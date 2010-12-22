@@ -26,6 +26,7 @@
 #include "WebPage.h"
 
 #include "Arguments.h"
+#include "DataReference.h"
 #include "DrawingArea.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
@@ -77,6 +78,10 @@
 #include <WebCore/SubstituteData.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
+
+#if PLATFORM(MAC) || PLATFORM(WIN)
+#include <WebCore/LegacyWebArchive.h>
+#endif
 
 #if ENABLE(PLUGIN_PROCESS)
 // FIXME: This is currently Mac-specific!
@@ -928,6 +933,23 @@ void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
        resultString = frame->source();
 
     send(Messages::WebPageProxy::DidGetSourceForFrame(resultString, callbackID));
+}
+
+void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
+{
+    CoreIPC::DataReference dataReference;
+
+#if PLATFORM(MAC) || PLATFORM(WIN)
+    RetainPtr<CFDataRef> data;
+    if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
+        if (RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(frame->coreFrame())) {
+            if ((data = archive->rawDataRepresentation()))
+                dataReference = CoreIPC::DataReference(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+        }
+    }
+#endif
+
+    send(Messages::WebPageProxy::DidGetWebArchiveOfFrame(dataReference, callbackID));
 }
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)

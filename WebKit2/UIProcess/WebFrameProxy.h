@@ -27,6 +27,7 @@
 #define WebFrameProxy_h
 
 #include "APIObject.h"
+#include "GenericCallback.h"
 #include "WebFrameListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
@@ -46,6 +47,8 @@ class WebCertificateInfo;
 class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
+
+typedef GenericCallback<WKDataRef> WebArchiveCallback;
 
 class WebFrameProxy : public APIObject {
 public:
@@ -94,6 +97,8 @@ public:
 
     bool isDisplayingStandaloneImageDocument() const;
     bool isDisplayingMarkupDocument() const;
+
+    void getWebArchive(PassRefPtr<WebArchiveCallback>);
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);

@@ -66,6 +66,13 @@ WK_EXPORT bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frame);
 
 WK_EXPORT bool WKFrameIsFrameSet(WKFrameRef frame);
 
+typedef void (*WKFrameGetWebArchiveFunction)(WKDataRef archiveData, WKErrorRef error, void* functionContext);
+WK_EXPORT void WKFrameGetWebArchive(WKFrameRef frame, WKFrameGetWebArchiveFunction function, void* functionContext);
+#ifdef __BLOCKS__
+typedef void (^WKFrameGetWebArchiveBlock)(WKDataRef archiveData, WKErrorRef error);
+WK_EXPORT void WKFrameGetWebArchive_b(WKFrameRef frame, WKFrameGetWebArchiveBlock block);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

@@ -28,6 +28,10 @@
 #include "WKAPICast.h"
 #include "WebFrameProxy.h"
 
+#ifdef __BLOCKS__
+#include <Block.h>
+#endif
+
 using namespace WebKit;
 
 WKTypeID WKFrameGetTypeID()
@@ -115,3 +119,22 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
 {
     return toImpl(frameRef)->isFrameSet();
 }
+
+void WKFrameGetWebArchive(WKFrameRef frameRef, WKFrameGetWebArchiveFunction callback, void* context)
+{
+    toImpl(frameRef)->getWebArchive(WebArchiveCallback::create(context, callback));
+}
+
+#ifdef __BLOCKS__
+static void callGetWebArchiveBlockAndDispose(WKDataRef archiveData, WKErrorRef error, void* context)
+{
+    WKFrameGetWebArchiveBlock block = (WKFrameGetWebArchiveBlock)context;
+    block(archiveData, error);
+    Block_release(block);
+}
+
+void WKFrameGetWebArchive_b(WKFrameRef frameRef, WKFrameGetWebArchiveBlock block)
+{
+    WKFrameGetWebArchive(frameRef, callGetWebArchiveBlockAndDispose, Block_copy(block));
+}
+#endif

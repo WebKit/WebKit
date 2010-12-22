@@ -249,6 +249,7 @@ void WebPageProxy::close()
     invalidateCallbackMap(m_frameSourceCallbacks);
     invalidateCallbackMap(m_renderTreeExternalRepresentationCallbacks);
     invalidateCallbackMap(m_scriptReturnValueCallbacks);
+    invalidateCallbackMap(m_webArchiveCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -813,6 +814,14 @@ void WebPageProxy::getContentsAsString(PassRefPtr<ContentsAsStringCallback> prpC
     uint64_t callbackID = callback->callbackID();
     m_contentsAsStringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
+}
+
+void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<WebArchiveCallback> prpCallback)
+{
+    RefPtr<WebArchiveCallback> callback = prpCallback;
+    uint64_t callbackID = callback->callbackID();
+    m_webArchiveCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
 void WebPageProxy::preferencesDidChange()
@@ -1746,6 +1755,21 @@ void WebPageProxy::didGetSourceForFrame(const String& resultString, uint64_t cal
     callback->performCallbackWithReturnValue(resultString.impl());
 }
 
+void WebPageProxy::didGetWebArchiveOfFrame(const CoreIPC::DataReference& dataReference, uint64_t callbackID)
+{
+    RefPtr<WebArchiveCallback> callback = m_webArchiveCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    RefPtr<WebData> data;
+    if (size_t size = dataReference.size())
+        data = WebData::create(dataReference.data(), size);
+
+    callback->performCallbackWithReturnValue(data.get());
+}
+
 void WebPageProxy::focusedFrameChanged(uint64_t frameID)
 {
     m_focusedFrame = frameID ? process()->webFrame(frameID) : 0;
@@ -1802,6 +1826,7 @@ void WebPageProxy::processDidCrash()
     invalidateCallbackMap(m_frameSourceCallbacks);
     invalidateCallbackMap(m_renderTreeExternalRepresentationCallbacks);
     invalidateCallbackMap(m_scriptReturnValueCallbacks);
+    invalidateCallbackMap(m_webArchiveCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);

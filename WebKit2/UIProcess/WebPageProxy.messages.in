@@ -111,6 +111,7 @@ messages -> WebPageProxy {
     DidGetContentsAsString(WTF::String resultString, uint64_t callbackID)
     DidGetRenderTreeExternalRepresentation(WTF::String resultString, uint64_t callbackID)
     DidGetSourceForFrame(WTF::String resultString, uint64_t callbackID)
+    DidGetWebArchiveOfFrame(CoreIPC::DataReference archiveData, uint64_t callbackID)
     DidRunJavaScriptInMainFrame(WTF::String resultString, uint64_t callbackID)
 
 #if PLATFORM(MAC)

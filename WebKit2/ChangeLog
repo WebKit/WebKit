@@ -1,3 +1,27 @@
+2010-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson and Sam Weinig.
+
+        Add a way to get a web archive in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51437
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetWebArchive): Added.
+        (callGetWebArchiveBlockAndDispose): Added.
+        (WKFrameGetWebArchive_b): Added.
+        * UIProcess/API/C/WKFrame.h: Added functions above.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Clear out m_webArchiveCallbacks.
+        (WebKit::WebPageProxy::getWebArchiveOfFrame): Added.
+        (WebKit::WebPageProxy::didGetWebArchiveOfFrame): Added.
+        (WebKit::WebPageProxy::processDidCrash): Clear out m_webArchiveCallbacks.
+        * UIProcess/WebPageProxy.h: Added functions above.
+        * UIProcess/WebPageProxy.messages.in: Added DidGetWebArchiveOfFrame.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getWebArchiveOfFrame): Added.
+        * WebProcess/WebPage/WebPage.h: Added function above.
+        * WebProcess/WebPage/WebPage.messages.in: Added GetWebArchiveOfFrame.
+
 2010-12-21  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

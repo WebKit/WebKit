@@ -28,7 +28,6 @@
 
 #include "APIObject.h"
 #include "DrawingAreaProxy.h"
-#include "GenericCallback.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
 #include "WebContextMenuItemData.h"
@@ -245,6 +244,7 @@ public:
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);
     void getSourceForFrame(WebFrameProxy*, PassRefPtr<FrameSourceCallback>);
     void getContentsAsString(PassRefPtr<ContentsAsStringCallback>);
+    void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<WebArchiveCallback>);
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
 
@@ -424,6 +424,7 @@ private:
     void didRunJavaScriptInMainFrame(const String&, uint64_t);
     void didGetRenderTreeExternalRepresentation(const String&, uint64_t);
     void didGetSourceForFrame(const String&, uint64_t);
+    void didGetWebArchiveOfFrame(const CoreIPC::DataReference&, uint64_t);
 
     void focusedFrameChanged(uint64_t frameID);
 
@@ -470,6 +471,7 @@ private:
     HashMap<uint64_t, RefPtr<FrameSourceCallback> > m_frameSourceCallbacks;
     HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
+    HashMap<uint64_t, RefPtr<WebArchiveCallback> > m_webArchiveCallbacks;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 

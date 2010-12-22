@@ -195,4 +195,14 @@ WebFormSubmissionListenerProxy* WebFrameProxy::setUpFormSubmissionListenerProxy(
     return static_cast<WebFormSubmissionListenerProxy*>(m_activeListener.get());
 }
 
+void WebFrameProxy::getWebArchive(PassRefPtr<WebArchiveCallback> callback)
+{
+    if (!m_page) {
+        callback->invalidate();
+        return;
+    }
+
+    m_page->getWebArchiveOfFrame(this, callback);
+}
+
 } // namespace WebKit
