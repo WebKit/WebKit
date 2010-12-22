@@ -1,3 +1,14 @@
+2010-12-21  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Do not build non-Intel architectures for WebKit2-related projects.
+        https://bugs.webkit.org/show_bug.cgi?id=51440
+
+        * MiniBrowser/Configurations/Base.xcconfig: Only build for i386 and x86_64.
+        * TestWebKitAPI/Configurations/Base.xcconfig: Ditto.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Ditto.
+
 2010-12-21  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.
