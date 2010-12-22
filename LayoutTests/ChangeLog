@@ -1,3 +1,17 @@
+2010-12-21  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed test expectations update. Remove the following five
+        expected text differences from the chromium-gpu test expectations
+        file, because these tests are now passing in DumpRenderTree (and
+        Chromium with --in-process-webgl --disable-accelerated-compositing):
+            canvas/philip/tests/2d.shadow.transform.2.html
+            canvas/philip/tests/2d.imageData.get.source.outside.html
+            fast/canvas/canvas-scale-fillRect-shadow.html
+            fast/canvas/canvas-scale-fillPath-shadow.html
+            fast/canvas/canvas-scale-strokePath-shadow.html
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2010-12-21  Andy Estes  <aestes@apple.com>
 
         Rebaseline test for r74427.
