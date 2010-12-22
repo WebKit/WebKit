@@ -1,3 +1,12 @@
+2010-12-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed build fix for r74447.
+
+        Call usesDashboardBackwardCompatibilityMode() only if DASHBOARD_SUPPORT is enabled.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::sourceURI):
+
 2010-12-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
