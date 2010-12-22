@@ -129,22 +129,26 @@ static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 
 void InjectedBundle::addUserScript(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime injectionTime, WebCore::UserContentInjectedFrames injectedFrames)
 {
-    PageGroup::pageGroup(pageGroup->identifier())->addUserScriptToWorld(scriptWorld->coreWorld(), source, KURL(ParsedURLString, url), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
+    // url is not from KURL::string(), i.e. it has not already been parsed by KURL, so we have to use the relative URL constructor for KURL instead of the ParsedURLStringTag version.
+    PageGroup::pageGroup(pageGroup->identifier())->addUserScriptToWorld(scriptWorld->coreWorld(), source, KURL(KURL(), url), toStringVector(whitelist), toStringVector(blacklist), injectionTime, injectedFrames);
 }
 
 void InjectedBundle::addUserStyleSheet(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserContentInjectedFrames injectedFrames)
 {
-    PageGroup::pageGroup(pageGroup->identifier())->addUserStyleSheetToWorld(scriptWorld->coreWorld(), source, KURL(ParsedURLString, url), toStringVector(whitelist), toStringVector(blacklist), injectedFrames);
+    // url is not from KURL::string(), i.e. it has not already been parsed by KURL, so we have to use the relative URL constructor for KURL instead of the ParsedURLStringTag version.
+    PageGroup::pageGroup(pageGroup->identifier())->addUserStyleSheetToWorld(scriptWorld->coreWorld(), source, KURL(KURL(), url), toStringVector(whitelist), toStringVector(blacklist), injectedFrames);
 }
 
 void InjectedBundle::removeUserScript(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& url)
 {
-    PageGroup::pageGroup(pageGroup->identifier())->removeUserScriptFromWorld(scriptWorld->coreWorld(), KURL(ParsedURLString, url));
+    // url is not from KURL::string(), i.e. it has not already been parsed by KURL, so we have to use the relative URL constructor for KURL instead of the ParsedURLStringTag version.
+    PageGroup::pageGroup(pageGroup->identifier())->removeUserScriptFromWorld(scriptWorld->coreWorld(), KURL(KURL(), url));
 }
 
 void InjectedBundle::removeUserStyleSheet(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld, const String& url)
 {
-    PageGroup::pageGroup(pageGroup->identifier())->removeUserStyleSheetFromWorld(scriptWorld->coreWorld(), KURL(ParsedURLString, url));
+    // url is not from KURL::string(), i.e. it has not already been parsed by KURL, so we have to use the relative URL constructor for KURL instead of the ParsedURLStringTag version.
+    PageGroup::pageGroup(pageGroup->identifier())->removeUserStyleSheetFromWorld(scriptWorld->coreWorld(), KURL(KURL(), url));
 }
 
 void InjectedBundle::removeUserScripts(WebPageGroupProxy* pageGroup, InjectedBundleScriptWorld* scriptWorld)

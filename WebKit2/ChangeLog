@@ -1,3 +1,19 @@
+2010-12-22  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        InjectedBundle methods should  use the relative URL constructor for KURL instead of the ParsedURLStringTag version
+        https://bugs.webkit.org/show_bug.cgi?id=51491
+        
+        The url passed to various InjectedBundle methods is not from KURL::string(), i.e. it has not already been parsed by KURL,
+        so we have to use the relative URL constructor for KURL instead of the ParsedURLStringTag version.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::addUserScript):
+        (WebKit::InjectedBundle::addUserStyleSheet):
+        (WebKit::InjectedBundle::removeUserScript):
+        (WebKit::InjectedBundle::removeUserStyleSheet):
+
 2010-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
