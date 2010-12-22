@@ -335,13 +335,6 @@ private:
 
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    friend class InspectorDebuggerAgent;
-    String breakpointsSettingKey();
-    PassRefPtr<InspectorValue> loadBreakpoints();
-    void saveBreakpoints(PassRefPtr<InspectorObject> breakpoints);
-#endif
-
     Page* m_inspectedPage;
     InspectorClient* m_client;
     OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
@@ -395,7 +388,6 @@ private:
     HashSet<String> m_eventListenerBreakpoints;
     HashSet<String> m_XHRBreakpoints;
     bool m_hasXHRBreakpointWithEmptyURL;
-    bool m_stickyBreakpointsRestored;
 
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif

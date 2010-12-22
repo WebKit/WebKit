@@ -29,8 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Breakpoint = function(debuggerModel, sourceID, url, line, enabled, condition)
+WebInspector.Breakpoint = function(debuggerModel, breakpointId, sourceID, url, line, enabled, condition)
 {
+    this.id = breakpointId;
     this.url = url;
     this.line = line;
     this.sourceID = sourceID;
@@ -41,25 +42,10 @@ WebInspector.Breakpoint = function(debuggerModel, sourceID, url, line, enabled, 
     this._debuggerModel = debuggerModel;
 }
 
-WebInspector.Breakpoint.jsBreakpointId = function(sourceID, line)
-{
-    return sourceID + ":" + line;
-}
-
 WebInspector.Breakpoint.prototype = {
     get enabled()
     {
         return this._enabled;
-    },
-
-    set enabled(x)
-    {
-        if (this._enabled === x)
-            return;
-
-        this._enabled = x;
-        this._debuggerModel._setBreakpointOnBackend(this);
-        this.dispatchEventToListeners("enable-changed");
     },
 
     get sourceText()
@@ -73,26 +59,9 @@ WebInspector.Breakpoint.prototype = {
         this.dispatchEventToListeners("label-changed");
     },
 
-    get id()
-    {
-        return WebInspector.Breakpoint.jsBreakpointId(this.sourceID, this.line);
-    },
-
     get condition()
     {
         return this._condition;
-    },
-
-    set condition(c)
-    {
-        c = c || "";
-        if (this._condition === c)
-            return;
-
-        this._condition = c;
-        if (this.enabled)
-            this._debuggerModel._setBreakpointOnBackend(this);
-        this.dispatchEventToListeners("condition-changed");
     },
 
     get hit()
@@ -134,7 +103,7 @@ WebInspector.Breakpoint.prototype = {
 
     remove: function()
     {
-        InspectorBackend.removeBreakpoint(this.sourceID, this.line);
+        this._debuggerModel.removeBreakpoint(this.id);
         this.dispatchEventToListeners("removed");
         this.removeAllListeners();
         delete this._debuggerModel;

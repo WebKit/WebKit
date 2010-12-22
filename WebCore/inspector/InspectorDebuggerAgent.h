@@ -31,12 +31,12 @@
 #define InspectorDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
-#include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -61,8 +61,9 @@ public:
 
     void activateBreakpoints();
     void deactivateBreakpoints();
-    void setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber);
-    void removeBreakpoint(const String& sourceID, unsigned lineNumber);
+    void setStickyBreakpoint(const String& url, unsigned lineNumber, const String& condition, bool enabled);
+    void setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, String* breakpointId, unsigned int* actualLineNumber);
+    void removeBreakpoint(const String& breakpointId);
 
     void editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
     void getScriptSource(const String& sourceID, String* scriptSource);
@@ -81,30 +82,27 @@ public:
 
     void clearForPageNavigation();
 
-    static String md5Base16(const String& string);
-
 private:
     InspectorDebuggerAgent(InspectorController*, InspectorFrontend*);
 
     PassRefPtr<InspectorValue> currentCallFrames();
-
-    void loadBreakpoints();
-    void saveBreakpoints();
 
     virtual void didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
     virtual void didPause(ScriptState*);
     virtual void didContinue();
 
+    void restoreBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled);
+
     InspectorController* m_inspectorController;
     InspectorFrontend* m_frontend;
     ScriptState* m_pausedScriptState;
-    HashMap<String, String> m_sourceIDToURL;
     HashMap<String, String> m_scriptIDToContent;
-    HashMap<String, SourceBreakpoints> m_stickyBreakpoints;
-    HashMap<String, unsigned> m_breakpointsMapping;
-    bool m_breakpointsLoaded;
-    static InspectorDebuggerAgent* s_debuggerAgentOnBreakpoint;
+    typedef HashMap<String, Vector<String> > URLToSourceIDsMap;
+    URLToSourceIDsMap m_urlToSourceIDs;
+    typedef std::pair<String, bool> Breakpoint;
+    typedef HashMap<unsigned, Breakpoint> ScriptBreakpoints;
+    HashMap<String, ScriptBreakpoints> m_stickyBreakpoints;
     RefPtr<InspectorObject> m_breakProgramDetails;
     bool m_javaScriptPauseScheduled;
 };

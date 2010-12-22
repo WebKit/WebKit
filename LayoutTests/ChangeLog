@@ -1,3 +1,17 @@
+2010-12-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: persist JavaScript breakpoints in frontend settings.
+        https://bugs.webkit.org/show_bug.cgi?id=48434
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.setBreakpoint):
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger-pause-on-breakpoint.html:
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/report-protocol-errors.html:
+
 2010-12-22  Andrei Popescu  <andreip@google.com>
 
         Unreviewed buildfix.

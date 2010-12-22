@@ -150,7 +150,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
     , m_hasXHRBreakpointWithEmptyURL(false)
-    , m_stickyBreakpointsRestored(false)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
@@ -1349,6 +1348,7 @@ void InspectorController::enableDebuggerFromFrontend(bool always)
     ASSERT(m_inspectedPage);
 
     m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get());
+    restoreStickyBreakpoints();
 
     m_frontend->debuggerWasEnabled();
 }
@@ -1396,10 +1396,6 @@ void InspectorController::resume()
 void InspectorController::setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints)
 {
     m_state->setObject(InspectorState::stickyBreakpoints, breakpoints);
-    if (!m_stickyBreakpointsRestored) {
-        restoreStickyBreakpoints();
-        m_stickyBreakpointsRestored = true;
-    }
 }
 
 void InspectorController::restoreStickyBreakpoints()
@@ -1420,8 +1416,9 @@ void InspectorController::restoreStickyBreakpoints()
 
 void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint)
 {
-    DEFINE_STATIC_LOCAL(String, eventListenerNativeBreakpointType, ("EventListener"));
-    DEFINE_STATIC_LOCAL(String, xhrNativeBreakpointType, ("XHR"));
+    DEFINE_STATIC_LOCAL(String, eventListenerBreakpointType, ("EventListener"));
+    DEFINE_STATIC_LOCAL(String, javaScriptBreakpointType, ("JS"));
+    DEFINE_STATIC_LOCAL(String, xhrBreakpointType, ("XHR"));
 
     if (!breakpoint)
         return;
@@ -1429,17 +1426,33 @@ void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> br
     if (!breakpoint->getString("type", &type))
         return;
     bool enabled;
-    if (!breakpoint->getBoolean("enabled", &enabled) || !enabled)
+    if (!breakpoint->getBoolean("enabled", &enabled))
         return;
     RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
     if (!condition)
         return;
 
-    if (type == eventListenerNativeBreakpointType) {
+    if (type == eventListenerBreakpointType) {
+        if (!enabled)
+            return;
         String eventName;
         if (condition->getString("eventName", &eventName))
             setEventListenerBreakpoint(eventName);
-    } else if (type == xhrNativeBreakpointType) {
+    } else if (type == javaScriptBreakpointType) {
+        String url;
+        if (!condition->getString("url", &url))
+            return;
+        double lineNumber;
+        if (!condition->getNumber("lineNumber", &lineNumber))
+            return;
+        String javaScriptCondition;
+        if (!condition->getString("condition", &javaScriptCondition))
+            return;
+        if (m_debuggerAgent)
+            m_debuggerAgent->setStickyBreakpoint(url, lineNumber, javaScriptCondition, enabled);
+    } else if (type == xhrBreakpointType) {
+        if (!enabled)
+            return;
         String url;
         if (condition->getString("url", &url))
             setXHRBreakpoint(url);
@@ -1512,26 +1525,6 @@ void InspectorController::didEvaluateForTestInFrontend(long callId, const String
     function.appendArgument(jsonResult);
     function.call();
 }
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-String InspectorController::breakpointsSettingKey()
-{
-    DEFINE_STATIC_LOCAL(String, keyPrefix, ("breakpoints:"));
-    return keyPrefix + InspectorDebuggerAgent::md5Base16(m_inspectedPage->mainFrame()->loader()->url().string());
-}
-
-PassRefPtr<InspectorValue> InspectorController::loadBreakpoints()
-{
-    String jsonString;
-    m_client->populateSetting(breakpointsSettingKey(), &jsonString);
-    return InspectorValue::parseJSON(jsonString);
-}
-
-void InspectorController::saveBreakpoints(PassRefPtr<InspectorObject> breakpoints)
-{
-    m_client->storeSetting(breakpointsSettingKey(), breakpoints->toJSONString());
-}
-#endif
 
 static Path quadToPath(const FloatQuad& quad)
 {

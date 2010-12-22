@@ -271,13 +271,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._addScriptToFilesMenu(script);
     },
 
-    continueToLine: function(sourceID, line)
-    {
-        WebInspector.debuggerModel.setOneTimeBreakpoint(sourceID, line);
-        if (this.paused)
-            this._togglePause();
-    },
-
     _resourceLoadingFinished: function(e)
     {
         var resource = e.target;
@@ -372,7 +365,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var callFrames = event.data.callFrames;
 
-        WebInspector.debuggerModel.removeOneTimeBreakpoint();
         this._paused = true;
         this._waitingToPause = false;
         this._stepping = false;

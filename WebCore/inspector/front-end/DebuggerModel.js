@@ -32,7 +32,9 @@ WebInspector.DebuggerModel = function()
 {
     InspectorBackend.registerDomainDispatcher("Debugger", this);
 
+    this._paused = false;
     this._breakpoints = {};
+    this._sourceIDAndLineToBreakpointId = {};
     this._scripts = {};
 }
 
@@ -42,35 +44,68 @@ WebInspector.DebuggerModel.Events = {
     ParsedScriptSource: "parsed-script-source",
     FailedToParseScriptSource: "failed-to-parse-script-source",
     BreakpointAdded: "breakpoint-added",
+    BreakpointRemoved: "breakpoint-removed"
 }
 
 WebInspector.DebuggerModel.prototype = {
-    setOneTimeBreakpoint: function(sourceID, line)
+    continueToLine: function(sourceID, lineNumber)
     {
-        var breakpoint = new WebInspector.Breakpoint(this, sourceID, undefined, line, true, undefined);
-        if (this._breakpoints[breakpoint.id])
-            return;
-        if (this._oneTimeBreakpoint)
-            InspectorBackend.removeBreakpoint(this._oneTimeBreakpoint.sourceID, this._oneTimeBreakpoint.line);
-        this._oneTimeBreakpoint = breakpoint;
-        // FIXME(40669): one time breakpoint will be persisted in inspector settings if not hit.
-        this._setBreakpointOnBackend(breakpoint, true);
-    },
-
-    removeOneTimeBreakpoint: function()
-    {
-        if (this._oneTimeBreakpoint) {
-            InspectorBackend.removeBreakpoint(this._oneTimeBreakpoint.sourceID, this._oneTimeBreakpoint.line);
-            delete this._oneTimeBreakpoint;
+        function didSetBreakpoint(breakpointId, actualLineNumber)
+        {
+            if (!breakpointId)
+                return;
+            if (this.findBreakpoint(sourceID, actualLineNumber)) {
+                InspectorBackend.removeBreakpoint(breakpointId);
+                return;
+            }
+            if ("_continueToLineBreakpointId" in this)
+                InspectorBackend.removeBreakpoint(this._continueToLineBreakpointId);
+            this._continueToLineBreakpointId = breakpointId;
         }
+        InspectorBackend.setBreakpoint(sourceID, lineNumber, "", true, didSetBreakpoint.bind(this));
+        if (this._paused)
+            InspectorBackend.resume();
     },
 
-    setBreakpoint: function(sourceID, line, enabled, condition)
+    setBreakpoint: function(sourceID, lineNumber, enabled, condition)
     {
+        function didSetBreakpoint(breakpointId, actualLineNumber)
+        {
+            if (breakpointId)
+                this._breakpointSetOnBackend(breakpointId, sourceID, actualLineNumber, condition, enabled, lineNumber, false);
+        }
+        InspectorBackend.setBreakpoint(sourceID, lineNumber, condition, enabled, didSetBreakpoint.bind(this));
+    },
+
+    removeBreakpoint: function(breakpointId)
+    {
+        InspectorBackend.removeBreakpoint(breakpointId);
+        var breakpoint = this._breakpoints[breakpointId];
+        delete this._breakpoints[breakpointId];
+        delete this._sourceIDAndLineToBreakpointId[this._encodeSourceIDAndLine(breakpoint.sourceID, breakpoint.line)];
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointRemoved, breakpointId);
+    },
+
+    breakpointResolved: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber)
+    {
+        this._breakpointSetOnBackend(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, true);
+    },
+
+    _breakpointSetOnBackend: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, restored)
+    {
+        var sourceIDAndLine = this._encodeSourceIDAndLine(sourceID, lineNumber);
+        if (sourceIDAndLine in this._sourceIDAndLineToBreakpointId) {
+            InspectorBackend.removeBreakpoint(breakpointId);
+            return;
+        }
+
         var url = this._scripts[sourceID].sourceURL;
-        var breakpoint = this._setBreakpoint(sourceID, url, line, enabled, condition);
-        if (breakpoint)
-            this._setBreakpointOnBackend(breakpoint);
+        var breakpoint = new WebInspector.Breakpoint(this, breakpointId, sourceID, url, lineNumber, enabled, condition);
+        breakpoint.restored = restored;
+        breakpoint.originalLineNumber = originalLineNumber;
+        this._breakpoints[breakpointId] = breakpoint;
+        this._sourceIDAndLineToBreakpointId[sourceIDAndLine] = breakpointId;
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpoint);
     },
 
     queryBreakpoints: function(filter)
@@ -86,53 +121,23 @@ WebInspector.DebuggerModel.prototype = {
 
     findBreakpoint: function(sourceID, lineNumber)
     {
-        var breakpointId = WebInspector.Breakpoint.jsBreakpointId(sourceID, lineNumber);
+        var sourceIDAndLine = this._encodeSourceIDAndLine(sourceID, lineNumber);
+        var breakpointId = this._sourceIDAndLineToBreakpointId[sourceIDAndLine];
         return this._breakpoints[breakpointId];
+    },
+
+    _encodeSourceIDAndLine: function(sourceID, lineNumber)
+    {
+        return sourceID + ":" + lineNumber;
     },
 
     reset: function()
     {
+        this._paused = false;
         this._breakpoints = {};
         delete this._oneTimeBreakpoint;
+        this._sourceIDAndLineToBreakpointId = {};
         this._scripts = {};
-    },
-
-    _setBreakpoint: function(sourceID, url, line, enabled, condition)
-    {
-        var breakpoint = new WebInspector.Breakpoint(this, sourceID, url, line, enabled, condition);
-        if (this._breakpoints[breakpoint.id])
-            return;
-        if (this._oneTimeBreakpoint && (this._oneTimeBreakpoint.id == breakpoint.id))
-            delete this._oneTimeBreakpoint;
-        this._breakpoints[breakpoint.id] = breakpoint;
-        breakpoint.addEventListener("removed", this._breakpointRemoved, this);
-        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpoint);
-        return breakpoint;
-    },
-
-    _breakpointRemoved: function(event)
-    {
-        delete this._breakpoints[event.target.id];
-    },
-
-    _setBreakpointOnBackend: function(breakpoint, isOneTime)
-    {
-        function didSetBreakpoint(success, line)
-        {
-            if (success && line == breakpoint.line)
-                return;
-            if (isOneTime) {
-                if (success)
-                    this._oneTimeBreakpoint.line = line;
-                else
-                    delete this._oneTimeBreakpoint;
-            } else {
-                breakpoint.remove();
-                if (success)
-                    this._setBreakpoint(breakpoint.sourceID, breakpoint.url, line, breakpoint.enabled, breakpoint.condition);
-            }
-        }
-        InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition, didSetBreakpoint.bind(this));
     },
 
     scriptForSourceID: function(sourceID)
@@ -158,13 +163,13 @@ WebInspector.DebuggerModel.prototype = {
 
     // All the methods below are InspectorBackend notification handlers.
 
-    breakpointRestored: function(sourceID, url, line, enabled, condition)
-    {
-        this._setBreakpoint(sourceID, url, line, enabled, condition);
-    },
-
     pausedScript: function(details)
     {
+        this._paused = true;
+        if ("_continueToLineBreakpointId" in this) {
+            InspectorBackend.removeBreakpoint(this._continueToLineBreakpointId);
+            delete this._continueToLineBreakpointId;
+        }
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, details);
 
         if (details.eventType === WebInspector.DebuggerEventTypes.JavaScriptPause || details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint)
@@ -179,6 +184,7 @@ WebInspector.DebuggerModel.prototype = {
 
     resumedScript: function()
     {
+        this._paused = false;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
 
         if (!this._lastHitBreakpoint)

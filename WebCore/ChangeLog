@@ -1,3 +1,51 @@
+2010-12-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: persist JavaScript breakpoints in frontend settings.
+        https://bugs.webkit.org/show_bug.cgi?id=48434
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::setStickyBreakpoints):
+        (WebCore::InspectorController::restoreStickyBreakpoint):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::setStickyBreakpoint):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::restoreBreakpoint):
+        (WebCore::InspectorDebuggerAgent::clearForPageNavigation):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.remove):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.DOMBreakpoint.prototype._serializeToJSON):
+        (WebInspector.JavaScriptBreakpoint):
+        (WebInspector.XHRBreakpoint.prototype._serializeToJSON):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        * inspector/front-end/SourceFrame.js:
+
 2010-12-22  Dirk Schulze  <krit@wbekit.org>
 
         Reviewed by Nikolas Zimmermann.
