@@ -1,3 +1,13 @@
+2010-12-21  Darin Adler  <darin@apple.com>
+
+        Unreviewed correction to unreviewed build fix for r74447.
+
+        Inappropriate code was left behind in sourceURI function for non-Dashboard platforms.
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::sourceURI): Change the logic so all the bug-workaround
+        logic is inside the #ifdef.
+
 2010-12-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
