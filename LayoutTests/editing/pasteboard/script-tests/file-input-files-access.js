@@ -99,10 +99,11 @@ function runTest()
 
     fileInput.multiple = true;
 
-    debug("Dragging two files to a multi-file input control:");
+    debug("Dragging three files to a multi-file input control:");
     testDraggingFiles([
         { 'path': 'resources/apple.gif', 'name' : 'apple.gif', 'size' : 1476, 'type' : 'image/gif' },
-        { 'path': 'resources/mozilla.gif', 'name' : 'mozilla.gif', 'size' : 2593, 'type' : 'image/gif' }
+        { 'path': 'resources/mozilla.gif', 'name' : 'mozilla.gif', 'size' : 2593, 'type' : 'image/gif' },
+        { 'path': 'resources/file.invalidext', 'name' : 'file.invalidext', 'size' : 10, 'type' : '' }
     ]);
 
     testOrderedDraggingWithDirectory();
