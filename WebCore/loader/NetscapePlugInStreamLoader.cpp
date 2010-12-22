@@ -49,7 +49,9 @@ PassRefPtr<NetscapePlugInStreamLoader> NetscapePlugInStreamLoader::create(Frame*
     RefPtr<NetscapePlugInStreamLoader> loader(adoptRef(new NetscapePlugInStreamLoader(frame, client)));
     loader->setShouldBufferData(false);
     loader->documentLoader()->addPlugInStreamLoader(loader.get());
-    loader->init(request);
+    if (!loader->init(request))
+        return 0;
+
     return loader.release();
 }
 

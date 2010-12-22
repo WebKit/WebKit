@@ -110,7 +110,7 @@ void ResourceLoader::releaseResources()
     m_deferredRequest = ResourceRequest();
 }
 
-void ResourceLoader::init(const ResourceRequest& r)
+bool ResourceLoader::init(const ResourceRequest& r)
 {
     ASSERT(!m_handle);
     ASSERT(m_request.isNull());
@@ -130,6 +130,14 @@ void ResourceLoader::init(const ResourceRequest& r)
     }
 
     m_request = clientRequest;
+
+    willSendRequest(m_request, ResourceResponse());
+    if (m_request.isNull()) {
+        didFail(frameLoader()->cancelledError(m_request));
+        return false;
+    }
+
+    return true;
 }
 
 void ResourceLoader::start()
@@ -138,12 +146,6 @@ void ResourceLoader::start()
     ASSERT(!m_request.isNull());
     ASSERT(m_deferredRequest.isNull());
 
-    willSendRequest(m_request, ResourceResponse());
-    if (m_request.isNull()) {
-        didFail(frameLoader()->cancelledError(m_request));
-        return;
-    }    
-    
     if (m_documentLoader->scheduleArchiveLoad(this, m_request, m_request.url()))
         return;
     

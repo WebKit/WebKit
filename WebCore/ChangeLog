@@ -1,3 +1,26 @@
+2010-12-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8668230> REGRESSION (r71884): Returning alternate requests from willSendRequest can prevent other requests from ever being sent
+        https://bugs.webkit.org/show_bug.cgi?id=51413
+
+        71884 was wrong in moving willSendRequest to ResourceLoader::start(). It’s wrong to do all the
+        scheduling, which is host-dependent, before calling willSendRequest, because the latter can
+        change the host.
+
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::create): Check the return value from ResourceLoader::init()
+        and return 0 if it is false.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init): Made this function return a boolean. Moved the call to willSendRequest()
+        from start() into here. Return false if willSendRequest() canceled the request.
+        (WebCore::ResourceLoader::start): Moved the call to willSendRequest() from here to init().
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create): Check the return value from ResourceLoader::init()
+        and return 0 if it is false.
+
 2010-12-21  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Darin Adler.

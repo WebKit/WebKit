@@ -54,7 +54,7 @@ namespace WebCore {
 
         void cancel();
 
-        virtual void init(const ResourceRequest&);
+        virtual bool init(const ResourceRequest&);
 
         FrameLoader* frameLoader() const;
         DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
