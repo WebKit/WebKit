@@ -1,3 +1,14 @@
+2010-12-21  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 26276 - Need a mechanism to determine stack extent
+
+        Correctly measuring available stack increases the size of expression we can handle!
+
+        * fast/js/large-expressions-expected.txt:
+        * fast/js/script-tests/large-expressions.js:
+
 2010-12-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
