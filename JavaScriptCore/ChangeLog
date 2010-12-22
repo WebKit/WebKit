@@ -1,5 +1,11 @@
 2010-12-22  Dan Bernstein  <mitz@apple.com>
 
+        Changed WebKitTools to Tools.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+
+2010-12-22  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Mark Rowe.
 
         Changed WebKitTools to Tools in script build phases.

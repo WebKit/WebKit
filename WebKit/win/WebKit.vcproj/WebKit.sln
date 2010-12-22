@@ -76,74 +76,74 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitGUID", "WebKitGUID.vc
 		{91762BE2-87EF-4F5A-A480-48B90EB3F406} = {91762BE2-87EF-4F5A-A480-48B90EB3F406}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebKitTools", "WebKitTools", "{62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{62DCDFE4-EAD2-48E1-A2BD-BD54AD3C7459}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DumpRenderTree", "..\..\..\WebKitTools\DumpRenderTree\win\DumpRenderTree.vcproj", "{6567DFD4-D6DE-4CD5-825D-17E353D160E1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DumpRenderTree", "..\..\..\Tools\DumpRenderTree\win\DumpRenderTree.vcproj", "{6567DFD4-D6DE-4CD5-825D-17E353D160E1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{59CC0547-70AC-499C-9B19-EC01C6F61137} = {59CC0547-70AC-499C-9B19-EC01C6F61137}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageDiff", "..\..\..\WebKitTools\DumpRenderTree\win\ImageDiff.vcproj", "{59CC0547-70AC-499C-9B19-EC01C6F61137}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageDiff", "..\..\..\Tools\DumpRenderTree\win\ImageDiff.vcproj", "{59CC0547-70AC-499C-9B19-EC01C6F61137}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C0737398-3565-439E-A2B8-AB2BE4D5430C} = {C0737398-3565-439E-A2B8-AB2BE4D5430C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindSafari", "..\..\..\WebKitTools\FindSafari\FindSafari.vcproj", "{DA31DA52-6675-48D4-89E0-333A7144397C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindSafari", "..\..\..\Tools\FindSafari\FindSafari.vcproj", "{DA31DA52-6675-48D4-89E0-333A7144397C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AAE88FEF-509E-4D49-870B-7357922C276F} = {AAE88FEF-509E-4D49-870B-7357922C276F}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "record-memory-win", "..\..\..\WebKitTools\record-memory-win\record-memory-win.vcproj", "{44B9C152-1870-4035-B94D-7B3285AA0C12}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "record-memory-win", "..\..\..\Tools\record-memory-win\record-memory-win.vcproj", "{44B9C152-1870-4035-B94D-7B3285AA0C12}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D09806DB-E58B-4646-8C9B-61101906C1E2} = {D09806DB-E58B-4646-8C9B-61101906C1E2}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNetscapePlugin", "..\..\..\WebKitTools\DumpRenderTree\TestNetscapePlugIn\win\TestNetscapePlugin.vcproj", "{C0737398-3565-439E-A2B8-AB2BE4D5430C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNetscapePlugin", "..\..\..\Tools\DumpRenderTree\TestNetscapePlugIn\win\TestNetscapePlugin.vcproj", "{C0737398-3565-439E-A2B8-AB2BE4D5430C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{114FCA11-216B-4C8C-957E-30A75AE80443} = {114FCA11-216B-4C8C-957E-30A75AE80443}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitAPITest", "..\..\..\WebKitTools\WebKitAPITest\WebKitAPITest.vcproj", "{626089A3-25D3-4883-A96C-B8C66E036397}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitAPITest", "..\..\..\Tools\WebKitAPITest\WebKitAPITest.vcproj", "{626089A3-25D3-4883-A96C-B8C66E036397}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6567DFD4-D6DE-4CD5-825D-17E353D160E1} = {6567DFD4-D6DE-4CD5-825D-17E353D160E1}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitLauncherWin", "..\..\..\WebKitTools\WebKitLauncherWin\WebKitLauncherWin.vcproj", "{D09806DB-E58B-4646-8C9B-61101906C1E2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitLauncherWin", "..\..\..\Tools\WebKitLauncherWin\WebKitLauncherWin.vcproj", "{D09806DB-E58B-4646-8C9B-61101906C1E2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{626089A3-25D3-4883-A96C-B8C66E036397} = {626089A3-25D3-4883-A96C-B8C66E036397}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\WebKitTools\WinLauncher\WinLauncher.vcproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\Tools\WinLauncher\WinLauncher.vcproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C59E5129-B453-49B7-A52B-1E104715F76E} = {C59E5129-B453-49B7-A52B-1E104715F76E}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundle", "..\..\..\WebKitTools\WebKitTestRunner\win\InjectedBundle.vcproj", "{CBC3391C-F060-4BF5-A66E-81404168816B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundle", "..\..\..\Tools\WebKitTestRunner\win\InjectedBundle.vcproj", "{CBC3391C-F060-4BF5-A66E-81404168816B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4343BC0B-A2E0-4B48-8277-F33CFBFA83CD} = {4343BC0B-A2E0-4B48-8277-F33CFBFA83CD}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundleGenerated", "..\..\..\WebKitTools\WebKitTestRunner\win\InjectedBundleGenerated.vcproj", "{4343BC0B-A2E0-4B48-8277-F33CFBFA83CD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InjectedBundleGenerated", "..\..\..\Tools\WebKitTestRunner\win\InjectedBundleGenerated.vcproj", "{4343BC0B-A2E0-4B48-8277-F33CFBFA83CD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{44B9C152-1870-4035-B94D-7B3285AA0C12} = {44B9C152-1870-4035-B94D-7B3285AA0C12}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitTestRunner", "..\..\..\WebKitTools\WebKitTestRunner\win\WebKitTestRunner.vcproj", "{3B99669B-1817-443B-BCBE-835580146668}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKitTestRunner", "..\..\..\Tools\WebKitTestRunner\win\WebKitTestRunner.vcproj", "{3B99669B-1817-443B-BCBE-835580146668}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CBC3391C-F060-4BF5-A66E-81404168816B} = {CBC3391C-F060-4BF5-A66E-81404168816B}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniBrowser", "..\..\..\WebKitTools\MiniBrowser\MiniBrowser.vcproj", "{1480CF5F-4160-47B5-A0E6-96AEC8258FB5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MiniBrowser", "..\..\..\Tools\MiniBrowser\MiniBrowser.vcproj", "{1480CF5F-4160-47B5-A0E6-96AEC8258FB5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3E48AB23-D249-488F-A1C4-43CDF52FBD28} = {3E48AB23-D249-488F-A1C4-43CDF52FBD28}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestWebKitAPI", "..\..\..\WebKitTools\TestWebKitAPI\win\TestWebKitAPI.vcproj", "{3E48AB23-D249-488F-A1C4-43CDF52FBD28}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestWebKitAPI", "..\..\..\Tools\TestWebKitAPI\win\TestWebKitAPI.vcproj", "{3E48AB23-D249-488F-A1C4-43CDF52FBD28}"
 	ProjectSection(ProjectDependencies) = postProject
 		{45C45411-7F0E-404D-919A-4EE9BB60BE86} = {45C45411-7F0E-404D-919A-4EE9BB60BE86}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestWebKitAPIGenerated", "..\..\..\WebKitTools\TestWebKitAPI\win\TestWebKitAPIGenerated.vcproj", "{45C45411-7F0E-404D-919A-4EE9BB60BE86}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestWebKitAPIGenerated", "..\..\..\Tools\TestWebKitAPI\win\TestWebKitAPIGenerated.vcproj", "{45C45411-7F0E-404D-919A-4EE9BB60BE86}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3B99669B-1817-443B-BCBE-835580146668} = {3B99669B-1817-443B-BCBE-835580146668}
 	EndProjectSection

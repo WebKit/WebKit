@@ -1,3 +1,9 @@
+2010-12-22  Dan Bernstein  <mitz@apple.com>
+
+        Changed WebKitTools to Tools.
+
+        * WebKit.vcproj/WebKit.sln:
+
 2010-12-14  Adam Roben  <aroben@apple.com>
 
         Always record the last-set cursor, even when the UI delegate is

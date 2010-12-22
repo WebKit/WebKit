@@ -14,7 +14,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsc", "jsc\jsc.vcproj", "{C
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "WTF\WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindSafari", "..\..\WebKitTools\FindSafari\FindSafari.vcproj", "{DA31DA52-6675-48D4-89E0-333A7144397C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindSafari", "..\..\Tools\FindSafari\FindSafari.vcproj", "{DA31DA52-6675-48D4-89E0-333A7144397C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "JavaScriptCore\JavaScriptCoreGenerated.vcproj", "{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
 EndProject
