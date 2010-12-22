@@ -1,3 +1,20 @@
+2010-12-22  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Rebaseline chromium media/controls-styling layout test and re-enable.
+        https://bugs.webkit.org/show_bug.cgi?id=51427
+
+        * platform/chromium-linux/media/controls-styling-expected.checksum: Added.
+        * platform/chromium-linux/media/controls-styling-expected.png: Added.
+        * platform/chromium-mac/media/controls-styling-expected.checksum: Added.
+        * platform/chromium-mac/media/controls-styling-expected.png: Added.
+        * platform/chromium-mac/media/controls-styling-expected.txt: Added.
+        * platform/chromium-win/media/controls-styling-expected.checksum: Added.
+        * platform/chromium-win/media/controls-styling-expected.png: Added.
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-22  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by David Levin.
