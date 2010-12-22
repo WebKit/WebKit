@@ -1,3 +1,12 @@
+2010-12-21  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [WK2] Guard gcc-specific syntax
+
+        * WebKit2.pro: Non-gcc based compliers choke on the "-include" 
+        syntax for preinclude, make sure it has guard around it.
+
 2010-12-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
