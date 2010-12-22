@@ -1,3 +1,11 @@
+2010-12-22  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Changed WebKitTools to Tools in script build phases.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-12-22  Andrei Popescu  <andreip@google.com>
 
         Unreviewed build fix.

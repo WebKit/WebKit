@@ -1,3 +1,11 @@
+2010-12-22  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Changed WebKitTools to Tools in script build phases.
+
+        * JavaScriptGlue.xcodeproj/project.pbxproj:
+
 2010-12-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Gavin Barraclough & Oliver Hunt.
