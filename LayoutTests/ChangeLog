@@ -1,3 +1,15 @@
+2010-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CSS 2.1 failure: counter-increment-013 fails
+        https://bugs.webkit.org/show_bug.cgi?id=51483
+        
+        Layout test version of CSS 2.1 counter-increment-013 test.
+
+        * fast/css/counters/counter-increment-overflow-expected.txt: Added.
+        * fast/css/counters/counter-increment-overflow.html: Added.
+
 2010-12-22  Chang Shu  <chang.shu@nokia.com>
 
         Unreviewed layout test fix.

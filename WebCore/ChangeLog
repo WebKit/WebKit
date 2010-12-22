@@ -1,3 +1,19 @@
+2010-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CSS 2.1 failure: counter-increment-013 fails
+        https://bugs.webkit.org/show_bug.cgi?id=51483
+        
+        Clamp the counter-increment property to the valid range of signed
+        integers.
+
+        Test: fast/css/counters/counter-increment-overflow.html
+
+        * css/CSSParser.cpp:
+        (WebCore::clampToSignedInteger):
+        (WebCore::CSSParser::parseCounter):
+
 2010-12-22  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.
