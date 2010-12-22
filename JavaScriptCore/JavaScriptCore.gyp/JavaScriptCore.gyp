@@ -147,7 +147,9 @@
           'sources/': [
             ['exclude', 'ThreadIdentifierDataPthreads\\.(h|cpp)$'],
             ['exclude', 'ThreadingPthreads\\.cpp$'],
-            ['include', 'Thread(ing|Specific)Win\\.cpp$']
+            ['include', 'Thread(ing|Specific)Win\\.cpp$'],
+            ['exclude', 'OSAllocatorPosix\\.cpp$'],
+            ['include', 'OSAllocatorWin\\.cpp$']
           ],
           'include_dirs!': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit',
