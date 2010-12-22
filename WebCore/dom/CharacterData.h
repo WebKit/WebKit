@@ -64,9 +64,9 @@ private:
     virtual bool isCharacterDataNode() const { return true; }
     virtual int maxCharacterOffset() const;
     virtual bool offsetInCharacters() const;
-
+    void setDataAndUpdate(PassRefPtr<StringImpl>, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
+    void updateRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
     void checkCharDataOperation(unsigned offset, ExceptionCode&);
-    PassRefPtr<StringImpl> appendDataCommon(const String&);
 
     RefPtr<StringImpl> m_data;
 };

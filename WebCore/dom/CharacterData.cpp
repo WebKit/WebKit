@@ -36,18 +36,9 @@ void CharacterData::setData(const String& data, ExceptionCode&)
     if (equal(m_data.get(), dataImpl))
         return;
 
-    int oldLength = length();
-    RefPtr<StringImpl> oldStr = m_data;
-    m_data = dataImpl;
+    unsigned oldLength = length();
 
-    if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
-        detach();
-        attach();
-    } else if (renderer())
-        toRenderText(renderer())->setTextWithOffset(m_data, 0, oldLength);
-
-    dispatchModifiedEvent(oldStr.get());
-
+    setDataAndUpdate(dataImpl, 0, oldLength);
     document()->textRemoved(this, 0, oldLength);
 }
 
@@ -60,26 +51,15 @@ String CharacterData::substringData(unsigned offset, unsigned count, ExceptionCo
     return m_data->substring(offset, count);
 }
 
-PassRefPtr<StringImpl> CharacterData::appendDataCommon(const String& data)
+void CharacterData::parserAppendData(const String& data)
 {
     String newStr = m_data;
     newStr.append(data);
 
-    RefPtr<StringImpl> oldStr = m_data;
+    int oldLength = m_data->length();
     m_data = newStr.impl();
 
-    if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
-        detach();
-        attach();
-    } else if (renderer())
-        toRenderText(renderer())->setTextWithOffset(m_data, oldStr->length(), 0);
-
-    return oldStr.release();
-}
-
-void CharacterData::parserAppendData(const String& data)
-{
-    appendDataCommon(data);
+    updateRenderer(oldLength, 0);
     // We don't call dispatchModifiedEvent here because we don't want the
     // parser to dispatch DOM mutation events.
     if (parentNode())
@@ -88,8 +68,12 @@ void CharacterData::parserAppendData(const String& data)
 
 void CharacterData::appendData(const String& data, ExceptionCode&)
 {
-    RefPtr<StringImpl> oldStr = appendDataCommon(data);
-    dispatchModifiedEvent(oldStr.get());
+    String newStr = m_data;
+    newStr.append(data);
+
+    setDataAndUpdate(newStr.impl(), m_data->length(), 0);
+
+    // FIXME: Should we call textInserted here?
 }
 
 void CharacterData::insertData(unsigned offset, const String& data, ExceptionCode& ec)
@@ -101,17 +85,8 @@ void CharacterData::insertData(unsigned offset, const String& data, ExceptionCod
     String newStr = m_data;
     newStr.insert(data, offset);
 
-    RefPtr<StringImpl> oldStr = m_data;
-    m_data = newStr.impl();
+    setDataAndUpdate(newStr.impl(), offset, 0);
 
-    if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
-        detach();
-        attach();
-    } else if (renderer())
-        toRenderText(renderer())->setTextWithOffset(m_data, offset, 0);
-
-    dispatchModifiedEvent(oldStr.get());
-    
     document()->textInserted(this, offset, data.length());
 }
 
@@ -130,16 +105,7 @@ void CharacterData::deleteData(unsigned offset, unsigned count, ExceptionCode& e
     String newStr = m_data;
     newStr.remove(offset, realCount);
 
-    RefPtr<StringImpl> oldStr = m_data;
-    m_data = newStr.impl();
-    
-    if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
-        detach();
-        attach();
-    } else if (renderer())
-        toRenderText(renderer())->setTextWithOffset(m_data, offset, count);
-
-    dispatchModifiedEvent(oldStr.get());
+    setDataAndUpdate(newStr.impl(), offset, count);
 
     document()->textRemoved(this, offset, realCount);
 }
@@ -160,17 +126,8 @@ void CharacterData::replaceData(unsigned offset, unsigned count, const String& d
     newStr.remove(offset, realCount);
     newStr.insert(data, offset);
 
-    RefPtr<StringImpl> oldStr = m_data;
-    m_data = newStr.impl();
+    setDataAndUpdate(newStr.impl(), offset, count);
 
-    if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
-        detach();
-        attach();
-    } else if (renderer())
-        toRenderText(renderer())->setTextWithOffset(m_data, offset, count);
-    
-    dispatchModifiedEvent(oldStr.get());
-    
     // update the markers for spell checking and grammar checking
     document()->textRemoved(this, offset, realCount);
     document()->textInserted(this, offset, data.length());
@@ -191,12 +148,29 @@ void CharacterData::setNodeValue(const String& nodeValue, ExceptionCode& ec)
     setData(nodeValue, ec);
 }
 
-void CharacterData::dispatchModifiedEvent(StringImpl* prevValue)
+void CharacterData::setDataAndUpdate(PassRefPtr<StringImpl> newData, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
+{
+    RefPtr<StringImpl> oldData = m_data;
+    m_data = newData;
+    updateRenderer(offsetOfReplacedData, lengthOfReplacedData);
+    dispatchModifiedEvent(oldData.get());
+}
+
+void CharacterData::updateRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
+{
+    if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
+        detach();
+        attach();
+    } else if (renderer())
+        toRenderText(renderer())->setTextWithOffset(m_data, offsetOfReplacedData, lengthOfReplacedData);
+}
+
+void CharacterData::dispatchModifiedEvent(StringImpl* oldData)
 {
     if (parentNode())
         parentNode()->childrenChanged();
     if (document()->hasListenerType(Document::DOMCHARACTERDATAMODIFIED_LISTENER))
-        dispatchEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, prevValue, m_data));
+        dispatchEvent(MutationEvent::create(eventNames().DOMCharacterDataModifiedEvent, true, 0, oldData, m_data));
     dispatchSubtreeModifiedEvent();
 #if ENABLE(INSPECTOR)
     InspectorInstrumentation::characterDataModified(document(), this);
