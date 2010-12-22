@@ -1,3 +1,31 @@
+2010-12-22  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style shouldn't complaint about underscores in variables in objective C files.
+        https://bugs.webkit.org/show_bug.cgi?id=51452
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FileState.__init__): Added the information to determine if a file is C or Objective C.
+        Using the file extension if possible but falling back to the file contents if we have a header file.
+        (_FileState.is_objective_c): Determine if we have an Objective C by examining the file contents if needed.
+        (_FileState.is_c_or_objective_c):
+        (check_using_std): Changed to using _FileState to determine the file type.
+        (check_max_min_macros): Ditto.
+        (check_for_null): Ditto.
+        (check_style): Changed the parameters to various calls since they now need _FileState
+        to determine the file type.
+        (check_language): Added the file_state parameter so it could be passed
+        to check_identifier_name_in_declaration.
+        (check_identifier_name_in_declaration): Don't warn about underscores in variables if
+        this is an Objective C file.
+        (_process_lines): Added information for the _FileState constructor (and moved the
+        call to a place that had the information).
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppFunctionsTest.test_is_c_or_objective_c): Changed the tests to use FileState and exercise
+        its functionality.
+        (WebKitStyleTest.test_names): Add tests for underscores in Objective C files.
+
 2010-12-21  Andy Estes  <aestes@apple.com>
 
         Reviewed by Mark Rowe.

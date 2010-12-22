@@ -384,16 +384,6 @@ class _IncludeError(Exception):
     pass
 
 
-def is_c_or_objective_c(file_extension):
-   """Return whether the file extension corresponds to C or Objective-C.
-
-   Args:
-     file_extension: The file extension without the leading dot.
-
-   """
-   return file_extension in ['c', 'm']
-
-
 class FileInfo:
     """Provides utility functions for filenames.
 
@@ -934,14 +924,42 @@ class _ClassState(object):
 
 
 class _FileState(object):
-    def __init__(self):
+    def __init__(self, clean_lines, file_extension):
         self._did_inside_namespace_indent_warning = False
+        self._clean_lines = clean_lines
+        if file_extension in ['m', 'mm']:
+            self._is_objective_c = True
+        elif file_extension == 'h':
+            # In the case of header files, it is unknown if the file
+            # is objective c or not, so set this value to None and then
+            # if it is requested, use heuristics to guess the value.
+            self._is_objective_c = None
+        else:
+            self._is_objective_c = False
+        self._is_c = file_extension == 'c'
 
     def set_did_inside_namespace_indent_warning(self):
         self._did_inside_namespace_indent_warning = True
 
     def did_inside_namespace_indent_warning(self):
         return self._did_inside_namespace_indent_warning
+
+    def is_objective_c(self):
+        if self._is_objective_c is None:
+            for line in self._clean_lines.elided:
+                # Starting with @ or #import seem like the best indications
+                # that we have an Objective C file.
+                if line.startswith("@") or line.startswith("#import"):
+                    self._is_objective_c = True
+                    break
+            else:
+                self._is_objective_c = False
+        return self._is_objective_c
+
+    def is_c_or_objective_c(self):
+        """Return whether the file extension corresponds to C or Objective-C."""
+        return self._is_c or self.is_objective_c()
+
 
 def check_for_non_standard_constructs(clean_lines, line_number,
                                       class_state, error):
@@ -1620,18 +1638,20 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
         if current_indentation_level < 0:
             break;
 
-def check_using_std(file_extension, clean_lines, line_number, error):
+
+def check_using_std(clean_lines, line_number, file_state, error):
     """Looks for 'using std::foo;' statements which should be replaced with 'using namespace std;'.
 
     Args:
-      file_extension: The extension of the current file, without the leading dot.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
       error: The function to call with any errors found.
     """
 
     # This check doesn't apply to C or Objective-C implementation files.
-    if is_c_or_objective_c(file_extension):
+    if file_state.is_c_or_objective_c():
         return
 
     line = clean_lines.elided[line_number] # Get rid of comments and strings.
@@ -1645,18 +1665,19 @@ def check_using_std(file_extension, clean_lines, line_number, error):
           "Use 'using namespace std;' instead of 'using std::%s;'." % method_name)
 
 
-def check_max_min_macros(file_extension, clean_lines, line_number, error):
+def check_max_min_macros(clean_lines, line_number, file_state, error):
     """Looks use of MAX() and MIN() macros that should be replaced with std::max() and std::min().
 
     Args:
-      file_extension: The extension of the current file, without the leading dot.
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
       error: The function to call with any errors found.
     """
 
     # This check doesn't apply to C or Objective-C implementation files.
-    if is_c_or_objective_c(file_extension):
+    if file_state.is_c_or_objective_c():
         return
 
     line = clean_lines.elided[line_number] # Get rid of comments and strings.
@@ -1984,9 +2005,9 @@ def check_for_comparisons_to_zero(clean_lines, line_number, error):
               'Tests for true/false, null/non-null, and zero/non-zero should all be done without equality comparisons.')
 
 
-def check_for_null(file_extension, clean_lines, line_number, error):
+def check_for_null(clean_lines, line_number, file_state, error):
     # This check doesn't apply to C or Objective-C implementation files.
-    if is_c_or_objective_c(file_extension):
+    if file_state.is_c_or_objective_c():
         return
 
     line = clean_lines.elided[line_number]
@@ -2127,15 +2148,15 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
 
     # Some more style checks
     check_namespace_indentation(clean_lines, line_number, file_extension, file_state, error)
-    check_using_std(file_extension, clean_lines, line_number, error)
-    check_max_min_macros(file_extension, clean_lines, line_number, error)
+    check_using_std(clean_lines, line_number, file_state, error)
+    check_max_min_macros(clean_lines, line_number, file_state, error)
     check_switch_indentation(clean_lines, line_number, error)
     check_braces(clean_lines, line_number, error)
     check_exit_statement_simplifications(clean_lines, line_number, error)
     check_spacing(file_extension, clean_lines, line_number, error)
     check_check(clean_lines, line_number, error)
     check_for_comparisons_to_zero(clean_lines, line_number, error)
-    check_for_null(file_extension, clean_lines, line_number, error)
+    check_for_null(clean_lines, line_number, file_state, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
@@ -2337,7 +2358,7 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
 
 
 def check_language(filename, clean_lines, line_number, file_extension, include_state,
-                   error):
+                   file_state, error):
     """Checks rules from the 'C++ language rules' section of cppguide.html.
 
     Some of these rules are hard to test (function overloading, using
@@ -2349,6 +2370,8 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
       line_number: The number of the line to check.
       file_extension: The extension (without the dot) of the filename.
       include_state: An _IncludeState instance in which the headers are inserted.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
       error: The function to call with any errors found.
     """
     # If the line is empty or consists of entirely a comment, no need to
@@ -2538,10 +2561,10 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
               'http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
               ' for more information.')
 
-    check_identifier_name_in_declaration(filename, line_number, line, error)
+    check_identifier_name_in_declaration(filename, line_number, line, file_state, error)
 
 
-def check_identifier_name_in_declaration(filename, line_number, line, error):
+def check_identifier_name_in_declaration(filename, line_number, line, file_state, error):
     """Checks if identifier names contain any underscores.
 
     As identifiers in libraries we are using have a bunch of
@@ -2552,6 +2575,8 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
       filename: The name of the current file.
       line_number: The number of the line to check.
       line: The line of code to check.
+      file_state: A _FileState instance which maintains information about
+                  the state of things in the file.
       error: The function to call with any errors found.
     """
     # We don't check a return statement.
@@ -2629,7 +2654,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
 
         # Remove "m_" and "s_" to allow them.
         modified_identifier = sub(r'(^|(?<=::))[ms]_', '', identifier)
-        if modified_identifier.find('_') >= 0:
+        if not file_state.is_objective_c() and modified_identifier.find('_') >= 0:
             # Various exceptions to the rule: JavaScript op codes functions, const_iterator.
             if (not (filename.find('JavaScriptCore') >= 0 and modified_identifier.find('op_') >= 0)
                 and not modified_identifier.startswith('tst_')
@@ -2980,7 +3005,7 @@ def process_line(filename, file_extension,
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
-                   error)
+                   file_state, error)
     check_for_non_standard_constructs(clean_lines, line, class_state, error)
     check_posix_threading(clean_lines, line, error)
     check_invalid_increment(clean_lines, line, error)
@@ -3002,7 +3027,6 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
     include_state = _IncludeState()
     function_state = _FunctionState(min_confidence)
     class_state = _ClassState()
-    file_state = _FileState()
 
     check_for_copyright(lines, error)
 
@@ -3011,6 +3035,7 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
 
     remove_multi_line_comments(lines, error)
     clean_lines = CleansedLines(lines)
+    file_state = _FileState(clean_lines, file_extension)
     for line in xrange(clean_lines.num_lines()):
         process_line(filename, file_extension, clean_lines, line,
                      include_state, function_state, class_state, file_state, error)

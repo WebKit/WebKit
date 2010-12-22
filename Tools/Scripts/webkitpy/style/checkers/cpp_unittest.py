@@ -110,9 +110,14 @@ class CppFunctionsTest(unittest.TestCase):
     """Supports testing functions that do not need CppStyleTestBase."""
 
     def test_is_c_or_objective_c(self):
-        self.assertTrue(cpp_style.is_c_or_objective_c("c"))
-        self.assertTrue(cpp_style.is_c_or_objective_c("m"))
-        self.assertFalse(cpp_style.is_c_or_objective_c("cpp"))
+        clean_lines = cpp_style.CleansedLines([''])
+        clean_objc_lines = cpp_style.CleansedLines(['#import "header.h"'])
+        self.assertTrue(cpp_style._FileState(clean_lines, 'c').is_c_or_objective_c())
+        self.assertTrue(cpp_style._FileState(clean_lines, 'm').is_c_or_objective_c())
+        self.assertFalse(cpp_style._FileState(clean_lines, 'cpp').is_c_or_objective_c())
+        self.assertFalse(cpp_style._FileState(clean_lines, 'cc').is_c_or_objective_c())
+        self.assertFalse(cpp_style._FileState(clean_lines, 'h').is_c_or_objective_c())
+        self.assertTrue(cpp_style._FileState(clean_objc_lines, 'h').is_c_or_objective_c())
 
 
 class CppStyleTestBase(unittest.TestCase):
@@ -3754,6 +3759,30 @@ class WebKitStyleTest(CppStyleTestBase):
                          '_length' + name_underscore_error_message)
         self.assert_lint('unsigned long long _length;',
                          '_length' + name_underscore_error_message)
+
+        # Allow underscores in Objective C files.
+        self.assert_lint('unsigned long long _length;',
+                         '',
+                         'foo.m')
+        self.assert_lint('unsigned long long _length;',
+                         '',
+                         'foo.mm')
+        self.assert_lint('#import "header_file.h"\n'
+                         'unsigned long long _length;',
+                         '',
+                         'foo.h')
+        self.assert_lint('unsigned long long _length;\n'
+                         '@interface WebFullscreenWindow;',
+                         '',
+                         'foo.h')
+        self.assert_lint('unsigned long long _length;\n'
+                         '@implementation WebFullscreenWindow;',
+                         '',
+                         'foo.h')
+        self.assert_lint('unsigned long long _length;\n'
+                         '@class WebWindowFadeAnimation;',
+                         '',
+                         'foo.h')
 
         # Variable name 'l' is easy to confuse with '1'
         self.assert_lint('int l;', 'l' + name_tooshort_error_message)
