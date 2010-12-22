@@ -1,5 +1,11 @@
 2010-12-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-12-21  Gavin Barraclough  <barraclough@apple.com>
+
         Eeeep! build fix!
 
         * wtf/OSAllocator.h:
