@@ -1,3 +1,13 @@
+2010-12-22  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Update fast/canvas/webgl/gl-uniform-arrays.html to bring in sync with Khronos
+        https://bugs.webkit.org/show_bug.cgi?id=51489
+
+        * fast/canvas/webgl/gl-uniform-arrays-expected.txt:
+        * fast/canvas/webgl/gl-uniform-arrays.html:
+
 2010-12-22  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

@@ -21,12 +21,10 @@
 </script>
 
 <script id="fshader" type="x-shader/x-fragment">
-    // Workaround for non-compliant WebGL implementations (FIXME)
-    #if defined(GL_ES)
-    uniform mediump $type color[3];
-    #else
-    uniform $type color[3];
+    #ifdef GL_ES
+    precision mediump float;
     #endif
+    uniform $type color[3];
     void main()
     {
         gl_FragColor = vec4(color[0]$elem, color[1]$elem, color[2]$elem, 1);
@@ -105,7 +103,7 @@ var typeInfos = [
       return value === null ? 'null' : value.toString();
     },
     checkType: function(value) {
-      return typeof values === 'number';
+      return typeof value === 'number';
     },
     checkValue: function(typeInfo, index, value) {
       return typeInfo.srcValues[index] == value;
@@ -132,8 +130,9 @@ var typeInfos = [
       return value === null ? 'null' : ("[" + value[0] + ", " + value[1] + "]");
     },
     checkType: function(value) {
-      return typeof values.length === 'number' &&
-             values.length == 2;
+      return value &&
+             typeof value.length === 'number' &&
+             value.length == 2;
     },
     checkValue: function(typeInfo, index, value) {
       return value !== null &&
@@ -164,8 +163,9 @@ var typeInfos = [
           ("[" + value[0] + ", " + value[1] + ", " + value[2] + "]");
     },
     checkType: function(value) {
-      return typeof values.length === 'number' &&
-             values.length == 3;
+      return value &&
+             typeof value.length === 'number' &&
+             value.length == 3;
     },
     checkValue: function(typeInfo, index, value) {
       return value !== null &&
@@ -199,8 +199,9 @@ var typeInfos = [
            ", " + value[2] + ", " + value[3] + "]");
     },
     checkType: function(value) {
-      return typeof values.length === 'number' &&
-             values.length == 4;
+      return value &&
+             typeof value.length === 'number' &&
+             value.length == 4;
     },
     checkValue: function(typeInfo, index, value) {
       return value !== null &&
@@ -228,34 +229,34 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
   var info = gl.getActiveUniform(program, 0);
   assertMsg(info.name == "color[0]",
             "uniform name is 'color[0]' not 'color' as per OpenGL ES 2.0.24 section 2.10");
-  var loc = gl.getUniformLocation(program, "color");
+  var loc = gl.getUniformLocation(program, "color[0]");
   var srcValues = typeInfo.srcValues;
   var srcValuesBad = typeInfo.srcValuesBad;
 
   // Try setting the value before using the program
   gl[typeInfo.setter](loc, srcValues);
-  assertMsg(gl.getError() == gl.INVALID_OPERATION,
+  glErrorShouldBe(gl, gl.INVALID_OPERATION,
             "should fail if there is no current program");
 
   gl.useProgram(program);
   gl[typeInfo.setter](loc, srcValuesBad);
-  assertMsg(gl.getError() == gl.INVALID_VALUE,
+  glErrorShouldBe(gl, gl.INVALID_VALUE,
             "should fail with insufficient array size with gl." + typeInfo.setter);
   gl[typeInfo.setter](loc, srcValues);
-  assertMsg(gl.getError() == gl.NO_ERROR,
+  glErrorShouldBe(gl, gl.NO_ERROR,
             "can set an array of uniforms with gl." + typeInfo.setter);
   var values = gl.getUniform(program, loc);
-  assertMsg(gl.getError() == gl.NO_ERROR,
+  glErrorShouldBe(gl, gl.NO_ERROR,
             "can call gl.getUniform");
   assertMsg(typeInfo.checkType(values),
             "gl.getUniform returns the correct type.");
   for (var ii = 0; ii < typeInfo.numSrcValues; ++ii) {
     var elemLoc = gl.getUniformLocation(program, "color[" + ii + "]");
-    assertMsg(gl.getError() == gl.NO_ERROR,
+    glErrorShouldBe(gl, gl.NO_ERROR,
               "can get location of element " + ii +
               " of array from gl.getUniformLocation");
     var value = gl.getUniform(program, elemLoc);
-    assertMsg(gl.getError() == gl.NO_ERROR,
+    glErrorShouldBe(gl, gl.NO_ERROR,
               "can get value of element " + ii + " of array from gl.getUniform");
     assertMsg(typeInfo.checkValue(typeInfo, ii, value),
               "value put in (" + typeInfo.srcValueAsString(ii, srcValues) +
@@ -263,7 +264,7 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
               typeInfo.returnValueAsString(value) + ")");
   }
   typeInfo.invalidSet(loc);
-  assertMsg(gl.getError() == gl.INVALID_OPERATION,
+  glErrorShouldBe(gl, gl.INVALID_OPERATION,
             "using the wrong size of gl.Uniform fails");
   var exceptionCaught = false;
   if (typeInfo.illegalSet) {
@@ -276,7 +277,7 @@ for (var tt = 0; tt < typeInfos.length; ++tt) {
   }
 
   gl.useProgram(null);
-  assertMsg(gl.getError() == gl.NO_ERROR,
+  glErrorShouldBe(gl, gl.NO_ERROR,
             "can call gl.useProgram(null)");
 }
 debug("");
