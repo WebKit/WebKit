@@ -1,3 +1,11 @@
+2010-12-22  Jessie Berlin  <jberlin@apple.com>
+
+        Add Windows-specific expected results for fast/js/large-expressions.html in order to get
+        the Windows 7 Release test bot green again. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=51469
+
+        * platform/win/fast/js/large-expressions-expected.txt: Added.
+
 2010-12-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
