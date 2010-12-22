@@ -1,5 +1,23 @@
 2010-12-22  Lucas Forschler  <lforschler@apple.com>
 
+        Reviewed by Alice Liu.
+
+        <rdar://problem/8633222> record-memory-win needs to record memory used by the webprocess.
+        Verified on Chrome, Safari, and IE.
+        With this change, we will record memory from a parent browser window and all child processes.
+
+        * record-memory-win/main.cpp:
+        (ProcessArgs):
+        (PrintUsage):
+        (getMemoryInfo):
+        (printProcessInfo):
+        (evalProcesses):
+        (UseImage):
+        (QueryContinuously):
+        (ElapsedTime):
+
+2010-12-22  Lucas Forschler  <lforschler@apple.com>
+
         Unreviewed rollout r74489, because it was missing changelog.
 
         * record-memory-win/main.cpp:
