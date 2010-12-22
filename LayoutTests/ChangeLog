@@ -1,3 +1,13 @@
+2010-12-22  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        CopyTex{Sub}Image2D check always if the bound fbo's internal color format is compatible
+        https://bugs.webkit.org/show_bug.cgi?id=51423
+
+        * fast/canvas/webgl/tex-input-validation-expected.txt: Add test cases for copying from webgl's internal FBO.
+        * fast/canvas/webgl/tex-input-validation.html: Ditto.
+
 2010-12-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Sam Weining.

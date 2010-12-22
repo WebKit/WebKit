@@ -1,3 +1,16 @@
+2010-12-22  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        CopyTex{Sub}Image2D check always if the bound fbo's internal color format is compatible
+        https://bugs.webkit.org/show_bug.cgi?id=51423
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Remove the isGLES2Compliant flag around format compatibility checking.
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::getBoundFramebufferColorFormat): Helper function to get bound framebuffer's color format; deal with the case of webgl's internal fbo.
+        * html/canvas/WebGLRenderingContext.h:
+
 2010-12-22  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

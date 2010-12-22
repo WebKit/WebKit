@@ -502,6 +502,9 @@ public:
     bool isTexInternalFormatColorBufferCombinationValid(unsigned long texInternalFormat,
                                                         unsigned long colorBufferFormat);
 
+    // Helper function to get the bound framebuffer's color buffer format.
+    unsigned long getBoundFramebufferColorFormat();
+
     // Helper function to check target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
     // null.  Otherwise, return the texture bound to the target.
