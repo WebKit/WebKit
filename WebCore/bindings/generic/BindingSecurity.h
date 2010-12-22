@@ -78,7 +78,7 @@ template <class Binding>
 bool BindingSecurity<Binding>::canAccessWindow(State<Binding>* state,
                                                DOMWindow* targetWindow)
 {
-    DOMWindow* activeWindow = state->getActiveWindow();
+    DOMWindow* activeWindow = state->activeWindow();
     return canAccess(activeWindow, targetWindow);
 }
 
@@ -119,7 +119,7 @@ bool BindingSecurity<Binding>::allowPopUp(State<Binding>* state)
     if (state->processingUserGesture())
         return true;
 
-    Frame* frame = state->getFirstFrame();
+    Frame* frame = state->firstFrame();
     ASSERT(frame);
     Settings* settings = frame->settings();
     return settings && settings->javaScriptCanOpenWindowsAutomatically();
@@ -147,7 +147,7 @@ bool BindingSecurity<Binding>::allowSettingSrcToJavascriptURL(State<Binding>* st
 template <class Binding>
 bool BindingSecurity<Binding>::shouldAllowNavigation(State<Binding>* state, Frame* frame)
 {
-    Frame* activeFrame = state->getActiveFrame();
+    Frame* activeFrame = state->activeFrame();
     return activeFrame && activeFrame->loader()->shouldAllowNavigation(frame);
 }
 

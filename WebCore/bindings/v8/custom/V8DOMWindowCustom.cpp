@@ -195,11 +195,11 @@ void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v
     DOMWindow* imp = V8DOMWindow::toNative(info.Holder());
     State<V8Binding>* state = V8BindingState::Only();
 
-    DOMWindow* activeWindow = state->getActiveWindow();
+    DOMWindow* activeWindow = state->activeWindow();
     if (!activeWindow)
       return;
 
-    DOMWindow* firstWindow = state->getFirstWindow();
+    DOMWindow* firstWindow = state->firstWindow();
     if (!firstWindow)
       return;
 
@@ -509,19 +509,22 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
 v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.open()");
+    DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
 
-    DOMWindow* parent = V8DOMWindow::toNative(args.Holder());
-    String urlString = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
-    AtomicString frameName = (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1]));
-    WindowFeatures rawFeatures(toWebCoreStringWithNullOrUndefinedCheck(args[2]));
-    DOMWindow* child = V8BindingDOMWindow::open(V8BindingState::Only(), parent, urlString, frameName, rawFeatures);
+    V8BindingState* state = V8BindingState::Only();
 
-    if (!child)
+    DOMWindow* activeWindow = state->activeWindow();
+    DOMWindow* firstWindow = state->firstWindow();
+
+    EXCEPTION_BLOCK(String, urlString, toWebCoreStringWithNullOrUndefinedCheck(args[0]));
+    EXCEPTION_BLOCK(AtomicString, frameName, (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1])));
+    EXCEPTION_BLOCK(String, windowFeaturesString, toWebCoreStringWithNullOrUndefinedCheck(args[2]));
+
+    RefPtr<DOMWindow> openedWindow = impl->open(urlString, frameName, windowFeaturesString, activeWindow, firstWindow);
+    if (!openedWindow)
         return v8::Undefined();
-
-    return toV8(child);
+    return toV8(openedWindow.release());
 }
-
 
 v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {

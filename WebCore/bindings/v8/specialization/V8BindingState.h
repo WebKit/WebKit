@@ -49,11 +49,11 @@ public:
     // Reports an error message (without delay) if the security check fails.
     static void immediatelyReportUnsafeAccessTo(Frame*);
 
-    DOMWindow* getActiveWindow();
-    DOMWindow* getFirstWindow();
+    DOMWindow* activeWindow();
+    DOMWindow* firstWindow();
 
-    Frame* getActiveFrame();
-    Frame* getFirstFrame();
+    Frame* activeFrame();
+    Frame* firstFrame();
 
     bool processingUserGesture();
 

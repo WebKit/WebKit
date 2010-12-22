@@ -101,7 +101,7 @@ bool processingUserGesture()
 
 Frame* callingOrEnteredFrame()
 {
-    return V8BindingState::Only()->getActiveFrame();
+    return V8BindingState::Only()->activeFrame();
 }
 
 bool shouldAllowNavigation(Frame* frame)

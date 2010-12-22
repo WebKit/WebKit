@@ -40,12 +40,12 @@ namespace WebCore {
 
 class Frame;
 
-Frame* State<JSBinding>::getActiveFrame()
+Frame* State<JSBinding>::activeFrame()
 {
     return asJSDOMWindow(m_exec->lexicalGlobalObject())->impl()->frame();
 }
 
-Frame* State<JSBinding>::getFirstFrame()
+Frame* State<JSBinding>::firstFrame()
 {
     return asJSDOMWindow(m_exec->dynamicGlobalObject())->impl()->frame();
 }

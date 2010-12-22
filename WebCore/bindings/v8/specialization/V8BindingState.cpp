@@ -44,7 +44,7 @@ State<V8Binding>* State<V8Binding>::Only()
     return &globalV8BindingState;
 }
 
-DOMWindow* State<V8Binding>::getActiveWindow()
+DOMWindow* State<V8Binding>::activeWindow()
 {
     v8::Local<v8::Context> activeContext = v8::Context::GetCalling();
     if (activeContext.IsEmpty()) {
@@ -55,12 +55,12 @@ DOMWindow* State<V8Binding>::getActiveWindow()
     return V8Proxy::retrieveWindow(activeContext);
 }
 
-DOMWindow* State<V8Binding>::getFirstWindow()
+DOMWindow* State<V8Binding>::firstWindow()
 {
     return V8Proxy::retrieveWindow(v8::Context::GetEntered());
 }
 
-Frame* State<V8Binding>::getActiveFrame()
+Frame* State<V8Binding>::activeFrame()
 {
     Frame* frame = V8Proxy::retrieveFrameForCallingContext();
     if (!frame) {
@@ -74,7 +74,7 @@ Frame* State<V8Binding>::getActiveFrame()
     return frame;
 }
 
-Frame* State<V8Binding>::getFirstFrame()
+Frame* State<V8Binding>::firstFrame()
 {
     return V8Proxy::retrieveFrameForEnteredContext();
 }

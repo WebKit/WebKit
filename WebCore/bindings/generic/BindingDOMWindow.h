@@ -142,11 +142,11 @@ WebCore::DOMWindow* BindingDOMWindow<Binding>::open(State<Binding>* state,
     if (!BindingSecurity<Binding>::canAccessFrame(state, frame, true))
         return 0;
 
-    Frame* firstFrame = state->getFirstFrame();
+    Frame* firstFrame = state->firstFrame();
     if (!firstFrame)
         return 0;
 
-    Frame* activeFrame = state->getActiveFrame();
+    Frame* activeFrame = state->activeFrame();
     // We may not have a calling context if we are invoked by a plugin
     // via NPAPI.
     if (!activeFrame)

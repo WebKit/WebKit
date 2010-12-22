@@ -45,7 +45,7 @@ public:
 template <class Binding>
 void BindingFrame<Binding>::navigateIfAllowed(State<Binding>* state, Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
 {
-    Frame* activeFrame = state->getActiveFrame();
+    Frame* activeFrame = state->activeFrame();
     if (!activeFrame)
         return;
     if (!protocolIsJavaScript(url) || state->allowsAccessFromFrame(frame))

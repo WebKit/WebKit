@@ -1,3 +1,43 @@
+2010-12-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move V8 to common implementation of window.open
+        https://bugs.webkit.org/show_bug.cgi?id=51385
+
+        I also changed some function names to match WebKit style.  There's a
+        bunch of code we can remove in the generic bindings now.  I'll do that
+        in the next patch.
+
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::open):
+        * bindings/generic/BindingFrame.h:
+        (WebCore::::navigateIfAllowed):
+        * bindings/generic/BindingSecurity.h:
+        (WebCore::::canAccessWindow):
+        (WebCore::::allowPopUp):
+        (WebCore::::shouldAllowNavigation):
+        * bindings/generic/GenericBinding.h:
+        (WebCore::completeURL):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::toLexicalFrame):
+        (WebCore::toDynamicFrame):
+        * bindings/js/specialization/JSBindingState.cpp:
+        (WebCore::::activeFrame):
+        (WebCore::::firstFrame):
+        * bindings/js/specialization/JSBindingState.h:
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::callingOrEnteredFrame):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::locationAccessorSetter):
+        (WebCore::V8DOMWindow::openCallback):
+        * bindings/v8/specialization/V8BindingState.cpp:
+        (WebCore::::activeWindow):
+        (WebCore::::firstWindow):
+        (WebCore::::activeFrame):
+        (WebCore::::firstFrame):
+        * bindings/v8/specialization/V8BindingState.h:
+
 2010-12-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed build fix for r74447.

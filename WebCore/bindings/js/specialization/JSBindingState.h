@@ -56,8 +56,8 @@ public:
     {
     }
 
-    Frame* getActiveFrame();
-    Frame* getFirstFrame();
+    Frame* activeFrame();
+    Frame* firstFrame();
 
     bool processingUserGesture();
 

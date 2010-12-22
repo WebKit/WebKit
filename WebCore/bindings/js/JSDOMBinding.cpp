@@ -712,12 +712,12 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 
 Frame* toLexicalFrame(ExecState* exec)
 {
-    return JSBindingState(exec).getActiveFrame();
+    return JSBindingState(exec).activeFrame();
 }
 
 Frame* toDynamicFrame(ExecState* exec)
 {
-    return JSBindingState(exec).getFirstFrame();
+    return JSBindingState(exec).firstFrame();
 }
 
 bool processingUserGesture()

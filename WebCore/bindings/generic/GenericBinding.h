@@ -55,7 +55,7 @@ KURL completeURL(State<Binding>* state, const String& relativeURL)
 {
     // For historical reasons, we need to complete the URL using the
     // dynamic frame.
-    Frame* frame = state->getFirstFrame();
+    Frame* frame = state->firstFrame();
     if (!frame)
         return KURL();
     return frame->loader()->completeURL(relativeURL);
