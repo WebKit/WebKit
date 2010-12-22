@@ -837,7 +837,7 @@ def parse_options(args):
                                    'that need rebaselining.'))
 
     option_parser.add_option('-u', '--archive_url',
-                             default=('http://build.chromium.org/buildbot/'
+                             default=('http://build.chromium.org/f/chromium/'
                                       'layout_test_results'),
                              help=('Url to find the layout test result archive'
                                    ' file.'))

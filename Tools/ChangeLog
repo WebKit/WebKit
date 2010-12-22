@@ -1,3 +1,13 @@
+2010-12-22  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Update chromium archive test result url in rebaseline script.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51503
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-12-22  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Alice Liu.
