@@ -67,7 +67,7 @@ WebInspector.Placard.prototype = {
         if (this._subtitle === x)
             return;
         this._subtitle = x;
-        this.subtitleElement.innerHTML = x;
+        this.subtitleElement.textContent = x;
     },
 
     get selected()
