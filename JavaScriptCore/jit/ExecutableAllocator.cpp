@@ -67,7 +67,7 @@ bool ExecutableAllocator::isValid() const
     return true;
 }
     
-bool ExecutableAllocator::underMemoryPressure() const
+bool ExecutableAllocator::underMemoryPressure()
 {
     return false;
 }
