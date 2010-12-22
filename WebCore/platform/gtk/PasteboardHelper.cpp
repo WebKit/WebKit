@@ -34,11 +34,11 @@
 
 namespace WebCore {
 
-static GdkAtom textPlainAtom = gdk_atom_intern("text/plain;charset=utf-8", FALSE);
-static GdkAtom markupAtom = gdk_atom_intern("text/html", FALSE);
-static GdkAtom netscapeURLAtom = gdk_atom_intern("_NETSCAPE_URL", FALSE);
-static GdkAtom uriListAtom = gdk_atom_intern("text/uri-list", FALSE);
-static String gMarkupPrefix = "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
+static GdkAtom textPlainAtom;
+static GdkAtom markupAtom;
+static GdkAtom netscapeURLAtom;
+static GdkAtom uriListAtom;
+static String gMarkupPrefix;
 
 static void removeMarkupPrefix(String& markup)
 {
@@ -49,9 +49,26 @@ static void removeMarkupPrefix(String& markup)
         markup.remove(0, gMarkupPrefix.length());
 }
 
+static void initGdkAtoms()
+{
+    static gboolean initialized = FALSE;
+
+    if (initialized)
+        return;
+
+    initialized = TRUE;
+
+    textPlainAtom = gdk_atom_intern("text/plain;charset=utf-8", FALSE);
+    markupAtom = gdk_atom_intern("text/html", FALSE);
+    netscapeURLAtom = gdk_atom_intern("_NETSCAPE_URL", FALSE);
+    uriListAtom = gdk_atom_intern("text/uri-list", FALSE);
+    gMarkupPrefix = "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
+}
+
 PasteboardHelper::PasteboardHelper()
     : m_targetList(gtk_target_list_new(0, 0))
 {
+    initGdkAtoms();
 }
 
 PasteboardHelper::~PasteboardHelper()

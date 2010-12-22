@@ -1,3 +1,12 @@
+2010-12-22  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Compilation fixes with GTK+ 2.91.7
+        https://bugs.webkit.org/show_bug.cgi?id=51487
+
+        * configure.ac: depend on GTK+ 2.91.7 when using GTK+ 3.x.
+
 2010-12-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

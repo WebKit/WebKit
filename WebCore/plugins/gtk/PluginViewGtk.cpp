@@ -62,7 +62,9 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
+#ifdef GTK_API_VERSION_2
 #include <gdkconfig.h>
+#endif
 #include <gtk/gtk.h>
 
 #if defined(XP_UNIX)
