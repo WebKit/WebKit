@@ -1,3 +1,14 @@
+2010-12-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8725702> REGRESSION(r68854): Broken image icon seen in the Address Book Dashboard widget
+
+        * platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk-expected.txt: Added.
+        * platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html: Added.
+        * platform/mac/fast/dom/HTMLImageElement/resources: Added.
+        * platform/mac/fast/dom/HTMLImageElement/resources/blue_rect.jpg: Added.
+
 2010-12-21  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

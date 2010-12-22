@@ -1,3 +1,19 @@
+2010-12-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/8725702> REGRESSION (r68854): Broken image icon seen in the Address Book Dashboard widget
+
+        Test: platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html
+
+        The Address Book widget sets the src attribute of an img element to a string that looks like a CSS
+        URL value. This used to work prior to r68854, because some DOM attribute parsing functions were using
+        the wrong function to parse URL attributes (last named deprecatedParseURL).
+
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::sourceURI): In Dashboard, check if the src attribute begins with 'url("'
+        and ends with '")', and if so, strip those away.
+
 2010-12-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
