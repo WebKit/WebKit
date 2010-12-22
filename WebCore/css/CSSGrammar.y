@@ -1278,9 +1278,13 @@ decl_list:
             $$ = $2;
     }
     | decl_list error ';' maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyStart();
         $$ = $1;
     }
     | decl_list error invalid_block_list error ';' maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markPropertyStart();
         $$ = $1;
     }
     ;

@@ -53,7 +53,7 @@ body.main2: []
 rule
 body.mainpage: []
 ['text-decoration':'none'] @[5-27] active
-['badproperty':'1badvalue1' non-parsed] @[107-131] active
+['badproperty':'1badvalue1' non-parsed] @[108-132] active
 
 rule
 body.mainpage: []
@@ -190,7 +190,7 @@ StyleSheet: '
 /* An inline stylesheet */
 body.mainpage {
     text-decoration: none; /* at least one valid property is necessary for WebCore to match a rule */
-    badproperty: 1badvalue1;
+    ;badproperty: 1badvalue1;
 }
 
 body.mainpage {
@@ -203,7 +203,7 @@ body.mainpage {
 rule
 body.mainpage: []
 ['text-decoration':'none'] @[5-27] active
-['badproperty':'1badvalue1' non-parsed] @[107-131] active
+['badproperty':'1badvalue1' non-parsed] @[108-132] active
 
 rule
 body.mainpage: []

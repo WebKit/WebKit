@@ -1,3 +1,13 @@
+2010-12-22  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: Styles pane fails to display properties from a broken CSS rule correctly
+        https://bugs.webkit.org/show_bug.cgi?id=51405
+
+        * inspector/styles-new-API-expected.txt:
+        * inspector/styles-new-API.html:
+
 2010-12-22  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.
