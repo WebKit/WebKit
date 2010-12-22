@@ -1,3 +1,18 @@
+2010-12-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        MediaPlayer should look for MIME type in data: URL
+        https://bugs.webkit.org/show_bug.cgi?id=51195
+
+        If no MIME type is passed from the media element for a data: URL, try to get it from
+        the URL itself.
+
+        No new tests are possible because the MIME type is just passed to the media engine.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::load):
+
 2010-12-22  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by Kenneth Russell.

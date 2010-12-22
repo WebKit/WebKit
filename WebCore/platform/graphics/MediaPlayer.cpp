@@ -302,14 +302,18 @@ void MediaPlayer::load(const String& url, const ContentType& contentType)
     String type = contentType.type().lower();
     String typeCodecs = contentType.parameter(codecs());
 
-    // If the MIME type is unhelpful, see if the type registry has a match for the file extension.
+    // If the MIME type is missing or is not meaningful, try to figure it out from the URL.
     if (type.isEmpty() || type == applicationOctetStream() || type == textPlain()) {
-        size_t pos = url.reverseFind('.');
-        if (pos != notFound) {
-            String extension = url.substring(pos + 1);
-            String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
-            if (!mediaType.isEmpty())
-                type = mediaType;
+        if (protocolIs(url, "data"))
+            type = mimeTypeFromDataURL(url);
+        else {
+            size_t pos = url.reverseFind('.');
+            if (pos != notFound) {
+                String extension = url.substring(pos + 1);
+                String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
+                if (!mediaType.isEmpty())
+                    type = mediaType;
+            }
         }
     }
 
