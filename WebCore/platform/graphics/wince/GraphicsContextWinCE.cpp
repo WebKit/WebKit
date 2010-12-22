@@ -1206,8 +1206,9 @@ void GraphicsContext::fillRoundedRect(const IntRect& fillRect, const IntSize& to
     FloatSize shadowOffset;
     float shadowBlur = 0;
     Color shadowColor;
+    ColorSpace shadowColorSpace;
         
-    getShadow(shadowOffset, shadowBlur, shadowColor);
+    getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
     
     IntRect dstRect = fillRect;
     
@@ -1623,8 +1624,9 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
     FloatSize shadowOffset;
     float shadowBlur = 0;
     Color shadowColor;
+    ColorSpace shadowColorSpace;
     bool hasShadow = textDrawingMode() == TextModeFill
-        && getShadow(shadowOffset, shadowBlur, shadowColor)
+        && getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace)
         && shadowColor.alpha();
     COLORREF shadowRGBColor;
     FloatPoint trShadowPoint;

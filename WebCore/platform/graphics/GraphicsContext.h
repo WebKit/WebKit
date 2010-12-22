@@ -162,6 +162,7 @@ namespace WebCore {
             , fillRule(RULE_NONZERO)
             , strokeColorSpace(ColorSpaceDeviceRGB)
             , fillColorSpace(ColorSpaceDeviceRGB)
+            , shadowColorSpace(ColorSpaceDeviceRGB)
             , compositeOperator(CompositeSourceOver)
             , shouldAntialias(true)
             , shouldSmoothFonts(true)
@@ -195,6 +196,7 @@ namespace WebCore {
 
         ColorSpace strokeColorSpace;
         ColorSpace fillColorSpace;
+        ColorSpace shadowColorSpace;
 
         CompositeOperator compositeOperator;
 
@@ -344,7 +346,7 @@ namespace WebCore {
         void endTransparencyLayer();
 
         void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
-        bool getShadow(FloatSize&, float&, Color&) const;
+        bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
         void clearShadow();
 
         void drawFocusRing(const Vector<IntRect>&, int width, int offset, const Color&);

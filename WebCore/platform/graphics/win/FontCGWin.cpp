@@ -143,7 +143,9 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
             FloatSize offset;
             float blur;
             Color color;
-            graphicsContext->getShadow(offset, blur, color);
+            ColorSpace shadowColorSpace;
+
+            graphicsContext->getShadow(offset, blur, color, shadowColorSpace);
             drawIntoBitmap = offset.width() || offset.height() || blur;
         }
     }
@@ -352,7 +354,8 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     FloatSize shadowOffset;
     float shadowBlur;
     Color shadowColor;
-    graphicsContext->getShadow(shadowOffset, shadowBlur, shadowColor);
+    ColorSpace shadowColorSpace;
+    graphicsContext->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
 
     bool hasSimpleShadow = graphicsContext->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur;
     if (hasSimpleShadow) {

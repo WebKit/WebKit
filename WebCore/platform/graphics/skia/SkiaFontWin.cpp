@@ -225,8 +225,9 @@ bool windowsCanHandleDrawTextShadow(GraphicsContext *context)
     FloatSize shadowOffset;
     float shadowBlur;
     Color shadowColor;
+    ColorSpace shadowColorSpace;
 
-    bool hasShadow = context->getShadow(shadowOffset, shadowBlur, shadowColor);
+    bool hasShadow = context->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
     return (hasShadow && (shadowBlur == 0) && (shadowColor.alpha() == 255) && (context->fillColor().alpha() == 255));
 }
 
