@@ -947,6 +947,18 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="cf"
+				>
+				<File
+					RelativePath="..\Shared\cf\ArgumentCodersCF.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\cf\ArgumentCodersCF.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="win"
 				>
 				<File

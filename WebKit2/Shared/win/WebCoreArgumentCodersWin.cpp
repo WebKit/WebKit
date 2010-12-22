@@ -25,30 +25,79 @@
 
 #include "WebCoreArgumentCoders.h"
 
-#include "NotImplemented.h"
+#if USE(CFNETWORK)
+#include "ArgumentCodersCF.h"
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 namespace CoreIPC {
 
+// FIXME: These coders should really go in a WebCoreArgumentCodersCFNetwork file.
+
 void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
 {
-    notImplemented();
+#if USE(CFNETWORK)
+    RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLRequestCreateSerializableRepresentation(resourceRequest.cfURLRequest(), CoreIPC::tokenNullTypeRef()));
+    encode(encoder, dictionary.get());
+#endif
 }
 
 bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
 {
-    notImplemented();
+#if USE(CFNETWORK)
+    RetainPtr<CFDictionaryRef> dictionary;
+    if (!decode(decoder, dictionary))
+        return false;
+
+    CFURLRequestRef cfURLRequest = wkCFURLRequestCreateFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    if (!cfURLRequest)
+        return false;
+
+    resourceRequest = WebCore::ResourceRequest(cfURLRequest);
+    return true;
+#else
     return false;
+#endif
 }
 
 void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
 {
-    notImplemented();
+#if USE(CFNETWORK)
+    bool responseIsPresent = resourceResponse.cfURLResponse();
+    encoder->encode(responseIsPresent);
+
+    if (!responseIsPresent)
+        return;
+
+    RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLResponseCreateSerializableRepresentation(resourceResponse.cfURLResponse(), CoreIPC::tokenNullTypeRef()));
+    encode(encoder, dictionary.get());
+#endif
 }
 
 bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
 {
-    notImplemented();
+#if USE(CFNETWORK)
+    bool responseIsPresent;
+    decoder->decode(responseIsPresent);
+
+    if (!responseIsPresent) {
+        resourceResponse = WebCore::ResourceResponse();
+        return true;
+    }
+
+    RetainPtr<CFDictionaryRef> dictionary;
+    if (!decode(decoder, dictionary))
+        return false;
+
+    CFURLResponseRef cfURLResponse = wkCFURLResponseCreateFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    if (!cfURLResponse)
+        return false;
+
+    resourceResponse = WebCore::ResourceResponse(cfURLResponse);
+    return true;
+#else
     return false;
+#endif
 }
 
 } // namespace CoreIPC
