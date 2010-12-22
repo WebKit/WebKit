@@ -352,7 +352,7 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
 - (BOOL)isNativeLibraryData:(NSData *)data
 {
     NSUInteger sizeInBytes = [data length];
-    Vector<uint32_t, 128> rawData((sizeInBytes - 1) / 4 + 1);
+    Vector<uint32_t, 128> rawData((sizeInBytes + 3) / 4);
     memcpy(rawData.data(), [data bytes], sizeInBytes);
     
     unsigned numArchs = 0;
