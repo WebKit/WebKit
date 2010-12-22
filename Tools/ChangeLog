@@ -1,3 +1,14 @@
+2010-12-22  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        TestNetscapePlugIn should use #if defined
+        https://bugs.webkit.org/show_bug.cgi?id=51471
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_Initialize):
+        (NPP_New):
+
 2010-12-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

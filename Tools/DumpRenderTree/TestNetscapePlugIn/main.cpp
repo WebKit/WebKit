@@ -47,7 +47,7 @@ using namespace std;
 static bool getEntryPointsWasCalled;
 static bool initializeWasCalled;
 
-#if XP_WIN
+#if defined(XP_WIN)
 #define STDCALL __stdcall
 
 static inline int strcasecmp(const char* s1, const char* s2)
@@ -73,7 +73,7 @@ NPError STDCALL NP_Initialize(NPNetscapeFuncs *browserFuncs
 {
     initializeWasCalled = true;
 
-#if XP_WIN
+#if defined(XP_WIN)
     // Simulate Flash and QuickTime's behavior of crashing when NP_Initialize is called before NP_GetEntryPoints.
     if (!getEntryPointsWasCalled)
         CRASH();
@@ -239,7 +239,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
                 return NPERR_INCOMPATIBLE_VERSION_ERROR;
 #endif
         } else if (strcasecmp(argn[i], "testGetURLOnDestroy") == 0) {
-#if XP_WIN
+#if defined(XP_WIN)
             // FIXME: When https://bugs.webkit.org/show_bug.cgi?id=41831 is fixed, this #ifdef can be removed.
             obj->testGetURLOnDestroy = TRUE;
 #endif
