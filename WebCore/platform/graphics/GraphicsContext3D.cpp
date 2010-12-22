@@ -31,25 +31,106 @@
 #include "GraphicsContext3D.h"
 
 #include "ArrayBufferView.h"
+#include "CheckedInt.h"
 #include "DrawingBuffer.h"
 #include "Image.h"
 #include "ImageData.h"
 
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
+
 namespace WebCore {
 
-static uint8_t convertColor16LittleTo8(uint16_t value)
-{
-    return value >> 8;
-}
+namespace {
 
-static uint8_t convertColor16BigTo8(uint16_t value)
-{
-    return static_cast<uint8_t>(value & 0x00FF);
-}
+    unsigned bytesPerComponent(unsigned type)
+    {
+        switch (type) {
+        case GraphicsContext3D::UNSIGNED_BYTE:
+            return 1;
+        case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+        case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+        case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+            return 2;
+        case GraphicsContext3D::FLOAT:
+            return 4;
+        default:
+            return 1;
+        }
+    }
+
+    unsigned componentsPerPixel(unsigned format, unsigned type)
+    {
+        switch (type) {
+        case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+        case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+        case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+        case GraphicsContext3D::FLOAT:
+            return 1;
+        default:
+            break;
+        }
+        switch (format) {
+        case GraphicsContext3D::ALPHA:
+        case GraphicsContext3D::LUMINANCE:
+            return 1;
+        case GraphicsContext3D::LUMINANCE_ALPHA:
+            return 2;
+        case GraphicsContext3D::RGB:
+            return 3;
+        case GraphicsContext3D::RGBA:
+            return 4;
+        default:
+            return 4;
+        }
+    }
+
+    // This function should only be called if width and height is non-zero and
+    // format/type are valid.  Return 0 if overflow happens.
+    size_t imageSizeInBytes(unsigned width, unsigned height, unsigned format, unsigned type)
+    {
+        ASSERT(width && height);
+        CheckedInt<uint32_t> checkedWidth(width);
+        CheckedInt<uint32_t> checkedHeight(height);
+        CheckedInt<uint32_t> checkedBytesPerPixel(bytesPerComponent(type) * componentsPerPixel(format, type));
+        CheckedInt<uint32_t> checkedSize = checkedWidth * checkedHeight * checkedBytesPerPixel;
+        if (checkedSize.valid())
+            return checkedSize.value();
+        return 0;
+    }
+
+    uint8_t convertColor16LittleTo8(uint16_t value)
+    {
+        return value >> 8;
+    }
+
+    uint8_t convertColor16BigTo8(uint16_t value)
+    {
+        return static_cast<uint8_t>(value & 0x00FF);
+    }
+
+} // anonymous namespace
+
 
 PassRefPtr<DrawingBuffer> GraphicsContext3D::createDrawingBuffer(const IntSize& size)
 {
     return DrawingBuffer::create(this, size);
+}
+
+bool GraphicsContext3D::texImage2DResourceSafe(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type)
+{
+    OwnArrayPtr<unsigned char> zero;
+    if (width && height) {
+        size_t size = imageSizeInBytes(width, height, format, type);
+        if (!size) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return false;
+        }
+        zero = adoptArrayPtr(new unsigned char[size]);
+        memset(zero.get(), 0, size);
+    }
+    texImage2D(target, level, internalformat, width, height, border, format, type, zero.get());
+    return true;
 }
 
 bool GraphicsContext3D::computeFormatAndTypeParameters(unsigned int format,

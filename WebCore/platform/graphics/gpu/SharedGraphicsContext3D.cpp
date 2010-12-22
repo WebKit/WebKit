@@ -165,6 +165,10 @@ void SharedGraphicsContext3D::texParameteri(unsigned target, unsigned pname, int
 
 int SharedGraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels)
 {
+    if (!pixels) {
+        m_context->texImage2DResourceSafe(target, level, internalformat, width, height, border, format, type);
+        return 0;
+    }
     return m_context->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 }
 

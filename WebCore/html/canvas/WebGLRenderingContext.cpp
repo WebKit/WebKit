@@ -571,7 +571,7 @@ void WebGLRenderingContext::clear(unsigned long mask)
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -649,7 +649,7 @@ void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, uns
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -674,7 +674,7 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
             return;
         }
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -1105,7 +1105,7 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
         }
     }
 
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -1169,7 +1169,7 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
         }
     }
 
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -2320,7 +2320,7 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
-    if (m_framebufferBinding && !m_framebufferBinding->onAccess()) {
+    if (m_framebufferBinding && !m_framebufferBinding->onAccess(!isResourceSafe())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
@@ -2520,8 +2520,15 @@ void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsi
             return;
         }
     }
-    m_context->texImage2D(target, level, internalformat, width, height,
-                          border, format, type, pixels);
+    if (!pixels && !isResourceSafe()) {
+        bool succeed = m_context->texImage2DResourceSafe(target, level, internalformat, width, height,
+                                                         border, format, type);
+        if (!succeed)
+            return;
+    } else {
+        m_context->texImage2D(target, level, internalformat, width, height,
+                              border, format, type, pixels);
+    }
     tex->setLevelInfo(target, level, internalformat, width, height, type);
     cleanupAfterGraphicsCall(false);
 }

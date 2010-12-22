@@ -199,8 +199,7 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
     if (visibleRectWidth != m_rootLayerTextureWidth || visibleRectHeight != m_rootLayerTextureHeight) {
         m_rootLayerTextureWidth = visibleRectWidth;
         m_rootLayerTextureHeight = visibleRectHeight;
-
-        GLC(m_context.get(), m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_rootLayerTextureWidth, m_rootLayerTextureHeight, 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0));
+        GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_rootLayerTextureWidth, m_rootLayerTextureHeight, 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE));
 
         // Reset the current render surface to force an update of the viewport and
         // projection matrix next time useRenderSurface is called.

@@ -472,6 +472,10 @@ public:
     // like GL_FLOAT, GL_INT, etc.
     int sizeInBytes(int type);
 
+    // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
+    // Return true if no GL error is synthesized.
+    bool texImage2DResourceSafe(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type);
+
     bool isGLES2Compliant() const;
 
     //----------------------------------------------------------------------

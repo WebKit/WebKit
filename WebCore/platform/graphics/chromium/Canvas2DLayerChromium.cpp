@@ -68,7 +68,7 @@ void Canvas2DLayerChromium::updateContentsIfDirty()
         context->activeTexture(GraphicsContext3D::TEXTURE0);
         context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
         IntSize size = m_drawingBuffer->size();
-        context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, size.width(), size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
+        context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, size.width(), size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE);
         // Set the min-mag filters to linear and wrap modes to GraphicsContext3D::CLAMP_TO_EDGE
         // to get around NPOT texture limitations of GLES.
         context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);

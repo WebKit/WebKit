@@ -1327,8 +1327,11 @@ long GraphicsContext3D::getVertexAttribOffset(unsigned long index, unsigned long
 
 int GraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels)
 {
+    if (width && height && !pixels) {
+        synthesizeGLError(INVALID_VALUE);
+        return 1;
+    }
     makeContextCurrent();
-
     unsigned openGLInternalFormat = internalformat;
     if (type == GL_FLOAT) {
         if (format == GL_RGBA)

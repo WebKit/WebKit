@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WebGL Uninitialized GL Resources Tests</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas" width="2" height="2"> </canvas>
+<script>
+description("Tests to check user code cannot access uninitialized data from GL resources.");
+
+var canvas = document.getElementById("canvas");
+var gl = create3DContext(canvas);
+if (!gl)
+  testFailed("Context created.");
+else
+  testPassed("Context created.");
+
+debug("Reading an uninitialized texture should succeed with all bytes set to 0.");
+
+var width = 512;
+var height = 512;
+var bpp = 4;
+var expectedDataLength = width*height*bpp;
+
+var tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+// this can be quite undeterministic so to improve odds of seeing uninitialized data write bits
+// into tex then delete texture then re-create one with same characteristics (driver will likely reuse mem)
+// with this trick on r59046 WebKit/OSX I get FAIL 100% of the time instead of ~15% of the time.
+
+var badData = new Uint8Array(expectedDataLength);
+for (var i = 0; i < badData.length; ++i)
+    badData[i] = i % 255;
+
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, badData);
+gl.finish(); // make sure it has been uploaded
+
+gl.deleteTexture(tex);
+gl.finish(); // make sure it has been deleted
+
+var tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+var fb = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+
+data = new Uint8Array(width * height * 4);
+gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, data);
+
+if (data.length != expectedDataLength) {
+    testFailed("expected data length " + expectedDataLength + " but got " + data.length + " instead.");
+} else {
+    var k = 0;
+    for (var i = 0; i < data.length; ++i) {
+        if (data[i] != 0) {
+            k++;
+        }
+    }
+
+    if (k) {
+        testFailed("Found " + k + " non-zero bytes");
+    } else {
+        testPassed("All data initialized");
+    }
+}
+
+glErrorShouldBe(gl, gl.NO_ERROR);
+
+//TODO: uninitialized vertex array buffer
+//TODO: uninitialized vertex elements buffer
+//TODO: uninitialized framebuffer? (implementations would need to do a GL clear at first binding?)
+//TODO: uninitialized renderbuffer? (implementations would need to do a GL clear at first binding?)
+//TODO: uninitialized uniform arrays?
+
+debug("");
+successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

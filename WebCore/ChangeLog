@@ -1,3 +1,46 @@
+2010-12-21  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        WebGLRenderingContext needs to zero textures and renderbuffers
+        https://bugs.webkit.org/show_bug.cgi?id=49355
+
+        Test: fast/canvas/webgl/uninitialized-test.html
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::onAccess): Use a parameter to decide if renderbuffer initialization is needed.
+        (WebCore::WebGLFramebuffer::initializeRenderbuffers): Don't return false if color buffer doesn't exist.
+        * html/canvas/WebGLFramebuffer.h: Modify onAccess with an added parameter.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::clear): Call onAccess with an added parameter.
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::drawArrays): Ditto.
+        (WebCore::WebGLRenderingContext::drawElements): Ditto.
+        (WebCore::WebGLRenderingContext::readPixels): Ditto.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Create buffer data of 0s if input is null to initialize textures.
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2DResourceSafe): Helper function that initialize all pixels to 0.
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateContentsIfDirty): Use texImage2DResourceSafe.
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::generateColorTexture): Ditto.
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::prepareToDrawLayers): Ditto.
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::requestTexture): Ditto.
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::allocateTexture): Ditto.
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::reset): Use texImage2DResourceSafe; also, only initialize depth/stencil buffer.
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::texImage2D): Use texImage2DResourceSafe.
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::create): Ditto.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::texImage2D): Generate an INVALID_VALUE if pixels==null is passed in.
+
 2010-12-21  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

@@ -1,3 +1,13 @@
+2010-12-21  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        WebGLRenderingContext needs to zero textures and renderbuffers
+        https://bugs.webkit.org/show_bug.cgi?id=49355
+
+        * fast/canvas/webgl/uninitialized-test-expected.txt: Added.
+        * fast/canvas/webgl/uninitialized-test.html: Added.
+
 2010-12-21  Kenneth Russell  <kbr@google.com>
 
         Unreviewed test expectations update. Remove the following five

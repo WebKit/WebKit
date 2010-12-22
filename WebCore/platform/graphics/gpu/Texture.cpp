@@ -106,15 +106,15 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
 
         IntRect tileBoundsWithBorder = tiling.tileBoundsWithBorder(i);
 
-    unsigned int glFormat = 0;
-    unsigned int glType = 0;
-    bool swizzle;
-    convertFormat(context, format, &glFormat, &glType, &swizzle);
-    context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId);
-    context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, glFormat,
-            tileBoundsWithBorder.width(),
-            tileBoundsWithBorder.height(),
-            0, glFormat, glType, 0);
+        unsigned int glFormat = 0;
+        unsigned int glType = 0;
+        bool swizzle;
+        convertFormat(context, format, &glFormat, &glType, &swizzle);
+        context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId);
+        context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, glFormat,
+                                        tileBoundsWithBorder.width(),
+                                        tileBoundsWithBorder.height(),
+                                        0, glFormat, glType);
     }
     return adoptRef(new Texture(context, textureIds.leakPtr(), format, width, height, maxTextureSize));
 }
