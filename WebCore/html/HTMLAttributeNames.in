@@ -32,6 +32,7 @@ aria-labeledby
 aria-labelledby
 aria-level
 aria-live
+aria-multiline
 aria-multiselectable
 aria-orientation
 aria-owns

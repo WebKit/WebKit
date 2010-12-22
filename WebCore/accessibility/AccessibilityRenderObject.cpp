@@ -457,12 +457,6 @@ bool AccessibilityRenderObject::isNativeTextControl() const
     return m_renderer->isTextControl();
 }
     
-bool AccessibilityRenderObject::isTextControl() const
-{
-    AccessibilityRole role = roleValue();
-    return role == TextAreaRole || role == TextFieldRole;
-}
-
 bool AccessibilityRenderObject::isNativeImage() const
 {
     return m_renderer->isBoxModelObject() && toRenderBoxModelObject(m_renderer)->isImage();
@@ -2953,6 +2947,9 @@ AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
 
     if (role == ButtonRole && ariaHasPopup())
         role = PopUpButtonRole;
+
+    if (role == TextAreaRole && ariaIsMultiline())
+        role = TextFieldRole;
     
     if (role)
         return role;

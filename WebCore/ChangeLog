@@ -1,3 +1,25 @@
+2010-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        AX: WAI-ARIA textbox role needs different AXRole, depending on value of aria-multiline property
+        https://bugs.webkit.org/show_bug.cgi?id=51481
+
+        Support aria-multiline and use it to change the role of an ARIA "textbox" 
+        from AXTextArea to AXTextField.
+
+        Test: platform/mac/accessibility/aria-multiline.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::ariaIsMultiline):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isPasswordField):
+        (WebCore::AccessibilityObject::isTextControl):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        * accessibility/AccessibilityRenderObject.h:
+        * html/HTMLAttributeNames.in:
+
 2010-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

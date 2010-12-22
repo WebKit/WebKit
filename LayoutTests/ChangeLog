@@ -1,3 +1,13 @@
+2010-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weining.
+
+        AX: WAI-ARIA textbox role needs different AXRole, depending on value of aria-multiline property
+        https://bugs.webkit.org/show_bug.cgi?id=51481
+
+        * platform/mac/accessibility/aria-multiline-expected.txt: Added.
+        * platform/mac/accessibility/aria-multiline.html: Added.
+
 2010-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

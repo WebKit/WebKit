@@ -72,7 +72,6 @@ public:
     virtual bool isImage() const;
     virtual bool isNativeImage() const;
     virtual bool isPasswordField() const;
-    virtual bool isTextControl() const;
     virtual bool isNativeTextControl() const;
     virtual bool isWebArea() const;
     virtual bool isFileUploadButton() const;

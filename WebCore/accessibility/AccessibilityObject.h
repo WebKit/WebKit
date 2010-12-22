@@ -268,7 +268,6 @@ public:
     virtual bool isNativeImage() const { return false; }
     virtual bool isImageButton() const { return false; }
     virtual bool isPasswordField() const { return false; }
-    virtual bool isTextControl() const { return false; }
     virtual bool isNativeTextControl() const { return false; }
     virtual bool isWebArea() const { return false; }
     virtual bool isCheckbox() const { return roleValue() == CheckBoxRole; }
@@ -299,6 +298,7 @@ public:
     virtual bool isMenuList() const { return false; }
     virtual bool isMenuListPopup() const { return false; }
     virtual bool isMenuListOption() const { return false; }
+    bool isTextControl() const { return roleValue() == TextAreaRole || roleValue() == TextFieldRole; }
     bool isTabList() const { return roleValue() == TabListRole; }
     bool isTabItem() const { return roleValue() == TabRole; }
     bool isRadioGroup() const { return roleValue() == RadioGroupRole; }
@@ -360,6 +360,7 @@ public:
     virtual bool supportsARIAFlowTo() const { return false; }
     virtual void ariaFlowToElements(AccessibilityChildrenVector&) const { }
     virtual bool ariaHasPopup() const { return false; }
+    bool ariaIsMultiline() const;
     virtual const AtomicString& invalidStatus() const;
 
     // ARIA drag and drop

@@ -837,6 +837,11 @@ const String& AccessibilityObject::actionVerb() const
     }
 }
 
+bool AccessibilityObject::ariaIsMultiline() const
+{
+    return equalIgnoringCase(getAttribute(aria_multilineAttr), "true");
+}
+
 const AtomicString& AccessibilityObject::invalidStatus() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, invalidStatusFalse, ("false"));
