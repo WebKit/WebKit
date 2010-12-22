@@ -124,6 +124,7 @@ private:
     void removeTextureFor(NativeImagePtr);
 
     RefPtr<GraphicsContext3D> m_context;
+    bool m_bgraSupported;
 
     unsigned m_quadVertices;
 

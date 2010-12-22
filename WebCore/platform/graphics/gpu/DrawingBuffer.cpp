@@ -41,7 +41,13 @@ namespace WebCore {
 PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size)
 {
     RefPtr<DrawingBuffer> drawingBuffer = adoptRef(new DrawingBuffer(context, size));
-    drawingBuffer->m_multisampleExtensionSupported = context->getExtensions()->supports("GL_ANGLE_framebuffer_blit") && context->getExtensions()->supports("GL_ANGLE_framebuffer_multisample");
+    Extensions3D* extensions = context->getExtensions();
+    bool multisampleSupported = extensions->supports("GL_ANGLE_framebuffer_blit") && extensions->supports("GL_ANGLE_framebuffer_multisample");
+    if (multisampleSupported) {
+        extensions->ensureEnabled("GL_ANGLE_framebuffer_blit");
+        extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
+    }
+    drawingBuffer->m_multisampleExtensionSupported = multisampleSupported;
     return (drawingBuffer->m_context) ? drawingBuffer.release() : 0;
 }
 
