@@ -1,3 +1,15 @@
+2010-12-21  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fixing crash with empty render surfaces.
+        https://bugs.webkit.org/show_bug.cgi?id=51432
+
+        Test: platform/chromium/compositing/empty-render-surface-crasher.html
+
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::draw):
+
 2010-12-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

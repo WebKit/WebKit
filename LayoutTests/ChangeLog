@@ -1,3 +1,15 @@
+2010-12-21  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Enabling layout tests in platform/chromium/compositing
+        and adding new layout test to check for crash on empty render surfaces.
+        https://bugs.webkit.org/show_bug.cgi?id=51432
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/compositing/empty-render-surface-crasher-expected.txt: Added.
+        * platform/chromium/compositing/empty-render-surface-crasher.html: Added.
+
 2010-12-22  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

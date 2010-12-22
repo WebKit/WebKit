@@ -135,7 +135,7 @@ bool RenderSurfaceChromium::prepareContentsTexture()
 
 void RenderSurfaceChromium::draw()
 {
-    if (m_skipsDraw)
+    if (m_skipsDraw || !m_contentsTexture)
         return;
 
     m_contentsTexture->bindTexture();
