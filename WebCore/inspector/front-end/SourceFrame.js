@@ -482,7 +482,7 @@ WebInspector.SourceFrame.prototype = {
         var breakpoint = this._findBreakpoint(lineNumber);
         if (!breakpoint) {
             // This row doesn't have a breakpoint: We want to show Add Breakpoint and Add and Edit Breakpoint.
-            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._setBreakpoint.bind(this, lineNumber));
+            contextMenu.appendItem(WebInspector.UIString("Add Breakpoint"), this._setBreakpoint.bind(this, lineNumber, "", true));
 
             function addConditionalBreakpoint()
             {
@@ -491,7 +491,7 @@ WebInspector.SourceFrame.prototype = {
                 {
                     this._removeBreakpointDecoration(lineNumber);
                     if (committed)
-                        this._setBreakpoint(lineNumber, condition);
+                        this._setBreakpoint(lineNumber, true, condition);
                 }
                 this._editBreakpointCondition(lineNumber, "", didEditBreakpointCondition.bind(this));
             }
@@ -503,16 +503,23 @@ WebInspector.SourceFrame.prototype = {
             {
                 function didEditBreakpointCondition(committed, condition)
                 {
-                    if (committed)
-                        breakpoint.condition = condition;
+                    if (committed) {
+                        breakpoint.remove();
+                        this._setBreakpoint(breakpoint.line, breakpoint.enabled, condition);
+                    }
                 }
-                this._editBreakpointCondition(lineNumber, breakpoint.condition, didEditBreakpointCondition);
+                this._editBreakpointCondition(lineNumber, breakpoint.condition, didEditBreakpointCondition.bind(this));
             }
             contextMenu.appendItem(WebInspector.UIString("Edit Breakpoint…"), editBreakpointCondition.bind(this));
+            function setBreakpointEnabled(enabled)
+            {
+                breakpoint.remove();
+                this._setBreakpoint(breakpoint.line, enabled, breakpoint.condition);
+            }
             if (breakpoint.enabled)
-                contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), function() { breakpoint.enabled = false; });
+                contextMenu.appendItem(WebInspector.UIString("Disable Breakpoint"), setBreakpointEnabled.bind(this, false));
             else
-                contextMenu.appendItem(WebInspector.UIString("Enable Breakpoint"), function() { breakpoint.enabled = true; });
+                contextMenu.appendItem(WebInspector.UIString("Enable Breakpoint"), setBreakpointEnabled.bind(this, true));
         }
         contextMenu.show(event);
     },
@@ -535,12 +542,11 @@ WebInspector.SourceFrame.prototype = {
 
         var breakpoint = this._findBreakpoint(lineNumber);
         if (breakpoint) {
+            breakpoint.remove();
             if (event.shiftKey)
-                breakpoint.enabled = !breakpoint.enabled;
-            else
-                breakpoint.remove();
+                this._setBreakpoint(breakpoint.line, !breakpoint.enabled, breakpoint.condition);
         } else
-            this._setBreakpoint(lineNumber);
+            this._setBreakpoint(lineNumber, true, "");
         event.preventDefault();
     },
 
@@ -775,7 +781,7 @@ WebInspector.SourceFrame.prototype = {
         var sourceID = this._sourceIDForLine(lineNumber);
         if (!sourceID)
             return;
-        WebInspector.panels.scripts.continueToLine(sourceID, lineNumber);
+        WebInspector.debuggerModel.continueToLine(sourceID, lineNumber);
     },
 
     _editLine: function(lineNumber, newContent, cancelEditingCallback)
@@ -823,12 +829,12 @@ WebInspector.SourceFrame.prototype = {
             script.resource.setContent(newContent, revertEditLineCallback);
     },
 
-    _setBreakpoint: function(lineNumber, condition)
+    _setBreakpoint: function(lineNumber, enabled, condition)
     {
         var sourceID = this._sourceIDForLine(lineNumber);
         if (!sourceID)
             return;
-        WebInspector.debuggerModel.setBreakpoint(sourceID, lineNumber, true, condition);
+        WebInspector.debuggerModel.setBreakpoint(sourceID, lineNumber, enabled, condition);
         if (!WebInspector.panels.scripts.breakpointsActivated)
             WebInspector.panels.scripts.toggleBreakpointsClicked();
     },

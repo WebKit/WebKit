@@ -31,7 +31,6 @@
 (function () {
 
 var DebuggerScript = {};
-DebuggerScript._breakpoints = {};
 
 DebuggerScript.PauseOnExceptionsState = {
     DontPauseOnExceptions : 0,
@@ -100,25 +99,13 @@ DebuggerScript.setBreakpoint = function(execState, args)
     var locations = Debug.findBreakPointActualLocations(breakId);
     if (!locations.length)
         return undefined;
-    var actualLineNumber = locations[0].line;
-
-    var key = args.scriptId + ":" + actualLineNumber;
-    if (key in DebuggerScript._breakpoints) {
-        // Remove old breakpoint.
-        Debug.findBreakPoint(DebuggerScript._breakpoints[key], true);
-    }
-    DebuggerScript._breakpoints[key] = breakId;
-    return DebuggerScript._v8ToWebkitLineNumber(actualLineNumber);
+    args.lineNumber = DebuggerScript._v8ToWebkitLineNumber(locations[0].line);
+    return breakId.toString();
 }
 
 DebuggerScript.removeBreakpoint = function(execState, args)
 {
-    args.lineNumber = DebuggerScript._webkitToV8LineNumber(args.lineNumber);
-    var key = args.scriptId + ":" + args.lineNumber;
-    var breakId = DebuggerScript._breakpoints[key];
-    if (breakId)
-        Debug.findBreakPoint(breakId, true);
-    delete DebuggerScript._breakpoints[key];
+    Debug.findBreakPoint(args.breakpointId, true);
 }
 
 DebuggerScript.pauseOnExceptionsState = function()
@@ -190,11 +177,7 @@ DebuggerScript.editScriptSource = function(scriptId, newSource)
 
 DebuggerScript.clearBreakpoints = function(execState, args)
 {
-    for (var key in DebuggerScript._breakpoints) {
-        var breakId = DebuggerScript._breakpoints[key];
-        Debug.findBreakPoint(breakId, true);
-    }
-    DebuggerScript._breakpoints = {};
+    Debug.clearAllBreakPoints();
 }
 
 DebuggerScript.setBreakpointsActivated = function(execState, args)
