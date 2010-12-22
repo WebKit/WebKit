@@ -1,3 +1,15 @@
+2010-12-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WAI-ARIA menubar role mapped to AXGroup, should be AXMenuBar
+        https://bugs.webkit.org/show_bug.cgi?id=51488
+
+        Test: platform/mac/accessibility/aria-menubar.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::createARIARoleMap):
+
 2010-12-22  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

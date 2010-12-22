@@ -923,7 +923,7 @@ static ARIARoleMap* createARIARoleMap()
         { "marquee", ApplicationMarqueeRole },
         { "math", DocumentMathRole },
         { "menu", MenuRole },
-        { "menubar", GroupRole },
+        { "menubar", MenuBarRole },
         // "menuitem" isn't here because it may map to different roles depending on the parent element's role
         { "menuitemcheckbox", MenuItemRole },
         { "menuitemradio", MenuItemRole },
