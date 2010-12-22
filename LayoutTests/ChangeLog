@@ -1,3 +1,15 @@
+2010-12-21  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        matrix3d() must take the zoom factor into account
+        https://bugs.webkit.org/show_bug.cgi?id=51408
+
+        * transforms/3d/general/matrix-with-zoom-3d-expected.checksum: Added.
+        * transforms/3d/general/matrix-with-zoom-3d-expected.png: Added.
+        * transforms/3d/general/matrix-with-zoom-3d-expected.txt: Added.
+        * transforms/3d/general/matrix-with-zoom-3d.html: Added.
+
 2010-12-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
