@@ -1,3 +1,14 @@
+2010-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move Mach message receiving code out into a new function
+        https://bugs.webkit.org/show_bug.cgi?id=51502
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::readFromMachPort):
+        (CoreIPC::Connection::receiveSourceEventHandler):
+
 2010-12-22  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Sam Weinig.

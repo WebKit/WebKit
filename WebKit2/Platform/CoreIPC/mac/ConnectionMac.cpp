@@ -284,33 +284,43 @@ static PassOwnPtr<ArgumentDecoder> createArgumentDecoder(mach_msg_header_t* head
     return adoptPtr(new ArgumentDecoder(messageBody, messageBodySize, attachments));
 }
 
-void Connection::receiveSourceEventHandler()
-{
-    // The receive buffer size should always include the maximum trailer size.
-    static const size_t receiveBufferSize = inlineMessageMaxSize + MAX_TRAILER_SIZE;
+// The receive buffer size should always include the maximum trailer size.
+static const size_t receiveBufferSize = inlineMessageMaxSize + MAX_TRAILER_SIZE;
+typedef Vector<char, receiveBufferSize> ReceiveBuffer;
 
-    Vector<char, receiveBufferSize> buffer(receiveBufferSize);
-    
+static mach_msg_header_t* readFromMachPort(mach_port_t machPort, ReceiveBuffer& buffer)
+{
+    buffer.resize(receiveBufferSize);
+
     mach_msg_header_t* header = reinterpret_cast<mach_msg_header_t*>(buffer.data());
-    
-    kern_return_t kr = mach_msg(header, MACH_RCV_MSG | MACH_RCV_LARGE | MACH_RCV_TIMEOUT, 0, buffer.size(), m_receivePort, 0, MACH_PORT_NULL);
+    kern_return_t kr = mach_msg(header, MACH_RCV_MSG | MACH_RCV_LARGE | MACH_RCV_TIMEOUT, 0, buffer.size(), machPort, 0, MACH_PORT_NULL);
     if (kr == MACH_RCV_TIMED_OUT)
-        return;
+        return 0;
 
     if (kr == MACH_RCV_TOO_LARGE) {
         // The message was too large, resize the buffer and try again.
         buffer.resize(header->msgh_size + MAX_TRAILER_SIZE);
-        
         header = reinterpret_cast<mach_msg_header_t*>(buffer.data());
         
-        kr = mach_msg(header, MACH_RCV_MSG | MACH_RCV_LARGE | MACH_RCV_TIMEOUT, 0, buffer.size(), m_receivePort, 0, MACH_PORT_NULL);
+        kr = mach_msg(header, MACH_RCV_MSG | MACH_RCV_LARGE | MACH_RCV_TIMEOUT, 0, buffer.size(), machPort, 0, MACH_PORT_NULL);
         ASSERT(kr != MACH_RCV_TOO_LARGE);
     }
 
     if (kr != MACH_MSG_SUCCESS) {
         ASSERT_NOT_REACHED();
-        return;
+        return 0;
     }
+
+    return header;
+}
+
+void Connection::receiveSourceEventHandler()
+{
+    ReceiveBuffer buffer;
+
+    mach_msg_header_t* header = readFromMachPort(m_receivePort, buffer);
+    if (!header)
+        return;
 
     MessageID messageID = MessageID::fromInt(header->msgh_id);
     OwnPtr<ArgumentDecoder> arguments = createArgumentDecoder(header);
