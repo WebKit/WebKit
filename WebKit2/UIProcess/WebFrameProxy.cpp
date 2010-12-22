@@ -69,11 +69,6 @@ bool WebFrameProxy::isMainFrame() const
     return this == m_page->mainFrame();
 }
 
-void WebFrameProxy::setCertificateInfo(PassRefPtr<WebCertificateInfo> certificateInfo)
-{
-    m_certificateInfo = certificateInfo;
-}
-
 bool WebFrameProxy::canProvideSource() const
 {
     return isDisplayingMarkupDocument();
@@ -132,7 +127,7 @@ void WebFrameProxy::didFailProvisionalLoad()
     m_provisionalURL = String();
 }
 
-void WebFrameProxy::didCommitLoad()
+void WebFrameProxy::didCommitLoad(const String& mimeType, const PlatformCertificateInfo& certificateInfo)
 {
     ASSERT(m_loadState == LoadStateProvisional);
     ASSERT(!m_provisionalURL.isEmpty());
@@ -140,6 +135,9 @@ void WebFrameProxy::didCommitLoad()
     m_url = m_provisionalURL;
     m_provisionalURL = String();
     m_title = String();
+    m_MIMEType = mimeType;
+    m_isFrameSet = false;
+    m_certificateInfo = WebCertificateInfo::create(certificateInfo);
 }
 
 void WebFrameProxy::didFinishLoad()

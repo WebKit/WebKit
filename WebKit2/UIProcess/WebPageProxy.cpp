@@ -972,10 +972,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 
     WebFrameProxy* frame = process()->webFrame(frameID);
 
-    frame->setMIMEType(mimeType);
-    frame->setIsFrameSet(false);
-    frame->setCertificateInfo(WebCertificateInfo::create(certificateInfo));
-    frame->didCommitLoad();
+    frame->didCommitLoad(mimeType, certificateInfo);
 
     if (frame->isMainFrame()) {
         m_mainFrameHasCustomRepresentation = frameHasCustomRepresentation;

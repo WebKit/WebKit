@@ -84,12 +84,10 @@ public:
     void setUnreachableURL(const String& unreachableURL) { m_unreachableURL = unreachableURL; }
     const String& unreachableURL() const { return m_unreachableURL; }
 
-    void setMIMEType(const String& mimeType) { m_MIMEType = mimeType; }
     const String& mimeType() const { return m_MIMEType; }
 
     const String& title() const { return m_title; }
 
-    void setCertificateInfo(PassRefPtr<WebCertificateInfo>);
     WebCertificateInfo* certificateInfo() const { return m_certificateInfo.get(); }
 
     bool canProvideSource() const;
@@ -103,7 +101,7 @@ public:
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);
     void didFailProvisionalLoad();
-    void didCommitLoad();
+    void didCommitLoad(const String& contentType, const PlatformCertificateInfo&);
     void didFinishLoad();
     void didFailLoad();
     void didSameDocumentNavigation(const String&); // eg. anchor navigation, session state change.

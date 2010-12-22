@@ -1,3 +1,18 @@
+2010-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move more of WebPageProxy::didCommitLoadForFrame into WebFrameProxy::didCommitLoad.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didCommitLoad): Added type and certificate info arguments,
+        and set m_MIMEType, m_isFrameSet, and m_certificateInfo.
+        * UIProcess/WebFrameProxy.h: Removed setMIMEType and setCertificateInfo and added
+        arguments to didCommitLoad.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Removed code that is now inside the
+        WebFrameProxy::didCommitLoad function.
+
 2010-12-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson and Sam Weinig.
