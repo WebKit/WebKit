@@ -110,6 +110,8 @@ http/tests/misc/isindex-with-no-form-base-href.html
 http/tests/misc/isindex-with-no-form.html
 http/tests/misc/timer-vs-loading.html
 
+http/tests/appcache/auth.html
+
 # Our expected results are out-of-date - need to be updated first.
 http/tests/loading/bad-scheme-subframe.html
 
