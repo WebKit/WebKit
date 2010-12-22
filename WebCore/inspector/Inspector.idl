@@ -218,8 +218,8 @@ module core {
         [domain=Debugger] void activateBreakpoints();
         [domain=Debugger] void deactivateBreakpoints();
 
-        [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in String condition, in boolean enabled, out String breakpointId, out unsigned int actualLineNumber);
-        [domain=Debugger] void removeBreakpoint(in String breakpointId);
+        [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in boolean enabled, in String condition, out boolean success, out unsigned int actualLineNumber);
+        [domain=Debugger] void removeBreakpoint(in String sourceID, in unsigned long lineNumber);
 
         [domain=Inspector] void setStickyBreakpoints(in Object breakpoints); // FIXME: Move to newly introduced BrowserDebugger.
 
@@ -245,7 +245,7 @@ module core {
         [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
         [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
 
-        [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out String sourceID, out unsigned int lineNumber, out String condition, out boolean enabled, out unsigned int originalLineNumber);
+        [notify, domain=Debugger] void breakpointRestored(out String sourceID, out String url, out int line, out boolean enabled, out String condition); // FIXME: should be breakpointResolved
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         [notify, domain=Debugger] void didCreateWorker(out long id, out String url, out boolean isShared);

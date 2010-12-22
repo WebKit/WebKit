@@ -50,7 +50,6 @@
 #include <debugger/DebuggerCallFrame.h>
 #include <parser/SourceCode.h>
 #include <runtime/JSLock.h>
-#include <wtf/text/StringConcatenate.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -138,33 +137,23 @@ bool ScriptDebugServer::hasListenersInterestedInPage(Page* page)
     return m_pageListenersMap.contains(page);
 }
 
-String ScriptDebugServer::setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, unsigned* actualLineNumber)
+bool ScriptDebugServer::setBreakpoint(const String& sourceID, ScriptBreakpoint breakpoint, unsigned lineNumber, unsigned* actualLineNumber)
 {
     intptr_t sourceIDValue = sourceID.toIntPtr();
     if (!sourceIDValue)
-        return "";
+        return false;
     BreakpointsMap::iterator it = m_breakpoints.find(sourceIDValue);
     if (it == m_breakpoints.end())
         it = m_breakpoints.set(sourceIDValue, SourceBreakpoints()).first;
-    if (it->second.contains(lineNumber))
-        return "";
-    it->second.set(lineNumber, ScriptBreakpoint(enabled, condition));
+    it->second.set(lineNumber, breakpoint);
     *actualLineNumber = lineNumber;
-    return makeString(sourceID, ":", String::number(lineNumber));
+    return true;
 }
 
-void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
+void ScriptDebugServer::removeBreakpoint(const String& sourceID, unsigned lineNumber)
 {
-    Vector<String> tokens;
-    breakpointId.split(":", tokens);
-    if (tokens.size() != 2)
-        return;
-    bool success;
-    intptr_t sourceIDValue = tokens[0].toIntPtr(&success);
-    if (!success)
-        return;
-    unsigned lineNumber = tokens[1].toUInt(&success);
-    if (!success)
+    intptr_t sourceIDValue = sourceID.toIntPtr();
+    if (!sourceIDValue)
         return;
     BreakpointsMap::iterator it = m_breakpoints.find(sourceIDValue);
     if (it != m_breakpoints.end())

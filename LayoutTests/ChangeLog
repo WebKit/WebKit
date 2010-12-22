@@ -1,3 +1,18 @@
+2010-12-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r74473.
+        http://trac.webkit.org/changeset/74473
+        https://bugs.webkit.org/show_bug.cgi?id=51463
+
+        broke compilation on leopard intel release (Requested by
+        podivilov on #webkit).
+
+        * http/tests/inspector/debugger-test2.js:
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger-pause-on-breakpoint.html:
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/report-protocol-errors.html:
+
 2010-12-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

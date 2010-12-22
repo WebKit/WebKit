@@ -1,3 +1,95 @@
+2010-12-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r74473.
+        http://trac.webkit.org/changeset/74473
+        https://bugs.webkit.org/show_bug.cgi?id=51463
+
+        broke compilation on leopard intel release (Requested by
+        podivilov on #webkit).
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::setStickyBreakpoints):
+        (WebCore::InspectorController::restoreStickyBreakpoint):
+        (WebCore::InspectorController::breakpointsSettingKey):
+        (WebCore::InspectorController::loadBreakpoints):
+        (WebCore::InspectorController::saveBreakpoints):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::formatBreakpointId):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::clearForPageNavigation):
+        (WebCore::InspectorDebuggerAgent::md5Base16):
+        (WebCore::InspectorDebuggerAgent::loadBreakpoints):
+        (WebCore::InspectorDebuggerAgent::saveBreakpoints):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.jsBreakpointId):
+        (WebInspector.Breakpoint.prototype.set enabled):
+        (WebInspector.Breakpoint.prototype.get id):
+        (WebInspector.Breakpoint.prototype.set condition):
+        (WebInspector.Breakpoint.prototype.remove):
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype._createDOMBreakpoint):
+        (WebInspector.BreakpointManager.prototype._createEventListenerBreakpoint):
+        (WebInspector.BreakpointManager.prototype._createXHRBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setNativeBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setNativeBreakpointEnabled):
+        (WebInspector.BreakpointManager.prototype._removeNativeBreakpoint):
+        (WebInspector.BreakpointManager.prototype.breakpointViewForEventData):
+        (WebInspector.BreakpointManager.prototype._projectChanged):
+        (WebInspector.BreakpointManager.prototype.restoreDOMBreakpoints):
+        (WebInspector.BreakpointManager.prototype._saveBreakpoints):
+        (WebInspector.BreakpointManager.prototype._validateBreakpoints):
+        (WebInspector.DOMBreakpoint.prototype._serializeToJSON):
+        (WebInspector.EventListenerBreakpoint.prototype._serializeToJSON):
+        (WebInspector.XHRBreakpoint.prototype._serializeToJSON):
+        (WebInspector.NativeBreakpointView.prototype.set enabled):
+        (WebInspector.NativeBreakpointView.prototype.remove):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.setOneTimeBreakpoint):
+        (WebInspector.DebuggerModel.prototype.removeOneTimeBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.findBreakpoint):
+        (WebInspector.DebuggerModel.prototype.reset):
+        (WebInspector.DebuggerModel.prototype._setBreakpoint):
+        (WebInspector.DebuggerModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerModel.prototype._setBreakpointOnBackend):
+        (WebInspector.DebuggerModel.prototype.breakpointRestored):
+        (WebInspector.DebuggerModel.prototype.pausedScript):
+        (WebInspector.DebuggerModel.prototype.resumedScript):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.continueToLine):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.addConditionalBreakpoint):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition.didEditBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu.else.editBreakpointCondition):
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._continueToLine):
+        (WebInspector.SourceFrame.prototype._setBreakpoint):
+
 2010-12-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -42,6 +42,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorStorageAgent.h"
+#include "ScriptBreakpoint.h"
 #include "ScriptProfiler.h"
 #include "SerializedScriptValue.h"
 

@@ -143,7 +143,7 @@ void ScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page
     // FIXME: Remove all breakpoints set by the agent.
 }
 
-String ScriptDebugServer::setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, unsigned* actualLineNumber)
+bool ScriptDebugServer::setBreakpoint(const String& sourceID, ScriptBreakpoint breakpoint, unsigned lineNumber, unsigned* actualLineNumber)
 {
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
@@ -152,25 +152,27 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, unsigned lineNum
     v8::Local<v8::Object> args = v8::Object::New();
     args->Set(v8::String::New("scriptId"), v8String(sourceID));
     args->Set(v8::String::New("lineNumber"), v8::Integer::New(lineNumber));
-    args->Set(v8::String::New("condition"), v8String(condition));
-    args->Set(v8::String::New("enabled"), v8::Boolean::New(enabled));
+    args->Set(v8::String::New("condition"), v8String(breakpoint.condition));
+    args->Set(v8::String::New("enabled"), v8::Boolean::New(breakpoint.enabled));
 
     v8::Handle<v8::Function> setBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setBreakpoint")));
-    v8::Handle<v8::Value> breakpointId = v8::Debug::Call(setBreakpointFunction, args);
-    if (!breakpointId->IsString())
-        return "";
-    *actualLineNumber = args->Get(v8::String::New("lineNumber"))->Int32Value();
-    return v8StringToWebCoreString(breakpointId->ToString());
+    v8::Handle<v8::Value> result = v8::Debug::Call(setBreakpointFunction, args);
+    if (!result->IsNumber())
+        return false;
+    ASSERT(result->Int32Value() >= 0);
+    *actualLineNumber = result->Int32Value();
+    return true;
 }
 
-void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
+void ScriptDebugServer::removeBreakpoint(const String& sourceID, unsigned lineNumber)
 {
     v8::HandleScope scope;
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::New("breakpointId"), v8String(breakpointId));
+    args->Set(v8::String::New("scriptId"), v8String(sourceID));
+    args->Set(v8::String::New("lineNumber"), v8::Integer::New(lineNumber));
 
     v8::Handle<v8::Function> removeBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("removeBreakpoint")));
     v8::Debug::Call(removeBreakpointFunction, args);

@@ -37,8 +37,15 @@
 #include "InspectorValues.h"
 #include "PlatformString.h"
 #include "ScriptDebugServer.h"
+#include <wtf/MD5.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
+
+static String formatBreakpointId(const String& sourceID, unsigned lineNumber)
+{
+    return makeString(sourceID, ':', String::number(lineNumber));
+}
 
 PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorController* inspectorController, InspectorFrontend* frontend)
 {
@@ -54,6 +61,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorController* inspectorCon
     : m_inspectorController(inspectorController)
     , m_frontend(frontend)
     , m_pausedScriptState(0)
+    , m_breakpointsLoaded(false)
     , m_javaScriptPauseScheduled(false)
 {
 }
@@ -79,37 +87,49 @@ void InspectorDebuggerAgent::deactivateBreakpoints()
     ScriptDebugServer::shared().deactivateBreakpoints();
 }
 
-void InspectorDebuggerAgent::setStickyBreakpoint(const String& url, unsigned lineNumber, const String& condition, bool enabled)
+void InspectorDebuggerAgent::setBreakpoint(const String& sourceID, unsigned lineNumber, bool enabled, const String& condition, bool* success, unsigned int* actualLineNumber)
 {
-    HashMap<String, ScriptBreakpoints>::iterator it = m_stickyBreakpoints.find(url);
-    if (it == m_stickyBreakpoints.end())
-        it = m_stickyBreakpoints.set(url, ScriptBreakpoints()).first;
-    it->second.set(lineNumber, Breakpoint(condition, enabled));
-
-    URLToSourceIDsMap::iterator urlToSourceIDsIterator = m_urlToSourceIDs.find(url);
-    if (urlToSourceIDsIterator == m_urlToSourceIDs.end())
+    ScriptBreakpoint breakpoint(enabled, condition);
+    *success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpoint, lineNumber, actualLineNumber);
+    if (!*success)
         return;
-    const Vector<String>& sourceIDs = urlToSourceIDsIterator->second;
-    for (size_t i = 0; i < sourceIDs.size(); ++i)
-        restoreBreakpoint(sourceIDs[i], lineNumber, condition, enabled);
+
+    String url = m_sourceIDToURL.get(sourceID);
+    if (url.isEmpty())
+        return;
+
+    String breakpointId = formatBreakpointId(sourceID, *actualLineNumber);
+    m_breakpointsMapping.set(breakpointId, *actualLineNumber);
+
+    String key = md5Base16(url);
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(key);
+    if (it == m_stickyBreakpoints.end())
+        it = m_stickyBreakpoints.set(key, SourceBreakpoints()).first;
+    it->second.set(*actualLineNumber, breakpoint);
+    saveBreakpoints();
 }
 
-void InspectorDebuggerAgent::setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, String* breakpointId, unsigned int* actualLineNumber)
+void InspectorDebuggerAgent::removeBreakpoint(const String& sourceID, unsigned lineNumber)
 {
-    *breakpointId = ScriptDebugServer::shared().setBreakpoint(sourceID, lineNumber, condition, enabled, actualLineNumber);
-}
+    ScriptDebugServer::shared().removeBreakpoint(sourceID, lineNumber);
 
-void InspectorDebuggerAgent::removeBreakpoint(const String& breakpointId)
-{
-    ScriptDebugServer::shared().removeBreakpoint(breakpointId);
-}
+    String url = m_sourceIDToURL.get(sourceID);
+    if (url.isEmpty())
+        return;
 
-void InspectorDebuggerAgent::restoreBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled)
-{
-    unsigned actualLineNumber = 0;
-    String breakpointId = ScriptDebugServer::shared().setBreakpoint(sourceID, lineNumber, condition, enabled, &actualLineNumber);
-    if (!breakpointId.isEmpty())
-        m_frontend->breakpointResolved(breakpointId, sourceID, actualLineNumber, condition, enabled, lineNumber);
+    String breakpointId = formatBreakpointId(sourceID, lineNumber);
+    HashMap<String, unsigned>::iterator mappingIt = m_breakpointsMapping.find(breakpointId);
+    if (mappingIt == m_breakpointsMapping.end())
+        return;
+    unsigned stickyLine = mappingIt->second;
+    m_breakpointsMapping.remove(mappingIt);
+
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
+    if (it == m_stickyBreakpoints.end())
+        return;
+
+    it->second.remove(stickyLine);
+    saveBreakpoints();
 }
 
 void InspectorDebuggerAgent::editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames)
@@ -180,9 +200,28 @@ long InspectorDebuggerAgent::pauseOnExceptionsState()
 
 void InspectorDebuggerAgent::clearForPageNavigation()
 {
+    m_sourceIDToURL.clear();
     m_scriptIDToContent.clear();
-    m_urlToSourceIDs.clear();
     m_stickyBreakpoints.clear();
+    m_breakpointsMapping.clear();
+    m_breakpointsLoaded = false;
+}
+
+String InspectorDebuggerAgent::md5Base16(const String& string)
+{
+    static const char digits[] = "0123456789abcdef";
+
+    MD5 md5;
+    md5.addBytes(reinterpret_cast<const uint8_t*>(string.characters()), string.length() * 2);
+    Vector<uint8_t, 16> digest;
+    md5.checksum(digest);
+
+    Vector<char, 32> result;
+    for (int i = 0; i < 16; ++i) {
+        result.append(digits[(digest[i] >> 4) & 0xf]);
+        result.append(digits[digest[i] & 0xf]);
+    }
+    return String(result.data(), result.size());
 }
 
 PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()
@@ -197,6 +236,39 @@ PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()
     return injectedScript.callFrames();
 }
 
+void InspectorDebuggerAgent::loadBreakpoints()
+{
+    if (m_breakpointsLoaded)
+        return;
+    m_breakpointsLoaded = true;
+
+    RefPtr<InspectorValue> parsedSetting = m_inspectorController->loadBreakpoints();
+    if (!parsedSetting)
+        return;
+    RefPtr<InspectorObject> breakpoints = parsedSetting->asObject();
+    if (!breakpoints)
+        return;
+    for (InspectorObject::iterator it = breakpoints->begin(); it != breakpoints->end(); ++it) {
+        RefPtr<InspectorObject> breakpointsForURL = it->second->asObject();
+        if (!breakpointsForURL)
+            continue;
+        HashMap<String, SourceBreakpoints>::iterator sourceBreakpointsIt = m_stickyBreakpoints.set(it->first, SourceBreakpoints()).first;
+        ScriptBreakpoint::sourceBreakpointsFromInspectorObject(breakpointsForURL, &sourceBreakpointsIt->second);
+    }
+}
+
+void InspectorDebuggerAgent::saveBreakpoints()
+{
+    RefPtr<InspectorObject> breakpoints = InspectorObject::create();
+    for (HashMap<String, SourceBreakpoints>::iterator it(m_stickyBreakpoints.begin()); it != m_stickyBreakpoints.end(); ++it) {
+        if (it->second.isEmpty())
+            continue;
+        RefPtr<InspectorObject> breakpointsForURL = ScriptBreakpoint::inspectorObjectFromSourceBreakpoints(it->second);
+        breakpoints->setObject(it->first, breakpointsForURL);
+    }
+    m_inspectorController->saveBreakpoints(breakpoints);
+}
+
 // JavaScriptDebugListener functions
 
 void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType worldType)
@@ -209,20 +281,23 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String
     if (url.isEmpty())
         return;
 
-    URLToSourceIDsMap::iterator urlToSourceIDsIterator = m_urlToSourceIDs.find(url);
-    if (urlToSourceIDsIterator == m_urlToSourceIDs.end())
-        urlToSourceIDsIterator = m_urlToSourceIDs.set(url, Vector<String>()).first;
-    urlToSourceIDsIterator->second.append(sourceID);
-
-    HashMap<String, ScriptBreakpoints>::iterator stickyBreakpointsIterator = m_stickyBreakpoints.find(url);
-    if (stickyBreakpointsIterator == m_stickyBreakpoints.end())
-        return;
-
-    const ScriptBreakpoints& breakpoints = stickyBreakpointsIterator->second;
-    for (ScriptBreakpoints::const_iterator it = breakpoints.begin(); it != breakpoints.end(); ++it) {
-        const Breakpoint& breakpoint = it->second;
-        restoreBreakpoint(sourceID, it->first, breakpoint.first, breakpoint.second);
+    loadBreakpoints();
+    HashMap<String, SourceBreakpoints>::iterator it = m_stickyBreakpoints.find(md5Base16(url));
+    if (it != m_stickyBreakpoints.end()) {
+        for (SourceBreakpoints::iterator breakpointIt = it->second.begin(); breakpointIt != it->second.end(); ++breakpointIt) {
+            int lineNumber = breakpointIt->first;
+            if (firstLine > lineNumber)
+                continue;
+            unsigned actualLineNumber = 0;
+            bool success = ScriptDebugServer::shared().setBreakpoint(sourceID, breakpointIt->second, lineNumber, &actualLineNumber);
+            if (!success)
+                continue;
+            m_frontend->breakpointRestored(sourceID, url, actualLineNumber, breakpointIt->second.enabled, breakpointIt->second.condition);
+            String breakpointId = formatBreakpointId(sourceID, actualLineNumber);
+            m_breakpointsMapping.set(breakpointId, lineNumber);
+        }
     }
+    m_sourceIDToURL.set(sourceID, url);
 }
 
 void InspectorDebuggerAgent::failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage)
