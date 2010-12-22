@@ -21,11 +21,11 @@
 #define SVGPathSegList_h
 
 #if ENABLE(SVG)
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
 #include "SVGPathSeg.h"
 #include "SVGPropertyTraits.h"
+
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

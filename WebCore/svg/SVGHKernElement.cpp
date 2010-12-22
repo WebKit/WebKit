@@ -24,9 +24,9 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGHKernElement.h"
 
+#include "SVGFontData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
-#include "SVGFontData.h"
 #include "SVGNames.h"
 #include "SimpleFontData.h"
 #include "XMLNames.h"

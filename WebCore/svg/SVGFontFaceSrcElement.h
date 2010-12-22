@@ -25,19 +25,19 @@
 
 namespace WebCore {
 
-    class CSSValueList;
+class CSSValueList;
 
-    class SVGFontFaceSrcElement : public SVGElement {
-    public:
-        static PassRefPtr<SVGFontFaceSrcElement> create(const QualifiedName&, Document*);
+class SVGFontFaceSrcElement : public SVGElement {
+public:
+    static PassRefPtr<SVGFontFaceSrcElement> create(const QualifiedName&, Document*);
 
-        PassRefPtr<CSSValueList> srcValue() const;
-        
-    private:
-        SVGFontFaceSrcElement(const QualifiedName&, Document*);
-        
-        virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-    };
+    PassRefPtr<CSSValueList> srcValue() const;
+    
+private:
+    SVGFontFaceSrcElement(const QualifiedName&, Document*);
+    
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+};
 
 } // namespace WebCore
 

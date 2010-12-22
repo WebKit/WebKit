@@ -1,3 +1,86 @@
+2010-12-22  Dirk Schulze  <krit@wbekit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Cleanup SVG code according to the webkit style rules 2
+        https://bugs.webkit.org/show_bug.cgi?id=51461
+
+        Second patch to fix indention and other style issues according to the WebKit style rules in the SVG code.
+
+        No changes of functionality, so no new tests. 
+
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::stringToChannel):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFEFuncAElement.h:
+        * svg/SVGFEFuncBElement.h:
+        * svg/SVGFEFuncGElement.h:
+        * svg/SVGFEFuncRElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::build):
+        * svg/SVGFEMorphologyElement.cpp:
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::findLights):
+        * svg/SVGFESpotLightElement.h:
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox):
+        (WebCore::SVGFitToViewBox::isKnownAttribute):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::cssPropertyIdForSVGAttributeName):
+        * svg/SVGFontFaceElement.h:
+        (WebCore::SVGFontFaceElement::associatedFontElement):
+        * svg/SVGFontFaceNameElement.h:
+        * svg/SVGFontFaceSrcElement.cpp:
+        * svg/SVGFontFaceSrcElement.h:
+        * svg/SVGFontFaceUriElement.h:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::parseArabicForm):
+        (WebCore::parseOrientation):
+        * svg/SVGGlyphElement.h:
+        (WebCore::SVGGlyphIdentifier::SVGGlyphIdentifier):
+        (WebCore::SVGGlyphIdentifier::inheritedValue):
+        (WebCore::SVGGlyphIdentifier::operator==):
+        (WebCore::SVGGlyphElement::rendererIsNeeded):
+        * svg/SVGGlyphMap.h:
+        (WebCore::GlyphMapNode::GlyphMapNode):
+        (WebCore::GlyphMapNode::create):
+        (WebCore::SVGGlyphMap::SVGGlyphMap):
+        (WebCore::SVGGlyphMap::add):
+        (WebCore::SVGGlyphMap::compareGlyphPriority):
+        (WebCore::SVGGlyphMap::get):
+        (WebCore::SVGGlyphMap::clear):
+        * svg/SVGGradientElement.cpp:
+        * svg/SVGHKernElement.cpp:
+        * svg/SVGHKernElement.h:
+        (WebCore::SVGHKernElement::rendererIsNeeded):
+        * svg/SVGImageElement.h:
+        * svg/SVGImageLoader.cpp:
+        * svg/SVGImageLoader.h:
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::parseMappedAttribute):
+        (WebCore::SVGLangSpace::isKnownAttribute):
+        * svg/SVGLangSpace.h:
+        (WebCore::SVGLangSpace::xmllang):
+        * svg/SVGMetadataElement.h:
+        * svg/SVGMissingGlyphElement.h:
+        (WebCore::SVGMissingGlyphElement::rendererIsNeeded):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::cssText):
+        * svg/SVGPaint.h:
+        (WebCore::SVGPaint::create):
+        (WebCore::SVGPaint::paintType):
+        (WebCore::SVGPaint::isSVGPaint):
+        * svg/SVGParserUtilities.cpp:
+        * svg/SVGParserUtilities.h:
+        (WebCore::isWhitespace):
+        (WebCore::skipOptionalSpaces):
+        (WebCore::skipOptionalSpacesOrDelimiter):
+        * svg/SVGPathElement.cpp:
+        * svg/SVGPathParserFactory.h:
+        * svg/SVGPathSegList.h:
+
 2010-12-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Sam Weinig.

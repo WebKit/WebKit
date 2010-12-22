@@ -25,17 +25,17 @@
 
 namespace WebCore {
 
-    class CSSFontFaceSrcValue;
+class CSSFontFaceSrcValue;
 
-    class SVGFontFaceNameElement : public SVGElement {
-    public:
-        static PassRefPtr<SVGFontFaceNameElement> create(const QualifiedName&, Document*);
-        
-        PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
+class SVGFontFaceNameElement : public SVGElement {
+public:
+    static PassRefPtr<SVGFontFaceNameElement> create(const QualifiedName&, Document*);
+    
+    PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
 
-    private:
-        SVGFontFaceNameElement(const QualifiedName&, Document*);
-    };
+private:
+    SVGFontFaceNameElement(const QualifiedName&, Document*);
+};
 
 } // namespace WebCore
 

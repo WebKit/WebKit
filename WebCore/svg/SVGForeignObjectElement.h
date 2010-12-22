@@ -23,11 +23,11 @@
 #if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
-#include "SVGTests.h"
-#include "SVGLangSpace.h"
-#include "SVGURIReference.h"
-#include "SVGStyledTransformableElement.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGLangSpace.h"
+#include "SVGStyledTransformableElement.h"
+#include "SVGTests.h"
+#include "SVGURIReference.h"
 
 namespace WebCore {
 

@@ -55,7 +55,8 @@ bool SVGLangSpace::parseMappedAttribute(Attribute* attr)
     if (attr->name().matches(XMLNames::langAttr)) {
         setXmllang(attr->value());
         return true;
-    } else if (attr->name().matches(XMLNames::spaceAttr)) {
+    }
+    if (attr->name().matches(XMLNames::spaceAttr)) {
         setXmlspace(attr->value());
         return true;
     }
@@ -65,8 +66,7 @@ bool SVGLangSpace::parseMappedAttribute(Attribute* attr)
 
 bool SVGLangSpace::isKnownAttribute(const QualifiedName& attrName)
 {
-    return (attrName.matches(XMLNames::langAttr) ||
-            attrName.matches(XMLNames::spaceAttr));
+    return attrName.matches(XMLNames::langAttr) || attrName.matches(XMLNames::spaceAttr);
 }
 
 }

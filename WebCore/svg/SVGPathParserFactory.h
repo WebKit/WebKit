@@ -23,9 +23,10 @@
 #if ENABLE(SVG)
 #include "Path.h"
 #include "PlatformString.h"
+#include "SVGPathByteStream.h"
 #include "SVGPathConsumer.h"
 #include "SVGPathSegList.h"
-#include "SVGPathByteStream.h"
+
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

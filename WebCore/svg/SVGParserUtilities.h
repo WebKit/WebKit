@@ -30,43 +30,43 @@ typedef Vector<UnicodeRange> UnicodeRanges;
 
 namespace WebCore {
 
-    class SVGPointList;
+class SVGPointList;
 
-    bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip = true);
-    bool parseNumberOptionalNumber(const String& s, float& h, float& v);
-    bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag);
+bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip = true);
+bool parseNumberOptionalNumber(const String& s, float& h, float& v);
+bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag);
 
-    // SVG allows several different whitespace characters:
-    // http://www.w3.org/TR/SVG/paths.html#PathDataBNF
-    inline bool isWhitespace(const UChar& c)
-    {
-        return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
-    }
+// SVG allows several different whitespace characters:
+// http://www.w3.org/TR/SVG/paths.html#PathDataBNF
+inline bool isWhitespace(const UChar& c)
+{
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
 
-    inline bool skipOptionalSpaces(const UChar*& ptr, const UChar* end)
-    {
-        while (ptr < end && isWhitespace(*ptr))
+inline bool skipOptionalSpaces(const UChar*& ptr, const UChar* end)
+{
+    while (ptr < end && isWhitespace(*ptr))
+        ptr++;
+    return ptr < end;
+}
+
+inline bool skipOptionalSpacesOrDelimiter(const UChar*& ptr, const UChar* end, UChar delimiter = ',')
+{
+    if (ptr < end && !isWhitespace(*ptr) && *ptr != delimiter)
+        return false;
+    if (skipOptionalSpaces(ptr, end)) {
+        if (ptr < end && *ptr == delimiter) {
             ptr++;
-        return ptr < end;
-    }
-
-    inline bool skipOptionalSpacesOrDelimiter(const UChar*& ptr, const UChar* end, UChar delimiter = ',')
-    {
-        if (ptr < end && !isWhitespace(*ptr) && *ptr != delimiter)
-            return false;
-        if (skipOptionalSpaces(ptr, end)) {
-            if (ptr < end && *ptr == delimiter) {
-                ptr++;
-                skipOptionalSpaces(ptr, end);
-            }
+            skipOptionalSpaces(ptr, end);
         }
-        return ptr < end;
     }
+    return ptr < end;
+}
 
-    bool pointsListFromSVGData(SVGPointList& pointsList, const String& points);
-    Vector<String> parseDelimitedString(const String& input, const char seperator);
-    bool parseKerningUnicodeString(const String& input, UnicodeRanges&, HashSet<String>& stringList);
-    bool parseGlyphName(const String& input, HashSet<String>& values);
+bool pointsListFromSVGData(SVGPointList& pointsList, const String& points);
+Vector<String> parseDelimitedString(const String& input, const char seperator);
+bool parseKerningUnicodeString(const String& input, UnicodeRanges&, HashSet<String>& stringList);
+bool parseGlyphName(const String& input, HashSet<String>& values);
 
 } // namespace WebCore
 

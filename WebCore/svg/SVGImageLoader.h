@@ -25,16 +25,16 @@
 
 namespace WebCore {
 
-    class SVGImageElement;
+class SVGImageElement;
 
-    class SVGImageLoader : public ImageLoader {
-    public:
-        SVGImageLoader(SVGImageElement*);
+class SVGImageLoader : public ImageLoader {
+public:
+    SVGImageLoader(SVGImageElement*);
 
-    private:
-        virtual void dispatchLoadEvent();
-        virtual String sourceURI(const AtomicString&) const;
-    };
+private:
+    virtual void dispatchLoadEvent();
+    virtual String sourceURI(const AtomicString&) const;
+};
 
 } // namespace WebCore
 

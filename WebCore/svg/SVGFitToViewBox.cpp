@@ -52,8 +52,7 @@ bool SVGFitToViewBox::parseViewBox(Document* doc, const UChar*& c, const UChar* 
     float y = 0.0f;
     float width = 0.0f;
     float height = 0.0f;
-    bool valid = (parseNumber(c, end, x) && parseNumber(c, end, y) &&
-          parseNumber(c, end, width) && parseNumber(c, end, height, false));
+    bool valid = parseNumber(c, end, x) && parseNumber(c, end, y) && parseNumber(c, end, width) && parseNumber(c, end, height, false);
     if (!validate) {
         viewBox = FloatRect(x, y, width, height);
         return true;
@@ -108,8 +107,7 @@ bool SVGFitToViewBox::parseMappedAttribute(Document* document, Attribute* attr)
 
 bool SVGFitToViewBox::isKnownAttribute(const QualifiedName& attrName)
 {
-    return (attrName == SVGNames::viewBoxAttr ||
-            attrName == SVGNames::preserveAspectRatioAttr);
+    return attrName == SVGNames::viewBoxAttr || attrName == SVGNames::preserveAspectRatioAttr;
 }
 
 }

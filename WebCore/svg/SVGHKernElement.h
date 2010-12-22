@@ -27,20 +27,20 @@
 
 namespace WebCore {
 
-    class SVGHKernElement : public SVGElement {
-    public:
-        static PassRefPtr<SVGHKernElement> create(const QualifiedName&, Document*);
+class SVGHKernElement : public SVGElement {
+public:
+    static PassRefPtr<SVGHKernElement> create(const QualifiedName&, Document*);
 
-        void buildHorizontalKerningPair(KerningPairVector&);
+    void buildHorizontalKerningPair(KerningPairVector&);
 
-    private:
-        SVGHKernElement(const QualifiedName&, Document*);
+private:
+    SVGHKernElement(const QualifiedName&, Document*);
 
-        virtual void insertedIntoDocument();
-        virtual void removedFromDocument();
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
-        virtual bool rendererIsNeeded(RenderStyle*) { return false; }
-    };
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+};
 
 } // namespace WebCore
 

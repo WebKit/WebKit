@@ -38,8 +38,8 @@
 #include "SVGPathSegLinetoHorizontal.h"
 #include "SVGPathSegLinetoVertical.h"
 #include "SVGPathSegList.h"
-#include "SVGPathSegListPropertyTearOff.h"
 #include "SVGPathSegListBuilder.h"
+#include "SVGPathSegListPropertyTearOff.h"
 #include "SVGPathSegMoveto.h"
 #include "SVGSVGElement.h"
 

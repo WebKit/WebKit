@@ -80,11 +80,11 @@ static inline SVGGlyphIdentifier::ArabicForm parseArabicForm(const AtomicString&
 {
     if (value == "medial")
         return SVGGlyphIdentifier::Medial;
-    else if (value == "terminal")
+    if (value == "terminal")
         return SVGGlyphIdentifier::Terminal;
-    else if (value == "isolated")
+    if (value == "isolated")
         return SVGGlyphIdentifier::Isolated;
-    else if (value == "initial")
+    if (value == "initial")
         return SVGGlyphIdentifier::Initial;
 
     return SVGGlyphIdentifier::None;
@@ -94,7 +94,7 @@ static inline SVGGlyphIdentifier::Orientation parseOrientation(const AtomicStrin
 {
     if (value == "h")
         return SVGGlyphIdentifier::Horizontal;
-    else if (value == "v")
+    if (value == "v")
         return SVGGlyphIdentifier::Vertical;
 
     return SVGGlyphIdentifier::Both;

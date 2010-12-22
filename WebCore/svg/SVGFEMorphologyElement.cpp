@@ -133,6 +133,6 @@ PassRefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterB
     return effect.release();
 }
 
-} //namespace WebCore
+} // namespace WebCore
 
 #endif // ENABLE(SVG)

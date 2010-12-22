@@ -27,8 +27,9 @@
 
 #include "Document.h"
 #include "FloatPoint.h"
-#include <limits>
 #include "SVGPointList.h"
+
+#include <limits>
 #include <wtf/ASCIICType.h>
 
 namespace WebCore {

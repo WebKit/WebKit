@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "SVGPaint.h"
+
 #include "SVGURIReference.h"
 
 namespace WebCore {
@@ -99,9 +100,9 @@ String SVGPaint::cssText() const
 {
     if (m_paintType == SVG_PAINTTYPE_NONE)
         return "none";
-    else if (m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
+    if (m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
         return "currentColor";
-    else if (m_paintType == SVG_PAINTTYPE_URI)
+    if (m_paintType == SVG_PAINTTYPE_URI)
         return "url(" + m_uri + ")";
 
     return SVGColor::cssText();

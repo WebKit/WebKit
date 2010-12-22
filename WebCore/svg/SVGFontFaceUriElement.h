@@ -27,28 +27,28 @@
 
 namespace WebCore {
 
-    class CSSFontFaceSrcValue;
-    class CachedFont;
+class CSSFontFaceSrcValue;
+class CachedFont;
 
-    class SVGFontFaceUriElement : public SVGElement, public CachedResourceClient {
-    public:
-        static PassRefPtr<SVGFontFaceUriElement> create(const QualifiedName&, Document*);
+class SVGFontFaceUriElement : public SVGElement, public CachedResourceClient {
+public:
+    static PassRefPtr<SVGFontFaceUriElement> create(const QualifiedName&, Document*);
 
-        virtual ~SVGFontFaceUriElement();
+    virtual ~SVGFontFaceUriElement();
 
-        PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
+    PassRefPtr<CSSFontFaceSrcValue> srcValue() const;
 
-    private:
-        SVGFontFaceUriElement(const QualifiedName&, Document*);
-        
-        virtual void parseMappedAttribute(Attribute*);
-        virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-        virtual void insertedIntoDocument();
+private:
+    SVGFontFaceUriElement(const QualifiedName&, Document*);
+    
+    virtual void parseMappedAttribute(Attribute*);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void insertedIntoDocument();
 
-        void loadFont();
+    void loadFont();
 
-        CachedResourceHandle<CachedFont> m_cachedFont;
-    };
+    CachedResourceHandle<CachedFont> m_cachedFont;
+};
 
 } // namespace WebCore
 

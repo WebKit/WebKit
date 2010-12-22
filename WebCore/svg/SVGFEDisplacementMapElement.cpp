@@ -50,11 +50,11 @@ ChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& k
 {
     if (key == "R")
         return CHANNEL_R;
-    else if (key == "G")
+    if (key == "G")
         return CHANNEL_G;
-    else if (key == "B")
+    if (key == "B")
         return CHANNEL_B;
-    else if (key == "A")
+    if (key == "A")
         return CHANNEL_A;
 
     return CHANNEL_UNKNOWN;

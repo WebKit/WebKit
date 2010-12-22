@@ -27,44 +27,44 @@
 
 namespace WebCore {
 
-    class CSSFontFaceRule;
-    class CSSMutableStyleDeclaration;
-    class SVGFontElement;
+class CSSFontFaceRule;
+class CSSMutableStyleDeclaration;
+class SVGFontElement;
 
-    class SVGFontFaceElement : public SVGElement {
-    public:
-        static PassRefPtr<SVGFontFaceElement> create(const QualifiedName&, Document*);
+class SVGFontFaceElement : public SVGElement {
+public:
+    static PassRefPtr<SVGFontFaceElement> create(const QualifiedName&, Document*);
 
-        unsigned unitsPerEm() const;
-        int xHeight() const;
-        float horizontalOriginX() const;
-        float horizontalOriginY() const;
-        float horizontalAdvanceX() const;
-        float verticalOriginX() const;
-        float verticalOriginY() const;
-        float verticalAdvanceY() const;
-        int ascent() const;
-        int descent() const;
-        String fontFamily() const;
+    unsigned unitsPerEm() const;
+    int xHeight() const;
+    float horizontalOriginX() const;
+    float horizontalOriginY() const;
+    float horizontalAdvanceX() const;
+    float verticalOriginX() const;
+    float verticalOriginY() const;
+    float verticalAdvanceY() const;
+    int ascent() const;
+    int descent() const;
+    String fontFamily() const;
 
-        SVGFontElement* associatedFontElement() const { return m_fontElement; }
-        void rebuildFontFace();
-        void removeFromMappedElementSheet();
+    SVGFontElement* associatedFontElement() const { return m_fontElement; }
+    void rebuildFontFace();
+    void removeFromMappedElementSheet();
 
-    private:
-        SVGFontFaceElement(const QualifiedName&, Document*);
+private:
+    SVGFontFaceElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*);
+    virtual void parseMappedAttribute(Attribute*);
 
-        virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
-        virtual void insertedIntoDocument();
-        virtual void removedFromDocument();
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
-        RefPtr<CSSFontFaceRule> m_fontFaceRule;
-        RefPtr<CSSMutableStyleDeclaration> m_styleDeclaration;
+    RefPtr<CSSFontFaceRule> m_fontFaceRule;
+    RefPtr<CSSMutableStyleDeclaration> m_styleDeclaration;
 
-        SVGFontElement* m_fontElement;
-    };
+    SVGFontElement* m_fontElement;
+};
 
 } // namespace WebCore
 
