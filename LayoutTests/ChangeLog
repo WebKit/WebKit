@@ -1,3 +1,22 @@
+2010-12-22  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        Transform applied via CSSMatrix does not take full page zoom into account
+        https://bugs.webkit.org/show_bug.cgi?id=24808
+
+        The bug has been fixed with r74430 and r74451.
+        These two are just the tests.
+
+        * transforms/2d/cssmatrix-2d-zoom-expected.checksum: Added.
+        * transforms/2d/cssmatrix-2d-zoom-expected.png: Added.
+        * transforms/2d/cssmatrix-2d-zoom-expected.txt: Added.
+        * transforms/2d/cssmatrix-2d-zoom.html: Added.
+        * transforms/3d/general/cssmatrix-3d-zoom-expected.checksum: Added.
+        * transforms/3d/general/cssmatrix-3d-zoom-expected.png: Added.
+        * transforms/3d/general/cssmatrix-3d-zoom-expected.txt: Added.
+        * transforms/3d/general/cssmatrix-3d-zoom.html: Added.
+
 2010-12-22  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
