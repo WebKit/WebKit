@@ -1,3 +1,4 @@
+EXPORTS
 
     ??0CString@WTF@@QAE@PBD@Z
     ??0CString@WTF@@QAE@PBDI@Z
@@ -358,4 +359,3 @@
     WTFReportAssertionFailure
     WTFReportAssertionFailureWithMessage
     WTFReportError
-EXPORTS
