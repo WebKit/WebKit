@@ -264,7 +264,7 @@ void FunctionExecutable::markAggregate(MarkStack& markStack)
         m_codeBlockForConstruct->markAggregate(markStack);
 }
 
-void FunctionExecutable::recompile(ExecState*)
+void FunctionExecutable::discardCode()
 {
     m_codeBlockForCall.clear();
     m_codeBlockForConstruct.clear();

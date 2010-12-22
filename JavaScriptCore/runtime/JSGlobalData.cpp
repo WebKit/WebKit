@@ -31,6 +31,7 @@
 
 #include "ArgList.h"
 #include "Collector.h"
+#include "CollectorHeapIterator.h"
 #include "CommonIdentifiers.h"
 #include "FunctionConstructor.h"
 #include "GetterSetter.h"
@@ -311,6 +312,22 @@ void JSGlobalData::dumpSampleData(ExecState* exec)
     interpreter->dumpSampleData(exec);
 }
 
+void JSGlobalData::recompileAllJSFunctions()
+{
+    // If JavaScript is running, it's not safe to recompile, since we'll end
+    // up throwing away code that is live on the stack.
+    ASSERT(!dynamicGlobalObject);
+
+    LiveObjectIterator it = heap.primaryHeapBegin();
+    LiveObjectIterator heapEnd = heap.primaryHeapEnd();
+    for ( ; it != heapEnd; ++it) {
+        if ((*it)->inherits(&JSFunction::info)) {
+            JSFunction* function = asFunction(*it);
+            if (!function->executable()->isHostFunction())
+                function->jsExecutable()->discardCode();
+        }
+    }
+}
 
 #if ENABLE(REGEXP_TRACING)
 void JSGlobalData::addRegExpToTrace(PassRefPtr<RegExp> regExp)

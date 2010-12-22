@@ -67,6 +67,11 @@ bool ExecutableAllocator::isValid() const
     return true;
 }
     
+bool ExecutableAllocator::underMemoryPressure() const
+{
+    return false;
+}
+    
 size_t ExecutableAllocator::committedByteCount()
 {
     return 0;

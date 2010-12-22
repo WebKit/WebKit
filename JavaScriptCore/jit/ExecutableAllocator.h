@@ -184,7 +184,9 @@ public:
     }
 
     bool isValid() const;
-    
+
+    static bool underMemoryPressure();
+
     PassRefPtr<ExecutablePool> poolForSize(size_t n)
     {
         // Try to fit in the existing small allocator

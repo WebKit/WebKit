@@ -348,7 +348,7 @@ namespace JSC {
         UString paramString() const;
         SharedSymbolTable* symbolTable() const { return m_symbolTable; }
 
-        void recompile(ExecState*);
+        void discardCode();
         void markAggregate(MarkStack&);
         static PassRefPtr<FunctionExecutable> fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
 

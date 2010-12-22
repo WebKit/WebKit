@@ -248,6 +248,7 @@ namespace JSC {
         void startSampling();
         void stopSampling();
         void dumpSampleData(ExecState* exec);
+        void recompileAllJSFunctions();
         RegExpCache* regExpCache() { return m_regExpCache; }
 #if ENABLE(REGEXP_TRACING)
         void addRegExpToTrace(PassRefPtr<RegExp> regExp);

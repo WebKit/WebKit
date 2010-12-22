@@ -431,7 +431,8 @@ void ExecutableAllocator::intializePageSize()
 }
 
 static FixedVMPoolAllocator* allocator = 0;
-    
+static size_t allocatedCount = 0;
+
 bool ExecutableAllocator::isValid() const
 {
     SpinLockHolder lock_holder(&spinlock);
@@ -440,10 +441,18 @@ bool ExecutableAllocator::isValid() const
     return allocator->isValid();
 }
 
+bool ExecutableAllocator::underMemoryPressure()
+{
+    // Technically we should take the spin lock here, but we don't care if we get stale data.
+    // This is only really a heuristic anyway.
+    return allocatedCount > (VM_POOL_SIZE / 2);
+}
+
 ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
 {
     SpinLockHolder lock_holder(&spinlock);
     ASSERT(allocator);
+    allocatedCount += size;
     return allocator->alloc(size);
 }
 
@@ -451,6 +460,7 @@ void ExecutablePool::systemRelease(ExecutablePool::Allocation& allocation)
 {
     SpinLockHolder lock_holder(&spinlock);
     ASSERT(allocator);
+    allocatedCount -= allocation.size();
     allocator->free(allocation);
 }
 

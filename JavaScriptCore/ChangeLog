@@ -1,5 +1,41 @@
 2010-12-21  Gavin Barraclough  <barraclough@apple.com>
 
+         Reviewed by Geoff Garen.
+ 
+        <rdar://problem/8765333> CRASH running out of executable memory, loading io9.com
+        https://bugs.webkit.org/show_bug.cgi?id=51443
+
+        The problem here is that each page uses a reasonable amount of memory, (~4Mb),
+        and that when miultiple pages are open we keep all JIT code for all functions
+        in all pages alive.
+
+        Add a check to detect high memory pressure situations in the executable allocator
+        (>50% of available memory allocated), and upon a top level entry into JSC (no code
+        running on the stack) in this situation throw away all JIT code.
+
+        * JavaScriptCore.exp:
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions): stop passing exec to recompile.
+        * jit/ExecutableAllocator.h:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::ExecutablePool::systemAlloc): Count allocations.
+        (JSC::ExecutablePool::systemRelease): Count deallocations.
+        (JSC::ExecutablePool::underMemoryPressure): Check memory pressure.
+        * jit/ExecutableAllocatorPosix.cpp:
+        (JSC::ExecutablePool::underMemoryPressure): Stub out; only meaningful with FixedVMPool.
+        * jit/ExecutableAllocatorWin.cpp:
+        (JSC::ExecutablePool::underMemoryPressure): Stub out; only meaningful with FixedVMPool.
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::recompile): Remove ExecState argument to recompile.
+        * runtime/Executable.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::recompileAllJSFunctions): throws away all JIT code.
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope): add check / call to throw away.
+
+2010-12-21  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Geoff Garen.
 
         <rdar://problem/8241425> JIT executable memory excessive usage due to regex caching

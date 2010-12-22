@@ -467,18 +467,7 @@ namespace JSC {
 
     class DynamicGlobalObjectScope : public Noncopyable {
     public:
-        DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject) 
-            : m_dynamicGlobalObjectSlot(callFrame->globalData().dynamicGlobalObject)
-            , m_savedDynamicGlobalObject(m_dynamicGlobalObjectSlot)
-        {
-            if (!m_dynamicGlobalObjectSlot) {
-                m_dynamicGlobalObjectSlot = dynamicGlobalObject;
-
-                // Reset the date cache between JS invocations to force the VM
-                // to observe time zone changes.
-                callFrame->globalData().resetDateCache();
-            }
-        }
+        DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject);
 
         ~DynamicGlobalObjectScope()
         {
