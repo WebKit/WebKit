@@ -1,3 +1,15 @@
+2010-12-22  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51289
+        Initial state of checkValidity() and :invalid are incorrect with <select required>
+
+        * fast/css/pseudo-valid-007-expected.txt:
+        * fast/css/pseudo-valid-007.html:
+        * fast/forms/checkValidity-002-expected.txt:
+        * fast/forms/checkValidity-002.html:
+
 2010-12-22  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Joseph Pecoraro.

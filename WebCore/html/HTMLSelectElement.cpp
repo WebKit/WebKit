@@ -343,6 +343,7 @@ void HTMLSelectElement::recalcListItemsIfNeeded()
 void HTMLSelectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     setRecalcListItems();
+    setNeedsValidityCheck();
     HTMLFormControlElementWithState::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     
     if (AXObjectCache::accessibilityEnabled() && renderer())

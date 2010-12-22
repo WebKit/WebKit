@@ -10,6 +10,10 @@
 <input id="input-empty" name="victim" type="text" required/>
 <input id="input-pattern-mismatch" name="victim" type="text" pattern="Lorem ipsum" value="Loremipsum"/>
 <textarea id="textarea" name="victim" required></textarea>
+<select id="select-no-explicit-value" required>
+  <option>empty</option>
+  <option>another</option>
+</select>
 <select id="select-placeholder" name="victim" required>
   <option value="" selected />
   <option value="X">X</option>
@@ -30,6 +34,7 @@
     shouldBeFalse('checkValidityFor("input-empty")');
     shouldBeFalse('checkValidityFor("input-pattern-mismatch")');
     shouldBeFalse('checkValidityFor("textarea")');
+    shouldBeTrue('checkValidityFor("select-no-explicit-value")');
     shouldBeFalse('checkValidityFor("select-placeholder")');
     shouldBeTrue('checkValidityFor("select-non-placeholder")');
 
