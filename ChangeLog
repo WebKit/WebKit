@@ -1,3 +1,15 @@
+2010-12-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Sets default user agent
+        https://bugs.webkit.org/show_bug.cgi?id=47903
+
+        Add macros for WebKit EFL and User Agent.
+
+        * cmake/OptionsEfl.cmake:
+        * cmakeconfig.h.cmake:
+
 2010-12-20  Adam Barth  <abarth@webkit.org>
 
         Move web sites to Websites directory

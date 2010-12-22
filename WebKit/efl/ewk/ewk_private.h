@@ -156,6 +156,8 @@ void ewk_view_contents_size_changed(Evas_Object *o, Evas_Coord w, Evas_Coord h);
 
 WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o);
 
+const char* ewk_settings_default_user_agent_get();
+
 #ifdef __cplusplus
 
 }

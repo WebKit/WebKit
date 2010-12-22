@@ -1,3 +1,22 @@
+2010-12-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Sets default user agent
+        https://bugs.webkit.org/show_bug.cgi?id=47903
+
+        If applcation(e.g EWebLauncher) doesn't set user agent, WebKit EFL doesn't
+        set user agent. However, we need to set user agent by default. Because, some
+        web sites send different pages according to user agent.
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_settings.cpp:
+        (_ewk_settings_webkit_platform):
+        (_ewk_settings_webkit_os_version):
+        (ewk_settings_default_user_agent_get):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2010-12-16  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed build fix.

@@ -29,15 +29,19 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "KURL.h"
+#include "Language.h"
 #include "ewk_private.h"
-#include <wtf/text/CString.h>
 
+#include <Eina.h>
 #include <eina_safety_checks.h>
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
 #include <unistd.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #if USE(SOUP)
 #include "ResourceHandle.h"
@@ -47,6 +51,30 @@
 static const char* _ewk_default_web_database_path = 0;
 static const char* _ewk_icon_database_path = 0;
 static uint64_t _ewk_default_web_database_quota = 1 * 1024 * 1024;
+
+static WTF::String _ewk_settings_webkit_platform_get()
+{
+    WTF::String ua_platform;
+#if PLATFORM(X11)
+    ua_platform = "X11";
+#else
+    ua_platform = "Unknown";
+#endif
+    return ua_platform;
+}
+
+static WTF::String _ewk_settings_webkit_os_version_get()
+{
+    WTF::String ua_os_version;
+    struct utsname name;
+
+    if (uname(&name) != -1)
+        ua_os_version = WTF::String(name.sysname) + " " + WTF::String(name.machine);
+    else
+        ua_os_version = "Unknown";
+
+    return ua_os_version;
+}
 
 /**
  * Returns the default quota for Web Database databases. By default
@@ -261,3 +289,17 @@ void ewk_settings_proxy_uri_set(const char* proxy)
     EINA_SAFETY_ON_TRUE_RETURN(1);
 #endif
 }
+
+/**
+* @internal
+* Gets the default user agent string.
+*
+* @return A pointer to an eina_stringshare containing the user agent string.
+*/
+const char* ewk_settings_default_user_agent_get()
+{
+    WTF::String ua_version = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
+    WTF::String static_ua = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; U; ", _ewk_settings_webkit_os_version_get(), "; ", WebCore::defaultLanguage(), ") AppleWebKit/", ua_version) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", ua_version);
+
+    return eina_stringshare_add(static_ua.utf8().data());
+} 

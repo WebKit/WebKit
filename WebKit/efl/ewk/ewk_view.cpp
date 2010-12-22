@@ -622,6 +622,8 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.page_cache = priv->page_settings->usesPageCache();
     priv->settings.encoding_detector = priv->page_settings->usesEncodingDetector();
 
+    priv->settings.user_agent = ewk_settings_default_user_agent_get();
+
     // Since there's no scale separated from zooming in webkit-efl, this functionality of
     // viewport meta tag is implemented using zoom. When scale zoom is supported by webkit-efl,
     // this functionality will be modified by the scale zoom patch.
