@@ -2186,7 +2186,7 @@ public:
     {
         generate();
 
-        LinkBuffer patchBuffer(this, globalData->executableAllocator.poolForSize(size()), 0);
+        LinkBuffer patchBuffer(this, globalData->regexAllocator.poolForSize(size()), 0);
 
         for (unsigned i = 0; i < m_expressionState.m_backtrackRecords.size(); ++i)
             patchBuffer.patch(m_expressionState.m_backtrackRecords[i].dataLabel, patchBuffer.locationOf(m_expressionState.m_backtrackRecords[i].backtrackLocation));

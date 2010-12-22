@@ -1,5 +1,28 @@
 2010-12-21  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/8241425> JIT executable memory excessive usage due to regex caching
+        https://bugs.webkit.org/show_bug.cgi?id=51434
+
+        Reduce the amount of memory the RegExpCache can hold on to on iOS.
+        Currently the RegExpCache can hold 256 RegExp objects. If each falls into a separate
+        ExecutablePool, with a common size of 16Kb, this means we end up holding onto 4Mb of
+        memory. Firstly, we can reduce this by simply reducing the size of the cache to 32
+        entries. Secondly, we can use a separate set of ExecutablePools for JIT code generated
+        from RegExp objects. This helps in two ways (1) it increases the probability that
+        RegExps in the cache share the same pool, and (2) it means that a RegExp can't end
+        up holding on to a large ExecutablePool containing a translation of JS code.
+        (A RegExp could end up keeping a larger RegExp alive that happened to be sharing the
+        same pool, but large RegExp patterns are less common).
+
+        * runtime/JSGlobalData.h:
+        * runtime/RegExpCache.h:
+        * yarr/RegexJIT.cpp:
+        (JSC::Yarr::RegexGenerator::compile):
+
+2010-12-21  Gavin Barraclough  <barraclough@apple.com>
+
         Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

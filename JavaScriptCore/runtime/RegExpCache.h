@@ -47,7 +47,14 @@ public:
 
 private:
     static const unsigned maxCacheablePatternLength = 256;
+
+#if PLATFORM(IOS)
+    // The RegExpCache can currently hold onto multiple Mb of memory;
+    // as a short-term fix some embedded platforms may wish to reduce the cache size.
+    static const int maxCacheableEntries = 32;
+#else
     static const int maxCacheableEntries = 256;
+#endif
 
     FixedArray<RegExpKey, maxCacheableEntries> patternKeyArray;
     RegExpCacheMap m_cacheMap;

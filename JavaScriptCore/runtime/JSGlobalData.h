@@ -170,6 +170,7 @@ namespace JSC {
         
 #if ENABLE(ASSEMBLER)
         ExecutableAllocator executableAllocator;
+        ExecutableAllocator regexAllocator;
 #endif
 
 #if !ENABLE(JIT)
