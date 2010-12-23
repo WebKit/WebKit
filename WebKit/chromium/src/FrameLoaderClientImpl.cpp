@@ -1349,11 +1349,11 @@ void FrameLoaderClientImpl::transitionToCommittedForNewPage()
     makeDocumentView();
 }
 
-void WebFrameLoaderClientImpl::didSaveToPageCache()
+void FrameLoaderClientImpl::didSaveToPageCache()
 {
 }
 
-void WebFrameLoaderClientImpl::didRestoreFromPageCache()
+void FrameLoaderClientImpl::didRestoreFromPageCache()
 {
 }
 

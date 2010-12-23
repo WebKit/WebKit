@@ -1,3 +1,11 @@
+2010-12-23  Sam Weinig  <sam@webkit.org>
+
+        Fix build.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didSaveToPageCache):
+        (WebKit::FrameLoaderClientImpl::didRestoreFromPageCache):
+
 2010-12-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
