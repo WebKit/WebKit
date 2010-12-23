@@ -52,6 +52,7 @@ messages -> WebPage {
     # Callbacks.
     GetRenderTreeExternalRepresentation(uint64_t callbackID)
     GetContentsAsString(uint64_t callbackID)
+    GetSelectionOrContentsAsString(uint64_t callbackID)
     GetSourceForFrame(uint64_t frameID, uint64_t callbackID)
     GetWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
     RunJavaScriptInMainFrame(WTF::String script, uint64_t callbackID)

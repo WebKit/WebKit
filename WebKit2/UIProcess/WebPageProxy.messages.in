@@ -109,13 +109,14 @@ messages -> WebPageProxy {
 
     # Callback messages.
     DidGetContentsAsString(WTF::String resultString, uint64_t callbackID)
+    DidGetSelectionOrContentsAsString(WTF::String resultString, uint64_t callbackID)
     DidGetRenderTreeExternalRepresentation(WTF::String resultString, uint64_t callbackID)
     DidGetSourceForFrame(WTF::String resultString, uint64_t callbackID)
     DidGetWebArchiveOfFrame(CoreIPC::DataReference archiveData, uint64_t callbackID)
     DidRunJavaScriptInMainFrame(WTF::String resultString, uint64_t callbackID)
 
 #if PLATFORM(MAC)
-    # Keyboard support
+    # Keyboard support messages.
     InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline> underlines)
 #endif
     
@@ -142,33 +143,40 @@ messages -> WebPageProxy {
     DidChangeCompositionSelection(bool hasChanged)
 #endif
 
-    # Find.
+    # Find messages.
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)
     DidFindString(WTF::String string, uint32_t matchCount)
     DidFailToFindString(WTF::String string)
 
-    # PopupMenu.
+    # PopupMenu messages.
     ShowPopupMenu(WebCore::IntRect rect, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)
     HidePopupMenu()
     
-    # ContextMenu
+    # ContextMenu messages.
     ShowContextMenu(WebCore::IntPoint point, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
 
 #if USE(ACCELERATED_COMPOSITING)
-    # Accelerated compsiting messages.
+    # Accelerated compositing messages.
     DidChangeAcceleratedCompositing(bool compositing) -> (WebKit::DrawingAreaInfo newDrawingArea)
 #endif
 
-    # Authentication
+    # Authentication messages.
     CanAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, WebCore::ProtectionSpace protectionSpace) -> (bool canAuthenticate)
     DidReceiveAuthenticationChallenge(uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
-    # Databases
+    # Database messages.
     ExceededDatabaseQuota(uint64_t frameID, WTF::String originIdentifier, WTF::String databaseName, WTF::String databaseDisplayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage) -> (uint64_t newQuota)
 
-    # Complex text input support for plug-ins.
+    # Plug-in complex text input support messages.
 #if PLATFORM(MAC)
     SetComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
+#endif
+
+    # Speech messages.
+#if PLATFORM(MAC)
+    GetIsSpeaking() -> (bool isSpeaking)
+    Speak(WTF::String string)
+    StopSpeaking()
 #endif
 }

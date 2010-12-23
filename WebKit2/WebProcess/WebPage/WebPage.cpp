@@ -284,7 +284,7 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
     // drawing area types.
     DrawingAreaInfo newDrawingAreaInfo;
 
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::DidChangeAcceleratedCompositing(compositing), Messages::WebPageProxy::DidChangeAcceleratedCompositing::Reply(newDrawingAreaInfo), m_pageID))
+    if (!sendSync(Messages::WebPageProxy::DidChangeAcceleratedCompositing(compositing), Messages::WebPageProxy::DidChangeAcceleratedCompositing::Reply(newDrawingAreaInfo)))
         return;
     
     if (newDrawingAreaInfo.type != drawingArea()->info().type) {
@@ -926,6 +926,14 @@ void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
     send(Messages::WebPageProxy::DidGetRenderTreeExternalRepresentation(resultString, callbackID));
 }
 
+void WebPage::getSelectionOrContentsAsString(uint64_t callbackID)
+{
+    String resultString = m_mainFrame->selectionAsString();
+    if (resultString.isEmpty())
+        resultString = m_mainFrame->contentsAsString();
+    send(Messages::WebPageProxy::DidGetContentsAsString(resultString, callbackID));
+}
+
 void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
 {
     String resultString;
@@ -1360,6 +1368,22 @@ bool WebPage::hasLocalDataForURL(const KURL& url)
 void WebPage::setCustomTextEncodingName(const String& encoding)
 {
     m_page->mainFrame()->loader()->reloadWithOverrideEncoding(encoding);
+}
+
+bool WebPage::isSpeaking()
+{
+    bool result;
+    return sendSync(Messages::WebPageProxy::GetIsSpeaking(), Messages::WebPageProxy::GetIsSpeaking::Reply(result)) && result;
+}
+
+void WebPage::speak(const String& string)
+{
+    send(Messages::WebPageProxy::Speak(string));
+}
+
+void WebPage::stopSpeaking()
+{
+    send(Messages::WebPageProxy::StopSpeaking());
 }
 
 } // namespace WebKit

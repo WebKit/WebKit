@@ -25,17 +25,11 @@
 
 #include "WebContextMenuClient.h"
 
+#include "NotImplemented.h"
 #include "WebPage.h"
-
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <wtf/text/WTFString.h>
-
-#include "NotImplemented.h"
-
-@interface NSApplication (AppKitSecretsIKnowAbout)
-- (void)speakString:(NSString *)string;
-@end
 
 using namespace WebCore;
 
@@ -49,21 +43,25 @@ void WebContextMenuClient::lookUpInDictionary(Frame*)
 
 bool WebContextMenuClient::isSpeaking()
 {
-    return [NSApp isSpeaking];
+    return m_page->isSpeaking();
 }
 
 void WebContextMenuClient::speak(const String& string)
 {
-    [NSApp speakString:[[(NSString*)string copy] autorelease]];
+    m_page->speak(string);
 }
 
 void WebContextMenuClient::stopSpeaking()
 {
-    [NSApp stopSpeaking:nil];
+    m_page->stopSpeaking();
 }
 
 void WebContextMenuClient::searchWithSpotlight()
 {
+    // FIXME: Why do we need to search all the frames like this?
+    // Isn't there any function in WebCore that can do this?
+    // If not, can we find a place in WebCore to put this?
+
     Frame* mainFrame = m_page->corePage()->mainFrame();
     
     Frame* selectionFrame = mainFrame;
@@ -79,7 +77,9 @@ void WebContextMenuClient::searchWithSpotlight()
     if (selectedString.isEmpty())
         return;
 
-    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:(NSString *)selectedString];
+    NSString *convertedSelectedString = selectedString;
+
+    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:convertedSelectedString];
 }
 
 } // namespace WebKit

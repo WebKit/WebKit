@@ -122,7 +122,7 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
 
 void WKFrameGetWebArchive(WKFrameRef frameRef, WKFrameGetWebArchiveFunction callback, void* context)
 {
-    toImpl(frameRef)->getWebArchive(WebArchiveCallback::create(context, callback));
+    toImpl(frameRef)->getWebArchive(DataCallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__

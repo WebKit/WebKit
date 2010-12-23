@@ -1,3 +1,93 @@
+2010-12-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Make Speech menu items work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51504
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetWebArchive): Updated to use new-named typedef.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame): Ditto.
+        (WKPageRenderTreeExternalRepresentation): Ditto.
+        (WKPageGetSourceForFrame): Ditto.
+        (WKPageGetContentsAsString): Ditto.
+
+        * UIProcess/API/mac/WKView.mm:
+        (menuItem): Added. Helper function to make it easy to call menu item
+        functions on arbitrary user interface items.
+        (toolbarItem): Ditto.
+        (-[WKView validateUserInterfaceItem:]): Added validation for startSpeaking
+        and stopSpeaking commands. Reworked the code to fix a bug where
+        toggleContinuousSpellChecking would always be enabled even when it should
+        be disabled. Reworked the asynchronous validation code so it works for
+        items other than menu items and can also handle more than one item for the
+        same command. Added some comments.
+        (speakString): Added. Helper function to be used as a callback when we
+        get the selection or contents to speak.
+        (-[WKView startSpeaking:]): Added. Uses getSelectionOrContentsAsString.
+        (-[WKView stopSpeaking:]): Added.
+        (-[WKView _setUserInterfaceItemState:enabled:state:]): Reworked to work
+        with the changes to validateUserInterfaceItem above.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::isDisplayingMarkupDocument): Added a FIXME about
+        a problem I noticed.
+        (WebKit::WebFrameProxy::didCommitLoad): Tweaked argument name.
+        (WebKit::WebFrameProxy::getWebArchive): Changed to use new-named typedef.
+        * UIProcess/WebFrameProxy.h: Changed WebArchiveCallback to DataCallaback.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Invalidate the two callback maps since
+        we only have two now.
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame): Changed to use merged
+        maps and typedefs so we don't need a separate callback map for each function.
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation): Ditto.
+        (WebKit::WebPageProxy::getSourceForFrame): Ditto.
+        (WebKit::WebPageProxy::getContentsAsString): Ditto.
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString): Added.
+        (WebKit::WebPageProxy::getWebArchiveOfFrame): Ditto.
+        (WebKit::WebPageProxy::didGetContentsAsString): Ditto.
+        (WebKit::WebPageProxy::didGetSelectionOrContentsAsString): Ditto.
+        (WebKit::WebPageProxy::didRunJavaScriptInMainFrame): Ditto.
+        (WebKit::WebPageProxy::didGetRenderTreeExternalRepresentation): Ditto.
+        (WebKit::WebPageProxy::didGetSourceForFrame): Ditto.
+        (WebKit::WebPageProxy::didGetWebArchiveOfFrame): Ditto.
+        (WebKit::WebPageProxy::processDidCrash): Ditto.
+
+        * UIProcess/WebPageProxy.h: Updated for changes above.
+
+        * UIProcess/WebPageProxy.messages.in: Added DidGetSelectionOrContentsAsString,
+        GetIsSpeaking, Speak, and StopSpeaking.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getIsSpeaking): Added.
+        (WebKit::WebPageProxy::speak): Added.
+        (WebKit::WebPageProxy::stopSpeaking): Added.
+
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::isSpeaking): Call WebPage instead of doing
+        the work directly, so it can run in the UI process.
+        (WebKit::WebContextMenuClient::speak): Ditto.
+        (WebKit::WebContextMenuClient::stopSpeaking): Ditto.
+        (WebKit::WebContextMenuClient::searchWithSpotlight): Added FIXME comment and
+        changed code to avoid a C-style cast.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::selectionAsString): Added.
+        * WebProcess/WebPage/WebFrame.h: Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeAcceleratedCompositingMode): Use sendSync in the
+        modern way instead of explicitly calling WebProcess.
+        (WebKit::WebPage::getSelectionOrContentsAsString): Added.
+        (WebKit::WebPage::isSpeaking): Added.
+        (WebKit::WebPage::speak): Added.
+        (WebKit::WebPage::stopSpeaking): Added.
+        * WebProcess/WebPage/WebPage.h: Added functions.
+
+        * WebProcess/WebPage/WebPage.messages.in: Added GetSelectionOrContentsAsString.
+
 2010-12-22  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

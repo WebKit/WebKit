@@ -98,7 +98,8 @@ bool WebFrameProxy::isDisplayingStandaloneImageDocument() const
 
 bool WebFrameProxy::isDisplayingMarkupDocument() const
 {
-    // FIXME: This check should be moved to somewhere in WebCore. 
+    // FIXME: This check should be moved to somewhere in WebCore.
+    // FIXME: This returns false when displaying a web archive.
     return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_MIMEType);
 }
 
@@ -127,7 +128,7 @@ void WebFrameProxy::didFailProvisionalLoad()
     m_provisionalURL = String();
 }
 
-void WebFrameProxy::didCommitLoad(const String& mimeType, const PlatformCertificateInfo& certificateInfo)
+void WebFrameProxy::didCommitLoad(const String& contentType, const PlatformCertificateInfo& certificateInfo)
 {
     ASSERT(m_loadState == LoadStateProvisional);
     ASSERT(!m_provisionalURL.isEmpty());
@@ -135,7 +136,7 @@ void WebFrameProxy::didCommitLoad(const String& mimeType, const PlatformCertific
     m_url = m_provisionalURL;
     m_provisionalURL = String();
     m_title = String();
-    m_MIMEType = mimeType;
+    m_MIMEType = contentType;
     m_isFrameSet = false;
     m_certificateInfo = WebCertificateInfo::create(certificateInfo);
 }
@@ -193,7 +194,7 @@ WebFormSubmissionListenerProxy* WebFrameProxy::setUpFormSubmissionListenerProxy(
     return static_cast<WebFormSubmissionListenerProxy*>(m_activeListener.get());
 }
 
-void WebFrameProxy::getWebArchive(PassRefPtr<WebArchiveCallback> callback)
+void WebFrameProxy::getWebArchive(PassRefPtr<DataCallback> callback)
 {
     if (!m_page) {
         callback->invalidate();

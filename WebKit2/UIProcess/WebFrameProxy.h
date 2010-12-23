@@ -48,7 +48,7 @@ class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
 class WebPageProxy;
 
-typedef GenericCallback<WKDataRef> WebArchiveCallback;
+typedef GenericCallback<WKDataRef> DataCallback;
 
 class WebFrameProxy : public APIObject {
 public:
@@ -96,7 +96,7 @@ public:
     bool isDisplayingStandaloneImageDocument() const;
     bool isDisplayingMarkupDocument() const;
 
-    void getWebArchive(PassRefPtr<WebArchiveCallback>);
+    void getWebArchive(PassRefPtr<DataCallback>);
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);

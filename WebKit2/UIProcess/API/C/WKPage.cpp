@@ -326,7 +326,7 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
-    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), ScriptReturnValueCallback::create(context, callback));
+    toImpl(pageRef)->runJavaScriptInMainFrame(toImpl(scriptRef)->string(), StringCallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__
@@ -345,7 +345,7 @@ void WKPageRunJavaScriptInMainFrame_b(WKPageRef pageRef, WKStringRef scriptRef, 
 
 void WKPageRenderTreeExternalRepresentation(WKPageRef pageRef, void* context, WKPageRenderTreeExternalRepresentationFunction callback)
 {
-    toImpl(pageRef)->getRenderTreeExternalRepresentation(RenderTreeExternalRepresentationCallback::create(context, callback));
+    toImpl(pageRef)->getRenderTreeExternalRepresentation(StringCallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__
@@ -364,7 +364,7 @@ void WKPageRenderTreeExternalRepresentation_b(WKPageRef pageRef, WKPageRenderTre
 
 void WKPageGetSourceForFrame(WKPageRef pageRef, WKFrameRef frameRef, void* context, WKPageGetSourceForFrameFunction callback)
 {
-    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), FrameSourceCallback::create(context, callback));
+    toImpl(pageRef)->getSourceForFrame(toImpl(frameRef), StringCallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__
@@ -383,7 +383,7 @@ void WKPageGetSourceForFrame_b(WKPageRef pageRef, WKFrameRef frameRef, WKPageGet
 
 void WKPageGetContentsAsString(WKPageRef pageRef, void* context, WKPageGetContentsAsStringFunction callback)
 {
-    toImpl(pageRef)->getContentsAsString(ContentsAsStringCallback::create(context, callback));
+    toImpl(pageRef)->getContentsAsString(StringCallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__

@@ -25,10 +25,6 @@
 
 #import "WKView.h"
 
-// C API
-#import "WKAPICast.h"
-
-// Implementation
 #import "ChunkedUpdateDrawingAreaProxy.h"
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
@@ -39,6 +35,8 @@
 #import "PageClientImpl.h"
 #import "RunLoop.h"
 #import "TextChecker.h"
+#import "WKAPICast.h"
+#import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
 #import "WebContext.h"
 #import "WebEventFactory.h"
@@ -56,22 +54,31 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
-extern "C" {
-    
-    // Need to declare this attribute name because AppKit exports it but does not make it available in API or SPI headers.
-    // <rdar://problem/8631468> tracks the request to make it available. This code should be removed when the bug is closed.
-    
-    extern NSString *NSTextInputReplacementRangeAttributeName;
-    
-}
-
-using namespace WebKit;
-using namespace WebCore;
+@interface NSApplication (Details)
+- (void)speakString:(NSString *)string;
+@end
 
 @interface NSWindow (Details)
 - (NSRect)_growBoxRect;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
 @end
+
+extern "C" {
+    // Need to declare this attribute name because AppKit exports it but does not make it available in API or SPI headers.
+    // <rdar://problem/8631468> tracks the request to make it available. This code should be removed when the bug is closed.
+    extern NSString *NSTextInputReplacementRangeAttributeName;
+}
+
+using namespace WebKit;
+using namespace WebCore;
+
+namespace WebKit {
+
+typedef id <NSValidatedUserInterfaceItem> ValidationItem;
+typedef Vector<RetainPtr<ValidationItem> > ValidationVector;
+typedef HashMap<String, ValidationVector> ValidationMap;
+
+}
 
 @interface WKViewData : NSObject {
 @public
@@ -86,8 +93,9 @@ using namespace WebCore;
 #if USE(ACCELERATED_COMPOSITING)
     NSView *_layerHostingView;
 #endif
-    // For Menus.
-    HashMap<String, RetainPtr<NSMenuItem> > _menuItemsMap;
+
+    // For asynchronous validation.
+    ValidationMap _validationMap;
 
     OwnPtr<PDFViewController> _pdfViewController;
 
@@ -294,7 +302,6 @@ static String commandNameForSelector(SEL selector)
 }
 
 // Editing commands
-// FIXME: we should add all the commands here as we implement them.
 
 #define WEBCORE_COMMAND(command) - (void)command:(id)sender { _data->_page->executeEditCommand(commandNameForSelector(_cmd)); }
 
@@ -310,39 +317,88 @@ WEBCORE_COMMAND(takeFindStringFromSelection)
 
 // Menu items validation
 
+static NSMenuItem *menuItem(id <NSValidatedUserInterfaceItem> item)
+{
+    if (![(NSObject *)item isKindOfClass:[NSMenuItem class]])
+        return nil;
+    return (NSMenuItem *)item;
+}
+
+static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
+{
+    if (![(NSObject *)item isKindOfClass:[NSToolbarItem class]])
+        return nil;
+    return (NSToolbarItem *)item;
+}
+
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
-    NSMenuItem *menuItem = (NSMenuItem *)item;
-    if (![menuItem isKindOfClass:[NSMenuItem class]])
-        return NO; // FIXME: We need to be able to handle other user interface elements.
-
     SEL action = [item action];
 
-    if (action == @selector(toggleContinuousSpellChecking:)) {
-        bool checkMark = false;
-        bool returnValue = false;
-        if (TextChecker::isContinuousSpellCheckingAllowed())
-            checkMark = TextChecker::isContinuousSpellCheckingEnabled();
-        returnValue = true;
+    // FIXME: This is only needed to work around the fact that we don't return YES for
+    // selectors that are not editing commands (see below). If that's fixed, this can be removed.
+    if (action == @selector(startSpeaking:))
+        return YES;
 
-        [menuItem setState:checkMark ? NSOnState : NSOffState];
-        return returnValue;
+    if (action == @selector(stopSpeaking:))
+        return [NSApp isSpeaking];
+
+    if (action == @selector(toggleContinuousSpellChecking:)) {
+        bool enabled = TextChecker::isContinuousSpellCheckingAllowed();
+        bool checked = enabled && TextChecker::isContinuousSpellCheckingEnabled();
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return enabled;
     }
 
     if (action == @selector(toggleGrammarChecking:)) {
-        bool checkMark = TextChecker::isGrammarCheckingEnabled();
-        [menuItem setState:checkMark ? NSOnState : NSOffState];
+        bool checked = TextChecker::isGrammarCheckingEnabled();
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
         return YES;
     }
-    
-    String commandName = commandNameForSelector([item action]);
 
-    if (_data->_menuItemsMap.find(commandName) == _data->_menuItemsMap.end()) {
-        _data->_menuItemsMap.add(commandName, menuItem);
+    // FIXME: We should return YES here for selectors that are not editing commands.
+    // But at the moment there is no way to find out if a selector is an editing command or not
+    // in the UI process. So for now we assume any selectors not handled above are editing commands.
+
+    String commandName = commandNameForSelector([item action]);
+    if (commandName.isEmpty())
+        return YES;
+
+    // Add this menu item to the vector of items for a given command that are awaiting validation.
+    // If the item is the first to be added, then call validateMenuItem to start the asynchronous
+    // validation process.
+    pair<ValidationMap::iterator, bool> addResult = _data->_validationMap.add(commandName, ValidationVector());
+    addResult.first->second.append(item);
+    if (addResult.second) {
+        // FIXME: The function should be renamed validateCommand because it is not specific to menu items.
         _data->_page->validateMenuItem(commandName);
     }
 
+    // Treat as enabled until we get the result back from the web process and _setUserInterfaceItemState is called.
+    // FIXME: This means that items will flash enabled at first, and only then disable a moment later, which is unattractive.
+    // But returning NO here is worse, because that makes keyboard commands such as command-C fail.
     return YES;
+}
+
+static void speakString(WKStringRef string, WKErrorRef error, void*)
+{
+    if (error)
+        return;
+    if (!string)
+        return;
+
+    NSString *convertedString = toImpl(string)->string();
+    [NSApp speakString:convertedString];
+}
+
+- (IBAction)startSpeaking:(id)sender
+{
+    _data->_page->getSelectionOrContentsAsString(StringCallback::create(0, speakString));
+}
+
+- (IBAction)stopSpeaking:(id)sender
+{
+    [NSApp stopSpeaking:sender];
 }
 
 - (IBAction)toggleContinuousSpellChecking:(id)sender
@@ -354,7 +410,7 @@ WEBCORE_COMMAND(takeFindStringFromSelection)
         _data->_page->unmarkAllMisspellings();
 }
 
-- (void)toggleGrammarChecking:(id)sender
+- (IBAction)toggleGrammarChecking:(id)sender
 {
     bool grammarCheckingEnabled = !TextChecker::isGrammarCheckingEnabled();
     TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
@@ -371,7 +427,6 @@ WEBCORE_COMMAND(takeFindStringFromSelection)
 {
     return YES;
 }
-
 
 #define EVENT_HANDLER(Selector, Type) \
     - (void)Selector:(NSEvent *)theEvent \
@@ -926,9 +981,16 @@ static bool isViewVisible(NSView *view)
 
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState
 {
-    NSMenuItem *menuItem = _data->_menuItemsMap.take(commandName).get();
-    [menuItem setState:newState];
-    [menuItem setEnabled:isEnabled];
+    ValidationVector items = _data->_validationMap.take(commandName);
+    size_t size = items.size();
+    for (size_t i = 0; i < size; ++i) {
+        ValidationItem item = items[i].get();
+        [menuItem(item) setState:newState];
+        [menuItem(item) setEnabled:isEnabled];
+        [toolbarItem(item) setEnabled:isEnabled];
+        // FIXME: If the user interface item is neither a menu item nor a toolbar, it will be left enabled.
+        // It's not obvious how to fix this.
+    }
 }
 
 - (NSRect)_convertToDeviceSpace:(NSRect)rect

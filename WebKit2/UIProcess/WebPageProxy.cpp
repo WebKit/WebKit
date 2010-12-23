@@ -245,11 +245,8 @@ void WebPageProxy::close()
 
     m_toolTip = String();
 
-    invalidateCallbackMap(m_contentsAsStringCallbacks);
-    invalidateCallbackMap(m_frameSourceCallbacks);
-    invalidateCallbackMap(m_renderTreeExternalRepresentationCallbacks);
-    invalidateCallbackMap(m_scriptReturnValueCallbacks);
-    invalidateCallbackMap(m_webArchiveCallbacks);
+    invalidateCallbackMap(m_dataCallbacks);
+    invalidateCallbackMap(m_stringCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);
@@ -784,43 +781,51 @@ void WebPageProxy::countStringMatches(const String& string, FindOptions options,
     process()->send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), m_pageID);
 }
     
-void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptReturnValueCallback> prpCallback)
+void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<StringCallback> prpCallback)
 {
-    RefPtr<ScriptReturnValueCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
-    m_scriptReturnValueCallbacks.set(callbackID, callback.get());
+    m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::RunJavaScriptInMainFrame(script, callbackID), m_pageID);
 }
 
-void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback> prpCallback)
+void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<StringCallback> prpCallback)
 {
-    RefPtr<RenderTreeExternalRepresentationCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
-    m_renderTreeExternalRepresentationCallbacks.set(callbackID, callback.get());
+    m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetRenderTreeExternalRepresentation(callbackID), m_pageID);
 }
 
-void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<FrameSourceCallback> prpCallback)
+void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<StringCallback> prpCallback)
 {
-    RefPtr<FrameSourceCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
-    m_frameSourceCallbacks.set(callbackID, callback.get());
+    m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_pageID);
 }
 
-void WebPageProxy::getContentsAsString(PassRefPtr<ContentsAsStringCallback> prpCallback)
+void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
 {
-    RefPtr<ContentsAsStringCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
-    m_contentsAsStringCallbacks.set(callbackID, callback.get());
+    m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
 
-void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<WebArchiveCallback> prpCallback)
+void WebPageProxy::getSelectionOrContentsAsString(PassRefPtr<StringCallback> prpCallback)
 {
-    RefPtr<WebArchiveCallback> callback = prpCallback;
+    RefPtr<StringCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
-    m_webArchiveCallbacks.set(callbackID, callback.get());
+    m_stringCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID), m_pageID);
+}
+
+void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
+{
+    RefPtr<DataCallback> callback = prpCallback;
+    uint64_t callbackID = callback->callbackID();
+    m_dataCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
@@ -1710,7 +1715,18 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
 void WebPageProxy::didGetContentsAsString(const String& resultString, uint64_t callbackID)
 {
-    RefPtr<ContentsAsStringCallback> callback = m_contentsAsStringCallbacks.take(callbackID);
+    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(resultString.impl());
+}
+
+void WebPageProxy::didGetSelectionOrContentsAsString(const String& resultString, uint64_t callbackID)
+{
+    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         return;
@@ -1721,7 +1737,7 @@ void WebPageProxy::didGetContentsAsString(const String& resultString, uint64_t c
 
 void WebPageProxy::didRunJavaScriptInMainFrame(const String& resultString, uint64_t callbackID)
 {
-    RefPtr<ScriptReturnValueCallback> callback = m_scriptReturnValueCallbacks.take(callbackID);
+    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         return;
@@ -1732,7 +1748,7 @@ void WebPageProxy::didRunJavaScriptInMainFrame(const String& resultString, uint6
 
 void WebPageProxy::didGetRenderTreeExternalRepresentation(const String& resultString, uint64_t callbackID)
 {
-    RefPtr<RenderTreeExternalRepresentationCallback> callback = m_renderTreeExternalRepresentationCallbacks.take(callbackID);
+    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         return;
@@ -1743,7 +1759,7 @@ void WebPageProxy::didGetRenderTreeExternalRepresentation(const String& resultSt
 
 void WebPageProxy::didGetSourceForFrame(const String& resultString, uint64_t callbackID)
 {
-    RefPtr<FrameSourceCallback> callback = m_frameSourceCallbacks.take(callbackID);
+    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         return;
@@ -1754,7 +1770,7 @@ void WebPageProxy::didGetSourceForFrame(const String& resultString, uint64_t cal
 
 void WebPageProxy::didGetWebArchiveOfFrame(const CoreIPC::DataReference& dataReference, uint64_t callbackID)
 {
-    RefPtr<WebArchiveCallback> callback = m_webArchiveCallbacks.take(callbackID);
+    RefPtr<DataCallback> callback = m_dataCallbacks.take(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         return;
@@ -1819,11 +1835,8 @@ void WebPageProxy::processDidCrash()
 
     m_toolTip = String();
 
-    invalidateCallbackMap(m_contentsAsStringCallbacks);
-    invalidateCallbackMap(m_frameSourceCallbacks);
-    invalidateCallbackMap(m_renderTreeExternalRepresentationCallbacks);
-    invalidateCallbackMap(m_scriptReturnValueCallbacks);
-    invalidateCallbackMap(m_webArchiveCallbacks);
+    invalidateCallbackMap(m_dataCallbacks);
+    invalidateCallbackMap(m_stringCallbacks);
 
     Vector<WebEditCommandProxy*> editCommandVector;
     copyToVector(m_editCommandSet, editCommandVector);

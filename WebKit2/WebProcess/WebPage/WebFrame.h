@@ -75,6 +75,7 @@ public:
 
     String source() const;
     String contentsAsString() const;
+    String selectionAsString() const;
 
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;

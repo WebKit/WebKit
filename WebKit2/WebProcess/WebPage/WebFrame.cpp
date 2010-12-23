@@ -278,6 +278,14 @@ String WebFrame::contentsAsString() const
     return plainText(range.get());
 }
 
+String WebFrame::selectionAsString() const 
+{
+    if (!m_coreFrame)
+        return String();
+
+    return m_coreFrame->displayStringModifiedByEncoding(m_coreFrame->editor()->selectedText());
+}
+
 bool WebFrame::isFrameSet() const
 {
     if (!m_coreFrame)

@@ -28,6 +28,10 @@
 #include <WebCore/Language.h>
 #include <wtf/text/StringConcatenate.h>
 
+@interface NSApplication (Details)
+- (void)speakString:(NSString *)string;
+@end
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -88,6 +92,22 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     if (applicationNameForUserAgent.isEmpty())
         return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, "; ", language, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)");
     return makeString("Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X ", osVersion, "; ", language, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) ", applicationNameForUserAgent);
+}
+
+void WebPageProxy::getIsSpeaking(bool& isSpeaking)
+{
+    isSpeaking = [NSApp isSpeaking];
+}
+
+void WebPageProxy::speak(const String& string)
+{
+    NSString *convertedString = string;
+    [NSApp speakString:convertedString];
+}
+
+void WebPageProxy::stopSpeaking()
+{
+    [NSApp stopSpeaking:nil];
 }
 
 } // namespace WebKit

@@ -258,7 +258,16 @@ public:
     void firstRectForCharacterInSelectedRange(const uint64_t characterPosition, WebCore::IntRect& resultRect);
     void getSelectedText(WTF::String&);
 #endif
+
+    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
+    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     void dummy(bool&);
+
+#if PLATFORM(MAC)
+    bool isSpeaking();
+    void speak(const String&);
+    void stopSpeaking();
+#endif
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
@@ -309,6 +318,7 @@ private:
 
     void getContentsAsString(uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
+    void getSelectionOrContentsAsString(uint64_t callbackID);
     void getSourceForFrame(uint64_t frameID, uint64_t callbackID);
     void getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID);
     void runJavaScriptInMainFrame(const String&, uint64_t callbackID);
