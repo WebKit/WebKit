@@ -1133,10 +1133,6 @@ WebViewHost::~WebViewHost()
         loadURLForFrame(GURL("about:blank"), WebString());
     }
 
-    // Call GC twice to clean up garbage.
-    m_shell->callJSGC();
-    m_shell->callJSGC();
-
     webWidget()->close();
 
     if (m_inModalLoop)

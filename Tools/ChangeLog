@@ -1,3 +1,19 @@
+2010-12-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Web Inspector: chromium: inspector's tests are quite slow especially at windows(Debug).
+
+        Almost all inspector's tests become flaky on chromium Win(dbg) after switching to DRT.
+        I just discovered that we have two additional GC runs per each WebViewHost.
+        Test_shell had no such calls.
+        These gc runs eat 15% of cpu time.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51479
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::~WebViewHost):
+
 2010-12-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
