@@ -140,7 +140,7 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
         return true;
     }
     case CFData: {
-        RetainPtr<CFDictionaryRef> data;
+        RetainPtr<CFDataRef> data;
         if (!decode(decoder, data))
             return false;
         result.adoptCF(data.leakRef());

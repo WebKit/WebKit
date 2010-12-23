@@ -1,3 +1,15 @@
+2010-12-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8799032>
+        REGRESSION(r74436) Crash opening many pages with WebKit2
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::decode):
+        Fix paste-o. Decode into a CFDataRef not a CFDictionaryRef
+        when decoding CFDataRefs.
+
 2010-12-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
