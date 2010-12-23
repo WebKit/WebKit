@@ -119,9 +119,6 @@ void ImageLayerChromium::updateContentsIfDirty()
     // FIXME: do we need to support more image configurations?
     if (skiaConfig == SkBitmap::kARGB_8888_Config)
         pixels = skiaBitmap->getPixels();
-    // Since this operation requires contiguous pixels, make sure there's no padding at the
-    // end of each line.
-    ASSERT(!pixels || skiaBitmap->rowBytes() == SkBitmap::ComputeRowBytes(skiaConfig, skiaBitmap->width()));
 #elif PLATFORM(CG)
     // FIXME: we should get rid of this temporary copy where possible.
     int tempRowBytes = width * 4;

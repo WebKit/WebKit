@@ -78,8 +78,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     SkBitmap& skiaImageRef = *skiaImage;
     SkAutoLockPixels lock(skiaImageRef);
-    ASSERT(skiaImage->bytesPerPixel() == 4
-           && skiaImage->rowBytes() == SkBitmap::ComputeRowBytes(skiaImage->config(), skiaImage->width()));
+    ASSERT(skiaImage->rowBytes() == skiaImage->width() * 4);
     outputVector.resize(skiaImage->rowBytes() * skiaImage->height());
     return packPixels(reinterpret_cast<const uint8_t*>(skiaImage->getPixels()),
                       SourceFormatBGRA8, skiaImage->width(), skiaImage->height(), 0,
