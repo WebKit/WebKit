@@ -1569,7 +1569,7 @@ static const CommandMap& createCommandMap()
 static const EditorInternalCommand* internalCommand(const String& commandName)
 {
     static const CommandMap& commandMap = createCommandMap();
-    return commandMap.get(commandName);
+    return commandName.isEmpty() ? 0 : commandMap.get(commandName);
 }
 
 Editor::Command Editor::command(const String& commandName)
