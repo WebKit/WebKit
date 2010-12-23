@@ -600,9 +600,9 @@ static Eina_Bool _ewk_tile_matrix_slicer_setup(Ewk_Tile_Matrix *tm, const Eina_R
         y = 0;
     }
 
-    if (y + h - 1 > rows * th)
+    if (y + h - 1 > (long)(rows * th))
         h = rows * th - y;
-    if (x + w - 1 > cols * tw)
+    if (x + w - 1 > (long)(cols * tw))
         w = cols * tw - x;
 
     return eina_tile_grid_slicer_setup(slicer, x, y, w, h, tw, th);

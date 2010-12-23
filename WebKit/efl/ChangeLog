@@ -1,3 +1,22 @@
+2010-12-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Clean warnings in Tiled Backing Store
+        https://bugs.webkit.org/show_bug.cgi?id=51529
+
+        Tiled backing store in EFL was giving the following warnings that are
+        gone now:
+
+        - Static function defined but not used;
+        - Comparison between signed and unsigned integer expressions;
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_smart_calculate):
+        * ewk/ewk_tiled_matrix.c:
+        (_ewk_tile_matrix_slicer_setup):
+
 2010-12-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build warning fix.

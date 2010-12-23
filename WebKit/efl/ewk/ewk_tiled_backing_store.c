@@ -491,66 +491,15 @@ static Eina_Bool _ewk_tiled_backing_store_enable_render(Ewk_Tiled_Backing_Store_
     return EINA_TRUE;
 }
 
-/**
- * Returns a rectangle whose coordinates indicate which tiles are
- * currently inside the viewport.
- *
- * Specifically, the returned rectangle's coordinates have the
- * following meaning:
- *  - x: Column number for the top-level tile inside the viewport.
- *  - y: Row number for the top-level tile inside the viewport.
- *  - w: Number of tiles horizontally inside the viewport.
- *  - h: Number of tiles vertically inside the viewport.
- */
-static Eina_Rectangle _ewk_tiled_backing_store_visible_tiles_rect(Ewk_Tiled_Backing_Store_Data *priv)
-{
-     Eina_Rectangle r;
-
-     const Evas_Coord ox = -priv->view.offset.cur.x;
-     const Evas_Coord oy = -priv->view.offset.cur.y;
-     const Evas_Coord tw = priv->view.tile.w;
-     const Evas_Coord th = priv->view.tile.h;
-
-     r.x = MAX(0, ox / tw);
-     r.y = MAX(0, oy / th);
-     r.w = MIN(priv->model.cur.cols,
-               ceil((float)(priv->view.w + (ox % tw)) / tw));
-     r.h = MIN(priv->model.cur.rows,
-               ceil((float)(priv->view.h + (oy % th)) / th));
-
-     DBG("Returning %d,%d+%dx%d", r.x, r.y, r.w, r.h);
-
-     return r;
-}
-
-static Eina_Bool _ewk_tiled_backing_store_tile_is_inside_viewport(Ewk_Tiled_Backing_Store_Data *priv, int col, int row)
-{
-    const Eina_Rectangle r = _ewk_tiled_backing_store_visible_tiles_rect(priv);
-
-    return eina_rectangle_coords_inside(&r, col, row);
-}
-
-static Eina_Bool _ewk_tiled_backing_store_tile_is_adjacent_to_viewport(Ewk_Tiled_Backing_Store_Data *priv, int col, int row)
-{
-    const Eina_Rectangle r = _ewk_tiled_backing_store_visible_tiles_rect(priv);
-
-    if (row == (r.y - 1) || row == (r.y + r.h))
-        return (col >= (r.x - 1) && col <= (r.x + r.w));
-
-    if (col == (r.x - 1) || col == (r.x + r.w))
-        return (row >= (r.y - 1) && row <= (r.y + r.h));
-
-    return EINA_FALSE;
-}
-
 static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tiled_Backing_Store_Item *it, long col, int row)
 {
-    int m_col = priv->model.base.col + col;
-    int m_row = priv->model.base.row + row;
+    long m_col = priv->model.base.col + col;
+    long m_row = priv->model.base.row + row;
     double last_used = ecore_loop_time_get();
 
     if (m_col < 0 || m_row < 0
-        || m_col >= priv->model.cur.cols || m_row >= priv->model.cur.rows) {
+        || (unsigned long)(m_col) >= priv->model.cur.cols
+        || (unsigned long)(m_row) >= priv->model.cur.rows) {
 
         if (it->tile) {
             _ewk_tiled_backing_store_tile_dissociate(priv, it, last_used);
@@ -562,8 +511,8 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
         const float zoom = priv->view.tile.zoom;
 
         if (it->update.process) {
-            if (it->update.row == m_row
-                && it->update.col == m_col
+            if (it->update.row == (unsigned long)(m_row)
+                && it->update.col == (unsigned long)(m_col)
                 && it->update.zoom == zoom)
                 return EINA_TRUE;
 
@@ -572,12 +521,15 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
 
         if (it->tile) {
             Ewk_Tile *old = it->tile;
-            if (old->row != m_row || old->col != m_col || old->zoom != zoom) {
+            if (old->row != (unsigned long)(m_row)
+                || old->col != (unsigned long)(m_col)
+                || old->zoom != zoom) {
                 _ewk_tiled_backing_store_tile_dissociate(priv, it,
                                                          last_used);
                 if (it->update.process)
                     _ewk_tiled_backing_store_item_request_del(priv, it);
-            } else if (old->row == m_row && old->col == m_col
+            } else if (old->row == (unsigned long)(m_row)
+                       && old->col == (unsigned long)(m_col)
                        && old->zoom == zoom)
                 goto end;
         }
@@ -1450,7 +1402,7 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object *o)
     ewk_tile_matrix_freeze(priv->model.matrix);
 
     if (!priv->render.suspend && priv->changed.model) {
-        long cols, rows;
+        unsigned long cols, rows;
 
         cols = priv->model.width / priv->view.tile.w + 1;
         rows = priv->model.height / priv->view.tile.h + 1;
