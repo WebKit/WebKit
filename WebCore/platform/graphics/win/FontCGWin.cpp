@@ -357,14 +357,17 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     ColorSpace shadowColorSpace;
     graphicsContext->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
 
-    bool hasSimpleShadow = graphicsContext->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur;
+    bool hasSimpleShadow = graphicsContext->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && (!graphicsContext->shadowsIgnoreTransforms() || graphicsContext->getCTM().isIdentityOrTranslationOrFlipped());
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         graphicsContext->clearShadow();
         Color fillColor = graphicsContext->fillColor();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
         graphicsContext->setFillColor(shadowFillColor, ColorSpaceDeviceRGB);
-        CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowOffset.width(), point.y() + translation.height() + shadowOffset.height());
+        float shadowTextX = point.x() + translation.width() + shadowOffset.width();
+        // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
+        float shadowTextY = point.y() + translation.height() + shadowOffset.height() * (graphicsContext->shadowsIgnoreTransforms() ? -1 : 1);
+        CGContextSetTextPosition(cgContext, shadowTextX, shadowTextY);
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->syntheticBoldOffset()) {
             CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowOffset.width() + font->syntheticBoldOffset(), point.y() + translation.height() + shadowOffset.height());

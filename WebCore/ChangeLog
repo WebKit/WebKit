@@ -1,3 +1,28 @@
+2010-12-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        the shadow direction is negated in canvas context shadowOffsetY.
+        https://bugs.webkit.org/show_bug.cgi?id=25619
+        
+        Invert shadow offset Y direction in 0-blur path in FontMac::drawGlyps
+        if we're not transforming shadows (i.e. are rendering in a canvas). Also
+        use CG shadows if there's a non-translate/flip transform applied
+        (shadow offsets are supposed to ignore transforms, but the naive/simple
+        implementation was taking them into account).
+        
+        Also does the equivalent changes to FontCGWin.
+
+        Test: fast/canvas/fillText-shadow.html
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::shadowsIgnoreTransforms):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2010-12-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74503.

@@ -173,17 +173,20 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     ColorSpace fillColorSpace = context->fillColorSpace();
     context->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
 
-    bool hasSimpleShadow = context->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont();
+    bool hasSimpleShadow = context->textDrawingMode() == TextModeFill && shadowColor.isValid() && !shadowBlur && !platformData.isColorBitmapFont() && (!context->shadowsIgnoreTransforms() || context->getCTM().isIdentityOrTranslationOrFlipped());
     if (hasSimpleShadow) {
         // Paint simple shadows ourselves instead of relying on CG shadows, to avoid losing subpixel antialiasing.
         context->clearShadow();
         Color fillColor = context->fillColor();
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
         context->setFillColor(shadowFillColor, shadowColorSpace);
-        CGContextSetTextPosition(cgContext, point.x() + shadowOffset.width(), point.y() + shadowOffset.height());
+        float shadowTextX = point.x() + shadowOffset.width();
+        // If shadows are ignoring transforms, then we haven't applied the Y coordinate flip yet, so down is negative.
+        float shadowTextY = point.y() + shadowOffset.height() * (context->shadowsIgnoreTransforms() ? -1 : 1);
+        CGContextSetTextPosition(cgContext, shadowTextX, shadowTextY);
         showGlyphsWithAdvances(font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->syntheticBoldOffset()) {
-            CGContextSetTextPosition(cgContext, point.x() + shadowOffset.width() + font->syntheticBoldOffset(), point.y() + shadowOffset.height());
+            CGContextSetTextPosition(cgContext, shadowTextX + font->syntheticBoldOffset(), shadowTextY);
             showGlyphsWithAdvances(font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         }
         context->setFillColor(fillColor, fillColorSpace);
