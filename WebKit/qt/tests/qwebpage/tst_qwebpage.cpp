@@ -1099,6 +1099,9 @@ void tst_QWebPage::textSelection()
     // ..but SelectAll is awalys enabled
     QCOMPARE(page->action(QWebPage::SelectAll)->isEnabled(), true);
 
+    // Verify hasSelection returns false since there is no selection yet...
+    QCOMPARE(page->hasSelection(), false);
+
     // this will select the first paragraph
     QString selectScript = "var range = document.createRange(); " \
         "var node = document.getElementById(\"one\"); " \
@@ -1106,6 +1109,9 @@ void tst_QWebPage::textSelection()
         "getSelection().addRange(range);";
     page->mainFrame()->evaluateJavaScript(selectScript);
     QCOMPARE(page->selectedText().trimmed(), QString::fromLatin1("The quick brown fox"));
+
+    // Make sure hasSelection returns true, since there is selected text now...
+    QCOMPARE(page->hasSelection(), true);
 
     // here the actions are enabled after a selection has been created
     QCOMPARE(page->action(QWebPage::SelectNextChar)->isEnabled(), true);

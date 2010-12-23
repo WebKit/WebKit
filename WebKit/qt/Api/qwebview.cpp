@@ -572,6 +572,21 @@ QIcon QWebView::icon() const
 }
 
 /*!
+    \property QWebView::hasSelection
+    \brief whether this page contains selected content or not.
+
+    By default, this property is false.
+
+    \sa selectionChanged()
+*/
+bool QWebView::hasSelection() const
+{
+    if (d->page)
+        return d->page->hasSelection();
+    return false;
+}
+
+/*!
     \property QWebView::selectedText
     \brief the text currently selected
 

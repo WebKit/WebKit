@@ -2624,6 +2624,21 @@ bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &
 }
 
 /*!
+    \property QWebPage::hasSelection
+    \brief whether this page contains selected content or not.
+
+    \sa selectionChanged()
+*/
+bool QWebPage::hasSelection() const
+{
+    d->createMainFrame();
+    WebCore::Frame* frame = d->page->focusController()->focusedOrMainFrame();
+    if (frame)
+        return (frame->selection()->selection().selectionType() != VisibleSelection::NoSelection);
+    return false;
+}
+
+/*!
     \property QWebPage::selectedText
     \brief the text currently selected
 
