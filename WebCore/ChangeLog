@@ -1,3 +1,16 @@
+2010-12-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        canHyphenate() always returns true for the default locale
+        https://bugs.webkit.org/show_bug.cgi?id=51506
+
+        No test, since this change only affects performance.
+
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::::createValueForNullKey): Return 0 if hyphenation is not supported for the default locale.
+        (WebCore::::createValueForKey): Removed whitespace.
+
 2010-12-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Joseph Pecoraro.
