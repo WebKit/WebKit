@@ -378,6 +378,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFNumberRef>& result)
     if (!neededBufferSize || dataReference.size() != neededBufferSize)
         return false;
 
+    ASSERT(dataReference.data());
     CFNumberRef number = CFNumberCreate(0, numberType, dataReference.data());
     result.adoptCF(number);
 
@@ -416,7 +417,7 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFStringRef>& result)
     if (!decoder->decode(dataReference))
         return false;
 
-    CFStringRef string = CFStringCreateWithBytes(0, dataReference.isEmpty() ? 0 : dataReference.data(), dataReference.size(), encoding, false);
+    CFStringRef string = CFStringCreateWithBytes(0, dataReference.data(), dataReference.size(), encoding, false);
     if (!string)
         return false;
 

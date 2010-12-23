@@ -52,8 +52,8 @@ public:
     size_t size() const { return m_size; }
     const uint8_t* data() const 
     { 
-        ASSERT(!isEmpty());
-        
+        if (isEmpty())
+            return 0;
         return m_data; 
     }
 
