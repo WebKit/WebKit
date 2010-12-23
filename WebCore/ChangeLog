@@ -1,3 +1,16 @@
+2010-12-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add setNeedsStyleRecalc for getting canvas contexts that use IOSurfaces
+        This patch also changes USE_IOSURFACE to instead follow USE(IOSURFACE)
+        https://bugs.webkit.org/show_bug.cgi?id=51279
+
+        * html/HTMLCanvasElement.cpp: For IOSurface, use setNeedsStyleRecalc
+        * html/canvas/CanvasRenderingContext2D.cpp: Use new flag
+        * platform/graphics/ImageBuffer.h: Use new flag
+        * platform/graphics/cg/ImageBufferCG.cpp: Use new flag
+
 2010-12-20  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

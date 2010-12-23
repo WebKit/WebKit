@@ -1,3 +1,17 @@
+2010-12-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add setNeedsStyleRecalc for getting canvas contexts that use IOSurfaces
+        https://bugs.webkit.org/show_bug.cgi?id=51279
+
+        * platform/mac-snowleopard/platform/mac/compositing: Added.
+        * platform/mac-snowleopard/platform/mac/compositing/canvas: Added.
+        * platform/mac-snowleopard/platform/mac/compositing/canvas/accelerated-canvas-compositing-expected.txt: Added.
+        * platform/mac/compositing/canvas: Added.
+        * platform/mac/compositing/canvas/accelerated-canvas-compositing-expected.txt: Added.
+        * platform/mac/compositing/canvas/accelerated-canvas-compositing.html: Added.
+
 2010-12-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium expectations update. Fix incorrect syntax for

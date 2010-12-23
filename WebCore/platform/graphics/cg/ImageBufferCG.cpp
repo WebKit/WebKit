@@ -42,7 +42,7 @@
 #include <wtf/Threading.h>
 #include <math.h>
 
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include <IOSurface/IOSurface.h>
 #endif
 
@@ -54,7 +54,7 @@ using namespace std;
 
 namespace WebCore {
 
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 {
     unsigned pixelFormat = 'BGRA';
@@ -100,7 +100,7 @@ static void releaseImageData(void*, const void* data, size_t)
 
 ImageBufferData::ImageBufferData(const IntSize&)
     : m_data(0)
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     , m_surface(0)
 #endif
 {
@@ -111,7 +111,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     , m_size(size)
     , m_accelerateRendering(renderingMode == Accelerated)
 {
-#if !defined(USE_IOSURFACE)
+#if !USE(IOSURFACE_CANVAS_BACKING_STORE)
     ASSERT(renderingMode == Unaccelerated);
 #endif
     success = false;  // Make early return mean failure.
@@ -148,7 +148,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
         // Create a live image that wraps the data.
         m_data.m_dataProvider.adoptCF(CGDataProviderCreateWithData(0, m_data.m_data, dataSize, releaseImageData));
     } else {
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
         m_data.m_surface = createIOSurface(size);
         cgContext.adoptCF(wkIOSurfaceContextCreate(m_data.m_surface.get(), size.width(), size.height(), m_data.m_colorSpace));
 #else
@@ -185,7 +185,7 @@ PassRefPtr<Image> ImageBuffer::copyImage() const
     CGImageRef ctxImage = 0;
     if (!m_accelerateRendering)
         ctxImage = CGBitmapContextCreateImage(context()->platformContext());
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else
         ctxImage = wkIOSurfaceContextCreateImage(context()->platformContext());
 #endif
@@ -241,7 +241,7 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
     RetainPtr<CGImageRef> image;
     if (!m_accelerateRendering)
         image.adoptCF(cgImage(m_size, m_data));
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else
         image.adoptCF(wkIOSurfaceContextCreateImage(platformContext));
 #endif
@@ -309,7 +309,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
             destRows += destBytesPerRow;
         }
     } else {
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
         IOSurfaceRef surface = imageData.m_surface.get();
         IOSurfaceLock(surface, kIOSurfaceLockReadOnly, 0);
         srcBytesPerRow = IOSurfaceGetBytesPerRow(surface);
@@ -410,7 +410,7 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
             srcRows += srcBytesPerRow;
         }
     } else {
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
         IOSurfaceRef surface = imageData.m_surface.get();
         IOSurfaceLock(surface, 0, 0);
         destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
@@ -496,7 +496,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     RetainPtr<CGImageRef> image;
     if (!m_accelerateRendering)
         image.adoptCF(CGBitmapContextCreateImage(context()->platformContext()));
-#if defined(USE_IOSURFACE)
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
     else
         image.adoptCF(wkIOSurfaceContextCreateImage(context()->platformContext()));
 #endif
