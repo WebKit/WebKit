@@ -1,3 +1,76 @@
+2010-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Clean up the selection handling code
+        https://bugs.webkit.org/show_bug.cgi?id=51550
+
+        * Shared/SelectionState.h: Added.
+        Add SelectionState class which hold information about the current selection.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        Remove selectionChanged function.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        Remove all the selection related state; it lives in the WebPageProxy object now.
+        
+        (-[WKView insertText:]):
+        (-[WKView selectedRange]):
+        (-[WKView hasMarkedText]):
+        Get the selection information from the WebPageProxy.
+
+        * UIProcess/API/mac/WKViewInternal.h:
+        Remove _selectionChanged declaration.
+
+        * UIProcess/PageClient.h:
+        Remove selectionChanged functions.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::selectionStateChanged):
+        Update the selection state.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::selectionState):
+        Return the selection state.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add SelectionStateChanged message.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        Remove all the selection related state; it lives in the WebPageProxy object now.
+
+        (WebKit::WebView::compositionSelectionChanged):
+        (WebKit::WebView::onIMEComposition):
+        (WebKit::WebView::onIMEEndComposition):
+        (WebKit::WebView::onIMERequestCharPosition):
+        (WebKit::WebView::onIMERequest):
+        Get the selection information from the WebPageProxy.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add SelectionState.h
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        Send a SelectionStateChanged message with the updated state.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        Remove mac specific code.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getLocationAndLengthFromRange):
+        Rename this function from convertRangeToPlatformRange and move it out of WebPageMac.mm
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getMarkedRange):
+        (WebKit::WebPage::characterIndexForPoint):
+        Call getLocationAndLengthFromRange.
+
+        * win/WebKit2.vcproj:
+        Add SelectionState.h
+
 2010-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
@@ -85,79 +158,6 @@
         * WebProcess/WebPage/WebFrame.cpp:
         (WebKit::WebFrame::createSubframe):
         Send parent frameID in addition to our own in the message to UIProcess.
-
-2010-12-23  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Darin Adler.
-
-        Clean up the selection handling code
-        https://bugs.webkit.org/show_bug.cgi?id=51550
-
-        * Shared/SelectionState.h: Added.
-        Add SelectionState class which hold information about the current selection.
-
-        * UIProcess/API/mac/PageClientImpl.h:
-        * UIProcess/API/mac/PageClientImpl.mm:
-        Remove selectionChanged function.
-
-        * UIProcess/API/mac/WKView.mm:
-        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
-        Remove all the selection related state; it lives in the WebPageProxy object now.
-        
-        (-[WKView insertText:]):
-        (-[WKView selectedRange]):
-        (-[WKView hasMarkedText]):
-        Get the selection information from the WebPageProxy.
-
-        * UIProcess/API/mac/WKViewInternal.h:
-        Remove _selectionChanged declaration.
-
-        * UIProcess/PageClient.h:
-        Remove selectionChanged functions.
-
-        * UIProcess/WebPageProxy.cpp:
-        (WebKit::WebPageProxy::selectionStateChanged):
-        Update the selection state.
-
-        * UIProcess/WebPageProxy.h:
-        (WebKit::WebPageProxy::selectionState):
-        Return the selection state.
-
-        * UIProcess/WebPageProxy.messages.in:
-        Add SelectionStateChanged message.
-
-        * UIProcess/win/WebView.cpp:
-        (WebKit::WebView::WebView):
-        Remove all the selection related state; it lives in the WebPageProxy object now.
-
-        (WebKit::WebView::compositionSelectionChanged):
-        (WebKit::WebView::onIMEComposition):
-        (WebKit::WebView::onIMEEndComposition):
-        (WebKit::WebView::onIMERequestCharPosition):
-        (WebKit::WebView::onIMERequest):
-        Get the selection information from the WebPageProxy.
-        
-        * WebKit2.xcodeproj/project.pbxproj:
-        Add SelectionState.h
-
-        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
-        (WebKit::WebEditorClient::respondToChangedSelection):
-        Send a SelectionStateChanged message with the updated state.
-
-        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
-        Remove mac specific code.
-
-        * WebProcess/WebPage/WebPage.cpp:
-        (WebKit::WebPage::getLocationAndLengthFromRange):
-        Rename this function from convertRangeToPlatformRange and move it out of WebPageMac.mm
-
-        * WebProcess/WebPage/mac/WebPageMac.mm:
-        (WebKit::WebPage::getMarkedRange):
-        (WebKit::WebPage::characterIndexForPoint):
-        Call getLocationAndLengthFromRange.
-
-        * win/WebKit2.vcproj:
-        Add SelectionState.h
 
 2010-12-23  Anders Carlsson  <andersca@apple.com>
 
