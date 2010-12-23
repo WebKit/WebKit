@@ -189,11 +189,11 @@ void WebFrameProxy::appendChild(WebFrameProxy* child)
 
     child->m_parentFrame = this;
 
-    ASSERT(!m_lastChild->m_nextSibling);
     WebFrameProxy* oldLast = m_lastChild;
     m_lastChild = child;
 
     if (oldLast) {
+        ASSERT(!oldLast->m_nextSibling);
         child->m_previousSibling = oldLast;
         oldLast->m_nextSibling = child;
     } else
