@@ -1552,13 +1552,12 @@ void WebPageProxy::backForwardForwardListCount(int32_t& count)
     count = m_backForwardList->forwardListCount();
 }
 
-#if PLATFORM(MAC)
-// Selection change support
-void WebPageProxy::didSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition, uint64_t location, uint64_t length)
+void WebPageProxy::selectionStateChanged(const SelectionState& selectionState)
 {
-    m_pageClient->selectionChanged(isNone, isContentEditable, isPasswordField, hasComposition, location, length);
+    m_selectionState = selectionState;
 }
 
+#if PLATFORM(MAC)
 // Complex text input support for plug-ins.
 void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
 {
@@ -1566,12 +1565,6 @@ void WebPageProxy::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputI
         return;
     
     process()->send(Messages::WebPage::SendComplexTextInputToPlugin(pluginComplexTextInputIdentifier, textInput), m_pageID);
-}
-    
-#else    
-void WebPageProxy::didChangeSelection(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
-{
-    m_pageClient->selectionChanged(isNone, isContentEditable, isPasswordField, hasComposition);
 }
 #endif
 

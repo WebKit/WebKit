@@ -70,9 +70,6 @@ public:
     virtual void setEditCommandState(const String& commandName, bool isEnabled, int state) = 0;
 #if PLATFORM(MAC)
     virtual void interceptKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>&, uint32_t, uint32_t, Vector<WebCore::CompositionUnderline>&) = 0;
-    virtual void selectionChanged(bool, bool, bool, bool, uint64_t, uint64_t) = 0;
-#else
-    virtual void selectionChanged(bool, bool, bool, bool) = 0;
 #endif
 #if PLATFORM(WIN)
     virtual void compositionSelectionChanged(bool) = 0;

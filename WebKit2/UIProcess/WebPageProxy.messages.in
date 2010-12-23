@@ -131,12 +131,8 @@ messages -> WebPageProxy {
     ClearAllEditCommands()
     
     # Selection messages.
-#if PLATFORM(MAC)
-    DidSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition, uint64_t location, uint64_t length)
-#endif
-#if !PLATFORM(MAC)
-    DidChangeSelection(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
-#endif
+    SelectionStateChanged(WebKit::SelectionState selectionState)
+
 #if PLATFORM(WIN)
     DidChangeCompositionSelection(bool hasChanged)
 #endif

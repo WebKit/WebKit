@@ -28,6 +28,7 @@
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 
+#include "SelectionState.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -178,7 +179,6 @@ void WebEditorClient::respondToChangedContents()
     notImplemented();
 }
 
-#if !PLATFORM(MAC)
 void WebEditorClient::respondToChangedSelection()
 {
     static const String WebViewDidChangeSelectionNotification = "WebViewDidChangeSelectionNotification";
@@ -187,8 +187,18 @@ void WebEditorClient::respondToChangedSelection()
     if (!frame)
         return;
 
-    m_page->send(Messages::WebPageProxy::DidChangeSelection(frame->selection()->isNone(), frame->selection()->isContentEditable(), frame->selection()->isInPasswordField(), frame->editor()->hasComposition()));
+    SelectionState selectionState;
+    selectionState.isNone = frame->selection()->isNone();
+    selectionState.isContentEditable = frame->selection()->isContentEditable();
+    selectionState.isInPasswordField = frame->selection()->isInPasswordField();
+    selectionState.hasComposition = frame->editor()->hasComposition();
+
+    WebPage::getLocationAndLengthFromRange(frame->selection()->toNormalizedRange().get(), selectionState.selectedRangeStart, selectionState.selectedRangeLength);
+
+    m_page->send(Messages::WebPageProxy::SelectionStateChanged(selectionState));
+
 #if PLATFORM(WIN)
+    // FIXME: This should also go into the selection state.
     if (!frame->editor()->hasComposition() || frame->editor()->ignoreCompositionSelectionChange())
         return;
 
@@ -197,7 +207,6 @@ void WebEditorClient::respondToChangedSelection()
     m_page->send(Messages::WebPageProxy::DidChangeCompositionSelection(frame->editor()->getCompositionSelection(start, end)));
 #endif
 }
-#endif
     
 void WebEditorClient::didEndEditing()
 {

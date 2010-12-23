@@ -51,7 +51,6 @@
 #endif
 
 using namespace WebCore;
-using namespace WTF;
 
 @interface NSAttributedString (WebNSAttributedStringDetails)
 - (DOMDocumentFragment*)_documentFromRange:(NSRange)range document:(DOMDocument*)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
@@ -62,19 +61,6 @@ using namespace WTF;
 @end
 
 namespace WebKit {
-
-void WebEditorClient::respondToChangedSelection()
-{
-    static const String WebViewDidChangeSelectionNotification = "WebViewDidChangeSelectionNotification";
-    m_page->injectedBundleEditorClient().didChangeSelection(m_page, WebViewDidChangeSelectionNotification.impl());
-    WebCore::Frame* frame = m_page->corePage()->focusController()->focusedFrame();
-    if (!frame)
-        return;
-    uint64_t location;
-    uint64_t length;
-    WebPage::convertRangeToPlatformRange(frame, frame->selection()->toNormalizedRange().get(), location, length);
-    m_page->send(Messages::WebPageProxy::DidSelectionChange(frame->selection()->isNone(), frame->selection()->isContentEditable(), frame->selection()->isInPasswordField(), frame->editor()->hasComposition(), location, length));
-}
     
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {

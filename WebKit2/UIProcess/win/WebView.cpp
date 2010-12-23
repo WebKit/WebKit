@@ -225,10 +225,6 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_overrideCursor(0)
     , m_trackingMouseLeave(false)
     , m_isBeingDestroyed(false)
-    , m_selectionIsNone(true)
-    , m_selectionIsEditable(false)
-    , m_selectionInPasswordField(false)
-    , m_hasMarkedText(false)
     , m_inIMEComposition(0)
 {
     registerWebViewWindowClass();
@@ -693,17 +689,9 @@ void WebView::setInputMethodState(bool enabled)
     Ime::ImmAssociateContextEx(m_window, 0, enabled ? IACE_DEFAULT : 0);
 }
 
-void WebView::selectionChanged(bool isNone, bool isEditable, bool isPasswordField, bool hasComposition)
-{
-    m_selectionIsNone = isNone;
-    m_selectionIsEditable = isEditable;
-    m_selectionInPasswordField = isPasswordField;
-    m_hasMarkedText = hasComposition;
-}
-
 void WebView::compositionSelectionChanged(bool hasChanged)
 {
-    if (m_hasMarkedText && !hasChanged)
+    if (m_page->selectionState().hasComposition && !hasChanged)
         resetIME();
 }
 
@@ -811,7 +799,7 @@ bool WebView::onIMEComposition(LPARAM lparam)
     if (!hInputContext)
         return true;
 
-    if (!m_selectionIsEditable)
+    if (!m_page->selectionState().isContentEditable)
         return true;
 
     prepareCandidateWindow(hInputContext);
@@ -854,7 +842,7 @@ bool WebView::onIMEEndComposition()
     LOG(TextInput, "onIMEEndComposition");
     // If the composition hasn't been confirmed yet, it needs to be cancelled.
     // This happens after deleting the last character from inline input hole.
-    if (m_hasMarkedText)
+    if (m_page->selectionState().hasComposition)
         m_page->confirmComposition(String());
 
     if (m_inIMEComposition)
@@ -865,7 +853,7 @@ bool WebView::onIMEEndComposition()
 
 LRESULT WebView::onIMERequestCharPosition(IMECHARPOSITION* charPos)
 {
-    if (charPos->dwCharPos && !m_hasMarkedText)
+    if (charPos->dwCharPos && !m_page->selectionState().hasComposition)
         return 0;
     IntRect caret = m_page->firstRectForCharacterInSelectedRange(charPos->dwCharPos);
     charPos->pt.x = caret.x();
@@ -897,7 +885,7 @@ LRESULT WebView::onIMERequestReconvertString(RECONVERTSTRING* reconvertString)
 LRESULT WebView::onIMERequest(WPARAM request, LPARAM data)
 {
     LOG(TextInput, "onIMERequest %s", imeRequestName(request).latin1().data());
-    if (!m_selectionIsEditable)
+    if (!m_page->selectionState().isContentEditable)
         return 0;
 
     switch (request) {

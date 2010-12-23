@@ -244,14 +244,15 @@ public:
     };
 
     SandboxExtensionTracker& sandboxExtensionTracker() { return m_sandboxExtensionTracker; }
-    
+
+    static void getLocationAndLengthFromRange(WebCore::Range*, uint64_t& location, uint64_t& length);
+
 #if PLATFORM(MAC)
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
-    static void convertRangeToPlatformRange(WebCore::Frame* frame, WebCore::Range *range, uint64_t& location, uint64_t& length);
 #elif PLATFORM(WIN)
     void confirmComposition(const String& compositionString);
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);

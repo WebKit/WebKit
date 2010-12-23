@@ -483,6 +483,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\SelectionState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\StringPairVector.h"
 				>
 			</File>

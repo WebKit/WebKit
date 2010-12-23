@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "DrawingAreaProxy.h"
+#include "SelectionState.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
 #include "WebContextMenuItemData.h"
@@ -171,17 +172,15 @@ public:
     void executeEditCommand(const String& commandName);
     void validateMenuItem(const String& commandName);
 
-// These are only used on Mac currently.
+    const SelectionState& selectionState() const { return m_selectionState; }
+
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
-    void didSelectionChange(bool, bool, bool, bool, uint64_t, uint64_t);
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
-#else
-    void didChangeSelection(bool, bool, bool, bool);
 #endif
 #if PLATFORM(WIN)
     void didChangeCompositionSelection(bool);
@@ -384,6 +383,9 @@ private:
     void didFindZoomableArea(const WebCore::IntRect&);
 #endif
 
+    // Selection
+    void selectionStateChanged(const SelectionState&);
+
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);
     void backForwardGoToItem(uint64_t itemID);
@@ -491,6 +493,8 @@ private:
     RefPtr<WebBackForwardList> m_backForwardList;
 
     String m_toolTip;
+
+    SelectionState m_selectionState;
 
     // REMOVE: For demo purposes only.
     String m_urlAtProcessExit;

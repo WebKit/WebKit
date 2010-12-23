@@ -109,14 +109,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
     uint64_t _pluginComplexTextInputIdentifier;
 
-    BOOL _isSelectionNone;
-    BOOL _isSelectionEditable;
-    BOOL _isSelectionInPasswordField;
-    BOOL _hasMarkedText;
     Vector<CompositionUnderline> _underlines;
     unsigned _selectionStart;
     unsigned _selectionEnd;
-    NSRange _selectedRange;
 }
 @end
 
@@ -164,12 +159,6 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get()));
     _data->_page->initializeWebPage(IntSize(frame.size));
     _data->_page->setIsInWindow([self window]);
-
-    _data->_isSelectionNone = YES;
-    _data->_isSelectionEditable = NO;
-    _data->_isSelectionInPasswordField = NO;
-    _data->_hasMarkedText = NO;
-    _data->_selectedRange = NSMakeRange(NSNotFound, 0);
 
     WebContext::statistics().wkViewCount++;
 
@@ -472,7 +461,7 @@ MOUSE_EVENT_HANDLER(mouseUp)
     
     LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
     NSString *text;
-    bool isFromInputMethod = _data->_hasMarkedText;
+    bool isFromInputMethod = _data->_page->selectionState().hasComposition;
 
     if (isAttributedString) {
         text = [string string];
@@ -549,15 +538,6 @@ MOUSE_EVENT_HANDLER(mouseUp)
     _data->_keyDownEventBeingResent = [event retain];
 }
 
-- (void)_selectionChanged:(BOOL)isNone isEditable:(BOOL)isContentEditable isPassword:(BOOL)isPasswordField hasMarkedText:(BOOL)hasComposition range:(NSRange)newrange
-{
-    _data->_isSelectionNone = isNone;
-    _data->_isSelectionEditable = isContentEditable;
-    _data->_isSelectionInPasswordField = isPasswordField;
-    _data->_hasMarkedText = hasComposition;
-    _data->_selectedRange = newrange;
-}
-
 - (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent 
 {
     _data->_commandsList.clear();
@@ -616,17 +596,17 @@ MOUSE_EVENT_HANDLER(mouseUp)
 
 - (NSRange)selectedRange
 {
-    if (_data->_isSelectionNone || !_data->_isSelectionEditable)
+    if (_data->_page->selectionState().isNone || !_data->_page->selectionState().isContentEditable)
         return NSMakeRange(NSNotFound, 0);
     
-    LOG(TextInput, "selectedRange -> (%u, %u)", _data->_selectedRange.location, _data->_selectedRange.length);
-    return _data->_selectedRange;
+    LOG(TextInput, "selectedRange -> (%u, %u)", _data->_page->selectionState().selectedRangeStart, _data->_page->selectionState().selectedRangeLength);
+    return NSMakeRange(_data->_page->selectionState().selectedRangeStart, _data->_page->selectionState().selectedRangeLength);
 }
 
 - (BOOL)hasMarkedText
 {
-    LOG(TextInput, "hasMarkedText -> %u", _data-> _hasMarkedText);
-    return _data->_hasMarkedText;
+    LOG(TextInput, "hasMarkedText -> %u", _data->_page->selectionState().hasComposition);
+    return _data->_page->selectionState().hasComposition;
 }
 
 - (void)unmarkText

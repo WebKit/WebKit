@@ -123,34 +123,6 @@ bool WebPage::interceptEditingKeyboardEvent(KeyboardEvent* evt, bool shouldSaveC
     return eventWasHandled;
 }
 
-void WebPage::convertRangeToPlatformRange(WebCore::Frame* frame, WebCore::Range *range, uint64_t& location, uint64_t& length)
-{
-    location = NSNotFound;
-    length = 0;
-    if (!range || !range->startContainer())
-        return;
-        
-    Element* selectionRoot = frame->selection()->rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
-    
-    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
-    // that is not inside the current editable region.  These checks ensure we don't produce
-    // potentially invalid data when responding to such requests.
-    if (range->startContainer() != scope && !range->startContainer()->isDescendantOf(scope))
-        return;
-    if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
-        return;
-            
-    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
-    ASSERT(testRange->startContainer() == scope);
-    location = TextIterator::rangeLength(testRange.get());
-            
-    ExceptionCode ec;
-    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
-    ASSERT(testRange->startContainer() == scope);
-    length = TextIterator::rangeLength(testRange.get()) - location;
-}
-
 void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput)
 {
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it) {
@@ -167,7 +139,7 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
     if (!frame)
         return;
     
-    convertRangeToPlatformRange(frame, frame->editor()->compositionRange().get(), location, length);
+    getLocationAndLengthFromRange(frame->editor()->compositionRange().get(), location, length);
 }
 
 static Range *characterRangeAtPoint(Frame* frame, const IntPoint point)
@@ -206,9 +178,11 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
     frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
     
     Range *range = characterRangeAtPoint(frame, result.point());
+    if (!range)
+        return;
+
     uint64_t length;
-    if (range)
-        convertRangeToPlatformRange(frame, range, index, length);
+    getLocationAndLengthFromRange(range, index, length);
 }
 
 static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)

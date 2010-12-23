@@ -117,7 +117,6 @@ private:
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
-    virtual void selectionChanged(bool, bool, bool, bool);
     virtual void compositionSelectionChanged(bool);
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
@@ -151,11 +150,6 @@ private:
 
     RefPtr<WebPageProxy> m_page;
 
-    // Text input state values
-    bool m_selectionIsNone;
-    bool m_selectionIsEditable;
-    bool m_selectionInPasswordField;
-    bool m_hasMarkedText;
     unsigned m_inIMEComposition;
 };
 

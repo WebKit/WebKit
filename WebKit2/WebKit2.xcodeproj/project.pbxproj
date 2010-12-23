@@ -157,6 +157,7 @@
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA417C912C00CCA002BE67B /* TextChecker.h */; };
 		1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */; };
+		1AA41AB512C02EC4002BE67B /* SelectionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA41AB412C02EC4002BE67B /* SelectionState.h */; };
 		1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */; };
 		1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
@@ -813,6 +814,7 @@
 		1AA1CD06100FA1BA0078DEBC /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		1AA417C912C00CCA002BE67B /* TextChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextChecker.h; sourceTree = "<group>"; };
 		1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextCheckerMac.mm; sourceTree = "<group>"; };
+		1AA41AB412C02EC4002BE67B /* SelectionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionState.h; sourceTree = "<group>"; };
 		1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessMac.mm; sourceTree = "<group>"; };
 		1AA56F2811E92BC80061B882 /* PluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginController.h; sourceTree = "<group>"; };
 		1AA5889011EE70400061B882 /* NetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePluginStream.h; sourceTree = "<group>"; };
@@ -1603,6 +1605,7 @@
 				BCC43AB9127B95DC00317F16 /* PlatformPopupMenuData.h */,
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
+				1AA41AB412C02EC4002BE67B /* SelectionState.h */,
 				BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */,
 				BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */,
 				1A0F29C9120B37160053D1B9 /* VisitedLinkTable.cpp */,
@@ -2770,6 +2773,7 @@
 				1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */,
 				BC858A2012C0357B00EDEB2E /* WebResourceLoadClient.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
+				1AA41AB512C02EC4002BE67B /* SelectionState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
