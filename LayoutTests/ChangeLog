@@ -1,3 +1,9 @@
+2010-12-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Update Qt specific expected file after r74539.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2010-12-23  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Eric Seidel.
