@@ -488,7 +488,7 @@ void GraphicsLayerCA::setAcceleratesDrawing(bool acceleratesDrawing)
         return;
 
     GraphicsLayer::setAcceleratesDrawing(acceleratesDrawing);
-    noteLayerPropertyChanged(DrawsContentChanged);
+    noteLayerPropertyChanged(AcceleratesDrawingChanged);
 }
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)

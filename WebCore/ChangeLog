@@ -1,3 +1,15 @@
+2010-12-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Incorrect layer property used noted as changed in GraphicsLayerCA::setAcceleratesDrawing
+        https://bugs.webkit.org/show_bug.cgi?id=51560
+
+        No new tests.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setAcceleratesDrawing):
+
 2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Andreas Kling.
