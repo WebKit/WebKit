@@ -1,3 +1,14 @@
+2010-12-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Joseph Pecoraro.
+
+        Web Inspector: Can't backspace from CSS value to CSS key field
+        https://bugs.webkit.org/show_bug.cgi?id=51476
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.):
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2010-12-23  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by Kenneth Russell.

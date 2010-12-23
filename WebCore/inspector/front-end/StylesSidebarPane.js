@@ -1559,7 +1559,14 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 return "move-forward";
             } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code)
                 return "cancel";
-            else if (event.keyIdentifier === "U+0009") // Tab key.
+            else if (!isEditingName && this._newProperty && event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code) {
+                // For a new property, when Backspace is pressed at the beginning of new property value, move back to the property name.
+                var selection = window.getSelection();
+                if (selection.isCollapsed && !selection.focusOffset) {
+                    event.preventDefault();
+                    return "move-backward";
+                }
+            } else if (event.keyIdentifier === "U+0009") // Tab key.
                 return "move-" + (event.shiftKey ? "backward" : "forward");
         }
 
