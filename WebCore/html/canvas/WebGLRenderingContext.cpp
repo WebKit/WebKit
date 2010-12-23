@@ -140,6 +140,7 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
 
 void WebGLRenderingContext::initializeNewContext()
 {
+    ASSERT(!m_contextLost);
     m_needsUpdate = true;
     m_markedCanvasDirty = false;
     m_activeTextureUnit = 0;
@@ -3325,8 +3326,8 @@ void WebGLRenderingContext::restoreContext()
         return;
 
     m_context = context;
-    initializeNewContext();
     m_contextLost = false;
+    initializeNewContext();
     canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, false, true, ""));
 }
 

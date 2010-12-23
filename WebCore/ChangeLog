@@ -1,3 +1,16 @@
+2010-12-22  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Fix null pointer deref when restoring a lost WebGL context.
+        https://bugs.webkit.org/show_bug.cgi?id=51494
+
+        No new tests, as context restored events are not currently testable.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::restoreContext):
+
 2010-12-22  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Martin Robinson.
