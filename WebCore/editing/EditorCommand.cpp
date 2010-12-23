@@ -1225,7 +1225,7 @@ static bool enabledUndo(Frame* frame, Event*, EditorCommandSource)
 }
 
 #if SUPPORT_AUTOCORRECTION_PANEL
-static bool enabledDismissCorrectionPanel(Frame* frame, EditorCommandSource source)
+static bool enabledDismissCorrectionPanel(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->isShowingCorrectionPanel();
 }
