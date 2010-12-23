@@ -253,36 +253,36 @@ void EditorClientHaiku::handleKeyboardEvent(KeyboardEvent* event)
     if (start->isContentEditable()) {
         switch (kevent->windowsVirtualKeyCode()) {
         case VK_BACK:
-            frame->editor()->deleteWithDirection(SelectionController::DirectionBackward,
+            frame->editor()->deleteWithDirection(DirectionBackward,
                                                  kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                                                  false, true);
             break;
         case VK_DELETE:
-            frame->editor()->deleteWithDirection(SelectionController::DirectionForward,
+            frame->editor()->deleteWithDirection(DirectionForward,
                                                  kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                                                  false, true);
             break;
         case VK_LEFT:
             frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                                       SelectionController::DirectionLeft,
+                                       DirectionLeft,
                                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                                        true);
             break;
         case VK_RIGHT:
             frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                                       SelectionController::DirectionRight,
+                                       DirectionRight,
                                        kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                                        true);
             break;
         case VK_UP:
             frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                                       SelectionController::DirectionBackward,
+                                       DirectionBackward,
                                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                                        true);
             break;
         case VK_DOWN:
             frame->selection()->modify(kevent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                                       SelectionController::DirectionForward,
+                                       DirectionForward,
                                        kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                                        true);
             break;

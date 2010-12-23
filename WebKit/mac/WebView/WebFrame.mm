@@ -708,7 +708,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #endif
 }
 
-- (DOMRange *)_rangeByAlteringCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionController::EDirection)direction granularity:(TextGranularity)granularity
+- (DOMRange *)_rangeByAlteringCurrentSelection:(SelectionController::EAlteration)alteration direction:(SelectionDirection)direction granularity:(TextGranularity)granularity
 {
     if (_private->coreFrame->selection()->isNone())
         return nil;

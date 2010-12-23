@@ -1,3 +1,95 @@
+2010-12-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Editor.h doesn't need to include SelectionController.h
+        https://bugs.webkit.org/show_bug.cgi?id=51441
+
+        Removed #include <Selection.h> from Editor.h.
+        Also extracted WritingDirection.h from EditingStyle.h and renamed SelectionController::EDirection
+        to SelectionDirection and moved its declaration from SelectionController.h to VisibleSelection.h
+
+        * WebCore.exp.in: Signature changes.
+        * WebCore.xcodeproj/project.pbxproj: Added WritingDirection.h
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine): Change due to SelectionDirection.
+        * editing/EditingStyle.h: Removed WritingDirection and included WritingDirection.h
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection): Change due to SelectionDirection.
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Ditto.
+        (WebCore::Editor::markMisspellingsAfterTypingToWord): Ditto.
+        * editing/Editor.h: Removed SelectionController.h; added DocumentMarker.h, Timer.h, VisibleSelection.h
+        and WritingDirection.h; forward declared CSSMutableStyleDeclaration.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDeleteBackward): Change due to SelectionDirection.
+        (WebCore::executeDeleteBackwardByDecomposingPreviousCharacter): Ditto.
+        (WebCore::executeDeleteForward): Ditto.
+        (WebCore::executeDeleteToBeginningOfLine): Ditto.
+        (WebCore::executeDeleteToBeginningOfParagraph): Ditto.
+        (WebCore::executeDeleteToEndOfLine): Ditto.
+        (WebCore::executeDeleteToEndOfParagraph): Ditto.
+        (WebCore::executeDeleteWordBackward): Ditto.
+        (WebCore::executeDeleteWordForward): Ditto.
+        (WebCore::executeForwardDelete): Ditto.
+        (WebCore::executeMoveBackward): Ditto.
+        (WebCore::executeMoveBackwardAndModifySelection): Ditto.
+        (WebCore::executeMoveDown): Ditto.
+        (WebCore::executeMoveDownAndModifySelection): Ditto.
+        (WebCore::executeMoveForward): Ditto.
+        (WebCore::executeMoveForwardAndModifySelection): Ditto.
+        (WebCore::executeMoveLeft): Ditto.
+        (WebCore::executeMoveLeftAndModifySelection): Ditto.
+        (WebCore::executeMoveRight): Ditto.
+        (WebCore::executeMoveRightAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfDocument): Ditto.
+        (WebCore::executeMoveToBeginningOfDocumentAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfLine): Ditto.
+        (WebCore::executeMoveToBeginningOfLineAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfParagraph): Ditto.
+        (WebCore::executeMoveToBeginningOfParagraphAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfSentence): Ditto.
+        (WebCore::executeMoveToBeginningOfSentenceAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfDocument): Ditto.
+        (WebCore::executeMoveToEndOfDocumentAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfSentence): Ditto.
+        (WebCore::executeMoveToEndOfSentenceAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfLine): Ditto.
+        (WebCore::executeMoveToEndOfLineAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfParagraph): Ditto.
+        (WebCore::executeMoveToEndOfParagraphAndModifySelection): Ditto.
+        (WebCore::executeMoveParagraphBackwardAndModifySelection): Ditto.
+        (WebCore::executeMoveParagraphForwardAndModifySelection): Ditto.
+        (WebCore::executeMoveUp): Ditto.
+        (WebCore::executeMoveUpAndModifySelection): Ditto.
+        (WebCore::executeMoveWordBackward): Ditto.
+        (WebCore::executeMoveWordBackwardAndModifySelection): Ditto.
+        (WebCore::executeMoveWordForward): Ditto.
+        (WebCore::executeMoveWordForwardAndModifySelection): Ditto.
+        (WebCore::executeMoveWordLeft): Ditto.
+        (WebCore::executeMoveWordLeftAndModifySelection): Ditto.
+        (WebCore::executeMoveWordRight): Ditto.
+        (WebCore::executeMoveWordRightAndModifySelection): Ditto.
+        (WebCore::executeMoveToLeftEndOfLine): Ditto.
+        (WebCore::executeMoveToLeftEndOfLineAndModifySelection): Ditto.
+        (WebCore::executeMoveToRightEndOfLine): Ditto.
+        (WebCore::executeMoveToRightEndOfLineAndModifySelection): Ditto.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::willBeModified): Takes SelectionDirection instead of EDirection.
+        (WebCore::SelectionController::modify): Ditto.
+        * editing/SelectionController.h: Change due to SelectionDirection.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed): Ditto.
+        (WebCore::TypingCommand::forwardDeleteKeyPressed): Ditto.
+        * editing/VisibleSelection.h: Added SelectionDirection, renamed and moved from EDirection
+        in SelectionController.h
+        * editing/WritingDirection.h: Added.
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::modify): Change due to SelectionDirection.
+        (WebCore::DOMSelection::deleteFromDocument): Ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleKeyboardSelectionMovement): Ditto.
+        * page/Frame.h: Includes SelectionController.h.
+
 2010-12-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

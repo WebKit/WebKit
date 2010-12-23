@@ -50,7 +50,6 @@ enum DirectionalityPolicy { MakeNonDirectionalSelection, MakeDirectionalSelectio
 class SelectionController : public Noncopyable {
 public:
     enum EAlteration { AlterationMove, AlterationExtend };
-    enum EDirection { DirectionForward, DirectionBackward, DirectionRight, DirectionLeft };
     enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,
                                AlignCursorOnScrollAlways };
 
@@ -83,7 +82,7 @@ public:
 
     EAffinity affinity() const { return m_selection.affinity(); }
 
-    bool modify(EAlteration, EDirection, TextGranularity, bool userTriggered = false);
+    bool modify(EAlteration, SelectionDirection, TextGranularity, bool userTriggered = false);
     bool modify(EAlteration, int verticalDistance, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
     TextGranularity granularity() const { return m_granularity; }
 
@@ -112,8 +111,8 @@ public:
     void setCaretRectNeedsUpdate(bool flag = true);
 
     void setIsDirectional(bool);
-    void willBeModified(EAlteration, EDirection);
-    
+    void willBeModified(EAlteration, SelectionDirection);
+
     bool isNone() const { return m_selection.isNone(); }
     bool isCaret() const { return m_selection.isCaret(); }
     bool isRange() const { return m_selection.isRange(); }

@@ -1,3 +1,15 @@
+2010-12-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Editor.h doesn't need to include SelectionController.h
+        https://bugs.webkit.org/show_bug.cgi?id=51441
+
+        Renamed SelectionController::EDirection to SelectionDirection.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeCommand):
+
 2010-12-23  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by Kenneth Russell.

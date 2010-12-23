@@ -353,25 +353,25 @@ bool EditorClientWinCE::handleEditingKeyboardEvent(KeyboardEvent* event)
         switch (keyEvent->windowsVirtualKeyCode()) {
         case VK_LEFT:
             frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                    SelectionController::DirectionLeft,
+                    DirectionLeft,
                     keyEvent->ctrlKey() ? WordGranularity : CharacterGranularity,
                     true);
             return true;
         case VK_RIGHT:
             frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                    SelectionController::DirectionRight,
+                    DirectionRight,
                     keyEvent->ctrlKey() ? WordGranularity : CharacterGranularity,
                     true);
             return true;
         case VK_UP:
             frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                    SelectionController::DirectionBackward,
+                    DirectionBackward,
                     keyEvent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                     true);
             return true;
         case VK_DOWN:
             frame->selection()->modify(keyEvent->shiftKey() ? SelectionController::AlterationExtend : SelectionController::AlterationMove,
-                    SelectionController::DirectionForward,
+                    DirectionForward,
                     keyEvent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                     true);
             return true;

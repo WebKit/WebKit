@@ -1150,11 +1150,11 @@ bool WebFrameImpl::executeCommand(const WebString& name)
     // support.
     if (command == "DeleteToEndOfParagraph") {
         Editor* editor = frame()->editor();
-        if (!editor->deleteWithDirection(SelectionController::DirectionForward,
+        if (!editor->deleteWithDirection(DirectionForward,
                                          ParagraphBoundary,
                                          true,
                                          false)) {
-            editor->deleteWithDirection(SelectionController::DirectionForward,
+            editor->deleteWithDirection(DirectionForward,
                                         CharacterGranularity,
                                         true,
                                         false);

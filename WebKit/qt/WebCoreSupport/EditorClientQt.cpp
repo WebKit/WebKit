@@ -391,11 +391,11 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 #endif // QT_NO_SHORTCUT
         switch (kevent->windowsVirtualKeyCode()) {
         case VK_BACK:
-            frame->editor()->deleteWithDirection(SelectionController::DirectionBackward,
+            frame->editor()->deleteWithDirection(DirectionBackward,
                     CharacterGranularity, false, true);
             break;
         case VK_DELETE:
-            frame->editor()->deleteWithDirection(SelectionController::DirectionForward,
+            frame->editor()->deleteWithDirection(DirectionForward,
                     CharacterGranularity, false, true);
             break;
         case VK_LEFT:

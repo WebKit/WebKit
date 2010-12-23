@@ -34,6 +34,7 @@
 #include "EventHandler.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "SelectionController.h"
 #include "ScriptController.h"
 #include "UserScriptTypes.h"
 

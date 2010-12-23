@@ -253,7 +253,7 @@ void SelectionController::setIsDirectional(bool isDirectional)
     m_isDirectional = !m_frame || m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional() || isDirectional;
 }
 
-void SelectionController::willBeModified(EAlteration alter, EDirection direction)
+void SelectionController::willBeModified(EAlteration alter, SelectionDirection direction)
 {
     if (alter != AlterationExtend)
         return;
@@ -620,8 +620,8 @@ static bool isBoundary(TextGranularity granularity)
 {
     return granularity == LineBoundary || granularity == ParagraphBoundary || granularity == DocumentBoundary;
 }    
-    
-bool SelectionController::modify(EAlteration alter, EDirection direction, TextGranularity granularity, bool userTriggered)
+
+bool SelectionController::modify(EAlteration alter, SelectionDirection direction, TextGranularity granularity, bool userTriggered)
 {
     if (userTriggered) {
         SelectionController trialSelectionController;

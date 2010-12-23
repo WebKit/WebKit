@@ -2391,16 +2391,16 @@ void EventHandler::handleKeyboardSelectionMovement(KeyboardEvent* event)
     bool isCommanded = event->getModifierState("Meta");
     
     if (key == "Up") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, SelectionController::DirectionBackward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionBackward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
         event->setDefaultHandled();
     } else if (key == "Down") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, SelectionController::DirectionForward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionForward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
         event->setDefaultHandled();
     } else if (key == "Left") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, SelectionController::DirectionLeft, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionLeft, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
         event->setDefaultHandled();
     } else if (key == "Right") {
-        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, SelectionController::DirectionRight, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
+        m_frame->selection()->modify((isShifted) ? SelectionController::AlterationExtend : SelectionController::AlterationMove, DirectionRight, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
         event->setDefaultHandled();
     }    
 }

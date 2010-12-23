@@ -2432,7 +2432,7 @@ VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsi
     // will be a caret at visiblePos.
     SelectionController selection;
     selection.setSelection(VisibleSelection(visiblePos));
-    selection.modify(SelectionController::AlterationExtend, SelectionController::DirectionRight, LineBoundary);
+    selection.modify(SelectionController::AlterationExtend, DirectionRight, LineBoundary);
     
     return VisiblePositionRange(selection.selection().visibleStart(), selection.selection().visibleEnd());
 }

@@ -29,12 +29,15 @@
 #include "ClipboardAccessPolicy.h"
 #include "Color.h"
 #include "CorrectionPanelInfo.h"
+#include "DocumentMarker.h"
 #include "EditAction.h"
 #include "EditingBehavior.h"
 #include "EditorDeleteAction.h"
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
-#include "SelectionController.h"
+#include "Timer.h"
+#include "VisibleSelection.h"
+#include "WritingDirection.h"
 
 #if PLATFORM(MAC) && !defined(__OBJC__)
 class NSDictionary;
@@ -43,6 +46,7 @@ typedef int NSWritingDirection;
 
 namespace WebCore {
 
+class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
 class Clipboard;
 class DeleteButtonController;
@@ -145,7 +149,7 @@ public:
 
     void clearLastEditCommand();
 
-    bool deleteWithDirection(SelectionController::EDirection, TextGranularity, bool killRing, bool isTypingAction);
+    bool deleteWithDirection(SelectionDirection, TextGranularity, bool killRing, bool isTypingAction);
     void deleteSelectionWithSmartDelete(bool smartDelete);
     bool dispatchCPPEvent(const AtomicString&, ClipboardAccessPolicy);
     

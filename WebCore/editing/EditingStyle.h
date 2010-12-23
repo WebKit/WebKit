@@ -33,14 +33,13 @@
 
 #include "Document.h"
 #include "Position.h"
+#include "WritingDirection.h"
 
 namespace WebCore {
 
 class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
-
-enum WritingDirection { NaturalWritingDirection, LeftToRightWritingDirection, RightToLeftWritingDirection };
 
 class EditingStyle : public RefCounted<EditingStyle> {
 public:

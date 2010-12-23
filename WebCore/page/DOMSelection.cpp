@@ -298,15 +298,15 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
     else
         return;
 
-    SelectionController::EDirection direction;
+    SelectionDirection direction;
     if (equalIgnoringCase(directionString, "forward"))
-        direction = SelectionController::DirectionForward;
+        direction = DirectionForward;
     else if (equalIgnoringCase(directionString, "backward"))
-        direction = SelectionController::DirectionBackward;
+        direction = DirectionBackward;
     else if (equalIgnoringCase(directionString, "left"))
-        direction = SelectionController::DirectionLeft;
+        direction = DirectionLeft;
     else if (equalIgnoringCase(directionString, "right"))
-        direction = SelectionController::DirectionRight;
+        direction = DirectionRight;
     else
         return;
 
@@ -436,7 +436,7 @@ void DOMSelection::deleteFromDocument()
         return;
 
     if (isCollapsed())
-        selection->modify(SelectionController::AlterationExtend, SelectionController::DirectionBackward, CharacterGranularity);
+        selection->modify(SelectionController::AlterationExtend, DirectionBackward, CharacterGranularity);
 
     RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
     if (!selectedRange)

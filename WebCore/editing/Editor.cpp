@@ -312,7 +312,7 @@ bool Editor::isSelectTrailingWhitespaceEnabled()
     return client() && client()->isSelectTrailingWhitespaceEnabled();
 }
 
-bool Editor::deleteWithDirection(SelectionController::EDirection direction, TextGranularity granularity, bool killRing, bool isTypingAction)
+bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity granularity, bool killRing, bool isTypingAction)
 {
     if (!canEdit())
         return false;
@@ -329,12 +329,12 @@ bool Editor::deleteWithDirection(SelectionController::EDirection direction, Text
         }
     } else {
         switch (direction) {
-        case SelectionController::DirectionForward:
-        case SelectionController::DirectionRight:
+        case DirectionForward:
+        case DirectionRight:
             TypingCommand::forwardDeleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
             break;
-        case SelectionController::DirectionBackward:
-        case SelectionController::DirectionLeft:
+        case DirectionBackward:
+        case DirectionLeft:
             TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
             break;
         }
@@ -2125,7 +2125,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 
         // Reset the charet one character further.
         frame()->selection()->moveTo(frame()->selection()->end());
-        frame()->selection()->modify(SelectionController::AlterationMove, SelectionController::DirectionForward, CharacterGranularity);
+        frame()->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
     }
 
     if (!isGrammarCheckingEnabled())
@@ -2418,11 +2418,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             RefPtr<Range> selectionRange = paragraph.subrange(0, selectionOffset);
             m_frame->selection()->moveTo(selectionRange->endPosition(), DOWNSTREAM);
             if (adjustSelectionForParagraphBoundaries)
-                m_frame->selection()->modify(SelectionController::AlterationMove, SelectionController::DirectionForward, CharacterGranularity);
+                m_frame->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
         } else {
             // If this fails for any reason, the fallback is to go one position beyond the last replacement
             m_frame->selection()->moveTo(m_frame->selection()->end());
-            m_frame->selection()->modify(SelectionController::AlterationMove, SelectionController::DirectionForward, CharacterGranularity);
+            m_frame->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
         }
     }
 }

@@ -173,7 +173,7 @@ using namespace std;
         WebFrame *frame = [_htmlView _frame];
         DOMRange *selection = kit(core(frame)->selection()->toNormalizedRange().get());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:SelectionController::AlterationExtend
-            direction:SelectionController::DirectionBackward granularity:WordGranularity];
+            direction:DirectionBackward granularity:WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
         [prefix setEnd:[selection startContainer] offset:[selection startOffset]];
 

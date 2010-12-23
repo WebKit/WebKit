@@ -3041,6 +3041,7 @@
 		9B417065125662B3006B28FC /* ApplyBlockElementCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */; };
 		9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAB6C6A12550631001626D4 /* EditingStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BAB6C6B12550631001626D4 /* EditingStyle.cpp */; };
+		9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAF3B2312C1A39800014BF1 /* WritingDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */; };
 		9BD0BF9412A42BF50072FD43 /* ScopedEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */; };
 		9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */; };
@@ -9367,6 +9368,7 @@
 		9B417063125662B3006B28FC /* ApplyBlockElementCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplyBlockElementCommand.cpp; sourceTree = "<group>"; };
 		9BAB6C6A12550631001626D4 /* EditingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingStyle.h; sourceTree = "<group>"; };
 		9BAB6C6B12550631001626D4 /* EditingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditingStyle.cpp; sourceTree = "<group>"; };
+		9BAF3B2312C1A39800014BF1 /* WritingDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritingDirection.h; sourceTree = "<group>"; };
 		9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedEventQueue.h; sourceTree = "<group>"; };
 		9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedEventQueue.cpp; sourceTree = "<group>"; };
 		9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorProfilerAgent.cpp; sourceTree = "<group>"; };
@@ -15150,6 +15152,7 @@
 				A883DF260F3D045D00F19BF6 /* VisibleSelection.h */,
 				93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */,
 				93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */,
+				9BAF3B2312C1A39800014BF1 /* WritingDirection.h */,
 			);
 			path = editing;
 			sourceTree = "<group>";
@@ -22096,6 +22099,7 @@
 				0B9056F90F2685F30095FF6A /* WorkerThreadableLoader.h in Headers */,
 				5112247A10CFB8FF008099D7 /* WorkerThreadableWebSocketChannel.h in Headers */,
 				93309E24099E64920056E581 /* WrapContentsInDummySpanCommand.h in Headers */,
+				9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */,
 				6565820209D1508D000E61D7 /* XLinkNames.h in Headers */,
 				93F1992108245E59001E9ABC /* XMLDocumentParser.h in Headers */,
 				5D15E3AC0F9E6AC1009E0E3F /* XMLDocumentParserScope.h in Headers */,
