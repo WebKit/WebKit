@@ -2830,33 +2830,53 @@ void EventHandler::updateLastScrollbarUnderMouse(Scrollbar* scrollbar, bool setL
 
 #if ENABLE(TOUCH_EVENTS)
 
-static PassRefPtr<TouchList> assembleTargetTouches(Touch* touchTarget, TouchList* touches)
+static const AtomicString& eventNameForTouchPointState(PlatformTouchPoint::State state)
 {
-    RefPtr<TouchList> targetTouches = TouchList::create();
-
-    for (unsigned i = 0; i < touches->length(); ++i) {
-        if (touches->item(i)->target()->toNode()->isSameNode(touchTarget->target()->toNode()))
-            targetTouches->append(touches->item(i));
+    switch (state) {
+    case PlatformTouchPoint::TouchReleased:
+        return eventNames().touchendEvent;
+    case PlatformTouchPoint::TouchCancelled:
+        return eventNames().touchcancelEvent;
+    case PlatformTouchPoint::TouchPressed:
+        return eventNames().touchstartEvent;
+    case PlatformTouchPoint::TouchMoved:
+        return eventNames().touchmoveEvent;
+    default:
+        ASSERT_NOT_REACHED();
+        return emptyAtom;
     }
-
-    return targetTouches.release();
 }
 
 bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 {
+    // First build up the lists to use for the 'touches', 'targetTouches' and 'changedTouches' attributes
+    // in the JS event. See http://www.sitepen.com/blog/2008/07/10/touching-and-gesturing-on-the-iphone/
+    // for an overview of how these lists fit together.
+
+    // Holds the complete set of touches on the screen and will be used as the 'touches' list in the JS event.
     RefPtr<TouchList> touches = TouchList::create();
-    RefPtr<TouchList> pressedTouches = TouchList::create();
-    RefPtr<TouchList> releasedTouches = TouchList::create();
-    RefPtr<TouchList> movedTouches = TouchList::create();
-    RefPtr<TouchList> cancelTouches = TouchList::create();
+
+    // A different view on the 'touches' list above, filtered and grouped by event target. Used for the
+    // 'targetTouches' list in the JS event.
+    typedef HashMap<EventTarget*, RefPtr<TouchList> > TargetTouchesMap;
+    TargetTouchesMap touchesByTarget;
+
+    // Array of touches per state, used to assemble the 'changedTouches' list in the JS event.
+    typedef HashSet<RefPtr<EventTarget> > EventTargetSet;
+    struct {
+        // The touches corresponding to the particular change state this struct instance represents.
+        RefPtr<TouchList> m_touches;
+        // Set of targets involved in m_touches.
+        EventTargetSet m_targets;
+    } changedTouches[PlatformTouchPoint::TouchStateEnd];
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
-    AtomicString* eventName = 0;
 
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     for (unsigned i = 0; i < points.size(); ++i) {
         const PlatformTouchPoint& point = points[i];
+        PlatformTouchPoint::State pointState = point.state();
         IntPoint pagePoint = documentPointForWindowPoint(m_frame, point.pos());
 
         HitTestRequest::HitTestRequestType hitType = HitTestRequest::Active | HitTestRequest::ReadOnly;
@@ -2865,7 +2885,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         // should affect the active state of the current node if necessary,
         // HitTestRequest::Active signifies that the hit test is taking place
         // with the mouse (or finger in this case) being pressed.
-        switch (point.state()) {
+        switch (pointState) {
         case PlatformTouchPoint::TouchPressed:
             hitType = HitTestRequest::Active;
             break;
@@ -2881,13 +2901,14 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         }
 
         HitTestResult result = hitTestResultAtPoint(pagePoint, /*allowShadowContent*/ false, false, DontHitTestScrollbars, hitType);
-        Node* target = result.innerNode();
+        Node* node = result.innerNode();
+        ASSERT(node);
 
         // Touch events should not go to text nodes
-        if (target && target->isTextNode())
-            target = target->parentNode();
+        if (node->isTextNode())
+            node = node->parentNode();
 
-        Document* doc = target->document();
+        Document* doc = node->document();
         if (!doc)
             continue;
         if (!doc->hasListenerType(Document::TOUCH_LISTENER))
@@ -2904,10 +2925,10 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         // Increment the platform touch id by 1 to avoid storing a key of 0 in the hashmap.
         unsigned touchPointTargetKey = point.id() + 1;
         RefPtr<EventTarget> touchTarget;
-        if (point.state() == PlatformTouchPoint::TouchPressed) {
-            m_originatingTouchPointTargets.set(touchPointTargetKey, target);
-            touchTarget = target;
-        } else if (point.state() == PlatformTouchPoint::TouchReleased || point.state() == PlatformTouchPoint::TouchCancelled) {
+        if (pointState == PlatformTouchPoint::TouchPressed) {
+            m_originatingTouchPointTargets.set(touchPointTargetKey, node);
+            touchTarget = node;
+        } else if (pointState == PlatformTouchPoint::TouchReleased || pointState == PlatformTouchPoint::TouchCancelled) {
             // The target should be the original target for this touch, so get it from the hashmap. As it's a release or cancel
             // we also remove it from the map.
             touchTarget = m_originatingTouchPointTargets.take(touchPointTargetKey);
@@ -2921,110 +2942,60 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
                                             point.screenPos().x(), point.screenPos().y(),
                                             adjustedPageX, adjustedPageY);
 
-        // touches should contain information about every touch currently on the screen.
-        if (point.state() != PlatformTouchPoint::TouchReleased)
+        // Ensure this target's touch list exists, even if it ends up empty, so it can always be passed to TouchEvent::Create below.
+        TargetTouchesMap::iterator targetTouchesIterator = touchesByTarget.find(touchTarget.get());
+        if (targetTouchesIterator == touchesByTarget.end())
+            targetTouchesIterator = touchesByTarget.set(touchTarget.get(), TouchList::create()).first;
+
+        // touches and targetTouches should only contain information about touches still on the screen, so if this point is
+        // released or cancelled it will only appear in the changedTouches list.
+        if (pointState != PlatformTouchPoint::TouchReleased && pointState != PlatformTouchPoint::TouchCancelled) {
             touches->append(touch);
+            targetTouchesIterator->second->append(touch);
+        }
 
         // Now build up the correct list for changedTouches.
         // Note that  any touches that are in the TouchStationary state (e.g. if
         // the user had several points touched but did not move them all) should
-        // only be present in the touches list. They may also be added to the
-        // targetTouches list later, but should never be in the changedTouches
-        // list so we do not handle them explicitly here.
+        // never be in the changedTouches list so we do not handle them explicitly here.
         // See https://bugs.webkit.org/show_bug.cgi?id=37609 for further discussion
         // about the TouchStationary state.
-        if (point.state() == PlatformTouchPoint::TouchReleased)
-            releasedTouches->append(touch);
-        else if (point.state() == PlatformTouchPoint::TouchCancelled)
-            cancelTouches->append(touch);
-        else if (point.state() == PlatformTouchPoint::TouchPressed)
-            pressedTouches->append(touch);
-        else if (point.state() == PlatformTouchPoint::TouchMoved)
-            movedTouches->append(touch);
+        if (pointState != PlatformTouchPoint::TouchStationary) {
+            ASSERT(pointState < PlatformTouchPoint::TouchStateEnd);
+            if (!changedTouches[pointState].m_touches)
+                changedTouches[pointState].m_touches = TouchList::create();
+            changedTouches[pointState].m_touches->append(touch);
+            changedTouches[pointState].m_targets.add(touchTarget);
+        }
     }
-
     m_touchPressed = touches->length() > 0;
 
+    // Now iterate the changedTouches list and m_targets within it, sending events to the tagets as required.
     bool defaultPrevented = false;
-    Touch* changedTouch = 0;
-    EventTarget* touchEventTarget = 0;
+    RefPtr<TouchList> emptyList = TouchList::create();
+    for (unsigned state = 0; state != PlatformTouchPoint::TouchStateEnd; ++state) {
+        if (!changedTouches[state].m_touches)
+            continue;
 
-    if (cancelTouches->length() > 0) {
-        // We dispatch the event to the target of the touch that caused this touch event to be generated, i.e.
-        // we take it from the list that will be used as the changedTouches property of the event.
-        // The choice to use the touch at index 0 guarantees that there is a target (as we checked the length
-        // above). In the case that there are multiple touches in what becomes the changedTouches list, it is
-        // difficult to say how we should prioritise touches and as such, item 0 is an arbitrary choice.
-        changedTouch = cancelTouches->item(0);
-        ASSERT(changedTouch);
-        touchEventTarget = changedTouch->target();
-        ASSERT(touchEventTarget);
+        // When sending a touch cancel event, use empty touches and targetTouches lists.
+        bool isTouchCancelEvent = (state == PlatformTouchPoint::TouchCancelled);
+        RefPtr<TouchList>& effectiveTouches(isTouchCancelEvent ? emptyList : touches);
+        const AtomicString& stateName(eventNameForTouchPointState(static_cast<PlatformTouchPoint::State>(state)));
+        const EventTargetSet& targetsForState = changedTouches[state].m_targets;
 
-        eventName = &eventNames().touchcancelEvent;
-        RefPtr<TouchEvent> cancelEv =
-            TouchEvent::create(TouchList::create().get(), TouchList::create().get(), cancelTouches.get(),
-                                                   *eventName, touchEventTarget->toNode()->document()->defaultView(),
-                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
-                                                   event.metaKey());
-        ExceptionCode ec = 0;
-        touchEventTarget->dispatchEvent(cancelEv.get(), ec);
-        defaultPrevented |= cancelEv->defaultPrevented();
-    }
+        for (EventTargetSet::const_iterator it = targetsForState.begin(); it != targetsForState.end(); ++it) {
+            EventTarget* touchEventTarget = it->get();
+            RefPtr<TouchList> targetTouches(isTouchCancelEvent ? emptyList : touchesByTarget.get(touchEventTarget));
+            ASSERT(targetTouches);
 
-    if (releasedTouches->length() > 0) {
-        Touch* changedTouch = releasedTouches->item(0);
-        ASSERT(changedTouch);
-        touchEventTarget = changedTouch->target();
-        ASSERT(touchEventTarget);
-
-        RefPtr<TouchList> targetTouches = assembleTargetTouches(changedTouch, touches.get());
-
-        eventName = &eventNames().touchendEvent;
-        RefPtr<TouchEvent> endEv = 
-            TouchEvent::create(touches.get(), targetTouches.get(), releasedTouches.get(),
-                                                   *eventName, touchEventTarget->toNode()->document()->defaultView(),
-                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
-                                                   event.metaKey());
-        ExceptionCode ec = 0;
-        touchEventTarget->dispatchEvent(endEv.get(), ec);
-        defaultPrevented |= endEv->defaultPrevented();
-    }
-    if (pressedTouches->length() > 0) {
-        Touch* changedTouch = pressedTouches->item(0);
-        ASSERT(changedTouch);
-        touchEventTarget = changedTouch->target();
-        ASSERT(touchEventTarget);
-
-        RefPtr<TouchList> targetTouches = assembleTargetTouches(changedTouch, touches.get());
-
-        eventName = &eventNames().touchstartEvent;
-        RefPtr<TouchEvent> startEv =
-            TouchEvent::create(touches.get(), targetTouches.get(), pressedTouches.get(),
-                                                   *eventName, touchEventTarget->toNode()->document()->defaultView(),
-                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
-                                                   event.metaKey());
-        ExceptionCode ec = 0;
-        touchEventTarget->dispatchEvent(startEv.get(), ec);
-        defaultPrevented |= startEv->defaultPrevented();
-    }
-
-    if (movedTouches->length() > 0) {
-        Touch* changedTouch = movedTouches->item(0);
-        ASSERT(changedTouch);
-        touchEventTarget = changedTouch->target();
-        ASSERT(touchEventTarget);
-
-        RefPtr<TouchList> targetTouches = assembleTargetTouches(changedTouch, touches.get());
-
-        eventName = &eventNames().touchmoveEvent;
-        RefPtr<TouchEvent> moveEv = 
-            TouchEvent::create(touches.get(), targetTouches.get(), movedTouches.get(),
-                                                   *eventName, touchEventTarget->toNode()->document()->defaultView(),
-                                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(),
-                                                   event.metaKey());
-        ExceptionCode ec = 0;
-        touchEventTarget->dispatchEvent(moveEv.get(), ec);
-        defaultPrevented |= moveEv->defaultPrevented();
+            RefPtr<TouchEvent> touchEvent =
+                TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
+                                   stateName, touchEventTarget->toNode()->document()->defaultView(),
+                                   0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
+            ExceptionCode ec = 0;
+            touchEventTarget->dispatchEvent(touchEvent.get(), ec);
+            defaultPrevented |= touchEvent->defaultPrevented();
+        }
     }
 
     return defaultPrevented;

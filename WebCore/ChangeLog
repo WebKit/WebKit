@@ -1,3 +1,20 @@
+2010-12-23  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Steve Block.
+
+        TouchEvents does not support multi-touch on a page with multiple touch targets
+        https://bugs.webkit.org/show_bug.cgi?id=51258
+
+        Test: fast/events/touch/multi-touch-grouped-targets.html
+
+        * page/EventHandler.cpp:
+        (WebCore::eventNameForTouchPointState):
+        (WebCore::EventHandler::handleTouchEvent):
+        Redesigned event handler to ensure all event targets involved in a given
+        multitouch event get the appropriate event(s) fired.
+
+        * platform/PlatformTouchPoint.h: Added end-stop marker for State enum.
+
 2010-12-23  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -1,3 +1,33 @@
+2010-12-23  Jonathan Dixon  <joth@chromium.org>
+
+        Reviewed by Steve Block.
+
+        TouchEvents does not support multi-touch on a page with multiple touch targets
+        https://bugs.webkit.org/show_bug.cgi?id=51258
+
+        * fast/events/touch/multi-touch-grouped-targets-expected.txt: Added.
+        * fast/events/touch/multi-touch-grouped-targets.html: Added.
+        * fast/events/touch/script-tests/multi-touch-grouped-targets.js: Added.
+        (declareTouchHandler.return.shouldBe):
+        (declareTouchHandler):
+        (touchEndHandler):
+        Added new test that ensures both test targets receive events when hit by multiple
+        touch points from the same platform event.
+
+        * fast/events/touch/script-tests/touch-target-limited.js:
+        (declareTouchStart.return.touchStartHandler):
+        (declareTouchStart):
+        (declareTouchMove.return.touchMoveHandler):
+        (declareTouchMove):
+        * fast/events/touch/script-tests/touch-target.js:
+        (declareTouchStart.return.touchStartHandler):
+        (declareTouchStart):
+        (declareTouchMove.return.touchMoveHandler):
+        (declareTouchMove):
+        * fast/events/touch/touch-target-expected.txt:
+        * fast/events/touch/touch-target-limited-expected.txt:
+        Updated & rebaselined existing tests to reflect new expectations.
+
 2010-12-23  Jeremy Moskovich  <jeremy@chromium.org>
 
         Unreviewed test expectations update.

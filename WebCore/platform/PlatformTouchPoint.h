@@ -40,7 +40,8 @@ public:
         TouchPressed,
         TouchMoved,
         TouchStationary,
-        TouchCancelled
+        TouchCancelled,
+        TouchStateEnd // Placeholder: must remain the last item.
     };
 
 #if PLATFORM(QT)

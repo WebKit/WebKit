@@ -13,59 +13,69 @@ div2.style.width = "100px";
 div2.style.height = "100px";
 div2.style.backgroundColor = "green";
 
-var touchStartCount = 0;
-var touchMoveCount = 0;
-
 document.body.insertBefore(targetsDiv, document.getElementById('console'));
 targetsDiv.appendChild(div1);
 targetsDiv.appendChild(document.createElement('br'));
 targetsDiv.appendChild(div2);
 
-function touchStartHandler()
+function declareTouchStart()
 {
-    shouldBeEqualToString('event.type', 'touchstart');
-    switch (touchStartCount) {
-        case 0:
-            shouldBeEqualToString('event.touches[0].target.id', div1.id);
-            shouldBeEqualToString('event.touches[1].target.id', div2.id);
-            break;
-        case 1:
-            shouldBeEqualToString('event.touches[0].target.id', div2.id);
-            shouldBeEqualToString('event.touches[1].target.id', div1.id);
-            break;
-    }
-
-    touchStartCount++;
-}
-
-function touchMoveHandler()
-{
-    shouldBeEqualToString('event.type', 'touchmove');
-    switch (touchMoveCount) {
-        case 0:
-        case 1:
-            shouldBeEqualToString('event.touches[0].target.id', div1.id);
-            shouldBeEqualToString('event.touches[1].target.id', div2.id);
-            break;
-        case 2:
-            shouldBeEqualToString('event.touches[0].target.id', div2.id);
-            shouldBeEqualToString('event.touches[1].target.id', div1.id);
-            break;
-    }
-
-    if (++touchMoveCount == 3)
+    var touchStartCount = 0;
+    return function touchStartHandler()
     {
-        successfullyParsed = true;
-        layoutTestController.notifyDone();
-        isSuccessfullyParsed();
+        shouldBeEqualToString('event.type', 'touchstart');
+        switch (touchStartCount) {
+            case 0:
+                shouldBeEqualToString('event.touches[0].target.id', div1.id);
+                shouldBeEqualToString('event.touches[1].target.id', div2.id);
+                break;
+            case 1:
+                shouldBeEqualToString('event.touches[0].target.id', div2.id);
+                shouldBeEqualToString('event.touches[1].target.id', div1.id);
+                break;
+        }
+        shouldBe('event.targetTouches.length', '1');
+
+        touchStartCount++;
     }
 }
 
-div1.addEventListener("touchstart", touchStartHandler, false);
-div1.addEventListener("touchmove", touchMoveHandler, false);
+var totalTouchMoveCount = 0;
 
-div2.addEventListener("touchstart", touchStartHandler, false);
-div2.addEventListener("touchmove", touchMoveHandler, false);
+function declareTouchMove(div_id)
+{
+    var touchMoveCount = 0;
+    return function touchMoveHandler()
+    {
+        shouldBeEqualToString('event.type', 'touchmove');
+        switch (touchMoveCount) {
+            case 0:
+            case 1:
+                shouldBeEqualToString('event.touches[0].target.id', div1.id);
+                shouldBeEqualToString('event.touches[1].target.id', div2.id);
+                break;
+            case 2:
+                shouldBeEqualToString('event.touches[0].target.id', div2.id);
+                shouldBeEqualToString('event.touches[1].target.id', div1.id);
+                break;
+        }
+        shouldBe('event.targetTouches.length', '1');
+        ++touchMoveCount;
+
+        if (++totalTouchMoveCount == 6)
+        {
+            successfullyParsed = true;
+            layoutTestController.notifyDone();
+            isSuccessfullyParsed();
+        }
+    }
+}
+
+div1.addEventListener("touchstart", declareTouchStart(), false);
+div1.addEventListener("touchmove", declareTouchMove(), false);
+
+div2.addEventListener("touchstart", declareTouchStart(), false);
+div2.addEventListener("touchmove", declareTouchMove(), false);
 
 description("Tests that the target of touches match the element where the event originated, not where the touch is currently occurring.");
 
