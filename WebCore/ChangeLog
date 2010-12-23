@@ -1,3 +1,19 @@
+2010-12-22  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Optimize canvas.toDataURL("image/png") unpremultiplication loop
+        https://bugs.webkit.org/show_bug.cgi?id=51321
+
+        Follow on from r73890, unroll the SkUnPreMultiply::PMColorToColor() call for
+        the "image/png" encoder case viz., compute the unpremultiplication in-place.
+        See https://bugs.webkit.org/show_bug.cgi?id=50804 for reference.
+
+        No new tests: canvas.toDataURL() is covered by existing tests.
+
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::preMultipliedBGRAtoRGBA):
+
 2010-12-22  Ariya Hidayat  <ariya@sencha.com>
 
         Reviewed by Simon Fraser.

@@ -33,6 +33,7 @@
 
 #include "IntSize.h"
 #include "SkBitmap.h"
+#include "SkColorPriv.h"
 #include "SkUnPreMultiply.h"
 extern "C" {
 #include "png.h"
@@ -47,12 +48,21 @@ static void writeOutput(png_structp png, png_bytep data, png_size_t size)
 
 static void preMultipliedBGRAtoRGBA(const SkPMColor* input, int pixels, unsigned char* output)
 {
-    while (pixels-- > 0) {
-        SkColor unmultiplied = SkUnPreMultiply::PMColorToColor(*input++);
-        *output++ = SkColorGetR(unmultiplied);
-        *output++ = SkColorGetG(unmultiplied);
-        *output++ = SkColorGetB(unmultiplied);
-        *output++ = SkColorGetA(unmultiplied);
+    static const SkUnPreMultiply::Scale* scale = SkUnPreMultiply::GetScaleTable();
+
+    for (; pixels-- > 0; ++input) {
+        const unsigned alpha = SkGetPackedA32(*input);
+        if ((alpha != 0) && (alpha != 255)) {
+            *output++ = SkUnPreMultiply::ApplyScale(scale[alpha], SkGetPackedR32(*input));
+            *output++ = SkUnPreMultiply::ApplyScale(scale[alpha], SkGetPackedG32(*input));
+            *output++ = SkUnPreMultiply::ApplyScale(scale[alpha], SkGetPackedB32(*input));
+            *output++ = alpha;
+        } else {
+            *output++ = SkGetPackedR32(*input);
+            *output++ = SkGetPackedG32(*input);
+            *output++ = SkGetPackedB32(*input);
+            *output++ = alpha;
+        }
     }
 }
 
