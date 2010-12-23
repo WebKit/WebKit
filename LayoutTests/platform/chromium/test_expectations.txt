@@ -3266,7 +3266,7 @@ BUGWK51398 MAC : inspector/console-dir-global.html = TIMEOUT
 BUGWK51398 MAC : inspector/debugger-expand-scope.html = TIMEOUT
 
 // WebKit roll 74534:74545
-BUGWK51536 : fast/css/box-shadow.html = IMAGE+TEXT IMAGE
+BUGWK51536 : fast/css/box-shadow.html = FAIL
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGCR67905 MAC : svg/css/getComputedStyle-basic.xhtml = TEXT

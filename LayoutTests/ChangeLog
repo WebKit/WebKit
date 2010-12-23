@@ -1,3 +1,11 @@
+2010-12-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium test expectations update. Fix botched update
+        of fast/css/box-shadow.html expectation; needed to be FAIL, not
+        IMAGE+TEXT IMAGE.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-23  Albert J. Wong  <ajwong@chromium.org>
 
         Unreviewed. Chromium layout test expectations update.
