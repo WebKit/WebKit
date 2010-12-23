@@ -33,45 +33,14 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 
-#if PLATFORM(WIN)
-
-#include "SoftLinking.h"
-
-#ifdef DEBUG_ALL
-SOFT_LINK_DEBUG_LIBRARY(CoreFoundation)
-#else
-SOFT_LINK_LIBRARY(CoreFoundation)
-#endif
-
-SOFT_LINK_OPTIONAL(CoreFoundation, CFStringGetHyphenationLocationBeforeIndex, CFIndex, , (CFStringRef string, CFIndex location, CFRange limitRange, CFOptionFlags options, CFLocaleRef locale, UTF32Char *character))
-SOFT_LINK_OPTIONAL(CoreFoundation, CFStringIsHyphenationAvailableForLocale, Boolean, , (CFLocaleRef locale))
-
-static CFIndex wkCFStringGetHyphenationLocationBeforeIndex(CFStringRef string, CFIndex location, CFRange limitRange, CFOptionFlags options, CFLocaleRef locale, UTF32Char *character)
-{
-    static CFStringGetHyphenationLocationBeforeIndexPtrType cfStringGetHyphenationLocationBeforeIndex = CFStringGetHyphenationLocationBeforeIndexPtr();
-    if (!cfStringGetHyphenationLocationBeforeIndex)
-        return kCFNotFound;
-    return cfStringGetHyphenationLocationBeforeIndex(string, location, limitRange, options, locale, character);
-}
-
-static Boolean wkCFStringIsHyphenationAvailableForLocale(CFLocaleRef locale)
-{
-    static CFStringIsHyphenationAvailableForLocalePtrType cfStringIsHyphenationAvailableForLocale = CFStringIsHyphenationAvailableForLocalePtr();
-    return cfStringIsHyphenationAvailableForLocale && cfStringIsHyphenationAvailableForLocale(locale);
-}
-
-#define CFStringGetHyphenationLocationBeforeIndex wkCFStringGetHyphenationLocationBeforeIndex
-#define CFStringIsHyphenationAvailableForLocale wkCFStringIsHyphenationAvailableForLocale
-
-#endif // PLATFORM(WIN)
-
 namespace WebCore {
+
+#if !PLATFORM(WIN) || (defined(MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7)
 
 template<>
 RetainPtr<CFLocaleRef> AtomicStringKeyedMRUCache<RetainPtr<CFLocaleRef> >::createValueForNullKey()
 {
-    RetainPtr<CFStringRef> cfLocaleIdentifier(AdoptCF, CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(currentSearchLocaleID()), strlen(currentSearchLocaleID()), kCFStringEncodingASCII, false, kCFAllocatorNull));
-    RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCreate(kCFAllocatorDefault, cfLocaleIdentifier.get()));
+    RetainPtr<CFLocaleRef> locale(AdoptCF, CFLocaleCopyCurrent());
 
     return CFStringIsHyphenationAvailableForLocale(locale.get()) ? locale : 0;
 }
@@ -106,6 +75,21 @@ size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeI
     CFIndex result = CFStringGetHyphenationLocationBeforeIndex(string.get(), beforeIndex, CFRangeMake(0, length), 0, locale.get(), 0);
     return result == kCFNotFound ? 0 : result;
 }
+
+#else
+
+bool canHyphenate(const AtomicString&)
+{
+    return false;
+}
+
+size_t lastHyphenLocation(const UChar*, size_t, size_t, const AtomicString&)
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+#endif // PLATFORM(WIN) && (!defined(MAC_OS_X_VERSION_10_7) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7)
 
 } // namespace WebCore
 

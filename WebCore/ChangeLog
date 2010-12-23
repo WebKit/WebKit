@@ -1,3 +1,16 @@
+2010-12-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Replace runtime checks for hyphenation API availability with compile-time checks.
+
+        * platform/text/cf/HyphenationCF.cpp:
+        (WebCore::::createValueForNullKey): Changed to use CFLocaleCopyCurrent() instead of using the
+        search locale, which is empty on Windows. On Mac, this is equivalent to using the search locale.
+        (WebCore::canHyphenate): Added this implementation for when the hyphenation API is not available.
+        It is identical to the implementation in Hyphenation.cpp.
+        (WebCore::lastHyphenLocation): Ditto.
+
 2010-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
