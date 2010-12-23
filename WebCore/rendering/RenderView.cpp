@@ -566,15 +566,10 @@ bool RenderView::printing() const
     return document()->printing();
 }
 
-void RenderView::updateWidgetPositions()
+size_t RenderView::getRetainedWidgets(Vector<RenderWidget*>& renderWidgets)
 {
-    // updateWidgetPosition() can possibly cause layout to be re-entered (via plug-ins running
-    // scripts in response to NPP_SetWindow, for example), so we need to keep the Widgets
-    // alive during enumeration.    
-
     size_t size = m_widgets.size();
 
-    Vector<RenderWidget*> renderWidgets;
     renderWidgets.reserveCapacity(size);
 
     RenderWidgetSet::const_iterator end = m_widgets.end();
@@ -583,14 +578,33 @@ void RenderView::updateWidgetPositions()
         (*it)->ref();
     }
     
+    return size;
+}
+
+void RenderView::releaseWidgets(Vector<RenderWidget*>& renderWidgets)
+{
+    size_t size = renderWidgets.size();
+
+    for (size_t i = 0; i < size; ++i)
+        renderWidgets[i]->deref(renderArena());
+}
+
+void RenderView::updateWidgetPositions()
+{
+    // updateWidgetPosition() can possibly cause layout to be re-entered (via plug-ins running
+    // scripts in response to NPP_SetWindow, for example), so we need to keep the Widgets
+    // alive during enumeration.    
+
+    Vector<RenderWidget*> renderWidgets;
+    size_t size = getRetainedWidgets(renderWidgets);
+    
     for (size_t i = 0; i < size; ++i)
         renderWidgets[i]->updateWidgetPosition();
 
     for (size_t i = 0; i < size; ++i)
         renderWidgets[i]->widgetPositionsUpdated();
 
-    for (size_t i = 0; i < size; ++i)
-        renderWidgets[i]->deref(renderArena());
+    releaseWidgets(renderWidgets);
 }
 
 void RenderView::addWidget(RenderWidget* o)
@@ -601,6 +615,17 @@ void RenderView::addWidget(RenderWidget* o)
 void RenderView::removeWidget(RenderWidget* o)
 {
     m_widgets.remove(o);
+}
+
+void RenderView::notifyWidgets(WidgetNotification notification)
+{
+    Vector<RenderWidget*> renderWidgets;
+    size_t size = getRetainedWidgets(renderWidgets);
+
+    for (size_t i = 0; i < size; ++i)
+        renderWidgets[i]->notifyWidget(notification);
+
+    releaseWidgets(renderWidgets);
 }
 
 IntRect RenderView::viewRect() const

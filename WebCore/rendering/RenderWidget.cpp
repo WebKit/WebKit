@@ -236,6 +236,12 @@ void RenderWidget::showSubstituteImage(PassRefPtr<Image> prpImage)
     repaint();
 }
 
+void RenderWidget::notifyWidget(WidgetNotification notification)
+{
+    if (m_widget)
+        m_widget->notifyWidget(notification);
+}
+
 void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     if (!shouldPaint(paintInfo, tx, ty))

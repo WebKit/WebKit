@@ -97,6 +97,8 @@ public:
     void updateWidgetPositions();
     void addWidget(RenderWidget*);
     void removeWidget(RenderWidget*);
+    
+    void notifyWidgets(WidgetNotification);
 
     // layoutDelta is used transiently during layout to store how far an object has moved from its
     // last layout location, in order to repaint correctly.
@@ -198,6 +200,9 @@ private:
         m_layoutState = state->m_next;
         state->destroy(renderArena());
     }
+
+    size_t getRetainedWidgets(Vector<RenderWidget*>&);
+    void releaseWidgets(Vector<RenderWidget*>&);
     
     friend class LayoutStateMaintainer;
         

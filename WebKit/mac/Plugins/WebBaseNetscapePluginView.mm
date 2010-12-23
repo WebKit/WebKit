@@ -579,6 +579,23 @@ String WebHaltablePlugin::pluginName() const
     return [_pluginPackage.get() supportsSnapshotting];
 }
 
+- (void)cacheSnapshot
+{
+    NSImage *snapshot = [[NSImage alloc] initWithSize: [self bounds].size];
+    _snapshotting = YES;
+    [snapshot lockFocus];
+    [self drawRect:[self bounds]];
+    [snapshot unlockFocus];
+    _snapshotting = NO;
+    
+    _cachedSnapshot.adoptNS(snapshot);
+}
+
+- (void)clearCachedSnapshot
+{
+    _cachedSnapshot.clear();
+}
+
 - (BOOL)hasBeenHalted
 {
     return _hasBeenHalted;

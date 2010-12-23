@@ -1,3 +1,53 @@
+2010-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Cache snapshots of plug-ins before painting, to avoid script running during painting
+        https://bugs.webkit.org/show_bug.cgi?id=51493
+        
+        When FrameView is asked to do a flattening paint (e.g. when Safari snapshots,
+        or when printing), plug-ins which otherwise use the CA rendering model
+        are sent a paint event. Some plug-ins may run script while handling this event,
+        or out of process plug-ins may process queued requests at this time. Running
+        script while inside layout or painting can have bad consequences, because it
+        can result in arbitrary changes to the render tree.
+        
+        This patch avoids sending plug-ins paint events inside of painting. Instead,
+        we ask the plug-ins to cache a snapshot before we paint, and then the software
+        paint simply draws that snapshot.
+        
+        Requires manual test, because the bug happens when Safari does
+        a page snapshot. It's not possible to tell the Test Netscape Plug-in
+        to paint without laying out, making an automated test impossible.
+
+        * manual-tests/plugins/plugin-paint-causes-layout.html: Added.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents): Notify all enclosed widgets
+        that a flattening paint is going to happen.
+        (WebCore::FrameView::notifyWidgetsInAllFrames): Utility method 
+        that tells the RenderView in all subframes to notify their widgets.
+
+        * platform/Widget.h:
+        (WebCore::Widget::notifyWidget): Generic method that can be used
+        to send messages to widgets. Current messages are just 'before flattening paint'
+        and 'after flattening paint'. Message has no payload.
+
+        * rendering/RenderView.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::getRetainedWidgets):
+        (WebCore::RenderView::releaseWidgets): Factor code out of updateWidgetPositions(),
+        since we use it in two places now.
+        
+        (WebCore::RenderView::updateWidgetPositions): Use getRetainedWidgets() etc.
+        (WebCore::RenderView::notifyWidgets): Retain all the widgets, then send
+        them all the message.
+
+        * rendering/RenderWidget.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::notifyWidget): Pass the message to the widget.
+
 2010-12-22  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

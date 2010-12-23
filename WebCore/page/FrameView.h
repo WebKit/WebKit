@@ -308,6 +308,8 @@ private:
     virtual void updateScrollCorner();
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
+    void notifyWidgetsInAllFrames(WidgetNotification);
+    
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 
     IntSize m_size;
