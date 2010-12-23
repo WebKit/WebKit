@@ -1,3 +1,10 @@
+2010-12-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed test expectations update. fast/canvas/fillText-shadow.html
+        fails with Skia.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-22  Jessie Berlin  <jberlin@apple.com>
 
         Add Windows-specific (failing) expected results for media/audio-data-url.html in order to get
