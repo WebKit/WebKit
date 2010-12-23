@@ -83,6 +83,9 @@ bool PNGImageEncoder::encode(const SkBitmap& bitmap, Vector<unsigned char>* outp
         return false;
     }
 
+    png_set_compression_level(png, Z_BEST_SPEED);
+    png_set_compression_strategy(png, Z_HUFFMAN_ONLY);
+
     png_set_write_fn(png, output, writeOutput, 0);
     png_set_IHDR(png, info, imageSize.width(), imageSize.height(),
                  8, PNG_COLOR_TYPE_RGB_ALPHA, 0, 0, 0);
