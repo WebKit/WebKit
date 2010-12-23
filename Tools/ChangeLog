@@ -1,3 +1,26 @@
+2010-12-23  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 51537 - iexploder needs cleanup
+        
+        * iExploder/htdocs: Removed.
+        * iExploder/htdocs/config.rb: Removed.
+        * iExploder/htdocs/cssproperties.in: Removed.
+        * iExploder/htdocs/cssvalues.in: Removed.
+        * iExploder/htdocs/htmlattrs.in: Removed.
+        * iExploder/htdocs/htmltags.in: Removed.
+        * iExploder/htdocs/htmlvalues.in: Removed.
+        * iExploder/htdocs/iexploder.cgi: Removed.
+        * iExploder/htdocs/iexploder.rb: Removed.
+        * iExploder/htdocs/index.html: Removed.
+        * iExploder/htdocs/webserver.rb: Removed.
+        * iExploder/iexploder-1.7.2/output: Removed.
+        * iExploder/tools: Removed.
+        * iExploder/tools/lasthit.rb: Removed.
+        * iExploder/tools/osx_last_crash.rb: Removed.
+        * iExploder/tools/showtest.rb: Removed.
+
 2010-12-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
