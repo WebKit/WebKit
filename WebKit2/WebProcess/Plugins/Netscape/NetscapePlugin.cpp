@@ -324,6 +324,9 @@ NPError NetscapePlugin::NPP_GetValue(NPPVariable variable, void *value)
 
 NPError NetscapePlugin::NPP_SetValue(NPNVariable variable, void *value)
 {
+    if (!m_pluginModule->pluginFuncs().setvalue)
+        return NPERR_GENERIC_ERROR;
+
     return m_pluginModule->pluginFuncs().setvalue(&m_npp, variable, value);
 }
 

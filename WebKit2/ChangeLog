@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        Webkit2: WebProcess crashes when Private browsing is turned on on yahoo.com
+        https://bugs.webkit.org/show_bug.cgi?id=51516
+        <rdar://problem/8766995>
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NPP_SetValue):
+        Add a null check for NPP_SetValue.
+
+2010-12-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         REGRESSION (WK2): Plugins swallow CMD-W, CMD-Q, and probably other shortcuts
         https://bugs.webkit.org/show_bug.cgi?id=51515
         <rdar://problem/8740926>
