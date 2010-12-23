@@ -1,3 +1,19 @@
+2010-12-22  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix.
+
+        [Symbian] Make sure OSAllocatorSymbian builds
+
+        This patch only addresses the build problem.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51128 tracks the full
+        (re)implementation of the Symbian allocator.
+
+        * wtf/OSAllocatorSymbian.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+        (WTF::OSAllocator::commit):
+
 2010-12-22  Dan Bernstein  <mitz@apple.com>
 
         Changed WebKitTools to Tools.
