@@ -220,10 +220,12 @@ void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, in
 
 void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno)
 {
+    callEvent(debuggerCallFrame, sourceID, lineno);
 }
 
 void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno)
 {
+    returnEvent(debuggerCallFrame, sourceID, lineno);
 }
 
 void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&, intptr_t, int)

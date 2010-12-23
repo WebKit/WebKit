@@ -1,3 +1,22 @@
+2010-12-23  Yongjun Zhang  <yongjun_zhang@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit crashes at DebuggerCallFrame::functionName() if m_callFrame is the top global callframe.
+        https://bugs.webkit.org/show_bug.cgi?id=38535
+
+        WebScriptDebugger in WebKit has empty implementations for willExecuteProgram and didExecuteProgram.  As a result,
+        if the top call frame is from a program, WebKitScriptDebugger doesn't record that callframe as the top frame, and
+        WebScriptDebugger's callframe stack is wrong from this point.  That could cause crash if we trying to access the top
+        call frame from this stack when an exception throws because the saved top frame could be invalid.
+
+        To fix that, we need to maintain the call frame stack in willExecuteProgram and didExecuteProgram, as we did in
+        callEvent and returnEvent.
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::willExecuteProgram):
+        (WebScriptDebugger::didExecuteProgram):
+
 2010-12-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
