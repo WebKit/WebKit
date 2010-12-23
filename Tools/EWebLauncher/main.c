@@ -698,13 +698,14 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_layer_set(app->bg, EVAS_LAYER_MIN);
     evas_object_show(app->bg);
 
-    if (backingStore && !strcasecmp(backingStore, "single")) {
-        app->browser = ewk_view_single_add(app->evas);
-        info("backing store: single\n");
-    } else {
+    if (backingStore && !strcasecmp(backingStore, "tiled")) {
         app->browser = ewk_view_tiled_add(app->evas);
         info("backing store: tiled\n");
+    } else {
+        app->browser = ewk_view_single_add(app->evas);
+        info("backing store: single\n");
     }
+
     ewk_view_theme_set(app->browser, theme);
     if (userAgent)
         ewk_view_setting_user_agent_set(app->browser, userAgent);
