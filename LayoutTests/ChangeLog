@@ -1,3 +1,89 @@
+2010-12-23  Albert J. Wong  <ajwong@chromium.org>
+
+        Unreviewed. Chromium layout test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=51500
+
+        Rebaseline media control layout tests due to pixel diff from r74535
+
+        * platform/chromium-linux/media/audio-controls-rendering-expected.checksum:
+        * platform/chromium-linux/media/audio-controls-rendering-expected.png:
+        * platform/chromium-linux/media/controls-after-reload-expected.checksum:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-strict-expected.checksum:
+        * platform/chromium-linux/media/controls-strict-expected.png:
+        * platform/chromium-linux/media/controls-styling-expected.checksum:
+        * platform/chromium-linux/media/controls-styling-expected.png:
+        * platform/chromium-linux/media/controls-without-preload-expected.checksum:
+        * platform/chromium-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-linux/media/video-controls-rendering-expected.checksum:
+        * platform/chromium-linux/media/video-controls-rendering-expected.png:
+        * platform/chromium-linux/media/video-display-toggle-expected.checksum:
+        * platform/chromium-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-linux/media/video-empty-source-expected.checksum:
+        * platform/chromium-linux/media/video-empty-source-expected.png:
+        * platform/chromium-linux/media/video-no-audio-expected.checksum:
+        * platform/chromium-linux/media/video-no-audio-expected.png:
+        * platform/chromium-linux/media/video-volume-slider-expected.checksum:
+        * platform/chromium-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.checksum:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.checksum:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.checksum:
+        * platform/chromium-mac/media/controls-strict-expected.png:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/controls-styling-expected.checksum:
+        * platform/chromium-mac/media/controls-styling-expected.png:
+        * platform/chromium-mac/media/controls-styling-expected.txt:
+        * platform/chromium-mac/media/controls-without-preload-expected.checksum:
+        * platform/chromium-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-mac/media/controls-without-preload-expected.txt:
+        * platform/chromium-mac/media/video-display-toggle-expected.checksum:
+        * platform/chromium-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.checksum:
+        * platform/chromium-mac/media/video-empty-source-expected.png:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.checksum:
+        * platform/chromium-mac/media/video-no-audio-expected.png:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-volume-slider-expected.checksum:
+        * platform/chromium-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium-win/media/audio-controls-rendering-expected.checksum:
+        * platform/chromium-win/media/audio-controls-rendering-expected.png:
+        * platform/chromium-win/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-win/media/controls-after-reload-expected.checksum:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.txt:
+        * platform/chromium-win/media/controls-strict-expected.checksum:
+        * platform/chromium-win/media/controls-strict-expected.png:
+        * platform/chromium-win/media/controls-strict-expected.txt:
+        * platform/chromium-win/media/controls-styling-expected.checksum:
+        * platform/chromium-win/media/controls-styling-expected.png:
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium-win/media/controls-without-preload-expected.checksum:
+        * platform/chromium-win/media/controls-without-preload-expected.png:
+        * platform/chromium-win/media/controls-without-preload-expected.txt:
+        * platform/chromium-win/media/video-controls-rendering-expected.checksum:
+        * platform/chromium-win/media/video-controls-rendering-expected.png:
+        * platform/chromium-win/media/video-controls-rendering-expected.txt:
+        * platform/chromium-win/media/video-display-toggle-expected.checksum:
+        * platform/chromium-win/media/video-display-toggle-expected.png:
+        * platform/chromium-win/media/video-display-toggle-expected.txt:
+        * platform/chromium-win/media/video-empty-source-expected.checksum:
+        * platform/chromium-win/media/video-empty-source-expected.png:
+        * platform/chromium-win/media/video-empty-source-expected.txt:
+        * platform/chromium-win/media/video-no-audio-expected.checksum:
+        * platform/chromium-win/media/video-no-audio-expected.png:
+        * platform/chromium-win/media/video-no-audio-expected.txt:
+        * platform/chromium-win/media/video-volume-slider-expected.checksum:
+        * platform/chromium-win/media/video-volume-slider-expected.png:
+        * platform/chromium-win/media/video-volume-slider-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium expectations update. Suppress crashes seen on
