@@ -2,6 +2,14 @@
 
         Not reviewed.
 
+        Another attempt.
+
+        * http/tests/local/slow-css-pass.cgi:
+
+2010-12-23  Antti Koivisto  <antti@apple.com>
+
+        Not reviewed.
+
         Flaky Test: http/tests/local/stylesheet-and-script-load-order-media-print.html
         
         Try to fix flakiness.
