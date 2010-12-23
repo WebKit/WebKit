@@ -1,3 +1,18 @@
+2010-12-22  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION: Can't shadow/overwrite window.constructor 
+        (causes TypeError exception)
+        https://bugs.webkit.org/show_bug.cgi?id=48953
+
+        Added code in the javascript code generator to create a setter for
+        a constructor if the new extended attribute ReplaceableConstructor
+        is present for the interface.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * page/DOMWindow.idl:
+
 2010-12-22  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by David Levin.

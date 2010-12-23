@@ -1017,6 +1017,11 @@ sub GenerateHeader
             my $getter = "js" . $interfaceName . "Constructor";
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, const JSC::Identifier&);\n");
         }
+
+        if ($dataNode->extendedAttributes->{"ReplaceableConstructor"}) {
+            my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
+            push(@headerContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);\n");
+        }
     }
 
     if ($numConstants > 0) {
@@ -1095,8 +1100,14 @@ sub GenerateAttributesHashTable($$)
         push(@hashKeys, "constructor");
         my $getter = "js" . $interfaceName . "Constructor";
         push(@hashValue1, $getter);
-        push(@hashValue2, "0");
-        push(@hashSpecials, "DontEnum | ReadOnly"); # FIXME: Setting the constructor should be possible.
+        if ($dataNode->extendedAttributes->{"ReplaceableConstructor"}) {
+            my $setter = "setJS" . $interfaceName . "Constructor";
+            push(@hashValue2, $setter);
+            push(@hashSpecials, "DontEnum | DontDelete");
+        } else {            
+            push(@hashValue2, "0");
+            push(@hashSpecials, "DontEnum | ReadOnly");
+        }
     }
 
     $object->GenerateHashTable($hashName, $hashSize,
@@ -1629,6 +1640,7 @@ sub GenerateImplementation
 
                 push(@implContent, "    return ${className}::getConstructor(exec, domObject->globalObject());\n");
                 push(@implContent, "}\n");
+                push(@implContent, "\n");
             }
         }
 
@@ -1722,7 +1734,11 @@ sub GenerateImplementation
                                 $implIncludes{"JS" . $constructorType . ".h"} = 1;
                             }
                             push(@implContent, "    // Shadowing a built-in constructor\n");
-                            push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
+                            if ($interfaceName eq "DOMWindow" && $className eq "JSblah") {
+                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->propertyNames().constructor, value);\n");
+                            } else {
+                                push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
+                            }
                         } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
                             push(@implContent, "    // Shadowing a built-in object\n");
                             push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
@@ -1790,6 +1806,31 @@ sub GenerateImplementation
                     }
                 }
             }
+            
+            if ($dataNode->extendedAttributes->{"ReplaceableConstructor"}) {
+                my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
+                
+                push(@implContent, "void ${constructorFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
+                push(@implContent, "{\n");
+                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+                    if ($interfaceName eq "DOMWindow") {
+                        push(@implContent, "    if (!static_cast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
+                    } else {
+                        push(@implContent, "    if (!allowsAccessFromFrame(exec, static_cast<$className*>(thisObject)->impl()->frame()))\n");
+                    }
+                    push(@implContent, "        return;\n");
+                }
+
+                push(@implContent, "    // Shadowing a built-in constructor\n");
+
+                if ($interfaceName eq "DOMWindow") {
+                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->propertyNames().constructor, value);\n");
+                } else {
+                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(Identifier(exec, \"$name\"), value);\n");
+                }
+                push(@implContent, "}\n");
+                push(@implContent, "\n");
+            }        
         }
     }
 
