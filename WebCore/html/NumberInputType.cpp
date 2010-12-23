@@ -31,10 +31,13 @@
 #include "config.h"
 #include "NumberInputType.h"
 
+#include "BeforeTextInsertedEvent.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "KeyboardEvent.h"
 #include <limits>
+#include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -48,6 +51,11 @@ static const double numberDefaultMaximum = FLT_MAX;
 
 static const double numberDefaultStep = 1.0;
 static const double numberStepScaleFactor = 1.0;
+
+static bool isNumberCharacter(UChar ch)
+{
+    return ch == '+' || ch == '-' || ch == '.' || ch == 'e' || ch == 'E' || isASCIIDigit(ch);
+}
 
 PassOwnPtr<InputType> NumberInputType::create(HTMLInputElement* element)
 {
@@ -155,9 +163,40 @@ double NumberInputType::stepScaleFactor() const
     return numberStepScaleFactor;
 }
 
-bool NumberInputType::handleKeydownEvent(KeyboardEvent* event)
+void NumberInputType::handleKeydownEvent(KeyboardEvent* event)
 {
-    return handleKeydownEventForSpinButton(event) || TextFieldInputType::handleKeydownEventForSpinButton(event);
+    handleKeydownEventForSpinButton(event);
+    if (!event->defaultHandled())
+        TextFieldInputType::handleKeydownEvent(event);
+}
+
+void NumberInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event)
+{
+    unsigned length = event->text().length();
+    bool hasInvalidChar = false;
+    for (unsigned i = 0; i < length; ++i) {
+        if (!isNumberCharacter(event->text()[i])) {
+            hasInvalidChar = true;
+            break;
+        }
+    }
+    if (hasInvalidChar) {
+        Vector<UChar> stripped;
+        stripped.reserveCapacity(length);
+        for (unsigned i = 0; i < length; ++i) {
+            UChar ch = event->text()[i];
+            if (!isNumberCharacter(ch))
+                continue;
+            stripped.append(ch);
+        }
+        event->setText(String::adopt(stripped));
+    }
+    TextFieldInputType::handleBeforeTextInsertedEvent(event);
+}
+
+void NumberInputType::handleWheelEvent(WheelEvent* event)
+{
+    handleWheelEventForSpinButton(event);
 }
 
 double NumberInputType::parseToDouble(const String& src, double defaultValue) const

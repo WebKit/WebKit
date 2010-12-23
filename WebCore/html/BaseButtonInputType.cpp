@@ -43,7 +43,7 @@ bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
     return false;
 }
 
-bool BaseButtonInputType::handleKeydownEvent(KeyboardEvent* event)
+void BaseButtonInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key == "U+0020") {
@@ -51,33 +51,29 @@ bool BaseButtonInputType::handleKeydownEvent(KeyboardEvent* event)
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
     }
-    return false;
 }
 
-bool BaseButtonInputType::handleKeypressEvent(KeyboardEvent* event)
+void BaseButtonInputType::handleKeypressEvent(KeyboardEvent* event)
 {
     int charCode = event->charCode();
     if (charCode == '\r') {
         element()->dispatchSimulatedClick(event);
         event->setDefaultHandled();
-        return true;
+        return;
     }
     if (charCode == ' ') {
         // Prevent scrolling down the page.
         event->setDefaultHandled();
-        return true;
     }
-    return false;
 }
 
-bool BaseButtonInputType::handleKeyupEvent(KeyboardEvent* event)
+void BaseButtonInputType::handleKeyupEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key != "U+0020")
-        return false;
+        return;
     // Simulate mouse click for spacebar for button types.
     dispatchSimulatedClickIfActive(event);
-    return true;
 }
 
 RenderObject* BaseButtonInputType::createRenderer(RenderArena* arena, RenderStyle*) const

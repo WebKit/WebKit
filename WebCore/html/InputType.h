@@ -37,15 +37,18 @@
 
 namespace WebCore {
 
+class BeforeTextInsertedEvent;
 class DateComponents;
 class Event;
 class FormDataList;
+class HTMLFormElement;
 class HTMLInputElement;
 class KeyboardEvent;
 class MouseEvent;
 class RenderArena;
 class RenderObject;
 class RenderStyle;
+class WheelEvent;
 
 // An InputType object represents the type-specific part of an HTMLInputElement.
 // Do not expose instances of InputType and classes derived from it to classes
@@ -105,17 +108,18 @@ public:
     virtual String valueMissingText() const;
 
     // Event handlers
-    // If the return value is true, do no further default event handling in the
-    // default event handler. If an event handler calls Event::setDefaultHandled(),
-    // its return value must be true.
 
-    virtual bool handleClickEvent(MouseEvent*);
-    virtual bool handleDOMActivateEvent(Event*);
-    virtual bool handleKeydownEvent(KeyboardEvent*);
-    virtual bool handleKeypressEvent(KeyboardEvent*);
-    virtual bool handleKeyupEvent(KeyboardEvent*);
-    // A helper for event handlers.
+    virtual void handleClickEvent(MouseEvent*);
+    virtual void handleDOMActivateEvent(Event*);
+    virtual void handleKeydownEvent(KeyboardEvent*);
+    virtual void handleKeypressEvent(KeyboardEvent*);
+    virtual void handleKeyupEvent(KeyboardEvent*);
+    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*);
+    virtual void handleWheelEvent(WheelEvent*);
+    virtual void forwardEvent(Event*);
+    // Helpers for event handlers.
     virtual bool shouldSubmitImplicitly(Event*);
+    virtual PassRefPtr<HTMLFormElement> formForSubmission() const;
 
     // Miscellaneous functions
 

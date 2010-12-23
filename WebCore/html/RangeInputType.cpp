@@ -133,11 +133,11 @@ double RangeInputType::stepScaleFactor() const
     return rangeStepScaleFactor;
 }
 
-bool RangeInputType::handleKeydownEvent(KeyboardEvent* event)
+void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key != "Up" && key != "Right" && key != "Down" && key != "Left")
-        return false;
+        return;
 
     ExceptionCode ec;
     if (equalIgnoringCase(element()->fastGetAttribute(stepAttr), "any")) {
@@ -171,7 +171,12 @@ bool RangeInputType::handleKeydownEvent(KeyboardEvent* event)
         element()->stepUpFromRenderer(stepMagnification);
     }
     event->setDefaultHandled();
-    return true;
+}
+
+void RangeInputType::forwardEvent(Event* event)
+{
+    if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent()))
+        toRenderSlider(element()->renderer())->forwardEvent(event);
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const

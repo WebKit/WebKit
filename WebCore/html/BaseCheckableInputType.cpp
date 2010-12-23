@@ -58,7 +58,7 @@ bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const
     return true;
 }
 
-bool BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
+void BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key == "U+0020") {
@@ -66,17 +66,14 @@ bool BaseCheckableInputType::handleKeydownEvent(KeyboardEvent* event)
         // No setDefaultHandled(), because IE dispatches a keypress in this case
         // and the caller will only dispatch a keypress if we don't call setDefaultHandled().
     }
-    return false;
 }
 
-bool BaseCheckableInputType::handleKeypressEvent(KeyboardEvent* event)
+void BaseCheckableInputType::handleKeypressEvent(KeyboardEvent* event)
 {
     if (event->charCode() == ' ') {
         // Prevent scrolling down the page.
         event->setDefaultHandled();
-        return true;
     }
-    return false;
 }
 
 } // namespace WebCore

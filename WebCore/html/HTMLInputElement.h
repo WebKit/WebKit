@@ -210,6 +210,8 @@ public:
         return document()->checkedRadioButtons();
     }
 
+    void handleBeforeTextInsertedEvent(Event* event);
+
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
@@ -338,8 +340,6 @@ private:
 
     void updateCheckedRadioButtons();
     
-    void handleBeforeTextInsertedEvent(Event*);
-    PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
     // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
     void applyStep(double count, ExceptionCode&);
 
@@ -370,6 +370,11 @@ private:
 #endif
     OwnPtr<InputType> m_inputType;
 };
+
+inline void HTMLInputElement::handleBeforeTextInsertedEvent(Event* event)
+{
+    InputElement::handleBeforeTextInsertedEvent(m_data, this, this, event);
+}
 
 } //namespace
 

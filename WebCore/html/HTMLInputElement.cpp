@@ -80,12 +80,6 @@ using namespace HTMLNames;
 
 const int maxSavedResults = 256;
 
-static bool isNumberCharacter(UChar ch)
-{
-    return ch == '+' || ch == '-' || ch == '.' || ch == 'e' || ch == 'E'
-        || (ch >= '0' && ch <= '9');
-}
-
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLTextFormControlElement(tagName, document, form)
     , m_maxResults(-1)
@@ -1294,14 +1288,17 @@ void HTMLInputElement::postDispatchEventHandler(Event *evt, void* data)
 
 void HTMLInputElement::defaultEventHandler(Event* evt)
 {
-    // FIXME: It would be better to refactor this for the different types of input element.
-    // Having them all in one giant function makes this hard to read, and almost all the handling is type-specific.
+    if (evt->isMouseEvent() && evt->type() == eventNames().clickEvent) {
+        m_inputType->handleClickEvent(static_cast<MouseEvent*>(evt));
+        if (evt->defaultHandled())
+            return;
+    }
 
-    if (evt->isMouseEvent() && evt->type() == eventNames().clickEvent && m_inputType->handleClickEvent(static_cast<MouseEvent*>(evt)))
-        return;
-
-    if (evt->isKeyboardEvent() && evt->type() == eventNames().keydownEvent && m_inputType->handleKeydownEvent(static_cast<KeyboardEvent*>(evt)))
-        return;
+    if (evt->isKeyboardEvent() && evt->type() == eventNames().keydownEvent) {
+        m_inputType->handleKeydownEvent(static_cast<KeyboardEvent*>(evt));
+        if (evt->defaultHandled())
+            return;
+    }
 
     // Call the base event handler before any of our own event handling for almost all events in text fields.
     // Makes editing keyboard handling take precedence over the keydown and keypress handling in this function.
@@ -1316,16 +1313,25 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     // actually submitting the form. For reset inputs, the form is reset. These events are sent when the user clicks
     // on the element, or presses enter while it is the active element. JavaScript code wishing to activate the element
     // must dispatch a DOMActivate event - a click event will not do the job.
-    if (evt->type() == eventNames().DOMActivateEvent && m_inputType->handleDOMActivateEvent(evt))
-        return;
+    if (evt->type() == eventNames().DOMActivateEvent) {
+        m_inputType->handleDOMActivateEvent(evt);
+        if (evt->defaultHandled())
+            return;
+    }
 
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->isKeyboardEvent() && evt->type() == eventNames().keypressEvent && m_inputType->handleKeypressEvent(static_cast<KeyboardEvent*>(evt)))
-        return;
+    if (evt->isKeyboardEvent() && evt->type() == eventNames().keypressEvent) {
+        m_inputType->handleKeypressEvent(static_cast<KeyboardEvent*>(evt));
+        if (evt->defaultHandled())
+            return;
+    }
 
-    if (evt->isKeyboardEvent() && evt->type() == eventNames().keyupEvent && m_inputType->handleKeyupEvent(static_cast<KeyboardEvent*>(evt)))
-        return;
+    if (evt->isKeyboardEvent() && evt->type() == eventNames().keyupEvent) {
+        m_inputType->handleKeyupEvent(static_cast<KeyboardEvent*>(evt));
+        if (evt->defaultHandled())
+            return;
+    }
 
     if (m_inputType->shouldSubmitImplicitly(evt)) {
         if (isSearchField()) {
@@ -1342,11 +1348,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
                 toRenderTextControl(r)->setChangedSinceLastChangeEvent(false);
         }
 
-        RefPtr<HTMLFormElement> formForSubmission = form();
-        // If there is no form and the element is an <isindex>, then create a temporary form just to be used for submission.
-        if (!formForSubmission && deprecatedInputType() == ISINDEX)
-            formForSubmission = createTemporaryFormForIsIndex();
-
+        RefPtr<HTMLFormElement> formForSubmission = m_inputType->formForSubmission();
         // Form may never have been present, or may have been destroyed by code responding to the change event.
         if (formForSubmission)
             formForSubmission->submitImplicitly(evt, canTriggerImplicitSubmission());
@@ -1356,70 +1358,18 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
     }
 
     if (evt->isBeforeTextInsertedEvent())
-        handleBeforeTextInsertedEvent(evt);
+        m_inputType->handleBeforeTextInsertedEvent(static_cast<BeforeTextInsertedEvent*>(evt));
 
-    if (hasSpinButton() && evt->isWheelEvent()) {
-        WheelEvent* wheel = static_cast<WheelEvent*>(evt);
-        int step = 0;
-        if (wheel->wheelDeltaY() > 0) {
-            step = 1;
-        } else if (wheel->wheelDeltaY() < 0) {
-            step = -1;
-        }
-        if (step) {
-            stepUpFromRenderer(step);
-            evt->setDefaultHandled();
+    if (evt->isWheelEvent()) {
+        m_inputType->handleWheelEvent(static_cast<WheelEvent*>(evt));
+        if (evt->defaultHandled())
             return;
-        }
     }
-    if (isTextField() && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent() || evt->type() == eventNames().blurEvent || evt->type() == eventNames().focusEvent))
-        toRenderTextControlSingleLine(renderer())->forwardEvent(evt);
 
-    if (deprecatedInputType() == RANGE && renderer() && (evt->isMouseEvent() || evt->isDragEvent() || evt->isWheelEvent()))
-        toRenderSlider(renderer())->forwardEvent(evt);
+    m_inputType->forwardEvent(evt);
 
     if (!callBaseClassEarly && !evt->defaultHandled())
         HTMLFormControlElementWithState::defaultEventHandler(evt);
-}
-
-void HTMLInputElement::handleBeforeTextInsertedEvent(Event* event)
-{
-    if (deprecatedInputType() == NUMBER) {
-        BeforeTextInsertedEvent* textEvent = static_cast<BeforeTextInsertedEvent*>(event);
-        unsigned length = textEvent->text().length();
-        bool hasInvalidChar = false;
-        for (unsigned i = 0; i < length; ++i) {
-            if (!isNumberCharacter(textEvent->text()[i])) {
-                hasInvalidChar = true;
-                break;
-            }
-        }
-        if (hasInvalidChar) {
-            Vector<UChar> stripped;
-            stripped.reserveCapacity(length);
-            for (unsigned i = 0; i < length; ++i) {
-                UChar ch = textEvent->text()[i];
-                if (!isNumberCharacter(ch))
-                    continue;
-                stripped.append(ch);
-            }
-            textEvent->setText(String::adopt(stripped));
-        }
-    }
-    InputElement::handleBeforeTextInsertedEvent(m_data, this, this, event);
-}
-
-PassRefPtr<HTMLFormElement> HTMLInputElement::createTemporaryFormForIsIndex()
-{
-    RefPtr<HTMLFormElement> form = HTMLFormElement::create(document());
-    form->registerFormElement(this);
-    form->setMethod("GET");
-    if (!document()->baseURL().isEmpty()) {
-        // We treat the href property of the <base> element as the form action, as per section 7.5 
-        // "Queries and Indexes" of the HTML 2.0 spec. <http://www.w3.org/MarkUp/html-spec/html-spec_7.html#SEC7.5>.
-        form->setAction(document()->baseURL().string());
-    }
-    return form.release();
 }
 
 bool HTMLInputElement::isURLAttribute(Attribute *attr) const

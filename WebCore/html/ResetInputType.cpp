@@ -52,13 +52,12 @@ bool ResetInputType::supportsValidation() const
     return false;
 }
 
-bool ResetInputType::handleDOMActivateEvent(Event* event)
+void ResetInputType::handleDOMActivateEvent(Event* event)
 {
     if (element()->disabled() || !element()->form())
-        return false;
+        return;
     element()->form()->reset();
     event->setDefaultHandled();
-    return true;
 }
 
 } // namespace WebCore

@@ -58,13 +58,12 @@ String CheckboxInputType::valueMissingText() const
     return validationMessageValueMissingForCheckboxText();
 }
 
-bool CheckboxInputType::handleKeyupEvent(KeyboardEvent* event)
+void CheckboxInputType::handleKeyupEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key != "U+0020")
-        return false;
+        return;
     dispatchSimulatedClickIfActive(event);
-    return true;
 }
 
 } // namespace WebCore

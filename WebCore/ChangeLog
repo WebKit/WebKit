@@ -1,3 +1,90 @@
+2010-12-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor HTMLInputElement: Move a part of HTMLInputElement::defaultEventHandler()
+        to InputTypes.
+        https://bugs.webkit.org/show_bug.cgi?id=51093
+
+        Move BeforeTextInserted and Wheel event handling, event forwarding to
+        renderers, and the isindex form submission quirk code to InputTypes.
+        Also, change the return types of InputType event handlers from 'bool'
+        to 'void'. We use Event::defaultHandled() to decide whether event
+        handling should be stopped.
+
+        No new tests because this is just a refactoring.
+
+        * html/BaseButtonInputType.cpp: bool->void changes
+        (WebCore::BaseButtonInputType::handleKeydownEvent):
+        (WebCore::BaseButtonInputType::handleKeypressEvent):
+        (WebCore::BaseButtonInputType::handleKeyupEvent):
+        * html/BaseButtonInputType.h: ditto.
+        * html/BaseCheckableInputType.cpp: ditto.
+        (WebCore::BaseCheckableInputType::handleKeydownEvent):
+        (WebCore::BaseCheckableInputType::handleKeypressEvent):
+        * html/BaseCheckableInputType.h: ditto.
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::handleKeydownEvent): ditto.
+        (WebCore::BaseDateAndTimeInputType::handleWheelEvent): Just calls handleWheelEventForSpinButton().
+        * html/BaseDateAndTimeInputType.h: bool->void change and handleWhellEvent() addition.
+        * html/CheckboxInputType.cpp: bool->void change
+        (WebCore::CheckboxInputType::handleKeyupEvent):
+        * html/CheckboxInputType.h: ditto.
+        * html/FileInputType.cpp: ditto.
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        * html/FileInputType.h: ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler):
+         - Change return-value handling of InputType event handlers
+         - Move out beforeTextInserted/wheel event handling and isindex form quirk.
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::handleBeforeTextInsertedEvent):
+         Added so that InputType can call InputElement::handleBeforeTextInsertedEvent().
+        * html/ImageInputType.cpp: bool->void change
+        (WebCore::ImageInputType::handleDOMActivateEvent):
+        * html/ImageInputType.h: ditto.
+        * html/InputType.cpp: ditto.
+        (WebCore::InputType::handleClickEvent):
+        (WebCore::InputType::handleDOMActivateEvent):
+        (WebCore::InputType::handleKeydownEvent):
+        (WebCore::InputType::handleKeypressEvent):
+        (WebCore::InputType::handleKeyupEvent):
+        (WebCore::InputType::handleBeforeTextInsertedEvent):
+        (WebCore::InputType::handleWheelEvent): Added default implementation.
+        (WebCore::InputType::forwardEvent): ditto.
+        (WebCore::InputType::formForSubmission): ditto.
+        * html/InputType.h:
+        * html/IsIndexInputType.cpp:
+        (WebCore::IsIndexInputType::formForSubmission): Moved from HTMLInputElement.cpp.
+        * html/IsIndexInputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::isNumberCharacter): Moved from HTMLInputElement.cpp.
+        (WebCore::NumberInputType::handleKeydownEvent): bool->void change.
+        (WebCore::NumberInputType::handleBeforeTextInsertedEvent): Moved from HTMInputElement.cpp.
+        (WebCore::NumberInputType::handleWheelEvent): Added. Just calls handleWheelEventForSpinButton().
+        * html/NumberInputType.h:
+        * html/RadioInputType.cpp: bool->void changes.
+        (WebCore::RadioInputType::handleClickEvent):
+        (WebCore::RadioInputType::handleKeydownEvent):
+        (WebCore::RadioInputType::handleKeyupEvent):
+        * html/RadioInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent): ditto.
+        (WebCore::RangeInputType::forwardEvent): Moved from HTMLInputElement.cpp.
+        * html/RangeInputType.h:
+        * html/ResetInputType.cpp: bool->void change.
+        (WebCore::ResetInputType::handleDOMActivateEvent):
+        * html/ResetInputType.h: ditto.
+        * html/SubmitInputType.cpp: ditto.
+        (WebCore::SubmitInputType::handleDOMActivateEvent):
+        * html/SubmitInputType.h: ditto.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleKeydownEvent): bool->void change.
+        (WebCore::TextFieldInputType::handleKeydownEventForSpinButton): ditto.
+        (WebCore::TextFieldInputType::handleWheelEventForSpinButton): Moved from HTMLInputElement.cpp.
+        (WebCore::TextFieldInputType::forwardEvent): ditto.
+        * html/TextFieldInputType.h:
+
 2010-12-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Joseph Pecoraro.

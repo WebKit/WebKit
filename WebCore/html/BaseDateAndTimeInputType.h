@@ -58,7 +58,8 @@ private:
     virtual double defaultValueForStepUp() const;
     virtual bool stepMismatch(const String&, double) const;
     virtual double stepBase() const;
-    virtual bool handleKeydownEvent(KeyboardEvent*);
+    virtual void handleKeydownEvent(KeyboardEvent*);
+    virtual void handleWheelEvent(WheelEvent*);
     virtual String serialize(double) const;
 };
 

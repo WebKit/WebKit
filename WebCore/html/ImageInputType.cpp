@@ -62,11 +62,11 @@ bool ImageInputType::supportsValidation() const
     return false;
 }
 
-bool ImageInputType::handleDOMActivateEvent(Event* event)
+void ImageInputType::handleDOMActivateEvent(Event* event)
 {
     RefPtr<HTMLInputElement> element = this->element();
     if (element->disabled() || !element->form())
-        return false;
+        return;
     element->setActivatedSubmit(true);
     if (event->underlyingEvent() && event->underlyingEvent()->isMouseEvent()) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event->underlyingEvent());
@@ -76,7 +76,6 @@ bool ImageInputType::handleDOMActivateEvent(Event* event)
     element->form()->prepareSubmit(event); // Event handlers can run.
     element->setActivatedSubmit(false);
     event->setDefaultHandled();
-    return true;
 }
 
 RenderObject* ImageInputType::createRenderer(RenderArena* arena, RenderStyle*) const

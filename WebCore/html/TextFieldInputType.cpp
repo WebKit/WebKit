@@ -36,6 +36,7 @@
 #include "KeyboardEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "TextEvent.h"
+#include "WheelEvent.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,18 +51,17 @@ bool TextFieldInputType::valueMissing(const String& value) const
     return value.isEmpty();
 }
 
-bool TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
+void TextFieldInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     if (!element()->focused())
-        return false;
+        return;
     Frame* frame = element()->document()->frame();
     if (!frame || !frame->editor()->doTextFieldCommandFromEvent(element(), event))
-        return false;
+        return;
     event->setDefaultHandled();
-    return true;
 }
 
-bool TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
+void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     int step = 0;
@@ -70,10 +70,28 @@ bool TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
     else if (key == "Down")
         step = -1;
     else
-        return false;
+        return;
     element()->stepUpFromRenderer(step);
     event->setDefaultHandled();
-    return true;
+}
+
+void TextFieldInputType::handleWheelEventForSpinButton(WheelEvent* event)
+{
+    int step = 0;
+    if (event->wheelDeltaY() > 0)
+        step = 1;
+    else if (event->wheelDeltaY() < 0)
+        step = -1;
+    else
+        return;
+    element()->stepUpFromRenderer(step);
+    event->setDefaultHandled();
+}
+
+void TextFieldInputType::forwardEvent(Event* event)
+{
+    if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent() || event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent))
+        toRenderTextControlSingleLine(element()->renderer())->forwardEvent(event);
 }
 
 bool TextFieldInputType::shouldSubmitImplicitly(Event* event)

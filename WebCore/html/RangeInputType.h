@@ -54,7 +54,8 @@ private:
     virtual double stepBase() const;
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
-    virtual bool handleKeydownEvent(KeyboardEvent*);
+    virtual void handleKeydownEvent(KeyboardEvent*);
+    virtual void forwardEvent(Event*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual double parseToDouble(const String&, double) const;
     virtual String serialize(double) const;

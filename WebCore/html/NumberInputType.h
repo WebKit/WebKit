@@ -55,7 +55,9 @@ private:
     virtual double stepBaseWithDecimalPlaces(unsigned*) const;
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
-    virtual bool handleKeydownEvent(KeyboardEvent*);
+    virtual void handleKeydownEvent(KeyboardEvent*);
+    virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*);
+    virtual void handleWheelEvent(WheelEvent*);
     virtual double parseToDouble(const String&, double) const;
     virtual double parseToDoubleWithDecimalPlaces(const String&, double, unsigned*) const;
     virtual String serialize(double) const;

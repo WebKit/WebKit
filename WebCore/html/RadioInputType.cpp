@@ -56,19 +56,19 @@ String RadioInputType::valueMissingText() const
     return validationMessageValueMissingForRadioText();
 }
 
-bool RadioInputType::handleClickEvent(MouseEvent* event)
+void RadioInputType::handleClickEvent(MouseEvent* event)
 {
     event->setDefaultHandled();
-    return true;
 }
 
-bool RadioInputType::handleKeydownEvent(KeyboardEvent* event)
+void RadioInputType::handleKeydownEvent(KeyboardEvent* event)
 {
-    if (BaseCheckableInputType::handleKeydownEvent(event))
-        return true;
+    BaseCheckableInputType::handleKeydownEvent(event);
+    if (event->defaultHandled())
+        return;
     const String& key = event->keyIdentifier();
     if (key != "Up" && key != "Down" && key != "Left" && key != "Right")
-        return false;
+        return;
 
     // Left and up mean "previous radio button".
     // Right and down mean "next radio button".
@@ -77,7 +77,7 @@ bool RadioInputType::handleKeydownEvent(KeyboardEvent* event)
     // However, when using Spatial Navigation, we need to be able to navigate without changing the selection.
     Document* document = element()->document();
     if (isSpatialNavigationEnabled(document->frame()))
-        return false;
+        return;
     bool forward = (key == "Down" || key == "Right");
 
     // We can only stay within the form's children if the form hasn't been demoted to a leaf because
@@ -98,23 +98,21 @@ bool RadioInputType::handleKeydownEvent(KeyboardEvent* event)
             document->setFocusedNode(inputElement);
             inputElement->dispatchSimulatedClick(event, false, false);
             event->setDefaultHandled();
-            return true;
+            return;
         }
     }
-    return false;
 }
 
-bool RadioInputType::handleKeyupEvent(KeyboardEvent* event)
+void RadioInputType::handleKeyupEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
     if (key != "U+0020")
-        return false;
+        return;
     // If an unselected radio is tabbed into (because the entire group has nothing
     // checked, or because of some explicit .focus() call), then allow space to check it.
     if (element()->checked())
-        return false;
+        return;
     dispatchSimulatedClickIfActive(event);
-    return true;
 }
 
 } // namespace WebCore

@@ -61,16 +61,15 @@ bool SubmitInputType::supportsRequired() const
     return false;
 }
 
-bool SubmitInputType::handleDOMActivateEvent(Event* event)
+void SubmitInputType::handleDOMActivateEvent(Event* event)
 {
     RefPtr<HTMLInputElement> element = this->element();
     if (element->disabled() || !element->form())
-        return false;
+        return;
     element->setActivatedSubmit(true);
     element->form()->prepareSubmit(event); // Event handlers can run.
     element->setActivatedSubmit(false);
     event->setDefaultHandled();
-    return true;
 }
 
 } // namespace WebCore

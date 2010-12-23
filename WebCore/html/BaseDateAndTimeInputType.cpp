@@ -34,6 +34,7 @@
 #include "DateComponents.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "KeyboardEvent.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
@@ -119,9 +120,16 @@ double BaseDateAndTimeInputType::stepBase() const
     return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase());
 }
 
-bool BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
+void BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
-    return handleKeydownEventForSpinButton(event) || TextFieldInputType::handleKeydownEvent(event);
+    handleKeydownEventForSpinButton(event);
+    if (!event->defaultHandled())
+        TextFieldInputType::handleKeydownEvent(event);
+}
+
+void BaseDateAndTimeInputType::handleWheelEvent(WheelEvent* event)
+{
+    handleWheelEventForSpinButton(event);
 }
 
 double BaseDateAndTimeInputType::parseToDouble(const String& src, double defaultValue) const

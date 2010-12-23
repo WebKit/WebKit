@@ -83,13 +83,12 @@ String FileInputType::valueMissingText() const
     return element()->multiple() ? validationMessageValueMissingForMultipleFileText() : validationMessageValueMissingForFileText();
 }
 
-bool FileInputType::handleDOMActivateEvent(Event* event)
+void FileInputType::handleDOMActivateEvent(Event* event)
 {
     if (element()->disabled() || !element()->renderer())
-        return false;
+        return;
     toRenderFileUploadControl(element()->renderer())->click();
     event->setDefaultHandled();
-    return true;
 }
 
 RenderObject* FileInputType::createRenderer(RenderArena* arena, RenderStyle*) const

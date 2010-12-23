@@ -27,6 +27,7 @@
 #include "config.h"
 #include "InputType.h"
 
+#include "BeforeTextInsertedEvent.h"
 #include "ButtonInputType.h"
 #include "CheckboxInputType.h"
 #include "ColorInputType.h"
@@ -291,34 +292,47 @@ String InputType::valueMissingText() const
     return validationMessageValueMissingText();
 }
 
-bool InputType::handleClickEvent(MouseEvent*)
+void InputType::handleClickEvent(MouseEvent*)
 {
-    return false;
 }
 
-bool InputType::handleDOMActivateEvent(Event*)
+void InputType::handleDOMActivateEvent(Event*)
 {
-    return false;
 }
 
-bool InputType::handleKeydownEvent(KeyboardEvent*)
+void InputType::handleKeydownEvent(KeyboardEvent*)
 {
-    return false;
 }
 
-bool InputType::handleKeypressEvent(KeyboardEvent*)
+void InputType::handleKeypressEvent(KeyboardEvent*)
 {
-    return false;
 }
 
-bool InputType::handleKeyupEvent(KeyboardEvent*)
+void InputType::handleKeyupEvent(KeyboardEvent*)
 {
-    return false;
+}
+
+void InputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event)
+{
+    element()->handleBeforeTextInsertedEvent(event);
+}
+
+void InputType::handleWheelEvent(WheelEvent*)
+{
+}
+
+void InputType::forwardEvent(Event*)
+{
 }
 
 bool InputType::shouldSubmitImplicitly(Event* event)
 {
     return event->isKeyboardEvent() && event->type() == eventNames().keypressEvent && static_cast<KeyboardEvent*>(event)->charCode() == '\r';
+}
+
+PassRefPtr<HTMLFormElement> InputType::formForSubmission() const
+{
+    return element()->form();
 }
 
 RenderObject* InputType::createRenderer(RenderArena*, RenderStyle* style) const
