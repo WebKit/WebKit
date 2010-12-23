@@ -34,19 +34,26 @@ ShadowData::ShadowData(const ShadowData& o)
     , m_y(o.m_y)
     , m_blur(o.m_blur)
     , m_spread(o.m_spread)
-    , m_style(o.m_style)
     , m_color(o.m_color)
+    , m_style(o.m_style)
+    , m_isWebkitBoxShadow(o.m_isWebkitBoxShadow)
 {
     m_next = o.m_next ? new ShadowData(*o.m_next) : 0;
 }
 
 bool ShadowData::operator==(const ShadowData& o) const
 {
-    if ((m_next && !o.m_next) || (!m_next && o.m_next) ||
-        (m_next && o.m_next && *m_next != *o.m_next))
+    if ((m_next && !o.m_next) || (!m_next && o.m_next)
+        || (m_next && o.m_next && *m_next != *o.m_next))
         return false;
     
-    return m_x == o.m_x && m_y == o.m_y && m_blur == o.m_blur && m_spread == o.m_spread && m_style == o.m_style && m_color == o.m_color;
+    return m_x == o.m_x
+        && m_y == o.m_y
+        && m_blur == o.m_blur
+        && m_spread == o.m_spread
+        && m_style == o.m_style
+        && m_color == o.m_color
+        && m_isWebkitBoxShadow == o.m_isWebkitBoxShadow;
 }
 
 static inline void calculateShadowExtent(const ShadowData* shadow, int additionalOutlineSize, int& shadowLeft, int& shadowRight, int& shadowTop, int& shadowBottom)

@@ -142,9 +142,13 @@ static inline ShadowStyle blendFunc(const AnimationBase* anim, ShadowStyle from,
 static inline ShadowData* blendFunc(const AnimationBase* anim, const ShadowData* from, const ShadowData* to, double progress)
 {  
     ASSERT(from && to);
-    return new ShadowData(blendFunc(anim, from->x(), to->x(), progress), blendFunc(anim, from->y(), to->y(), progress), 
-                          blendFunc(anim, from->blur(), to->blur(), progress), blendFunc(anim, from->spread(), to->spread(), progress),
-                          blendFunc(anim, from->style(), to->style(), progress), blendFunc(anim, from->color(), to->color(), progress));
+    return new ShadowData(blendFunc(anim, from->x(), to->x(), progress),
+                          blendFunc(anim, from->y(), to->y(), progress), 
+                          blendFunc(anim, from->blur(), to->blur(), progress),
+                          blendFunc(anim, from->spread(), to->spread(), progress),
+                          blendFunc(anim, from->style(), to->style(), progress),
+                          from->isWebkitBoxShadow(),
+                          blendFunc(anim, from->color(), to->color(), progress));
 }
 
 static inline TransformOperations blendFunc(const AnimationBase* anim, const TransformOperations& from, const TransformOperations& to, double progress)
@@ -354,7 +358,7 @@ public:
     {
         const ShadowData* shadowA = (a->*m_getter)();
         const ShadowData* shadowB = (b->*m_getter)();
-        ShadowData defaultShadowData(0, 0, 0, 0, Normal, Color::transparent);
+        ShadowData defaultShadowData(0, 0, 0, 0, Normal, property() == CSSPropertyWebkitBoxShadow, Color::transparent);
 
         ShadowData* newShadowData = 0;
         ShadowData* lastShadow = 0;
@@ -683,6 +687,7 @@ void AnimationBase::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyBorderBottomColor, &RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor));
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyOutlineColor, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor));
 
+        gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow));
         gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyWebkitBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow));
         gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyTextShadow, &RenderStyle::textShadow, &RenderStyle::setTextShadow));
 

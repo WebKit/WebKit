@@ -1,3 +1,49 @@
+2010-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Support unprefixed box-shadow property
+        https://bugs.webkit.org/show_bug.cgi?id=51448
+        
+        Add support for the box-shadow CSS property. We'll currently render this
+        similarly to -webkit-box-shadow, but a later fix will adjust the blur radius
+        handling to match the spec.
+
+        Test: fast/css/box-shadow.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Implement getComputedStyle
+        for box-shadow
+        
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::ShadowParseContext::ShadowParseContext):
+        (WebCore::ShadowParseContext::commitValue):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::ShadowParseContext::commitColor): Support CSSPropertyBoxShadow
+
+        * css/CSSPropertyNames.in: add box-shadow
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Add CSSPropertyBoxShadow, and
+        store in the ShadowData if this is -webkit-box-shadow or not. We'll use this
+        to adjust radii later.
+
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty): Add CSSPropertyBoxShadow.
+        
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperShadow::blend):
+        (WebCore::AnimationBase::ensurePropertyMap): Support animations of box-shadow.
+        
+        * rendering/style/ShadowData.cpp: Store a flag to say if this is a -webkit-box-shadow.
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::operator==):
+        * rendering/style/ShadowData.h:
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::ShadowData::isWebkitBoxShadow):
+
 2010-12-22  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1232,6 +1232,7 @@ bool CSSParser::parseValue(int propId, bool important)
         validPrimitive = validUnit(value, FLength | FPercent, m_strict);
         break;
     case CSSPropertyTextShadow: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
+    case CSSPropertyBoxShadow:
     case CSSPropertyWebkitBoxShadow:
         if (id == CSSValueNone)
             validPrimitive = true;
@@ -4129,7 +4130,7 @@ struct ShadowParseContext {
         , allowBlur(false)
         , allowSpread(false)
         , allowColor(true)
-        , allowStyle(prop == CSSPropertyWebkitBoxShadow)
+        , allowStyle(prop == CSSPropertyWebkitBoxShadow || prop == CSSPropertyBoxShadow)
         , allowBreak(true)
     {
     }
@@ -4161,7 +4162,7 @@ struct ShadowParseContext {
         allowY = false;
         allowBlur = false;
         allowSpread = false;
-        allowStyle = property == CSSPropertyWebkitBoxShadow;
+        allowStyle = property == CSSPropertyWebkitBoxShadow || property == CSSPropertyBoxShadow;
     }
 
     void commitLength(CSSParserValue* v)
@@ -4180,12 +4181,12 @@ struct ShadowParseContext {
             allowY = false;
             allowBlur = true;
             allowColor = true;
-            allowStyle = property == CSSPropertyWebkitBoxShadow;
+            allowStyle = property == CSSPropertyWebkitBoxShadow || property == CSSPropertyBoxShadow;
             allowBreak = true;
         } else if (allowBlur) {
             blur = val.release();
             allowBlur = false;
-            allowSpread = property == CSSPropertyWebkitBoxShadow;
+            allowSpread = property == CSSPropertyWebkitBoxShadow || property == CSSPropertyBoxShadow;
         } else if (allowSpread) {
             spread = val.release();
             allowSpread = false;
@@ -4202,7 +4203,7 @@ struct ShadowParseContext {
         } else {
             allowBlur = false;
             allowSpread = false;
-            allowStyle = property == CSSPropertyWebkitBoxShadow;
+            allowStyle = property == CSSPropertyWebkitBoxShadow || property == CSSPropertyBoxShadow;
         }
     }
 
@@ -4234,7 +4235,7 @@ struct ShadowParseContext {
     bool allowBlur;
     bool allowSpread;
     bool allowColor;
-    bool allowStyle;
+    bool allowStyle; // inset or not.
     bool allowBreak;
 };
 

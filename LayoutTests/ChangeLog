@@ -1,3 +1,23 @@
+2010-12-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Support unprefixed box-shadow property
+        https://bugs.webkit.org/show_bug.cgi?id=51448
+        
+        Add box-shadow to getComputedStyle tests, and add new pixel test
+        for box-shadow. (This test will be updated when the shadow radius is fixed via
+        bug 22102).
+
+        * fast/css/box-shadow.html: Added.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/fast/css/box-shadow-expected.checksum: Added.
+        * platform/mac/fast/css/box-shadow-expected.png: Added.
+        * platform/mac/fast/css/box-shadow-expected.txt: Added.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2010-12-22  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Sam Weinig.

@@ -569,7 +569,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             ASSERT(!item->spread);
             ASSERT(!item->style);
                 
-            ShadowData* shadowData = new ShadowData(x, y, blur, 0, Normal, color.isValid() ? color : Color::transparent);
+            ShadowData* shadowData = new ShadowData(x, y, blur, 0, Normal, false, color.isValid() ? color : Color::transparent);
             svgstyle->setShadow(shadowData);
             return;
         }

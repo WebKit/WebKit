@@ -25,6 +25,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     border-top-style: solid
     border-top-width: 16px
     bottom: auto
+    box-shadow: none
     box-sizing: content-box
     caption-side: top
     clear: none

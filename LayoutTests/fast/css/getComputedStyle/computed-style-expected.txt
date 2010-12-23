@@ -26,6 +26,7 @@ border-top-right-radius: 0px;
 border-top-style: none;
 border-top-width: 0px;
 bottom: auto;
+box-shadow: none;
 box-sizing: content-box;
 caption-side: top;
 clear: none;

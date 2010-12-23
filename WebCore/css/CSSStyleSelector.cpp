@@ -4791,6 +4791,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyTextShadow:
+    case CSSPropertyBoxShadow:
     case CSSPropertyWebkitBoxShadow: {
         if (isInherit) {
             if (id == CSSPropertyTextShadow)
@@ -4818,7 +4819,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             Color color;
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());
-            ShadowData* shadowData = new ShadowData(x, y, blur, spread, shadowStyle, color.isValid() ? color : Color::transparent);
+            ShadowData* shadowData = new ShadowData(x, y, blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent);
             if (id == CSSPropertyTextShadow)
                 m_style->setTextShadow(shadowData, i != 0);
             else
