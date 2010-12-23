@@ -1288,9 +1288,8 @@ void WebPageProxy::createNewPage(const WindowFeatures& windowFeatures, uint32_t 
 {
     RefPtr<WebPageProxy> newPage = m_uiClient.createNewPage(this, windowFeatures, static_cast<WebEvent::Modifiers>(opaqueModifiers), static_cast<WebMouseEvent::Button>(opaqueMouseButton));
     if (newPage) {
-        // FIXME: Pass the real size.
         newPageID = newPage->pageID();
-        newPageParameters = newPage->creationParameters(IntSize(100, 100));
+        newPageParameters = newPage->creationParameters(newPage->drawingArea()->size());
     } else
         newPageID = 0;
 }

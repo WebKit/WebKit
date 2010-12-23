@@ -81,8 +81,7 @@ FloatRect WebChromeClient::windowRect()
 
 FloatRect WebChromeClient::pageRect()
 {
-    notImplemented();
-    return FloatRect();
+    return FloatRect(FloatPoint(), m_page->size());
 }
 
 float WebChromeClient::scaleFactor()
