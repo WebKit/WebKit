@@ -1332,7 +1332,6 @@ static HashSet<String> mimeTypeCache()
         // GStreamer.
         HashSet<String> handledApplicationSubtypes;
         handledApplicationSubtypes.add(String("ogg"));
-        handledApplicationSubtypes.add(String("x-3gp"));
         handledApplicationSubtypes.add(String("vnd.rn-realmedia"));
         handledApplicationSubtypes.add(String("x-pn-realaudio"));
 
@@ -1357,6 +1356,13 @@ static HashSet<String> mimeTypeCache()
                     cache.add(String("video/mp4"));
                     cache.add(String("audio/aac"));
                     cache.add(String("audio/mp4"));
+                    cached = true;
+                }
+
+                if (g_str_equal(name, "application/x-3gp")) {
+                    cache.add(String("audio/3gpp"));
+                    cache.add(String("video/3gpp"));
+                    cache.add(String("application/x-3gp"));
                     cached = true;
                 }
 

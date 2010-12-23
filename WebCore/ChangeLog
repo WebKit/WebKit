@@ -1,3 +1,16 @@
+2010-12-23  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] media/audio-data-url.html fails since r75504
+        https://bugs.webkit.org/show_bug.cgi?id=51525
+
+        Make the GStreamer media-player advertize 3gpp mime-types as
+        supported if the 3gp caps are in the typefind factories.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
 2010-12-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
