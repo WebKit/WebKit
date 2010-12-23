@@ -1,3 +1,13 @@
+2010-12-23  Jessie Berlin  <jberlin@apple.com>
+
+        Add Windows-XP-specific (failing) expected results for
+        fast/profiler/throw-exception-from-eval-expected.html in order to get the Windows XP Debug
+        test bot green again. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=49801
+
+        * platform/win-xp/fast/profiler: Added.
+        * platform/win-xp/fast/profiler/throw-exception-from-eval-expected.txt: Added.
+
 2010-12-23  Jeremy Moskovich  <jeremy@chromium.org>
 
         Unreviewed new Chromium baselines and test expectations update.
