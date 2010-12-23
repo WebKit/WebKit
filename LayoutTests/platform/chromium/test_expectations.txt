@@ -3279,7 +3279,7 @@ BUGCR59704 : media/video-no-audio.html = IMAGE+TEXT
 BUGCR59704 : media/video-volume-slider.html = IMAGE+TEXT
 
 // WebKit roll 74534:74545
-BUGWK51536 : fast/css/box-shadow.html = IMAGE+TEXT
+BUGWK51536 : fast/css/box-shadow.html = IMAGE+TEXT IMAGE
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGCR67905 MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
