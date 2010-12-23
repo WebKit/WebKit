@@ -100,8 +100,7 @@ PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<Graph
 }
 
 LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> context)
-    : m_rootLayerTextureId(0)
-    , m_rootLayerTextureWidth(0)
+    : m_rootLayerTextureWidth(0)
     , m_rootLayerTextureHeight(0)
     , m_rootLayer(0)
     , m_scrollPosition(IntPoint(-1, -1))
@@ -112,11 +111,19 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     , m_defaultRenderSurface(0)
 {
     m_hardwareCompositing = initializeSharedObjects();
+    m_rootLayerTiler = LayerTilerChromium::create(this, IntSize(256, 256));
+    ASSERT(m_rootLayerTiler);
 }
 
 LayerRendererChromium::~LayerRendererChromium()
 {
     cleanupSharedObjects();
+
+    // Because the tilers need to clean up textures, clean them up explicitly
+    // before the GraphicsContext3D is destroyed.
+    m_rootLayerTiler.clear();
+    m_horizontalScrollbarTiler.clear();
+    m_verticalScrollbarTiler.clear();
 }
 
 GraphicsContext3D* LayerRendererChromium::context()
@@ -131,40 +138,6 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
         LOG_ERROR("GL command failed: File: %s\n\tLine %d\n\tcommand: %s, error %x\n", file, line, command, static_cast<int>(error));
 }
 
-// Creates a canvas and an associated graphics context that the root layer will
-// render into.
-void LayerRendererChromium::setRootLayerCanvasSize(const IntSize& size)
-{
-    if (size == m_rootLayerCanvasSize)
-        return;
-
-#if PLATFORM(SKIA)
-    // Create new canvas and context. OwnPtr takes care of freeing up
-    // the old ones.
-    m_rootLayerCanvas = new skia::PlatformCanvas(size.width(), size.height(), false);
-    m_rootLayerSkiaContext = new PlatformContextSkia(m_rootLayerCanvas.get());
-    m_rootLayerGraphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_rootLayerSkiaContext.get()));
-#elif PLATFORM(CG)
-    // Release the previous CGBitmapContext before reallocating the backing store as a precaution.
-    m_rootLayerCGContext.adoptCF(0);
-    int rowBytes = 4 * size.width();
-    m_rootLayerBackingStore.resize(rowBytes * size.height());
-    memset(m_rootLayerBackingStore.data(), 0, m_rootLayerBackingStore.size());
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    m_rootLayerCGContext.adoptCF(CGBitmapContextCreate(m_rootLayerBackingStore.data(),
-                                                       size.width(), size.height(), 8, rowBytes,
-                                                       colorSpace.get(),
-                                                       kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-    CGContextTranslateCTM(m_rootLayerCGContext.get(), 0, size.height());
-    CGContextScaleCTM(m_rootLayerCGContext.get(), 1, -1);
-    m_rootLayerGraphicsContext = new GraphicsContext(m_rootLayerCGContext.get());
-#else
-#error "Need to implement for your platform."
-#endif
-
-    m_rootLayerCanvasSize = size;
-}
-
 void LayerRendererChromium::useShader(unsigned programId)
 {
     if (programId != m_currentShader) {
@@ -173,12 +146,75 @@ void LayerRendererChromium::useShader(unsigned programId)
     }
 }
 
-// This method must be called before any other updates are made to the
-// root layer texture. It resizes the root layer texture and scrolls its
-// contents as needed. It also sets up common GL state used by the rest
-// of the layer drawing code.
-void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, const IntRect& contentRect,
-                                                const IntPoint& scrollPosition)
+IntRect LayerRendererChromium::verticalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect)
+{
+    IntRect verticalScrollbar(IntPoint(contentRect.right(), contentRect.y()), IntSize(visibleRect.width() - contentRect.width(), visibleRect.height()));
+    return verticalScrollbar;
+}
+
+IntRect LayerRendererChromium::horizontalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect)
+{
+    IntRect horizontalScrollbar(IntPoint(contentRect.x(), contentRect.bottom()), IntSize(visibleRect.width(), visibleRect.height() - contentRect.height()));
+    return horizontalScrollbar;
+}
+
+void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect, const IntRect& visibleRect, const IntRect& contentRect)
+{
+    if (contentRect.intersects(dirtyRect))
+        m_rootLayerTiler->invalidateRect(dirtyRect);
+    if (m_horizontalScrollbarTiler) {
+        IntRect scrollbar = horizontalScrollbarRect(visibleRect, contentRect);
+        if (dirtyRect.intersects(scrollbar)) {
+            m_horizontalScrollbarTiler->setLayerPosition(scrollbar.location());
+            m_horizontalScrollbarTiler->invalidateRect(dirtyRect);
+        }
+    }
+    if (m_verticalScrollbarTiler) {
+        IntRect scrollbar = verticalScrollbarRect(visibleRect, contentRect);
+        if (dirtyRect.intersects(scrollbar)) {
+            m_verticalScrollbarTiler->setLayerPosition(scrollbar.location());
+            m_verticalScrollbarTiler->invalidateRect(dirtyRect);
+        }
+    }
+}
+
+void LayerRendererChromium::updateAndDrawRootLayer(TilePaintInterface& tilePaint, TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect)
+{
+    // Mask out writes to alpha channel: subpixel antialiasing via Skia results in invalid
+    // zero alpha values on text glyphs. The root layer is always opaque.
+    GLC(m_context.get(), m_context->colorMask(true, true, true, false));
+
+    m_rootLayerTiler->update(tilePaint, visibleRect);
+    m_rootLayerTiler->draw(visibleRect);
+
+    if (visibleRect.width() > contentRect.width()) {
+        IntRect verticalScrollbar = verticalScrollbarRect(visibleRect, contentRect);
+        IntSize tileSize = verticalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
+        if (!m_verticalScrollbarTiler)
+            m_verticalScrollbarTiler = LayerTilerChromium::create(this, tileSize);
+        else
+            m_verticalScrollbarTiler->setTileSize(tileSize);
+        m_verticalScrollbarTiler->setLayerPosition(verticalScrollbar.location());
+        m_verticalScrollbarTiler->update(scrollbarPaint, visibleRect);
+        m_verticalScrollbarTiler->draw(visibleRect);
+    }
+
+    if (visibleRect.height() > contentRect.height()) {
+        IntRect horizontalScrollbar = horizontalScrollbarRect(visibleRect, contentRect);
+        IntSize tileSize = horizontalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
+        if (!m_horizontalScrollbarTiler)
+            m_horizontalScrollbarTiler = LayerTilerChromium::create(this, tileSize);
+        else
+            m_horizontalScrollbarTiler->setTileSize(tileSize);
+        m_horizontalScrollbarTiler->setLayerPosition(horizontalScrollbar.location());
+        m_horizontalScrollbarTiler->update(scrollbarPaint, visibleRect);
+        m_horizontalScrollbarTiler->draw(visibleRect);
+    }
+}
+
+void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect& contentRect,
+                                       const IntPoint& scrollPosition, TilePaintInterface& tilePaint,
+                                       TilePaintInterface& scrollbarPaint)
 {
     ASSERT(m_hardwareCompositing);
 
@@ -186,10 +222,6 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
         return;
 
     makeContextCurrent();
-
-    GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_rootLayerTextureId));
-
-    bool skipScroll = false;
 
     // If the size of the visible area has changed then allocate a new texture
     // to store the contents of the root layer and adjust the projection matrix
@@ -199,15 +231,10 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
     if (visibleRectWidth != m_rootLayerTextureWidth || visibleRectHeight != m_rootLayerTextureHeight) {
         m_rootLayerTextureWidth = visibleRectWidth;
         m_rootLayerTextureHeight = visibleRectHeight;
-        GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, m_rootLayerTextureWidth, m_rootLayerTextureHeight, 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE));
 
         // Reset the current render surface to force an update of the viewport and
         // projection matrix next time useRenderSurface is called.
         m_currentRenderSurface = 0;
-
-        // The root layer texture was just resized so its contents are not
-        // useful for scrolling.
-        skipScroll = true;
     }
 
     // The GL viewport covers the entire visible area, including the scrollbars.
@@ -223,75 +250,7 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
     // Blending disabled by default. Root layer alpha channel on Windows is incorrect when Skia uses ClearType.
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::BLEND));
 
-    if (m_scrollPosition == IntPoint(-1, -1)) {
-        m_scrollPosition = scrollPosition;
-        skipScroll = true;
-    }
-
-    IntPoint scrollDelta = toPoint(scrollPosition - m_scrollPosition);
-
-    // Scrolling larger than the contentRect size does not preserve any of the pixels, so there is
-    // no need to copy framebuffer pixels back into the texture.
-    if (abs(scrollDelta.y()) > contentRect.height() || abs(scrollDelta.x()) > contentRect.width())
-        skipScroll = true;
-
-    // Scroll the backbuffer
-    if (!skipScroll && (scrollDelta.x() || scrollDelta.y())) {
-        // Scrolling works as follows: We render a quad with the current root layer contents
-        // translated by the amount the page has scrolled since the last update and then read the
-        // pixels of the content area (visible area excluding the scroll bars) back into the
-        // root layer texture. The newly exposed area will be filled by a subsequent drawLayersIntoRect call
-        TransformationMatrix scrolledLayerMatrix;
-
-        scrolledLayerMatrix.translate3d(0.5 * visibleRect.width() - scrollDelta.x(),
-            0.5 * visibleRect.height() + scrollDelta.y(), 0);
-        scrolledLayerMatrix.scale3d(1, -1, 1);
-
-        const RenderSurfaceChromium::SharedValues* rsv = renderSurfaceSharedValues();
-        useShader(rsv->shaderProgram());
-        GLC(m_context.get(), m_context->uniform1i(rsv->shaderSamplerLocation(), 0));
-        LayerChromium::drawTexturedQuad(m_context.get(), m_projectionMatrix, scrolledLayerMatrix,
-                                        visibleRect.width(), visibleRect.height(), 1,
-                                        rsv->shaderMatrixLocation(), rsv->shaderAlphaLocation());
-
-        GLC(m_context.get(), m_context->copyTexSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, 0, 0, contentRect.width(), contentRect.height()));
-    }
-
     m_scrollPosition = scrollPosition;
-}
-
-void LayerRendererChromium::updateRootLayerTextureRect(const IntRect& updateRect)
-{
-    ASSERT(m_hardwareCompositing);
-
-    if (!m_rootLayer)
-        return;
-
-    GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_rootLayerTextureId));
-
-    // Update the root layer texture.
-    ASSERT((updateRect.right()  <= m_rootLayerTextureWidth)
-           && (updateRect.bottom() <= m_rootLayerTextureHeight));
-
-#if PLATFORM(SKIA)
-    // Get the contents of the updated rect.
-    const SkBitmap& bitmap = m_rootLayerCanvas->getDevice()->accessBitmap(false);
-    ASSERT(bitmap.width() == updateRect.width() && bitmap.height() == updateRect.height());
-    void* pixels = bitmap.getPixels();
-#elif PLATFORM(CG)
-    // Get the contents of the updated rect.
-    ASSERT(static_cast<int>(CGBitmapContextGetWidth(m_rootLayerCGContext.get())) == updateRect.width() && static_cast<int>(CGBitmapContextGetHeight(m_rootLayerCGContext.get())) == updateRect.height());
-    void* pixels = m_rootLayerBackingStore.data();
-#else
-#error "Need to implement for your platform."
-#endif
-    // Copy the contents of the updated rect to the root layer texture.
-    GLC(m_context.get(), m_context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
-}
-
-void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect& contentRect)
-{
-    ASSERT(m_hardwareCompositing);
 
     m_defaultRenderSurface = m_rootLayer->m_renderSurface.get();
     if (!m_defaultRenderSurface)
@@ -304,22 +263,7 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     m_context->clearColor(0, 0, 1, 1);
     m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
 
-    GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_rootLayerTextureId));
-
-    // Render the root layer using a quad that takes up the entire visible area of the window.
-    // We reuse the shader program used by ContentLayerChromium.
-    const ContentLayerChromium::SharedValues* contentLayerValues = contentLayerSharedValues();
-    useShader(contentLayerValues->contentShaderProgram());
-    GLC(m_context.get(), m_context->uniform1i(contentLayerValues->shaderSamplerLocation(), 0));
-    // Mask out writes to alpha channel: ClearType via Skia results in invalid
-    // zero alpha values on text glyphs. The root layer is always opaque.
-    GLC(m_context.get(), m_context->colorMask(true, true, true, false));
-    TransformationMatrix layerMatrix;
-    layerMatrix.translate3d(visibleRect.width() * 0.5f, visibleRect.height() * 0.5f, 0);
-    LayerChromium::drawTexturedQuad(m_context.get(), m_projectionMatrix, layerMatrix,
-                                    visibleRect.width(), visibleRect.height(), 1,
-                                    contentLayerValues->shaderMatrixLocation(), contentLayerValues->shaderAlphaLocation());
-    GLC(m_context.get(), m_context->colorMask(true, true, true, true));
+    updateAndDrawRootLayer(tilePaint, scrollbarPaint, visibleRect, contentRect);
 
     // Set the root visible/content rects --- used by subsequent drawLayers calls.
     m_rootVisibleRect = visibleRect;
@@ -387,6 +331,16 @@ void LayerRendererChromium::present()
     // Note that currently this has the same effect as swapBuffers; we should
     // consider exposing a different entry point on GraphicsContext3D.
     m_context->prepareTexture();
+}
+
+void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
+{
+    m_rootLayer = layer;
+    m_rootLayerTiler->invalidateEntireLayer();
+    if (m_horizontalScrollbarTiler)
+        m_horizontalScrollbarTiler->invalidateEntireLayer();
+    if (m_verticalScrollbarTiler)
+        m_verticalScrollbarTiler->invalidateEntireLayer();
 }
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
@@ -782,19 +736,6 @@ bool LayerRendererChromium::initializeSharedObjects()
 {
     makeContextCurrent();
 
-    // Create a texture object to hold the contents of the root layer.
-    m_rootLayerTextureId = createLayerTexture();
-    if (!m_rootLayerTextureId) {
-        LOG_ERROR("Failed to create texture for root layer");
-        cleanupSharedObjects();
-        return false;
-    }
-    // Turn off filtering for the root layer to avoid blurring from the repeated
-    // writes and reads to the framebuffer that happen while scrolling.
-    GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_rootLayerTextureId));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
-
     // Get the max texture size supported by the system.
     m_maxTextureSize = 0;
     GLC(m_context.get(), m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_maxTextureSize));
@@ -829,12 +770,6 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_videoLayerSharedValues.clear();
     m_pluginLayerSharedValues.clear();
     m_renderSurfaceSharedValues.clear();
-
-    if (m_rootLayerTextureId) {
-        deleteLayerTexture(m_rootLayerTextureId);
-        m_rootLayerTextureId = 0;
-    }
-
     if (m_offscreenFramebufferId)
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 

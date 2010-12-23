@@ -60,6 +60,7 @@ class LayerRendererChromium;
 // this class.
 class LayerChromium : public RefCounted<LayerChromium> {
     friend class LayerRendererChromium;
+    friend class LayerTilerChromium;
 public:
     static PassRefPtr<LayerChromium> create(GraphicsLayerChromium* owner = 0);
 

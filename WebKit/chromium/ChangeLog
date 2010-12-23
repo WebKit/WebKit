@@ -1,3 +1,25 @@
+2010-12-20  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Tile root layer of the compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=49947
+
+        Refactor root layer logic out of WebViewImpl and into
+        LayerTilerChromium.  The painting is now done through an interface
+        rather than directly in WebViewImpl.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImplTilePaintInterface::WebViewImplTilePaintInterface):
+        (WebKit::WebViewImplTilePaintInterface::paint):
+        (WebKit::WebViewImplScrollbarPaintInterface::WebViewImplScrollbarPaintInterface):
+        (WebKit::WebViewImplScrollbarPaintInterface::paint):
+        (WebKit::WebViewImpl::doComposite):
+        * src/WebViewImpl.h:
+
 2010-12-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -53,6 +53,7 @@ ScrollView::ScrollView()
     , m_drawPanScrollIcon(false)
     , m_useFixedLayout(false)
     , m_paintsEntireContents(false)
+    , m_clipsRepaints(true)
     , m_delegatesScrolling(false)
 {
     platformInit();
@@ -200,6 +201,11 @@ bool ScrollView::canBlitOnScroll() const
 void ScrollView::setPaintsEntireContents(bool paintsEntireContents)
 {
     m_paintsEntireContents = paintsEntireContents;
+}
+
+void ScrollView::setClipsRepaints(bool clipsRepaints)
+{
+    m_clipsRepaints = clipsRepaints;
 }
 
 void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
@@ -794,7 +800,7 @@ void ScrollView::frameRectsChanged()
 void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
 {
     IntRect paintRect = rect;
-    if (!paintsEntireContents())
+    if (clipsRepaints() && !paintsEntireContents())
         paintRect.intersect(visibleContentRect());
     if (paintRect.isEmpty())
         return;
@@ -1155,4 +1161,3 @@ bool ScrollView::platformIsOffscreen() const
 #endif
 
 }
-

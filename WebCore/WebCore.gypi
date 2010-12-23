@@ -2599,6 +2599,8 @@
             'platform/graphics/chromium/LayerRendererChromium.h',
             'platform/graphics/chromium/LayerTexture.cpp',
             'platform/graphics/chromium/LayerTexture.h',
+            'platform/graphics/chromium/LayerTilerChromium.cpp',
+            'platform/graphics/chromium/LayerTilerChromium.h',
             'platform/graphics/chromium/MediaPlayerPrivateChromium.h',
             'platform/graphics/chromium/PlatformIcon.h',
             'platform/graphics/chromium/PluginLayerChromium.cpp',

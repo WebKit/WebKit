@@ -1314,7 +1314,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
     double delay = adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
         IntRect paintRect = r;
-        if (!paintsEntireContents())
+        if (clipsRepaints() && !paintsEntireContents())
             paintRect.intersect(visibleContentRect());
         if (paintRect.isEmpty())
             return;

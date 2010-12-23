@@ -111,6 +111,11 @@ public:
     bool paintsEntireContents() const { return m_paintsEntireContents; }
     void setPaintsEntireContents(bool);
 
+    // By default, paint events are clipped to the visible area.  If set to
+    // false, paint events are no longer clipped.  paintsEntireContents() implies !clipsRepaints().
+    bool clipsRepaints() const { return m_clipsRepaints; }
+    void setClipsRepaints(bool);
+
     // By default programmatic scrolling is handled by WebCore and not by the UI application.
     // In the case of using a tiled backing store, this mode can be set, so that the scroll requests
     // are delegated to the UI application.
@@ -325,6 +330,7 @@ private:
     bool m_useFixedLayout;
 
     bool m_paintsEntireContents;
+    bool m_clipsRepaints;
     bool m_delegatesScrolling;
 
     // There are 8 possible combinations of writing mode and direction.  Scroll origin will be non-zero in the x or y axis

@@ -1,3 +1,70 @@
+2010-12-20  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Tile root layer of the compositor.
+        https://bugs.webkit.org/show_bug.cgi?id=49947
+
+        Refactor root layer update and drawing from LayerRendererChromium into
+        LayerTilerChromium.  The root layer is now drawn as multiple tiles
+        rather than as one single large texture.  Scrollbars are now drawn
+        separately rather than as part of the root layer.
+
+        Test: LayoutTests/compositing/
+
+        * WebCore.gypi:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::setClipsRepaints):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::clipsRepaints):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::~LayerRendererChromium):
+        (WebCore::LayerRendererChromium::useShader):
+        (WebCore::LayerRendererChromium::verticalScrollbarRect):
+        (WebCore::LayerRendererChromium::horizontalScrollbarRect):
+        (WebCore::LayerRendererChromium::invalidateRootLayerRect):
+        (WebCore::LayerRendererChromium::updateAndDrawRootLayer):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::setRootLayer):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp: Added.
+        (WebCore::LayerTilerChromium::create):
+        (WebCore::LayerTilerChromium::LayerTilerChromium):
+        (WebCore::LayerTilerChromium::~LayerTilerChromium):
+        (WebCore::LayerTilerChromium::layerRendererContext):
+        (WebCore::LayerTilerChromium::setTileSize):
+        (WebCore::LayerTilerChromium::reset):
+        (WebCore::LayerTilerChromium::createTile):
+        (WebCore::LayerTilerChromium::invalidateTiles):
+        (WebCore::LayerTilerChromium::contentRectToTileIndices):
+        (WebCore::LayerTilerChromium::contentRectToLayerRect):
+        (WebCore::LayerTilerChromium::layerRectToContentRect):
+        (WebCore::LayerTilerChromium::tileIndex):
+        (WebCore::LayerTilerChromium::tileContentRect):
+        (WebCore::LayerTilerChromium::tileLayerRect):
+        (WebCore::LayerTilerChromium::invalidateRect):
+        (WebCore::LayerTilerChromium::invalidateEntireLayer):
+        (WebCore::LayerTilerChromium::update):
+        (WebCore::LayerTilerChromium::setLayerPosition):
+        (WebCore::LayerTilerChromium::draw):
+        (WebCore::LayerTilerChromium::resizeLayer):
+        (WebCore::LayerTilerChromium::growLayerToContain):
+        (WebCore::LayerTilerChromium::Tile::~Tile):
+        (WebCore::LayerTilerChromium::Tile::releaseTextureId):
+        * platform/graphics/chromium/LayerTilerChromium.h: Added.
+        (WebCore::LayerTilerChromium::Tile::Tile):
+        (WebCore::LayerTilerChromium::Tile::textureId):
+        (WebCore::LayerTilerChromium::Tile::dirty):
+        (WebCore::LayerTilerChromium::Tile::clearDirty):
+        (WebCore::LayerTilerChromium::layerRenderer):
+
 2010-12-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

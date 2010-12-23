@@ -38,6 +38,7 @@
 #include "ContentLayerChromium.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
+#include "LayerTilerChromium.h"
 #include "PluginLayerChromium.h"
 #include "RenderSurfaceChromium.h"
 #include "SkBitmap.h"
@@ -67,14 +68,12 @@ public:
 
     GraphicsContext3D* context();
 
-    // updates size of root texture, if needed, and scrolls the backbuffer.
-    void prepareToDrawLayers(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
+    void invalidateRootLayerRect(const IntRect& dirtyRect, const IntRect& visibleRect, const IntRect& contentRect);
 
-    // updates a rectangle within the root layer texture
-    void updateRootLayerTextureRect(const IntRect& updateRect);
-
-    // draws the current layers onto the backbuffer
-    void drawLayers(const IntRect& visibleRect, const IntRect& contentRect);
+    // updates and draws the current layers onto the backbuffer
+    void drawLayers(const IntRect& visibleRect, const IntRect& contentRect,
+                    const IntPoint& scrollPosition, TilePaintInterface& tilePaint,
+                    TilePaintInterface& scrollbarPaint);
 
     // waits for rendering to finish
     void finish();
@@ -82,7 +81,7 @@ public:
     // puts backbuffer onscreen
     void present();
 
-    void setRootLayer(PassRefPtr<LayerChromium> layer) { m_rootLayer = layer; }
+    void setRootLayer(PassRefPtr<LayerChromium> layer);
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
     void transferRootLayer(LayerRendererChromium* other) { other->m_rootLayer = m_rootLayer.release(); }
 
@@ -126,6 +125,8 @@ private:
 
     void drawLayer(LayerChromium*, RenderSurfaceChromium*);
 
+    void updateAndDrawRootLayer(TilePaintInterface& tilePaint, TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect);
+
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);
 
     void setDrawViewportRect(const IntRect&, bool flipY);
@@ -139,13 +140,18 @@ private:
     bool initializeSharedObjects();
     void cleanupSharedObjects();
 
-    unsigned m_rootLayerTextureId;
+    static IntRect verticalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect);
+    static IntRect horizontalScrollbarRect(const IntRect& visibleRect, const IntRect& contentRect);
+
     int m_rootLayerTextureWidth;
     int m_rootLayerTextureHeight;
 
     TransformationMatrix m_projectionMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
+    OwnPtr<LayerTilerChromium> m_rootLayerTiler;
+    OwnPtr<LayerTilerChromium> m_horizontalScrollbarTiler;
+    OwnPtr<LayerTilerChromium> m_verticalScrollbarTiler;
 
     IntPoint m_scrollPosition;
     bool m_hardwareCompositing;
