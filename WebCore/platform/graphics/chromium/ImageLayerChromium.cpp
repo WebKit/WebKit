@@ -156,13 +156,8 @@ void ImageLayerChromium::updateContentsIfDirty()
 #error "Need to implement for your platform."
 #endif
 
-    if (pixels) {
-        // Since this operation requires contiguous pixels, make sure there's no padding at the
-        // end of each line.
-        ASSERT(skiaBitmap->rowBytes() == SkBitmap::ComputeRowBytes(skiaConfig, skiaBitmap->width()));
-
+    if (pixels)
         updateTextureRect(pixels, bitmapSize,  dirtyRect);
-    }
 }
 
 }

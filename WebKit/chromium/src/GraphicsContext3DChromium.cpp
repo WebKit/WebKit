@@ -172,13 +172,9 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
     const SkBitmap* canvasBitmap = imageBuffer->context()->platformContext()->bitmap();
     const SkBitmap* readbackBitmap = 0;
     ASSERT(canvasBitmap->config() == SkBitmap::kARGB_8888_Config);
-    ASSERT(SkBitmap::ComputeBytesPerPixel(canvasBitmap->config()) == 4);
     if (canvasBitmap->width() == m_impl->width() && canvasBitmap->height() == m_impl->height()) {
         // This is the fastest and most common case. We read back
         // directly into the canvas's backing store.
-        // Make sure no extra padding at line ends (e.g. a bitmap extracted subset).
-        ASSERT(readbackBitmap->rowBytes() ==
-               SkBitmap::ComputeRowBytes(readbackBitmap->config(), readbackBitmap->width()));
         readbackBitmap = canvasBitmap;
         m_resizingBitmap.reset();
     } else {
