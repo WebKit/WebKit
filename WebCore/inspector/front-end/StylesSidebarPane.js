@@ -1714,8 +1714,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         event.preventDefault();
 
         if (!("originalPropertyText" in this)) {
-            // Remember the rule's original CSS text, so it can be restored
-            // if the editing is canceled and before each apply.
+            // Remember the rule's original CSS text on [Page](Up|Down), so it can be restored
+            // if the editing is canceled.
             this.originalPropertyText = this.property.propertyText;
         }
 
@@ -1848,14 +1848,21 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
     },
 
+    _hasBeenAppliedToPageViaUpDown: function()
+    {
+        // New properties applied via up/down have an originalPropertyText and will be deleted later
+        // on, if cancelled, when the empty string gets applied as their style text.
+        return ("originalPropertyText" in this);
+    },
+
     applyStyleText: function(styleText, updateInterface)
     {
         var section = this.treeOutline.section;
         var elementsPanel = WebInspector.panels.elements;
         styleText = styleText.replace(/\s/g, " ").trim(); // Replace &nbsp; with whitespace.
         var styleTextLength = styleText.length;
-        if (!styleTextLength && updateInterface && this._newProperty) {
-            // The user deleted everything, so remove the tree element and update.
+        if (!styleTextLength && updateInterface && this._newProperty && !this._hasBeenAppliedToPageViaUpDown()) {
+            // The user deleted everything and never applied a new property value via Up/Down scrolling, so remove the tree element and update.
             this.parent.removeChild(this);
             section.afterUpdate();
             return;
