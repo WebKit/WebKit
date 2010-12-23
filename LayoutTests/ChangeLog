@@ -1,3 +1,11 @@
+2010-12-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium expectations update. Suppress crashes seen on
+        Windows with fast/canvas/webgl/canvas-test.html and
+        fast/canvas/webgl/gl-pixelstorei.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-23  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Eric Seidel.

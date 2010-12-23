@@ -3283,3 +3283,7 @@ BUGWK51536 : fast/css/box-shadow.html = IMAGE+TEXT IMAGE
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGCR67905 MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
+
+// WebKit roll 74557:74567
+BUGCR67935 WIN : fast/canvas/webgl/canvas-test.html = CRASH
+BUGCR67935 WIN : fast/canvas/webgl/gl-pixelstorei.html = CRASH
