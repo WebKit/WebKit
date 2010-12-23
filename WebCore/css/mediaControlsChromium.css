@@ -73,6 +73,11 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
     -webkit-appearance: media-timeline-container;
     -webkit-user-select: none;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+    -webkit-box-direction: reverse;
+    -webkit-box-flex: 1;
 
     position: absolute;
     top: auto;
@@ -90,18 +95,15 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
-    display: inline-block;
+    display: -webkit-box;
+    -webkit-box-flex: 0;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
 
     overflow: hidden;
     cursor: default;
 
-    position: absolute;
     line-height: 21px;
-    top: auto;
-    bottom: 6px;
-    left: auto;
-    right: 0px;
-
     height: 20px;
     width: 58px;
 
@@ -123,17 +125,14 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     -webkit-appearance: media-time-remaining-display;
     -webkit-user-select: none;
     display: none;
+    -webkit-box-flex: 0;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
 
     overflow: hidden;
     cursor: default;
 
-    position: absolute;
     line-height: 21px;
-    top: auto;
-    bottom: 6px;
-    left: auto;
-    right: 0px;
-
     height: 20px;
     width: 58px;
 
@@ -153,11 +152,11 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
-    position: absolute;
-    top: auto;
-    bottom: 7px;
-    left: 6px;
-    right: 65px;
+    display: -webkit-box;
+    -webkit-box-flex: 1;
+
+    padding: 0px;
+    margin: 0px 6px;
     height: 16px;
 
     border-color: rgba(255, 255, 255, 0.2);

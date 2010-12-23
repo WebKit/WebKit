@@ -1,3 +1,24 @@
+2010-12-22  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by David Levin.
+
+        Change css for chromium media controls to deal with the timeline
+        not expanding when the current time disappears. This happens when
+        the width of the control drops below 240px.
+
+        This change results in a minor pixel difference - the timebar now
+        aligns better with the time and when the time is not displayed is
+        now perfectly centered. Disabling the affected tests for now
+        and will rebaseline.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51500
+
+        * css/mediaControlsChromium.css:
+        (audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container):
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+
 2010-12-22  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Simon Fraser.

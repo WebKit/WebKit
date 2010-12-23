@@ -3209,7 +3209,8 @@ BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
 BUGCR66085 : media/remove-from-document.html = PASS TIMEOUT
 BUGCR66085 WIN : media/video-currentTime.html = TIMEOUT
 BUGCR66085 LINUX : media/video-currentTime.html = PASS TIMEOUT
-BUGCR66085 : media/video-display-toggle.html = PASS TIMEOUT
+// Re-enable this once 59704 is fixed (rebaselined).
+//BUGCR66085 : media/video-display-toggle.html = PASS TIMEOUT
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUGCR66085 : media/video-source.html = PASS TIMEOUT
 BUGCR66085 : media/video-source-moved.html = PASS TIMEOUT
@@ -3263,3 +3264,15 @@ BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 
 BUGWK51398 MAC : inspector/console-dir-global.html = TIMEOUT
 BUGWK51398 MAC : inspector/debugger-expand-scope.html = TIMEOUT
+
+// Change for 59704 requires a rebaseline of various media tests
+BUGCR59704 : media/audio-controls-rendering.html = IMAGE+TEXT
+BUGCR59704 : media/controls-after-reload.html = IMAGE+TEXT
+BUGCR59704 : media/controls-strict.html = IMAGE+TEXT
+BUGCR59704 : media/controls-styling.html = IMAGE+TEXT
+BUGCR59704 : media/controls-without-preload.html = IMAGE+TEXT
+BUGCR59704 : media/video-controls-rendering.html = IMAGE+TEXT
+BUGCR59704 : media/video-display-toggle.html = IMAGE+TEXT TIMEOUT
+BUGCR59704 : media/video-empty-source.html = IMAGE+TEXT
+BUGCR59704 : media/video-no-audio.html = IMAGE+TEXT
+BUGCR59704 : media/video-volume-slider.html = IMAGE+TEXT
