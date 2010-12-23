@@ -1,3 +1,17 @@
+2010-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WKView should not try to do asynchronous validation for selectors that are not editor commands
+        https://bugs.webkit.org/show_bug.cgi?id=51555
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]): Removed the special case for startSpeaking.
+        Added call to commandIsSupportedFromMenuOrKeyBinding so we only try to do validation
+        for commands that are supported. Tweaked comments and added some bug numbers.
+        (-[WKView _setUserInterfaceItemState:enabled:state:]): Tweaked comment and added
+        bug number.
+
 2010-12-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

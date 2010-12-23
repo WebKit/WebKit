@@ -66,7 +66,7 @@ using namespace HTMLNames;
 class EditorInternalCommand {
 public:
     bool (*execute)(Frame*, Event*, EditorCommandSource, const String&);
-    bool (*isSupported)(Frame*, EditorCommandSource);
+    bool (*isSupportedFromDOM)(Frame*);
     bool (*isEnabled)(Frame*, Event*, EditorCommandSource);
     TriState (*state)(Frame*, Event*);
     String (*value)(Frame*, Event*);
@@ -1088,52 +1088,27 @@ static bool executeCancelOperation(Frame* frame, Event*, EditorCommandSource, co
 
 // Supported functions
 
-static bool supported(Frame*, EditorCommandSource)
+static bool supported(Frame*)
 {
     return true;
 }
 
-static bool supportedFromMenuOrKeyBinding(Frame*, EditorCommandSource source)
+static bool supportedFromMenuOrKeyBinding(Frame*)
 {
-    return source == CommandFromMenuOrKeyBinding;
-}
-
-static bool supportedCopyCut(Frame* frame, EditorCommandSource source)
-{
-    switch (source) {
-    case CommandFromMenuOrKeyBinding:
-        return true;
-    case CommandFromDOM:
-    case CommandFromDOMWithUserInterface: {
-        Settings* settings = frame ? frame->settings() : 0;
-        return settings && settings->javaScriptCanAccessClipboard();
-    }
-    }
-    ASSERT_NOT_REACHED();
     return false;
 }
 
-static bool supportedPaste(Frame* frame, EditorCommandSource source)
+static bool supportedCopyCut(Frame* frame)
 {
-    switch (source) {
-    case CommandFromMenuOrKeyBinding:
-        return true;
-    case CommandFromDOM:
-    case CommandFromDOMWithUserInterface: {
-        Settings* settings = frame ? frame->settings() : 0;
-        return settings && (settings->javaScriptCanAccessClipboard() ? settings->isDOMPasteAllowed() : 0);
-    }
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    Settings* settings = frame ? frame->settings() : 0;
+    return settings && settings->javaScriptCanAccessClipboard();
 }
 
-#if SUPPORT_AUTOCORRECTION_PANEL
-static bool supportedDismissCorrectionPanel(Frame* frame, EditorCommandSource source)
+static bool supportedPaste(Frame* frame)
 {
-    return supportedFromMenuOrKeyBinding(frame, source) && frame->editor()->isShowingCorrectionPanel();
+    Settings* settings = frame ? frame->settings() : 0;
+    return settings && (settings->javaScriptCanAccessClipboard() ? settings->isDOMPasteAllowed() : 0);
 }
-#endif
 
 // Enabled functions
 
@@ -1248,6 +1223,13 @@ static bool enabledUndo(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canUndo();
 }
+
+#if SUPPORT_AUTOCORRECTION_PANEL
+static bool enabledDismissCorrectionPanel(Frame* frame, EditorCommandSource source)
+{
+    return frame->editor()->isShowingCorrectionPanel();
+}
+#endif
 
 // State functions
 
@@ -1506,9 +1488,6 @@ static const CommandMap& createCommandMap()
         { "Subscript", { executeSubscript, supported, enabledInRichlyEditableText, stateSubscript, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Superscript", { executeSuperscript, supported, enabledInRichlyEditableText, stateSuperscript, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "SwapWithMark", { executeSwapWithMark, supportedFromMenuOrKeyBinding, enabledVisibleSelectionAndMark, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-#if PLATFORM(MAC)
-        { "TakeFindStringFromSelection", { executeTakeFindStringFromSelection, supportedFromMenuOrKeyBinding, enabledTakeFindStringFromSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-#endif
         { "ToggleBold", { executeToggleBold, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateBold, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ToggleItalic", { executeToggleItalic, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "ToggleUnderline", { executeUnderline, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateUnderline, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
@@ -1520,8 +1499,13 @@ static const CommandMap& createCommandMap()
         { "Unselect", { executeUnselect, supported, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Yank", { executeYank, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "YankAndSelect", { executeYankAndSelect, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+
+#if PLATFORM(MAC)
+        { "TakeFindStringFromSelection", { executeTakeFindStringFromSelection, supportedFromMenuOrKeyBinding, enabledTakeFindStringFromSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+#endif
+
 #if SUPPORT_AUTOCORRECTION_PANEL
-        { "CancelOperation", { executeCancelOperation, supportedDismissCorrectionPanel, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "CancelOperation", { executeCancelOperation, supportedFromMenuOrKeyBinding, enabledDismissCorrectionPanel, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
 #endif
     };
 
@@ -1582,34 +1566,42 @@ static const CommandMap& createCommandMap()
     return commandMap;
 }
 
+static const EditorInternalCommand* internalCommand(const String& commandName)
+{
+    static const CommandMap& commandMap = createCommandMap();
+    return commandMap.get(commandName);
+}
+
 Editor::Command Editor::command(const String& commandName)
 {
-    return command(commandName, CommandFromMenuOrKeyBinding);
+    return Command(internalCommand(commandName), CommandFromMenuOrKeyBinding, m_frame);
 }
 
 Editor::Command Editor::command(const String& commandName, EditorCommandSource source)
 {
-    if (commandName.isEmpty())
-        return Command();
+    return Command(internalCommand(commandName), source, m_frame);
+}
 
-    static const CommandMap& commandMap = createCommandMap();
-    const EditorInternalCommand* internalCommand = commandMap.get(commandName);
-    return internalCommand ? Command(m_frame, internalCommand, source) : Command();
+bool Editor::commandIsSupportedFromMenuOrKeyBinding(const String& commandName)
+{
+    return internalCommand(commandName);
 }
 
 Editor::Command::Command()
     : m_command(0)
-    , m_source()
 {
 }
 
-Editor::Command::Command(PassRefPtr<Frame> frame, const EditorInternalCommand* command, EditorCommandSource source)
-    : m_frame(frame)
-    , m_command(command)
+Editor::Command::Command(const EditorInternalCommand* command, EditorCommandSource source, PassRefPtr<Frame> frame)
+    : m_command(command)
     , m_source(source)
+    , m_frame(command ? frame : 0)
 {
-    ASSERT(m_frame);
-    ASSERT(m_command);
+    // Use separate assertions so we can tell which bad thing happened.
+    if (!command)
+        ASSERT(!m_frame);
+    else
+        ASSERT(m_frame);
 }
 
 bool Editor::Command::execute(const String& parameter, Event* triggeringEvent) const
@@ -1630,7 +1622,17 @@ bool Editor::Command::execute(Event* triggeringEvent) const
 
 bool Editor::Command::isSupported() const
 {
-    return m_command && m_command->isSupported(m_frame.get(), m_source);
+    if (!m_command)
+        return false;
+    switch (m_source) {
+    case CommandFromMenuOrKeyBinding:
+        return true;
+    case CommandFromDOM:
+    case CommandFromDOMWithUserInterface:
+        return m_command->isSupportedFromDOM(m_frame.get());
+    }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool Editor::Command::isEnabled(Event* triggeringEvent) const

@@ -175,7 +175,7 @@ public:
     class Command {
     public:
         Command();
-        Command(PassRefPtr<Frame>, const EditorInternalCommand*, EditorCommandSource);
+        Command(const EditorInternalCommand*, EditorCommandSource, PassRefPtr<Frame>);
 
         bool execute(const String& parameter = String(), Event* triggeringEvent = 0) const;
         bool execute(Event* triggeringEvent) const;
@@ -189,12 +189,13 @@ public:
         bool isTextInsertion() const;
 
     private:
-        RefPtr<Frame> m_frame;
         const EditorInternalCommand* m_command;
         EditorCommandSource m_source;
+        RefPtr<Frame> m_frame;
     };
-    Command command(const String& commandName); // Default is CommandFromMenuOrKeyBinding.
+    Command command(const String& commandName); // Command source is CommandFromMenuOrKeyBinding.
     Command command(const String& commandName, EditorCommandSource);
+    static bool commandIsSupportedFromMenuOrKeyBinding(const String& commandName); // Works without a frame.
 
     bool insertText(const String&, Event* triggeringEvent);
     bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, Event* triggeringEvent);

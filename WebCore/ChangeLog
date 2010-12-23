@@ -1,3 +1,39 @@
+2010-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WKView should not try to do asynchronous validation for selectors that are not editor commands
+        https://bugs.webkit.org/show_bug.cgi?id=51555
+
+        * WebCore.exp.in: Added commandIsSupportedFromMenuOrKeyBinding.
+        * editing/Editor.h: Reordered arguments in the Editor::Command constructor
+        and the data members too so the frame is last. Added
+        commandIsSupportedFromMenuOrKeyBinding.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::supported): Removed the EditorCommandSource argument. These
+        functions are now only used when called from DOM.
+        (WebCore::supportedFromMenuOrKeyBinding): Ditto.
+        (WebCore::supportedCopyCut): Ditto.
+        (WebCore::supportedPaste): Ditto.
+        (WebCore::enabledDismissCorrectionPanel): Changed the supported function to
+        an enabled function. It was incorrect to say that this is "supported" only
+        when the correction panel is up. Correct to say that it is "enabled" only
+        then. And also probably OK to enable it even when the selection is not in
+        editable text, as long as the panel is up.
+        (WebCore::createCommandMap): Moved conditional commands out of the main
+        array into a separate section at the end.
+        (WebCore::internalCommand): Added.
+        (WebCore::Editor::command): Changed to use the new internalCommand function
+        and simplified by relying on the null check in the Command constructor.
+        (WebCore::Editor::commandIsSupportedFromMenuOrKeyBinding): Added.
+        (WebCore::Editor::Command::Command): Removed unneeded initialization of
+        m_source, which is never looked at if m_command is 0. Added feature of
+        passing a null command pointer to the non-default constructor.
+        (WebCore::Editor::Command::isSupported): Changed to only call the
+        per-command isSupported function when the command source is DOM.
+        Accordingly that function is now called isSupportedFromDOM.
+
 2010-12-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

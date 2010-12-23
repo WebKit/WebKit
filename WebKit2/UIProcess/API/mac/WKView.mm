@@ -335,11 +335,6 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 {
     SEL action = [item action];
 
-    // FIXME: This is only needed to work around the fact that we don't return YES for
-    // selectors that are not editing commands (see below). If that's fixed, this can be removed.
-    if (action == @selector(startSpeaking:))
-        return YES;
-
     if (action == @selector(stopSpeaking:))
         return [NSApp isSpeaking];
 
@@ -356,27 +351,26 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         return YES;
     }
 
-    // FIXME: We should return YES here for selectors that are not editing commands.
-    // But at the moment there is no way to find out if a selector is an editing command or not
-    // in the UI process. So for now we assume any selectors not handled above are editing commands.
-
+    // Next, handle editor commands. Start by returning YES for anything that is not an editor command.
+    // Returning YES is the default thing to do in an AppKit validate method for any selector that is not recognized.
     String commandName = commandNameForSelector([item action]);
-    if (commandName.isEmpty())
+    if (!Editor::commandIsSupportedFromMenuOrKeyBinding(commandName))
         return YES;
 
-    // Add this menu item to the vector of items for a given command that are awaiting validation.
-    // If the item is the first to be added, then call validateMenuItem to start the asynchronous
-    // validation process.
+    // Add this item to the vector of items for a given command that are awaiting validation.
     pair<ValidationMap::iterator, bool> addResult = _data->_validationMap.add(commandName, ValidationVector());
     addResult.first->second.append(item);
     if (addResult.second) {
-        // FIXME: The function should be renamed validateCommand because it is not specific to menu items.
+        // If we are not already awaiting validation for this command, start the asynchronous validation process.
+        // FIXME: Theoretically, there is a race here; when we get the answer it might be old, from a previous time
+        // we asked for the same command; there is no guarantee the answer is still valid.
+        // FIXME: The function called here should be renamed validateCommand because it is not specific to menu items.
         _data->_page->validateMenuItem(commandName);
     }
 
     // Treat as enabled until we get the result back from the web process and _setUserInterfaceItemState is called.
-    // FIXME: This means that items will flash enabled at first, and only then disable a moment later, which is unattractive.
-    // But returning NO here is worse, because that makes keyboard commands such as command-C fail.
+    // FIXME <rdar://problem/8803459>: This means disabled items will flash enabled at first for a moment.
+    // But returning NO here would be worse; that would make keyboard commands such as command-C fail.
     return YES;
 }
 
@@ -988,8 +982,7 @@ static bool isViewVisible(NSView *view)
         [menuItem(item) setState:newState];
         [menuItem(item) setEnabled:isEnabled];
         [toolbarItem(item) setEnabled:isEnabled];
-        // FIXME: If the user interface item is neither a menu item nor a toolbar, it will be left enabled.
-        // It's not obvious how to fix this.
+        // FIXME <rdar://problem/8803392>: If the item is neither a menu nor toolbar item, it will be left enabled.
     }
 }
 
