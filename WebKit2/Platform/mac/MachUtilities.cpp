@@ -32,3 +32,34 @@ void setMachPortQueueLength(mach_port_t receivePort, mach_port_msgcount_t queueL
 
     mach_port_set_attributes(mach_task_self(), receivePort, MACH_PORT_LIMITS_INFO, reinterpret_cast<mach_port_info_t>(&portLimits), MACH_PORT_LIMITS_INFO_COUNT);
 }
+
+mach_port_t machExceptionPort()
+{
+    exception_mask_t exceptionMasks[EXC_TYPES_COUNT];
+    exception_port_t exceptionHandlers[EXC_TYPES_COUNT];
+    exception_behavior_t exceptionBehaviors[EXC_TYPES_COUNT];
+    thread_state_flavor_t exceptionFlavors[EXC_TYPES_COUNT];
+    mach_msg_type_number_t numExceptionMasks;
+
+    kern_return_t kr = task_get_exception_ports(mach_task_self(), EXC_MASK_CRASH, exceptionMasks, &numExceptionMasks, exceptionHandlers, exceptionBehaviors, exceptionFlavors);
+    if (kr != KERN_SUCCESS) {
+        ASSERT_NOT_REACHED();
+        return MACH_PORT_NULL;
+    }
+
+    // We're just interested in the first exception handler.
+    return exceptionHandlers[0];
+}
+
+void setMachExceptionPort(mach_port_t exceptionPort)
+{
+    // Assert that we dont try to call setMachExceptionPort more than once per process.
+#if !ASSERT_DISABLED
+    static mach_port_t taskExceptionPort = MACH_PORT_NULL;
+    ASSERT(taskExceptionPort == MACH_PORT_NULL);
+    taskExceptionPort = exceptionPort;
+#endif
+
+    if (task_set_exception_ports(mach_task_self(), EXC_MASK_CRASH, exceptionPort, EXCEPTION_STATE_IDENTITY | MACH_EXCEPTION_CODES, MACHINE_THREAD_STATE) != KERN_SUCCESS)
+        ASSERT_NOT_REACHED();
+}

@@ -35,6 +35,9 @@ namespace CoreIPCMessage {
 enum Kind {
     InitializeConnection,
     SyncMessageReply,
+#if PLATFORM(MAC)
+    SetExceptionPort,
+#endif
 };
 
 } // namespace CoreIPCMessage

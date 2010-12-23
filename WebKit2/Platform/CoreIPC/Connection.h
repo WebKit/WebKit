@@ -99,6 +99,10 @@ public:
     static PassRefPtr<Connection> createClientConnection(Identifier, Client*, RunLoop* clientRunLoop);
     ~Connection();
 
+#if PLATFORM(MAC)
+    void setShouldCloseConnectionOnMachExceptions();
+#endif
+
     bool open();
     void invalidate();
 
@@ -245,9 +249,15 @@ private:
     // Called on the connection queue.
     void receiveSourceEventHandler();
     void initializeDeadNameSource();
+    void exceptionSourceEventHandler();
 
     mach_port_t m_sendPort;
     mach_port_t m_receivePort;
+
+    // If setShouldCloseConnectionOnMachExceptions has been called, this has
+    // the exception port that exceptions from the other end will be sent on.
+    mach_port_t m_exceptionPort;
+
 #elif PLATFORM(WIN)
     // Called on the connection queue.
     void readEventHandler();

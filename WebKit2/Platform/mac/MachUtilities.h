@@ -30,4 +30,7 @@
 
 void setMachPortQueueLength(mach_port_t, mach_port_msgcount_t queueLength);
 
+mach_port_t machExceptionPort();
+void setMachExceptionPort(mach_port_t exceptionPort);
+
 #endif // MachUtilities_h

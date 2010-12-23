@@ -1,5 +1,45 @@
 2010-12-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Detect WebProcess crashes sooner, without waiting for ReportCrash to finish
+        https://bugs.webkit.org/show_bug.cgi?id=51505
+
+        * Platform/CoreIPC/CoreIPCMessageKinds.h:
+        Add SetExceptionPort.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        If we have an exception port, unregister it.
+
+        (CoreIPC::Connection::platformInitialize):
+        Set m_exceptionPort to null.
+
+        (CoreIPC::Connection::open):
+        If we have an exception port, register an event handler for it and send it over
+        to the other side.
+
+        (CoreIPC::Connection::receiveSourceEventHandler):
+        Handle the SetExceptionPort message.
+
+        (CoreIPC::Connection::exceptionSourceEventHandler):
+        Receive the message, forward it to the real exception handler and call connectionDidClose.
+
+        (CoreIPC::Connection::setShouldCloseConnectionOnMachExceptions):
+        Create an exception port.
+
+        * Platform/mac/MachUtilities.cpp:
+        (machExceptionPort):
+        (setMachExceptionPort):
+        * Platform/mac/MachUtilities.h:
+        Add helper functions for getting and setting the mach exception port.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        Call setShouldCloseConnectionOnMachExceptions on Mac.
+
+2010-12-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Move Mach message receiving code out into a new function

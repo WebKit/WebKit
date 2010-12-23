@@ -323,6 +323,10 @@ void WebProcessProxy::didFinishLaunching(CoreIPC::Connection::Identifier connect
     ASSERT(!m_connection);
     
     m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
+#if PLATFORM(MAC)
+    m_connection->setShouldCloseConnectionOnMachExceptions();
+#endif
+    
     m_connection->open();
     
     for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
