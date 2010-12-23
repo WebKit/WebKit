@@ -1,3 +1,17 @@
+2010-12-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build warning fix.
+
+        [EFL] Remove warning messages during the webkit efl compiling
+        https://bugs.webkit.org/show_bug.cgi?id=51520
+
+        Remove build warning messages.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_show):
+        (_ewk_view_smart_hide):
+        * ewk/ewk_view.h:
+
 2010-12-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

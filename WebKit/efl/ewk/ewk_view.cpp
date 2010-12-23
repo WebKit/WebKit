@@ -864,7 +864,6 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
 static void _ewk_view_smart_show(Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
 
     if (evas_object_clipees_get(sd->base.clipper))
         evas_object_show(sd->base.clipper);
@@ -874,7 +873,6 @@ static void _ewk_view_smart_show(Evas_Object *o)
 static void _ewk_view_smart_hide(Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
 
     evas_object_hide(sd->base.clipper);
     evas_object_hide(sd->backing_store);
