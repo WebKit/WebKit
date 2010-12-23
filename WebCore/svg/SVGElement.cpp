@@ -222,7 +222,7 @@ void SVGElement::setCursorImageValue(CSSCursorImageValue* cursorImageValue)
     rareData->setCursorImageValue(cursorImageValue);
 }
 
-void SVGElement::cursorImageElementRemoved()
+void SVGElement::cursorImageValueRemoved()
 {
     ASSERT(hasRareSVGData());
     rareSVGData()->setCursorImageValue(0);

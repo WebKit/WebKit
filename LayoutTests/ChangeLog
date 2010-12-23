@@ -1,3 +1,13 @@
+2010-12-23  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        CSSCursorImageValue destructor should clear referenced element.
+        https://bugs.webkit.org/show_bug.cgi?id=51417
+
+        * svg/css/cursor-image-replace-expected.txt: Added.
+        * svg/css/cursor-image-replace.svg: Added.
+
 2010-12-23  Kenneth Russell  <kbr@google.com>
 
         Unreviewed Chromium expectations update. Allow

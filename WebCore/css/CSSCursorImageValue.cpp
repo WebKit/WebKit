@@ -71,7 +71,7 @@ CSSCursorImageValue::~CSSCursorImageValue()
 
     for (; it != end; ++it) {
         SVGElement* referencedElement = *it;
-        referencedElement->cursorElementRemoved();
+        referencedElement->cursorImageValueRemoved();
         if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
             cursorElement->removeClient(referencedElement);
     }
