@@ -1,3 +1,14 @@
+2010-12-22  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Building with Blob support fails again
+        https://bugs.webkit.org/show_bug.cgi?id=51392
+
+        Build fix.
+
+        * GNUmakefile.am:
+
 2010-12-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

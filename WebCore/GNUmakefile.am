@@ -763,6 +763,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDataGridColumnListCustom.cpp \
 	WebCore/bindings/js/JSDataGridDataSource.cpp \
 	WebCore/bindings/js/JSDataGridDataSource.h \
+	WebCore/bindings/js/JSDataViewCustom.cpp \
 	WebCore/bindings/js/JSDebugWrapperSet.cpp \
 	WebCore/bindings/js/JSDebugWrapperSet.h \
 	WebCore/bindings/js/JSDedicatedWorkerContextCustom.cpp \
@@ -1572,6 +1573,8 @@ webcore_sources += \
 	WebCore/html/canvas/CanvasRenderingContext.h \
 	WebCore/html/canvas/CanvasStyle.cpp \
 	WebCore/html/canvas/CanvasStyle.h \
+	WebCore/html/canvas/DataView.cpp \
+	WebCore/html/canvas/DataView.h \
 	WebCore/html/canvas/Float32Array.cpp \
 	WebCore/html/canvas/Float32Array.h \
 	WebCore/html/canvas/Int16Array.cpp \
