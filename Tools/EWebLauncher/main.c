@@ -830,7 +830,6 @@ main(int argc, char *argv[])
 
     unsigned char quitOption = 0;
     unsigned char isFullscreen = 0;
-    unsigned char sudoWorkaround = 0;
     int args;
 
     Ecore_Getopt_Value values[] = {
@@ -841,7 +840,6 @@ main(int argc, char *argv[])
         ECORE_GETOPT_VALUE_PTR_CAST(geometry),
         ECORE_GETOPT_VALUE_STR(theme),
         ECORE_GETOPT_VALUE_STR(userAgent),
-        ECORE_GETOPT_VALUE_BOOL(sudoWorkaround),
         ECORE_GETOPT_VALUE_INT(verbose),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
@@ -871,9 +869,6 @@ main(int argc, char *argv[])
         url = argv[args];
     else
         url = (char*) default_url;
-
-    if (sudoWorkaround)
-        strcat(getenv("HOME"), "blah");
 
     themePath = findThemePath(theme);
     if (!themePath)
