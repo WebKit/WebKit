@@ -639,10 +639,13 @@ static NPCocoaEvent initializeKeyboardEvent(const WebKeyboardEvent& keyboardEven
 
 bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
 {
+    bool handled = false;
+
     switch (m_eventModel) {
     case NPEventModelCocoa: {
         NPCocoaEvent event = initializeKeyboardEvent(keyboardEvent);
-        return NPP_HandleEvent(&event);
+        handled = NPP_HandleEvent(&event);
+        break;
     }
 
 #ifndef NP_NO_CARBON
@@ -663,7 +666,8 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
         EventRecord event = initializeEventRecord(eventKind);
         event.modifiers = modifiersForEvent(keyboardEvent);
         event.message = keyboardEvent.nativeVirtualKeyCode() << 8 | keyboardEvent.macCharCode();
-        return NPP_HandleEvent(&event);
+        handled = NPP_HandleEvent(&event);
+        break;
     }
 #endif
 
@@ -671,7 +675,13 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
         ASSERT_NOT_REACHED();
     }
 
-    return false;
+    // Most plug-ins simply return true for all keyboard events, even those that aren't handled.
+    // This leads to bugs such as <rdar://problem/8740926>. We work around this by returning false
+    // if the keyboard event has the command modifier pressed.
+    if (keyboardEvent.metaKey())
+        return false;
+
+    return handled;
 }
 
 void NetscapePlugin::platformSetFocus(bool hasFocus)
