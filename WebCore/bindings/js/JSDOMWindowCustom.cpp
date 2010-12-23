@@ -706,6 +706,8 @@ private:
 
 inline void DialogHandler::dialogCreated(DOMWindow* dialog)
 {
+    // FIXME: This looks like a leak between the normal world and an isolated
+    //        world if dialogArguments comes from an isolated world.
     m_globalObject = toJSDOMWindow(dialog->frame(), normalWorld(m_exec->globalData()));
     if (JSValue dialogArguments = m_exec->argument(1))
         m_globalObject->putDirect(Identifier(m_exec, "dialogArguments"), dialogArguments);
@@ -722,9 +724,9 @@ inline JSValue DialogHandler::returnValue() const
     return slot.getValue(m_exec, identifier);
 }
 
-static void setUpDialog(DOMWindow* dialog, void* context)
+static void setUpDialog(DOMWindow* dialog, void* handler)
 {
-    static_cast<DialogHandler*>(context)->dialogCreated(dialog);
+    static_cast<DialogHandler*>(handler)->dialogCreated(dialog);
 }
 
 JSValue JSDOMWindow::showModalDialog(ExecState* exec)

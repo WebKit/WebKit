@@ -378,133 +378,68 @@ v8::Handle<v8::Value> V8DOMWindow::captureEventsCallback(const v8::Arguments& ar
     return v8::Undefined();
 }
 
-static bool canShowModalDialogNow(const Frame* frame)
-{
-    // A frame can out live its page. See bug 1219613.
-    if (!frame || !frame->page())
-        return false;
-    return frame->page()->chrome()->canRunModalNow();
-}
-
-static HashMap<String, String> parseModalDialogFeatures(const String& featuresArg)
-{
-    HashMap<String, String> map;
-
-    Vector<String> features;
-    featuresArg.split(';', features);
-    Vector<String>::const_iterator end = features.end();
-    for (Vector<String>::const_iterator it = features.begin(); it != end; ++it) {
-        String featureString = *it;
-        int pos = featureString.find('=');
-        int colonPos = featureString.find(':');
-        if (pos >= 0 && colonPos >= 0)
-            continue;  // ignore any strings that have both = and :
-        if (pos < 0)
-            pos = colonPos;
-        if (pos < 0) {
-            // null string for value means key without value
-            map.set(featureString.stripWhiteSpace().lower(), String());
-        } else {
-            String key = featureString.left(pos).stripWhiteSpace().lower();
-            String val = featureString.substring(pos + 1).stripWhiteSpace().lower();
-            int spacePos = val.find(' ');
-            if (spacePos != -1)
-                val = val.left(spacePos);
-            map.set(key, val);
-        }
+class DialogHandler {
+public:
+    explicit DialogHandler(v8::Handle<v8::Value> dialogArguments)
+        : m_dialogArguments(dialogArguments)
+    {
     }
 
-    return map;
+    void dialogCreated(DOMWindow*);
+    v8::Handle<v8::Value> returnValue() const;
+
+private:
+    v8::Handle<v8::Value> m_dialogArguments;
+    v8::Handle<v8::Context> m_dialogContext;
+};
+
+inline void DialogHandler::dialogCreated(DOMWindow* dialogFrame)
+{
+    m_dialogContext = V8Proxy::context(dialogFrame->frame());
+    if (m_dialogContext.IsEmpty())
+        return;
+    if (m_dialogArguments.IsEmpty())
+        return;
+    v8::Context::Scope scope(m_dialogContext);
+    m_dialogContext->Global()->Set(v8::String::New("dialogArguments"), m_dialogArguments);
+}
+
+inline v8::Handle<v8::Value> DialogHandler::returnValue() const
+{
+    if (m_dialogContext.IsEmpty())
+        return v8::Undefined();
+    v8::Context::Scope scope(m_dialogContext);
+    v8::Handle<v8::Value> returnValue = m_dialogContext->Global()->Get(v8::String::New("returnValue"));
+    if (returnValue.IsEmpty())
+        return v8::Undefined();
+    return returnValue;
+}
+
+static void setUpDialog(DOMWindow* dialog, void* handler)
+{
+    static_cast<DialogHandler*>(handler)->dialogCreated(dialog);
 }
 
 v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.DOMWindow.showModalDialog()");
+    DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
 
-    String url = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
-    v8::Local<v8::Value> dialogArgs = args[1];
-    String featureArgs = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
+    V8BindingState* state = V8BindingState::Only();
 
-    DOMWindow* window = V8DOMWindow::toNative(args.Holder());
-    Frame* frame = window->frame();
+    DOMWindow* activeWindow = state->activeWindow();
+    DOMWindow* firstWindow = state->firstWindow();
 
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), frame, true))
-        return v8::Undefined();
+    // FIXME: Handle exceptions properly.
+    String urlString = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
+    String dialogFeaturesString = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
 
-    Frame* callingFrame = V8Proxy::retrieveFrameForCallingContext();
-    if (!callingFrame)
-        return v8::Undefined();
+    DialogHandler handler(args[1]);
 
-    Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!enteredFrame)
-        return v8::Undefined();
+    impl->showModalDialog(urlString, dialogFeaturesString, activeWindow, firstWindow, setUpDialog, &handler);
 
-    if (!canShowModalDialogNow(frame) || !V8BindingSecurity::allowPopUp(V8BindingState::Only()))
-        return v8::Undefined();
-
-    const HashMap<String, String> features = parseModalDialogFeatures(featureArgs);
-
-    const bool trusted = false;
-
-    FloatRect screenRect = screenAvailableRect(frame->view());
-
-    WindowFeatures windowFeatures;
-    // default here came from frame size of dialog in MacIE.
-    windowFeatures.width = WindowFeatures::floatFeature(features, "dialogwidth", 100, screenRect.width(), 620);
-    windowFeatures.widthSet = true;
-    // default here came from frame size of dialog in MacIE.
-    windowFeatures.height = WindowFeatures::floatFeature(features, "dialogheight", 100, screenRect.height(), 450);
-    windowFeatures.heightSet = true;
-
-    windowFeatures.x = WindowFeatures::floatFeature(features, "dialogleft", screenRect.x(), screenRect.right() - windowFeatures.width, -1);
-    windowFeatures.xSet = windowFeatures.x > 0;
-    windowFeatures.y = WindowFeatures::floatFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - windowFeatures.height, -1);
-    windowFeatures.ySet = windowFeatures.y > 0;
-
-    if (WindowFeatures::boolFeature(features, "center", true)) {
-        if (!windowFeatures.xSet) {
-            windowFeatures.x = screenRect.x() + (screenRect.width() - windowFeatures.width) / 2;
-            windowFeatures.xSet = true;
-        }
-        if (!windowFeatures.ySet) {
-            windowFeatures.y = screenRect.y() + (screenRect.height() - windowFeatures.height) / 2;
-            windowFeatures.ySet = true;
-        }
-    }
-
-    windowFeatures.dialog = true;
-    windowFeatures.resizable = WindowFeatures::boolFeature(features, "resizable");
-    windowFeatures.scrollbarsVisible = WindowFeatures::boolFeature(features, "scroll", true);
-    windowFeatures.statusBarVisible = WindowFeatures::boolFeature(features, "status", !trusted);
-    windowFeatures.menuBarVisible = false;
-    windowFeatures.toolBarVisible = false;
-    windowFeatures.locationBarVisible = false;
-    windowFeatures.fullscreen = false;
-
-    Frame* dialogFrame = V8BindingDOMWindow::createWindow(V8BindingState::Only(), callingFrame, enteredFrame, frame, url, "", windowFeatures, dialogArgs);
-    if (!dialogFrame)
-        return v8::Undefined();
-
-    // Hold on to the context of the dialog window long enough to retrieve the
-    // value of the return value property.
-    v8::Local<v8::Context> context = V8Proxy::context(dialogFrame);
-
-    // Run the dialog.
-    dialogFrame->page()->chrome()->runModal();
-
-    // Extract the return value property from the dialog window.
-    v8::Local<v8::Value> returnValue;
-    if (!context.IsEmpty()) {
-        v8::Context::Scope scope(context);
-        returnValue = context->Global()->Get(v8::String::New("returnValue"));
-    }
-
-    if (!returnValue.IsEmpty())
-        return returnValue;
-
-    return v8::Undefined();
+    return handler.returnValue();
 }
-
 
 v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
 {
@@ -516,9 +451,10 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     DOMWindow* activeWindow = state->activeWindow();
     DOMWindow* firstWindow = state->firstWindow();
 
-    EXCEPTION_BLOCK(String, urlString, toWebCoreStringWithNullOrUndefinedCheck(args[0]));
-    EXCEPTION_BLOCK(AtomicString, frameName, (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1])));
-    EXCEPTION_BLOCK(String, windowFeaturesString, toWebCoreStringWithNullOrUndefinedCheck(args[2]));
+    // FIXME: Handle exceptions properly.
+    String urlString = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
+    AtomicString frameName = (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1]));
+    String windowFeaturesString = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
 
     RefPtr<DOMWindow> openedWindow = impl->open(urlString, frameName, windowFeaturesString, activeWindow, firstWindow);
     if (!openedWindow)

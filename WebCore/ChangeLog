@@ -1,3 +1,31 @@
+2010-12-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move V8 to WebCore's implementation of showModalDialog
+        https://bugs.webkit.org/show_bug.cgi?id=51527
+
+        This code is basically verbatim translation from the JavaScriptCore
+        bindings.  The only intentional difference is in the world selection
+        for the dialog's frame.  I suspect JavaScriptCore's bindings have a
+        subtle bug there.
+
+        In this patch, I also remove a bunch of now-unneeded code in the
+        generic bindings.
+
+        * bindings/generic/BindingDOMWindow.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::DialogHandler::dialogCreated):
+        (WebCore::setUpDialog):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::DialogHandler::DialogHandler):
+        (WebCore::DialogHandler::dialogCreated):
+        (WebCore::DialogHandler::returnValue):
+        (WebCore::setUpDialog):
+        (WebCore::V8DOMWindow::showModalDialogCallback):
+        (WebCore::V8DOMWindow::openCallback):
+        * bindings/v8/specialization/V8BindingDOMWindow.h:
+
 2010-12-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Joseph Pecoraro.
