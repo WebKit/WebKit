@@ -21,6 +21,7 @@
 
 #include "../util.h"
 #include "../WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include <QClipboard>
 #include <QDir>
 #include <QGraphicsWidget>
 #include <QLineEdit>
@@ -129,6 +130,10 @@ private slots:
     void supportedContentType();
     void infiniteLoopJS();
     void networkAccessManagerOnDifferentThread();
+
+#ifdef Q_OS_MAC
+    void macCopyUnicodeToClipboard();
+#endif
     
 private:
     QWebView* m_view;
@@ -2643,6 +2648,21 @@ void tst_QWebPage::networkAccessManagerOnDifferentThread()
     QTRY_COMPARE(loadSpy.count(), 1);
     QCOMPARE(m_page->mainFrame()->childFrames()[0]->url(), QUrl("qrc:///resources/frame_a.html"));
 }
+
+#ifdef Q_OS_MAC
+void tst_QWebPage::macCopyUnicodeToClipboard()
+{
+    QString unicodeText = QString::fromUtf8("αβγδεζηθικλμπ");
+    m_page->mainFrame()->setHtml(QString("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head><body>%1</body></html>").arg(unicodeText));
+    m_page->triggerAction(QWebPage::SelectAll);
+    m_page->triggerAction(QWebPage::Copy);
+
+    QString clipboardData = QString::fromUtf8(QApplication::clipboard()->mimeData()->data(QLatin1String("text/html")));
+
+    QVERIFY(clipboardData.contains(QLatin1String("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />")));
+    QVERIFY(clipboardData.contains(unicodeText));
+}
+#endif
 
 QTEST_MAIN(tst_QWebPage)
 #include "tst_qwebpage.moc"

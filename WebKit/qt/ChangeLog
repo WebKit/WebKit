@@ -1,3 +1,16 @@
+2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] copy and paste greek symbols to Word, TextEdit results in ?'s being shown
+        https://bugs.webkit.org/show_bug.cgi?id=35635
+
+        Test that QClipboard contains the charset information and unicode data
+        after copying unicode text.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::macCopyUnicodeToClipboard):
+
 2010-12-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

@@ -65,7 +65,14 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     text.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(text);
 
-    md->setHtml(createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs));
+    QString markup = createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs);
+#ifdef Q_OS_MAC
+    markup.prepend(QLatin1String("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head><body>"));
+    markup.append(QLatin1String("</body></html>"));
+    md->setData(QLatin1String("text/html"), markup.toUtf8());
+#else
+    md->setHtml(markup);
+#endif
 
 #ifndef QT_NO_CLIPBOARD
     QApplication::clipboard()->setMimeData(md, m_selectionMode ?

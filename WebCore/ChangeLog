@@ -1,3 +1,16 @@
+2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] copy and paste greek symbols to Word, TextEdit results in ?'s being shown
+        https://bugs.webkit.org/show_bug.cgi?id=35635
+
+        Explicitly set text/html data on QClipboard as UTF-8 and also include a <meta>
+        tag informing the OS that the data is in UTF-8 format.
+
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+
 2010-12-23  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Eric Seidel.
