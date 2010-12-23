@@ -60,6 +60,14 @@ enum SyncReplyMode {
     ManualReply
 };
 
+#define MESSAGE_CHECK_BASE(assertion, connection) do \
+    if (!(assertion)) { \
+        ASSERT(assertion); \
+        (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        return; \
+    } \
+while (0)
+
 class Connection : public ThreadSafeShared<Connection> {
 public:
     class MessageReceiver {
@@ -105,6 +113,7 @@ public:
 
     bool open();
     void invalidate();
+    void markCurrentlyDispatchedMessageAsInvalid();
 
     // FIXME: This variant of send is deprecated, all clients should move to the overload that takes a message.
     template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
@@ -188,6 +197,9 @@ private:
     bool m_isConnected;
     WorkQueue m_connectionQueue;
     RunLoop* m_clientRunLoop;
+
+    uint32_t m_inDispatchMessageCount;
+    bool m_didReceiveInvalidMessage;
 
     // Incoming messages.
     typedef Message<ArgumentDecoder> IncomingMessage;

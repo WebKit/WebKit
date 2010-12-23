@@ -55,6 +55,7 @@ class WebProcessProxy : public RefCounted<WebProcessProxy>, CoreIPC::Connection:
 public:
     typedef HashMap<uint64_t, RefPtr<WebPageProxy> > WebPageProxyMap;
     typedef WebPageProxyMap::const_iterator::Values pages_const_iterator;
+    typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem> > WebBackForwardListItemMap;
 
     static PassRefPtr<WebProcessProxy> create(WebContext*);
@@ -95,6 +96,7 @@ public:
     bool canSendMessage() const { return isValid() || isLaunching(); }
 
     WebFrameProxy* webFrame(uint64_t) const;
+    bool canCreateFrame(uint64_t frameID) const;
     void frameCreated(uint64_t, WebFrameProxy*);
     void didDestroyFrame(uint64_t);
     void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
@@ -144,9 +146,8 @@ private:
     WebContext* m_context;
 
     WebPageProxyMap m_pageMap;
+    WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
-
-    HashMap<uint64_t, RefPtr<WebFrameProxy> > m_frameMap;
 };
 
 template<typename E, typename T>

@@ -1,3 +1,48 @@
+2010-12-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebProcess should be terminated if invalid frameIDs are
+        passed to the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=51508
+
+        - Introduce a mechanism to mark a messages as invalid due to
+          reasons other than in ability to decode the message, eg. an
+          invalid frameID is passed in a message.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        (CoreIPC::Connection::markCurrentlyDispatchedMessageAsInvalid): Sets
+        the m_didReceiveInvalidMessage bit so that it can be picked up in 
+        (CoreIPC::Connection::dispatchMessages): Check for m_didReceiveInvalidMessage in
+        addition to tainted arguments.
+        * Platform/CoreIPC/Connection.h:
+        Add base macro for others to extend, that calls markCurrentlyDispatchedMessageAsInvalid()
+        ASSERTs, and returns.
+
+        * UIProcess/WebPageProxy.cpp:
+        Add Message checks for all WebFrameProxy's gotten from frameIDs passed
+        over the wire.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::isGoodMapKey):
+        Checks that the key can be inserted safely into a map (eg. not the empty or deleted value).
+
+        (WebKit::WebProcessProxy::webFrame):
+        Return null for bad keys (eg. 0 or -1).
+
+        (WebKit::WebProcessProxy::canCreateFrame):
+        Added. Checks that the ID is good and not in the map yet. Used
+        as a consistency check before creating frames.
+
+        (WebKit::WebProcessProxy::frameCreated): 
+        ASSERT that the key is good, in addition to not in the map yet.
+
+        (WebKit::WebProcessProxy::didDestroyFrame):
+        ASSERT that the key is good.
+
+        * UIProcess/WebProcessProxy.h:
+        Move WebFrameProxy HashMap type into a typedef.
+
 2010-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

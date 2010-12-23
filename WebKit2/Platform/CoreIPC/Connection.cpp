@@ -51,6 +51,8 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     , m_isConnected(false)
     , m_connectionQueue("com.apple.CoreIPC.ReceiveQueue")
     , m_clientRunLoop(clientRunLoop)
+    , m_inDispatchMessageCount(0)
+    , m_didReceiveInvalidMessage(false)
     , m_shouldWaitForSyncReplies(true)
 {
     ASSERT(m_client);
@@ -76,6 +78,14 @@ void Connection::invalidate()
     m_client = 0;
 
     m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::platformInvalidate));
+}
+
+void Connection::markCurrentlyDispatchedMessageAsInvalid()
+{
+    // This should only be called while processing a message.
+    ASSERT(m_inDispatchMessageCount > 0);
+
+    m_didReceiveInvalidMessage = true;
 }
 
 PassOwnPtr<ArgumentEncoder> Connection::createSyncMessageArgumentEncoder(uint64_t destinationID, uint64_t& syncRequestID)
@@ -420,13 +430,23 @@ void Connection::dispatchMessages()
         IncomingMessage& message = incomingMessages[i];
         OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
 
+        m_inDispatchMessageCount++;
+
+        bool oldDidReceiveInvalidMessage = m_didReceiveInvalidMessage;
+        m_didReceiveInvalidMessage = false;
+
         if (message.messageID().isSync())
             dispatchSyncMessage(message.messageID(), arguments.get());
         else
             m_client->didReceiveMessage(this, message.messageID(), arguments.get());
 
-        if (arguments->isInvalid())
+        m_didReceiveInvalidMessage |= arguments->isInvalid();
+        m_inDispatchMessageCount--;
+
+        if (m_didReceiveInvalidMessage)
             m_client->didReceiveInvalidMessage(this, message.messageID());
+
+        m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
     }
 }
 
