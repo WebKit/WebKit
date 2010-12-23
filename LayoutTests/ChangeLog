@@ -1,3 +1,11 @@
+2010-12-23  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed Chromium expectations update. Fix incorrect syntax for
+        fast/css/box-shadow.html suppression and state that
+        fast/events/touch/touch-target.html may timeout.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-23  Jessie Berlin  <jberlin@apple.com>
 
         Add Windows-XP-specific (failing) expected results for

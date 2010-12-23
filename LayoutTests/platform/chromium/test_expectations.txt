@@ -2184,7 +2184,8 @@ BUGCR37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.ht
 BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 
 // The touch targeting logic was recently changed.
-BUGCR36415 : fast/events/touch/touch-target.html = TEXT
+// TIMEOUT added for WebKit roll 74534:74557
+BUGCR36415 : fast/events/touch/touch-target.html = TEXT TIMEOUT
 
 // One pixel changes from gray 0x83 to gray 0x81. Valgrind is clean.
 BUGCR38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
@@ -3278,7 +3279,7 @@ BUGCR59704 : media/video-no-audio.html = IMAGE+TEXT
 BUGCR59704 : media/video-volume-slider.html = IMAGE+TEXT
 
 // WebKit roll 74534:74545
-BUGWK51536 fast/css/box-shadow.html = IMAGE+TEXT
+BUGWK51536 : fast/css/box-shadow.html = IMAGE+TEXT
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGCR67905 MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
