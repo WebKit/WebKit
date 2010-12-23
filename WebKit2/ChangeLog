@@ -1,5 +1,9 @@
 2010-12-22  Darin Adler  <darin@apple.com>
 
+        * WebProcess/WebPage/WebPage.cpp: Add #if to try to fix non-Mac builds.
+
+2010-12-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Make Speech menu items work in WebKit2

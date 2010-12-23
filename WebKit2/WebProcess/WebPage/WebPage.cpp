@@ -1370,6 +1370,8 @@ void WebPage::setCustomTextEncodingName(const String& encoding)
     m_page->mainFrame()->loader()->reloadWithOverrideEncoding(encoding);
 }
 
+#if PLATFORM(MAC)
+
 bool WebPage::isSpeaking()
 {
     bool result;
@@ -1385,5 +1387,7 @@ void WebPage::stopSpeaking()
 {
     send(Messages::WebPageProxy::StopSpeaking());
 }
+
+#endif
 
 } // namespace WebKit
