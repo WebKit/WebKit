@@ -703,8 +703,13 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     // Evaluate the JavaScript code. Note that running JavaScript here could cause the plug-in to be destroyed, so we
     // grab references to the plug-in here.
     RefPtr<Plugin> plugin = m_plugin;
+
+    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
+    frame->script()->setAllowPopupsFromPlugin(request->allowPopups());
     
     ScriptValue result = m_pluginElement->document()->frame()->script()->executeScript(jsString);
+
+    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
 
     // Check if evaluating the JavaScript destroyed the plug-in.
     if (!plugin->controller())
@@ -888,7 +893,7 @@ NPObject* PluginView::pluginElementNPObject()
     return m_npRuntimeObjectMap.getOrCreateNPObject(object);
 }
 
-bool PluginView::evaluate(NPObject* npObject, const String&scriptString, NPVariant* result, bool allowPopups)
+bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
 {
     if (!frame())
         return false;

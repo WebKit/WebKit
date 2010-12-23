@@ -648,14 +648,16 @@ static void NPN_SetException(NPObject*, const NPUTF8* message)
     NetscapePlugin::setException(message);
 }
 
-static void NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
+static void NPN_PushPopupsEnabledState(NPP npp, NPBool enabled)
 {
-    notImplemented();
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->pushPopupsEnabledState(enabled);
 }
     
-static void NPN_PopPopupsEnabledState(NPP instance)
+static void NPN_PopPopupsEnabledState(NPP npp)
 {
-    notImplemented();
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+    plugin->popPopupsEnabledState();
 }
     
 static bool NPN_Enumerate(NPP, NPObject* npObject, NPIdentifier** identifiers, uint32_t* identifierCount)

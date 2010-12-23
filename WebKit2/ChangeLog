@@ -1,3 +1,35 @@
+2010-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Nothing happens clicking "launch live player" on live.cnn.com
+        https://bugs.webkit.org/show_bug.cgi?id=51540
+        <rdar://problem/8791086>
+
+        Implement NPN_PushPopupsEnabledState/NPN_PopPopupsEnabledState.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_PushPopupsEnabledState):
+        Call NetscapePlugin::pushPopupsEnabledState.
+
+        (WebKit::NPN_PopPopupsEnabledState):
+        Call NetscapePlugin::popPopupsEnabledState.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pushPopupsEnabledState):
+        Append the boolean to the vector.
+
+        (WebKit::NetscapePlugin::popPopupsEnabledState):
+        Remove the last boolean from the vector.
+
+        (WebKit::NetscapePlugin::allowPopups):
+        Return the last boolean from the vector.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+        Update the "allowPopupsFromPlugin" state.
+
 2010-12-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

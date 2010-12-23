@@ -249,6 +249,18 @@ bool NetscapePlugin::isAcceleratedCompositingEnabled()
 #endif
 }
 
+void NetscapePlugin::pushPopupsEnabledState(bool state)
+{
+    m_popupEnabledStates.append(state);
+}
+ 
+void NetscapePlugin::popPopupsEnabledState()
+{
+    ASSERT(!m_popupEnabledStates.isEmpty());
+
+    m_popupEnabledStates.removeLast();
+}
+
 String NetscapePlugin::proxiesForURL(const String& urlString)
 {
     return m_pluginController->proxiesForURL(urlString);
@@ -371,7 +383,14 @@ void NetscapePlugin::stopAllStreams()
 
 bool NetscapePlugin::allowPopups() const
 {
-    // FIXME: Handle popups.
+    if (m_pluginModule->pluginFuncs().version >= NPVERS_HAS_POPUPS_ENABLED_STATE) {
+        if (!m_popupEnabledStates.isEmpty())
+            return m_popupEnabledStates.last();
+    }
+
+    // FIXME: Check if the current event is a user gesture.
+    // Really old versions of Flash required this for popups to work, but all newer versions
+    // support NPN_PushPopupEnabledState/NPN_PopPopupEnabledState.
     return false;
 }
 

@@ -87,6 +87,9 @@ public:
 
     bool isAcceleratedCompositingEnabled();
 
+    void pushPopupsEnabledState(bool enabled);
+    void popPopupsEnabledState();
+
     String proxiesForURL(const String& urlString);
     String cookiesForURL(const String& urlString);
     void setCookiesForURL(const String& urlString, const String& cookieString);
@@ -195,6 +198,7 @@ private:
     bool m_inNPPNew;
     bool m_loadManually;
     RefPtr<NetscapePluginStream> m_manualStream;
+    Vector<bool, 8> m_popupEnabledStates;
 
 #if PLATFORM(MAC)
     NPDrawingModel m_drawingModel;
