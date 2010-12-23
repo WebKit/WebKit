@@ -33,7 +33,9 @@
 
 struct _Ewk_Context_Menu {
     unsigned int __ref;
+#if ENABLE(CONTEXT_MENUS)
     WebCore::ContextMenuController* controller;
+#endif
     Evas_Object* view;
 
     Eina_List* items;
@@ -73,9 +75,12 @@ void ewk_context_menu_unref(Ewk_Context_Menu* menu)
 Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu* menu)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(menu, EINA_FALSE);
+#if ENABLE(CONTEXT_MENUS)
     EINA_SAFETY_ON_NULL_RETURN_VAL(menu->controller, EINA_FALSE);
 
     menu->controller->clearContextMenu();
+#endif
+
     return EINA_TRUE;
 }
 
@@ -106,6 +111,7 @@ Ewk_Context_Menu_Item* ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
 
 Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item)
 {
+#if ENABLE(CONTEXT_MENUS)
     EINA_SAFETY_ON_NULL_RETURN_VAL(menu, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(item, EINA_FALSE);
     WebCore::ContextMenuAction action = static_cast<WebCore::ContextMenuAction>(item->action);
@@ -114,6 +120,8 @@ Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_
     // Don't care about title and submenu as they're not used after this point.
     WebCore::ContextMenuItem core(type, action, WTF::String());
     menu->controller->contextMenuItemSelected(&core);
+#endif
+
     return EINA_TRUE;
 }
 
@@ -193,6 +201,7 @@ Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item *o, Eina_Bool 
 
 /* internal methods ****************************************************/
 
+#if ENABLE(CONTEXT_MENUS)
 /**
  * @internal
  *
@@ -260,3 +269,5 @@ void ewk_context_menu_show(Ewk_Context_Menu* o)
 
     evas_object_smart_callback_call(o->view, "contextmenu,show", o);
 }
+
+#endif

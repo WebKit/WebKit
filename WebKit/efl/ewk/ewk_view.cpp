@@ -1614,6 +1614,8 @@ Eina_Bool ewk_view_select_word(Evas_Object* o)
     return _ewk_view_editor_command(priv, "SelectWord");
 }
 
+#if ENABLE(CONTEXT_MENUS)
+
 /**
  * Forwards a request of new Context Menu to WebCore.
  *
@@ -1653,6 +1655,8 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object* o, const Evas_Event_M
 
     return EINA_TRUE;
 }
+
+#endif
 
 /**
  * Get current load progress estimate from 0.0 to 1.0.

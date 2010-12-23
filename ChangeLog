@@ -1,3 +1,25 @@
+2010-12-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Fix ContextMenu removal
+        https://bugs.webkit.org/show_bug.cgi?id=51530
+
+        Fix ContextMenu removal
+
+        In r74207 the support for ContextMenu was removed from EFL while the
+        code is being ported to the new CROSS_PLATFORM_MENUS due to build
+        breakage.  However there were some missing removals in the shutdown
+        logic that introduced a bug, leading to a segmentation fault when
+        ContexController was destroyed.
+
+        The best way to effectively disable the ContextMenu is to conditionally
+        compile the meaningful stuff by surrounding with "#if
+        ENABLE(CONTEXT_MENUS)" and then disabling it in CMake.
+
+        * cmake/OptionsEfl.cmake: Disable ContextMenu and don't pretend we
+        implement CROSS_PLATFORM_MENUS yet.
+
 2010-12-22  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

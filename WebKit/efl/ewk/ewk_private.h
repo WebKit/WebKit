@@ -111,11 +111,15 @@ int ewk_view_dpi_get();
 Ewk_History *ewk_history_new(WebCore::BackForwardListImpl *history);
 void ewk_history_free(Ewk_History *history);
 
+#if ENABLE(CONTEXT_MENUS)
+
 Ewk_Context_Menu *ewk_context_menu_new(Evas_Object *view, WebCore::ContextMenuController *controller);
 Eina_Bool ewk_context_menu_free(Ewk_Context_Menu *o);
 void ewk_context_menu_item_append(Ewk_Context_Menu *o, WebCore::ContextMenuItem& core);
 Ewk_Context_Menu *ewk_context_menu_custom_get(Ewk_Context_Menu *o);
 void ewk_context_menu_show(Ewk_Context_Menu *o);
+
+#endif
 
 Ewk_Window_Features *ewk_window_features_new_from_core(const WebCore::WindowFeatures* core);
 
