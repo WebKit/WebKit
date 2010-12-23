@@ -1,3 +1,20 @@
+2010-12-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix check by undefined macro
+        https://bugs.webkit.org/show_bug.cgi?id=51531
+
+        Fix check by undefined macro
+
+        When building EFL port with libsoup, BUILDING_GTK__ is not defined,
+        leading to warnings during compile. We actually have to use an #ifdef
+        instead of an #if.
+
+        No change in functionality so no new tests.
+
+        * platform/network/soup/cache/webkit/soup-cache.h:
+
 2010-12-23  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Steve Block.

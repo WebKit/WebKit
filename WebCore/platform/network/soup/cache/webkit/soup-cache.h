@@ -23,7 +23,7 @@
 #ifndef WEBKIT_SOUP_CACHE_H
 #define WEBKIT_SOUP_CACHE_H 1
 
-#if BUILDING_GTK__
+#ifdef BUILDING_GTK__
 #include <webkit/webkitdefines.h>
 #else
 #ifndef WEBKIT_API
