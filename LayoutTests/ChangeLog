@@ -1,3 +1,15 @@
+2010-12-23  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        QT linux has RTL line movement bug that causes editing/selection/extend-to-line-boundary.html to fail
+        https://bugs.webkit.org/show_bug.cgi?id=51514
+
+        Add different baseline to editing/selection/extend-to-line-boundary.html for qt-linux that
+        takes into account the RTL bug.
+
+        * platform/qt-linux/editing/selection/extend-to-line-boundary-expected.txt: Added.
+
 2010-12-23  Antti Koivisto  <antti@apple.com>
 
         Not reviewed.
