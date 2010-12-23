@@ -50,6 +50,8 @@ rect: style.getPropertyValue(border-top-width) : 0px
 rect: style.getPropertyCSSValue(border-top-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(bottom) : auto
 rect: style.getPropertyCSSValue(bottom) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(box-shadow) : none
+rect: style.getPropertyCSSValue(box-shadow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(box-sizing) : content-box
 rect: style.getPropertyCSSValue(box-sizing) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(caption-side) : top
@@ -474,6 +476,8 @@ g: style.getPropertyValue(border-top-width) : 0px
 g: style.getPropertyCSSValue(border-top-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(bottom) : auto
 g: style.getPropertyCSSValue(bottom) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(box-shadow) : none
+g: style.getPropertyCSSValue(box-shadow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(box-sizing) : content-box
 g: style.getPropertyCSSValue(box-sizing) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(caption-side) : top

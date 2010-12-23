@@ -1,3 +1,20 @@
+2010-12-23  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Unreviewed new Chromium baselines and test expectations update.
+
+        * platform/chromium-linux/fast/layers/video-layer-expected.checksum:
+        * platform/chromium-linux/fast/layers/video-layer-expected.png:
+        * platform/chromium-mac/fast/layers/video-layer-expected.checksum:
+        * platform/chromium-mac/fast/layers/video-layer-expected.png:
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/chromium-win/fast/layers/video-layer-expected.checksum:
+        * platform/chromium-win/fast/layers/video-layer-expected.png:
+        * platform/chromium-win/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-12-23  Jonathan Dixon  <joth@chromium.org>
 
         Reviewed by Steve Block.
