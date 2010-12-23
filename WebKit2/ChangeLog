@@ -1,5 +1,11 @@
 2010-12-22  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * Platform/mac/MachUtilities.cpp:
+
+2010-12-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Detect WebProcess crashes sooner, without waiting for ReportCrash to finish

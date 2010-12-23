@@ -25,6 +25,8 @@
 
 #include "MachUtilities.h"
 
+#include <mach/task.h>
+
 void setMachPortQueueLength(mach_port_t receivePort, mach_port_msgcount_t queueLength)
 {
     mach_port_limits_t portLimits;
