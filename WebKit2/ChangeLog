@@ -1,3 +1,25 @@
+2010-12-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Ensure that we are not getting too many mouse move events
+        https://bugs.webkit.org/show_bug.cgi?id=51568
+        <rdar://problem/7881470>
+        <rdar://problem/8735512>
+
+        Implement throttling of mouse move events.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize m_processingMouseMoveEvent to false.
+
+        (WebKit::WebPageProxy::handleMouseEvent):
+        If we're already processing a mouse move events, just update 
+        m_nextMouseMoveEvent and return.
+ 
+        (WebKit::WebPageProxy::didReceiveEvent):
+        If we received a mouse move event, send the next mouse move event if there is one.
+
 2010-12-23  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Anders Carlsson.

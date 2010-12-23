@@ -109,6 +109,7 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
     , m_syncMimeTypePolicyAction(PolicyUse)
     , m_syncMimeTypePolicyDownloadID(0)
     , m_processingWheelEvent(false)
+    , m_processingMouseMoveEvent(false)
     , m_pageID(pageID)
     , m_mainFrameHasCustomRepresentation(false)
 {
@@ -553,6 +554,15 @@ void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
     // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
     if (event.type() != WebEvent::MouseMove)
         process()->responsivenessTimer()->start();
+    else {
+        if (m_processingMouseMoveEvent) {
+            m_nextMouseMoveEvent = adoptPtr(new WebMouseEvent(event));
+            return;
+        }
+
+        m_processingMouseMoveEvent = true;
+    }
+
     process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
 
@@ -1780,6 +1790,12 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
     switch (type) {
     case WebEvent::MouseMove:
+        m_processingMouseMoveEvent = false;
+        if (m_nextMouseMoveEvent) {
+            handleMouseEvent(*m_nextMouseMoveEvent);
+            m_nextWheelEvent = nullptr;
+        }
+        break;
     case WebEvent::MouseDown:
     case WebEvent::MouseUp:
         break;
@@ -1788,7 +1804,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         m_processingWheelEvent = false;
         if (m_nextWheelEvent) {
             handleWheelEvent(*m_nextWheelEvent);
-            m_nextWheelEvent.clear();
+            m_nextWheelEvent = nullptr;
         }
         break;
     }

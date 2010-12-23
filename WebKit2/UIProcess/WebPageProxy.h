@@ -521,6 +521,9 @@ private:
     bool m_processingWheelEvent;
     OwnPtr<WebWheelEvent> m_nextWheelEvent;
 
+    bool m_processingMouseMoveEvent;
+    OwnPtr<WebMouseEvent> m_nextMouseMoveEvent;
+
     uint64_t m_pageID;
 
     bool m_mainFrameHasCustomRepresentation;
