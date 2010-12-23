@@ -912,15 +912,51 @@ void WebPageProxy::didCreateMainFrame(uint64_t frameID)
     process()->frameCreated(frameID, m_mainFrame.get());
 }
 
-void WebPageProxy::didCreateSubFrame(uint64_t frameID)
+void WebPageProxy::didCreateSubframe(uint64_t frameID, uint64_t parentFrameID)
 {
     MESSAGE_CHECK(m_mainFrame);
+
+    WebFrameProxy* parentFrame = process()->webFrame(parentFrameID);
+    MESSAGE_CHECK(parentFrame);
+    MESSAGE_CHECK(parentFrame->isDescendantOf(m_mainFrame.get()));
+
     MESSAGE_CHECK(process()->canCreateFrame(frameID));
     
     RefPtr<WebFrameProxy> subFrame = WebFrameProxy::create(this, frameID);
 
     // Add the frame to the process wide map.
     process()->frameCreated(frameID, subFrame.get());
+
+    // Insert the frame into the frame hierarchy.
+    parentFrame->appendChild(subFrame.get());
+}
+
+void WebPageProxy::didSaveFrameToPageCache(uint64_t frameID)
+{
+    MESSAGE_CHECK(m_mainFrame);
+
+    WebFrameProxy* subframe = process()->webFrame(frameID);
+    MESSAGE_CHECK(subframe);
+    MESSAGE_CHECK(subframe->isDescendantOf(m_mainFrame.get()));
+
+    subframe->didRemoveFromHierarchy();
+}
+
+void WebPageProxy::didRestoreFrameFromPageCache(uint64_t frameID, uint64_t parentFrameID)
+{
+    MESSAGE_CHECK(m_mainFrame);
+
+    WebFrameProxy* subframe = process()->webFrame(frameID);
+    MESSAGE_CHECK(subframe);
+    MESSAGE_CHECK(!subframe->parentFrame());
+    MESSAGE_CHECK(subframe->page() == m_mainFrame->page());
+
+    WebFrameProxy* parentFrame = process()->webFrame(parentFrameID);
+    MESSAGE_CHECK(parentFrame);
+    MESSAGE_CHECK(parentFrame->isDescendantOf(m_mainFrame.get()));
+
+    // Insert the frame into the frame hierarchy.
+    parentFrame->appendChild(subframe);
 }
 
 void WebPageProxy::didStartProgress()
@@ -1119,6 +1155,8 @@ void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::Argume
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+    frame->didRemoveFromHierarchy();
 
     m_loaderClient.didRemoveFrameFromHierarchy(this, frame, userData.get());
 }

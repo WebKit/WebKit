@@ -1,3 +1,18 @@
+2010-12-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit2 needs to mirror the frame tree in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=51546
+
+        - Add client functions to notify that a frame has been added or
+          removed from the page cache.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::didSaveToPageCache):
+        (WebFrameLoaderClient::didRestoreFromPageCache):
+
 2010-12-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

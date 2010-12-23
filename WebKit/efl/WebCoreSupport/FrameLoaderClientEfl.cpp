@@ -923,6 +923,14 @@ void FrameLoaderClientEfl::transitionToCommittedForNewPage()
         ewk_view_frame_main_cleared(m_view);
 }
 
+void FrameLoaderClientEfl::didSaveToPageCache()
+{
+}
+
+void FrameLoaderClientEfl::didRestoreFromPageCache()
+{
+}
+
 void FrameLoaderClientEfl::dispatchDidBecomeFrameset(bool)
 {
 }

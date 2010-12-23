@@ -90,6 +90,11 @@ WKPageRef WKFrameGetPage(WKFrameRef frameRef)
     return toAPI(toImpl(frameRef)->page());
 }
 
+WKArrayRef WKFrameCopyChildFrames(WKFrameRef frameRef)
+{
+    return toAPI(toImpl(frameRef)->childFrames().releaseRef());
+}
+
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->certificateInfo());

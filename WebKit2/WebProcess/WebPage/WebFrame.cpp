@@ -91,7 +91,8 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
 {
     RefPtr<WebFrame> frame = create();
 
-    page->send(Messages::WebPageProxy::DidCreateSubFrame(frame->frameID()));
+    WebFrame* parentFrame = static_cast<WebFrameLoaderClient*>(ownerElement->document()->frame()->loader()->client())->webFrame();
+    page->send(Messages::WebPageProxy::DidCreateSubframe(frame->frameID(), parentFrame->frameID()));
 
     frame->init(page, frameName, ownerElement);
 

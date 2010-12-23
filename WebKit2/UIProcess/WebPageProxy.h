@@ -312,7 +312,9 @@ private:
     CoreIPC::SyncReplyMode didReceiveSyncWebPageProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
     void didCreateMainFrame(uint64_t frameID);
-    void didCreateSubFrame(uint64_t frameID);
+    void didCreateSubframe(uint64_t frameID, uint64_t parentFrameID);
+    void didSaveFrameToPageCache(uint64_t frameID);
+    void didRestoreFrameFromPageCache(uint64_t frameID, uint64_t parentFrameID);
 
     void didStartProvisionalLoadForFrame(uint64_t frameID, const String&, bool loadingSubstituteDataForUnreachableURL, CoreIPC::ArgumentDecoder*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String&, CoreIPC::ArgumentDecoder*);

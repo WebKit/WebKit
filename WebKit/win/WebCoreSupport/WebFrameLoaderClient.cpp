@@ -720,6 +720,14 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     core(m_webFrame)->createView(IntRect(rect).size(), backgroundColor, transparent, IntSize(), false);
 }
 
+void WebFrameLoaderClient::didSaveToPageCache()
+{
+}
+
+void WebFrameLoaderClient::didRestoreFromPageCache()
+{
+}
+
 void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
 {
 }

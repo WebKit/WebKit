@@ -73,7 +73,9 @@ messages -> WebPageProxy {
 
     # Frame lifetime messages.
     DidCreateMainFrame(uint64_t frameID)
-    DidCreateSubFrame(uint64_t frameID)
+    DidCreateSubframe(uint64_t frameID, uint64_t parentFrameID)
+    DidSaveFrameToPageCache(uint64_t frameID);
+    DidRestoreFrameFromPageCache(uint64_t frameID, uint64_t parentFrameID);
 
     # Frame load messages.
     DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, bool hasCustomRepresentation, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData)

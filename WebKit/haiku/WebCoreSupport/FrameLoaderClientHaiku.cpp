@@ -857,6 +857,14 @@ void FrameLoaderClientHaiku::transitionToCommittedForNewPage()
         m_frame->view()->setScrollbarModes(owner->scrollingMode(), owner->scrollingMode());
 }
 
+void FrameLoaderClientHaiku::didSaveToPageCache()
+{
+}
+
+void FrameLoaderClientHaiku::didRestoreFromPageCache()
+{
+}
+
 void FrameLoaderClientHaiku::dispatchDidBecomeFrameset(bool)
 {
 }

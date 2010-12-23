@@ -81,6 +81,7 @@ public:
 
     using CachedFrameBase::document;
     using CachedFrameBase::view;
+    using CachedFrameBase::url;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
     Node* mousePressNode() const { return m_mousePressNode.get(); }
 

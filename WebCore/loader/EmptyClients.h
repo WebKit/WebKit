@@ -333,6 +333,9 @@ public:
     virtual void transitionToCommittedFromCachedFrame(CachedFrame*) { }
     virtual void transitionToCommittedForNewPage() { }    
 
+    virtual void didSaveToPageCache() { }
+    virtual void didRestoreFromPageCache() { }
+
     virtual void dispatchDidBecomeFrameset(bool) { }
 
     virtual void updateGlobalHistory() { }

@@ -1253,6 +1253,14 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     }
 }
 
+void WebFrameLoaderClient::didSaveToPageCache()
+{
+}
+
+void WebFrameLoaderClient::didRestoreFromPageCache()
+{
+}
+
 void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
 {
 }

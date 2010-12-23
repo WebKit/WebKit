@@ -1,3 +1,65 @@
+2010-12-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKit2 needs to mirror the frame tree in the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=51546
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCopyChildFrames):
+        * UIProcess/API/C/WKFrame.h:
+        Add API to get the child frames of a frame.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy):
+        (WebKit::WebFrameProxy::disconnect):
+        (WebKit::WebFrameProxy::appendChild):
+        (WebKit::WebFrameProxy::removeChild):
+        (WebKit::WebFrameProxy::isDescendantOf):
+        (WebKit::WebFrameProxy::dumpFrameTree):
+        (WebKit::WebFrameProxy::didRemoveFromHierarchy):
+        (WebKit::WebFrameProxy::childFrames):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::parentFrame): Add getter.
+        (WebKit::WebFrameProxy::nextSibling): Add getter.
+        (WebKit::WebFrameProxy::previousSibling): Add getter.
+        (WebKit::WebFrameProxy::firstChild): Add getter.
+        (WebKit::WebFrameProxy::lastChild): Add getter.
+        Make frames keep track of their subframes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCreateSubframe):
+        Use the now passed parentID to insert the frame into the hierarchy
+
+        (WebKit::WebPageProxy::didSaveFrameToPageCache):
+        When a frame is added to the page cache, remove it from the hierarchy.
+
+        (WebKit::WebPageProxy::didRestoreFrameFromPageCache):
+        When a frame is restored from the page cache, add it back to the hierarchy.
+
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        Detached frames should also be removed from the hierarchy.
+
+        * UIProcess/WebPageProxy.h:
+        Add new declarations for didSaveFrameToPageCache and didRestoreFrameFromPageCache.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add messages for DidSaveFrameToPageCache and DidRestoreFrameFromPageCache.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::savePlatformDataToCachedFrame): 
+        (WebKit::WebFrameLoaderClient::transitionToCommittedFromCachedFrame):
+        Remove notImplemented, there is no work we need to do here.
+
+        (WebKit::WebFrameLoaderClient::didSaveToPageCache): 
+        (WebKit::WebFrameLoaderClient::didRestoreFromPageCache):
+        Send message to UIProcess to indicate this happened.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSubframe):
+        Send parent frameID in addition to our own in the message to UIProcess.
+
 2010-12-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

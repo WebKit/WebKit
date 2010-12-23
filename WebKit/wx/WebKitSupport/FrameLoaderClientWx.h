@@ -151,7 +151,10 @@ namespace WebCore {
         virtual void savePlatformDataToCachedFrame(WebCore::CachedFrame*);
         virtual void transitionToCommittedFromCachedFrame(WebCore::CachedFrame*);
         virtual void transitionToCommittedForNewPage();
-        
+
+        virtual void didSaveToPageCache();
+        virtual void didRestoreFromPageCache();
+
         virtual void dispatchDidBecomeFrameset(bool);
 
         virtual void updateGlobalHistory();

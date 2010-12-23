@@ -1341,6 +1341,14 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     postCommitFrameViewSetup(m_frame, frame->view(), true);
 }
 
+void FrameLoaderClient::didSaveToPageCache()
+{
+}
+
+void FrameLoaderClient::didRestoreFromPageCache()
+{
+}
+
 void FrameLoaderClient::dispatchDidBecomeFrameset(bool)
 {
 }

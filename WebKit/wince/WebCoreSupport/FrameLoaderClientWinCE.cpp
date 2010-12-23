@@ -630,6 +630,14 @@ void FrameLoaderClientWinCE::transitionToCommittedForNewPage()
         m_frame->ownerRenderer()->setWidget(frameView);
 }
 
+void FrameLoaderClientWinCE::didSaveToPageCache()
+{
+}
+
+void FrameLoaderClientWinCE::didRestoreFromPageCache()
+{
+}
+
 void FrameLoaderClientWinCE::dispatchDidBecomeFrameset(bool)
 {
 }

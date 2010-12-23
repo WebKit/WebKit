@@ -1043,12 +1043,10 @@ String WebFrameLoaderClient::userAgent(const KURL&)
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
 {
-    notImplemented();
 }
 
 void WebFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
 {
-    notImplemented();
 }
 
 void WebFrameLoaderClient::transitionToCommittedForNewPage()
@@ -1077,6 +1075,31 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 #endif
 
     m_frame->coreFrame()->view()->setTransparent(!webPage->drawsBackground());
+}
+
+void WebFrameLoaderClient::didSaveToPageCache()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    if (m_frame->isMainFrame())
+        return;
+
+    webPage->send(Messages::WebPageProxy::DidSaveFrameToPageCache(m_frame->frameID()));
+}
+
+void WebFrameLoaderClient::didRestoreFromPageCache()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    if (m_frame->isMainFrame())
+        return;
+
+    WebFrame* parentFrame = static_cast<WebFrameLoaderClient*>(m_frame->coreFrame()->tree()->parent()->loader()->client())->webFrame();
+    webPage->send(Messages::WebPageProxy::DidRestoreFrameFromPageCache(m_frame->frameID(), parentFrame->frameID()));
 }
 
 void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)

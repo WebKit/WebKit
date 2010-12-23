@@ -966,6 +966,14 @@ void FrameLoaderClientWx::transitionToCommittedForNewPage()
         m_frame->createView(size, backgroundColor, transparent, IntSize(), false); 
 }
 
+void FrameLoaderClientWx::didSaveToPageCache()
+{
+}
+
+void FrameLoaderClientWx::didRestoreFromPageCache()
+{
+}
+
 void FrameLoaderClientWx::dispatchDidBecomeFrameset(bool)
 {
 }

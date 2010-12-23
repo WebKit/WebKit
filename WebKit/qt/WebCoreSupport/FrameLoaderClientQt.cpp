@@ -295,6 +295,14 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
     m_frame->view()->setActualVisibleContentRect(IntRect(IntPoint::zero(), currentVisibleContentSize));
 }
 
+void FrameLoaderClientQt::didSaveToPageCache()
+{
+}
+
+void FrameLoaderClientQt::didRestoreFromPageCache()
+{
+}
+
 void FrameLoaderClientQt::dispatchDidBecomeFrameset(bool)
 {
 }
