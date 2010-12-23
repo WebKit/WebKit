@@ -373,3 +373,5 @@ BUGWK50112 WIN LINUX : fast/canvas/canvas-createPattern-fillRect-shadow.html = T
 BUGCR64647 WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
 
 BUGCR66683 WIN LINUX : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
+
+BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT

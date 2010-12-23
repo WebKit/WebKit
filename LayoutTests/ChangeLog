@@ -1,3 +1,10 @@
+2010-12-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed test expectations update. fast/canvas/fillText-shadow.html
+        fails with Skia in the GPU suite too.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2010-12-22  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by David Levin.
