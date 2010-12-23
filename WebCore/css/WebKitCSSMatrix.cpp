@@ -156,6 +156,19 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotateAxisAngle(double x, double y,
     return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).rotate3d(x, y, z, angle));
 }
 
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::skewX(double angle) const
+{
+    if (isnan(angle))
+        angle = 0;
+    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).skewX(angle));
+}
+
+PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::skewY(double angle) const
+{
+    if (isnan(angle))
+        angle = 0;
+    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).skewY(angle));
+}
 
 String WebKitCSSMatrix::toString() const
 {

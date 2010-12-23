@@ -122,6 +122,38 @@ PASS parseFloat(m.d) is 1
 PASS parseFloat(m.e) is 0
 PASS parseFloat(m.f) is 0
 
+Test skew in horizontal direction
+PASS parseFloat(m2.a) is 1
+PASS parseFloat(m2.b) is 0
+PASS parseFloat(m2.c.toPrecision(6)) is 0.176327
+PASS parseFloat(m2.d) is 1
+PASS parseFloat(m2.e) is 0
+PASS parseFloat(m2.f) is 0
+
+Test immutability of horizontal skew
+PASS parseFloat(m.a) is 1
+PASS parseFloat(m.b) is 0
+PASS parseFloat(m.c) is 0
+PASS parseFloat(m.d) is 1
+PASS parseFloat(m.e) is 0
+PASS parseFloat(m.f) is 0
+
+Test skew in vertical direction
+PASS parseFloat(m2.a) is 1
+PASS parseFloat(m2.b.toPrecision(6)) is 0.700208
+PASS parseFloat(m2.c) is 0
+PASS parseFloat(m2.d) is 1
+PASS parseFloat(m2.e) is 0
+PASS parseFloat(m2.f) is 0
+
+Test immutability of vertical skew
+PASS parseFloat(m.a) is 1
+PASS parseFloat(m.b) is 0
+PASS parseFloat(m.c) is 0
+PASS parseFloat(m.d) is 1
+PASS parseFloat(m.e) is 0
+PASS parseFloat(m.f) is 0
+
 Test multiply
 PASS parseFloat(m3.a) is 31
 PASS parseFloat(m3.b) is 46

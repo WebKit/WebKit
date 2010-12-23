@@ -181,6 +181,46 @@ shouldBe('parseFloat(m.e)', '0');
 shouldBe('parseFloat(m.f)', '0');
 
 debug("");
+debug("Test skew in horizontal direction");
+m = new WebKitCSSMatrix();
+m2 = m.skewX(10);
+shouldBe('parseFloat(m2.a)', '1');
+shouldBe('parseFloat(m2.b)', '0');
+shouldBe('parseFloat(m2.c.toPrecision(6))', '0.176327');
+shouldBe('parseFloat(m2.d)', '1');
+shouldBe('parseFloat(m2.e)', '0');
+shouldBe('parseFloat(m2.f)', '0');
+
+debug("");
+debug("Test immutability of horizontal skew");
+shouldBe('parseFloat(m.a)', '1');
+shouldBe('parseFloat(m.b)', '0');
+shouldBe('parseFloat(m.c)', '0');
+shouldBe('parseFloat(m.d)', '1');
+shouldBe('parseFloat(m.e)', '0');
+shouldBe('parseFloat(m.f)', '0');
+
+debug("");
+debug("Test skew in vertical direction");
+m = new WebKitCSSMatrix();
+m2 = m.skewY(35);
+shouldBe('parseFloat(m2.a)', '1');
+shouldBe('parseFloat(m2.b.toPrecision(6))', '0.700208');
+shouldBe('parseFloat(m2.c)', '0');
+shouldBe('parseFloat(m2.d)', '1');
+shouldBe('parseFloat(m2.e)', '0');
+shouldBe('parseFloat(m2.f)', '0');
+
+debug("");
+debug("Test immutability of vertical skew");
+shouldBe('parseFloat(m.a)', '1');
+shouldBe('parseFloat(m.b)', '0');
+shouldBe('parseFloat(m.c)', '0');
+shouldBe('parseFloat(m.d)', '1');
+shouldBe('parseFloat(m.e)', '0');
+shouldBe('parseFloat(m.f)', '0');
+
+debug("");
 debug("Test multiply");
 m = new WebKitCSSMatrix("matrix(1, 2, 3, 4, 5, 6)");
 m2 = new WebKitCSSMatrix("matrix(7, 8, 9, 10, 11, 12)");

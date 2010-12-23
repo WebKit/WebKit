@@ -1,3 +1,14 @@
+2010-12-22  Ariya Hidayat  <ariya@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement skewX() and skewY() for CSSMatrix.
+        https://bugs.webkit.org/show_bug.cgi?id=38335
+
+        * fast/dom/Window/window-properties-expected.txt: Adjusted.
+        * transforms/cssmatrix-2d-interface.xhtml: Added tests for skewX() and skewY().
+        * transforms/cssmatrix-2d-interface-expected.txt: Adjusted.
+
 2010-12-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

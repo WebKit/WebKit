@@ -131,6 +131,18 @@ public:
     // the rotation values on the left (result = rotation(x,y,z,angle) * this)
     PassRefPtr<WebKitCSSMatrix> rotateAxisAngle(double x, double y, double z, double angle) const;
     
+    // Return this matrix skewed along the X axis by the passed values.
+    // Passing a NaN will use a value of 0.
+    // Operation is performed as though the this matrix is multiplied by a matrix with
+    // the skew values on the left (result = skewX(angle) * this)
+    PassRefPtr<WebKitCSSMatrix> skewX(double angle) const;
+
+    // Return this matrix skewed along the Y axis by the passed values.
+    // Passing a NaN will use a value of 0.
+    // Operation is performed as though the this matrix is multiplied by a matrix with
+    // the skew values on the left (result = skewY(angle) * this)
+    PassRefPtr<WebKitCSSMatrix> skewY(double angle) const;
+
     const TransformationMatrix& transform() const { return m_matrix; }
     
     String toString() const;

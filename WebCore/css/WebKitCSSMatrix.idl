@@ -84,7 +84,15 @@ module css {
         // Passing a NaN will use a value of 0. If the axis is (0,0,0) use a value
         // of (0,0,1).
         [Immutable] WebKitCSSMatrix rotateAxisAngle(in double x, in double y, in double z, in double angle);
-        
+
+        // Returns this matrix skewed along the X axis by the passed values.
+        // Passing a NaN will use a value of 0.
+        [Immutable] WebKitCSSMatrix skewX(in double angle);
+
+        // Returns this matrix skewed along the Y axis by the passed values.
+        // Passing a NaN will use a value of 0.
+        [Immutable] WebKitCSSMatrix skewY(in double angle);
+
         [DontEnum] DOMString toString();
     };
 
