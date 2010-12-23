@@ -521,67 +521,6 @@ class RebaselineTest(unittest.TestCase):
             codecs.open = original_open
 
 
-class TestRunnerWrapper(run_webkit_tests.TestRunner):
-    def _get_test_input_for_file(self, test_file):
-        return test_file
-
-
-class TestRunnerTest(unittest.TestCase):
-    def test_results_html(self):
-        mock_port = Mock()
-        mock_port.relative_test_filename = lambda name: name
-        mock_port.filename_to_uri = lambda name: name
-
-        runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(),
-            printer=Mock())
-        expected_html = u"""<html>
-  <head>
-    <title>Layout Test Results (time)</title>
-  </head>
-  <body>
-    <h2>Title (time)</h2>
-        <p><a href='test_path'>test_path</a><br />
-</p>
-</body></html>
-"""
-        html = runner._results_html(["test_path"], {}, "Title", override_time="time")
-        self.assertEqual(html, expected_html)
-
-    def test_shard_tests(self):
-        # Test that _shard_tests in run_webkit_tests.TestRunner really
-        # put the http tests first in the queue.
-        runner = TestRunnerWrapper(port=Mock(), options=Mock(),
-            printer=Mock())
-
-        test_list = [
-          "LayoutTests/websocket/tests/unicode.htm",
-          "LayoutTests/animations/keyframes.html",
-          "LayoutTests/http/tests/security/view-source-no-refresh.html",
-          "LayoutTests/websocket/tests/websocket-protocol-ignored.html",
-          "LayoutTests/fast/css/display-none-inline-style-change-crash.html",
-          "LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html",
-          "LayoutTests/dom/html/level2/html/HTMLAnchorElement03.html",
-          "LayoutTests/ietestcenter/Javascript/11.1.5_4-4-c-1.html",
-          "LayoutTests/dom/html/level2/html/HTMLAnchorElement06.html",
-        ]
-
-        expected_tests_to_http_lock = set([
-          'LayoutTests/websocket/tests/unicode.htm',
-          'LayoutTests/http/tests/security/view-source-no-refresh.html',
-          'LayoutTests/websocket/tests/websocket-protocol-ignored.html',
-          'LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html',
-        ])
-
-        # FIXME: Ideally the HTTP tests don't have to all be in one shard.
-        single_thread_results = runner._shard_tests(test_list, False)
-        multi_thread_results = runner._shard_tests(test_list, True)
-
-        self.assertEqual("tests_to_http_lock", single_thread_results[0][0])
-        self.assertEqual(expected_tests_to_http_lock, set(single_thread_results[0][1]))
-        self.assertEqual("tests_to_http_lock", multi_thread_results[0][0])
-        self.assertEqual(expected_tests_to_http_lock, set(multi_thread_results[0][1]))
-
-
 class DryrunTest(unittest.TestCase):
     # FIXME: it's hard to know which platforms are safe to test; the
     # chromium platforms require a chromium checkout, and the mac platform

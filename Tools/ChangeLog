@@ -2,6 +2,28 @@
 
         Reviewed by Ojan Vafai.
 
+        This change splits out the TestRunner class into its own file.
+        When we fork the code for message passing, we will create a new
+        TestRunner, and this change will allow that to be more modular.
+
+        While we're at it, split out TestInput and ResultSummary into
+        their own files, to reduce the size of run_webkit_tests to
+        something more managable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51092
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/result_summary.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_input.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+ 2010-12-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
         nrwt multiprocessing - start over, prepare to fork the code
  
         This code cleans up the signatures and implementation of the

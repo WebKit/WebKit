@@ -39,11 +39,13 @@ import logging
 from webkitpy.common import array_stream
 from webkitpy.common.system import logtesting
 from webkitpy.layout_tests import port
+
 from webkitpy.layout_tests.layout_package import printing
-from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import result_summary
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
-from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import test_runner
 
 
 def get_options(args):
@@ -149,7 +151,7 @@ class  Testprinter(unittest.TestCase):
             self._port.test_platform_name(), is_debug_mode=False,
             is_lint_mode=False)
 
-        rs = run_webkit_tests.ResultSummary(expectations, test_paths)
+        rs = result_summary.ResultSummary(expectations, test_paths)
         return test_paths, rs, expectations
 
     def test_help_printer(self):
@@ -515,7 +517,7 @@ class  Testprinter(unittest.TestCase):
                 retry.add(self.get_result('passes/text.html'), True)
                 retry.add(self.get_result('failures/expected/timeout.html'), True)
                 retry.add(self.get_result('failures/expected/crash.html'), True)
-            unexpected_results = run_webkit_tests.summarize_unexpected_results(
+            unexpected_results = test_runner.summarize_unexpected_results(
                 self._port, exp, rs, retry)
             return unexpected_results
 
