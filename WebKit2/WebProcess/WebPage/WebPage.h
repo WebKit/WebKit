@@ -317,6 +317,7 @@ private:
     void setDrawsTransparentBackground(bool);
 
     void getContentsAsString(uint64_t callbackID);
+    void getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID);
     void getRenderTreeExternalRepresentation(uint64_t callbackID);
     void getSelectionOrContentsAsString(uint64_t callbackID);
     void getSourceForFrame(uint64_t frameID, uint64_t callbackID);

@@ -1,5 +1,43 @@
 2010-12-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs a way to return the main resource data
+        https://bugs.webkit.org/show_bug.cgi?id=51510
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetMainResourceData): Added.
+        (callGetMainResourceDataBlockAndDispose): Added.
+        (WKFrameGetMainResourceData_b): Added.
+        * UIProcess/API/C/WKFrame.h: Added WKFrameGetMainResourceData.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::getMainResourceData): Added.
+        * UIProcess/WebFrameProxy.h: Ditto.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame): Added.
+        (WebKit::WebPageProxy::dataCallback): Replaced the individual callbacks
+        with just these two.
+        (WebKit::WebPageProxy::stringCallback): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame): Send the string callback
+        message instead of a specific one.
+        (WebKit::WebPage::getContentsAsString): Ditto.
+        (WebKit::WebPage::getRenderTreeExternalRepresentation): Ditto.
+        (WebKit::WebPage::getSelectionOrContentsAsString): Ditto.
+        (WebKit::WebPage::getSourceForFrame): Ditto.
+        (WebKit::WebPage::getMainResourceDataOfFrame): Added.
+        (WebKit::WebPage::getWebArchiveOfFrame): Send the data callback message
+        instead of a specific one.
+        * WebProcess/WebPage/WebPage.h: Added getMainResourceDataOfFrame.
+        * WebProcess/WebPage/WebPage.messages.in: Ditto.
+
+2010-12-22  Darin Adler  <darin@apple.com>
+
         * WebProcess/WebPage/WebPage.cpp: Add #if to try to fix non-Mac builds.
 
 2010-12-22  Darin Adler  <darin@apple.com>

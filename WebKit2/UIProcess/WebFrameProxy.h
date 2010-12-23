@@ -97,6 +97,7 @@ public:
     bool isDisplayingMarkupDocument() const;
 
     void getWebArchive(PassRefPtr<DataCallback>);
+    void getMainResourceData(PassRefPtr<DataCallback>);
 
     void didStartProvisionalLoad(const String& url);
     void didReceiveServerRedirectForProvisionalLoad(const String& url);

@@ -821,6 +821,14 @@ void WebPageProxy::getSelectionOrContentsAsString(PassRefPtr<StringCallback> prp
     process()->send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID), m_pageID);
 }
 
+void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
+{
+    RefPtr<DataCallback> callback = prpCallback;
+    uint64_t callbackID = callback->callbackID();
+    m_dataCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID), m_pageID);
+}
+
 void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
 {
     RefPtr<DataCallback> callback = prpCallback;
@@ -1713,62 +1721,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 }
 
-void WebPageProxy::didGetContentsAsString(const String& resultString, uint64_t callbackID)
-{
-    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(resultString.impl());
-}
-
-void WebPageProxy::didGetSelectionOrContentsAsString(const String& resultString, uint64_t callbackID)
-{
-    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(resultString.impl());
-}
-
-void WebPageProxy::didRunJavaScriptInMainFrame(const String& resultString, uint64_t callbackID)
-{
-    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(resultString.impl());
-}
-
-void WebPageProxy::didGetRenderTreeExternalRepresentation(const String& resultString, uint64_t callbackID)
-{
-    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(resultString.impl());
-}
-
-void WebPageProxy::didGetSourceForFrame(const String& resultString, uint64_t callbackID)
-{
-    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(resultString.impl());
-}
-
-void WebPageProxy::didGetWebArchiveOfFrame(const CoreIPC::DataReference& dataReference, uint64_t callbackID)
+void WebPageProxy::dataCallback(const CoreIPC::DataReference& dataReference, uint64_t callbackID)
 {
     RefPtr<DataCallback> callback = m_dataCallbacks.take(callbackID);
     if (!callback) {
@@ -1781,6 +1734,17 @@ void WebPageProxy::didGetWebArchiveOfFrame(const CoreIPC::DataReference& dataRef
         data = WebData::create(dataReference.data(), size);
 
     callback->performCallbackWithReturnValue(data.get());
+}
+
+void WebPageProxy::stringCallback(const String& resultString, uint64_t callbackID)
+{
+    RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(resultString.impl());
 }
 
 void WebPageProxy::focusedFrameChanged(uint64_t frameID)

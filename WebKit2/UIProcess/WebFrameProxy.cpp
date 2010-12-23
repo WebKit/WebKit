@@ -204,4 +204,14 @@ void WebFrameProxy::getWebArchive(PassRefPtr<DataCallback> callback)
     m_page->getWebArchiveOfFrame(this, callback);
 }
 
+void WebFrameProxy::getMainResourceData(PassRefPtr<DataCallback> callback)
+{
+    if (!m_page) {
+        callback->invalidate();
+        return;
+    }
+
+    m_page->getMainResourceDataOfFrame(this, callback);
+}
+
 } // namespace WebKit

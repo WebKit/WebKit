@@ -911,19 +911,19 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     if (resultValue)
         resultString = ustringToString(resultValue.toString(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 
-    send(Messages::WebPageProxy::DidRunJavaScriptInMainFrame(resultString, callbackID));
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 void WebPage::getContentsAsString(uint64_t callbackID)
 {
     String resultString = m_mainFrame->contentsAsString();
-    send(Messages::WebPageProxy::DidGetContentsAsString(resultString, callbackID));
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
 {
     String resultString = renderTreeExternalRepresentation();
-    send(Messages::WebPageProxy::DidGetRenderTreeExternalRepresentation(resultString, callbackID));
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 void WebPage::getSelectionOrContentsAsString(uint64_t callbackID)
@@ -931,7 +931,7 @@ void WebPage::getSelectionOrContentsAsString(uint64_t callbackID)
     String resultString = m_mainFrame->selectionAsString();
     if (resultString.isEmpty())
         resultString = m_mainFrame->contentsAsString();
-    send(Messages::WebPageProxy::DidGetContentsAsString(resultString, callbackID));
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
@@ -940,7 +940,22 @@ void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID))
        resultString = frame->source();
 
-    send(Messages::WebPageProxy::DidGetSourceForFrame(resultString, callbackID));
+    send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
+}
+
+void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
+{
+    CoreIPC::DataReference dataReference;
+
+    RefPtr<SharedBuffer> buffer;
+    if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
+        if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
+            if ((buffer = loader->mainResourceData()))
+                dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+        }
+    }
+
+    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
 void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
@@ -957,7 +972,7 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
     }
 #endif
 
-    send(Messages::WebPageProxy::DidGetWebArchiveOfFrame(dataReference, callbackID));
+    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)

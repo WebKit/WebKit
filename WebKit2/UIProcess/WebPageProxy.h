@@ -237,12 +237,13 @@ public:
     void hideFindUI();
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
 
-    void runJavaScriptInMainFrame(const String&, PassRefPtr<StringCallback>);
-    void getRenderTreeExternalRepresentation(PassRefPtr<StringCallback>);
-    void getSourceForFrame(WebFrameProxy*, PassRefPtr<StringCallback>);
     void getContentsAsString(PassRefPtr<StringCallback>);
+    void getMainResourceDataOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
+    void getRenderTreeExternalRepresentation(PassRefPtr<StringCallback>);
     void getSelectionOrContentsAsString(PassRefPtr<StringCallback>);
+    void getSourceForFrame(WebFrameProxy*, PassRefPtr<StringCallback>);
     void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
+    void runJavaScriptInMainFrame(const String&, PassRefPtr<StringCallback>);
 
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
 
@@ -425,12 +426,8 @@ private:
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
-    void didGetContentsAsString(const String&, uint64_t);
-    void didGetRenderTreeExternalRepresentation(const String&, uint64_t);
-    void didGetSelectionOrContentsAsString(const String&, uint64_t);
-    void didGetSourceForFrame(const String&, uint64_t);
-    void didGetWebArchiveOfFrame(const CoreIPC::DataReference&, uint64_t);
-    void didRunJavaScriptInMainFrame(const String&, uint64_t);
+    void dataCallback(const CoreIPC::DataReference&, uint64_t);
+    void stringCallback(const String&, uint64_t);
 
     void focusedFrameChanged(uint64_t frameID);
 

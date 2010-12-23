@@ -120,6 +120,25 @@ bool WKFrameIsFrameSet(WKFrameRef frameRef)
     return toImpl(frameRef)->isFrameSet();
 }
 
+void WKFrameGetMainResourceData(WKFrameRef frameRef, WKFrameGetMainResourceDataFunction callback, void* context)
+{
+    toImpl(frameRef)->getMainResourceData(DataCallback::create(context, callback));
+}
+
+#ifdef __BLOCKS__
+static void callGetMainResourceDataBlockAndDispose(WKDataRef data, WKErrorRef error, void* context)
+{
+    WKFrameGetMainResourceDataBlock block = (WKFrameGetMainResourceDataBlock)context;
+    block(data, error);
+    Block_release(block);
+}
+
+void WKFrameGetMainResourceData_b(WKFrameRef frameRef, WKFrameGetMainResourceDataBlock block)
+{
+    WKFrameGetMainResourceData(frameRef, callGetMainResourceDataBlockAndDispose, Block_copy(block));
+}
+#endif
+
 void WKFrameGetWebArchive(WKFrameRef frameRef, WKFrameGetWebArchiveFunction callback, void* context)
 {
     toImpl(frameRef)->getWebArchive(DataCallback::create(context, callback));
