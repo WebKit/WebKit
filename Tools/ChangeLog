@@ -1,3 +1,23 @@
+2010-12-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        nrwt multiprocessing - start over, prepare to fork the code
+ 
+        This code cleans up the signatures and implementation of the
+        TestRunner class so we can easily fork it to run either the
+        stable implementation or the new, unstable message-passing
+        implementation. The two variants will have different
+        implementations of the run_tests() method. We will switch
+        between the two based on the setting for the '--worker-model'
+        switch. We rename the two currently valid values to 'old-inline'
+        and 'old-threads'.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51081
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-12-22  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Darin Fisher.

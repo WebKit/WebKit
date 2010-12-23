@@ -76,7 +76,7 @@ def parse_args(extra_args=None, record_results=False, tests_included=False,
     if not record_results:
         args.append('--no-record-results')
     if not '--child-processes' in extra_args:
-        args.extend(['--worker-model', 'inline'])
+        args.extend(['--worker-model', 'old-inline'])
     args.extend(extra_args)
     if not tests_included:
         # We use the glob to test that globbing works.
@@ -442,14 +442,10 @@ class MainTest(unittest.TestCase):
         self.assertEqual(None, test_port.tolerance_used_for_diff_image)
 
     def test_worker_model__inline(self):
-        self.assertTrue(passing_run(['--worker-model', 'inline']))
+        self.assertTrue(passing_run(['--worker-model', 'old-inline']))
 
     def test_worker_model__threads(self):
-        self.assertTrue(passing_run(['--worker-model', 'threads']))
-
-    def test_worker_model__processes(self):
-        self.assertRaises(ValueError, logging_run,
-                          ['--worker-model', 'processes'])
+        self.assertTrue(passing_run(['--worker-model', 'old-threads']))
 
     def test_worker_model__unknown(self):
         self.assertRaises(ValueError, logging_run,
@@ -537,7 +533,7 @@ class TestRunnerTest(unittest.TestCase):
         mock_port.filename_to_uri = lambda name: name
 
         runner = run_webkit_tests.TestRunner(port=mock_port, options=Mock(),
-            printer=Mock(), message_broker=Mock())
+            printer=Mock())
         expected_html = u"""<html>
   <head>
     <title>Layout Test Results (time)</title>
@@ -555,7 +551,7 @@ class TestRunnerTest(unittest.TestCase):
         # Test that _shard_tests in run_webkit_tests.TestRunner really
         # put the http tests first in the queue.
         runner = TestRunnerWrapper(port=Mock(), options=Mock(),
-            printer=Mock(), message_broker=Mock())
+            printer=Mock())
 
         test_list = [
           "LayoutTests/websocket/tests/unicode.htm",

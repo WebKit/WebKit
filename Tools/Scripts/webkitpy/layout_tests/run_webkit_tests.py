@@ -143,7 +143,7 @@ class ResultSummary(object):
         """Add a TestResult into the appropriate bin.
 
         Args:
-          result: TestResult from dump_render_tree_thread.
+          result: TestResult
           expected: whether the result was what we expected it to be.
         """
 
@@ -252,19 +252,18 @@ class TestRunner:
     # in DumpRenderTree.
     DEFAULT_TEST_TIMEOUT_MS = 6 * 1000
 
-    def __init__(self, port, options, printer, message_broker):
+    def __init__(self, port, options, printer):
         """Initialize test runner data structures.
 
         Args:
           port: an object implementing port-specific
           options: a dictionary of command line options
           printer: a Printer object to record updates to.
-          message_broker: object used to communicate with workers.
         """
         self._port = port
         self._options = options
         self._printer = printer
-        self._message_broker = message_broker
+        self._message_broker = None
 
         # disable wss server. need to install pyOpenSSL on buildbots.
         # self._websocket_secure_server = websocket_server.PyWebSocket(
@@ -525,7 +524,7 @@ class TestRunner:
         """Groups tests into batches.
         This helps ensure that tests that depend on each other (aka bad tests!)
         continue to run together as most cross-tests dependencies tend to
-        occur within the same directory. If use_real_shards is false, we
+        occur within the same directory. If use_real_shards is False, we
         put each (non-HTTP/websocket) test into its own shard for maximum
         concurrency instead of trying to do any sort of real sharding.
 
@@ -617,12 +616,13 @@ class TestRunner:
 
         self._printer.print_update('Starting %s ...' %
                                    grammar.pluralize('worker', num_workers))
-        message_broker = self._message_broker
+        self._message_broker = message_broker.get(self._port, self._options)
+        broker = self._message_broker
         self._current_filename_queue = filename_queue
         self._current_result_summary = result_summary
 
         if not self._options.dry_run:
-            threads = message_broker.start_workers(self)
+            threads = broker.start_workers(self)
         else:
             threads = {}
 
@@ -631,15 +631,15 @@ class TestRunner:
         interrupted = False
         if not self._options.dry_run:
             try:
-                message_broker.run_message_loop()
+                broker.run_message_loop()
             except KeyboardInterrupt:
                 _log.info("Interrupted, exiting")
-                message_broker.cancel_workers()
+                broker.cancel_workers()
                 keyboard_interrupted = True
                 interrupted = True
             except TestRunInterruptedException, e:
                 _log.info(e.reason)
-                message_broker.cancel_workers()
+                broker.cancel_workers()
                 interrupted = True
             except:
                 # Unexpected exception; don't try to clean up workers.
@@ -649,6 +649,8 @@ class TestRunner:
         thread_timings, test_timings, individual_test_timings = \
             self._collect_timing_info(threads)
 
+        broker.cleanup()
+        self._message_broker = None
         return (interrupted, keyboard_interrupted, thread_timings, test_timings,
                 individual_test_timings)
 
@@ -1011,8 +1013,7 @@ class TestRunner:
     def _print_aggregate_test_statistics(self, individual_test_timings):
         """Prints aggregate statistics (e.g. median, mean, etc.) for all tests.
         Args:
-          individual_test_timings: List of dump_render_tree_thread.TestStats
-              for all tests.
+          individual_test_timings: List of TestResults for all tests.
         """
         test_types = []  # Unit tests don't actually produce any timings.
         if individual_test_timings:
@@ -1047,8 +1048,7 @@ class TestRunner:
                                   result_summary):
         """Prints the run times for slow, timeout and crash tests.
         Args:
-          individual_test_timings: List of dump_render_tree_thread.TestStats
-              for all tests.
+          individual_test_timings: List of TestStats for all tests.
           result_summary: summary object for test run
         """
         # Reverse-sort by the time spent in DumpRenderTree.
@@ -1321,10 +1321,13 @@ def run(port, options, args, regular_output=sys.stderr,
           error.
 
     """
-    _set_up_derived_options(port, options)
+    warnings = _set_up_derived_options(port, options)
 
     printer = printing.Printer(port, options, regular_output, buildbot_output,
         int(options.child_processes), options.experimental_fully_parallel)
+    for w in warnings:
+        _log.warning(w)
+
     if options.help_printing:
         printer.help_printing()
         printer.cleanup()
@@ -1336,13 +1339,11 @@ def run(port, options, args, regular_output=sys.stderr,
         printer.cleanup()
         return 0
 
-    broker = message_broker.get(port, options)
-
     # We wrap any parts of the run that are slow or likely to raise exceptions
     # in a try/finally to ensure that we clean up the logging configuration.
     num_unexpected_results = -1
     try:
-        test_runner = TestRunner(port, options, printer, broker)
+        test_runner = TestRunner(port, options, printer)
         test_runner._print_config()
 
         printer.print_update("Collecting tests ...")
@@ -1371,7 +1372,6 @@ def run(port, options, args, regular_output=sys.stderr,
             _log.debug("Testing completed, Exit status: %d" %
                        num_unexpected_results)
     finally:
-        broker.cleanup()
         printer.cleanup()
 
     return num_unexpected_results
@@ -1379,10 +1379,12 @@ def run(port, options, args, regular_output=sys.stderr,
 
 def _set_up_derived_options(port_obj, options):
     """Sets the options values that depend on other options values."""
+    # We return a list of warnings to print after the printer is initialized.
+    warnings = []
 
-    if options.worker_model == 'inline':
+    if options.worker_model == 'old-inline':
         if options.child_processes and int(options.child_processes) > 1:
-            _log.warning("--worker-model=inline overrides --child-processes")
+            warnings.append("--worker-model=old-inline overrides --child-processes")
         options.child_processes = "1"
     if not options.child_processes:
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
@@ -1410,6 +1412,7 @@ def _set_up_derived_options(port_obj, options):
             options.time_out_ms = str(TestRunner.DEFAULT_TEST_TIMEOUT_MS)
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
+    return warnings
 
 
 def _gather_unexpected_results(options):
@@ -1608,8 +1611,8 @@ def parse_args(args=None):
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
         optparse.make_option("--worker-model", action="store",
-            default="threads", help=("controls worker model. Valid values are "
-            "'inline' and 'threads' (default).")),
+            default="old-threads", help=("controls worker model. Valid values "
+            "are 'old-inline', 'old-threads'.")),
         optparse.make_option("--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),

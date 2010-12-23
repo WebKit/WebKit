@@ -53,9 +53,9 @@ _log = logging.getLogger(__name__)
 def get(port, options):
     """Return an instance of a WorkerMessageBroker."""
     worker_model = options.worker_model
-    if worker_model == 'inline':
+    if worker_model == 'old-inline':
         return InlineBroker(port, options)
-    if worker_model == 'threads':
+    if worker_model == 'old-threads':
         return MultiThreadedBroker(port, options)
     raise ValueError('unsupported value for --worker-model: %s' % worker_model)
 
