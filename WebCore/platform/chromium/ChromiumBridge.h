@@ -307,6 +307,39 @@ namespace WebCore {
         static IntSize getThemePartSize(ThemePart);
         // Paint the given the given theme part.
         static void paintThemePart(GraphicsContext*, ThemePart, ThemePaintState, const IntRect&, const ThemePaintExtraParams*);
+#elif OS(DARWIN)
+        enum ThemePaintState {
+            StateDisabled,
+            StateInactive,
+            StateActive,
+            StatePressed,
+        };
+
+        enum ThemePaintSize {
+            SizeRegular,
+            SizeSmall,
+        };
+
+        enum ThemePaintScrollbarOrientation {
+            ScrollbarOrientationHorizontal,
+            ScrollbarOrientationVertical,
+        };
+
+        enum ThemePaintScrollbarParent {
+            ScrollbarParentScrollView,
+            ScrollbarParentRenderLayer,
+        };
+
+        struct ThemePaintScrollbarInfo {
+            ThemePaintScrollbarOrientation orientation;
+            ThemePaintScrollbarParent parent;
+            int maxValue;
+            int currentValue;
+            int visibleSize;
+            int totalSize;
+        };
+
+        static void paintScrollbarThumb(GraphicsContext*, ThemePaintState, ThemePaintSize, const IntRect&, const ThemePaintScrollbarInfo&);
 #endif
 
         // Trace Event --------------------------------------------------------

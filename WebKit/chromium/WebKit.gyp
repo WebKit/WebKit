@@ -101,6 +101,7 @@
                 'public/mac/WebInputEventFactory.h',
                 'public/mac/WebSandboxSupport.h',
                 'public/mac/WebScreenInfoFactory.h',
+                'public/mac/WebThemeEngine.h',
                 'public/WebAccessibilityCache.h',
                 'public/WebAccessibilityNotification.h',
                 'public/WebAccessibilityObject.h',

@@ -79,6 +79,11 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/StringImpl.h>
 
+#if OS(DARWIN)
+#include "ChromiumBridge.h"
+#include "mac/WebThemeEngine.h"
+#endif
+
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
     COMPILE_ASSERT(int(WebKit::webkit_name) == int(WebCore::webcore_name), mismatching_enums)
 
@@ -392,4 +397,20 @@ COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorPathExists, FileError::PATH_EXISTS_ERR)
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPermissionDenied, GeolocationError::PermissionDenied);
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPositionUnavailable, GeolocationError::PositionUnavailable);
+#endif
+
+#if OS(DARWIN)
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateDisabled, ChromiumBridge::StateDisabled);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateInactive, ChromiumBridge::StateInactive);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateActive, ChromiumBridge::StateActive);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StatePressed, ChromiumBridge::StatePressed);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeRegular, ChromiumBridge::SizeRegular);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeSmall, ChromiumBridge::SizeSmall);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationHorizontal, ChromiumBridge::ScrollbarOrientationHorizontal);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationVertical, ChromiumBridge::ScrollbarOrientationVertical);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentScrollView, ChromiumBridge::ScrollbarParentScrollView);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentRenderLayer, ChromiumBridge::ScrollbarParentRenderLayer);
 #endif

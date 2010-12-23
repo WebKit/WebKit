@@ -62,6 +62,10 @@
 #include "WebViewImpl.h"
 #include "WebWorkerClientImpl.h"
 
+#if PLATFORM(CG)
+#include <CoreGraphics/CGContext.h>
+#endif
+
 #if OS(WINDOWS)
 #include "WebRect.h"
 #include "win/WebThemeEngine.h"
@@ -71,6 +75,10 @@
 #include "linux/WebThemeEngine.h"
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
+#endif
+
+#if OS(DARWIN)
+#include "mac/WebThemeEngine.h"
 #endif
 
 #if WEBKIT_USING_SKIA
@@ -836,6 +844,28 @@ void ChromiumBridge::paintThemePart(
     GetWebThemeExtraParams(part, state, extraParams, &webThemeExtraParams);
     webKitClient()->themeEngine()->paint(
         gc->platformContext()->canvas(), WebThemePart(part), WebThemeState(state), rect, &webThemeExtraParams);
+}
+
+#elif OS(DARWIN)
+
+void ChromiumBridge::paintScrollbarThumb(
+    GraphicsContext* gc, ThemePaintState state, ThemePaintSize size, const IntRect& rect, const ThemePaintScrollbarInfo& scrollbarInfo)
+{
+    WebThemeEngine::ScrollbarInfo webThemeScrollbarInfo;
+
+    webThemeScrollbarInfo.orientation = static_cast<WebThemeEngine::ScrollbarOrientation>(scrollbarInfo.orientation);
+    webThemeScrollbarInfo.parent = static_cast<WebThemeEngine::ScrollbarParent>(scrollbarInfo.parent);
+    webThemeScrollbarInfo.maxValue = scrollbarInfo.maxValue;
+    webThemeScrollbarInfo.currentValue = scrollbarInfo.currentValue;
+    webThemeScrollbarInfo.visibleSize = scrollbarInfo.visibleSize;
+    webThemeScrollbarInfo.totalSize = scrollbarInfo.totalSize;
+
+    webKitClient()->themeEngine()->paintScrollbarThumb(
+        gc->platformContext(),
+        static_cast<WebThemeEngine::State>(state),
+        static_cast<WebThemeEngine::Size>(size),
+        rect,
+        webThemeScrollbarInfo);
 }
 
 #endif
