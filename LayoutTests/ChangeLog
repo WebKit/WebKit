@@ -1,3 +1,11 @@
+2010-12-24  Jessie Berlin  <jberlin@apple.com>
+
+        Skip the new editing/input/ime-composition-clearpreedit.html test since textInputController
+        is unimplemented in the DRT for Windows. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=32021
+
+        * platform/win/Skipped:
+
 2010-12-24  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Nikolas Zimmermann.
