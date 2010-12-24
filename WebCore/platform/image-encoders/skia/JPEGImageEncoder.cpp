@@ -33,8 +33,8 @@
 
 #include "IntSize.h"
 #include "SkBitmap.h"
-#include "SkUnPreMultiply.h"
 #include "SkColorPriv.h"
+#include "SkUnPreMultiply.h"
 extern "C" {
 #include <stdio.h> // jpeglib.h needs stdio.h FILE
 #include "jpeglib.h"
