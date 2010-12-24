@@ -1,3 +1,26 @@
+2010-12-24  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Eric Seidel.
+
+        Clean up CSSRuleData in CSSStyleSelector.h
+        https://bugs.webkit.org/show_bug.cgi?id=27753
+
+        Move CSSRuleData and CSSRuleDataList from CSSStyleSelector.h to the .cpp file.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleData::CSSRuleData):
+        (WebCore::CSSRuleData::~CSSRuleData):
+        (WebCore::CSSRuleData::position):
+        (WebCore::CSSRuleData::rule):
+        (WebCore::CSSRuleData::selector):
+        (WebCore::CSSRuleData::next):
+        (WebCore::CSSRuleDataList::CSSRuleDataList):
+        (WebCore::CSSRuleDataList::~CSSRuleDataList):
+        (WebCore::CSSRuleDataList::first):
+        (WebCore::CSSRuleDataList::last):
+        (WebCore::CSSRuleDataList::append):
+        * css/CSSStyleSelector.h:
+
 2010-12-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix compilation on Windows.

@@ -348,6 +348,64 @@ if (id == propID) { \
     return; \
 }
 
+class CSSRuleData : public Noncopyable {
+public:
+    CSSRuleData(unsigned pos, CSSStyleRule* r, CSSSelector* sel, CSSRuleData* prev = 0)
+        : m_position(pos)
+        , m_rule(r)
+        , m_selector(sel)
+        , m_next(0)
+    {
+        if (prev)
+            prev->m_next = this;
+    }
+
+    ~CSSRuleData()
+    {
+    }
+
+    unsigned position() { return m_position; }
+    CSSStyleRule* rule() { return m_rule; }
+    CSSSelector* selector() { return m_selector; }
+    CSSRuleData* next() { return m_next; }
+
+private:
+    unsigned m_position;
+    CSSStyleRule* m_rule;
+    CSSSelector* m_selector;
+    CSSRuleData* m_next;
+};
+
+class CSSRuleDataList : public Noncopyable {
+public:
+    CSSRuleDataList(unsigned pos, CSSStyleRule* rule, CSSSelector* sel)
+        : m_first(new CSSRuleData(pos, rule, sel))
+        , m_last(m_first)
+    {
+    }
+
+    ~CSSRuleDataList()
+    {
+        CSSRuleData* ptr;
+        CSSRuleData* next;
+        ptr = m_first;
+        while (ptr) {
+            next = ptr->next();
+            delete ptr;
+            ptr = next;
+        }
+    }
+
+    CSSRuleData* first() { return m_first; }
+    CSSRuleData* last() { return m_last; }
+
+    void append(unsigned pos, CSSStyleRule* rule, CSSSelector* sel) { m_last = new CSSRuleData(pos, rule, sel, m_last); }
+
+private:
+    CSSRuleData* m_first;
+    CSSRuleData* m_last;
+};
+
 class CSSRuleSet : public Noncopyable {
 public:
     CSSRuleSet();
