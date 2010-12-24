@@ -5586,4 +5586,4 @@ http/tests/local/link-stylesheet-load-order-preload.html
 # Passing just a username or just a password to
 # layoutTestController.queueLoad() does not work
 http/tests/xmlhttprequest/basic-auth-nouser.html
-http/tests/xmlhttprequest/basic-auth-password.html
+http/tests/xmlhttprequest/basic-auth-nopassword.html
