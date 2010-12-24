@@ -1,3 +1,14 @@
+2010-12-21  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] minimal build with --database fails
+        https://bugs.webkit.org/show_bug.cgi?id=51394
+
+        * webkit/webkitprivate.cpp:
+        (webkit_init): Use cacheStorage() only if the
+        OFFLINE_WEB_APPLICATIONS feature is enabled.
+
 2010-12-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

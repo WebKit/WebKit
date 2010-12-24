@@ -129,14 +129,14 @@ void webkit_init()
     // that may only be done by the main thread.
     atomicCanonicalTextEncodingName("UTF-8");
 
-#if ENABLE(DATABASE)
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "webkit", "databases", NULL);
     webkit_set_web_database_directory_path(databaseDirectory);
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     // FIXME: It should be possible for client applications to override the default appcache location
     WebCore::cacheStorage().setCacheDirectory(databaseDirectory);
-    g_free(databaseDirectory);
 #endif
+    g_free(databaseDirectory);
 
     PageGroup::setShouldTrackVisitedLinks(true);
 
