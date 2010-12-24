@@ -1,3 +1,19 @@
+2010-12-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8758386> The web process uses its own credential storage
+        https://bugs.webkit.org/show_bug.cgi?id=51599
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge): Try to answer the challenge using
+        the UI process’s credential storage first.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::shouldUseCredentialStorage): Prevent the web process from using
+        its own credential storage.
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Ditto.
+
 2010-12-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
