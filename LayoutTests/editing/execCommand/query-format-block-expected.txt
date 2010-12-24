@@ -6,6 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Basic cases
 PASS queryCommand('formatBlock') returned "" selecting none of "hello"
 PASS queryCommand('formatBlock') returned "" selecting first position of "hello"
+PASS queryCommand('formatBlock') returned "" selecting first position of "<div contenteditable="false"><h1 contenteditable>hello</h1></div>"
+PASS queryCommand('formatBlock') returned "" selecting first position of "<h1 contenteditable="false"><span contenteditable>hello</span></h1>"
+PASS queryCommand('formatBlock') returned "" selecting first position of "<div><h1 contenteditable="false"><span contenteditable>hello</span></h1></div>"
+PASS queryCommand('formatBlock') returned "" selecting first position of "<div><header contenteditable="false"><h1 contenteditable>hello</h1></header></div>"
 PASS queryCommand('formatBlock') returned "" selecting first position of "<a>hello</a>"
 PASS queryCommand('formatBlock') returned "" selecting first position of "<abbr>hello</abbr>"
 PASS queryCommand('formatBlock') returned "" selecting first position of "<acronym>hello</acronym>"

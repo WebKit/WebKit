@@ -2,6 +2,19 @@
 
         Reviewed by Darin Adler.
 
+        queryCommandValue("FormatBlock") does not respect editing boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=51219
+
+        Fixed the bug by checking the element we found in elementForFormatBlockCommand
+        does not contain the editable root.
+
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::elementForFormatBlockCommand):
+
+2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
         FormatBlock doesn't preserve typing style but it should
         https://bugs.webkit.org/show_bug.cgi?id=51140
 

@@ -105,6 +105,10 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
     if (!commonAncestor)
         return 0;
 
+    Element* rootEditableElement = range->startContainer()->rootEditableElement();
+    if (!rootEditableElement || commonAncestor->contains(rootEditableElement))
+        return 0;
+
     ASSERT(commonAncestor->isElementNode());
     return static_cast<Element*>(commonAncestor);
 }

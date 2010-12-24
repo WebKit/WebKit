@@ -37,6 +37,10 @@ function selectMiddleOfHelloWorld(container) {
 debug('Basic cases');
 queryFormatBlock(function () {return 'none' }, 'hello', '');
 queryFormatBlock(selectFirstPosition, 'hello', '');
+queryFormatBlock(selectFirstPosition, '<div contenteditable="false"><h1 contenteditable>hello</h1></div>', '');
+queryFormatBlock(selectFirstPosition, '<h1 contenteditable="false"><span contenteditable>hello</span></h1>', '');
+queryFormatBlock(selectFirstPosition, '<div><h1 contenteditable="false"><span contenteditable>hello</span></h1></div>', '');
+queryFormatBlock(selectFirstPosition, '<div><header contenteditable="false"><h1 contenteditable>hello</h1></header></div>', '');
 queryFormatBlock(selectFirstPosition, '<a>hello</a>', '');
 queryFormatBlock(selectFirstPosition, '<abbr>hello</abbr>', '');
 queryFormatBlock(selectFirstPosition, '<acronym>hello</acronym>', '');
