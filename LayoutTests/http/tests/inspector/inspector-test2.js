@@ -55,6 +55,14 @@ InspectorTest.addResult = function(text)
     }
 }
 
+InspectorTest.addResults = function(textArray)
+{
+    if (!textArray)
+        return;
+    for (var i = 0, size = textArray.length; i < size; ++i)
+        InspectorTest.addResult(textArray[i]);
+}
+
 InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstLinePrefix)
 {
     prefix = prefix || "";
@@ -113,6 +121,13 @@ InspectorTest.pageReloaded = function()
 InspectorTest.runAfterPendingDispatches = function(callback)
 {
     WebInspector.TestController.prototype.runAfterPendingDispatches(callback);
+}
+
+InspectorTest.createKeyEvent = function(keyIdentifier)
+{
+    var evt = document.createEvent("KeyboardEvent");
+    evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "");
+    return evt;
 }
 
 InspectorTest.findDOMNode = function(root, filter, callback)

@@ -1077,6 +1077,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (!parseElement.hasAttributes()) {
             this.representedObject.removeAttribute(attributeName);
+            this.treeOutline.focusedNodeChanged(true);
             moveToNextAttributeIfNeeded.call(this);
             return;
         }

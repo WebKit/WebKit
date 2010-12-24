@@ -1132,6 +1132,9 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
     if (!id)
         return;
 
+    if (m_domListener)
+        m_domListener->didModifyDOMAttr(element);
+
     m_frontend->attributesUpdated(id, buildArrayForElementAttributes(element));
 }
 

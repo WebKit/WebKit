@@ -237,6 +237,7 @@ public:
     }
 
     InspectorStyleSheetForInlineStyle(const String& id, Element* element, const String& origin);
+    void didModifyElementAttribute();
     virtual bool text(String* result) const;
     virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, !id.ordinal()); return inlineStyle(); }
 
@@ -259,6 +260,9 @@ private:
     Element* m_element;
     RefPtr<CSSRuleSourceData> m_ruleSourceData;
     RefPtr<InspectorStyle> m_inspectorStyle;
+
+    // Contains "style" attribute value and should always be up-to-date.
+    String m_styleText;
 };
 
 #endif

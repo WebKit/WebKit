@@ -1,3 +1,29 @@
+2010-12-24  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Inline HTML style property out of sync with element.style in Sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=51478
+
+        * http/tests/inspector/inspector-test2.js:
+        (initialize_InspectorTest.InspectorTest.addResults):
+        (initialize_InspectorTest.InspectorTest.createKeyEvent):
+        * inspector/elements-delete-inline-style-expected.txt: Added.
+        * inspector/elements-delete-inline-style.html: Added.
+        * inspector/elements-tests2.js: Added.
+        (initialize_ElementTest.InspectorTest.expandDOMSubtree.processChildren):
+        (initialize_ElementTest.InspectorTest.expandDOMSubtree):
+        (initialize_ElementTest.InspectorTest.expandDOMSubtreeAndRun):
+        (initialize_ElementTest.InspectorTest.nodeForId):
+        (initialize_ElementTest.InspectorTest.selectElementAndRun):
+        (initialize_ElementTest.InspectorTest.dumpSelectedElementStyles):
+        (initialize_ElementTest.InspectorTest.getSelectedElementStyles):
+        (initialize_ElementTest.InspectorTest.getElementStylePropertyTreeItem):
+        (initialize_ElementTest.InspectorTest.dumpStyleTreeOutline):
+        (initialize_ElementTest.InspectorTest.dumpStyleTreeItem):
+        (initialize_ElementTest):
+        * inspector/styles-add-blank-property.html: Remove unnecessary function.
+
 2010-12-24  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.

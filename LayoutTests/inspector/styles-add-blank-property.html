@@ -27,13 +27,6 @@ function frontend_selectInspectedElement(testController)
     frontend_selectElementAndRun(testController, "inspected", frontend_dumpInspectedStyle);
 }
 
-function frontend_createKeyboardEvent(eventName, keyIdentifier)
-{
-    var evt = document.createEvent("KeyboardEvent");
-    evt.initKeyboardEvent(eventName, true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "");
-    return evt;
-}
-
 function frontend_dumpInspectedStyle(testController)
 {
     testController.results.push("Before append:");
@@ -42,8 +35,8 @@ function frontend_dumpInspectedStyle(testController)
     var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1];
     section.expand();
     var treeElement = section.addNewBlankProperty();
-    var enterKeyDown = frontend_createKeyboardEvent("keydown", "Enter");
-    var incrementKeyDown = frontend_createKeyboardEvent("keydown", "Up");
+    var enterKeyDown = frontend_createKeyEvent("Enter");
+    var incrementKeyDown = frontend_createKeyEvent("Up");
 
     function removeEmpty()
     {

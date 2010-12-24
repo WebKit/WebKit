@@ -542,6 +542,18 @@ void InspectorCSSAgent::didRemoveDOMNode(Node* node)
     m_nodeToInspectorStyleSheet.remove(node);
 }
 
+void InspectorCSSAgent::didModifyDOMAttr(Element* element)
+{
+    if (!element)
+        return;
+
+    NodeToInspectorStyleSheet::iterator it = m_nodeToInspectorStyleSheet.find(element);
+    if (it == m_nodeToInspectorStyleSheet.end())
+        return;
+
+    it->second->didModifyElementAttribute();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

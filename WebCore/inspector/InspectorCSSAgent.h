@@ -97,6 +97,7 @@ private:
     // InspectorDOMAgent::DOMListener interface
     virtual void didRemoveDocument(Document*);
     virtual void didRemoveDOMNode(Node*);
+    virtual void didModifyDOMAttr(Element*);
 
     InspectorDOMAgent* m_domAgent;
 

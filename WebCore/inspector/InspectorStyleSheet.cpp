@@ -1099,11 +1099,28 @@ InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(const Strin
 {
     ASSERT(element);
     m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id, 0), inlineStyle(), this);
+    m_styleText = m_element->isStyledElement() ? m_element->getAttribute("style").string() : String();
+}
+
+void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
+{
+    String newStyleText = m_element->getAttribute("style");
+    bool shouldDropSourceData = false;
+    if (m_element->isStyledElement() && m_element->style() != m_inspectorStyle->cssStyle()) {
+        m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id(), 0), inlineStyle(), this);
+        shouldDropSourceData = true;
+    }
+    if (newStyleText != m_styleText) {
+        m_styleText = newStyleText;
+        shouldDropSourceData = true;
+    }
+    if (shouldDropSourceData)
+        m_ruleSourceData.clear();
 }
 
 bool InspectorStyleSheetForInlineStyle::text(String* result) const
 {
-    *result = m_element->getAttribute("style");
+    *result = m_styleText;
     return true;
 }
 
@@ -1112,6 +1129,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
     ASSERT_UNUSED(style, style == inlineStyle());
     ExceptionCode ec = 0;
     m_element->setAttribute("style", text, ec);
+    m_styleText = text;
     m_ruleSourceData.clear();
     return !ec;
 }
@@ -1149,13 +1167,10 @@ CSSStyleDeclaration* InspectorStyleSheetForInlineStyle::inlineStyle() const
 
 bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleSourceData>* result)
 {
-    DEFINE_STATIC_LOCAL(String, styleAttributeName, ("style"));
-
     if (!m_element->isStyledElement())
         return false;
 
-    String styleText = static_cast<StyledElement*>(m_element)->getAttribute(styleAttributeName);
-    if (styleText.isEmpty()) {
+    if (m_styleText.isEmpty()) {
         (*result)->styleBodyRange.start = 0;
         (*result)->styleBodyRange.end = 0;
         return true;
@@ -1163,7 +1178,7 @@ bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleS
 
     RefPtr<CSSMutableStyleDeclaration> tempDeclaration = CSSMutableStyleDeclaration::create();
     CSSParser p;
-    p.parseDeclaration(tempDeclaration.get(), styleText, result);
+    p.parseDeclaration(tempDeclaration.get(), m_styleText, result);
     return true;
 }
 

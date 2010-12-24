@@ -85,6 +85,7 @@ namespace WebCore {
             }
             virtual void didRemoveDocument(Document*) = 0;
             virtual void didRemoveDOMNode(Node*) = 0;
+            virtual void didModifyDOMAttr(Element*) = 0;
         };
 
         static PassRefPtr<InspectorDOMAgent> create(InspectorFrontend* frontend)
