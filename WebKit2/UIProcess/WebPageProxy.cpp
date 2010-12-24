@@ -1793,7 +1793,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         m_processingMouseMoveEvent = false;
         if (m_nextMouseMoveEvent) {
             handleMouseEvent(*m_nextMouseMoveEvent);
-            m_nextWheelEvent = nullptr;
+            m_nextMouseMoveEvent = nullptr;
         }
         break;
     case WebEvent::MouseDown:
