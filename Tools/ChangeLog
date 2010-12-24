@@ -1,3 +1,23 @@
+2010-12-24  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch (or a pre-commit hook) needs to prevent bad ChangeLog changes
+        https://bugs.webkit.org/show_bug.cgi?id=28291
+
+        This is a start.  At least now webkit-patch will prompt when your ChangeLog looks questionable.
+        We could do more advanced things, like parsing the ChangeLog (with changelog.py) and comparing that
+        to strings with find in the diff.
+        Since non-interactive always returns the default, this should cause patches with bad changelogs to fail on the commit-queue.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/diff_parser.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/cleanworkingdirectory.py:
+        * Scripts/webkitpy/tool/steps/validatechangelogs.py: Copied from Tools/Scripts/webkitpy/tool/steps/validatereviewer.py.
+        * Scripts/webkitpy/tool/steps/validatechangelogs_unittest.py: Copied from Tools/Scripts/webkitpy/tool/steps/cleanworkingdirectory.py.
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+
 2010-12-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Kenneth Russell.

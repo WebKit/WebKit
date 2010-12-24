@@ -109,11 +109,11 @@ class DownloadCommandsTest(CommandsTest):
     def test_land_diff(self):
         expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n"
         mock_tool = MockTool()
-        mock_tool.scm().create_patch = Mock()
+        mock_tool.scm().create_patch = Mock(return_value="Patch1\nMockPatch\n")
         mock_tool.checkout().modified_changelogs = Mock(return_value=[])
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
         # Make sure we're not calling expensive calls too often.
-        self.assertEqual(mock_tool.scm().create_patch.call_count, 0)
+        self.assertEqual(mock_tool.scm().create_patch.call_count, 1)
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
     def test_land_red_builders(self):

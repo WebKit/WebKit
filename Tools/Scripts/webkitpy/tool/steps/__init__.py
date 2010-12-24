@@ -56,4 +56,5 @@ from webkitpy.tool.steps.runtests import RunTests
 from webkitpy.tool.steps.suggestreviewers import SuggestReviewers
 from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
 from webkitpy.tool.steps.update import Update
+from webkitpy.tool.steps.validatechangelogs import ValidateChangeLogs
 from webkitpy.tool.steps.validatereviewer import ValidateReviewer

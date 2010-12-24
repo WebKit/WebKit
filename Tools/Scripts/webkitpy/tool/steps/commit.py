@@ -36,12 +36,6 @@ from webkitpy.tool.steps.options import Options
 
 
 class Commit(AbstractStep):
-    @classmethod
-    def options(cls):
-        return AbstractStep.options() + [
-            Options.git_commit,
-        ]
-
     def _commit_warning(self, error):
         working_directory_message = "" if error.working_directory_is_clean else " and working copy changes"
         return ('There are %s local commits%s. Everything will be committed as a single commit. '

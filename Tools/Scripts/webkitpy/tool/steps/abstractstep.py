@@ -52,6 +52,7 @@ class AbstractStep(object):
         "bug_title": lambda self, state: self._tool.bugs.fetch_bug(state["bug_id"]).title(),
         "changed_files": lambda self, state: self._tool.scm().changed_files(self._options.git_commit),
         "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit, changed_files=self._changed_files(state)),
+        # Absolute path to ChangeLog files.
         "changelogs": lambda self, state: self._tool.checkout().modified_changelogs(self._options.git_commit, changed_files=self._changed_files(state)),
     }
 

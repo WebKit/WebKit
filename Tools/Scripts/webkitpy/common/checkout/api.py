@@ -39,14 +39,14 @@ from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
 
 
-# This class represents the WebKit-specific parts of the checkout (like
-# ChangeLogs).
+# This class represents the WebKit-specific parts of the checkout (like ChangeLogs).
 # FIXME: Move a bunch of ChangeLog-specific processing from SCM to this object.
+# NOTE: All paths returned from this class should be absolute.
 class Checkout(object):
     def __init__(self, scm):
         self._scm = scm
 
-    def _is_path_to_changelog(self, path):
+    def is_path_to_changelog(self, path):
         return os.path.basename(path) == "ChangeLog"
 
     def _latest_entry_for_changelog_at_revision(self, changelog_path, revision):
@@ -59,7 +59,7 @@ class Checkout(object):
 
     def changelog_entries_for_revision(self, revision):
         changed_files = self._scm.changed_files_for_revision(revision)
-        return [self._latest_entry_for_changelog_at_revision(path, revision) for path in changed_files if self._is_path_to_changelog(path)]
+        return [self._latest_entry_for_changelog_at_revision(path, revision) for path in changed_files if self.is_path_to_changelog(path)]
 
     @memoized
     def commit_info_for_revision(self, revision):
@@ -96,10 +96,10 @@ class Checkout(object):
         return [path for path in absolute_paths if predicate(path)]
 
     def modified_changelogs(self, git_commit, changed_files=None):
-        return self._modified_files_matching_predicate(git_commit, self._is_path_to_changelog, changed_files=changed_files)
+        return self._modified_files_matching_predicate(git_commit, self.is_path_to_changelog, changed_files=changed_files)
 
     def modified_non_changelogs(self, git_commit, changed_files=None):
-        return self._modified_files_matching_predicate(git_commit, lambda path: not self._is_path_to_changelog(path), changed_files=changed_files)
+        return self._modified_files_matching_predicate(git_commit, lambda path: not self.is_path_to_changelog(path), changed_files=changed_files)
 
     def commit_message_for_this_commit(self, git_commit, changed_files=None):
         changelog_paths = self.modified_changelogs(git_commit, changed_files)

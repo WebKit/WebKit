@@ -67,6 +67,9 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
             log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
             return
 
-        os.chdir(self._tool.scm().checkout_root)
+        # cached_lookup("changelogs") is always absolute paths.
         for changelog_path in self.cached_lookup(state, "changelogs"):
             ChangeLog(changelog_path).set_reviewer(reviewer)
+
+        # Tell the world that we just changed something on disk so that the cached diff is invalidated.
+        self.did_modify_checkout(state)

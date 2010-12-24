@@ -95,6 +95,7 @@ class Land(AbstractSequencedCommand):
         steps.EnsureBuildersAreGreen,
         steps.UpdateChangeLogsWithReviewer,
         steps.ValidateReviewer,
+        steps.ValidateChangeLogs, # We do this after UpdateChangeLogsWithReviewer to avoid not having to cache the diff twice.
         steps.Build,
         steps.RunTests,
         steps.Commit,
@@ -257,6 +258,7 @@ class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
         steps.CleanWorkingDirectory,
         steps.Update,
         steps.ApplyPatch,
+        steps.ValidateChangeLogs,
         steps.ValidateReviewer,
         steps.Build,
         steps.RunTests,

@@ -118,6 +118,8 @@ class DiffFile(object):
         self.lines.append((deleted_line_number, new_line_number, line))
 
 
+# If this is going to be called DiffParser, it should be a re-useable parser.
+# Otherwise we should rename it to ParsedDiff or just Diff.
 class DiffParser(object):
     """A parser for a patch file.
 
@@ -125,16 +127,18 @@ class DiffParser(object):
     a DiffFile object.
     """
 
-    # FIXME: This function is way too long and needs to be broken up.
     def __init__(self, diff_input):
         """Parses a diff.
 
         Args:
           diff_input: An iterable object.
         """
-        state = _INITIAL_STATE
+        self.files = self._parse_into_diff_files(diff_input)
 
-        self.files = {}
+    # FIXME: This function is way too long and needs to be broken up.
+    def _parse_into_diff_files(self, diff_input):
+        files = {}
+        state = _INITIAL_STATE
         current_file = None
         old_diff_line = None
         new_diff_line = None
@@ -148,7 +152,7 @@ class DiffParser(object):
             if file_declaration:
                 filename = file_declaration.group('FilePath')
                 current_file = DiffFile(filename)
-                self.files[filename] = current_file
+                files[filename] = current_file
                 state = _DECLARED_FILE_PATH
                 continue
 
@@ -179,3 +183,4 @@ class DiffParser(object):
                 else:
                     _log.error('Unexpected diff format when parsing a '
                                'chunk: %r' % line)
+        return files

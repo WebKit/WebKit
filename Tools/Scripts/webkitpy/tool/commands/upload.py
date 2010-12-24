@@ -196,6 +196,7 @@ class Post(AbstractPatchUploadingCommand):
     help_text = "Attach the current working directory diff to a bug as a patch file"
     argument_names = "[BUGID]"
     steps = [
+        steps.ValidateChangeLogs,
         steps.CheckStyle,
         steps.ConfirmDiff,
         steps.ObsoletePatches,
@@ -215,6 +216,7 @@ class LandSafely(AbstractPatchUploadingCommand):
     show_in_main_help = True
     steps = [
         steps.UpdateChangeLogsWithReviewer,
+        steps.ValidateChangeLogs,
         steps.ObsoletePatches,
         steps.PostDiffForCommit,
     ]
@@ -241,6 +243,7 @@ class Upload(AbstractPatchUploadingCommand):
     argument_names = "[BUGID]"
     show_in_main_help = True
     steps = [
+        steps.ValidateChangeLogs,
         steps.CheckStyle,
         steps.PromptForBugOrTitle,
         steps.CreateBug,
