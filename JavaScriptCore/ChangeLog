@@ -1,3 +1,14 @@
+2010-12-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [WINCE] Add CPU(MIPS) detection
+        https://bugs.webkit.org/show_bug.cgi?id=51342
+
+        WinCE usually defines MIPS and _MIPS_.
+
+        * wtf/Platform.h:
+
 2010-12-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
