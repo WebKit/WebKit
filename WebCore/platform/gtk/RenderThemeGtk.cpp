@@ -1006,6 +1006,19 @@ bool RenderThemeGtk::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pai
     paintInfo.context->fillRoundedRect(r, IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), m_sliderThumbColor, ColorSpaceDeviceRGB);
     return false;
 }
+
+String RenderThemeGtk::formatMediaControlsCurrentTime(float currentTime, float duration) const
+{
+    return formatMediaControlsTime(currentTime) + " / " + formatMediaControlsTime(duration);
+}
+
+bool RenderThemeGtk::paintMediaCurrentTime(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    GraphicsContext* context = paintInfo.context;
+
+    context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+    return false;
+}
 #endif
 
 #if ENABLE(PROGRESS_TAG)

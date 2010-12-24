@@ -81,6 +81,7 @@ public:
 
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
+    virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
 #endif
 
     void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing) const;
@@ -147,6 +148,7 @@ protected:
     virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
 #if ENABLE(PROGRESS_TAG)

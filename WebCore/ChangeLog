@@ -1,3 +1,17 @@
+2010-12-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Show current time / total in media player
+        https://bugs.webkit.org/show_bug.cgi?id=51535
+
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::formatMediaControlsCurrentTime):
+        (WebCore::RenderThemeGtk::paintMediaCurrentTime):
+        * platform/gtk/RenderThemeGtk.h:
+
 2010-12-24  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Eric Seidel.

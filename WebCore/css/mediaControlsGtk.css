@@ -49,6 +49,18 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     height: 20px;
 }
 
+audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
+    -webkit-appearance: media-current-time-display;
+    -webkit-user-select: none;
+    display: inline-block;
+    height: 20px;
+
+    padding: 5px;
+
+    text-align: center;
+    font-size: 10px;
+}
+
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     width: 20px;
     height: 20px;
