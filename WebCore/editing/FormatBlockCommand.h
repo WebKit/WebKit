@@ -37,6 +37,8 @@ public:
     {
         return adoptRef(new FormatBlockCommand(document, tagName));
     }
+    
+    virtual bool preservesTypingStyle() const { return true; }
 
     static Element* elementForFormatBlockCommand(Range*);
     bool didApply() const { return m_didApply; }

@@ -1,3 +1,17 @@
+2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        FormatBlock doesn't preserve typing style but it should
+        https://bugs.webkit.org/show_bug.cgi?id=51140
+
+        Fixed the bug by making preserveTypingStyle return true.
+
+        Test: editing/execCommand/format-block-typing-style.html
+
+        * editing/FormatBlockCommand.h:
+        (WebCore::FormatBlockCommand::preservesTypingStyle):
+
 2010-12-23  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

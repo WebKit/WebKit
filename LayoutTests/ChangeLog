@@ -1,5 +1,17 @@
 2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        FormatBlock doesn't preserve typing style but it should
+        https://bugs.webkit.org/show_bug.cgi?id=51140
+
+        Added a test to type text after bolding the typing style and executing a FormatBlock command.
+        Because FormatBlock command preserves typing style, the typed text should be in bold.
+
+        * editing/execCommand/format-block-typing-style.html: Added.
+
+2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Qt rebaselines for r74593.
 
         * platform/qt/editing/deleting/delete-3608445-fix-expected.txt:
