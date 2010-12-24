@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "V8CustomEventListener.h"
+#include "V8EventListener.h"
 
 #include "V8Proxy.h"
 

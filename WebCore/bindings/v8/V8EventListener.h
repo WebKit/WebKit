@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8CustomEventListener_h
-#define V8CustomEventListener_h
+#ifndef V8EventListener_h
+#define V8EventListener_h
 
 #include "V8AbstractEventListener.h"
 #include <v8.h>
@@ -60,4 +60,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // V8CustomEventListener_h
+#endif // V8EventListener_h

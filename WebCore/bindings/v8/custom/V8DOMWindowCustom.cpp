@@ -52,7 +52,7 @@
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
 #include "V8BindingState.h"
-#include "V8CustomEventListener.h"
+#include "V8EventListener.h"
 #include "V8GCForContextDispose.h"
 #include "V8HiddenPropertyName.h"
 #include "V8HTMLAudioElementConstructor.h"

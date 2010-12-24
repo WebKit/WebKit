@@ -33,7 +33,7 @@
 
 #if ENABLE(WORKERS)
 
-#include "V8CustomEventListener.h"
+#include "V8EventListener.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 

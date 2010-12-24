@@ -1,3 +1,25 @@
+2010-12-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        [V8] Rename V8CustomEventListener.{h,cpp} to V8EventListener.{h,cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=51595
+
+        * WebCore.gypi:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8EventListener.cpp: Renamed from WebCore/bindings/v8/custom/V8CustomEventListener.cpp.
+        (WebCore::V8EventListener::V8EventListener):
+        (WebCore::V8EventListener::getListenerFunction):
+        (WebCore::V8EventListener::callListenerFunction):
+        * bindings/v8/V8EventListener.h: Renamed from WebCore/bindings/v8/custom/V8CustomEventListener.h.
+        (WebCore::V8EventListener::create):
+        * bindings/v8/V8EventListenerList.h:
+        * bindings/v8/V8WorkerContextEventListener.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+
 2010-12-24  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.

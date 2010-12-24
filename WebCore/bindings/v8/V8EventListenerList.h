@@ -31,7 +31,7 @@
 #ifndef V8EventListenerList_h
 #define V8EventListenerList_h
 
-#include "V8CustomEventListener.h"
+#include "V8EventListener.h"
 #include "V8HiddenPropertyName.h"
 
 #include <v8.h>
