@@ -1,3 +1,12 @@
+2010-12-23  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Bug 51539 - update iexploder scripts to point to new location
+
+        * Scripts/run-iexploder-tests:
+        * Scripts/update-iexploder-cssproperties:
+
 2010-12-23  Evan Martin  <evan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
