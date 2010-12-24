@@ -50,7 +50,6 @@
 #include "SharedWorkerRepository.h"
 #include "Storage.h"
 #include "V8Binding.h"
-#include "V8BindingDOMWindow.h"
 #include "V8BindingMacros.h"
 #include "V8BindingState.h"
 #include "V8CustomEventListener.h"

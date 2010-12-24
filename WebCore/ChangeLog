@@ -1,3 +1,9 @@
+2010-12-23  Adam Barth  <abarth@webkit.org>
+
+        Remove include of non-existant file.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+
 2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
