@@ -937,7 +937,7 @@ bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element*
 
 static const unsigned cStyleSearchThreshold = 10;
 
-Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned depth)
+Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned depth) const
 {
     if (parent && parent->isStyledElement()) {
         StyledElement* p = static_cast<StyledElement*>(parent);
@@ -966,7 +966,7 @@ Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned depth)
     return 0;
 }
 
-bool CSSStyleSelector::canShareStyleWithElement(Node* n)
+bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
 {
     if (n->isStyledElement()) {
         StyledElement* s = static_cast<StyledElement*>(n);
@@ -1051,7 +1051,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n)
     return false;
 }
 
-ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
+ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle() const
 {
     if (m_styledElement && !m_styledElement->inlineStyleDecl() && !m_styledElement->hasID() && !m_styledElement->document()->usesSiblingRules()) {
         // Check previous siblings.
@@ -2119,6 +2119,7 @@ static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
 
 bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
+    ASSERT(e);
     if (!e)
         return false;
 
@@ -5820,12 +5821,12 @@ bool CSSStyleSelector::pageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrim
     return true;
 }
 
-Length CSSStyleSelector::mmLength(double mm)
+Length CSSStyleSelector::mmLength(double mm) const
 {
     return Length(CSSPrimitiveValue::create(mm, CSSPrimitiveValue::CSS_MM)->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
 }
 
-Length CSSStyleSelector::inchLength(double inch)
+Length CSSStyleSelector::inchLength(double inch) const
 {
     return Length(CSSPrimitiveValue::create(inch, CSSPrimitiveValue::CSS_IN)->computeLengthIntForLength(style(), m_rootElementStyle), Fixed);
 }
@@ -6566,7 +6567,7 @@ static Color colorForCSSValue(int cssValueId)
     return RenderTheme::defaultTheme()->systemColor(cssValueId);
 }
 
-Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue)
+Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue) const
 {
     Color col;
     int ident = primitiveValue->getIdent();
@@ -6588,7 +6589,7 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
     return col;
 }
 
-bool CSSStyleSelector::hasSelectorForAttribute(const AtomicString &attrname)
+bool CSSStyleSelector::hasSelectorForAttribute(const AtomicString &attrname) const
 {
     return m_selectorAttrs.contains(attrname.impl());
 }

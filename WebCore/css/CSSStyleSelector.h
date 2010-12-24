@@ -108,9 +108,9 @@ public:
     private:
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
         void initElement(Element*);
-        ALWAYS_INLINE RenderStyle* locateSharedStyle();
-        Node* locateCousinList(Element* parent, unsigned depth = 1);
-        bool canShareStyleWithElement(Node*);
+        ALWAYS_INLINE RenderStyle* locateSharedStyle() const;
+        Node* locateCousinList(Element* parent, unsigned depth = 1) const;
+        bool canShareStyleWithElement(Node*) const;
 
         RenderStyle* style() const { return m_style.get(); }
 
@@ -147,11 +147,11 @@ public:
         static float getComputedSizeFromSpecifiedSize(Document*, RenderStyle*, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules);
 
     public:
-        Color getColorFromPrimitiveValue(CSSPrimitiveValue*);
+        Color getColorFromPrimitiveValue(CSSPrimitiveValue*) const;
 
-        bool hasSelectorForAttribute(const AtomicString&);
+        bool hasSelectorForAttribute(const AtomicString&) const;
  
-        CSSFontSelector* fontSelector() { return m_fontSelector.get(); }
+        CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
 
         // Checks if a compound selector (which can consist of multiple simple selectors) matches the current element.
         bool checkSelector(CSSSelector*);
@@ -266,8 +266,8 @@ public:
         void applyProperty(int id, CSSValue*);
         void applyPageSizeProperty(CSSValue*);
         bool pageSizeFromName(CSSPrimitiveValue*, CSSPrimitiveValue*, Length& width, Length& height);
-        Length mmLength(double mm);
-        Length inchLength(double inch);
+        Length mmLength(double mm) const;
+        Length inchLength(double inch) const;
 #if ENABLE(SVG)
         void applySVGProperty(int id, CSSValue*);
 #endif

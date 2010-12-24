@@ -1,3 +1,25 @@
+2010-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CSSStyleSelector cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=51597
+
+        Make some methods const. Add assertion to checkOneSelector, with the
+        intention of later removing the if (!e) check (this is hot code).
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::locateCousinList):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::CSSStyleSelector::mmLength):
+        (WebCore::CSSStyleSelector::inchLength):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        (WebCore::CSSStyleSelector::hasSelectorForAttribute):
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::fontSelector):
+
 2010-12-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
