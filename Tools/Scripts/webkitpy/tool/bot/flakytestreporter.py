@@ -102,7 +102,9 @@ class FlakyTestReporter(object):
 
 The bots will update this with information from each new failure.
 
-If you would like to track this test fix with another bug, please close this bug as a duplicate.
+If you believe this bug to be fixed or invalid, feel free to close.  The bots will re-open if the flake re-occurs.
+
+If you would like to track this test fix with another bug, please close this bug as a duplicate.  The bots will follow the duplicate chain when making future comments.
 """ % format_values
 
         master_flake_bug = 50856  # MASTER: Flaky tests found by the commit-queue

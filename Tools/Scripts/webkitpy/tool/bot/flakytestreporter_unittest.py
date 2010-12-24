@@ -75,7 +75,9 @@ FLAKE_MESSAGE
 
 The bots will update this with information from each new failure.
 
-If you would like to track this test fix with another bug, please close this bug as a duplicate.
+If you believe this bug to be fixed or invalid, feel free to close.  The bots will re-open if the flake re-occurs.
+
+If you would like to track this test fix with another bug, please close this bug as a duplicate.  The bots will follow the duplicate chain when making future comments.
 
 component: Tools / Tests
 cc: test@test.com
@@ -115,7 +117,9 @@ Bot: mock-bot-id  Port: MockPort  Platform: MockPlatform 1.0
 
 The bots will update this with information from each new failure.
 
-If you would like to track this test fix with another bug, please close this bug as a duplicate.
+If you believe this bug to be fixed or invalid, feel free to close.  The bots will re-open if the flake re-occurs.
+
+If you would like to track this test fix with another bug, please close this bug as a duplicate.  The bots will follow the duplicate chain when making future comments.
 
 component: Tools / Tests
 cc: abarth@webkit.org
