@@ -25,7 +25,6 @@
  */
 
 #include "config.h"
-#include "RegexCompiler.h"
 
 #include "RegexInterpreter.h"
 #include "RegexPattern.h"
@@ -937,7 +936,7 @@ private:
 };
 
 
-const char* compileRegex(const UString& patternString, RegexPattern& pattern)
+static const char* compileRegex(const UString& patternString, RegexPattern& pattern)
 {
     RegexPatternConstructor constructor(pattern);
 
@@ -970,5 +969,23 @@ const char* compileRegex(const UString& patternString, RegexPattern& pattern)
     return 0;
 };
 
+RegexPattern::RegexPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error)
+    : m_ignoreCase(ignoreCase)
+    , m_multiline(multiline)
+    , m_containsBackreferences(false)
+    , m_containsBeginChars(false)
+    , m_containsBOL(false)
+    , m_numSubpatterns(0)
+    , m_maxBackReference(0)
+    , newlineCached(0)
+    , digitsCached(0)
+    , spacesCached(0)
+    , wordcharCached(0)
+    , nondigitsCached(0)
+    , nonspacesCached(0)
+    , nonwordcharCached(0)
+{
+    *error = compileRegex(pattern, *this);
+}
 
 } }

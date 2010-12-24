@@ -27,7 +27,6 @@
 #include "config.h"
 #include "RegexInterpreter.h"
 
-#include "RegexCompiler.h"
 #include "RegexPattern.h"
 #include <wtf/BumpPointerAllocator.h>
 

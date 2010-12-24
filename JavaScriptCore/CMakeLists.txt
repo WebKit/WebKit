@@ -166,7 +166,7 @@ SET(JavaScriptCore_SOURCES
     runtime/TimeoutChecker.cpp
     runtime/UString.cpp
 
-    yarr/RegexCompiler.cpp
+    yarr/RegexPattern.cpp
     yarr/RegexInterpreter.cpp
     yarr/RegexJIT.cpp
 
@@ -219,7 +219,7 @@ ADD_CUSTOM_COMMAND(
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/create_regex_tables
     COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/create_regex_tables > ${DERIVED_SOURCES_DIR}/RegExpJitTables.h
     VERBATIM)
-ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/yarr/RegexCompiler.cpp ${DERIVED_SOURCES_DIR}/RegExpJitTables.h)
+ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/yarr/RegexPattern.cpp ${DERIVED_SOURCES_DIR}/RegExpJitTables.h)
 
 
 

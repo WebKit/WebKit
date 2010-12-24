@@ -491,13 +491,12 @@
             'wtf/win/MainThreadWin.cpp',
             'wtf/win/OwnPtrWin.cpp',
             'wtf/wx/MainThreadWx.cpp',
-            'yarr/RegexCompiler.cpp',
-            'yarr/RegexCompiler.h',
             'yarr/RegexInterpreter.cpp',
             'yarr/RegexInterpreter.h',
             'yarr/RegexJIT.cpp',
             'yarr/RegexJIT.h',
             'yarr/RegexParser.h',
+            'yarr/RegexPattern.cpp',
             'yarr/RegexPattern.h',
         ]
     }

@@ -1,3 +1,28 @@
+2010-12-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename RegexCompiler.cpp to RegexPattern.cpp.
+        Implicitly call compileRegex from RegexPattern's constructor.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        * yarr/RegexCompiler.cpp: Removed.
+        * yarr/RegexCompiler.h: Removed.
+        * yarr/RegexInterpreter.cpp:
+        * yarr/RegexJIT.cpp:
+        * yarr/RegexPattern.cpp: Copied from JavaScriptCore/yarr/RegexCompiler.cpp.
+        (JSC::Yarr::compileRegex):
+        (JSC::Yarr::RegexPattern::RegexPattern):
+        * yarr/RegexPattern.h:
+
 2010-12-23  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for WinCE after r74360.

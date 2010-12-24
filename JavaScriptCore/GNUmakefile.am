@@ -548,13 +548,12 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/VMTags.h \
 	JavaScriptCore/wtf/WTFThreadData.cpp \
 	JavaScriptCore/wtf/WTFThreadData.h \
-	JavaScriptCore/yarr/RegexCompiler.cpp \
-	JavaScriptCore/yarr/RegexCompiler.h \
 	JavaScriptCore/yarr/RegexInterpreter.cpp \
 	JavaScriptCore/yarr/RegexInterpreter.h \
 	JavaScriptCore/yarr/RegexJIT.cpp \
 	JavaScriptCore/yarr/RegexJIT.h \
 	JavaScriptCore/yarr/RegexParser.h \
+	JavaScriptCore/yarr/RegexPattern.cpp \
 	JavaScriptCore/yarr/RegexPattern.h
 
 if TARGET_WIN32

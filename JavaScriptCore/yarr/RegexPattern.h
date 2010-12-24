@@ -30,6 +30,8 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
+#include <UString.h>
+
 namespace JSC { namespace Yarr {
 
 #define RegexStackSpaceForBackTrackInfoPatternCharacter 1 // Only for !fixed quantifiers.
@@ -315,23 +317,7 @@ struct BeginChar {
 };
 
 struct RegexPattern {
-    RegexPattern(bool ignoreCase, bool multiline)
-        : m_ignoreCase(ignoreCase)
-        , m_multiline(multiline)
-        , m_containsBackreferences(false)
-        , m_containsBeginChars(false)
-        , m_containsBOL(false)
-        , m_numSubpatterns(0)
-        , m_maxBackReference(0)
-        , newlineCached(0)
-        , digitsCached(0)
-        , spacesCached(0)
-        , wordcharCached(0)
-        , nondigitsCached(0)
-        , nonspacesCached(0)
-        , nonwordcharCached(0)
-    {
-    }
+    RegexPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error);
 
     ~RegexPattern()
     {

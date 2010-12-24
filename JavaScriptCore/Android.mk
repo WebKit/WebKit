@@ -189,7 +189,7 @@ LOCAL_SRC_FILES := \
 	\
 	wtf/unicode/icu/CollatorICU.cpp \
 	\
-	yarr/RegexCompiler.cpp \
+	yarr/RegexPattern.cpp \
 	yarr/RegexInterpreter.cpp \
 	yarr/RegexJIT.cpp
 

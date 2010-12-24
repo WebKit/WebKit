@@ -207,7 +207,7 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/TimeoutChecker.cpp \
     runtime/UString.cpp \
-    yarr/RegexCompiler.cpp \
+    yarr/RegexPattern.cpp \
     yarr/RegexInterpreter.cpp \
     yarr/RegexJIT.cpp
 

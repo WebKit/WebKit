@@ -1652,14 +1652,6 @@
 			Name="yarr"
 			>
 			<File
-				RelativePath="..\..\yarr\RegexCompiler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\yarr\RegexCompiler.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\yarr\RegexInterpreter.cpp"
 				>
 			</File>
@@ -1677,6 +1669,10 @@
 			</File>
 			<File
 				RelativePath="..\..\yarr\RegexParser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\RegexPattern.cpp"
 				>
 			</File>
 			<File

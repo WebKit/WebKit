@@ -29,7 +29,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 
-#include "yarr/RegexCompiler.h"
 #include "yarr/RegexJIT.h"
 #include "yarr/RegexInterpreter.h"
 #include "yarr/RegexPattern.h"
@@ -83,9 +82,8 @@ PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patte
 
 RegExp::RegExpState RegExp::compile(JSGlobalData* globalData)
 {
-    Yarr::RegexPattern pattern(ignoreCase(), multiline());
-
-    if ((m_constructionError = Yarr::compileRegex(m_patternString, pattern)))
+    Yarr::RegexPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
+    if (m_constructionError)
         return ParseError;
 
     m_numSubpatterns = pattern.m_numSubpatterns;

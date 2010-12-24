@@ -226,6 +226,7 @@
 		868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868BFA15117CF19900B908B1 /* WTFString.cpp */; };
 		868BFA18117CF19900B908B1 /* WTFString.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA16117CF19900B908B1 /* WTFString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA5F117D048200B908B1 /* StaticConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		868D81A212C428CE0093DC84 /* RegexPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 868D81A112C428CE0093DC84 /* RegexPattern.cpp */; };
 		8690231512092D5C00630AF9 /* PageReservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8690231412092D5C00630AF9 /* PageReservation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869D04AF1193B54D00803475 /* CachedTranscendentalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 869D04AE1193B54D00803475 /* CachedTranscendentalFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 869EBCB60E8C6D4A008722CC /* ResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -259,8 +260,6 @@
 		86DB64640F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */; };
 		86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E116B00FE75AC800B512BC /* CodeLocation.h */; };
 		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
-		86EAC4950F93E8D1008EC948 /* RegexCompiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */; };
-		86EAC4960F93E8D1008EC948 /* RegexCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EAC48E0F93E8D1008EC948 /* RegexCompiler.h */; };
 		86EAC4970F93E8D1008EC948 /* RegexInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC48F0F93E8D1008EC948 /* RegexInterpreter.cpp */; };
 		86EAC4980F93E8D1008EC948 /* RegexInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EAC4900F93E8D1008EC948 /* RegexInterpreter.h */; };
 		86EAC4990F93E8D1008EC948 /* RegexJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EAC4910F93E8D1008EC948 /* RegexJIT.cpp */; };
@@ -845,6 +844,7 @@
 		868BFA15117CF19900B908B1 /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WTFString.cpp; path = text/WTFString.cpp; sourceTree = "<group>"; };
 		868BFA16117CF19900B908B1 /* WTFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WTFString.h; path = text/WTFString.h; sourceTree = "<group>"; };
 		868BFA5F117D048200B908B1 /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
+		868D81A112C428CE0093DC84 /* RegexPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexPattern.cpp; path = yarr/RegexPattern.cpp; sourceTree = "<group>"; };
 		8690231412092D5C00630AF9 /* PageReservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageReservation.h; sourceTree = "<group>"; };
 		869D04AE1193B54D00803475 /* CachedTranscendentalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTranscendentalFunction.h; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
@@ -878,8 +878,6 @@
 		86DB64630F95C6FC00D7D921 /* ExecutableAllocatorFixedVMPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocatorFixedVMPool.cpp; sourceTree = "<group>"; };
 		86E116B00FE75AC800B512BC /* CodeLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeLocation.h; sourceTree = "<group>"; };
 		86E85538111B9968001AF51E /* JSStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringBuilder.h; sourceTree = "<group>"; };
-		86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexCompiler.cpp; path = yarr/RegexCompiler.cpp; sourceTree = "<group>"; };
-		86EAC48E0F93E8D1008EC948 /* RegexCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexCompiler.h; path = yarr/RegexCompiler.h; sourceTree = "<group>"; };
 		86EAC48F0F93E8D1008EC948 /* RegexInterpreter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexInterpreter.cpp; path = yarr/RegexInterpreter.cpp; sourceTree = "<group>"; };
 		86EAC4900F93E8D1008EC948 /* RegexInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexInterpreter.h; path = yarr/RegexInterpreter.h; sourceTree = "<group>"; };
 		86EAC4910F93E8D1008EC948 /* RegexJIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegexJIT.cpp; path = yarr/RegexJIT.cpp; sourceTree = "<group>"; };
@@ -1892,14 +1890,13 @@
 		86EAC48C0F93E8B9008EC948 /* yarr */ = {
 			isa = PBXGroup;
 			children = (
-				86EAC48D0F93E8D1008EC948 /* RegexCompiler.cpp */,
-				86EAC48E0F93E8D1008EC948 /* RegexCompiler.h */,
 				86EAC48F0F93E8D1008EC948 /* RegexInterpreter.cpp */,
 				86EAC4900F93E8D1008EC948 /* RegexInterpreter.h */,
 				86EAC4910F93E8D1008EC948 /* RegexJIT.cpp */,
 				86EAC4920F93E8D1008EC948 /* RegexJIT.h */,
 				86EAC4930F93E8D1008EC948 /* RegexParser.h */,
 				86EAC4940F93E8D1008EC948 /* RegexPattern.h */,
+				868D81A112C428CE0093DC84 /* RegexPattern.cpp */,
 			);
 			name = yarr;
 			sourceTree = "<group>";
@@ -2275,7 +2272,6 @@
 				90D3469C0E285280009492EE /* RefCountedLeakCounter.h in Headers */,
 				BC18C4580E16F5CD00B34460 /* RefPtr.h in Headers */,
 				BC18C4590E16F5CD00B34460 /* RefPtrHashMap.h in Headers */,
-				86EAC4960F93E8D1008EC948 /* RegexCompiler.h in Headers */,
 				86EAC4980F93E8D1008EC948 /* RegexInterpreter.h in Headers */,
 				86EAC49A0F93E8D1008EC948 /* RegexJIT.h in Headers */,
 				BC18C45A0E16F5CD00B34460 /* RegExp.h in Headers */,
@@ -2800,13 +2796,13 @@
 				14469DE9107EC7E700650446 /* PrototypeFunction.cpp in Sources */,
 				088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */,
 				905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */,
-				86EAC4950F93E8D1008EC948 /* RegexCompiler.cpp in Sources */,
 				86EAC4970F93E8D1008EC948 /* RegexInterpreter.cpp in Sources */,
 				86EAC4990F93E8D1008EC948 /* RegexJIT.cpp in Sources */,
 				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
 				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
 				14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */,
 				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,
+				868D81A212C428CE0093DC84 /* RegexPattern.cpp in Sources */,
 				14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */,
 				1428083A107EC0750013E7B2 /* RegisterFile.cpp in Sources */,
 				86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */,
