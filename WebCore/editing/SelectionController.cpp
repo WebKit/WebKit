@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SelectionController.h"
 
+#include "CharacterData.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
 #include "Editor.h"
@@ -186,13 +187,13 @@ static bool removingNodeRemovesPosition(Node* node, const Position& position)
 {
     if (!position.node())
         return false;
-        
+
     if (position.node() == node)
         return true;
-    
+
     if (!node->isElementNode())
         return false;
-    
+
     Element* element = static_cast<Element*>(node);
     return element->contains(position.node()) || element->contains(position.node()->shadowAncestorNode());
 }
@@ -201,17 +202,18 @@ void SelectionController::nodeWillBeRemoved(Node *node)
 {
     if (isNone())
         return;
-        
+
     // There can't be a selection inside a fragment, so if a fragment's node is being removed,
     // the selection in the document that created the fragment needs no adjustment.
     if (node && highestAncestor(node)->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
         return;
-    
-    bool baseRemoved = removingNodeRemovesPosition(node, m_selection.base());
-    bool extentRemoved = removingNodeRemovesPosition(node, m_selection.extent());
-    bool startRemoved = removingNodeRemovesPosition(node, m_selection.start());
-    bool endRemoved = removingNodeRemovesPosition(node, m_selection.end());
-    
+
+    respondToNodeModification(node, removingNodeRemovesPosition(node, m_selection.base()), removingNodeRemovesPosition(node, m_selection.extent()),
+        removingNodeRemovesPosition(node, m_selection.start()), removingNodeRemovesPosition(node, m_selection.end()));
+}
+
+void SelectionController::respondToNodeModification(Node* node, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved)
+{
     bool clearRenderTreeSelection = false;
     bool clearDOMTreeSelection = false;
 
@@ -228,13 +230,16 @@ void SelectionController::nodeWillBeRemoved(Node *node)
             m_selection.setWithoutValidation(m_selection.start(), m_selection.end());
         else
             m_selection.setWithoutValidation(m_selection.end(), m_selection.start());
-    // FIXME: This could be more efficient if we had an isNodeInRange function on Ranges.
-    } else if (comparePositions(m_selection.start(), Position(node, 0)) == -1 && comparePositions(m_selection.end(), Position(node, 0)) == 1) {
-        // If we did nothing here, when this node's renderer was destroyed, the rect that it 
-        // occupied would be invalidated, but, selection gaps that change as a result of 
-        // the removal wouldn't be invalidated.
-        // FIXME: Don't do so much unnecessary invalidation.
-        clearRenderTreeSelection = true;
+    } else if (m_selection.firstRange()) {
+        ExceptionCode ec = 0;
+        Range::CompareResults compareResult = m_selection.firstRange()->compareNode(node, ec);
+        if (!ec && (compareResult == Range::NODE_BEFORE_AND_AFTER || compareResult == Range::NODE_INSIDE)) {
+            // If we did nothing here, when this node's renderer was destroyed, the rect that it 
+            // occupied would be invalidated, but, selection gaps that change as a result of 
+            // the removal wouldn't be invalidated.
+            // FIXME: Don't do so much unnecessary invalidation.
+            clearRenderTreeSelection = true;
+        }
     }
 
     if (clearRenderTreeSelection) {
@@ -247,7 +252,54 @@ void SelectionController::nodeWillBeRemoved(Node *node)
     if (clearDOMTreeSelection)
         setSelection(VisibleSelection(), false, false);
 }
-    
+
+enum EndPointType { EndPointIsStart, EndPointIsEnd };
+
+static bool shouldRemovePositionAfterAdoptingTextReplacement(Position& position, EndPointType type, CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
+{
+    if (!position.anchorNode() || position.anchorNode() != node || position.anchorType() != Position::PositionIsOffsetInAnchor)
+        return false;
+
+    if (static_cast<unsigned>(position.offsetInContainerNode()) > offset && static_cast<unsigned>(position.offsetInContainerNode()) < offset + oldLength)
+        return true;
+
+    if ((type == EndPointIsStart && static_cast<unsigned>(position.offsetInContainerNode()) >= offset + oldLength)
+        || (type == EndPointIsEnd && static_cast<unsigned>(position.offsetInContainerNode()) > offset + oldLength))
+        position.moveToOffset(position.offsetInContainerNode() - oldLength + newLength);
+
+    return false;
+}
+
+void SelectionController::textWillBeReplaced(CharacterData* node, unsigned offset, unsigned oldLength, unsigned newLength)
+{
+    // The fragment check is a performance optimization. See http://trac.webkit.org/changeset/30062.
+    if (isNone() || !node || highestAncestor(node)->nodeType() == Node::DOCUMENT_FRAGMENT_NODE)
+        return;
+
+    Position base = m_selection.base();
+    Position extent = m_selection.extent();
+    Position start = m_selection.start();
+    Position end = m_selection.end();
+    bool shouldRemoveBase = shouldRemovePositionAfterAdoptingTextReplacement(base, m_selection.isBaseFirst() ? EndPointIsStart : EndPointIsEnd, node, offset, oldLength, newLength);
+    bool shouldRemoveExtent = shouldRemovePositionAfterAdoptingTextReplacement(extent, m_selection.isBaseFirst() ? EndPointIsEnd : EndPointIsStart, node, offset, oldLength, newLength);
+    bool shouldRemoveStart = shouldRemovePositionAfterAdoptingTextReplacement(start, EndPointIsStart, node, offset, oldLength, newLength);
+    bool shouldRemoveEnd = shouldRemovePositionAfterAdoptingTextReplacement(end, EndPointIsEnd, node, offset, oldLength, newLength);
+
+    if ((base != m_selection.base() || extent != m_selection.extent() || start != m_selection.start() || end != m_selection.end())
+        && !shouldRemoveStart && !shouldRemoveEnd) {
+        if (!shouldRemoveBase && !shouldRemoveExtent)
+            m_selection.setWithoutValidation(base, extent);
+        else {
+            if (m_selection.isBaseFirst())
+                m_selection.setWithoutValidation(m_selection.start(), m_selection.end());
+            else
+                m_selection.setWithoutValidation(m_selection.end(), m_selection.start());
+        }
+    }
+
+    respondToNodeModification(node, shouldRemoveBase, shouldRemoveExtent, shouldRemoveStart, shouldRemoveEnd);
+}
+
 void SelectionController::setIsDirectional(bool isDirectional)
 {
     m_isDirectional = !m_frame || m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional() || isDirectional;

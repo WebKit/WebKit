@@ -1,3 +1,43 @@
+2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Selection becomes stale when CharacterData is manipulated directly
+        https://bugs.webkit.org/show_bug.cgi?id=51389
+
+        The bug was caused by SelectionController's not adjusting selection when CharacterData's
+        m_data is modified by its API.
+
+        Fixed the bug by adding textWillBeReplaced to SelectionController and calling it in
+        CharacterData::textWillBeReplaced. Added newLength to setDataAndUpdate, which is passed to
+        textWillBeReplaced because inserting, replacing, or removing data may require moving
+        the offset of the selection end points (done by shouldRemovePositionAfterAdoptingTextReplacement).
+
+        Also fixed the condition for determining whether or not a node intersects the selection
+        in respondToNodeModification, which is extracted from nodeWillBeRemoved. The old condition
+        failed to recognize certain cases when selection started and ended with non-zero offsets.
+
+        Tests: editing/selection/character-data-mutation-crash.html
+               editing/selection/character-data-mutation.html
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::setData): Passes newLegnth to setDataAndUpdate.
+        (WebCore::CharacterData::appendData): Ditto.
+        (WebCore::CharacterData::insertData): Ditto.
+        (WebCore::CharacterData::deleteData): Ditto.
+        (WebCore::CharacterData::replaceData): Ditto.
+        (WebCore::CharacterData::setDataAndUpdate): Added newLegnth to the argument list,
+        and renamed lengthOfReplacedData to oldLength; calls textWillBeReplaced.
+        * dom/CharacterData.h:
+        * editing/SelectionController.cpp:
+        (WebCore::removingNodeRemovesPosition): Removed indentations from blank lines.
+        (WebCore::SelectionController::nodeWillBeRemoved): Calls nodeWillBeRemoved.
+        (WebCore::SelectionController::respondToNodeModification): Extracted from nodeWillBeRemoved;
+        fixed the logic to figure out whether a node is inside the range or not.
+        (WebCore::shouldRemovePositionAfterAdoptingTextReplacement): Added.
+        (WebCore::SelectionController::textWillBeReplaced): Added.
+        * editing/SelectionController.h:
+
 2010-12-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

@@ -38,7 +38,7 @@ void CharacterData::setData(const String& data, ExceptionCode&)
 
     unsigned oldLength = length();
 
-    setDataAndUpdate(dataImpl, 0, oldLength);
+    setDataAndUpdate(dataImpl, 0, oldLength, dataImpl->length());
     document()->textRemoved(this, 0, oldLength);
 }
 
@@ -71,7 +71,7 @@ void CharacterData::appendData(const String& data, ExceptionCode&)
     String newStr = m_data;
     newStr.append(data);
 
-    setDataAndUpdate(newStr.impl(), m_data->length(), 0);
+    setDataAndUpdate(newStr.impl(), m_data->length(), 0, data.length());
 
     // FIXME: Should we call textInserted here?
 }
@@ -85,7 +85,7 @@ void CharacterData::insertData(unsigned offset, const String& data, ExceptionCod
     String newStr = m_data;
     newStr.insert(data, offset);
 
-    setDataAndUpdate(newStr.impl(), offset, 0);
+    setDataAndUpdate(newStr.impl(), offset, 0, data.length());
 
     document()->textInserted(this, offset, data.length());
 }
@@ -105,7 +105,7 @@ void CharacterData::deleteData(unsigned offset, unsigned count, ExceptionCode& e
     String newStr = m_data;
     newStr.remove(offset, realCount);
 
-    setDataAndUpdate(newStr.impl(), offset, count);
+    setDataAndUpdate(newStr.impl(), offset, count, 0);
 
     document()->textRemoved(this, offset, realCount);
 }
@@ -126,7 +126,7 @@ void CharacterData::replaceData(unsigned offset, unsigned count, const String& d
     newStr.remove(offset, realCount);
     newStr.insert(data, offset);
 
-    setDataAndUpdate(newStr.impl(), offset, count);
+    setDataAndUpdate(newStr.impl(), offset, count, data.length());
 
     // update the markers for spell checking and grammar checking
     document()->textRemoved(this, offset, realCount);
@@ -148,11 +148,13 @@ void CharacterData::setNodeValue(const String& nodeValue, ExceptionCode& ec)
     setData(nodeValue, ec);
 }
 
-void CharacterData::setDataAndUpdate(PassRefPtr<StringImpl> newData, unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
+void CharacterData::setDataAndUpdate(PassRefPtr<StringImpl> newData, unsigned offsetOfReplacedData, unsigned oldLength, unsigned newLength)
 {
+    if (document()->frame())
+        document()->frame()->selection()->textWillBeReplaced(this, offsetOfReplacedData, oldLength, newLength);
     RefPtr<StringImpl> oldData = m_data;
     m_data = newData;
-    updateRenderer(offsetOfReplacedData, lengthOfReplacedData);
+    updateRenderer(offsetOfReplacedData, oldLength);
     dispatchModifiedEvent(oldData.get());
 }
 

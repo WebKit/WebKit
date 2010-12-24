@@ -123,8 +123,9 @@ public:
     PassRefPtr<Range> toNormalizedRange() const { return m_selection.toNormalizedRange(); }
 
     void debugRenderer(RenderObject*, bool selected) const;
-    
+
     void nodeWillBeRemoved(Node*);
+    void textWillBeReplaced(CharacterData*, unsigned offset, unsigned oldLength, unsigned newLength);
 
     void setCaretVisible(bool = true);
     void clearCaretRectIfNeeded();
@@ -176,6 +177,7 @@ public:
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
+    void respondToNodeModification(Node*, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved);
     TextDirection directionOfEnclosingBlock();
 
     VisiblePosition positionForPlatform(bool isGetStart) const;
