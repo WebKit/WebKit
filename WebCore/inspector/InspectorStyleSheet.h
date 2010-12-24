@@ -122,6 +122,7 @@ struct InspectorStyleProperty {
 class InspectorStyle : public RefCounted<InspectorStyle> {
 public:
     static PassRefPtr<InspectorStyle> create(const InspectorCSSId& styleId, PassRefPtr<CSSStyleDeclaration> style, InspectorStyleSheet* parentStyleSheet);
+    virtual ~InspectorStyle();
 
     CSSStyleDeclaration* cssStyle() const { return m_style.get(); }
     PassRefPtr<InspectorObject> buildObjectForStyle() const;

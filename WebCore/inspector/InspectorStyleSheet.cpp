@@ -144,6 +144,10 @@ InspectorStyle::InspectorStyle(const InspectorCSSId& styleId, PassRefPtr<CSSStyl
     ASSERT(m_style);
 }
 
+InspectorStyle::~InspectorStyle()
+{
+}
+
 PassRefPtr<InspectorObject> InspectorStyle::buildObjectForStyle() const
 {
     RefPtr<InspectorObject> result = InspectorObject::create();

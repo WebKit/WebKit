@@ -1,5 +1,13 @@
 2010-12-24  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Fix compilation on Windows.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::~InspectorStyle): added explicit empty destructor
+        * inspector/InspectorStyleSheet.h:
+
+2010-12-24  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Darin Adler.
 
         inspector/debugger-step-out.html crashing intermittently in the bots
