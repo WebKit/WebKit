@@ -483,14 +483,6 @@ on_focus_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
-on_resized(void *data, Evas *e, Evas_Object *obj, void *event_info)
-{
-    Evas_Coord w, h;
-    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-    ewk_view_fixed_layout_size_set(obj, w, h);
-}
-
-static void
 on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
     Evas_Event_Key_Down *ev = (Evas_Event_Key_Down*) event_info;
@@ -731,7 +723,6 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
 
 /*     ewk_callback_resize_requested_add(app->browser, on_resize_requested, app->ee); */
 
-    evas_object_event_callback_add(app->browser, EVAS_CALLBACK_RESIZE, on_resized, app);
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_KEY_DOWN, on_key_down, app);
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_MOUSE_DOWN, on_mouse_down, app);
     evas_object_event_callback_add(app->browser, EVAS_CALLBACK_FOCUS_IN, on_focus_in, app);

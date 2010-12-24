@@ -1,3 +1,18 @@
+2010-12-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Screen doesn't be rendered when changing size of EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=43528
+
+        Remove on_resize because ewk_view_fixed_layout_size_set should not be
+        called on callback of EVAS_CALLBACK_RESIZE. As it change size of
+        FrameView, rendering was ignored when _ewk_view_smart_calculate was
+        called.
+
+        * EWebLauncher/main.c:
+        (browserCreate):
+
 2010-12-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
