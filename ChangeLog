@@ -1,3 +1,14 @@
+2010-12-24  Darin Adler  <darin@apple.com>
+
+        Updated makefiles used by Apple engineers to fix build with the
+        new JavaScriptGlue location.
+
+        * Makefile: Told this to build JavaScriptGlue. Some day we might
+        want it to descend into Sources instead and use the Makefile there,
+        but there are problems with sequencing the project builds, so that
+        can wait.
+        * Sources/Makefile.shared: Added.
+
 2010-12-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
