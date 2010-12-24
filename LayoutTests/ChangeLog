@@ -1,3 +1,16 @@
+2010-12-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, updated GTK media tests baselines after r74643.
+
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+
 2010-12-24  Darin Adler  <darin@apple.com>
 
         Rebased Leopard to expect the same kind of stack failure
