@@ -8,6 +8,11 @@ var nextTestIndex = 0;
 
 function doit()
 {
+    if (!window.WebSocket) {
+        console.log("WebSocket is not supported.");
+        dumpConsoleMessages(false);
+        return;
+    }
     doNextTest();
 }
 
@@ -28,9 +33,11 @@ function testDNSLookup()
     var ws = new WebSocket("ws://nonexistent.domain.invalid/"); // Network error should be logged to console.
     ws.onopen = function() {
         console.log("testDNSLookup: onopen is called.");
+        ws.close();
     };
     ws.onerror = function() {
         console.log("testDNSLookup: onerror is called.");
+        ws.close();
     };
     ws.onclose = function() {
         console.log("testDNSLookup: onclose is called.");
@@ -47,9 +54,11 @@ function testSSLCertificate()
     var ws = new WebSocket("wss://127.0.0.1:8443/");
     ws.onopen = function() {
         console.log("testSSLCertificate: onopen is called.");
+        ws.close();
     };
     ws.onerror = function() {
         console.log("testSSLCertificate: onerror is called.");
+        ws.close();
     };
     ws.onclose = function() {
         console.log("testSSLCertificate: onclose is called.");
