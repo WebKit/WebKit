@@ -1,5 +1,18 @@
 2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        [Qt] Composition text is not removed from the editor when composition is cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=29391
+
+        Ensure that the composition text is cleared when an empty QInputMethodEvent
+        is received and the editor is in composition mode.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+
+2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
+
         Reviewed by Andreas Kling.
 
         [Qt] copy and paste greek symbols to Word, TextEdit results in ?'s being shown

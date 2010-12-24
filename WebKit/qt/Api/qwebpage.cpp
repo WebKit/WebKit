@@ -1099,6 +1099,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         editor->confirmComposition(ev->commitString());
     else if (!hasSelection && !ev->preeditString().isEmpty())
         editor->setComposition(ev->preeditString(), underlines, 0, 0);
+    else if (ev->preeditString().isEmpty() && editor->hasComposition())
+        editor->confirmComposition(String());
 
     ev->accept();
 }
