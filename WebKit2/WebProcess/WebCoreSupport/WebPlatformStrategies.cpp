@@ -35,6 +35,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 
 // FIXME: Implement localization.
