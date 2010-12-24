@@ -1,3 +1,13 @@
+2010-12-24  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGElementInstance::m_useElement should be cleared when use element is removed from document
+        https://bugs.webkit.org/show_bug.cgi?id=51486
+
+        * svg/custom/use-instanceRoot-with-use-removed-expected.txt: Added.
+        * svg/custom/use-instanceRoot-with-use-removed.svg: Added.
+
 2010-12-24  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

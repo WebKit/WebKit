@@ -77,6 +77,7 @@ private:
     friend class RenderSVGShadowTreeRootContainer;
     bool isPendingResource() const { return m_isPendingResource; }
     void buildShadowAndInstanceTree(SVGShadowTreeRootElement*);
+    void detachInstance();
 
     virtual bool selfHasRelativeLengths() const;
 

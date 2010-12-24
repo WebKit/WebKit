@@ -1,3 +1,23 @@
+2010-12-24  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGElementInstance::m_useElement should be cleared when use element is removed from document
+        https://bugs.webkit.org/show_bug.cgi?id=51486
+
+        Test: svg/custom/use-instanceRoot-with-use-removed.svg
+
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement):
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::clearUseElement):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::removedFromDocument):
+        (WebCore::ShadowTreeUpdateBlocker::if):
+        (WebCore::SVGUseElement::detachInstance):
+        (WebCore::SVGUseElement::detach):
+        * svg/SVGUseElement.h:
+
 2010-12-23  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Yury Semikhatsky.
