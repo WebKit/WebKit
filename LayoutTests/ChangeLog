@@ -1,3 +1,9 @@
+2010-12-24  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing media test on GTK.
+
+        * platform/gtk/Skipped: Skip media/controls-after-reload.html.
+
 2010-12-24  Andrei Popescu  <andreip@google.com>
 
         Unreviewed, build fix.

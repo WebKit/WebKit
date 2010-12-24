@@ -2839,6 +2839,9 @@ media/video-seek-past-end-playing.html
 # https://bugs.webkit.org/show_bug.cgi?id=30198
 media/video-source-error.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=51602
+media/controls-after-reload.html
+
 #   Tests generating new results
 media/video-aspect-ratio.html
 # This test requires media controls has a volume slider.
