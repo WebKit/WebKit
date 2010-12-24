@@ -1,3 +1,11 @@
+2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More unreviewed Chromium rebaselines for r74593.
+
+        * platform/chromium-linux/editing/deleting/smart-delete-002-expected.txt:
+        * platform/chromium-linux/editing/pasteboard/subframe-dragndrop-1-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-xml-expected.txt:
+
 2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Alexey Proskuryakov.
