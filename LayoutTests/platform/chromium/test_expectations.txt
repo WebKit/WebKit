@@ -3258,7 +3258,8 @@ BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
-BUGCR67662 WIN : http/tests/inspector/console-websocket-error.html = TEXT TIMEOUT
+BUGCR67662 WIN RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
+BUGCR67662 WIN DEBUG SLOW : http/tests/inspector/console-websocket-error.html = TEXT
 
 BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 

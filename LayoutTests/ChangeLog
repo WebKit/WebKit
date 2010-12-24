@@ -1,3 +1,11 @@
+2010-12-23  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        Mark http/tests/inspector/console-websocket-error.html as SLOW on WIN DEBUG.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-22  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
