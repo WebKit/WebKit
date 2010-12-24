@@ -1,3 +1,21 @@
+2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] User name/password stripped from URLs
+        https://bugs.webkit.org/show_bug.cgi?id=36232
+
+        If a username but no password or no username but a password is present
+        in a URL, QtWebKit won't send any authentication information down to Qt
+        as it should.
+
+        Tests: http/tests/xmlhttprequest/basic-auth-nopassword.html
+               http/tests/xmlhttprequest/basic-auth-nouser.html
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

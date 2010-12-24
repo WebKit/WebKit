@@ -124,7 +124,7 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (context && !context->isValid())
         return false;
 
-    if (!(d->m_user.isEmpty() || d->m_pass.isEmpty())) {
+    if (!d->m_user.isEmpty() || !d->m_pass.isEmpty()) {
         // If credentials were specified for this request, add them to the url,
         // so that they will be passed to QNetworkRequest.
         KURL urlWithCredentials(firstRequest().url());
@@ -186,7 +186,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, true, false));
 
     ResourceHandleInternal* d = handle->getInternal();
-    if (!(d->m_user.isEmpty() || d->m_pass.isEmpty())) {
+    if (!d->m_user.isEmpty() || !d->m_pass.isEmpty()) {
         // If credentials were specified for this request, add them to the url,
         // so that they will be passed to QNetworkRequest.
         KURL urlWithCredentials(d->m_firstRequest.url());

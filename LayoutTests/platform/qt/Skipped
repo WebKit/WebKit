@@ -275,6 +275,9 @@ editing/inserting/5803706-1.html
 editing/inserting/5994480-2.html
 editing/inserting/insert-bg-font.html
 
+# http://bugreports.qt.nokia.com/browse/QTBUG-15566
+http/tests/xmlhttprequest/basic-auth-nouser.html
+
 # =========================================================================== #
 #       Failing pasteboard tests.                                             #
 # =========================================================================== #
