@@ -1,3 +1,13 @@
+2010-12-24  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed, build fix.
+
+        [Chromium] http/tests/xmlhttprequest/basic-auth-nopassword.html needs Mac, Windows and Linux specific test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=51589
+
+        * platform/chromium-win/http/tests/xmlhttprequest/basic-auth-nopassword-expected.txt: Added.
+        * platform/chromium-win/http/tests/xmlhttprequest/basic-auth-nouser-expected.txt: Added.
+
 2010-12-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, updated GTK media tests baselines after r74643.
