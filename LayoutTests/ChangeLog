@@ -1,3 +1,13 @@
+2010-12-24  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed. Update Chromium test expectations.
+
+        Mark editing/input/ime-composition-clearpreedit.html.html as TEXT.
+        This test was added in http://trac.webkit.org/changeset/74605 and
+        fails in Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-24  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.

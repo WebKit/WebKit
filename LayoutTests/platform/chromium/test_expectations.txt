@@ -3275,3 +3275,5 @@ BUGCR67905 MAC : svg/css/getComputedStyle-basic.xhtml = TEXT
 // WebKit roll 74557:74567
 BUGCR67935 WIN : fast/canvas/webgl/canvas-test.html = CRASH
 BUGCR67935 WIN : fast/canvas/webgl/gl-pixelstorei.html = CRASH
+
+BUGCR67960 : editing/input/ime-composition-clearpreedit.html = TEXT
