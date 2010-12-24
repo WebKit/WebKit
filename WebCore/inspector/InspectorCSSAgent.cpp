@@ -186,7 +186,7 @@ void InspectorCSSAgent::getStylesForNode2(long nodeId, RefPtr<InspectorValue>* r
         resultObject->setObject("inlineStyle", styleSheet->buildObjectForStyle(element->style()));
 
     RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = computedStyle(element, true); // Support the viewing of :visited information in computed style.
-    RefPtr<InspectorStyle> computedInspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo.get(), 0);
+    RefPtr<InspectorStyle> computedInspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);
     resultObject->setObject("computedStyle", computedInspectorStyle->buildObjectForStyle());
 
     CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
@@ -248,7 +248,7 @@ void InspectorCSSAgent::getComputedStyleForNode2(long nodeId, RefPtr<InspectorVa
         return;
 
     RefPtr<CSSComputedStyleDeclaration> computedStyleInfo = computedStyle(element, true);
-    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo.get(), 0);
+    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);
     *style = inspectorStyle->buildObjectForStyle();
 }
 
