@@ -1,4 +1,4 @@
-MODULES = JavaScriptCore ANGLE WebCore WebKit WebKit2 Tools 
+MODULES = JavaScriptGlue
 
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \

@@ -399,7 +399,7 @@ if (isGtk()) {
     }
 
     # Apple builds JavaScriptGlue, and only on the Mac.
-    splice @projects, 1, 0, "JavaScriptGlue";
+    splice @projects, 1, 0, "Sources/JavaScriptGlue";
 
     # ANGLE must come before WebCore
     splice @projects, 0, 0, "ANGLE";
@@ -515,17 +515,19 @@ for my $dir (@projects) {
         next;
     }
 
+    my $project = basename($dir);
     if (isGtk()) {
+        #FIXME: $dir should probably be $project.
         $result = buildGtkProject($dir, $clean,  @options);
     } elsif (isQt()) {
+        #FIXME: $dir should probably be $project.
         $result = buildQMakeQtProject($dir, $clean, @options);
     } elsif (isAppleMacWebKit()) {
-        $dir = "MiniBrowser" if $dir eq "Tools/MiniBrowser";
         my @local_options = @options;
-        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $dir ne "ANGLE";
-        $result = buildXCodeProject($dir, $clean, @local_options, @ARGV);
+        push @local_options, XcodeCoverageSupportOptions() if $coverageSupport && $project ne "ANGLE";
+        $result = buildXCodeProject($project, $clean, @local_options, @ARGV);
     } elsif (isAppleWinWebKit()) {
-        if ($dir eq "WebKit") {
+        if ($project eq "WebKit") {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
         }
     }

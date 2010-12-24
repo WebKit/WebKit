@@ -1,3 +1,15 @@
+2010-12-23  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move JavaScriptGlue into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51583
+
+        PrettyPatch keeps a list of the top-level directories that exist in
+        trac.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2010-12-20  Adam Barth  <abarth@webkit.org>
 
         One more tweak caused by moving the web sites around.  I had this

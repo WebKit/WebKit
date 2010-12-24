@@ -66,10 +66,10 @@ private
     OPENSOURCE_DIRS = Set.new %w[
         Examples
         JavaScriptCore
-        JavaScriptGlue
         LayoutTests
         PageLoadTests
         SunSpider
+        Sources
         Tools
         WebCore
         WebKit

@@ -1,3 +1,145 @@
+2010-12-23  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move JavaScriptGlue into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51583
+
+        Actually perform the move.
+
+        * JavaScriptGlue: Removed.
+        * JavaScriptGlue/Configurations: Removed.
+        * JavaScriptGlue/Configurations/Base.xcconfig: Removed.
+        * JavaScriptGlue/Configurations/DebugRelease.xcconfig: Removed.
+        * JavaScriptGlue/Configurations/JavaScriptGlue.xcconfig: Removed.
+        * JavaScriptGlue/Configurations/Version.xcconfig: Removed.
+        * JavaScriptGlue/English.lproj: Removed.
+        * JavaScriptGlue/English.lproj/InfoPlist.strings: Removed.
+        * JavaScriptGlue/ForwardingHeaders: Removed.
+        * JavaScriptGlue/ForwardingHeaders/masm: Removed.
+        * JavaScriptGlue/ForwardingHeaders/masm/X86Assembler.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/profiler: Removed.
+        * JavaScriptGlue/ForwardingHeaders/profiler/Profiler.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/runtime: Removed.
+        * JavaScriptGlue/ForwardingHeaders/runtime/CallFrame.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/ASCIICType.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/AlwaysInline.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Assertions.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Atomics.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Bitmap.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/BumpPointerAllocator.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/CrossThreadRefCounted.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/CurrentTime.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/DateInstanceCache.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/DateMath.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/FastAllocBase.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/FastMalloc.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/FixedArray.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Forward.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/HashCountedSet.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/HashFunctions.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/HashMap.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/HashSet.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/HashTraits.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/ListHashSet.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/ListRefPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Locker.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/MainThread.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/MathExtras.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Noncopyable.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/NotFound.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/OSAllocator.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/OwnArrayPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/OwnArrayPtrCommon.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/OwnFastMallocPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/OwnPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/OwnPtrCommon.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PageAllocation.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PageAllocationAligned.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PageBlock.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PageReservation.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PassOwnArrayPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PassOwnPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PassRefPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Platform.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PossiblyNull.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/PtrAndFlags.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/RandomNumber.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/RefCounted.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/RefPtr.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/StackBounds.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/StdLibExtras.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/StringHasher.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/ThreadSafeShared.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/ThreadSpecific.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Threading.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/ThreadingPrimitives.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/UnusedParam.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/VMTags.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/ValueCheck.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/Vector.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/VectorTraits.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/WTFThreadData.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/text: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/text/CString.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/text/StringHash.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/text/StringImpl.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/text/StringImplBase.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/text/TextPosition.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/text/WTFString.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/unicode: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/unicode/Unicode.h: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/unicode/icu: Removed.
+        * JavaScriptGlue/ForwardingHeaders/wtf/unicode/icu/UnicodeIcu.h: Removed.
+        * JavaScriptGlue/Info.plist: Removed.
+        * JavaScriptGlue/JSBase.cpp: Removed.
+        * JavaScriptGlue/JSBase.h: Removed.
+        * JavaScriptGlue/JSObject.cpp: Removed.
+        * JavaScriptGlue/JSObject.h: Removed.
+        * JavaScriptGlue/JSRun.cpp: Removed.
+        * JavaScriptGlue/JSRun.h: Removed.
+        * JavaScriptGlue/JSUtils.cpp: Removed.
+        * JavaScriptGlue/JSUtils.h: Removed.
+        * JavaScriptGlue/JSValueWrapper.cpp: Removed.
+        * JavaScriptGlue/JSValueWrapper.h: Removed.
+        * JavaScriptGlue/JavaScriptGlue.cpp: Removed.
+        * JavaScriptGlue/JavaScriptGlue.exp: Removed.
+        * JavaScriptGlue/JavaScriptGlue.h: Removed.
+        * JavaScriptGlue/JavaScriptGlue.xcodeproj: Removed.
+        * JavaScriptGlue/JavaScriptGlue.xcodeproj/project.pbxproj: Removed.
+        * JavaScriptGlue/LICENSE: Removed.
+        * JavaScriptGlue/Makefile: Removed.
+        * JavaScriptGlue/UserObjectImp.cpp: Removed.
+        * JavaScriptGlue/UserObjectImp.h: Removed.
+        * JavaScriptGlue/config.h: Removed.
+        * JavaScriptGlue/icu: Removed.
+        * JavaScriptGlue/icu/LICENSE: Removed.
+        * JavaScriptGlue/icu/README: Removed.
+        * JavaScriptGlue/icu/unicode: Removed.
+        * JavaScriptGlue/icu/unicode/platform.h: Removed.
+        * JavaScriptGlue/icu/unicode/putil.h: Removed.
+        * JavaScriptGlue/icu/unicode/uchar.h: Removed.
+        * JavaScriptGlue/icu/unicode/ucnv.h: Removed.
+        * JavaScriptGlue/icu/unicode/ucnv_err.h: Removed.
+        * JavaScriptGlue/icu/unicode/uconfig.h: Removed.
+        * JavaScriptGlue/icu/unicode/uenum.h: Removed.
+        * JavaScriptGlue/icu/unicode/uiter.h: Removed.
+        * JavaScriptGlue/icu/unicode/umachine.h: Removed.
+        * JavaScriptGlue/icu/unicode/urename.h: Removed.
+        * JavaScriptGlue/icu/unicode/ustring.h: Removed.
+        * JavaScriptGlue/icu/unicode/utf.h: Removed.
+        * JavaScriptGlue/icu/unicode/utf16.h: Removed.
+        * JavaScriptGlue/icu/unicode/utf8.h: Removed.
+        * JavaScriptGlue/icu/unicode/utf_old.h: Removed.
+        * JavaScriptGlue/icu/unicode/utypes.h: Removed.
+        * JavaScriptGlue/icu/unicode/uversion.h: Removed.
+        * JavaScriptGlue/testjsglue.cpp: Removed.
+        * Makefile:
+        * Sources: Added.
+        * Sources/JavaScriptGlue: Copied from JavaScriptGlue.
+        * Sources/Makefile: Added.
+
 2010-12-23  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
