@@ -1,3 +1,14 @@
+2010-12-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unneeded V8 bindings files
+        https://bugs.webkit.org/show_bug.cgi?id=51570
+
+        * WebCore.gypi:
+        * bindings/generic/BindingDOMWindow.h: Removed.
+        * bindings/v8/specialization/V8BindingDOMWindow.h: Removed.
+
 2010-12-23  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
