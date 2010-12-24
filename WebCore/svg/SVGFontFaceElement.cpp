@@ -114,8 +114,7 @@ void SVGFontFaceElement::parseMappedAttribute(Attribute* attr)
     int propId = cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {
         m_styleDeclaration->setProperty(propId, attr->value(), false);
-        if (inDocument())
-            rebuildFontFace();
+        rebuildFontFace();
         return;
     }
     
@@ -264,7 +263,8 @@ String SVGFontFaceElement::fontFamily() const
 
 void SVGFontFaceElement::rebuildFontFace()
 {
-    ASSERT(inDocument());
+    if (!inDocument())
+        return;
 
     // we currently ignore all but the first src element, alternatively we could concat them
     SVGFontFaceSrcElement* srcElement = 0;
@@ -328,8 +328,7 @@ void SVGFontFaceElement::removedFromDocument()
 void SVGFontFaceElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    if (inDocument())
-        rebuildFontFace();
+    rebuildFontFace();
 }
 
 void SVGFontFaceElement::removeFromMappedElementSheet()

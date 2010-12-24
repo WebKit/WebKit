@@ -1,3 +1,13 @@
+2010-12-24  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        SVGFontFaceElement::rebuildFontFace() should exit when not in document
+        https://bugs.webkit.org/show_bug.cgi?id=51571
+
+        * svg/custom/use-invalid-font-face-expected.txt: Added.
+        * svg/custom/use-invalid-font-face.svg: Added.
+
 2010-12-23  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Update GTK's Skipped file.
