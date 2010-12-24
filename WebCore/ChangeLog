@@ -1,3 +1,19 @@
+2010-12-24  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        TextMetrics::width is an integer, but the member is a float
+        https://bugs.webkit.org/show_bug.cgi?id=51566
+
+        Change the return type to a float.
+
+        No tests, fixing a compiler warning.
+        (I was unable to produce a difference in the values exposed to pages
+        with a float versus the previous conversion to an integer.)
+
+        * html/TextMetrics.h:
+        (WebCore::TextMetrics::width):
+
 2010-12-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
