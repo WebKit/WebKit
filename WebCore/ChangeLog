@@ -1,3 +1,18 @@
+2010-12-24  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary check in CSSCanvasValue::canvasDestroyed().
+        https://bugs.webkit.org/show_bug.cgi?id=51564
+
+        This check was duplicating an ASSERT for a case fixed in r73927.
+        Now that the bug is fixed the check is no longer necessary.
+
+        Removing dead code, so no new tests needed.
+
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::canvasDestroyed):
+
 2010-12-23  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.
