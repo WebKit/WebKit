@@ -35,8 +35,11 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <wtf/MathExtras.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(CF)
+#include <wtf/RetainPtr.h>
+#endif
 
 // FIXME: Implement localization.
 #define UI_STRING(string, description) String::fromUTF8(string, strlen(string))

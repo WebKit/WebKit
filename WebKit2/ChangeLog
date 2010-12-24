@@ -1,3 +1,9 @@
+2010-12-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the Qt build after r74650.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+
 2010-12-24  Benjamin Poulain  <ikipou@gmail.com>
 
         Reviewed by Darin Adler.
