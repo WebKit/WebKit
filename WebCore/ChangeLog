@@ -1,3 +1,12 @@
+2010-12-24  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Qt build after r74648.
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * platform/network/qt/CredentialStorageQt.cpp: Added.
+        (WebCore::CredentialStorage::getFromPersistentStorage):
+
 2010-12-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

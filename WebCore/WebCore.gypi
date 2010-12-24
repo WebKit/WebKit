@@ -3152,6 +3152,7 @@
             'platform/network/mac/ResourceResponseMac.mm',
             'platform/network/mac/WebCoreURLResponse.h',
             'platform/network/mac/WebCoreURLResponse.mm',
+            'platform/network/qt/CredentialStorageQt.cpp',
             'platform/network/qt/AuthenticationChallenge.h',
             'platform/network/qt/QNetworkReplyHandler.cpp',
             'platform/network/qt/QNetworkReplyHandler.h',
