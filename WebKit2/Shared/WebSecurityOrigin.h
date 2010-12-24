@@ -44,6 +44,14 @@ public:
         return adoptRef(new WebSecurityOrigin(securityOrigin.release()));
     }
 
+    static PassRefPtr<WebSecurityOrigin> create(const String& protocol, const String& host, int port)
+    {
+        RefPtr<WebCore::SecurityOrigin> securityOrigin = WebCore::SecurityOrigin::create(protocol, host, port);
+        if (!securityOrigin)
+            return 0;
+        return adoptRef(new WebSecurityOrigin(securityOrigin.release()));
+    }
+
     const String protocol() const { return m_securityOrigin->domain(); }
     const String host() const { return m_securityOrigin->host(); }
     unsigned short port() const { return m_securityOrigin->port(); }

@@ -34,7 +34,8 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKSecurityOriginGetTypeID();
 
-WK_EXPORT WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef identifier);
+WK_EXPORT WKSecurityOriginRef WKSecurityOriginCreateFromIdentifier(WKStringRef identifier);
+WK_EXPORT WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port);
 
 WK_EXPORT WKStringRef WKSecurityOriginGetProtocol(WKSecurityOriginRef securityOrigin);
 WK_EXPORT WKStringRef WKSecurityOriginGetHost(WKSecurityOriginRef securityOrigin);

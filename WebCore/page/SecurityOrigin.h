@@ -42,6 +42,7 @@ class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {
 public:
     static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
     static PassRefPtr<SecurityOrigin> createFromString(const String&);
+    static PassRefPtr<SecurityOrigin> create(const String& protocol, const String& host, int port);
     static PassRefPtr<SecurityOrigin> create(const KURL&, SandboxFlags = SandboxNone);
     static PassRefPtr<SecurityOrigin> createEmpty();
 

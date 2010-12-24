@@ -35,9 +35,15 @@ WKTypeID WKSecurityOriginGetTypeID()
     return toAPI(WebSecurityOrigin::APIType);
 }
 
-WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef identifier)
+WKSecurityOriginRef WKSecurityOriginCreateFromIdentifier(WKStringRef identifier)
 {
     RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::create(toImpl(identifier)->string());
+    return toAPI(securityOrigin.release().leakRef());
+}
+
+WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port)
+{
+    RefPtr<WebSecurityOrigin> securityOrigin = WebSecurityOrigin::create(toImpl(protocol)->string(), toImpl(host)->string(), port);
     return toAPI(securityOrigin.release().leakRef());
 }
 

@@ -40,6 +40,7 @@
 namespace WebCore {
 
 static SecurityOrigin::LocalLoadPolicy localLoadPolicy = SecurityOrigin::AllowLocalLoadsForLocalOnly;
+const int MaxAllowedPort = 65535;
 
 typedef Vector<OriginAccessEntry> OriginAccessWhiteList;
 typedef HashMap<String, OriginAccessWhiteList*> OriginAccessMap;
@@ -415,7 +416,7 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
     if (!(portOkay || portAbsent))
         return create(KURL());
     
-    if (port < 0 || port > 65535)
+    if (port < 0 || port > MaxAllowedPort)
         return create(KURL());
         
     // Split out the 3 sections of data
@@ -423,6 +424,14 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::createFromDatabaseIdentifier(const St
     String host = databaseIdentifier.substring(separator1 + 1, separator2 - separator1 - 1);
     
     host = decodeURLEscapeSequences(host);
+    return create(KURL(KURL(), protocol + "://" + host + ":" + String::number(port)));
+}
+
+PassRefPtr<SecurityOrigin> SecurityOrigin::create(const String& protocol, const String& host, int port)
+{
+    if (port < 0 || port > MaxAllowedPort)
+        create(KURL());
+    String decodedHost = decodeURLEscapeSequences(host);
     return create(KURL(KURL(), protocol + "://" + host + ":" + String::number(port)));
 }
 

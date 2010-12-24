@@ -1,3 +1,22 @@
+2010-12-23  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Need WebKit2 API to create a SecurityOrigin from protocol, host, and port
+        https://bugs.webkit.org/show_bug.cgi?id=51563
+
+        Add SecurityOrigin::create(const String& protocol, const String& host, int port).
+
+        * WebCore.exp.in:
+        Export the symbols for WebCore::SecurityOrigin::create(String, String, int).
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::createFromDatabaseIdentifier):
+        Use the constant MaxAllowedPort.
+        (WebCore::SecurityOrigin::create):
+        Sanitizing based off of that done in createFromDatabaseIdentifier.
+        * page/SecurityOrigin.h:
+
 2010-12-23  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for WinCE after r73802.
