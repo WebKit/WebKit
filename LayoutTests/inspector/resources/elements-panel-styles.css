@@ -10,6 +10,7 @@ body {
 .foo {
 	color: black;
 	margin: 10px 0 2px;
+	border-radius: 5px;
 }
 
 .foo, .foo::before {

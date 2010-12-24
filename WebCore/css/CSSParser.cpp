@@ -4561,6 +4561,7 @@ bool CSSParser::parseBorderRadius(int propId, bool important)
     if (num > 9)
         return false;
 
+    ShorthandScope scope(this, propId);
     RefPtr<CSSPrimitiveValue> radii[2][4];
 
     unsigned indexAfterSlash = 0;
@@ -4605,10 +4606,12 @@ bool CSSParser::parseBorderRadius(int propId, bool important)
     } else
         completeBorderRadii(radii[1]);
 
+    m_implicitShorthand = true;
     addProperty(CSSPropertyBorderTopLeftRadius, CSSPrimitiveValue::create(Pair::create(radii[0][0].release(), radii[1][0].release())), important);
     addProperty(CSSPropertyBorderTopRightRadius, CSSPrimitiveValue::create(Pair::create(radii[0][1].release(), radii[1][1].release())), important);
     addProperty(CSSPropertyBorderBottomRightRadius, CSSPrimitiveValue::create(Pair::create(radii[0][2].release(), radii[1][2].release())), important);
     addProperty(CSSPropertyBorderBottomLeftRadius, CSSPrimitiveValue::create(Pair::create(radii[0][3].release(), radii[1][3].release())), important);
+    m_implicitShorthand = false;
     return true;
 }
 

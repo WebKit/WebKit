@@ -1,8 +1,16 @@
 Tests that elements panel shows proper styles in the sidebar panel.
 
 [expanded]  ()
+border-bottom-left-radius: 5px;
+    .foo - 5px 5px elements-panel-styles.css:10
+border-bottom-right-radius: 5px;
+    .foo - 5px 5px elements-panel-styles.css:10
+border-top-left-radius: 5px;
+    .foo - 5px 5px elements-panel-styles.css:10
+border-top-right-radius: 5px;
+    .foo - 5px 5px elements-panel-styles.css:10
 color: blue;
-    .foo, .foo::before - blue elements-panel-styles.css:15
+    .foo, .foo::before - blue elements-panel-styles.css:16
     /-- overloaded --/ .foo - black elements-panel-styles.css:10
 display: none;
     element.style - none 
@@ -25,9 +33,9 @@ margin-top: 10px;
 display: none;
 
 ======== Matched CSS Rules ========
-[expanded] .foo { (elements-panel-styles.css:33)
+[expanded] .foo { (elements-panel-styles.css:34)
 
-[expanded] .foo, .foo::before { (elements-panel-styles.css:15)
+[expanded] .foo, .foo::before { (elements-panel-styles.css:16)
 content: "[before Foo]";
 color: blue;
 
@@ -38,6 +46,11 @@ margin: 10px 0 2px;
     margin-right: 0px;
     margin-bottom: 2px;
     margin-left: 0px;
+border-radius: 5px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;
+    border-bottom-left-radius: 5px 5px;
 
 [expanded] div { (user agent stylesheet)
 /-- overloaded --/ display: block;
@@ -53,22 +66,22 @@ font-size: 14px;
 
 
 ======== Pseudo ::before element ========
-[expanded] .foo::before { (elements-panel-styles.css:37)
+[expanded] .foo::before { (elements-panel-styles.css:38)
 
-[expanded] .foo::before { (elements-panel-styles.css:20)
+[expanded] .foo::before { (elements-panel-styles.css:21)
 color: red;
 
-[expanded] .foo, .foo::before { (elements-panel-styles.css:15)
+[expanded] .foo, .foo::before { (elements-panel-styles.css:16)
 content: "[before Foo]";
 /-- overloaded --/ color: blue;
 
 
 ======== Pseudo ::after element ========
-[expanded] .foo::after { (elements-panel-styles.css:28)
+[expanded] .foo::after { (elements-panel-styles.css:29)
 font-family: courier;
 content: "[after Foo 2]";
 
-[expanded] .foo::after { (elements-panel-styles.css:24)
+[expanded] .foo::after { (elements-panel-styles.css:25)
 /-- overloaded --/ content: "[after Foo]";
 color: green;
 

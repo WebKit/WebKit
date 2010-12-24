@@ -1,3 +1,14 @@
+2010-12-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Web Inspector: CSS shorthand properties expand unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=36304
+
+        * inspector/elements-panel-styles-expected.txt:
+        * inspector/resources/elements-panel-styles.css:
+        (.foo):
+
 2010-12-24  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.

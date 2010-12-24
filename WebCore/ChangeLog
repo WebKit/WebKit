@@ -1,3 +1,20 @@
+2010-12-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Web Inspector: CSS shorthand properties expand unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=36304
+
+        "border-radius" is a shorthand property that has a "non-standard" format and longhands, see
+        http://www.w3.org/TR/css3-background/#border-radius for reference. CSSParser does not use the
+        standard parseShorthand() or parse4Values() methods but instead a custom parseBorderRadius() method.
+        This method didn't use to create a ShorthandScope instance and set the m_implicitShorthand value
+        appropriately when adding implicit longhands, thus they were added as normal properties
+        found in the CSS (neither implicit, nor longhands). This is now fixed.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBorderRadius):
+
 2010-12-24  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.
