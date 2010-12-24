@@ -1,3 +1,16 @@
+2010-12-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Modify new-run-webkit-tests to shut up and exit when all the threads
+        are wedged so that test runs complete faster and we don't end up
+        w/ enormous log files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51572
+
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker_unittest.py:
+
 2010-12-24  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.

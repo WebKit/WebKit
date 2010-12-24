@@ -84,7 +84,6 @@ class TestThread(threading.Thread):
 
     def next_timeout(self):
         if self._timeout:
-            self._timeout_queue.put('done')
             return time.time() - 10
         return time.time()
 
@@ -144,8 +143,6 @@ class MultiThreadedBrokerTest(unittest.TestCase):
     def test_exception(self):
         self.assertRaises(ValueError, self.run_one_thread, 'Exception')
 
-
-class Test(unittest.TestCase):
     def test_find_thread_stack_found(self):
         id, stack = sys._current_frames().items()[0]
         found_stack = message_broker._find_thread_stack(id)
@@ -169,9 +166,19 @@ class Test(unittest.TestCase):
         child_thread.start()
         msg = starting_queue.get()
 
-        message_broker.log_wedged_worker(child_thread.getName(),
-                                         child_thread.id())
-        stopping_queue.put('')
+        # FIXME: this is an ugly hack to make the broker aware of the thread.
+        port = None
+        options = mocktool.MockOptions(child_processes='1')
+        runner = self.MockTestRunner()
+        broker = message_broker.MultiThreadedBroker(port, options)
+        worker = message_broker._WorkerState('worker-0')
+        worker.thread = child_thread
+        broker._test_runner = runner
+        broker._workers['worker-0'] = worker
+
+        stopping_queue.put('Timeout')
+        broker.run_message_loop()
+        child_thread._timeout_queue.put('done')
         child_thread.join(timeout=1.0)
 
         self.assertFalse(astream.empty())
