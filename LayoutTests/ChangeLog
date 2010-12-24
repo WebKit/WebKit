@@ -2,6 +2,14 @@
 
         Unreviewed Qt rebaseline for r74593.
 
+        Added the forgotten blank line at the end.
+
+        * platform/qt/editing/pasteboard/copy-in-password-field-expected.txt:
+
+2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Qt rebaseline for r74593.
+
         * platform/qt/editing/pasteboard/copy-in-password-field-expected.txt: Added.
 
 2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
