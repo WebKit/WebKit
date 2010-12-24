@@ -238,6 +238,9 @@ class GlobalVariablesTest(unittest.TestCase):
                     "readability/braces")
         assertNoCheck("JavaScriptCore/qt/api/qscriptengine.cpp",
                       "readability/naming")
+        assertNoCheck("JavaScriptCore/qt/benchmarks"
+                      "/qscriptengine/tst_qscriptengine.cpp",
+                      "readability/naming")
         assertNoCheck("WebKit/qt/Api/qwebpage.cpp",
                       "readability/naming")
         assertNoCheck("WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",

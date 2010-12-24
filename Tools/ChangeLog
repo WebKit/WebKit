@@ -1,3 +1,13 @@
+2010-12-24  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style: should ignore "wrong" namings in JavaScriptCore/qt
+        https://bugs.webkit.org/show_bug.cgi?id=51467
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+
 2010-12-23  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

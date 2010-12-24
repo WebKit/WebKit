@@ -134,7 +134,7 @@ _PATH_RULES_SPECIFIER = [
       "WebCore/css/CSSParser.cpp",
       # Qt code uses '_' in some places (such as private slots
       # and on test xxx_data methos on tests)
-      "JavaScriptCore/qt/api/",
+      "JavaScriptCore/qt/",
       "WebKit/qt/Api/",
       "WebKit/qt/tests/",
       "WebKit/qt/declarative/",
