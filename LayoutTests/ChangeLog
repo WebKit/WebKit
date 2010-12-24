@@ -1,5 +1,64 @@
 2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed Qt rebaselines for r74593.
+
+        * platform/qt/editing/deleting/delete-3608445-fix-expected.txt:
+        * platform/qt/editing/deleting/delete-after-span-ws-001-expected.txt:
+        * platform/qt/editing/deleting/delete-after-span-ws-002-expected.txt:
+        * platform/qt/editing/deleting/delete-after-span-ws-003-expected.txt:
+        * platform/qt/editing/deleting/delete-block-merge-contents-010-expected.txt:
+        * platform/qt/editing/deleting/delete-character-001-expected.txt:
+        * platform/qt/editing/deleting/delete-hr-expected.txt:
+        * platform/qt/editing/deleting/delete-line-end-ws-001-expected.txt:
+        * platform/qt/editing/deleting/delete-selection-001-expected.txt:
+        * platform/qt/editing/deleting/delete-trailing-ws-001-expected.txt:
+        * platform/qt/editing/deleting/delete-trailing-ws-002-expected.txt:
+        * platform/qt/editing/deleting/non-smart-delete-expected.txt:
+        * platform/qt/editing/deleting/smart-delete-001-expected.txt:
+        * platform/qt/editing/deleting/smart-delete-003-expected.txt:
+        * platform/qt/editing/deleting/smart-delete-004-expected.txt:
+        * platform/qt/editing/inserting/insert-3654864-fix-expected.txt:
+        * platform/qt/editing/inserting/insert-after-delete-001-expected.txt:
+        * platform/qt/editing/inserting/insert-br-003-expected.txt:
+        * platform/qt/editing/inserting/insert-br-006-expected.txt:
+        * platform/qt/editing/inserting/insert-br-007-expected.txt:
+        * platform/qt/editing/inserting/insert-br-008-expected.txt:
+        * platform/qt/editing/inserting/insert-br-009-expected.txt:
+        * platform/qt/editing/inserting/insert-br-at-tabspan-002-expected.txt:
+        * platform/qt/editing/inserting/insert-br-at-tabspan-003-expected.txt:
+        * platform/qt/editing/inserting/insert-div-003-expected.txt:
+        * platform/qt/editing/inserting/insert-div-006-expected.txt:
+        * platform/qt/editing/inserting/insert-div-008-expected.txt:
+        * platform/qt/editing/inserting/insert-div-024-expected.txt:
+        * platform/qt/editing/inserting/insert-space-in-empty-doc-expected.txt:
+        * platform/qt/editing/inserting/insert-text-at-tabspan-001-expected.txt:
+        * platform/qt/editing/inserting/insert-text-at-tabspan-002-expected.txt:
+        * platform/qt/editing/inserting/typing-001-expected.txt:
+        * platform/qt/editing/inserting/typing-002-expected.txt:
+        * platform/qt/editing/inserting/typing-003-expected.txt:
+        * platform/qt/editing/inserting/typing-around-br-001-expected.txt:
+        * platform/qt/editing/inserting/typing-around-image-001-expected.txt:
+        * platform/qt/editing/pasteboard/4076267-3-expected.txt:
+        * platform/qt/editing/pasteboard/cut-text-001-expected.txt:
+        * platform/qt/editing/pasteboard/interchange-newline-1-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-1-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-2-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-4-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-list-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-table-expected.txt:
+        * platform/qt/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-019-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * platform/qt/editing/pasteboard/pasting-object-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-002-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-006-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/qt/editing/style/remove-underline-from-stylesheet-expected.txt:
+        * platform/qt/editing/undo/redo-style-expected.txt:
+
+2010-12-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         Selection becomes stale when CharacterData is manipulated directly
