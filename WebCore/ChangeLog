@@ -1,3 +1,17 @@
+2010-12-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Return an empty string instead of 'application/octet-stream' in getMIMETypeForExtension()
+        https://bugs.webkit.org/show_bug.cgi?id=51457
+
+        WebKit EFL can't play html5 audio because of wrong mime type checking.
+        So, 'application/octet-stream' is changed with an empty string.
+
+        * platform/efl/MIMETypeRegistryEfl.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        Returns an empty string instead of application/octet-stream when it can't find proper mime type.
+
 2010-12-24  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.
