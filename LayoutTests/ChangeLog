@@ -1,3 +1,31 @@
+2010-12-24  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        editing/selection/caret-* tests need rebaseline for gtk
+        https://bugs.webkit.org/show_bug.cgi?id=51578
+
+        Rebaseline editing/selection/caret-* tests for gtk.
+
+        * platform/gtk/editing/selection/caret-ltr-2-expected.checksum: Added.
+        * platform/gtk/editing/selection/caret-ltr-2-expected.png: Added.
+        * platform/gtk/editing/selection/caret-ltr-2-expected.txt: Added.
+        * platform/gtk/editing/selection/caret-ltr-2-left-expected.checksum: Added.
+        * platform/gtk/editing/selection/caret-ltr-2-left-expected.png: Added.
+        * platform/gtk/editing/selection/caret-ltr-2-left-expected.txt: Added.
+        * platform/gtk/editing/selection/caret-ltr-expected.checksum: Added.
+        * platform/gtk/editing/selection/caret-ltr-expected.png: Added.
+        * platform/gtk/editing/selection/caret-ltr-expected.txt: Added.
+        * platform/gtk/editing/selection/caret-ltr-right-expected.checksum: Added.
+        * platform/gtk/editing/selection/caret-ltr-right-expected.png: Added.
+        * platform/gtk/editing/selection/caret-ltr-right-expected.txt: Added.
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.checksum: Added.
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.png: Added.
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.txt: Added.
+        * platform/gtk/editing/selection/caret-rtl-right-expected.checksum: Added.
+        * platform/gtk/editing/selection/caret-rtl-right-expected.png: Added.
+        * platform/gtk/editing/selection/caret-rtl-right-expected.txt: Added.
+
 2010-12-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Maciej Stachowiak.
