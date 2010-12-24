@@ -352,7 +352,8 @@ void SVGAnimationElement::setTargetAttributeAnimatedValue(const String& value)
     const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
     for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
         SVGElement* shadowTreeElement = (*it)->shadowTreeElement();
-        ASSERT(shadowTreeElement);
+        if (!shadowTreeElement)
+            continue;
         if (isCSS)
             shadowTreeElement->style()->setProperty(attributeName, value, "", ec);
         else

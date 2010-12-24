@@ -1,3 +1,18 @@
+2010-12-24  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        setTargetAttributeAnimatedValue should check for a null shadowTreeElement.
+        https://bugs.webkit.org/show_bug.cgi?id=51576
+
+        Disallowed elements may be pruned from the shadow tree, leaving a null
+        shadowTreeElement. We should check for that before setting attributes.
+
+        Test: svg/custom/animate-disallowed-use-element.svg
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setTargetAttributeAnimatedValue):
+
 2010-12-24  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.
