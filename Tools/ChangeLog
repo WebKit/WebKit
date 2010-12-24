@@ -1,3 +1,21 @@
+2010-12-23  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        [chromium] LayoutTestController warning in float->int conversion
+        https://bugs.webkit.org/show_bug.cgi?id=51553
+
+        Rather than reading an int, converting to a float, then getting a compiler
+        warning on passing the float to something that expects an int, instead
+        just pass around ints.
+
+        No tests, fixes a compiler warning.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (parsePageSizeParameters):
+        (LayoutTestController::pageNumberForElementById):
+        (LayoutTestController::numberOfPages):
+
 2010-12-23  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Darin Adler.

@@ -1379,8 +1379,8 @@ void LayoutTestController::counterValueForElementById(const CppArgumentList& arg
 
 static bool parsePageSizeParameters(const CppArgumentList& arguments,
                                     int argOffset,
-                                    float* pageWidthInPixels,
-                                    float* pageHeightInPixels)
+                                    int* pageWidthInPixels,
+                                    int* pageHeightInPixels)
 {
     // WebKit is using the window width/height of DumpRenderTree as the
     // default value of the page size.
@@ -1391,8 +1391,8 @@ static bool parsePageSizeParameters(const CppArgumentList& arguments,
     case 2:
         if (!arguments[argOffset].isNumber() || !arguments[1 + argOffset].isNumber())
             return false;
-        *pageWidthInPixels = static_cast<float>(arguments[argOffset].toInt32());
-        *pageHeightInPixels = static_cast<float>(arguments[1 + argOffset].toInt32());
+        *pageWidthInPixels = arguments[argOffset].toInt32();
+        *pageHeightInPixels = arguments[1 + argOffset].toInt32();
         // fall through.
     case 0:
         break;
@@ -1405,8 +1405,8 @@ static bool parsePageSizeParameters(const CppArgumentList& arguments,
 void LayoutTestController::pageNumberForElementById(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    float pageWidthInPixels = 0;
-    float pageHeightInPixels = 0;
+    int pageWidthInPixels = 0;
+    int pageHeightInPixels = 0;
     if (!parsePageSizeParameters(arguments, 1,
                                  &pageWidthInPixels, &pageHeightInPixels))
         return;
@@ -1416,14 +1416,15 @@ void LayoutTestController::pageNumberForElementById(const CppArgumentList& argum
     if (!frame)
         return;
     result->set(frame->pageNumberForElementById(cppVariantToWebString(arguments[0]),
-                                                pageWidthInPixels, pageHeightInPixels));
+                                                static_cast<float>(pageWidthInPixels),
+                                                static_cast<float>(pageHeightInPixels)));
 }
 
 void LayoutTestController::numberOfPages(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    float pageWidthInPixels = 0;
-    float pageHeightInPixels = 0;
+    int pageWidthInPixels = 0;
+    int pageHeightInPixels = 0;
     if (!parsePageSizeParameters(arguments, 0, &pageWidthInPixels, &pageHeightInPixels))
         return;
 
