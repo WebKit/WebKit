@@ -1,3 +1,15 @@
+2010-12-24  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Add option to enable Touch Events.
+        https://bugs.webkit.org/show_bug.cgi?id=49125
+
+        Add ENABLE_TOUCH_EVENTS option.
+
+        * cmake/OptionsEfl.cmake:
+        * cmakeconfig.h.cmake:
+
 2010-12-23  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

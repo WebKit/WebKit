@@ -41,6 +41,10 @@ typedef unsigned long int uint32;
 #define AEEEvent uint16
 #endif
 
+#if PLATFORM(EFL)
+typedef struct _Eina_List Eina_List;
+#endif
+
 namespace WebCore {
 
 enum TouchEventType {
@@ -65,6 +69,8 @@ public:
     PlatformTouchEvent(const Vector<IntPoint>&, TouchEventType, PlatformTouchPoint::State, int metaState);
 #elif PLATFORM(BREWMP)
     PlatformTouchEvent(AEEEvent, uint16 wParam, uint32 dwParam);
+#elif PLATFORM(EFL)
+    PlatformTouchEvent(Eina_List*, const IntPoint, TouchEventType, int metaState);
 #endif
 
     TouchEventType type() const { return m_type; }

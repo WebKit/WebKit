@@ -898,6 +898,9 @@ SET(WebCore_SOURCES
     dom/TagNodeList.cpp
     dom/Text.cpp
     dom/TextEvent.cpp
+    dom/Touch.cpp
+    dom/TouchEvent.cpp
+    dom/TouchList.cpp
     dom/TransformSourceLibxslt.cpp
     dom/Traversal.cpp
     dom/TreeWalker.cpp

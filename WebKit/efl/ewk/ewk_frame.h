@@ -130,6 +130,26 @@ struct _Ewk_Hit_Test {
     } flags;
 };
 
+typedef enum {
+    EWK_TOUCH_START,
+    EWK_TOUCH_END,
+    EWK_TOUCH_MOVE,
+    EWK_TOUCH_CANCEL
+} Ewk_Touch_Event_Type;
+
+typedef enum {
+    EWK_TOUCH_POINT_PRESSED,
+    EWK_TOUCH_POINT_RELEASED,
+    EWK_TOUCH_POINT_MOVED,
+    EWK_TOUCH_POINT_CANCELLED
+} Ewk_Touch_Point_Type;
+
+typedef struct _Ewk_Touch_Point Ewk_Touch_Point;
+struct _Ewk_Touch_Point {
+    unsigned int id;
+    int x, y;
+    Ewk_Touch_Point_Type state;
+};
 
 EAPI Evas_Object *ewk_frame_view_get(const Evas_Object *o);
 EAPI void         ewk_frame_theme_set(Evas_Object *o, const char *path);
@@ -200,6 +220,7 @@ EAPI Eina_Bool    ewk_frame_feed_mouse_wheel(Evas_Object *o, const Evas_Event_Mo
 EAPI Eina_Bool    ewk_frame_feed_mouse_down(Evas_Object *o, const Evas_Event_Mouse_Down *ev);
 EAPI Eina_Bool    ewk_frame_feed_mouse_up(Evas_Object *o, const Evas_Event_Mouse_Up *ev);
 EAPI Eina_Bool    ewk_frame_feed_mouse_move(Evas_Object *o, const Evas_Event_Mouse_Move *ev);
+EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object* o, Ewk_Touch_Event_Type action, Eina_List* points, int metaState);
 EAPI Eina_Bool    ewk_frame_feed_key_down(Evas_Object *o, const Evas_Event_Key_Down *ev);
 EAPI Eina_Bool    ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up *ev);
 

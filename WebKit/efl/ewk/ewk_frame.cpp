@@ -36,6 +36,7 @@
 #include "KURL.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
 #include "RefPtr.h"
@@ -1472,6 +1473,42 @@ Eina_Bool ewk_frame_feed_mouse_move(Evas_Object* o, const Evas_Event_Mouse_Move*
 
     WebCore::PlatformMouseEvent event(ev, WebCore::IntPoint(x, y));
     return sd->frame->eventHandler()->mouseMoved(event);
+}
+
+Eina_Bool ewk_frame_feed_touch_event(Evas_Object* o, Ewk_Touch_Event_Type action, Eina_List* points, int metaState)
+{
+    Eina_Bool ret = EINA_FALSE;
+
+#if ENABLE(TOUCH_EVENTS)
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(points, EINA_FALSE);
+
+    Evas_Coord x, y;
+    evas_object_geometry_get(sd->view, &x, &y, 0, 0);
+
+    WebCore::TouchEventType type = WebCore::TouchStart;
+    switch (action) {
+    case EWK_TOUCH_START:
+        type = WebCore::TouchStart;
+        break;
+    case EWK_TOUCH_END:
+        type = WebCore::TouchEnd;
+        break;
+    case EWK_TOUCH_MOVE:
+        type = WebCore::TouchMove;
+        break;
+    case EWK_TOUCH_CANCEL:
+        type = WebCore::TouchCancel;
+        break;
+    default:
+        return EINA_FALSE;
+    }
+
+    WebCore::PlatformTouchEvent te(points, WebCore::IntPoint(x, y), type, metaState);
+    ret = sd->frame->eventHandler()->handleTouchEvent(te);
+#endif
+    return ret;
 }
 
 static inline Eina_Bool _ewk_frame_handle_key_scrolling(WebCore::Frame* frame, const WebCore::PlatformKeyboardEvent &event)
