@@ -84,37 +84,6 @@ void StackBounds::initialize()
     m_bound = static_cast<char*>(m_origin) - pthread_get_stacksize_np(thread);
 }
 
-#elif OS(WINDOWS)
-
-void StackBounds::initialize()
-{
-#if CPU(X86) && COMPILER(MSVC)
-    // offset 0x18 from the FS segment register gives a pointer to
-    // the thread information block for the current thread
-    NT_TIB* pTib;
-    __asm {
-        MOV EAX, FS:[18h]
-        MOV pTib, EAX
-    }
-    m_origin = static_cast<void*>(pTib->StackBase);
-#elif OS(WINDOWS) && CPU(X86) && COMPILER(GCC)
-    // offset 0x18 from the FS segment register gives a pointer to
-    // the thread information block for the current thread
-    NT_TIB* pTib;
-    asm ( "movl %%fs:0x18, %0\n"
-          : "=r" (pTib)
-        );
-    m_origin = static_cast<void*>(pTib->StackBase);
-#elif OS(WINDOWS) && CPU(X86_64)
-    PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
-    m_origin = reinterpret_cast<void*>(pTib->StackBase);
-#else
-#error Need a way to get the stack bounds on this platform (Windows)
-#endif
-    // Looks like we should be able to get pTib->StackLimit
-    m_bound = estimateStackBound(m_origin);
-}
-
 #elif OS(QNX)
 
 void StackBounds::initialize()
@@ -269,11 +238,43 @@ static void* getStackMax(void* previousFrame, bool& isGrowingDownward)
 
 void StackBounds::initialize()
 {
-    bool isGrowingDownward
-    m_origin = getStackMax(isGrowingDownward);
+    int dummy;
+    bool isGrowingDownward;
+    m_origin = getStackMax(&dummy, isGrowingDownward);
     m_bound = isGrowingDownward
         ? static_cast<char*>(m_origin) - estimatedStackSize
         : static_cast<char*>(m_origin) + estimatedStackSize;
+}
+
+#elif OS(WINDOWS)
+
+void StackBounds::initialize()
+{
+#if CPU(X86) && COMPILER(MSVC)
+    // offset 0x18 from the FS segment register gives a pointer to
+    // the thread information block for the current thread
+    NT_TIB* pTib;
+    __asm {
+        MOV EAX, FS:[18h]
+        MOV pTib, EAX
+    }
+    m_origin = static_cast<void*>(pTib->StackBase);
+#elif CPU(X86) && COMPILER(GCC)
+    // offset 0x18 from the FS segment register gives a pointer to
+    // the thread information block for the current thread
+    NT_TIB* pTib;
+    asm ( "movl %%fs:0x18, %0\n"
+          : "=r" (pTib)
+        );
+    m_origin = static_cast<void*>(pTib->StackBase);
+#elif CPU(X86_64)
+    PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
+    m_origin = reinterpret_cast<void*>(pTib->StackBase);
+#else
+#error Need a way to get the stack bounds on this platform (Windows)
+#endif
+    // Looks like we should be able to get pTib->StackLimit
+    m_bound = estimateStackBound(m_origin);
 }
 
 #else
