@@ -1,5 +1,14 @@
 2010-12-23  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed. Update GTK's Skipped file.
+
+        [GTK] http/tests/inspector/console-websocket-error.html hangs
+        https://bugs.webkit.org/show_bug.cgi?id=51380
+
+        * platform/gtk/Skipped:
+
+2010-12-23  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed. Update Chromium test expectations.
 
         Mark http/tests/inspector/console-websocket-error.html as SLOW on WIN DEBUG.
