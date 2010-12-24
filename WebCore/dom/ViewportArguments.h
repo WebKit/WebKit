@@ -74,7 +74,7 @@ struct ViewportArguments {
         , width(ValueAuto)
         , height(ValueAuto)
         , targetDensityDpi(ValueAuto)
-        , userScalable(ValueAuto)
+        , userScalable(true)
     {
     }
 

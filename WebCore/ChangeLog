@@ -1,3 +1,16 @@
+2010-12-23  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        ViewportArguments.h uses an enum to intialize a bool
+        https://bugs.webkit.org/show_bug.cgi?id=50982
+
+        Initialize userScalable to true, rather than -1.
+        No tests; fixes a compiler warning.
+
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::ViewportArguments):
+
 2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Adam Barth.
