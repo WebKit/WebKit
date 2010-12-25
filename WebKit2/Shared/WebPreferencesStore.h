@@ -58,6 +58,12 @@ namespace WebKit {
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
     macro(TabsToLinks, tabsToLinks, Bool, bool, false) \
     macro(DNSPrefetchingEnabled, dnsPrefetchingEnabled, Bool, bool, false) \
+    macro(WebArchiveDebugModeEnabled, webArchiveDebugModeEnabled, Bool, bool, false) \
+    macro(LocalFileContentSniffingEnabled, localFileContentSniffingEnabled, Bool, bool, false) \
+    macro(UsesPageCache, usesPageCache, Bool, bool, true) \
+    macro(AuthorAndUserStylesEnabled, authorAndUserStylesEnabled, Bool, bool, true) \
+    macro(PaginateDuringLayoutEnabled, paginateDuringLayoutEnabled, Bool, bool, false) \
+    macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \

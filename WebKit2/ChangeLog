@@ -1,3 +1,30 @@
+2010-12-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fill in some more preferences for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51610
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAuthorAndUserStylesEnabled):
+        (WKPreferencesGetAuthorAndUserStylesEnabled):
+        (WKPreferencesSetWebArchiveDebugModeEnabled):
+        (WKPreferencesGetWebArchiveDebugModeEnabled):
+        (WKPreferencesSetLocalFileContentSniffingEnabled):
+        (WKPreferencesGetLocalFileContentSniffingEnabled):
+        (WKPreferencesSetPageCacheEnabled):
+        (WKPreferencesGetPageCacheEnabled):
+        (WKPreferencesSetPaginateDuringLayoutEnabled):
+        (WKPreferencesGetPaginateDuringLayoutEnabled):
+        (WKPreferencesSetDOMPasteAllowedEnabled):
+        (WKPreferencesGetDOMPasteAllowedEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Pipe through some more preferences.
+
 2010-12-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -379,3 +379,63 @@ bool WKPreferencesGetDNSPrefetchingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->dnsPrefetchingEnabled();
 }
+
+void WKPreferencesSetAuthorAndUserStylesEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAuthorAndUserStylesEnabled(enabled);
+}
+
+bool WKPreferencesGetAuthorAndUserStylesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->authorAndUserStylesEnabled();
+}
+
+void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setWebArchiveDebugModeEnabled(enabled);
+}
+
+bool WKPreferencesGetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->webArchiveDebugModeEnabled();
+}
+
+void WKPreferencesSetLocalFileContentSniffingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setLocalFileContentSniffingEnabled(enabled);
+}
+
+bool WKPreferencesGetLocalFileContentSniffingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->localFileContentSniffingEnabled();
+}
+
+void WKPreferencesSetPageCacheEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setUsesPageCache(enabled);
+}
+
+bool WKPreferencesGetPageCacheEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->usesPageCache();
+}
+
+void WKPreferencesSetPaginateDuringLayoutEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setPaginateDuringLayoutEnabled(enabled);
+}
+
+bool WKPreferencesGetPaginateDuringLayoutEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->paginateDuringLayoutEnabled();
+}
+
+void WKPreferencesSetDOMPasteAllowed(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setDOMPasteAllowed(enabled);
+}
+
+bool WKPreferencesGetDOMPasteAllowed(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->domPasteAllowed();
+}
