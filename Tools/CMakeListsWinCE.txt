@@ -12,7 +12,7 @@ SET(WinCELauncher_INCLUDE_DIRECTORIES
 )
 
 SET(WinCELauncher_SOURCES
-    ${WEBKITTOOLS_DIR}/WinCELauncher/main.cpp
+    ${TOOLS_DIR}/WinCELauncher/main.cpp
 )
 
 SET(WinCELauncher_LIBRARIES
