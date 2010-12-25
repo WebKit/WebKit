@@ -27,7 +27,6 @@
 
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
-#include "AuthenticationManagerMessages.h"
 #include "DataReference.h"
 #include "DrawingAreaProxy.h"
 #include "FindIndicator.h"
@@ -62,7 +61,6 @@
 #include "WebProtectionSpace.h"
 #include "WebSecurityOrigin.h"
 #include "WebURLRequest.h"
-#include <WebCore/CredentialStorage.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/WindowFeatures.h>
@@ -1983,14 +1981,6 @@ void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const Web
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
-
-    if (!coreChallenge.previousFailureCount()) {
-        Credential defaultCredential = CredentialStorage::getFromPersistentStorage(coreChallenge.protectionSpace());
-        if (!defaultCredential.isEmpty() && defaultCredential.hasPassword() && !defaultCredential.password().isEmpty()) {
-            process()->send(Messages::AuthenticationManager::UseCredentialForChallenge(challengeID, defaultCredential), pageID());
-            return;
-        }
-    }
 
     RefPtr<AuthenticationChallengeProxy> authenticationChallenge = AuthenticationChallengeProxy::create(coreChallenge, challengeID, this);
     

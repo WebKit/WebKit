@@ -104,9 +104,6 @@ int WebProcessMain(const CommandLine& commandLine)
         return 2;
     }
 
-    // Disallow access to the user keychain.
-    SecKeychainSetPreferenceDomain(kSecPreferencesDomainSystem);
-
 #if !SHOW_CRASH_REPORTER
     // Installs signal handlers that exit on a crash so that CrashReporter does not show up.
     signal(SIGILL, _exit);

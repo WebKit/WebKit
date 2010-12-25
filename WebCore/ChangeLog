@@ -1,5 +1,16 @@
 2010-12-24  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION (r74648): XHR layout test failures
+        https://bugs.webkit.org/show_bug.cgi?id=51603
+
+        Reverted r74648.
+
+        * WebCore.exp.in:
+
+2010-12-24  Dan Bernstein  <mitz@apple.com>
+
         Try to fix the Qt build after r74648.
 
         * WebCore.gypi:
