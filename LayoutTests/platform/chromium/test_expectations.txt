@@ -1870,7 +1870,7 @@ BUGCR18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
 BUGCR18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
 
 // Test failures caused by re-enabling skia asserts.
-BUGCR18896 WIN DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
+BUGCR18896 WIN LINUX DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
 
 // Test failures from WebKit merge 46894 to 46977
 BUGCR26737 : fast/js/prototypes.html = FAIL

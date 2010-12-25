@@ -1,3 +1,10 @@
+2010-12-24  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium test expectations update.
+        svg/batik/paints/gradientLimit.svg fails on Linux Debug as well.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-24  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing media test on GTK.
