@@ -1,3 +1,13 @@
+2010-12-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Add standalone target for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=51607
+
+        * GNUmakefile.am: add convenience target to only build jsc and its
+        dependencies.
+
 2010-12-24  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

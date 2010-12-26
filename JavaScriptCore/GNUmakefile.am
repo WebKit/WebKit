@@ -598,6 +598,8 @@ JavaScriptCore/RegExpJitTables.h: $(srcdir)/JavaScriptCore/create_regex_tables
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$(AM_V_GEN)$(PERL) $^ $@
 
+jsc: $(javascriptcore_built_nosources) Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT);
+
 bin_PROGRAMS += \
 	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT)
 
