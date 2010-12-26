@@ -714,6 +714,7 @@ BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
 BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
 BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
 BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
+BUGCR67732 LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
 
 BUGCR67767 : http/tests/security/cross-frame-access-call.html = TEXT
 BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
@@ -1870,7 +1871,7 @@ BUGCR18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
 BUGCR18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
 
 // Test failures caused by re-enabling skia asserts.
-BUGCR18896 WIN LINUX DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL
+BUGCR18896 WIN LINUX DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL CRASH
 
 // Test failures from WebKit merge 46894 to 46977
 BUGCR26737 : fast/js/prototypes.html = FAIL
@@ -2185,7 +2186,8 @@ BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 
 // The touch targeting logic was recently changed.
 // TIMEOUT added for WebKit roll 74534:74557
-BUGCR36415 : fast/events/touch/touch-target.html = TEXT TIMEOUT
+// FAIL added because of differing failure modes on different platforms
+BUGCR36415 : fast/events/touch/touch-target.html = FAIL TIMEOUT
 
 // One pixel changes from gray 0x83 to gray 0x81. Valgrind is clean.
 BUGCR38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
@@ -2298,6 +2300,7 @@ BUGCR44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 // Many of these are skipped on the Mac platform
 BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
+BUGWK45991 LINUX DEBUG : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT TIMEOUT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create1.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create2.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.get.type.html = TEXT
@@ -3267,7 +3270,7 @@ BUGWK51398 MAC : inspector/console-dir-global.html = TIMEOUT
 BUGWK51398 MAC : inspector/debugger-expand-scope.html = TIMEOUT
 
 // WebKit roll 74534:74545
-BUGWK51536 : fast/css/box-shadow.html = FAIL
+BUGWK51536 : fast/css/box-shadow.html = FAIL TIMEOUT
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGCR67905 MAC : fast/css/getComputedStyle/computed-style.html = TEXT
 BUGCR67905 MAC : svg/css/getComputedStyle-basic.xhtml = TEXT

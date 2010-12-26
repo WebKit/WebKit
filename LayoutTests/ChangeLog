@@ -1,3 +1,19 @@
+2010-12-25  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
+        * platform/chromium-gpu/test_expectations.txt:
+          Win Debug:
+          Marked compositing/tiling/huge-layer-img.html as TIMEOUT.
+          Marked fast/canvas/webgl/gl-object-get-calls.html as a flaky crash.
+        * platform/chromium/test_expectations.txt:
+          Adjusted expectations for the following tests:
+          fast/canvas/shadow-offset-7.html
+          svg/batik/paints/gradientLimit.svg
+          fast/events/touch/touch-target.html
+          canvas/philip/tests/2d.gradient.radial.cone.top.html
+          fast/css/box-shadow.html
+
 2010-12-25  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip another GTK media test reporting wrong duration,
