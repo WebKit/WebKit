@@ -38,6 +38,32 @@ function computeAverage(values) {
     return sum / values.length;
 }
 
+function computeMax(values) {
+    var max = values.length ? values[0] : 0;
+    for (var i = 1; i < values.length; i++) {
+        if (max < values[i])
+            max = values[i];
+    }
+    return max;
+}
+
+function computeMedian(values) {
+    values.sort(function(a, b) { return a - b; });
+    var len = values.length;
+    if (len % 2)
+        return values[(len-1)/2];
+    return (values[len/2-1] + values[len/2]) / 2;
+}
+
+function computeMin(values) {
+    var min = values.length ? values[0] : 0;
+    for (var i = 1; i < values.length; i++) {
+        if (min > values[i])
+            min = values[i];
+    }
+    return min;
+}
+
 function computeStdev(values) {
     var average = computeAverage(values);
     var sumOfSquaredDeviations = 0;
@@ -51,7 +77,10 @@ function computeStdev(values) {
 function logStatistics(times) {
     log("");
     log("avg " + computeAverage(times));
+    log("median " + computeMedian(times));
     log("stdev " + computeStdev(times));
+    log("min " + computeMin(times));
+    log("max " + computeMax(times));
 }
 
 function run() {
