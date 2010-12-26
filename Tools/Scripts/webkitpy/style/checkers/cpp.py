@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009, 2010 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
 # Copyright (C) 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
@@ -308,6 +308,133 @@ class _IncludeState(dict):
         return error_message
 
 
+class Position(object):
+    """Holds the position of something."""
+    def __init__(self, row, column):
+        self.row = row
+        self.column = column
+
+
+class Parameter(object):
+    """Information about one function parameter."""
+    def __init__(self, parameter, parameter_name_index, row):
+        self.type = parameter[:parameter_name_index].strip()
+        # Remove any initializers from the parameter name (e.g. int i = 5).
+        self.name = sub(r'=.*', '', parameter[parameter_name_index:]).strip()
+        self.row = row
+
+
+class SingleLineView(object):
+    """Converts multiple lines into a single line (with line breaks replaced by a
+       space) to allow for easier searching."""
+    def __init__(self, lines, start_position, end_position):
+        """Create a SingleLineView instance.
+
+        Args:
+          lines: a list of multiple lines to combine into a single line.
+          start_position: offset within lines of where to start the single line.
+          end_position: just after where to end (like a slice operation).
+        """
+        # Get the rows of interest.
+        trimmed_lines = lines[start_position.row:end_position.row + 1]
+
+        # Remove the columns on the last line that aren't included.
+        trimmed_lines[-1] = trimmed_lines[-1][:end_position.column]
+
+        # Remove the columns on the first line that aren't included.
+        trimmed_lines[0] = trimmed_lines[0][start_position.column:]
+
+        # Create a single line with all of the parameters.
+        self.single_line = ' '.join(trimmed_lines)
+
+        # Keep the row lengths, so we can calculate the original row number
+        # given a column in the single line (adding 1 due to the space added
+        # during the join).
+        self._row_lengths = [len(line) + 1 for line in trimmed_lines]
+        self._starting_row = start_position.row
+
+    def convert_column_to_row(self, single_line_column_number):
+        """Convert the column number from the single line into the original
+        line number.
+
+        Special cases:
+        * Columns in the added spaces are considered part of the previous line.
+        * Columns beyond the end of the line are consider part the last line
+        in the view."""
+        total_columns = 0
+        row_offset = 0
+        while row_offset < len(self._row_lengths) - 1 and single_line_column_number >= total_columns + self._row_lengths[row_offset]:
+            total_columns += self._row_lengths[row_offset]
+            row_offset += 1
+        return self._starting_row + row_offset
+
+
+def create_skeleton_parameters(all_parameters):
+    """Converts a parameter list to a skeleton version.
+
+    The skeleton only has one word for the parameter name, one word for the type,
+    and commas after each parameter and only there. Everything in the skeleton
+    remains in the same columns as the original."""
+    all_simplifications = (
+        # Remove template parameters, function declaration parameters, etc.
+        r'(<[^<>]*?>)|(\([^\(\)]*?\))|(\{[^\{\}]*?\})',
+        # Remove all initializers.
+        r'=[^,]*',
+        # Remove :: and everything before it.
+        r'[^,]*::',
+        # Remove modifiers like &, *.
+        r'[&*]',
+        # Remove const modifiers.
+        r'\bconst\s+(?=[A-Za-z])',
+        # Remove numerical modifiers like long.
+        r'\b(unsigned|long|short)\s+(?=unsigned|long|short|int|char|double|float)')
+
+    skeleton_parameters = all_parameters
+    for simplification in all_simplifications:
+        skeleton_parameters = iteratively_replace_matches_with_char(simplification, ' ', skeleton_parameters)
+    # If there are any parameters, then add a , after the last one to
+    # make a regular pattern of a , following every parameter.
+    if skeleton_parameters.strip():
+        skeleton_parameters += ','
+    return skeleton_parameters
+
+
+def find_parameter_name_index(skeleton_parameter):
+    """Determines where the parametere name starts given the skeleton parameter."""
+    # The first space from the right in the simplified parameter is where the parameter
+    # name starts unless the first space is before any content in the simplified parameter.
+    before_name_index = skeleton_parameter.rstrip().rfind(' ')
+    if before_name_index != -1 and skeleton_parameter[:before_name_index].strip():
+        return before_name_index + 1
+    return len(skeleton_parameter)
+
+
+def parameter_list(elided_lines, start_position, end_position):
+    """Generator for a function's parameters."""
+    # Create new positions that omit the outer parenthesis of the parameters.
+    start_position = Position(row=start_position.row, column=start_position.column + 1)
+    end_position = Position(row=end_position.row, column=end_position.column - 1)
+    single_line_view = SingleLineView(elided_lines, start_position, end_position)
+    skeleton_parameters = create_skeleton_parameters(single_line_view.single_line)
+    end_index = -1
+
+    while True:
+        # Find the end of the next parameter.
+        start_index = end_index + 1
+        end_index = skeleton_parameters.find(',', start_index)
+
+        # No comma means that all parameters have been parsed.
+        if end_index == -1:
+            return
+        row = single_line_view.convert_column_to_row(end_index)
+
+        # Parse the parameter into a type and parameter name.
+        skeleton_parameter = skeleton_parameters[start_index:end_index]
+        name_offset = find_parameter_name_index(skeleton_parameter)
+        parameter = single_line_view.single_line[start_index:end_index]
+        yield Parameter(parameter, name_offset, row)
+
+
 class _FunctionState(object):
     """Tracks current function name and the number of lines in its body.
 
@@ -329,7 +456,8 @@ class _FunctionState(object):
         self.body_start_line_number = -1000
         self.ending_line_number = -1000
 
-    def begin(self, function_name, body_start_line_number, ending_line_number, is_declaration):
+    def begin(self, function_name, body_start_line_number, ending_line_number, is_declaration,
+              parameter_start_position, parameter_end_position, clean_lines):
         """Start analyzing function body.
 
         Args:
@@ -337,6 +465,9 @@ class _FunctionState(object):
             body_start_line_number: The line number of the { or the ; for a protoype.
             ending_line_number: The line number where the function ends.
             is_declaration: True if this is a prototype.
+            parameter_start_position: position in elided of the '(' for the parameters.
+            parameter_end_position: position in elided of the ')' for the parameters.
+            clean_lines: A CleansedLines instance containing the file.
         """
         self.in_a_function = True
         self.lines_in_function = -1  # Don't count the open brace line.
@@ -344,6 +475,17 @@ class _FunctionState(object):
         self.body_start_line_number = body_start_line_number
         self.ending_line_number = ending_line_number
         self.is_declaration = is_declaration
+        self.parameter_start_position = parameter_start_position
+        self.parameter_end_position = parameter_end_position
+        self._clean_lines = clean_lines
+        self._parameter_list = None
+
+    def parameter_list(self):
+        if not self._parameter_list:
+            # Store the final result as a tuple since that is immutable.
+            self._parameter_list = tuple(parameter_list(self._clean_lines.elided, self.parameter_start_position, self.parameter_end_position))
+
+        return self._parameter_list
 
     def count(self, line_number):
         """Count line in current function body."""
@@ -1213,7 +1355,11 @@ def detect_functions(clean_lines, line_number, function_state, error):
     raw = clean_lines.raw_lines
     raw_line = raw[line_number]
 
-    regexp = r'\s*(\w(\w|::|\*|\&|\s|<|>|,|~)*)\('  # decls * & space::name( ...
+    # Lines ending with a \ indicate a macro. Don't try to check them.
+    if raw_line.endswith('\\'):
+        return
+
+    regexp = r'\s*(\w(\w|::|\*|\&|\s|<|>|,|~|(operator\s*(/|-|=|!|\+)+))*)\('  # decls * & space::name( ...
     match_result = match(regexp, line)
     if not match_result:
         return
@@ -1232,7 +1378,7 @@ def detect_functions(clean_lines, line_number, function_state, error):
             # Replace template constructs with _ so that no spaces remain in the function name,
             # while keeping the column numbers of other characters the same as "line".
             line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', '_', line)
-            match_function = search(r'((\w|:|<|>|,|~)*)\(', line_with_no_templates)
+            match_function = search(r'((\w|:|<|>|,|~|(operator\s*(/|-|=|!|\+)+))*)\(', line_with_no_templates)
             if not match_function:
                 return  # The '(' must have been inside of a template.
 
@@ -1246,13 +1392,22 @@ def detect_functions(clean_lines, line_number, function_state, error):
                     function += parameter_regexp.group(1)
             else:
                 function += '()'
+
+            parameter_start_position = Position(line_number, match_function.end(1))
+            close_result = close_expression(clean_lines, line_number, parameter_start_position.column)
+            if close_result[1] == len(clean_lines.elided):
+                # No end was found.
+                return
+            parameter_end_position = Position(close_result[1], close_result[2])
+
             is_declaration = bool(search(r'^[^{]*;', start_line))
             if is_declaration:
                 ending_line_number = start_line_number
             else:
                 open_brace_index = start_line.find('{')
                 ending_line_number = close_expression(clean_lines, start_line_number, open_brace_index)[1]
-            function_state.begin(function, start_line_number, ending_line_number, is_declaration)
+            function_state.begin(function, start_line_number, ending_line_number, is_declaration,
+                                 parameter_start_position, parameter_end_position, clean_lines)
             return
 
     # No body for the function (or evidence of a non-function) was found.

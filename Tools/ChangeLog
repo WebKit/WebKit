@@ -1,3 +1,40 @@
+2010-12-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style should be able to parse function declaration parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=51451
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (Position.__init__): Holds simple position information (row, column).
+        (Parameter.__init__): Holds information about a parameter.
+        (SingleLineView.__init): Converts multiple lines into a single line for simpler searches.
+        (SingleLineView.convert_column_to_row): Returns the original row given a column.
+        (create_skeleton_parameters): Simplifies a parameter list for easier searching.
+        (find_parameter_name_index): Finds where the parameter name is.
+        (parameter_list): Generates the list of parameters for a function.
+        (_FunctionState.begin): Added information to allow determining the parameters
+        on demand.
+        (_FunctionState.get_parameter_list): Returns a tuple of function parameters.
+        (detect_functions): Improve function detection for operator functions and
+        determine where the parameters end and pass that to _FunctionState.begin.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppFunctionsTest.test_parameter): Verifies Parameter functionality.
+        (CppFunctionsTest.test_single_line_view): Verifies SingleLineView functionality.
+        (CppFunctionsTest.test_create_skeleton_parameters): Verifies create_skeleton_parameters.
+        (CppFunctionsTest.test_find_parameter_name_index): Verifies find_parameter_name_index.
+        (CppFunctionsTest.test_parameter_list): Does some minimal verification for parameter list.
+        Much more thorough verification is done as part of FunctionDetectionTest.test_parameter_list.
+        (FunctionDetectionTest.perform_function_detection): Added support for verifying
+        the parameters found.
+        (FunctionDetectionTest.test_function_declaration_detection): Added more function
+        detection test to verify that we catch the operator functions.
+        (FunctionDetectionTest.test_ignore_macros): Verify that function detection ignores macros.
+        (FunctionDetectionTest.test_parameter_list): Added tests to verify the parameter parsing.
+        (CheckForFunctionLengthsTest.test_function_length_check_definition_severity1_for_bad_test_doesnt_break): Removed
+        because the error. The test is about the bad function name. Fixing the name makes the test exactly like
+        test_function_length_check_definition_severity1_for_test.
+
 2010-12-25  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE buildfix after r74334.

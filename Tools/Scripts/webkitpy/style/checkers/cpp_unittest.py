@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8; -*-
 #
-# Copyright (C) 2009 Google Inc. All rights reserved.
+# Copyright (C) 2009, 2010 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
 # Copyright (C) 2009 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
@@ -118,6 +118,93 @@ class CppFunctionsTest(unittest.TestCase):
         self.assertFalse(cpp_style._FileState(clean_lines, 'cc').is_c_or_objective_c())
         self.assertFalse(cpp_style._FileState(clean_lines, 'h').is_c_or_objective_c())
         self.assertTrue(cpp_style._FileState(clean_objc_lines, 'h').is_c_or_objective_c())
+
+    def test_parameter(self):
+        # Test type.
+        parameter = cpp_style.Parameter('ExceptionCode', 13, 1)
+        self.assertEquals(parameter.type, 'ExceptionCode')
+        self.assertEquals(parameter.name, '')
+        self.assertEquals(parameter.row, 1)
+
+        # Test type and name.
+        parameter = cpp_style.Parameter('PassRefPtr<MyClass> parent', 19, 1)
+        self.assertEquals(parameter.type, 'PassRefPtr<MyClass>')
+        self.assertEquals(parameter.name, 'parent')
+        self.assertEquals(parameter.row, 1)
+
+        # Test type, no name, with default value.
+        parameter = cpp_style.Parameter('MyClass = 0', 7, 0)
+        self.assertEquals(parameter.type, 'MyClass')
+        self.assertEquals(parameter.name, '')
+        self.assertEquals(parameter.row, 0)
+
+        # Test type, name, and default value.
+        parameter = cpp_style.Parameter('MyClass a = 0', 7, 0)
+        self.assertEquals(parameter.type, 'MyClass')
+        self.assertEquals(parameter.name, 'a')
+        self.assertEquals(parameter.row, 0)
+
+    def test_single_line_view(self):
+        start_position = cpp_style.Position(row=1, column=1)
+        end_position = cpp_style.Position(row=3, column=1)
+        single_line_view = cpp_style.SingleLineView(['0', 'abcde', 'fgh', 'i'], start_position, end_position)
+        self.assertEquals(single_line_view.single_line, 'bcde fgh i')
+        self.assertEquals(single_line_view.convert_column_to_row(0), 1)
+        self.assertEquals(single_line_view.convert_column_to_row(4), 1)
+        self.assertEquals(single_line_view.convert_column_to_row(5), 2)
+        self.assertEquals(single_line_view.convert_column_to_row(8), 2)
+        self.assertEquals(single_line_view.convert_column_to_row(9), 3)
+        self.assertEquals(single_line_view.convert_column_to_row(100), 3)
+
+        start_position = cpp_style.Position(row=0, column=3)
+        end_position = cpp_style.Position(row=0, column=4)
+        single_line_view = cpp_style.SingleLineView(['abcdef'], start_position, end_position)
+        self.assertEquals(single_line_view.single_line, 'd')
+
+    def test_create_skeleton_parameters(self):
+        self.assertEquals(cpp_style.create_skeleton_parameters(''), '')
+        self.assertEquals(cpp_style.create_skeleton_parameters(' '), ' ')
+        self.assertEquals(cpp_style.create_skeleton_parameters('long'), 'long,')
+        self.assertEquals(cpp_style.create_skeleton_parameters('const unsigned long int'), '                    int,')
+        self.assertEquals(cpp_style.create_skeleton_parameters('long int*'), '     int ,')
+        self.assertEquals(cpp_style.create_skeleton_parameters('PassRefPtr<Foo> a'), 'PassRefPtr      a,')
+        self.assertEquals(cpp_style.create_skeleton_parameters(
+                'ComplexTemplate<NestedTemplate1<MyClass1, MyClass2>, NestedTemplate1<MyClass1, MyClass2> > param, int second'),
+                          'ComplexTemplate                                                                            param, int second,')
+        self.assertEquals(cpp_style.create_skeleton_parameters('int = 0, Namespace::Type& a'), 'int    ,            Type  a,')
+        # Create skeleton parameters is a bit too aggressive with function variables, but
+        # it allows for parsing other parameters and declarations like this are rare.
+        self.assertEquals(cpp_style.create_skeleton_parameters('void (*fn)(int a, int b), Namespace::Type& a'),
+                          'void                    ,            Type  a,')
+
+        # This doesn't look like functions declarations but the simplifications help to eliminate false positives.
+        self.assertEquals(cpp_style.create_skeleton_parameters('b{d}'), 'b   ,')
+
+    def test_find_parameter_name_index(self):
+        self.assertEquals(cpp_style.find_parameter_name_index(' int a '), 5)
+        self.assertEquals(cpp_style.find_parameter_name_index(' PassRefPtr     '), 16)
+        self.assertEquals(cpp_style.find_parameter_name_index('double'), 6)
+
+    def test_parameter_list(self):
+        elided_lines = ['int blah(PassRefPtr<MyClass> paramName,',
+                        'const Other1Class& foo,',
+                        'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const * param = new ComplexTemplate<Class1, NestedTemplate<P1, P2> >(34, 42),',
+                        'int* myCount = 0);']
+        start_position = cpp_style.Position(row=0, column=8)
+        end_position = cpp_style.Position(row=3, column=16)
+
+        expected_parameters = ({'type': 'PassRefPtr<MyClass>', 'name': 'paramName', 'row': 0},
+                               {'type': 'const Other1Class&', 'name': 'foo', 'row': 1},
+                               {'type': 'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const *', 'name': 'param', 'row': 2},
+                               {'type': 'int*', 'name': 'myCount', 'row': 3})
+        index = 0
+        for parameter in cpp_style.parameter_list(elided_lines, start_position, end_position):
+            expected_parameter = expected_parameters[index]
+            self.assertEquals(parameter.type, expected_parameter['type'])
+            self.assertEquals(parameter.name, expected_parameter['name'])
+            self.assertEquals(parameter.row, expected_parameter['row'])
+            index += 1
+        self.assertEquals(index, len(expected_parameters))
 
 
 class CppStyleTestBase(unittest.TestCase):
@@ -250,6 +337,16 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.assertEquals(function_state.body_start_line_number, function_information['body_start_line_number'])
         self.assertEquals(function_state.ending_line_number, function_information['ending_line_number'])
         self.assertEquals(function_state.is_declaration, function_information['is_declaration'])
+        expected_parameters = function_information.get('parameter_list')
+        if expected_parameters:
+            actual_parameters = function_state.parameter_list()
+            self.assertEquals(len(actual_parameters), len(expected_parameters))
+            for index in range(len(expected_parameters)):
+                actual_parameter = actual_parameters[index]
+                expected_parameter = expected_parameters[index]
+                self.assertEquals(actual_parameter.type, expected_parameter['type'])
+                self.assertEquals(actual_parameter.name, expected_parameter['name'])
+                self.assertEquals(actual_parameter.row, expected_parameter['row'])
 
     def test_basic_function_detection(self):
         self.perform_function_detection(
@@ -268,6 +365,37 @@ class FunctionDetectionTest(CppStyleTestBase):
              'ending_line_number': 0,
              'is_declaration': True})
 
+        self.perform_function_detection(
+            ['CheckedInt<T> operator /(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
+            {'name': 'operator /',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True})
+
+        self.perform_function_detection(
+            ['CheckedInt<T> operator -(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
+            {'name': 'operator -',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+            'is_declaration': True})
+
+        self.perform_function_detection(
+            ['CheckedInt<T> operator !=(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
+            {'name': 'operator !=',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True})
+
+        self.perform_function_detection(
+            ['CheckedInt<T> operator +(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
+            {'name': 'operator +',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True})
+
+    def test_ignore_macros(self):
+        self.perform_function_detection(['void aFunctionName(int); \\'], None)
+
     def test_non_functions(self):
         # This case exposed an error because the open brace was in quotes.
         self.perform_function_detection(
@@ -283,6 +411,70 @@ class FunctionDetectionTest(CppStyleTestBase):
 
         # Simple test case with something that is not a function.
         self.perform_function_detection(['class Stuff;'], None)
+
+    def test_parameter_list(self):
+        # A function with no arguments.
+        function_state = self.perform_function_detection(
+            ['void functionName();'],
+            {'name': 'functionName',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True,
+             'parameter_list': ()})
+
+        # A function with one argument.
+        function_state = self.perform_function_detection(
+            ['void functionName(int);'],
+            {'name': 'functionName',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True,
+             'parameter_list':
+                 ({'type': 'int', 'name': '', 'row': 0},)})
+
+        # A function with unsigned and short arguments
+        function_state = self.perform_function_detection(
+            ['void functionName(unsigned a, short b, long c, long long short unsigned int);'],
+            {'name': 'functionName',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True,
+             'parameter_list':
+                 ({'type': 'unsigned', 'name': 'a', 'row': 0},
+                  {'type': 'short', 'name': 'b', 'row': 0},
+                  {'type': 'long', 'name': 'c', 'row': 0},
+                  {'type': 'long long short unsigned int', 'name': '', 'row': 0})})
+
+        # Some parameter type with modifiers and no parameter names.
+        function_state = self.perform_function_detection(
+            ['virtual void determineARIADropEffects(Vector<String>*&, const unsigned long int*&, const MediaPlayer::Preload, Other<Other2, Other3<P1, P2> >, int);'],
+            {'name': 'determineARIADropEffects',
+             'body_start_line_number': 0,
+             'ending_line_number': 0,
+             'is_declaration': True,
+             'parameter_list':
+                 ({'type': 'Vector<String>*&', 'name': '', 'row': 0},
+                  {'type': 'const unsigned long int*&', 'name': '', 'row': 0},
+                  {'type': 'const MediaPlayer::Preload', 'name': '', 'row': 0},
+                  {'type': 'Other<Other2, Other3<P1, P2> >', 'name': '', 'row': 0},
+                  {'type': 'int', 'name': '', 'row': 0})})
+
+        # Try parsing a function with a very complex definition.
+        function_state = self.perform_function_detection(
+            ['AnotherTemplate<Class1, Class2> aFunctionName(PassRefPtr<MyClass> paramName,',
+             'const Other1Class& foo,',
+             'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const * param = new ComplexTemplate<Class1, NestedTemplate<P1, P2> >(34, 42),',
+             'int* myCount = 0);'],
+            {'name': 'aFunctionName',
+             'body_start_line_number': 3,
+             'ending_line_number': 3,
+             'is_declaration': True,
+             'parameter_list':
+                 ({'type': 'PassRefPtr<MyClass>', 'name': 'paramName', 'row': 0},
+                  {'type': 'const Other1Class&', 'name': 'foo', 'row': 1},
+                  {'type': 'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const *', 'name': 'param', 'row': 2},
+                  {'type': 'int*', 'name': 'myCount', 'row': 3})})
+
 
 class CppStyleTest(CppStyleTestBase):
 
@@ -2549,14 +2741,12 @@ class CheckForFunctionLengthsTest(CppStyleTestBase):
         error_level = 1
         error_lines = self.trigger_test_lines(error_level) + 1
         trigger_level = self.trigger_test_lines(self.min_confidence)
+        # Since the function name isn't valid, the function detection algorithm
+        # will skip it, so no error is produced.
         self.assert_function_lengths_check(
             ('TEST_F('
              + self.function_body(error_lines)),
-            ('Small and focused functions are preferred: '
-             'TEST_F has %d non-comment lines '
-             '(error triggered by exceeding %d lines).'
-             '  [readability/fn_size] [%d]')
-            % (error_lines, trigger_level, error_level))
+            '')
 
     def test_function_length_check_definition_severity1_with_embedded_no_lints(self):
         error_level = 1
