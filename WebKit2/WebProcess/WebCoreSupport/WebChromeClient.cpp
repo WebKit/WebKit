@@ -322,20 +322,20 @@ IntRect WebChromeClient::windowResizerRect() const
     return m_page->windowResizerRect();
 }
 
-void WebChromeClient::invalidateWindow(const IntRect& rect, bool immediate)
+void WebChromeClient::invalidateWindow(const IntRect&, bool)
 {
-    m_page->drawingArea()->invalidateWindow(rect, immediate);
+    // Do nothing here, there's no concept of invalidating the window in the web process.
 }
 
-void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
+void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool)
 {
-    m_page->drawingArea()->invalidateContentsAndWindow(rect, immediate);
+    m_page->drawingArea()->setNeedsDisplay(rect);
 }
 
-void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
+void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool)
 {
     m_page->pageDidScroll();
-    m_page->drawingArea()->invalidateContentsForSlowScroll(rect, immediate);
+    m_page->drawingArea()->setNeedsDisplay(rect);
 }
 
 void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)

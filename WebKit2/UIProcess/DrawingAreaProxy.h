@@ -46,6 +46,8 @@ typedef QPainter* PlatformDrawingContext;
 #endif
 
 class DrawingAreaProxy {
+    WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
+
 public:
     static DrawingAreaInfo::Identifier nextIdentifier();
 

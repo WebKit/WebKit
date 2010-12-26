@@ -55,20 +55,6 @@ TiledDrawingArea::~TiledDrawingArea()
 {
 }
 
-void TiledDrawingArea::invalidateWindow(const IntRect& rect, bool immediate)
-{
-}
-
-void TiledDrawingArea::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
-{
-    setNeedsDisplay(rect);
-}
-
-void TiledDrawingArea::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
-{
-    setNeedsDisplay(rect);
-}
-
 void TiledDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     // FIXME: Do something much smarter.

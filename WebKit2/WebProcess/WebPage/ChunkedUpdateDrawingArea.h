@@ -39,11 +39,8 @@ public:
     ChunkedUpdateDrawingArea(DrawingAreaInfo::Identifier identifier, WebPage*);
     virtual ~ChunkedUpdateDrawingArea();
 
-    virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate);
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect& rect, bool immediate);
-    virtual void invalidateContentsForSlowScroll(const WebCore::IntRect& rect, bool immediate);
-    virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
     virtual void setNeedsDisplay(const WebCore::IntRect&);
+    virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
     virtual void display();
 
 #if USE(ACCELERATED_COMPOSITING)

@@ -45,16 +45,10 @@ class DrawingArea : public RefCounted<DrawingArea> {
 public:
     // FIXME: It might make sense to move this create function into a factory style class. 
     static PassRefPtr<DrawingArea> create(DrawingAreaInfo::Type, DrawingAreaInfo::Identifier, WebPage*);
-
     virtual ~DrawingArea();
     
-    virtual void invalidateWindow(const WebCore::IntRect& rect, bool immediate) = 0;
-    virtual void invalidateContentsAndWindow(const WebCore::IntRect& rect, bool immediate) = 0;
-    virtual void invalidateContentsForSlowScroll(const WebCore::IntRect& rect, bool immediate) = 0;
-    virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect) = 0;
-
     virtual void setNeedsDisplay(const WebCore::IntRect&) = 0;
-    virtual void display() = 0;
+    virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect) = 0;
 
     virtual void pageBackgroundTransparencyChanged() { }
 

@@ -1,3 +1,23 @@
+2010-12-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Drawing area cleanup. Remove a bunch of redundant functions that just ended
+        up calling setNeedsDisplay.
+
+        * UIProcess/DrawingAreaProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::invalidateWindow):
+        (WebKit::WebChromeClient::invalidateContentsAndWindow):
+        (WebKit::WebChromeClient::invalidateContentsForSlowScroll):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        * WebProcess/WebPage/TiledDrawingArea.h:
+
 2010-12-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

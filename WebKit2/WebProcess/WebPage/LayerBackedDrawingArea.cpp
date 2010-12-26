@@ -61,21 +61,6 @@ LayerBackedDrawingArea::~LayerBackedDrawingArea()
     platformClear();
 }
 
-void LayerBackedDrawingArea::invalidateWindow(const IntRect& rect, bool immediate)
-{
-
-}
-
-void LayerBackedDrawingArea::invalidateContentsAndWindow(const IntRect& rect, bool immediate)
-{
-    setNeedsDisplay(rect);
-}
-
-void LayerBackedDrawingArea::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
-{
-    setNeedsDisplay(rect);
-}
-
 void LayerBackedDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
     // FIXME: Do something much smarter.
