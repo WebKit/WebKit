@@ -1,3 +1,11 @@
+2010-12-26  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium expectations fix. Fix broken (duplicate)
+        expectations for
+        canvas/philip/tests/2d.gradient.radial.cone.top.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-26  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.

@@ -2299,7 +2299,8 @@ BUGCR44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 // The following tests fail on all platforms and need further investigation.
 // Many of these are skipped on the Mac platform
 BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
+BUGWK45991 MAC WIN : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
+BUGWK45991 LINUX RELEASE : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
 BUGWK45991 LINUX DEBUG : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT TIMEOUT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create1.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create2.type.html = TEXT
