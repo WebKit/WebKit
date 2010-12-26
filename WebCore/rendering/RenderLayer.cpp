@@ -2572,12 +2572,11 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, RenderLayer* rootLayer, 
 }
 
 void RenderLayer::paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext* context,
-                                             const IntRect& paintDirtyRect, PaintBehavior paintBehavior,
-                                             RenderObject* paintingRoot, OverlapTestRequestMap* overlapTestRequests,
-                                             PaintLayerFlags paintFlags)
+                                           const IntRect& paintDirtyRect, PaintBehavior paintBehavior,
+                                           RenderObject* paintingRoot, OverlapTestRequestMap* overlapTestRequests,
+                                           PaintLayerFlags paintFlags)
 {
     // We need to do multiple passes, breaking up our child layer into strips.
-    ASSERT(!renderer()->isPositioned());
     Vector<RenderLayer*> columnLayers;
     RenderLayer* ancestorLayer = isNormalFlowOnly() ? parent() : stackingContext();
     for (RenderLayer* curr = childLayer->parent(); curr; curr = curr->parent()) {
@@ -3044,7 +3043,6 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
 RenderLayer* RenderLayer::hitTestPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, const HitTestRequest& request, HitTestResult& result,
                                                      const IntRect& hitTestRect, const IntPoint& hitTestPoint, const HitTestingTransformState* transformState, double* zOffset)
 {
-    ASSERT(!renderer()->isPositioned());
     Vector<RenderLayer*> columnLayers;
     RenderLayer* ancestorLayer = isNormalFlowOnly() ? parent() : stackingContext();
     for (RenderLayer* curr = childLayer->parent(); curr; curr = curr->parent()) {

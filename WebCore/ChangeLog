@@ -1,3 +1,16 @@
+2010-12-26  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Remove the bad assert in paintPaginatedChildLayer, hitTestPaginatedChildLayer. 
+        https://bugs.webkit.org/show_bug.cgi?id=48772
+
+        Test: fast/multicol/renderer-positioned-assert-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintPaginatedChildLayer):
+        (WebCore::RenderLayer::hitTestPaginatedChildLayer):
+
 2010-12-25  Peter Rybin  <peter.rybin@gmail.com>
 
         Reviewed by Adam Barth.
