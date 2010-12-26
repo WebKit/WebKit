@@ -574,7 +574,7 @@ StrokeStyle PainterOpenVG::strokeStyle() const
     return m_state->strokeStyle;
 }
 
-void PainterOpenVG::setStrokeStyle(const StrokeStyle& style)
+void PainterOpenVG::setStrokeStyle(StrokeStyle style)
 {
     ASSERT(m_state);
     m_surface->makeCurrent();

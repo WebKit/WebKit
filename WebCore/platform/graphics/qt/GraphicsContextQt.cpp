@@ -1227,7 +1227,7 @@ void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSpace colo
     p->setPen(newPen);
 }
 
-void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
+void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
 {
     if (paintingDisabled())
         return;

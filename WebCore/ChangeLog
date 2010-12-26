@@ -1,3 +1,29 @@
+2010-12-25  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        GraphicsContext: Don't pass StrokeStyle (enum) as const reference
+        https://bugs.webkit.org/show_bug.cgi?id=51608
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::setStrokeStyle):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::adjustLineToPixelBoundaries):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::PainterOpenVG::setStrokeStyle):
+        * platform/graphics/openvg/PainterOpenVG.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+
 2010-12-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

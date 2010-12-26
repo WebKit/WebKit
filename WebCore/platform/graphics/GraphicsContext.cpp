@@ -115,7 +115,7 @@ void GraphicsContext::setStrokeThickness(float thickness)
     setPlatformStrokeThickness(thickness);
 }
 
-void GraphicsContext::setStrokeStyle(const StrokeStyle& style)
+void GraphicsContext::setStrokeStyle(StrokeStyle style)
 {
     m_state.strokeStyle = style;
     setPlatformStrokeStyle(style);
@@ -616,7 +616,7 @@ void GraphicsContext::setPlatformTextDrawingMode(TextDrawingModeFlags mode)
 #endif
 
 #if !PLATFORM(QT) && !PLATFORM(CAIRO) && !PLATFORM(SKIA) && !PLATFORM(HAIKU) && !PLATFORM(OPENVG)
-void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle&)
+void GraphicsContext::setPlatformStrokeStyle(StrokeStyle)
 {
 }
 #endif
@@ -642,7 +642,7 @@ void GraphicsContext::markDirtyRect(const IntRect&)
 #endif
 
 
-void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle& penStyle)
+void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
 {
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out.  For example, with a border width of 3, WebKit will pass us (y1+y2)/2, e.g.,

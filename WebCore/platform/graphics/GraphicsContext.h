@@ -218,7 +218,7 @@ namespace WebCore {
         float strokeThickness() const;
         void setStrokeThickness(float);
         StrokeStyle strokeStyle() const;
-        void setStrokeStyle(const StrokeStyle& style);
+        void setStrokeStyle(StrokeStyle);
         Color strokeColor() const;
         ColorSpace strokeColorSpace() const;
         void setStrokeColor(const Color&, ColorSpace);
@@ -497,7 +497,7 @@ namespace WebCore {
         void setPlatformFont(const Font& font);
 
         void setPlatformStrokeColor(const Color&, ColorSpace);
-        void setPlatformStrokeStyle(const StrokeStyle&);
+        void setPlatformStrokeStyle(StrokeStyle);
         void setPlatformStrokeThickness(float);
         void setPlatformStrokeGradient(Gradient*);
         void setPlatformStrokePattern(Pattern*);
@@ -514,7 +514,7 @@ namespace WebCore {
 
         void setPlatformCompositeOperation(CompositeOperator);
 
-        static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, const StrokeStyle&);
+        static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
         GraphicsContextPlatformPrivate* m_data;
 

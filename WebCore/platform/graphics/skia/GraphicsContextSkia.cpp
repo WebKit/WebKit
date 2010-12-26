@@ -1103,7 +1103,7 @@ void GraphicsContext::setPlatformStrokeColor(const Color& strokecolor, ColorSpac
     platformContext()->setStrokeColor(strokecolor.rgb());
 }
 
-void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& stroke)
+void GraphicsContext::setPlatformStrokeStyle(StrokeStyle stroke)
 {
     if (paintingDisabled())
         return;

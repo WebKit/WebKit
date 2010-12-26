@@ -77,7 +77,7 @@ public:
     float strokeThickness() const;
     void setStrokeThickness(float);
     StrokeStyle strokeStyle() const;
-    void setStrokeStyle(const StrokeStyle&);
+    void setStrokeStyle(StrokeStyle);
 
     void setLineDash(const DashArray&, float dashOffset);
     void setLineCap(LineCap);

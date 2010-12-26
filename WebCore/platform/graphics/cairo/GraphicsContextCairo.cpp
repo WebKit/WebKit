@@ -797,7 +797,7 @@ void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
     cairo_set_line_width(m_data->cr, strokeThickness);
 }
 
-void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
+void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
 {
     static double dashPattern[] = {5.0, 5.0};
     static double dotPattern[] = {1.0, 1.0};

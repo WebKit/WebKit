@@ -500,7 +500,7 @@ pattern GraphicsContext::getHaikuStrokeStyle()
     }
 }
 
-void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
+void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
 {
     // FIXME: see getHaikuStrokeStyle.
     notImplemented();

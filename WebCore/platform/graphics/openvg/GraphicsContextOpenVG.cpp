@@ -475,7 +475,7 @@ void GraphicsContext::setPlatformStrokeColor(const Color& color, ColorSpace colo
     UNUSED_PARAM(colorSpace); // FIXME
 }
 
-void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
+void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
 {
     if (paintingDisabled())
         return;
