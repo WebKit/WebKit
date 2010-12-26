@@ -869,7 +869,7 @@ void WebPageProxy::setResizesToContentsUsingLayoutSize(const WebCore::IntSize& t
 
 void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
+    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxyLegacy>()) {
         m_drawingArea->didReceiveMessage(connection, messageID, arguments);
         return;
     }
@@ -887,7 +887,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
 
 void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
-    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
+    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxyLegacy>()) {
         m_drawingArea->didReceiveSyncMessage(connection, messageID, arguments, reply);
         return;
     }

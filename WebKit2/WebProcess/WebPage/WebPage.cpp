@@ -1281,7 +1281,7 @@ bool WebPage::windowIsFocused() const
 
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
+    if (messageID.is<CoreIPC::MessageClassDrawingAreaLegacy>()) {
         if (m_drawingArea)
             m_drawingArea->didReceiveMessage(connection, messageID, arguments);
         return;

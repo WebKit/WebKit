@@ -89,7 +89,7 @@ void ChunkedUpdateDrawingArea::display()
     UpdateChunk updateChunk(dirtyRect);
     paintIntoUpdateChunk(&updateChunk);
 
-    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
+    WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
 
     m_isWaitingForUpdate = true;
     m_displayTimer.stop();
@@ -132,7 +132,7 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
         ASSERT(!m_displayTimer.isActive());
 
         // Painting is suspended, just send back an empty update chunk.
-        WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(UpdateChunk()));
+        WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(UpdateChunk()));
         return;
     }
 
@@ -142,7 +142,7 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
 
     m_displayTimer.stop();
 
-    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
+    WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
 }
 
 void ChunkedUpdateDrawingArea::suspendPainting()
@@ -186,8 +186,8 @@ void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::
     if (targetIdentifier != info().identifier)
         return;
 
-    switch (messageID.get<DrawingAreaMessage::Kind>()) {
-        case DrawingAreaMessage::SetSize: {
+    switch (messageID.get<DrawingAreaLegacyMessage::Kind>()) {
+        case DrawingAreaLegacyMessage::SetSize: {
             IntSize size;
             if (!arguments->decode(CoreIPC::Out(size)))
                 return;
@@ -196,11 +196,11 @@ void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::
             break;
         }
         
-        case DrawingAreaMessage::SuspendPainting:
+        case DrawingAreaLegacyMessage::SuspendPainting:
             suspendPainting();
             break;
 
-        case DrawingAreaMessage::ResumePainting: {
+        case DrawingAreaLegacyMessage::ResumePainting: {
             bool forceRepaint;
             if (!arguments->decode(CoreIPC::Out(forceRepaint)))
                 return;
@@ -208,7 +208,7 @@ void ChunkedUpdateDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::
             resumePainting(forceRepaint);
             break;
         }
-        case DrawingAreaMessage::DidUpdate:
+        case DrawingAreaLegacyMessage::DidUpdate:
             didUpdate();
             break;
 

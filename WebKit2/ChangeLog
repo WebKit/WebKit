@@ -1,5 +1,56 @@
 2010-12-26  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Rename DrawingAreaMessage and DrawingAreaLegacyMessage and
+        DrawingAreaProxyMessage to DrawingAreaProxyLegacyMessage.
+
+        * Platform/CoreIPC/MessageID.h:
+        * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h:
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h:
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::paint):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::setPageIsVisible):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::update):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::sendSetSize):
+        (WebKit::ChunkedUpdateDrawingAreaProxy::didReceiveMessage):
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::sizeDidChange):
+        (WebKit::LayerBackedDrawingAreaProxy::setPageIsVisible):
+        (WebKit::LayerBackedDrawingAreaProxy::update):
+        (WebKit::LayerBackedDrawingAreaProxy::didReceiveMessage):
+        (WebKit::LayerBackedDrawingAreaProxy::didReceiveSyncMessage):
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::sizeDidChange):
+        (WebKit::TiledDrawingAreaProxy::setPageIsVisible):
+        (WebKit::TiledDrawingAreaProxy::didReceiveMessage):
+        (WebKit::TiledDrawingAreaProxy::requestTileUpdate):
+        (WebKit::TiledDrawingAreaProxy::waitUntilUpdatesComplete):
+        (WebKit::TiledDrawingAreaProxy::takeSnapshot):
+        (WebKit::TiledDrawingAreaProxy::removeTile):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::display):
+        (WebKit::ChunkedUpdateDrawingArea::setSize):
+        (WebKit::ChunkedUpdateDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::setSize):
+        (WebKit::LayerBackedDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::display):
+        (WebKit::TiledDrawingArea::setSize):
+        (WebKit::TiledDrawingArea::updateTile):
+        (WebKit::TiledDrawingArea::tileUpdateTimerFired):
+        (WebKit::TiledDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+
+2010-12-26  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Drawing area cleanup. Remove a bunch of redundant functions that just ended

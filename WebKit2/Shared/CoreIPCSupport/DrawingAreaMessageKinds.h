@@ -30,7 +30,7 @@
 
 // Messages sent from the web process to the UI process.
 
-namespace DrawingAreaMessage {
+namespace DrawingAreaLegacyMessage {
 
 enum Kind {
     // Called whenever the size of the drawing area needs to be updated.
@@ -62,8 +62,8 @@ enum Kind {
 
 namespace CoreIPC {
 
-template<> struct MessageKindTraits<DrawingAreaMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassDrawingArea;
+template<> struct MessageKindTraits<DrawingAreaLegacyMessage::Kind> { 
+    static const MessageClass messageClass = MessageClassDrawingAreaLegacy;
 };
 
 }

@@ -30,7 +30,7 @@
 
 // Messages sent from the web process to the WebPageProxy.
 
-namespace DrawingAreaProxyMessage {
+namespace DrawingAreaProxyLegacyMessage {
 
 enum Kind {
     Update,
@@ -50,8 +50,8 @@ enum Kind {
 
 namespace CoreIPC {
 
-template<> struct MessageKindTraits<DrawingAreaProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassDrawingAreaProxy;
+template<> struct MessageKindTraits<DrawingAreaProxyLegacyMessage::Kind> { 
+    static const MessageClass messageClass = MessageClassDrawingAreaProxyLegacy;
 };
 
 }

@@ -111,7 +111,7 @@ void LayerBackedDrawingArea::setSize(const IntSize& viewSize)
     if (m_webPage->drawingArea() != this)
         return;
     
-    WebProcess::shared().connection()->send(DrawingAreaProxyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize));
+    WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize));
 }
 
 void LayerBackedDrawingArea::suspendPainting()
@@ -147,8 +147,8 @@ void LayerBackedDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::Me
     if (targetIdentifier != info().identifier)
         return;
 
-    switch (messageID.get<DrawingAreaMessage::Kind>()) {
-        case DrawingAreaMessage::SetSize: {
+    switch (messageID.get<DrawingAreaLegacyMessage::Kind>()) {
+        case DrawingAreaLegacyMessage::SetSize: {
             IntSize size;
             if (!arguments->decode(CoreIPC::Out(size)))
                 return;
@@ -157,15 +157,15 @@ void LayerBackedDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::Me
             break;
         }
         
-        case DrawingAreaMessage::SuspendPainting:
+        case DrawingAreaLegacyMessage::SuspendPainting:
             suspendPainting();
             break;
 
-        case DrawingAreaMessage::ResumePainting:
+        case DrawingAreaLegacyMessage::ResumePainting:
             resumePainting();
             break;
 
-        case DrawingAreaMessage::DidUpdate:
+        case DrawingAreaLegacyMessage::DidUpdate:
             didUpdate();
             break;
 

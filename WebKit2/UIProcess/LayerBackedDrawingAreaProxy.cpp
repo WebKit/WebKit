@@ -80,7 +80,7 @@ void LayerBackedDrawingAreaProxy::sizeDidChange()
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
-    page->process()->send(DrawingAreaMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
+    page->process()->send(DrawingAreaLegacyMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
 }
 
 #if !PLATFORM(MAC) && !PLATFORM(WIN)
@@ -102,12 +102,12 @@ void LayerBackedDrawingAreaProxy::setPageIsVisible(bool isVisible)
 
     if (!m_isVisible) {
         // Tell the web process that it doesn't need to paint anything for now.
-        page->process()->send(DrawingAreaMessage::SuspendPainting, page->pageID(), CoreIPC::In(info().identifier));
+        page->process()->send(DrawingAreaLegacyMessage::SuspendPainting, page->pageID(), CoreIPC::In(info().identifier));
         return;
     }
     
     // The page is now visible.
-    page->process()->send(DrawingAreaMessage::ResumePainting, page->pageID(), CoreIPC::In(info().identifier));
+    page->process()->send(DrawingAreaLegacyMessage::ResumePainting, page->pageID(), CoreIPC::In(info().identifier));
     
     // FIXME: We should request a full repaint here if needed.
 }
@@ -126,17 +126,17 @@ void LayerBackedDrawingAreaProxy::didSetSize(const IntSize& size)
 void LayerBackedDrawingAreaProxy::update()
 {
     WebPageProxy* page = this->page();
-    page->process()->send(DrawingAreaMessage::DidUpdate, page->pageID(), CoreIPC::In(info().identifier));
+    page->process()->send(DrawingAreaLegacyMessage::DidUpdate, page->pageID(), CoreIPC::In(info().identifier));
 }
 
 void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
-        case DrawingAreaProxyMessage::Update: {
+    switch (messageID.get<DrawingAreaProxyLegacyMessage::Kind>()) {
+        case DrawingAreaProxyLegacyMessage::Update: {
             update();
             break;
         }
-        case DrawingAreaProxyMessage::DidSetSize: {
+        case DrawingAreaProxyLegacyMessage::DidSetSize: {
             IntSize size;
             if (!arguments->decode(CoreIPC::Out(size)))
                 return;
@@ -150,9 +150,9 @@ void LayerBackedDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIP
 
 void LayerBackedDrawingAreaProxy::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder*)
 {
-    switch (messageID.get<DrawingAreaProxyMessage::Kind>()) {
+    switch (messageID.get<DrawingAreaProxyLegacyMessage::Kind>()) {
 #if USE(ACCELERATED_COMPOSITING)
-        case DrawingAreaProxyMessage::AttachCompositingContext: {
+        case DrawingAreaProxyLegacyMessage::AttachCompositingContext: {
             uint32_t contextID;
             if (!arguments->decode(CoreIPC::Out(contextID)))
                 return;
