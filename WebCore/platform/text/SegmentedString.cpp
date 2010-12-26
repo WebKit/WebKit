@@ -53,6 +53,9 @@ const SegmentedString& SegmentedString::operator=(const SegmentedString &other)
         m_currentChar = other.m_currentChar;
     m_closed = other.m_closed;
     m_numberOfCharactersConsumedPriorToCurrentString = other.m_numberOfCharactersConsumedPriorToCurrentString;
+    m_numberOfCharactersConsumedPriorToCurrentLine = other.m_numberOfCharactersConsumedPriorToCurrentLine;
+    m_currentLine = other.m_currentLine;
+
     return *this;
 }
 
@@ -183,6 +186,17 @@ void SegmentedString::advanceSubstring()
     }
 }
 
+int SegmentedString::numberOfCharactersConsumedSlow() const
+{
+    int result = m_numberOfCharactersConsumedPriorToCurrentString + m_currentString.numberOfCharactersConsumed();
+    if (m_pushedChar1) {
+        --result;
+        if (m_pushedChar2)
+            --result;
+    }
+    return result;
+}
+
 String SegmentedString::toString() const
 {
     String result;
@@ -229,12 +243,32 @@ void SegmentedString::advanceSlowCase(int& lineNumber)
         m_pushedChar1 = m_pushedChar2;
         m_pushedChar2 = 0;
     } else if (m_currentString.m_current) {
-        if (*m_currentString.m_current++ == '\n' && m_currentString.doNotExcludeLineNumbers())
+        if (*m_currentString.m_current++ == '\n' && m_currentString.doNotExcludeLineNumbers()) {
             ++lineNumber;
+            ++m_currentLine;
+            m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed();
+        }
         if (--m_currentString.m_length == 0)
             advanceSubstring();
     }
     m_currentChar = m_pushedChar1 ? &m_pushedChar1 : m_currentString.m_current;
+}
+
+WTF::ZeroBasedNumber SegmentedString::currentLine() const
+{
+    return WTF::ZeroBasedNumber::fromZeroBasedInt(m_currentLine);
+}
+
+WTF::ZeroBasedNumber SegmentedString::currentColumn() const
+{
+    int zeroBasedColumn = numberOfCharactersConsumedSlow() - m_numberOfCharactersConsumedPriorToCurrentLine;
+    return WTF::ZeroBasedNumber::fromZeroBasedInt(zeroBasedColumn);
+}
+
+void SegmentedString::setCurrentPosition(WTF::ZeroBasedNumber line, WTF::ZeroBasedNumber columnAftreProlog, int prologLength)
+{
+    m_currentLine = line.zeroBasedInt();
+    m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumedSlow() + prologLength - columnAftreProlog.zeroBasedInt();
 }
 
 }

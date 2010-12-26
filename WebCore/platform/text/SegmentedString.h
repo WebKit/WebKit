@@ -22,6 +22,7 @@
 
 #include "PlatformString.h"
 #include <wtf/Deque.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
@@ -75,6 +76,8 @@ public:
         , m_pushedChar2(0)
         , m_currentChar(0)
         , m_numberOfCharactersConsumedPriorToCurrentString(0)
+        , m_numberOfCharactersConsumedPriorToCurrentLine(0)
+        , m_currentLine(0)
         , m_composite(false)
         , m_closed(false)
     {
@@ -86,6 +89,8 @@ public:
         , m_currentString(str)
         , m_currentChar(m_currentString.m_current)
         , m_numberOfCharactersConsumedPriorToCurrentString(0)
+        , m_numberOfCharactersConsumedPriorToCurrentLine(0)
+        , m_currentLine(0)
         , m_composite(false)
         , m_closed(false)
     {
@@ -155,7 +160,11 @@ public:
     {
         ASSERT(*current() == '\n');
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
-            lineNumber += m_currentString.doNotExcludeLineNumbers();
+            int newLineFlag = m_currentString.doNotExcludeLineNumbers();
+            lineNumber += newLineFlag;
+            m_currentLine += newLineFlag;
+            if (newLineFlag)
+                m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed();
             --m_currentString.m_length;
             m_currentChar = ++m_currentString.m_current;
             return;
@@ -177,7 +186,11 @@ public:
     void advance(int& lineNumber)
     {
         if (!m_pushedChar1 && m_currentString.m_length > 1) {
-            lineNumber += (*m_currentString.m_current == '\n') & m_currentString.doNotExcludeLineNumbers();
+            int newLineFlag = (*m_currentString.m_current == '\n') & m_currentString.doNotExcludeLineNumbers();
+            lineNumber += newLineFlag;
+            m_currentLine += newLineFlag;
+            if (newLineFlag)
+                m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
             --m_currentString.m_length;
             m_currentChar = ++m_currentString.m_current;
             return;
@@ -191,18 +204,28 @@ public:
 
     bool escaped() const { return m_pushedChar1; }
 
-    int numberOfCharactersConsumed()
+    int numberOfCharactersConsumed() const
     {
         // We don't currently handle the case when there are pushed character.
         ASSERT(!m_pushedChar1);
         return m_numberOfCharactersConsumedPriorToCurrentString + m_currentString.numberOfCharactersConsumed();
     }
 
+    int numberOfCharactersConsumedSlow() const;
+
     String toString() const;
 
     const UChar& operator*() const { return *current(); }
     const UChar* operator->() const { return current(); }
     
+
+    // The method is moderately slow, comparing to currentLine method.
+    WTF::ZeroBasedNumber currentColumn() const;
+    WTF::ZeroBasedNumber currentLine() const;
+    // Sets value of line/column variables. Column is specified indirectly by a parameter columnAftreProlog
+    // which is a value of column that we should get after a prolog (first prologLength characters) has been consumed.
+    void setCurrentPosition(WTF::ZeroBasedNumber line, WTF::ZeroBasedNumber columnAftreProlog, int prologLength);
+
 private:
     void append(const SegmentedSubstring&);
     void prepend(const SegmentedSubstring&);
@@ -247,6 +270,8 @@ private:
     SegmentedSubstring m_currentString;
     const UChar* m_currentChar;
     int m_numberOfCharactersConsumedPriorToCurrentString;
+    int m_numberOfCharactersConsumedPriorToCurrentLine;
+    int m_currentLine;
     Deque<SegmentedSubstring> m_substrings;
     bool m_composite;
     bool m_closed;

@@ -1,3 +1,39 @@
+2010-12-25  Peter Rybin  <peter.rybin@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Adds currentColumn (and currentLine) to SegmentedString. Switches
+        HTMLTreeBuilder to HTMLDocumentParser::textPosition when it
+        needs position for a <script> tag.
+
+        SegmentedString should provide column position
+        https://bugs.webkit.org/show_bug.cgi?id=51311
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::HTMLDocumentParser):
+        (WebCore::HTMLDocumentParser::textPosition):
+        * html/parser/HTMLInputStream.h:
+        (WebCore::HTMLInputStream::current):
+        (WebCore::InsertionPointRecord::InsertionPointRecord):
+        (WebCore::InsertionPointRecord::~InsertionPointRecord):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        * html/parser/HTMLTreeBuilder.h:
+        (WebCore::HTMLTreeBuilder::create):
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::operator=):
+        (WebCore::SegmentedString::numberOfCharactersConsumedSlow):
+        (WebCore::SegmentedString::advanceSlowCase):
+        (WebCore::SegmentedString::currentLine):
+        (WebCore::SegmentedString::currentColumn):
+        (WebCore::SegmentedString::setCurrentPosition):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::advancePastNewline):
+        (WebCore::SegmentedString::advance):
+        (WebCore::SegmentedString::numberOfCharactersConsumed):
+
 2010-12-25  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

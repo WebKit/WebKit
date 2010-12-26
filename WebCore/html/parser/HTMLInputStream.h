@@ -94,6 +94,7 @@ public:
     }
 
     SegmentedString& current() { return m_first; }
+    const SegmentedString& current() const { return m_first; }
 
     void splitInto(SegmentedString& next)
     {
@@ -133,17 +134,29 @@ public:
     explicit InsertionPointRecord(HTMLInputStream& inputStream)
         : m_inputStream(&inputStream)
     {
+        m_line = m_inputStream->current().currentLine();
+        m_column = m_inputStream->current().currentColumn();
         m_inputStream->splitInto(m_next);
+        // We 'fork' current position and use it for the generated script part.
+        // This is a bit weird, because generated part does not have positions within an HTML document.
+        m_inputStream->current().setCurrentPosition(m_line, m_column, 0);
     }
 
     ~InsertionPointRecord()
     {
+        // Some inserted text may have remained in input stream. E.g. if script has written "&amp" or "<table",
+        // it stays in buffer because it cannot be properly tokenized before we see next part.
+        int unparsedRemainderLength = m_inputStream->current().length();
         m_inputStream->mergeFrom(m_next);
+        // We restore position for the character that goes right after unparsed remainder.
+        m_inputStream->current().setCurrentPosition(m_line, m_column, unparsedRemainderLength);
     }
 
 private:
     HTMLInputStream* m_inputStream;
     SegmentedString m_next;
+    WTF::ZeroBasedNumber m_line;
+    WTF::ZeroBasedNumber m_column;
 };
 
 }

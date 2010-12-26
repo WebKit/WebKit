@@ -69,6 +69,10 @@ public:
     
     static bool usePreHTML5ParserQuirks(Document*);
 
+    HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
+
+    virtual TextPosition0 textPosition() const;
+
 protected:
     virtual void insert(const SegmentedString&);
     virtual void append(const SegmentedString&);
@@ -77,7 +81,6 @@ protected:
     HTMLDocumentParser(HTMLDocument*, bool reportErrors);
     HTMLDocumentParser(DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
 
-    HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
     HTMLTreeBuilder* treeBuilder() const { return m_treeBuilder.get(); }
 
 private:
@@ -92,7 +95,6 @@ private:
     virtual bool isExecutingScript() const;
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
-    virtual TextPosition0 textPosition() const;
 
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*);

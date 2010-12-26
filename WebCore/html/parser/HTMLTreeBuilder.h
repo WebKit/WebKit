@@ -49,16 +49,17 @@ class Frame;
 class HTMLToken;
 class HTMLDocument;
 class Node;
+class HTMLDocumentParser;
 
 class HTMLTreeBuilder : public Noncopyable {
 public:
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLTokenizer* tokenizer, HTMLDocument* document, bool reportErrors, bool usePreHTML5ParserQuirks)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, HTMLDocument* document, bool reportErrors, bool usePreHTML5ParserQuirks)
     {
-        return adoptPtr(new HTMLTreeBuilder(tokenizer, document, reportErrors, usePreHTML5ParserQuirks));
+        return adoptPtr(new HTMLTreeBuilder(parser, document, reportErrors, usePreHTML5ParserQuirks));
     }
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLTokenizer* tokenizer, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, bool usePreHTML5ParserQuirks)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, bool usePreHTML5ParserQuirks)
     {
-        return adoptPtr(new HTMLTreeBuilder(tokenizer, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks));
+        return adoptPtr(new HTMLTreeBuilder(parser, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks));
     }
     ~HTMLTreeBuilder();
 
@@ -113,8 +114,8 @@ private:
         AfterAfterFramesetMode,
     };
 
-    HTMLTreeBuilder(HTMLTokenizer*, HTMLDocument*, bool reportErrors, bool usePreHTML5ParserQuirks);
-    HTMLTreeBuilder(HTMLTokenizer*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usePreHTML5ParserQuirks);
+    HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument*, bool reportErrors, bool usePreHTML5ParserQuirks);
+    HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, bool usePreHTML5ParserQuirks);
 
     void processToken(AtomicHTMLToken&);
 
@@ -244,9 +245,9 @@ private:
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#pending-table-character-tokens
     Vector<UChar> m_pendingTableCharacters;
 
-    // HTML5 spec requires that we be able to change the state of the tokenizer
-    // from within parser actions.
-    HTMLTokenizer* m_tokenizer;
+    // We access parser because HTML5 spec requires that we be able to change the state of the tokenizer
+    // from within parser actions. We also need it to track the current position.
+    HTMLDocumentParser* m_parser;
 
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
     TextPosition1 m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.

@@ -79,7 +79,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     : ScriptableDocumentParser(document)
     , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(document)))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
-    , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), document, reportErrors, usePreHTML5ParserQuirks(document)))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, usePreHTML5ParserQuirks(document)))
     , m_parserScheduler(HTMLParserScheduler::create(this))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
@@ -91,7 +91,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
     : ScriptableDocumentParser(fragment->document())
     , m_tokenizer(HTMLTokenizer::create(usePreHTML5ParserQuirks(fragment->document())))
-    , m_treeBuilder(HTMLTreeBuilder::create(m_tokenizer.get(), fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document())))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, usePreHTML5ParserQuirks(fragment->document())))
     , m_endWasDelayed(false)
     , m_writeNestingLevel(0)
 {
@@ -407,11 +407,12 @@ int HTMLDocumentParser::lineNumber() const
 
 TextPosition0 HTMLDocumentParser::textPosition() const
 {
-    int lineZeroBased = m_tokenizer->lineNumber();
-    int columnOneBased = m_tokenizer->columnNumber();
+    const SegmentedString& currentString = m_input.current();
+    WTF::ZeroBasedNumber line = currentString.currentLine();
+    WTF::ZeroBasedNumber column = currentString.currentColumn();
+    ASSERT(m_tokenizer->lineNumber() == line.zeroBasedInt());
 
-    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(lineZeroBased),
-        WTF::OneBasedNumber::fromOneBasedInt(columnOneBased).convertToZeroBased());
+    return TextPosition0(line, column);
 }
 
 bool HTMLDocumentParser::isWaitingForScripts() const
