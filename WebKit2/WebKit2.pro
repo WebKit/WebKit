@@ -335,6 +335,7 @@ HEADERS += \
     UIProcess/WebContextMenuProxy.h \
     UIProcess/WebContextUserMessageCoders.h \
     UIProcess/WebDatabaseManagerProxy.h \
+    UIProcess/WebDatabaseManagerProxyClient.h \
     UIProcess/WebDownloadClient.h \
     UIProcess/WebEditCommandProxy.h \
     UIProcess/WebFindClient.h \
@@ -533,6 +534,7 @@ SOURCES += \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \
     UIProcess/WebDatabaseManagerProxy.cpp \
+    UIProcess/WebDatabaseManagerProxyClient.cpp \
     UIProcess/WebDownloadClient.cpp \
     UIProcess/WebEditCommandProxy.cpp \
     UIProcess/WebFindClient.cpp \

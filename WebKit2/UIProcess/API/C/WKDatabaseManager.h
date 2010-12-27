@@ -32,8 +32,6 @@
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
-
 /* Value type: WKSecurityOriginRef */
 WK_EXPORT WKStringRef WKDatabaseManagerGetOriginKey();
 
@@ -63,8 +61,26 @@ WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey();
 /* Value type: WKUInt64Ref */
 WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey();
 
+
+// Database Manager Client
+typedef void (*WKDatabaseManagerDidModifyOriginCallback)(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin, const void *clientInfo);
+typedef void (*WKDatabaseManagerDidModifyDatabaseCallback)(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin, WKStringRef databaseIdentifier, const void *clientInfo);
+
+struct WKDatabaseManagerClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKDatabaseManagerDidModifyOriginCallback                            didModifyOrigin;
+    WKDatabaseManagerDidModifyDatabaseCallback                          didModifyDatabase;
+};
+typedef struct WKDatabaseManagerClient WKDatabaseManagerClient;
+
+
+WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
+
+WK_EXPORT void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManager, const WKDatabaseManagerClient* client);
+
 typedef void (*WKDatabaseManagerGetDatabasesByOriginFunction)(WKArrayRef, WKErrorRef, void*);
-WK_EXPORT void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef contextRef, void* context, WKDatabaseManagerGetDatabasesByOriginFunction function);
+WK_EXPORT void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManager, void* context, WKDatabaseManagerGetDatabasesByOriginFunction function);
 #ifdef __BLOCKS__
 typedef void (^WKDatabaseManagerGetDatabasesByOriginBlock)(WKArrayRef, WKErrorRef);
 WK_EXPORT void WKDatabaseManagerGetDatabasesByOrigin_b(WKDatabaseManagerRef databaseManager, WKDatabaseManagerGetDatabasesByOriginBlock block);

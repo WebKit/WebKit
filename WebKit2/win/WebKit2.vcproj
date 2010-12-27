@@ -2007,6 +2007,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebDatabaseManagerProxyClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebDatabaseManagerProxyClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebDatabaseManagerProxy.messages.in"
 				>
 			</File>

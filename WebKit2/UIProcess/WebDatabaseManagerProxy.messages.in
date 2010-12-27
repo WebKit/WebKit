@@ -23,4 +23,6 @@
 messages -> WebDatabaseManagerProxy {
     DidGetDatabasesByOrigin(Vector<WebKit::OriginAndDatabases> originAndDatabases, uint64_t callbackID);
     DidGetDatabaseOrigins(Vector<WTF::String> originIdentifiers, uint64_t callbackID)
+    DidModifyOrigin(WTF::String originIdentifier)
+    DidModifyDatabase(WTF::String originIdentifier, WTF::String databaseIdentifier)
 }

@@ -87,6 +87,13 @@ WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
     return toAPI(key);
 }
 
+void WKDatabaseManagerSetClient(WKDatabaseManagerRef databaseManagerRef, const WKDatabaseManagerClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(databaseManagerRef)->initializeClient(wkClient);
+}
+
 void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabasesByOriginFunction callback)
 {
     toImpl(databaseManagerRef)->getDatabasesByOrigin(ArrayCallback::create(context, callback));

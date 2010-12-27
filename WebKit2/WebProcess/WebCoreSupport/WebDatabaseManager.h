@@ -27,6 +27,7 @@
 #define WebDatabaseManager_h
 
 #include "Arguments.h"
+#include <WebCore/DatabaseTrackerClient.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,7 +39,7 @@ class MessageID;
 
 namespace WebKit {
 
-class WebDatabaseManager {
+class WebDatabaseManager : public WebCore::DatabaseTrackerClient {
     WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
 public:
     static WebDatabaseManager& shared();
@@ -47,6 +48,7 @@ public:
 
 private:
     WebDatabaseManager();
+    virtual ~WebDatabaseManager();
 
     // Implemented in generated WebDatabaseManagerMessageReceiver.cpp
     void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -57,6 +59,10 @@ private:
     void deleteDatabasesForOrigin(const String& originIdentifier) const;
     void deleteAllDatabases() const;
     void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
+
+    // WebCore::DatabaseTrackerClient
+    virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
+    virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const String& databaseIdentifier);
 
     String databaseDirectory() const;
 };

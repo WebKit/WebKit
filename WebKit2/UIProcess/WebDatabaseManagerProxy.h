@@ -30,7 +30,7 @@
 #include "Arguments.h"
 #include "GenericCallback.h"
 #include "OriginAndDatabases.h"
-#include "WKBase.h"
+#include "WebDatabaseManagerProxyClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
@@ -55,6 +55,8 @@ public:
     virtual ~WebDatabaseManagerProxy();
 
     void invalidate();
+
+    void initializeClient(const WKDatabaseManagerClient*);
 
     void getDatabasesByOrigin(PassRefPtr<ArrayCallback>);
     void getDatabaseOrigins(PassRefPtr<ArrayCallback>);
@@ -82,9 +84,13 @@ private:
     // Message handlers.
     void didGetDatabasesByOrigin(const Vector<OriginAndDatabases>& originAndDatabases, uint64_t callbackID);
     void didGetDatabaseOrigins(const Vector<String>& originIdentifiers, uint64_t callbackID);
+    void didModifyOrigin(const String& originIdentifier);
+    void didModifyDatabase(const String& originIdentifier, const String& databaseIdentifier);
 
     WebContext* m_webContext;
     HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
+
+    WebDatabaseManagerProxyClient m_client;
 };
 
 } // namespace WebKit

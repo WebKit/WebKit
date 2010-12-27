@@ -104,6 +104,11 @@ void WebDatabaseManagerProxy::invalidate()
     m_webContext = 0;
 }
 
+void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClient* client)
+{
+    m_client.initialize(client);
+}
+
 void WebDatabaseManagerProxy::getDatabasesByOrigin(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
@@ -199,6 +204,18 @@ void WebDatabaseManagerProxy::deleteAllDatabases()
 void WebDatabaseManagerProxy::setQuotaForOrigin(WebSecurityOrigin* origin, uint64_t quota)
 {
     m_webContext->process()->send(Messages::WebDatabaseManager::SetQuotaForOrigin(origin->databaseIdentifier(), quota), 0);
+}
+
+void WebDatabaseManagerProxy::didModifyOrigin(const String& originIdentifier)
+{
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+    m_client.didModifyOrigin(this, origin.get());
+}
+
+void WebDatabaseManagerProxy::didModifyDatabase(const String& originIdentifier, const String& databaseIdentifier)
+{
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+    m_client.didModifyDatabase(this, origin.get(), databaseIdentifier);
 }
 
 } // namespace WebKit

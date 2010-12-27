@@ -5,6 +5,39 @@
         WebKit2: Add additional API for managing databases
         https://bugs.webkit.org/show_bug.cgi?id=51629
 
+        - Adds client for the database manager to get notifications
+          of changes to databases.
+
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerSetClient):
+        * UIProcess/API/C/WKDatabaseManager.h:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::initializeClient):
+        (WebKit::WebDatabaseManagerProxy::didModifyOrigin):
+        (WebKit::WebDatabaseManagerProxy::didModifyDatabase):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.messages.in:
+        * UIProcess/WebDatabaseManagerProxyClient.cpp: Added.
+        (WebKit::WebDatabaseManagerProxyClient::didModifyOrigin):
+        (WebKit::WebDatabaseManagerProxyClient::didModifyDatabase):
+        * UIProcess/WebDatabaseManagerProxyClient.h: Added.
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::WebDatabaseManager):
+        (WebKit::WebDatabaseManager::~WebDatabaseManager):
+        (WebKit::WebDatabaseManager::dispatchDidModifyOrigin):
+        (WebKit::WebDatabaseManager::dispatchDidModifyDatabase):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * win/WebKit2.vcproj:
+
+2010-12-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Add additional API for managing databases
+        https://bugs.webkit.org/show_bug.cgi?id=51629
+
         - Adds WKDatabaseManagerGetDatabasesByOrigin, which asynchronously returns
           an array of dictionaries containing details about each origin using 
           databases and details about each database. Keys were added for accessing

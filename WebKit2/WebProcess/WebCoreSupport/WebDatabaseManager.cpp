@@ -48,6 +48,11 @@ WebDatabaseManager& WebDatabaseManager::shared()
 WebDatabaseManager::WebDatabaseManager()
 {
     DatabaseTracker::initializeTracker(databaseDirectory());
+    DatabaseTracker::tracker().setClient(this);
+}
+
+WebDatabaseManager::~WebDatabaseManager()
+{
 }
 
 void WebDatabaseManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -144,6 +149,18 @@ void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsig
         return;
 
     DatabaseTracker::tracker().setQuota(origin.get(), quota);
+}
+
+void WebDatabaseManager::dispatchDidModifyOrigin(SecurityOrigin* origin)
+{
+    // NOTE: This may be called on a non-main thread.
+    WebProcess::shared().connection()->send(Messages::WebDatabaseManagerProxy::DidModifyOrigin(origin->databaseIdentifier()), 0);
+}
+
+void WebDatabaseManager::dispatchDidModifyDatabase(WebCore::SecurityOrigin* origin, const String& databaseIdentifier)
+{
+    // NOTE: This may be called on a non-main thread.
+    WebProcess::shared().connection()->send(Messages::WebDatabaseManagerProxy::DidModifyDatabase(origin->databaseIdentifier(), databaseIdentifier), 0);
 }
 
 } // namespace WebKit
