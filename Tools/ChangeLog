@@ -1,3 +1,13 @@
+2010-12-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move ANGLE to Sources/ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=51605
+
+        * Scripts/build-webkit:
+          - Point to the new ANGLE location.
+
 2010-12-26  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

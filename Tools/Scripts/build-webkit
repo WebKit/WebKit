@@ -402,7 +402,7 @@ if (isGtk()) {
     splice @projects, 1, 0, "Sources/JavaScriptGlue";
 
     # ANGLE must come before WebCore
-    splice @projects, 0, 0, "ANGLE";
+    splice @projects, 0, 0, "Sources/ThirdParty/ANGLE";
 
     # WebKit2 is only supported in SnowLeopard and later at present.
     push @projects, ("WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
