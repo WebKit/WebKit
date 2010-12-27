@@ -32,8 +32,6 @@
 #include "Frame.h"
 #include "PasteboardHelper.h"
 
-#include <gtk/gtk.h>
-
 using namespace WebCore;
 
 namespace WebKit {

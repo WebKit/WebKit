@@ -58,10 +58,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 
-#include <atk/atk.h>
-#include <glib.h>
-#include <libsoup/soup.h>
-
 namespace WebKit {
 
     class DocumentLoader;

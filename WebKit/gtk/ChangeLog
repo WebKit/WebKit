@@ -1,3 +1,13 @@
+2010-12-27  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Remove unneeded includes from our headers.
+
+        * WebCoreSupport/PasteboardHelperGtk.h: ditto.
+        * webkit/webkitprivate.h: ditto.
+        * webkit/webkitsoupauthdialog.h: ditto.
+
 2010-12-21  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.
