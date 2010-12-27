@@ -2,8 +2,8 @@
 
         Reviewed by Eric Siedel.
 
-        [Meta] Move source code into Sources
-        https://bugs.webkit.org/show_bug.cgi?id=51606
+        Move autotools into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51630
 
         * .gitignore:
         * GNUmakefile.am:

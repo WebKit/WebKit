@@ -2,8 +2,8 @@
 
         Reviewed by Eric Seidel.
 
-        [Meta] Move source code into Sources
-        https://bugs.webkit.org/show_bug.cgi?id=51606
+        Move autotools into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51630
 
         * PrettyPatch/PrettyPatch.rb:
           - Remove reference to non-existant autotools directory.
