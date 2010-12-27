@@ -1,3 +1,12 @@
+2010-12-27  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectation updates.
+
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.checksum: Added.
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.png: Added.
+
 2010-12-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dan Bernstein.
