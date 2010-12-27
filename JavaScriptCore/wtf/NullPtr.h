@@ -35,7 +35,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     #define __has_feature(feature) 0
 #endif
 
-#if !__has_feature(cxx_nullptr)
+#if __has_feature(cxx_nullptr) || (defined(_MSC_VER) && _MSC_VER >= 1600)
+
+#define HAVE_NULLPTR 1
+
+#else
 
 namespace std {
     class nullptr_t { };

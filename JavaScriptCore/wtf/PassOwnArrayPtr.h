@@ -73,7 +73,9 @@ public:
 #endif
 
     PassOwnArrayPtr& operator=(const PassOwnArrayPtr<T>&);
+#if !defined(LOOSE_PASS_OWN_ARRAY_PTR) || !HAVE(NULLPTR)
     PassOwnArrayPtr& operator=(std::nullptr_t) { clear(); return *this; }
+#endif
     template<typename U> PassOwnArrayPtr& operator=(const PassOwnArrayPtr<U>&);
 
     template<typename U> friend PassOwnArrayPtr<U> adoptArrayPtr(U*);

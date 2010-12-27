@@ -87,7 +87,9 @@ namespace WTF {
         template<typename U> RetainPtr& operator=(const RetainPtr<U>&);
         RetainPtr& operator=(PtrType);
         template<typename U> RetainPtr& operator=(U*);
+#if !HAVE(NULLPTR)
         RetainPtr& operator=(std::nullptr_t) { clear(); return *this; }
+#endif
 
         void adoptCF(PtrType);
         void adoptNS(PtrType);

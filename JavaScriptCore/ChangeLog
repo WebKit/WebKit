@@ -1,3 +1,35 @@
+2010-12-27  Jake Helfert  <jake@jakeonthenet.com>
+
+        Reviewed and reworked by Darin Adler.
+
+        Building WebKit with Visual Studio 2010 fails due
+        to ambiguous assignment operator errors.
+        https://bugs.webkit.org/show_bug.cgi?id=51116
+
+        * wtf/NullPtr.h: Added a HAVE(NULLPTR) definition for use with
+        Platform.h HAVE macro, and included the Visual Studio 2010 compiler
+        as one of the ones that has nullptr.
+        * wtf/NullPtr.cpp: Updated condition to match.
+        
+        * wtf/PassOwnArrayPtr.h: Don't include the operator=(nullptr_t)
+        overload if we are compiling in loose mode and the compiler has
+        nullptr, because assignment of 0 will otherwise encounter
+        ambiguitity with this overload and the overload for loose mode
+        that takes a raw pointer. The conditional can be removed when we
+        get rid of loose mode.
+        * wtf/PassOwnPtr.h: Ditto.
+
+        * wtf/PassRefPtr.h: Don't include the operator=(nullptr_t) overload
+        if the compiler has nullptr, because assignment of 0 would be
+        ambiguous with the overload that takes a raw pointer. The conditional
+        can be removed if we ever decide we no longer need to support
+        assigning 0, but might need a way to catch that usage on older compilers.
+        * wtf/RefPtr.h: Ditto.
+        * wtf/RetainPtr.h: Ditto
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added NullPtr.cpp,
+        accidentally omitted when the file was first added.
+
 2010-12-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Eric Seidel.

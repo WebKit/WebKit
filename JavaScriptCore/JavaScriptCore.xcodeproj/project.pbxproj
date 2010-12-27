@@ -286,6 +286,7 @@
 		9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93303FE80E6A72B500786E6A /* SmallStrings.cpp */; };
 		933F5CDC1269229B0049191E /* NullPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 933F5CDB126922690049191E /* NullPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-compare"; }; };
+		93854A9A12C93D3B00DAAF77 /* NullPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93854A9912C93D3B00DAAF77 /* NullPtr.cpp */; };
 		93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BD308B1514100F85226 /* pcre_xclass.cpp */; };
 		9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 952C63AC0E4777D600C13936 /* JSProfilerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95742F650DD11F5A000917FB /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95742F630DD11F5A000917FB /* Profile.cpp */; };
@@ -913,6 +914,7 @@
 		9374D3A7038D9D74008635CE /* ScopeChain.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChain.h; sourceTree = "<group>"; tabWidth = 8; };
 		9374D3A8038D9D74008635CE /* ScopeChain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopeChain.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		937B63CC09E766D200A671DD /* DerivedSources.make */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; fileEncoding = 4; path = DerivedSources.make; sourceTree = "<group>"; usesTabs = 1; };
+		93854A9912C93D3B00DAAF77 /* NullPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NullPtr.cpp; path = ./wtf/NullPtr.cpp; sourceTree = SOURCE_ROOT; };
 		938772E5038BFE19008635CE /* JSArray.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSArray.h; sourceTree = "<group>"; tabWidth = 8; };
 		938C4F690CA06BC700D9310A /* ASCIICType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASCIICType.h; sourceTree = "<group>"; };
 		938C4F6B0CA06BCE00D9310A /* DisallowCType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowCType.h; sourceTree = "<group>"; };
@@ -1533,6 +1535,7 @@
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
 				65E1A2F4122B880D00B26097 /* NonCopyingSort.h */,
 				C0A2723F0E509F1E00E96E15 /* NotFound.h */,
+				93854A9912C93D3B00DAAF77 /* NullPtr.cpp */,
 				933F5CDB126922690049191E /* NullPtr.h */,
 				1400067612A6F7830064D123 /* OSAllocator.h */,
 				1400069212A6F9E10064D123 /* OSAllocatorPosix.cpp */,
@@ -2833,6 +2836,7 @@
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */,
 				86D08D5311793613006E5ED0 /* WTFThreadData.cpp in Sources */,
+				93854A9A12C93D3B00DAAF77 /* NullPtr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

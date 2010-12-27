@@ -72,7 +72,9 @@ namespace WTF {
         operator UnspecifiedBoolType() const { return m_ptr ? &PassOwnPtr::m_ptr : 0; }
 
         PassOwnPtr& operator=(const PassOwnPtr<T>&);
+#if !defined(LOOSE_PASS_OWN_PTR) || !HAVE(NULLPTR)
         PassOwnPtr& operator=(std::nullptr_t) { clear(); return *this; }
+#endif
         template<typename U> PassOwnPtr& operator=(const PassOwnPtr<U>&);
 
         template<typename U> friend PassOwnPtr<U> adoptPtr(U*);

@@ -91,7 +91,9 @@ namespace WTF {
 
         PassRefPtr& operator=(T*);
         PassRefPtr& operator=(const PassRefPtr&);
+#if !HAVE(NULLPTR)
         PassRefPtr& operator=(std::nullptr_t) { clear(); return *this; }
+#endif
         template<typename U> PassRefPtr& operator=(const PassRefPtr<U>&);
         template<typename U> PassRefPtr& operator=(const RefPtr<U>&);
 

@@ -26,7 +26,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "NullPtr.h"
 
-#if !__has_feature(cxx_nullptr)
+#include "Platform.h"
+
+#if !HAVE(NULLPTR)
 
 std::nullptr_t nullptr;
 
