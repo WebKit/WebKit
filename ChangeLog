@@ -1,3 +1,10 @@
+2010-12-26  Adam Barth  <abarth@webkit.org>
+
+        Fix some references to the old location of the WebKit website in git
+        metadata files.
+
+        * .gitattributes:
+
 2010-12-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
