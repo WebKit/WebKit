@@ -1,3 +1,21 @@
+2010-12-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [GTK] EditorClient::generateEditorCommands queues up "null string" commands
+        https://bugs.webkit.org/show_bug.cgi?id=51569
+
+        Prevent adding "null string" editor commands by first checking whether or not
+        the command string is null in generateEditorCommands before appending it to the
+        list of pending editor command strings.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::generateEditorCommands): Check for the null string (no
+        command for this key combination) before appending a command string to the list of
+        pending editor commands.
+        (WebKit::EditorClient::executePendingEditorCommands): Add an ASSERT which detects
+        null command strings.
+
 2010-12-27  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

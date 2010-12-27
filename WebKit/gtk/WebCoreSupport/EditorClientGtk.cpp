@@ -652,24 +652,23 @@ void EditorClient::generateEditorCommands(const KeyboardEvent* event)
     if (event->ctrlKey())
         modifiers |= CtrlKey;
 
-
-    if (event->type() == eventNames().keydownEvent) {
-        int mapKey = modifiers << 16 | event->keyCode();
-        if (mapKey)
-            m_pendingEditorCommands.append(keyDownCommandsMap.get(mapKey));
+    // For keypress events, we want charCode(), but keyCode() does that.
+    int mapKey = modifiers << 16 | event->keyCode();
+    if (!mapKey)
         return;
-    }
-
-    int mapKey = modifiers << 16 | event->charCode();
-    if (mapKey)
-        m_pendingEditorCommands.append(keyPressCommandsMap.get(mapKey));
+    HashMap<int, const char*>* commandMap = event->type() == eventNames().keydownEvent ?
+        &keyDownCommandsMap : &keyPressCommandsMap;
+    if (const char* commandString = commandMap->get(mapKey))
+        m_pendingEditorCommands.append(commandString);
 }
 
 bool EditorClient::executePendingEditorCommands(Frame* frame, bool allowTextInsertion)
 {
     Vector<Editor::Command> commands;
     for (size_t i = 0; i < m_pendingEditorCommands.size(); i++) {
-        Editor::Command command = frame->editor()->command(m_pendingEditorCommands.at(i));
+        const char* commandString = m_pendingEditorCommands.at(i);
+        ASSERT(commandString);
+        Editor::Command command = frame->editor()->command(commandString);
         if (command.isTextInsertion() && !allowTextInsertion)
             return false;
 
