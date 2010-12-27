@@ -128,17 +128,6 @@ typedef HashMap<void*, v8::Object*> DOMObjectMap;
 
 #ifndef NDEBUG
 
-static void enumerateDOMObjectMap(DOMObjectMap& wrapperMap)
-{
-    for (DOMObjectMap::iterator it = wrapperMap.begin(), end = wrapperMap.end(); it != end; ++it) {
-        v8::Persistent<v8::Object> wrapper(it->second);
-        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
-        void* object = it->first;
-        UNUSED_PARAM(type);
-        UNUSED_PARAM(object);
-    }
-}
-
 class DOMObjectVisitor : public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
@@ -159,43 +148,6 @@ public:
 };
 
 #endif // NDEBUG
-
-// A map from a DOM node to its JS wrapper, the wrapper
-// is kept as a strong reference to survive GCs.
-static DOMObjectMap& gcProtectedMap()
-{
-    DEFINE_STATIC_LOCAL(DOMObjectMap, staticGcProtectedMap, ());
-    return staticGcProtectedMap;
-}
-
-void V8GCController::gcProtect(void* domObject)
-{
-    if (!domObject)
-        return;
-    if (gcProtectedMap().contains(domObject))
-        return;
-    if (!getDOMObjectMap().contains(domObject))
-        return;
-
-    // Create a new (strong) persistent handle for the object.
-    v8::Persistent<v8::Object> wrapper = getDOMObjectMap().get(domObject);
-    if (wrapper.IsEmpty())
-        return;
-
-    gcProtectedMap().set(domObject, *v8::Persistent<v8::Object>::New(wrapper));
-}
-
-void V8GCController::gcUnprotect(void* domObject)
-{
-    if (!domObject)
-        return;
-    if (!gcProtectedMap().contains(domObject))
-        return;
-
-    // Dispose the strong reference.
-    v8::Persistent<v8::Object> wrapper(gcProtectedMap().take(domObject));
-    wrapper.Dispose();
-}
 
 class GCPrologueVisitor : public DOMWrapperMap<void>::Visitor {
 public:
@@ -554,7 +506,6 @@ void V8GCController::gcEpilogue()
     EnsureWeakDOMNodeVisitor weakDOMNodeVisitor;
     visitDOMNodesInCurrentThread(&weakDOMNodeVisitor);
 
-    enumerateDOMObjectMap(gcProtectedMap());
     enumerateGlobalHandles();
 #endif
 }

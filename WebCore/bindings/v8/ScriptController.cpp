@@ -106,16 +106,6 @@ bool ScriptController::isSafeScript(Frame* target)
     return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), target, true);
 }
 
-void ScriptController::gcProtectJSWrapper(void* domObject)
-{
-    V8GCController::gcProtect(domObject);
-}
-
-void ScriptController::gcUnprotectJSWrapper(void* domObject)
-{
-    V8GCController::gcUnprotect(domObject);
-}
-
 ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
     , m_sourceURL(0)

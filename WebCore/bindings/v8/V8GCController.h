@@ -66,10 +66,6 @@ namespace WebCore {
 
     class V8GCController {
     public:
-        // Protect/Unprotect JS wrappers of a DOM object.
-        static void gcProtect(void* domObject);
-        static void gcUnprotect(void* domObject);
-
 #ifndef NDEBUG
         // For debugging and leak detection purpose.
         static void registerGlobalHandle(GlobalHandleType, void*, v8::Persistent<v8::Value>);

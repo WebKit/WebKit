@@ -149,10 +149,6 @@ public:
     // Pass command-line flags to the JS engine.
     static void setFlags(const char* string, int length);
 
-    // Protect and unprotect the JS wrapper from garbage collected.
-    static void gcProtectJSWrapper(void*);
-    static void gcUnprotectJSWrapper(void*);
-
     void finishedWithEvent(Event*);
 
     TextPosition0 eventHandlerPosition() const;
