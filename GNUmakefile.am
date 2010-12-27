@@ -102,7 +102,7 @@ version_script = -export-symbols-regex "^(webkit_|k?JS).*"
 endif
 
 if OS_GNU
-version_script = -Wl,--version-script,$(srcdir)/autotools/symbols.filter
+version_script = -Wl,--version-script,$(srcdir)/Sources/autotools/symbols.filter
 endif
 
 # Convenience libraries
@@ -196,7 +196,7 @@ global_cppflags += \
 endif
 
 EXTRA_DIST += \
-	$(srcdir)/autotools/symbols.filter \
+	$(srcdir)/Sources/autotools/symbols.filter \
 	$(srcdir)/gtk-doc.make \
 	$(srcdir)/WebKit/LICENSE
 
@@ -227,11 +227,11 @@ MAINTAINERCLEANFILES += \
 	$(builddir)/doltcompile \
 	$(builddir)/doltlibtool \
 	$(srcdir)/aconfig.h.in \
-	$(srcdir)/autotools/config.* \
-	$(srcdir)/autotools/compile \
-	$(srcdir)/autotools/depcomp \
-	$(srcdir)/autotools/install-sh \
-	$(srcdir)/autotools/missing \
+	$(srcdir)/Sources/autotools/config.* \
+	$(srcdir)/Sources/autotools/compile \
+	$(srcdir)/Sources/autotools/depcomp \
+	$(srcdir)/Sources/autotools/install-sh \
+	$(srcdir)/Sources/autotools/missing \
 	$(srcdir)/configure \
 	$(srcdir)/GNUmakefile.in \
 	$(srcdir)/INSTALL \

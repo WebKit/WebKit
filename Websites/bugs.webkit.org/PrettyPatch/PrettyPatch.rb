@@ -76,7 +76,6 @@ private
         WebKit2
         WebKitLibraries
         Websites
-        autotools
     ]
 
     def self.find_url_and_path(file_path)
