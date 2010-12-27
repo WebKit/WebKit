@@ -1,3 +1,10 @@
+2010-12-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Removed trailing spaces from a localized
+        string to make it the same as the one used in the code.
+
+        * English.lproj/localizedStrings.js:
+
 2010-12-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
