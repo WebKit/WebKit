@@ -1,3 +1,18 @@
+2010-12-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] Add support for build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=51625
+
+        Add GTK+ support to build-jsc now that building the jsc executable as
+        a standalone target is easy.
+
+        * Scripts/build-jsc: Call buildGtkProject for the GTK+ case now.
+        * Scripts/build-webkit: Pass in the proper target name to buildGtkProject.
+        * Scripts/webkitdirs.pm: Actually process the project parameter in buildGtkProject
+        and pass it along to buildAutotoolsProject.
+
 2010-12-27  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

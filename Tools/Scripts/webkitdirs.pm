@@ -1337,7 +1337,7 @@ sub autogenArgumentsHaveChanged($@)
 
 sub buildAutotoolsProject($@)
 {
-    my ($clean, @buildParams) = @_;
+    my ($project, $clean, @buildParams) = @_;
 
     my $make = 'make';
     my $dir = productDir();
@@ -1361,6 +1361,11 @@ sub buildAutotoolsProject($@)
     # if make arguments haven't already been specified.
     if ($makeArgs eq "") {
         $makeArgs = "-j" . numberOfCPUs();
+    }
+
+    # WebKit is the default target, so we don't need to specify anything.
+    if ($project eq "JavaScriptCore") {
+        $makeArgs .= " jsc";
     }
 
     $prefix = $ENV{"WebKitInstallationPrefix"} if !defined($prefix);
@@ -1622,15 +1627,15 @@ sub buildQMakeQtProject($$@)
     return buildQMakeProject($clean, @buildArgs);
 }
 
-sub buildGtkProject($$@)
+sub buildGtkProject
 {
     my ($project, $clean, @buildArgs) = @_;
 
-    if ($project ne "WebKit") {
-        die "The Gtk port builds JavaScriptCore, WebCore and WebKit in one shot! Only call it for 'WebKit'.\n";
+    if ($project ne "WebKit" and $project ne "JavaScriptCore") {
+        die "Unsupported project: $project. Supported projects: WebKit, JavaScriptCore\n";
     }
 
-    return buildAutotoolsProject($clean, @buildArgs);
+    return buildAutotoolsProject($project, $clean, @buildArgs);
 }
 
 sub buildChromiumMakefile($$)
