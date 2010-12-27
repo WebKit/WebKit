@@ -1,3 +1,12 @@
+2010-12-27  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by David Levin.
+
+        remove entries for media related non-flaky tests.
+        https://bugs.webkit.org/show_bug.cgi?id=51225
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip another GTK media test reporting wrong duration,

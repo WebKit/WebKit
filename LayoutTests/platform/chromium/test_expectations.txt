@@ -793,9 +793,6 @@ BUGCR54465 BUGCR62964 SKIP : http/tests/media/remove-while-loading.html = TIMEOU
 BUGCR54465 BUGCR62964 SKIP : http/tests/media/video-play-stall-seek.html = TIMEOUT
 BUGCR54465 BUGCR62964 SKIP : http/tests/media/video-play-stall.html = TIMEOUT
 BUGCR54465 BUGCR62964 SKIP : http/tests/media/video-seekable-stall.html = TIMEOUT
-BUGCR13907 BUGCR60355 : http/tests/security/local-video-poster-from-remote.html = PASS FAIL TIMEOUT
-BUGCR13907 BUGCR60355 : http/tests/security/local-video-source-from-remote.html = PASS FAIL TIMEOUT
-BUGCR13907 BUGCR60355 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT
 // UNIMPLEMENTED : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
 BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 
@@ -821,7 +818,7 @@ BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html =
 
 // Seeks to the end of file, which results in ogg packets with no timestamps.
 // KNOWNISSUE : fails because progress event is not published 
-BUGCR59675 BUGCR59263 : media/event-attributes.html = PASS FAIL TIMEOUT
+BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
 
 // The media time display isn't appearing.
 // KNOWNISSUE : Timebar is not scaled when video is zoomed
@@ -853,7 +850,7 @@ BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED
-BUGCR28301 : media/media-captions.html = TIMEOUT
+BUGCR28301 SKIP : media/media-captions.html = TIMEOUT
 
 // We haven't implemented reverse audio/video playback.
 // UNIMPLEMENTED BUGCR33099 Implement reverse audio/video playback
