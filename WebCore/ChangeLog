@@ -1,3 +1,19 @@
+2010-12-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] RenderThemeGtk::m_HScale and RenderThemeGtk::m_VScale are not initialized
+        https://bugs.webkit.org/show_bug.cgi?id=51654
+
+        Properly initialize slider members of RenderThemeGtk. This can lead to test crashes
+        on some debug configurations.
+
+        No new tests. This is already covered by current slider tests. It isn't crashing on
+        the bots, but it does crash locally.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk): Properly initialize members.
+
 2010-12-27  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by David Levin.
