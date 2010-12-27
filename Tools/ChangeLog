@@ -1,3 +1,16 @@
+2010-12-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Disable flash plugin in GtkLauncher when using gtk3
+        https://bugs.webkit.org/show_bug.cgi?id=51591
+
+        Flash plugin uses gtk2 that is incompatible with gtk3 making
+        webkit crash when it's built with gtk3.
+
+        * GtkLauncher/main.c:
+        (main):
+
 2010-12-25  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
