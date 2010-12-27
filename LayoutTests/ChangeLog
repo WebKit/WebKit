@@ -1,3 +1,11 @@
+2010-12-27  Shinichiro Hamaji  <shinichiro.hamaji@gmail.com>
+
+        Chromium expectation update.
+
+        Suppress fast/canvas/webgl/tex-image-with-format-and-type on linux debug
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-27  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation updates.
