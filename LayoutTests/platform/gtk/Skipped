@@ -2841,6 +2841,8 @@ media/video-source-error.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=51602
 media/controls-after-reload.html
+media/controls-strict.html
+media/video-display-toggle.html
 
 #   Tests generating new results
 media/video-aspect-ratio.html
@@ -5555,7 +5557,6 @@ media/controls-drag-timebar.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50518
 media/controls-without-preload.html
-media/video-display-toggle.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50678
 fast/history/history-back-initial-vs-final-url.html

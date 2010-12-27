@@ -1,3 +1,10 @@
+2010-12-27  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip another GTK media test reporting wrong duration,
+        see bug 51602.
+
+        * platform/gtk/Skipped:
+
 2010-12-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
