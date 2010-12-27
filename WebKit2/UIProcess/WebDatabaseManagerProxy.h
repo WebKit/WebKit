@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "Arguments.h"
 #include "GenericCallback.h"
+#include "OriginAndDatabases.h"
 #include "WKBase.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -44,7 +45,7 @@ namespace WebKit {
 class WebContext;
 class WebSecurityOrigin;
 
-typedef GenericCallback<WKArrayRef> DatabaseOriginsCallback;
+typedef GenericCallback<WKArrayRef> ArrayCallback;
 
 class WebDatabaseManagerProxy : public APIObject {
 public:
@@ -55,9 +56,21 @@ public:
 
     void invalidate();
 
-    void getDatabaseOrigins(PassRefPtr<DatabaseOriginsCallback>);
+    void getDatabasesByOrigin(PassRefPtr<ArrayCallback>);
+    void getDatabaseOrigins(PassRefPtr<ArrayCallback>);
+    void deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin*);
     void deleteDatabasesForOrigin(WebSecurityOrigin*);
     void deleteAllDatabases();
+    void setQuotaForOrigin(WebSecurityOrigin*, uint64_t quota);
+    
+    static String originKey();
+    static String originQuotaKey();
+    static String originUsageKey();
+    static String databaseDetailsKey();
+    static String databaseDetailsNameKey();
+    static String databaseDetailsDisplayNameKey();
+    static String databaseDetailsExpectedUsageKey();
+    static String databaseDetailsCurrentUsageKey();
 
     void didReceiveWebDatabaseManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
@@ -67,10 +80,11 @@ private:
     virtual Type type() const { return APIType; }
 
     // Message handlers.
+    void didGetDatabasesByOrigin(const Vector<OriginAndDatabases>& originAndDatabases, uint64_t callbackID);
     void didGetDatabaseOrigins(const Vector<String>& originIdentifiers, uint64_t callbackID);
 
     WebContext* m_webContext;
-    HashMap<uint64_t, RefPtr<DatabaseOriginsCallback> > m_databaseOriginsCallbacks;
+    HashMap<uint64_t, RefPtr<ArrayCallback> > m_arrayCallbacks;
 };
 
 } // namespace WebKit

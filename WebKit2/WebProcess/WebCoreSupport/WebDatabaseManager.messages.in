@@ -21,7 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebDatabaseManager {
+    void GetDatabasesByOrigin(uint64_t callbackID)
     void GetDatabaseOrigins(uint64_t callbackID)
+    void DeleteDatabaseWithNameForOrigin(WTF::String databaseIdentifier, WTF::String originIdentifier)
     void DeleteDatabasesForOrigin(WTF::String originIdentifier)
     void DeleteAllDatabases()
+    void SetQuotaForOrigin(WTF::String originIdentifier, uint64_t quota)
 }

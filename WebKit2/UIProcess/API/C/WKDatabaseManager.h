@@ -34,14 +34,54 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKDatabaseManagerGetTypeID();
 
+/* Value type: WKSecurityOriginRef */
+WK_EXPORT WKStringRef WKDatabaseManagerGetOriginKey();
+
+/* Value type: WKUInt64Ref */
+WK_EXPORT WKStringRef WKDatabaseManagerGetOriginQuotaKey();
+
+/* Value type: WKUInt64Ref */
+WK_EXPORT WKStringRef WKDatabaseManagerGetOriginUsageKey();
+
+/* Value type: WKArrayRef (array of WKDictionaryRef's with keys that include:
+       - WKDatabaseManagerGetDatabaseNameKey()
+       - WKDatabaseManagerGetDatabaseDisplayNameKey()
+       - WKDatabaseManagerGetDatabaseExpectedUsageKey()
+       - WKDatabaseManagerGetDatabaseCurrentUsageKey()
+ */
+WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsNameKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsDisplayNameKey();
+
+/* Value type: WKUInt64Ref */
+WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey();
+
+/* Value type: WKUInt64Ref */
+WK_EXPORT WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey();
+
+typedef void (*WKDatabaseManagerGetDatabasesByOriginFunction)(WKArrayRef, WKErrorRef, void*);
+WK_EXPORT void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef contextRef, void* context, WKDatabaseManagerGetDatabasesByOriginFunction function);
+#ifdef __BLOCKS__
+typedef void (^WKDatabaseManagerGetDatabasesByOriginBlock)(WKArrayRef, WKErrorRef);
+WK_EXPORT void WKDatabaseManagerGetDatabasesByOrigin_b(WKDatabaseManagerRef databaseManager, WKDatabaseManagerGetDatabasesByOriginBlock block);
+#endif
+
 typedef void (*WKDatabaseManagerGetDatabaseOriginsFunction)(WKArrayRef, WKErrorRef, void*);
 WK_EXPORT void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef contextRef, void* context, WKDatabaseManagerGetDatabaseOriginsFunction function);
 #ifdef __BLOCKS__
 typedef void (^WKDatabaseManagerGetDatabaseOriginsBlock)(WKArrayRef, WKErrorRef);
 WK_EXPORT void WKDatabaseManagerGetDatabaseOrigins_b(WKDatabaseManagerRef databaseManager, WKDatabaseManagerGetDatabaseOriginsBlock block);
 #endif
+
+WK_EXPORT void WKDatabaseManagerDeleteDatabasesWithNameForOrigin(WKDatabaseManagerRef databaseManager, WKStringRef databaseName, WKSecurityOriginRef origin);
 WK_EXPORT void WKDatabaseManagerDeleteDatabasesForOrigin(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin);
 WK_EXPORT void WKDatabaseManagerDeleteAllDatabases(WKDatabaseManagerRef databaseManager);
+
+WK_EXPORT void WKDatabaseManagerSetQuotaForOrigin(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin, uint64_t quota);
 
 #ifdef __cplusplus
 }

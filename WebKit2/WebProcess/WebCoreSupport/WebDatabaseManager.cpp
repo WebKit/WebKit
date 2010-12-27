@@ -27,9 +27,11 @@
 
 #include "Connection.h"
 #include "MessageID.h"
+#include "OriginAndDatabases.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/DatabaseDetails.h>
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/SecurityOrigin.h>
 
@@ -53,6 +55,48 @@ void WebDatabaseManager::didReceiveMessage(CoreIPC::Connection* connection, Core
     didReceiveWebDatabaseManagerMessage(connection, messageID, arguments);
 }
 
+void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
+{
+    // FIXME: This could be made more efficient by adding a function to DatabaseTracker
+    // to get both the origins and the Vector of DatabaseDetails for each origin in one
+    // shot.  That would avoid taking the numerous locks this requires.
+
+    Vector<RefPtr<SecurityOrigin> > origins;
+    DatabaseTracker::tracker().origins(origins);
+
+    Vector<OriginAndDatabases> originAndDatabasesVector;
+    originAndDatabasesVector.reserveInitialCapacity(origins.size());
+
+    for (size_t i = 0; i < origins.size(); ++i) {
+        OriginAndDatabases originAndDatabases;
+
+        Vector<String> nameVector;
+        if (!DatabaseTracker::tracker().databaseNamesForOrigin(origins[i].get(), nameVector))
+            continue;
+
+        Vector<DatabaseDetails> detailsVector;
+        detailsVector.reserveInitialCapacity(nameVector.size());
+        for (size_t j = 0; j < nameVector.size(); j++) {
+            DatabaseDetails details = DatabaseTracker::tracker().detailsForNameAndOrigin(nameVector[j], origins[i].get());
+            if (details.name().isNull())
+                continue;
+
+            detailsVector.append(details);
+        }
+
+        if (detailsVector.isEmpty())
+            continue;
+
+        originAndDatabases.originIdentifier = origins[i]->databaseIdentifier();
+        originAndDatabases.originQuota = DatabaseTracker::tracker().quotaForOrigin(origins[i].get());
+        originAndDatabases.originUsage = DatabaseTracker::tracker().usageForOrigin(origins[i].get());
+        originAndDatabases.databases.swap(detailsVector); 
+        originAndDatabasesVector.append(originAndDatabases);
+    }
+
+    WebProcess::shared().connection()->send(Messages::WebDatabaseManagerProxy::DidGetDatabasesByOrigin(originAndDatabasesVector, callbackID), 0);
+}
+
 void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
 {
     Vector<RefPtr<SecurityOrigin> > origins;
@@ -64,6 +108,15 @@ void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
     for (size_t i = 0; i < numOrigins; ++i)
         identifiers[i] = origins[i]->databaseIdentifier();
     WebProcess::shared().connection()->send(Messages::WebDatabaseManagerProxy::DidGetDatabaseOrigins(identifiers, callbackID), 0);
+}
+
+void WebDatabaseManager::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, const String& originIdentifier) const
+{
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    if (!origin)
+        return;
+
+    DatabaseTracker::tracker().deleteDatabase(origin.get(), databaseIdentifier);
 }
 
 void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier) const
@@ -78,6 +131,19 @@ void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier
 void WebDatabaseManager::deleteAllDatabases() const
 {
     DatabaseTracker::tracker().deleteAllDatabases();
+}
+
+void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const
+{
+    // If the quota is set to a value lower than the current usage, that quota will
+    // "stick" but no data will be purged to meet the new quota. This will simply
+    // prevent new data from being added to databases in that origin.
+
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
+    if (!origin)
+        return;
+
+    DatabaseTracker::tracker().setQuota(origin.get(), quota);
 }
 
 } // namespace WebKit

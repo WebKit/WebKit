@@ -26,6 +26,7 @@
 #include "WebDatabaseManagerProxy.h"
 
 #include "ImmutableArray.h"
+#include "ImmutableDictionary.h"
 #include "WebDatabaseManagerMessages.h"
 #include "WebContext.h"
 #include "WebSecurityOrigin.h"
@@ -33,6 +34,54 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+String WebDatabaseManagerProxy::originKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerOriginKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::originQuotaKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerOriginQuotaKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::originUsageKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerOriginUsageKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::databaseDetailsKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::databaseDetailsNameKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsNameKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsDisplayNameKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsExpectedUsageKey"));
+    return key;
+}
+
+String WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()
+{
+    DEFINE_STATIC_LOCAL(String, key, ("WebDatabaseManagerDatabaseDetailsCurrentUsageKey"));
+    return key;
+}
 
 PassRefPtr<WebDatabaseManagerProxy> WebDatabaseManagerProxy::create(WebContext* webContext)
 {
@@ -50,22 +99,74 @@ WebDatabaseManagerProxy::~WebDatabaseManagerProxy()
 
 void WebDatabaseManagerProxy::invalidate()
 {
-    invalidateCallbackMap(m_databaseOriginsCallbacks);
+    invalidateCallbackMap(m_arrayCallbacks);
 
     m_webContext = 0;
 }
 
-void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<DatabaseOriginsCallback> prpCallback)
+void WebDatabaseManagerProxy::getDatabasesByOrigin(PassRefPtr<ArrayCallback> prpCallback)
 {
-    RefPtr<DatabaseOriginsCallback> callback = prpCallback;
+    RefPtr<ArrayCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
-    m_databaseOriginsCallbacks.set(callbackID, callback.release());
+    m_arrayCallbacks.set(callbackID, callback.release());
+    m_webContext->process()->send(Messages::WebDatabaseManager::GetDatabasesByOrigin(callbackID), 0);
+}
+
+
+void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndDatabases>& originAndDatabasesVector, uint64_t callbackID)
+{
+    RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    size_t originAndDatabasesCount = originAndDatabasesVector.size();
+    Vector<RefPtr<APIObject> > result(originAndDatabasesCount);
+
+    for (size_t i = 0; i < originAndDatabasesCount; ++i) {
+        const OriginAndDatabases& originAndDatabases = originAndDatabasesVector[i];
+    
+        RefPtr<APIObject> origin = WebSecurityOrigin::create(originAndDatabases.originIdentifier);
+    
+        size_t databasesCount = originAndDatabases.databases.size();
+        Vector<RefPtr<APIObject> > databases(databasesCount);
+    
+        for (size_t j = 0; j < databasesCount; ++j) {
+            const DatabaseDetails& details = originAndDatabases.databases[i];
+            HashMap<String, RefPtr<APIObject> > detailsMap;
+
+            detailsMap.set(databaseDetailsNameKey(), WebString::create(details.name()));
+            detailsMap.set(databaseDetailsDisplayNameKey(), WebString::create(details.displayName()));
+            detailsMap.set(databaseDetailsExpectedUsageKey(), WebUInt64::create(details.expectedUsage()));
+            detailsMap.set(databaseDetailsCurrentUsageKey(), WebUInt64::create(details.currentUsage()));
+            databases.append(ImmutableDictionary::adopt(detailsMap));
+        }
+
+        HashMap<String, RefPtr<APIObject> > originAndDatabasesMap;
+        originAndDatabasesMap.set(originKey(), origin);
+        originAndDatabasesMap.set(originQuotaKey(), WebUInt64::create(originAndDatabases.originQuota));
+        originAndDatabasesMap.set(originUsageKey(), WebUInt64::create(originAndDatabases.originUsage));
+        originAndDatabasesMap.set(databaseDetailsKey(), ImmutableArray::adopt(databases));
+
+        result.append(ImmutableDictionary::adopt(originAndDatabasesMap));
+    }
+
+    RefPtr<ImmutableArray> resultArray = ImmutableArray::adopt(result);
+    callback->performCallbackWithReturnValue(resultArray.get());
+}
+
+void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<ArrayCallback> prpCallback)
+{
+    RefPtr<ArrayCallback> callback = prpCallback;
+    uint64_t callbackID = callback->callbackID();
+    m_arrayCallbacks.set(callbackID, callback.release());
     m_webContext->process()->send(Messages::WebDatabaseManager::GetDatabaseOrigins(callbackID), 0);
 }
 
 void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& originIdentifiers, uint64_t callbackID)
 {
-    RefPtr<DatabaseOriginsCallback> callback = m_databaseOriginsCallbacks.take(callbackID);
+    RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
         return;
@@ -80,17 +181,24 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
     callback->performCallbackWithReturnValue(ImmutableArray::adopt(securityOrigins).get());
 }
 
+void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin* origin)
+{
+    m_webContext->process()->send(Messages::WebDatabaseManager::DeleteDatabaseWithNameForOrigin(databaseIdentifier, origin->databaseIdentifier()), 0);
+}
+
 void WebDatabaseManagerProxy::deleteDatabasesForOrigin(WebSecurityOrigin* origin)
 {
-    if (!origin)
-        return;
-
     m_webContext->process()->send(Messages::WebDatabaseManager::DeleteDatabasesForOrigin(origin->databaseIdentifier()), 0);
 }
 
 void WebDatabaseManagerProxy::deleteAllDatabases()
 {
     m_webContext->process()->send(Messages::WebDatabaseManager::DeleteAllDatabases(), 0);
+}
+
+void WebDatabaseManagerProxy::setQuotaForOrigin(WebSecurityOrigin* origin, uint64_t quota)
+{
+    m_webContext->process()->send(Messages::WebDatabaseManager::SetQuotaForOrigin(origin->databaseIdentifier(), quota), 0);
 }
 
 } // namespace WebKit

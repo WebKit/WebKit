@@ -39,32 +39,108 @@ WKTypeID WKDatabaseManagerGetTypeID()
     return toAPI(WebDatabaseManagerProxy::APIType);
 }
 
-void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef databaseManager, void* context, WKDatabaseManagerGetDatabaseOriginsFunction callback)
+WKStringRef WKDatabaseManagerGetOriginKey()
 {
-    toImpl(databaseManager)->getDatabaseOrigins(DatabaseOriginsCallback::create(context, callback));
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::originKey()).releaseRef();
+    return toAPI(key);
+}
+
+WKStringRef WKDatabaseManagerGetOriginQuotaKey()
+{
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::originQuotaKey()).releaseRef();
+    return toAPI(key);
+}
+
+WKStringRef WKDatabaseManagerGetOriginUsageKey()
+{
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::originUsageKey()).releaseRef();
+    return toAPI(key);
+}
+
+WKStringRef WKDatabaseManagerGetDatabaseDetailsKey()
+{
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsKey()).releaseRef();
+    return toAPI(key);
+}
+
+WKStringRef WKDatabaseManagerGetDatabaseDetailsNameKey()
+{
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsNameKey()).releaseRef();
+    return toAPI(key);
+}
+
+WKStringRef WKDatabaseManagerGetDatabaseDetailsDisplayNameKey()
+{
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsDisplayNameKey()).releaseRef();
+    return toAPI(key);
+}
+
+WKStringRef WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey()
+{
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey()).releaseRef();
+    return toAPI(key);
+}
+
+WKStringRef WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey()
+{
+    static WebString* key = WebString::create(WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey()).releaseRef();
+    return toAPI(key);
+}
+
+void WKDatabaseManagerGetDatabasesByOrigin(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabasesByOriginFunction callback)
+{
+    toImpl(databaseManagerRef)->getDatabasesByOrigin(ArrayCallback::create(context, callback));
 }
 
 #ifdef __BLOCKS__
-static void callGetDatabaseOriginsBlockBlockAndDispose(WKArrayRef resultValue, WKErrorRef error, void* context)
+static void callGetDatabasesByOriginBlockAndDispose(WKArrayRef resultValue, WKErrorRef errorRef, void* context)
 {
-    WKDatabaseManagerGetDatabaseOriginsBlock block = (WKDatabaseManagerGetDatabaseOriginsBlock)context;
-    block(resultValue, error);
+    WKDatabaseManagerGetDatabasesByOriginBlock block = (WKDatabaseManagerGetDatabasesByOriginBlock)context;
+    block(resultValue, errorRef);
     Block_release(block);
 }
 
-void WKDatabaseManagerGetDatabaseOrigins_b(WKDatabaseManagerRef databaseManager, WKDatabaseManagerGetDatabaseOriginsBlock block)
+void WKDatabaseManagerGetDatabasesByOrigin_b(WKDatabaseManagerRef databaseManagerRef, WKDatabaseManagerGetDatabasesByOriginBlock block)
 {
-    WKDatabaseManagerGetDatabaseOrigins(databaseManager, Block_copy(block), callGetDatabaseOriginsBlockBlockAndDispose);
+    WKDatabaseManagerGetDatabasesByOrigin(databaseManagerRef, Block_copy(block), callGetDatabasesByOriginBlockAndDispose);
 }
 #endif
 
-void WKDatabaseManagerDeleteDatabasesForOrigin(WKDatabaseManagerRef databaseManager, WKSecurityOriginRef origin)
+void WKDatabaseManagerGetDatabaseOrigins(WKDatabaseManagerRef databaseManagerRef, void* context, WKDatabaseManagerGetDatabaseOriginsFunction callback)
 {
-    toImpl(databaseManager)->deleteDatabasesForOrigin(toImpl(origin));
+    toImpl(databaseManagerRef)->getDatabaseOrigins(ArrayCallback::create(context, callback));
 }
 
-void WKDatabaseManagerDeleteAllDatabases(WKDatabaseManagerRef databaseManager)
+#ifdef __BLOCKS__
+static void callGetDatabaseOriginsBlockBlockAndDispose(WKArrayRef resultValue, WKErrorRef errorRef, void* context)
 {
-    toImpl(databaseManager)->deleteAllDatabases();
+    WKDatabaseManagerGetDatabaseOriginsBlock block = (WKDatabaseManagerGetDatabaseOriginsBlock)context;
+    block(resultValue, errorRef);
+    Block_release(block);
 }
 
+void WKDatabaseManagerGetDatabaseOrigins_b(WKDatabaseManagerRef databaseManagerRef, WKDatabaseManagerGetDatabaseOriginsBlock block)
+{
+    WKDatabaseManagerGetDatabaseOrigins(databaseManagerRef, Block_copy(block), callGetDatabaseOriginsBlockBlockAndDispose);
+}
+#endif
+
+void WKDatabaseManagerDeleteDatabasesWithNameForOrigin(WKDatabaseManagerRef databaseManagerRef, WKStringRef databaseNameRef, WKSecurityOriginRef originRef)
+{
+    toImpl(databaseManagerRef)->deleteDatabaseWithNameForOrigin(toWTFString(databaseNameRef), toImpl(originRef));
+}
+
+void WKDatabaseManagerDeleteDatabasesForOrigin(WKDatabaseManagerRef databaseManagerRef, WKSecurityOriginRef originRef)
+{
+    toImpl(databaseManagerRef)->deleteDatabasesForOrigin(toImpl(originRef));
+}
+
+void WKDatabaseManagerDeleteAllDatabases(WKDatabaseManagerRef databaseManagerRef)
+{
+    toImpl(databaseManagerRef)->deleteAllDatabases();
+}
+
+void WKDatabaseManagerSetQuotaForOrigin(WKDatabaseManagerRef databaseManagerRef, WKSecurityOriginRef originRef, uint64_t quota)
+{
+    toImpl(databaseManagerRef)->setQuotaForOrigin(toImpl(originRef), quota);
+}

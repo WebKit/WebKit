@@ -33,6 +33,7 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/DatabaseDetails.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
@@ -315,6 +316,38 @@ template<> struct ArgumentCoder<WebCore::WindowFeatures> {
     }
 };
 
+template<> struct ArgumentCoder<WebCore::Color> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::Color& color)
+    {
+        if (!color.isValid()) {
+            encoder->encodeBool(false);
+            return;
+        }
+
+        encoder->encodeBool(true);
+        encoder->encode(color.rgb());
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::Color& color)
+    {
+        bool isValid;
+        if (!decoder->decode(isValid))
+            return false;
+
+        if (!isValid) {
+            color = WebCore::Color();
+            return true;
+        }
+
+        WebCore::RGBA32 rgba;
+        if (!decoder->decode(rgba))
+            return false;
+
+        color = WebCore::Color(rgba);
+        return true;
+    }
+};
+
 #if PLATFORM(MAC)
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
     static void encode(ArgumentEncoder* encoder, const WebCore::KeypressCommand& keypressCommand)
@@ -337,14 +370,30 @@ template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
     
     static bool decode(ArgumentDecoder* decoder, WebCore::CompositionUnderline& underline)
     {
-        uint32_t rgb;
-        if (!decoder->decode(CoreIPC::Out(underline.startOffset, underline.endOffset, underline.thick, rgb)))
+        return decoder->decode(CoreIPC::Out(underline.startOffset, underline.endOffset, underline.thick, underline.color));
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::DatabaseDetails> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::DatabaseDetails& details)
+    {
+        encoder->encode(CoreIPC::In(details.name(), details.displayName(), details.expectedUsage(), details.currentUsage()));
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::DatabaseDetails& details)
+    {
+        String name;
+        String displayName;
+        unsigned long long expectedUsage;
+        unsigned long long currentUsage;
+        if (!decoder->decode(CoreIPC::Out(name, displayName, expectedUsage, currentUsage)))
             return false;
-        underline.color = rgb;
+        
+        details = WebCore::DatabaseDetails(name, displayName, expectedUsage, currentUsage);
         return true;
     }
 };
-    
+
 } // namespace CoreIPC
 
 #endif // WebCoreArgumentCoders_h

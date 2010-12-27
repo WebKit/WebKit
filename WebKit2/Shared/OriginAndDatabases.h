@@ -23,44 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDatabaseManager_h
-#define WebDatabaseManager_h
+#ifndef OriginAndDatabases_h
+#define OriginAndDatabases_h
 
-#include "Arguments.h"
-#include <wtf/Noncopyable.h>
+#include <WebCore/DatabaseDetails.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-class MessageID;
+    class ArgumentDecoder;
+    class ArgumentEncoder;
 }
 
 namespace WebKit {
 
-class WebDatabaseManager {
-    WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
-public:
-    static WebDatabaseManager& shared();
+struct OriginAndDatabases {
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, OriginAndDatabases&);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-private:
-    WebDatabaseManager();
-
-    // Implemented in generated WebDatabaseManagerMessageReceiver.cpp
-    void didReceiveWebDatabaseManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
-    void getDatabasesByOrigin(uint64_t callbackID) const;
-    void getDatabaseOrigins(uint64_t callbackID) const;
-    void deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, const String& originIdentifier) const;
-    void deleteDatabasesForOrigin(const String& originIdentifier) const;
-    void deleteAllDatabases() const;
-    void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
-
-    String databaseDirectory() const;
+    String originIdentifier;
+    unsigned long long originQuota;
+    unsigned long long originUsage;
+    Vector<WebCore::DatabaseDetails> databases;
 };
 
 } // namespace WebKit
 
-#endif // WebDatabaseManager_h
+#endif // OriginAndDatabases_h

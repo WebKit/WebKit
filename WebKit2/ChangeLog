@@ -1,3 +1,72 @@
+2010-12-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Add additional API for managing databases
+        https://bugs.webkit.org/show_bug.cgi?id=51629
+
+        - Adds WKDatabaseManagerGetDatabasesByOrigin, which asynchronously returns
+          an array of dictionaries containing details about each origin using 
+          databases and details about each database. Keys were added for accessing
+          the data in the dictionaries.
+        - Adds WKDatabaseManagerDeleteDatabasesWithNameForOrigin to delete a database
+          with a specific identifier.
+        - Adds WKDatabaseManagerSetQuotaForOrigin to set the quota for an origin.
+
+        * Shared/OriginAndDatabases.cpp: Added.
+        (WebKit::OriginAndDatabases::encode):
+        (WebKit::OriginAndDatabases::decode):
+        * Shared/OriginAndDatabases.h: Added.
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/C/WKDatabaseManager.cpp:
+        (WKDatabaseManagerGetOriginKey):
+        (WKDatabaseManagerGetOriginQuotaKey):
+        (WKDatabaseManagerGetOriginUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsKey):
+        (WKDatabaseManagerGetDatabaseDetailsNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsDisplayNameKey):
+        (WKDatabaseManagerGetDatabaseDetailsExpectedUsageKey):
+        (WKDatabaseManagerGetDatabaseDetailsCurrentUsageKey):
+        (WKDatabaseManagerGetDatabasesByOrigin):
+        (callGetDatabasesByOriginBlockAndDispose):
+        (WKDatabaseManagerGetDatabasesByOrigin_b):
+        (WKDatabaseManagerGetDatabaseOrigins):
+        (callGetDatabaseOriginsBlockBlockAndDispose):
+        (WKDatabaseManagerGetDatabaseOrigins_b):
+        (WKDatabaseManagerDeleteDatabasesWithNameForOrigin):
+        (WKDatabaseManagerDeleteDatabasesForOrigin):
+        (WKDatabaseManagerDeleteAllDatabases):
+        (WKDatabaseManagerSetQuotaForOrigin):
+        * UIProcess/API/C/WKDatabaseManager.h:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::originKey):
+        (WebKit::WebDatabaseManagerProxy::originQuotaKey):
+        (WebKit::WebDatabaseManagerProxy::originUsageKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsNameKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsDisplayNameKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsExpectedUsageKey):
+        (WebKit::WebDatabaseManagerProxy::databaseDetailsCurrentUsageKey):
+        (WebKit::WebDatabaseManagerProxy::invalidate):
+        (WebKit::WebDatabaseManagerProxy::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::getDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::didGetDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManagerProxy::setQuotaForOrigin):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.messages.in:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManager::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManager::setQuotaForOrigin):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.messages.in:
+        * win/WebKit2.vcproj:
+
 2010-12-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -245,6 +245,7 @@ HEADERS += \
     Shared/MutableDictionary.h \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NotImplemented.h \
+    Shared/OriginAndDatabases.h \
     Shared/PlatformPopupMenuData.h \
     Shared/SameDocumentNavigationType.h \
     Shared/StringPairVector.h \
@@ -454,6 +455,7 @@ SOURCES += \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
+    Shared/OriginAndDatabases.cpp \
     Shared/PlatformPopupMenuData.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebContextMenuItem.cpp \

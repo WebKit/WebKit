@@ -471,6 +471,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\OriginAndDatabases.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\OriginAndDatabases.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\PlatformPopupMenuData.cpp"
 				>
 			</File>
