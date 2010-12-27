@@ -1,5 +1,51 @@
 2010-12-26  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Move cmake into Sources
+        https://bugs.webkit.org/show_bug.cgi?id=51631
+
+        * CMakeLists.txt:
+        * Sources/cmake: Copied from cmake.
+        * cmake: Removed.
+        * cmake/FindCFLite.cmake: Removed.
+        * cmake/FindCairo.cmake: Removed.
+        * cmake/FindEFL.cmake: Removed.
+        * cmake/FindFontconfig.cmake: Removed.
+        * cmake/FindFreetype.cmake: Removed.
+        * cmake/FindGDK-PixBuf.cmake: Removed.
+        * cmake/FindGDK.cmake: Removed.
+        * cmake/FindGIO.cmake: Removed.
+        * cmake/FindGStreamer-App.cmake: Removed.
+        * cmake/FindGStreamer-Base.cmake: Removed.
+        * cmake/FindGStreamer-Interfaces.cmake: Removed.
+        * cmake/FindGStreamer-Pbutils.cmake: Removed.
+        * cmake/FindGStreamer-Plugins-Base.cmake: Removed.
+        * cmake/FindGStreamer-Video.cmake: Removed.
+        * cmake/FindGStreamer.cmake: Removed.
+        * cmake/FindGlib.cmake: Removed.
+        * cmake/FindGperf.cmake: Removed.
+        * cmake/FindGthread.cmake: Removed.
+        * cmake/FindICU.cmake: Removed.
+        * cmake/FindLibSoup2.cmake: Removed.
+        * cmake/FindLibXlst.cmake: Removed.
+        * cmake/FindPango.cmake: Removed.
+        * cmake/FindSqlite.cmake: Removed.
+        * cmake/LibFindMacros.cmake: Removed.
+        * cmake/OptionsCommon.cmake: Removed.
+        * cmake/OptionsEfl.cmake: Removed.
+        * cmake/OptionsWinCE.cmake: Removed.
+        * cmake/OptionsWindows.cmake: Removed.
+        * cmake/WebKitEfl.cmake: Removed.
+        * cmake/WebKitFS.cmake: Removed.
+        * cmake/WebKitFeatures.cmake: Removed.
+        * cmake/WebKitHelpers.cmake: Removed.
+        * cmake/WebKitMacros.cmake: Removed.
+        * cmake/WebKitPackaging.cmake: Removed.
+        * cmake/eflsymbols.filter: Removed.
+
+2010-12-26  Adam Barth  <abarth@webkit.org>
+
         Fix some references to the old location of the WebKit website in git
         metadata files.
 
