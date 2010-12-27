@@ -1712,8 +1712,12 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
                 IntSize bottomLeftToClipOut = bottomLeft;
                 IntSize bottomRightToClipOut = bottomRight;
 
+                IntSize topLeftToFill = topLeft;
+                IntSize topRightToFill = topRight;
+                IntSize bottomLeftToFill  = bottomLeft;
+                IntSize bottomRightToFill = bottomRight;
                 if (shadowSpread < 0)
-                    uniformlyExpandBorderRadii(shadowSpread, topLeft, topRight, bottomLeft, bottomRight);
+                    uniformlyExpandBorderRadii(shadowSpread, topLeftToFill, topRightToFill, bottomLeftToFill, bottomRightToFill);
 
                 // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
                 // when painting the shadow. On the other hand, it introduces subpixel gaps along the
@@ -1725,7 +1729,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
                 if (!rectToClipOut.isEmpty())
                     context->clipOutRoundedRect(rectToClipOut, topLeftToClipOut, topRightToClipOut, bottomLeftToClipOut, bottomRightToClipOut);
-                context->fillRoundedRect(fillRect, topLeft, topRight, bottomLeft, bottomRight, Color::black, s->colorSpace());
+                context->fillRoundedRect(fillRect, topLeftToFill, topRightToFill, bottomLeftToFill, bottomRightToFill, Color::black, s->colorSpace());
             } else {
                 IntRect rectToClipOut = rect;
 

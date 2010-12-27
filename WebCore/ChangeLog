@@ -1,3 +1,19 @@
+2010-12-26  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        For box-shadow, non-primary shadows should have specified radii.
+        https://bugs.webkit.org/show_bug.cgi?id=51386
+
+        On paintBoxShadow(), the spread value accidentally accumulated accidentally
+        during the loop, which should be applied individually for radius of each shadow. 
+        This change makes the radii for rects computed for each shadow.
+        
+        Test: fast/box-shadow/spread-multiple-normal.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2010-12-26  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,15 @@
+2010-12-26  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        For box-shadow, non-primary shadows should have specified radii.
+        https://bugs.webkit.org/show_bug.cgi?id=51386
+
+        * fast/box-shadow/spread-multiple-normal-expected.txt: Added.
+        * fast/box-shadow/spread-multiple-normal.html: Added.
+        * fast/box-shadow/spread-multiple-normal-expected.checksum: Added.
+        * fast/box-shadow/spread-multiple-normal-expected.png: Added.
+
 2010-12-26  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, Chromium expectations fix. Fix broken (duplicate)
