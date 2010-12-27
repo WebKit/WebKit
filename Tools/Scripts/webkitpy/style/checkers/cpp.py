@@ -47,6 +47,8 @@ import string
 import sys
 import unicodedata
 
+from webkitpy.common.memoized import memoized
+
 # The key to use to provide a class to fake loading a header file.
 INCLUDE_IO_INJECTION_KEY = 'include_header_io'
 
@@ -192,6 +194,34 @@ def iteratively_replace_matches_with_char(pattern, char_replacement, s):
         s = s[:start_match_index] + char_replacement * match_length + s[end_match_index:]
 
 
+def _convert_to_lower_with_underscores(text):
+    """Converts all text strings in camelCase or PascalCase to lowers with underscores."""
+
+    # First add underscores before any capital letter followed by a lower case letter
+    # as long as it is in a word.
+    # (This put an underscore before Password but not P and A in WPAPassword).
+    text = sub(r'(?<=[A-Za-z0-9])([A-Z])(?=[a-z])', r'_\1', text)
+
+    # Next add underscores before capitals at the end of words if it was
+    # preceeded by lower case letter or number.
+    # (This puts an underscore before A in isA but not A in CBA).
+    text = sub(r'(?<=[a-z0-9])([A-Z])(?=\b)', r'_\1', text)
+
+    # Next add underscores when you have a captial letter which is followed by a capital letter
+    # but is not proceeded by one. (This puts an underscore before A in 'WordADay').
+    text = sub(r'(?<=[a-z0-9])([A-Z][A-Z_])', r'_\1', text)
+
+    return text.lower()
+
+
+
+def _create_acronym(text):
+    """Creates an acronym for the given text."""
+    # Removes all lower case letters except those starting words.
+    text = sub(r'(?<!\b)[a-z]', '', text)
+    return text.upper()
+
+
 def up_to_unmatched_closing_paren(s):
     """Splits a string into two parts up to first unmatched ')'.
 
@@ -322,6 +352,11 @@ class Parameter(object):
         # Remove any initializers from the parameter name (e.g. int i = 5).
         self.name = sub(r'=.*', '', parameter[parameter_name_index:]).strip()
         self.row = row
+
+    @memoized
+    def lower_with_underscores_name(self):
+        """Returns the parameter name in the lower with underscores format."""
+        return _convert_to_lower_with_underscores(self.name)
 
 
 class SingleLineView(object):
@@ -1441,6 +1476,71 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
             function_state.check(error, line_number)
     elif not match(r'^\s*$', line):
         function_state.count(line_number)  # Count non-blank/non-comment lines.
+
+
+def _check_parameter_name_against_text(parameter, text, error):
+    """Checks to see if the parameter name is contained within the text.
+
+    Return false if the check failed (i.e. an error was produced).
+    """
+
+    # Treat 'lower with underscores' as a canonical form because it is
+    # case insensitive while still retaining word breaks. (This ensures that
+    # 'elate' doesn't look like it is duplicating of 'NateLate'.)
+    canonical_parameter_name = parameter.lower_with_underscores_name()
+
+    # Appends "object" to all text to catch variables that did the same (but only
+    # do this when the parameter name is more than a single character to avoid
+    # flagging 'b' which may be an ok variable when used in an rgba function).
+    if len(canonical_parameter_name) > 1:
+        text = sub(r'(\w)\b', r'\1Object', text)
+    canonical_text = _convert_to_lower_with_underscores(text)
+
+    # Used to detect cases like ec for ExceptionCode.
+    acronym = _create_acronym(text).lower()
+    if canonical_text.find(canonical_parameter_name) != -1 or acronym.find(canonical_parameter_name) != -1:
+        error(parameter.row, 'readability/parameter_name', 5,
+              'The parameter name "%s" adds no information, so it should be removed.' % parameter.name)
+        return False
+    return True
+
+
+def check_function_definition(clean_lines, line_number, function_state, error):
+    """Check that function definitions for style issues.
+
+    Specifically, check that parameter names in declarations add information.
+
+    Args:
+       clean_lines: A CleansedLines instance containing the file.
+       line_number: The number of the line to check.
+       function_state: Current function name and lines in body so far.
+       error: The function to call with any errors found.
+    """
+    # Only do checks when we have a function declaration.
+    if line_number != function_state.body_start_line_number or not function_state.is_declaration:
+        return
+
+    parameter_list = function_state.parameter_list()
+    for parameter in parameter_list:
+        if not parameter.name:
+            continue
+
+        # Check the parameter name against the function name for single parameter set functions.
+        if len(parameter_list) == 1 and match('set[A-Z]', function_state.current_function):
+            trimmed_function_name = function_state.current_function[len('set'):]
+            if not _check_parameter_name_against_text(parameter, trimmed_function_name, error):
+                # Since an error was noted for this name, move to the next parameter.
+                continue
+
+        # Check the parameter name against the type.
+        if not _check_parameter_name_against_text(parameter, parameter.type, error):
+            continue
+
+        # Skip single letter parameters before comparing against value (because 'a' would
+        # be flagged, but it may be an ok variable when used in an rgba function).
+        if len(parameter.name) > 1:
+            # 'value' is a meaningless variable name that is used in some places, so flag it.
+            _check_parameter_name_against_text(parameter, 'value', error)
 
 
 def check_pass_ptr_usage(clean_lines, line_number, function_state, error):
@@ -3156,6 +3256,7 @@ def process_line(filename, file_extension,
     check_for_function_lengths(clean_lines, line, function_state, error)
     if search(r'\bNOLINT\b', raw_lines[line]):  # ignore nolint lines
         return
+    check_function_definition(clean_lines, line, function_state, error)
     check_pass_ptr_usage(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, error)
@@ -3239,6 +3340,7 @@ class CppChecker(object):
         'readability/function',
         'readability/multiline_comment',
         'readability/multiline_string',
+        'readability/parameter_name',
         'readability/naming',
         'readability/null',
         'readability/pass_ptr',

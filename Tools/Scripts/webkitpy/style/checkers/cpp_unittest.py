@@ -109,6 +109,19 @@ class CppFunctionsTest(unittest.TestCase):
 
     """Supports testing functions that do not need CppStyleTestBase."""
 
+    def test_convert_to_lower_with_underscores(self):
+        self.assertEquals(cpp_style._convert_to_lower_with_underscores('ABC'), 'abc')
+        self.assertEquals(cpp_style._convert_to_lower_with_underscores('aB'), 'a_b')
+        self.assertEquals(cpp_style._convert_to_lower_with_underscores('isAName'), 'is_a_name')
+        self.assertEquals(cpp_style._convert_to_lower_with_underscores('AnotherTest'), 'another_test')
+        self.assertEquals(cpp_style._convert_to_lower_with_underscores('PassRefPtr<MyClass>'), 'pass_ref_ptr<my_class>')
+        self.assertEquals(cpp_style._convert_to_lower_with_underscores('_ABC'), '_abc')
+
+    def test_create_acronym(self):
+        self.assertEquals(cpp_style._create_acronym('ABC'), 'ABC')
+        self.assertEquals(cpp_style._create_acronym('IsAName'), 'IAN')
+        self.assertEquals(cpp_style._create_acronym('PassRefPtr<MyClass>'), 'PRP<MC>')
+
     def test_is_c_or_objective_c(self):
         clean_lines = cpp_style.CleansedLines([''])
         clean_objc_lines = cpp_style.CleansedLines(['#import "header.h"'])
@@ -206,6 +219,12 @@ class CppFunctionsTest(unittest.TestCase):
             index += 1
         self.assertEquals(index, len(expected_parameters))
 
+    def test_check_parameter_against_text(self):
+        error_collector = ErrorCollector(self.assert_)
+        parameter = cpp_style.Parameter('FooF ooF', 4, 1)
+        self.assertFalse(cpp_style._check_parameter_name_against_text(parameter, 'FooF', error_collector))
+        self.assertEquals(error_collector.results(),
+                          'The parameter name "ooF" adds no information, so it should be removed.  [readability/parameter_name] [5]')
 
 class CppStyleTestBase(unittest.TestCase):
     """Provides some useful helper functions for cpp_style tests.
@@ -239,6 +258,7 @@ class CppStyleTestBase(unittest.TestCase):
         basic_error_rules = ('-build/header_guard',
                              '-legal/copyright',
                              '-readability/fn_size',
+                             '-readability/parameter_name',
                              '-whitespace/ending_newline')
         return self.perform_lint(code, filename, basic_error_rules)
 
@@ -246,7 +266,7 @@ class CppStyleTestBase(unittest.TestCase):
     def perform_multi_line_lint(self, code, file_extension):
         basic_error_rules = ('-build/header_guard',
                              '-legal/copyright',
-                             '-multi_line_filter',
+                             '-readability/parameter_name',
                              '-whitespace/ending_newline')
         return self.perform_lint(code, 'test.' + file_extension, basic_error_rules)
 
@@ -4098,6 +4118,59 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('OwnPtr<uint32_t> under_score(new uint32_t);',
                          'under_score' + name_underscore_error_message)
 
+    def test_parameter_names(self):
+        # Leave meaningless variable names out of function declarations.
+        meaningless_variable_name_error_message = 'The parameter name "%s" adds no information, so it should be removed.  [readability/parameter_name] [5]'
+
+        parameter_error_rules = ('-',
+                                 '+readability/parameter_name')
+        # No variable name, so no error.
+        self.assertEquals('',
+                          self.perform_lint('void func(int);', 'test.cpp', parameter_error_rules))
+
+        # Verify that copying the name of the set function causes the error (with some odd casing).
+        self.assertEquals(meaningless_variable_name_error_message % 'itemCount',
+                          self.perform_lint('void setItemCount(size_t itemCount);', 'test.cpp', parameter_error_rules))
+        self.assertEquals(meaningless_variable_name_error_message % 'abcCount',
+                          self.perform_lint('void setABCCount(size_t abcCount);', 'test.cpp', parameter_error_rules))
+
+        # Verify that copying a type name will trigger the warning (even if the type is a template parameter).
+        self.assertEquals(meaningless_variable_name_error_message % 'context',
+                          self.perform_lint('void funct(PassRefPtr<ScriptExecutionContext> context);', 'test.cpp', parameter_error_rules))
+
+        # Verify that acronyms as variable names trigger the error (for both set functions and type names).
+        self.assertEquals(meaningless_variable_name_error_message % 'ec',
+                          self.perform_lint('void setExceptionCode(int ec);', 'test.cpp', parameter_error_rules))
+        self.assertEquals(meaningless_variable_name_error_message % 'ec',
+                          self.perform_lint('void funct(ExceptionCode ec);', 'test.cpp', parameter_error_rules))
+
+        # 'object' alone, appended, or as part of an acronym is meaningless.
+        self.assertEquals(meaningless_variable_name_error_message % 'object',
+                          self.perform_lint('void funct(RenderView object);', 'test.cpp', parameter_error_rules))
+        self.assertEquals(meaningless_variable_name_error_message % 'viewObject',
+                          self.perform_lint('void funct(RenderView viewObject);', 'test.cpp', parameter_error_rules))
+        self.assertEquals(meaningless_variable_name_error_message % 'rvo',
+                          self.perform_lint('void funct(RenderView rvo);', 'test.cpp', parameter_error_rules))
+
+        # 'value' is a meaningless variable name.
+        self.assertEquals(meaningless_variable_name_error_message % 'value',
+                          self.perform_lint('void funct(RenderView value);', 'test.cpp', parameter_error_rules))
+
+        # Check that r, g, b, and a are allowed.
+        self.assertEquals('',
+                          self.perform_lint('void setRGBAValues(int r, int g, int b, int a);', 'test.cpp', parameter_error_rules))
+
+        # Verify that a simple substring match isn't done which would cause false positives.
+        self.assertEquals('',
+                          self.perform_lint('void setNateLateCount(size_t elate);', 'test.cpp', parameter_error_rules))
+        self.assertEquals('',
+                          self.perform_lint('void funct(NateLate elate);', 'test.cpp', parameter_error_rules))
+
+        # Don't have generate warnings for functions (only declarations).
+        self.assertEquals('',
+                          self.perform_lint('void funct(PassRefPtr<ScriptExecutionContext> context)\n'
+                                            '{\n'
+                                            '}\n', 'test.cpp', parameter_error_rules))
 
     def test_comments(self):
         # A comment at the beginning of a line is ok.

@@ -156,6 +156,10 @@ _PATH_RULES_SPECIFIER = [
       # we don't check for underscores in that directory.
       "/JavaScriptCore/assembler/"],
      ["-readability/naming"]),
+    ([# JITStubs has an usual syntax which causes false alarms for a few checks.
+      "JavaScriptCore/jit/JITStubs.cpp"],
+     ["-readability/parameter_name",
+      "-whitespace/parens"]),
 
     # WebKit2 rules:
     # WebKit2 doesn't use config.h, and certain directories have other

@@ -1,3 +1,34 @@
+2010-12-27  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style check for meaningless variable names in function declarations.
+        https://bugs.webkit.org/show_bug.cgi?id=51523
+
+        * Scripts/webkitpy/style/checker.py: Exempted JavaScriptCore/jit/JITStubs.cpp
+        from the new check and whitespace/parens because the syntax is unusual and
+        produced a fair number of positives for these checks.
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_convert_to_lower_with_underscores): Used as a canonical form for type names
+        and parameter names when determining if the parameter name is useless.
+        (_create_acronym): Used to check for redundant variable names in cases like "ExceptionCode ec"
+        (Parameter.lower_with_underscores_name): Gives back the parameter name in a lower_with_underscore
+        format.
+        (_check_parameter_name_against_text):  Checks to see if the parameter name is in the
+        text or an acronym of it.
+        (check_function_definition): Checks function definitions for meaningless variable names.
+        (process_line): Added call to check_function_definition.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppFunctionsTest.test_convert_to_lower_with_underscores): Test for _convert_to_lower_with_underscores.
+        (CppFunctionsTest.test_create_acronym): Test for _create_acronym.
+        (CppFunctionsTest.test_check_parameter_against_text): Test for _check_parameter_against_text.
+        (CppStyleTestBase.perform_single_line_lint): Removed the parameter name check
+        because when only checking a snippet, there are a lot of bogus functions.
+        (CppStyleTestBase.perform_multi_line_lint): Ditto and removed a bogus filter
+        that I put there previously and just noticed.
+        (WebKitStyleTest.test_parameter_names): Tests for the functionality -- both
+        check_function_definition and process_line.
+
 2010-12-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
