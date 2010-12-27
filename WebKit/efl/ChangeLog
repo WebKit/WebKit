@@ -1,3 +1,26 @@
+2010-12-27  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Set the frame smart object base clipper to non-static.
+        https://bugs.webkit.org/show_bug.cgi?id=51552
+
+        The base clipper of the clipped smart object, which is the parent
+        class of the ewk_frame class is a static clipper. It's normally only
+        used for showing/hiding the object, but in the case of the ewk_frame,
+        it needs to clip the object to its dimension, in order to clip
+        scrollbars of inner frames.
+
+        Setting it to non-static makes the clipper to be automatically moved
+        by the parent class, thus staying on the correct position when the
+        frame is moved.
+
+        This change needed to be done after the adoption of the static clipper
+        on the clipped smart base class.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_smart_add):
+
 2010-12-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

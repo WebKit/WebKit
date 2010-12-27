@@ -192,6 +192,7 @@ static void _ewk_frame_smart_add(Evas_Object* o)
     sd->self = o;
 
     _parent_sc.add(o);
+    evas_object_static_clip_set(sd->base.clipper, EINA_FALSE);
     evas_object_move(sd->base.clipper, 0, 0);
     evas_object_resize(sd->base.clipper, 0, 0);
 
