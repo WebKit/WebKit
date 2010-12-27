@@ -1,3 +1,21 @@
+2010-12-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Browser is failing 16 baseline test from Selector API Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=42968
+
+        Throw an exception if there is no argument to querySelector or 
+        querySelectorAll. This replaces the current behavior of passing the string
+        "undefined" as the argument.
+
+        No new tests, just updating the existing results for 
+        fast/dom/SelectorAPI/resig-SelectorAPI-test.xhtml.
+
+        * dom/Document.idl:
+        * dom/DocumentFragment.idl:
+        * dom/Element.idl:
+
 2010-12-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dan Bernstein.

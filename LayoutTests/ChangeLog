@@ -1,3 +1,14 @@
+2010-12-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Browser is failing 16 baseline test from Selector API Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=42968
+
+        Update the expected result for the test.
+
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt:
+
 2010-12-27  Shinichiro Hamaji  <shinichiro.hamaji@gmail.com>
 
         Chromium expectation update.

@@ -21,9 +21,9 @@ module core {
 
     interface DocumentFragment : Node {
         // NodeSelector - Selector API
-        Element querySelector(in DOMString selectors)
+        [RequiresAllArguments=Raise] Element querySelector(in DOMString selectors)
             raises(DOMException);
-        NodeList querySelectorAll(in DOMString selectors)
+        [RequiresAllArguments=Raise] NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
     };
 
