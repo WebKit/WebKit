@@ -1,3 +1,14 @@
+2010-12-28  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium test expectations update.
+
+        Marked inspector/styles-source-lines.html as a flaky failure on
+        Win Debug and
+        http/tests/inspector/extensions-resources-redirect.html as a flaky
+        timeout on Win Release.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-28  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Kenneth Russell.

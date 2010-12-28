@@ -634,6 +634,8 @@ BUGCR26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
 BUGCR66087 WIN SLOW : inspector/styles-disable-then-enable.html = PASS TEXT
 BUGCR66087 WIN : inspector/timeline-layout.html = PASS TEXT
 BUGCR66087 WIN : inspector/timeline-parse-html.html = CRASH TIMEOUT PASS TEXT
+// WebKit roll 74708:74711
+BUGCR68165 WIN DEBUG : inspector/styles-source-lines.html = TEXT
 
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
@@ -3263,6 +3265,7 @@ BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
 BUGCR67662 WIN RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
 BUGCR67662 WIN DEBUG SLOW : http/tests/inspector/console-websocket-error.html = TEXT
+BUGCR68173 WIN RELEASE : http/tests/inspector/extensions-resources-redirect.html = PASS TIMEOUT
 
 BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 
