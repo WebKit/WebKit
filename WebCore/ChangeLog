@@ -1,3 +1,14 @@
+2010-12-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Fix memory leak in Profiles tab concerned with heap profiles views.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51680
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+
 2010-12-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

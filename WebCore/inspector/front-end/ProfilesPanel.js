@@ -212,6 +212,8 @@ WebInspector.ProfilesPanel.prototype = {
 
         this.profileViewStatusBarItemsContainer.removeChildren();
 
+        this.removeAllListeners();
+
         this._updateInterface();
         this.welcomeView.show();
     },
