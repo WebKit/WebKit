@@ -417,8 +417,8 @@ void FocusController::setActive(bool active)
 
 static void updateFocusCandidateIfNeeded(FocusDirection direction, const IntRect& startingRect, FocusCandidate& candidate, FocusCandidate& closest)
 {
-    if (!candidate.visibleNode->isElementNode() || !candidate.visibleNode->renderer())
-        return;
+    ASSERT(candidate.visibleNode->isElementNode());
+    ASSERT(candidate.visibleNode->renderer());
 
     // Ignore iframes that don't have a src attribute
     if (frameOwnerElement(candidate) && (!frameOwnerElement(candidate)->contentFrame() || candidate.rect.isEmpty()))
@@ -472,11 +472,14 @@ void FocusController::findFocusCandidateInContainer(Node* container, const IntRe
     Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedNode() : 0;
 
     Node* node = container->firstChild();
-    for (; node; node = (node->isFrameOwnerElement() || canScrollInDirection(direction, node)) ? node->traverseNextSibling(container) : node->traverseNextNode(container)) {
+    for (; node; node = (node->isFrameOwnerElement() || canScrollInDirection(node, direction)) ? node->traverseNextSibling(container) : node->traverseNextNode(container)) {
         if (node == focusedNode)
             continue;
 
-        if (!node->isKeyboardFocusable(event) && !node->isFrameOwnerElement() && !canScrollInDirection(direction, node))
+        if (!node->isElementNode())
+            continue;
+
+        if (!node->isKeyboardFocusable(event) && !node->isFrameOwnerElement() && !canScrollInDirection(node, direction))
             continue;
 
         FocusCandidate candidate = FocusCandidate(node, direction);
@@ -531,7 +534,8 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
         }
         return true;
     }
-    if (canScrollInDirection(direction, focusCandidate.visibleNode)) {
+
+    if (canScrollInDirection(focusCandidate.visibleNode, direction)) {
         if (focusCandidate.isOffscreenAfterScrolling) {
             scrollInDirection(focusCandidate.visibleNode, direction);
             return true;
@@ -578,7 +582,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
         } else if (focusedNode->hasTagName(areaTag)) {
             HTMLAreaElement* area = static_cast<HTMLAreaElement*>(focusedNode);
             container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, area->imageElement());
-            startingRect = virtualRectForAreaElementAndDirection(direction, area);
+            startingRect = virtualRectForAreaElementAndDirection(area, direction);
         }
     }
 

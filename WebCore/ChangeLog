@@ -1,3 +1,33 @@
+2010-12-20  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        Spatial Navigation: code clean up (Part VI)
+        https://bugs.webkit.org/show_bug.cgi?id=50666
+
+        No new tests needed.
+
+        * page/FocusController.cpp:
+        (WebCore::updatFocusCandidateIfNeeded): Assert renderer() and
+        isElementNode() now that we are bailing out earlier in both the
+        FocusCandidate constructor and FocusController::findFocusCandidateInContainer().
+        * page/SpatialNavigation.h: Swapped the parameters order in canScrollInDirection
+        and virtualRectForAreaElementAndDirection functions.
+        (WebCore::FocusController::findFocusCandidateInContainer):
+        (WebCore::FocusController::advanceFocusDirectionallyInContainer): Adjusted callsites
+        of canScrollInDirection(), and added an early return if !isElementNode().
+        (WebCore::FocusController::advanceFocusDirectionally): Adjusted callsite of
+        virtualRectForAreaElementAndDirection();
+        * page/SpatialNavigation.cpp:
+        (WebCore::FocusCandidate::FocusCandidate): Assert if node is not a element node;
+        (WebCore::isScrollableNode): Renamed from isScrollableContainerNode;
+        (WebCore::scrollInDirection): Adjusted callsite after function name change;
+        (WebCore::scrollableEnclosingBoxOrParentFrameForNodeInDi:rection): Assert if node is
+        a documentNode.
+        (WebCore::canScrollInDirection): Signature changed.
+        (WebCore::canBeScrolledIntoView): Ditto.
+        (WebCore::virtualRectForAreaElementAndDirection): Ditto.
+
 2010-12-28  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

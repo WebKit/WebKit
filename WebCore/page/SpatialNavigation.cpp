@@ -52,7 +52,7 @@ static bool isRectInDirection(FocusDirection, const IntRect&, const IntRect&);
 static void deflateIfOverlapped(IntRect&, IntRect&);
 static IntRect rectToAbsoluteCoordinates(Frame* initialFrame, const IntRect&);
 static void entryAndExitPointsForDirection(FocusDirection direction, const IntRect& startingRect, const IntRect& potentialRect, IntPoint& exitPoint, IntPoint& entryPoint);
-static bool isScrollableContainerNode(const Node*);
+static bool isScrollableNode(const Node*);
 
 FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
     : visibleNode(0)
@@ -66,6 +66,8 @@ FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
     , isOffscreenAfterScrolling(true)
 {
     ASSERT(node);
+    ASSERT(node->isElementNode());
+
     if (node->hasTagName(HTMLNames::areaTag)) {
         HTMLAreaElement* area = static_cast<HTMLAreaElement*>(node);
         HTMLImageElement* image = area->imageElement();
@@ -73,7 +75,7 @@ FocusCandidate::FocusCandidate(Node* node, FocusDirection direction)
             return;
 
         visibleNode = image;
-        rect = virtualRectForAreaElementAndDirection(direction, area);
+        rect = virtualRectForAreaElementAndDirection(area, direction);
     } else {
         if (!node->renderer())
             return;
@@ -336,7 +338,7 @@ bool scrollInDirection(Frame* frame, FocusDirection direction)
 {
     ASSERT(frame);
 
-    if (frame && canScrollInDirection(direction, frame->document())) {
+    if (frame && canScrollInDirection(frame->document(), direction)) {
         int dx = 0;
         int dy = 0;
         switch (direction) {
@@ -372,7 +374,7 @@ bool scrollInDirection(Node* container, FocusDirection direction)
     if (!container->renderBox())
         return false;
 
-    if (canScrollInDirection(direction, container)) {
+    if (canScrollInDirection(container, direction)) {
         int dx = 0;
         int dy = 0;
         switch (direction) {
@@ -417,15 +419,15 @@ static void deflateIfOverlapped(IntRect& a, IntRect& b)
         b.inflate(deflateFactor);
 }
 
-bool isScrollableContainerNode(const Node* node)
+bool isScrollableNode(const Node* node)
 {
+    ASSERT(!node->isDocumentNode());
+
     if (!node)
         return false;
 
-    if (RenderObject* renderer = node->renderer()) {
-        return (renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea()
-             && node->hasChildNodes() && !node->isDocumentNode());
-    }
+    if (RenderObject* renderer = node->renderer())
+        return renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea() && node->hasChildNodes();
 
     return false;
 }
@@ -439,18 +441,18 @@ Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection direc
             parent = static_cast<Document*>(parent)->document()->frame()->ownerElement();
         else
             parent = parent->parentNode();
-    } while (parent && !canScrollInDirection(direction, parent) && !parent->isDocumentNode());
+    } while (parent && !canScrollInDirection(parent, direction) && !parent->isDocumentNode());
 
     return parent;
 }
 
-bool canScrollInDirection(FocusDirection direction, const Node* container)
+bool canScrollInDirection(const Node* container, FocusDirection direction)
 {
     ASSERT(container);
     if (container->isDocumentNode())
-        return canScrollInDirection(direction, static_cast<const Document*>(container)->frame());
+        return canScrollInDirection(static_cast<const Document*>(container)->frame(), direction);
 
-    if (!isScrollableContainerNode(container))
+    if (!isScrollableNode(container))
         return false;
 
     switch (direction) {
@@ -468,7 +470,7 @@ bool canScrollInDirection(FocusDirection direction, const Node* container)
     }
 }
 
-bool canScrollInDirection(FocusDirection direction, const Frame* frame)
+bool canScrollInDirection(const Frame* frame, FocusDirection direction)
 {
     if (!frame->view())
         return false;
@@ -659,7 +661,7 @@ bool canBeScrolledIntoView(FocusDirection direction, const FocusCandidate& candi
                 return false;
         }
         if (parentNode == candidate.enclosingScrollableBox)
-            return canScrollInDirection(direction, parentNode);
+            return canScrollInDirection(parentNode, direction);
     }
     return true;
 }
@@ -693,7 +695,7 @@ IntRect virtualRectForDirection(FocusDirection direction, const IntRect& startin
     return virtualStartingRect;
 }
 
-IntRect virtualRectForAreaElementAndDirection(FocusDirection direction, HTMLAreaElement* area)
+IntRect virtualRectForAreaElementAndDirection(HTMLAreaElement* area, FocusDirection direction)
 {
     ASSERT(area);
     ASSERT(area->imageElement());
