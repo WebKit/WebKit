@@ -607,7 +607,7 @@ const ClassInfo JSONObject::info = { "JSON", 0, 0, ExecState::jsonTable };
 /* Source for JSONObject.lut.h
 @begin jsonTable
   parse         JSONProtoFuncParse             DontEnum|Function 2
-  stringify     JSONProtoFuncStringify         DontEnum|Function 1
+  stringify     JSONProtoFuncStringify         DontEnum|Function 3
 @end
 */
 
