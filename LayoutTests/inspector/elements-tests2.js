@@ -43,8 +43,6 @@ InspectorTest.selectElementAndRun = function(idValue, callback)
 
 InspectorTest.dumpSelectedElementStyles = function()
 {
-    InspectorTest.addResult("Debugger was enabled.");
-    InspectorTest.completeTest();
     InspectorTest.addResults(InspectorTest.getSelectedElementStyles(false));
 };
 

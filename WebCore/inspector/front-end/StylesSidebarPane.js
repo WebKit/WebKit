@@ -1236,6 +1236,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.valueElement = valueElement;
 
         if (value) {
+            var self = this;
+
             function processValue(regex, processor, nextProcessor, valueText)
             {
                 var container = document.createDocumentFragment();
@@ -1259,10 +1261,19 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             function linkifyURL(url)
             {
+                var hrefUrl = url;
+                var match = hrefUrl.match(/['"]?([^'"]+)/);
+                if (match)
+                    hrefUrl = match[1];
                 var container = document.createDocumentFragment();
                 container.appendChild(document.createTextNode("url("));
-                var hasResource = !!WebInspector.resourceForURL(url);
-                container.appendChild(WebInspector.linkifyURLAsNode(url, url, null, hasResource));
+                if (self._styleRule.sourceURL)
+                    hrefUrl = WebInspector.completeURL(self._styleRule.sourceURL, hrefUrl);
+                else if (WebInspector.panels.elements.focusedDOMNode)
+                    hrefUrl = WebInspector.resourceURLForRelatedNode(WebInspector.panels.elements.focusedDOMNode, hrefUrl);
+                var hasResource = !!WebInspector.resourceForURL(hrefUrl);
+                // FIXME: WebInspector.linkifyURLAsNode() should really use baseURI.
+                container.appendChild(WebInspector.linkifyURLAsNode(hrefUrl, url, null, hasResource));
                 container.appendChild(document.createTextNode(")"));
                 return container;
             }
@@ -1364,7 +1375,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?!-))/g;
             var colorProcessor = processValue.bind(window, colorRegex, processColor, null);
 
-            valueElement.appendChild(processValue(/url\(([^)]+)\)/g, linkifyURL, colorProcessor, value));
+            valueElement.appendChild(processValue(/url\(\s*([^)\s]+)\s*\)/g, linkifyURL, colorProcessor, value));
         }
 
         this.listItemElement.removeChildren();

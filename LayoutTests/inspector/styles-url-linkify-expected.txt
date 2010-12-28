@@ -1,0 +1,8 @@
+Tests that the Styles sidebar pane URLs are linked correctly. Bug 51663
+
+
+Link for a URI from CSS document:
+LayoutTests/inspector/resources/fromcss.png
+Link for a URI from iframe inline stylesheet:
+LayoutTests/inspector/resources/iframed.png
+

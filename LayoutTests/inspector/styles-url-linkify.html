@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="elements-tests2.js"></script>
+<link rel="stylesheet" href="resources/styles-url-linkify.css">
+<script>
+
+function runAfterIframeLoaded()
+{
+    function step()
+    {
+        if (!window.iframeLoaded)
+            setTimeout(step, 100);
+        else
+            runTest();
+    }
+    setTimeout(step, 100);
+}
+
+function test()
+{
+    function dumpHref()
+    {
+        var href = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2].propertiesTreeOutline.children[0].valueElement.childNodes[2].href;
+        var segments = href.split("/");
+        var output = [];
+        for (var i = segments.length - 1, minSegment = i - 3; i >= 0 && i >= minSegment; --i)
+            output.unshift(segments[i]);
+        InspectorTest.addResult(output.join("/"));
+    }
+
+    function selectLocalElement()
+    {
+        InspectorTest.selectElementAndRun("local", executeLocalTest);
+    }
+
+    function executeLocalTest()
+    {
+        InspectorTest.addResult("Link for a URI from CSS document:");
+        dumpHref();
+        InspectorTest.selectElementAndRun("iframed", executeIframedTest);
+    }
+
+    function executeIframedTest()
+    {
+        InspectorTest.addResult("Link for a URI from iframe inline stylesheet:");
+        dumpHref();
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.expandDOMSubtreeAndRun(null, selectLocalElement);
+}
+
+</script>
+</head>
+<body onload="runAfterIframeLoaded()">
+<p>
+Tests that the Styles sidebar pane URLs are linked correctly. <a href="http://bugs.webkit.org/show_bug.cgi?id=51663">Bug 51663</a>
+</p>
+<div id="local"></div>
+<iframe src="resources/styles-url-linkify-iframe.html"></iframe>
+
+</body>
+</html>
