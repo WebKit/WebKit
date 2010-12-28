@@ -194,9 +194,13 @@ BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html 
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
-BUGCR60651 : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
+BUGCR60651 MAC WIN LINUX RELEASE: fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
+BUGCR60651 MAC LINUX DEBUG: fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
+BUGWK47243 WIN DEBUG : fast/canvas/webgl/gl-object-get-calls.html = PASS CRASH
 BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 // BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
+BUGWK47243 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
+BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
@@ -346,11 +350,6 @@ BUGWK48029 MAC : compositing/tiling/huge-layer-with-layer-children-resize.html =
 
 // New test, needs windows and mac specific baselines.
 BUGJAMESR WIN MAC : compositing/text-on-large-layer.html = PASS FAIL
-
-// Need to investigate WebGL support in DRT.
-BUGWK47243 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
-BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
-BUGWK47243 WIN DEBUG : fast/canvas/webgl/gl-object-get-calls.html = PASS CRASH
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
 // bots running tests on real hardware.

@@ -1,3 +1,12 @@
+2010-12-28  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium test expectations update. Coalesce WebGL
+        expectations for chromium-gpu platform and fix duplicate
+        expectation for gl-object-get-calls.html accidentally introduced
+        on Windows Debug.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2010-12-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
