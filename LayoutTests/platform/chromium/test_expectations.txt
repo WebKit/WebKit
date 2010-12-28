@@ -2295,7 +2295,7 @@ BUGCR43419: fast/wcss/wap-input-required.xhtml = TEXT
 BUGCR43890 WIN : http/tests/loading/basic.html = TEXT PASS
 
 // Flaky crashing test. Started crashing around Chromium r47220
-BUGCR44150 LINUX DEBUG : fast/forms/input-text-paste-maxlength.html = CRASH PASS
+BUGCR44150 LINUX : fast/forms/input-text-paste-maxlength.html = CRASH PASS
 
 // The following tests fail on all platforms and need further investigation.
 // Many of these are skipped on the Mac platform

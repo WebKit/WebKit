@@ -1,5 +1,13 @@
 2010-12-28  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed, Chromium test expectations update. Mark
+        fast/forms/input-text-paste-maxlength.html as a flaky crash on
+        Linux Release as well as Debug.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-28  Kenneth Russell  <kbr@google.com>
+
         Unreviewed, Chromium test expectations update.
 
         Marked inspector/styles-source-lines.html as a flaky failure on
