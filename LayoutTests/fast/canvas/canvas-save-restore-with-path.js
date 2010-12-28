@@ -44,7 +44,7 @@ context.rect(25, 0,25,25);
 context.restore();
 context.fill();
 pixelShouldBe(75, 25, [0, 128, 0, 255]);
-pixelShouldBe(75, 50, [255, 0, 0, 255]);
+pixelShouldBe(75, 75, [255, 0, 0, 255]);
 
 // Test rotate
 context.beginPath();
@@ -54,7 +54,7 @@ context.rect(50, -50, 50, 50);
 context.restore();
 context.fill();
 pixelShouldBe(25, 75, [0, 128, 0, 255]);
-pixelShouldBe(50, 75, [255, 0, 0, 255]);
+pixelShouldBe(75, 75, [255, 0, 0, 255]);
 
 // Test transform
 context.beginPath();
