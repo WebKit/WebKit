@@ -706,15 +706,17 @@ BUGJAMESR WIN LINUX : editing/spelling/spelling-hasspellingmarker.html = TEXT
 // Low priority, unclear if test expectations are correct (see bug)
 BUGCR6139 : fast/forms/select-writing-direction-natural.html = FAIL
 
-// Shadow offset tests crash occasionally on mac debug.
-BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-1.html = PASS CRASH
-BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-2.html = PASS CRASH
-BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
-BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
-BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
-BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
-BUGCR67732 MAC DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
-BUGCR67732 LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
+// Shadow offset tests crash occasionally on Mac and Linux debug.
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-1.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-2.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
+
+// This SVG test is occasionally crashing apparently for the same reason.
+BUGCR67732 MAC LINUX DEBUG : svg/W3C-SVG-1.1-SE/paths-dom-02-f.svg = PASS CRASH
 
 BUGCR67767 : http/tests/security/cross-frame-access-call.html = TEXT
 BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
@@ -3244,7 +3246,7 @@ BUGCR66979 WIN LINUX : fast/dom/global-constructors.html = TEXT PASS
 
 // The test is just too slow and has never passed since on Dbg build.
 BUG_YURYS DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
-BUGCR67139 WIN MAC DEBUG : storage/close-during-stress-test.html = CRASH PASS
+BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH PASS
 
 // These tests are flaky.
 BUGCR67209 WIN DEBUG : inspector/console-uncaught-exception-in-eval.html = CRASH TIMEOUT PASS

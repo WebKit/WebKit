@@ -1,3 +1,11 @@
+2010-12-27  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, Chromium test expectations update. Generalize
+        suppressions for Chromium bugs 67732 and 67139 to cover Linux
+        Debug.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-27  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Daniel Bates.
