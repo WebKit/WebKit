@@ -99,7 +99,7 @@ ScriptSourceCode HTMLScriptRunner::sourceFromPendingScript(const PendingScript& 
         return ScriptSourceCode(script.cachedScript());
     }
     errorOccurred = false;
-    return ScriptSourceCode(script.element()->textContent(), documentURLForScriptExecution(m_document), script.startingPosition());
+    return ScriptSourceCode(script.element()->textContent(), documentURLForScriptExecution(m_document));
 }
 
 bool HTMLScriptRunner::isPendingScriptReady(const PendingScript& script)

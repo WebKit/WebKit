@@ -1,3 +1,24 @@
+2010-12-28  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove unused member of PendingScript
+        https://bugs.webkit.org/show_bug.cgi?id=51684
+
+        This was used when HTMLScriptRunner::runScript created a PendingScript
+        for inline scripts. But now it just calls executeScript() directly.
+        External scripts always have the minimum starting line number.
+
+        No new tests because no changed functionality.
+
+        * dom/PendingScript.cpp:
+        (WebCore::PendingScript::releaseElementAndClear):
+        * dom/PendingScript.h:
+        (WebCore::PendingScript::PendingScript):
+        (WebCore::PendingScript::operator=):
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::sourceFromPendingScript):
+
 2010-12-20  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Daniel Bates.
