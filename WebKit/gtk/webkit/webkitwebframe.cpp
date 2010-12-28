@@ -51,9 +51,9 @@
 #include "ScriptController.h"
 #include "SubstituteData.h"
 #include "webkitenumtypes.h"
+#include "webkitmarshal.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponseprivate.h"
-#include "webkitmarshal.h"
 #include "webkitprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include "webkitwebframeprivate.h"
@@ -115,11 +115,11 @@ static guint webkit_web_frame_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE(WebKitWebFrame, webkit_web_frame, G_TYPE_OBJECT)
 
-static void webkit_web_frame_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+static void webkit_web_frame_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* paramSpec)
 {
     WebKitWebFrame* frame = WEBKIT_WEB_FRAME(object);
 
-    switch(prop_id) {
+    switch (propertyId) {
     case PROP_NAME:
         g_value_set_string(value, webkit_web_frame_get_name(frame));
         break;
@@ -139,7 +139,7 @@ static void webkit_web_frame_get_property(GObject* object, guint prop_id, GValue
         g_value_set_enum(value, webkit_web_frame_get_vertical_scrollbar_policy(frame));
         break;
     default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, paramSpec);
         break;
     }
 }
@@ -158,7 +158,7 @@ void webkit_web_frame_core_frame_gone(WebKitWebFrame* frame)
 
 static WebKitWebDataSource* webkit_web_frame_get_data_source_from_core_loader(WebCore::DocumentLoader* loader)
 {
-    return loader ? static_cast<WebKit::DocumentLoader*>(loader)->dataSource() : NULL;
+    return loader ? static_cast<WebKit::DocumentLoader*>(loader)->dataSource() : 0;
 }
 
 static void webkit_web_frame_finalize(GObject* object)
@@ -190,8 +190,8 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
-            NULL,
-            NULL,
+            0,
+            0,
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 
@@ -207,8 +207,8 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
-            NULL,
-            NULL,
+            0,
+            0,
             g_cclosure_marshal_VOID__VOID,
             G_TYPE_NONE, 0);
 
@@ -225,8 +225,8 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
-            NULL,
-            NULL,
+            0,
+            0,
             g_cclosure_marshal_VOID__BOOLEAN,
             G_TYPE_NONE, 1,
             G_TYPE_BOOLEAN);
@@ -244,8 +244,8 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
-            NULL,
-            NULL,
+            0,
+            0,
             webkit_marshal_VOID__STRING,
             G_TYPE_NONE, 1,
             G_TYPE_STRING);
@@ -254,8 +254,8 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             G_TYPE_FROM_CLASS(frameClass),
             (GSignalFlags)G_SIGNAL_RUN_LAST,
             0,
-            NULL,
-            NULL,
+            0,
+            0,
             webkit_marshal_VOID__STRING_STRING,
             G_TYPE_NONE, 2,
             G_TYPE_STRING, G_TYPE_STRING);
@@ -290,7 +290,7 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
             (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
             0,
             g_signal_accumulator_true_handled,
-            NULL,
+            0,
             webkit_marshal_BOOLEAN__VOID,
             G_TYPE_BOOLEAN, 0);
 
@@ -308,21 +308,21 @@ static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
                                     g_param_spec_string("name",
                                                         _("Name"),
                                                         _("The name of the frame"),
-                                                        NULL,
+                                                        0,
                                                         WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(objectClass, PROP_TITLE,
                                     g_param_spec_string("title",
                                                         _("Title"),
                                                         _("The document title of the frame"),
-                                                        NULL,
+                                                        0,
                                                         WEBKIT_PARAM_READABLE));
 
     g_object_class_install_property(objectClass, PROP_URI,
                                     g_param_spec_string("uri",
                                                         _("URI"),
                                                         _("The current URI of the contents displayed by the frame"),
-                                                        NULL,
+                                                        0,
                                                         WEBKIT_PARAM_READABLE));
 
     /**
@@ -387,6 +387,7 @@ static void webkit_web_frame_init(WebKitWebFrame* frame)
     frame->priv = priv;
 }
 
+
 /**
  * webkit_web_frame_new:
  * @web_view: the controlling #WebKitWebView
@@ -400,7 +401,7 @@ static void webkit_web_frame_init(WebKitWebFrame* frame)
  **/
 WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     WebKitWebFrame* frame = WEBKIT_WEB_FRAME(g_object_new(WEBKIT_TYPE_WEB_FRAME, NULL));
     WebKitWebFramePrivate* priv = frame->priv;
@@ -411,7 +412,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
     priv->coreFrame = Frame::create(viewPriv->corePage, 0, client).get();
     priv->coreFrame->init();
 
-    priv->origin = NULL;
+    priv->origin = 0;
 
     return frame;
 }
@@ -426,7 +427,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
  */
 G_CONST_RETURN gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     WebKitWebFramePrivate* priv = frame->priv;
     return priv->title;
@@ -442,7 +443,7 @@ G_CONST_RETURN gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
  */
 G_CONST_RETURN gchar* webkit_web_frame_get_uri(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     WebKitWebFramePrivate* priv = frame->priv;
     return priv->uri;
@@ -461,7 +462,7 @@ G_CONST_RETURN gchar* webkit_web_frame_get_uri(WebKitWebFrame* frame)
  */
 WebKitWebView* webkit_web_frame_get_web_view(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     WebKitWebFramePrivate* priv = frame->priv;
     return priv->webView;
@@ -477,7 +478,7 @@ WebKitWebView* webkit_web_frame_get_web_view(WebKitWebFrame* frame)
  */
 G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     WebKitWebFramePrivate* priv = frame->priv;
 
@@ -503,11 +504,11 @@ G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
  */
 WebKitWebFrame* webkit_web_frame_get_parent(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     Frame* coreFrame = core(frame);
     if (!coreFrame)
-        return NULL;
+        return 0;
 
     return kit(coreFrame->tree()->parent());
 }
@@ -574,7 +575,7 @@ void webkit_web_frame_load_string(WebKitWebFrame* frame, const gchar* content, c
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
     g_return_if_fail(content);
 
-    webkit_web_frame_load_data(frame, content, contentMimeType, contentEncoding, baseUri, NULL);
+    webkit_web_frame_load_data(frame, content, contentMimeType, contentEncoding, baseUri, 0);
 }
 
 /**
@@ -595,7 +596,7 @@ void webkit_web_frame_load_alternate_string(WebKitWebFrame* frame, const gchar* 
     g_return_if_fail(WEBKIT_IS_WEB_FRAME(frame));
     g_return_if_fail(content);
 
-    webkit_web_frame_load_data(frame, content, NULL, NULL, baseURL, unreachableURL);
+    webkit_web_frame_load_data(frame, content, 0, 0, baseURL, unreachableURL);
 }
 
 /**
@@ -674,12 +675,12 @@ void webkit_web_frame_reload(WebKitWebFrame* frame)
  */
 WebKitWebFrame* webkit_web_frame_find_frame(WebKitWebFrame* frame, const gchar* name)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
-    g_return_val_if_fail(name, NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+    g_return_val_if_fail(name, 0);
 
     Frame* coreFrame = core(frame);
     if (!coreFrame)
-        return NULL;
+        return 0;
 
     String nameString = String::fromUTF8(name);
     return kit(coreFrame->tree()->find(AtomicString(nameString)));
@@ -696,11 +697,11 @@ WebKitWebFrame* webkit_web_frame_find_frame(WebKitWebFrame* frame, const gchar* 
  */
 JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     Frame* coreFrame = core(frame);
     if (!coreFrame)
-        return NULL;
+        return 0;
 
     return toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
 }
@@ -717,7 +718,7 @@ JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
  */
 WebKitWebDataSource* webkit_web_frame_get_data_source(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     Frame* coreFrame = core(frame);
     return webkit_web_frame_get_data_source_from_core_loader(coreFrame->loader()->documentLoader());
@@ -739,7 +740,7 @@ WebKitWebDataSource* webkit_web_frame_get_data_source(WebKitWebFrame* frame)
  */
 WebKitWebDataSource* webkit_web_frame_get_provisional_data_source(WebKitWebFrame* frame)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
     Frame* coreFrame = core(frame);
     return webkit_web_frame_get_data_source_from_core_loader(coreFrame->loader()->provisionalDocumentLoader());
@@ -804,7 +805,7 @@ GtkPrintOperationResult webkit_web_frame_print_full(WebKitWebFrame* frame, GtkPr
     GtkWidget* topLevel = gtk_widget_get_toplevel(GTK_WIDGET(webkit_web_frame_get_web_view(frame)));
 
     if (!gtk_widget_is_toplevel(topLevel))
-        topLevel = NULL;
+        topLevel = 0;
 
     Frame* coreFrame = core(frame);
     if (!coreFrame)
@@ -933,7 +934,7 @@ WebKitSecurityOrigin* webkit_web_frame_get_security_origin(WebKitWebFrame* frame
 {
     WebKitWebFramePrivate* priv = frame->priv;
     if (!priv->coreFrame || !priv->coreFrame->document() || !priv->coreFrame->document()->securityOrigin())
-        return NULL;
+        return 0;
 
     if (priv->origin && priv->origin->priv->coreOrigin.get() == priv->coreFrame->document()->securityOrigin())
         return priv->origin;
@@ -962,11 +963,11 @@ WebKitNetworkResponse* webkit_web_frame_get_network_response(WebKitWebFrame* fra
 {
     Frame* coreFrame = core(frame);
     if (!coreFrame)
-        return NULL;
+        return 0;
 
     WebCore::DocumentLoader* loader = coreFrame->loader()->activeDocumentLoader();
     if (!loader)
-        return NULL;
+        return 0;
 
     return kitNew(loader->response());
 }

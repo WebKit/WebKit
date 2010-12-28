@@ -1,3 +1,33 @@
+2010-12-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Clean up usage of NULL in webkitwebframe.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=51685
+
+        Replace occurrences of NULL with 0, in webkitwebframe.cpp. Not all
+        uses of NULL have been changed, as certain GLib functions require
+        an explicit NULL as a sentinel.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_data_source_from_core_loader):
+        (webkit_web_frame_class_init):
+        (webkit_web_frame_new):
+        (webkit_web_frame_get_title):
+        (webkit_web_frame_get_uri):
+        (webkit_web_frame_get_web_view):
+        (webkit_web_frame_get_name):
+        (webkit_web_frame_get_parent):
+        (webkit_web_frame_load_string):
+        (webkit_web_frame_load_alternate_string):
+        (webkit_web_frame_find_frame):
+        (webkit_web_frame_get_global_context):
+        (webkit_web_frame_get_data_source):
+        (webkit_web_frame_get_provisional_data_source):
+        (webkit_web_frame_print_full):
+        (webkit_web_frame_get_security_origin):
+        (webkit_web_frame_get_network_response):
+
 2010-12-27  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ryosuke Niwa.
