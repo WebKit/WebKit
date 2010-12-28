@@ -1,3 +1,13 @@
+2010-12-27  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Martin Robinson.
+
+        Append the directory Tools/DumpRenderTree to the list of directories that
+        do-webcore-rename should search so that it can rename DRT files and
+        source code.
+
+        * Scripts/do-webcore-rename:
+
 2010-12-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

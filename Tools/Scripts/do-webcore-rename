@@ -74,6 +74,7 @@ find(\&wanted, "Sources/JavaScriptGlue");
 find(\&wanted, "WebCore");
 find(\&wanted, "WebKit");
 find(\&wanted, "WebKit2");
+find(\&wanted, "Tools/DumpRenderTree");
 
 sub wanted
 {
