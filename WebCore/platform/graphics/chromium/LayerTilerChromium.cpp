@@ -398,9 +398,10 @@ void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
 {
     // Grow the tile array to contain this content rect.
     IntRect layerRect = contentRectToLayerRect(contentRect);
-    IntRect layer(IntPoint(0, 0), m_layerSize);
-    layer.unite(layerRect);
-    resizeLayer(layer.size());
+    IntSize layerSize = IntSize(layerRect.right(), layerRect.bottom());
+
+    IntSize newSize = layerSize.expandedTo(m_layerSize);
+    resizeLayer(newSize);
 }
 
 LayerTilerChromium::Tile::~Tile()

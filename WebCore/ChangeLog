@@ -1,3 +1,20 @@
+2010-12-28  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fix tiled compositor assertion after GPU process recovery.
+        https://bugs.webkit.org/show_bug.cgi?id=51682
+
+        After the GPU process recovers, the layer size is set to IntSize(),
+        but IntRect::unite() has a special case for empty rects.  This
+        behavior was causing the layer size to be too small, causing an
+        out-of-bounds array access elsewhere.
+
+        No new tests.
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::growLayerToContain):
+
 2010-12-23  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
