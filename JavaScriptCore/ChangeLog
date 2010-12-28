@@ -1,3 +1,17 @@
+2010-12-28  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Sam Weinig.
+
+        JSON.parse must exist as a function taking 2 parameters
+        https://bugs.webkit.org/show_bug.cgi?id=51666
+
+        Support for revivers was introduced in bug 26591, but the function
+        length has since remained unchanged.
+
+        Test: ietestcenter/Javascript/15.12.2-0-2.html
+
+        * runtime/JSONObject.cpp:
+
 2010-12-27  Jake Helfert  <jake@jakeonthenet.com>
 
         Reviewed and reworked by Darin Adler.
