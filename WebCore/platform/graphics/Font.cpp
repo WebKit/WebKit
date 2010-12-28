@@ -109,8 +109,7 @@ bool Font::operator==(const Font& other) const
 {
     // Our FontData don't have to be checked, since checking the font description will be fine.
     // FIXME: This does not work if the font was made with the FontPlatformData constructor.
-    if ((m_fontList && m_fontList->loadingCustomFonts()) ||
-        (other.m_fontList && other.m_fontList->loadingCustomFonts()))
+    if (loadingCustomFonts() || other.loadingCustomFonts())
         return false;
     
     FontSelector* first = m_fontList ? m_fontList->fontSelector() : 0;
@@ -138,7 +137,7 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
 void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     // Don't draw anything while we are using custom fonts that are in the process of loading.
-    if (m_fontList && m_fontList->loadingCustomFonts())
+    if (loadingCustomFonts())
         return;
     
     to = (to == -1 ? run.length() : to);
@@ -158,7 +157,7 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
 
 void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
 {
-    if (m_fontList && m_fontList->loadingCustomFonts())
+    if (loadingCustomFonts())
         return;
 
     if (to < 0)

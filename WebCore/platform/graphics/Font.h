@@ -210,6 +210,11 @@ public:
     }
 
     FontSelector* fontSelector() const;
+    bool loadingCustomFonts() const
+    {
+        return m_fontList && m_fontList->loadingCustomFonts();
+    }
+
     static bool treatAsSpace(UChar c) { return c == ' ' || c == '\t' || c == '\n' || c == noBreakSpace; }
     static bool treatAsZeroWidthSpace(UChar c) { return c < 0x20 || (c >= 0x7F && c < 0xA0) || c == softHyphen || (c >= 0x200c && c <= 0x200f) || (c >= 0x202a && c <= 0x202e) || c == objectReplacementCharacter; }
     static bool canReceiveTextEmphasis(UChar32 c);

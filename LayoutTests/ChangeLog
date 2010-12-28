@@ -1,3 +1,13 @@
+2010-12-28  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Tests that we do not crash when drawing text during custom font load.
+        https://bugs.webkit.org/show_bug.cgi?id=51681
+
+        * canvas/philip/tests/2d.text-custom-font-load-crash-expected.txt: Added.
+        * canvas/philip/tests/2d.text-custom-font-load-crash.html: Added.
+
 2010-12-28  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
