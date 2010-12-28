@@ -1,3 +1,12 @@
+2010-12-27  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix the WebKit2 Windows build after changeset 74698
+        <http://trac.webkit.org/changeset/74698> (bug #51656).
+
+        Add "..\Shared\API\c\WKImage.h" to WebKit2Generated.make.
+
+        * win/WebKit2Generated.make:
+
 2010-12-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
