@@ -1,3 +1,15 @@
+2010-12-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [Cairo] fast/canvas/canvas-save-restore-with-path.html fails with some versions of Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=51655
+
+        Increase the precision of pi used in this test case. It appears that
+        some Cairo versions or processors are sensitive to rounding errors here.
+
+        * fast/canvas/canvas-save-restore-with-path.js: Increase pi precision.
+
 2010-12-27  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.

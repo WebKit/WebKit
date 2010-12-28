@@ -49,7 +49,7 @@ pixelShouldBe(75, 50, [255, 0, 0, 255]);
 // Test rotate
 context.beginPath();
 context.save();
-context.rotate(90/180 * 3.1415);
+context.rotate(90/180 * 3.14159);
 context.rect(50, -50, 50, 50);
 context.restore();
 context.fill();
