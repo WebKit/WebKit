@@ -1,3 +1,16 @@
+2010-12-28  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] GraphicsContext::getCTM() does not need to make a copy of QPainter::combinedTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=51687
+
+        Use a const reference instead of a copy of QPainter::combinedTransform() 
+        in GraphicsContext::getCTM()
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getCTM):
+
 2010-12-28  Takashi Toyoshima  <toyoshim@google.com>
 
         Reviewed by Eric Seidel.

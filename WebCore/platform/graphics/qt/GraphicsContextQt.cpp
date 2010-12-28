@@ -288,7 +288,7 @@ PlatformGraphicsContext* GraphicsContext::platformContext() const
 
 AffineTransform GraphicsContext::getCTM() const
 {
-    QTransform matrix(platformContext()->combinedTransform());
+    const QTransform& matrix = platformContext()->combinedTransform();
     return AffineTransform(matrix.m11(), matrix.m12(), matrix.m21(),
                            matrix.m22(), matrix.dx(), matrix.dy());
 }
