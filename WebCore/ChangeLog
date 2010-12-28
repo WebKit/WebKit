@@ -6,7 +6,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=51634
 
         Rename HTMLFrameElementBase::getMarginWidth() and HTMLFrameElementBase::getMarginHeight()
-        to HTMLFrameElementBase::marginHeight() and HTMLFrameElementBase::marginHeight(), respectively.
+        to HTMLFrameElementBase::marginWidth() and HTMLFrameElementBase::marginHeight(), respectively.
         This will make the names of these getters consistent with the naming convention we use for
         getters.
 
