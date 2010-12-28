@@ -48,6 +48,7 @@ my $parseonly = 0;
 my $setBaseline = 0;
 my $showHelp = 0;
 my $testsPattern;
+my $noBuild = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
@@ -64,6 +65,7 @@ Usage: $programName [options] [options to pass to build system]
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
   --parse-only      Use the parse-only benchmark suite. Same as --suite=parse-only
+  --no-build        Do not try to build JSC before running the tests.
 EOF
 
 GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurationProductDir(Cwd::abs_path($root)); },
@@ -77,7 +79,8 @@ GetOptions('root=s' => sub { my ($x, $value) = @_; $root = $value; setConfigurat
            'v8' => \$v8,
            'parse-only' => \$parseonly,
            'tests=s' => \$testsPattern,
-           'help' => \$showHelp);
+           'help' => \$showHelp,
+           'no-build' => \$noBuild);
 
 if ($showHelp) {
    print STDERR $usage;
@@ -106,7 +109,9 @@ sub setupEnvironmentForExecution($)
     # FIXME: Other platforms may wish to augment this method to use LD_LIBRARY_PATH, etc.
 }
 
-buildJSC();
+unless ($noBuild) {
+    buildJSC();
+}
 
 chdirWebKit();
 chdir("SunSpider");
