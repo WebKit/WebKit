@@ -5,6 +5,7 @@ Page reloaded.
 Started extension.
 Running tests...
 RUNNING TEST: extension_testGetHAR
+resource: .../tests/inspector/extensions-resources-test.js
 resource: .../tests/inspector/extensions-test.js
 resource: .../tests/inspector/inspector-test2.js
 resource: .../LayoutTests/inspector/extensions-resources.html

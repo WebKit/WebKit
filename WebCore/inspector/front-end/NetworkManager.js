@@ -286,6 +286,7 @@ WebInspector.NetworkManager.prototype = {
     _appendRedirect: function(identifier, redirectURL)
     {
         var originalResource = this._resourcesById[identifier];
+        originalResource.finished = true;
         originalResource.identifier = null;
 
         var newResource = this._createResource(identifier, redirectURL, originalResource.loader, originalResource.stackTrace);

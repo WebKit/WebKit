@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="inspector-test2.js"></script>
+<script src="extensions-resources-test.js"></script>
+<script src="extensions-test.js"></script>
+<script type="text/javascript">
+
+function extension_testGetRedirectResourceContent(nextTest)
+{
+    function onFinished()
+    {
+        extension_getResourceByUrl([ /redirect-methods-result.php\?status=302$/ ], function(resource) {
+            resource.getContent(onContent)
+        });
+    }
+    function onContent(content, encoding)
+    {
+        output("content: " + content + ", encoding: " + encoding);
+        nextTest();
+    }
+
+    webInspector.resources.onFinished.addListener(onFinished);
+    webInspector.inspectedWindow.eval("doRequest()");
+}
+
+function doRequest()
+{
+    // We can't use XHR here -- the content for XHRs is pushed from back-end.
+    var iframe = document.createElement("iframe");
+    iframe.src = "/loading/resources/redirect-methods-result.php?status=302";
+    document.body.appendChild(iframe);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebInspector extension API</p>
+</body>
+</html>
