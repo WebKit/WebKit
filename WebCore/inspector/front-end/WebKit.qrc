@@ -77,6 +77,7 @@
     <file>ResourceCookiesView.js</file>
     <file>ResourceHeadersView.js</file>
     <file>ResourceTimingView.js</file>
+    <file>ResourceTreeModel.js</file>
     <file>ResourceView.js</file>
     <file>ResourcesPanel.js</file>
     <file>ScopeChainSidebarPane.js</file>
