@@ -227,7 +227,6 @@ public:
 
     Node* shadowRoot();
     void setShadowRoot(PassRefPtr<Node>);
-    void clearShadowRoot();
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
@@ -392,6 +391,7 @@ private:
     ElementRareData* ensureRareData();
 
     SpellcheckAttributeState spellcheckAttributeState() const;
+    void removeShadowRoot();
 
 private:
     mutable RefPtr<NamedNodeMap> m_attributeMap;

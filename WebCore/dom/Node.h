@@ -216,6 +216,9 @@ public:
     // Use when it's guaranteed to that shadowParentNode is 0.
     ContainerNode* parentNodeGuaranteedHostFree() const;
 
+    Element* shadowHost() const;
+    void setShadowHost(Element*);
+
     // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
     Node* enclosingLinkEventParentOrSelf();
 
@@ -637,9 +640,6 @@ protected:
 
     NodeRareData* rareData() const;
     NodeRareData* ensureRareData();
-
-    Element* shadowHost() const;
-    void setShadowHost(Element*);
 
 private:
 #if USE(JSC)

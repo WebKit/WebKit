@@ -1082,24 +1082,31 @@ Node* Element::shadowRoot()
 
 void Element::setShadowRoot(PassRefPtr<Node> node)
 {
-    ASSERT(node);
+    // FIXME: Because today this is never called from script directly, we don't have to worry
+    // about compromising DOM tree integrity (eg. node being a parent of this). However,
+    // once we implement XBL2, we will have to add integrity checks here.
+    removeShadowRoot();
+    RefPtr<Node> newRoot = node;
+    if (!newRoot)
+        return;
 
-    // FIXME: Once all instances of shadow DOM are converted to use this code, add setting of shadow host (shadowParent) on node.
-    ensureRareData()->m_shadowRoot = node;
+    ensureRareData()->m_shadowRoot = newRoot;
+    newRoot->setShadowHost(this);
 }
 
-void Element::clearShadowRoot()
+void Element::removeShadowRoot()
 {
     if (!hasRareData())
         return;
 
-    RefPtr<Node> shadowRoot = rareData()->m_shadowRoot.release();
-    document()->removeFocusedNodeOfSubtree(shadowRoot.get());
-    // FIXME: Once all instances of shadow DOM are converted to use this code, add clearing of shadow host (shadowParent).
-    if (shadowRoot->inDocument())
-        shadowRoot->removedFromDocument();
-    else
-        shadowRoot->removedFromTree(true);
+    if (RefPtr<Node> oldRoot = rareData()->m_shadowRoot.release()) {
+        document()->removeFocusedNodeOfSubtree(oldRoot.get());
+        oldRoot->setShadowHost(0);
+        if (oldRoot->inDocument())
+            oldRoot->removedFromDocument();
+        else
+            oldRoot->removedFromTree(true);
+    }
 }
 
 bool Element::childTypeAllowed(NodeType type)

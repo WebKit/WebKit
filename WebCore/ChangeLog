@@ -1,3 +1,22 @@
+2010-12-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Combine setShadowRoot and clearShadowRoot into a simpler API
+        https://bugs.webkit.org/show_bug.cgi?id=50971
+
+        No change in behavior, and API is not used yet.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setShadowRoot): Combined clearing and setting of
+            the shadowRoot, also hooked up with setting and clearing of the
+            corresponding shadowHost values.
+        * dom/Element.h: renamed clearShadowRoot to removeShadowRoot and made it
+            private.
+        * dom/Node.h: Made shadow host-related functions public so that
+            Element::setShadowRoot can access setShadowHost. It seems logical
+            to make shadowHost public as well to keep the defs together.
+
 2010-12-28  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
