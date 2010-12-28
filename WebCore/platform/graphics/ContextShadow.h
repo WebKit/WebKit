@@ -29,6 +29,7 @@
 #ifndef ContextShadow_h
 #define ContextShadow_h
 
+#include "AffineTransform.h"
 #include "Color.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -107,7 +108,7 @@ public:
     PlatformContext beginShadowLayer(PlatformContext, const FloatRect& layerArea);
     void endShadowLayer(PlatformContext);
     static void purgeScratchBuffer();
-    static TransformationMatrix getTransformationMatrixFromContext(PlatformContext);
+    static AffineTransform getTransformationMatrixFromContext(PlatformContext);
 
     void setShadowsIgnoreTransforms(bool enable) { m_shadowsIgnoreTransforms = enable; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }

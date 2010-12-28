@@ -1,3 +1,26 @@
+2010-12-27  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Ariya Hidayat.
+
+        ContextShadow should use AffineTransform instead of TransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=51661
+
+        ContextShadow needs the CTM to make sure shadows are not affected by
+        transformations when drawing on a canvas. AffineTransform is sufficient
+        in this case.
+
+        Existing tests: fast/canvas/canvas*shadow*html
+
+        * platform/graphics/ContextShadow.cpp:
+        (WebCore::ContextShadow::mustUseContextShadow):
+        (WebCore::ContextShadow::adjustBlurDistance):
+        (WebCore::ContextShadow::calculateLayerBoundingRect):
+        * platform/graphics/ContextShadow.h:
+        * platform/graphics/cairo/ContextShadowCairo.cpp:
+        (WebCore::ContextShadow::getTransformationMatrixFromContext):
+        * platform/graphics/qt/ContextShadowQt.cpp:
+        (WebCore::ContextShadow::getTransformationMatrixFromContext):
+
 2010-12-27  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Antonio Gomes.

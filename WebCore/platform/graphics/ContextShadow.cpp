@@ -91,7 +91,7 @@ bool ContextShadow::mustUseContextShadow(PlatformContext context)
     if (!shadowsIgnoreTransforms())
         return false;
     // We can avoid ContextShadow, since there are no transformations to apply to the canvas.
-    const TransformationMatrix transform(getTransformationMatrixFromContext(context));
+    const AffineTransform transform(getTransformationMatrixFromContext(context));
     if (transform.isIdentity())
         return false;
     // Otherwise, no chance avoiding ContextShadow.
@@ -173,7 +173,7 @@ void ContextShadow::blurLayerImage(unsigned char* imageData, const IntSize& size
 void ContextShadow::adjustBlurDistance(const PlatformContext context)
 {
     // Adjust blur if we're scaling, since the radius must not be affected by transformations.
-    const TransformationMatrix transform(getTransformationMatrixFromContext(context));
+    const AffineTransform transform(getTransformationMatrixFromContext(context));
 
     if (transform.isIdentity())
         return;
@@ -204,7 +204,7 @@ IntRect ContextShadow::calculateLayerBoundingRect(const PlatformContext context,
     FloatRect layerFloatRect;
     float inflation = 0;
 
-    const TransformationMatrix transform(getTransformationMatrixFromContext(context));
+    const AffineTransform transform(getTransformationMatrixFromContext(context));
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
         FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(layerArea));
         transformedPolygon.move(m_offset);

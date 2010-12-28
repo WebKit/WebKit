@@ -29,7 +29,6 @@
 #include "config.h"
 #include "ContextShadow.h"
 
-#include "AffineTransform.h"
 #include "CairoUtilities.h"
 #include "OwnPtrCairo.h"
 #include "Path.h"
@@ -82,12 +81,12 @@ static cairo_surface_t* getScratchBuffer(const IntSize& size)
     return scratchBuffer;
 }
 
-TransformationMatrix ContextShadow::getTransformationMatrixFromContext(PlatformContext context)
+AffineTransform ContextShadow::getTransformationMatrixFromContext(PlatformContext context)
 {
     cairo_matrix_t transform;
     cairo_get_matrix(context, &transform);
-    return TransformationMatrix(transform.xx, transform.yx, transform.xy,
-                                transform.yy, transform.x0, transform.y0);
+    return AffineTransform(transform.xx, transform.yx, transform.xy,
+                           transform.yy, transform.x0, transform.y0);
 }
 
 PlatformContext ContextShadow::beginShadowLayer(PlatformContext context, const FloatRect& layerArea)

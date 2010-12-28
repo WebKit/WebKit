@@ -100,11 +100,11 @@ void ShadowBuffer::timerEvent(QTimerEvent* event)
     QObject::timerEvent(event);
 }
 
-TransformationMatrix ContextShadow::getTransformationMatrixFromContext(PlatformContext context)
+AffineTransform ContextShadow::getTransformationMatrixFromContext(PlatformContext context)
 {
     const QTransform& transform = context->transform();
-    return TransformationMatrix(transform.m11(), transform.m12(), transform.m21(),
-                                transform.m22(), transform.dx(), transform.dy());
+    return AffineTransform(transform.m11(), transform.m12(), transform.m21(),
+                           transform.m22(), transform.dx(), transform.dy());
 }
 
 Q_GLOBAL_STATIC(ShadowBuffer, scratchShadowBuffer)
