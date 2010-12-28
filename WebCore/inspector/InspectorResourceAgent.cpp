@@ -237,7 +237,6 @@ static String cachedResourceTypeString(const CachedResource& cachedResource)
     switch (cachedResource.type()) {
     case CachedResource::ImageResource:
         return "Image";
-        break;
     case CachedResource::FontResource:
         return "Font";
     case CachedResource::CSSStyleSheet:
@@ -249,8 +248,9 @@ static String cachedResourceTypeString(const CachedResource& cachedResource)
     case CachedResource::Script:
         return "Script";
     default:
-        return "Other";
+        break;
     }
+    return "Other";
 }
 
 static PassRefPtr<InspectorObject> buildObjectForCachedResource(DocumentLoader* loader, const CachedResource& cachedResource)

@@ -1112,17 +1112,17 @@ void Element::removeShadowRoot()
 bool Element::childTypeAllowed(NodeType type)
 {
     switch (type) {
-        case ELEMENT_NODE:
-        case TEXT_NODE:
-        case COMMENT_NODE:
-        case PROCESSING_INSTRUCTION_NODE:
-        case CDATA_SECTION_NODE:
-        case ENTITY_REFERENCE_NODE:
-            return true;
-            break;
-        default:
-            return false;
+    case ELEMENT_NODE:
+    case TEXT_NODE:
+    case COMMENT_NODE:
+    case PROCESSING_INSTRUCTION_NODE:
+    case CDATA_SECTION_NODE:
+    case ENTITY_REFERENCE_NODE:
+        return true;
+    default:
+        break;
     }
+    return false;
 }
 
 static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool finishedParsingCallback,
