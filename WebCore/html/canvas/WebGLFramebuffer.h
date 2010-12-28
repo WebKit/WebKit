@@ -33,18 +33,24 @@
 
 namespace WebCore {
 
+class WebGLRenderbuffer;
+class WebGLTexture;
+
 class WebGLFramebuffer : public WebGLObject {
 public:
     virtual ~WebGLFramebuffer() { deleteObject(); }
 
     static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContext*);
 
-    void setAttachment(unsigned long, WebGLObject*);
+    void setAttachment(unsigned long attachment, unsigned long texTarget, WebGLTexture*, int level);
+    void setAttachment(unsigned long attachment, WebGLRenderbuffer*);
     // If an object is attached to the framebuffer, remove it.
     void removeAttachment(WebGLObject*);
     WebGLObject* getAttachment(unsigned long) const;
 
     unsigned long getColorBufferFormat() const;
+    int getWidth() const;
+    int getHeight() const;
 
     // This should always be called before drawArray, drawElements, clear,
     // readPixels, copyTexImage2D, copyTexSubImage2D if this framebuffer is
@@ -83,6 +89,9 @@ private:
     RefPtr<WebGLObject> m_depthStencilAttachment;
 
     bool m_hasEverBeenBound;
+
+    unsigned long m_texTarget;
+    int m_texLevel;
 };
 
 } // namespace WebCore

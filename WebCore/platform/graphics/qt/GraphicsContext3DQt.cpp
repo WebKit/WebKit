@@ -598,6 +598,11 @@ void GraphicsContext3D::reshape(int width, int height)
     glFlush();
 }
 
+IntSize GraphicsContext3D::getInternalFramebufferSize()
+{
+    return IntSize(m_currentWidth, m_currentHeight);
+}
+
 void GraphicsContext3D::activeTexture(unsigned long texture)
 {
     m_internal->m_glWidget->makeCurrent();

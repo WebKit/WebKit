@@ -65,6 +65,7 @@ public:
     int sizeInBytes(int type);
 
     void reshape(int width, int height);
+    IntSize getInternalFramebufferSize();
 
     void paintRenderingResultsToCanvas(CanvasRenderingContext*);
     bool paintsIntoCanvasBuffer() const;

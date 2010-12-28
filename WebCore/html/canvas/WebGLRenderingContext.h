@@ -505,6 +505,12 @@ public:
     // Helper function to get the bound framebuffer's color buffer format.
     unsigned long getBoundFramebufferColorFormat();
 
+    // Helper function to get the bound framebuffer's width.
+    int getBoundFramebufferWidth();
+
+    // Helper function to get the bound framebuffer's height.
+    int getBoundFramebufferHeight();
+
     // Helper function to check if size is non-negative.
     // Generate GL error and return false for negative inputs; otherwise, return true.
     bool validateSize(long x, long y);

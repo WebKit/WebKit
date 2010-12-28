@@ -1,3 +1,14 @@
+2010-12-23  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Initialize to 0 for undefined values in CopyTexImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=51421
+
+        * src/GraphicsContext3DChromium.cpp: Implement getInternalFramebufferSize().
+        (WebCore::GraphicsContext3DInternal::getInternalFramebufferSize):
+        * src/GraphicsContext3DInternal.h:
+
 2010-12-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74561.

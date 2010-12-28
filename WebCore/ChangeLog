@@ -2,6 +2,42 @@
 
         Reviewed by Kenneth Russell.
 
+        Initialize to 0 for undefined values in CopyTexImage2D
+        https://bugs.webkit.org/show_bug.cgi?id=51421
+
+        * html/canvas/WebGLFramebuffer.cpp: Track width/height/internalFormat of color buffer.
+        (WebCore::WebGLFramebuffer::WebGLFramebuffer):
+        (WebCore::WebGLFramebuffer::setAttachment):
+        (WebCore::WebGLFramebuffer::getWidth):
+        (WebCore::WebGLFramebuffer::getHeight):
+        (WebCore::WebGLFramebuffer::getColorBufferFormat):
+        * html/canvas/WebGLFramebuffer.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Initialize undefined pixels to 0.
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+        (WebCore::WebGLRenderingContext::framebufferTexture2D):
+        (WebCore::WebGLRenderingContext::renderbufferStorage):
+        (WebCore::WebGLRenderingContext::getBoundFramebufferWidth):
+        (WebCore::WebGLRenderingContext::getBoundFramebufferHeight):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLTexture.cpp: Track width/height/internalFormat of a texture by target/level.
+        (WebCore::WebGLTexture::getInternalFormat):
+        (WebCore::WebGLTexture::getWidth):
+        (WebCore::WebGLTexture::getHeight):
+        (WebCore::WebGLTexture::mapTargetToIndex):
+        (WebCore::WebGLTexture::getLevelInfo):
+        * html/canvas/WebGLTexture.h:
+        (WebCore::WebGLTexture::isTexture):
+        * platform/graphics/GraphicsContext3D.h: Add getInternalFramebufferSize() function.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getInternalFramebufferSize):
+
+2010-12-23  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Map GLsizei to long instead of unsigned long in WebGLRenderingContext and GraphicsContext3D
         https://bugs.webkit.org/show_bug.cgi?id=39855
 

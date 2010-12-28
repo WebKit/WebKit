@@ -796,6 +796,8 @@ public:
     // determine this.
     Extensions3D* getExtensions();
 
+    IntSize getInternalFramebufferSize();
+
   private:
     GraphicsContext3D(Attributes attrs, HostWindow* hostWindow, bool renderDirectlyToHostWindow);
 

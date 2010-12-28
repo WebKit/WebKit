@@ -76,28 +76,58 @@ PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContext* ctx
 WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContext* ctx)
     : WebGLObject(ctx)
     , m_hasEverBeenBound(false)
+    , m_texTarget(0)
+    , m_texLevel(-1)
 {
     setObject(context()->graphicsContext3D()->createFramebuffer());
 }
 
-void WebGLFramebuffer::setAttachment(unsigned long attachment, WebGLObject* attachedObject)
+void WebGLFramebuffer::setAttachment(unsigned long attachment, unsigned long texTarget, WebGLTexture* texture, int level)
 {
     if (!object())
         return;
-    if (attachedObject && !attachedObject->object())
-        attachedObject = 0;
+    if (texture && !texture->object())
+        texture = 0;
     switch (attachment) {
     case GraphicsContext3D::COLOR_ATTACHMENT0:
-        m_colorAttachment = attachedObject;
+        m_colorAttachment = texture;
+        if (texture) {
+            m_texTarget = texTarget;
+            m_texLevel = level;
+        }
         break;
     case GraphicsContext3D::DEPTH_ATTACHMENT:
-        m_depthAttachment = attachedObject;
+        m_depthAttachment = texture;
         break;
     case GraphicsContext3D::STENCIL_ATTACHMENT:
-        m_stencilAttachment = attachedObject;
+        m_stencilAttachment = texture;
         break;
     case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
-        m_depthStencilAttachment = attachedObject;
+        m_depthStencilAttachment = texture;
+        break;
+    default:
+        return;
+    }
+}
+
+void WebGLFramebuffer::setAttachment(unsigned long attachment, WebGLRenderbuffer* renderbuffer)
+{
+    if (!object())
+        return;
+    if (renderbuffer && !renderbuffer->object())
+        renderbuffer = 0;
+    switch (attachment) {
+    case GraphicsContext3D::COLOR_ATTACHMENT0:
+        m_colorAttachment = renderbuffer;
+        break;
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+        m_depthAttachment = renderbuffer;
+        break;
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+        m_stencilAttachment = renderbuffer;
+        break;
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        m_depthStencilAttachment = renderbuffer;
         break;
     default:
         return;
@@ -138,21 +168,48 @@ void WebGLFramebuffer::removeAttachment(WebGLObject* attachment)
         return;
 }
 
+int WebGLFramebuffer::getWidth() const
+{
+    if (!object() || !isColorAttached())
+        return 0;
+    if (m_colorAttachment->isRenderbuffer())
+        return (reinterpret_cast<WebGLRenderbuffer*>(m_colorAttachment.get()))->getWidth();
+    if (m_colorAttachment->isTexture())
+        return (reinterpret_cast<WebGLTexture*>(m_colorAttachment.get()))->getWidth(m_texTarget, m_texLevel);
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+int WebGLFramebuffer::getHeight() const
+{
+    if (!object() || !isColorAttached())
+        return 0;
+    if (m_colorAttachment->isRenderbuffer())
+        return (reinterpret_cast<WebGLRenderbuffer*>(m_colorAttachment.get()))->getHeight();
+    if (m_colorAttachment->isTexture())
+        return (reinterpret_cast<WebGLTexture*>(m_colorAttachment.get()))->getHeight(m_texTarget, m_texLevel);
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 unsigned long WebGLFramebuffer::getColorBufferFormat() const
 {
-    if (object() && m_colorAttachment && m_colorAttachment->object()) {
-        if (m_colorAttachment->isRenderbuffer()) {
-            unsigned long format = (reinterpret_cast<WebGLRenderbuffer*>(m_colorAttachment.get()))->getInternalFormat();
-            switch (format) {
-            case GraphicsContext3D::RGBA4:
-            case GraphicsContext3D::RGB5_A1:
-                return GraphicsContext3D::RGBA;
-            case GraphicsContext3D::RGB565:
-                return GraphicsContext3D::RGB;
-            }
-        } else if (m_colorAttachment->isTexture())
-            return (reinterpret_cast<WebGLTexture*>(m_colorAttachment.get()))->getInternalFormat(0);
+    if (!object() || !isColorAttached())
+        return 0;
+    if (m_colorAttachment->isRenderbuffer()) {
+        unsigned long format = (reinterpret_cast<WebGLRenderbuffer*>(m_colorAttachment.get()))->getInternalFormat();
+        switch (format) {
+        case GraphicsContext3D::RGBA4:
+        case GraphicsContext3D::RGB5_A1:
+            return GraphicsContext3D::RGBA;
+        case GraphicsContext3D::RGB565:
+            return GraphicsContext3D::RGB;
+        }
+        return 0;
     }
+    if (m_colorAttachment->isTexture())
+        return (reinterpret_cast<WebGLTexture*>(m_colorAttachment.get()))->getInternalFormat(m_texTarget, m_texLevel);
+    ASSERT_NOT_REACHED();
     return 0;
 }
 

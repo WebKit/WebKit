@@ -169,12 +169,28 @@ void WebGLTexture::generateMipmapLevelInfo()
     m_needToUseBlackTexture = false;
 }
 
-unsigned long WebGLTexture::getInternalFormat(int level) const
+unsigned long WebGLTexture::getInternalFormat(unsigned long target, int level) const
 {
-    if (!object() || !m_target)
+    const LevelInfo* info = getLevelInfo(target, level);
+    if (!info)
         return 0;
-    // We assume level has been validated already.
-    return m_info[0][level].internalFormat;
+    return info->internalFormat;
+}
+
+int WebGLTexture::getWidth(unsigned long target, int level) const
+{
+    const LevelInfo* info = getLevelInfo(target, level);
+    if (!info)
+        return 0;
+    return info->width;
+}
+
+int WebGLTexture::getHeight(unsigned long target, int level) const
+{
+    const LevelInfo* info = getLevelInfo(target, level);
+    if (!info)
+        return 0;
+    return info->height;
 }
 
 bool WebGLTexture::isNPOT(unsigned width, unsigned height)
@@ -205,7 +221,7 @@ void WebGLTexture::deleteObjectImpl(Platform3DObject object)
     context()->graphicsContext3D()->deleteTexture(object);
 }
 
-int WebGLTexture::mapTargetToIndex(unsigned long target)
+int WebGLTexture::mapTargetToIndex(unsigned long target) const
 {
     if (m_target == GraphicsContext3D::TEXTURE_2D) {
         if (target == GraphicsContext3D::TEXTURE_2D)
@@ -312,6 +328,18 @@ void WebGLTexture::update()
     // Completeness
     if (!m_isComplete && m_minFilter != GraphicsContext3D::NEAREST && m_minFilter != GraphicsContext3D::LINEAR)
         m_needToUseBlackTexture = true;
+}
+
+const WebGLTexture::LevelInfo* WebGLTexture::getLevelInfo(unsigned long target, int level) const
+{
+    if (!object() || !m_target)
+        return 0;
+    int targetIndex = mapTargetToIndex(target);
+    if (targetIndex < 0 || targetIndex >= static_cast<int>(m_info.size()))
+        return 0;
+    if (level < 0 || level >= static_cast<int>(m_info[targetIndex].size()))
+        return 0;
+    return &(m_info[targetIndex][level]);
 }
 
 }

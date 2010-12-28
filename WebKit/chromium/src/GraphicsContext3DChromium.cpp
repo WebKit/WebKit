@@ -246,6 +246,11 @@ void GraphicsContext3DInternal::reshape(int width, int height)
 #endif // PLATFORM(CG)
 }
 
+IntSize GraphicsContext3DInternal::getInternalFramebufferSize()
+{
+    return IntSize(m_impl->width(), m_impl->height());
+}
+
 bool GraphicsContext3DInternal::isContextLost()
 {
     return m_impl->isContextLost();
@@ -892,6 +897,7 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 DELEGATE_TO_INTERNAL(makeContextCurrent)
 DELEGATE_TO_INTERNAL_1R(sizeInBytes, int, int)
 DELEGATE_TO_INTERNAL_2(reshape, int, int)
+DELEGATE_TO_INTERNAL_R(getInternalFramebufferSize, IntSize)
 
 DELEGATE_TO_INTERNAL_1(activeTexture, unsigned long)
 DELEGATE_TO_INTERNAL_2(attachShader, Platform3DObject, Platform3DObject)

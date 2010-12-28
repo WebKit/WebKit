@@ -52,7 +52,9 @@ public:
     // Generate all level information.
     void generateMipmapLevelInfo();
 
-    unsigned long getInternalFormat(int level) const;
+    unsigned long getInternalFormat(unsigned long target, int level) const;
+    int getWidth(unsigned long target, int level) const;
+    int getHeight(unsigned long target, int level) const;
 
     // Whether width/height is NotPowerOfTwo.
     static bool isNPOT(unsigned, unsigned);
@@ -71,19 +73,6 @@ protected:
     virtual void deleteObjectImpl(Platform3DObject);
 
 private:
-    virtual bool isTexture() const { return true; }
-
-    void update();
-
-    int mapTargetToIndex(unsigned long);
-
-    unsigned long m_target;
-
-    int m_minFilter;
-    int m_magFilter;
-    int m_wrapS;
-    int m_wrapT;
-
     class LevelInfo {
     public:
         LevelInfo()
@@ -110,6 +99,21 @@ private:
         int height;
         unsigned long type;
     };
+
+    virtual bool isTexture() const { return true; }
+
+    void update();
+
+    int mapTargetToIndex(unsigned long) const;
+
+    const LevelInfo* getLevelInfo(unsigned long target, int level) const;
+
+    unsigned long m_target;
+
+    int m_minFilter;
+    int m_magFilter;
+    int m_wrapS;
+    int m_wrapT;
 
     Vector<Vector<LevelInfo> > m_info;
 

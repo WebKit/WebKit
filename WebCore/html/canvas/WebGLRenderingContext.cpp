@@ -65,10 +65,28 @@ namespace WebCore {
 
 const double secondsBetweenRestoreAttempts = 1.0;
 
-static inline Platform3DObject objectOrZero(WebGLObject* object)
-{
-    return object ? object->object() : 0;
-}
+namespace {
+
+    Platform3DObject objectOrZero(WebGLObject* object)
+    {
+        return object ? object->object() : 0;
+    }
+
+    void clip(long start, long range, long sourceRange, long* clippedStart, long* clippedRange)
+    {
+        ASSERT(clippedStart && clippedRange);
+        if (start < 0) {
+            range += start;
+            start = 0;
+        }
+        long end = start + range;
+        if (end > sourceRange)
+            range -= end - sourceRange;
+        *clippedStart = start;
+        *clippedRange = range;
+    }
+
+} // namespace anonymous
 
 class WebGLStateRestorer {
 public:
@@ -650,7 +668,22 @@ void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, uns
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
-    m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    if (isResourceSafe())
+        m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    else {
+        long clippedX, clippedY, clippedWidth, clippedHeight;
+        clip(x, width, getBoundFramebufferWidth(), &clippedX, &clippedWidth);
+        clip(y, height, getBoundFramebufferHeight(), &clippedY, &clippedHeight);
+        if (clippedX != x || clippedY != y || clippedWidth != static_cast<long>(width) || clippedHeight != static_cast<long>(height)) {
+            m_context->texImage2DResourceSafe(target, level, internalformat, width, height, border,
+                                              internalformat, GraphicsContext3D::UNSIGNED_BYTE);
+            if (clippedWidth > 0 && clippedHeight > 0) {
+                m_context->copyTexSubImage2D(target, level, clippedX - x, clippedY - y,
+                                             clippedX, clippedY, clippedWidth, clippedHeight);
+            }
+        } else
+            m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
+    }
     // FIXME: if the framebuffer is not complete, none of the below should be executed.
     tex->setLevelInfo(target, level, internalformat, width, height, GraphicsContext3D::UNSIGNED_BYTE);
     cleanupAfterGraphicsCall(false);
@@ -665,7 +698,7 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
         return;
     if (!validateSize(xoffset, yoffset) || !validateSize(width, height))
         return;
-    if (!isTexInternalFormatColorBufferCombinationValid(tex->getInternalFormat(level), getBoundFramebufferColorFormat())) {
+    if (!isTexInternalFormatColorBufferCombinationValid(tex->getInternalFormat(target, level), getBoundFramebufferColorFormat())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
@@ -1321,7 +1354,7 @@ void WebGLRenderingContext::framebufferTexture2D(unsigned long target, unsigned 
         return;
     }
     m_context->framebufferTexture2D(target, attachment, textarget, objectOrZero(texture), level);
-    m_framebufferBinding->setAttachment(attachment, texture);
+    m_framebufferBinding->setAttachment(attachment, textarget, texture, level);
     cleanupAfterGraphicsCall(false);
 }
 
@@ -2387,14 +2420,15 @@ void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned l
         m_context->renderbufferStorage(target, internalformat, width, height);
         m_renderbufferBinding->setInternalFormat(internalformat);
         m_renderbufferBinding->setIsValid(true);
+        m_renderbufferBinding->setSize(width, height);
         cleanupAfterGraphicsCall(false);
         break;
     case GraphicsContext3D::DEPTH_STENCIL:
         if (isDepthStencilSupported()) {
             m_context->renderbufferStorage(target, Extensions3D::DEPTH24_STENCIL8, width, height);
             cleanupAfterGraphicsCall(false);
-        } else
-            m_renderbufferBinding->setSize(width, height);
+        }
+        m_renderbufferBinding->setSize(width, height);
         m_renderbufferBinding->setIsValid(isDepthStencilSupported());
         m_renderbufferBinding->setInternalFormat(internalformat);
         break;
@@ -3581,6 +3615,20 @@ unsigned long WebGLRenderingContext::getBoundFramebufferColorFormat()
     if (m_attributes.alpha)
         return GraphicsContext3D::RGBA;
     return GraphicsContext3D::RGB;
+}
+
+int WebGLRenderingContext::getBoundFramebufferWidth()
+{
+    if (m_framebufferBinding && m_framebufferBinding->object())
+        return m_framebufferBinding->getWidth();
+    return m_context->getInternalFramebufferSize().width();
+}
+
+int WebGLRenderingContext::getBoundFramebufferHeight()
+{
+    if (m_framebufferBinding && m_framebufferBinding->object())
+        return m_framebufferBinding->getHeight();
+    return m_context->getInternalFramebufferSize().height();
 }
 
 WebGLTexture* WebGLRenderingContext::validateTextureBinding(unsigned long target, bool useSixEnumsForCubeMap)
