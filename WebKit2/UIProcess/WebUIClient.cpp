@@ -214,7 +214,7 @@ FloatRect WebUIClient::windowFrame(WebPageProxy* page)
     if (!m_client.getWindowFrame)
         return FloatRect();
 
-    return toImpl(m_client.getWindowFrame(toAPI(page), m_client.clientInfo));
+    return toFloatRect(m_client.getWindowFrame(toAPI(page), m_client.clientInfo));
 }
 
 bool WebUIClient::canRunBeforeUnloadConfirmPanel()

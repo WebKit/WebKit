@@ -29,6 +29,7 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKEvent.h>
 #include <WebKit2/WKFindOptions.h>
+#include <WebKit2/WKImage.h>
 #include <WebKit2/WKPageLoadTypes.h>
 
 #ifndef __cplusplus
@@ -213,6 +214,9 @@ WK_EXPORT bool WKBundlePageHasLocalDataForURL(WKBundlePageRef page, WKURLRef url
 WK_EXPORT bool WKBundlePageCanHandleRequest(WKURLRequestRef request);
 
 WK_EXPORT bool WKBundlePageFindString(WKBundlePageRef page, WKStringRef target, WKFindOptions findOptions);
+
+WK_EXPORT WKImageRef WKBundlePageCreateSnapshotInViewCoordinates(WKBundlePageRef page, WKRect rect, WKImageOptions options);
+WK_EXPORT WKImageRef WKBundlePageCreateSnapshotInDocumentCoordinates(WKBundlePageRef page, WKRect rect, WKImageOptions options);
 
 #ifdef __cplusplus
 }

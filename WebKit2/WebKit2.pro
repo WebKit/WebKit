@@ -222,6 +222,7 @@ HEADERS += \
     Shared/API/c/WKContextMenuItem.h \
     Shared/API/c/WKContextMenuItemTypes.h \
     Shared/API/c/WKGeometry.h \
+    Shared/API/c/WKImage.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKPageLoadTypes.h \
     Shared/API/c/WKSecurityOrigin.h \
@@ -239,6 +240,7 @@ HEADERS += \
     Shared/ChildProcess.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
+    Shared/ImageOptions.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
     Shared/MutableArray.h \
@@ -258,6 +260,7 @@ HEADERS += \
     Shared/WebEvent.h \
     Shared/WebEventConversion.h \
     Shared/WebFindOptions.h \
+    Shared/WebImage.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebOpenPanelParameters.h \
@@ -439,6 +442,7 @@ SOURCES += \
     Shared/API/c/WKArray.cpp \
     Shared/API/c/WKCertificateInfo.cpp \
     Shared/API/c/WKContextMenuItem.cpp \
+    Shared/API/c/WKImage.cpp \
     Shared/API/c/WKNumber.cpp \
     Shared/API/c/WKSecurityOrigin.cpp \
     Shared/API/c/WKSerializedScriptValue.cpp \
@@ -465,6 +469,7 @@ SOURCES += \
     Shared/WebEvent.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebKeyboardEvent.cpp \
+    Shared/WebImage.cpp \
     Shared/WebMouseEvent.cpp \
     Shared/WebOpenPanelParameters.cpp \
     Shared/WebPageCreationParameters.cpp \

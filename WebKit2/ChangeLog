@@ -2,6 +2,75 @@
 
         Reviewed by Anders Carlsson.
 
+        WebKit2: Add API for getting snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=51656
+
+        * Shared/API/c/WKBase.h:
+        * Shared/API/c/WKImage.cpp: Added.
+        (WKImageGetTypeID):
+        (WKImageCreate):
+        (WKImageGetSize):
+        * Shared/API/c/WKImage.h: Added.
+        * Shared/WebImage.cpp: Added.
+        (WebKit::WebImage::create):
+        (WebKit::WebImage::size):
+        * Shared/WebImage.h: Added.
+        (WebKit::WebImage::backingStore):
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::type):
+        Add a general purpose API image class.
+
+        * Shared/API/c/cg: Added.
+        * Shared/API/c/cg/WKImageCG.cpp: Added.
+        (WKImageCreateCGImage):
+        * Shared/API/c/cg/WKImageCG.h: Added.
+        Add function to convert a WKImageRef to a CGImageRef for platforms that use CG.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toFloatRect):
+        (WebKit::toIntSize):
+        (WebKit::toIntPoint):
+        (WebKit::toIntRect):
+        (WebKit::toImageOptions):
+        Make conversion functions that are ambiguous more explicit.
+
+        * Shared/APIObject.h:
+        * Shared/BackingStore.h:
+        (WebKit::BackingStore::isBackedBySharedMemory):
+        * Shared/ImageOptions.h: Added.
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        Allow a WKImageRef to be passed in user messages.  Right now, it only
+        works if the image is sharable.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageScaleWebView):
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::windowFrame):
+        Use the more explicit conversion function name.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCreateSnapshotInViewCoordinates):
+        (WKBundlePageCreateSnapshotInDocumentCoordinates):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (WKBundlePageOverlaySetNeedsDisplay):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotInViewCoordinates):
+        (WebKit::WebPage::snapshotInDocumentCoordinates):
+        Add function to take the snapshot.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
+2010-12-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         WebKit2: Add additional API for managing databases
         https://bugs.webkit.org/show_bug.cgi?id=51629
 

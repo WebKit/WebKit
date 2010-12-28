@@ -567,6 +567,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebImage.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebKeyboardEvent.cpp"
 				>
 			</File>
@@ -758,6 +766,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\WKImage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKImage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\WKMutableArray.cpp"
 					>
 				</File>
@@ -926,6 +942,18 @@
 					</File>
 					<File
 						RelativePath="..\Shared\API\c\cf\WKURLResponseCF.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="cg"
+					>
+					<File
+						RelativePath="..\Shared\API\c\cg\WKImageCG.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\Shared\API\c\cg\WKImageCG.h"
 						>
 					</File>
 				</Filter>

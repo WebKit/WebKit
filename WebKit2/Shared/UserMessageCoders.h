@@ -28,6 +28,7 @@
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebImage.h"
 #include "WebNumber.h"
 #include "WebSerializedScriptValue.h"
 #include "WebString.h"
@@ -39,10 +40,11 @@ namespace WebKit {
 //   - Null -> Null
 //   - Array -> Array
 //   - Dictionary -> Dictionary
-//   - String -> String
 //   - SerializedScriptValue -> SerializedScriptValue
+//   - String -> String
 //   - UserContentURLPattern -> UserContentURLPattern
 //   - WebDouble -> WebDouble
+//   - WebImage -> WebImage
 //   - WebUInt64 -> WebUInt64
 //   - WebURL -> WebURL
 
@@ -115,6 +117,23 @@ public:
             encoder->encode(urlPattern->patternString());
             return true;
         }
+        case APIObject::TypeImage: {
+            WebImage* image = static_cast<WebImage*>(m_root);
+            if (!image->backingStore()->isBackedBySharedMemory()) {
+                encoder->encode(false);
+                return true;
+            }
+
+            SharedMemory::Handle handle;
+            if (!image->backingStore()->createHandle(handle))
+                return false;
+
+            encoder->encode(true);
+            
+            encoder->encode(image->size());
+            encoder->encode(handle);
+            return true;
+        }
         default:
             break;
         }
@@ -136,10 +155,11 @@ protected:
 //   - Null -> Null
 //   - Array -> Array
 //   - Dictionary -> Dictionary
-//   - String -> String
 //   - SerializedScriptValue -> SerializedScriptValue
+//   - String -> String
 //   - UserContentURLPattern -> UserContentURLPattern
 //   - WebDouble -> WebDouble
+//   - WebImage -> WebImage
 //   - WebUInt64 -> WebUInt64
 //   - WebURL -> WebURL
 
@@ -244,6 +264,25 @@ public:
                 return false;
             coder.m_root = WebUserContentURLPattern::create(string);
             break;
+        }
+        case APIObject::TypeImage: {
+            bool didEncode = false;
+            if (!decoder->decode(didEncode))
+                return false;
+
+            if (!didEncode)
+                break;
+
+            WebCore::IntSize size;
+            if (!decoder->decode(size))
+                return false;
+
+            SharedMemory::Handle handle;
+            if (!decoder->decode(handle))
+                return false;
+
+            coder.m_root = WebImage::create(BackingStore::create(size, handle));
+            return true;
         }
         default:
             break;

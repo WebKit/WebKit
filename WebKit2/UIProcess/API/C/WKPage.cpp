@@ -252,7 +252,7 @@ void WKPageSetPageAndTextZoomFactors(WKPageRef pageRef, double pageZoomFactor, d
 
 void WKPageScaleWebView(WKPageRef pageRef, double scale, WKPoint origin)
 {
-    toImpl(pageRef)->scaleWebView(scale, toImpl(origin));
+    toImpl(pageRef)->scaleWebView(scale, toIntPoint(origin));
 }
 
 double WKPageGetViewScaleFactor(WKPageRef pageRef)

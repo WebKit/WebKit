@@ -26,12 +26,14 @@
 #ifndef WKSharedAPICast_h
 #define WKSharedAPICast_h
 
+#include "ImageOptions.h"
 #include "SameDocumentNavigationType.h"
 #include "WKBase.h"
 #include "WKContextMenuItemTypes.h"
 #include "WKEvent.h"
 #include "WKFindOptions.h"
 #include "WKGeometry.h"
+#include "WKImage.h"
 #include "WKPageLoadTypes.h"
 #include "WebError.h"
 #include "WebEvent.h"
@@ -42,7 +44,6 @@
 #include <WebCore/ContextMenuItem.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/IntPoint.h>
 #include <WebCore/IntRect.h>
 #include <wtf/TypeTraits.h>
 
@@ -55,6 +56,7 @@ class MutableDictionary;
 class WebCertificateInfo;
 class WebContextMenuItem;
 class WebData;
+class WebImage;
 class WebSecurityOrigin;
 class WebSerializedScriptValue;
 class WebURLRequest;
@@ -76,6 +78,7 @@ WK_ADD_API_MAPPING(WKDataRef, WebData)
 WK_ADD_API_MAPPING(WKDictionaryRef, ImmutableDictionary)
 WK_ADD_API_MAPPING(WKDoubleRef, WebDouble)
 WK_ADD_API_MAPPING(WKErrorRef, WebError)
+WK_ADD_API_MAPPING(WKImageRef, WebImage)
 WK_ADD_API_MAPPING(WKMutableArrayRef, MutableArray)
 WK_ADD_API_MAPPING(WKMutableDictionaryRef, MutableDictionary)
 WK_ADD_API_MAPPING(WKSecurityOriginRef, WebSecurityOrigin)
@@ -171,15 +174,26 @@ inline ProxyingRefPtr<WebError> toAPI(const WebCore::ResourceError& error)
 
 /* Geometry conversions */
 
-inline WebCore::FloatRect toImpl(const WKRect& wkRect)
+inline WebCore::FloatRect toFloatRect(const WKRect& wkRect)
 {
     return WebCore::FloatRect(static_cast<float>(wkRect.origin.x), static_cast<float>(wkRect.origin.y),
                               static_cast<float>(wkRect.size.width), static_cast<float>(wkRect.size.height));
 }
 
-inline WebCore::IntPoint toImpl(const WKPoint& wkPoint)
+inline WebCore::IntSize toIntSize(const WKSize& wkSize)
+{
+    return WebCore::IntSize(static_cast<int>(wkSize.width), static_cast<int>(wkSize.height));
+}
+
+inline WebCore::IntPoint toIntPoint(const WKPoint& wkPoint)
 {
     return WebCore::IntPoint(static_cast<int>(wkPoint.x), static_cast<int>(wkPoint.y));
+}
+
+inline WebCore::IntRect toIntRect(const WKRect& wkRect)
+{
+    return WebCore::IntRect(static_cast<int>(wkRect.origin.x), static_cast<int>(wkRect.origin.y),
+                            static_cast<int>(wkRect.size.width), static_cast<int>(wkRect.size.height));
 }
 
 inline WKRect toAPI(const WebCore::FloatRect& rect)
@@ -200,6 +214,14 @@ inline WKRect toAPI(const WebCore::IntRect& rect)
     wkRect.size.width = rect.width();
     wkRect.size.height = rect.height();
     return wkRect;
+}
+
+inline WKSize toAPI(const WebCore::IntSize& size)
+{
+    WKSize wkSize;
+    wkSize.width = size.width();
+    wkSize.height = size.height();
+    return wkSize;
 }
 
 inline WKPoint toAPI(const WebCore::IntPoint& point)
@@ -696,6 +718,16 @@ inline WKSameDocumentNavigationType toAPI(SameDocumentNavigationType type)
     }
     
     return wkType;
+}
+
+inline ImageOptions toImageOptions(WKImageOptions wkImageOptions)
+{
+    unsigned imageOptions = 0;
+
+    if (wkImageOptions & kWKImageOptionsSharable)
+        imageOptions |= ImageOptionsSharable;
+
+    return static_cast<ImageOptions>(imageOptions);
 }
 
 } // namespace WebKit

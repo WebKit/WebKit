@@ -44,6 +44,7 @@ public:
         TypeData,
         TypeDictionary,
         TypeError,
+        TypeImage,
         TypeProtectionSpace,
         TypeSecurityOrigin,
         TypeSerializedScriptValue,

@@ -27,11 +27,12 @@
 #include "WKBundlePagePrivate.h"
 
 #include "InjectedBundleBackForwardList.h"
+#include "WKAPICast.h"
+#include "WKBundleAPICast.h"
+#include "WebImage.h"
 #include "WebPage.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
 
 #include <WebCore/KURL.h>
 
@@ -165,4 +166,16 @@ bool WKBundlePageCanHandleRequest(WKURLRequestRef requestRef)
 bool WKBundlePageFindString(WKBundlePageRef pageRef, WKStringRef target, WKFindOptions findOptions)
 {
     return toImpl(pageRef)->findStringFromInjectedBundle(toImpl(target)->string(), toFindOptions(findOptions));
+}
+
+WKImageRef WKBundlePageCreateSnapshotInViewCoordinates(WKBundlePageRef pageRef, WKRect rect, WKImageOptions options)
+{
+    RefPtr<WebImage> webImage = toImpl(pageRef)->snapshotInViewCoordinates(toIntRect(rect), toImageOptions(options));
+    return toAPI(webImage.release().leakRef());
+}
+
+WKImageRef WKBundlePageCreateSnapshotInDocumentCoordinates(WKBundlePageRef pageRef, WKRect rect, WKImageOptions options)
+{
+    RefPtr<WebImage> webImage = toImpl(pageRef)->snapshotInDocumentCoordinates(toIntRect(rect), toImageOptions(options));
+    return toAPI(webImage.release().leakRef());
 }

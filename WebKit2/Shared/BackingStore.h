@@ -66,11 +66,12 @@ public:
     // Paint the backing store into the given context.
     void paint(WebCore::GraphicsContext&, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect);
 
+    bool isBackedBySharedMemory() const { return m_sharedMemory; }
+
 private:
     BackingStore(const WebCore::IntSize&, void*);
     BackingStore(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
 
-    bool isBackedBySharedMemory() const { return m_sharedMemory; }
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
 
     void* data() const;

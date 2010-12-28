@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "DrawingArea.h"
 #include "FindController.h"
+#include "ImageOptions.h"
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
@@ -75,6 +76,7 @@ class WebContextMenu;
 class WebContextMenuItemData;
 class WebEvent;
 class WebFrame;
+class WebImage;
 class WebInspector;
 class WebKeyboardEvent;
 class WebMouseEvent;
@@ -205,6 +207,9 @@ public:
 
     void installPageOverlay(PassRefPtr<PageOverlay>);
     void uninstallPageOverlay(PageOverlay*);
+
+    PassRefPtr<WebImage> snapshotInViewCoordinates(const WebCore::IntRect&, ImageOptions);
+    PassRefPtr<WebImage> snapshotInDocumentCoordinates(const WebCore::IntRect&, ImageOptions);
 
     static const WebEvent* currentEvent();
 

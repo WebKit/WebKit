@@ -41,14 +41,15 @@
 #include "WebContextMenuClient.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebOpenPanelResultListener.h"
 #include "WebDragClient.h"
 #include "WebEditorClient.h"
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebFrame.h"
+#include "WebImage.h"
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
+#include "WebOpenPanelResultListener.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroupProxy.h"
 #include "WebPageProxyMessages.h"
@@ -585,6 +586,44 @@ void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay)
     m_pageOverlay->setPage(0);
     m_pageOverlay = nullptr;
     m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+}
+
+PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, ImageOptions options)
+{
+    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    if (!frameView)
+        return 0;
+
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->backingStore()->createGraphicsContext();
+
+    graphicsContext->save();
+    graphicsContext->translate(-rect.x(), -rect.y());
+    frameView->paint(graphicsContext.get(), rect);
+    graphicsContext->restore();
+
+    return snapshot.release();
+}
+
+PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect, ImageOptions options)
+{
+    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    if (!frameView)
+        return 0;
+
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->backingStore()->createGraphicsContext();
+
+    graphicsContext->save();
+    graphicsContext->translate(-rect.x(), -rect.y());
+    frameView->paintContents(graphicsContext.get(), rect);
+    graphicsContext->restore();
+
+    return snapshot.release();
 }
 
 void WebPage::pageDidScroll()

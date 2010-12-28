@@ -134,5 +134,5 @@ WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* wkCl
 
 void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlayRef, WKRect rect)
 {
-    toImpl(bundlePageOverlayRef)->setNeedsDisplay(enclosingIntRect(toImpl(rect)));
+    toImpl(bundlePageOverlayRef)->setNeedsDisplay(enclosingIntRect(toFloatRect(rect)));
 }
