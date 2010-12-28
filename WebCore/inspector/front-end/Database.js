@@ -34,8 +34,7 @@ WebInspector.Database = function(id, domain, name, version)
     this._version = version;
 }
 
-WebInspector.Database.successCallbacks = {};
-WebInspector.Database.errorCallbacks = {};
+WebInspector.Database._callbacks = {};
 
 WebInspector.Database.prototype = {
     get id()
@@ -95,9 +94,50 @@ WebInspector.Database.prototype = {
                 onError(WebInspector.UIString("Database not found."));
                 return;
             }
-            WebInspector.Database.successCallbacks[transactionId] = onSuccess;
-            WebInspector.Database.errorCallbacks[transactionId] = onError;
+            WebInspector.Database._callbacks[transactionId] = {"onSuccess": onSuccess, "onError": onError};
         }
         InspectorBackend.executeSQL(this._id, query, callback);
     }
 }
+
+WebInspector.Database.addDatabase = function(payload)
+{
+    if (!WebInspector.panels.resources)
+        return;
+    var database = new WebInspector.Database(
+        payload.id,
+        payload.domain,
+        payload.name,
+        payload.version);
+    WebInspector.panels.resources.addDatabase(database);
+}
+
+WebInspector.Database.selectDatabase = function(o)
+{
+    WebInspector.showPanel("resources");
+    WebInspector.panels.resources.selectDatabase(o);
+}
+
+WebInspector.Database.sqlTransactionSucceeded = function(transactionId, columnNames, values)
+{
+    if (!WebInspector.Database._callbacks[transactionId])
+        return;
+
+    var callback = WebInspector.Database._callbacks[transactionId].onSuccess;
+    delete WebInspector.Database._callbacks[transactionId];
+    if (callback)
+        callback(columnNames, values);
+}
+
+WebInspector.Database.sqlTransactionFailed = function(transactionId, errorObj)
+{
+    if (!WebInspector.Database._callbacks[transactionId])
+        return;
+
+    var callback = WebInspector.Database._callbacks[transactionId].onError;
+    delete WebInspector.Database._callbacks[transactionId];
+    if (callback)
+        callback(errorObj);
+}
+
+InspectorBackend.registerDomainDispatcher("Database", WebInspector.Database);

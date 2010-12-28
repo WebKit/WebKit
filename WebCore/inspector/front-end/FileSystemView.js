@@ -40,6 +40,23 @@ WebInspector.FileSystem.getFileSystemPathsAsync = function(origin)
     InspectorBackend.getFileSystemPathAsync(WebInspector.FileSystem.TEMPORARY, origin);
 }
 
+WebInspector.FileSystem.didGetFileSystemPath = function(root, type, origin)
+{
+    WebInspector.panels.resources.updateFileSystemPath(root, type, origin);
+}
+
+WebInspector.FileSystem.didGetFileSystemError = function(type, origin)
+{
+    WebInspector.panels.resources.updateFileSystemError(type, origin);
+}
+
+WebInspector.FileSystem.didGetFileSystemDisabled = function()
+{
+    WebInspector.panels.resources.setFileSystemDisabled();
+}
+
+InspectorBackend.registerDomainDispatcher("FileSystem", WebInspector.FileSystem);
+
 WebInspector.FileSystemView = function(treeElement, fileSystemOrigin)
 {
     WebInspector.View.call(this);

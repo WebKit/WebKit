@@ -797,14 +797,14 @@ WebInspector.NetworkPanel.prototype = {
         if (!resource)
             return;
 
-        var oldView = WebInspector.ResourceManager.existingResourceViewForResource(resource);
+        var oldView = WebInspector.ResourceView.existingResourceViewForResource(resource);
         if (!oldView)
             return;
 
-        if (WebInspector.ResourceManager.resourceViewTypeMatchesResource(resource))
+        if (WebInspector.ResourceView.resourceViewTypeMatchesResource(resource))
             return;
 
-        var newView = WebInspector.ResourceManager.recreateResourceView(resource);
+        var newView = WebInspector.ResourceView.recreateResourceView(resource);
         if (this.visibleView === oldView)
             this.visibleView = newView;
     },

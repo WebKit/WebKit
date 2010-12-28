@@ -162,7 +162,7 @@ WebInspector.CSSStyleModel.prototype = {
 
         function callback(href, content)
         {
-            var resource = WebInspector.resourceManager.resourceForURL(href);
+            var resource = WebInspector.resourceTreeModel.resourceForURL(href);
             if (resource && resource.type === WebInspector.Resource.Type.Stylesheet)
                 resource.setContent(content, this._onRevert.bind(this, styleSheetId));
         }

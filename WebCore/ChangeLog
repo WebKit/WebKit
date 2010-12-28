@@ -1,3 +1,119 @@
+2010-12-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Protocol cleanup task. Introduce Network, DOMStorage and Database domains.
+
+        Domain was changed for Resources, FileSystem etc. related methods.
+        ResourcesManager was renamed to NetworkManager.
+        ResourceTreeModel was extracted as separate file.
+        FileSystem, Database, DOMStorage and ApplicationCache methods were
+        removed from NetworkManager and added to corresponding classes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51334
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.selectorsCallback):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged.callback):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.addMessage):
+        (WebInspector.ConsoleView.prototype.clearMessages):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.ApplicationCache.updateApplicationCacheStatus):
+        (WebInspector.ApplicationCache.updateNetworkState):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorage.addDOMStorage):
+        (WebInspector.DOMStorage.selectDOMStorage):
+        (WebInspector.DOMStorage.updateDOMStorage):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.executeSql):
+        (WebInspector.Database.addDatabase):
+        (WebInspector.Database.selectDatabase):
+        (WebInspector.Database.sqlTransactionSucceeded):
+        (WebInspector.Database.sqlTransactionFailed):
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystem.didGetFileSystemPath):
+        (WebInspector.FileSystem.didGetFileSystemError):
+        (WebInspector.FileSystem.didGetFileSystemDisabled):
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        * inspector/front-end/NetworkManager.js: Added.
+        (WebInspector.NetworkManager):
+        (WebInspector.NetworkManager.prototype._createResource):
+        (WebInspector.NetworkManager.prototype.identifierForInitialRequest):
+        (WebInspector.NetworkManager.prototype.willSendRequest):
+        (WebInspector.NetworkManager.prototype._updateResourceWithRequest):
+        (WebInspector.NetworkManager.prototype._appendRedirect):
+        (WebInspector.NetworkManager.prototype.markResourceAsCached):
+        (WebInspector.NetworkManager.prototype.didReceiveResponse):
+        (WebInspector.NetworkManager.prototype._updateResourceWithResponse):
+        (WebInspector.NetworkManager.prototype.didReceiveContentLength):
+        (WebInspector.NetworkManager.prototype.didFinishLoading):
+        (WebInspector.NetworkManager.prototype.didFailLoading):
+        (WebInspector.NetworkManager.prototype.didLoadResourceFromMemoryCache):
+        (WebInspector.NetworkManager.prototype._updateResourceWithCachedResource):
+        (WebInspector.NetworkManager.prototype.setInitialContent):
+        (WebInspector.NetworkManager.prototype.didCommitLoadForFrame):
+        (WebInspector.NetworkManager.prototype.frameDetachedFromParent):
+        (WebInspector.NetworkManager.prototype.didCreateWebSocket):
+        (WebInspector.NetworkManager.prototype.willSendWebSocketHandshakeRequest):
+        (WebInspector.NetworkManager.prototype.didReceiveWebSocketHandshakeResponse):
+        (WebInspector.NetworkManager.prototype.didCloseWebSocket):
+        (WebInspector.NetworkManager.prototype._processCachedResources):
+        (WebInspector.NetworkManager.prototype._addFramesRecursively):
+        (WebInspector.NetworkManager.requestContent):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype.refreshResource):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._innerRequestContent):
+        * inspector/front-end/ResourceManager.js: Removed.
+        * inspector/front-end/ResourceTreeModel.js: Added.
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype.addOrUpdateFrame):
+        (WebInspector.ResourceTreeModel.prototype.didCommitLoadForFrame):
+        (WebInspector.ResourceTreeModel.prototype.frameDetachedFromParent):
+        (WebInspector.ResourceTreeModel.prototype._clearChildFramesAndResources):
+        (WebInspector.ResourceTreeModel.prototype.addResourceToFrame):
+        (WebInspector.ResourceTreeModel.prototype._clearResources):
+        (WebInspector.ResourceTreeModel.prototype.forAllResources):
+        (WebInspector.ResourceTreeModel.prototype.addConsoleMessage):
+        (WebInspector.ResourceTreeModel.prototype.clearConsoleMessages):
+        (WebInspector.ResourceTreeModel.prototype._callForFrameResources):
+        (WebInspector.ResourceTreeModel.prototype.resourceForURL):
+        (WebInspector.ResourceTreeModel.prototype.bindResourceURL):
+        (WebInspector.ResourceTreeModel.prototype._unbindResourceURL):
+        (WebInspector.ResourceTreeModel.createResource):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.createResourceView):
+        (WebInspector.ResourceView.resourceViewTypeMatchesResource):
+        (WebInspector.ResourceView.resourceViewForResource):
+        (WebInspector.ResourceView.recreateResourceView):
+        (WebInspector.ResourceView.existingResourceViewForResource):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.canShowSourceLine):
+        (WebInspector.ResourcesPanel.prototype.showSourceLine):
+        (WebInspector.ResourcesPanel.prototype.showResource):
+        (WebInspector.ResourcesPanel.prototype.get searchableViews.callback):
+        (WebInspector.ResourcesPanel.prototype.get searchableViews):
+        (WebInspector.FrameResourceTreeElement.prototype._errorsWarningsUpdated):
+        (WebInspector.FrameResourceTreeElement.prototype._contentChanged):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addScript):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForResource):
+        (WebInspector.ScriptsPanel.prototype._showScriptOrResource):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.forAllResources):
+        (WebInspector.resourceForURL):
+
 2010-12-27  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.

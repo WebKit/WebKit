@@ -33,6 +33,20 @@ $typeTransform{"Resources"} = {
     "header" => "InspectorResourceAgent.h",
     "domainAccessor" => "m_inspectorController->m_resourceAgent",
 };
+$typeTransform{"Network"} = {
+    "forward" => "InspectorResourceAgent",
+    "header" => "InspectorResourceAgent.h",
+    "domainAccessor" => "m_inspectorController->m_resourceAgent",
+};
+$typeTransform{"DOMStorage"} = {
+    "forwardHeader" => "InspectorController.h",
+    "domainAccessor" => "m_inspectorController",
+};
+$typeTransform{"Database"} = {
+    "forward" => "InspectorBackend",
+    "header" => "InspectorBackend.h",
+    "domainAccessor" => "m_inspectorController->inspectorBackend()",
+};
 $typeTransform{"DOM"} = {
     "forward" => "InspectorDOMAgent",
     "header" => "InspectorDOMAgent.h",

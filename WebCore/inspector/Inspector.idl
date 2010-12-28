@@ -67,6 +67,8 @@ module core {
         [domain=Inspector] void hideFrameHighlight();
         [notify, domain=Inspector] void updateFocusedNode(out long nodeId);
 
+        [domain=Inspector] void setExtraHeaders(in Object headers);
+
         ///////////////////////////////////////////////////////////////////////
         // Console API
         ///////////////////////////////////////////////////////////////////////
@@ -79,67 +81,63 @@ module core {
         [notify, domain=Inspector] void consoleMessagesCleared();
 
         ///////////////////////////////////////////////////////////////////////
+        // Network API
+        ///////////////////////////////////////////////////////////////////////
+
+        [notify, domain=Network] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
+        [notify, domain=Network] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
+        [notify, domain=Network] void markResourceAsCached(out long identifier);
+        [notify, domain=Network] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
+        [notify, domain=Network] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
+        [notify, domain=Network] void didFinishLoading(out long identifier, out double finishTime);
+        [notify, domain=Network] void didFailLoading(out long identifier, out double time, out String localizedDescription);
+        [notify, domain=Network] void didLoadResourceFromMemoryCache(out double time, out Object resource);
+        [notify, domain=Network] void setInitialContent(out long identifier, out String sourceString, out String type);
+        [notify, domain=Network] void didCommitLoadForFrame(out Object frame, out Object loader);
+        [notify, domain=Network] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
+        [notify, domain=Network] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
+        [notify, domain=Network] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
+        [notify, domain=Network] void didCloseWebSocket(out unsigned long identifier, out double time);
+
+        ///////////////////////////////////////////////////////////////////////
         // Resources API
         ///////////////////////////////////////////////////////////////////////
 
-        // FIXME: Network domain
-        [notify, domain=Resources] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
-        [notify, domain=Resources] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
-        [notify, domain=Resources] void markResourceAsCached(out long identifier);
-        [notify, domain=Resources] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
-        [notify, domain=Resources] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
-        [notify, domain=Resources] void didFinishLoading(out long identifier, out double finishTime);
-        [notify, domain=Resources] void didFailLoading(out long identifier, out double time, out String localizedDescription);
-        [notify, domain=Resources] void didLoadResourceFromMemoryCache(out double time, out Object resource);
-        [notify, domain=Resources] void setInitialContent(out long identifier, out String sourceString, out String type);
-        [notify, domain=Resources] void didCommitLoadForFrame(out Object frame, out Object loader);
-        [notify, domain=Resources] void frameDetachedFromParent(out unsigned long frameId);
-       
-        [domain=Inspector] void setExtraHeaders(in Object headers);
-
         [domain=Resources] void cachedResources(out Object resources);
         [domain=Resources] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
-
-        [notify, domain=Resources] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
-        [notify, domain=Resources] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);
-        [notify, domain=Resources] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
-        [notify, domain=Resources] void didCloseWebSocket(out unsigned long identifier, out double time);
+        [notify, domain=Resources] void frameDetachedFromParent(out unsigned long frameId);
 
         // FIXME: Introduce new StorageDomain.
         [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
         [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [notify, domain=Resources] void addDatabase(out Object database);
-        [notify, domain=Resources] void selectDatabase(out int databaseId);
-        [domain=Backend] void getDatabaseTableNames(in long databaseId, out Array tableNames);
-        [domain=Backend] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
-        [notify, domain=Resources] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
-        [notify, domain=Resources] void sqlTransactionFailed(out long transactionId, out Value sqlError);
+        [notify, domain=Database] void addDatabase(out Object database);
+        [notify, domain=Database] void selectDatabase(out int databaseId);
+        [domain=Database] void getDatabaseTableNames(in long databaseId, out Array tableNames);
+        [domain=Database] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
+        [notify, domain=Database] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
+        [notify, domain=Database] void sqlTransactionFailed(out long transactionId, out Value sqlError);
 #endif
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
-        [domain=Inspector] void getDOMStorageEntries(in long storageId, out Array entries);
-        [domain=Inspector] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
-        [domain=Inspector] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
-        // FIXME: nuke these from resource manager asap, dispatch on StorageDomain.
-        [notify, domain=Resources] void addDOMStorage(out Object storage);
-        [notify, domain=Resources] void updateDOMStorage(out int storageId);
-        [notify, domain=Resources] void selectDOMStorage(out int storageId);
-#endif
-#if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
-        [notify, domain=Resources] void updateApplicationCacheStatus(out int status);
-        [notify, domain=Resources] void updateNetworkState(out boolean isNowOnline);
+        [domain=DOMStorage] void getDOMStorageEntries(in long storageId, out Array entries);
+        [domain=DOMStorage] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
+        [domain=DOMStorage] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
+        [notify, domain=DOMStorage] void addDOMStorage(out Object storage);
+        [notify, domain=DOMStorage] void updateDOMStorage(out int storageId);
+        [notify, domain=DOMStorage] void selectDOMStorage(out int storageId);
 #endif
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         [domain=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
+        [notify, domain=ApplicationCache] void updateApplicationCacheStatus(out int status);
+        [notify, domain=ApplicationCache] void updateNetworkState(out boolean isNowOnline);
 #endif
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
         [domain=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
         [domain=FileSystem] void revealFolderInOS(in String path);
 
-        // FIXME: nuke these from resource manager asap, dispatch on FileSystem.
-        [notify, domain=Resources] void didGetFileSystemPath(out String root, out int type, out String origin);
-        [notify, domain=Resources] void didGetFileSystemError(out int type, out String origin);
-        [notify, domain=Resources] void didGetFileSystemDisabled();
+        [notify, domain=FileSystem] void didGetFileSystemPath(out String root, out int type, out String origin);
+        [notify, domain=FileSystem] void didGetFileSystemError(out int type, out String origin);
+        [notify, domain=FileSystem] void didGetFileSystemDisabled();
 #endif
 
         ///////////////////////////////////////////////////////////////////////

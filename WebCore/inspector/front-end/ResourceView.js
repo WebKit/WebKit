@@ -42,3 +42,76 @@ WebInspector.ResourceView.prototype = {
 }
 
 WebInspector.ResourceView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.ResourceView.createResourceView = function(resource)
+{
+    switch (resource.category) {
+    case WebInspector.resourceCategories.documents:
+    case WebInspector.resourceCategories.stylesheets:
+    case WebInspector.resourceCategories.scripts:
+    case WebInspector.resourceCategories.xhr:
+        return new WebInspector.SourceView(resource);
+    case WebInspector.resourceCategories.images:
+        return new WebInspector.ImageView(resource);
+    case WebInspector.resourceCategories.fonts:
+        return new WebInspector.FontView(resource);
+    default:
+        return new WebInspector.ResourceView(resource);
+    }
+}
+
+WebInspector.ResourceView.resourceViewTypeMatchesResource = function(resource)
+{
+    var resourceView = resource._resourcesView;
+    switch (resource.category) {
+    case WebInspector.resourceCategories.documents:
+    case WebInspector.resourceCategories.stylesheets:
+    case WebInspector.resourceCategories.scripts:
+    case WebInspector.resourceCategories.xhr:
+        return resourceView.__proto__ === WebInspector.SourceView.prototype;
+    case WebInspector.resourceCategories.images:
+        return resourceView.__proto__ === WebInspector.ImageView.prototype;
+    case WebInspector.resourceCategories.fonts:
+        return resourceView.__proto__ === WebInspector.FontView.prototype;
+    default:
+        return resourceView.__proto__ === WebInspector.ResourceView.prototype;
+    }
+}
+
+WebInspector.ResourceView.resourceViewForResource = function(resource)
+{
+    if (!resource)
+        return null;
+    if (!resource._resourcesView)
+        resource._resourcesView = WebInspector.ResourceView.createResourceView(resource);
+    return resource._resourcesView;
+}
+
+WebInspector.ResourceView.recreateResourceView = function(resource)
+{
+    var newView = WebInspector.ResourceView.createResourceView(resource);
+
+    var oldView = resource._resourcesView;
+    var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
+    var scrollTop = oldView.scrollTop;
+
+    resource._resourcesView.detach();
+    delete resource._resourcesView;
+
+    resource._resourcesView = newView;
+
+    if (oldViewParentNode)
+        newView.show(oldViewParentNode);
+    if (scrollTop)
+        newView.scrollTop = scrollTop;
+
+    WebInspector.panels.scripts.viewRecreated(oldView, newView);
+    return newView;
+}
+
+WebInspector.ResourceView.existingResourceViewForResource = function(resource)
+{
+    if (!resource)
+        return null;
+    return resource._resourcesView;
+}

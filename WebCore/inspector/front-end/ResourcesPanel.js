@@ -329,12 +329,12 @@ WebInspector.ResourcesPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        return !!WebInspector.resourceManager.resourceForURL(url);
+        return !!WebInspector.resourceView.resourceForURL(url);
     },
 
     showSourceLine: function(url, line)
     {
-        var resource = WebInspector.resourceManager.resourceForURL(url);
+        var resource = WebInspector.resourceTreeModel.resourceForURL(url);
         if (resource.type === WebInspector.Resource.Type.XHR) {
             // Show XHRs in the network panel only.
             if (WebInspector.panels.network && WebInspector.panels.network.canShowSourceLine(url, line)) {
@@ -343,7 +343,7 @@ WebInspector.ResourcesPanel.prototype = {
             }
             return;
         }
-        this.showResource(WebInspector.resourceManager.resourceForURL(url), line);
+        this.showResource(WebInspector.resourceTreeModel.resourceForURL(url), line);
     },
 
     showResource: function(resource, line)
@@ -355,7 +355,7 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         if (line) {
-            var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+            var view = WebInspector.ResourceView.resourceViewForResource(resource);
             if (view.revealLine)
                 view.revealLine(line);
             if (view.highlightLine)
@@ -366,7 +366,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     _showResourceView: function(resource)
     {
-        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+        var view = WebInspector.ResourceView.resourceViewForResource(resource);
 
         // Consider rendering diff markup here.
         if (resource.baseRevision && view instanceof WebInspector.SourceView) {
@@ -687,7 +687,7 @@ WebInspector.ResourcesPanel.prototype = {
         function callback(resourceTreeElement)
         {
             var resource = resourceTreeElement._resource;
-            var resourceView = WebInspector.ResourceManager.resourceViewForResource(resource);
+            var resourceView = WebInspector.ResourceView.resourceViewForResource(resource);
             if (resourceView.performSearch && resourceView !== visibleView)
                 views.push(resourceView);
         }
@@ -1069,7 +1069,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
     {
         // FIXME: move to the Script/SourceView.
         if (!this._resource.warnings && !this._resource.errors) {
-            var view = WebInspector.ResourceManager.existingResourceViewForResource(this._resource);
+            var view = WebInspector.ResourceView.existingResourceViewForResource(this._resource);
             if (view && view.clearMessages)
                 view.clearMessages();
         }
@@ -1092,9 +1092,9 @@ WebInspector.FrameResourceTreeElement.prototype = {
     _contentChanged: function(event)
     {
         this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, event.data.revision), 0);
-        var oldView = WebInspector.ResourceManager.existingResourceViewForResource(this._resource);
+        var oldView = WebInspector.ResourceView.existingResourceViewForResource(this._resource);
         if (oldView) {
-            var newView = WebInspector.ResourceManager.recreateResourceView(this._resource);
+            var newView = WebInspector.ResourceView.recreateResourceView(this._resource);
             if (oldView === this._storagePanel.visibleView)
                 this._storagePanel.visibleView = newView;
         }

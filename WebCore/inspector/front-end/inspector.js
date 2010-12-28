@@ -445,12 +445,12 @@ var WebInspector = {
 
     forAllResources: function(callback)
     {
-        WebInspector.resourceManager.forAllResources(callback);
+        WebInspector.resourceTreeModel.forAllResources(callback);
     },
 
     resourceForURL: function(url)
     {
-        return this.resourceManager.resourceForURL(url);
+        return this.resourceTreeModel.resourceForURL(url);
     }
 }
 
@@ -517,7 +517,8 @@ WebInspector.doLoadedDone = function()
     // this.changes = new WebInspector.ChangesView(this.drawer);
     // TODO: Remove class="hidden" from inspector.html on button#changes-status-bar-item
     this.drawer.visibleView = this.console;
-    this.resourceManager = new WebInspector.ResourceManager();
+    this.resourceTreeModel = new WebInspector.ResourceTreeModel();
+    this.networkManager = new WebInspector.NetworkManager(this.resourceTreeModel);
     this.domAgent = new WebInspector.DOMAgent();
 
     InspectorBackend.registerDomainDispatcher("Inspector", this);

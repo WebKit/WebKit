@@ -65549,6 +65549,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\NetworkManager.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\networkPanel.css"
 					>
 				</File>
@@ -65625,15 +65629,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\ResourceManager.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\ResourcesPanel.js"
 					>
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourceTimingView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ResourceTreeModel.js"
 					>
 				</File>
 				<File

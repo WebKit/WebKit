@@ -70,3 +70,26 @@ WebInspector.DOMStorage.prototype = {
     }
 }
 
+WebInspector.DOMStorage.addDOMStorage = function(payload)
+{
+    if (!WebInspector.panels.resources)
+        return;
+    var domStorage = new WebInspector.DOMStorage(
+        payload.id,
+        payload.host,
+        payload.isLocalStorage);
+    WebInspector.panels.resources.addDOMStorage(domStorage);
+}
+
+WebInspector.DOMStorage.selectDOMStorage = function(o)
+{
+    WebInspector.showPanel("resources");
+    WebInspector.panels.resources.selectDOMStorage(o);
+}
+
+WebInspector.DOMStorage.updateDOMStorage = function(storageId)
+{
+    WebInspector.panels.resources.updateDOMStorage(storageId);
+}
+
+InspectorBackend.registerDomainDispatcher("DOMStorage", WebInspector.DOMStorage);

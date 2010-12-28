@@ -471,6 +471,18 @@ WebInspector.ApplicationCache.getApplicationCachesAsync = function(callback)
     InspectorBackend.getApplicationCaches(mycallback);
 }
 
+WebInspector.ApplicationCache.updateApplicationCacheStatus = function(status)
+{
+    WebInspector.panels.resources.updateApplicationCacheStatus(status);
+}
+
+WebInspector.ApplicationCache.updateNetworkState = function(isNowOnline)
+{
+    WebInspector.panels.resources.updateNetworkState(isNowOnline);
+}
+
+InspectorBackend.registerDomainDispatcher("ApplicationCache", WebInspector.ApplicationCache);
+
 WebInspector.Cookies = {}
 
 WebInspector.Cookies.getCookiesAsync = function(callback)

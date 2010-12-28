@@ -256,7 +256,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
                 script.resource = resource;
-                var view = WebInspector.ResourceManager.existingResourceViewForResource(resource);
+                var view = WebInspector.ResourceView.existingResourceViewForResource(resource);
                 if (view && view.sourceFrame)
                     view.sourceFrame.addScript(script);
             } else {
@@ -434,10 +434,6 @@ WebInspector.ScriptsPanel.prototype = {
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
 
-        var scripts = WebInspector.debuggerModel.queryScripts(function(s) { return !!s.resource; });
-        for (var i = 0; i < scripts.length; ++i)
-            delete scripts[i].resource._resourcesView;
-
         this.sidebarPanes.watchExpressions.refreshExpressions();
         if (!preserveItems)
             this.sidebarPanes.workers.reset();
@@ -545,7 +541,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _sourceFrameForResource: function(resource)
     {
-        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+        var view = WebInspector.ResourceView.resourceViewForResource(resource);
         if (!view)
             return null;
 
@@ -566,7 +562,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         var view;
         if (scriptOrResource instanceof WebInspector.Resource)
-            view = WebInspector.ResourceManager.resourceViewForResource(scriptOrResource);
+            view = WebInspector.ResourceView.resourceViewForResource(scriptOrResource);
         else if (scriptOrResource instanceof WebInspector.Script)
             view = this.scriptViewForScript(scriptOrResource);
 
