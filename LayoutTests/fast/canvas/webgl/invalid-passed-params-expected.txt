@@ -23,6 +23,28 @@ PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['STATIC_READ']) gene
 PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['STATIC_COPY']) generated expected GL error: INVALID_ENUM.
 PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_READ']) generated expected GL error: INVALID_ENUM.
 PASS context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_COPY']) generated expected GL error: INVALID_ENUM.
+Test {copy}Tex{Sub}Image2D with negative offset/width/height
+PASS context.bindTexture(context.TEXTURE_2D, tex) generated expected GL error: NO_ERROR.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, -16, -16, 0, context.RGBA, context.UNSIGNED_BYTE, null) generated expected GL error: INVALID_VALUE.
+PASS context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 16, 16, 0, context.RGBA, context.UNSIGNED_BYTE, null) generated expected GL error: NO_ERROR.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, -1, -1, 2, 2, context.RGBA, context.UNSIGNED_BYTE, pixels) generated expected GL error: INVALID_VALUE.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 0, 0, -1, -1, context.RGBA, context.UNSIGNED_BYTE, pixels) generated expected GL error: INVALID_VALUE.
+PASS context.texSubImage2D(context.TEXTURE_2D, 0, 0, 0, 2, 2, context.RGBA, context.UNSIGNED_BYTE, pixels) generated expected GL error: NO_ERROR.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, -1, -1, 0) generated expected GL error: INVALID_VALUE.
+PASS context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 16, 16, 0) generated expected GL error: NO_ERROR.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, -1, -1, 0, 0, 2, 2) generated expected GL error: INVALID_VALUE.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, -1, -1) generated expected GL error: INVALID_VALUE.
+PASS context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 2, 2) generated expected GL error: NO_ERROR.
+Test renderbufferStorage() with negative width/height
+PASS context.bindRenderbuffer(context.RENDERBUFFER, renderbuffer) generated expected GL error: NO_ERROR.
+PASS context.renderbufferStorage(context.RENDERBUFFER, context.RGBA4, -2, -2) generated expected GL error: INVALID_VALUE.
+PASS context.renderbufferStorage(context.RENDERBUFFER, context.RGBA4, 16, 16) generated expected GL error: NO_ERROR.
+Test scissor() with negative width/height
+PASS context.scissor(0, 0, -2, -2) generated expected GL error: INVALID_VALUE.
+PASS context.scissor(0, 0, 16, 16) generated expected GL error: NO_ERROR.
+Test viewport() with negative width/height
+PASS context.viewport(0, 0, -2, -2) generated expected GL error: INVALID_VALUE.
+PASS context.viewport(0, 0, 16, 16) generated expected GL error: NO_ERROR.
 
 PASS successfullyParsed is true
 

@@ -97,8 +97,8 @@ public:
     // void compressedTexImage2D(unsigned long target, long level, unsigned long internalformat, unsigned long width, unsigned long height, long border, unsigned long imageSize, const void* data);
     // void compressedTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, unsigned long width, unsigned long height, unsigned long format, unsigned long imageSize, const void* data);
 
-    void copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border);
-    void copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height);
+    void copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, long width, long height, long border);
+    void copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, long width, long height);
 
     PassRefPtr<WebGLBuffer> createBuffer();
     PassRefPtr<WebGLFramebuffer> createFramebuffer();
@@ -195,9 +195,9 @@ public:
     void polygonOffset(double factor, double units);
     void readPixels(long x, long y, long width, long height, unsigned long format, unsigned long type, ArrayBufferView* pixels, ExceptionCode&);
     void releaseShaderCompiler();
-    void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
+    void renderbufferStorage(unsigned long target, unsigned long internalformat, long width, long height);
     void sampleCoverage(double value, bool invert);
-    void scissor(long x, long y, unsigned long width, unsigned long height);
+    void scissor(long x, long y, long width, long height);
     void shaderSource(WebGLShader*, const String&, ExceptionCode&);
     void stencilFunc(unsigned long func, long ref, unsigned long mask);
     void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
@@ -207,7 +207,7 @@ public:
     void stencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass);
 
     void texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                    unsigned width, unsigned height, unsigned border,
+                    int width, int height, unsigned border,
                     unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode&);
     void texImage2D(unsigned target, unsigned level, unsigned internalformat,
                     unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
@@ -221,16 +221,16 @@ public:
     void texParameterf(unsigned target, unsigned pname, float param);
     void texParameteri(unsigned target, unsigned pname, int param);
 
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                       unsigned width, unsigned height,
+    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
+                       int width, int height,
                        unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                        unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                        unsigned format, unsigned type, HTMLImageElement* image, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                        unsigned format, unsigned type, HTMLCanvasElement* canvas, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                        unsigned format, unsigned type, HTMLVideoElement* video, ExceptionCode&);
 
     void uniform1f(const WebGLUniformLocation* location, float x, ExceptionCode&);
@@ -282,7 +282,7 @@ public:
     void vertexAttribPointer(unsigned long index, long size, unsigned long type, bool normalized,
                              long stride, long offset, ExceptionCode&);
 
-    void viewport(long x, long y, unsigned long width, unsigned long height);
+    void viewport(long x, long y, long width, long height);
 
     void loseContext();
     void restoreContext();
@@ -480,15 +480,15 @@ public:
     WebGLGetInfo getWebGLIntArrayParameter(unsigned long pname);
 
     void texImage2DBase(unsigned target, unsigned level, unsigned internalformat,
-                        unsigned width, unsigned height, unsigned border,
+                        int width, int height, unsigned border,
                         unsigned format, unsigned type, void* pixels, ExceptionCode&);
     void texImage2DImpl(unsigned target, unsigned level, unsigned internalformat,
                         unsigned format, unsigned type, Image* image,
                         bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texSubImage2DBase(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                           unsigned width, unsigned height,
+    void texSubImage2DBase(unsigned target, unsigned level, int xoffset, int yoffset,
+                           int width, int height,
                            unsigned format, unsigned type, void* pixels, ExceptionCode&);
-    void texSubImage2DImpl(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+    void texSubImage2DImpl(unsigned target, unsigned level, int xoffset, int yoffset,
                            unsigned format, unsigned type,
                            Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
@@ -504,6 +504,10 @@ public:
 
     // Helper function to get the bound framebuffer's color buffer format.
     unsigned long getBoundFramebufferColorFormat();
+
+    // Helper function to check if size is non-negative.
+    // Generate GL error and return false for negative inputs; otherwise, return true.
+    bool validateSize(long x, long y);
 
     // Helper function to check target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is

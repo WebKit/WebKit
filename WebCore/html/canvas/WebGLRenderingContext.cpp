@@ -629,7 +629,7 @@ void WebGLRenderingContext::compileShader(WebGLShader* shader, ExceptionCode& ec
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border)
+void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, long width, long height, long border)
 {
     if (isContextLost())
         return;
@@ -656,12 +656,14 @@ void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, uns
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height)
+void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, long width, long height)
 {
     if (isContextLost())
         return;
     WebGLTexture* tex = validateTextureBinding(target, true);
     if (!tex)
+        return;
+    if (!validateSize(xoffset, yoffset) || !validateSize(width, height))
         return;
     if (!isTexInternalFormatColorBufferCombinationValid(tex->getInternalFormat(level), getBoundFramebufferColorFormat())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
@@ -2362,7 +2364,7 @@ void WebGLRenderingContext::releaseShaderCompiler()
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height)
+void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned long internalformat, long width, long height)
 {
     if (isContextLost())
         return;
@@ -2374,6 +2376,8 @@ void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned l
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
+    if (!validateSize(width, height))
+        return;
     switch (internalformat) {
     case GraphicsContext3D::DEPTH_COMPONENT16:
     case GraphicsContext3D::RGBA4:
@@ -2407,9 +2411,11 @@ void WebGLRenderingContext::sampleCoverage(double value, bool invert)
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::scissor(long x, long y, unsigned long width, unsigned long height)
+void WebGLRenderingContext::scissor(long x, long y, long width, long height)
 {
     if (isContextLost())
+        return;
+    if (!validateSize(width, height))
         return;
     m_context->scissor(x, y, width, height);
     cleanupAfterGraphicsCall(false);
@@ -2497,7 +2503,7 @@ void WebGLRenderingContext::stencilOpSeparate(unsigned long face, unsigned long 
 }
 
 void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsigned internalformat,
-                                           unsigned width, unsigned height, unsigned border,
+                                           int width, int height, unsigned border,
                                            unsigned format, unsigned type, void* pixels, ExceptionCode& ec)
 {
     // FIXME: For now we ignore any errors returned
@@ -2545,7 +2551,7 @@ void WebGLRenderingContext::texImage2DImpl(unsigned target, unsigned level, unsi
 }
 
 void WebGLRenderingContext::texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                                       unsigned width, unsigned height, unsigned border,
+                                       int width, int height, unsigned border,
                                        unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
     if (isContextLost() || !validateTexFuncData(width, height, format, type, pixels))
@@ -2694,8 +2700,8 @@ void WebGLRenderingContext::texParameteri(unsigned target, unsigned pname, int p
     texParameter(target, pname, 0, param, false);
 }
 
-void WebGLRenderingContext::texSubImage2DBase(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                                              unsigned width, unsigned height,
+void WebGLRenderingContext::texSubImage2DBase(unsigned target, unsigned level, int xoffset, int yoffset,
+                                              int width, int height,
                                               unsigned format, unsigned type, void* pixels, ExceptionCode& ec)
 {
     // FIXME: For now we ignore any errors returned
@@ -2706,11 +2712,13 @@ void WebGLRenderingContext::texSubImage2DBase(unsigned target, unsigned level, u
         return;
     if (!validateTextureBinding(target, true))
         return;
+    if (!validateSize(xoffset, yoffset) || !validateSize(width, height))
+        return;
     m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::texSubImage2DImpl(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+void WebGLRenderingContext::texSubImage2DImpl(unsigned target, unsigned level, int xoffset, int yoffset,
                                               unsigned format, unsigned type,
                                               Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
@@ -2726,8 +2734,8 @@ void WebGLRenderingContext::texSubImage2DImpl(unsigned target, unsigned level, u
                       format, type, data.data(), ec);
 }
 
-void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
-                                          unsigned width, unsigned height,
+void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
+                                          int width, int height,
                                           unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
     if (isContextLost() || !validateTexFuncData(width, height, format, type, pixels))
@@ -2752,7 +2760,7 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
-void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                                           unsigned format, unsigned type, ImageData* pixels, ExceptionCode& ec)
 {
     ec = 0;
@@ -2767,7 +2775,7 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
                       format, type, data.data(), ec);
 }
 
-void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                                           unsigned format, unsigned type, HTMLImageElement* image, ExceptionCode& ec)
 {
     ec = 0;
@@ -2782,7 +2790,7 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
                       m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
-void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                                           unsigned format, unsigned type, HTMLCanvasElement* canvas, ExceptionCode& ec)
 {
     ec = 0;
@@ -2797,7 +2805,7 @@ void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsig
                       m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
-void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset,
+void WebGLRenderingContext::texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
                                           unsigned format, unsigned type, HTMLVideoElement* video, ExceptionCode& ec)
 {
     ec = 0;
@@ -3284,7 +3292,7 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, 
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::viewport(long x, long y, unsigned long width, unsigned long height)
+void WebGLRenderingContext::viewport(long x, long y, long width, long height)
 {
     if (isContextLost())
         return;
@@ -3296,6 +3304,8 @@ void WebGLRenderingContext::viewport(long x, long y, unsigned long width, unsign
         width = 100;
     if (isnan(height))
         height = 100;
+    if (!validateSize(width, height))
+        return;
     m_context->viewport(x, y, width, height);
     cleanupAfterGraphicsCall(false);
 }
@@ -3606,6 +3616,15 @@ WebGLTexture* WebGLRenderingContext::validateTextureBinding(unsigned long target
     if (!tex)
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
     return tex;
+}
+
+bool WebGLRenderingContext::validateSize(long x, long y)
+{
+    if (x < 0 || y < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return false;
+    }
+    return true;
 }
 
 bool WebGLRenderingContext::validateTexFuncFormatAndType(unsigned long format, unsigned long type)

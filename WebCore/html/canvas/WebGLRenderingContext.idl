@@ -483,8 +483,8 @@ module html {
         //void         compressedTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in unsigned long width, in unsigned long height, in long border, in unsigned long imageSize, const void* data);
         //void         compressedTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in unsigned long width, in unsigned long height, in unsigned long format, in unsigned long imageSize, const void* data);
         
-        [StrictTypeChecking] void         copyTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long x, in long y, in unsigned long width, in unsigned long height, in long border);
-        [StrictTypeChecking] void         copyTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in long x, in long y, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         copyTexImage2D(in unsigned long target, in long level, in unsigned long internalformat, in long x, in long y, in long width, in long height, in long border);
+        [StrictTypeChecking] void         copyTexSubImage2D(in unsigned long target, in long level, in long xoffset, in long yoffset, in long x, in long y, in long width, in long height);
 
         [StrictTypeChecking] WebGLBuffer createBuffer();
         [StrictTypeChecking] WebGLFramebuffer createFramebuffer();
@@ -590,9 +590,9 @@ module html {
         [StrictTypeChecking] void         readPixels(in long x, in long y, in long width, in long height, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises(DOMException);
         
         [StrictTypeChecking] void         releaseShaderCompiler();
-        [StrictTypeChecking] void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in long width, in long height);
         [StrictTypeChecking] void         sampleCoverage(in double value, in boolean invert);
-        [StrictTypeChecking] void         scissor(in long x, in long y, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         scissor(in long x, in long y, in long width, in long height);
         [StrictTypeChecking] void         shaderSource(in WebGLShader shader, in DOMString string) raises(DOMException);
         [StrictTypeChecking] void         stencilFunc(in unsigned long func, in long ref, in unsigned long mask);
         [StrictTypeChecking] void         stencilFuncSeparate(in unsigned long face, in unsigned long func, in long ref, in unsigned long mask);
@@ -661,9 +661,9 @@ module html {
         [StrictTypeChecking] void         vertexAttrib4f(in unsigned long indx, in float x, in float y, in float z, in float w);
         [StrictTypeChecking, Custom] void         vertexAttrib4fv(in unsigned long indx, in Float32Array values);
         [StrictTypeChecking] void         vertexAttribPointer(in unsigned long indx, in long size, in unsigned long type, in boolean normalized, 
-                                                              in long stride, in unsigned long offset) raises(DOMException);
+                                                              in long stride, in long offset) raises(DOMException);
 
-        [StrictTypeChecking] void         viewport(in long x, in long y, in unsigned long width, in unsigned long height);
+        [StrictTypeChecking] void         viewport(in long x, in long y, in long width, in long height);
     };
 }
 

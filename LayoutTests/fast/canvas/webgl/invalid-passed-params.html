@@ -39,6 +39,35 @@ shouldGenerateGLError(context, context.INVALID_ENUM, "context.bufferData(context
 shouldGenerateGLError(context, context.INVALID_ENUM, "context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_READ'])");
 shouldGenerateGLError(context, context.INVALID_ENUM, "context.bufferData(context.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_COPY'])");
 
+debug("Test {copy}Tex{Sub}Image2D with negative offset/width/height");
+var tex = context.createTexture();
+var pixels = new Uint8Array(2 * 2 * 4);
+shouldGenerateGLError(context, context.NO_ERROR, "context.bindTexture(context.TEXTURE_2D, tex)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, -16, -16, 0, context.RGBA, context.UNSIGNED_BYTE, null)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.texImage2D(context.TEXTURE_2D, 0, context.RGBA, 16, 16, 0, context.RGBA, context.UNSIGNED_BYTE, null)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.texSubImage2D(context.TEXTURE_2D, 0, -1, -1, 2, 2, context.RGBA, context.UNSIGNED_BYTE, pixels)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.texSubImage2D(context.TEXTURE_2D, 0, 0, 0, -1, -1, context.RGBA, context.UNSIGNED_BYTE, pixels)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.texSubImage2D(context.TEXTURE_2D, 0, 0, 0, 2, 2, context.RGBA, context.UNSIGNED_BYTE, pixels)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, -1, -1, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.copyTexImage2D(context.TEXTURE_2D, 0, context.RGBA, 0, 0, 16, 16, 0)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.copyTexSubImage2D(context.TEXTURE_2D, 0, -1, -1, 0, 0, 2, 2)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, -1, -1)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.copyTexSubImage2D(context.TEXTURE_2D, 0, 0, 0, 0, 0, 2, 2)");
+
+debug("Test renderbufferStorage() with negative width/height");
+var renderbuffer = context.createRenderbuffer();
+shouldGenerateGLError(context, context.NO_ERROR, "context.bindRenderbuffer(context.RENDERBUFFER, renderbuffer)");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.renderbufferStorage(context.RENDERBUFFER, context.RGBA4, -2, -2)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.renderbufferStorage(context.RENDERBUFFER, context.RGBA4, 16, 16)");
+
+debug("Test scissor() with negative width/height");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.scissor(0, 0, -2, -2)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.scissor(0, 0, 16, 16)");
+
+debug("Test viewport() with negative width/height");
+shouldGenerateGLError(context, context.INVALID_VALUE, "context.viewport(0, 0, -2, -2)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.viewport(0, 0, 16, 16)");
+
 debug("")
 successfullyParsed = true;
 </script>
