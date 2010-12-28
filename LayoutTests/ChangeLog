@@ -1,3 +1,13 @@
+2010-12-27  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        Try to fix my previous commit for Mac by stepping up the precision of pi even more
+        using Math.PI.
+
+        * fast/canvas/canvas-save-restore-with-path.js: Use Math.PI instead of a
+        hard-coded estimation.
+
 2010-12-27  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, Chromium test expectations update. Generalize
