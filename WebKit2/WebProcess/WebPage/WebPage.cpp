@@ -596,6 +596,9 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
 
     frameView->updateLayoutAndStyleIfNeededRecursive();
 
+    PaintBehavior oldBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
+
     RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->backingStore()->createGraphicsContext();
 
@@ -603,6 +606,8 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
     graphicsContext->translate(-rect.x(), -rect.y());
     frameView->paint(graphicsContext.get(), rect);
     graphicsContext->restore();
+
+    frameView->setPaintBehavior(oldBehavior);
 
     return snapshot.release();
 }
@@ -615,6 +620,9 @@ PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect,
 
     frameView->updateLayoutAndStyleIfNeededRecursive();
 
+    PaintBehavior oldBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
+
     RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->backingStore()->createGraphicsContext();
 
@@ -622,6 +630,8 @@ PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect,
     graphicsContext->translate(-rect.x(), -rect.y());
     frameView->paintContents(graphicsContext.get(), rect);
     graphicsContext->restore();
+
+    frameView->setPaintBehavior(oldBehavior);
 
     return snapshot.release();
 }

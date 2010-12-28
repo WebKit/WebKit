@@ -1,3 +1,18 @@
+2010-12-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 snapshots should contain accelerated content
+        <rdar://problem/8807393>
+        https://bugs.webkit.org/show_bug.cgi?id=51660
+
+        When creating a snapshot, flatten the layer tree for painting so that
+        accelerated content is included in the snapshot.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotInViewCoordinates):
+        (WebKit::WebPage::snapshotInDocumentCoordinates):
+
 2010-12-27  Daniel Bates  <dbates@rim.com>
 
         Attempt to fix the WebKit2 Windows build after changeset 74698
