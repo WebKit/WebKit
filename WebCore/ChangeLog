@@ -1,3 +1,31 @@
+2010-12-27  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        Clean up: Rename HTMLFrameElementBase::getMarginWidth() and HTMLFrameElementBase::getMarginHeight()
+        https://bugs.webkit.org/show_bug.cgi?id=51634
+
+        Rename HTMLFrameElementBase::getMarginWidth() and HTMLFrameElementBase::getMarginHeight()
+        to HTMLFrameElementBase::marginHeight() and HTMLFrameElementBase::marginHeight(), respectively.
+        This will make the names of these getters consistent with the naming convention we use for
+        getters.
+
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::insertedIntoDocument):
+        * html/HTMLFrameElementBase.h:
+        (WebCore::HTMLFrameElementBase::marginWidth): Renamed; Formerly getMarginWidth().
+        (WebCore::HTMLFrameElementBase::marginHeight): Renamed; Formerly getMarginHeight().
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadSubframe):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::init):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::viewCleared): Also renamed variables marginw and marginh
+        to marginWidth and marginHeight, respectively. This makes the names of these variables
+        consistent with the names of similar variables in SubframeLoader::loadSubframe() and FrameView::init().
+        * rendering/RenderFrame.cpp:
+        (WebCore::RenderFrame::viewCleared): Ditto.
+
 2010-12-27  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Daniel Bates.

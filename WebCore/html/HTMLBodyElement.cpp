@@ -184,10 +184,10 @@ void HTMLBodyElement::insertedIntoDocument()
     Element* ownerElement = document()->ownerElement();
     if (ownerElement && (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag))) {
         HTMLFrameElementBase* ownerFrameElement = static_cast<HTMLFrameElementBase*>(ownerElement);
-        int marginWidth = ownerFrameElement->getMarginWidth();
+        int marginWidth = ownerFrameElement->marginWidth();
         if (marginWidth != -1)
             setAttribute(marginwidthAttr, String::number(marginWidth));
-        int marginHeight = ownerFrameElement->getMarginHeight();
+        int marginHeight = ownerFrameElement->marginHeight();
         if (marginHeight != -1)
             setAttribute(marginheightAttr, String::number(marginHeight));
     }

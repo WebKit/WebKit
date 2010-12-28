@@ -253,8 +253,8 @@ void FrameView::init()
         HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
         if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
             setCanHaveScrollbars(false);
-        int marginWidth = frameElt->getMarginWidth();
-        int marginHeight = frameElt->getMarginHeight();
+        int marginWidth = frameElt->marginWidth();
+        int marginHeight = frameElt->marginHeight();
         if (marginWidth != -1)
             setMarginWidth(marginWidth);
         if (marginHeight != -1)

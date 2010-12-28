@@ -253,8 +253,8 @@ Frame* SubframeLoader::loadSubframe(HTMLFrameOwnerElement* ownerElement, const K
     if (ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(iframeTag)) {
         HTMLFrameElementBase* o = static_cast<HTMLFrameElementBase*>(ownerElement);
         allowsScrolling = o->scrollingMode() != ScrollbarAlwaysOff;
-        marginWidth = o->getMarginWidth();
-        marginHeight = o->getMarginHeight();
+        marginWidth = o->marginWidth();
+        marginHeight = o->marginHeight();
     }
 
     if (!ownerElement->document()->securityOrigin()->canDisplay(url)) {

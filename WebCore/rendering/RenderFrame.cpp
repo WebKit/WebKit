@@ -50,13 +50,13 @@ void RenderFrame::viewCleared()
 
     FrameView* view = static_cast<FrameView*>(widget());
 
-    int marginw = element->getMarginWidth();
-    int marginh = element->getMarginHeight();
+    int marginWidth = element->marginWidth();
+    int marginHeight = element->marginHeight();
 
-    if (marginw != -1)
-        view->setMarginWidth(marginw);
-    if (marginh != -1)
-        view->setMarginHeight(marginh);
+    if (marginWidth != -1)
+        view->setMarginWidth(marginWidth);
+    if (marginHeight != -1)
+        view->setMarginHeight(marginHeight);
 }
 
 } // namespace WebCore

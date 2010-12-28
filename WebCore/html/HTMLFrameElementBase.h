@@ -36,8 +36,8 @@ public:
 
     virtual ScrollbarMode scrollingMode() const { return m_scrolling; }
     
-    int getMarginWidth() const { return m_marginWidth; }
-    int getMarginHeight() const { return m_marginHeight; }
+    int marginWidth() const { return m_marginWidth; }
+    int marginHeight() const { return m_marginHeight; }
 
     int width() const;
     int height() const;
