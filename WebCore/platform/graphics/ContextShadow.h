@@ -41,7 +41,9 @@ typedef struct _cairo cairo_t;
 typedef struct _cairo_surface cairo_surface_t;
 #elif PLATFORM(QT)
 #include <QImage>
+QT_BEGIN_NAMESPACE
 class QPainter;
+QT_END_NAMESPACE
 #endif
 
 namespace WebCore {

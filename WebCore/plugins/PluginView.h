@@ -60,7 +60,9 @@ typedef PlatformWidget PlatformPluginWidget;
 #if PLATFORM(QT)
 #include <QGraphicsItem>
 #include <QImage>
+QT_BEGIN_NAMESPACE
 class QPainter;
+QT_END_NAMESPACE
 #endif
 
 #if USE(JSC)

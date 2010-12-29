@@ -1,3 +1,14 @@
+2010-12-29  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compilation with Qt in namespace
+        https://bugs.webkit.org/show_bug.cgi?id=51701
+
+        * Api/qwebkitplatformplugin.h:
+        * WebCoreSupport/InspectorServerQt.h:
+        * tests/hybridPixmap/widget.h:
+
 2010-12-23  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Alexey Proskuryakov.

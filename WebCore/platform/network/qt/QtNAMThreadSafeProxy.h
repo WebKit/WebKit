@@ -25,9 +25,11 @@
 #include <QNetworkReply>
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
 class QNetworkAccessManager;
 class QNetworkRequest;
 class QUrl;
+QT_END_NAMESPACE
 
 namespace WebCore {
 

@@ -56,8 +56,10 @@ typedef void* CALayer;
 typedef void* WebGLLayer;
 #endif
 #elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QPainter;
 class QRect;
+QT_END_NAMESPACE
 typedef void* PlatformGraphicsContext3D;
 const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 typedef int Platform3DObject;

@@ -1,3 +1,16 @@
+2010-12-29  Kent Hansen  <kent.hansen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix compilation with Qt in namespace
+        https://bugs.webkit.org/show_bug.cgi?id=51701
+
+        * platform/graphics/ContextShadow.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/network/NetworkingContext.h:
+        * platform/network/qt/QtNAMThreadSafeProxy.h:
+        * plugins/PluginView.h:
+
 2010-12-28  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

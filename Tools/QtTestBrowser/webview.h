@@ -41,7 +41,9 @@
 #include <QGraphicsWidget>
 #include <QTime>
 
+QT_BEGIN_NAMESPACE
 class QStateMachine;
+QT_END_NAMESPACE
 
 class WebViewTraditional : public QWebView {
     Q_OBJECT

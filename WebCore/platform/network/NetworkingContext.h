@@ -27,8 +27,10 @@
 #endif
 
 #if PLATFORM(QT)
+QT_BEGIN_NAMESPACE
 class QObject;
 class QNetworkAccessManager;
+QT_END_NAMESPACE
 #endif
 
 namespace WebCore {
