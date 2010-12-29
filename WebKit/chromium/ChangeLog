@@ -1,3 +1,17 @@
+2010-12-29  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix editing/input/ime-composition-clearpreedit.html test in chromium
+        by removing the line "editor->confirmComposition(text);" from
+        WebFrameImpl::setMarkedText() method, because that line will insert the
+        text into the focused node, which is apparently wrong.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51693
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::setMarkedText):
+
 2010-12-23  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
