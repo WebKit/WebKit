@@ -1,3 +1,15 @@
+2010-12-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ojan Vafai.
+
+        prepare-ChangeLog should support the -g option for specifying the git-commit
+        https://bugs.webkit.org/show_bug.cgi?id=51708
+
+        Add a -g shortcut for the --git-commit prepare-ChangeLog option. This matches
+        webkit-patch, though the exact meaning of the two options remain different.
+
+        * Scripts/prepare-ChangeLog: Add -g.
+
 2010-12-29  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Simon Hausmann.
