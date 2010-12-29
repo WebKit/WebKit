@@ -1,6 +1,16 @@
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
+
+        fast/canvas/webgl/tex-image-with-format-and-type.html is flaky in
+        the GPU suite too.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium-gpu/test_expectations.txt:
+
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
         
         Remove failure expectations for tests that no longer fail:
         - fast/images/svg-as-background.html has not timed out for as long as
