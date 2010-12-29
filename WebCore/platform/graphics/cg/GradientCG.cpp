@@ -28,7 +28,7 @@
 #include "Gradient.h"
 
 #include "CSSParser.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/RetainPtr.h>
 
@@ -65,7 +65,7 @@ CGShadingRef Gradient::platformGradient()
     const CGFunctionCallbacks gradientCallbacks = { 0, gradientCallback, 0 };
     RetainPtr<CGFunctionRef> colorFunction(AdoptCF, CGFunctionCreate(this, 1, intervalRanges, 4, colorComponentRanges, &gradientCallbacks));
 
-    static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef colorSpace = deviceRGBColorSpaceRef();
 
     if (m_radial)
         m_gradient = CGShadingCreateRadial(colorSpace, m_p0, m_r0, m_p1, m_r1, colorFunction.get(), true, true);
@@ -79,8 +79,6 @@ CGGradientRef Gradient::platformGradient()
 {
     if (m_gradient)
         return m_gradient;
-
-    static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
 
     sortStopsIfNecessary();
     
@@ -100,7 +98,7 @@ CGGradientRef Gradient::platformGradient()
         locations.uncheckedAppend(m_stops[i].stop);
     }
     
-    m_gradient = CGGradientCreateWithColorComponents(colorSpace, colorComponents.data(), locations.data(), m_stops.size());
+    m_gradient = CGGradientCreateWithColorComponents(deviceRGBColorSpaceRef(), colorComponents.data(), locations.data(), m_stops.size());
 
     return m_gradient;
 }

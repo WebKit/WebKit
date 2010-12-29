@@ -30,7 +30,7 @@
 
 #include "BitmapInfo.h"
 #include "FrameView.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include "Settings.h"
 
 #include <CoreGraphics/CoreGraphics.h>
@@ -63,10 +63,8 @@ static HBITMAP imageFromRect(const Frame* frame, IntRect& ir)
 
     HBITMAP hbmp = CreateDIBSection(0, &bmp, DIB_RGB_COLORS, static_cast<void**>(&bits), 0, 0);
     HBITMAP hbmpOld = static_cast<HBITMAP>(SelectObject(hdc, hbmp));
-    CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = CGBitmapContextCreate(static_cast<void*>(bits), w, h,
-        8, w * sizeof(RGBQUAD), deviceRGB, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    CGColorSpaceRelease(deviceRGB);
+        8, w * sizeof(RGBQUAD), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
     CGContextSaveGState(context);
 
     GraphicsContext gc(context);

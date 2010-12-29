@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 
 #include "AffineTransform.h"
 #include "Path.h"
@@ -40,7 +40,6 @@ namespace WebCore {
 static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
 {
     HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
-    CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
     BITMAP info;
 
     GetObject(bitmap, sizeof(info), &info);
@@ -48,8 +47,7 @@ static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
 
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | (hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst);
     CGContextRef context = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
-                                                 info.bmWidthBytes, deviceRGB, bitmapInfo);
-    CGColorSpaceRelease(deviceRGB);
+                                                 info.bmWidthBytes, deviceRGBColorSpaceRef(), bitmapInfo);
 
     // Flip coords
     CGContextTranslateCTM(context, 0, info.bmHeight);
@@ -101,11 +99,9 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     GetObject(bitmap, sizeof(info), &info);
     ASSERT(info.bmBitsPixel == 32);
 
-    CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
     CGContextRef bitmapContext = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
-                                                       info.bmWidthBytes, deviceRGB, kCGBitmapByteOrder32Little | 
+                                                       info.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little |
                                                        (supportAlphaBlend ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst));
-    CGColorSpaceRelease(deviceRGB);
 
     CGImageRef image = CGBitmapContextCreateImage(bitmapContext);
     CGContextDrawImage(m_data->m_cgContext.get(), dstRect, image);
@@ -119,12 +115,11 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
 
 void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& point)
 {
-    RetainPtr<CGColorSpaceRef> deviceRGB(AdoptCF, CGColorSpaceCreateDeviceRGB());
     // FIXME: Creating CFData is non-optimal, but needed to avoid crashing when printing.  Ideally we should 
     // make a custom CGDataProvider that controls the WindowsBitmap lifetime.  see <rdar://6394455>
     RetainPtr<CFDataRef> imageData(AdoptCF, CFDataCreate(kCFAllocatorDefault, image->buffer(), image->bufferLength()));
     RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(imageData.get()));
-    RetainPtr<CGImageRef> cgImage(AdoptCF, CGImageCreate(image->size().width(), image->size().height(), 8, 32, image->bytesPerRow(), deviceRGB.get(),
+    RetainPtr<CGImageRef> cgImage(AdoptCF, CGImageCreate(image->size().width(), image->size().height(), 8, 32, image->bytesPerRow(), deviceRGBColorSpaceRef(),
                                                          kCGBitmapByteOrder32Little | kCGImageAlphaFirst, dataProvider.get(), 0, true, kCGRenderingIntentDefault));
     CGContextDrawImage(m_data->m_cgContext.get(), CGRectMake(point.x(), point.y(), image->size().width(), image->size().height()), cgImage.get());   
 }

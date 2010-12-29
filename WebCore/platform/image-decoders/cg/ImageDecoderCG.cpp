@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ImageDecoder.h"
 
+#include "GraphicsContextCG.h"
+
 #include <CoreGraphics/CGColorSpace.h>
 #include <CoreGraphics/CGImage.h>
 
@@ -83,10 +85,9 @@ static CGColorSpaceRef createColorSpace(const ColorProfile& colorProfile)
 #if !defined(TARGETING_TIGER) && !defined(TARGETING_LEOPARD)
     return CGColorSpaceCreateWithICCProfile(data.get());
 #else
-    RetainPtr<CGColorSpaceRef> deviceColorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     RetainPtr<CGDataProviderRef> profileDataProvider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
     CGFloat ranges[] = {0.0, 255.0, 0.0, 255.0, 0.0, 255.0};
-    return CGColorSpaceCreateICCBased(3, ranges, profileDataProvider.get(), deviceColorSpace.get());
+    return CGColorSpaceCreateICCBased(3, ranges, profileDataProvider.get(), deviceRGBColorSpaceRef());
 #endif
 }
 

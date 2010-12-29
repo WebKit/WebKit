@@ -28,7 +28,7 @@
 
 #include "BitmapInfo.h"
 #include "CachedImage.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include "Image.h"
 #include "RetainPtr.h"
 
@@ -53,11 +53,9 @@ HBITMAP allocImage(HDC dc, IntSize size, CGContextRef *targetRef)
     if (!targetRef)
         return hbmp;
 
-    CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
     CGContextRef bitmapContext = CGBitmapContextCreate(bits, bmpInfo.bmiHeader.biWidth, bmpInfo.bmiHeader.biHeight, 8,
-                                                       bmpInfo.bmiHeader.biWidth * 4, deviceRGB, 
+                                                       bmpInfo.bmiHeader.biWidth * 4, deviceRGBColorSpaceRef(),
                                                        kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
-    CGColorSpaceRelease(deviceRGB);
     if (!bitmapContext) {
         DeleteObject(hbmp);
         return 0;
@@ -73,10 +71,8 @@ static CGContextRef createCgContextFromBitmap(HBITMAP bitmap)
     GetObject(bitmap, sizeof(info), &info);
     ASSERT(info.bmBitsPixel == 32);
 
-    CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
     CGContextRef bitmapContext = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
-                                                       info.bmWidthBytes, deviceRGB, kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
-    CGColorSpaceRelease(deviceRGB);
+                                                       info.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst);
     return bitmapContext;
 }
 

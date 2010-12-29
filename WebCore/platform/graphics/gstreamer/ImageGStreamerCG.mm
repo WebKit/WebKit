@@ -18,6 +18,8 @@
  */
 
 #include "config.h"
+
+#include "GraphicsContextCG.h"
 #include "ImageGStreamer.h"
 #if USE(GSTREAMER)
 
@@ -43,8 +45,7 @@ ImageGStreamer::ImageGStreamer(GstBuffer*& buffer, IntSize size)
 
     RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(0, static_cast<UInt8*>(GST_BUFFER_DATA(buffer)), GST_BUFFER_SIZE(buffer), kCFAllocatorNull));
     RetainPtr<CGDataProviderRef> provider(AdoptCF, CGDataProviderCreateWithCFData(data.get()));
-    static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGImageRef frameImage = CGImageCreate(size.width(), size.height(), 8, 32, size.width()*4, colorSpace,
+    CGImageRef frameImage = CGImageCreate(size.width(), size.height(), 8, 32, size.width()*4, deviceRGBColorSpaceRef(),
         kCGBitmapByteOrder32Little | kCGImageAlphaFirst, provider.get(), 0, false, kCGRenderingIntentDefault);
     m_image = BitmapImage::create(frameImage);
 }

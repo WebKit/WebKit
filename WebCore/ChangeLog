@@ -1,3 +1,39 @@
+2010-12-28  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51522
+        Use deviceRGBColorSpaceRef() instead of calling CGColorSpaceCreateDeviceRGB()
+
+        * page/win/FrameCGWin.cpp:
+        (WebCore::imageFromRect):
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::platformGradient):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/gstreamer/ImageGStreamerCG.mm:
+        (ImageGStreamer::ImageGStreamer):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::CGContextWithHDC):
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        (WebCore::GraphicsContext::drawWindowsBitmap):
+        * platform/graphics/win/ImageCGWin.cpp:
+        (WebCore::BitmapImage::create):
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        * platform/image-decoders/cg/ImageDecoderCG.cpp:
+        (WebCore::createColorSpace):
+        * platform/win/DragImageCGWin.cpp:
+        (WebCore::allocImage):
+        (WebCore::createCgContextFromBitmap):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+
 2010-12-28  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Sam Weinig.
