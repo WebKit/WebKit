@@ -35,9 +35,16 @@
 
 namespace JSC {
 
+static inline bool isJSONWhiteSpace(const UChar& c)
+{
+    // The JSON RFC 4627 defines a list of allowed characters to be considered
+    // insignificant white space: http://www.ietf.org/rfc/rfc4627.txt (2. JSON Grammar).
+    return c == ' ' || c == 0x9 || c == 0xA || c == 0xD;
+}
+
 LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
 {
-    while (m_ptr < m_end && isASCIISpace(*m_ptr))
+    while (m_ptr < m_end && isJSONWhiteSpace(*m_ptr))
         ++m_ptr;
 
     ASSERT(m_ptr <= m_end);

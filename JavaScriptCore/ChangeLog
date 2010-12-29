@@ -1,3 +1,20 @@
+2010-12-29  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Eric Seidel.
+
+        <VT> and <FF> are not valid JSON whitespace characters
+        https://bugs.webkit.org/show_bug.cgi?id=51671
+
+        Vertical Tab and Form Feed are not allowed white spaces by the JSON
+        RFC 4627: http://www.ietf.org/rfc/rfc4627.txt (2. JSON Grammar).
+
+        Tests: ietestcenter/Javascript/15.12.1.1-0-2.html
+               ietestcenter/Javascript/15.12.1.1-0-3.html
+
+        * runtime/LiteralParser.cpp:
+        (JSC::isJSONWhiteSpace):
+        (JSC::LiteralParser::Lexer::lex):
+
 2010-12-28  Helder Correia  <helder@sencha.com>
 
         Reviewed by Eric Seidel.
