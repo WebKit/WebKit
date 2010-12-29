@@ -70,6 +70,7 @@ namespace WebKit {
 
 ChromeClient::ChromeClient(WebKitWebView* webView)
     : m_webView(webView)
+    , m_closeSoonTimer(0)
 {
     ASSERT(m_webView);
 }
@@ -249,19 +250,37 @@ void ChromeClient::setResizable(bool)
     // Ignored for now
 }
 
+static gboolean emitCloseWebViewSignalLater(WebKitWebView* view)
+{
+    gboolean isHandled;
+    g_signal_emit_by_name(view, "close-web-view", &isHandled);
+    return FALSE;
+}
+
 void ChromeClient::closeWindowSoon()
 {
     // We may not have a WebView as create-web-view can return NULL.
     if (!m_webView)
         return;
+    if (m_closeSoonTimer) // Don't call close-web-view more than once.
+        return;
 
+    // We need to remove the parent WebView from WebViewSets here, before it actually
+    // closes, to make sure that JavaScript code that executes before it closes
+    // can't find it. Otherwise, window.open will select a closed WebView instead of 
+    // opening a new one <rdar://problem/3572585>.
+    m_webView->priv->corePage->setGroupName("");
+
+    // We also need to stop the load to prevent further parsing or JavaScript execution
+    // after the window has torn down <rdar://problem/4161660>.
     webkit_web_view_stop_loading(m_webView);
 
-    gboolean isHandled = false;
-    g_signal_emit_by_name(m_webView, "close-web-view", &isHandled);
-
-    if (isHandled)
-        return;
+    // Clients commonly destroy the web view during the close-web-view signal, but our caller
+    // may need to send more signals to the web view. For instance, if this happened in the
+    // onload handler, it will need to call FrameLoaderClient::dispatchDidHandleOnloadEvents.
+    // Instead of firing the close-web-view signal now, fire it after the caller finishes.
+    // This seems to match the Mac/Windows port behavior.
+    m_closeSoonTimer = g_timeout_add(0, reinterpret_cast<GSourceFunc>(emitCloseWebViewSignalLater), m_webView);
 }
 
 bool ChromeClient::canTakeFocus(FocusDirection)

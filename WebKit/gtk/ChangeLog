@@ -1,5 +1,26 @@
 2010-12-28  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] Closing a window during an onload event can trigger serious GLib warnings
+        https://bugs.webkit.org/show_bug.cgi?id=51686
+
+        Don't emit the close-web-view signal immediately during execution of closeWindowSoon.
+        The signal handler may choose to destroy the web view while handling that signal,
+        which may remove the last reference to the web view. FrameLoaderClient depends on the
+        view still existing though. Instead, let the caller finish executing and emit the signal
+        after a 0 length timeout. This matches the behavior on the Windows and Mac ports.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::ChromeClient): Initialize the timer id.
+        (WebKit::emitCloseWebViewSignalLater): Callback for the timer.
+        (WebKit::ChromeClient::closeWindowSoon): Do the actual signal invocation after
+        the caller finishes its tasks.
+        * WebCoreSupport/ChromeClientGtk.h: Add a new member for the timer id. We
+        can use this to prevent emitting the close-web-view signal twice.
+
+2010-12-28  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Eric Seidel.
 
         [GTK] Clean up usage of NULL in webkitwebframe.cpp

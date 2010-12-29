@@ -154,6 +154,7 @@ namespace WebKit {
     private:
         WebKitWebView* m_webView;
         WebCore::KURL m_hoveredLinkURL;
+        unsigned int m_closeSoonTimer;
     };
 }
 
