@@ -26,51 +26,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InspectorDOMStorageAgent_h
-#define InspectorDOMStorageAgent_h
+#ifndef InspectorStorageAgent_h
+#define InspectorStorageAgent_h
 
 #include "PlatformString.h"
-#include "wtf/HashMap.h"
 #include "wtf/PassRefPtr.h"
 
 namespace WebCore {
 
-class InspectorArray;
-class InspectorController;
-class InspectorDOMStorageResource;
+class Database;
 class InspectorFrontend;
-class Storage;
 
-class InspectorDOMStorageAgent : public RefCounted<InspectorDOMStorageAgent> {
+class InspectorStorageAgent : public RefCounted<InspectorStorageAgent> {
 public:
-    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
-
-    static PassRefPtr<InspectorDOMStorageAgent> create(DOMStorageResourcesMap* domStorageResources, InspectorFrontend* frontend)
+    static PassRefPtr<InspectorStorageAgent> create(InspectorFrontend* frontend)
     {
-        return adoptRef(new InspectorDOMStorageAgent(domStorageResources, frontend));
+        return adoptRef(new InspectorStorageAgent(frontend));
     }
 
-    virtual ~InspectorDOMStorageAgent();
+    virtual ~InspectorStorageAgent();
 
-    // Called from the front-end.
-    void getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries);
-    void setDOMStorageItem(long storageId, const String& key, const String& value, bool* success);
-    void removeDOMStorageItem(long storageId, const String& key, bool* success);
-
-    // Called from the injected script.
-    void selectDOMStorage(Storage* storage);
+    long executeSQL(Database*, const String& query);
 
     InspectorFrontend* frontend() { return m_frontend; }
+    void clearFrontend();
 
 private:
-    InspectorDOMStorageAgent(DOMStorageResourcesMap*, InspectorFrontend*);
+    InspectorStorageAgent(InspectorFrontend*);
 
-    InspectorDOMStorageResource* getDOMStorageResourceForId(long storageId);
-
-    DOMStorageResourcesMap* m_domStorageResources;
     InspectorFrontend* m_frontend;
 };
 
 } // namespace WebCore
 
-#endif // !defined(InspectorDOMStorageAgent_h)
+#endif // !defined(InspectorStorageAgent_h)

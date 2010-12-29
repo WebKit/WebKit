@@ -220,7 +220,7 @@ WebInspector.ScriptsPanel.prototype = {
             this.visibleView.show(this.viewsContainerElement);
 
         if (this._attachDebuggerWhenShown) {
-            InspectorBackend.enableDebuggerFromFrontend(false);
+            InspectorBackend.enableDebugger(false);
             delete this._attachDebuggerWhenShown;
         }
     },

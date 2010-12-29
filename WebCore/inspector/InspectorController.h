@@ -56,13 +56,12 @@ class HitTestResult;
 class InjectedScript;
 class InjectedScriptHost;
 class InspectorArray;
+class InspectorBackend;
 class InspectorBackendDispatcher;
 class InspectorClient;
 class InspectorCSSAgent;
 class InspectorDOMAgent;
-class InspectorDOMStorageAgent;
 class InspectorDOMStorageResource;
-class InspectorDatabaseAgent;
 class InspectorDatabaseResource;
 class InspectorDebuggerAgent;
 class InspectorFrontend;
@@ -86,6 +85,7 @@ class ScriptArguments;
 class ScriptCallStack;
 class ScriptProfile;
 class SharedBuffer;
+class Storage;
 class StorageArea;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -103,6 +103,9 @@ class WebSocketHandshakeResponse;
 
 class InspectorController : public Noncopyable {
 public:
+    typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
+    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
+
     static const char* const ConsolePanel;
     static const char* const ElementsPanel;
     static const char* const ProfilesPanel;
@@ -111,6 +114,7 @@ public:
     InspectorController(Page*, InspectorClient*);
     ~InspectorController();
 
+    InspectorBackend* inspectorBackend() { return m_inspectorBackend.get(); }
     InspectorBackendDispatcher* inspectorBackendDispatcher() { return m_inspectorBackendDispatcher.get(); }
     InspectorClient* inspectorClient() { return m_client; }
     InjectedScriptHost* injectedScriptHost() { return m_injectedScriptHost.get(); }
@@ -185,6 +189,10 @@ public:
     InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
 #endif
 
+#if ENABLE(FILE_SYSTEM)
+    InspectorFileSystemAgent* fileSystemAgent() { return m_fileSystemAgent.get(); }
+#endif 
+
     void mainResourceFiredLoadEvent(DocumentLoader*, const KURL&);
     void mainResourceFiredDOMContentEvent(DocumentLoader*, const KURL&);
 
@@ -199,11 +207,13 @@ public:
 #if ENABLE(DATABASE)
     void didOpenDatabase(PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
-
 #if ENABLE(DOM_STORAGE)
     void didUseDOMStorage(StorageArea* storageArea, bool isLocalStorage, Frame* frame);
+    void selectDOMStorage(Storage* storage);
+    void getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries);
+    void setDOMStorageItem(long storageId, const String& key, const String& value, bool* success);
+    void removeDOMStorageItem(long storageId, const String& key, bool* success);
 #endif
-
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest&);
@@ -240,10 +250,12 @@ public:
     void enableProfiler(bool always = false, bool skipRecompile = false);
     void disableProfiler(bool always = false);
     bool profilerEnabled() const;
+    InspectorProfilerAgent* profilerAgent() const { return m_profilerAgent.get(); }
 
     void enableDebugger();
     void disableDebugger(bool always = false);
     bool debuggerEnabled() const { return m_debuggerAgent; }
+    InspectorDebuggerAgent* debuggerAgent() const { return m_debuggerAgent.get(); }
     void resume();
 
     void setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints);
@@ -254,12 +266,6 @@ public:
     void removeXHRBreakpoint(const String& url);
     bool hasXHRBreakpoint(const String& url, String* breakpointURL);
 #endif
-
-    void setInjectedScriptSource(const String& source);
-    void dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException);
-
-    // Generic code called from custom implementations.
-    void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
 
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
@@ -300,6 +306,8 @@ private:
     void setSearchingForNode(bool enabled, bool* newState);
 
     void setMonitoringXHREnabled(bool enabled, bool* newState);
+    InspectorCSSAgent* cssAgent() { return m_cssAgent.get(); }
+    InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
     void releaseFrontendLifetimeAgents();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -307,6 +315,13 @@ private:
     void enableDebuggerFromFrontend(bool always);
     void restoreStickyBreakpoints();
     void restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint);
+#endif
+#if ENABLE(DATABASE)
+    void selectDatabase(Database* database);
+    Database* databaseForId(long databaseId);
+#endif
+#if ENABLE(DOM_STORAGE)
+    InspectorDOMStorageResource* getDOMStorageResourceForId(long storageId);
 #endif
 
     PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie&);
@@ -327,15 +342,7 @@ private:
     OwnPtr<InspectorFrontend> m_frontend;
     OwnPtr<InspectorCSSAgent> m_cssAgent;
     RefPtr<InspectorDOMAgent> m_domAgent;
-
-#if ENABLE(DATABASE)
-    RefPtr<InspectorDatabaseAgent> m_databaseAgent;
-#endif
-
-#if ENABLE(DOM_STORAGE)
-    RefPtr<InspectorDOMStorageAgent> m_domStorageAgent;
-#endif
-
+    RefPtr<InspectorStorageAgent> m_storageAgent;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     OwnPtr<InspectorState> m_state;
 
@@ -354,20 +361,17 @@ private:
     unsigned m_expiredConsoleMessageCount;
     HashMap<String, double> m_times;
     HashMap<String, unsigned> m_counts;
-
 #if ENABLE(DATABASE)
-    typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     DatabaseResourcesMap m_databaseResources;
 #endif
 #if ENABLE(DOM_STORAGE)
-    typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
     DOMStorageResourcesMap m_domStorageResources;
 #endif
-
     String m_showAfterVisible;
     RefPtr<Node> m_highlightedNode;
     ConsoleMessage* m_previousMessage;
     bool m_settingsLoaded;
+    RefPtr<InspectorBackend> m_inspectorBackend;
     OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
 

@@ -10,63 +10,71 @@ use Class::Struct;
 use File::stat;
 
 my %typeTransform;
-$typeTransform{"ApplicationCache"} = {
-    "forward" => "InspectorApplicationCacheAgent",
-    "header" => "InspectorApplicationCacheAgent.h",
-    "domainAccessor" => "m_inspectorController->m_applicationCacheAgent",
+$typeTransform{"InspectorClient"} = {
+    "forward" => "InspectorClient",
+    "header" => "InspectorClient.h",
 };
-$typeTransform{"CSS"} = {
-    "forward" => "InspectorCSSAgent",
-    "header" => "InspectorCSSAgent.h",
-    "domainAccessor" => "m_inspectorController->m_cssAgent",
-};
-$typeTransform{"Debugger"} = {
-    "forward" => "InspectorDebuggerAgent",
-    "header" => "InspectorDebuggerAgent.h",
-    "domainAccessor" => "m_inspectorController->m_debuggerAgent",
-};
-$typeTransform{"Database"} = {
-    "forward" => "InspectorDatabaseAgent",
-    "header" => "InspectorDatabaseAgent.h",
-    "domainAccessor" => "m_inspectorController->m_databaseAgent",
-};
-$typeTransform{"DOM"} = {
-    "forward" => "InspectorDOMAgent",
-    "header" => "InspectorDOMAgent.h",
-    "domainAccessor" => "m_inspectorController->m_domAgent",
-};
-$typeTransform{"DOMStorage"} = {
-    "forward" => "InspectorDOMStorageAgent",
-    "header" => "InspectorDOMStorageAgent.h",
-    "domainAccessor" => "m_inspectorController->m_domStorageAgent",
-};
-$typeTransform{"FileSystem"} = {
-    "forward" => "InspectorFileSystemAgent",
-    "header" => "InspectorFileSystemAgent.h",
-    "domainAccessor" => "m_inspectorController->m_fileSystemAgent",
+$typeTransform{"Backend"} = {
+    "forward" => "InspectorBackend",
+    "header" => "InspectorBackend.h",
+    "domainAccessor" => "m_inspectorController->inspectorBackend()",
 };
 $typeTransform{"Inspector"} = {
     "forwardHeader" => "InspectorController.h",
     "domainAccessor" => "m_inspectorController",
+};
+$typeTransform{"Debugger"} = {
+    "forward" => "InspectorDebuggerAgent",
+    "header" => "InspectorDebuggerAgent.h",
+    "domainAccessor" => "m_inspectorController->debuggerAgent()",
+};
+$typeTransform{"Resources"} = {
+    "forward" => "InspectorResourceAgent",
+    "header" => "InspectorResourceAgent.h",
+    "domainAccessor" => "m_inspectorController->m_resourceAgent",
 };
 $typeTransform{"Network"} = {
     "forward" => "InspectorResourceAgent",
     "header" => "InspectorResourceAgent.h",
     "domainAccessor" => "m_inspectorController->m_resourceAgent",
 };
+$typeTransform{"DOMStorage"} = {
+    "forwardHeader" => "InspectorController.h",
+    "domainAccessor" => "m_inspectorController",
+};
+$typeTransform{"Database"} = {
+    "forward" => "InspectorBackend",
+    "header" => "InspectorBackend.h",
+    "domainAccessor" => "m_inspectorController->inspectorBackend()",
+};
+$typeTransform{"DOM"} = {
+    "forward" => "InspectorDOMAgent",
+    "header" => "InspectorDOMAgent.h",
+    "domainAccessor" => "m_inspectorController->domAgent()",
+};
+$typeTransform{"CSS"} = {
+    "forward" => "InspectorCSSAgent",
+    "header" => "InspectorCSSAgent.h",
+    "domainAccessor" => "m_inspectorController->cssAgent()",
+};
+$typeTransform{"ApplicationCache"} = {
+    "forward" => "InspectorApplicationCacheAgent",
+    "header" => "InspectorApplicationCacheAgent.h",
+    "domainAccessor" => "m_inspectorController->applicationCacheAgent()",
+};
+$typeTransform{"FileSystem"} = {
+    "forward" => "InspectorFileSystemAgent",
+    "header" => "InspectorFileSystemAgent.h",
+    "domainAccessor" => "m_inspectorController->fileSystemAgent()",
+};
 $typeTransform{"Profiler"} = {
     "forward" => "InspectorProfilerAgent",
     "header" => "InspectorProfilerAgent.h",
-    "domainAccessor" => "m_inspectorController->m_profilerAgent",
+    "domainAccessor" => "m_inspectorController->profilerAgent()",
 };
-
 $typeTransform{"Frontend"} = {
     "forward" => "InspectorFrontend",
     "header" => "InspectorFrontend.h",
-};
-$typeTransform{"InspectorClient"} = {
-    "forward" => "InspectorClient",
-    "header" => "InspectorClient.h",
 };
 $typeTransform{"PassRefPtr"} = {
     "forwardHeader" => "wtf/PassRefPtr.h",

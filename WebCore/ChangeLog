@@ -1,3 +1,7 @@
+2010-12-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: revert r74755 and 74757.
+
 2010-12-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Sam Weinig.
