@@ -94,6 +94,11 @@ bool RangeInputType::rangeOverflow(const String& value) const
     return false;
 }
 
+bool RangeInputType::supportsRangeLimitation() const
+{
+    return true;
+}
+
 double RangeInputType::minimum() const
 {
     return parseToDouble(element()->fastGetAttribute(minAttr), rangeDefaultMinimum);

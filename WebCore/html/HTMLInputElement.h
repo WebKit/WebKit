@@ -312,6 +312,9 @@ private:
     virtual String sanitizeValue(const String&) const;
     virtual bool hasUnacceptableValue() const;
 
+    virtual bool isInRange() const;
+    virtual bool isOutOfRange() const;
+
     virtual void documentDidBecomeActive();
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;

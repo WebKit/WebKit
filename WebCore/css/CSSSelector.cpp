@@ -311,6 +311,8 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoFirstPage:
     case PseudoLeftPage:
     case PseudoRightPage:
+    case PseudoInRange:
+    case PseudoOutOfRange:
         return NOPSEUDO;
     case PseudoNotParsed:
         ASSERT_NOT_REACHED();
@@ -437,6 +439,8 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, fullScreen, ("-webkit-full-screen"));
     DEFINE_STATIC_LOCAL(AtomicString, fullScreenDocument, ("-webkit-full-screen-document"));
 #endif
+    DEFINE_STATIC_LOCAL(AtomicString, inRange, ("in-range"));
+    DEFINE_STATIC_LOCAL(AtomicString, outOfRange, ("out-of-range"));
 
     static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoType = 0;
     if (!nameToPseudoType) {
@@ -552,6 +556,8 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(fullScreen.impl(), CSSSelector::PseudoFullScreen);
         nameToPseudoType->set(fullScreenDocument.impl(), CSSSelector::PseudoFullScreenDocument);
 #endif
+        nameToPseudoType->set(inRange.impl(), CSSSelector::PseudoInRange);
+        nameToPseudoType->set(outOfRange.impl(), CSSSelector::PseudoOutOfRange);
     }
     return nameToPseudoType;
 }
@@ -685,6 +691,8 @@ void CSSSelector::extractPseudoType() const
     case PseudoFullScreen:
     case PseudoFullScreenDocument:
 #endif
+    case PseudoInRange:
+    case PseudoOutOfRange:
         break;
     case PseudoFirstPage:
     case PseudoLeftPage:

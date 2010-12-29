@@ -1487,6 +1487,16 @@ bool HTMLInputElement::hasUnacceptableValue() const
     return deprecatedInputType() == NUMBER && renderer() && !isAcceptableValue(toRenderTextControl(renderer())->text());
 }
 
+bool HTMLInputElement::isInRange() const
+{
+    return m_inputType->supportsRangeLimitation() && !rangeUnderflow(value()) && !rangeOverflow(value());
+}
+
+bool HTMLInputElement::isOutOfRange() const
+{
+    return m_inputType->supportsRangeLimitation() && (rangeUnderflow(value()) || rangeOverflow(value()));
+}
+
 bool HTMLInputElement::needsActivationCallback()
 {
     return deprecatedInputType() == PASSWORD || m_autocomplete == Off;

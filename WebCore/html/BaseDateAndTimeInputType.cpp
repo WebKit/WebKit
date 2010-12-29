@@ -94,6 +94,11 @@ bool BaseDateAndTimeInputType::rangeOverflow(const String& value) const
     return isfinite(doubleValue) && doubleValue > maximum();
 }
 
+bool BaseDateAndTimeInputType::supportsRangeLimitation() const
+{
+    return true;
+}
+
 double BaseDateAndTimeInputType::defaultValueForStepUp() const
 {
     double ms = currentTimeMS();

@@ -220,6 +220,11 @@ bool InputType::rangeOverflow(const String&) const
     return false;
 }
 
+bool InputType::supportsRangeLimitation() const
+{
+    return false;
+}
+
 double InputType::defaultValueForStepUp() const
 {
     return 0;

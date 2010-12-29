@@ -1015,6 +1015,12 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
                 
                 if (willValidate && (s->isValidFormControlElement() != m_element->isValidFormControlElement()))
                     return false;
+
+                if (s->isInRange() != m_element->isInRange())
+                    return false;
+
+                if (s->isOutOfRange() != m_element->isOutOfRange())
+                    return false;
             }
 
             if (style->transitions() || style->animations())
@@ -2672,6 +2678,16 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     return false;
                 return true;
 #endif
+            case CSSSelector::PseudoInRange:
+                if (!e)
+                    return false;
+                e->document()->setContainsValidityStyleRules();
+                return e->isInRange();
+            case CSSSelector::PseudoOutOfRange:
+                if (!e)
+                    return false;
+                e->document()->setContainsValidityStyleRules();
+                return e->isOutOfRange();
             case CSSSelector::PseudoUnknown:
             case CSSSelector::PseudoNotParsed:
             default:

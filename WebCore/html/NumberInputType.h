@@ -48,6 +48,7 @@ private:
     virtual bool typeMismatch() const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;
+    virtual bool supportsRangeLimitation() const;
     virtual double minimum() const;
     virtual double maximum() const;
     virtual bool stepMismatch(const String&, double) const;

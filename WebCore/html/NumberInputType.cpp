@@ -110,6 +110,11 @@ bool NumberInputType::rangeOverflow(const String& value) const
     return isfinite(doubleValue) && doubleValue > maximum();
 }
 
+bool NumberInputType::supportsRangeLimitation() const
+{
+    return true;
+}
+
 double NumberInputType::minimum() const
 {
     return parseToDouble(element()->fastGetAttribute(minAttr), numberDefaultMinimum);
@@ -228,6 +233,5 @@ double NumberInputType::acceptableError(double step) const
 {
     return step / pow(2.0, FLT_MANT_DIG);
 }
-
 
 } // namespace WebCore

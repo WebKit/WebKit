@@ -1,3 +1,45 @@
+2010-12-29  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kent Tamura.
+
+        [HTML5][Forms] Support for :in-range and :out-of-range CSS selectors
+        https://bugs.webkit.org/show_bug.cgi?id=29071
+
+        Use InputType::rangeUnderflow() and InputType::rangeOverflow()
+        to determine if a control is in-range or out-of-range.
+
+        Tests: fast/css/pseudo-in-range-invalid-value.html
+               fast/css/pseudo-in-range.html
+               fast/css/pseudo-out-of-range.html
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * dom/Element.h:
+        (WebCore::Element::isInRange):
+        (WebCore::Element::isOutOfRange):
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::supportsRangeLimitation):
+        * html/BaseDateAndTimeInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isInRange):
+        (WebCore::HTMLInputElement::isOutOfRange):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::supportsRangeLimitation):
+        * html/InputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::supportsRangeLimitation):
+        * html/NumberInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::supportsRangeLimitation):
+        * html/RangeInputType.h:
+
 2010-12-29  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Eric Seidel.

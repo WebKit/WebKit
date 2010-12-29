@@ -221,6 +221,8 @@ namespace WebCore {
             PseudoFullScreen,
             PseudoFullScreenDocument,
 #endif
+            PseudoInRange,
+            PseudoOutOfRange,
         };
 
         enum MarginBoxType {

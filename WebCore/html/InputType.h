@@ -93,6 +93,7 @@ public:
     virtual bool patternMismatch(const String&) const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;
+    virtual bool supportsRangeLimitation() const;
     virtual double defaultValueForStepUp() const;
     virtual double minimum() const;
     virtual double maximum() const;
