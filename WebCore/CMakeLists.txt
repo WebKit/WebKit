@@ -2074,7 +2074,7 @@ FOREACH (_file ${WebCore_IDL_FILES})
         OUTPUT  ${DERIVED_SOURCES_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_DIR}/JS${_name}.h
         MAIN_DEPENDENCY ${_file}
         DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${_file}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" ${WEBCORE_DIR}/${_file}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WEBCORE_DIR}/${_file}
         VERBATIM)
     LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/JS${_name}.cpp)
 ENDFOREACH ()
@@ -2085,7 +2085,7 @@ ADD_CUSTOM_COMMAND(
     OUTPUT ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.h ${DERIVED_SOURCES_DIR}/InspectorFrontend.cpp ${DERIVED_SOURCES_DIR}/InspectorFrontend.h
     MAIN_DEPENDENCY inspector/Inspector.idl
     DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} inspector/Inspector.idl
-    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts -I${WEBCORE_DIR}/inspector ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator Inspector ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" ${WEBCORE_DIR}/inspector/Inspector.idl
+    COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts -I${WEBCORE_DIR}/inspector ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator Inspector ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WEBCORE_DIR}/inspector/Inspector.idl
     VERBATIM)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp ${DERIVED_SOURCES_DIR}/InspectorFrontend.cpp)
 

@@ -1,3 +1,9 @@
+2010-12-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Use gcc as default preprocessor.
+
+        * Sources/cmake/OptionsCommon.cmake:
+
 2010-12-27  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by David Levin.
