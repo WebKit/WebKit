@@ -1081,6 +1081,8 @@ void WebFrameImpl::setMarkedText(
 {
     Editor* editor = frame()->editor();
 
+    editor->confirmComposition(text);
+
     Vector<CompositionUnderline> decorations;
     editor->setComposition(text, decorations, location, length);
 }
