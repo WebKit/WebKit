@@ -32,8 +32,8 @@ typedef struct _CFURLResponse* CFURLResponseRef;
 
 CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData);
 
-#pragma mark -
-#pragma mark Platform-specific methods
+// MARK: -
+// MARK: Platform-specific methods
 
 CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData);
 CFArrayRef supportedNonImageMIMETypes();

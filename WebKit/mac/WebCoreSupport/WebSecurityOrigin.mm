@@ -124,8 +124,8 @@ using namespace WebCore;
 @end
 
 
-#pragma mark -
-#pragma mark WebQuotaManagers
+// MARK: -
+// MARK: WebQuotaManagers
 
 @implementation WebSecurityOrigin (WebQuotaManagers)
 
@@ -146,8 +146,8 @@ using namespace WebCore;
 @end
 
 
-#pragma mark -
-#pragma mark Deprecated
+// MARK: -
+// MARK: Deprecated
 
 // FIXME: The following methods are deprecated and should removed later.
 // Clients should instead get a WebQuotaManager, and query / set the quota via the Manager.

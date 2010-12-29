@@ -1,3 +1,17 @@
+2010-12-28  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Sam Weinig.
+
+        Substitute // MARK: for compiler-specific #pragma mark
+        https://bugs.webkit.org/show_bug.cgi?id=51657
+
+        Fix compilation warnings about "#pragma mark" on GTK+ bots by
+        substituting  "// MARK:" for "#pragma mark", which provides
+        analogous code-bookmarking functionality under Xcode.
+
+        * platform/graphics/cg/PathCG.cpp:
+        * platform/graphics/mac/WebLayer.mm:
+
 2010-12-28  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Eric Seidel.

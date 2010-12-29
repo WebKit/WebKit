@@ -1,3 +1,24 @@
+2010-12-28  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Sam Weinig.
+
+        Substitute // MARK: for compiler-specific #pragma mark
+        https://bugs.webkit.org/show_bug.cgi?id=51657
+
+        Fix future compilation warnings about "#pragma mark" on GTK+ bots by
+        substituting  "// MARK:" for "#pragma mark", which provides
+        analogous code-bookmarking functionality under Xcode.
+
+        Also, for consistency, we should substitute "// MARK:" for compiler-
+        specific "#pragma mark" in the source files for the Mac port.
+
+        * DumpRenderTree/AccessibilityTextMarker.cpp:
+        * DumpRenderTree/cf/WebArchiveDumpSupport.h:
+        * DumpRenderTree/mac/AccessibilityTextMarkerMac.mm:
+        * DumpRenderTree/mac/ObjCController.m:
+        * MiniBrowser/mac/AppDelegate.m:
+        * MiniBrowser/mac/BrowserWindowController.m:
+
 2010-12-28  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Eric Seidel.

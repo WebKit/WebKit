@@ -254,8 +254,8 @@ FloatPoint Path::currentPoint() const
     return CGPathGetCurrentPoint(m_path);
 }
 
-#pragma mark -
-#pragma mark Path Management
+// MARK: -
+// MARK: Path Management
 
 struct PathApplierInfo {
     void* info;

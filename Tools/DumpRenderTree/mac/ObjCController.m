@@ -270,8 +270,8 @@ static void* runJavaScriptThread(void* arg)
     return nil;
 }
 
-#pragma mark -
-#pragma mark Testing Objective-C DOM HTML Bindings
+// MARK: -
+// MARK: Testing Objective-C DOM HTML Bindings
 
 - (void)setSelectElement:(WebScriptObject *)element selectedIndex:(int)index allowingMultiple:(BOOL)allowingMultiple
 {

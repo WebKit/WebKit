@@ -690,7 +690,7 @@ String WebHaltablePlugin::pluginName() const
     }
 }
 
-#pragma mark NOTIFICATIONS
+// MARK: NOTIFICATIONS
 
 - (void)windowWillClose:(NSNotification *)notification 
 {

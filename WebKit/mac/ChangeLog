@@ -1,3 +1,22 @@
+2010-12-28  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Sam Weinig.
+
+        Substitute // MARK: for compiler-specific #pragma mark
+        https://bugs.webkit.org/show_bug.cgi?id=51657
+
+        For consistency, we should substitute "// MARK:" for compiler-
+        specific "#pragma mark" in the source files for the Mac port.
+
+        * History/WebHistory.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebNetscapePluginView.mm:
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebCoreSupport/WebSecurityOrigin.mm:
+        * WebView/WebPDFView.mm:
+        * WebView/WebVideoFullscreenController.mm:
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+
 2010-12-23  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Reviewed by Darin Adler.

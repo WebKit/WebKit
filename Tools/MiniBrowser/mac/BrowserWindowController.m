@@ -247,7 +247,7 @@
     });
 }
 
-#pragma mark Loader Client Callbacks
+// MARK: Loader Client Callbacks
 
 static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
 {
@@ -356,7 +356,7 @@ static void didChangeBackForwardList(WKPageRef page, const void *clientInfo)
     [(BrowserWindowController *)clientInfo validateToolbar];
 }
 
-#pragma mark Policy Client Callbacks
+// MARK: Policy Client Callbacks
 
 static void decidePolicyForNavigationAction(WKPageRef page, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRef url, WKFrameRef frame, WKFramePolicyListenerRef listener, const void *clientInfo)
 {
@@ -375,7 +375,7 @@ static void decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURLR
     WKFramePolicyListenerUse(listener);
 }
 
-#pragma mark UI Client Callbacks
+// MARK: UI Client Callbacks
 
 static WKPageRef createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
 {

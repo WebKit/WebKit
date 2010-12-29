@@ -199,7 +199,7 @@ typedef struct {
     WKSendUserChangeNotifications();
 }
 
-#pragma mark EVENTS
+// MARK: EVENTS
 
 // The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
 // the entire window frame (or structure region to use the Carbon term) rather then just the window content.
@@ -859,7 +859,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self didCallPlugInFunction];
 }
 
-#pragma mark WEB_NETSCAPE_PLUGIN
+// MARK: WEB_NETSCAPE_PLUGIN
 
 - (BOOL)isNewWindowEqualToOldWindow
 {
@@ -1342,7 +1342,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 }
 #endif
 
-#pragma mark NSVIEW
+// MARK: NSVIEW
 
 - (id)initWithFrame:(NSRect)frame
       pluginPackage:(WebNetscapePluginPackage *)pluginPackage

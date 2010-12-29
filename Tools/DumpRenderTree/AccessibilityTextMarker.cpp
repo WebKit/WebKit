@@ -29,7 +29,7 @@
 #include "AccessibilityUIElement.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 
-#pragma mark AccessibilityTextMarker
+// MARK: AccessibilityTextMarker
 
 // Callback methods
 
@@ -81,7 +81,7 @@ JSClassRef AccessibilityTextMarker::getJSClass()
     return accessibilityTextMarkerClass;
 }
 
-#pragma mark AccessibilityTextMarkerRange
+// MARK: AccessibilityTextMarkerRange
 
 // Callback methods
 

@@ -219,8 +219,8 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 }
          
          
-#pragma mark -
-#pragma mark Exposed Interface
+// MARK: -
+// MARK: Exposed Interface
 
 static void constrainFrameToRatioOfFrame(NSRect *frameToConstrain, const NSRect *frame)
 {
@@ -422,8 +422,8 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 #endif
 }
 
-#pragma mark -
-#pragma mark Window callback
+// MARK: -
+// MARK: Window callback
 
 - (void)_requestExit
 {
@@ -452,8 +452,8 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     [_hudController fadeWindowIn];
 }
 
-#pragma mark -
-#pragma mark QTMovie callbacks
+// MARK: -
+// MARK: QTMovie callbacks
 
 - (void)rateChanged:(NSNotification *)unusedNotification
 {

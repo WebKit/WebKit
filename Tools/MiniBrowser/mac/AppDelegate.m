@@ -60,7 +60,7 @@ void didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef messa
     WKRelease(newMessageBody);
 }
 
-#pragma mark History Client Callbacks
+// MARK: History Client Callbacks
 
 static void didNavigateWithNavigationData(WKContextRef context, WKPageRef page, WKNavigationDataRef navigationData, WKFrameRef frame, const void *clientInfo)
 {

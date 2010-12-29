@@ -28,7 +28,7 @@
 #import "AccessibilityTextMarker.h"
 #import "DumpRenderTree.h"
 
-#pragma mark AccessibilityTextMarker
+// MARK: AccessibilityTextMarker
 
 AccessibilityTextMarker::AccessibilityTextMarker(PlatformTextMarker marker)
     : m_textMarker(marker)
@@ -54,7 +54,7 @@ PlatformTextMarker AccessibilityTextMarker::platformTextMarker() const
     return m_textMarker.get();
 }
 
-#pragma mark AccessibilityTextMarkerRange
+// MARK: AccessibilityTextMarkerRange
 
 AccessibilityTextMarkerRange::AccessibilityTextMarkerRange(PlatformTextMarkerRange markerRange)
     : m_textMarkerRange(markerRange)

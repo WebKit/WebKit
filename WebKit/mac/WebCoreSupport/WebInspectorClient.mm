@@ -69,7 +69,7 @@ using namespace WebCore;
 - (void)destroyInspectorView:(bool)notifyInspectorController;
 @end
 
-#pragma mark -
+// MARK: -
 
 @interface WebNodeHighlighter : NSObject {
 @private
@@ -81,7 +81,7 @@ using namespace WebCore;
 - (void)hideHighlight;
 @end
 
-#pragma mark -
+// MARK: -
 
 
 WebInspectorClient::WebInspectorClient(WebView *webView)
@@ -208,7 +208,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 }
 
 
-#pragma mark -
+// MARK: -
 
 @implementation WebInspectorWindowController
 - (id)init
@@ -271,7 +271,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [super dealloc];
 }
 
-#pragma mark -
+// MARK: -
 
 - (WebView *)webView
 {
@@ -307,7 +307,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     return window;
 }
 
-#pragma mark -
+// MARK: -
 
 - (BOOL)windowShouldClose:(id)sender
 {
@@ -385,7 +385,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     }
 }
 
-#pragma mark -
+// MARK: -
 
 - (void)attach
 {
@@ -465,8 +465,8 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [_webView close];
 }
 
-#pragma mark -
-#pragma mark WebNodeHighlight delegate
+// MARK: -
+// MARK: WebNodeHighlight delegate
 
 - (void)didAttachWebNodeHighlight:(WebNodeHighlight *)highlight
 {
@@ -478,15 +478,15 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [_inspectedWebView setCurrentNodeHighlight:nil];
 }
 
-#pragma mark -
-#pragma mark UI delegate
+// MARK: -
+// MARK: UI delegate
 
 - (NSUInteger)webView:(WebView *)sender dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return WebDragDestinationActionNone;
 }
 
-#pragma mark -
+// MARK: -
 
 // These methods can be used by UI elements such as menu items and toolbar buttons when the inspector is the key window.
 
@@ -534,7 +534,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
 @end
 
 
-#pragma mark -
+// MARK: -
 
 @implementation WebNodeHighlighter
 - (id)initWithInspectedWebView:(WebView *)webView
@@ -550,7 +550,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     [super dealloc];
 }
 
-#pragma mark -
+// MARK: -
 
 - (void)highlightNode:(DOMNode *)node
 {
@@ -575,8 +575,8 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     _currentHighlight = nil;
 }
 
-#pragma mark -
-#pragma mark WebNodeHighlight delegate
+// MARK: -
+// MARK: WebNodeHighlight delegate
 
 - (void)didAttachWebNodeHighlight:(WebNodeHighlight *)highlight
 {

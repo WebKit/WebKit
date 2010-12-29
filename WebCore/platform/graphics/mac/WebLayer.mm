@@ -183,7 +183,7 @@ void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::GraphicsLayer* layerCon
 
 @end // implementation WebLayer
 
-#pragma mark -
+// MARK: -
 
 #ifndef NDEBUG
 

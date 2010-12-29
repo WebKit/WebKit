@@ -623,7 +623,7 @@ static NSString *timeToString(double time)
     return timeToString([_delegate mediaElement]->currentTime());
 }
 
-#pragma mark NSResponder
+// MARK: NSResponder
 
 - (void)mouseEntered:(NSEvent *)theEvent
 {
@@ -659,7 +659,7 @@ static NSString *timeToString(double time)
     [_delegate requestExitFullscreen]; 
 }
 
-#pragma mark NSWindowDelegate
+// MARK: NSWindowDelegate
 
 - (void)windowDidExpose:(NSNotification *)notification
 {
