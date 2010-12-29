@@ -3286,3 +3286,5 @@ BUGCR67960 : editing/input/ime-composition-clearpreedit.html = TEXT
 
 // WebKit roll 74667:74679
 BUGCR68067 LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
+
+BUGWK51720 DEBUG : http/tests/incremental/split-hex-entities.pl = CRASH PASS

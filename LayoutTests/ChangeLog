@@ -1,3 +1,10 @@
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        Mark http/tests/incremental/split-hex-entities.pl as flaky.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-29  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
