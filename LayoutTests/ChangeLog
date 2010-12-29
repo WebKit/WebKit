@@ -1,3 +1,16 @@
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium baselines. Add Chromium baselines for the
+        layout test added by r74743.
+
+        * platform/chromium-linux/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.checksum: Added.
+        * platform/chromium-linux/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png: Added.
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.checksum: Added.
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png: Added.
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Added.
+
 2010-12-29  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kent Tamura.
