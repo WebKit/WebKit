@@ -1,3 +1,13 @@
+2010-12-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Element highlight tooltip displays wrong element size when zoomed in
+        https://bugs.webkit.org/show_bug.cgi?id=51703
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::drawElementTitle):
+
 2010-12-29  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kent Tamura.

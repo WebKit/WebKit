@@ -1716,10 +1716,12 @@ void InspectorController::drawElementTitle(GraphicsContext& context, const IntRe
             }
         }
     }
+
+    Element* highlightedElement = m_highlightedNode->isElementNode() ? static_cast<Element*>(m_highlightedNode.get()) : 0;
     nodeTitle += " [";
-    nodeTitle += String::number(boundingBox.width());
+    nodeTitle += String::number(highlightedElement ? highlightedElement->offsetWidth() : boundingBox.width());
     nodeTitle.append(static_cast<UChar>(0x00D7)); // &times;
-    nodeTitle += String::number(boundingBox.height());
+    nodeTitle += String::number(highlightedElement ? highlightedElement->offsetHeight() : boundingBox.height());
     nodeTitle += "]";
 
     FontDescription desc;
