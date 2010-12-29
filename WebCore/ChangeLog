@@ -1,3 +1,16 @@
+2010-12-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: A disabled style property should get enabled when edited
+        https://bugs.webkit.org/show_bug.cgi?id=51679
+
+        Test: inspector/styles-disable-then-change.html
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setText.callback):
+
 2010-12-29  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

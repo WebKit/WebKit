@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test2.js"></script>
+<script src="elements-tests2.js"></script>
+<script>
+
+function test()
+{
+    function selectContainerElementContinuation()
+    {
+        InspectorTest.selectElementAndRun("container", disableContainerStyle);
+    }
+
+    function disableContainerStyle()
+    {
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.addResult("Before disable");
+        InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true, true));
+
+        treeItem.toggleEnabled({ target: { checked: false } });
+        InspectorTest.runAfterPendingDispatches(changeContainerStyle);
+    }
+
+    function changeContainerStyle()
+    {
+        var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
+        InspectorTest.addResult("After disable");
+        InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true, true));
+
+        treeItem.applyStyleText("color: green", true);
+        InspectorTest.runAfterPendingDispatches(dumpResults);
+    }
+
+    function dumpResults()
+    {
+        InspectorTest.addResult("After change");
+        InspectorTest.addResults(InspectorTest.getSelectedElementStyles(true, true));
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.expandDOMSubtreeAndRun(null, selectContainerElementContinuation);
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that changing a disabled property enables it as well.
+</p>
+
+<div id="container" style="font-weight:bold">
+</div>
+
+<div id="other">
+</div>
+
+</body>
+</html>

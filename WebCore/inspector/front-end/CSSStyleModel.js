@@ -456,19 +456,31 @@ WebInspector.CSSProperty.prototype = {
     // Replaces "propertyName: propertyValue [!important];" in the stylesheet by an arbitrary propertyText.
     setText: function(propertyText, majorChange, userCallback)
     {
+        function enabledCallback(style)
+        {
+            if (style)
+                WebInspector.cssModel._styleSheetChanged(style.id.styleSheetId, majorChange);
+            if (userCallback)
+                userCallback(style);
+        }
+
         function callback(stylePayload)
         {
-            if (stylePayload)
+            if (stylePayload) {
                 this.text = propertyText;
-
-            if (!userCallback)
-                return;
-            if (!stylePayload)
-                userCallback(null);
-            else {
                 var style = WebInspector.CSSStyleDeclaration.parsePayload(stylePayload);
-                userCallback(style);
-                WebInspector.cssModel._styleSheetChanged(style.id.styleSheetId, majorChange);
+                var newProperty = style.allProperties[this.index];
+
+                if (newProperty && this.disabled && !propertyText.match(/^\s*$/)) {
+                    newProperty.setDisabled(false, enabledCallback);
+                    return;
+                } else
+                    WebInspector.cssModel._styleSheetChanged(style.id.styleSheetId, majorChange);
+                if (userCallback)
+                    userCallback(style);
+            } else {
+                if (userCallback)
+                    userCallback(null);
             }
         }
 
