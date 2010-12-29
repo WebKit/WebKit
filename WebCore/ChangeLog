@@ -1,3 +1,24 @@
+2010-12-29  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Assertion failure: element->inDocument() in AsyncScriptRunner::executeScriptSoon()
+        https://bugs.webkit.org/show_bug.cgi?id=51067
+
+        Typically when a script element is removed from the document, the cached script
+        client is removed. However, during the before load event, the cached script client
+        hasn't been created yet so it can't be removed.
+
+        This patch handles that case by explicitly checking if the script element was
+        removed during the beforeload event. Also, it avoids caching the Document references
+        over the arbitrary script execution in the before load event.
+
+        Test: fast/dom/HTMLScriptElement/move-in-beforeload.html
+              fast/dom/HTMLScriptElement/remove-in-beforeload.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+
 2010-12-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

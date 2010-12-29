@@ -145,19 +145,20 @@ static bool isSupportedJavaScriptLanguage(const String& language)
 
 void ScriptElement::requestScript(const String& sourceUrl)
 {
-    Document* document = m_element->document();
-
     // FIXME: Eventually we'd like to evaluate scripts which are inserted into a 
     // viewless document but this'll do for now.
     // See http://bugs.webkit.org/show_bug.cgi?id=5727
-    if (!document->frame())
+    if (!m_element->document()->frame())
         return;
 
+    RefPtr<Document> originalDocument = m_element->document();
     if (!m_element->dispatchBeforeLoadEvent(sourceUrl))
+        return;
+    if (!m_element->inDocument() || m_element->document() != originalDocument)
         return;
 
     ASSERT(!m_cachedScript);
-    m_cachedScript = document->cachedResourceLoader()->requestScript(sourceUrl, scriptCharset());
+    m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(sourceUrl, scriptCharset());
     m_isExternalScript = true;
 
     // m_wasInsertedByParser is never reset - always resied at the initial value set while parsing.

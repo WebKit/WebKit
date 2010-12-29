@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+<body onload="test()">
+<div id="console"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+function test()
+{
+    var s = document.createElement("script");
+    s.addEventListener("beforeload", function() {
+        document.body.removeChild(document.getElementsByTagName("script")[2]);
+        testPassed("");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, false);
+    s.addEventListener("error", function() {
+        testFailed("error event should not fire.")
+    }, false);
+    s.addEventListener("load", function() {
+        testFailed("load event should not fire.")
+    }, false);
+    s.src = "resources/shouldnotexecute.js";
+    document.body.appendChild(s);
+}
+</script>
+</body>
+</html>

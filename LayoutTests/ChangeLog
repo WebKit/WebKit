@@ -1,3 +1,15 @@
+2010-12-29  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Assertion failure: element->inDocument() in AsyncScriptRunner::executeScriptSoon()
+        https://bugs.webkit.org/show_bug.cgi?id=51067
+
+        * fast/dom/HTMLScriptElement/move-in-beforeload-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/move-in-beforeload.html: Added.
+        * fast/dom/HTMLScriptElement/remove-in-beforeload-expected.txt: Added.
+        * fast/dom/HTMLScriptElement/remove-in-beforeload.html: Added.
+
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, rolling out r74748.
