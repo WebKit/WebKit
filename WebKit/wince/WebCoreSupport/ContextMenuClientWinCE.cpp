@@ -42,9 +42,9 @@ void ContextMenuClientWinCE::contextMenuDestroyed()
     delete this;
 }
 
-PlatformMenuDescription ContextMenuClientWinCE::getCustomMenuFromDefaultItems(ContextMenu* menu)
+PassOwnPtr<ContextMenu> ContextMenuClientWinCE::customizeMenu(PassOwnPtr<ContextMenu> menu)
 {
-    return menu->releasePlatformDescription();
+    return menu;
 }
 
 void ContextMenuClientWinCE::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)

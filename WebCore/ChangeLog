@@ -1,3 +1,17 @@
+2010-12-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for WinCE after r73802.
+
+        Reapply parts from r72585:
+        Port ContextMenuWin.cpp to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=48408
+
+        * CMakeLists.txt:
+        * platform/ContextMenu.h:
+        * platform/win/ContextMenuWin.cpp:
+        (WebCore::ContextMenu::getContextMenuItems):
+        (WebCore::ContextMenu::createNativeMenuFromItems):
+
 2010-12-29  Kent Hansen  <kent.hansen@nokia.com>
 
         Reviewed by Simon Hausmann.

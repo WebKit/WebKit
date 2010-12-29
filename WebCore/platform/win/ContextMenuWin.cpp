@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "Node.h"
+#include "NotImplemented.h"
 #include <tchar.h>
 #include <windows.h>
 #include <wtf/Vector.h>
@@ -51,6 +52,9 @@ ContextMenu::ContextMenu(HMENU menu)
 
 void ContextMenu::getContextMenuItems(HMENU menu, Vector<ContextMenuItem>& items)
 {
+#if OS(WINCE)
+    notImplemented();
+#else
     int count = ::GetMenuItemCount(menu);
     if (count <= 0)
         return;
@@ -76,6 +80,7 @@ void ContextMenu::getContextMenuItems(HMENU menu, Vector<ContextMenuItem>& items
         if (::GetMenuItemInfo(menu, i, TRUE, &info))
            items.append(ContextMenuItem(info));
     }
+#endif
 }
 
 HMENU ContextMenu::createNativeMenuFromItems(const Vector<ContextMenuItem>& items)
@@ -87,6 +92,31 @@ HMENU ContextMenu::createNativeMenuFromItems(const Vector<ContextMenuItem>& item
 
         MENUITEMINFO menuItem = item.nativeMenuItem();
 
+#if OS(WINCE)
+        UINT flags = MF_BYPOSITION;
+        UINT newItem = 0;
+        LPCWSTR title = 0;
+
+        if (item.type() == SeparatorType)
+            flags |= MF_SEPARATOR;
+        else {
+            flags |= MF_STRING;
+            flags |= item.checked() ? MF_CHECKED : MF_UNCHECKED;
+            flags |= item.enabled() ? MF_ENABLED : MF_GRAYED;
+
+            title = menuItem.dwTypeData;
+            menuItem.dwTypeData = 0;
+
+            if (menuItem.hSubMenu) {
+                flags |= MF_POPUP;
+                newItem = reinterpret_cast<UINT>(menuItem.hSubMenu);
+                menuItem.hSubMenu = 0;
+            } else
+                newItem = menuItem.wID;
+        }
+
+        ::InsertMenuW(menu, i, flags, newItem, title);
+#else
         // ContextMenuItem::nativeMenuItem doesn't set the title of the MENUITEMINFO to make the
         // lifetime handling easier for callers.
         String itemTitle = item.title();
@@ -97,6 +127,7 @@ HMENU ContextMenu::createNativeMenuFromItems(const Vector<ContextMenuItem>& item
         }
 
         ::InsertMenuItem(menu, i, TRUE, &menuItem);
+#endif
     }
 
     return menu;

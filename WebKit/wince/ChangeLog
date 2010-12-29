@@ -1,3 +1,11 @@
+2010-12-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for WinCE after r73802.
+
+        * WebCoreSupport/ContextMenuClientWinCE.cpp:
+        (WebKit::ContextMenuClientWinCE::customizeMenu):
+        * WebCoreSupport/ContextMenuClientWinCE.h:
+
 2010-12-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
