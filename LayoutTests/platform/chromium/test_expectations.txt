@@ -1213,9 +1213,6 @@ BUGCR10376 MAC : fast/dom/isindex-002.html = FAIL
 BUGCR10378 MAC : fast/images/embed-image.html = FAIL
 BUGCR10378 MAC : fast/images/object-image.html = FAIL
 
-BUGCR10381 LINUX RELEASE : svg/W3C-SVG-1.1/animate-elem-03-t.svg = IMAGE+TEXT PASS
-BUGCR10381 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-03-t.svg = FAIL
-
 // The following are flaky in that some times the timeout or crash, but we think
 // it is because of bugs in other parts of the code and not specific to what
 // these tests are doing.  The are being noted here so we can get the buildbots
@@ -2176,7 +2173,6 @@ BUGCR37896 WIN LINUX : fast/multicol/hit-test-above-or-below.html = TEXT
 BUGCR37896 WIN DEBUG : fast/text/firstline/001.html = PASS CRASH
 BUGCR37896 LINUX MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
 // Added in http://trac.webkit.org/changeset/55587
-BUGCR37896 LINUX DEBUG : fast/images/svg-as-background.html = TIMEOUT
 // Three flaky tests noticed during a sheriff rotation.
 BUGCR37962 MAC LINUX DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
 BUGCR37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = CRASH PASS

@@ -1,6 +1,19 @@
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
+        
+        Remove failure expectations for tests that no longer fail:
+        - fast/images/svg-as-background.html has not timed out for as long as
+          the flakiness dashboard has history
+        - svg/W3C-SVG-1.1/animate-elem-03-t.svg has not failed for as long as
+          the flakiness dashboard has history
+
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
         Add recent upstream expectations Chromium changes.
 
         * platform/chromium/test_expectations.txt:
