@@ -23,12 +23,16 @@
 #ifndef WEBKIT_SOUP_CACHE_H
 #define WEBKIT_SOUP_CACHE_H 1
 
-#ifdef BUILDING_GTK__
-#include <webkit/webkitdefines.h>
+#ifdef G_OS_WIN32
+    #ifdef BUILDING_WEBKIT
+        #define WEBKIT_API __declspec(dllexport)
+    #else
+        #define WEBKIT_API __declspec(dllimport)
+    #endif
+    #define WEBKIT_OBSOLETE_API WEBKIT_API
 #else
-#ifndef WEBKIT_API
-#define WEBKIT_API
-#endif
+    #define WEBKIT_API __attribute__((visibility("default")))
+    #define WEBKIT_OBSOLETE_API WEBKIT_API __attribute__((deprecated))
 #endif
 
 #include <libsoup/soup-types.h>

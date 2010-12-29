@@ -7,10 +7,10 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 webcore_cppflags += \
 	-I$(srcdir)/WebCore \
 	-I$(srcdir)/WebCore/accessibility \
+	-I$(srcdir)/WebCore/bindings \
 	-I$(srcdir)/WebCore/bindings/generic \
 	-I$(srcdir)/WebCore/bindings/js \
 	-I$(srcdir)/WebCore/bindings/js/specialization \
-	-I$(srcdir)/WebCore/bindings/gobject \
 	-I$(srcdir)/WebCore/bridge \
 	-I$(srcdir)/WebCore/bridge/c \
 	-I$(srcdir)/WebCore/bridge/jni/jsc \
@@ -686,21 +686,6 @@ webcore_sources += \
 	WebCore/bindings/generic/GenericBinding.h \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	WebCore/bindings/generic/RuntimeEnabledFeatures.h \
-	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
-	WebCore/bindings/gobject/ConvertToUTF8String.h \
-	WebCore/bindings/gobject/DOMObjectCache.cpp \
-	WebCore/bindings/gobject/DOMObjectCache.h \
-	WebCore/bindings/gobject/GObjectEventListener.cpp \
-	WebCore/bindings/gobject/GObjectEventListener.h \
-	WebCore/bindings/gobject/WebKitDOMBinding.cpp \
-	WebCore/bindings/gobject/WebKitDOMBinding.h \
-	WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
-	WebCore/bindings/gobject/WebKitDOMEventTarget.h \
-	WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
-	WebCore/bindings/gobject/WebKitDOMObject.cpp \
-	WebCore/bindings/gobject/WebKitDOMObject.h \
-	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
-	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h \
 	WebCore/bindings/js/CachedScriptSourceProvider.h \
 	WebCore/bindings/js/DOMObjectHashTableMap.cpp \
 	WebCore/bindings/js/DOMObjectHashTableMap.h \

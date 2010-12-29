@@ -154,6 +154,21 @@ webkitgtk_built_sources += \
 BUILT_SOURCES += $(webkitgtk_built_sources)
 
 webkitgtk_sources += \
+	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
+	WebCore/bindings/gobject/ConvertToUTF8String.h \
+	WebCore/bindings/gobject/DOMObjectCache.cpp \
+	WebCore/bindings/gobject/DOMObjectCache.h \
+	WebCore/bindings/gobject/GObjectEventListener.cpp \
+	WebCore/bindings/gobject/GObjectEventListener.h \
+	WebCore/bindings/gobject/WebKitDOMBinding.cpp \
+	WebCore/bindings/gobject/WebKitDOMBinding.h \
+	WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
+	WebCore/bindings/gobject/WebKitDOMEventTarget.h \
+	WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
+	WebCore/bindings/gobject/WebKitDOMObject.cpp \
+	WebCore/bindings/gobject/WebKitDOMObject.h \
+	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
+	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
 	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
