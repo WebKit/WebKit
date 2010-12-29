@@ -1,5 +1,11 @@
 2010-12-29  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: Qt build fix.
+
+        * inspector/InspectorController.cpp:
+
+2010-12-29  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: extract Database & DOM Storage

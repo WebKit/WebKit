@@ -62,8 +62,8 @@
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
-#include "InspectorDatabaseAgent.h"
 #include "InspectorDatabaseResource.h"
+#include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorInstrumentation.h"
@@ -104,7 +104,7 @@
 
 #if ENABLE(DATABASE)
 #include "Database.h"
-#include "InspectorDebuggerAgent.h"
+#include "InspectorDatabaseAgent.h"
 #endif
 
 #if ENABLE(DOM_STORAGE)
