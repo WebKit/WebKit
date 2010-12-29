@@ -1,5 +1,15 @@
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium baselines. Update Chromium baselines for
+        fast/events/ime-composition-events-001.html after r74735 (the
+        new baselines are closer to the upstream Mac ones).
+
+        * platform/chromium-mac/fast/events/ime-composition-events-001-expected.txt: Removed.
+        * platform/chromium-win/fast/events/ime-composition-events-001-expected.txt: Removed.
+        * platform/chromium/fast/events/ime-composition-events-001-expected.txt: Added.
+
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium baselines. Add Chromium baselines for the
         layout test added by r74743.
 
