@@ -22,6 +22,7 @@
 #include "config.h"
 #include "webkitwebinspector.h"
 
+#include "DumpRenderTreeSupportGtk.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "HitTestRequest.h"
