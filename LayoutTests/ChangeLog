@@ -1,3 +1,16 @@
+2010-12-28  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        Add comment to test case fast/repaint/no-caret-repaint-in-non-content-editable-element.html
+        to clarify caret browsing disabled
+        https://bugs.webkit.org/show_bug.cgi?id=51633
+
+        Add a comment to test case fast/repaint/no-caret-repaint-in-non-content-editable-element.html
+        that explains that this test is only applicable when caret browsing is disabled.
+
+        * fast/repaint/no-caret-repaint-in-non-content-editable-element.html:
+
 2010-12-28  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Eric Seidel.
