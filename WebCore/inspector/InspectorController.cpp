@@ -57,21 +57,19 @@
 #include "HitTestResult.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorBackend.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
+#include "InspectorDatabaseAgent.h"
 #include "InspectorDatabaseResource.h"
-#include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
 #include "InspectorState.h"
-#include "InspectorStorageAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
 #include "InspectorWorkerResource.h"
@@ -106,6 +104,13 @@
 
 #if ENABLE(DATABASE)
 #include "Database.h"
+#include "InspectorDebuggerAgent.h"
+#endif
+
+#if ENABLE(DOM_STORAGE)
+#include "InspectorDOMStorageAgent.h"
+#include "Storage.h"
+#include "StorageArea.h"
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -114,11 +119,6 @@
 
 #if ENABLE(FILE_SYSTEM)
 #include "InspectorFileSystemAgent.h"
-#endif
-
-#if ENABLE(DOM_STORAGE)
-#include "Storage.h"
-#include "StorageArea.h"
 #endif
 
 using namespace std;
@@ -144,7 +144,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_expiredConsoleMessageCount(0)
     , m_previousMessage(0)
     , m_settingsLoaded(false)
-    , m_inspectorBackend(InspectorBackend::create(this))
     , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(this))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -167,7 +166,6 @@ InspectorController::~InspectorController()
 
     releaseFrontendLifetimeAgents();
 
-    m_inspectorBackend->disconnectController();
     m_injectedScriptHost->disconnectController();
 }
 
@@ -476,7 +474,11 @@ void InspectorController::connectFrontend()
     m_cssAgent->setDOMAgent(m_domAgent.get());
 
 #if ENABLE(DATABASE)
-    m_storageAgent = InspectorStorageAgent::create(m_frontend.get());
+    m_databaseAgent = InspectorDatabaseAgent::create(&m_databaseResources, m_frontend.get());
+#endif
+
+#if ENABLE(DOM_STORAGE)
+    m_domStorageAgent = InspectorDOMStorageAgent::create(&m_domStorageResources, m_frontend.get());
 #endif
 
     if (m_timelineAgent)
@@ -592,9 +594,13 @@ void InspectorController::releaseFrontendLifetimeAgents()
     m_domAgent.clear();
 
 #if ENABLE(DATABASE)
-    if (m_storageAgent)
-        m_storageAgent->clearFrontend();
-    m_storageAgent.clear();
+    if (m_databaseAgent)
+        m_databaseAgent->clearFrontend();
+    m_databaseAgent.clear();
+#endif
+
+#if ENABLE(DOM_STORAGE)
+    m_domStorageAgent.clear();
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -1035,27 +1041,6 @@ void InspectorController::didDestroyWorker(intptr_t id)
 #endif // ENABLE(WORKERS)
 
 #if ENABLE(DATABASE)
-void InspectorController::selectDatabase(Database* database)
-{
-    if (!m_frontend)
-        return;
-
-    for (DatabaseResourcesMap::iterator it = m_databaseResources.begin(); it != m_databaseResources.end(); ++it) {
-        if (it->second->database() == database) {
-            m_frontend->selectDatabase(it->first);
-            break;
-        }
-    }
-}
-
-Database* InspectorController::databaseForId(long databaseId)
-{
-    DatabaseResourcesMap::iterator it = m_databaseResources.find(databaseId);
-    if (it == m_databaseResources.end())
-        return 0;
-    return it->second->database();
-}
-
 void InspectorController::didOpenDatabase(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
     if (!enabled())
@@ -1174,71 +1159,6 @@ void InspectorController::didUseDOMStorage(StorageArea* storageArea, bool isLoca
     // Resources are only bound while visible.
     if (m_frontend)
         resource->bind(m_frontend.get());
-}
-
-void InspectorController::selectDOMStorage(Storage* storage)
-{
-    ASSERT(storage);
-    if (!m_frontend)
-        return;
-
-    Frame* frame = storage->frame();
-    ExceptionCode ec = 0;
-    bool isLocalStorage = (frame->domWindow()->localStorage(ec) == storage && !ec);
-    long storageResourceId = 0;
-    DOMStorageResourcesMap::iterator domStorageEnd = m_domStorageResources.end();
-    for (DOMStorageResourcesMap::iterator it = m_domStorageResources.begin(); it != domStorageEnd; ++it) {
-        if (it->second->isSameHostAndType(frame, isLocalStorage)) {
-            storageResourceId = it->first;
-            break;
-        }
-    }
-    if (storageResourceId)
-        m_frontend->selectDOMStorage(storageResourceId);
-}
-
-void InspectorController::getDOMStorageEntries(long storageId, RefPtr<InspectorArray>* entries)
-{
-    InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
-    if (storageResource) {
-        storageResource->startReportingChangesToFrontend();
-        Storage* domStorage = storageResource->domStorage();
-        for (unsigned i = 0; i < domStorage->length(); ++i) {
-            String name(domStorage->key(i));
-            String value(domStorage->getItem(name));
-            RefPtr<InspectorArray> entry = InspectorArray::create();
-            entry->pushString(name);
-            entry->pushString(value);
-            (*entries)->pushArray(entry);
-        }
-    }
-}
-
-void InspectorController::setDOMStorageItem(long storageId, const String& key, const String& value, bool* success)
-{
-    InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
-    if (storageResource) {
-        ExceptionCode exception = 0;
-        storageResource->domStorage()->setItem(key, value, exception);
-        *success = !exception;
-    }
-}
-
-void InspectorController::removeDOMStorageItem(long storageId, const String& key, bool* success)
-{
-    InspectorDOMStorageResource* storageResource = getDOMStorageResourceForId(storageId);
-    if (storageResource) {
-        storageResource->domStorage()->removeItem(key);
-        *success = true;
-    }
-}
-
-InspectorDOMStorageResource* InspectorController::getDOMStorageResourceForId(long storageId)
-{
-    DOMStorageResourcesMap::iterator it = m_domStorageResources.find(storageId);
-    if (it == m_domStorageResources.end())
-        return 0;
-    return it->second.get();
 }
 #endif
 
@@ -1506,6 +1426,36 @@ bool InspectorController::hasXHRBreakpoint(const String& url, String* breakpoint
 }
 
 #endif
+
+void InspectorController::setInjectedScriptSource(const String& source)
+{
+     injectedScriptHost()->setInjectedScriptSource(source);
+}
+
+void InspectorController::dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException)
+{
+    if (!m_frontend)
+        return;
+
+    // FIXME: explicitly pass injectedScriptId along with node id to the frontend.
+    bool injectedScriptIdIsNodeId = injectedScriptId <= 0;
+
+    InjectedScript injectedScript;
+    if (injectedScriptIdIsNodeId)
+        injectedScript = injectedScriptForNodeId(-injectedScriptId);
+    else
+        injectedScript = injectedScriptHost()->injectedScriptForId(injectedScriptId);
+
+    if (injectedScript.hasNoValue())
+        return;
+
+    injectedScript.dispatch(methodName, arguments, result, hadException);
+}
+
+void InspectorController::releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup)
+{
+    injectedScriptHost()->releaseWrapperObjectGroup(injectedScriptId, objectGroup);
+}
 
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {

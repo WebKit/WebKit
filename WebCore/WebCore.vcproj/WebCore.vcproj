@@ -65094,14 +65094,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorBackend.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorBackend.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorClient.cpp"
 				>
 			</File>
@@ -65126,6 +65118,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorDatabaseAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDatabaseAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorDatabaseResource.cpp"
 				>
 			</File>
@@ -65147,6 +65147,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDOMAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMStorageAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDOMStorageAgent.h"
 				>
 			</File>
 			<File
@@ -65215,14 +65223,6 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorState.h"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorStorageAgent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorStorageAgent.h"
 				>
 			</File>
 			<File

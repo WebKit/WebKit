@@ -30,6 +30,8 @@
 
 #include "config.h"
 #include "InjectedScriptHost.h"
+#include "InspectorDatabaseAgent.h"
+#include "InspectorDOMStorageAgent.h"
 
 #if ENABLE(INSPECTOR)
 
@@ -120,23 +122,23 @@ long InjectedScriptHost::inspectedNode(unsigned long num)
 #if ENABLE(DATABASE)
 Database* InjectedScriptHost::databaseForId(long databaseId)
 {
-    if (m_inspectorController)
-        return m_inspectorController->databaseForId(databaseId);
+    if (m_inspectorController && m_inspectorController->m_databaseAgent)
+        return m_inspectorController->m_databaseAgent->databaseForId(databaseId);
     return 0;
 }
 
 void InjectedScriptHost::selectDatabase(Database* database)
 {
-    if (m_inspectorController)
-        m_inspectorController->selectDatabase(database);
+    if (m_inspectorController && m_inspectorController->m_databaseAgent)
+        m_inspectorController->m_databaseAgent->selectDatabase(database);
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
 void InjectedScriptHost::selectDOMStorage(Storage* storage)
 {
-    if (m_inspectorController)
-        m_inspectorController->selectDOMStorage(storage);
+    if (m_inspectorController && m_inspectorController->m_domStorageAgent)
+        m_inspectorController->m_domStorageAgent->selectDOMStorage(storage);
 }
 #endif
 
@@ -170,7 +172,7 @@ InspectorDOMAgent* InjectedScriptHost::inspectorDOMAgent()
 {
     if (!m_inspectorController)
         return 0;
-    return m_inspectorController->domAgent();
+    return m_inspectorController->m_domAgent.get();
 }
 
 InspectorFrontend* InjectedScriptHost::frontend()

@@ -36,12 +36,12 @@ module core {
         // generic Inspector's methods
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Backend] void setInjectedScriptSource(in String scriptSource);
         // HUGE FIXME: we need to expose InjectedScript methods here. Or document InjectedScript capabilities.
-        [domain=Backend] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
+        [domain=Inspector] void setInjectedScriptSource(in String scriptSource);
+        [domain=Inspector] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
         [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
         [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
-        [domain=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
+        [domain=Inspector] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
         [domain=Inspector] void getInspectorState(out Object state);
         [domain=Inspector] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
         [domain=Inspector] void reloadPage();
@@ -69,6 +69,9 @@ module core {
 
         [domain=Inspector] void setExtraHeaders(in Object headers);
 
+        [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
+        [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
+
         ///////////////////////////////////////////////////////////////////////
         // Console API
         ///////////////////////////////////////////////////////////////////////
@@ -83,6 +86,10 @@ module core {
         ///////////////////////////////////////////////////////////////////////
         // Network API
         ///////////////////////////////////////////////////////////////////////
+
+        [domain=Network] void cachedResources(out Object resources);
+        [domain=Network] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
+        [notify, domain=Network] void frameDetachedFromParent(out unsigned long frameId);
 
         [notify, domain=Network] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
         [notify, domain=Network] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
@@ -99,18 +106,12 @@ module core {
         [notify, domain=Network] void didReceiveWebSocketHandshakeResponse(out unsigned long identifier, out double time, out Object response);
         [notify, domain=Network] void didCloseWebSocket(out unsigned long identifier, out double time);
 
-        ///////////////////////////////////////////////////////////////////////
-        // Resources API
-        ///////////////////////////////////////////////////////////////////////
-
-        [domain=Resources] void cachedResources(out Object resources);
-        [domain=Resources] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
-        [notify, domain=Resources] void frameDetachedFromParent(out unsigned long frameId);
-
-        // FIXME: Introduce new StorageDomain.
-        [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
-        [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
+
+        ///////////////////////////////////////////////////////////////////////
+        // Database API
+        ///////////////////////////////////////////////////////////////////////
+
         [notify, domain=Database] void addDatabase(out Object database);
         [notify, domain=Database] void selectDatabase(out int databaseId);
         [domain=Database] void getDatabaseTableNames(in long databaseId, out Array tableNames);
@@ -118,7 +119,13 @@ module core {
         [notify, domain=Database] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
         [notify, domain=Database] void sqlTransactionFailed(out long transactionId, out Value sqlError);
 #endif
+
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
+
+        ///////////////////////////////////////////////////////////////////////
+        // DOM Storage API
+        ///////////////////////////////////////////////////////////////////////
+
         [domain=DOMStorage] void getDOMStorageEntries(in long storageId, out Array entries);
         [domain=DOMStorage] void setDOMStorageItem(in long storageId, in String key, in String value, out boolean success);
         [domain=DOMStorage] void removeDOMStorageItem(in long storageId, in String key, out boolean success);
@@ -126,12 +133,24 @@ module core {
         [notify, domain=DOMStorage] void updateDOMStorage(out int storageId);
         [notify, domain=DOMStorage] void selectDOMStorage(out int storageId);
 #endif
+
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
+
+        ///////////////////////////////////////////////////////////////////////
+        // AppCache API
+        ///////////////////////////////////////////////////////////////////////
+
         [domain=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
         [notify, domain=ApplicationCache] void updateApplicationCacheStatus(out int status);
         [notify, domain=ApplicationCache] void updateNetworkState(out boolean isNowOnline);
 #endif
+
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
+
+        ///////////////////////////////////////////////////////////////////////
+        // Filesystem API
+        ///////////////////////////////////////////////////////////////////////
+
         [domain=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
         [domain=FileSystem] void revealFolderInOS(in String path);
 
@@ -203,8 +222,8 @@ module core {
         // Debugger API
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Backend] void enableDebugger(in boolean always);
-        [domain=Inspector] void disableDebugger(in boolean always); // FIXME: should be on the same domain as enableDebugger.
+        [domain=Inspector] void enableDebuggerFromFrontend(in boolean always);
+        [domain=Inspector] void disableDebugger(in boolean always);
         [notify, domain=Debugger] void debuggerWasEnabled();
         [notify, domain=Debugger] void debuggerWasDisabled();
 
