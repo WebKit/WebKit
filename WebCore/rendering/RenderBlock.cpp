@@ -389,10 +389,15 @@ RenderBlock* RenderBlock::containingColumnsBlock(bool allowAnonymousColumnBlock)
 
 RenderBlock* RenderBlock::clone() const
 {
-    RenderBlock* o = new (renderArena()) RenderBlock(node());
-    o->setStyle(style());
-    o->setChildrenInline(childrenInline());
-    return o;
+    RenderBlock* cloneBlock;
+    if (isAnonymousBlock())
+        cloneBlock = createAnonymousBlock();
+    else {
+        cloneBlock = new (renderArena()) RenderBlock(node());
+        cloneBlock->setStyle(style());
+    }
+    cloneBlock->setChildrenInline(childrenInline());
+    return cloneBlock;
 }
 
 void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
@@ -400,13 +405,9 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
                               RenderObject* beforeChild, RenderBoxModelObject* oldCont)
 {
     // Create a clone of this inline.
-    RenderBlock* cloneBlock;
-    if (isAnonymousBlock())
-        cloneBlock = createAnonymousBlock();
-    else {
-        cloneBlock = clone();
+    RenderBlock* cloneBlock = clone();
+    if (!isAnonymousBlock())
         cloneBlock->setContinuation(oldCont);
-    }
 
     // Now take all of the children from beforeChild to the end and remove
     // them from |this| and place them in the clone.
@@ -431,7 +432,7 @@ void RenderBlock::splitBlocks(RenderBlock* fromBlock, RenderBlock* toBlock,
         
         // Create a new clone.
         RenderBlock* cloneChild = cloneBlock;
-        cloneBlock = blockCurr->isAnonymousBlock() ? blockCurr->createAnonymousBlock() : blockCurr->clone();
+        cloneBlock = blockCurr->clone();
 
         // Insert our child clone as the first child.
         cloneBlock->children()->appendChildNode(cloneBlock, cloneChild);

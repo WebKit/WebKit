@@ -1,3 +1,17 @@
+2010-12-29  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        When cloning an anonymous block, make sure to set the childrenInline flag based
+        on the state of the block to be cloned.
+        https://bugs.webkit.org/show_bug.cgi?id=51489
+
+        Test: fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone): add code to handle cloning of anonymous blocks.
+        (WebCore::RenderBlock::splitBlocks): remove anonymous block creation calls since it is now handled by clone().
+
 2010-12-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for WinCE after r73802.
