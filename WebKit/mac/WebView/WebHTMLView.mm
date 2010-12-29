@@ -6281,7 +6281,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection
 {
-    return [self findString:string options:(forward ? 0 : WebFindOptionsBackwards) | (caseFlag ? 0 : WebFindOptionsCaseInsensitive) | (startInSelection ? WebFindOptionsStartInSelection : 0)];
+    return [self _findString:string options:(forward ? 0 : WebFindOptionsBackwards) | (caseFlag ? 0 : WebFindOptionsCaseInsensitive) | (startInSelection ? WebFindOptionsStartInSelection : 0)];
 }
 
 @end
@@ -6352,7 +6352,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return result;
 }
 
-- (BOOL)findString:(NSString *)string options:(WebFindOptions)options
+- (BOOL)_findString:(NSString *)string options:(WebFindOptions)options
 {
     if (![string length])
         return NO;

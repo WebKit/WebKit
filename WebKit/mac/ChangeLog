@@ -1,3 +1,20 @@
+2010-12-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Ada Chan.
+
+        <rdar://problem/8758191> REGRESSION (r72887): Mail crashes when doing searches in a message due to method name conflict
+        https://bugs.webkit.org/show_bug.cgi?id=51717
+
+        Renamed -findString:options: to -_findString:options: in the WebDocumentOptionsSearching
+        protocol to avoid conflict with -[WebHTMLView(MailExtras) findString:options:] which Mail defines.
+
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:startInSelection:]):
+        (-[WebHTMLView _findString:options:]):
+        * WebView/WebView.mm:
+        (findString):
+
 2010-12-28  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Sam Weinig.

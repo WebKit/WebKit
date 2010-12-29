@@ -68,7 +68,8 @@
 @end
 
 @protocol WebDocumentOptionsSearching <NSObject>
-- (BOOL)findString:(NSString *)string options:(WebFindOptions)options;
+// Prefixed with an underscore to avoid conflict with Mail's -[WebHTMLView(MailExtras) findString:options:].
+- (BOOL)_findString:(NSString *)string options:(WebFindOptions)options;
 @end
 
 /* Used to save and restore state in the view, typically when going back/forward */

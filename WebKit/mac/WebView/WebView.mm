@@ -4286,7 +4286,7 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *string, WebFindOptions options)
 {
     if ([searchView conformsToProtocol:@protocol(WebDocumentOptionsSearching)])
-        return [(NSView <WebDocumentOptionsSearching> *)searchView findString:string options:options];
+        return [(NSView <WebDocumentOptionsSearching> *)searchView _findString:string options:options];
     if ([searchView conformsToProtocol:@protocol(WebDocumentIncrementalSearching)])
         return [(NSView <WebDocumentIncrementalSearching> *)searchView searchFor:string direction:!(options & WebFindOptionsBackwards) caseSensitive:!(options & WebFindOptionsCaseInsensitive) wrap:!!(options & WebFindOptionsWrapAround) startInSelection:!!(options & WebFindOptionsStartInSelection)];
     return [searchView searchFor:string direction:!(options & WebFindOptionsBackwards) caseSensitive:!(options & WebFindOptionsCaseInsensitive) wrap:!!(options & WebFindOptionsWrapAround)];
