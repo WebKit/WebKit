@@ -65,13 +65,8 @@ EncodedJSValue JSC_HOST_CALL JSDataViewConstructor::constructJSDataView(ExecStat
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), view.get())));
 }
 
-static JSValue getDataViewMember(ExecState* exec, DataViewAccessType type)
+static JSValue getDataViewMember(ExecState* exec, DataView* imp, DataViewAccessType type)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSDataView::s_info))
-        return throwTypeError(exec);
-    JSDataView* castedThis = static_cast<JSDataView*>(asObject(thisValue));
-    DataView* imp = static_cast<DataView*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
@@ -107,33 +102,28 @@ static JSValue getDataViewMember(ExecState* exec, DataViewAccessType type)
     return result;
 }
 
-JSValue JSC_HOST_CALL JSDataView::getInt8(ExecState* exec)
+JSValue JSDataView::getInt8(ExecState* exec)
 {
-    return getDataViewMember(exec, AccessDataViewMemberAsInt8);
+    return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsInt8);
 }
 
-JSValue JSC_HOST_CALL JSDataView::getUint8(ExecState* exec)
+JSValue JSDataView::getUint8(ExecState* exec)
 {
-    return getDataViewMember(exec, AccessDataViewMemberAsUint8);
+    return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsUint8);
 }
 
-JSValue JSC_HOST_CALL JSDataView::getFloat32(ExecState* exec)
+JSValue JSDataView::getFloat32(ExecState* exec)
 {
-    return getDataViewMember(exec, AccessDataViewMemberAsFloat32);
+    return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsFloat32);
 }
 
-JSValue JSC_HOST_CALL JSDataView::getFloat64(ExecState* exec)
+JSValue JSDataView::getFloat64(ExecState* exec)
 {
-    return getDataViewMember(exec, AccessDataViewMemberAsFloat64);
+    return getDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsFloat64);
 }
 
-static JSValue setDataViewMember(ExecState* exec, DataViewAccessType type)
+static JSValue setDataViewMember(ExecState* exec, DataView* imp, DataViewAccessType type)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&JSDataView::s_info))
-        return throwTypeError(exec);
-    JSDataView* castedThis = static_cast<JSDataView*>(asObject(thisValue));
-    DataView* imp = static_cast<DataView*>(castedThis->impl());
     if (exec->argumentCount() < 2)
         return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
     ExceptionCode ec = 0;
@@ -159,14 +149,14 @@ static JSValue setDataViewMember(ExecState* exec, DataViewAccessType type)
     return jsUndefined();
 }
 
-JSValue JSC_HOST_CALL JSDataView::setInt8(ExecState* exec)
+JSValue JSDataView::setInt8(ExecState* exec)
 {
-    return setDataViewMember(exec, AccessDataViewMemberAsInt8);
+    return setDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsInt8);
 }
 
-JSValue JSC_HOST_CALL JSDataView::setUint8(ExecState* exec)
+JSValue JSDataView::setUint8(ExecState* exec)
 {
-    return setDataViewMember(exec, AccessDataViewMemberAsUint8);
+    return setDataViewMember(exec, static_cast<DataView*>(impl()), AccessDataViewMemberAsUint8);
 }
 
 } // namespace WebCore

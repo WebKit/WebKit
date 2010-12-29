@@ -1,3 +1,26 @@
+2010-12-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Sam Weinig.
+
+        JSDataViewCustom.cpp gives the fastcall calling convention to functions called via C++
+        https://bugs.webkit.org/show_bug.cgi?id=51722
+
+        Remove the JSC_HOST_CALL from methods that are called from C++. JSC_HOST_CALL gives
+        methods the fastcall calling convention, which leads to runtime errors when they are
+        called from C++. Also remove a bit of unnecessary code duplication.
+
+        No new tests. This is covered by fast/canvas/webgl/data-view-test.html.
+
+        * bindings/js/JSDataViewCustom.cpp:
+        (WebCore::getDataViewMember): Remove duplicated code.
+        (WebCore::JSDataView::getInt8): Remove JSC_HOST_CALL.
+        (WebCore::JSDataView::getUint8): Ditto.
+        (WebCore::JSDataView::getFloat32): Ditto.
+        (WebCore::JSDataView::getFloat64): Ditto.
+        (WebCore::setDataViewMember): Remove duplicated code.
+        (WebCore::JSDataView::setInt8): Remove JSC_HOST_CALL.
+        (WebCore::JSDataView::setUint8): Ditto.
+
 2010-12-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Kenneth Russel.
