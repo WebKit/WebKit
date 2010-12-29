@@ -134,6 +134,12 @@ bool QWKPreferences::testAttribute(WebAttribute attr) const
         return WKPreferencesGetXSSAuditorEnabled(d->ref);
     case FrameFlatteningEnabled:
         return WKPreferencesGetFrameFlatteningEnabled(d->ref);
+    case PrivateBrowsingEnabled:
+        return WKPreferencesGetPrivateBrowsingEnabled(d->ref);
+    case DeveloperExtrasEnabled:
+        return WKPreferencesGetDeveloperExtrasEnabled(d->ref);
+    case DnsPrefetchEnabled:
+        return WKPreferencesGetDNSPrefetchingEnabled(d->ref);
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -163,6 +169,15 @@ void QWKPreferences::setAttribute(WebAttribute attr, bool on)
         break;
     case FrameFlatteningEnabled:
         WKPreferencesSetFrameFlatteningEnabled(d->ref, on);
+        break;
+    case PrivateBrowsingEnabled:
+        WKPreferencesSetPrivateBrowsingEnabled(d->ref, on);
+        break;
+    case DeveloperExtrasEnabled:
+        WKPreferencesSetDeveloperExtrasEnabled(d->ref, on);
+        break;
+    case DnsPrefetchEnabled:
+        WKPreferencesSetDNSPrefetchingEnabled(d->ref, on);
         break;
     default:
         ASSERT_NOT_REACHED();

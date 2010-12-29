@@ -43,7 +43,10 @@ public:
         OfflineWebApplicationCacheEnabled,
         LocalStorageEnabled,
         XSSAuditingEnabled,
-        FrameFlatteningEnabled
+        FrameFlatteningEnabled,
+        PrivateBrowsingEnabled,
+        DeveloperExtrasEnabled,
+        DnsPrefetchEnabled
     };
 
     static QWKPreferences* sharedPreferences();
