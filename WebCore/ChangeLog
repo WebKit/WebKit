@@ -1,3 +1,23 @@
+2010-12-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Kenneth Russel.
+
+        A more robust fix for https://bugs.webkit.org/show_bug.cgi?id=51681
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::attach): Added. Like recalcStyle(), calls
+        CanvasRenderingContext2D::updateFont() if necessary. This covers the case of a detach/
+        attach-type style recalc.
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal): Removed the early return added in
+        r74716. A font that is loading custom fonts is okay to use, as long as it is valid.
+        (WebCore::CanvasRenderingContext2D::accessFont): Added a call to
+        Document::updateStyleIfNeeded(). This ensures that any pending style recalc will take place
+        and update the font if it is invalid.
+        * platform/graphics/Font.h:
+        (WebCore::Font::loadingCustomFonts): Made this private.
+
 2010-12-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: Qt build fix.

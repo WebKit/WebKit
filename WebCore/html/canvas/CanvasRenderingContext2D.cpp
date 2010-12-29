@@ -1761,10 +1761,6 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     const Font& font = accessFont();
     
-    // Don't draw anything while we are using custom fonts that are in the process of loading.
-    if (font.loadingCustomFonts())
-        return;
-
     // FIXME: Handle maxWidth.
     // FIXME: Need to turn off font smoothing.
 
@@ -1882,6 +1878,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
 const Font& CanvasRenderingContext2D::accessFont()
 {
+    canvas()->document()->updateStyleIfNeeded();
+
     if (!state().m_realizedFont)
         setFont(state().m_unparsedFont);
     return state().m_font;

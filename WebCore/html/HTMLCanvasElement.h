@@ -130,6 +130,8 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
+    virtual void attach();
+
     virtual void recalcStyle(StyleChange);
 
     void reset();
