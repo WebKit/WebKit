@@ -1,3 +1,16 @@
+2010-12-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] GSettings warning is concealing real warnings on the build bots
+        https://bugs.webkit.org/show_bug.cgi?id=51691
+
+        Reviewed by Xan Lopez.
+
+        Do not print the GSettings warning message when running in DumpRenderTree.
+
+        * webkit/webkitwebinspector.cpp:
+        (inspectorGSettings): Do not print the GSettings warning if we are running
+        in DumpRenderTree. This should clean up the test results page a great deal.
+
 2010-12-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
