@@ -1319,11 +1319,12 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
     RefPtr<DocumentLoader> oldDocumentLoader = m_documentLoader;
 
     bool sameURL = shouldTreatURLAsSameAsCurrent(newURL);
+    const String& httpMethod = request.httpMethod();
     
     // Make sure to do scroll to anchor processing even if the URL is
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
-    if (shouldScrollToAnchor(isFormSubmission, newLoadType, newURL)) {
+    if (shouldScrollToAnchor(isFormSubmission, httpMethod, newLoadType, newURL)) {
         oldDocumentLoader->setTriggeringAction(action);
         policyChecker()->stopCheck();
         policyChecker()->setLoadType(newLoadType);
@@ -1442,8 +1443,9 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     bool isFormSubmission = formState;
 
     const KURL& newURL = loader->request().url();
+    const String& httpMethod = loader->request().httpMethod();
 
-    if (shouldScrollToAnchor(isFormSubmission, policyChecker()->loadType(), newURL)) {
+    if (shouldScrollToAnchor(isFormSubmission,  httpMethod, policyChecker()->loadType(), newURL)) {
         RefPtr<DocumentLoader> oldDocumentLoader = m_documentLoader;
         NavigationAction action(newURL, policyChecker()->loadType(), isFormSubmission);
 
@@ -2818,17 +2820,17 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     loadInSameDocument(request.url(), 0, !isRedirect);
 }
 
-bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, FrameLoadType loadType, const KURL& url)
+bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, const String& httpMethod, FrameLoadType loadType, const KURL& url)
 {
     // Should we do anchor navigation within the existing content?
 
-    // We don't do this if we are submitting a form, explicitly reloading,
+    // We don't do this if we are submitting a form with method other than "GET", explicitly reloading,
     // currently displaying a frameset, or if the URL does not have a fragment.
     // These rules were originally based on what KHTML was doing in KHTMLPart::openURL.
 
     // FIXME: What about load types other than Standard and Reload?
 
-    return !isFormSubmission
+    return (!isFormSubmission || equalIgnoringCase(httpMethod, "GET"))
         && loadType != FrameLoadTypeReload
         && loadType != FrameLoadTypeReloadFromOrigin
         && loadType != FrameLoadTypeSame

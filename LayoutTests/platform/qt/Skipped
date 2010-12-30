@@ -2513,7 +2513,6 @@ fast/transforms/transform-positioned-ancestor.html
 # -- timedout with --platform mac --ignore-metrics
 fast/events/5056619.html
 fast/events/drag-in-frames.html
-fast/dom/cssTarget-crash.html
 fast/loader/null-request-after-willSendRequest.html
 fast/text/international/thai-line-breaks.html
 

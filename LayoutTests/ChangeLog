@@ -1,3 +1,15 @@
+2010-12-30  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION: fast/dom/cssTarget-crash.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=20342
+
+        * fast/forms/submit-change-fragment-expected.txt: Added.
+        * fast/forms/submit-change-fragment.html: Added.
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2010-12-30  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, unskip the test, it's running fine locally.

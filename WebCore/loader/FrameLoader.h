@@ -366,7 +366,7 @@ private:
     void continueLoadAfterNewWindowPolicy(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, const NavigationAction&, bool shouldContinue);
     void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
-    bool shouldScrollToAnchor(bool isFormSubmission, FrameLoadType, const KURL&);
+    bool shouldScrollToAnchor(bool isFormSubmission, const String& httpMethod, FrameLoadType, const KURL&);
 
     void checkLoadCompleteForThisFrame();
 
