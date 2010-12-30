@@ -28,13 +28,15 @@
 
 #include "config.h"
 
-#include "InspectorStorageAgent.h"
+#include "InspectorDatabaseAgent.h"
 
 #if ENABLE(INSPECTOR) && ENABLE(DATABASE)
 
 #include "Database.h"
 #include "ExceptionCode.h"
 #include "InspectorFrontend.h"
+#include "InspectorController.h"
+#include "InspectorDatabaseResource.h"
 #include "InspectorValues.h"
 #include "SQLError.h"
 #include "SQLStatementCallback.h"
@@ -54,7 +56,7 @@ namespace {
 
 long lastTransactionId = 0;
 
-void reportTransactionFailed(InspectorStorageAgent* agent, long transactionId, SQLError* error)
+void reportTransactionFailed(InspectorDatabaseAgent* agent, long transactionId, SQLError* error)
 {
     if (!agent->frontend())
         return;
@@ -66,7 +68,7 @@ void reportTransactionFailed(InspectorStorageAgent* agent, long transactionId, S
 
 class StatementCallback : public SQLStatementCallback {
 public:
-    static PassRefPtr<StatementCallback> create(long transactionId, PassRefPtr<InspectorStorageAgent> agent)
+    static PassRefPtr<StatementCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
     {
         return adoptRef(new StatementCallback(transactionId, agent));
     }
@@ -100,16 +102,16 @@ public:
     }
 
 private:
-    StatementCallback(long transactionId, PassRefPtr<InspectorStorageAgent> agent)
+    StatementCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
         : m_transactionId(transactionId)
         , m_agent(agent) { }
     long m_transactionId;
-    RefPtr<InspectorStorageAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent> m_agent;
 };
 
 class StatementErrorCallback : public SQLStatementErrorCallback {
 public:
-    static PassRefPtr<StatementErrorCallback> create(long transactionId, PassRefPtr<InspectorStorageAgent> agent)
+    static PassRefPtr<StatementErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
     {
         return adoptRef(new StatementErrorCallback(transactionId, agent));
     }
@@ -123,16 +125,16 @@ public:
     }
 
 private:
-    StatementErrorCallback(long transactionId, RefPtr<InspectorStorageAgent> agent)
+    StatementErrorCallback(long transactionId, RefPtr<InspectorDatabaseAgent> agent)
         : m_transactionId(transactionId)
         , m_agent(agent) { }
     long m_transactionId;
-    RefPtr<InspectorStorageAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent> m_agent;
 };
 
 class TransactionCallback : public SQLTransactionCallback {
 public:
-    static PassRefPtr<TransactionCallback> create(const String& sqlStatement, long transactionId, PassRefPtr<InspectorStorageAgent> agent)
+    static PassRefPtr<TransactionCallback> create(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
     {
         return adoptRef(new TransactionCallback(sqlStatement, transactionId, agent));
     }
@@ -152,18 +154,18 @@ public:
         return true;
     }
 private:
-    TransactionCallback(const String& sqlStatement, long transactionId, PassRefPtr<InspectorStorageAgent> agent)
+    TransactionCallback(const String& sqlStatement, long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
         : m_sqlStatement(sqlStatement)
         , m_transactionId(transactionId)
         , m_agent(agent) { }
     String m_sqlStatement;
     long m_transactionId;
-    RefPtr<InspectorStorageAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent> m_agent;
 };
 
 class TransactionErrorCallback : public SQLTransactionErrorCallback {
 public:
-    static PassRefPtr<TransactionErrorCallback> create(long transactionId, PassRefPtr<InspectorStorageAgent> agent)
+    static PassRefPtr<TransactionErrorCallback> create(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
     {
         return adoptRef(new TransactionErrorCallback(transactionId, agent));
     }
@@ -176,11 +178,11 @@ public:
         return true;
     }
 private:
-    TransactionErrorCallback(long transactionId, PassRefPtr<InspectorStorageAgent> agent)
+    TransactionErrorCallback(long transactionId, PassRefPtr<InspectorDatabaseAgent> agent)
         : m_transactionId(transactionId)
         , m_agent(agent) { }
     long m_transactionId;
-    RefPtr<InspectorStorageAgent> m_agent;
+    RefPtr<InspectorDatabaseAgent> m_agent;
 };
 
 class TransactionSuccessCallback : public VoidCallback {
@@ -200,28 +202,67 @@ private:
 
 } // namespace
 
-InspectorStorageAgent::InspectorStorageAgent(InspectorFrontend* frontend)
-    : m_frontend(frontend)
+InspectorDatabaseAgent::~InspectorDatabaseAgent()
 {
 }
 
-InspectorStorageAgent::~InspectorStorageAgent()
+void InspectorDatabaseAgent::getDatabaseTableNames(long databaseId, RefPtr<InspectorArray>* names)
 {
+    Database* database = databaseForId(databaseId);
+    if (database) {
+        Vector<String> tableNames = database->tableNames();
+        unsigned length = tableNames.size();
+        for (unsigned i = 0; i < length; ++i)
+            (*names)->pushString(tableNames[i]);
+    }
 }
 
-long InspectorStorageAgent::executeSQL(Database* database, const String& query)
+void InspectorDatabaseAgent::executeSQL(long databaseId, const String& query, bool* success, long* transactionId)
 {
-    long transactionId = ++lastTransactionId;
-    RefPtr<SQLTransactionCallback> callback(TransactionCallback::create(query, transactionId, this));
-    RefPtr<SQLTransactionErrorCallback> errorCallback(TransactionErrorCallback::create(transactionId, this));
+    Database* database = databaseForId(databaseId);
+    if (!database) {
+        *success = false;
+        return;
+    }
+
+    *transactionId = ++lastTransactionId;
+    RefPtr<SQLTransactionCallback> callback(TransactionCallback::create(query, *transactionId, this));
+    RefPtr<SQLTransactionErrorCallback> errorCallback(TransactionErrorCallback::create(*transactionId, this));
     RefPtr<VoidCallback> successCallback(TransactionSuccessCallback::create());
     database->transaction(callback.release(), errorCallback.release(), successCallback.release());
-    return transactionId;
+    *success = true;
 }
 
-void InspectorStorageAgent::clearFrontend()
+Database* InspectorDatabaseAgent::databaseForId(long databaseId)
+{
+    DatabaseResourcesMap::iterator it = m_databaseResources->find(databaseId);
+    if (it == m_databaseResources->end())
+        return 0;
+    return it->second->database();
+}
+
+void InspectorDatabaseAgent::selectDatabase(Database* database)
+{
+    if (!m_frontend)
+        return;
+
+    for (DatabaseResourcesMap::iterator it = m_databaseResources->begin(); it != m_databaseResources->end(); ++it) {
+        if (it->second->database() == database) {
+            m_frontend->selectDatabase(it->first);
+            break;
+        }
+    }
+}
+
+void InspectorDatabaseAgent::clearFrontend()
 {
     m_frontend = 0;
+}
+
+InspectorDatabaseAgent::InspectorDatabaseAgent(DatabaseResourcesMap* databaseResources, InspectorFrontend* frontend)
+    : m_databaseResources(databaseResources)
+    , m_frontend(frontend)
+{
 }
 
 } // namespace WebCore

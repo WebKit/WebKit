@@ -44,7 +44,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 }
 {
     seq : 2
-    domain : "Resources"
+    domain : "Network"
     success : false
     errors : {
         0 : "Protocol Error: 'arguments' property with type 'object' was not found."
@@ -52,7 +52,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 }
 {
     seq : 3
-    domain : "Resources"
+    domain : "Network"
     success : false
     errors : {
         0 : "Protocol Error: 'arguments' property with type 'object' was not found."
@@ -60,7 +60,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 }
 {
     seq : 4
-    domain : "Resources"
+    domain : "Network"
     success : false
     errors : {
         0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."
@@ -70,7 +70,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 }
 {
     seq : 5
-    domain : "Resources"
+    domain : "Network"
     success : false
     errors : {
         0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."

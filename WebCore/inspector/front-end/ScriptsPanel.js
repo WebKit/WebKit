@@ -220,7 +220,7 @@ WebInspector.ScriptsPanel.prototype = {
             this.visibleView.show(this.viewsContainerElement);
 
         if (this._attachDebuggerWhenShown) {
-            InspectorBackend.enableDebugger(false);
+            InspectorBackend.enableDebuggerFromFrontend(false);
             delete this._attachDebuggerWhenShown;
         }
     },
@@ -392,7 +392,7 @@ WebInspector.ScriptsPanel.prototype = {
     attachDebuggerWhenShown: function()
     {
         if (this.element.parentElement) {
-            InspectorBackend.enableDebugger(false);
+            InspectorBackend.enableDebuggerFromFrontend(false);
         } else {
             this._attachDebuggerWhenShown = true;
         }
@@ -862,7 +862,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (this._debuggerEnabled)
             InspectorBackend.disableDebugger(true);
         else
-            InspectorBackend.enableDebugger(!!optionalAlways);
+            InspectorBackend.enableDebuggerFromFrontend(!!optionalAlways);
     },
 
     _togglePauseOnExceptions: function()

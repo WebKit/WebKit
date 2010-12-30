@@ -1,3 +1,64 @@
+2010-12-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: extract Database & DOM Storage agents; remove InspectorBackend.
+        https://bugs.webkit.org/show_bug.cgi?id=51707
+
+        This change brushes up storage agents + removes redundant InspectorBackend class.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::databaseForId):
+        (WebCore::InjectedScriptHost::selectDatabase):
+        (WebCore::InjectedScriptHost::selectDOMStorage):
+        (WebCore::InjectedScriptHost::inspectorDOMAgent):
+        * inspector/Inspector.idl:
+        * inspector/InspectorBackend.cpp: Removed.
+        * inspector/InspectorBackend.h: Removed.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorController::didUseDOMStorage):
+        (WebCore::InspectorController::setInjectedScriptSource):
+        (WebCore::InspectorController::dispatchOnInjectedScript):
+        (WebCore::InspectorController::releaseWrapperObjectGroup):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMStorageAgent.cpp: Added.
+        (WebCore::InspectorDOMStorageAgent::~InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageEntries):
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::removeDOMStorageItem):
+        (WebCore::InspectorDOMStorageAgent::selectDOMStorage):
+        (WebCore::InspectorDOMStorageAgent::InspectorDOMStorageAgent):
+        (WebCore::InspectorDOMStorageAgent::getDOMStorageResourceForId):
+        * inspector/InspectorDOMStorageAgent.h: Copied from WebCore/inspector/InspectorStorageAgent.h.
+        (WebCore::InspectorDOMStorageAgent::create):
+        (WebCore::InspectorDOMStorageAgent::frontend):
+        * inspector/InspectorDatabaseAgent.cpp: Renamed from WebCore/inspector/InspectorStorageAgent.cpp.
+        (WebCore::InspectorDatabaseAgent::~InspectorDatabaseAgent):
+        (WebCore::InspectorDatabaseAgent::getDatabaseTableNames):
+        (WebCore::InspectorDatabaseAgent::executeSQL):
+        (WebCore::InspectorDatabaseAgent::databaseForId):
+        (WebCore::InspectorDatabaseAgent::selectDatabase):
+        (WebCore::InspectorDatabaseAgent::clearFrontend):
+        (WebCore::InspectorDatabaseAgent::InspectorDatabaseAgent):
+        * inspector/InspectorDatabaseAgent.h: Renamed from WebCore/inspector/InspectorStorageAgent.h.
+        (WebCore::InspectorDatabaseAgent::create):
+        (WebCore::InspectorDatabaseAgent::frontend):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.show):
+        (WebInspector.ScriptsPanel.prototype.attachDebuggerWhenShown):
+        (WebInspector.ScriptsPanel.prototype._toggleDebugging):
+
 2010-12-29  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

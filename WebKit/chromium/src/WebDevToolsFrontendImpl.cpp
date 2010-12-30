@@ -38,7 +38,6 @@
 #include "Document.h"
 #include "Event.h"
 #include "Frame.h"
-#include "InspectorBackend.h"
 #include "InspectorController.h"
 #include "InspectorFrontendClientImpl.h"
 #include "InspectorFrontendHost.h"

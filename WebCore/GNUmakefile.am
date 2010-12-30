@@ -1930,20 +1930,22 @@ webcore_sources += \
 	WebCore/inspector/InjectedScriptHost.h \
 	WebCore/inspector/InspectorApplicationCacheAgent.cpp \
 	WebCore/inspector/InspectorApplicationCacheAgent.h \
-	WebCore/inspector/InspectorBackend.cpp \
-	WebCore/inspector/InspectorBackend.h \
 	WebCore/inspector/InspectorClient.cpp \
 	WebCore/inspector/InspectorClient.h \
 	WebCore/inspector/InspectorController.cpp \
 	WebCore/inspector/InspectorController.h \
 	WebCore/inspector/InspectorCSSAgent.cpp \
 	WebCore/inspector/InspectorCSSAgent.h \
+	WebCore/inspector/InspectorDatabaseAgent.cpp \
+	WebCore/inspector/InspectorDatabaseAgent.h \
 	WebCore/inspector/InspectorDatabaseResource.cpp \
 	WebCore/inspector/InspectorDatabaseResource.h \
 	WebCore/inspector/InspectorDebuggerAgent.cpp \
 	WebCore/inspector/InspectorDebuggerAgent.h \
 	WebCore/inspector/InspectorDOMAgent.cpp \
 	WebCore/inspector/InspectorDOMAgent.h \
+	WebCore/inspector/InspectorDOMStorageAgent.cpp \
+	WebCore/inspector/InspectorDOMStorageAgent.h \
 	WebCore/inspector/InspectorDOMStorageResource.cpp \
 	WebCore/inspector/InspectorDOMStorageResource.h \
 	WebCore/inspector/InspectorFileSystemAgent.cpp \
@@ -1961,8 +1963,6 @@ webcore_sources += \
 	WebCore/inspector/InspectorResourceAgent.h \
 	WebCore/inspector/InspectorState.cpp \
 	WebCore/inspector/InspectorState.h \
-	WebCore/inspector/InspectorStorageAgent.cpp \
-	WebCore/inspector/InspectorStorageAgent.h \
 	WebCore/inspector/InspectorStyleSheet.cpp \
 	WebCore/inspector/InspectorStyleSheet.h \
 	WebCore/inspector/InspectorTimelineAgent.cpp \

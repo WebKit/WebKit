@@ -1039,13 +1039,14 @@ SOURCES += \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
-    inspector/InspectorBackend.cpp \
     inspector/InspectorCSSAgent.cpp \
     inspector/InspectorClient.cpp \
     inspector/InspectorController.cpp \
+    inspector/InspectorDatabaseAgent.cpp \
     inspector/InspectorDatabaseResource.cpp \
     inspector/InspectorDebuggerAgent.cpp \
     inspector/InspectorDOMAgent.cpp \
+    inspector/InspectorDOMStorageAgent.cpp \
     inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorFileSystemAgent.cpp \
     inspector/InspectorFrontendClientLocal.cpp \
@@ -1054,7 +1055,6 @@ SOURCES += \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResourceAgent.cpp \
     inspector/InspectorState.cpp \
-    inspector/InspectorStorageAgent.cpp \
     inspector/InspectorStyleSheet.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
@@ -1930,11 +1930,12 @@ HEADERS += \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
     inspector/InspectorApplicationCacheAgent.h \
-    inspector/InspectorBackend.h \
     inspector/InspectorController.h \
     inspector/InspectorCSSAgent.h \
+    inspector/InspectorDatabaseAgent.h \
     inspector/InspectorDatabaseResource.h \
     inspector/InspectorDebuggerAgent.h \
+    inspector/InspectorDOMStorageAgent.h \
     inspector/InspectorDOMStorageResource.h \
     inspector/InspectorFileSystemAgent.h \
     inspector/InspectorFrontendClient.h \
@@ -1944,7 +1945,6 @@ HEADERS += \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResourceAgent.h \
     inspector/InspectorState.h \
-    inspector/InspectorStorageAgent.h \
     inspector/InspectorStyleSheet.h \
     inspector/InspectorTimelineAgent.h \
     inspector/ScriptGCEventListener.h \
