@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,10 +29,11 @@
 #include "config.h"
 #include "Location.h"
 
+#include "DOMWindow.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "KURL.h"
-#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -52,7 +53,7 @@ inline const KURL& Location::url() const
 
     const KURL& url = m_frame->loader()->url();
     if (!url.isValid())
-        return blankURL();  // Use "about:blank" while the page is still loading (before we have a frame).
+        return blankURL(); // Use "about:blank" while the page is still loading (before we have a frame).
 
     return url;
 }
@@ -124,9 +125,7 @@ String Location::origin() const
 {
     if (!m_frame)
         return String();
-
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url());
-    return origin->toString();
+    return SecurityOrigin::create(url())->toString();
 }
 
 String Location::hash() const
@@ -134,7 +133,7 @@ String Location::hash() const
     if (!m_frame)
         return String();
 
-    const String& fragmentIdentifier = this->url().fragmentIdentifier();
+    const String& fragmentIdentifier = url().fragmentIdentifier();
     return fragmentIdentifier.isEmpty() ? "" : "#" + fragmentIdentifier;
 }
 
@@ -155,6 +154,120 @@ String Location::toString() const
 
     const KURL& url = this->url();
     return url.hasPath() ? url.prettyURL() : url.prettyURL() + "/";
+}
+
+void Location::setHref(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    m_frame->domWindow()->setLocation(urlString, activeWindow, firstWindow);
+}
+
+void Location::setProtocol(const String& protocol, DOMWindow* activeWindow, DOMWindow* firstWindow, ExceptionCode& ec)
+{
+    if (!m_frame)
+        return;
+    KURL url = m_frame->loader()->url();
+    if (!url.setProtocol(protocol)) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+    m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
+}
+
+void Location::setHost(const String& host, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    KURL url = m_frame->loader()->url();
+    url.setHostAndPort(host);
+    m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
+}
+
+void Location::setHostname(const String& hostname, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    KURL url = m_frame->loader()->url();
+    url.setHost(hostname);
+    m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
+}
+
+void Location::setPort(const String& portString, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    KURL url = m_frame->loader()->url();
+    int port = portString.toInt();
+    if (port < 0 || port > 0xFFFF)
+        url.removePort();
+    else
+        url.setPort(port);
+    m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
+}
+
+void Location::setPathname(const String& pathname, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    KURL url = m_frame->loader()->url();
+    url.setPath(pathname);
+    m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
+}
+
+void Location::setSearch(const String& search, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    KURL url = m_frame->loader()->url();
+    url.setQuery(search);
+    m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
+}
+
+void Location::setHash(const String& hash, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    KURL url = m_frame->loader()->url();
+    String oldFragmentIdentifier = url.fragmentIdentifier();
+    String newFragmentIdentifier = hash;
+    if (hash[0] == '#')
+        newFragmentIdentifier = hash.substring(1);
+    if (equalIgnoringNullity(oldFragmentIdentifier, newFragmentIdentifier))
+        return;
+    url.setFragmentIdentifier(newFragmentIdentifier);
+    m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
+}
+
+void Location::assign(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    m_frame->domWindow()->setLocation(urlString, activeWindow, firstWindow);
+}
+
+void Location::replace(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow)
+{
+    if (!m_frame)
+        return;
+    m_frame->domWindow()->setLocation(urlString, activeWindow, firstWindow, LockHistoryAndBackForwardList);
+}
+
+void Location::reload(DOMWindow* activeWindow)
+{
+    if (!m_frame)
+        return;
+    // FIXME: It's not clear this cross-origin security check is valuable.
+    // We allow one page to change the location of another. Why block attempts to reload?
+    // Other location operations simply block use of JavaScript URLs cross origin.
+    DOMWindow* targetWindow = m_frame->domWindow();
+    if (!activeWindow->securityOrigin()->canAccess(targetWindow->securityOrigin())) {
+        targetWindow->printErrorMessage(targetWindow->crossDomainAccessErrorMessage(activeWindow));
+        return;
+    }
+    if (protocolIsJavaScript(m_frame->loader()->url()))
+        return;
+    m_frame->navigationScheduler()->scheduleRefresh();
 }
 
 } // namespace WebCore

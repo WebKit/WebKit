@@ -20,21 +20,11 @@
 #include "config.h"
 #include "JSDOMWindowCustom.h"
 
-#include "Chrome.h"
-#include "DOMWindow.h"
-#include "Document.h"
-#include "ExceptionCode.h"
-#include "FloatRect.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
-#include "FrameLoader.h"
-#include "FrameTree.h"
-#include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "History.h"
 #include "JSAudioConstructor.h"
-#include "JSDOMWindowShell.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "JSEventSource.h"
@@ -43,7 +33,6 @@
 #include "JSImageConstructor.h"
 #include "JSLocation.h"
 #include "JSMessageChannel.h"
-#include "JSMessagePort.h"
 #include "JSMessagePortCustom.h"
 #include "JSOptionConstructor.h"
 #include "JSWebKitCSSMatrix.h"
@@ -53,22 +42,10 @@
 #include "JSXSLTProcessor.h"
 #include "Location.h"
 #include "MediaPlayer.h"
-#include "MessagePort.h"
-#include "NotificationCenter.h"
-#include "Page.h"
-#include "PlatformScreen.h"
-#include "RegisteredEventListener.h"
 #include "ScheduledAction.h"
-#include "ScriptController.h"
-#include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
-#include "WindowFeatures.h"
-#include <runtime/Error.h>
 #include <runtime/JSFunction.h>
-#include <runtime/JSObject.h>
-#include <runtime/PrototypeFunction.h>
-#include <wtf/text/AtomicString.h>
 
 #if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 #include "JSArrayBuffer.h"
@@ -490,13 +467,10 @@ JSValue JSDOMWindow::location(ExecState* exec) const
 
 void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 {
-    DOMWindow* activeWindow = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-    DOMWindow* firstWindow = asJSDOMWindow(exec->dynamicGlobalObject())->impl();
-
 #if ENABLE(DASHBOARD_SUPPORT)
     // To avoid breaking old widgets, make "var location =" in a top-level frame create
     // a property named "location" instead of performing a navigation (<rdar://problem/5688039>).
-    if (Frame* activeFrame = activeWindow->frame()) {
+    if (Frame* activeFrame = activeDOMWindow(exec)->frame()) {
         if (Settings* settings = activeFrame->settings()) {
             if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
                 if (allowsAccessFrom(exec))
@@ -511,7 +485,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     if (exec->hadException())
         return;
 
-    impl()->setLocation(ustringToString(locationString), activeWindow, firstWindow);
+    impl()->setLocation(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
 }
 
 JSValue JSDOMWindow::crypto(ExecState*) const
@@ -669,9 +643,6 @@ JSValue JSDOMWindow::webSocket(ExecState* exec) const
 
 JSValue JSDOMWindow::open(ExecState* exec)
 {
-    DOMWindow* activeWindow = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-    DOMWindow* firstWindow = asJSDOMWindow(exec->dynamicGlobalObject())->impl();
-
     String urlString = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
@@ -682,7 +653,7 @@ JSValue JSDOMWindow::open(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    RefPtr<DOMWindow> openedWindow = impl()->open(urlString, frameName, windowFeaturesString, activeWindow, firstWindow);
+    RefPtr<DOMWindow> openedWindow = impl()->open(urlString, frameName, windowFeaturesString, activeDOMWindow(exec), firstDOMWindow(exec));
     if (!openedWindow)
         return jsUndefined();
     return toJS(exec, openedWindow.get());
@@ -731,9 +702,6 @@ static void setUpDialog(DOMWindow* dialog, void* handler)
 
 JSValue JSDOMWindow::showModalDialog(ExecState* exec)
 {
-    DOMWindow* activeWindow = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-    DOMWindow* firstWindow = asJSDOMWindow(exec->dynamicGlobalObject())->impl();
-
     String urlString = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
@@ -743,15 +711,13 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec)
 
     DialogHandler handler(exec);
 
-    impl()->showModalDialog(urlString, dialogFeaturesString, activeWindow, firstWindow, setUpDialog, &handler);
+    impl()->showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(exec), firstDOMWindow(exec), setUpDialog, &handler);
 
     return handler.returnValue();
 }
 
 JSValue JSDOMWindow::postMessage(ExecState* exec)
 {
-    DOMWindow* activeWindow = asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-
     PassRefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0));
 
     if (exec->hadException())
@@ -768,7 +734,7 @@ JSValue JSDOMWindow::postMessage(ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    impl()->postMessage(message, &messagePorts, targetOrigin, activeWindow, ec);
+    impl()->postMessage(message, &messagePorts, targetOrigin, activeDOMWindow(exec), ec);
     setDOMException(exec, ec);
 
     return jsUndefined();

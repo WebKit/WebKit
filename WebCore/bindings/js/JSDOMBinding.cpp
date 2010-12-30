@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -39,8 +39,6 @@
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
-#include "JSBinding.h"
-#include "JSBindingState.h"
 #include "JSDOMCoreException.h"
 #include "JSDOMWindowCustom.h"
 #include "JSDebugWrapperSet.h"
@@ -490,13 +488,6 @@ JSValue jsOwnedStringOrNull(ExecState* exec, const String& s)
     return jsOwnedString(exec, stringToUString(s));
 }
 
-JSValue jsOwnedStringOrNull(ExecState* exec, const UString& s)
-{
-    if (s.isNull())
-        return jsNull();
-    return jsOwnedString(exec, s);
-}
-
 JSValue jsStringOrUndefined(ExecState* exec, const String& s)
 {
     if (s.isNull())
@@ -666,6 +657,16 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     throwError(exec, errorObject);
 }
 
+DOMWindow* activeDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->lexicalGlobalObject())->impl();
+}
+
+DOMWindow* firstDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
+}
+
 bool checkNodeSecurity(ExecState* exec, Node* node)
 {
     return node && allowsAccessFromFrame(exec, node->document()->frame());
@@ -687,22 +688,6 @@ bool allowsAccessFromFrame(ExecState* exec, Frame* frame, String& message)
     return window && window->allowsAccessFrom(exec, message);
 }
 
-bool shouldAllowNavigation(ExecState* exec, Frame* frame)
-{
-    JSBindingState state(exec);
-    return JSBindingSecurity::shouldAllowNavigation(&state, frame);
-}
-
-bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* element, const String& name, const String& value)
-{
-    if ((element->hasTagName(iframeTag) || element->hasTagName(frameTag)) && equalIgnoringCase(name, "src") && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
-          Document* contentDocument = static_cast<HTMLFrameElementBase*>(element)->contentDocument();
-          if (contentDocument && !checkNodeSecurity(exec, contentDocument))
-              return false;
-      }
-      return true;
-}
-
 void printErrorMessageForFrame(Frame* frame, const String& message)
 {
     if (!frame)
@@ -710,25 +695,16 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
     frame->domWindow()->printErrorMessage(message);
 }
 
-Frame* toLexicalFrame(ExecState* exec)
-{
-    return JSBindingState(exec).activeFrame();
-}
-
+// FIXME: We should remove or at least deprecate this function. Callers can use firstDOMWindow directly.
 Frame* toDynamicFrame(ExecState* exec)
 {
-    return JSBindingState(exec).firstFrame();
+    return firstDOMWindow(exec)->frame();
 }
 
+// FIXME: We should remove this function. Callers can use ScriptController directly.
 bool processingUserGesture()
 {
-    return JSBindingState(JSMainThreadExecState::currentState()).processingUserGesture();
-}
-
-KURL completeURL(ExecState* exec, const String& relativeURL)
-{
-    JSBindingState state(exec);
-    return completeURL(&state, relativeURL);
+    return ScriptController::processingUserGesture();
 }
 
 JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
@@ -747,29 +723,6 @@ Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, NonNullPassRefPtr<
     JSDOMStructureMap& structures = globalObject->structures();
     ASSERT(!structures.contains(classInfo));
     return structures.set(classInfo, structure).first->second.get();
-}
-
-Structure* getCachedDOMStructure(ExecState* exec, const ClassInfo* classInfo)
-{
-    return getCachedDOMStructure(static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), classInfo);
-}
-
-Structure* cacheDOMStructure(ExecState* exec, NonNullPassRefPtr<Structure> structure, const ClassInfo* classInfo)
-{
-    return cacheDOMStructure(static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), structure, classInfo);
-}
-
-JSObject* getCachedDOMConstructor(ExecState* exec, const ClassInfo* classInfo)
-{
-    JSDOMConstructorMap& constructors = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->constructors();
-    return constructors.get(classInfo);
-}
-
-void cacheDOMConstructor(ExecState* exec, const ClassInfo* classInfo, JSObject* constructor)
-{
-    JSDOMConstructorMap& constructors = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->constructors();
-    ASSERT(!constructors.contains(classInfo));
-    constructors.set(classInfo, constructor);
 }
 
 JSC::JSObject* toJSSequence(ExecState* exec, JSValue value, unsigned& length)

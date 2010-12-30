@@ -132,11 +132,6 @@ namespace WebCore {
 
     JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject*, const JSC::ClassInfo*);
     JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, NonNullPassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
-    JSC::Structure* getCachedDOMStructure(JSC::ExecState*, const JSC::ClassInfo*);
-    JSC::Structure* cacheDOMStructure(JSC::ExecState*, NonNullPassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
-
-    JSC::JSObject* getCachedDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*);
-    void cacheDOMConstructor(JSC::ExecState*, const JSC::ClassInfo*, JSC::JSObject* constructor);
 
     inline JSDOMGlobalObject* deprecatedGlobalObjectForPrototype(JSC::ExecState* exec)
     {
@@ -225,10 +220,9 @@ namespace WebCore {
     JSC::JSValue jsStringOrFalse(JSC::ExecState*, const String&); // boolean false if the string is null
     JSC::JSValue jsStringOrFalse(JSC::ExecState*, const KURL&); // boolean false if the URL is null
 
-    // See JavaScriptCore for explanation: Should be used for any UString that is already owned by another
+    // See JavaScriptCore for explanation: Should be used for any string that is already owned by another
     // object, to let the engine know that collecting the JSString wrapper is unlikely to save memory.
     JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const String&); 
-    JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const JSC::UString&); 
 
     String identifierToString(const JSC::Identifier&);
     String ustringToString(const JSC::UString&);
@@ -284,18 +278,17 @@ namespace WebCore {
     // Helpers for Window, History, and Location classes to implement cross-domain policy.
     // Besides the cross-domain check, they need non-caching versions of staticFunctionGetter for
     // because we do not want current property values involved at all.
+    // FIXME: These functions should be named frameAllowsAccessFrom, because the access is *to* the frame.
     bool allowsAccessFromFrame(JSC::ExecState*, Frame*);
     bool allowsAccessFromFrame(JSC::ExecState*, Frame*, String& message);
-    bool shouldAllowNavigation(JSC::ExecState*, Frame*);
-    bool allowSettingSrcToJavascriptURL(JSC::ExecState*, Element*, const String&, const String&);
+    DOMWindow* activeDOMWindow(JSC::ExecState*);
+    DOMWindow* firstDOMWindow(JSC::ExecState*);
 
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier& propertyName);
 
-    Frame* toLexicalFrame(JSC::ExecState*);
     Frame* toDynamicFrame(JSC::ExecState*);
     bool processingUserGesture();
-    KURL completeURL(JSC::ExecState*, const String& relativeURL);
     
     inline JSC::JSValue jsString(JSC::ExecState* exec, const String& s)
     {

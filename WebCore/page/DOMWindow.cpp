@@ -1608,7 +1608,7 @@ void DOMWindow::revokeObjectURL(const String& blobURLString)
 }
 #endif
 
-void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow)
+void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow, SetLocationLocking locking)
 {
     Frame* activeFrame = activeWindow->frame();
     if (!activeFrame)
@@ -1631,7 +1631,8 @@ void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DO
     // We want a new history item if we are processing a user gesture.
     m_frame->navigationScheduler()->scheduleLocationChange(activeFrame->document()->securityOrigin(),
         completedURL, activeFrame->loader()->outgoingReferrer(),
-        !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
+        locking != LockHistoryBasedOnGestureState || !activeFrame->script()->anyPageIsProcessingUserGesture(),
+        locking != LockHistoryBasedOnGestureState);
 }
 
 void DOMWindow::printErrorMessage(const String& message)

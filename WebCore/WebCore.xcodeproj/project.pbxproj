@@ -3090,9 +3090,6 @@
 		A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = A59E3C1D11580F510072928E /* KeyEventIPhone.mm */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
-		A622A8EE122C442A00A785B3 /* JSBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8ED122C442A00A785B3 /* JSBinding.h */; };
-		A622A8F2122C444500A785B3 /* JSBindingState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A622A8F0122C444500A785B3 /* JSBindingState.cpp */; };
-		A622A8F3122C444500A785B3 /* JSBindingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F1122C444500A785B3 /* JSBindingState.h */; };
 		A622A8FA122C44A600A785B3 /* BindingLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F4122C44A600A785B3 /* BindingLocation.h */; };
 		A622A8FB122C44A600A785B3 /* BindingSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F5122C44A600A785B3 /* BindingSecurity.h */; };
 		A622A8FC122C44A600A785B3 /* BindingSecurityBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */; };
@@ -9422,9 +9419,6 @@
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCocoa.h; path = cocoa/KeyEventCocoa.h; sourceTree = "<group>"; };
 		A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventCocoa.mm; path = cocoa/KeyEventCocoa.mm; sourceTree = "<group>"; };
-		A622A8ED122C442A00A785B3 /* JSBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBinding.h; sourceTree = "<group>"; };
-		A622A8F0122C444500A785B3 /* JSBindingState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBindingState.cpp; sourceTree = "<group>"; };
-		A622A8F1122C444500A785B3 /* JSBindingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBindingState.h; sourceTree = "<group>"; };
 		A622A8F4122C44A600A785B3 /* BindingLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingLocation.h; path = generic/BindingLocation.h; sourceTree = "<group>"; };
 		A622A8F5122C44A600A785B3 /* BindingSecurity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurity.h; path = generic/BindingSecurity.h; sourceTree = "<group>"; };
 		A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BindingSecurityBase.cpp; path = generic/BindingSecurityBase.cpp; sourceTree = "<group>"; };
@@ -15737,15 +15731,6 @@
 			name = cocoa;
 			sourceTree = "<group>";
 		};
-		A622A8EF122C444500A785B3 /* specialization */ = {
-			isa = PBXGroup;
-			children = (
-				A622A8F0122C444500A785B3 /* JSBindingState.cpp */,
-				A622A8F1122C444500A785B3 /* JSBindingState.h */,
-			);
-			path = specialization;
-			sourceTree = "<group>";
-		};
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
@@ -17453,7 +17438,6 @@
 				BCCE58B41061E925008FB35A /* Constructors */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
-				A622A8EF122C444500A785B3 /* specialization */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */,
@@ -17466,7 +17450,6 @@
 				C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */,
 				1C81BA030E97348300266E07 /* JavaScriptCallFrame.cpp */,
 				1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */,
-				A622A8ED122C442A00A785B3 /* JSBinding.h */,
 				BC53DAC411432FD9000D817E /* JSDebugWrapperSet.cpp */,
 				BC53DAC111432EEE000D817E /* JSDebugWrapperSet.h */,
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
@@ -20779,8 +20762,6 @@
 				BC124F000C26447A009E2349 /* JSBarInfo.h in Headers */,
 				BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */,
 				51721FD311D27EF200638B42 /* JSBeforeProcessEvent.h in Headers */,
-				A622A8EE122C442A00A785B3 /* JSBinding.h in Headers */,
-				A622A8F3122C444500A785B3 /* JSBindingState.h in Headers */,
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
 				89CD029411C85B870070B791 /* JSBlobBuilder.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
@@ -23500,7 +23481,6 @@
 				BC124EFF0C26447A009E2349 /* JSBarInfo.cpp in Sources */,
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
 				51721FD211D27EF200638B42 /* JSBeforeProcessEvent.cpp in Sources */,
-				A622A8F2122C444500A785B3 /* JSBindingState.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
 				89CD029311C85B870070B791 /* JSBlobBuilder.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
