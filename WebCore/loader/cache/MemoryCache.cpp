@@ -69,156 +69,6 @@ MemoryCache::MemoryCache()
 {
 }
 
-static CachedResource* createResource(CachedResource::Type type, const KURL& url, const String& charset)
-{
-    switch (type) {
-    case CachedResource::ImageResource:
-        return new CachedImage(url.string());
-    case CachedResource::CSSStyleSheet:
-        return new CachedCSSStyleSheet(url.string(), charset);
-    case CachedResource::Script:
-        return new CachedScript(url.string(), charset);
-    case CachedResource::FontResource:
-        return new CachedFont(url.string());
-#if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
-        return new CachedXSLStyleSheet(url.string());
-#endif
-#if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
-        return new CachedResource(url.string(), CachedResource::LinkPrefetch);
-#endif
-    default:
-        break;
-    }
-
-    return 0;
-}
-
-CachedResource* MemoryCache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& requestURL, const String& charset, ResourceLoadPriority priority, bool requestIsPreload, bool forHistory)
-{
-    LOG(ResourceLoading, "MemoryCache::requestResource '%s', charset '%s', priority=%d, preload=%u, forHistory=%u", requestURL.string().latin1().data(), charset.latin1().data(), priority, requestIsPreload, forHistory);
-    
-    // FIXME: Do we really need to special-case an empty URL?
-    // Would it be better to just go on with the cache code and let it fail later?
-    if (requestURL.isEmpty())
-        return 0;
-    
-    // Ensure this is the pure primary resource URL.
-    KURL url = removeFragmentIdentifierIfNeeded(requestURL);
-
-    // Look up the resource in our map.
-    CachedResource* resource = resourceForURL(url);
-
-    // Non https "no-store" resources are left in the cache to be used for back/forward navigation only.
-    // If this is not a request forHistory and the resource was served with "no-store" we should evict
-    // it here and make a fresh request.
-    if (!forHistory && resource && resource->response().cacheControlContainsNoStore()) {
-        LOG(ResourceLoading, "MemoryCache::requestResource cleared a for history only resource due to a non-history request for the resource");
-        evict(resource);
-        resource = 0;
-    }
-
-    if (resource && requestIsPreload && !resource->isPreloaded()) {
-        LOG(ResourceLoading, "MemoryCache::requestResource already has a preload request for this request, and it hasn't been preloaded yet");
-        return 0;
-    }
-
-    if (!cachedResourceLoader->document()->securityOrigin()->canDisplay(url)) {
-        LOG(ResourceLoading, "...URL was not allowed by SecurityOrigin");
-        if (!requestIsPreload)
-            FrameLoader::reportLocalLoadFailed(cachedResourceLoader->document()->frame(), url.string());
-        return 0;
-    }
-
-    if (resource && resource->type() != type) {
-        LOG(ResourceLoading, "Cache::requestResource found a cache resource with matching url but different type, evicting and loading with new type.");
-        evict(resource);
-        resource = 0;
-    }
-
-    if (!resource) {
-        LOG(ResourceLoading, "CachedResource for '%s' wasn't found in cache. Creating it", url.string().latin1().data());
-        // The resource does not exist. Create it.
-        resource = createResource(type, url, charset);
-        ASSERT(resource);
-
-        // Pretend the resource is in the cache, to prevent it from being deleted during the load() call.
-        // FIXME: CachedResource should just use normal refcounting instead.
-        resource->setInCache(true);
-        
-        // Default priority based on resource type is used if the request did not specify one.
-        if (priority != ResourceLoadPriorityUnresolved)
-            resource->setLoadPriority(priority);
-
-        resource->load(cachedResourceLoader);
-        
-        if (resource->errorOccurred()) {
-            // We don't support immediate loads, but we do support immediate failure.
-            // In that case we should to delete the resource now and return 0 because otherwise
-            // it would leak if no ref/deref was ever done on it.
-            resource->setInCache(false);
-            delete resource;
-            return 0;
-        }
-
-        if (!disabled())
-            m_resources.set(url.string(), resource);  // The size will be added in later once the resource is loaded and calls back to us with the new size.
-        else {
-            // Kick the resource out of the cache, because the cache is disabled.
-            resource->setInCache(false);
-            resource->setCachedResourceLoader(cachedResourceLoader);
-        }
-    } else {
-        // FIXME: Upgrading the priority doesn't really do much since the ResourceLoadScheduler does not currently
-        // allow changing priorities. This might become important if we make scheduling priorities
-        // more dynamic.
-        if (priority != ResourceLoadPriorityUnresolved && resource->loadPriority() < priority)
-            resource->setLoadPriority(priority);
-    }
-
-    if (!disabled()) {
-        // This will move the resource to the front of its LRU list and increase its access count.
-        resourceAccessed(resource);
-    }
-
-    LOG(ResourceLoading, "MemoryCache::requestResource for '%s' returning resource %p\n", url.string().latin1().data(), resource);
-
-    return resource;
-}
-    
-CachedCSSStyleSheet* MemoryCache::requestUserCSSStyleSheet(CachedResourceLoader* cachedResourceLoader, const KURL& requestURL, const String& charset)
-{
-    // Ensure this is the pure primary resource URL.
-    KURL url = removeFragmentIdentifierIfNeeded(requestURL);
-
-    CachedCSSStyleSheet* userSheet;
-    if (CachedResource* existing = resourceForURL(url)) {
-        if (existing->type() != CachedResource::CSSStyleSheet)
-            return 0;
-        userSheet = static_cast<CachedCSSStyleSheet*>(existing);
-    } else {
-        userSheet = new CachedCSSStyleSheet(url, charset);
-
-        // Pretend the resource is in the cache, to prevent it from being deleted during the load() call.
-        // FIXME: CachedResource should just use normal refcounting instead.
-        userSheet->setInCache(true);
-        // Don't load incrementally, skip load checks, don't send resource load callbacks.
-        userSheet->load(cachedResourceLoader, false, SkipSecurityCheck, false);
-        if (!disabled())
-            m_resources.set(url, userSheet);
-        else
-            userSheet->setInCache(false);
-    }
-
-    if (!disabled()) {
-        // This will move the resource to the front of its LRU list and increase its access count.
-        resourceAccessed(userSheet);
-    }
-
-    return userSheet;
-}
-
 KURL MemoryCache::removeFragmentIdentifierIfNeeded(const KURL& originalURL)
 {
     if (!originalURL.hasFragmentIdentifier())
@@ -232,29 +82,20 @@ KURL MemoryCache::removeFragmentIdentifierIfNeeded(const KURL& originalURL)
     return url;
 }
 
-void MemoryCache::revalidateResource(CachedResource* resource, CachedResourceLoader* cachedResourceLoader)
+bool MemoryCache::add(CachedResource* resource)
 {
-    ASSERT(resource);
-    ASSERT(resource->inCache());
-    ASSERT(resource == m_resources.get(resource->url()));
-    ASSERT(!disabled());
-    if (resource->resourceToRevalidate())
-        return;
-    if (!resource->canUseCacheValidator()) {
-        evict(resource);
-        return;
-    }
-    const String& url = resource->url();
-    CachedResource* newResource = createResource(resource->type(), KURL(ParsedURLString, url), resource->encoding());
-    LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource, resource);
-    newResource->setResourceToRevalidate(resource);
-    evict(resource);
-    m_resources.set(url, newResource);
-    newResource->setInCache(true);
-    resourceAccessed(newResource);
-    newResource->load(cachedResourceLoader);
-}
+    if (disabled())
+        return false;
     
+    m_resources.set(resource->url(), resource);
+    resource->setInCache(true);
+    
+    resourceAccessed(resource);
+    
+    LOG(ResourceLoading, "MemoryCache::add Added '%s', resource %p\n", resource->url().latin1().data(), resource);
+    return true;
+}
+
 void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse& response)
 {
     CachedResource* resource = revalidatingResource->resourceToRevalidate();

@@ -93,6 +93,7 @@ public:
     Type type() const { return static_cast<Type>(m_type); }
     
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
+    void setLoadPriority(ResourceLoadPriority);
 
     void addClient(CachedResourceClient*);
     void removeClient(CachedResourceClient*);
@@ -186,7 +187,7 @@ public:
     
     virtual void destroyDecodedData() { }
 
-    void setCachedResourceLoader(CachedResourceLoader* cachedResourceLoader) { m_cachedResourceLoader = cachedResourceLoader; }
+    void setOwningCachedResourceLoader(CachedResourceLoader* cachedResourceLoader) { m_owningCachedResourceLoader = cachedResourceLoader; }
     
     bool isPreloaded() const { return m_preloadCount; }
     void increasePreloadCount() { ++m_preloadCount; }
@@ -196,7 +197,7 @@ public:
     void unregisterHandle(CachedResourceHandleBase* h);
     
     bool canUseCacheValidator() const;
-    bool mustRevalidate(CachePolicy) const;
+    bool mustRevalidateDueToCacheHeaders(CachePolicy) const;
     bool isCacheValidator() const { return m_resourceToRevalidate; }
     CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
     
@@ -207,6 +208,12 @@ public:
     // triggering a load. We should make it protected again if we can find a
     // better way to handle the archive case.
     bool makePurgeable(bool purgeable);
+    
+    // HTTP revalidation support methods for CachedResourceLoader.
+    void setResourceToRevalidate(CachedResource*);
+    void switchClientsToRevalidatedResource();
+    void clearResourceToRevalidate();
+    void updateResponseAfterRevalidation(const ResourceResponse& validatingResponse);
 
 protected:
     void setEncodedSize(unsigned);
@@ -230,14 +237,8 @@ protected:
 
 private:
     void addClientToSet(CachedResourceClient*);
-                                        
-    // These are called by the friendly MemoryCache only
-    void setResourceToRevalidate(CachedResource*);
-    void switchClientsToRevalidatedResource();
-    void clearResourceToRevalidate();
-    void updateResponseAfterRevalidation(const ResourceResponse& validatingResponse);
+
     virtual PurgePriority purgePriority() const { return PurgeDefault; }
-    void setLoadPriority(ResourceLoadPriority loadPriority) { m_loadPriority = loadPriority; }
 
     double currentAge() const;
     double freshnessLifetime() const;
@@ -275,7 +276,7 @@ private:
     CachedResource* m_nextInLiveResourcesList;
     CachedResource* m_prevInLiveResourcesList;
 
-    CachedResourceLoader* m_cachedResourceLoader; // only non-0 for resources that are not in the cache
+    CachedResourceLoader* m_owningCachedResourceLoader; // only non-0 for resources that are not in the cache
     
     // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date
     // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved

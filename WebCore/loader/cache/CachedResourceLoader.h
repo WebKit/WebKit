@@ -28,7 +28,6 @@
 
 #include "CachedResource.h"
 #include "CachedResourceHandle.h"
-#include "CachedResourceRequest.h"
 #include "CachePolicy.h"
 #include "ResourceLoadPriority.h"
 #include <wtf/HashMap.h>
@@ -41,6 +40,7 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class CachedFont;
 class CachedImage;
+class CachedResourceRequest;
 class CachedScript;
 class CachedXSLStyleSheet;
 class Document;
@@ -108,14 +108,18 @@ public:
     
 private:
     CachedResource* requestResource(CachedResource::Type, const String& url, const String& charset, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved, bool isPreload = false);
+    CachedResource* revalidateResource(CachedResource*, ResourceLoadPriority priority);
+    CachedResource* loadResource(CachedResource::Type, const KURL&, const String& charset, ResourceLoadPriority priority);
     void requestPreload(CachedResource::Type, const String& url, const String& charset);
 
-    void checkForReload(const KURL&);
-    void checkCacheObjectStatus(CachedResource*);
+    enum RevalidationPolicy { Use, Revalidate, Reload, Load };
+    RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, bool forPreload, CachedResource* existingResource) const;
+    
+    void notifyLoadedFromMemoryCache(CachedResource*);
     bool canRequest(CachedResource::Type, const KURL&);
     
     MemoryCache* m_cache;
-    HashSet<String> m_reloadedURLs;
+    HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;
     Document* m_document;
 

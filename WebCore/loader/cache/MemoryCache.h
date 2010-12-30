@@ -102,16 +102,14 @@ public:
 #endif
         TypeStatistic fonts;
     };
-
-    // Request resources from the cache.  A load will be initiated and a cache object created if the object is not
-    // found in the cache.
-    CachedResource* requestResource(CachedResourceLoader*, CachedResource::Type, const KURL& url, const String& charset, ResourceLoadPriority, bool isPreload = false, bool forHistory = false);
-
-    CachedCSSStyleSheet* requestUserCSSStyleSheet(CachedResourceLoader*, const KURL& url, const String& charset);
     
+    CachedResource* resourceForURL(const KURL&);
+    
+    bool add(CachedResource* resource);
+    void remove(CachedResource* resource) { evict(resource); }
+
     static KURL removeFragmentIdentifierIfNeeded(const KURL& originalURL);
     
-    void revalidateResource(CachedResource*, CachedResourceLoader*);
     void revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse&);
     void revalidationFailed(CachedResource* revalidatingResource);
     
@@ -140,13 +138,8 @@ public:
     void setDeadDecodedDataDeletionInterval(double interval) { m_deadDecodedDataDeletionInterval = interval; }
     double deadDecodedDataDeletionInterval() const { return m_deadDecodedDataDeletionInterval; }
 
-    // Remove an existing cache entry from both the resource map and from the LRU list.
-    void remove(CachedResource* resource) { evict(resource); }
-
     void addCachedResourceLoader(CachedResourceLoader*);
     void removeCachedResourceLoader(CachedResourceLoader*);
-
-    CachedResource* resourceForURL(const KURL&);
 
     // Calls to put the cached resource into and out of LRU lists.
     void insertInLRUList(CachedResource*);
@@ -166,13 +159,14 @@ public:
 
     // Function to collect cache statistics for the caches window in the Safari Debug menu.
     Statistics getStatistics();
+    
+    void resourceAccessed(CachedResource*);
 
 private:
     MemoryCache();
     ~MemoryCache(); // Not implemented to make sure nobody accidentally calls delete -- WebCore does not delete singletons.
        
     LRUList* lruListFor(CachedResource*);
-    void resourceAccessed(CachedResource*);
 #ifndef NDEBUG
     void dumpStats();
     void dumpLRULists(bool includeLive) const;

@@ -1,3 +1,76 @@
+2010-12-30  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51134
+        Move loading related code from MemoryCache to CachedResourceLoader
+
+        - Merge MemoryCache::requestResource to CachedResourceLoader::requestResource
+        - Merge MemoryCache::requestUserCSSStyleSheet to CachedResourceLoader::requestUserCSSStyleSheet
+        - Move MemoryCache::revalidateResource to CachedResourceLoader::revalidateResource
+        - Add MemoryCache::add
+        - Refactor the decision on whether to reload, revalidate or use the existing resource to 
+          a single function, CachedResourceLoader::determineRevalidationPolicy
+
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+            
+            Remove a code path that called MemoryCache::requestResource directly. This code path would have crashed
+            if ever taken (since it passes null CachedResourceLoader pointer).
+            
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::mustRevalidateDueToCacheHeaders):
+        
+            Moved tests that were not about cache headers to CachedResourceLoader::determineRevalidationPolicy and renamed.
+        
+        (WebCore::CachedResource::setLoadPriority):
+        
+            Check for Unresolved value before setting.
+        
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::setOwningCachedResourceLoader):
+        
+            Rename to be bit less mysterious.
+        
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        
+            This was moved from MemoryCache.
+        
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        (WebCore::CachedResourceLoader::requestUserCSSStyleSheet):
+        
+            This was moved/merged from MemoryCache.
+        
+        (WebCore::CachedResourceLoader::canRequest):
+        (WebCore::CachedResourceLoader::requestResource):
+        
+            This combines MemoryCache::requestResource and the existing method.
+        
+        (WebCore::CachedResourceLoader::revalidateResource):
+        
+            This was moved from MemoryCache.
+        
+        (WebCore::CachedResourceLoader::loadResource):
+        
+            New method for initiating loading.
+        
+        (WebCore::CachedResourceLoader::notifyLoadedFromMemoryCache):
+        
+            Renamed the mysterious CachedResourceLoader::checkCacheObjectStatus
+        
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::add):
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::remove):
+
 2010-12-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Gavin Barraclough.

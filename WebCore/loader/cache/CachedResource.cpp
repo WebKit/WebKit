@@ -101,7 +101,7 @@ CachedResource::CachedResource(const String& url, Type type)
     , m_prevInAllResourcesList(0)
     , m_nextInLiveResourcesList(0)
     , m_prevInLiveResourcesList(0)
-    , m_cachedResourceLoader(0)
+    , m_owningCachedResourceLoader(0)
     , m_resourceToRevalidate(0)
     , m_proxyResource(0)
 {
@@ -122,8 +122,8 @@ CachedResource::~CachedResource()
     cachedResourceLeakCounter.decrement();
 #endif
 
-    if (m_cachedResourceLoader)
-        m_cachedResourceLoader->removeCachedResource(this);
+    if (m_owningCachedResourceLoader)
+        m_owningCachedResourceLoader->removeCachedResource(this);
 }
 
 void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
@@ -490,17 +490,14 @@ bool CachedResource::canUseCacheValidator() const
     DEFINE_STATIC_LOCAL(const AtomicString, eTagHeader, ("etag"));
     return !m_response.httpHeaderField(lastModifiedHeader).isEmpty() || !m_response.httpHeaderField(eTagHeader).isEmpty();
 }
-    
-bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
-{
-    if (errorOccurred()) {
-        LOG(ResourceLoading, "CachedResource %p mustRevalidate because of m_errorOccurred\n", this);
-        return true;
-    }
 
-    if (m_loading)
-        return false;
-    
+bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) const
+{    
+    ASSERT(cachePolicy == CachePolicyRevalidate || cachePolicy == CachePolicyCache || cachePolicy == CachePolicyVerify);
+
+    if (cachePolicy == CachePolicyRevalidate)
+        return true;
+
     if (m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()) {
         LOG(ResourceLoading, "CachedResource %p mustRevalidate because of m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()\n", this);
         return true;
@@ -514,6 +511,7 @@ bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
         return false;
     }
 
+    // CachePolicyVerify
     if (isExpired()) {
         LOG(ResourceLoading, "CachedResource %p mustRevalidate because of isExpired()\n", this);
         return true;
@@ -586,6 +584,13 @@ unsigned CachedResource::overheadSize() const
         576 = 192 +                   // average size of m_url
               384;                    // average size of m_clients hash map
     */
+}
+    
+void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority) 
+{ 
+    if (loadPriority == ResourceLoadPriorityUnresolved)
+        return;
+    m_loadPriority = loadPriority;
 }
 
 }
