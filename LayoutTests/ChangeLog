@@ -1,5 +1,12 @@
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium expectations update. Mark two more inspector tests
+        as flaky.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium expectations update. Mark a few more tests as flaky.
 
         * platform/chromium/test_expectations.txt:

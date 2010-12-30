@@ -640,6 +640,8 @@ BUGCR66087 WIN : inspector/storage-panel-dom-storage.html = PASS TEXT
 
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
 BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
+BUGCR66087 WIN : http/tests/inspector/console-resource-errors.html = PASS TEXT
+BUGCR66087 WIN : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
 
 // -----------------------------------------------------------------
 // Other
