@@ -50,4 +50,4 @@ wince*: {
     LIBS += $$WCECOMPAT/lib/wcecompat.lib
 }
 
-DEFINES+=USE_SYSTEM_MALLOC
+DEFINES += USE_SYSTEM_MALLOC=1

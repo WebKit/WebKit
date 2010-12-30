@@ -1,3 +1,13 @@
+2010-12-30  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Reviewed by David Kilzer.
+
+        [Qt] Don't build wtf/TCSystemAlloc.cpp if --system-malloc option is
+        used
+        https://bugs.webkit.org/show_bug.cgi?id=51672
+
+        * wtf/wtf.pri: Replaced USE_SYSTEM_MALLOC with USE_SYSTEM_MALLOC=1
+
 2010-12-30  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

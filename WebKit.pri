@@ -48,7 +48,7 @@ building-libs {
 }
 
 !mac:!unix|symbian {
-    DEFINES += USE_SYSTEM_MALLOC
+    DEFINES += USE_SYSTEM_MALLOC=1
 }
 
 CONFIG(release, debug|release) {
@@ -88,7 +88,7 @@ valgrind {
     contains(JAVASCRIPTCORE_JIT,yes): error("'JAVASCRIPTCORE_JIT=yes' not supported with valgrind")
     QMAKE_CXXFLAGS += -g
     QMAKE_LFLAGS += -g
-    DEFINES += USE_SYSTEM_MALLOC
+    DEFINES += USE_SYSTEM_MALLOC=1
     DEFINES += ENABLE_JIT=0
     JAVASCRIPTCORE_JIT = no
 }

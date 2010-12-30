@@ -41,7 +41,7 @@ contains(DEFINES, USE_GSTREAMER=1) {
     CONFIG += link_pkgconfig
 }
 
-!contains(DEFINES, USE_SYSTEM_MALLOC) {
+!contains(DEFINES, USE_SYSTEM_MALLOC=1) {
     SOURCES += wtf/TCSystemAlloc.cpp
 }
 
