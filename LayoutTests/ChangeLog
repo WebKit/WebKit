@@ -1,3 +1,13 @@
+2010-12-30  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Tests that we do not crash when trying to find video elements in the media document.
+        https://bugs.webkit.org/show_bug.cgi?id=51696
+
+        * media/video-element-other-namespace-crash-expected.txt: Added.
+        * media/video-element-other-namespace-crash.html: Added.
+
 2010-12-29  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.

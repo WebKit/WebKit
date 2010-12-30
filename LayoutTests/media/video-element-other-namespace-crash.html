@@ -1,0 +1,29 @@
+<html>
+<script>
+if (window.layoutTestController)
+{ 
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest()
+{
+    frame = document.body.appendChild(document.createElement('iframe'));
+    frame.onload = function() {
+        frame.onload = null;
+        container = frame.contentDocument.body.appendChild(frame.contentDocument.createElement('div'));
+        otherVideo = container.appendChild(frame.contentDocument.createElementNS('other', 'video'));
+        event = frame.contentDocument.createEvent('KeyboardEvents');
+        event.initKeyboardEvent('keydown', 1, 1, frame.contentWindow, 'U+0020');
+        container.dispatchEvent(event);
+        
+        document.body.appendChild(document.createTextNode('PASS, did not crash.'));
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+
+    frame.src = 'content/test.mp4';
+}
+</script>
+<body onload="runTest()"/>
+</html>
