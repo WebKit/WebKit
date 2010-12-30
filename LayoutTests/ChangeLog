@@ -2,6 +2,14 @@
 
         Unreviewed Chromium expectations update.
         
+        fast/canvas/shadow-offset-* are flaky when run in the GPU suite too.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
         Make expectation for http/tests/media/reload-after-dialog.html not
         trigger a duplication error for the debug Linux builder.
 

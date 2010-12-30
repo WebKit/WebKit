@@ -379,3 +379,12 @@ BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 
 // WebKit roll 74667:74679
 BUGCR68067 LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
+
+// Shadow offset tests crash occasionally on Mac and Linux debug.
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-1.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-2.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
+BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
