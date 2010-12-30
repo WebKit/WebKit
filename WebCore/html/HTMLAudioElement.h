@@ -29,10 +29,11 @@
 
 #if ENABLE(VIDEO)
 
-#include "Document.h"
 #include "HTMLMediaElement.h"
 
 namespace WebCore {
+
+class Document;
 
 class HTMLAudioElement : public HTMLMediaElement {
 public:

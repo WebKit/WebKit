@@ -31,15 +31,18 @@
 #ifndef EditingStyle_h
 #define EditingStyle_h
 
-#include "Document.h"
-#include "Position.h"
 #include "WritingDirection.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
+class Node;
+class Position;
+class RenderStyle;
 
 class EditingStyle : public RefCounted<EditingStyle> {
 public:

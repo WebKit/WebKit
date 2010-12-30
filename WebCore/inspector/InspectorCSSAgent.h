@@ -25,7 +25,6 @@
 #ifndef InspectorCSSAgent_h
 #define InspectorCSSAgent_h
 
-#include "Document.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
 #include "InspectorValues.h"
@@ -42,6 +41,7 @@ class CSSRuleList;
 class CSSStyleDeclaration;
 class CSSStyleRule;
 class CSSStyleSheet;
+class Document;
 class Element;
 class InspectorFrontend;
 class NameNodeMap;

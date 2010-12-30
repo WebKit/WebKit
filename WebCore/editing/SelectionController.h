@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class CharacterData;
 class CSSMutableStyleDeclaration;
 class Frame;
 class GraphicsContext;

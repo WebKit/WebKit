@@ -25,9 +25,10 @@
 #define HTMLBodyElement_h
 
 #include "HTMLElement.h"
-#include "Document.h"
 
 namespace WebCore {
+
+class Document;
 
 class HTMLBodyElement : public HTMLElement {
 public:

@@ -26,7 +26,6 @@
 #ifndef visible_units_h
 #define visible_units_h
 
-#include "Document.h"
 #include "EditingBoundary.h"
 #include "Position.h"
 #include "TextAffinity.h"

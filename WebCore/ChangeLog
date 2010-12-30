@@ -1,3 +1,26 @@
+2010-12-30  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove Document.h include from some headers where it isn't necessary
+        https://bugs.webkit.org/show_bug.cgi?id=51730
+
+        No new tests because no new functionality.
+
+        * editing/EditingStyle.cpp:
+        * editing/EditingStyle.h:
+        * editing/SelectionController.h:
+        * editing/visible_units.h:
+        * html/HTMLAudioElement.h:
+        * html/HTMLBodyElement.h:
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.h:
+        * xml/DOMParser.cpp:
+        * xml/DOMParser.h:
+        (WebCore::DOMParser::create):
+        (WebCore::DOMParser::DOMParser):
+
 2010-12-30  Benjamin C Meyer  <bmeyer@rim.com>
 
         Reviewed by Darin Adler.

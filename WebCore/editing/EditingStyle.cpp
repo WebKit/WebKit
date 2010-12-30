@@ -32,6 +32,8 @@
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSValueKeywords.h"
 #include "Frame.h"
+#include "Node.h"
+#include "Position.h"
 #include "RenderStyle.h"
 #include "SelectionController.h"
 

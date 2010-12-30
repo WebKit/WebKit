@@ -31,7 +31,6 @@
 #ifndef InspectorInstrumentation_h
 #define InspectorInstrumentation_h
 
-#include "Document.h"
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
@@ -39,6 +38,7 @@
 namespace WebCore {
 
 class CharacterData;
+class Document;
 class Element;
 class EventContext;
 class InspectorController;

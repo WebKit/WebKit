@@ -30,7 +30,6 @@
 #ifndef InspectorDOMAgent_h
 #define InspectorDOMAgent_h
 
-#include "Document.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "InspectorValues.h"
@@ -53,6 +52,7 @@ namespace WebCore {
     class CSSStyleRule;
     class CSSStyleSheet;
     class CharacterData;
+    class Document;
     class Element;
     class Event;
     class InspectorDOMAgent;

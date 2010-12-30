@@ -29,6 +29,7 @@
 #define Frame_h
 
 #include "AnimationController.h"
+#include "Document.h"
 #include "DragImage.h"
 #include "Editor.h"
 #include "EventHandler.h"
@@ -60,6 +61,7 @@ typedef struct HBITMAP__* HBITMAP;
 
 namespace WebCore {
 
+    class FrameView;
     class HTMLTableCellElement;
     class RegularExpression;
     class RenderPart;
