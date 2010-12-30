@@ -1,3 +1,13 @@
+2010-12-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Eric Seidel.
+
+        drawElements should raise INVALID_OPERATION if offset is not a multiple of the type size
+        https://bugs.webkit.org/show_bug.cgi?id=51726
+
+        * fast/canvas/webgl/draw-elements-out-of-bounds-expected.txt:
+        * fast/canvas/webgl/draw-elements-out-of-bounds.html: Add test cases to verify the behavior.
+
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
