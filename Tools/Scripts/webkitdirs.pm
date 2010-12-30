@@ -286,6 +286,17 @@ sub determineConfigurationForVisualStudio
     $configurationForVisualStudio = $configuration;
 }
 
+sub usesPerConfigurationBuildDirectory
+{
+    # [Gtk][Efl] We don't have Release/Debug configurations in straight
+    # autotool builds (non build-webkit). In this case and if
+    # WEBKITOUTPUTDIR exist, use that as our configuration dir. This will
+    # allows us to run run-webkit-tests without using build-webkit.
+    #
+    # Symbian builds do not have Release/Debug configurations either.
+    return ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) || isSymbian();
+}
+
 sub determineConfigurationProductDir
 {
     return if defined $configurationProductDir;
@@ -294,11 +305,7 @@ sub determineConfigurationProductDir
     if (isAppleWinWebKit() && !isWx()) {
         $configurationProductDir = File::Spec->catdir($baseProductDir, "bin");
     } else {
-        # [Gtk][Efl] We don't have Release/Debug configurations in straight
-        # autotool builds (non build-webkit). In this case and if
-        # WEBKITOUTPUTDIR exist, use that as our configuration dir. This will
-        # allows us to run run-webkit-tests without using build-webkit.
-        if ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) {
+        if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";
         } else {
             $configurationProductDir = "$baseProductDir/$configuration";
@@ -1526,14 +1533,13 @@ sub buildQMakeProject($@)
     my $config = configuration();
     push @buildArgs, "INSTALL_HEADERS=" . $installHeaders if defined($installHeaders);
     push @buildArgs, "INSTALL_LIBS=" . $installLibs if defined($installLibs);
-    my $dir = File::Spec->canonpath(baseProductDir());
-    $dir = File::Spec->catfile($dir, $config) unless isSymbian();
+    my $dir = File::Spec->canonpath(productDir());
     File::Path::mkpath($dir);
     chdir $dir or die "Failed to cd into " . $dir . "\n";
 
     print "Generating derived sources\n\n";
 
-    push @buildArgs, "OUTPUT_DIR=" . baseProductDir() . "/$config";
+    push @buildArgs, "OUTPUT_DIR=" . $dir;
 
     my @dsQmakeArgs = @buildArgs;
     push @dsQmakeArgs, "-r";

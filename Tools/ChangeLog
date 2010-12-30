@@ -1,3 +1,15 @@
+2010-12-30  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by David Kilzer.
+
+        [Qt] [Symbian] Fix build-webkit script for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=51509
+
+        Set the OUTPUT_DIR for Symbian to be the same as the source
+        directory.
+
+        * Scripts/webkitdirs.pm:
+
 2010-12-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Darin Adler.
