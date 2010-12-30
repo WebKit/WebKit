@@ -1,3 +1,13 @@
+2010-12-29  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Check SVG element type in FrameView::scrollToAnchor
+        https://bugs.webkit.org/show_bug.cgi?id=51718
+
+        * svg/custom/scroll-to-anchor-in-symbol-expected.txt: Added.
+        * svg/custom/scroll-to-anchor-in-symbol.svg: Added.
+
 2010-12-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Eric Seidel.

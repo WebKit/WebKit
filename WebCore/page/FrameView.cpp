@@ -1219,8 +1219,11 @@ bool FrameView::scrollToAnchor(const String& name)
             if (anchorNode && anchorNode->hasTagName(SVGNames::viewTag)) {
                 RefPtr<SVGViewElement> viewElement = anchorNode->hasTagName(SVGNames::viewTag) ? static_cast<SVGViewElement*>(anchorNode) : 0;
                 if (viewElement.get()) {
-                    RefPtr<SVGSVGElement> svg = static_cast<SVGSVGElement*>(SVGLocatable::nearestViewportElement(viewElement.get()));
-                    svg->inheritViewAttributes(viewElement.get());
+                    SVGElement* element = SVGLocatable::nearestViewportElement(viewElement.get());
+                    if (element->hasTagName(SVGNames::svgTag)) {
+                        RefPtr<SVGSVGElement> svg = static_cast<SVGSVGElement*>(element);
+                        svg->inheritViewAttributes(viewElement.get());
+                    }
                 }
             }
         }
