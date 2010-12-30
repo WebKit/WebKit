@@ -211,7 +211,7 @@ TryMallocReturnValue tryFastZeroedMalloc(size_t n)
 
 #if OS(DARWIN)
 #include <malloc/malloc.h>
-#elif COMPILER(MSVC)
+#elif OS(WINDOWS)
 #include <malloc.h>
 #endif
 
@@ -384,7 +384,7 @@ size_t fastMallocSize(const void* p)
 {
 #if OS(DARWIN)
     return malloc_size(p);
-#elif COMPILER(MSVC) && !PLATFORM(BREWMP)
+#elif OS(WINDOWS) && !PLATFORM(BREWMP)
     // Brew MP uses its own memory allocator, so _msize does not work on the Brew MP simulator.
     return _msize(const_cast<void*>(p));
 #else
@@ -2151,7 +2151,7 @@ class TCMalloc_ThreadCache_FreeList {
 class TCMalloc_ThreadCache {
  private:
   typedef TCMalloc_ThreadCache_FreeList FreeList;
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
   typedef DWORD ThreadIdentifier;
 #else
   typedef pthread_t ThreadIdentifier;
@@ -2442,7 +2442,7 @@ static __thread TCMalloc_ThreadCache *threadlocal_heap;
 // Until then, we use a slow path to get the heap object.
 static bool tsd_inited = false;
 static pthread_key_t heap_key;
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
 DWORD tlsIndex = TLS_OUT_OF_INDEXES;
 #endif
 
@@ -2451,7 +2451,7 @@ static ALWAYS_INLINE void setThreadHeap(TCMalloc_ThreadCache* heap)
     // still do pthread_setspecific when using MSVC fast TLS to
     // benefit from the delete callback.
     pthread_setspecific(heap_key, heap);
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
     TlsSetValue(tlsIndex, heap);
 #endif
 }
@@ -2962,7 +2962,7 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetThreadHeap() {
     // __thread is faster, but only when the kernel supports it
   if (KernelSupportsTLS())
     return threadlocal_heap;
-#elif COMPILER(MSVC)
+#elif OS(WINDOWS)
     return static_cast<TCMalloc_ThreadCache*>(TlsGetValue(tlsIndex));
 #else
     return static_cast<TCMalloc_ThreadCache*>(pthread_getspecific(heap_key));
@@ -2992,12 +2992,12 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCacheIfPresent() {
 void TCMalloc_ThreadCache::InitTSD() {
   ASSERT(!tsd_inited);
   pthread_key_create(&heap_key, DestroyThreadCache);
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
   tlsIndex = TlsAlloc();
 #endif
   tsd_inited = true;
     
-#if !COMPILER(MSVC)
+#if !OS(WINDOWS)
   // We may have used a fake pthread_t for the main thread.  Fix it.
   pthread_t zero;
   memset(&zero, 0, sizeof(zero));
@@ -3008,7 +3008,7 @@ void TCMalloc_ThreadCache::InitTSD() {
   ASSERT(pageheap_lock.IsHeld());
 #endif
   for (TCMalloc_ThreadCache* h = thread_heaps; h != NULL; h = h->next_) {
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
     if (h->tid_ == 0) {
       h->tid_ = GetCurrentThreadId();
     }
@@ -3026,7 +3026,7 @@ TCMalloc_ThreadCache* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
   {
     SpinLockHolder h(&pageheap_lock);
 
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
     DWORD me;
     if (!tsd_inited) {
       me = 0;
@@ -3047,7 +3047,7 @@ TCMalloc_ThreadCache* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
     // In that case, the heap for this thread has already been created
     // and added to the linked list.  So we search for that first.
     for (TCMalloc_ThreadCache* h = thread_heaps; h != NULL; h = h->next_) {
-#if COMPILER(MSVC)
+#if OS(WINDOWS)
       if (h->tid_ == me) {
 #else
       if (pthread_equal(h->tid_, me)) {
