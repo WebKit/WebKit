@@ -1,5 +1,13 @@
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium expectations update.
+        fast/js/numeric-escapes-in-string-literals.html fails because V8 does
+        not support ECMAScript strict mode.
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium expectations update. Mark two more inspector tests
         as flaky.
 
