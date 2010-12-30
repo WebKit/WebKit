@@ -1,5 +1,18 @@
 2010-12-30  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed Chromium baseline update.
+        
+        [Chromium] svg/dom/length-list-parser.html fails on Chromium Linux after r74788 and r74803
+        https://bugs.webkit.org/show_bug.cgi?id=51759
+        
+        r74803 added chromium-win baselines for svg/dom/length-list-parser.html
+        but chromium-linux shouldn't use them (despite having them in its
+        fallback path). Copy the base expectations into chromium-linux.
+
+        * platform/chromium-linux/svg/dom/length-list-parser-expected.txt: Added.
+
+2010-12-30  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium expectations update.
         
         Mark a few inspector tests as slow, they occasionally time out with
