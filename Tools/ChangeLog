@@ -1,3 +1,13 @@
+2010-12-29  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fixed compatibility with gold linker on X11 platforms
+        https://bugs.webkit.org/show_bug.cgi?id=51700
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        Linked TestNetscapePlugin with libX11 on Unix platforms
+
 2010-12-29  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Darin Adler.

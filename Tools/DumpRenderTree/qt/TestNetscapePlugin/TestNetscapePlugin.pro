@@ -44,3 +44,7 @@ mac {
 } else {
     SOURCES += ../../unix/TestNetscapePlugin/TestNetscapePlugin.cpp
 }
+
+unix {
+    LIBS += -lX11
+}
