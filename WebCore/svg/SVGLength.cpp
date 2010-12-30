@@ -93,13 +93,9 @@ inline SVGLengthType stringToLengthType(const UChar*& ptr, const UChar* end)
         return LengthTypeNumber;
 
     const UChar firstChar = *ptr;
-    ++ptr;
 
-    if (firstChar == '%') {
-        if (ptr == end)
-            return LengthTypePercentage;
-        return LengthTypeUnknown;
-    }
+    if (++ptr == end)
+        return firstChar == '%' ? LengthTypePercentage : LengthTypeUnknown;
 
     const UChar secondChar = *ptr;
 
@@ -266,6 +262,7 @@ void SVGLength::setValueAsString(const String& string, ExceptionCode& ec)
     }
 
     SVGLengthType type = stringToLengthType(ptr, end);
+    ASSERT(ptr <= end);
     if (type == LengthTypeUnknown) {
         ec = SYNTAX_ERR;
         return;
