@@ -2,6 +2,16 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: breakpoint is not disabled when clicking on breakpoints sidebar pane checkbox.
+        https://bugs.webkit.org/show_bug.cgi?id=51745
+
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint.prototype.set enabled):
+
+2010-12-30  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: call stack shows "Paused on a JavaScript breakpoint" when stepping.
         https://bugs.webkit.org/show_bug.cgi?id=51748
 

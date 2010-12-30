@@ -48,6 +48,14 @@ WebInspector.Breakpoint.prototype = {
         return this._enabled;
     },
 
+    set enabled(enabled)
+    {
+        if (this._enabled === enabled)
+            return;
+        this.remove();
+        WebInspector.debuggerModel.setBreakpoint(this.sourceID, this.line, enabled, this.condition);
+    },
+
     get sourceText()
     {
         return this._sourceText;
