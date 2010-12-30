@@ -943,7 +943,7 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
 
     // Make sure the types of the anonymous blocks match up.
     return prev->isAnonymousColumnsBlock() == next->isAnonymousColumnsBlock()
-           && prev->isAnonymousColumnSpanBlock() == prev->isAnonymousColumnSpanBlock();
+           && prev->isAnonymousColumnSpanBlock() == next->isAnonymousColumnSpanBlock();
 }
 
 void RenderBlock::removeChild(RenderObject* oldChild)
@@ -977,6 +977,13 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             blockChildrenBlock->children()->insertChildNode(blockChildrenBlock, inlineChildrenBlock, prev == inlineChildrenBlock ? blockChildrenBlock->firstChild() : 0,
                                                             inlineChildrenBlock->hasLayer() || blockChildrenBlock->hasLayer());
             next->setNeedsLayoutAndPrefWidthsRecalc();
+            
+            // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child
+            // of "this". we null out prev or next so that is not used later in the function.
+            if (inlineChildrenBlock == prevBlock)
+                prev = 0;
+            else
+                next = 0;
         } else {
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
@@ -985,6 +992,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // Delete the now-empty block's lines and nuke it.
             nextBlock->deleteLineBoxTree();
             nextBlock->destroy();
+            next = 0;
         }
     }
 

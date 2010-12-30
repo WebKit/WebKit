@@ -1,3 +1,21 @@
+2010-12-29  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        ASSERT(oldchild->parent() == owner) fails.
+        https://bugs.webkit.org/show_bug.cgi?id=50480
+
+        In RenderBlock removeChild function, when the inlineChildrenBlock(equal to prev or next)
+        is reparented to blockChildrenBlock, it is no longer a child of "this". This causes the
+        assertion failure when removeChildNode executes on the child(equal to prev or next).
+        Fix a typo in canMergeContiguousAnonymousBlocks.
+
+        Test: fast/multicol/span/double-merge-anonymous-block-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::canMergeContiguousAnonymousBlocks): fix typo, change prev to next.
+        (WebCore::RenderBlock::removeChild): if prev or not is reparented, then set it to zero.
+
 2010-12-29  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Darin Adler.
