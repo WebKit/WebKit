@@ -1,3 +1,25 @@
+2010-12-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Sam Weinig.
+
+        Visiting macnn.com often causes SQL spew via geolocation database
+        https://bugs.webkit.org/show_bug.cgi?id=51557
+
+        If the Geolocation position cache database path has not been set, early-out
+        rather than using an empty path and thus failing to open the database.
+        This avoids SQL log spew.
+
+        Also, avoid starting the database thread until the path has been set, and
+        shorten the thread name to avoid warnings due to exceeding 30 characters.
+
+        No new tests, implementation clean-up only.
+
+        * page/GeolocationPositionCache.cpp:
+        (WebCore::GeolocationPositionCache::addUser):
+        (WebCore::GeolocationPositionCache::removeUser):
+        (WebCore::GeolocationPositionCache::setDatabasePath):
+        (WebCore::GeolocationPositionCache::startBackgroundThread):
+
 2010-12-29  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

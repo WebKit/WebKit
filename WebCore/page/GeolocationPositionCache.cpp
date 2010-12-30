@@ -60,7 +60,8 @@ GeolocationPositionCache::GeolocationPositionCache()
 void GeolocationPositionCache::addUser()
 {
     ASSERT(numUsers >= 0);
-    if (!numUsers && !m_threadId) {
+    MutexLocker databaseLock(m_databaseFileMutex);
+    if (!numUsers && !m_threadId && !m_databaseFile.isNull()) {
         startBackgroundThread();
         MutexLocker lock(m_cachedPositionMutex);
         if (!m_cachedPosition)
@@ -74,7 +75,7 @@ void GeolocationPositionCache::removeUser()
     MutexLocker lock(m_cachedPositionMutex);
     --numUsers;
     ASSERT(numUsers >= 0);
-    if (!numUsers && m_cachedPosition)
+    if (!numUsers && m_cachedPosition && m_threadId)
         triggerWriteToDatabase();
 }
 
@@ -85,8 +86,11 @@ void GeolocationPositionCache::setDatabasePath(const String& path)
     MutexLocker lock(m_databaseFileMutex);
     if (m_databaseFile != newFile) {
         m_databaseFile = newFile;
-        if (numUsers && !m_cachedPosition)
-            triggerReadFromDatabase();
+        if (numUsers && !m_threadId) {
+            startBackgroundThread();
+            if (!m_cachedPosition)
+                triggerReadFromDatabase();
+        }
     }
 }
 
@@ -105,7 +109,7 @@ Geoposition* GeolocationPositionCache::cachedPosition()
 void GeolocationPositionCache::startBackgroundThread()
 {
     // FIXME: Consider sharing this thread with other background tasks.
-    m_threadId = createThread(threadEntryPoint, this, "WebCore: GeolocationPositionCache");
+    m_threadId = createThread(threadEntryPoint, this, "WebCore: Geolocation cache");
 }
 
 void* GeolocationPositionCache::threadEntryPoint(void* object)
