@@ -1,3 +1,15 @@
+2010-12-29  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Darin Adler.
+
+        Circular dependency in webkitpy.common.checkout.changelog module
+        https://bugs.webkit.org/show_bug.cgi?id=50475
+
+        Remove automatic import of api.Checkout module when any checkout/
+        submodule is imported (e.g.: when checkout.scm.Git is imported).
+
+        * Scripts/webkitpy/common/checkout/__init__.py:
+
 2010-12-29  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ojan Vafai.
