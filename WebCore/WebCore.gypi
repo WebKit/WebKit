@@ -860,6 +860,7 @@
             'bindings/v8/custom/V8NodeCustom.cpp',
             'bindings/v8/custom/V8NodeListCustom.cpp',
             'bindings/v8/custom/V8NotificationCenterCustom.cpp',
+            'bindings/v8/custom/V8PerformanceCustom.cpp',
             'bindings/v8/custom/V8PopStateEventCustom.cpp',
             'bindings/v8/custom/V8ScriptProfileCustom.cpp',
             'bindings/v8/custom/V8ScriptProfileNodeCustom.cpp',

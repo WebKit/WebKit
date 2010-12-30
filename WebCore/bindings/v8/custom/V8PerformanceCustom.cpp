@@ -28,13 +28,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module window {
+#include "config.h"
 
-    // See: http://dev.w3.org/2006/webapi/WebTiming/
-    interface [Conditional=WEB_TIMING, OmitConstructor] Performance {
-        readonly attribute PerformanceNavigation navigation;
-        readonly attribute PerformanceTiming timing;
-        readonly attribute [V8CustomGetter] MemoryInfo memory;
-    };
+#include "V8Performance.h"
 
+#include "Performance.h"
+#include "V8Binding.h"
+#include "V8BindingMacros.h"
+#include "V8MemoryInfo.h"
+
+namespace WebCore {
+
+v8::Handle<v8::Value> V8Performance::memoryAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.Performance.memoryAccessorGetter");
+    Performance* imp = V8Performance::toNative(info.Holder());
+    return toV8(imp->memory());
 }
+
+} // namespace WebCore

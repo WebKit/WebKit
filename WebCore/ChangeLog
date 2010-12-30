@@ -1,3 +1,20 @@
+2010-12-30  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix leak of MemoryInfo wrappers introduced in r57004 (see issue 51712).
+
+        https://bugs.webkit.org/show_bug.cgi?id=51713
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore::V8Console::memoryAccessorGetter):
+        * bindings/v8/custom/V8PerformanceCustom.cpp: Copied from V8ConsoleCustom.cpp.
+        (WebCore::V8Performance::memoryAccessorGetter):
+        * page/Console.idl:
+        * page/Performance.idl:
+
 2010-12-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Sam Weinig.

@@ -58,7 +58,7 @@ module window {
         [CustomArgumentHandling] void groupCollapsed();
         void groupEnd();
 
-        readonly attribute MemoryInfo memory;
+        readonly attribute [V8CustomGetter] MemoryInfo memory;
     };
 
 }

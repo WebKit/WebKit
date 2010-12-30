@@ -39,6 +39,7 @@
 #include "ScriptProfile.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
+#include "V8MemoryInfo.h"
 #include "V8Proxy.h"
 #include "V8ScriptProfile.h"
 
@@ -107,5 +108,12 @@ v8::Handle<v8::Value> V8Console::profileEndCallback(const v8::Arguments& args)
     return v8::Handle<v8::Value>();
 }
 #endif
+
+v8::Handle<v8::Value> V8Console::memoryAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.Console.memoryAccessorGetter");
+    Console* imp = V8Console::toNative(info.Holder());
+    return toV8(imp->memory());
+}
 
 } // namespace WebCore
