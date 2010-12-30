@@ -2283,6 +2283,10 @@ def check_for_null(clean_lines, line_number, file_state, error):
     if search(r'\bgdk_pixbuf_save_to\w+\b', line):
         return
 
+    # Don't warn about NULL usage in gtk_widget_style_get(). See Bug 51758.
+    if search(r'\bgtk_widget_style_get\(\w+\b', line):
+        return
+
     if search(r'\bNULL\b', line):
         error(line_number, 'readability/null', 5, 'Use 0 instead of NULL.')
         return

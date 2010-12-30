@@ -1,3 +1,15 @@
+2010-12-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        check-webkit-style should ignore NULL usage in calls to gtk_widget_style_get
+        https://bugs.webkit.org/show_bug.cgi?id=51758
+
+        Add a check-webkit-style exception for gtk_widget_style_get and NULL usage.
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Add the exception.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Add some tests for this.
+
 2010-12-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE buildfix.

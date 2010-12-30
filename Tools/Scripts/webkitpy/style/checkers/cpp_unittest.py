@@ -3858,6 +3858,17 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint(
             'gchar* result = gdk_pixbuf_save_to_stream(pixbuf, function, data, type, error, NULL);',
             '')
+        self.assert_lint(
+            'gtk_widget_style_get(style, "propertyName", &value, "otherName", &otherValue, NULL);',
+            '')
+        self.assert_lint(
+            'gtk_widget_style_get_property(style, NULL, NULL);',
+            'Use 0 instead of NULL.  [readability/null] [5]',
+            'foo.cpp')
+        self.assert_lint(
+            'gtk_widget_style_get_valist(style, NULL, NULL);',
+            'Use 0 instead of NULL.  [readability/null] [5]',
+            'foo.cpp')
 
         # 2. C++ and C bool values should be written as true and
         #    false. Objective-C BOOL values should be written as YES and NO.
