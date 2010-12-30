@@ -271,7 +271,7 @@ END
     }
 },
 { # New test
-    diffName => "fixChangeLogPatch: [no change] New entry inserted in middle.",
+    diffName => "fixChangeLogPatch: New entry inserted in middle.",
     inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
@@ -292,30 +292,26 @@ END
          * File:
 END
     expectedReturn => {
-    hasOverlappingLines => 1,
     patch => <<'END',
 --- ChangeLog
 +++ ChangeLog
-@@ -11,6 +11,14 @@
- 
-         Reviewed by Ray.
- 
-+        Changed some more code on 2009-12-21.
-+
-+        * File:
-+
+@@ -1,3 +1,11 @@
 +2009-12-21  Alice  <alice@email.address>
 +
 +        Reviewed by Ray.
 +
-         Changed some code on 2009-12-21.
++        Changed some more code on 2009-12-21.
++
++        * File:
++
+ 2009-12-21  Alice  <alice@email.address>
  
-         * File:
+         Reviewed by Ray.
 END
     }
 },
 { # New test
-    diffName => "fixChangeLogPatch: [no change] New entry inserted earlier in the file, but after an entry with the same author and date.",
+    diffName => "fixChangeLogPatch: New entry inserted earlier in the file, but after an entry with the same author and date.",
     inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
@@ -336,25 +332,21 @@ END
          Changed some code on 2009-12-22.
 END
     expectedReturn => {
-    hasOverlappingLines => 1,
     patch => <<'END',
 --- ChangeLog
 +++ ChangeLog
-@@ -70,6 +70,14 @@
- 
- 2009-12-22  Alice  <alice@email.address>
- 
+@@ -1,3 +1,11 @@
++2009-12-22  Alice  <alice@email.address>
++
 +        Reviewed by Sue.
 +
 +        Changed some more code on 2009-12-22.
 +
 +        * File:
 +
-+2009-12-22  Alice  <alice@email.address>
-+
-         Reviewed by Ray.
+ 2009-12-22  Alice  <alice@email.address>
  
-         Changed some code on 2009-12-22.
+         Reviewed by Ray.
 END
     }
 },

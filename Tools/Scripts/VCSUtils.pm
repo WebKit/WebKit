@@ -1304,12 +1304,7 @@ sub setChangeLogDateAndReviewer($$$)
 # Returns $changeLogHashRef:
 #   $changeLogHashRef: a hash reference representing a change log patch.
 #     patch: a ChangeLog patch equivalent to the given one, but with the
-#            newest ChangeLog entry inserted at the top of the file, if possible.
-#     hasOverlappingLines: the value 1 if the change log entry overlaps
-#                          some lines of another change log entry. This can
-#                          happen when deliberately inserting a new ChangeLog
-#                          entry earlier in the file above an entry with
-#                          the same date and author.                     
+#            newest ChangeLog entry inserted at the top of the file, if possible.              
 sub fixChangeLogPatch($)
 {
     my $patch = shift; # $patch will only contain patch fragments for ChangeLog.
@@ -1403,8 +1398,19 @@ sub fixChangeLogPatch($)
         $lines[$i] = "+$text";
     }
 
-    # Finish moving whatever overlapping lines remain, and update
-    # the initial chunk range.
+    # If @overlappingLines > 0, this is where we make use of the
+    # assumption that the beginning of the source file was not modified.
+    splice(@lines, $chunkStartIndex, 0, @overlappingLines);
+
+    # Update the date start index as it may have changed after shifting
+    # the overlapping lines towards the front.
+    for ($i = $chunkStartIndex; $i < $dateStartIndex; ++$i) {
+        $dateStartIndex = $i if $lines[$i] =~ /$dateStartRegEx/;
+    }
+    splice(@lines, $chunkStartIndex, $dateStartIndex - $chunkStartIndex); # Remove context of later entry.
+    $deletedLineCount += $dateStartIndex - $chunkStartIndex;
+
+    # Update the initial chunk range.
     my $chunkRangeRegEx = '^\@\@ -(\d+),(\d+) \+\d+,(\d+) \@\@$'; # e.g. @@ -2,6 +2,18 @@
     if ($lines[$chunkStartIndex - 1] !~ /$chunkRangeRegEx/) {
         # FIXME: Handle errors differently from ChangeLog files that
@@ -1413,20 +1419,8 @@ sub fixChangeLogPatch($)
         $changeLogHashRef{patch} = $patch; # Error: unexpected patch string format.
         return \%changeLogHashRef;
     }
-    my $skippedFirstLineCount = $1 - 1;
     my $oldSourceLineCount = $2;
     my $oldTargetLineCount = $3;
-
-    if (@overlappingLines != $skippedFirstLineCount) {
-        # This can happen, for example, when deliberately inserting
-        # a new ChangeLog entry earlier in the file.
-        $changeLogHashRef{hasOverlappingLines} = 1;
-        $changeLogHashRef{patch} = $patch;
-        return \%changeLogHashRef;
-    }
-    # If @overlappingLines > 0, this is where we make use of the
-    # assumption that the beginning of the source file was not modified.
-    splice(@lines, $chunkStartIndex, 0, @overlappingLines);
 
     my $sourceLineCount = $oldSourceLineCount + @overlappingLines - $deletedLineCount;
     my $targetLineCount = $oldTargetLineCount + @overlappingLines - $deletedLineCount;

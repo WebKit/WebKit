@@ -1,3 +1,37 @@
+2010-12-29  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        svn-apply updates date of wrong change log entry for a change log diff that
+        contains two consecutive entries with the same author and date
+        https://bugs.webkit.org/show_bug.cgi?id=46061
+
+        Fixes an issue where the date of the wrong change log entry may be modified.
+        Moreover, changes fixChangeLogPatch() to move entries inserted earlier
+        in a ChangeLog file to the top of the file.
+
+        Currently, fixChangeLogPatch() explicitly bails out and returns an unchanged
+        diff when it detects that the diff inserts a change log entry earlier in a
+        ChangeLog. It is unusual to land a patch that has such a deliberate ChangeLog
+        change. With the advent of the commit-queue this functionality of bailing out
+        and hence landing the patch as-is is harmful to the accuracy of the ChangeLog.
+        Instead, we should always move the change log entry to the top of the ChangeLog file.
+
+        A side-effect of this change is that setChangeLogDateAndReviewer() now updates
+        the date line of the correct change log entry in a ChangeLog diff.
+
+        * Scripts/VCSUtils.pm: Modified fixChangeLogPatch() to move entries inserted earlier to the top.
+
+        * Scripts/webkitperl/VCSUtils_unittest/fixChangeLogPatch.pl:
+          Updated the following unit tests now that we move entries inserted earlier to the top:
+          - "fixChangeLogPatch: New entry inserted in middle."
+            (formerly named "fixChangeLogPatch: [no change] New entry inserted in middle.")
+
+          - "fixChangeLogPatch: New entry inserted earlier in the file, but after an entry with the same author and date."
+            (formerly named "fixChangeLogPatch: [no change] New entry inserted earlier in the file, but after an entry with the same author and date.")
+
+        * Scripts/webkitperl/VCSUtils_unittest/fixChangeLogPatchThenSetChangeLogDateAndReviewer.pl: Added.
+
 2010-12-29  Konstantin Tokarev  <annulen@yandex.ru>
 
         Reviewed by Eric Seidel.
