@@ -3285,3 +3285,5 @@ BUGCR64371 WIN RELEASE : http/tests/appcache/online-whitelist.html = TEXT
 BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
+
+BUGCR68289 LINUX : media/video-element-other-namespace-crash.html = TIMEOUT
