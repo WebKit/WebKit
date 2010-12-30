@@ -1,3 +1,17 @@
+2010-12-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Enable JSC Rich Source Info for Android even when Inspector and Debugger are disabled
+        https://bugs.webkit.org/show_bug.cgi?id=51740
+
+        This is a policy decision for Android.
+
+        No new tests, simply enabling existing, tested code on Android.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsRichSourceInfo):
+
 2010-12-30  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Adam Barth.
