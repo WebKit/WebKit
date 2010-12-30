@@ -1547,6 +1547,13 @@ WebInspector.resourceURLForRelatedNode = function(node, url)
 
 WebInspector.completeURL = function(baseURL, href)
 {
+    if (href) {
+        // Return absolute URLs as-is.
+        var parsedHref = href.asParsedURL();
+        if (parsedHref && parsedHref.scheme)
+            return href;
+    }
+
     var parsedURL = baseURL.asParsedURL();
     if (parsedURL) {
         var path = href;
@@ -1753,6 +1760,7 @@ WebInspector.isEditingAnyField = function()
 // commitHandler: Function - handles editing "commit" outcome
 // cancelHandler: Function - handles editing "cancel" outcome
 // customFinishHandler: Function - custom finish handler for the editing session (invoked on keydown)
+// pasteHandler: Function - handles the "paste" event, return values are the same as those for customFinishHandler
 // multiline: Boolean - whether the edited element is multiline
 WebInspector.startEditing = function(element, config)
 {
@@ -1764,6 +1772,7 @@ WebInspector.startEditing = function(element, config)
     config = config || {};
     var committedCallback = config.commitHandler;
     var cancelledCallback = config.cancelHandler;
+    var pasteCallback = config.pasteHandler;
     var context = config.context;
     var oldText = getContent(element);
     var moveDirection = "";
@@ -1796,6 +1805,8 @@ WebInspector.startEditing = function(element, config)
 
         element.removeEventListener("blur", blurEventListener, false);
         element.removeEventListener("keydown", keyDownEventListener, true);
+        if (pasteCallback)
+            element.removeEventListener("paste", pasteEventListener, true);
 
         if (element === WebInspector.currentFocusElement || element.isAncestor(WebInspector.currentFocusElement))
             WebInspector.currentFocusElement = WebInspector.previousFocusElement;
@@ -1833,10 +1844,8 @@ WebInspector.startEditing = function(element, config)
             return "move-" + (event.shiftKey ? "backward" : "forward");
     }
 
-    function keyDownEventListener(event)
+    function handleEditingResult(result, event)
     {
-        var handler = config.customFinishHandler || defaultFinishHandler;
-        var result = handler(event);
         if (result === "commit") {
             editingCommitted.call(element);
             event.preventDefault();
@@ -1852,8 +1861,23 @@ WebInspector.startEditing = function(element, config)
         }
     }
 
+    function pasteEventListener(event)
+    {
+        var result = pasteCallback(event);
+        handleEditingResult(result, event);
+    }
+
+    function keyDownEventListener(event)
+    {
+        var handler = config.customFinishHandler || defaultFinishHandler;
+        var result = handler(event);
+        handleEditingResult(result, event);
+    }
+
     element.addEventListener("blur", blurEventListener, false);
     element.addEventListener("keydown", keyDownEventListener, true);
+    if (pasteCallback)
+        element.addEventListener("paste", pasteEventListener, true);
 
     WebInspector.currentFocusElement = element;
     return {

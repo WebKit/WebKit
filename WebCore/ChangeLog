@@ -1,3 +1,24 @@
+2010-12-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Pasting a style property with value should automatically split it into prop/value
+        https://bugs.webkit.org/show_bug.cgi?id=51581
+
+        The "paste" DOM event is handled for the CSS property name field to parse out the name and value parts
+        of a CSS property being pasted (by the first ':' found). The property is committed (if not a new one),
+        and the edit focus is transferred to the value field.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.selectElement):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        * inspector/front-end/inspector.js:
+        (WebInspector.completeURL): Drive-by: return full URLs as-is.
+        (WebInspector.startEditing.cleanUpAfterEditing):
+        (WebInspector.startEditing):
+        (WebInspector.startEditing.pasteEventListener):
+        (WebInspector.startEditing.keyDownEventListener):
+
 2010-12-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1581,11 +1581,37 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 return "move-" + (event.shiftKey ? "backward" : "forward");
         }
 
+        function pasteHandler(context, event)
+        {
+            var data = event.clipboardData.getData("Text");
+            if (!data)
+                return;
+            var colonIdx = data.indexOf(":");
+            if (colonIdx < 0)
+                return;
+            var name = data.substring(0, colonIdx).trim();
+            var value = data.substring(colonIdx + 1).trim();
+
+            event.preventDefault();
+
+            if (!("originalName" in context)) {
+                context.originalName = this.nameElement.textContent;
+                context.originalValue = this.valueElement.textContent;
+            }
+            this.nameElement.textContent = name;
+            this.valueElement.textContent = value;
+            this.nameElement.normalize();
+            this.valueElement.normalize();
+
+            return "move-forward";
+        }
+
         WebInspector.startEditing(selectElement, {
             context: context,
             commitHandler: this.editingCommitted.bind(this),
             cancelHandler: this.editingCancelled.bind(this),
-            customFinishHandler: nameValueFinishHandler.bind(this, context, isEditingName)
+            customFinishHandler: nameValueFinishHandler.bind(this, context, isEditingName),
+            pasteHandler: isEditingName ? pasteHandler.bind(this, context) : null
         });
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
     },
@@ -1793,9 +1819,10 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         // Make the Changes and trigger the moveToNextCallback after updating.
         var blankInput = /^\s*$/.test(userInput);
+        var isDataPasted = "originalName" in context;
+        var isDirtyViaPaste = isDataPasted && (this.nameElement.textContent !== context.originalName || this.valueElement.textContent !== context.originalValue);
         var shouldCommitNewProperty = this._newProperty && (moveToOther || (!moveDirection && !isEditingName) || (isEditingName && blankInput));
-
-        if ((userInput !== previousContent && !this._newProperty) || shouldCommitNewProperty) {
+        if (((userInput !== previousContent || isDirtyViaPaste) && !this._newProperty) || shouldCommitNewProperty) {
             this.treeOutline.section._afterUpdate = moveToNextCallback.bind(this, this._newProperty, !blankInput, this.treeOutline.section);
             var propertyText;
             if (blankInput || (this._newProperty && /^\s*$/.test(this.valueElement.textContent)))
@@ -1808,7 +1835,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
             this.applyStyleText(propertyText, true);
         } else {
-            if (!this._newProperty)
+            if (!isDataPasted && !this._newProperty)
                 this.updateTitle();
             moveToNextCallback(this._newProperty, false, this.treeOutline.section);
         }
