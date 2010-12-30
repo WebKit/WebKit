@@ -1,3 +1,15 @@
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Make expectation for http/tests/media/reload-after-dialog.html not
+        trigger a duplication error for the debug Linux builder.
+
+        Remove expectation for platform/gtk/fast/text/emphasis-overlap.html, it
+        was removed in r74346.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-29  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
