@@ -51,7 +51,7 @@
 // Moving this #include above FrameLoader.h causes the Windows build to fail due to warnings about
 // alignment in Timer<FrameLoader>. It seems that the definition of EmptyFrameLoaderClient is what
 // causes this (removing that definition fixes the warnings), but it isn't clear why.
-#include "EmptyClients.h"
+#include "EmptyClients.h" // NOLINT
 
 namespace WebCore {
 

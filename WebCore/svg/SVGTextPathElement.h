@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-    enum SVGTextPathMethodType {
+enum SVGTextPathMethodType {
     SVG_TEXTPATH_METHODTYPE_UNKNOWN = 0,
     SVG_TEXTPATH_METHODTYPE_ALIGN = 1,
     SVG_TEXTPATH_METHODTYPE_STRETCH = 2

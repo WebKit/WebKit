@@ -27,26 +27,26 @@
 
 namespace WebCore {
 
-    class SVGElement;
+class SVGElement;
 
-    class SVGStyledLocatableElement : public SVGStyledElement,
-                                      virtual public SVGLocatable {
-    public:
-        virtual SVGElement* nearestViewportElement() const;
-        virtual SVGElement* farthestViewportElement() const;
+class SVGStyledLocatableElement : public SVGStyledElement,
+                                  virtual public SVGLocatable {
+public:
+    virtual SVGElement* nearestViewportElement() const;
+    virtual SVGElement* farthestViewportElement() const;
 
-        virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
-        virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
-        virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
 
-        virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGLocatable::localCoordinateSpaceTransform(mode); }
+    virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGLocatable::localCoordinateSpaceTransform(mode); }
 
-    protected:
-        SVGStyledLocatableElement(const QualifiedName&, Document*);
+protected:
+    SVGStyledLocatableElement(const QualifiedName&, Document*);
 
-    private:
-        virtual bool isStyledLocatable() const { return true; }
-    };
+private:
+    virtual bool isStyledLocatable() const { return true; }
+};
 
 } // namespace WebCore
 

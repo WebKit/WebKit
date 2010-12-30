@@ -87,7 +87,7 @@ bool SVGViewSpec::parseViewSpec(const String& viewSpec)
     if (!skipString(currViewSpec, end, svgViewSpec, WTF_ARRAY_LENGTH(svgViewSpec)))
         return false;
 
-    if (currViewSpec >= end || *currViewSpec != '(' )
+    if (currViewSpec >= end || *currViewSpec != '(')
         return false;
     currViewSpec++;
 

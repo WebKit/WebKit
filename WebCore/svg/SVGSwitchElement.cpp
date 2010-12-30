@@ -45,13 +45,15 @@ bool SVGSwitchElement::childShouldCreateRenderer(Node* child) const
 {
     // FIXME: This function does not do what the comment below implies it does.
     // It will create a renderer for any valid SVG element children, not just the first one.
+    for (Node* node = firstChild(); node; node = node->nextSibling()) {
+        if (!node->isSVGElement())
+            continue;
 
-    for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
-        if (n->isSVGElement()) {
-            SVGElement* element = static_cast<SVGElement*>(n);
-            if (element && element->isValid())
-                return (n == child); // Only allow this child if it's the first valid child
-        }
+        SVGElement* element = static_cast<SVGElement*>(node);
+        if (!element || !element->isValid())
+            continue;
+
+        return node == child; // Only allow this child if it's the first valid child
     }
 
     return false;

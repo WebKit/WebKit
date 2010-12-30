@@ -92,8 +92,7 @@ private:
 bool ConditionEventListener::operator==(const EventListener& listener)
 {
     if (const ConditionEventListener* conditionEventListener = ConditionEventListener::cast(&listener))
-        return m_animation == conditionEventListener->m_animation &&
-               m_condition == conditionEventListener->m_condition;
+        return m_animation == conditionEventListener->m_animation && m_condition == conditionEventListener->m_condition;
     return false;
 }
 
@@ -614,7 +613,7 @@ SMILTime SVGSMILElement::repeatingDuration() const
     SMILTime repeatCount = this->repeatCount();
     SMILTime repeatDur = this->repeatDur();
     SMILTime simpleDuration = this->simpleDuration();
-    if (simpleDuration == 0 || (repeatDur.isUnresolved() && repeatCount.isUnresolved()))
+    if (!simpleDuration || (repeatDur.isUnresolved() && repeatCount.isUnresolved()))
         return simpleDuration;
     SMILTime repeatCountDuration = simpleDuration * repeatCount;
     return min(repeatCountDuration, min(repeatDur, SMILTime::indefinite()));
@@ -670,10 +669,11 @@ void SVGSMILElement::resolveInterval(bool first, SMILTime& beginResult, SMILTime
             beginResult = tempBegin;
             endResult = tempEnd;
             return;
-        } else if (restart() == RestartNever)
+        }
+        if (restart() == RestartNever)
             break;
-        else
-            beginAfter = tempEnd;
+
+        beginAfter = tempEnd;
         lastIntervalTempEnd = tempEnd;
     }
     beginResult = SMILTime::unresolved();
@@ -787,7 +787,7 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
         repeat = 0;
         return 0.f;
     }
-    if (simpleDuration == 0) {
+    if (!simpleDuration) {
         repeat = 0;
         return 1.f;
     }
@@ -797,7 +797,7 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
     SMILTime repeatingDuration = this->repeatingDuration();
     if (elapsed >= m_intervalEnd || activeTime > repeatingDuration) {
         repeat = static_cast<unsigned>(repeatingDuration.value() / simpleDuration.value());
-        if (fmod(repeatingDuration.value(), simpleDuration.value() == 0.))
+        if (fmod(repeatingDuration.value(), !simpleDuration.value()))
             repeat--;
         return 1.f;
     }

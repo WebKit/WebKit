@@ -57,7 +57,7 @@ SMILTime WebCore::operator*(const SMILTime& a,  const SMILTime& b)
 {
     if (a.isUnresolved() || b.isUnresolved())
         return SMILTime::unresolved();
-    if (a.value() == 0 || b.value() == 0)
+    if (!a.value() || !b.value())
         return SMILTime(0);
     if (a.isIndefinite() || b.isIndefinite())
         return SMILTime::indefinite();

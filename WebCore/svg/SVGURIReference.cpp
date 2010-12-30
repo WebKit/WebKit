@@ -48,11 +48,14 @@ String SVGURIReference::getTarget(const String& url)
         size_t start = url.find('#') + 1;
         size_t end = url.reverseFind(')');
         return url.substring(start, end - start);
-    } else if (url.find('#') != notFound) { // format is #target
+    }
+    if (url.find('#') != notFound) { // format is #target
         size_t start = url.find('#') + 1;
         return url.substring(start, url.length() - start);
-    } else // The url doesn't have any target.
-        return String();
+    }
+
+    // The url doesn't have any target.
+    return String();
 }
 
 }

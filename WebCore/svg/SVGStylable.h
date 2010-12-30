@@ -27,16 +27,16 @@
 
 namespace WebCore {
 
-    class CSSValue;
-    class CSSStyleDeclaration;
+class CSSValue;
+class CSSStyleDeclaration;
 
-    class SVGStylable {
-    public:
-        virtual ~SVGStylable() { }
+class SVGStylable {
+public:
+    virtual ~SVGStylable() { }
 
-        virtual CSSStyleDeclaration* style() = 0;
-        virtual PassRefPtr<CSSValue> getPresentationAttribute(const String&) = 0;
-    };
+    virtual CSSStyleDeclaration* style() = 0;
+    virtual PassRefPtr<CSSValue> getPresentationAttribute(const String&) = 0;
+};
 
 } // namespace WebCore
 

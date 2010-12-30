@@ -1,3 +1,108 @@
+2010-12-29  Dirk Schulze  <krit@wbekit.org>
+
+        Reviewed by Darin Adler.
+
+        Cleanup SVG code according to the webkit style rules 3
+        https://bugs.webkit.org/show_bug.cgi?id=51490
+
+        Last patch to fix indention and other style issues according to the WebKit style rules in the SVG code.
+        Just one file can't be fixed for check-webkit-style.
+        * SVGAllInOne.cpp: check-webkit-style wants a config.h at the beginning
+
+        No changes of functionality, so no new tests. 
+
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGImage.cpp:
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValue):
+        * svg/SVGPolygonElement.h:
+        * svg/SVGPolylineElement.h:
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio):
+        (WebCore::SVGPreserveAspectRatio::transformRect):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::viewport):
+        * svg/SVGSetElement.h:
+        * svg/SVGStylable.h:
+        (WebCore::SVGStylable::~SVGStylable):
+        * svg/SVGStyledLocatableElement.h:
+        (WebCore::SVGStyledLocatableElement::localCoordinateSpaceTransform):
+        (WebCore::SVGStyledLocatableElement::isStyledLocatable):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::isKnownAttribute):
+        * svg/SVGSwitchElement.cpp:
+        (WebCore::SVGSwitchElement::childShouldCreateRenderer):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::parseMappedAttribute):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::isKnownAttribute):
+        * svg/SVGTextPathElement.cpp:
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTitleElement.h:
+        (WebCore::SVGTitleElement::rendererIsNeeded):
+        * svg/SVGTransformDistance.cpp:
+        (WebCore::SVGTransformDistance::SVGTransformDistance):
+        (WebCore::SVGTransformDistance::scaledDistance):
+        (WebCore::SVGTransformDistance::addSVGTransforms):
+        (WebCore::SVGTransformDistance::addSVGTransform):
+        (WebCore::SVGTransformDistance::addToSVGTransform):
+        (WebCore::SVGTransformDistance::isZero):
+        * svg/SVGTransformList.cpp:
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::getTarget):
+        * svg/SVGVKernElement.h:
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::parseViewSpec):
+        * svg/SVGZoomAndPan.h:
+        (WebCore::SVGZoomAndPan::SVGZoomAndPan):
+        (WebCore::SVGZoomAndPan::~SVGZoomAndPan):
+        (WebCore::SVGZoomAndPan::zoomAndPan):
+        * svg/SVGZoomEvent.h:
+        (WebCore::SVGZoomEvent::create):
+        * svg/animation/SMILTime.cpp:
+        (WebCore::operator*):
+        * svg/animation/SMILTime.h:
+        (WebCore::SMILTime::SMILTime):
+        (WebCore::SMILTime::unresolved):
+        (WebCore::SMILTime::indefinite):
+        (WebCore::SMILTime::operator=):
+        (WebCore::SMILTime::value):
+        (WebCore::SMILTime::isFinite):
+        (WebCore::SMILTime::isIndefinite):
+        (WebCore::SMILTime::isUnresolved):
+        (WebCore::operator==):
+        (WebCore::operator!): new operator checks for 0 or infinite values.
+        (WebCore::operator!=):
+        (WebCore::operator>):
+        (WebCore::operator<):
+        (WebCore::operator>=):
+        (WebCore::operator<=):
+        * svg/animation/SMILTimeContainer.h:
+        (WebCore::SMILTimeContainer::create):
+        (WebCore::SMILTimeContainer::setDocumentOrderIndexesDirty):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::operator==):
+        (WebCore::SVGSMILElement::repeatingDuration):
+        (WebCore::SVGSMILElement::resolveInterval):
+        (WebCore::SVGSMILElement::calculateAnimationPercentAndRepeat):
+        * svg/animation/SVGSMILElement.h:
+        (WebCore::SVGSMILElement::timeContainer):
+        (WebCore::SVGSMILElement::intervalBegin):
+        (WebCore::SVGSMILElement::intervalEnd):
+        (WebCore::SVGSMILElement::previousIntervalBegin):
+        (WebCore::SVGSMILElement::documentOrderIndex):
+        (WebCore::SVGSMILElement::setDocumentOrderIndex):
+        * svg/graphics/SVGImage.h:
+        (WebCore::SVGImage::create):
+        (WebCore::SVGImage::destroyDecodedData):
+        (WebCore::SVGImage::decodedSize):
+        (WebCore::SVGImage::frameAtIndex):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::create):
+        (WebCore::SVGFilterBuilder::lastEffect):
+        (WebCore::SVGFilterBuilder::getEffectReferences):
+        (WebCore::SVGFilterBuilder::addBuiltinEffects):
+
 2010-12-29  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Adler.

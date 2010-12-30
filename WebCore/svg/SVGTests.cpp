@@ -72,10 +72,12 @@ bool SVGTests::parseMappedAttribute(Attribute* attr)
     if (attr->name() == SVGNames::requiredFeaturesAttr) {
         m_requiredFeatures.value.reset(attr->value());
         return true;
-    } else if (attr->name() == SVGNames::requiredExtensionsAttr) {
+    }
+    if (attr->name() == SVGNames::requiredExtensionsAttr) {
         m_requiredExtensions.value.reset(attr->value());
         return true;
-    } else if (attr->name() == SVGNames::systemLanguageAttr) {
+    }
+    if (attr->name() == SVGNames::systemLanguageAttr) {
         m_systemLanguage.value.reset(attr->value());
         return true;
     }

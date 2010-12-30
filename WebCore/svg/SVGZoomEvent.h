@@ -28,36 +28,36 @@
 
 namespace WebCore {
 
-    class SVGZoomEvent : public UIEvent {
-    public:
-        static PassRefPtr<SVGZoomEvent> create() { return adoptRef(new SVGZoomEvent); }
+class SVGZoomEvent : public UIEvent {
+public:
+    static PassRefPtr<SVGZoomEvent> create() { return adoptRef(new SVGZoomEvent); }
 
-        // 'SVGZoomEvent' functions
-        FloatRect zoomRectScreen() const;
+    // 'SVGZoomEvent' functions
+    FloatRect zoomRectScreen() const;
 
-        float previousScale() const;
-        void setPreviousScale(float);
+    float previousScale() const;
+    void setPreviousScale(float);
 
-        FloatPoint previousTranslate() const;
+    FloatPoint previousTranslate() const;
 
-        float newScale() const;
-        void setNewScale(float);
+    float newScale() const;
+    void setNewScale(float);
 
-        FloatPoint newTranslate() const;
+    FloatPoint newTranslate() const;
 
-    private:
-        SVGZoomEvent();
+private:
+    SVGZoomEvent();
 
-        virtual bool isSVGZoomEvent() const;
+    virtual bool isSVGZoomEvent() const;
 
-        float m_newScale;
-        float m_previousScale;
-        
-        FloatRect m_zoomRectScreen;
-        
-        FloatPoint m_newTranslate;
-        FloatPoint m_previousTranslate;
-    };
+    float m_newScale;
+    float m_previousScale;
+
+    FloatRect m_zoomRectScreen;
+
+    FloatPoint m_newTranslate;
+    FloatPoint m_previousTranslate;
+};
 
 } // namespace WebCore
 

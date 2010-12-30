@@ -24,9 +24,9 @@
 #include "SVGFontElement.h"
 #include "SVGParserUtilities.h"
 #include "SVGStyledElement.h"
-#include <wtf/Forward.h>
 
 #include <limits>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

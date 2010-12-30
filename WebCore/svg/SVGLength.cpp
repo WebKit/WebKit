@@ -203,22 +203,19 @@ void SVGLength::setValue(float value, const SVGElement* context, ExceptionCode& 
     case LengthTypeNumber:
         m_valueInSpecifiedUnits = value;
         break;
-    case LengthTypePercentage:
-    {
+    case LengthTypePercentage: {
         float result = convertValueFromUserUnitsToPercentage(value, context, ec);
         if (!ec)
             m_valueInSpecifiedUnits = result; 
         break;
     }
-    case LengthTypeEMS:
-    {
+    case LengthTypeEMS: {
         float result = convertValueFromUserUnitsToEMS(value, context, ec);
         if (!ec)
             m_valueInSpecifiedUnits = result;
         break;
     }
-    case LengthTypeEXS:
-    {
+    case LengthTypeEXS: {
         float result = convertValueFromUserUnitsToEXS(value, context, ec);
         if (!ec)
             m_valueInSpecifiedUnits = result; 

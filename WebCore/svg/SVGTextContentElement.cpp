@@ -222,11 +222,11 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
 
 bool SVGTextContentElement::isKnownAttribute(const QualifiedName& attrName)
 {
-    return (attrName.matches(SVGNames::lengthAdjustAttr) ||
-            attrName.matches(SVGNames::textLengthAttr) ||
-            SVGLangSpace::isKnownAttribute(attrName) ||
-            SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
-            SVGStyledElement::isKnownAttribute(attrName));
+    return attrName.matches(SVGNames::lengthAdjustAttr)
+            || attrName.matches(SVGNames::textLengthAttr)
+            || SVGLangSpace::isKnownAttribute(attrName)
+            || SVGExternalResourcesRequired::isKnownAttribute(attrName)
+            || SVGStyledElement::isKnownAttribute(attrName);
 }
 
 bool SVGTextContentElement::selfHasRelativeLengths() const

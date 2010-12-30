@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,8 +21,6 @@
 #ifndef SVGFilterBuilder_h
 #define SVGFilterBuilder_h
 
-#include "config.h"
-
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "PlatformString.h"
@@ -32,49 +31,49 @@
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
+
+class SVGFilterBuilder : public RefCounted<SVGFilterBuilder> {
+public:
+    typedef HashSet<FilterEffect*> FilterEffectSet;
+
+    static PassRefPtr<SVGFilterBuilder> create(Filter* filter) { return adoptRef(new SVGFilterBuilder(filter)); }
+
+    void add(const AtomicString& id, RefPtr<FilterEffect> effect);
+
+    FilterEffect* getEffectById(const AtomicString& id) const;
+    FilterEffect* lastEffect() const { return m_lastEffect.get(); }
+
+    void appendEffectToEffectReferences(RefPtr<FilterEffect>);
+
+    inline FilterEffectSet& getEffectReferences(FilterEffect* effect)
+    {
+        // Only allowed for effects belongs to this builder.
+        ASSERT(m_effectReferences.contains(effect));
+        return m_effectReferences.find(effect)->second;
+    }
+
+    void clearEffects();
+
+private:
+    SVGFilterBuilder(Filter*);
+
+    inline void addBuiltinEffects()
+    {
+        HashMap<AtomicString, RefPtr<FilterEffect> >::iterator end = m_builtinEffects.end();
+        for (HashMap<AtomicString, RefPtr<FilterEffect> >::iterator iterator = m_builtinEffects.begin(); iterator != end; ++iterator)
+             m_effectReferences.add(iterator->second, FilterEffectSet());
+    }
+
+    HashMap<AtomicString, RefPtr<FilterEffect> > m_builtinEffects;
+    HashMap<AtomicString, RefPtr<FilterEffect> > m_namedEffects;
+    // The value is a list, which contains those filter effects,
+    // which depends on the key filter effect.
+    HashMap<RefPtr<FilterEffect>, FilterEffectSet> m_effectReferences;
+
+    RefPtr<FilterEffect> m_lastEffect;
+};
     
-    class SVGFilterBuilder : public RefCounted<SVGFilterBuilder> {
-    public:
-        typedef HashSet<FilterEffect*> FilterEffectSet;
-
-        static PassRefPtr<SVGFilterBuilder> create(Filter* filter) { return adoptRef(new SVGFilterBuilder(filter)); }
-
-        void add(const AtomicString& id, RefPtr<FilterEffect> effect);
-
-        FilterEffect* getEffectById(const AtomicString& id) const;
-        FilterEffect* lastEffect() const { return m_lastEffect.get(); }
-
-        void appendEffectToEffectReferences(RefPtr<FilterEffect>);
-
-        inline FilterEffectSet& getEffectReferences(FilterEffect* effect)
-        {
-            // Only allowed for effects belongs to this builder.
-            ASSERT(m_effectReferences.contains(effect));
-            return m_effectReferences.find(effect)->second;
-        }
-
-        void clearEffects();
-
-    private:
-        SVGFilterBuilder(Filter*);
-
-        inline void addBuiltinEffects()
-        {
-            HashMap<AtomicString, RefPtr<FilterEffect> >::iterator end = m_builtinEffects.end();
-            for (HashMap<AtomicString, RefPtr<FilterEffect> >::iterator iterator = m_builtinEffects.begin(); iterator != end; ++iterator)
-                 m_effectReferences.add(iterator->second, FilterEffectSet());
-        }
-
-        HashMap<AtomicString, RefPtr<FilterEffect> > m_builtinEffects;
-        HashMap<AtomicString, RefPtr<FilterEffect> > m_namedEffects;
-        // The value is a list, which contains those filter effects,
-        // which depends on the key filter effect.
-        HashMap<RefPtr<FilterEffect>, FilterEffectSet> m_effectReferences;
-
-        RefPtr<FilterEffect> m_lastEffect;
-    };
-    
-} //namespace WebCore
+} // namespace WebCore
 
 #endif // ENABLE(SVG) && ENABLE(FILTERS)
-#endif
+#endif // SVGFilterBuilder_h

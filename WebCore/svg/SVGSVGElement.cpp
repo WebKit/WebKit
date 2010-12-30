@@ -129,20 +129,20 @@ void SVGSVGElement::setContentStyleType(const AtomicString& type)
 
 FloatRect SVGSVGElement::viewport() const
 {
-    double _x = 0.0;
-    double _y = 0.0;
+    double x = 0;
+    double y = 0;
     if (!isOutermostSVG()) {
-        _x = x().value(this);
-        _y = y().value(this);
+        x = this->x().value(this);
+        y = this->y().value(this);
     }
     float w = width().value(this);
     float h = height().value(this);
     AffineTransform viewBox = viewBoxToViewTransform(w, h);
     double wDouble = w;
     double hDouble = h;
-    viewBox.map(_x, _y, _x, _y);
+    viewBox.map(x, y, x, y);
     viewBox.map(w, h, wDouble, hDouble);
-    return FloatRect::narrowPrecision(_x, _y, wDouble, hDouble);
+    return FloatRect::narrowPrecision(x, y, wDouble, hDouble);
 }
 
 int SVGSVGElement::relativeWidthValue() const

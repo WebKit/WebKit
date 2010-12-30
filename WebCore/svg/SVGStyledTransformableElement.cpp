@@ -88,8 +88,7 @@ void SVGStyledTransformableElement::synchronizeProperty(const QualifiedName& att
 
 bool SVGStyledTransformableElement::isKnownAttribute(const QualifiedName& attrName)
 {
-    return SVGTransformable::isKnownAttribute(attrName) ||
-           SVGStyledLocatableElement::isKnownAttribute(attrName);
+    return SVGTransformable::isKnownAttribute(attrName) || SVGStyledLocatableElement::isKnownAttribute(attrName);
 }
 
 SVGElement* SVGStyledTransformableElement::nearestViewportElement() const

@@ -33,48 +33,47 @@
 
 namespace WebCore {
 
-    class Page;
-    class SVGImageChromeClient;
-    
-    class SVGImage : public Image {
-    public:
-        static PassRefPtr<SVGImage> create(ImageObserver* observer)
-        {
-            return adoptRef(new SVGImage(observer));
-        }
+class Page;
+class SVGImageChromeClient;
 
-    private:
-        virtual ~SVGImage();
+class SVGImage : public Image {
+public:
+    static PassRefPtr<SVGImage> create(ImageObserver* observer)
+    {
+        return adoptRef(new SVGImage(observer));
+    }
 
-        virtual String filenameExtension() const;
+private:
+    virtual ~SVGImage();
 
-        virtual void setContainerSize(const IntSize&);
-        virtual bool usesContainerSize() const;
-        virtual bool hasRelativeWidth() const;
-        virtual bool hasRelativeHeight() const;
+    virtual String filenameExtension() const;
 
-        virtual IntSize size() const;
-        
-        virtual bool dataChanged(bool allDataReceived);
+    virtual void setContainerSize(const IntSize&);
+    virtual bool usesContainerSize() const;
+    virtual bool hasRelativeWidth() const;
+    virtual bool hasRelativeHeight() const;
 
-        // FIXME: SVGImages are underreporting decoded sizes and will be unable
-        // to prune because these functions are not implemented yet.
-        virtual void destroyDecodedData(bool) { }
-        virtual unsigned decodedSize() const { return 0; }
+    virtual IntSize size() const;
 
-        virtual NativeImagePtr frameAtIndex(size_t) { return 0; }
-        
-        SVGImage(ImageObserver*);
-        virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator);
-        
-        virtual NativeImagePtr nativeImageForCurrentFrame();
-        
-        OwnPtr<SVGImageChromeClient> m_chromeClient;
-        OwnPtr<Page> m_page;
-        RefPtr<Image> m_frameCache;
-    };
+    virtual bool dataChanged(bool allDataReceived);
+
+    // FIXME: SVGImages are underreporting decoded sizes and will be unable
+    // to prune because these functions are not implemented yet.
+    virtual void destroyDecodedData(bool) { }
+    virtual unsigned decodedSize() const { return 0; }
+
+    virtual NativeImagePtr frameAtIndex(size_t) { return 0; }
+
+    SVGImage(ImageObserver*);
+    virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator);
+
+    virtual NativeImagePtr nativeImageForCurrentFrame();
+
+    OwnPtr<SVGImageChromeClient> m_chromeClient;
+    OwnPtr<Page> m_page;
+    RefPtr<Image> m_frameCache;
+};
 }
 
 #endif // ENABLE(SVG)
-
-#endif
+#endif // SVGImage_h

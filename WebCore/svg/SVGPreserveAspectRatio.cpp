@@ -66,25 +66,25 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
 
     // FIXME: Rewrite this parser, without gotos!
     if (!skipOptionalSpaces(currParam, end))
-        goto bail_out;
+        goto bailOut;
 
     if (*currParam == 'd') {
         if (!skipString(currParam, end, "defer"))
-            goto bail_out;
+            goto bailOut;
         // FIXME: We just ignore the "defer" here.
         if (!skipOptionalSpaces(currParam, end))
-            goto bail_out;
+            goto bailOut;
     }
 
     if (*currParam == 'n') {
         if (!skipString(currParam, end, "none"))
-            goto bail_out;
+            goto bailOut;
         skipOptionalSpaces(currParam, end);
     } else if (*currParam == 'x') {
         if ((end - currParam) < 8)
-            goto bail_out;
+            goto bailOut;
         if (currParam[1] != 'M' || currParam[4] != 'Y' || currParam[5] != 'M')
-            goto bail_out;
+            goto bailOut;
         if (currParam[2] == 'i') {
             if (currParam[3] == 'n') {
                 if (currParam[6] == 'i') {
@@ -93,11 +93,11 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
                     else if (currParam[7] == 'd')
                         aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMINYMID;
                     else
-                        goto bail_out;
+                        goto bailOut;
                 } else if (currParam[6] == 'a' && currParam[7] == 'x')
                      aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMINYMAX;
                 else
-                     goto bail_out;
+                     goto bailOut;
              } else if (currParam[3] == 'd') {
                 if (currParam[6] == 'i') {
                     if (currParam[7] == 'n')
@@ -105,13 +105,13 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
                     else if (currParam[7] == 'd')
                         aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMIDYMID;
                     else
-                        goto bail_out;
+                        goto bailOut;
                 } else if (currParam[6] == 'a' && currParam[7] == 'x')
                     aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMIDYMAX;
                 else
-                    goto bail_out;
+                    goto bailOut;
             } else
-                goto bail_out;
+                goto bailOut;
         } else if (currParam[2] == 'a' && currParam[3] == 'x') {
             if (currParam[6] == 'i') {
                 if (currParam[7] == 'n')
@@ -119,26 +119,26 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
                 else if (currParam[7] == 'd')
                     aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMAXYMID;
                 else
-                    goto bail_out;
+                    goto bailOut;
             } else if (currParam[6] == 'a' && currParam[7] == 'x')
                 aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_XMAXYMAX;
             else
-                goto bail_out;
+                goto bailOut;
         } else
-            goto bail_out;
+            goto bailOut;
         currParam += 8;
         skipOptionalSpaces(currParam, end);
     } else
-        goto bail_out;
+        goto bailOut;
 
     if (currParam < end) {
         if (*currParam == 'm') {
             if (!skipString(currParam, end, "meet"))
-                goto bail_out;
+                goto bailOut;
             skipOptionalSpaces(currParam, end);
         } else if (*currParam == 's') {
             if (!skipString(currParam, end, "slice"))
-                goto bail_out;
+                goto bailOut;
             skipOptionalSpaces(currParam, end);
             if (aspectRatio.m_align != SVG_PRESERVEASPECTRATIO_NONE)
                 aspectRatio.m_meetOrSlice = SVG_MEETORSLICE_SLICE;    
@@ -146,7 +146,7 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
     }
 
     if (end != currParam && validate) {
-bail_out:
+bailOut:
         // FIXME: Should the two values be set to UNKNOWN instead?
         aspectRatio.m_align = SVG_PRESERVEASPECTRATIO_NONE;
         aspectRatio.m_meetOrSlice = SVG_MEETORSLICE_MEET;
@@ -164,8 +164,7 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
     switch (m_meetOrSlice) {
     case SVGPreserveAspectRatio::SVG_MEETORSLICE_UNKNOWN:
         break;
-    case SVGPreserveAspectRatio::SVG_MEETORSLICE_MEET:
-    {
+    case SVGPreserveAspectRatio::SVG_MEETORSLICE_MEET: {
         float widthToHeightMultiplier = srcRect.height() / srcRect.width();
         if (origDestHeight > origDestWidth * widthToHeightMultiplier) {
             destRect.setHeight(origDestWidth * widthToHeightMultiplier);
@@ -203,8 +202,7 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
         }
         break;
     }
-    case SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE:
-    {
+    case SVGPreserveAspectRatio::SVG_MEETORSLICE_SLICE: {
         float widthToHeightMultiplier = srcRect.height() / srcRect.width();
         // if the destination height is less than the height of the image we'll be drawing
         if (origDestHeight < origDestWidth * widthToHeightMultiplier) {
