@@ -1,5 +1,16 @@
 2010-12-29  Abhishek Arya  <inferno@chromium.org>
 
+        Unreviewed.
+
+        Add 'PASS' to layout test since test failing on chromium due to empty expectations.
+        Filed webkit bug 51734 to track gtk test failure and skipping test for now.
+
+        * fast/multicol/span/double-merge-anonymous-block-crash-expected.txt:
+        * fast/multicol/span/double-merge-anonymous-block-crash.html:
+        * platform/gtk/Skipped:
+
+2010-12-29  Abhishek Arya  <inferno@chromium.org>
+
         Reviewed by Darin Adler.
 
         Tests that we do not crash when merging anonymous blocks. 
