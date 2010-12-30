@@ -1,5 +1,11 @@
 2010-12-30  Shinichiro Hamaji  <shinichiro.hamaji@gmail.com>
 
+        Chromium test expectation update for svg/dom/length-list-parser.html
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-30  Shinichiro Hamaji  <shinichiro.hamaji@gmail.com>
+
         Chromium test expectation update for media/video-element-other-namespace-crash.html
 
         * platform/chromium/test_expectations.txt:
