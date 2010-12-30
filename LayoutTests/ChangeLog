@@ -1,6 +1,16 @@
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update.
+        
+        Remove failing expectations for three Mac tests that no longer fail.
+        Remove failing expectations for two canvas tests that no longer crash
+        (r74561, which caused the failing assert, was rolled out with r74587).
+
+        * platform/chromium/test_expectations.txt:
+
+2010-12-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
         fast/js/numeric-escapes-in-string-literals.html fails because V8 does
         not support ECMAScript strict mode.
 
