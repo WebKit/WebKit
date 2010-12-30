@@ -5387,6 +5387,7 @@ editing/selection/extend-by-character-003.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=51699
 editing/selection/extend-by-character-004.html
+editing/selection/extend-by-character-005.html
 
 # Remaining Sputnik failures
 # https://bugs.webkit.org/show_bug.cgi?id=43568

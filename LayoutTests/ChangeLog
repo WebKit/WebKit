@@ -1,3 +1,9 @@
+2010-12-30  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skipping another editing flacky test.
+
+        * platform/gtk/Skipped: skip editing/selection/extend-by-character-005.html.
+
 2010-12-30  Shinichiro Hamaji  <shinichiro.hamaji@gmail.com>
 
         Chromium test expectation update for svg/dom/length-list-parser.html
