@@ -1,3 +1,12 @@
+2010-12-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium expectations update.
+        
+        Mark a few inspector tests as slow, they occasionally time out with
+        debug builds.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-12-30  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.
