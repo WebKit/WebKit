@@ -841,22 +841,26 @@ if test "$with_font_backend" = "freetype"; then
    AC_SUBST([FREETYPE_LIBS])
 fi
 
-# check if sqlite 3 is available
-if test "$enable_icon_database" = "yes" || \
+# check if SQLite3 is available. Error out only if one of the
+# features hard-depending on it is enabled while SQLite3 is
+# unavailable.
+PKG_CHECK_MODULES([SQLITE3],
+                  [sqlite3 >= $SQLITE_REQUIRED_VERSION],
+                  [sqlite3_has_pkg_config=yes],
+                  [sqlite3_has_pkg_config=no])
+if test "$sqlite3_has_pkg_config" = "no"; then
+   AC_SEARCH_LIBS([sqlite3_open16], [sqlite3],
+                  [sqlite3_found=yes;SQLITE3_LIBS="$LIBS";SQLITE3_CFLAGS="-I $srcdir/WebKitLibraries/WebCoreSQLite3"],
+                  [sqlite3_found=no])
+fi
+AC_SUBST([SQLITE3_CFLAGS])
+AC_SUBST([SQLITE3_LIBS])
+
+if (test "$sqlite3_found" = "no") && (test "$enable_icon_database" = "yes" || \
    test "$enable_database" = "yes" || \
    test "$enable_offline_web_applications" = "yes" || \
-   test "$enable_dom_storage" = "yes"; then
-   PKG_CHECK_MODULES([SQLITE3],
-                     [sqlite3 >= $SQLITE_REQUIRED_VERSION],
-                     [sqlite3_has_pkg_config=yes],
-                     [sqlite3_has_pkg_config=no])
-   if test "$sqlite3_has_pkg_config" = "no"; then
-      AC_SEARCH_LIBS([sqlite3_open16], [sqlite3],
-                     [SQLITE3_LIBS="$LIBS";SQLITE3_CFLAGS="-I $srcdir/WebKitLibraries/WebCoreSQLite3"],
-                     [AC_MSG_ERROR([SQLite3 is required to enable Database support])])
-   fi
-   AC_SUBST([SQLITE3_CFLAGS])
-   AC_SUBST([SQLITE3_LIBS])
+   test "$enable_dom_storage" = "yes"); then
+   AC_MSG_ERROR([SQLite3 is required for the Database related features])
 fi
 
 # check if libxslt is available

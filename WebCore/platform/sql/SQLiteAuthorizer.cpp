@@ -25,9 +25,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "DatabaseAuthorizer.h"
 
+#if ENABLE(DATABASE)
 #include <sqlite3.h>
 
 namespace WebCore {
@@ -37,3 +39,5 @@ const int SQLAuthIgnore = SQLITE_IGNORE;
 const int SQLAuthDeny = SQLITE_DENY;
 
 } // namespace WebCore
+
+#endif // ENABLE(DATABASE)

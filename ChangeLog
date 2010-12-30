@@ -1,3 +1,13 @@
+2010-12-29  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] minimal build fails at link time due to missing sqlite3 symbols
+        https://bugs.webkit.org/show_bug.cgi?id=51327
+
+        * configure.ac: Error out if SQLite3 wasn't found while at least
+        one of the features depending on it has been enabled.
+
 2010-12-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Use gcc as default preprocessor.

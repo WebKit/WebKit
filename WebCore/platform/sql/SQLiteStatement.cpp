@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SQLiteStatement.h"
 
+#if ENABLE(DATABASE)
+
 #include "Logging.h"
 #include "SQLValue.h"
 #include <sqlite3.h>
@@ -496,3 +498,5 @@ bool SQLiteStatement::isExpired()
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DATABASE)
