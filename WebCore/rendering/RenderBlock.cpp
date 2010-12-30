@@ -110,7 +110,6 @@ RenderBlock::RenderBlock(Node* node)
       : RenderBox(node)
       , m_floatingObjects(0)
       , m_positionedObjects(0)
-      , m_continuation(0)
       , m_rareData(0)
       , m_lineHeight(-1)
 {
@@ -154,9 +153,10 @@ void RenderBlock::destroy()
     // Destroy our continuation before anything other than anonymous children.
     // The reason we don't destroy it before anonymous children is that they may
     // have continuations of their own that are anonymous children of our continuation.
-    if (m_continuation) {
-        m_continuation->destroy();
-        m_continuation = 0;
+    RenderBoxModelObject* continuation = this->continuation();
+    if (continuation) {
+        continuation->destroy();
+        setContinuation(0);
     }
     
     if (!documentBeingDestroyed()) {
@@ -2517,14 +2517,16 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
 
 RenderInline* RenderBlock::inlineElementContinuation() const
 { 
-    return m_continuation && m_continuation->isInline() ? toRenderInline(m_continuation) : 0;
+    RenderBoxModelObject* continuation = this->continuation();
+    return continuation && continuation->isInline() ? toRenderInline(continuation) : 0;
 }
 
 RenderBlock* RenderBlock::blockElementContinuation() const
 {
-    if (!m_continuation || m_continuation->isInline())
+    RenderBoxModelObject* currentContinuation = continuation();
+    if (!currentContinuation || currentContinuation->isInline())
         return 0;
-    RenderBlock* nextContinuation = toRenderBlock(m_continuation);
+    RenderBlock* nextContinuation = toRenderBlock(currentContinuation);
     if (nextContinuation->isAnonymousBlock())
         return nextContinuation->blockElementContinuation();
     return nextContinuation;

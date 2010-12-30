@@ -125,6 +125,9 @@ protected:
 
     bool shouldPaintAtLowQuality(GraphicsContext*, Image*, const void*, const IntSize&);
 
+    RenderBoxModelObject* continuation() const;
+    void setContinuation(RenderBoxModelObject*);
+
 private:
     virtual bool isBoxModelObject() const { return true; }
 

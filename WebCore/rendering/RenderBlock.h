@@ -128,12 +128,13 @@ public:
 
     void addContinuationWithOutline(RenderInline*);
 
-    RenderBoxModelObject* continuation() const { return m_continuation; }
-    void setContinuation(RenderBoxModelObject* c) { m_continuation = c; }
     virtual RenderBoxModelObject* virtualContinuation() const { return continuation(); }
     bool isAnonymousBlockContinuation() const { return continuation() && isAnonymousBlock(); }
     RenderInline* inlineElementContinuation() const;
     RenderBlock* blockElementContinuation() const;
+
+    using RenderBoxModelObject::continuation;
+    using RenderBoxModelObject::setContinuation;
 
     // This function is a convenience helper for creating an anonymous block that inherits its
     // style from this RenderBlock.
@@ -674,12 +675,6 @@ private:
     
     PositionedObjectsListHashSet* m_positionedObjects;
 
-    // An inline can be split with blocks occurring in between the inline content.
-    // When this occurs we need a pointer to our next object.  We can basically be
-    // split into a sequence of inlines and blocks.  The continuation will either be
-    // an anonymous block (that houses other blocks) or it will be an inline flow.
-    RenderBoxModelObject* m_continuation;
-    
     // Allocated only when some of these fields have non-default values
     struct RenderBlockRareData : Noncopyable {
         RenderBlockRareData(const RenderBlock* block) 

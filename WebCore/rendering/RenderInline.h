@@ -65,8 +65,6 @@ public:
     InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
 
-    RenderBoxModelObject* continuation() const { return m_continuation; }
-    void setContinuation(RenderBoxModelObject* c) { m_continuation = c; }
     virtual RenderBoxModelObject* virtualContinuation() const { return continuation(); }
     RenderInline* inlineElementContinuation() const;
 
@@ -76,6 +74,9 @@ public:
 
     virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
     void paintOutline(GraphicsContext*, int tx, int ty);
+
+    using RenderBoxModelObject::continuation;
+    using RenderBoxModelObject::setContinuation;
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -153,8 +154,6 @@ private:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
-    RenderBoxModelObject* m_continuation; // Can be either a block or an inline. <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as its continuation but the
-                                          // <b> will just have an inline as its continuation.
     mutable int m_lineHeight;
 };
 

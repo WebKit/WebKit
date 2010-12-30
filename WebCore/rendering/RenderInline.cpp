@@ -46,7 +46,6 @@ namespace WebCore {
 
 RenderInline::RenderInline(Node* node)
     : RenderBoxModelObject(node)
-    , m_continuation(0)
     , m_lineHeight(-1)
 {
     setChildrenInline(true);
@@ -61,9 +60,10 @@ void RenderInline::destroy()
     // Destroy our continuation before anything other than anonymous children.
     // The reason we don't destroy it before anonymous children is that they may
     // have continuations of their own that are anonymous children of our continuation.
-    if (m_continuation) {
-        m_continuation->destroy();
-        m_continuation = 0;
+    RenderBoxModelObject* continuation = this->continuation();
+    if (continuation) {
+        continuation->destroy();
+        setContinuation(0);
     }
     
     if (!documentBeingDestroyed()) {
@@ -95,9 +95,10 @@ void RenderInline::destroy()
 
 RenderInline* RenderInline::inlineElementContinuation() const
 {
-    if (!m_continuation || m_continuation->isInline())
-        return toRenderInline(m_continuation);
-    return toRenderBlock(m_continuation)->inlineElementContinuation();
+    RenderBoxModelObject* continuation = this->continuation();
+    if (!continuation || continuation->isInline())
+        return toRenderInline(continuation);
+    return toRenderBlock(continuation)->inlineElementContinuation();
 }
 
 void RenderInline::updateBoxModelInfoFromStyle()

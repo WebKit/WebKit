@@ -53,6 +53,16 @@ static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 typedef pair<RenderBoxModelObject*, const void*> LastPaintSizeMapKey;
 typedef HashMap<LastPaintSizeMapKey, IntSize> LastPaintSizeMap;
 
+// The HashMap for storing continuation pointers.
+// An inline can be split with blocks occuring in between the inline content.
+// When this occurs we need a pointer to the next object. We can basically be
+// split into a sequence of inlines and blocks. The continuation will either be
+// an anonymous block (that houses other blocks) or it will be an inline flow.
+// <b><i><p>Hello</p></i></b>. In this example the <i> will have a block as
+// its continuation but the <b> will just have an inline as its continuation.
+typedef HashMap<const RenderBoxModelObject*, RenderBoxModelObject*> ContinuationMap;
+static ContinuationMap* continuationMap = 0;
+
 class ImageQualityController : public Noncopyable {
 public:
     ImageQualityController();
@@ -228,6 +238,9 @@ void RenderBoxModelObject::destroy()
     // This must be done before we destroy the RenderObject.
     if (m_layer)
         m_layer->clearClipRects();
+
+    // A continuation of this RenderObject should be destroyed at subclasses.
+    ASSERT(!continuation());
 
     // RenderObject::destroy calls back to destroyLayer() for layer destruction
     RenderObject::destroy();
@@ -1821,6 +1834,25 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 int RenderBoxModelObject::containingBlockLogicalWidthForContent() const
 {
     return containingBlock()->availableLogicalWidth();
+}
+
+RenderBoxModelObject* RenderBoxModelObject::continuation() const
+{
+    if (!continuationMap)
+        return 0;
+    return continuationMap->get(this);
+}
+
+void RenderBoxModelObject::setContinuation(RenderBoxModelObject* continuation)
+{
+    if (continuation) {
+        if (!continuationMap)
+            continuationMap = new ContinuationMap;
+        continuationMap->set(this, continuation);
+    } else {
+        if (continuationMap)
+            continuationMap->remove(this);
+    }
 }
 
 } // namespace WebCore
