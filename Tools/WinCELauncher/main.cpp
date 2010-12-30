@@ -25,6 +25,7 @@
 #include "config.h"
 #include "WebView.h"
 #include <windows.h>
+#include <wtf/PassOwnPtr.h>
 
 static const LPCWSTR kMainWindowTitle = L"WebKit for WinCE";
 static const LPCWSTR kMainWindowClassName = L"MainWindowClass";
