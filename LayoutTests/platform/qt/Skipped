@@ -590,6 +590,7 @@ media/video-dom-autoplay.html
 media/video-dom-preload.html
 media/video-dom-src.html
 media/video-duration-known-after-eos.html
+media/video-element-other-namespace-crash.html
 media/video-empty-source.html
 media/video-error-does-not-exist.html
 media/video-layer-crash.html
