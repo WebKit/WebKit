@@ -1,3 +1,14 @@
+2010-12-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 51724 - In strict mode string literals should allow \0, but disallow \8 and \9.
+
+        * fast/js/numeric-escapes-in-string-literals-expected.txt: Added.
+        * fast/js/numeric-escapes-in-string-literals.html: Added.
+        * fast/js/script-tests/numeric-escapes-in-string-literals.js: Added.
+        (test):
+
 2010-12-29  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium expectations update. Mark another test as flaky.

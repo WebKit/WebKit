@@ -492,10 +492,15 @@ ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp, bool strictMode)
                     record16('u');
                 else // Only stringQuoteCharacter allowed after \u
                     return false;
-            } else if (isASCIIOctalDigit(m_current)) {
-                // Octal character sequences
-                if (strictMode)
+            } else if (strictMode && isASCIIDigit(m_current)) {
+                // The only valid numeric escape in strict mode is '\0', and this must not be followed by a decimal digit.
+                int character1 = m_current;
+                shift();
+                if (character1 != '0' || isASCIIDigit(m_current))
                     return false;
+                record16(0);
+            } else if (!strictMode && isASCIIOctalDigit(m_current)) {
+                // Octal character sequences
                 int character1 = m_current;
                 shift();
                 if (isASCIIOctalDigit(m_current)) {
