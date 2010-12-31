@@ -1,3 +1,10 @@
+LIST(APPEND WTF_HEADERS
+    unicode/wince/UnicodeWinCE.h
+
+    ${3RDPARTY_DIR}/ce-compat/ce_time.h
+    ${3RDPARTY_DIR}/ce-compat/ce_unicode.h
+)
+
 LIST(APPEND WTF_SOURCES
     NullPtr.cpp
     OSAllocatorWin.cpp
