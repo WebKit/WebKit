@@ -52,7 +52,6 @@ namespace WebCore {
     bool processingUserGesture();
     bool shouldAllowNavigation(Frame*);
     KURL completeURL(const String& relativeURL);
-    void navigateIfAllowed(Frame*, const KURL&, bool lockHistory, bool lockBackForwardList);
 
     ScriptExecutionContext* getScriptExecutionContext();
 

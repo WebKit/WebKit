@@ -48,170 +48,103 @@
 
 namespace WebCore {
 
-// Notes about V8/JSC porting of this file.
-// This class is not very JS-engine specific.  If we can move a couple of
-// methods to the scriptController, we should be able to unify the code
-// between JSC and V8:
-//    toCallingFrame()   - in JSC, this needs an ExecState.
-//    isSafeScript()
-// Since JSC and V8 have different mechanisms for getting at the calling frame,
-// we're just making all these custom for now.  The functionality is simple
-// and mirrors JSLocationCustom.cpp.
-
 void V8Location::hashAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.hash._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
+
+    // FIXME: Handle exceptions correctly.
     String hash = toWebCoreString(value);
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
-
-    KURL url = frame->loader()->url();
-    String oldRef = url.fragmentIdentifier();
-
-    if (hash.startsWith("#"))
-        hash = hash.substring(1);
-
-    // Note that by parsing the URL and *then* comparing fragments, we are
-    // comparing fragments post-canonicalization, and so this handles the
-    // cases where fragment identifiers are ignored or invalid.
-    url.setFragmentIdentifier(hash);
-    String newRef = url.fragmentIdentifier();
-    if (oldRef == newRef || (oldRef.isNull() && newRef.isEmpty()))
-        return;
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->setHash(hash, state->activeWindow(), state->firstWindow());
 }
 
 void V8Location::hostAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.host._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
+
+    // FIXME: Handle exceptions correctly.
     String host = toWebCoreString(value);
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
-
-    KURL url = frame->loader()->url();
-    String newHost = host.left(host.find(":"));
-    String newPort = host.substring(host.find(":") + 1);
-    url.setHost(newHost);
-    url.setPort(newPort.toUInt());
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->setHost(host, state->activeWindow(), state->firstWindow());
 }
 
 void V8Location::hostnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.hostname._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
+
+    // FIXME: Handle exceptions correctly.
     String hostname = toWebCoreString(value);
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
-
-    KURL url = frame->loader()->url();
-    url.setHost(hostname);
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->setHostname(hostname, state->activeWindow(), state->firstWindow());
 }
 
 void V8Location::hrefAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.href._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
+    // FIXME: Handle exceptions correctly.
+    String href = toWebCoreString(value);
 
-    KURL url = completeURL(toWebCoreString(value));
-    if (url.isNull())
-        return;
-
-    if (!shouldAllowNavigation(frame))
-        return;
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->setHref(href, state->activeWindow(), state->firstWindow());
 }
 
 void V8Location::pathnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.pathname._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
+
+    // FIXME: Handle exceptions correctly.
     String pathname = toWebCoreString(value);
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
-
-    KURL url = frame->loader()->url();
-    url.setPath(pathname);
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->setPathname(pathname, state->activeWindow(), state->firstWindow());
 }
 
 void V8Location::portAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.port._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
+
+    // FIXME: Handle exceptions correctly.
     String port = toWebCoreString(value);
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
-
-    KURL url = frame->loader()->url();
-    url.setPort(port.toUInt());
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->setPort(port, state->activeWindow(), state->firstWindow());
 }
 
 void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.protocol._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
+
+    // FIXME: Handle exceptions correctly.
     String protocol = toWebCoreString(value);
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
-
-    KURL url = frame->loader()->url();
-    if (!url.setProtocol(protocol)) {
-        throwError("Can't set protocol", V8Proxy::SyntaxError);
-        return;
-    }
-
-    navigateIfAllowed(frame, url, false, false);
+    ExceptionCode ec = 0;
+    impl->setProtocol(protocol, state->activeWindow(), state->firstWindow(), ec);
+    if (UNLIKELY(ec))
+        V8Proxy::setDOMException(ec);
 }
 
 void V8Location::searchAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.search._set");
-    v8::Handle<v8::Object> holder = info.Holder();
-    Location* imp = V8Location::toNative(holder);
-    String query = toWebCoreString(value);
+    Location* impl = V8Location::toNative(info.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return;
+    // FIXME: Handle exceptions correctly.
+    String search = toWebCoreString(value);
 
-    KURL url = frame->loader()->url();
-    url.setQuery(query);
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->setSearch(search, state->activeWindow(), state->firstWindow());
 }
 
 v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -271,48 +204,37 @@ v8::Handle<v8::Value> V8Location::assignAccessorGetter(v8::Local<v8::String> nam
 
 v8::Handle<v8::Value> V8Location::reloadCallback(const v8::Arguments& args)
 {
-    // FIXME: we ignore the "forceget" parameter.
-
     INC_STATS("DOM.Location.reload");
-    v8::Handle<v8::Object> holder = args.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(args.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
 
-    Frame* frame = imp->frame();
-    if (!frame || !ScriptController::isSafeScript(frame))
-        return v8::Undefined();
-
-    if (!protocolIsJavaScript(frame->loader()->url()))
-        frame->navigationScheduler()->scheduleRefresh();
+    impl->reload(state->activeWindow());
     return v8::Undefined();
 }
 
 v8::Handle<v8::Value> V8Location::replaceCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.replace");
-    v8::Handle<v8::Object> holder = args.Holder();
-    Location* imp = V8Location::toNative(holder);
-    V8Binding::Location::replace(V8BindingState::Only(), imp, toWebCoreString(args[0]));
+    Location* impl = V8Location::toNative(args.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
+
+    // FIXME: Handle exceptions correctly.
+    String urlString = toWebCoreString(args[0]);
+
+    impl->replace(urlString, state->activeWindow(), state->firstWindow());
     return v8::Undefined();
 }
 
 v8::Handle<v8::Value> V8Location::assignCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.assign");
-    v8::Handle<v8::Object> holder = args.Holder();
-    Location* imp = V8Location::toNative(holder);
+    Location* impl = V8Location::toNative(args.Holder());
+    State<V8Binding>* state = V8BindingState::Only();
 
-    Frame* frame = imp->frame();
-    if (!frame)
-        return v8::Undefined();
+    // FIXME: Handle exceptions correctly.
+    String urlString = toWebCoreString(args[0]);
 
-    KURL url = completeURL(toWebCoreString(args[0]));
-    if (url.isNull())
-        return v8::Undefined();
-
-    if (!shouldAllowNavigation(frame))
-        return v8::Undefined();
-
-    navigateIfAllowed(frame, url, false, false);
+    impl->assign(urlString, state->activeWindow(), state->firstWindow());
     return v8::Undefined();
 }
 

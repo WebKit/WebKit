@@ -114,11 +114,6 @@ KURL completeURL(const String& relativeURL)
     return completeURL(V8BindingState::Only(), relativeURL);
 }
 
-void navigateIfAllowed(Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
-{
-    return V8Binding::Frame::navigateIfAllowed(V8BindingState::Only(), frame, url, lockHistory, lockBackForwardList);
-}
-
 ScriptExecutionContext* getScriptExecutionContext()
 {
 #if ENABLE(WORKERS)

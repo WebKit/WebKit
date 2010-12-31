@@ -578,20 +578,10 @@ v8::Local<v8::Object> V8DOMWindowShell::createWrapperFromCacheSlowCase(WrapperTy
     return notHandledByInterceptor();
 }
 
-void V8DOMWindowShell::setLocation(DOMWindow* window, const String& relativeURL)
+void V8DOMWindowShell::setLocation(DOMWindow* window, const String& locationString)
 {
-    Frame* frame = window->frame();
-    if (!frame)
-        return;
-
-    KURL url = completeURL(relativeURL);
-    if (url.isNull())
-        return;
-
-    if (!shouldAllowNavigation(frame))
-        return;
-
-    navigateIfAllowed(frame, url, false, false);
+    State<V8Binding>* state = V8BindingState::Only();
+    window->setLocation(locationString, state->activeWindow(), state->firstWindow());
 }
 
 } // WebCore

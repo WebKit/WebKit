@@ -31,28 +31,6 @@
 #ifndef BindingFrame_h
 #define BindingFrame_h
 
-#include "Frame.h"
-#include "GenericBinding.h"
-
-namespace WebCore {
-
-template <class Binding>
-class BindingFrame {
-public:
-    static void navigateIfAllowed(State<Binding>*, Frame*, const KURL&, bool lockHistory, bool lockBackForwardList);
-};
-
-template <class Binding>
-void BindingFrame<Binding>::navigateIfAllowed(State<Binding>* state, Frame* frame, const KURL& url, bool lockHistory, bool lockBackForwardList)
-{
-    Frame* activeFrame = state->activeFrame();
-    if (!activeFrame)
-        return;
-    if (!protocolIsJavaScript(url) || state->allowsAccessFromFrame(frame))
-        frame->navigationScheduler()->scheduleLocationChange(activeFrame->document()->securityOrigin(),
-            url.string(), activeFrame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList);
-}
-
-} // namespace WebCore
+// FIXME: Remove this file.
 
 #endif // BindingFrame_h

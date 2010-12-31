@@ -31,35 +31,6 @@
 #ifndef BindingLocation_h
 #define BindingLocation_h
 
-#include "BindingSecurity.h"
-#include "GenericBinding.h"
-#include "Location.h"
-
-namespace WebCore {
-
-template <class Binding>
-class BindingLocation {
-public:
-    static void replace(State<Binding>*, Location*, const String& url);
-};
-
-template <class Binding>
-void BindingLocation<Binding>::replace(State<Binding>* state, Location* location, const String& url)
-{
-    Frame* frame = location->frame();
-    if (!frame)
-        return;
-
-    KURL fullURL = completeURL(state, url);
-    if (fullURL.isNull())
-        return;
-
-    if (!BindingSecurity<Binding>::shouldAllowNavigation(state, frame))
-        return;
-
-    Binding::Frame::navigateIfAllowed(state, frame, fullURL, true, true);
-}
-
-} // namespace WebCore
+// FIXME: Remove this file.
 
 #endif // BindingLocation_h

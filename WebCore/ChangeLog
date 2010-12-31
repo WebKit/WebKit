@@ -1,3 +1,30 @@
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move V8 to WebCore Location implementation
+        https://bugs.webkit.org/show_bug.cgi?id=51768
+
+        * bindings/generic/BindingFrame.h:
+        * bindings/generic/BindingLocation.h:
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::setLocation):
+        * bindings/v8/V8Utilities.cpp:
+        * bindings/v8/V8Utilities.h:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::hashAccessorSetter):
+        (WebCore::V8Location::hostAccessorSetter):
+        (WebCore::V8Location::hostnameAccessorSetter):
+        (WebCore::V8Location::hrefAccessorSetter):
+        (WebCore::V8Location::pathnameAccessorSetter):
+        (WebCore::V8Location::portAccessorSetter):
+        (WebCore::V8Location::protocolAccessorSetter):
+        (WebCore::V8Location::searchAccessorSetter):
+        (WebCore::V8Location::reloadCallback):
+        (WebCore::V8Location::replaceCallback):
+        (WebCore::V8Location::assignCallback):
+
 2010-12-31  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Eric Seidel.
