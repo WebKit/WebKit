@@ -329,7 +329,7 @@ WebInspector.ResourcesPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        return !!WebInspector.resourceView.resourceForURL(url);
+        return !!WebInspector.resourceTreeModel.resourceForURL(url);
     },
 
     showSourceLine: function(url, line)

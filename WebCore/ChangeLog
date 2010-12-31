@@ -1,3 +1,14 @@
+2010-12-31  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] WebInspector.ResourcesPanel.prototype.canShowSourceLine() broken.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51709
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.canShowSourceLine):
+
 2010-12-31  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix after r74800.
