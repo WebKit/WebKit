@@ -25,6 +25,7 @@
 
 #include "Location.h"
 #include <runtime/JSFunction.h>
+#include <runtime/PrototypeFunction.h>
 
 using namespace JSC;
 

@@ -46,6 +46,7 @@
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
 #include <runtime/JSFunction.h>
+#include <runtime/PrototypeFunction.h>
 
 #if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 #include "JSArrayBuffer.h"

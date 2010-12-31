@@ -1,3 +1,10 @@
+2010-12-31  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix after r74800.
+
+        * bindings/js/JSDOMWindowCustom.cpp: Add missing header.
+        * bindings/js/JSLocationCustom.cpp: Ditto.
+
 2010-12-31  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.
