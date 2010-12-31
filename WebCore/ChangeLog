@@ -1,3 +1,8 @@
+2010-12-31  Darin Adler  <darin@apple.com>
+
+        * WebCore.xcodeproj/project.pbxproj: Added back the language.
+        Developers should be using Xcode 3.2.5 or newer.
+
 2010-12-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
