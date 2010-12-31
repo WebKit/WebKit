@@ -1,3 +1,22 @@
+2010-12-31  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Inspector's tests are very slow on Win(Dbg).
+
+        It was a problem with Chromium DRT. DevToolsAgent object instance was
+        attached not only to the inspected page but to the DevTools window too.
+        As result all the inspector files were interpreted as a content of inspected page
+        and were transfered to the DevTools scripts panel for debugging etc.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51735
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::bindJSObjectsToWindow):
+        (TestShell::createNewWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+
 2010-12-31  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

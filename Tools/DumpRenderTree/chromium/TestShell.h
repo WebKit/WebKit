@@ -151,7 +151,6 @@ public:
     // testing where we only want to have the output from the last load.
     void setDumpWhenFinished(bool dumpWhenFinished) { m_dumpWhenFinished = dumpWhenFinished; }
 
-    WebViewHost* createWebView();
     WebViewHost* createNewWindow(const WebKit::WebURL&);
     void closeWindow(WebViewHost*);
     void closeRemainingWindows();
@@ -168,6 +167,8 @@ public:
     static const int virtualWindowBorder = 3;
 
 private:
+    WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent* devToolsAgent);
+    void createMainWindow();
     void createDRTDevToolsClient(DRTDevToolsAgent*);
 
     void resetWebSettings(WebKit::WebView&);

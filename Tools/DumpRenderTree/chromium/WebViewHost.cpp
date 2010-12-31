@@ -235,7 +235,7 @@ WebView* WebViewHost::createView(WebFrame*, const WebWindowFeatures&, const WebS
 {
     if (!layoutTestController()->canOpenWindows())
         return 0;
-    return m_shell->createWebView()->webView();
+    return m_shell->createNewWindow(WebURL())->webView();
 }
 
 WebWidget* WebViewHost::createPopupMenu(WebPopupType)
