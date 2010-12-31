@@ -1,3 +1,15 @@
+2010-12-31  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add a fast case for ASCII strings in HashAndUTF8CharactersTranslator::equal
+        https://bugs.webkit.org/show_bug.cgi?id=50517
+
+        This change shows about 2% performance win on the xml-parser benchmark.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::HashAndUTF8CharactersTranslator::equal):
+
 2010-12-30  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Ariya Hidayat.

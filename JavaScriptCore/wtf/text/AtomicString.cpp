@@ -225,7 +225,22 @@ struct HashAndUTF8CharactersTranslator {
 
     static bool equal(StringImpl* const& string, const HashAndUTF8Characters& buffer)
     {
-        return equalUTF16WithUTF8(string->characters(), string->characters() + string->length(), buffer.characters, buffer.characters + buffer.length);
+        if (buffer.utf16Length != string->length())
+            return false;
+
+        const UChar* stringCharacters = string->characters();
+
+        // If buffer contains only ASCII characters UTF-8 and UTF16 length are the same.
+        if (buffer.utf16Length != buffer.length)
+            return equalUTF16WithUTF8(stringCharacters, stringCharacters + string->length(), buffer.characters, buffer.characters + buffer.length);
+
+        for (unsigned i = 0; i < buffer.length; ++i) {
+            ASSERT(isASCII(buffer.characters[i]));
+            if (stringCharacters[i] != buffer.characters[i])
+                return false;
+        }
+
+        return true;
     }
 
     static void translate(StringImpl*& location, const HashAndUTF8Characters& buffer, unsigned hash)
