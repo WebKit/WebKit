@@ -1,3 +1,19 @@
+2010-12-31  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add XML parser benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=51612
+
+        Move the JavaScript code of html parser into a separate file to share it with xml parser.
+
+        * benchmarks/parser/html-parser.html:
+        * benchmarks/parser/resources/runner.js: Copied from WebCore/benchmarks/parser/html-parser.html.
+        (runFunction):
+        (run):
+        (start):
+        * benchmarks/parser/xml-parser.html: Copied from WebCore/benchmarks/parser/html-parser.html.
+
 2010-12-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
