@@ -1,3 +1,15 @@
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        Remove Tools/Scripts/wkstyle
+        https://bugs.webkit.org/show_bug.cgi?id=51774
+
+        This script appears to not have been touched in a while and seems to
+        have been replaced by check-webkit-style.
+
+        * Scripts/wkstyle: Removed.
+
 2010-12-31  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Coding style fix.
