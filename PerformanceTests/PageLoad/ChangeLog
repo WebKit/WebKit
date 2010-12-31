@@ -1,3 +1,14 @@
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move PageLoadTests to PerformanceTests/PageLoad
+        https://bugs.webkit.org/show_bug.cgi?id=51771
+
+        Update URLs to point to the new directory name.
+
+        * svg/svg.pltsuite:
+
 2006-12-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by olliej.

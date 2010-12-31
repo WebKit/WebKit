@@ -80,7 +80,6 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
       "/LayoutTests/"
       "/manual-tests/"
       "/tests/"
-      "/PageLoadTests/"
       )
   ENDIF(NOT WEBKIT_CPACK_ADD_TESTS)
 

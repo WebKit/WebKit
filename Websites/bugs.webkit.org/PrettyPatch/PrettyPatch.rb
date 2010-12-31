@@ -67,7 +67,6 @@ private
         Examples
         JavaScriptCore
         LayoutTests
-        PageLoadTests
         PerformanceTests
         Sources
         Tools

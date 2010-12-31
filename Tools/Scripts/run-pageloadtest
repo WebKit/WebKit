@@ -67,7 +67,7 @@ checkFrameworks();
 chdirWebKit();
 
 if ($testName eq 'svg') {
-    my $suiteFile = "PageLoadTests/$testName/$testName.pltsuite";
+    my $suiteFile = "PerformanceTests/PageLoad/$testName/$testName.pltsuite";
     my $webkitPath = sourceDir();
     `cat "$suiteFile" | perl -pe 's|WEBKIT_PATH|$webkitPath|' > $safariResourcePath/$testName.pltsuite`
 }

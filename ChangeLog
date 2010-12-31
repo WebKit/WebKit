@@ -2,6 +2,43 @@
 
         Rubber-stamped by Eric Seidel.
 
+        Move PageLoadTests to PerformanceTests/PageLoad
+        https://bugs.webkit.org/show_bug.cgi?id=51771
+
+        Actually move the directory.
+
+        * PageLoadTests: Removed.
+        * PageLoadTests/svg: Removed.
+        * PageLoadTests/svg/LICENSES: Removed.
+        * PageLoadTests/svg/files: Removed.
+        * PageLoadTests/svg/files/33041-Samurai.svg: Removed.
+        * PageLoadTests/svg/files/42450-under the see.svg: Removed.
+        * PageLoadTests/svg/files/42470-flower_from_my_garden_v2.svg: Removed.
+        * PageLoadTests/svg/files/44057-drops on a blade.svg: Removed.
+        * PageLoadTests/svg/files/Harvey_Rayner.svg: Removed.
+        * PageLoadTests/svg/files/az-lizard_benji_park_01.svg: Removed.
+        * PageLoadTests/svg/files/bamboo_01.svg: Removed.
+        * PageLoadTests/svg/files/cacuts_01.svg: Removed.
+        * PageLoadTests/svg/files/cowboy.svg: Removed.
+        * PageLoadTests/svg/files/crawfish2_ganson.svg: Removed.
+        * PageLoadTests/svg/files/deb9frac1.svg: Removed.
+        * PageLoadTests/svg/files/food_leif_lodahl_01.svg: Removed.
+        * PageLoadTests/svg/files/france.svg: Removed.
+        * PageLoadTests/svg/files/francobollo_gnome_ezechi_02.svg: Removed.
+        * PageLoadTests/svg/files/gearflowers.svg: Removed.
+        * PageLoadTests/svg/files/hereGear4.svg: Removed.
+        * PageLoadTests/svg/files/mtsthelens.svg: Removed.
+        * PageLoadTests/svg/files/mtsthelens0.jpg: Removed.
+        * PageLoadTests/svg/files/world-iso.svg: Removed.
+        * PageLoadTests/svg/files/worldcup.svg: Removed.
+        * PageLoadTests/svg/svg.pltsuite: Removed.
+        * PerformanceTests/PageLoad: Copied from PageLoadTests.
+        * Sources/cmake/WebKitPackaging.cmake:
+
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
         Move SunSpider into PerformanceTests
         https://bugs.webkit.org/show_bug.cgi?id=51769
 
