@@ -1,3 +1,9 @@
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Update SVN ignore property to hide two more external dependencies.
+
+        * chromium: Modified property svn:ignore.
+
 2010-12-22  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.
