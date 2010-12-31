@@ -1,3 +1,11 @@
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Remove custom Chromium expectation for invalid-protocol.  Now that we
+        share more code with JavaScriptCore, we throw exactly the same
+        exception and therefore can share results.
+
+        * platform/chromium/fast/dom/Window/invalid-protocol-expected.txt: Removed.
+
 2010-12-29  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
