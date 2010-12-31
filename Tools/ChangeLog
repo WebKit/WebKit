@@ -1,3 +1,33 @@
+2010-12-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Add WebThemeEngineDRTMac so that Chromium DRT scrollbar rendering can match the Mac port's
+        https://bugs.webkit.org/show_bug.cgi?id=51728
+        
+        Add implementation of the Mac WebThemeEngine that uses an NSScroller
+        to render top-level scrollbars. This makes them match the Mac port's
+        use of an NSScrollView, which means that we'll be able to share more
+        pixel baselines.
+        
+        The new rendering code will not be activated until the 
+        USE_WEB_THEME_ENGINE_TO_PAINT_THUMB #define is fliped in
+        ScrollbarThemeChromiumMac.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestShellMac.mm:
+        (platformInit):
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.h: Added.
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.mm: Added.
+        (+[FakeActiveWindow alwaysActiveWindow]):
+        (+[FakeActiveWindow alwaysInactiveWindow]):
+        (-[FakeActiveWindow initWithActiveControls:]):
+        (-[FakeActiveWindow _hasActiveControls]):
+        (WebThemeEngineDRTMac::paintScrollbarThumb):
+        (stateToHIEnableState):
+        (WebThemeEngineDRTMac::paintHIThemeScrollbarThumb):
+        (WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb):
+
 2010-12-30  Konstantin Tokarev  <annulen@yandex.ru>
 
         Reviewed by David Kilzer.

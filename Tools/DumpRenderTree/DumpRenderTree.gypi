@@ -67,6 +67,12 @@
                     'chromium/WebThemeEngineDRTWin.h',
                 ],
             }],
+            ['OS=="mac"', {
+                'drt_files': [
+                    'chromium/WebThemeEngineDRTMac.mm',
+                    'chromium/WebThemeEngineDRTMac.h',
+                ],
+            }],            
         ],
     }
 }
