@@ -1,3 +1,13 @@
+2010-12-31  Jessie Berlin  <jberlin@apple.com>
+
+        Add Windows-specific (failing) expected results for
+        svg/dom/length-list-parser.html in order to get the Windows 7 Release test bot green again.
+        Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=51786
+
+        * platform/win/svg/dom: Added.
+        * platform/win/svg/dom/length-list-parser-expected.txt: Added.
+
 2010-12-31  Adam Barth  <abarth@webkit.org>
 
         Remove custom Chromium expectation for invalid-protocol.  Now that we
