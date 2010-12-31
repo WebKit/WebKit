@@ -1,3 +1,19 @@
+2010-12-31  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Make retrieving extraMediaControlsStyleSheet be page dependent.
+        https://bugs.webkit.org/show_bug.cgi?id=51752
+
+        Use themeForPage to retrieve extraMediaControlsStyleSheet for media
+        controls.
+
+        No new tests because no platform-specific theme implementation uses
+        the passed page pointer yet.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+
 2010-12-31  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
