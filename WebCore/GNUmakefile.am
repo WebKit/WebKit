@@ -698,7 +698,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSAttrCustom.cpp \
 	WebCore/bindings/js/JSAudioConstructor.cpp \
 	WebCore/bindings/js/JSAudioConstructor.h \
-	WebCore/bindings/js/JSBinding.h \
 	WebCore/bindings/js/JSCDATASectionCustom.cpp \
 	WebCore/bindings/js/JSCSSFontFaceRuleCustom.cpp \
 	WebCore/bindings/js/JSCSSImportRuleCustom.cpp \
@@ -904,8 +903,6 @@ webcore_sources += \
 	WebCore/bindings/js/WebCoreJSClientData.h \
 	WebCore/bindings/js/WorkerScriptController.cpp \
 	WebCore/bindings/js/WorkerScriptController.h \
-	WebCore/bindings/js/specialization/JSBindingState.cpp \
-	WebCore/bindings/js/specialization/JSBindingState.h \
 	WebCore/bindings/ScriptControllerBase.cpp \
 	WebCore/bindings/ScriptControllerBase.h \
 	WebCore/bridge/Bridge.h \

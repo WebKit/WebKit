@@ -1,3 +1,22 @@
+2010-12-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Remove unused JSBinding source files
+        https://bugs.webkit.org/show_bug.cgi?id=51762
+
+        * bindings/js/JSBinding.h: Removed.
+        * bindings/js/specialization: Removed.
+        * bindings/js/specialization/JSBindingState.cpp: Removed.
+        * bindings/js/specialization/JSBindingState.h: Removed.
+
+        * CMakeLists.txt: Removed references to files.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+
 2010-12-30  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Adler.

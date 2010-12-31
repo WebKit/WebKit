@@ -727,8 +727,6 @@ SET(WebCore_SOURCES
     bindings/js/SerializedScriptValue.cpp
     bindings/js/WorkerScriptController.cpp
 
-    bindings/js/specialization/JSBindingState.cpp
-
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp
     bridge/npruntime.cpp
