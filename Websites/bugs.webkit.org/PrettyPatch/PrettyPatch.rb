@@ -68,7 +68,7 @@ private
         JavaScriptCore
         LayoutTests
         PageLoadTests
-        SunSpider
+        PerformanceTests
         Sources
         Tools
         WebCore

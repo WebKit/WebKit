@@ -121,7 +121,7 @@ sub pathToJSC()
 
 my $jscPath = pathToJSC();
 chdirWebKit();
-chdir("SunSpider");
+chdir("PerformanceTests/SunSpider");
 
 my @args = ("--shell", $jscPath);
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode

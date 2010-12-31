@@ -36,7 +36,7 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
     "/\\\\.gitattributes$"
 
     # SVN-only files should be ignored (site, examples...)
-    "/SunSpider/"
+    "/PerformanceTests/"
     "/Examples/"
     "/Websites/"
 
