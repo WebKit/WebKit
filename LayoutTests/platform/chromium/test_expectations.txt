@@ -458,6 +458,7 @@ BUGCR16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
 BUGCR16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
 BUGCR16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
 BUGWK45102 WONTFIX SKIP : media/media-can-play-mpeg4-video.html = TEXT
+BUGCR68289 WONTFIX SKIP : media/video-element-other-namespace-crash.html = TIMEOUT
 
 // Chromium does not use the icon loader in WebCore for loading notifications.
 WONTFIX SKIP : http/tests/notifications = FAIL
@@ -3285,4 +3286,3 @@ BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
 
-BUGCR68289 LINUX : media/video-element-other-namespace-crash.html = TIMEOUT
