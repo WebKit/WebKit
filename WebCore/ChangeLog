@@ -1,3 +1,21 @@
+2010-12-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Update validation of stencil mask and ref values
+        https://bugs.webkit.org/show_bug.cgi?id=50716
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeNewContext): Initialize cached stencil settings.
+        (WebCore::WebGLRenderingContext::drawArrays): Validate stencil settings.
+        (WebCore::WebGLRenderingContext::drawElements): Ditto.
+        (WebCore::WebGLRenderingContext::stencilFunc): Cache stencil settings, but generate no error.
+        (WebCore::WebGLRenderingContext::stencilFuncSeparate): Ditto.
+        (WebCore::WebGLRenderingContext::stencilMask): Ditto.
+        (WebCore::WebGLRenderingContext::stencilMaskSeparate): Ditto.
+        (WebCore::WebGLRenderingContext::validateStencilSettings): Helper function to validate stencil settings.
+        * html/canvas/WebGLRenderingContext.h: Declare stencil setting members.
+
 2010-12-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

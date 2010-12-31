@@ -173,8 +173,11 @@ void WebGLRenderingContext::initializeNewContext()
     m_framebufferBinding = 0;
     m_renderbufferBinding = 0;
     m_stencilMask = 0xFFFFFFFF;
+    m_stencilMaskBack = 0xFFFFFFFF;
     m_stencilFuncRef = 0;
+    m_stencilFuncRefBack = 0;
     m_stencilFuncMask = 0xFFFFFFFF;
+    m_stencilFuncMaskBack = 0xFFFFFFFF;
     m_vertexAttribState.clear();
 
     int numCombinedTextureImageUnits = 0;
@@ -1109,6 +1112,9 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
     if (isContextLost() || !validateDrawMode(mode))
         return;
 
+    if (!validateStencilSettings())
+        return;
+
     if (first < 0 || count < 0) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
@@ -1156,6 +1162,9 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
     UNUSED_PARAM(ec);
 
     if (isContextLost() || !validateDrawMode(mode))
+        return;
+
+    if (!validateStencilSettings())
         return;
 
     switch (type) {
@@ -2471,7 +2480,9 @@ void WebGLRenderingContext::stencilFunc(unsigned long func, long ref, unsigned l
     if (!validateStencilFunc(func))
         return;
     m_stencilFuncRef = ref;
+    m_stencilFuncRefBack = ref;
     m_stencilFuncMask = mask;
+    m_stencilFuncMaskBack = mask;
     m_context->stencilFunc(func, ref, mask);
     cleanupAfterGraphicsCall(false);
 }
@@ -2480,15 +2491,25 @@ void WebGLRenderingContext::stencilFuncSeparate(unsigned long face, unsigned lon
 {
     if (isContextLost())
         return;
-    if (!validateFace(face) || !validateStencilFunc(func))
+    if (!validateStencilFunc(func))
         return;
-    if (face == GraphicsContext3D::FRONT_AND_BACK) {
+    switch (face) {
+    case GraphicsContext3D::FRONT_AND_BACK:
+        m_stencilFuncRef = ref;
+        m_stencilFuncRefBack = ref;
+        m_stencilFuncMask = mask;
+        m_stencilFuncMaskBack = mask;
+        break;
+    case GraphicsContext3D::FRONT:
         m_stencilFuncRef = ref;
         m_stencilFuncMask = mask;
-    } else if (m_stencilFuncRef != ref || m_stencilFuncMask != mask) {
-        // for ref value, we generate an error if user specify a different value
-        // for front/back faces even if they clamp to the same value internally.
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        break;
+    case GraphicsContext3D::BACK:
+        m_stencilFuncRefBack = ref;
+        m_stencilFuncMaskBack = mask;
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }
     m_context->stencilFuncSeparate(face, func, ref, mask);
@@ -2500,6 +2521,7 @@ void WebGLRenderingContext::stencilMask(unsigned long mask)
     if (isContextLost())
         return;
     m_stencilMask = mask;
+    m_stencilMaskBack = mask;
     m_context->stencilMask(mask);
     cleanupAfterGraphicsCall(false);
 }
@@ -2508,12 +2530,19 @@ void WebGLRenderingContext::stencilMaskSeparate(unsigned long face, unsigned lon
 {
     if (isContextLost())
         return;
-    if (!validateFace(face))
-        return;
-    if (face == GraphicsContext3D::FRONT_AND_BACK)
+    switch (face) {
+    case GraphicsContext3D::FRONT_AND_BACK:
         m_stencilMask = mask;
-    else if (m_stencilMask != mask) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        m_stencilMaskBack = mask;
+        break;
+    case GraphicsContext3D::FRONT:
+        m_stencilMask = mask;
+        break;
+    case GraphicsContext3D::BACK:
+        m_stencilMaskBack = mask;
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }
     m_context->stencilMaskSeparate(face, mask);
@@ -3865,17 +3894,13 @@ bool WebGLRenderingContext::validateDrawMode(unsigned long mode)
     }
 }
 
-bool WebGLRenderingContext::validateFace(unsigned long face)
+bool WebGLRenderingContext::validateStencilSettings()
 {
-    switch (face) {
-    case GraphicsContext3D::FRONT:
-    case GraphicsContext3D::BACK:
-    case GraphicsContext3D::FRONT_AND_BACK:
-        return true;
-    default:
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    if (m_stencilMask != m_stencilMaskBack || m_stencilFuncRef != m_stencilFuncRefBack || m_stencilFuncMask != m_stencilFuncMaskBack) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return false;
     }
+    return true;
 }
 
 bool WebGLRenderingContext::validateStencilFunc(unsigned long func)

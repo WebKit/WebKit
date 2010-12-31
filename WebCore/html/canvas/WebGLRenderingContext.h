@@ -456,9 +456,9 @@ public:
     GraphicsContext3D::Attributes m_attributes;
 
     long m_stencilBits;
-    unsigned long m_stencilMask;
-    long m_stencilFuncRef; // Note that this is the user specified value, not the internal clamped value.
-    unsigned long m_stencilFuncMask;
+    unsigned long m_stencilMask, m_stencilMaskBack;
+    long m_stencilFuncRef, m_stencilFuncRefBack; // Note that these are the user specified values, not the internal clamped value.
+    unsigned long m_stencilFuncMask, m_stencilFuncMaskBack;
 
     bool m_isGLES2Compliant;
     bool m_isGLES2NPOTStrict;
@@ -541,8 +541,8 @@ public:
     // Helper function to validate mode for draw{Arrays/Elements}.
     bool validateDrawMode(unsigned long);
 
-    // Helper function to validate face.
-    bool validateFace(unsigned long);
+    // Helper function to validate if front/back stencilMask and stencilFunc settings are the same.
+    bool validateStencilSettings();
 
     // Helper function to validate stencil func.
     bool validateStencilFunc(unsigned long);
