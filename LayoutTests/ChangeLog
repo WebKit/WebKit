@@ -1,3 +1,13 @@
+2010-12-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Update validation of stencil mask and ref values
+        https://bugs.webkit.org/show_bug.cgi?id=50716
+
+        * fast/canvas/webgl/webgl-specific-expected.txt: Sync with khronos: refactor the test, also update the stencil setting test due to spec change.
+        * fast/canvas/webgl/webgl-specific.html: Ditto.
+
 2010-12-30  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.
