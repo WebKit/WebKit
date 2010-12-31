@@ -167,7 +167,7 @@ public:
     static const int virtualWindowBorder = 3;
 
 private:
-    WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent* devToolsAgent);
+    WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent*);
     void createMainWindow();
     void createDRTDevToolsClient(DRTDevToolsAgent*);
 

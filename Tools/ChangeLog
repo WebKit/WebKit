@@ -1,5 +1,11 @@
 2010-12-31  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        Unreviewed. Coding style fix.
+
+        * DumpRenderTree/chromium/TestShell.h:
+
+2010-12-31  Ilya Tikhonovsky  <loislo@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: [Chromium] Inspector's tests are very slow on Win(Dbg).
