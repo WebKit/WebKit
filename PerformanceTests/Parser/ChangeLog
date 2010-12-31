@@ -1,0 +1,11 @@
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move HTML and XML parser benchmarks into PerformanceTests/Parser
+        https://bugs.webkit.org/show_bug.cgi?id=51772
+
+        Add a ChangeLog for tracking changes to the Parser PerformanceTest.
+
+        * ChangeLog: Added.
+
