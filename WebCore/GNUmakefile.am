@@ -3707,6 +3707,8 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/PopupMenuGtk.h \
 	WebCore/platform/gtk/RenderThemeGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.h \
+	WebCore/platform/gtk/RenderThemeGtk2.cpp \
+	WebCore/platform/gtk/RenderThemeGtk3.cpp \
 	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	WebCore/platform/gtk/ScrollbarThemeGtk.h \
 	WebCore/platform/gtk/ScrollViewGtk.cpp \

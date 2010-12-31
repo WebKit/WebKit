@@ -1,3 +1,28 @@
+2010-12-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fork pieces of RenderThemeGtk that will differ for GTK+ 3
+        https://bugs.webkit.org/show_bug.cgi?id=51755
+
+        Split out pieces of RenderThemeGtk into RenderThemeGtk2 and RenderThemeGtk3
+        if they are going to differ between GTK+ 2.x and GTK+ 3.x. This is the preliminary
+        step to landing support for the new GTK+ 3.x theming API.
+
+        No new tests. This should not change functionality.
+
+        * GNUmakefile.am: Add RenderThemeGtk2 and RenderThemeGtk3 to the sources list.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle): Call the setTextInputBorders static method.
+        (WebCore::RenderThemeGtk::adjustTextAreaStyle): Ditto.
+        (WebCore::RenderThemeGtk::paintMediaButton): Ditto.
+        (WebCore::RenderThemeGtk::adjustProgressBarStyle): ditto.
+        * platform/gtk/RenderThemeGtk.h: Make setTextInputBorders a method, so that
+        it can be exist in RenderThemeGtk{2,3} and be called from RenderThemeGtk.
+        * platform/gtk/RenderThemeGtk2.cpp: Added. A fork of the bits of RenderThemeGtk
+        that will eventually be platform-dependent.
+        * platform/gtk/RenderThemeGtk3.cpp: Added. Ditto.
+
 2010-12-30  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by James Robinson.

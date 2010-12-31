@@ -173,6 +173,7 @@ private:
     bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
 #endif
     GtkStateType gtkIconState(RenderObject*);
+    static void setTextInputBorders(RenderStyle*);
 
     mutable GtkWidget* m_gtkWindow;
     mutable GtkWidget* m_gtkContainer;
