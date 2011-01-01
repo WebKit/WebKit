@@ -36,7 +36,6 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
-#include "InspectorController.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -58,6 +57,10 @@
 
 #if USE(JSC)
 #include "JSDOMWindow.h"
+#endif
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
 #endif
 
 namespace WebCore {

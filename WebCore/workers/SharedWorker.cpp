@@ -35,12 +35,15 @@
 
 #include "SharedWorker.h"
 
-#include "InspectorController.h"
 #include "KURL.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
 #include "SharedWorkerRepository.h"
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#endif
 
 namespace WebCore {
 

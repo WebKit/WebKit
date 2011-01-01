@@ -64,8 +64,6 @@
 #include "History.h"
 #include "IDBFactory.h"
 #include "IDBFactoryBackendInterface.h"
-#include "InspectorController.h"
-#include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Location.h"
 #include "MediaQueryList.h"
@@ -103,6 +101,11 @@
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "LocalFileSystem.h"
+#endif
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #endif
 
 using std::min;
@@ -1533,13 +1536,13 @@ bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget
     event->setTarget(prpTarget ? prpTarget : this);
     event->setCurrentTarget(this);
     event->setEventPhase(Event::AT_TARGET);
-
+#if ENABLE(INSPECTOR)
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), *event, this);
-
+#endif
     bool result = fireEventListeners(event.get());
-
+#if ENABLE(INSPECTOR)
     InspectorInstrumentation::didDispatchEventOnWindow(cookie);
-
+#endif
     return result;
 }
 

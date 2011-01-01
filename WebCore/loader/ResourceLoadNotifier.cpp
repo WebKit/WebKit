@@ -35,10 +35,13 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "InspectorController.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceLoader.h"
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#endif
 
 namespace WebCore {
 

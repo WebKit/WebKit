@@ -40,13 +40,16 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "InspectorController.h"
 #include "MessageEvent.h"
 #include "TextEncoding.h"
 #include "WorkerContextProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#endif
 
 namespace WebCore {
 

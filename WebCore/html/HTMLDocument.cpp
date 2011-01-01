@@ -69,11 +69,14 @@
 #include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
 #include "HTMLNames.h"
-#include "InspectorController.h"
 #include "KURL.h"
 #include "Page.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#endif
 
 namespace WebCore {
 

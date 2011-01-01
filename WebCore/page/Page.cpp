@@ -45,7 +45,6 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HistoryItem.h"
-#include "InspectorController.h"
 #include "Logging.h"
 #include "MediaCanStartListener.h"
 #include "Navigator.h"
@@ -79,6 +78,10 @@
 #if ENABLE(DOM_STORAGE)
 #include "StorageArea.h"
 #include "StorageNamespace.h"
+#endif
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

@@ -27,7 +27,6 @@
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"
-#include "InspectorController.h"
 #include "JSDOMWindowCustom.h"
 #include "JSNode.h"
 #include "Logging.h"
@@ -38,6 +37,10 @@
 #include "WebCoreJSClientData.h"
 #include <wtf/Threading.h>
 #include <wtf/text/StringConcatenate.h>
+
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#endif
 
 using namespace JSC;
 

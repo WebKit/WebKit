@@ -1,3 +1,55 @@
+2011-01-01  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Reviewed by Darin Adler.
+
+        Don't include Inspector headers when Inspector is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=51789
+
+        * bindings/js/JSDOMWindowBase.cpp: Include Inspector headers when
+        Inspector is enabled
+        * dom/Document.cpp: Include Inspector headers when
+        Inspector is enabled
+        (WebCore::Document::recalcStyle): Disabled InspectorInstrumentationCookie
+        handling
+        * html/HTMLDocument.cpp: Include Inspector headers when
+        Inspector is enabled
+        * loader/FrameLoader.cpp: Include Inspector headers when
+        Inspector is enabled
+        * loader/ResourceLoadNotifier.cpp: Include Inspector headers when
+        Inspector is enabled
+        * page/Chrome.cpp: Include Inspector headers when
+        Inspector is enabled
+        * page/Console.cpp: Include Inspector headers when
+        Inspector is enabled
+        * page/ContextMenuController.cpp: Include Inspector headers when
+        Inspector is enabled
+        * page/DOMWindow.cpp: Include Inspector headers when
+        Inspector is enabled
+        (WebCore::DOMWindow::dispatchEvent): Disabled InspectorInstrumentationCookie
+        handling
+        * page/EventHandler.cpp: Include Inspector headers when
+        Inspector is enabled
+        * page/Page.cpp: Include Inspector headers when
+        Inspector is enabled
+        * storage/Database.cpp: Include Inspector headers when
+        Inspector is enabled
+        * workers/AbstractWorker.cpp: Include Inspector headers when
+        Inspector is enabled
+        * workers/DefaultSharedWorkerRepository.cpp: Include Inspector headers when
+        Inspector is enabled
+        * workers/SharedWorker.cpp: Include Inspector headers when
+        Inspector is enabled
+        * workers/Worker.cpp: Include Inspector headers when
+        Inspector is enabled
+        * workers/WorkerContext.cpp: Include Inspector headers when
+        Inspector is enabled
+        * workers/WorkerMessagingProxy.cpp: Include Inspector headers when
+        Inspector is enabled
+        * xml/XMLHttpRequest.cpp: Include Inspector headers when
+        Inspector is enabled
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener): Disabled
+        InspectorInstrumentationCookie handling
+
 2010-12-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
