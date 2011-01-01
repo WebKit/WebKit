@@ -61,25 +61,27 @@ public:
     String encoding() const { return m_attributes.encodingType(); }
     void setEncoding(const String& value) { setEnctype(value); }
 
-    bool autoComplete() const { return m_autocomplete; }
+    // FIXME: Rename this function to shouldAutocomplete.
+    bool autoComplete() const;
 
-    // FIXME: Should rename these two functions to say "form control"
-    // or "form-associated element" instead of "form element".
+    // FIXME: Should rename these two functions to say "form control" or "form-associated element" instead of "form element".
     void registerFormElement(FormAssociatedElement*);
     void removeFormElement(FormAssociatedElement*);
+
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
-    bool prepareSubmit(Event*);
-    void submit(Frame* javaScriptActiveFrame = 0);
+    bool prepareForSubmission(Event*);
+    void submit();
+    void submitFromJavaScript();
     void reset();
 
     // Used to indicate a malformed state to keep from applying the bottom margin of the form.
-    void setMalformed(bool malformed) { m_malformed = malformed; }
-    bool isMalformed() const { return m_malformed; }
+    // FIXME: Would probably be better to call this wasUnclosed; that's more specific.
+    void setMalformed(bool malformed) { m_wasMalformed = malformed; }
+    bool isMalformed() const { return m_wasMalformed; }
 
-    void setDemoted(bool demoted) { m_demoted = demoted; }
-    bool isDemoted() const { return m_demoted; }
+    void setDemoted(bool demoted) { m_wasDemoted = demoted; }
 
     void submitImplicitly(Event*, bool fromImplicitSubmissionTrigger);
     bool formWouldHaveSecureSubmission(const String& url);
@@ -105,7 +107,7 @@ public:
 
     bool checkValidity();
 
-    PassRefPtr<HTMLFormControlElement> elementForAlias(const AtomicString&);
+    HTMLFormControlElement* elementForAlias(const AtomicString&);
     void addElementAlias(HTMLFormControlElement*, const AtomicString& alias);
 
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
@@ -134,8 +136,10 @@ private:
 
     unsigned formElementIndexWithFormAttribute(Element*);
     unsigned formElementIndex(FormAssociatedElement*);
-    // Returns true if the submission should be proceeded.
+
+    // Returns true if the submission should proceed.
     bool validateInteractively(Event*);
+
     // Validates each of the controls, and stores controls of which 'invalid'
     // event was not canceled to the specified vector.
     void collectUnhandledInvalidControls(Vector<RefPtr<FormAssociatedElement> >&);
@@ -156,13 +160,14 @@ private:
     Vector<HTMLImageElement*> m_imageElements;
 
     bool m_wasUserSubmitted;
+    bool m_isSubmittingOrPreparingForSubmission;
+    bool m_shouldSubmit;
 
-    bool m_autocomplete : 1;
-    bool m_insubmit : 1;
-    bool m_doingsubmit : 1;
-    bool m_inreset : 1;
-    bool m_malformed : 1;
-    bool m_demoted : 1;
+    bool m_isInResetFunction;
+
+    bool m_wasMalformed;
+    bool m_wasDemoted;
+
     AtomicString m_name;
 };
 

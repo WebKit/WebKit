@@ -51,8 +51,9 @@ public:
     virtual int size() const { return m_data.size(); }
     virtual bool multiple() const { return m_data.multiple(); }
 
-    void add(HTMLElement* element, HTMLElement* before, ExceptionCode&);
+    void add(HTMLElement*, HTMLElement* beforeElement, ExceptionCode&);
     void remove(int index);
+    void remove(HTMLOptionElement*);
 
     String value();
     void setValue(const String&);

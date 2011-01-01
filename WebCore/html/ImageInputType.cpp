@@ -73,7 +73,7 @@ void ImageInputType::handleDOMActivateEvent(Event* event)
         m_clickLocation = IntPoint(mouseEvent->offsetX(), mouseEvent->offsetY());
     } else
         m_clickLocation = IntPoint();
-    element->form()->prepareSubmit(event); // Event handlers can run.
+    element->form()->prepareForSubmission(event); // Event handlers can run.
     element->setActivatedSubmit(false);
     event->setDefaultHandled();
 }

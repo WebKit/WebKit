@@ -49,7 +49,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual void handleDOMActivateEvent(Event*);
 
-    // This is valid only during HTMLFormElement::prepareSubmit().
+    // This is valid only during HTMLFormElement::prepareForSubmission().
     IntPoint m_clickLocation;
 };
 

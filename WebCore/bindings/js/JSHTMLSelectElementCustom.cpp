@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple, Inc.
+ * Copyright (C) 2007, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov (ap@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -36,10 +36,9 @@ JSValue JSHTMLSelectElement::remove(ExecState* exec)
 {
     HTMLSelectElement& select = *static_cast<HTMLSelectElement*>(impl());
 
-    // we support both options index and options objects
-    HTMLElement* element = toHTMLElement(exec->argument(0));
-    if (element && element->hasTagName(optionTag))
-        select.remove(static_cast<HTMLOptionElement*>(element)->index());
+    // The remove function can take either an option object or the index of an option.
+    if (HTMLOptionElement* option = toHTMLOptionElement(exec->argument(0)))
+        select.remove(option);
     else
         select.remove(exec->argument(0).toInt32(exec));
 

@@ -31,13 +31,18 @@ module html {
         attribute [Reflect] boolean noValidate;
         attribute [Reflect=accept_charset] DOMString acceptCharset;
         attribute [Reflect, URL] DOMString action;
-        attribute [ConvertNullToNullString] DOMString encoding;  /* Netscape/Firefox legacy attribute. Same as enctype. */
+        attribute [ConvertNullToNullString] DOMString encoding;
         attribute [ConvertNullToNullString] DOMString enctype;
         attribute [Reflect] DOMString method;
         attribute [Reflect] DOMString target;
         
-        [CallWith=DynamicFrame] void submit();
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+        [ImplementationFunction=submitFromJavaScript] void submit();
+#else
+        void submit();
+#endif
         void reset();
         boolean checkValidity();
     };
+
 }

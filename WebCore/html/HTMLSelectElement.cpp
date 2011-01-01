@@ -176,7 +176,7 @@ unsigned HTMLSelectElement::length() const
     return SelectElement::optionCount(m_data, this);
 }
 
-void HTMLSelectElement::add(HTMLElement *element, HTMLElement *before, ExceptionCode& ec)
+void HTMLSelectElement::add(HTMLElement* element, HTMLElement* before, ExceptionCode& ec)
 {
     RefPtr<HTMLElement> protectNewChild(element); // make sure the element is ref'd and deref'd so we don't leak it
 
@@ -187,17 +187,23 @@ void HTMLSelectElement::add(HTMLElement *element, HTMLElement *before, Exception
     setNeedsValidityCheck();
 }
 
-void HTMLSelectElement::remove(int index)
+void HTMLSelectElement::remove(int optionIndex)
 {
-    int listIndex = optionToListIndex(index);
+    int listIndex = optionToListIndex(optionIndex);
     if (listIndex < 0)
         return;
 
-    Element* item = listItems()[listIndex];
-    ASSERT(item->parentNode());
     ExceptionCode ec;
-    item->parentNode()->removeChild(item, ec);
-    setNeedsValidityCheck();
+    listItems()[listIndex]->remove(ec);
+}
+
+void HTMLSelectElement::remove(HTMLOptionElement* option)
+{
+    if (option->ownerSelectElement() != this)
+        return;
+
+    ExceptionCode ec;
+    option->remove(ec);
 }
 
 String HTMLSelectElement::value()

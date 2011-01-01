@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  *
@@ -43,7 +43,7 @@ using namespace HTMLNames;
 inline HTMLButtonElement::HTMLButtonElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLFormControlElement(tagName, document, form)
     , m_type(SUBMIT)
-    , m_activeSubmit(false)
+    , m_isActivatedSubmit(false)
 {
     ASSERT(hasTagName(buttonTag));
 }
@@ -96,47 +96,45 @@ void HTMLButtonElement::parseMappedAttribute(Attribute* attr)
         HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
-void HTMLButtonElement::defaultEventHandler(Event* evt)
+void HTMLButtonElement::defaultEventHandler(Event* event)
 {
-    if (evt->type() == eventNames().DOMActivateEvent && !disabled()) {
+    if (event->type() == eventNames().DOMActivateEvent && !disabled()) {
         if (form() && m_type == SUBMIT) {
-            m_activeSubmit = true;
-            form()->prepareSubmit(evt);
-            m_activeSubmit = false; // in case we were canceled
+            m_isActivatedSubmit = true;
+            form()->prepareForSubmission(event);
+            m_isActivatedSubmit = false; // Do this in case submission was canceled.
         }
         if (form() && m_type == RESET)
             form()->reset();
     }
 
-    if (evt->isKeyboardEvent()) {
-        if (evt->type() == eventNames().keydownEvent && static_cast<KeyboardEvent*>(evt)->keyIdentifier() == "U+0020") {
+    if (event->isKeyboardEvent()) {
+        if (event->type() == eventNames().keydownEvent && static_cast<KeyboardEvent*>(event)->keyIdentifier() == "U+0020") {
             setActive(true, true);
             // No setDefaultHandled() - IE dispatches a keypress in this case.
             return;
         }
-        if (evt->type() == eventNames().keypressEvent) {
-            switch (static_cast<KeyboardEvent*>(evt)->charCode()) {
+        if (event->type() == eventNames().keypressEvent) {
+            switch (static_cast<KeyboardEvent*>(event)->charCode()) {
                 case '\r':
-                    dispatchSimulatedClick(evt);
-                    evt->setDefaultHandled();
+                    dispatchSimulatedClick(event);
+                    event->setDefaultHandled();
                     return;
                 case ' ':
                     // Prevent scrolling down the page.
-                    evt->setDefaultHandled();
+                    event->setDefaultHandled();
                     return;
-                default:
-                    break;
             }
         }
-        if (evt->type() == eventNames().keyupEvent && static_cast<KeyboardEvent*>(evt)->keyIdentifier() == "U+0020") {
+        if (event->type() == eventNames().keyupEvent && static_cast<KeyboardEvent*>(event)->keyIdentifier() == "U+0020") {
             if (active())
-                dispatchSimulatedClick(evt);
-            evt->setDefaultHandled();
+                dispatchSimulatedClick(event);
+            event->setDefaultHandled();
             return;
         }
     }
 
-    HTMLFormControlElement::defaultEventHandler(evt);
+    HTMLFormControlElement::defaultEventHandler(event);
 }
 
 bool HTMLButtonElement::isSuccessfulSubmitButton() const
@@ -148,17 +146,17 @@ bool HTMLButtonElement::isSuccessfulSubmitButton() const
 
 bool HTMLButtonElement::isActivatedSubmit() const
 {
-    return m_activeSubmit;
+    return m_isActivatedSubmit;
 }
 
 void HTMLButtonElement::setActivatedSubmit(bool flag)
 {
-    m_activeSubmit = flag;
+    m_isActivatedSubmit = flag;
 }
 
 bool HTMLButtonElement::appendFormData(FormDataList& formData, bool)
 {
-    if (m_type != SUBMIT || name().isEmpty() || !m_activeSubmit)
+    if (m_type != SUBMIT || name().isEmpty() || !m_isActivatedSubmit)
         return false;
     formData.appendData(name(), value());
     return true;

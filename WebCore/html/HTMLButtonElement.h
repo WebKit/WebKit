@@ -62,7 +62,7 @@ private:
     virtual bool recalcWillValidate() const;
 
     Type m_type;
-    bool m_activeSubmit;
+    bool m_isActivatedSubmit;
 };
 
 } // namespace

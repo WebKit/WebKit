@@ -1,3 +1,80 @@
+2010-12-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Some renaming and refactoring of form element code
+        https://bugs.webkit.org/show_bug.cgi?id=51784
+
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        (WebCore::JSHTMLSelectElement::remove): Call new overload of remove
+        for option elements instead of putting the logic in the binding.
+
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::HTMLButtonElement): Updated for name changes.
+        (WebCore::HTMLButtonElement::defaultEventHandler): Renamed argument to
+        "event" instead of "evt". Also updated for name changes.
+        (WebCore::HTMLButtonElement::isActivatedSubmit): Ditto.
+        (WebCore::HTMLButtonElement::setActivatedSubmit): Ditto.
+        (WebCore::HTMLButtonElement::appendFormData): Ditto.
+        * html/HTMLButtonElement.h: Renamed m_activeSubmit to m_isActivatedSubmit
+        to match the getter function name. The name still doesn't seem great.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::HTMLFormElement): Updated for name changes.
+        (WebCore::HTMLFormElement::~HTMLFormElement): Use autoComplete function
+        instead of m_autocomplete data member.
+        (WebCore::HTMLFormElement::rendererIsNeeded): Use m_wasDemoted data member
+        instead of otherwise-unused isDemoted function.
+        (WebCore::HTMLFormElement::submitImplicitly): Updated for name changes.
+        (WebCore::HTMLFormElement::validateInteractively): Removed code to clear
+        m_insubmit. This is now handled by the caller, prepareForSubmission.
+        (WebCore::HTMLFormElement::prepareForSubmission): Renamed. Updated for
+        name changes. Moved code to clear m_isSubmittingOrPreparingForSubmission
+        here from validateInteractively. Removed unneeded check of m_doingsubmit
+        boolean before setting it.
+        (WebCore::HTMLFormElement::submit): Factored this function into two.
+        One for JavaScript and one for non-JavaScript. Neither function needs a frame
+        argument, because the question being asked, anyPageIsProcessingUserGesture,
+        is a question asked of an entire page group, not a specific frame or page,
+        so it's not important which is the active frame.
+        (WebCore::HTMLFormElement::submitFromJavaScript): Ditto.
+        (WebCore::HTMLFormElement::reset): Updated for name changes.
+        (WebCore::HTMLFormElement::parseMappedAttribute): Removed code to parse
+        acceptAttr and got rid of code to set m_autocomplete.
+        (WebCore::HTMLFormElement::elementForAlias): Changed return type to a raw
+        pointer.
+        (WebCore::HTMLFormElement::getNamedElements): Updated to use raw pointer
+        and the vector find function. Added a FIXME about the comment.
+        (WebCore::HTMLFormElement::documentDidBecomeActive): Use autoComplete
+        function instead of m_autocomplete data member.
+        (WebCore::HTMLFormElement::willMoveToNewOwnerDocument): Ditto.
+        (WebCore::HTMLFormElement::didMoveToNewOwnerDocument): Ditto.
+        (WebCore::HTMLFormElement::autoComplete): Ditto.
+        * html/HTMLFormElement.h: Added a FIXME about renaming the autoComplete
+        function. Renamed prepareSubmit to prepareForSubmission. Got rid of the
+        frame argument from the submit function and added a new submitFromJavaScript
+        variant. Removed the unneeded isDemoted function. Changed the return type
+        of elementForAlias to a raw pointer. Removed m_autocomplete. Renamed
+        m_insubmit to m_isSubmittingOrPreparingForSubmission, m_doingsubmit to
+        m_shouldSubmit, m_inreset to m_inResetFunction, m_malformed to m_wasMalformed,
+        m_demoted to m_wasDemoted. Use plain bool instead of bitfields.
+
+        * html/HTMLFormElement.idl: Use the function named submitFromJavaScript
+        instead of using CallWith=DynamicFrame because we don't need to know
+        what frame is calling. If we did, it's not clear that the "dynamic"
+        frame would be the right one anyway.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::remove): Added an overload that takes an option
+        element, since the JavaScript binding supports this.
+        * html/HTMLSelectElement.h: Ditto.
+
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::handleDOMActivateEvent): Updated for name changes.
+        * html/ImageInputType.h: Ditto.
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::handleDOMActivateEvent): Ditto.
+
 2010-12-31  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
