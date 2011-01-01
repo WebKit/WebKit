@@ -1,0 +1,39 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x40
+        RenderText {#text} at (0,0) size 468x19
+          text run at (0,0) width 468: "This tests the correct placement of inline spelling and grammar markers in text."
+        RenderBR {BR} at (468,15) size 0x0
+        RenderText {#text} at (0,20) size 450x19
+          text run at (0,20) width 450: "Spelling markers should line up exactly under misspelled words in all cases."
+      RenderBlock (anonymous) at (0,56) size 784x20
+        RenderText {#text} at (0,0) size 28x19
+          text run at (0,0) width 28: "LTR"
+      RenderBlock (anonymous) at (0,98) size 784x20
+        RenderText {#text} at (0,0) size 28x19
+          text run at (0,0) width 28: "RTL"
+      RenderBlock (anonymous) at (0,140) size 784x20
+        RenderText {#text} at (0,0) size 172x19
+          text run at (0,0) width 172: "LTR (text-overflow:ellipses):"
+      RenderBlock (anonymous) at (0,182) size 784x20
+        RenderText {#text} at (0,0) size 172x19
+          text run at (0,0) width 172: "RTL (text-overflow:ellipses):"
+layer at (8,84) size 202x22 clip at (9,85) size 200x20 scrollWidth 215
+  RenderBlock {DIV} at (0,76) size 202x22 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 214x19
+      text run at (1,1) width 214: "the the adlj adaasj sdklj. there there"
+layer at (8,126) size 202x22 clip at (9,127) size 200x20 scrollX 14 scrollWidth 214
+  RenderBlock {DIV} at (0,118) size 202x22 [border: (1px solid #000000)]
+    RenderText {#text} at (-13,1) size 214x19
+      text run at (-13,1) width 214 RTL override: "the the adlj adaasj sdklj. there there"
+layer at (8,168) size 202x22 clip at (9,169) size 200x20 scrollWidth 215
+  RenderBlock {DIV} at (0,160) size 202x22 [border: (1px solid #000000)]
+    RenderText {#text} at (1,1) size 214x19
+      text run at (1,1) width 214: "the the adlj adaasj sdklj. there there"
+layer at (8,210) size 202x22 clip at (9,211) size 200x20 scrollX 14 scrollWidth 214
+  RenderBlock {DIV} at (0,202) size 202x22 [border: (1px solid #000000)]
+    RenderText {#text} at (-13,1) size 214x19
+      text run at (-13,1) width 214 RTL override: "the the adlj adaasj sdklj. there there"

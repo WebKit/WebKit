@@ -636,7 +636,7 @@ BUGCR66087 WIN SLOW : inspector/styles-disable-then-enable.html = PASS TEXT
 BUGCR66087 WIN : inspector/timeline-layout.html = CRASH TIMEOUT PASS TEXT
 BUGCR66087 WIN : inspector/timeline-parse-html.html = CRASH TIMEOUT PASS TEXT
 // WebKit roll 74708:74711
-BUGCR68165 WIN DEBUG : inspector/styles-source-lines.html = TEXT
+BUGCR68165 WIN DEBUG SLOW : inspector/styles-source-lines.html = PASS
 BUGCR66087 WIN SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 
 BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
@@ -673,13 +673,6 @@ BUGCR3273 : editing/selection/mixed-editability-10.html = TEXT
 // selection
 BUGCR10369 LINUX : editing/selection/5354455-2.html = FAIL
 
-// We don't draw the spelling markers at all in test shell.
-BUGCR11577 WIN LINUX : editing/spelling/inline_spelling_markers.html = FAIL
-BUGCR11577 WIN LINUX : editing/spelling/spellcheck-attribute.html = FAIL
-BUGCR11577 WIN LINUX : editing/spelling/spelling-linebreak.html = FAIL
-BUGCR11577 WIN LINUX : editing/spelling/spelling-attribute-change.html = FAIL
-BUGCR11577 WIN LINUX : editing/spelling/spelling-attribute-at-child.html = FAIL
-
 // TODO(erg): Attempted to rebaseline these tests as part of the above
 // 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
 // tree red. May be more involved then just rebaselining.
@@ -704,8 +697,6 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-delete.html = IMAG
 BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
 BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
 BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+TEXT
-
-BUGJAMESR WIN LINUX : editing/spelling/spelling-hasspellingmarker.html = TEXT
 
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
@@ -1223,8 +1214,7 @@ BUGCR10378 MAC : fast/images/object-image.html = FAIL
 // green so new mac regressions are caught much quicker.
 // (there are a few others marked w/ multiple status like this in other parts of
 // the file, but they were left there as the comments in those areas are valid.)
-BUGCR10384 MAC WIN DEBUG SLOW : fast/dom/Window/new-window-opener.html = FAIL
-BUGCR10384 MAC RELEASE : fast/dom/Window/new-window-opener.html = TEXT
+BUGCR10384 MAC : fast/dom/Window/new-window-opener.html = TEXT
 
 BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 
@@ -3212,8 +3202,6 @@ BUGCR66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
 BUGCR66085 : media/remove-from-document.html = PASS TIMEOUT
-BUGCR66085 WIN : media/video-currentTime.html = TIMEOUT
-BUGCR66085 LINUX : media/video-currentTime.html = PASS TIMEOUT
 BUGCR66085 : media/video-display-toggle.html = PASS TIMEOUT
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUGCR66085 : media/video-source.html = PASS TIMEOUT

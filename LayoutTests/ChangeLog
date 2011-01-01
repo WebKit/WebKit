@@ -1,3 +1,17 @@
+2011-01-01  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        One more rebaseline for a spelling test, and remove passing tests from
+        test_expectations.txt.
+
+        * platform/chromium-linux/editing/spelling/inline_spelling_markers-expected.checksum: Added.
+        * platform/chromium-linux/editing/spelling/inline_spelling_markers-expected.png: Added.
+        * platform/chromium-win/editing/spelling/inline_spelling_markers-expected.checksum: Added.
+        * platform/chromium-win/editing/spelling/inline_spelling_markers-expected.png: Added.
+        * platform/chromium-win/editing/spelling/inline_spelling_markers-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-12-31  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
