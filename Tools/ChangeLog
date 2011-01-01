@@ -1,3 +1,13 @@
+2010-12-31  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [DRT/Chromium] Enable mock spell checker on non-OSX
+        https://bugs.webkit.org/show_bug.cgi?id=51401
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::spellCheck):
+
 2010-12-31  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Ariya Hidayat.
