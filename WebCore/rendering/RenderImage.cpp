@@ -325,7 +325,7 @@ void RenderImage::paint(PaintInfo& paintInfo, int tx, int ty)
         paintFocusRing(paintInfo, style());
 }
     
-void RenderImage::paintFocusRing(PaintInfo& paintInfo, const RenderStyle* style)
+void RenderImage::paintFocusRing(PaintInfo& paintInfo, const RenderStyle*)
 {
     // Don't draw focus rings if printing.
     if (document()->printing() || !frame()->selection()->isFocusedAndActive())
@@ -348,9 +348,6 @@ void RenderImage::paintFocusRing(PaintInfo& paintInfo, const RenderStyle* style)
     
     RefPtr<HTMLCollection> areas = mapElement->areas();
     unsigned numAreas = areas->length();
-
-    if (theme()->supportsFocusRing(style))
-        return; // The theme draws the focus ring.
     
     // FIXME: Clip the paths to the image bounding box.
     for (unsigned k = 0; k < numAreas; ++k) {
@@ -359,6 +356,8 @@ void RenderImage::paintFocusRing(PaintInfo& paintInfo, const RenderStyle* style)
             continue;
 
         RenderStyle* styleToUse = areaElement->computedStyle();
+        if (theme()->supportsFocusRing(styleToUse))
+            return; // The theme draws the focus ring.
         paintInfo.context->drawFocusRing(areaElement->getPath(this), styleToUse->outlineWidth(), styleToUse->outlineOffset(), styleToUse->visitedDependentColor(CSSPropertyOutlineColor));
         break;
     }

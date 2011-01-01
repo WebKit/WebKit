@@ -1,3 +1,22 @@
+2010-12-31  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Pass style for <area> instead of associated <img> when querying whether
+        the theme draws the focus ring for an <area>
+        https://bugs.webkit.org/show_bug.cgi?id=51632
+
+        Fixes an issue where the style for the associated <img> of an <area>
+        was passed when considering whether the theme should draw a focus ring
+        for the <area>. Instead, we should pass the theme the style for the <area>.
+
+        It's not possible to test this at this time since there are no themes
+        that override focus ring drawing for <area>s.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintFocusRing): Moved call to RenderTheme::supportsFocusRing()
+        such that it's called with respect to the focused <area>.
+
 2010-12-31  Darin Adler  <darin@apple.com>
 
         * WebCore.xcodeproj/project.pbxproj: Added back the language.
