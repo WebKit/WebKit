@@ -233,9 +233,12 @@ void Location::setHash(const String& hash, DOMWindow* activeWindow, DOMWindow* f
     String newFragmentIdentifier = hash;
     if (hash[0] == '#')
         newFragmentIdentifier = hash.substring(1);
-    if (equalIgnoringNullity(oldFragmentIdentifier, newFragmentIdentifier))
-        return;
     url.setFragmentIdentifier(newFragmentIdentifier);
+    // Note that by parsing the URL and *then* comparing fragments, we are 
+    // comparing fragments post-canonicalization, and so this handles the 
+    // cases where fragment identifiers are ignored or invalid. 
+    if (equalIgnoringNullity(oldFragmentIdentifier, url.fragmentIdentifier()))
+        return;
     m_frame->domWindow()->setLocation(url.string(), activeWindow, firstWindow);
 }
 

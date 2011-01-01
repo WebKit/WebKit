@@ -1,3 +1,18 @@
+2010-12-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        fast/loader/about-blank-hash-change.html fails on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=51788
+
+        I'm unable to reproduce the failure locally, so this patch is slightly
+        speculative.  We need to be slighly more careful how we compare the
+        fragment identifiers for Chromium because Chromium uses a URL parser
+        that is more agressive about canonicalization.
+
+        * page/Location.cpp:
+        (WebCore::Location::setHash):
+
 2010-12-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
