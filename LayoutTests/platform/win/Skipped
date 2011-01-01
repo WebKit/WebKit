@@ -60,6 +60,9 @@ media/video-volume-slider.html
 media/media-fullscreen-inline.html
 media/media-fullscreen-not-in-document.html
 
+# Times out https://bugs.webkit.org/show_bug.cgi?id=51787
+media/video-element-other-namespace-crash.html
+
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common
 fast/text/international/bidi-AN-after-L.html
