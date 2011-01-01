@@ -30,9 +30,6 @@
 #ifndef FileSystem_h
 #define FileSystem_h
 
-#if PLATFORM(GTK)
-#include <gmodule.h>
-#endif
 #if PLATFORM(QT)
 #include <QFile>
 #include <QLibrary>
@@ -62,6 +59,11 @@ typedef HINSTANCE HMODULE;
 
 #if PLATFORM(BREWMP)
 typedef struct _IFile IFile;
+#endif
+
+#if PLATFORM(GTK)
+typedef struct _GFileIOStream GFileIOStream;
+typedef struct _GModule GModule;
 #endif
 
 namespace WebCore {
@@ -122,6 +124,9 @@ typedef IFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
 typedef void* PlatformModule;
 typedef unsigned PlatformModuleVersion;
+#elif PLATFORM(GTK)
+typedef GFileIOStream* PlatformFileHandle;
+const PlatformFileHandle invalidPlatformFileHandle = 0;
 #else
 typedef int PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = -1;

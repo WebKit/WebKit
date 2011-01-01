@@ -1,3 +1,29 @@
+2010-12-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use GLib/GIO API for FileSystemGtk implementation
+        https://bugs.webkit.org/show_bug.cgi?id=51617
+
+        Complete implementation of FileSystem platform code for GLib. This
+        converts remaining API points using POSIX calls to platform-independent
+        GLib calls and fixes other compilation errors.
+
+        No new tests. This code will be tested when an implementation
+        of beginDragWithFiles is complete.
+
+        (WebCore::JSDirectoryEntry::getFile):
+        (WebCore::JSDirectoryEntry::getDirectory):
+        * platform/FileSystem.h: Added forward declarations for GLib types to
+        avoid GLib includes and changed the PlatformFileHandle to be a GIOStream.
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::openTemporaryFile): Reimplement using only GLib calls.
+        (WebCore::openFile): Ditto.
+        (WebCore::closeFile): Ditto.
+        (WebCore::seekFile): Added implementation.
+        (WebCore::writeToFile): Reimplement using only GLib calls.
+        (WebCore::readFromFile): Ditto.
+
 2010-12-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

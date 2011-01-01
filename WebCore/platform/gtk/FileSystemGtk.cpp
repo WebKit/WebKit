@@ -24,12 +24,11 @@
 
 #include "GOwnPtr.h"
 #include "PlatformString.h"
-
-#include <errno.h>
-#include <fcntl.h>
+#include "UUID.h"
+#include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <unistd.h>
+#include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -216,75 +215,86 @@ Vector<String> listDirectory(const String& path, const String& filter)
 
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
-    gchar* filename = g_strdup_printf("%sXXXXXX", prefix);
-    gchar* tempPath = g_build_filename(g_get_tmp_dir(), filename, NULL);
-    g_free(filename);
+    GOwnPtr<gchar> filename(g_strdup_printf("%s%s", prefix, createCanonicalUUIDString().utf8().data()));
+    GOwnPtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), NULL));
+    PlatformRefPtr<GFile> file = adoptPlatformRef(g_file_new_for_path(tempPath.get()));
 
-    int fileDescriptor = g_mkstemp(tempPath);
-    if (!isHandleValid(fileDescriptor)) {
-        LOG_ERROR("Can't create a temporary file.");
-        g_free(tempPath);
+    handle = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
+    if (!isHandleValid(handle))
         return CString();
-    }
-    CString tempFilePath = tempPath;
-    g_free(tempPath);
-
-    handle = fileDescriptor;
-    return tempFilePath;
+    return tempPath.get();
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
     CString fsRep = fileSystemRepresentation(path);
-
     if (fsRep.isNull())
         return invalidPlatformFileHandle;
 
-    int platformFlag = 0;
+    PlatformRefPtr<GFile> file = adoptPlatformRef(g_file_new_for_path(fsRep.data()));
+    GFileIOStream* ioStream = 0;
     if (mode == OpenForRead)
-        platformFlag |= O_RDONLY;
-    else if (mode == OpenForWrite)
-        platformFlag |= (O_WRONLY | O_CREAT | O_TRUNC);
+        ioStream = g_file_open_readwrite(file.get(), 0, 0);
+    else if (mode == OpenForWrite) {
+        if (g_file_test(fsRep.data(), static_cast<GFileTest>(G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)))
+            ioStream = g_file_open_readwrite(file.get(), 0, 0);
+        else
+            ioStream = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
+    }
 
-    return g_open(fsRep.data(), platformFlag, 0666);
+    return ioStream;
 }
 
 void closeFile(PlatformFileHandle& handle)
 {
-    if (isHandleValid(handle)) {
-        close(handle);
-        handle = invalidPlatformFileHandle;
-    }
+    if (!isHandleValid(handle))
+        return;
+
+    g_io_stream_close(G_IO_STREAM(handle), 0, 0);
+    g_object_unref(handle);
+    handle = invalidPlatformFileHandle;
 }
 
 long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
-    // FIXME - Awaiting implementation, see https://bugs.webkit.org/show_bug.cgi?id=43878
-    return -1;
+    GSeekType seekType = G_SEEK_SET;
+    switch (origin) {
+    case SeekFromBeginning:
+        seekType = G_SEEK_SET;
+        break;
+    case SeekFromCurrent:
+        seekType = G_SEEK_CUR;
+        break;
+    case SeekFromEnd:
+        seekType = G_SEEK_END;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    if (!g_seekable_seek(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))),
+                         offset, seekType, 0, 0))
+        return -1;
+    return g_seekable_tell(G_SEEKABLE(g_io_stream_get_input_stream(G_IO_STREAM(handle))));
 }
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    int totalBytesWritten = 0;
-    while (totalBytesWritten < length) {
-        int bytesWritten = write(handle, data, length - totalBytesWritten);
-        if (bytesWritten < 0)
-            return -1;
-        totalBytesWritten += bytesWritten;
-        data += bytesWritten;
-    }
-
-    return totalBytesWritten;
+    gsize bytesWritten;
+    g_output_stream_write_all(g_io_stream_get_output_stream(G_IO_STREAM(handle)),
+                              data, length, &bytesWritten, 0, 0);
+    return bytesWritten;
 }
 
 int readFromFile(PlatformFileHandle handle, char* data, int length)
 {
+    GOwnPtr<GError> error;
     do {
-        int bytesRead = read(handle, data, static_cast<size_t>(length));
+        gssize bytesRead = g_input_stream_read(g_io_stream_get_input_stream(G_IO_STREAM(handle)),
+                                               data, length, 0, &error.outPtr());
         if (bytesRead >= 0)
             return bytesRead;
-    } while (errno == EINTR);
-
+    } while (error && error->code == G_FILE_ERROR_INTR);
     return -1;
 }
 
