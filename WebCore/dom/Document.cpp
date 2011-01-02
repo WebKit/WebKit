@@ -91,6 +91,8 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "ImageLoader.h"
+#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MediaQueryList.h"
@@ -148,11 +150,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuffer.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#include "InspectorInstrumentation.h"
-#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
@@ -1548,9 +1545,8 @@ void Document::recalcStyle(StyleChange change)
     
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
-#if ENABLE(INSPECTOR)
+
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
-#endif
 
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
@@ -1604,9 +1600,8 @@ bail_out:
         m_closeAfterStyleRecalc = false;
         implicitClose();
     }
-#if ENABLE(INSPECTOR)
+
     InspectorInstrumentation::didRecalculateStyle(cookie);
-#endif
 }
 
 void Document::updateStyleIfNeeded()

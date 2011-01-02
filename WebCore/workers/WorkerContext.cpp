@@ -42,6 +42,7 @@
 #include "ErrorEvent.h"
 #include "Event.h"
 #include "EventException.h"
+#include "InspectorController.h"
 #include "KURL.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
@@ -57,10 +58,6 @@
 #include "XMLHttpRequestException.h"
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 #if ENABLE(NOTIFICATIONS)
 #include "NotificationCenter.h"

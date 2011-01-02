@@ -33,6 +33,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "InspectorController.h"
 #include "Page.h"
 #include "PageGroupLoadDeferrer.h"
 #include "RenderObject.h"
@@ -44,10 +45,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 #if ENABLE(DOM_STORAGE)
 #include "StorageNamespace.h"

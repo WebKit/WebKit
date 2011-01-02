@@ -38,13 +38,10 @@
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "ExceptionCode.h"
+#include "InspectorController.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 namespace WebCore {
 

@@ -38,12 +38,9 @@
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
+#include "InspectorController.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 namespace WebCore {
 

@@ -37,6 +37,7 @@
 #include "ActiveDOMObject.h"
 #include "CrossThreadTask.h"
 #include "Document.h"
+#include "InspectorController.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
@@ -53,10 +54,6 @@
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/HashSet.h>
 #include <wtf/Threading.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 namespace WebCore {
 

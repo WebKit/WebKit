@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "InspectorController.h"
 #include "MemoryInfo.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -47,10 +48,6 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/UnusedParam.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 namespace WebCore {
 

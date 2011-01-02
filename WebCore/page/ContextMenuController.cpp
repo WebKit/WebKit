@@ -50,6 +50,7 @@
 #include "HTMLFormElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InspectorController.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NavigationAction.h"
@@ -65,10 +66,6 @@
 #include "WindowFeatures.h"
 #include "markup.h"
 #include <wtf/unicode/Unicode.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 using namespace WTF;
 using namespace Unicode;

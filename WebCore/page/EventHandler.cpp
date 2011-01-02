@@ -50,6 +50,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
+#include "InspectorController.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
@@ -74,10 +75,6 @@
 #include "htmlediting.h" // for comparePositions()
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"

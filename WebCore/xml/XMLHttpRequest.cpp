@@ -35,6 +35,8 @@
 #include "EventNames.h"
 #include "File.h"
 #include "HTTPParsers.h"
+#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
@@ -50,11 +52,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/UnusedParam.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#include "InspectorInstrumentation.h"
-#endif
 
 #if USE(JSC)
 #include "JSDOMBinding.h"
@@ -358,24 +355,18 @@ void XMLHttpRequest::callReadyStateChangeListener()
 {
     if (!scriptExecutionContext())
         return;
-#if ENABLE(INSPECTOR)
+
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willChangeXHRReadyState(scriptExecutionContext(), this);
-#endif
+
     if (m_async || (m_state <= OPENED || m_state == DONE))
         m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().readystatechangeEvent), m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
-#if ENABLE(INSPECTOR)
+
     InspectorInstrumentation::didChangeXHRReadyState(cookie);
-#endif
 
     if (m_state == DONE && !m_error) {
-#if ENABLE(INSPECTOR)
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLoadXHR(scriptExecutionContext(), this);
-#endif
         m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadEvent));
-
-#if ENABLE(INSPECTOR)
         InspectorInstrumentation::didLoadXHR(cookie);
-#endif
     }
 }
 

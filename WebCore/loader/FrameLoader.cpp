@@ -69,6 +69,7 @@
 #include "HistoryItem.h"
 #include "IconDatabase.h"
 #include "IconLoader.h"
+#include "InspectorController.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MainResourceLoader.h"
@@ -96,10 +97,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorController.h"
-#endif
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
