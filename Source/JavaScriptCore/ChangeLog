@@ -1,3 +1,16 @@
+2011-01-02  Carl Lobo  <carllobo@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Fix Windows Build for non-production where VSPropsRedirectionDir is not defined.
+        https://bugs.webkit.org/show_bug.cgi?id=51797
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
         Fix relative include paths in an attempt to fix the Qt build.
