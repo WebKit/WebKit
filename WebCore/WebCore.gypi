@@ -1224,7 +1224,6 @@
             'dom/Element.cpp',
             'dom/Element.h',
             'dom/ElementRareData.h',
-            'dom/Entity.cpp',
             'dom/Entity.h',
             'dom/EntityReference.cpp',
             'dom/EntityReference.h',

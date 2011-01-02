@@ -3808,7 +3808,6 @@
 		A8EA7EC00A1945D000A8EF5F /* EntityReference.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7EB80A1945D000A8EF5F /* EntityReference.h */; };
 		A8EA7EC10A1945D000A8EF5F /* EntityReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */; };
 		A8EA7EC20A1945D000A8EF5F /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7EBA0A1945D000A8EF5F /* Entity.h */; };
-		A8EA7EC30A1945D000A8EF5F /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */; };
 		A8EA80070A19516E00A8EF5F /* CSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */; };
 		A8EA80080A19516E00A8EF5F /* CSSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA80000A19516E00A8EF5F /* CSSStyleSheet.cpp */; };
 		A8EA80090A19516E00A8EF5F /* MediaList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8EA80010A19516E00A8EF5F /* MediaList.cpp */; };
@@ -9997,7 +9996,6 @@
 		A8EA7EB80A1945D000A8EF5F /* EntityReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EntityReference.h; sourceTree = "<group>"; };
 		A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntityReference.cpp; sourceTree = "<group>"; };
 		A8EA7EBA0A1945D000A8EF5F /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
-		A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		A8EA7FFF0A19516E00A8EF5F /* CSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSStyleSheet.h; sourceTree = "<group>"; };
 		A8EA80000A19516E00A8EF5F /* CSSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSStyleSheet.cpp; sourceTree = "<group>"; };
 		A8EA80010A19516E00A8EF5F /* MediaList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaList.cpp; sourceTree = "<group>"; };
@@ -18772,7 +18770,6 @@
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
 				637B7ADE0E8767B800E32194 /* ElementRareData.h */,
-				A8EA7EBB0A1945D000A8EF5F /* Entity.cpp */,
 				A8EA7EBA0A1945D000A8EF5F /* Entity.h */,
 				93EEC1EB09C2877700C515D1 /* Entity.idl */,
 				A8EA7EB90A1945D000A8EF5F /* EntityReference.cpp */,
@@ -23098,7 +23095,6 @@
 				A8C4A80809D563270003AC8D /* Element.cpp in Sources */,
 				A8CFF6CB0A1561CD000A4234 /* EllipsisBox.cpp in Sources */,
 				F55B3DBB1251F12D003EF269 /* EmailInputType.cpp in Sources */,
-				A8EA7EC30A1945D000A8EF5F /* Entity.cpp in Sources */,
 				A8EA7EC10A1945D000A8EF5F /* EntityReference.cpp in Sources */,
 				8987855B122CA064003AABDA /* Entry.cpp in Sources */,
 				8987855D122CA064003AABDA /* EntryArray.cpp in Sources */,

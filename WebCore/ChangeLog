@@ -2,6 +2,20 @@
 
         Remove empty file.
 
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Entity.cpp: Removed.
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
+        Remove empty file.
+
         * CMakeLists.txt:
         * GNUmakefile.am:
         * WebCore.pro:

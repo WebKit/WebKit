@@ -1170,7 +1170,6 @@ webcore_sources += \
 	WebCore/dom/Element.cpp \
 	WebCore/dom/Element.h \
 	WebCore/dom/ElementRareData.h \
-	WebCore/dom/Entity.cpp \
 	WebCore/dom/Entity.h \
 	WebCore/dom/EntityReference.cpp \
 	WebCore/dom/EntityReference.h \

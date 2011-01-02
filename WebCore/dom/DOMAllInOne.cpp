@@ -65,7 +65,6 @@
 #include "DynamicNodeList.cpp"
 #include "EditingText.cpp"
 #include "Element.cpp"
-#include "Entity.cpp"
 #include "EntityReference.cpp"
 #include "ErrorEvent.cpp"
 #include "Event.cpp"
