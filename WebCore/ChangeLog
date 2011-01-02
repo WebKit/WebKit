@@ -1,5 +1,17 @@
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
+        Remove empty file.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSPopStateEventCustom.cpp: Removed.
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
         Remove empty files.
 
         * GNUmakefile.am:

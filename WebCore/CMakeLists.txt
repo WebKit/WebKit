@@ -684,7 +684,6 @@ SET(WebCore_SOURCES
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSOptionConstructor.cpp
     bindings/js/JSPluginElementFunctions.cpp
-    bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
     bindings/js/JSSQLResultSetRowListCustom.cpp
     bindings/js/JSSQLTransactionCustom.cpp

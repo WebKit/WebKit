@@ -116,7 +116,6 @@
 #include "JSNodeListCustom.cpp"
 #include "JSOptionConstructor.cpp"
 #include "JSPluginElementFunctions.cpp"
-#include "JSPopStateEventCustom.cpp"
 #include "JSProcessingInstructionCustom.cpp"
 #include "JSSQLResultSetRowListCustom.cpp"
 #include "JSSQLTransactionCustom.cpp"

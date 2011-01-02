@@ -825,7 +825,6 @@ webcore_sources += \
 	WebCore/bindings/js/JSOptionConstructor.h \
 	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/JSPluginElementFunctions.h \
-	WebCore/bindings/js/JSPopStateEventCustom.cpp \
 	WebCore/bindings/js/JSProcessingInstructionCustom.cpp \
 	WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	WebCore/bindings/js/JSSQLTransactionCustom.cpp \
