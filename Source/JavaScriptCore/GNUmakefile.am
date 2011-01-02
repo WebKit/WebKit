@@ -21,10 +21,10 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/wtf/text \
 	-I$(srcdir)/Source/JavaScriptCore/wtf/unicode \
 	-I$(srcdir)/Source/JavaScriptCore/yarr \
-	-I$(top_builddir)/JavaScriptCore \
-	-I$(top_builddir)/JavaScriptCore/parser \
-	-I$(top_builddir)/JavaScriptCore/pcre \
-	-I$(top_builddir)/JavaScriptCore/runtime
+	-I$(top_builddir)/Source/JavaScriptCore \
+	-I$(top_builddir)/Source/JavaScriptCore/parser \
+	-I$(top_builddir)/Source/JavaScriptCore/pcre \
+	-I$(top_builddir)/Source/JavaScriptCore/runtime
 
 javascriptcore_h_api += \
 	Source/JavaScriptCore/API/JSBase.h \

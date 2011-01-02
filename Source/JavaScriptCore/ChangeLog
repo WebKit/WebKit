@@ -1,3 +1,11 @@
+2011-01-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix GTK+ build after r74855.
+
+        Reviewed by Xan Lopez.
+
+        * GNUmakefile.am: Fix include pathes.
+
 2011-01-02  Adam Barth  <abarth@webkit.org>
 
         One more .. missing in the Qt build.
