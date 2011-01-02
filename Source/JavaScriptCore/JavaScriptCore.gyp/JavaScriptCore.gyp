@@ -32,7 +32,7 @@
   'includes': [
     # FIXME: Sense whether upstream or downstream build, and
     # include the right features.gypi
-    '../../WebKit/chromium/features.gypi',
+    '../../../WebKit/chromium/features.gypi',
     '../JavaScriptCore.gypi',
   ],
   'variables': {
@@ -40,10 +40,10 @@
     'conditions': [
       ['inside_chromium_build==0', {
         # Webkit is being built outside of the full chromium project.
-        'chromium_src_dir': '../../WebKit/chromium',
+        'chromium_src_dir': '../../../WebKit/chromium',
       },{
         # WebKit is checked out in src/chromium/third_party/WebKit
-        'chromium_src_dir': '../../../..',
+        'chromium_src_dir': '../../../../..',
       }],
     ],
   },
