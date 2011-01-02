@@ -391,6 +391,7 @@ webkit_tests_cflags = \
 	-I$(top_srcdir)/WebCore/bindings/gobject \
 	$(global_cppflags) \
 	$(global_cflags) \
+	$(javascriptcore_cppflags) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
