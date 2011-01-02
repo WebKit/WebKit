@@ -513,7 +513,7 @@ for my $dir (@projects) {
 
     # For Gtk and Qt the WebKit project builds all others
     if ((isGtk() || isQt()) && $dir ne "WebKit") {
-        chdir ".." or die;
+        chdirWebKit();
         next;
     }
 

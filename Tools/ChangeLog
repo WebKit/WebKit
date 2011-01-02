@@ -1,5 +1,12 @@
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
+        Remove the assumption from the Qt and Gtk builds that every project is
+        in the root directory.
+
+        * Scripts/build-webkit:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Teach svn-apply how to apply patches even though JavaScriptCore has moved
