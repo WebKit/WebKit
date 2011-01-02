@@ -41,6 +41,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPF
 	-DBUILDING_WEBKIT \
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
 	-DDATA_DIR=\"${datadir}\" \
+	-I$(srcdir)/Source \
 	-I$(WebCore)/bindings \
 	-I$(WebCore)/bindings/gobject \
 	-I$(WebKit) \
@@ -381,6 +382,7 @@ dist_resources_DATA = \
 noinst_PROGRAMS += $(TEST_PROGS)
 webkit_tests_cflags = \
 	-fno-strict-aliasing \
+	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	-I$(WebCore)/platform/network/soup/cache \
 	-I$(WebKit) \
