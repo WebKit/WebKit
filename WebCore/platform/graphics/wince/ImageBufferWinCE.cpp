@@ -122,10 +122,10 @@ void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect
     imageCopy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 
-template <bool premultiplied> PassRefPtr<ByteArray>
-static getImageData(const IntRect& rect, const SharedBitmap* bitmap)
+template <bool premultiplied>
+static PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SharedBitmap* bitmap)
 {
-    RefPtr<ImageData> imageData = ImageData::create(rect.width(), rect.height());
+    RefPtr<ByteArray> imageData = ByteArray::create(rect.width() * rect.height() * 4);
 
     const unsigned char* src = static_cast<const unsigned char*>(bitmap->bytes());
     if (!src)
@@ -137,13 +137,13 @@ static getImageData(const IntRect& rect, const SharedBitmap* bitmap)
         return imageData.release();
 
     unsigned char* dst = imageData->data();
-    memset(dst, 0, imageData->data()->data()->length());
+    memset(dst, 0, imageData->length());
     src += (sourceRect.y() * bitmap->width() + sourceRect.x()) * 4;
-    dst += ((sourceRect.y() - rect.y()) * imageData->width() + sourceRect.x() - rect.x()) * 4;
+    dst += ((sourceRect.y() - rect.y()) * rect.width() + sourceRect.x() - rect.x()) * 4;
     int bytesToCopy = sourceRect.width() * 4;
     int srcSkip = (bitmap->width() - sourceRect.width()) * 4;
-    int dstSkip = (imageData->width() - sourceRect.width()) * 4;
-    const unsigned char* dstEnd = dst + sourceRect.height() * imageData->width() * 4;
+    int dstSkip = (rect.width() - sourceRect.width()) * 4;
+    const unsigned char* dstEnd = dst + sourceRect.height() * rect.width() * 4;
     while (dst < dstEnd) {
         const unsigned char* dstRowEnd = dst + bytesToCopy;
         while (dst < dstRowEnd) {
