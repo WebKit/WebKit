@@ -1,5 +1,11 @@
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
+        Another speculative build fix for GTK.
+
+        * GNUmakefile.am:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
         Speculative build fix for GTK.  Update the paths in GNUmakefile to
         include "Source".
 

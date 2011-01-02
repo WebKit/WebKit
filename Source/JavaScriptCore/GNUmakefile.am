@@ -586,16 +586,16 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/unicode/glib/UnicodeGLib.cpp
 endif
 
-JavaScriptCore/Lexer.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
+Source/JavaScriptCore/Lexer.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
 	$(AM_V_GEN)$(PERL) $^ > $@
 
-JavaScriptCore/%.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/%.cpp
+Source/JavaScriptCore/%.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/%.cpp
 	$(AM_V_GEN)$(PERL) $^ -i > $@
 
-JavaScriptCore/RegExpJitTables.h: $(srcdir)/Source/JavaScriptCore/create_regex_tables
+Source/JavaScriptCore/RegExpJitTables.h: $(srcdir)/Source/JavaScriptCore/create_regex_tables
 	$(AM_V_GEN)$(PYTHON) $^ > $@
 
-JavaScriptCore/pcre/chartables.c: $(srcdir)/Source/JavaScriptCore/pcre/dftables
+Source/JavaScriptCore/pcre/chartables.c: $(srcdir)/Source/JavaScriptCore/pcre/dftables
 	$(AM_V_GEN)$(PERL) $^ $@
 
 jsc: $(javascriptcore_built_nosources) Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@$(EXEEXT);
