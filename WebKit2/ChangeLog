@@ -1,5 +1,11 @@
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
+        Speculative build fix for Qt.  Add some more include paths.
+
+        * WebKit2.pro:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Move JavaScriptCore to Source

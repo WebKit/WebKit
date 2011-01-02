@@ -34,7 +34,11 @@ DESTDIR = $$WEBKIT2_DESTDIR
 mac: CONFIG += build_all
 
 INCLUDEPATH = \
-    $$PWD/.. \
+    $$PWD/.. \ # FIXME: Remove this include once we move all the source to Source.
+    $$PWD/../Source \
+    $$INCLUDEPATH
+
+INCLUDEPATH = \
     $$PWD/../Source/JavaScriptCore \
     $$PWD/../Source/JavaScriptCore/assembler \
     $$PWD/../Source/JavaScriptCore/bytecode \
