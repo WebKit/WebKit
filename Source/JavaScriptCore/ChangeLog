@@ -1,3 +1,9 @@
+2011-01-02  Adam Barth  <abarth@webkit.org>
+
+        One more .. missing in the Qt build.
+
+        * jsc.pro:
+
 2011-01-02  Xan Lopez  <xlopez@igalia.com>
 
         Fix GTK+ build.
