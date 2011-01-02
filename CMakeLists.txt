@@ -104,7 +104,7 @@ INCLUDE(WebKitPackaging)
 # -----------------------------------------------------------------------------
 # Add module directories
 # -----------------------------------------------------------------------------
-ADD_SUBDIRECTORY(JavaScriptCore)
+ADD_SUBDIRECTORY(Source/JavaScriptCore)
 ADD_SUBDIRECTORY(WebCore)
 ADD_SUBDIRECTORY(WebKit)
 
