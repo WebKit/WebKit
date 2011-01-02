@@ -68,7 +68,7 @@ private
         JavaScriptCore
         LayoutTests
         PerformanceTests
-        Sources
+        Source
         Tools
         WebCore
         WebKit

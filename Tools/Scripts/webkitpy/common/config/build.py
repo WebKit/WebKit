@@ -57,7 +57,7 @@ def _should_file_trigger_build(target_platform, file):
         ("wince", []),
 
         # Directories that should trigger builds on only some bots.
-        ("Sources/JavaScriptGlue", ["mac"]),
+        ("Source/JavaScriptGlue", ["mac"]),
         ("LayoutTests/platform/mac", ["mac", "win"]),
         ("LayoutTests/platform/mac-snowleopard", ["mac-snowleopard", "win"]),
         ("WebCore/image-decoders", ["chromium"]),

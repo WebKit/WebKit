@@ -10,7 +10,7 @@ cd $srcdir
 
 GTKDOCIZE_FLAGS="--copy"
 LIBTOOLIZE_FLAGS="--force --automake"
-ACLOCAL_FLAGS="-I Sources/autotools $ACLOCAL_FLAGS"
+ACLOCAL_FLAGS="-I Source/autotools $ACLOCAL_FLAGS"
 AUTOMAKE_FLAGS="--foreign --add-missing"
 
 DIE=0
