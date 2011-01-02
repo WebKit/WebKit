@@ -1,3 +1,11 @@
+2011-01-02  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, build fix.
+
+        [Qt] Fix DRT build after 74855
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
         Remove the assumption from the Qt and Gtk builds that every project is

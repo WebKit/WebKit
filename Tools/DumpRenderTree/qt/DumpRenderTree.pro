@@ -6,7 +6,7 @@ BASEDIR = $$PWD/../
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 
 include(../../../WebKit.pri)
-INCLUDEPATH += ../../..
+INCLUDEPATH += ../../../Source
 INCLUDEPATH += ../../../Source/JavaScriptCore
 INCLUDEPATH += ../../../Source/JavaScriptCore/ForwardingHeaders
 INCLUDEPATH += $$BASEDIR
