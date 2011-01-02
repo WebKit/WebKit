@@ -269,7 +269,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     -I$(GENSOURCES) \
 	     -I$(GENSOURCES_WEBKIT) \
 	     -I$(top_builddir)/WebKit/gtk \
-	     -I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
+	     -I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \
 	     $(GENSOURCES_WEBKIT)/webkitenumtypes.h \
 	     $(webkitgtk_h_api) \
@@ -381,7 +381,7 @@ dist_resources_DATA = \
 noinst_PROGRAMS += $(TEST_PROGS)
 webkit_tests_cflags = \
 	-fno-strict-aliasing \
-	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	-I$(WebCore)/platform/network/soup/cache \
 	-I$(WebKit) \
 	-I$(GENSOURCES) \

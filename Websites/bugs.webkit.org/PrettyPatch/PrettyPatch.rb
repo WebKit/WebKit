@@ -65,7 +65,6 @@ private
 
     OPENSOURCE_DIRS = Set.new %w[
         Examples
-        JavaScriptCore
         LayoutTests
         PerformanceTests
         Source

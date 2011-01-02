@@ -125,7 +125,7 @@ if (isAppleMacWebKit() || isAppleWinWebKit()) {
 
 # Find JavaScriptCore directory
 chdirWebKit();
-chdir("JavaScriptCore");
+chdir("Source/JavaScriptCore");
 chdir "tests/mozilla" or die;
 printf "Running: jsDriver.pl -e squirrelfish -s %s -f actual.html %s\n", jscPath($productDir), join(" ", @jsArgs);
 my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs;

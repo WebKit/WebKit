@@ -175,8 +175,8 @@ contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     DEFINES += ENABLE_NO_LISTBOX_RENDERING=1
 }
 
-include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
-!v8: addJavaScriptCoreLib(../JavaScriptCore)
+include($$PWD/../Source/JavaScriptCore/JavaScriptCore.pri)
+!v8: addJavaScriptCoreLib(../Source/JavaScriptCore)
 
 webkit2 {
     include($$PWD/../WebKit2/WebKit2.pri)
@@ -334,8 +334,8 @@ SOURCES += \
     bindings/generic/ActiveDOMCallback.cpp
 
 v8 {
-    include($$PWD/../JavaScriptCore/pcre/pcre.pri)
-    include($$PWD/../JavaScriptCore/wtf/wtf.pri)
+    include($$PWD/../Source/JavaScriptCore/pcre/pcre.pri)
+    include($$PWD/../Source/JavaScriptCore/wtf/wtf.pri)
 
     SOURCES += \
         bindings/generic/BindingSecurityBase.cpp \

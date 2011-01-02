@@ -73,10 +73,10 @@ INCLUDES= \
 	$(global_cppflags) \
 	$(global_cflags) \
 	-I$(top_srcdir) \
-	-I$(top_srcdir)/JavaScriptCore \
-	-I$(top_srcdir)/JavaScriptCore/ForwardingHeaders \
-	-I$(top_srcdir)/JavaScriptCore/parser \
-	-I$(top_srcdir)/JavaScriptCore/wtf \
+	-I$(top_srcdir)/Source/JavaScriptCore \
+	-I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
+	-I$(top_srcdir)/Source/JavaScriptCore/parser \
+	-I$(top_srcdir)/Source/JavaScriptCore/wtf \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_srcdir)/WebCore/platform/network/soup/cache \
 	$(GLOBALDEPS_CFLAGS) \

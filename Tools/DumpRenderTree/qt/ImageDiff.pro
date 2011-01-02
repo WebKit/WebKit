@@ -3,7 +3,7 @@ CONFIG  -= app_bundle
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include(../../../WebKit.pri)
-INCLUDEPATH += ../../../JavaScriptCore
+INCLUDEPATH += ../../../Source/JavaScriptCore
 DESTDIR = $$OUTPUT_DIR/bin
 
 QT = core gui

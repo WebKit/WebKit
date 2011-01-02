@@ -25,7 +25,7 @@
 ##
 
 # lookup tables for old-style JavaScript bindings
-create_hash_table := $(LOCAL_PATH)/../JavaScriptCore/create_hash_table
+create_hash_table := $(LOCAL_PATH)/../Source/JavaScriptCore/create_hash_table
 
 GEN := $(addprefix $(intermediates)/, \
 			bindings/js/JSDOMWindowBase.lut.h \

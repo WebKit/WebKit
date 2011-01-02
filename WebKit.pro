@@ -3,7 +3,7 @@ CONFIG += ordered
 
 include(WebKit.pri)
 
-!v8: SUBDIRS += JavaScriptCore
+!v8: SUBDIRS += Source/JavaScriptCore
 webkit2 {
     SUBDIRS += WebKit2
 }
@@ -14,7 +14,7 @@ exists($$PWD/Tools/QtTestBrowser): SUBDIRS += Tools/QtTestBrowser
 contains(QT_CONFIG, declarative) {
     exists($$PWD/WebKit/qt/declarative): SUBDIRS += WebKit/qt/declarative
 }
-!v8:exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
+!v8:exists($$PWD/Source/JavaScriptCore/jsc.pro): SUBDIRS += Source/JavaScriptCore/jsc.pro
 exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests
 exists($$PWD/Tools/DumpRenderTree/qt/DumpRenderTree.pro): SUBDIRS += Tools/DumpRenderTree/qt/DumpRenderTree.pro
 exists($$PWD/Tools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += Tools/DumpRenderTree/qt/ImageDiff.pro
@@ -25,9 +25,9 @@ exists($$PWD/Tools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += Tools/DumpRender
 
 build-qtscript {
     SUBDIRS += \
-        JavaScriptCore/qt/api/QtScript.pro \
-        JavaScriptCore/qt/tests \
-        JavaScriptCore/qt/benchmarks
+        Source/JavaScriptCore/qt/api/QtScript.pro \
+        Source/JavaScriptCore/qt/tests \
+        Source/JavaScriptCore/qt/benchmarks
 }
 
 webkit2 {

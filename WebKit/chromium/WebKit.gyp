@@ -880,11 +880,11 @@
             'type': 'executable',
             'dependencies': [
                 'webkit',
-                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
-                '../../JavaScriptCore',
+                '../../Source/JavaScriptCore',
                 '<(DEPTH)',
             ],
             'sources': [
@@ -901,7 +901,7 @@
                 'TestNetscapePlugIn',
                 'copy_TestNetscapePlugIn',
                 'webkit',
-                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
+                '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
@@ -910,8 +910,8 @@
             'include_dirs': [
                 '<(chromium_src_dir)',
                 'public',
-                '../../JavaScriptCore',
-                '../../JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
+                '../../Source/JavaScriptCore',
+                '../../Source/JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
                 '<(DEPTH)',
             ],
             'defines': [
@@ -943,7 +943,7 @@
                                 'public',
                             ],
                             'dependencies': [
-                                '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+                                '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                             ],
                         }],
                         ['inside_chromium_build==1', {

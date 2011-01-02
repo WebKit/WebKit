@@ -30,7 +30,7 @@ from settings import *
 webkit_dirs = ['.', 'WebKitSupport']
 include_paths = webkit_dirs + common_includes + ['.', '..',
                 wk_root,
-                os.path.join(wk_root, 'JavaScriptCore'),
+                os.path.join(wk_root, 'Source', 'JavaScriptCore'),
                 os.path.join(wk_root, 'WebCore'),
                 os.path.join(wk_root, 'WebCore', 'bindings', 'wx'),
                 os.path.join(wk_root, 'WebCore', 'DerivedSources'),
@@ -56,9 +56,9 @@ webcore_include_dirs = []
 for dir in webcore_dirs + ['DerivedSources']:
     include_paths.append(os.path.join(wk_root, 'WebCore', dir)) 
 
-js_include_dirs = [os.path.join(wk_root, 'JavaScriptCore', 'assembler')]
+js_include_dirs = [os.path.join(wk_root, 'Source', 'JavaScriptCore', 'assembler')]
 for dir in jscore_dirs:
-    js_include_dirs.append(os.path.join(wk_root, 'JavaScriptCore', dir))
+    js_include_dirs.append(os.path.join(wk_root, 'Source', 'JavaScriptCore', dir))
 
 def set_options(opt):
     common_set_options(opt)

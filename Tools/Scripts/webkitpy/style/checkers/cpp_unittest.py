@@ -2009,7 +2009,7 @@ class CppStyleTest(CppStyleTestBase):
         # Allow the WTF_ prefix for files in that directory.
         header_guard_filter = FilterConfiguration(('-', '+build/header_guard'))
         error_collector = ErrorCollector(self.assert_, header_guard_filter)
-        self.process_file_data('JavaScriptCore/wtf/TestName.h', 'h',
+        self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
                                ['#ifndef WTF_TestName_h', '#define WTF_TestName_h'],
                                error_collector)
         self.assertEquals(0, len(error_collector.result_list()),
@@ -2017,7 +2017,7 @@ class CppStyleTest(CppStyleTestBase):
 
         # Also allow the non WTF_ prefix for files in that directory.
         error_collector = ErrorCollector(self.assert_, header_guard_filter)
-        self.process_file_data('JavaScriptCore/wtf/TestName.h', 'h',
+        self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
                                ['#ifndef TestName_h', '#define TestName_h'],
                                error_collector)
         self.assertEquals(0, len(error_collector.result_list()),
@@ -2025,7 +2025,7 @@ class CppStyleTest(CppStyleTestBase):
 
         # Verify that we suggest the WTF prefix version.
         error_collector = ErrorCollector(self.assert_, header_guard_filter)
-        self.process_file_data('JavaScriptCore/wtf/TestName.h', 'h',
+        self.process_file_data('Source/JavaScriptCore/wtf/TestName.h', 'h',
                                ['#ifndef BAD_TestName_h', '#define BAD_TestName_h'],
                                error_collector)
         self.assertEquals(
@@ -4088,8 +4088,8 @@ class WebKitStyleTest(CppStyleTestBase):
                           'variable_2' + name_underscore_error_message])
 
         # There is an exception for op code functions but only in the JavaScriptCore directory.
-        self.assert_lint('void this_op_code(int var1, int var2)', '', 'JavaScriptCore/foo.cpp')
-        self.assert_lint('void op_code(int var1, int var2)', '', 'JavaScriptCore/foo.cpp')
+        self.assert_lint('void this_op_code(int var1, int var2)', '', 'Source/JavaScriptCore/foo.cpp')
+        self.assert_lint('void op_code(int var1, int var2)', '', 'Source/JavaScriptCore/foo.cpp')
         self.assert_lint('void this_op_code(int var1, int var2)', 'this_op_code' + name_underscore_error_message)
 
         # GObject requires certain magical names in class declarations.

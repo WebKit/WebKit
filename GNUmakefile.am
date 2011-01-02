@@ -204,7 +204,7 @@ EXTRA_DIST += \
 	$(srcdir)/WebKit/LICENSE
 
 # Include module makefiles
-include JavaScriptCore/GNUmakefile.am
+include Source/JavaScriptCore/GNUmakefile.am
 include WebCore/GNUmakefile.am
 if ENABLE_WEBKIT2
 include WebKit2/GNUmakefile.am

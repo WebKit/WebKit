@@ -48,7 +48,7 @@ if sys.platform.startswith('win'):
 else:
     wx_root = commands.getoutput('wx-config --prefix')
 
-jscore_dir = os.path.join(wk_root, 'JavaScriptCore')
+jscore_dir = os.path.join(wk_root, 'Source/JavaScriptCore')
 webcore_dir = os.path.join(wk_root, 'WebCore')
 wklibs_dir = os.path.join(wk_root, 'WebKitLibraries')
 
@@ -179,7 +179,7 @@ def get_config():
 
     return waf_configname
 
-create_hash_table = wk_root + "/JavaScriptCore/create_hash_table"
+create_hash_table = wk_root + "/Source/JavaScriptCore/create_hash_table"
 if building_on_win32:
     create_hash_table = get_output('cygpath --unix "%s"' % create_hash_table)
 os.environ['CREATE_HASH_TABLE'] = create_hash_table

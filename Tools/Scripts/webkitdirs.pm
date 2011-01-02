@@ -85,8 +85,8 @@ sub determineSourceDir
     $sourceDir =~ s|/+$||; # Remove trailing '/' as we would die later
 
     # walks up path checking each directory to see if it is the main WebKit project dir, 
-    # defined by containing JavaScriptCore, WebCore, and WebKit
-    until ((-d "$sourceDir/JavaScriptCore" && -d "$sourceDir/WebCore" && -d "$sourceDir/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
+    # defined by containing Sources, WebCore, and WebKit
+    until ((-d "$sourceDir/Source" && -d "$sourceDir/WebCore" && -d "$sourceDir/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
     {
         if ($sourceDir !~ s|/[^/]+$||) {
             die "Could not find top level webkit directory above source directory using FindBin.\n";
@@ -1554,7 +1554,7 @@ sub buildQMakeProject($@)
     my $dsMakefile = "Makefile.DerivedSources";
 
     # Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
-    my @subdirs = ("JavaScriptCore", "WebCore", "WebKit/qt/Api");
+    my @subdirs = ("Source/JavaScriptCore", "WebCore", "WebKit/qt/Api");
     if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
         push @subdirs, "WebKit2";
         push @subdirs, "Tools/WebKitTestRunner";

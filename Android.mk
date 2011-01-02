@@ -138,10 +138,10 @@ LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebKit/android/stl
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/JavaScriptCore \
-	$(LOCAL_PATH)/JavaScriptCore/wtf \
-	$(LOCAL_PATH)/JavaScriptCore/wtf/unicode \
-	$(LOCAL_PATH)/JavaScriptCore/wtf/unicode/icu
+	$(LOCAL_PATH)/Source/JavaScriptCore \
+	$(LOCAL_PATH)/Source/JavaScriptCore/wtf \
+	$(LOCAL_PATH)/Source/JavaScriptCore/wtf/unicode \
+	$(LOCAL_PATH)/Source/JavaScriptCore/wtf/unicode/icu
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(base_intermediates)/WebCore/ \
@@ -161,7 +161,7 @@ endif
 
 ifeq ($(JAVASCRIPT_ENGINE),v8)
 # Include WTF source file.
-d := JavaScriptCore
+d := Source/JavaScriptCore
 LOCAL_PATH := $(BASE_PATH)/$d
 intermediates := $(base_intermediates)/$d
 include $(LOCAL_PATH)/Android.v8.wtf.mk
@@ -171,7 +171,7 @@ endif  # JAVASCRIPT_ENGINE == v8
 # Include source files for WebCore
 d := WebCore
 LOCAL_PATH := $(BASE_PATH)/$d
-JAVASCRIPTCORE_PATH := $(BASE_PATH)/JavaScriptCore
+JAVASCRIPTCORE_PATH := $(BASE_PATH)/Source/JavaScriptCore
 intermediates := $(base_intermediates)/$d
 include $(LOCAL_PATH)/Android.mk
 ifeq ($(JAVASCRIPT_ENGINE),jsc)
@@ -283,7 +283,7 @@ LOCAL_SHARED_LIBRARIES := $(WEBKIT_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES := $(WEBKIT_STATIC_LIBRARIES)
 LOCAL_CFLAGS := $(WEBKIT_CFLAGS)
 # Include source files for JavaScriptCore
-d := JavaScriptCore
+d := Source/JavaScriptCore
 LOCAL_PATH := $(BASE_PATH)/$d
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
 # Cannot use base_intermediates as this is a new module

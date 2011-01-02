@@ -30,7 +30,7 @@ import Logs
 import Options
 
 include_paths = [
-            os.path.join(wk_root, 'JavaScriptCore'),
+            os.path.join(wk_root, 'Source', 'JavaScriptCore'),
             os.path.join(wk_root, 'WebCore', 'bindings', 'cpp'),
             os.path.join(wk_root, 'WebCore', 'DerivedSources'),
             os.path.join(wk_root, 'WebKit', 'wx'),

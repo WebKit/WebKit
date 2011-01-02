@@ -26,7 +26,7 @@
   Background
 </h2>
 <p>
-  WebKit provides a number of macros to assert that conditions in the code are met. They are defined in <a href="http://trac.webkit.org/browser/trunk/JavaScriptCore/wtf/Assertions.h">JavaScriptCore/wtf/Assertions.h</a>. This document provides an overview of the various macros, including guidelines and best practices for their use.
+  WebKit provides a number of macros to assert that conditions in the code are met. They are defined in <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/wtf/Assertions.h">Source/JavaScriptCore/wtf/Assertions.h</a>. This document provides an overview of the various macros, including guidelines and best practices for their use.
 </p>
 <h2>
   Types of ASSERT macros
@@ -48,7 +48,7 @@ if (condition) {
 </pre>
   </li>
   <li>ASSERT_UNUSED(variable, expression) - for assertions that check the value of otherwise unused variable. The need for this becomes apparent if you consider the case where you want to assert an expression that uses a variable that wouldn't otherwise be used in the enclosing function. ASSERT() can't be used in this case because in a release build the compiler would warn about the unused variable. ASSERT_UNUSED() avoids this warning. <br>
-Example from <a href="http://trac.webkit.org/browser/trunk/JavaScriptCore/jit/ExecutableAllocatorPosix.cpp">JavaScriptCore/jit/ExecutableAllocatorPosix.cpp</a> :
+Example from <a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/jit/ExecutableAllocatorPosix.cpp">Source/JavaScriptCore/jit/ExecutableAllocatorPosix.cpp</a> :
     <pre class="code">
 void ExecutablePool::systemRelease(const ExecutablePool::Allocation&amp; alloc)
 { 

@@ -35,23 +35,23 @@ mac: CONFIG += build_all
 
 INCLUDEPATH = \
     $$PWD/.. \
-    $$PWD/../JavaScriptCore \
-    $$PWD/../JavaScriptCore/assembler \
-    $$PWD/../JavaScriptCore/bytecode \
-    $$PWD/../JavaScriptCore/bytecompiler \
-    $$PWD/../JavaScriptCore/debugger \
-    $$PWD/../JavaScriptCore/interpreter \
-    $$PWD/../JavaScriptCore/jit \
-    $$PWD/../JavaScriptCore/parser \
-    $$PWD/../JavaScriptCore/pcre \
-    $$PWD/../JavaScriptCore/profiler \
-    $$PWD/../JavaScriptCore/runtime \
-    $$PWD/../JavaScriptCore/wtf \
-    $$PWD/../JavaScriptCore/wtf/symbian \
-    $$PWD/../JavaScriptCore/wtf/unicode \
-    $$PWD/../JavaScriptCore/yarr \
-    $$PWD/../JavaScriptCore/API \
-    $$PWD/../JavaScriptCore/ForwardingHeaders \
+    $$PWD/../Source/JavaScriptCore \
+    $$PWD/../Source/JavaScriptCore/assembler \
+    $$PWD/../Source/JavaScriptCore/bytecode \
+    $$PWD/../Source/JavaScriptCore/bytecompiler \
+    $$PWD/../Source/JavaScriptCore/debugger \
+    $$PWD/../Source/JavaScriptCore/interpreter \
+    $$PWD/../Source/JavaScriptCore/jit \
+    $$PWD/../Source/JavaScriptCore/parser \
+    $$PWD/../Source/JavaScriptCore/pcre \
+    $$PWD/../Source/JavaScriptCore/profiler \
+    $$PWD/../Source/JavaScriptCore/runtime \
+    $$PWD/../Source/JavaScriptCore/wtf \
+    $$PWD/../Source/JavaScriptCore/wtf/symbian \
+    $$PWD/../Source/JavaScriptCore/wtf/unicode \
+    $$PWD/../Source/JavaScriptCore/yarr \
+    $$PWD/../Source/JavaScriptCore/API \
+    $$PWD/../Source/JavaScriptCore/ForwardingHeaders \
     $$INCLUDEPATH
 
 INCLUDEPATH = \

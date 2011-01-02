@@ -18,7 +18,7 @@ mac {
     debug_and_release:TARGET = $$qtLibraryTarget($$TARGET)
 }
 
-INCLUDEPATH += ../../../../JavaScriptCore \
+INCLUDEPATH += ../../../../Source/JavaScriptCore \
                ../../unix/TestNetscapePlugin/ForwardingHeaders \
                ../../unix/TestNetscapePlugin/ForwardingHeaders/WebKit \
                ../../../../WebCore \

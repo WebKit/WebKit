@@ -61,7 +61,7 @@ chdirWebKit();
 my @options = XcodeOptions();
 my @coverageSupportOptions = ($coverageSupport) ? XcodeCoverageSupportOptions() : ();
 
-chdir "JavaScriptCore" or die "Can't find JavaScriptCore directory to build from";
+chdir "Source/JavaScriptCore" or die "Can't find JavaScriptCore directory to build from";
 my $result;
 if (isAppleMacWebKit()) {
     $result = system "sh", "-c", 'xcodebuild -project JavaScriptCore.xcodeproj "$@" | grep -v setenv && exit ${PIPESTATUS[0]}', "xcodebuild",  @options, @ARGV, @coverageSupportOptions;

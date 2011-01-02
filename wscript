@@ -33,8 +33,8 @@ if build_port == "wx":
     webcore_dirs.extend(['WebKit/wx', 'WebKit/wx/WebKitSupport'])
 
 wk_includes = ['.', 'WebCore', 'WebCore/DerivedSources',
-                os.path.join(wk_root, 'JavaScriptCore'),
-                os.path.join(wk_root, 'JavaScriptCore', 'wtf', 'text'),
+                os.path.join(wk_root, 'Source', 'JavaScriptCore'),
+                os.path.join(wk_root, 'Source', 'JavaScriptCore', 'wtf', 'text'),
                 os.path.join(wk_root, 'WebCore'),
                 os.path.join(output_dir),
                 'WebCore/platform/image-decoders',
@@ -192,6 +192,7 @@ def build(bld):
     import TaskGen
     global wk_includes
 
+    # FIXME: Does this need to be Source/JavaScriptCore?
     bld.add_subdirs('JavaScriptCore')
 
     if sys.platform.startswith('darwin'):
@@ -214,7 +215,7 @@ def build(bld):
 
     full_dirs = get_dirs_for_features(wk_root, features=features, dirs=webcore_dirs)
 
-    jscore_dir = os.path.join(wk_root, 'JavaScriptCore')
+    jscore_dir = os.path.join(wk_root, 'Source', 'JavaScriptCore')
     for item in os.listdir(jscore_dir):
         fullpath = os.path.join(jscore_dir, item)
         if os.path.isdir(fullpath) and not item == "os-win32" and not item == 'icu':

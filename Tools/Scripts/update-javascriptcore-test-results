@@ -33,7 +33,7 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 chdirWebKit();
-chdir "JavaScriptCore/tests/mozilla" or die;
+chdir "Source/JavaScriptCore/tests/mozilla" or die;
 
 my $force = 0;
 GetOptions('force' => \$force);

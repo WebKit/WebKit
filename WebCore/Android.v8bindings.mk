@@ -33,7 +33,7 @@ BINDING_C_INCLUDES := \
 	$(LOCAL_PATH)/bridge \
 	\
 	$(base_intermediates)/WebCore/bindings \
-	$(base_intermediates)/JavaScriptCore
+	$(base_intermediates)/Source/JavaScriptCore
 
 LOCAL_SRC_FILES += \
 	bindings/ScriptControllerBase.cpp \

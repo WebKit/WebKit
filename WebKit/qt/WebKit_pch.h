@@ -39,7 +39,7 @@
 #include <windows.h>
 #endif
 
-#include "../../JavaScriptCore/config.h"
+#include "../../Source/JavaScriptCore/config.h"
 
 #include <math.h>
 #include <stdio.h>

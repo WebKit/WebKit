@@ -134,7 +134,7 @@ _PATH_RULES_SPECIFIER = [
       "WebCore/css/CSSParser.cpp",
       # Qt code uses '_' in some places (such as private slots
       # and on test xxx_data methos on tests)
-      "JavaScriptCore/qt/",
+      "Source/JavaScriptCore/qt/",
       "WebKit/qt/Api/",
       "WebKit/qt/tests/",
       "WebKit/qt/declarative/",
@@ -154,7 +154,7 @@ _PATH_RULES_SPECIFIER = [
      ["-build/header_guard"]),
     ([# assembler has lots of opcodes that use underscores, so
       # we don't check for underscores in that directory.
-      "/JavaScriptCore/assembler/"],
+      "/Source/JavaScriptCore/assembler/"],
      ["-readability/naming"]),
     ([# JITStubs has an usual syntax which causes false alarms for a few checks.
       "JavaScriptCore/jit/JITStubs.cpp"],

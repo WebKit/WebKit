@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-        JavaScriptCore/DerivedSources.pro \
+        Source/JavaScriptCore/DerivedSources.pro \
         WebCore/DerivedSources.pro \
         WebKit/qt/Api/DerivedSources.pro
 

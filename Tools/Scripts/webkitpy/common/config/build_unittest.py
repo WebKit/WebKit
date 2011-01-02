@@ -29,7 +29,7 @@ class ShouldBuildTest(unittest.TestCase):
     _should_build_tests = [
         (["Websites/bugs.webkit.org/foo", "WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
-        (["JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-snowleopard"]),
+        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-snowleopard"]),
         (["Source/JavaScriptGlue/foo", "WebCore/bar"], ["*"]),
         (["Source/JavaScriptGlue/foo"], ["mac-leopard", "mac-snowleopard"]),
         (["LayoutTests/foo"], ["*"]),

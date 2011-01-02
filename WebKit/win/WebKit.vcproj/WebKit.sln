@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\JavaScriptCore\JavaScriptCore.vcproj", "{011D10F1-B656-4A1B-A0C3-3842F02122C5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "..\..\..\Source\JavaScriptCore\JavaScriptCore.vcproj\JavaScriptCore\JavaScriptCore.vcproj", "{011D10F1-B656-4A1B-A0C3-3842F02122C5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AA8A5A85-592B-4357-BC60-E0E91E026AF6} = {AA8A5A85-592B-4357-BC60-E0E91E026AF6}
 	EndProjectSection
@@ -11,19 +11,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCore", "..\..\..\WebCore
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325} = {E498CA9D-3BD2-4D52-8E37-C8DC76526325}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\WTF\WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "..\..\..\Source\JavaScriptCore\JavaScriptCore.vcproj\WTF\WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A} = {4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsc", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\jsc\jsc.vcproj", "{C59E5129-B453-49B7-A52B-1E104715F76E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsc", "..\..\..\Source\JavaScriptCore\JavaScriptCore.vcproj\jsc\jsc.vcproj", "{C59E5129-B453-49B7-A52B-1E104715F76E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2} = {1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JavaScriptCore Folder", "JavaScriptCore Folder", "{557FA164-0E39-4DEC-B66C-8795C8E52399}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\JavaScriptCore\JavaScriptCoreGenerated.vcproj", "{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "..\..\..\Source\JavaScriptCore\JavaScriptCore.vcproj\JavaScriptCore\JavaScriptCoreGenerated.vcproj", "{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebCore Folder", "WebCore Folder", "{63FB6F8A-C601-43E3-BD16-A00A465C2CB6}"
 EndProject
@@ -37,7 +37,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QTMovieWin", "..\..\..\WebC
 		{0A324352-B3B6-496C-9E5B-4C7E923E628B} = {0A324352-B3B6-496C-9E5B-4C7E923E628B}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "..\..\..\JavaScriptCore\JavaScriptCore.vcproj\testapi\testapi.vcproj", "{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "..\..\..\Source\JavaScriptCore\JavaScriptCore.vcproj\testapi\testapi.vcproj", "{1AFD081F-1AC7-4A97-8EFA-6DF97761A3A2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DA31DA52-6675-48D4-89E0-333A7144397C} = {DA31DA52-6675-48D4-89E0-333A7144397C}
 	EndProjectSection
