@@ -1,3 +1,9 @@
+2011-01-02  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Unreviewed build fix.
+
+        * CMakeLists.txt:
+
 2011-01-02  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Simon Fraser.
