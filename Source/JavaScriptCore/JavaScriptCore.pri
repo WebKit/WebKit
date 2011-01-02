@@ -1,6 +1,6 @@
 # JavaScriptCore - Qt4 build info
 
-include(../common.pri)
+include(../../common.pri)
 
 VPATH += $$PWD
 
@@ -31,6 +31,7 @@ symbian: {
 INCLUDEPATH = \
     $$PWD \
     $$PWD/.. \
+    $$PWD/../.. \ # FIXME: Remove this include once we finish moving the source to Source
     $$PWD/assembler \
     $$PWD/bytecode \
     $$PWD/bytecompiler \

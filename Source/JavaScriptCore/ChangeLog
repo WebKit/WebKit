@@ -1,5 +1,12 @@
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
+        Fix relative include paths in an attempt to fix the Qt build.
+
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
         Another speculative build fix for GTK.
 
         * GNUmakefile.am:
