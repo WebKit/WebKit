@@ -1,4 +1,5 @@
 javascriptcore_cppflags += \
+	-I$(srcdir)/Source \
 	-I$(srcdir)/Source/JavaScriptCore \
 	-I$(srcdir)/Source/JavaScriptCore/API \
 	-I$(srcdir)/Source/JavaScriptCore/assembler \

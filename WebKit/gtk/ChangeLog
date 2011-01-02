@@ -1,3 +1,11 @@
+2011-01-02  Xan Lopez  <xlopez@igalia.com>
+
+        Fix GTK+ build.
+
+        * GNUmakefile.am: remove individual -I$(srcdir)/Source when we'll
+        already get them from javascriptcore_cppflags, and add it for the
+        introspection build (which is not tested in the bots).
+
 2011-01-02  Adam Barth  <abarth@webkit.org>
 
         Speculative build fix for GTK.  Add Source to the include paths.

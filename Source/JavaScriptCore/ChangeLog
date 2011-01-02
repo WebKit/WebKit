@@ -1,3 +1,11 @@
+2011-01-02  Xan Lopez  <xlopez@igalia.com>
+
+        Fix GTK+ build.
+
+        * GNUmakefile.am: add -I$(srcdir)/Source to the JSC cppflags so
+        that anyone can include its headers without adding the prefix
+        'Source/'.
+
 2011-01-02  Carl Lobo  <carllobo@gmail.com>
 
         Reviewed by Adam Barth.
