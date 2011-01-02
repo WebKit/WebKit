@@ -1,3 +1,20 @@
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        forbid sandboxed frames to call top.close() when allow-same-origin is not setted
+        https://bugs.webkit.org/show_bug.cgi?id=38340
+
+        Test the interaction between the HTML5 sandbox and window.close.
+
+        * fast/frames/resources/close-top.html: Added.
+        * fast/frames/resources/sandboxed-iframe-close-top-does-close.html: Added.
+        * fast/frames/resources/sandboxed-iframe-close-top-does-not-close.html: Added.
+        * fast/frames/sandboxed-iframe-close-top-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-close-top-noclose-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-close-top-noclose.html: Added.
+        * fast/frames/sandboxed-iframe-close-top.html: Added.
+
 2011-01-01  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Eric Seidel.

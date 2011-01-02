@@ -860,7 +860,7 @@ void DOMWindow::blur()
     page->chrome()->unfocus();
 }
 
-void DOMWindow::close()
+void DOMWindow::close(ScriptExecutionContext* context)
 {
     if (!m_frame)
         return;
@@ -871,6 +871,16 @@ void DOMWindow::close()
 
     if (m_frame != page->mainFrame())
         return;
+
+    if (context) {
+        ASSERT(WTF::isMainThread());
+        Frame* activeFrame = static_cast<Document*>(context)->frame();
+        if (!activeFrame)
+            return;
+
+        if (!activeFrame->loader()->shouldAllowNavigation(m_frame))
+            return;
+    }
 
     Settings* settings = m_frame->settings();
     bool allowScriptsToCloseWindows = settings && settings->allowScriptsToCloseWindows();
