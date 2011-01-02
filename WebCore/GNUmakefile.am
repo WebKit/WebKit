@@ -678,8 +678,6 @@ webcore_sources += \
 	WebCore/accessibility/AXObjectCache.h \
 	WebCore/bindings/generic/ActiveDOMCallback.cpp \
 	WebCore/bindings/generic/ActiveDOMCallback.h \
-	WebCore/bindings/generic/BindingFrame.h \
-	WebCore/bindings/generic/BindingLocation.h \
 	WebCore/bindings/generic/BindingSecurityBase.cpp \
 	WebCore/bindings/generic/BindingSecurityBase.h \
 	WebCore/bindings/generic/BindingSecurity.h \

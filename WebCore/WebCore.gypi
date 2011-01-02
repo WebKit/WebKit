@@ -548,8 +548,6 @@
             'accessibility/wx/AccessibilityObjectWx.cpp',
             'bindings/generic/ActiveDOMCallback.cpp',
             'bindings/generic/ActiveDOMCallback.h',
-            'bindings/generic/BindingFrame.h',
-            'bindings/generic/BindingLocation.h',
             'bindings/generic/BindingSecurity.h',
             'bindings/generic/BindingSecurityBase.cpp',
             'bindings/generic/BindingSecurityBase.h',

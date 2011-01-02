@@ -55417,14 +55417,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\generic\BindingFrame.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\generic\BindingLocation.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\generic\BindingSecurity.h"
 					>
 				</File>

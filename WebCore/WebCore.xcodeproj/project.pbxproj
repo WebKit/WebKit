@@ -3090,7 +3090,6 @@
 		A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = A59E3C1D11580F510072928E /* KeyEventIPhone.mm */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
-		A622A8FA122C44A600A785B3 /* BindingLocation.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F4122C44A600A785B3 /* BindingLocation.h */; };
 		A622A8FB122C44A600A785B3 /* BindingSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F5122C44A600A785B3 /* BindingSecurity.h */; };
 		A622A8FC122C44A600A785B3 /* BindingSecurityBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */; };
 		A622A8FD122C44A600A785B3 /* BindingSecurityBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */; };
@@ -9419,7 +9418,6 @@
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCocoa.h; path = cocoa/KeyEventCocoa.h; sourceTree = "<group>"; };
 		A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventCocoa.mm; path = cocoa/KeyEventCocoa.mm; sourceTree = "<group>"; };
-		A622A8F4122C44A600A785B3 /* BindingLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingLocation.h; path = generic/BindingLocation.h; sourceTree = "<group>"; };
 		A622A8F5122C44A600A785B3 /* BindingSecurity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurity.h; path = generic/BindingSecurity.h; sourceTree = "<group>"; };
 		A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BindingSecurityBase.cpp; path = generic/BindingSecurityBase.cpp; sourceTree = "<group>"; };
 		A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurityBase.h; path = generic/BindingSecurityBase.h; sourceTree = "<group>"; };
@@ -17393,7 +17391,6 @@
 			children = (
 				B5D31DF811CF610B009F22B4 /* ActiveDOMCallback.cpp */,
 				B5D31DF911CF610B009F22B4 /* ActiveDOMCallback.h */,
-				A622A8F4122C44A600A785B3 /* BindingLocation.h */,
 				A622A8F5122C44A600A785B3 /* BindingSecurity.h */,
 				A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */,
 				A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */,
@@ -19338,7 +19335,6 @@
 				B2C3DA250D006C1D00EF6F26 /* BidiResolver.h in Headers */,
 				BCE789861120E7A60060ECE5 /* BidiRun.h in Headers */,
 				938192050F87E1EC00D5352A /* BinaryPropertyList.h in Headers */,
-				A622A8FA122C44A600A785B3 /* BindingLocation.h in Headers */,
 				A622A8FB122C44A600A785B3 /* BindingSecurity.h in Headers */,
 				A622A8FD122C44A600A785B3 /* BindingSecurityBase.h in Headers */,
 				FD31608D12B026F700C1A359 /* Biquad.h in Headers */,
