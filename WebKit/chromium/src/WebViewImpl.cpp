@@ -69,7 +69,6 @@
 #include "HTMLNames.h"
 #include "Image.h"
 #include "ImageBuffer.h"
-#include "ImageData.h"
 #include "InspectorController.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
@@ -120,6 +119,7 @@
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebViewClient.h"
+#include <wtf/ByteArray.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(CG)
@@ -1020,10 +1020,10 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     IntRect invertRect(rect.x(), bitmapHeight - rect.bottom(), rect.width(), rect.height());
 
     OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
-    RefPtr<ImageData> imageData(ImageData::create(rect.width(), rect.height()));
-    if (imageBuffer.get() && imageData.get()) {
-        m_layerRenderer->getFramebufferPixels(imageData->data()->data()->data(), invertRect);
-        imageBuffer->putPremultipliedImageData(imageData.get(), IntRect(IntPoint(), rect.size()), IntPoint());
+    RefPtr<ByteArray> pixelArray(ByteArray::create(rect.width() * rect.height() * 4));
+    if (imageBuffer.get() && pixelArray.get()) {
+        m_layerRenderer->getFramebufferPixels(pixelArray->data(), invertRect);
+        imageBuffer->putPremultipliedImageData(pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
         gc.save();
         gc.translate(FloatSize(0.0f, bitmapHeight));
         gc.scale(FloatSize(1.0f, -1.0f));

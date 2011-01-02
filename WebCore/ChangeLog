@@ -1,3 +1,109 @@
+2011-01-02  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Clarify ImageBuffer and ImageData relationship
+        https://bugs.webkit.org/show_bug.cgi?id=51297
+
+        Remove references to ImageData and CanvasPixelArray from ImageBuffer and SVG filter/masker code,
+        since this was a layering violation, and replaced it by ByteArray.
+
+        No change of functionality, so no new test added.
+
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create):
+        (WebCore::ImageData::ImageData):
+        * html/ImageData.h: Added new constructor with ByteArray input.
+        (WebCore::ImageData::width):
+        (WebCore::ImageData::height):
+        (WebCore::ImageData::data):
+        * html/canvas/CanvasPixelArray.cpp:
+        (WebCore::CanvasPixelArray::create):
+        (WebCore::CanvasPixelArray::CanvasPixelArray):
+        * html/canvas/CanvasPixelArray.h: New conctructor with ByteArray input, used by HTML Canvas.
+        (WebCore::CanvasPixelArray::data):
+        (WebCore::CanvasPixelArray::length):
+        (WebCore::CanvasPixelArray::set):
+        (WebCore::CanvasPixelArray::get):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::apply):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::apply):
+        * platform/graphics/filters/FEComposite.cpp:
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::setDestinationPixels):
+        (WebCore::FEConvolveMatrix::apply):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::apply):
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::apply):
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::apply):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::apply):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::asImageBuffer):
+        (WebCore::FilterEffect::asUnmultipliedImage):
+        (WebCore::FilterEffect::asPremultipliedImage):
+        (WebCore::FilterEffect::copyImageBytes):
+        (WebCore::FilterEffect::copyUnmultipliedImage):
+        (WebCore::FilterEffect::copyPremultipliedImage):
+        (WebCore::FilterEffect::createUnmultipliedImageResult):
+        (WebCore::FilterEffect::createPremultipliedImageResult):
+        * platform/graphics/filters/FilterEffect.h:
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

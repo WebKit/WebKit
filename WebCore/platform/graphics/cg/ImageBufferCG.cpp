@@ -32,7 +32,6 @@
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCG.h"
-#include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
@@ -253,13 +252,13 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 }
 
 template <Multiply multiplied>
-PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
+PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
 {
-    PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
-    unsigned char* data = result->data()->data()->data();
+    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
+    unsigned char* data = result->data();
 
-    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
-        memset(data, 0, result->data()->length());
+    if (rect.x() < 0 || rect.y() < 0 || rect.right() > size.width() || rect.bottom() > size.height())
+        memset(data, 0, result->length());
 
     int originx = rect.x();
     int destx = 0;
@@ -267,7 +266,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
         destx = -originx;
         originx = 0;
     }
-    int endx = rect.x() + rect.width();
+    int endx = rect.right();
     if (endx > size.width())
         endx = size.width();
     int numColumns = endx - originx;
@@ -278,7 +277,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
         desty = -originy;
         originy = 0;
     }
-    int endy = rect.y() + rect.height();
+    int endy = rect.bottom();
     if (endy > size.height())
         endy = size.height();
     int numRows = endy - originy;
@@ -340,17 +339,17 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
 #endif
     }
     
-    return result;
+    return result.release();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
     return getImageData<Unmultiplied>(rect, m_data, m_size, m_accelerateRendering);
 }
 
-PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
@@ -358,7 +357,7 @@ PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect
 }
 
 template <Multiply multiplied>
-void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
+void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -386,8 +385,8 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     ASSERT(endy <= size.height());
     int numRows = endy - desty;
 
-    unsigned srcBytesPerRow = 4 * source->width();
-    unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
+    unsigned srcBytesPerRow = 4 * sourceSize.width();
+    unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
     unsigned destBytesPerRow;
     unsigned char* destRows;
 
@@ -442,18 +441,18 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     }
 }
 
-void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
-    putImageData<Unmultiplied>(source, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
+    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
 }
 
-void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
-    putImageData<Premultiplied>(source, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
+    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
 }
 
 static inline CFStringRef jpegUTI()

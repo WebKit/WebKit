@@ -52,10 +52,10 @@ public:
 
     bool hasResult() const { return m_imageBufferResult || m_unmultipliedImageResult || m_premultipliedImageResult; }
     ImageBuffer* asImageBuffer();
-    PassRefPtr<ImageData> asUnmultipliedImage(const IntRect&);
-    PassRefPtr<ImageData> asPremultipliedImage(const IntRect&);
-    void copyUnmultipliedImage(ImageData* destination, const IntRect&);
-    void copyPremultipliedImage(ImageData* destination, const IntRect&);
+    PassRefPtr<ByteArray> asUnmultipliedImage(const IntRect&);
+    PassRefPtr<ByteArray> asPremultipliedImage(const IntRect&);
+    void copyUnmultipliedImage(ByteArray* destination, const IntRect&);
+    void copyPremultipliedImage(ByteArray* destination, const IntRect&);
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
@@ -110,13 +110,13 @@ protected:
     FilterEffect(Filter*);
 
     ImageBuffer* createImageBufferResult();
-    ImageData* createUnmultipliedImageResult();
-    ImageData* createPremultipliedImageResult();
+    ByteArray* createUnmultipliedImageResult();
+    ByteArray* createPremultipliedImageResult();
 
 private:
     OwnPtr<ImageBuffer> m_imageBufferResult;
-    RefPtr<ImageData> m_unmultipliedImageResult;
-    RefPtr<ImageData> m_premultipliedImageResult;
+    RefPtr<ByteArray> m_unmultipliedImageResult;
+    RefPtr<ByteArray> m_premultipliedImageResult;
     FilterEffectVector m_inputEffects;
 
     bool m_alphaImage;
@@ -129,7 +129,7 @@ private:
     Filter* m_filter;
 
 private:
-    inline void copyImageBytes(ImageData* source, ImageData* destination, const IntRect&);
+    inline void copyImageBytes(ByteArray* source, ByteArray* destination, const IntRect&);
 
     // The following member variables are SVG specific and will move to RenderSVGResourceFilterPrimitive.
     // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.

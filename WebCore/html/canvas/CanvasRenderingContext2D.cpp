@@ -1587,7 +1587,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
     ImageBuffer* buffer = canvas()->buffer();
     if (!buffer)
         return createEmptyImageData(scaledRect.size());
-    return buffer->getUnmultipliedImageData(scaledRect);
+    return ImageData::create(scaledRect.width(), scaledRect.height(), buffer->getUnmultipliedImageData(scaledRect));
 }
 
 void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, ExceptionCode& ec)
@@ -1636,7 +1636,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     IntRect sourceRect(destRect);
     sourceRect.move(-destOffset);
 
-    buffer->putUnmultipliedImageData(data, sourceRect, IntPoint(destOffset));
+    buffer->putUnmultipliedImageData(data->data()->data(), IntSize(data->width(), data->height()), sourceRect, IntPoint(destOffset));
     didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }
 

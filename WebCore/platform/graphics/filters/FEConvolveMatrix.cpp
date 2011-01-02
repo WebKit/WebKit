@@ -26,9 +26,9 @@
 #if ENABLE(FILTERS)
 #include "FEConvolveMatrix.h"
 
-#include "CanvasPixelArray.h"
 #include "Filter.h"
-#include "ImageData.h"
+
+#include <wtf/ByteArray.h>
 
 namespace WebCore {
 
@@ -202,7 +202,7 @@ static ALWAYS_INLINE unsigned char clampRGBAValue(float channel, unsigned char m
 }
 
 template<bool preserveAlphaValues>
-ALWAYS_INLINE void setDestinationPixels(CanvasPixelArray* image, int& pixel, float* totals, float divisor, float bias, CanvasPixelArray* src)
+ALWAYS_INLINE void setDestinationPixels(ByteArray* image, int& pixel, float* totals, float divisor, float bias, ByteArray* src)
 {
     unsigned char maxAlpha = preserveAlphaValues ? 255 : clampRGBAValue(totals[3] / divisor + bias);
     for (int i = 0; i < 3; ++i)
@@ -379,7 +379,7 @@ void FEConvolveMatrix::apply()
     if (!in->hasResult())
         return;
 
-    ImageData* resultImage;
+    ByteArray* resultImage;
     if (m_preserveAlpha)
         resultImage = createUnmultipliedImageResult();
     else
@@ -389,16 +389,16 @@ void FEConvolveMatrix::apply()
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
 
-    RefPtr<CanvasPixelArray> srcPixelArray;
+    RefPtr<ByteArray> srcPixelArray;
     if (m_preserveAlpha)
-        srcPixelArray = in->asUnmultipliedImage(effectDrawingRect)->data();
+        srcPixelArray = in->asUnmultipliedImage(effectDrawingRect);
     else
-        srcPixelArray = in->asPremultipliedImage(effectDrawingRect)->data();
+        srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
 
     IntSize paintSize = absolutePaintRect().size();
     PaintingData paintingData;
     paintingData.srcPixelArray = srcPixelArray.get();
-    paintingData.dstPixelArray = resultImage->data();
+    paintingData.dstPixelArray = resultImage;
     paintingData.width = paintSize.width();
     paintingData.height = paintSize.height();
     paintingData.bias = m_bias * 255;

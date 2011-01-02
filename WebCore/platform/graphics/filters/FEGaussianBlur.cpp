@@ -29,8 +29,8 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
 
+#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
 
 using std::max;
@@ -171,14 +171,14 @@ void FEGaussianBlur::apply()
     if (!in->hasResult())
         return;
 
-    ImageData* resultImage = createPremultipliedImageResult();
-    if (!resultImage)
+    ByteArray* srcPixelArray = createPremultipliedImageResult();
+    if (!srcPixelArray)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyPremultipliedImage(resultImage, effectDrawingRect);
+    in->copyPremultipliedImage(srcPixelArray, effectDrawingRect);
 
     if (!m_stdX && !m_stdY)
         return;
@@ -188,9 +188,8 @@ void FEGaussianBlur::apply()
     calculateKernelSize(filter(), kernelSizeX, kernelSizeY, m_stdX, m_stdY);
 
     IntSize paintSize = absolutePaintRect().size();
-    ByteArray* srcPixelArray = resultImage->data()->data();
-    RefPtr<ImageData> tmpImageData = ImageData::create(paintSize.width(), paintSize.height());
-    ByteArray* tmpPixelArray = tmpImageData->data()->data();
+    RefPtr<ByteArray> tmpImageData = ByteArray::create(paintSize.width() * paintSize.height() * 4);
+    ByteArray* tmpPixelArray = tmpImageData.get();
 
     int stride = 4 * paintSize.width();
     int dxLeft = 0;

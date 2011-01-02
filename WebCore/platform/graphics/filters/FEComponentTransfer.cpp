@@ -28,8 +28,8 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
 
+#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -156,8 +156,8 @@ void FEComponentTransfer::apply()
     if (!in->hasResult())
         return;
 
-    ImageData* imageData = createUnmultipliedImageResult();
-    if (!imageData)
+    ByteArray* pixelArray = createUnmultipliedImageResult();
+    if (!pixelArray)
         return;
 
     unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
@@ -171,8 +171,7 @@ void FEComponentTransfer::apply()
         (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
 
     IntRect drawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyUnmultipliedImage(imageData, drawingRect);
-    ByteArray* pixelArray = imageData->data()->data();
+    in->copyUnmultipliedImage(pixelArray, drawingRect);
 
     unsigned pixelArrayLength = pixelArray->length();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {

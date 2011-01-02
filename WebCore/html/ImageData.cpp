@@ -36,10 +36,22 @@ PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height)
     return adoptRef(new ImageData(width, height));
 }
 
+PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height, PassRefPtr<ByteArray> byteArray)
+{
+    return adoptRef(new ImageData(width, height, byteArray));
+}
+
 ImageData::ImageData(unsigned width, unsigned height)
     : m_width(width)
     , m_height(height)
     , m_data(CanvasPixelArray::create(width * height * 4))
+{
+}
+
+ImageData::ImageData(unsigned width, unsigned height, PassRefPtr<ByteArray> byteArray)
+    : m_width(width)
+    , m_height(height)
+    , m_data(CanvasPixelArray::create(byteArray))
 {
 }
 

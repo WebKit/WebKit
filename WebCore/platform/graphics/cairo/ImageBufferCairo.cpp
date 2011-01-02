@@ -151,16 +151,16 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 }
 
 template <Multiply multiplied>
-PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
+PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
 {
     ASSERT(cairo_surface_get_type(data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 
-    PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
+    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
     unsigned char* dataSrc = cairo_image_surface_get_data(data.m_surface);
-    unsigned char* dataDst = result->data()->data()->data();
+    unsigned char* dataDst = result->data();
 
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
-        memset(dataDst, 0, result->data()->length());
+        memset(dataDst, 0, result->length());
 
     int originx = rect.x();
     int destx = 0;
@@ -168,7 +168,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& d
         destx = -originx;
         originx = 0;
     }
-    int endx = rect.x() + rect.width();
+    int endx = rect.right();
     if (endx > size.width())
         endx = size.width();
     int numColumns = endx - originx;
@@ -179,7 +179,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& d
         desty = -originy;
         originy = 0;
     }
-    int endy = rect.y() + rect.height();
+    int endy = rect.bottom();
     if (endy > size.height())
         endy = size.height();
     int numRows = endy - originy;
@@ -206,21 +206,21 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& d
         destRows += destBytesPerRow;
     }
 
-    return result;
+    return result.release();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
     return getImageData<Unmultiplied>(rect, m_data, m_size);
 }
 
-PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
 
 template <Multiply multiplied>
-void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& data, const IntSize& size)
+void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& data, const IntSize& size)
 {
     ASSERT(cairo_surface_get_type(data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
 
@@ -252,10 +252,10 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     ASSERT(endy <= size.height());
     int numRows = endy - desty;
 
-    unsigned srcBytesPerRow = 4 * source->width();
+    unsigned srcBytesPerRow = 4 * sourceSize.width();
     int stride = cairo_image_surface_get_stride(data.m_surface);
 
-    unsigned char* srcRows = source->data()->data()->data() + originy * srcBytesPerRow + originx * 4;
+    unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
         unsigned* row = reinterpret_cast<unsigned*>(dataDst + stride * (y + desty));
         for (int x = 0; x < numColumns; x++) {
@@ -277,14 +277,14 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
                                         numColumns, numRows);
 }
 
-void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Unmultiplied>(source, sourceRect, destPoint, m_data, m_size);
+    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
 }
 
-void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Premultiplied>(source, sourceRect, destPoint, m_data, m_size);
+    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
 }
 
 #if !PLATFORM(GTK)

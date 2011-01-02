@@ -31,14 +31,24 @@
 
 namespace WebCore {
     
-    PassRefPtr<CanvasPixelArray> CanvasPixelArray::create(unsigned length)
-    {
-        return adoptRef(new CanvasPixelArray(length));
-    }
-    
-    CanvasPixelArray::CanvasPixelArray(unsigned length)
-        : m_data(WTF::ByteArray::create(length))
-    {
-    }
-    
+PassRefPtr<CanvasPixelArray> CanvasPixelArray::create(unsigned length)
+{
+    return adoptRef(new CanvasPixelArray(length));
+}
+
+PassRefPtr<CanvasPixelArray> CanvasPixelArray::create(PassRefPtr<ByteArray> byteArray)
+{
+    return adoptRef(new CanvasPixelArray(byteArray));
+}
+
+CanvasPixelArray::CanvasPixelArray(unsigned length)
+    : m_data(ByteArray::create(length))
+{
+}
+
+CanvasPixelArray::CanvasPixelArray(PassRefPtr<ByteArray> byteArray)
+    : m_data(byteArray)
+{
+}
+
 }

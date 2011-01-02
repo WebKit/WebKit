@@ -178,13 +178,13 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 }
 
 template <Multiply multiplied>
-PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
+PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
 {
-    PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
-    unsigned char* data = result->data()->data()->data();
+    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
+    unsigned char* data = result->data();
 
-    if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
-        memset(data, 0, result->data()->length());
+    if (rect.x() < 0 || rect.y() < 0 || rect.right() > size.width() || rect.bottom() > size.height())
+        memset(data, 0, result->length());
 
     int originx = rect.x();
     int destx = 0;
@@ -192,7 +192,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
         destx = -originx;
         originx = 0;
     }
-    int endx = rect.x() + rect.width();
+    int endx = rect.right();
     if (endx > size.width())
         endx = size.width();
     int numColumns = endx - originx;
@@ -203,7 +203,7 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
         desty = -originy;
         originy = 0;
     }
-    int endy = rect.y() + rect.height();
+    int endy = rect.bottom();
     if (endy > size.height())
         endy = size.height();
     int numRows = endy - originy;
@@ -257,15 +257,15 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& i
         }
     }
 
-    return result;
+    return result.release();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
     return getImageData<Unmultiplied>(rect, m_data, m_size);
 }
 
-PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
     return getImageData<Premultiplied>(rect, m_data, m_size);
 }
@@ -287,7 +287,7 @@ static inline unsigned int premultiplyABGRtoARGB(unsigned int x)
 }
 
 template <Multiply multiplied>
-void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& data, const IntSize& size)
+void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& data, const IntSize& size)
 {
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -315,14 +315,14 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     ASSERT(endy <= size.height());
     int numRows = endy - desty;
 
-    unsigned srcBytesPerRow = 4 * source->width();
+    unsigned srcBytesPerRow = 4 * sourceSize.width();
 
     // NOTE: For unmultiplied input data, we do the premultiplication below.
     QImage image(numColumns, numRows, QImage::Format_ARGB32_Premultiplied);
     uchar* bits = image.bits();
     const int bytesPerLine = image.bytesPerLine();
 
-    const quint32* srcScanLine = reinterpret_cast_ptr<const quint32*>(source->data()->data()->data() + originy * srcBytesPerRow + originx * 4);
+    const quint32* srcScanLine = reinterpret_cast_ptr<const quint32*>(source->data() + originy * srcBytesPerRow + originx * 4);
 
     if (multiplied == Unmultiplied) {
         for (int y = 0; y < numRows; ++y) {
@@ -332,7 +332,7 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
                 quint32 pixel = srcScanLine[x];
                 destScanLine[x] = premultiplyABGRtoARGB(pixel);
             }
-            srcScanLine += source->width();
+            srcScanLine += sourceSize.width();
         }
     } else {
         for (int y = 0; y < numRows; ++y) {
@@ -342,7 +342,7 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
                 quint32 pixel = srcScanLine[x];
                 destScanLine[x] = ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
             }
-            srcScanLine += source->width();
+            srcScanLine += sourceSize.width();
         }
     }
 
@@ -367,14 +367,14 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
         data.m_painter->restore();
 }
 
-void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Unmultiplied>(source, sourceRect, destPoint, m_data, m_size);
+    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
 }
 
-void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Premultiplied>(source, sourceRect, destPoint, m_data, m_size);
+    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size);
 }
 
 // We get a mimeType here but QImageWriter does not support mimetypes but

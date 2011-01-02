@@ -29,8 +29,6 @@
 #if ENABLE(FILTERS)
 #include "FELighting.h"
 
-#include "CanvasPixelArray.h"
-#include "ImageData.h"
 #include "LightSource.h"
 
 namespace WebCore {
@@ -338,15 +336,14 @@ void FELighting::apply()
     if (!in->hasResult())
         return;
 
-    ImageData* resultImage = createUnmultipliedImageResult();
-    if (!resultImage)
+    ByteArray* srcPixelArray = createUnmultipliedImageResult();
+    if (!srcPixelArray)
         return;
 
     setIsAlphaImage(false);
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    in->copyUnmultipliedImage(resultImage, effectDrawingRect);
-    ByteArray* srcPixelArray = resultImage->data()->data();
+    in->copyUnmultipliedImage(srcPixelArray, effectDrawingRect);
 
     // FIXME: support kernelUnitLengths other than (1,1). The issue here is that the W3
     // standard has no test case for them, and other browsers (like Firefox) has strange

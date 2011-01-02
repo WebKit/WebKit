@@ -84,8 +84,8 @@ private:
             const IntPoint&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
 
     struct PaintingData {
-        CanvasPixelArray* srcPixelArray;
-        CanvasPixelArray* dstPixelArray;
+        ByteArray* srcPixelArray;
+        ByteArray* dstPixelArray;
         int width;
         int height;
         float bias;

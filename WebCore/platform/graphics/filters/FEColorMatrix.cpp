@@ -27,8 +27,8 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
 
+#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -164,28 +164,27 @@ void FEColorMatrix::apply()
     resultImage->context()->drawImageBuffer(in->asImageBuffer(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
 
     IntRect imageRect(IntPoint(), absolutePaintRect().size());
-    RefPtr<ImageData> imageData = resultImage->getUnmultipliedImageData(imageRect);
-    ByteArray* pixelArray = imageData->data()->data();
+    RefPtr<ByteArray> pixelArray = resultImage->getUnmultipliedImageData(imageRect);
 
     switch (m_type) {
-        case FECOLORMATRIX_TYPE_UNKNOWN:
-            break;
-        case FECOLORMATRIX_TYPE_MATRIX:
-            effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray, m_values);
-            break;
-        case FECOLORMATRIX_TYPE_SATURATE: 
-            effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray, m_values);
-            break;
-        case FECOLORMATRIX_TYPE_HUEROTATE:
-            effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray, m_values);
-            break;
-        case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-            effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray, m_values);
-            setIsAlphaImage(true);
-            break;
+    case FECOLORMATRIX_TYPE_UNKNOWN:
+        break;
+    case FECOLORMATRIX_TYPE_MATRIX:
+        effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray.get(), m_values);
+        break;
+    case FECOLORMATRIX_TYPE_SATURATE: 
+        effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray.get(), m_values);
+        break;
+    case FECOLORMATRIX_TYPE_HUEROTATE:
+        effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray.get(), m_values);
+        break;
+    case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+        effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray.get(), m_values);
+        setIsAlphaImage(true);
+        break;
     }
 
-    resultImage->putUnmultipliedImageData(imageData.get(), imageRect, IntPoint());
+    resultImage->putUnmultipliedImageData(pixelArray.get(), imageRect.size(), imageRect, IntPoint());
 }
 
 void FEColorMatrix::dump()

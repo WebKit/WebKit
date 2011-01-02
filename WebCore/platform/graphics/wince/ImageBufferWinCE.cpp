@@ -122,21 +122,21 @@ void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect
     imageCopy->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 
-template <bool premultiplied> PassRefPtr<ImageData>
+template <bool premultiplied> PassRefPtr<ByteArray>
 static getImageData(const IntRect& rect, const SharedBitmap* bitmap)
 {
-    PassRefPtr<ImageData> imageData = ImageData::create(rect.width(), rect.height());
+    RefPtr<ImageData> imageData = ImageData::create(rect.width(), rect.height());
 
     const unsigned char* src = static_cast<const unsigned char*>(bitmap->bytes());
     if (!src)
-        return imageData;
+        return imageData.release();
 
     IntRect sourceRect(0, 0, bitmap->width(), bitmap->height());
     sourceRect.intersect(rect);
     if (sourceRect.isEmpty())
-        return imageData;
+        return imageData.release();
 
-    unsigned char* dst = imageData->data()->data()->data();
+    unsigned char* dst = imageData->data();
     memset(dst, 0, imageData->data()->data()->length());
     src += (sourceRect.y() * bitmap->width() + sourceRect.x()) * 4;
     dst += ((sourceRect.y() - rect.y()) * imageData->width() + sourceRect.x() - rect.x()) * 4;
@@ -169,21 +169,21 @@ static getImageData(const IntRect& rect, const SharedBitmap* bitmap)
         dst += dstSkip;
     }
 
-    return imageData;
+    return imageData.release();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
     return getImageData<false>(rect, m_data.m_bitmap.get());
 }
 
-PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
     return getImageData<true>(rect, m_data.m_bitmap.get());
 }
 
 template <bool premultiplied>
-static void putImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint, SharedBitmap* bitmap)
+static void putImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, SharedBitmap* bitmap)
 {
     unsigned char* dst = (unsigned char*)bitmap->bytes();
     if (!dst)
@@ -195,12 +195,12 @@ static void putImageData(ImageData* source, const IntRect& sourceRect, const Int
     if (destRect.isEmpty())
         return;
 
-    const unsigned char* src = source->data()->data()->data();
+    const unsigned char* src = source->data();
     dst += (destRect.y() * bitmap->width() + destRect.x()) * 4;
-    src += (sourceRect.y() * source->width() + sourceRect.x()) * 4;
+    src += (sourceRect.y() * sourceSize.width() + sourceRect.x()) * 4;
     int bytesToCopy = destRect.width() * 4;
     int dstSkip = (bitmap->width() - destRect.width()) * 4;
-    int srcSkip = (source->width() - destRect.width()) * 4;
+    int srcSkip = (sourceSize.width() - destRect.width()) * 4;
     const unsigned char* dstEnd = dst + destRect.height() * bitmap->width() * 4;
     while (dst < dstEnd) {
         const unsigned char* dstRowEnd = dst + bytesToCopy;
@@ -227,14 +227,14 @@ static void putImageData(ImageData* source, const IntRect& sourceRect, const Int
     }
 }
 
-void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<false>(source, sourceRect, destPoint, m_data.m_bitmap.get());
+    putImageData<false>(source, sourceSize, sourceRect, destPoint, m_data.m_bitmap.get());
 }
 
-void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<true>(source, sourceRect, destPoint, m_data.m_bitmap.get());
+    putImageData<true>(source, sourceSize, sourceRect, destPoint, m_data.m_bitmap.get());
 }
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)

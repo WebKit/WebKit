@@ -27,8 +27,8 @@
 #include "FETurbulence.h"
 
 #include "Filter.h"
-#include "ImageData.h"
 
+#include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -322,14 +322,13 @@ void FETurbulence::apply()
 {
     if (hasResult())
         return;
-    ImageData* resultImage = createUnmultipliedImageResult();
-    if (!resultImage)
+    ByteArray* pixelArray = createUnmultipliedImageResult();
+    if (!pixelArray)
         return;
 
     if (absolutePaintRect().isEmpty())
         return;
 
-    ByteArray* pixelArray = resultImage->data()->data();
     PaintingData paintingData(m_seed, roundedIntSize(filterPrimitiveSubregion().size()));
     initPaint(paintingData);
 

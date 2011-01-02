@@ -27,8 +27,8 @@
 #include "FEMorphology.h"
 
 #include "Filter.h"
-#include "ImageData.h"
 
+#include <wtf/ByteArray.h>
 #include <wtf/Vector.h>
 
 using std::min;
@@ -98,8 +98,8 @@ void FEMorphology::apply()
     if (!in->hasResult())
         return;
 
-    ImageData* resultImage = createPremultipliedImageResult();
-    if (!resultImage)
+    ByteArray* dstPixelArray = createPremultipliedImageResult();
+    if (!dstPixelArray)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
@@ -111,9 +111,7 @@ void FEMorphology::apply()
     int radiusY = static_cast<int>(floorf(filter->applyVerticalScale(m_radiusY)));
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageData = in->asPremultipliedImage(effectDrawingRect);
-    ByteArray* srcPixelArray = srcImageData->data()->data();
-    ByteArray* dstPixelArray = resultImage->data()->data();
+    RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectDrawingRect);
 
     int effectWidth = effectDrawingRect.width() * 4;
     

@@ -28,7 +28,8 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
+
+#include <wtf/ByteArray.h>
 
 namespace WebCore {
 
@@ -190,17 +191,17 @@ void FEComposite::apply()
         return;
 
     if (m_type == FECOMPOSITE_OPERATOR_ARITHMETIC) {
-        ImageData* resultImage = createPremultipliedImageResult();
-        if (!resultImage)
+        ByteArray* dstPixelArray = createPremultipliedImageResult();
+        if (!dstPixelArray)
             return;
 
         IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-        RefPtr<ImageData> srcImageData = in->asPremultipliedImage(effectADrawingRect);
+        RefPtr<ByteArray> srcPixelArray = in->asPremultipliedImage(effectADrawingRect);
 
         IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-        in2->copyPremultipliedImage(resultImage, effectBDrawingRect);
+        in2->copyPremultipliedImage(dstPixelArray, effectBDrawingRect);
 
-        arithmetic(srcImageData->data()->data(), resultImage->data()->data(), m_k1, m_k2, m_k3, m_k4);
+        arithmetic(srcPixelArray.get(), dstPixelArray, m_k1, m_k2, m_k3, m_k4);
         return;
     }
 

@@ -25,11 +25,11 @@
 #if ENABLE(FILTERS)
 #include "FEBlend.h"
 
-#include "CanvasPixelArray.h"
 #include "Filter.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
+
+#include <wtf/ByteArray.h>
 
 typedef unsigned char (*BlendType)(unsigned char colorA, unsigned char colorB, unsigned char alphaA, unsigned char alphaB);
 
@@ -100,19 +100,15 @@ void FEBlend::apply()
     if (m_mode <= FEBLEND_MODE_UNKNOWN || m_mode > FEBLEND_MODE_LIGHTEN)
         return;
 
-    ImageData* resultImage = createPremultipliedImageResult();
-    if (!resultImage)
+    ByteArray* dstPixelArray = createPremultipliedImageResult();
+    if (!dstPixelArray)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataA = in->asPremultipliedImage(effectADrawingRect);
-    ByteArray* srcPixelArrayA = srcImageDataA->data()->data();
+    RefPtr<ByteArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataB = in2->asPremultipliedImage(effectBDrawingRect);
-    ByteArray* srcPixelArrayB = srcImageDataB->data()->data();
-
-    ByteArray* dstPixelArray = resultImage->data()->data();
+    RefPtr<ByteArray> srcPixelArrayB = in2->asPremultipliedImage(effectBDrawingRect);
 
     // Keep synchronized with BlendModeType
     static const BlendType callEffect[] = {unknown, normal, multiply, screen, darken, lighten};

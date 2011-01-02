@@ -34,6 +34,7 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
+#include <wtf/ByteArray.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -83,11 +84,11 @@ namespace WebCore {
         bool drawsUsingCopy() const; // If the image buffer has to render using a copied image, it will return true.
         PassRefPtr<Image> copyImage() const; // Return a new image that is a copy of the buffer.
 
-        PassRefPtr<ImageData> getUnmultipliedImageData(const IntRect&) const;
-        PassRefPtr<ImageData> getPremultipliedImageData(const IntRect&) const;
+        PassRefPtr<ByteArray> getUnmultipliedImageData(const IntRect&) const;
+        PassRefPtr<ByteArray> getPremultipliedImageData(const IntRect&) const;
 
-        void putUnmultipliedImageData(ImageData*, const IntRect& sourceRect, const IntPoint& destPoint);
-        void putPremultipliedImageData(ImageData*, const IntRect& sourceRect, const IntPoint& destPoint);
+        void putUnmultipliedImageData(ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
+        void putPremultipliedImageData(ByteArray*, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
         
         String toDataURL(const String& mimeType, const double* quality = 0) const;
 #if !PLATFORM(CG)

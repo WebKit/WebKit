@@ -156,23 +156,24 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 }
 
 template <Multiply multiplied>
-PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap, 
+PassRefPtr<ByteArray> getImageData(const IntRect& rect, const SkBitmap& bitmap, 
                                    const IntSize& size)
 {
-    RefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
+    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
 
     if (bitmap.config() == SkBitmap::kNo_Config) {
         // This is an empty SkBitmap that could not be configured.
         ASSERT(!size.width() || !size.height());
-        return result;
+        return result.release();
     }
 
-    unsigned char* data = result->data()->data()->data();
+    unsigned char* data = result->data();
 
-    if (rect.x() < 0 || rect.y() < 0 ||
-        (rect.x() + rect.width()) > size.width() ||
-        (rect.y() + rect.height()) > size.height())
-        memset(data, 0, result->data()->length());
+    if (rect.x() < 0
+        || rect.y() < 0
+        || rect.right() > size.width()
+        || rect.bottom() > size.height())
+        memset(data, 0, result->length());
 
     int originX = rect.x();
     int destX = 0;
@@ -180,13 +181,13 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         destX = -originX;
         originX = 0;
     }
-    int endX = rect.x() + rect.width();
+    int endX = rect.right();
     if (endX > size.width())
         endX = size.width();
     int numColumns = endX - originX;
 
     if (numColumns <= 0) 
-        return result;
+        return result.release();
 
     int originY = rect.y();
     int destY = 0;
@@ -194,13 +195,13 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         destY = -originY;
         originY = 0;
     }
-    int endY = rect.y() + rect.height();
+    int endY = rect.bottom();
     if (endY > size.height())
         endY = size.height();
     int numRows = endY - originY;
 
     if (numRows <= 0) 
-        return result;
+        return result.release();
 
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
     SkAutoLockPixels bitmapLock(bitmap);
@@ -231,23 +232,23 @@ PassRefPtr<ImageData> getImageData(const IntRect& rect, const SkBitmap& bitmap,
         destRow += destBytesPerRow;
     }
 
-    return result;
+    return result.release();
 }
 
-PassRefPtr<ImageData> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
     context()->platformContext()->syncSoftwareCanvas();
     return getImageData<Unmultiplied>(rect, *context()->platformContext()->bitmap(), m_size);
 }
 
-PassRefPtr<ImageData> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
+PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
     context()->platformContext()->syncSoftwareCanvas();
     return getImageData<Premultiplied>(rect, *context()->platformContext()->bitmap(), m_size);
 }
 
 template <Multiply multiplied>
-void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint& destPoint, 
+void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, 
                   const SkBitmap& bitmap, const IntSize& size)
 {
     ASSERT(sourceRect.width() > 0);
@@ -279,9 +280,9 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
     SkAutoLockPixels bitmapLock(bitmap);
 
-    unsigned srcBytesPerRow = 4 * source->width();
+    unsigned srcBytesPerRow = 4 * sourceSize.width();
 
-    const unsigned char* srcRow = source->data()->data()->data() + originY * srcBytesPerRow + originX * 4;
+    const unsigned char* srcRow = source->data() + originY * srcBytesPerRow + originX * 4;
 
     for (int y = 0; y < numRows; ++y) {
         uint32_t* destRow = bitmap.getAddr32(destX, destY + y);
@@ -301,15 +302,15 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
     }
 }
 
-void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
     context()->platformContext()->prepareForSoftwareDraw();
-    putImageData<Unmultiplied>(source, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
+    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 
-void ImageBuffer::putPremultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
+void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    putImageData<Premultiplied>(source, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
+    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const

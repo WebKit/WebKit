@@ -28,7 +28,8 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include "ImageData.h"
+
+#include <wtf/ByteArray.h>
 
 namespace WebCore {
 
@@ -90,19 +91,15 @@ void FEDisplacementMap::apply()
     if (m_xChannelSelector == CHANNEL_UNKNOWN || m_yChannelSelector == CHANNEL_UNKNOWN)
         return;
 
-    ImageData* resultImage = createPremultipliedImageResult();
-    if (!resultImage)
+    ByteArray* dstPixelArray = createPremultipliedImageResult();
+    if (!dstPixelArray)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataA = in->asPremultipliedImage(effectADrawingRect);
-    ByteArray* srcPixelArrayA = srcImageDataA->data()->data();
+    RefPtr<ByteArray> srcPixelArrayA = in->asPremultipliedImage(effectADrawingRect);
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<ImageData> srcImageDataB = in2->asUnmultipliedImage(effectBDrawingRect);
-    ByteArray* srcPixelArrayB = srcImageDataB->data()->data();
-
-    ByteArray* dstPixelArray = resultImage->data()->data();
+    RefPtr<ByteArray> srcPixelArrayB = in2->asUnmultipliedImage(effectBDrawingRect);
 
     ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
 

@@ -24,14 +24,12 @@
 #include "RenderSVGResourceMasker.h"
 
 #include "AffineTransform.h"
-#include "CanvasPixelArray.h"
 #include "Element.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"
-#include "ImageData.h"
 #include "IntRect.h"
 #include "RenderSVGResource.h"
 #include "SVGElement.h"
@@ -39,6 +37,8 @@
 #include "SVGMaskElement.h"
 #include "SVGStyledElement.h"
 #include "SVGUnitTypes.h"
+
+#include <wtf/ByteArray.h>
 #include <wtf/Vector.h>
 #include <wtf/UnusedParam.h>
 
@@ -161,8 +161,7 @@ void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, c
 
     // Create the luminance mask.
     IntRect maskImageRect(IntPoint(), maskerData->maskImage->size());
-    RefPtr<ImageData> imageData = maskerData->maskImage->getUnmultipliedImageData(maskImageRect);
-    ByteArray* srcPixelArray = imageData->data()->data();
+    RefPtr<ByteArray> srcPixelArray = maskerData->maskImage->getUnmultipliedImageData(maskImageRect);
 
     unsigned pixelArrayLength = srcPixelArray->length();
     for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
@@ -177,7 +176,7 @@ void RenderSVGResourceMasker::drawContentIntoMaskImage(MaskerData* maskerData, c
         srcPixelArray->set(pixelOffset + 3, luma);
     }
 
-    maskerData->maskImage->putUnmultipliedImageData(imageData.get(), maskImageRect, IntPoint());
+    maskerData->maskImage->putUnmultipliedImageData(srcPixelArray.get(), maskImageRect.size(), maskImageRect, IntPoint());
 }
 
 void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
