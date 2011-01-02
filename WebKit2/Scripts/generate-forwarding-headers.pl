@@ -40,6 +40,7 @@ my @frameworks = ( "JavaScriptCore", "WebCore", "WebKit2");
 my @skippedPrefixes;
 my @frameworkHeaders;
 my $framework;
+my $sourceDirectoryInPath;
 my %neededHeaders;
 
 shift;
@@ -53,8 +54,15 @@ foreach my $prefix (@platformPrefixes) {
 
 foreach (@frameworks) {
     $framework = $_;
+
+    #FIXME: Workaround until moving all sources to Source directory is finished.
+    if ($framework eq "JavaScriptCore") {
+        $sourceDirectoryInPath = "Source";
+    } else {
+        $sourceDirectoryInPath = "";
+    }
     find(\&collectNeededHeaders, $incFromRoot);
-    find(\&collectFameworkHeaderPaths, File::Spec->catfile($srcRoot, $framework));
+    find(\&collectFameworkHeaderPaths, File::Spec->catfile($srcRoot, $sourceDirectoryInPath, $framework));
     createForwardingHeadersForFramework();
 }
 
@@ -76,7 +84,7 @@ sub collectFameworkHeaderPaths {
     my $filePath = $File::Find::name;
     my $file = $_;
     if ($filePath =~ '\.h$' && $filePath !~ "ForwardingHeaders" && grep{$file eq $_} keys %neededHeaders) {
-        my $headerPath = substr($filePath, length("$srcRoot/$framework/"));
+        my $headerPath = substr($filePath, length(File::Spec->catfile($srcRoot, $sourceDirectoryInPath, $framework)) + 1 );
         push(@frameworkHeaders, $headerPath) unless (grep($headerPath =~ "$_/", @skippedPrefixes));
     }
 }
