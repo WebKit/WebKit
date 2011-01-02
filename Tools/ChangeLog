@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Teach svn-apply how to apply patches even though JavaScriptCore has moved
+        https://bugs.webkit.org/show_bug.cgi?id=51796
+
+        After this change, svn-apply will magically apply patches to
+        JavaScriptCore/foo to Source/JavaScriptCore/foo.
+
+        * Scripts/VCSUtils.pm:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Move JavaScriptCore to Source
         https://bugs.webkit.org/show_bug.cgi?id=51604
 
