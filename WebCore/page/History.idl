@@ -37,9 +37,9 @@ module window {
     ] History {
         readonly attribute unsigned long length;
 
-        [DoNotCheckDomainSecurity] void back();
-        [DoNotCheckDomainSecurity] void forward();
-        [DoNotCheckDomainSecurity] void go(in long distance);
+        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void back();
+        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void forward();
+        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void go(in long distance);
         
         [Custom, EnabledAtRuntime] void pushState(in any data, in DOMString title, in optional DOMString url)
             raises(DOMException);

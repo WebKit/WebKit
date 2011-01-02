@@ -1,5 +1,26 @@
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        sandbox iframes have access to top.history methods
+        https://bugs.webkit.org/show_bug.cgi?id=38152
+
+        To enforce the sandbox restrictions on History, we need to pass the
+        ScriptExecutionContext to WebCore.  This patch leaves the original
+        History methods in place because they are used directly by folks who
+        don't care about security checks.
+
+        Test: fast/frames/sandboxed-iframe-history-denied.html
+
+        * page/History.cpp:
+        (WebCore::History::back):
+        (WebCore::History::forward):
+        (WebCore::History::go):
+        * page/History.h:
+        * page/History.idl:
+
+2011-01-01  Adam Barth  <abarth@webkit.org>
+
         Remove empty file.
 
         * Android.mk:

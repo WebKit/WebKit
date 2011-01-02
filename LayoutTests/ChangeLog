@@ -1,3 +1,19 @@
+2011-01-01  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        sandbox iframes have access to top.history methods
+        https://bugs.webkit.org/show_bug.cgi?id=38152
+
+        Test that sandboxed iframes cannot use history to navigate the top
+        frame.  This test is less than ideal, as described in the test itself.
+        If I was really on top of things, I'd add a test for successful use of
+        the history API when allow-top-navigation is set, but that test would
+        be complicated and I'm lazy (enough to copy directly from abarth).
+
+        * fast/frames/sandboxed-iframe-history-denied-expected.txt: Added.
+        * fast/frames/sandboxed-iframe-history-denied.html: Added.
+
 2011-01-01  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

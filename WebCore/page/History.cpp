@@ -27,6 +27,7 @@
 #include "History.h"
 
 #include "BackForwardController.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -62,22 +63,45 @@ unsigned History::length() const
 
 void History::back()
 {
-    if (!m_frame)
-        return;
-    m_frame->navigationScheduler()->scheduleHistoryNavigation(-1);
+    go(-1);
+}
+
+void History::back(ScriptExecutionContext* context)
+{
+    go(context, -1);
 }
 
 void History::forward()
 {
-    if (!m_frame)
-        return;
-    m_frame->navigationScheduler()->scheduleHistoryNavigation(1);
+    go(1);
+}
+
+void History::forward(ScriptExecutionContext* context)
+{
+    go(context, 1);
 }
 
 void History::go(int distance)
 {
     if (!m_frame)
         return;
+
+    m_frame->navigationScheduler()->scheduleHistoryNavigation(distance);
+}
+
+void History::go(ScriptExecutionContext* context, int distance)
+{
+    if (!m_frame)
+        return;
+
+    ASSERT(WTF::isMainThread());
+    Frame* activeFrame = static_cast<Document*>(context)->frame();
+    if (!activeFrame)
+        return;
+
+    if (!activeFrame->loader()->shouldAllowNavigation(m_frame))
+        return;
+
     m_frame->navigationScheduler()->scheduleHistoryNavigation(distance);
 }
 

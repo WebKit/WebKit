@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class Frame;
+class ScriptExecutionContext;
 class SerializedScriptValue;
 typedef int ExceptionCode;
 
@@ -48,6 +49,10 @@ public:
     void back();
     void forward();
     void go(int distance);
+
+    void back(ScriptExecutionContext*);
+    void forward(ScriptExecutionContext*);
+    void go(ScriptExecutionContext*, int distance);
 
     enum StateObjectType {
         StateObjectPush,
