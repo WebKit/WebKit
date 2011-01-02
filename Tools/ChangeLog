@@ -1,5 +1,14 @@
 2011-01-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed fix after r74855.
+
+        Move JavaScriptCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=51604
+
+        * BuildSlaveSupport/built-product-archive: JavaScriptCore -> Source/JavaScriptCore
+
+2011-01-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed run-javasriptcore-tests fix after r74855.
 
         Move JavaScriptCore to Source
