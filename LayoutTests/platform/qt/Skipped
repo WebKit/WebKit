@@ -346,6 +346,8 @@ fast/dom/object-embed-plugin-scripting.html
 plugins/plugin-initiate-popup-window.html
 # ---- to be reviewed
 http/tests/plugins/plugin-document-has-focus.html
+# ---- Bug: Qt Style Widgets should render when plugins are disabled
+plugins/application-plugin-plugins-disabled.html
 
 # =========================================================================== #
 #       Failing execCommand tests.                                            #

@@ -1,5 +1,18 @@
 2011-01-02  Robert Hogan  <robert@webkit.org>
 
+        Unreviewed, update expected results.
+
+        Update expected results for tests added in r74872
+
+        Skip test on Qt as Qt Styled Widgets are no longer getting
+        rendered when plugins are disabled. This is a bug.
+
+        * platform/gtk/plugins/application-plugin-plugins-disabled-expected.txt: Copied from LayoutTests/plugins/application-plugin-plugins-disabled-expected.txt.
+        * platform/qt/Skipped:
+        * plugins/application-plugin-plugins-disabled-expected.txt:
+
+2011-01-02  Robert Hogan  <robert@webkit.org>
+
         Unreviewed. 
 
         Layout tests from changeset r56661 were missed
