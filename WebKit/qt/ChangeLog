@@ -1,3 +1,31 @@
+2011-01-02  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Refactor EditorClientQt::handleKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=51306
+
+        EditorClientQt::handleKeyboardEvent relies on QWebPagePrivate::editorActionForKeyEvent()
+        to handle all editor commands that have a QAction associted with it.
+        In practice, that covers most of editor commands (as one can see in editorCommandWebActions,
+        in qwebpage.cpp). However, there are some key down events that are associated to no QAction
+        or need special handling when features like spatial navigation or
+        caret browsing are enabled. Currently, these cases are being handled with confusing
+        and nested if/else switch's statements in EditorClientQt::handleKeyboardEvent(),
+        and the code is hardly readable.
+
+        This patch introduces a mapping hash for those cases, simplifying much
+        the code. Basically, nested switches statements mixed with if/else's were
+        refactored, and early returns were added right after an event gets consumed
+        by the Editor.
+
+        Since it is a refactor only patch, there is no funcionality change at
+        all, and then no new tests are being added.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::interpretKeyEvent):
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
