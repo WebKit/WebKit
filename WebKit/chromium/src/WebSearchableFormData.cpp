@@ -46,6 +46,7 @@
 #include "WebFormElement.h"
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 namespace {
 
@@ -128,13 +129,13 @@ bool IsSelectInDefaultState(const HTMLSelectElement* select)
 // Returns true if the form element is in its default state, false otherwise.
 // The default state is the state of the form element on initial load of the
 // page, and varies depending upon the form element. For example, a checkbox is
-// in its default state if the checked state matches the defaultChecked state.
+// in its default state if the checked state matches the state of the checked attribute.
 bool IsInDefaultState(const HTMLFormControlElement* formElement)
 {
     if (formElement->hasTagName(HTMLNames::inputTag)) {
         const HTMLInputElement* inputElement = static_cast<const HTMLInputElement*>(formElement);
         if (inputElement->isCheckbox() || inputElement->isRadioButton())
-            return inputElement->checked() == inputElement->defaultChecked();
+            return inputElement->checked() == inputElement->hasAttribute(checkedAttr);
     } else if (formElement->hasTagName(HTMLNames::selectTag))
         return IsSelectInDefaultState(static_cast<const HTMLSelectElement*>(formElement));
     return true;
