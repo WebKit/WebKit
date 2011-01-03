@@ -1,3 +1,12 @@
+2011-01-03  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        [WINCE] Provide third party directory via environment variable
+        https://bugs.webkit.org/show_bug.cgi?id=51643
+
+        * Source/cmake/OptionsWinCE.cmake:
+
 2011-01-03  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
