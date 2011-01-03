@@ -431,10 +431,12 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/DateMath.h \
 	Source/JavaScriptCore/wtf/DecimalNumber.h \
 	Source/JavaScriptCore/wtf/DecimalNumber.cpp \
+	Source/JavaScriptCore/wtf/Decoder.h \
 	Source/JavaScriptCore/wtf/Deque.h \
 	Source/JavaScriptCore/wtf/DisallowCType.h \
 	Source/JavaScriptCore/wtf/dtoa.cpp \
 	Source/JavaScriptCore/wtf/dtoa.h \
+	Source/JavaScriptCore/wtf/Encoder.h \
 	Source/JavaScriptCore/wtf/FastAllocBase.h \
 	Source/JavaScriptCore/wtf/FastMalloc.cpp \
 	Source/JavaScriptCore/wtf/FastMalloc.h \

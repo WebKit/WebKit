@@ -12,8 +12,10 @@ SET(WTF_HEADERS
     CurrentTime.h
     DateMath.h
     DecimalNumber.h
+    Decoder.h
     Deque.h
     DisallowCType.h
+    Encoder.h
     FastAllocBase.h
     FastMalloc.h
     FixedArray.h

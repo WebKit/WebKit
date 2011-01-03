@@ -517,6 +517,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\Decoder.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\Deque.h"
 			>
 		</File>
@@ -530,6 +534,10 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\dtoa.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\Encoder.h"
 			>
 		</File>
 		<File

@@ -1,3 +1,19 @@
+2011-01-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add Encode/Decode machinery Darin and I plan to work with for back/forward stuff in WebKit2.
+
+        Starting out with a pure virtual interface to be implemented in WK2, but we might change that later.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+
+        * wtf/Decoder.h: Added.
+        * wtf/Encoder.h: Added.
+
 2011-01-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed build fix.

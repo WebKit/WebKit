@@ -1,3 +1,12 @@
+2011-01-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add Encode/Decode machinery Darin and I plan to work with for back/forward stuff in WebKit2.
+
+        * ForwardingHeaders/wtf/Decoder.h: Added.
+        * ForwardingHeaders/wtf/Encoder.h: Added.
+
 2011-01-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
