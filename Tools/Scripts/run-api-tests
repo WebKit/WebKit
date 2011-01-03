@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -46,20 +46,20 @@ sub populateTests();
 sub buildTestTool();
 
 my $showHelp = 0;
-my $quiet = 0;
+my $verbose = 0;
 my $dump = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
   --help                Show this help message
-  -q|--quite            Less verbose output
+  -v|--verbose          Verbose output
   -d|--dump-tests       Dump the names of testcases without running them
 EOF
 
 GetOptions(
     'help' => \$showHelp,
-    'quiet|q' => \$quiet,
+    'verbose|v' => \$verbose,
     'dump|d' => \$dump,
 );
 
@@ -132,11 +132,32 @@ sub runTest($$)
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         my $apiTesterPath = "$productDir/TestWebKitAPI";
-        if (architecture()) {
-            $result = system "arch", "-" . architecture(), $apiTesterPath, $test, @ARGV;
+
+        local *DEVNULL;
+        my ($childIn, $childOut, $childErr);
+        unless ($verbose) {
+            open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
+            $childOut = ">&DEVNULL";
+            $childErr = ">&DEVNULL";
         } else {
-            $result = system $apiTesterPath, $test, @ARGV;
+            $childOut = ">&STDOUT";
+            $childErr = ">&STDERR";
         }
+
+        my $pid;
+        if (architecture()) {
+            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), $apiTesterPath, $test, @ARGV) or die "Failed to run test: $test.";
+        } else {
+            $pid = open3($childIn, $childOut, $childErr, $apiTesterPath, $test, @ARGV) or die "Failed to run test: $test.";
+        }
+
+        close($childIn);
+        close($childOut);
+        close($childErr);
+        close(DEVNULL) unless ($verbose);
+
+        waitpid($pid, 0);
+        my $result = $?;
     } elsif (isAppleWinWebKit()) {
         my $apiTesterNameSuffix;
         if (configurationForVisualStudio() ne "Debug_All") {
@@ -168,15 +189,27 @@ sub populateTests()
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         my $apiTesterPath = "$productDir/TestWebKitAPI";
 
-        my ($pid, $childIn, $childOut);
-        if (architecture()) {
-            $pid = open3($childIn, $childOut, ">&STDERR", "arch", "-" . architecture(), $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
+        local *DEVNULL;
+        my ($childIn, $childOut, $childErr);
+        unless ($verbose) {
+            open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
+            $childErr = ">&DEVNULL";
         } else {
-            $pid = open3($childIn, $childOut, ">&STDERR", $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
+            $childErr = ">&STDERR";
         }
+
+        my $pid;
+        if (architecture()) {
+            $pid = open3($childIn, $childOut, $childErr, "arch", "-" . architecture(), $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
+        } else {
+            $pid = open3($childIn, $childOut, $childErr, $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
+        }
+
         close($childIn);
         @tests = <$childOut>;
         close($childOut);
+        close($childErr);
+        close(DEVNULL) unless ($verbose);
 
         waitpid($pid, 0);
         my $result = $?;
@@ -219,7 +252,7 @@ sub buildTestTool()
 
     local *DEVNULL;
     my ($childIn, $childOut, $childErr);
-    if ($quiet) {
+    unless ($verbose) {
         open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
         $childOut = ">&DEVNULL";
         $childErr = ">&DEVNULL";
@@ -231,13 +264,14 @@ sub buildTestTool()
 
     my @args = argumentsForConfiguration();
     my $buildProcess = open3($childIn, $childOut, $childErr, "Tools/Scripts/$buildTestTool", @args) or die "Failed to run " . $buildTestTool;
+
     close($childIn);
-    waitpid $buildProcess, 0;
-    my $buildResult = $?;
     close($childOut);
     close($childErr);
+    close(DEVNULL) unless ($verbose);
 
-    close DEVNULL if ($quiet);
+    waitpid($buildProcess, 0);
+    my $buildResult = $?;
 
     if ($buildResult) {
         print STDERR "Compiling TestWebKitAPI failed!\n";

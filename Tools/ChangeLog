@@ -1,3 +1,15 @@
+2011-01-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make run-api-tests less chatty.
+        https://bugs.webkit.org/show_bug.cgi?id=51831
+
+        - Make script quiet by default and add --verbose option (replacing --quiet).
+        - When not verbose, pipe stdout and stderr to devnull.
+
+        * Scripts/run-api-tests:
+
 2011-01-03  Pratik Solanki  <psolanki@apple.com>
 
         Unreviewed. Adding myself to committers.py.
