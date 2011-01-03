@@ -155,7 +155,6 @@ private:
     int m_columnSpan;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
-    int m_percentageHeight;
 };
 
 inline RenderTableCell* toRenderTableCell(RenderObject* object)

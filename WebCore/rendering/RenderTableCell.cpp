@@ -47,7 +47,6 @@ RenderTableCell::RenderTableCell(Node* node)
     , m_columnSpan(1)
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
-    , m_percentageHeight(0)
 {
     updateFromElement();
 }

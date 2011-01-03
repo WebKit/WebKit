@@ -1,3 +1,14 @@
+2011-01-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remove the unused RenderTableCell::m_percentageHeight
+        https://bugs.webkit.org/show_bug.cgi?id=51837
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::RenderTableCell): Removed initialization of m_percentageHeight.
+        * rendering/RenderTableCell.h: Removed m_percentageHeight.
+
 2011-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by David Hyatt.
