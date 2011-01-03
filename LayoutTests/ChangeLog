@@ -1,3 +1,19 @@
+2011-01-02  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        - Add expectation files for application-plugin-plugins-disabled.html
+        - Add some flaky tests to test_expectations.txt
+
+        * platform/chromium-linux/plugins/application-plugin-plugins-disabled-expected.checksum: Added.
+        * platform/chromium-linux/plugins/application-plugin-plugins-disabled-expected.png: Added.
+        * platform/chromium-mac/plugins/application-plugin-plugins-disabled-expected.checksum: Added.
+        * platform/chromium-mac/plugins/application-plugin-plugins-disabled-expected.png: Added.
+        * platform/chromium-win/plugins/application-plugin-plugins-disabled-expected.checksum: Added.
+        * platform/chromium-win/plugins/application-plugin-plugins-disabled-expected.png: Added.
+        * platform/chromium-win/plugins/application-plugin-plugins-disabled-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-02  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, update expected results.

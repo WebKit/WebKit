@@ -2754,7 +2754,6 @@ BUGWK45061 : fast/forms/focus2.html = FAIL
 BUGCR54330 MAC : fast/forms/input-spinbutton-capturing.html = TEXT PASS
 BUGCR54331 MAC : fast/forms/input-number-events.html = TEXT PASS
 BUGCR54333 WIN LINUX : fast/replaced/embed-display-none.html = PASS TIMEOUT
-BUGCR54334 LINUX : media/video-timeupdate-during-playback.html = PASS TIMEOUT
 BUGCR54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 
 // New test in r66740
@@ -3121,7 +3120,7 @@ BUGCR59665 MAC : media/video-pause-immediately.html = CRASH PASS
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
 BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = CRASH TIMEOUT PASS
-BUGCR59665 MAC : media/video-timeupdate-during-playback.html = CRASH TIMEOUT PASS
+BUGCR54334 DEBUG SLOW : media/video-timeupdate-during-playback.html = PASS TIMEOUT
 
 // Also fails on the mac port; see http://webkit.org/b/34331
 BUG_DRT : http/tests/media/video-referer.html = TEXT PASS
@@ -3274,3 +3273,5 @@ BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
 
+BUGCR68436 LINUX MAC DEBUG SLOW : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
+BUGCR68436 WIN DEBUG SLOW : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
