@@ -53,10 +53,15 @@ PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWid
         return pluginView->bindingInstance();
     }
 
-    QWidget* platformWidget = widget->platformWidget();
-    if (!platformWidget)
+    QObject* object = widget->bindingObject();
+
+    if (!object)
+        object = widget->platformWidget();
+
+    if (!object)
         return 0;
-    return JSC::Bindings::QtInstance::getQtInstance(platformWidget, bindingRootObject(), QScriptEngine::QtOwnership);
+
+    return JSC::Bindings::QtInstance::getQtInstance(object, bindingRootObject(), QScriptEngine::QtOwnership);
 }
 
 }

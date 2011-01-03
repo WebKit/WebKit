@@ -1445,7 +1445,12 @@ public:
             graphicsWidget->hide();
     }
 private:
-    QtPluginGraphicsWidget(QGraphicsWidget* w = 0): Widget(0), graphicsWidget(w) {}
+    QtPluginGraphicsWidget(QGraphicsWidget* w = 0)
+        : Widget(0)
+        , graphicsWidget(w)
+    {
+        setBindingObject(graphicsWidget);
+    }
 
     QGraphicsWidget* graphicsWidget;
 };

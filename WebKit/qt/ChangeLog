@@ -1,3 +1,20 @@
+2011-01-03  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] document.getElementById(...) doesn't return the right object in combination with QGraphicsWidget
+        https://bugs.webkit.org/show_bug.cgi?id=51464
+
+        Added a way to bind any QObject created as a plugin to JavaScript, 
+        by adding a custom membe to WebCore::Widget. 
+        Added a test to make sure plugins created as QGraphicsWidget are 
+        accessible through JavaScript.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (PluginPage::createPlugin):
+        (tst_QWebPage::graphicsWidgetPlugin):
+
 2011-01-02  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Kenneth Rohde Christiansen.

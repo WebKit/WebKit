@@ -41,6 +41,7 @@
 
 #if PLATFORM(QT)
 #include <qglobal.h>
+#include <QWeakPointer>
 #endif
 
 #if PLATFORM(MAC)
@@ -234,6 +235,11 @@ public:
     virtual bool isPluginContainer() const { return false; }
 #endif
 
+#if PLATFORM(QT)
+    QObject* bindingObject() const;
+    void setBindingObject(QObject*);
+#endif
+
     // Virtual methods to convert points to/from the containing ScrollView
     virtual IntRect convertToContainingView(const IntRect&) const;
     virtual IntRect convertFromContainingView(const IntRect&) const;
@@ -276,6 +282,10 @@ private:
 
 #if PLATFORM(MAC) || PLATFORM(EFL)
     WidgetPrivate* m_data;
+#endif
+
+#if PLATFORM(QT)
+    QWeakPointer<QObject> m_bindingObject;
 #endif
 
 #if PLATFORM(HAIKU)

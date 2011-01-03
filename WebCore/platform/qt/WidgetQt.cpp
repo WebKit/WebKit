@@ -110,6 +110,16 @@ void Widget::setIsSelected(bool)
     notImplemented();
 }
 
+void Widget::setBindingObject(QObject* object)
+{
+    m_bindingObject = object;
+}
+
+QObject* Widget::bindingObject() const
+{
+    return m_bindingObject.data();
+}
+
 }
 
 // vim: ts=4 sw=4 et

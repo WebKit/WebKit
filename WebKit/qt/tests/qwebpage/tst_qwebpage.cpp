@@ -91,6 +91,7 @@ private slots:
     void destroyPlugin();
     void createViewlessPlugin_data();
     void createViewlessPlugin();
+    void graphicsWidgetPlugin();
     void multiplePageGroupsAndLocalStorage();
     void cursorMovements();
     void textSelection();
@@ -588,6 +589,8 @@ protected:
             result = new QPushButton();
         else if (classid == "lineedit")
             result = new QLineEdit();
+        else if (classid == "graphicswidget")
+            result = new QGraphicsWidget();
         if (result)
             result->setObjectName(classid);
         calls.append(CallInfo(classid, url, paramNames, paramValues, result));
@@ -675,6 +678,54 @@ static void createPlugin(QWebView *view)
         QVERIFY(ci.returnValue != 0);
         QVERIFY(ci.returnValue->inherits("QPushButton"));
     }
+}
+
+void tst_QWebPage::graphicsWidgetPlugin()
+{
+    m_view->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    QGraphicsWebView webView;
+
+    QSignalSpy loadSpy(&webView, SIGNAL(loadFinished(bool)));
+
+    PluginPage* newPage = new PluginPage(&webView);
+    webView.setPage(newPage);
+
+    // type has to be application/x-qt-plugin
+    webView.setHtml(QString("<html><body><object type='application/x-foobarbaz' classid='graphicswidget' id='mygraphicswidget'/></body></html>"));
+    QTRY_COMPARE(loadSpy.count(), 1);
+    QCOMPARE(newPage->calls.count(), 0);
+
+    webView.setHtml(QString("<html><body><object type='application/x-qt-plugin' classid='graphicswidget' id='mygraphicswidget'/></body></html>"));
+    QTRY_COMPARE(loadSpy.count(), 2);
+    QCOMPARE(newPage->calls.count(), 1);
+    {
+        PluginPage::CallInfo ci = newPage->calls.takeFirst();
+        QCOMPARE(ci.classid, QString::fromLatin1("graphicswidget"));
+        QCOMPARE(ci.url, QUrl());
+        QCOMPARE(ci.paramNames.count(), 3);
+        QCOMPARE(ci.paramValues.count(), 3);
+        QCOMPARE(ci.paramNames.at(0), QString::fromLatin1("type"));
+        QCOMPARE(ci.paramValues.at(0), QString::fromLatin1("application/x-qt-plugin"));
+        QCOMPARE(ci.paramNames.at(1), QString::fromLatin1("classid"));
+        QCOMPARE(ci.paramValues.at(1), QString::fromLatin1("graphicswidget"));
+        QCOMPARE(ci.paramNames.at(2), QString::fromLatin1("id"));
+        QCOMPARE(ci.paramValues.at(2), QString::fromLatin1("mygraphicswidget"));
+        QVERIFY(ci.returnValue);
+        QVERIFY(ci.returnValue->inherits("QGraphicsWidget"));
+    }
+    // test JS bindings
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("document.getElementById('mygraphicswidget').toString()").toString(),
+             QString::fromLatin1("[object HTMLObjectElement]"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("mygraphicswidget.toString()").toString(),
+             QString::fromLatin1("[object HTMLObjectElement]"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("typeof mygraphicswidget.objectName").toString(),
+             QString::fromLatin1("string"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("mygraphicswidget.objectName").toString(),
+             QString::fromLatin1("graphicswidget"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("typeof mygraphicswidget.geometryChanged").toString(),
+             QString::fromLatin1("function"));
+    QCOMPARE(newPage->mainFrame()->evaluateJavaScript("mygraphicswidget.geometryChanged.toString()").toString(),
+             QString::fromLatin1("function geometryChanged() {\n    [native code]\n}"));
 }
 
 void tst_QWebPage::createPluginWithPluginsEnabled()
