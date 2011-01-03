@@ -13,6 +13,7 @@ SOURCES += \
     wtf/HashTable.cpp \
     wtf/MD5.cpp \
     wtf/MainThread.cpp \
+    wtf/NullPtr.cpp \
     wtf/qt/MainThreadQt.cpp \
     wtf/qt/StringQt.cpp \
     wtf/qt/ThreadingQt.cpp \

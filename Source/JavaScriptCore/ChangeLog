@@ -1,3 +1,14 @@
+2011-01-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix.
+
+        [Qt] Add NullPtr.cpp introduced in r71155 to the Qt build system.
+
+        This fix is required for builds where HAVE(NULLPTR) is false
+        (e.g. some MSVC and Symbian builds).
+
+        * wtf/wtf.pri:
+
 2011-01-02  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Simon Fraser.
