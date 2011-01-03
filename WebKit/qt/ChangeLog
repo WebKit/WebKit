@@ -1,3 +1,12 @@
+2011-01-03  Antonio Gomes  <agomes@rim.com>
+
+        Unreviewed crash fix.
+
+        Follow up of r74891: potential crash fix (bogus assertion).
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::editorCommandForKeyDownEvent):
+
 2011-01-03  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -377,7 +377,8 @@ static const KeyDownEntry keyDownEntries[] = {
 
 const char* editorCommandForKeyDownEvent(const KeyboardEvent* event)
 {
-    ASSERT(event->type() == eventNames().keydownEvent);
+    if (event->type() != eventNames().keydownEvent)
+        return "";
 
     static HashMap<int, const char*> keyDownCommandsMap;
     if (keyDownCommandsMap.isEmpty()) {
