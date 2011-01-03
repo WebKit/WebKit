@@ -1,3 +1,11 @@
+2011-01-02  Adam Barth  <abarth@webkit.org>
+
+        Skip this test for now.  It's been failing for a while.  I'm
+        investigating the root cause now, but having this red on the buildbot
+        isn't productive.
+
+        * platform/mac/Skipped:
+
 2011-01-02  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

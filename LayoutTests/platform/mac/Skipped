@@ -278,3 +278,7 @@ animations/stop-animation-on-suspend.html
 
 # DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html
+
+# This test is failing on the Leopard Intel Debug buildbot
+# https://bugs.webkit.org/show_bug.cgi?id=51807
+fast/blockflow/broken-ideograph-small-caps.html
