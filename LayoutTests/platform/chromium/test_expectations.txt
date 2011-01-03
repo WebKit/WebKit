@@ -1312,7 +1312,6 @@ BUGCR23488 MAC : fast/layers/layer-content-visibility-change.html = IMAGE
 BUGCR23488 MAC : fast/layers/remove-layer-with-nested-stacking.html = IMAGE
 BUGCR23488 MAC : fast/lists/ol-start-parsing.html = IMAGE
 BUGCR23488 MAC : fast/multicol/positioned-with-constrained-height.html = IMAGE
-BUGCR23488 MAC : fast/overflow/position-fixed-transform-clipping.html = IMAGE
 BUGCR23488 MAC : fast/text/shadow-no-blur.html = IMAGE
 BUGCR23488 MAC : fast/text/shadow-translucent-fill.html = IMAGE
 BUGCR23488 MAC : svg/transforms/animated-path-inside-transformed-html.xhtml = IMAGE
@@ -3060,16 +3059,23 @@ BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-docty
 
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
-BUG_MIHAIP MAC : css1/box_properties/clear.html = IMAGE
 BUG_MIHAIP MAC : css1/box_properties/clear_float.html = IMAGE
+BUG_MIHAIP MAC : css1/box_properties/clear.html = IMAGE
 BUG_MIHAIP MAC : css1/box_properties/float_elements_in_series.html = IMAGE
 BUG_MIHAIP MAC : css1/box_properties/float_on_text_elements.html = IMAGE
 BUG_MIHAIP MAC : css1/text_properties/text_transform.html = IMAGE
 BUG_MIHAIP MAC : css1/text_properties/vertical_align.html = IMAGE
+BUG_MIHAIP MAC : css2.1/t0905-c5525-fltwidth-00-c-g.html = IMAGE
+BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-001.html = IMAGE
+BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-002.html = IMAGE
 BUG_MIHAIP MAC : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
+BUG_MIHAIP MAC : fast/block/basic/016.html = IMAGE
+BUG_MIHAIP MAC : fast/block/basic/truncation-rtl.html = IMAGE
+BUG_MIHAIP MAC : fast/blockflow/fieldsets.html = IMAGE
 BUG_MIHAIP MAC : fast/borders/border-image-rotate-transform.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
+BUG_MIHAIP MAC : fast/borders/border-image-scale-transform.html = IMAGE
 BUG_MIHAIP MAC : fast/events/pointer-events-2.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 
 // Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
 // should now pass with upstream mac baselines).

@@ -1,6 +1,14 @@
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, Chromium test expectation update.
+
+        Missed a few failing tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, Chromium test expectation update.
         
         Remove fast/, printing/, svg/, tables/ and transforms/ chromium-mac
         baselines that are no longer necessary after r74892 (now that
