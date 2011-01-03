@@ -11,6 +11,15 @@
 
         Reviewed by Martin Robinson.
 
+        Use autoreconf instead of calling manually all the usual commands.
+
+        * autogen.sh: call autoreconf instead of
+        aclocal/autoheader/autoconf/automake/libtoolize.
+
+2011-01-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Disable superfluous GNU make built-in implicit rules
         https://bugs.webkit.org/show_bug.cgi?id=51826
 

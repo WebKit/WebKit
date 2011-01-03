@@ -8,55 +8,16 @@ test -z "$srcdir" && srcdir=.
 ORIGDIR=`pwd`
 cd $srcdir
 
-GTKDOCIZE_FLAGS="--copy"
-LIBTOOLIZE_FLAGS="--force --automake"
-ACLOCAL_FLAGS="-I Source/autotools $ACLOCAL_FLAGS"
-AUTOMAKE_FLAGS="--foreign --add-missing"
-
-DIE=0
-
-(autoconf --version) < /dev/null > /dev/null 2>&1 || {
-    echo
-    echo "You must have autoconf installed to compile $PROJECT."
-    echo "Install the appropriate package for your distribution,"
-    echo "or get the source tarball at http://ftp.gnu.org/gnu/autoconf/"
-    DIE=1
-}
-
-(automake --version) < /dev/null > /dev/null 2>&1 || {
-    echo
-    echo "You must have automake installed to compile $PROJECT."
-    echo "Install the appropriate package for your distribution,"
-    echo "or get the source tarball at http://ftp.gnu.org/gnu/automake/"
-    DIE=1
-}
-
-LIBTOOLIZE=libtoolize
-($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1 || {
-    LIBTOOLIZE=glibtoolize
-    ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1 || {
-        echo
-        echo "You must have libtool installed to compile $PROJECT."
-        echo "Install the appropriate package for your distribution,"
-        echo "or get the source tarball at http://ftp.gnu.org/gnu/libtool/"
-        DIE=1
-    }
-}
-
-if test "$DIE" -eq 1; then
-    exit 1
-fi
-
-rm -rf $top_srcdir/autom4te.cache
+rm -f $top_srcdir/autom4te.cache
 
 touch README INSTALL
 
-gtkdocize $GTKDOCIZE_FLAGS > /dev/null 2>&1 || echo "Warning: not running gtk-docize."
-aclocal $ACLOCAL_FLAGS || exit $?
-$LIBTOOLIZE $LIBTOOLIZE_FLAGS || exit $?
-autoheader || exit $?
-automake $AUTOMAKE_FLAGS || exit $?
-autoconf || exit $?
+gtkdocize --copy > /dev/null 2>&1 || echo "Warning: not running gtk-docize."
+if test -z `which autoreconf`; then
+    echo "Error: autoreconf not found, please install it."
+    exit 1
+fi
+autoreconf --verbose --install -I Source/autotools || exit $?
 
 cd $ORIGDIR || exit 1
 
