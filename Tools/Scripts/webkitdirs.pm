@@ -600,7 +600,7 @@ sub builtDylibPathForName
         return "$configurationProductDir/libwxwebkit.dylib";
     }
     if (isGtk()) {
-        my $libraryDir = "$configurationProductDir/$libraryName/../.libs/";
+        my $libraryDir = "$configurationProductDir/.libs/";
         if (-e $libraryDir . "libwebkitgtk-3.0.so") {
             return $libraryDir . "libwebkitgtk-3.0.so";
         }

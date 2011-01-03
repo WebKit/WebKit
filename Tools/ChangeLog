@@ -1,3 +1,19 @@
+2011-01-03  Koan-Sin Tan  <koansin.tan@gmail.com>
+
+        Reviewed by Xan Lopez.
+
+        "Tool/Scripts/run-launcher --gtk" stopped working after 74855
+        https://bugs.webkit.org/show_bug.cgi?id=51806
+
+        Originally, the $libraryName is 'JavaScriptCore'. When building release 
+        one, the $libraryDir was 'WebKitBuild/Release/JavaScriptCore/../.libs/'
+        which doesn't exist anymore ('WebKitBuild/Release/JavaScriptCore'
+        is 'WebKitBuild/Release/Source/JavaScriptCore' now), and 
+        'WebKitBuild/Release/Source/JavaScriptCore/../../.libs' looks weird,
+        so make it 'WebKitBuild/Release/.libs'
+
+        * Scripts/webkitdirs.pm: 
+
 2011-01-02  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Barth.
