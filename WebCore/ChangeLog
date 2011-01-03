@@ -1,3 +1,12 @@
+2011-01-03  Benjamin C Meyer  <bmeyer@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        In the cmake build system move logic related to ENABLE_NOTIFICATIONS into its own block.
+        https://bugs.webkit.org/show_bug.cgi?id=51827
+
+        * CMakeLists.txt:
+
 2011-01-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

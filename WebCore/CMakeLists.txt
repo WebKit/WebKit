@@ -312,9 +312,6 @@ SET(WebCore_IDL_FILES
 
     loader/appcache/DOMApplicationCache.idl
 
-    notifications/Notification.idl
-    notifications/NotificationCenter.idl
-
     page/BarInfo.idl
     page/Console.idl
     page/Coordinates.idl
@@ -632,7 +629,6 @@ SET(WebCore_SOURCES
     bindings/js/JSDataGridDataSource.cpp
     bindings/js/JSDebugWrapperSet.cpp
     bindings/js/JSDedicatedWorkerContextCustom.cpp
-    bindings/js/JSDesktopNotificationsCustom.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDocumentCustom.cpp
@@ -1715,6 +1711,16 @@ ELSE ()
     LIST(APPEND WebCore_SOURCES
         plugins/PluginPackageNone.cpp
         plugins/PluginViewNone.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_NOTIFICATIONS)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSDesktopNotificationsCustom.cpp
+    )
+    LIST(APPEND WebCore_IDL_FILES
+        notifications/Notification.idl
+        notifications/NotificationCenter.idl
     )
 ENDIF ()
 
