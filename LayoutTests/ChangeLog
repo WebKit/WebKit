@@ -1,3 +1,12 @@
+2011-01-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix.
+
+        [Qt] DRT sideeffect revealed by r74896
+        https://bugs.webkit.org/show_bug.cgi?id=51829
+
+        * platform/qt/Skipped: http/tests/misc/401-alternative-content.php added until fix.
+
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, Chromium test expectation update.
