@@ -224,11 +224,6 @@ bool RenderThemeGtk::paintMenuList(RenderObject* object, const PaintInfo& info, 
     return paintRenderObject(MOZ_GTK_DROPDOWN, object, info.context, rect);
 }
 
-bool RenderThemeGtk::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
-{
-    return paintMenuList(object, info, rect);
-}
-
 void RenderThemeGtk::setTextInputBorders(RenderStyle* style)
 {
     // If this control isn't drawn using the native theme, we don't touch the borders.

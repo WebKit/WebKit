@@ -273,6 +273,11 @@ void RenderThemeGtk::adjustMenuListButtonStyle(CSSStyleSelector* selector, Rende
     adjustMenuListStyle(selector, style, e);
 }
 
+bool RenderThemeGtk::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    return paintMenuList(object, info, rect);
+}
+
 void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     RenderThemeGtk::setTextInputBorders(style);
