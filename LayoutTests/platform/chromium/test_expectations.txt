@@ -1298,9 +1298,7 @@ BUGCR23494 MAC : fast/text/monospace-width-cache.html = IMAGE
 // Actual is just slightly off in color than expected
 BUGCR23488 MAC RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUGCR23488 MAC DEBUG SLOW : fast/backgrounds/size/backgroundSize15.html = IMAGE
-BUGCR23488 MAC : fast/block/float/avoidance-percent-width-strict.html = IMAGE
 BUGCR23488 MAC : fast/block/float/float-avoidance.html = IMAGE
-BUGCR23488 MAC : fast/borders/inline-mask-overlay-image.html = IMAGE
 BUGCR23488 MAC : fast/box-shadow/basic-shadows.html = IMAGE
 BUGCR23488 MAC : fast/box-shadow/inset.html = IMAGE
 BUGCR23488 MAC : fast/canvas/canvas-incremental-repaint-2.html = IMAGE
@@ -1696,7 +1694,6 @@ BUGCR23956 WIN LINUX : fast/dom/Range/getClientRects.html = FAIL
 BUGCR24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 
 // Started happening somewhere around http://trac.webkit.org/changeset/48989.
-BUGCR23955 MAC : fast/css/last-of-type-pseudo-class.html = IMAGE
 BUGCR23955 LINUX : fast/css/last-of-type-pseudo-class.html = IMAGE
 
 // Started failing for no apparent reason at r28124, and IMAGE+TEXT diffs started at r51875
@@ -1763,13 +1760,13 @@ BUGCR27418 MAC RELEASE SLOW : http/tests/plugins/interrupted-get-url.html = PASS
 // http://trac.webkit.org/changeset/50852
 // The ColorSpace was only implemented for CG, more port implementation
 // required in order for Chromium to support color correction.
-BUGCR28005 : fast/css/color-correction-backgrounds-and-text.html = FAIL
+BUGCR28005 WIN LINUX : fast/css/color-correction-backgrounds-and-text.html = FAIL
 BUGCR28005 WIN LINUX : fast/css/color-correction-on-backgrounds.html = IMAGE+TEXT
 BUGCR28005 WIN LINUX : fast/css/color-correction-on-text.html = IMAGE+TEXT
 BUGCR28005 WIN LINUX : fast/css/color-correction.html = IMAGE+TEXT
 BUGCR28005 WIN LINUX : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
 BUGCR28005 WIN LINUX : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
-BUGCR28005 : fast/css/color-correction-on-background-image.html = FAIL
+BUGCR28005 WIN LINUX : fast/css/color-correction-on-background-image.html = FAIL
 BUGCR28005 WIN LINUX : fast/css/color-correction-untagged-images.html = IMAGE+TEXT
 
 // May also be related to r50760, but not as confident.
@@ -1940,15 +1937,6 @@ BUGCR35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // WebKit roll 54493 to 54530: new tests.
 BUGCR35114 : fast/js/parser-syntax-check.html = TEXT
-
-// WebKit roll 54530 to 54550
-BUGCR35238 MAC : fast/dom/clone-node-dynamic-style.html = IMAGE
-
-// WebKit roll 54550 to 54559
-BUGCR35238 MAC : svg/overflow/overflow-on-outermost-svg-element-defaults.svg = IMAGE
-BUGCR35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1.svg = IMAGE
-BUGCR35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg = IMAGE
-BUGCR35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg = IMAGE
 
 // Started failing during roll from 54848 -> 54898
 // Started failing with 54865. No rebaselines upstream but they don't run pixel tests.
@@ -2767,7 +2755,6 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
 // These tests started failing presumably after r70850
 BUGWK48627 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
-BUGWK48627 MAC : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml = IMAGE
 
 // New test, seems V8 differs from JSC here.
 // Added by http://trac.webkit.org/changeset/70910

@@ -1,3 +1,11 @@
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectation update.
+        
+        Remove failing expectations for tests that now pass (due to r74892).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by David Hyatt.
