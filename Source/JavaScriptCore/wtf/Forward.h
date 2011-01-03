@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2009, 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -36,6 +36,8 @@ namespace WTF {
     class AtomicString;
     class AtomicStringImpl;
     class CString;
+    class Decoder;
+    class Encoder;
     class String;
     class StringBuffer;
     class StringImpl;
@@ -53,6 +55,8 @@ using WTF::Vector;
 using WTF::AtomicString;
 using WTF::AtomicStringImpl;
 using WTF::CString;
+using WTF::Encoder;
+using WTF::Decoder;
 using WTF::String;
 using WTF::StringBuffer;
 using WTF::StringImpl;
