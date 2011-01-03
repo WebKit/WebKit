@@ -1,3 +1,13 @@
+2011-01-03  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        check-webkit-style shouldn't consider "value" automatically to be a meaningless name.
+        https://bugs.webkit.org/show_bug.cgi?id=51842
+
+        * Scripts/webkitpy/style/checkers/cpp.py: Remove the check for value.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Remove the test for value.
+
 2011-01-03  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by David Kilzer.

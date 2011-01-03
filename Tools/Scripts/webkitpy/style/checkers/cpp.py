@@ -1529,18 +1529,11 @@ def check_function_definition(clean_lines, line_number, function_state, error):
         if len(parameter_list) == 1 and match('set[A-Z]', function_state.current_function):
             trimmed_function_name = function_state.current_function[len('set'):]
             if not _check_parameter_name_against_text(parameter, trimmed_function_name, error):
-                # Since an error was noted for this name, move to the next parameter.
-                continue
+                continue  # Since an error was noted for this name, move to the next parameter.
 
         # Check the parameter name against the type.
         if not _check_parameter_name_against_text(parameter, parameter.type, error):
-            continue
-
-        # Skip single letter parameters before comparing against value (because 'a' would
-        # be flagged, but it may be an ok variable when used in an rgba function).
-        if len(parameter.name) > 1:
-            # 'value' is a meaningless variable name that is used in some places, so flag it.
-            _check_parameter_name_against_text(parameter, 'value', error)
+            continue  # Since an error was noted for this name, move to the next parameter.
 
 
 def check_pass_ptr_usage(clean_lines, line_number, function_state, error):

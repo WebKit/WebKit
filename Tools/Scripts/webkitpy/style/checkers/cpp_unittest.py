@@ -4163,10 +4163,6 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assertEquals(meaningless_variable_name_error_message % 'rvo',
                           self.perform_lint('void funct(RenderView rvo);', 'test.cpp', parameter_error_rules))
 
-        # 'value' is a meaningless variable name.
-        self.assertEquals(meaningless_variable_name_error_message % 'value',
-                          self.perform_lint('void funct(RenderView value);', 'test.cpp', parameter_error_rules))
-
         # Check that r, g, b, and a are allowed.
         self.assertEquals('',
                           self.perform_lint('void setRGBAValues(int r, int g, int b, int a);', 'test.cpp', parameter_error_rules))
