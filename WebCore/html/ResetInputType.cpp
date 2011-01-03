@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,7 +33,9 @@
 #include "ResetInputType.h"
 
 #include "Event.h"
+#include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "LocalizedStrings.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -58,6 +61,16 @@ void ResetInputType::handleDOMActivateEvent(Event* event)
         return;
     element()->form()->reset();
     event->setDefaultHandled();
+}
+
+String ResetInputType::defaultValue()
+{
+    return resetButtonDefaultLabel();
+}
+
+bool ResetInputType::isTextButton() const
+{
+    return true;
 }
 
 } // namespace WebCore

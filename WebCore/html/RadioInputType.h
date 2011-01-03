@@ -47,6 +47,12 @@ private:
     virtual void handleClickEvent(MouseEvent*);
     virtual void handleKeydownEvent(KeyboardEvent*);
     virtual void handleKeyupEvent(KeyboardEvent*);
+    virtual bool isKeyboardFocusable() const;
+    virtual void attach();
+    virtual bool shouldSendChangeEventAfterCheckedChanged();
+    virtual PassOwnPtr<ClickHandlingState> willDispatchClick();
+    virtual void didDispatchClick(Event*, const ClickHandlingState&);
+    virtual bool isRadioButton() const;
 };
 
 } // namespace WebCore

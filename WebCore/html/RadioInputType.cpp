@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -113,6 +113,84 @@ void RadioInputType::handleKeyupEvent(KeyboardEvent* event)
     if (element()->checked())
         return;
     dispatchSimulatedClickIfActive(event);
+}
+
+bool RadioInputType::isKeyboardFocusable() const
+{
+    // When using Spatial Navigation, every radio button should be focusable.
+    if (isSpatialNavigationEnabled(element()->document()->frame()))
+        return true;
+
+    // Never allow keyboard tabbing to leave you in the same radio group.  Always
+    // skip any other elements in the group.
+    Node* currentFocusedNode = element()->document()->focusedNode();
+    if (currentFocusedNode && currentFocusedNode->hasTagName(inputTag)) {
+        HTMLInputElement* focusedInput = static_cast<HTMLInputElement*>(currentFocusedNode);
+        if (focusedInput->isRadioButton() && focusedInput->form() == element()->form() && focusedInput->name() == element()->name())
+            return false;
+    }
+
+    // Allow keyboard focus if we're checked or if nothing in the group is checked.
+    return element()->checked() || !element()->checkedRadioButtons().checkedButtonForGroup(element()->name());
+}
+
+void RadioInputType::attach()
+{
+    InputType::attach();
+    element()->updateCheckedRadioButtons();
+}
+
+bool RadioInputType::shouldSendChangeEventAfterCheckedChanged()
+{
+    // Don't send a change event for a radio button that's getting unchecked.
+    // This was done to match the behavior of other browsers.
+    return element()->checked();
+}
+
+PassOwnPtr<ClickHandlingState> RadioInputType::willDispatchClick()
+{
+    // An event handler can use preventDefault or "return false" to reverse the selection we do here.
+    // The ClickHandlingState object contains what we need to undo what we did here in didDispatchClick.
+
+    // We want radio groups to end up in sane states, i.e., to have something checked.
+    // Therefore if nothing is currently selected, we won't allow the upcoming action to be "undone", since
+    // we want some object in the radio group to actually get selected.
+
+    OwnPtr<ClickHandlingState> state = adoptPtr(new ClickHandlingState);
+
+    state->checked = element()->checked();
+    state->indeterminate = element()->indeterminate();
+    state->checkedRadioButton = element()->checkedRadioButtons().checkedButtonForGroup(element()->name());
+
+    if (element()->indeterminate())
+        element()->setIndeterminate(false);
+    element()->setChecked(true, true);
+
+    return state.release();
+}
+
+void RadioInputType::didDispatchClick(Event* event, const ClickHandlingState& state)
+{
+    if (event->defaultPrevented() || event->defaultHandled()) {
+        // Restore the original selected radio button if possible.
+        // Make sure it is still a radio button and only do the restoration if it still belongs to our group.
+        HTMLInputElement* checkedRadioButton = state.checkedRadioButton.get();
+        if (checkedRadioButton
+                && checkedRadioButton->isRadioButton()
+                && checkedRadioButton->form() == element()->form()
+                && checkedRadioButton->name() == element()->name()) {
+            checkedRadioButton->setChecked(true);
+        }
+        element()->setIndeterminate(state.indeterminate);
+    }
+
+    // The work we did in willDispatchClick was default handling.
+    event->setDefaultHandled();
+}
+
+bool RadioInputType::isRadioButton() const
+{
+    return true;
 }
 
 } // namespace WebCore

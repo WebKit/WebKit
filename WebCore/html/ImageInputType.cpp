@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,12 +23,19 @@
 #include "ImageInputType.h"
 
 #include "FormDataList.h"
+#include "HTMLFormElement.h"
+#include "HTMLImageLoader.h"
 #include "HTMLInputElement.h"
 #include "MouseEvent.h"
 #include "RenderImage.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+inline ImageInputType::ImageInputType(HTMLInputElement* element)
+    : BaseButtonInputType(element)
+{
+}
 
 PassOwnPtr<InputType> ImageInputType::create(HTMLInputElement* element)
 {
@@ -83,6 +90,79 @@ RenderObject* ImageInputType::createRenderer(RenderArena* arena, RenderStyle*) c
     RenderImage* image = new (arena) RenderImage(element());
     image->setImageResource(RenderImageResource::create());
     return image;
+}
+
+void ImageInputType::altAttributeChanged()
+{
+    RenderImage* image = toRenderImage(element()->renderer());
+    if (!image)
+        return;
+    image->updateAltText();
+}
+
+void ImageInputType::srcAttributeChanged()
+{
+    if (!element()->renderer())
+        return;
+    if (!m_imageLoader)
+        m_imageLoader = adoptPtr(new HTMLImageLoader(element()));
+    m_imageLoader->updateFromElementIgnoringPreviousError();
+}
+
+void ImageInputType::attach()
+{
+    BaseButtonInputType::attach();
+
+    if (!m_imageLoader)
+        m_imageLoader = adoptPtr(new HTMLImageLoader(element()));
+    m_imageLoader->updateFromElement();
+
+    RenderImage* renderer = toRenderImage(element()->renderer());
+    if (!renderer)
+        return;
+
+    if (!m_imageLoader->haveFiredBeforeLoadEvent())
+        return;
+
+    RenderImageResource* imageResource = renderer->imageResource();
+    imageResource->setCachedImage(m_imageLoader->image()); 
+
+    // If we have no image at all because we have no src attribute, set
+    // image height and width for the alt text instead.
+    if (!m_imageLoader->image() && !imageResource->cachedImage())
+        renderer->setImageSizeForAltText();
+}
+
+void ImageInputType::willMoveToNewOwnerDocument()
+{
+    BaseButtonInputType::willMoveToNewOwnerDocument();
+    if (m_imageLoader)
+        m_imageLoader->elementWillMoveToNewOwnerDocument();
+}
+
+bool ImageInputType::shouldRespectAlignAttribute()
+{
+    return true;
+}
+
+bool ImageInputType::canBeSuccessfulSubmitButton()
+{
+    return true;
+}
+
+bool ImageInputType::isImageButton() const
+{
+    return true;
+}
+
+bool ImageInputType::isEnumeratable()
+{
+    return false;
+}
+
+bool ImageInputType::shouldRespectHeightAndWidthAttributes()
+{
+    return true;
 }
 
 } // namespace WebCore

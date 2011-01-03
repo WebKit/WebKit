@@ -91,7 +91,7 @@ double TimeInputType::stepScaleFactor() const
     return timeStepScaleFactor;
 }
 
-bool TimeInputType::scaledStepValeuShouldBeInteger() const
+bool TimeInputType::scaledStepValueShouldBeInteger() const
 {
     return true;
 }

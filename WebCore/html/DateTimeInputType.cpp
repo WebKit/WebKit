@@ -79,7 +79,7 @@ double DateTimeInputType::stepScaleFactor() const
     return dateTimeStepScaleFactor;
 }
 
-bool DateTimeInputType::scaledStepValeuShouldBeInteger() const
+bool DateTimeInputType::scaledStepValueShouldBeInteger() const
 {
     return true;
 }

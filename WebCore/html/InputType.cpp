@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  * Copyright (C) 2007 Samuel Weinig (sam@webkit.org)
  * Copyright (C) 2010 Google Inc. All rights reserved.
@@ -38,6 +38,7 @@
 #include "EmailInputType.h"
 #include "FileInputType.h"
 #include "FormDataList.h"
+#include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HiddenInputType.h"
 #include "ImageInputType.h"
@@ -68,7 +69,9 @@ namespace WebCore {
 
 using namespace std;
 
-typedef HashMap<String, PassOwnPtr<InputType> (*)(HTMLInputElement*), CaseFoldingHash> InputTypeFactoryMap;
+typedef PassOwnPtr<InputType> (*InputTypeFactoryFunction)(HTMLInputElement*);
+typedef HashMap<String, InputTypeFactoryFunction, CaseFoldingHash> InputTypeFactoryMap;
+
 static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
 {
     OwnPtr<InputTypeFactoryMap> map = adoptPtr(new InputTypeFactoryMap);
@@ -99,7 +102,7 @@ static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     return map.release();
 }
 
-PassOwnPtr<InputType> InputType::create(HTMLInputElement* element, const AtomicString& typeName)
+PassOwnPtr<InputType> InputType::create(HTMLInputElement* element, const String& typeName)
 {
     static const InputTypeFactoryMap* factoryMap = createInputTypeFactoryMap().leakPtr();
     PassOwnPtr<InputType> (*factory)(HTMLInputElement*) = typeName.isEmpty() ? 0 : factoryMap->get(typeName);
@@ -277,7 +280,7 @@ bool InputType::parsedStepValueShouldBeInteger() const
     return false;
 }
 
-bool InputType::scaledStepValeuShouldBeInteger() const
+bool InputType::scaledStepValueShouldBeInteger() const
 {
     return false;
 }
@@ -374,6 +377,239 @@ void InputType::dispatchSimulatedClickIfActive(KeyboardEvent* event) const
     if (element()->active())
         element()->dispatchSimulatedClick(event);
     event->setDefaultHandled();
+}
+
+bool InputType::canSetStringValue() const
+{
+    return true;
+}
+
+bool InputType::isKeyboardFocusable() const
+{
+    return true;
+}
+
+bool InputType::shouldUseInputMethod() const
+{
+    return false;
+}
+
+void InputType::handleBlurEvent()
+{
+}
+
+void InputType::accessKeyAction(bool)
+{
+    element()->focus(false);
+}
+
+void InputType::attach()
+{
+}
+
+void InputType::altAttributeChanged()
+{
+}
+
+void InputType::srcAttributeChanged()
+{
+}
+
+void InputType::willMoveToNewOwnerDocument()
+{
+}
+
+bool InputType::shouldRespectAlignAttribute()
+{
+    return false;
+}
+
+bool InputType::canChangeFromAnotherType() const
+{
+    return true;
+}
+
+void InputType::minOrMaxAttributeChanged()
+{
+}
+
+bool InputType::canBeSuccessfulSubmitButton()
+{
+    return false;
+}
+
+bool InputType::rendererIsNeeded()
+{
+    return true;
+}
+
+FileList* InputType::files()
+{
+    return 0;
+}
+
+bool InputType::getTypeSpecificValue(String&)
+{
+    return false;
+}
+
+String InputType::fallbackValue()
+{
+    return String();
+}
+
+String InputType::defaultValue()
+{
+    return String();
+}
+
+bool InputType::canSetSuggestedValue()
+{
+    return false;
+}
+
+bool InputType::shouldSendChangeEventAfterCheckedChanged()
+{
+    return true;
+}
+
+bool InputType::storesValueSeparateFromAttribute()
+{
+    return true;
+}
+
+bool InputType::canSetValue(const String&)
+{
+    return true;
+}
+
+PassOwnPtr<ClickHandlingState> InputType::willDispatchClick()
+{
+    return PassOwnPtr<ClickHandlingState>();
+}
+
+void InputType::didDispatchClick(Event*, const ClickHandlingState&)
+{
+}
+
+bool InputType::isAcceptableValue(const String&)
+{
+    return true;
+}
+
+String InputType::sanitizeValue(const String& proposedValue)
+{
+    return proposedValue;
+}
+
+bool InputType::hasUnacceptableValue()
+{
+    return false;
+}
+
+void InputType::setFileList(const Vector<String>&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool InputType::shouldResetOnDocumentActivation()
+{
+    return false;
+}
+
+bool InputType::shouldRespectListAttribute()
+{
+    return false;
+}
+
+bool InputType::shouldRespectSpeechAttribute()
+{
+    return false;
+}
+
+bool InputType::isTextButton() const
+{
+    return false;
+}
+
+bool InputType::isRadioButton() const
+{
+    return false;
+}
+
+bool InputType::isSearchField() const
+{
+    return false;
+}
+
+bool InputType::isHiddenType() const
+{
+    return false;
+}
+
+bool InputType::isPasswordField() const
+{
+    return false;
+}
+
+bool InputType::isCheckbox() const
+{
+    return false;
+}
+
+bool InputType::isEmailField() const
+{
+    return false;
+}
+
+bool InputType::isFileUpload() const
+{
+    return false;
+}
+
+bool InputType::isImageButton() const
+{
+    return false;
+}
+
+bool InputType::isNumberField() const
+{
+    return false;
+}
+
+bool InputType::isSubmitButton() const
+{
+    return false;
+}
+
+bool InputType::isTelephoneField() const
+{
+    return false;
+}
+
+bool InputType::isURLField() const
+{
+    return false;
+}
+
+bool InputType::isEnumeratable()
+{
+    return true;
+}
+
+bool InputType::isCheckable()
+{
+    return false;
+}
+
+bool InputType::hasSpinButton()
+{
+    return false;
+}
+
+bool InputType::shouldRespectHeightAndWidthAttributes()
+{
+    return false;
 }
 
 namespace InputTypeNames {
@@ -525,6 +761,6 @@ const AtomicString& week()
     return name;
 }
 
-} // namespace WebCore::InpuTypeNames
+} // namespace WebCore::InputTypeNames
 
 } // namespace WebCore

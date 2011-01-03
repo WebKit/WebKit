@@ -45,6 +45,10 @@ private:
     virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool supportsRequired() const;
     virtual void handleDOMActivateEvent(Event*);
+    virtual bool canBeSuccessfulSubmitButton();
+    virtual String defaultValue();
+    virtual bool isSubmitButton() const;
+    virtual bool isTextButton() const;
 };
 
 } // namespace WebCore

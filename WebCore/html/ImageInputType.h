@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,24 +34,36 @@
 
 #include "BaseButtonInputType.h"
 #include "IntPoint.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
+
+class HTMLImageLoader;
 
 class ImageInputType : public BaseButtonInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    ImageInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    ImageInputType(HTMLInputElement*);
     virtual const AtomicString& formControlType() const;
     virtual bool isFormDataAppendable() const;
     virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool supportsValidation() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual void handleDOMActivateEvent(Event*);
+    virtual void altAttributeChanged();
+    virtual void srcAttributeChanged();
+    virtual void attach();
+    virtual void willMoveToNewOwnerDocument();
+    virtual bool shouldRespectAlignAttribute();
+    virtual bool canBeSuccessfulSubmitButton();
+    virtual bool isImageButton() const;
+    virtual bool isEnumeratable();
+    virtual bool shouldRespectHeightAndWidthAttributes();
 
-    // This is valid only during HTMLFormElement::prepareForSubmission().
-    IntPoint m_clickLocation;
+    OwnPtr<HTMLImageLoader> m_imageLoader;
+    IntPoint m_clickLocation; // Valid only during HTMLFormElement::prepareForSubmission().
 };
 
 } // namespace WebCore

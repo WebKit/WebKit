@@ -40,14 +40,19 @@ namespace WebCore {
 class TextFieldInputType : public InputType {
 protected:
     TextFieldInputType(HTMLInputElement* element) : InputType(element) { }
-    virtual bool isTextField() const;
-    virtual bool valueMissing(const String&) const;
     virtual void handleKeydownEvent(KeyboardEvent*);
     void handleKeydownEventForSpinButton(KeyboardEvent*);
     void handleWheelEventForSpinButton(WheelEvent*);
+
+private:
+    virtual bool isTextField() const;
+    virtual bool valueMissing(const String&) const;
     virtual void forwardEvent(Event*);
     virtual bool shouldSubmitImplicitly(Event*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual bool shouldUseInputMethod() const;
+    virtual String sanitizeValue(const String& proposedValue);
+    virtual bool shouldRespectListAttribute();
 };
 
 } // namespace WebCore

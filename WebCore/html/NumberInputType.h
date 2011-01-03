@@ -63,6 +63,13 @@ private:
     virtual double parseToDoubleWithDecimalPlaces(const String&, double, unsigned*) const;
     virtual String serialize(double) const;
     virtual double acceptableError(double) const;
+    virtual void handleBlurEvent();
+    virtual bool isAcceptableValue(const String&);
+    virtual String sanitizeValue(const String&);
+    virtual bool hasUnacceptableValue();
+    virtual bool shouldRespectSpeechAttribute();
+    virtual bool isNumberField() const;
+    virtual bool hasSpinButton();
 };
 
 } // namespace WebCore

@@ -40,6 +40,8 @@ namespace WebCore {
 class BaseTextInputType : public TextFieldInputType {
 protected:
     BaseTextInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
+
+private:
     virtual bool isTextType() const;
     virtual bool patternMismatch(const String&) const;
 };

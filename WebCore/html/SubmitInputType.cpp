@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,7 +34,9 @@
 
 #include "Event.h"
 #include "FormDataList.h"
+#include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "LocalizedStrings.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -70,6 +73,26 @@ void SubmitInputType::handleDOMActivateEvent(Event* event)
     element->form()->prepareForSubmission(event); // Event handlers can run.
     element->setActivatedSubmit(false);
     event->setDefaultHandled();
+}
+
+bool SubmitInputType::canBeSuccessfulSubmitButton()
+{
+    return true;
+}
+
+String SubmitInputType::defaultValue()
+{
+    return submitButtonDefaultLabel();
+}
+
+bool SubmitInputType::isSubmitButton() const
+{
+    return true;
+}
+
+bool SubmitInputType::isTextButton() const
+{
+    return true;
 }
 
 } // namespace WebCore

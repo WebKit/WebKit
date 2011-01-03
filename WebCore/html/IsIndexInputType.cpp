@@ -32,6 +32,7 @@
 #include "IsIndexInputType.h"
 
 #include "Document.h"
+#include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -68,6 +69,11 @@ PassRefPtr<HTMLFormElement> IsIndexInputType::formForSubmission() const
         form->setAction(document->baseURL().string());
     }
     return form.release();
+}
+
+bool IsIndexInputType::shouldRespectListAttribute()
+{
+    return false;
 }
 
 } // namespace WebCore

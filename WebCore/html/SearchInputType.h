@@ -42,6 +42,8 @@ public:
 private:
     SearchInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool shouldRespectSpeechAttribute();
+    virtual bool isSearchField() const;
 };
 
 } // namespace WebCore

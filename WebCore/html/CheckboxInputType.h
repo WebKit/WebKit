@@ -45,6 +45,9 @@ private:
     virtual bool valueMissing(const String&) const;
     virtual String valueMissingText() const;
     virtual void handleKeyupEvent(KeyboardEvent*);
+    virtual PassOwnPtr<ClickHandlingState> willDispatchClick();
+    virtual void didDispatchClick(Event*, const ClickHandlingState&);
+    virtual bool isCheckbox() const;
 };
 
 } // namespace WebCore

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -53,6 +54,30 @@ RenderObject* HiddenInputType::createRenderer(RenderArena*, RenderStyle*) const
 {
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+void HiddenInputType::accessKeyAction(bool)
+{
+}
+
+bool HiddenInputType::rendererIsNeeded()
+{
+    return false;
+}
+
+bool HiddenInputType::storesValueSeparateFromAttribute()
+{
+    return false;
+}
+
+bool HiddenInputType::isHiddenType() const
+{
+    return true;
+}
+
+bool HiddenInputType::shouldRespectHeightAndWidthAttributes()
+{
+    return true;
 }
 
 } // namespace WebCore

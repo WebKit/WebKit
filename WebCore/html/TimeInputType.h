@@ -47,7 +47,7 @@ private:
     virtual double maximum() const;
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
-    virtual bool scaledStepValeuShouldBeInteger() const;
+    virtual bool scaledStepValueShouldBeInteger() const;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const;
 };

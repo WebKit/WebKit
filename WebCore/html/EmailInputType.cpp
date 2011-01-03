@@ -85,4 +85,9 @@ String EmailInputType::typeMismatchText() const
     return element()->multiple() ? validationMessageTypeMismatchForMultipleEmailText() : validationMessageTypeMismatchForEmailText();
 }
 
+bool EmailInputType::isEmailField() const
+{
+    return true;
+}
+
 } // namespace WebCore

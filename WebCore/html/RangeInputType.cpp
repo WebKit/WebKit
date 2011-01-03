@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +37,7 @@
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "RenderSlider.h"
+#include "StepRange.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
@@ -203,6 +205,46 @@ String RangeInputType::serialize(double value) const
     if (!isfinite(value))
         return String();
     return serializeForNumberType(value);
+}
+
+// FIXME: Could share this with BaseButtonInputType and BaseCheckableInputType if we had a common base class.
+void RangeInputType::accessKeyAction(bool sendToAnyElement)
+{
+    InputType::accessKeyAction(sendToAnyElement);
+
+    // Send mouse button events if the caller specified sendToAnyElement.
+    // FIXME: The comment above is no good. It says what we do, but not why.
+    element()->dispatchSimulatedClick(0, sendToAnyElement);
+}
+
+void RangeInputType::minOrMaxAttributeChanged()
+{
+    InputType::minOrMaxAttributeChanged();
+
+    // Sanitize the value.
+    element()->setValue(element()->value());
+    element()->setNeedsStyleRecalc();
+}
+
+String RangeInputType::fallbackValue()
+{
+    return serializeForNumberType(StepRange(element()).defaultValue());
+}
+
+String RangeInputType::sanitizeValue(const String& proposedValue)
+{
+    // If the proposedValue is null than this is a reset scenario and we
+    // want the range input's value attribute to take priority over the
+    // calculated default (middle) value.
+    if (proposedValue.isNull())
+        return proposedValue;
+
+    return serializeForNumberType(StepRange(element()).clampValue(proposedValue));
+}
+
+bool RangeInputType::shouldRespectListAttribute()
+{
+    return true;
 }
 
 } // namespace WebCore

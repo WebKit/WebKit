@@ -25,21 +25,15 @@
 #define HTMLInputElement_h
 
 #include "HTMLFormControlElement.h"
-#include "HTMLFormElement.h"
 #include "InputElement.h"
-#include "InputType.h"
-#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class DateComponents;
 class FileList;
 class HTMLDataListElement;
-class HTMLImageLoader;
 class HTMLOptionElement;
 class InputType;
 class KURL;
-class VisibleSelection;
 
 class HTMLInputElement : public HTMLTextFormControlElement, public InputElement {
 public:
@@ -84,38 +78,38 @@ public:
     // stepUp()/stepDown() for user-interaction.
     void stepUpFromRenderer(int);
 
-    bool isTextButton() const { return deprecatedInputType() == SUBMIT || deprecatedInputType() == RESET || deprecatedInputType() == BUTTON; }
+    bool isTextButton() const;
 
-    virtual bool isRadioButton() const { return deprecatedInputType() == RADIO; }
+    virtual bool isRadioButton() const;
     virtual bool isTextField() const;
-    virtual bool isSearchField() const { return deprecatedInputType() == SEARCH; }
-    virtual bool isInputTypeHidden() const { return deprecatedInputType() == HIDDEN; }
-    virtual bool isPasswordField() const { return deprecatedInputType() == PASSWORD; }
-    virtual bool isCheckbox() const { return deprecatedInputType() == CHECKBOX; }
+    virtual bool isSearchField() const;
+    virtual bool isInputTypeHidden() const;
+    virtual bool isPasswordField() const;
+    virtual bool isCheckbox() const;
 
     // FIXME: It's highly likely that any call site calling this function should instead
     // be using a different one. Many input elements behave like text fields, and in addition
     // any unknown input type is treated as text. Consider, for example, isTextField or
     // isTextField && !isPasswordField.
-    bool isText() const { return deprecatedInputType() == TEXT; }
+    bool isText() const;
 
-    bool isEmailField() const { return deprecatedInputType() == EMAIL; }
-    bool isFileUpload() const { return deprecatedInputType() == FILE; }
-    bool isImageButton() const { return deprecatedInputType() == IMAGE; }
-    bool isNumberField() const { return deprecatedInputType() == NUMBER; }
-    bool isSubmitButton() const { return deprecatedInputType() == SUBMIT; }
-    bool isTelephoneField() const { return deprecatedInputType() == TELEPHONE; }
-    bool isURLField() const { return deprecatedInputType() == URL; }
+    bool isEmailField() const;
+    bool isFileUpload() const;
+    bool isImageButton() const;
+    bool isNumberField() const;
+    bool isSubmitButton() const;
+    bool isTelephoneField() const;
+    bool isURLField() const;
 
 #if ENABLE(INPUT_SPEECH)
     virtual bool isSpeechEnabled() const;
 #endif
 
-    bool checked() const { return m_checked; }
+    bool checked() const { return m_isChecked; }
     void setChecked(bool, bool sendChangeEvent = false);
 
     // 'indeterminate' is a state independent of the checked state that causes the control to draw in a way that hides the actual state.
-    bool indeterminate() const { return m_indeterminate; }
+    bool indeterminate() const { return m_isIndeterminate; }
     void setIndeterminate(bool);
 
     virtual int size() const;
@@ -165,8 +159,6 @@ public:
 
     String defaultValue() const;
     void setDefaultValue(const String&);
-    
-    bool defaultChecked() const;
 
     void setDefaultName(const AtomicString&);
 
@@ -182,12 +174,8 @@ public:
 
     bool multiple() const;
 
-#if ENABLE(DIRECTORY_UPLOAD)
-    bool webkitdirectory() const;
-#endif
-
-    virtual bool isAutofilled() const { return m_autofilled; }
-    void setAutofilled(bool value = true);
+    virtual bool isAutofilled() const { return m_isAutofilled; }
+    void setAutofilled(bool = true);
 
     FileList* files();
 
@@ -203,60 +191,26 @@ public:
     void setWapInputFormat(String& mask);
 #endif
 
-    inline CheckedRadioButtons& checkedRadioButtons() const
-    {
-        if (HTMLFormElement* formElement = form())
-            return formElement->checkedRadioButtons();
-        return document()->checkedRadioButtons();
-    }
-
-    void handleBeforeTextInsertedEvent(Event* event);
-
+    // These functions are public so they can be used in InputType classes.
+    // Otherwise, they would be private.
+    CheckedRadioButtons& checkedRadioButtons() const;
+    void handleBeforeTextInsertedEvent(Event*);
+    void updateCheckedRadioButtons();
+    
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement* = 0);
 
     virtual void defaultEventHandler(Event*);
 
 private:
-    enum DeprecatedInputType {
-        TEXT = 0, // TEXT must be 0.
-        PASSWORD,
-        ISINDEX,
-        CHECKBOX,
-        RADIO,
-        SUBMIT,
-        RESET,
-        FILE,
-        HIDDEN,
-        IMAGE,
-        BUTTON,
-        SEARCH,
-        RANGE,
-        EMAIL,
-        NUMBER,
-        TELEPHONE,
-        URL,
-        COLOR,
-        DATE,
-        DATETIME,
-        DATETIMELOCAL,
-        MONTH,
-        TIME,
-        WEEK,
-    };
-
     enum AutoCompleteSetting { Uninitialized, On, Off };
-
-    typedef HashMap<String, HTMLInputElement::DeprecatedInputType, CaseFoldingHash> InputTypeMap;
-    static PassOwnPtr<InputTypeMap> createTypeMap();
-    DeprecatedInputType deprecatedInputType() const { return static_cast<DeprecatedInputType>(m_deprecatedTypeNumber); }
 
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
-    virtual bool isEnumeratable() const { return deprecatedInputType() != IMAGE; }
+    virtual bool isEnumeratable() const;
     virtual void updateFocusAppearance(bool restorePreviousSelection);
     virtual void aboutToUnload();
     virtual bool shouldUseInputMethod() const;
@@ -264,15 +218,13 @@ private:
     virtual const AtomicString& formControlName() const;
  
     // isChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
-    virtual bool isChecked() const { return checked() && (deprecatedInputType() == CHECKBOX || deprecatedInputType() == RADIO); }
+    virtual bool isChecked() const;
     virtual bool isIndeterminate() const { return indeterminate(); }
     
     virtual bool isTextFormControl() const { return isTextField(); }
 
-    virtual bool hasSpinButton() const { return deprecatedInputType() == NUMBER || deprecatedInputType() == DATE || deprecatedInputType() == DATETIME || deprecatedInputType() == DATETIMELOCAL || deprecatedInputType() == MONTH || deprecatedInputType() == TIME || deprecatedInputType() == WEEK; }
+    virtual bool hasSpinButton() const;
     virtual bool canTriggerImplicitSubmission() const { return isTextField(); }
-
-    bool allowsIndeterminate() const { return deprecatedInputType() == CHECKBOX || deprecatedInputType() == RADIO; }
 
     virtual const AtomicString& formControlType() const;
 
@@ -296,9 +248,6 @@ private:
 
     virtual bool isSuccessfulSubmitButton() const;
 
-    // Report if this input type uses height & width attributes
-    bool respectHeightAndWidthAttrs() const { return deprecatedInputType() == IMAGE || deprecatedInputType() == HIDDEN; }
-
     virtual void reset();
 
     virtual void* preDispatchEventHandler(Event*);
@@ -319,8 +268,6 @@ private:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    bool storesValueSeparateFromAttribute() const;
-
     bool needsActivationCallback();
     void registerForActivationCallbackIfNeeded();
     void unregisterForActivationCallbackIfNeeded();
@@ -328,7 +275,7 @@ private:
     virtual bool supportsMaxLength() const { return isTextType(); }
     bool isTextType() const;
 
-    virtual bool supportsPlaceholder() const { return isTextType() || deprecatedInputType() == ISINDEX; }
+    virtual bool supportsPlaceholder() const;
     virtual bool isEmptyValue() const { return value().isEmpty(); }
     virtual void handleFocusEvent();
     virtual void handleBlurEvent();
@@ -341,8 +288,6 @@ private:
 
     void updateType();
 
-    void updateCheckedRadioButtons();
-    
     // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
     void applyStep(double count, ExceptionCode&);
 
@@ -356,28 +301,18 @@ private:
 
     InputElementData m_data;
     short m_maxResults;
-    OwnPtr<HTMLImageLoader> m_imageLoader;
-    RefPtr<FileList> m_fileList;
-    unsigned m_deprecatedTypeNumber : 5; // DeprecatedInputType 
-    bool m_checked : 1;
-    bool m_defaultChecked : 1;
-    bool m_useDefaultChecked : 1;
-    bool m_indeterminate : 1;
-    bool m_haveType : 1;
-    bool m_activeSubmit : 1;
+    bool m_isChecked : 1;
+    bool m_reflectsCheckedAttribute : 1;
+    bool m_isIndeterminate : 1;
+    bool m_hasType : 1;
+    bool m_isActivatedSubmit : 1;
     unsigned m_autocomplete : 2; // AutoCompleteSetting
-    bool m_autofilled : 1;
-    bool m_inited : 1;
+    bool m_isAutofilled : 1;
 #if ENABLE(DATALIST)
     bool m_hasNonEmptyList : 1;
 #endif
     OwnPtr<InputType> m_inputType;
 };
-
-inline void HTMLInputElement::handleBeforeTextInsertedEvent(Event* event)
-{
-    InputElement::handleBeforeTextInsertedEvent(m_data, this, this, event);
-}
 
 } //namespace
 

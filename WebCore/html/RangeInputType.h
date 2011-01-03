@@ -60,6 +60,11 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual double parseToDouble(const String&, double) const;
     virtual String serialize(double) const;
+    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual void minOrMaxAttributeChanged();
+    virtual String fallbackValue();
+    virtual String sanitizeValue(const String& proposedValue);
+    virtual bool shouldRespectListAttribute();
 };
 
 } // namespace WebCore

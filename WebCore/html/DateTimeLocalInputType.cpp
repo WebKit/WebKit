@@ -85,7 +85,7 @@ double DateTimeLocalInputType::stepScaleFactor() const
     return dateTimeLocalStepScaleFactor;
 }
 
-bool DateTimeLocalInputType::scaledStepValeuShouldBeInteger() const
+bool DateTimeLocalInputType::scaledStepValueShouldBeInteger() const
 {
     return true;
 }

@@ -44,6 +44,8 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool supportsValidation() const;
     virtual void handleDOMActivateEvent(Event*);
+    virtual String defaultValue();
+    virtual bool isTextButton() const;
 };
 
 } // namespace WebCore

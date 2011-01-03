@@ -42,11 +42,10 @@ protected:
     BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual double parseToDouble(const String&, double) const;
     virtual bool parseToDateComponents(const String&, DateComponents*) const;
-    // A helper for parseToDateComponents().
-    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
-    virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
 
 private:
+    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
+    virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;
@@ -62,6 +61,7 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*);
     virtual void handleWheelEvent(WheelEvent*);
     virtual String serialize(double) const;
+    virtual bool hasSpinButton();
 };
 
 } // namespace WebCore

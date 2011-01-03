@@ -63,4 +63,9 @@ String URLInputType::typeMismatchText() const
     return validationMessageTypeMismatchForURLText();
 }
 
+bool URLInputType::isURLField() const
+{
+    return true;
+}
+
 } // namespace WebCore

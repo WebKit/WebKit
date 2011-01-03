@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -102,6 +103,21 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
     return new (arena) RenderTextControlSingleLine(element(), element()->placeholderShouldBeVisible());
+}
+
+bool TextFieldInputType::shouldUseInputMethod() const
+{
+    return true;
+}
+
+String TextFieldInputType::sanitizeValue(const String& proposedValue)
+{
+    return InputElement::sanitizeValueForTextField(element(), proposedValue);
+}
+
+bool TextFieldInputType::shouldRespectListAttribute()
+{
+    return true;
 }
 
 } // namespace WebCore

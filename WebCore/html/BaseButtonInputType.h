@@ -46,6 +46,8 @@ private:
     virtual void handleKeypressEvent(KeyboardEvent*);
     virtual void handleKeyupEvent(KeyboardEvent*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual bool storesValueSeparateFromAttribute();
 };
 
 } // namespace WebCore

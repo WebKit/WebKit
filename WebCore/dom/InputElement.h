@@ -75,6 +75,12 @@ public:
     static const int s_maximumLength;
     static const int s_defaultSize;
 
+    // Replaces CRs and LFs, shrinks the value for s_maximumLength.
+    // This should be applied to values from the HTML value attribute and the DOM value property.
+    // This function should be called only by sanitizeValue() implementations.
+    // Public so it can be called by InputType.
+    static String sanitizeValueForTextField(const InputElement*, const String&);
+
 protected:
     static void dispatchFocusEvent(InputElement*, Element*);
     static void dispatchBlurEvent(InputElement*, Element*);
@@ -82,10 +88,6 @@ protected:
     static void updateSelectionRange(InputElement*, Element*, int start, int end);
     static void aboutToUnload(InputElement*, Element*);
     static void setValueFromRenderer(InputElementData&, InputElement*, Element*, const String&);
-    // Replaces CRs and LFs, shrinks the value for s_maximumLength.
-    // This should be applied to values from the HTML value attribute and the DOM value property.
-    // This function should be called only by sanitizeValue() implementations.
-    static String sanitizeValueForTextField(const InputElement*, const String&);
     // Replaces CRs and LFs, shrinks the value for the specified maximum length.
     // This should be applied to values specified by users.
     // The input string may be a fragment of the whole value.

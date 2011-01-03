@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
+#include "RenderTextControl.h"
 #include <limits>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
@@ -232,6 +234,47 @@ String NumberInputType::serialize(double value) const
 double NumberInputType::acceptableError(double step) const
 {
     return step / pow(2.0, FLT_MANT_DIG);
+}
+
+void NumberInputType::handleBlurEvent()
+{
+    // Reset the renderer value, which might be unmatched with the element value.
+    element()->setFormControlValueMatchesRenderer(false);
+
+    // We need to reset the renderer value explicitly because an unacceptable
+    // renderer value should be purged before style calculation.
+    if (element()->renderer())
+        element()->renderer()->updateFromElement();
+}
+
+bool NumberInputType::isAcceptableValue(const String& proposedValue)
+{
+    return proposedValue.isEmpty() || parseToDoubleForNumberType(proposedValue, 0);
+}
+
+String NumberInputType::sanitizeValue(const String& proposedValue)
+{
+    return parseToDoubleForNumberType(proposedValue, 0) ? proposedValue : String();
+}
+
+bool NumberInputType::hasUnacceptableValue()
+{
+    return element()->renderer() && !isAcceptableValue(toRenderTextControl(element()->renderer())->text());
+}
+
+bool NumberInputType::shouldRespectSpeechAttribute()
+{
+    return true;
+}
+
+bool NumberInputType::isNumberField() const
+{
+    return true;
+}
+
+bool NumberInputType::hasSpinButton()
+{
+    return true;
 }
 
 } // namespace WebCore

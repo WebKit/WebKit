@@ -44,6 +44,11 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool supportsValidation() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual bool rendererIsNeeded();
+    virtual bool storesValueSeparateFromAttribute();
+    virtual bool isHiddenType() const;
+    virtual bool shouldRespectHeightAndWidthAttributes();
 };
 
 } // namespace WebCore

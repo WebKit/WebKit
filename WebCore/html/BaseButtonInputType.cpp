@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -79,6 +80,21 @@ void BaseButtonInputType::handleKeyupEvent(KeyboardEvent* event)
 RenderObject* BaseButtonInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
     return new (arena) RenderButton(element());
+}
+
+// FIXME: Could share this with BaseCheckableInputType and RangeInputType if we had a common base class.
+void BaseButtonInputType::accessKeyAction(bool sendToAnyElement)
+{
+    InputType::accessKeyAction(sendToAnyElement);
+
+    // Send mouse button events if the caller specified sendToAnyElement.
+    // FIXME: The comment above is no good. It says what we do, but not why.
+    element()->dispatchSimulatedClick(0, sendToAnyElement);
+}
+
+bool BaseButtonInputType::storesValueSeparateFromAttribute()
+{
+    return false;
 }
 
 } // namespace WebCore

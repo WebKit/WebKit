@@ -46,6 +46,11 @@ private:
     virtual void restoreFormControlState(const String&) const;
     virtual bool appendFormData(FormDataList&, bool) const;
     virtual void handleKeypressEvent(KeyboardEvent*);
+    virtual bool canSetStringValue() const;
+    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual String fallbackValue();
+    virtual bool storesValueSeparateFromAttribute();
+    virtual bool isCheckable();
 };
 
 } // namespace WebCore

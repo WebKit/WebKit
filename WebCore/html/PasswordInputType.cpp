@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,6 +57,33 @@ void PasswordInputType::restoreFormControlState(const String&) const
 {
     // Should never save/restore password fields.
     ASSERT_NOT_REACHED();
+}
+
+bool PasswordInputType::shouldUseInputMethod() const
+{
+    // Input methods are disabled for the password field because otherwise
+    // anyone can access the underlying password and display it in clear text.
+    return false;
+}
+
+bool PasswordInputType::shouldResetOnDocumentActivation()
+{
+    return true;
+}
+
+bool PasswordInputType::shouldRespectListAttribute()
+{
+    return false;
+}
+
+bool PasswordInputType::shouldRespectSpeechAttribute()
+{
+    return true;
+}
+
+bool PasswordInputType::isPasswordField() const
+{
+    return true;
 }
 
 } // namespace WebCore

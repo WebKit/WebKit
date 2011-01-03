@@ -45,6 +45,7 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual bool supportsRequired() const;
     virtual PassRefPtr<HTMLFormElement> formForSubmission() const;
+    virtual bool shouldRespectListAttribute();
 };
 
 } // namespace WebCore

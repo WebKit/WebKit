@@ -50,4 +50,9 @@ bool ButtonInputType::supportsValidation() const
     return false;
 }
 
+bool ButtonInputType::isTextButton() const
+{
+    return true;
+}
+
 } // namespace WebCore

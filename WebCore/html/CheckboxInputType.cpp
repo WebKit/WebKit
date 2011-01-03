@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -64,6 +65,40 @@ void CheckboxInputType::handleKeyupEvent(KeyboardEvent* event)
     if (key != "U+0020")
         return;
     dispatchSimulatedClickIfActive(event);
+}
+
+PassOwnPtr<ClickHandlingState> CheckboxInputType::willDispatchClick()
+{
+    // An event handler can use preventDefault or "return false" to reverse the checking we do here.
+    // The ClickHandlingState object contains what we need to undo what we did here in didDispatchClick.
+
+    OwnPtr<ClickHandlingState> state = adoptPtr(new ClickHandlingState);
+
+    state->checked = element()->checked();
+    state->indeterminate = element()->indeterminate();
+
+    if (state->indeterminate)
+        element()->setIndeterminate(false);
+    else
+        element()->setChecked(!state->checked, true);
+
+    return state.release();
+}
+
+void CheckboxInputType::didDispatchClick(Event* event, const ClickHandlingState& state)
+{
+    if (event->defaultPrevented() || event->defaultHandled()) {
+        element()->setIndeterminate(state.indeterminate);
+        element()->setChecked(state.checked);
+    }
+
+    // The work we did in willDispatchClick was default handling.
+    event->setDefaultHandled();
+}
+
+bool CheckboxInputType::isCheckbox() const
+{
+    return true;
 }
 
 } // namespace WebCore

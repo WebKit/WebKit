@@ -1,3 +1,381 @@
+2011-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kent Tamura.
+
+        Eliminate HTMLInputElement::m_deprecatedTypeNumber, other input refactoring and renaming
+        https://bugs.webkit.org/show_bug.cgi?id=51791
+
+        * dom/InputElement.h: Make sanitizeValueForTextField public so it can
+        be called by InputType.
+
+        * html/BaseButtonInputType.cpp:
+        (WebCore::BaseButtonInputType::accessKeyAction): Added.
+        (WebCore::BaseButtonInputType::storesValueSeparateFromAttribute): Added.
+        * html/BaseButtonInputType.h: Ditto.
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::canSetStringValue): Added.
+        (WebCore::BaseCheckableInputType::accessKeyAction): Added.
+        (WebCore::BaseCheckableInputType::fallbackValue): Added.
+        (WebCore::BaseCheckableInputType::storesValueSeparateFromAttribute): Added.
+        (WebCore::BaseCheckableInputType::isCheckable): Added.
+        * html/BaseCheckableInputType.h: Ditto.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::hasSpinButton): Added.
+        * html/BaseDateAndTimeInputType.h: Ditto.
+
+        * html/BaseTextInputType.h: Made more functions private.
+
+        * html/ButtonInputType.cpp:
+        (WebCore::ButtonInputType::isTextButton): Added.
+        * html/ButtonInputType.h: Ditto.
+
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::willDispatchClick): Added.
+        (WebCore::CheckboxInputType::didDispatchClick): Added.
+        (WebCore::CheckboxInputType::isCheckbox): Added.
+        * html/CheckboxInputType.h: Ditto.
+
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::scaledStepValueShouldBeInteger): Fixed
+        typo in name of this function.
+        * html/DateTimeInputType.h: Ditto.
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::scaledStepValueShouldBeInteger): Ditto.
+        * html/DateTimeLocalInputType.h: Ditto.
+
+        * html/EmailInputType.cpp:
+        (WebCore::EmailInputType::isEmailField): Added.
+        * html/EmailInputType.h: Ditto.
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::FileInputType): Added.
+        (WebCore::FileInputType::canSetStringValue): Added.
+        (WebCore::FileInputType::canChangeFromAnotherType): Added.
+        (WebCore::FileInputType::files): Added.
+        (WebCore::FileInputType::canSetValue): Added.
+        (WebCore::FileInputType::getTypeSpecificValue): Added.
+        (WebCore::FileInputType::storesValueSeparateFromAttribute): Added.
+        (WebCore::FileInputType::setFileList): Added.
+        (WebCore::FileInputType::isFileUpload): Added.
+        * html/FileInputType.h: Ditto.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement): Updated for data member
+        renaming and removal.
+        (WebCore::HTMLInputElement::isValidValue): Call canSetStringValue
+        instead of checking specific type numbers.
+        (WebCore::HTMLInputElement::getAllowedValueStepWithDecimalPlaces):
+        Use fastGetAttribute and fixed typo in the name of the
+        scaledStepValueShouldBeInteger function.
+        (WebCore::HTMLInputElement::isKeyboardFocusable): Call
+        InputType::isKeyboardFocusable; moved most of the type-specific
+        logic there.
+        (WebCore::HTMLInputElement::shouldUseInputMethod): Call
+        InputType::shouldUseInputMethod; moved the type-specific logic there.
+        (WebCore::HTMLInputElement::handleBlurEvent): Call
+        InputType::handleBlurEvent; moved the type-specific logic there.
+        (WebCore::HTMLInputElement::setType): Tweak the names and types
+        in this function.
+        (WebCore::HTMLInputElement::updateType): Removed the code that
+        set m_deprecatedTypeNumber. Compare types by comparing the value
+        from formControlType. Removed file-specific logic and instead call
+        InputType::canChangeFromAnotherType. Streamlined the logic for
+        activation callbacks.
+        (WebCore::HTMLInputElement::accessKeyAction): Call
+        InputType::accessKeyAction; moved the type-specific logic there.
+        (WebCore::HTMLInputElement::mapToEntry): Call
+        InputType::shouldRespectHeightAndWidthAttributes and
+        InputType::shouldRespectAlignAttribute.
+        (WebCore::HTMLInputElement::parseMappedAttribute): Updated
+        for name changes and the removal of m_defaultChecked. Changed the
+        alt attribute logic to be based on the class of the renderer.
+        Call InputType::srcAttributeChanged and moved the type-specific
+        logic there. Call shouldRespectAlignAttribute and
+        shouldRespectHeightAndWidthAttributes rather than having
+        type-specific logic here. Call minOrMaxAttributeChanged.
+        (WebCore::HTMLInputElement::rendererIsNeeded): Call
+        InputType::rendererIsNeeded; moved the type-specific logic there.
+        (WebCore::HTMLInputElement::attach): Removed the unneeded m_inited
+        flag, which was redundant with the m_haveType flag. Call
+        InputType::attach; moved the type-specific logic there.
+        (WebCore::HTMLInputElement::altText): Use fastGetAttribute.
+        (WebCore::HTMLInputElement::isSuccessfulSubmitButton): Call
+        InputType::canBeSuccessfulSubmitButton; moved the type-specific
+        logic there.
+        (WebCore::HTMLInputElement::isActivatedSubmit): Updated for
+        name changes.
+        (WebCore::HTMLInputElement::setActivatedSubmit): Ditto.
+        (WebCore::HTMLInputElement::reset): Updated to use
+        InputType::storesValueSeparateFromAttribute. Also use
+        hasAttribute(checkedAttr) rather than m_defaultChecked,
+        since both are the same. Also updated for name change.
+        (WebCore::HTMLInputElement::setChecked): Updated for name
+        changes. Also added call to
+        InputType::shouldSendChangeEventAfterCheckedChanged and
+        moved the type-specific logic there.
+        (WebCore::HTMLInputElement::setIndeterminate): Call
+        isCheckable to see if indeterminate is allowed.
+        Also updated for name changes.
+        (WebCore::HTMLInputElement::copyNonAttributeProperties):
+        Updated for name changes and removed data members.
+        (WebCore::HTMLInputElement::value): Call
+        InputType::getTypeSpecificValue and InputType::fallbackValue.
+        Moved the type-specific logic there.
+        (WebCore::HTMLInputElement::valueWithDefault): Call
+        InputType::defaultValue. Moved the type-specific logic there.
+        (WebCore::HTMLInputElement::setSuggestedValue): Call
+        InputType::canSetSuggestedValue. Moved the type-specific logic
+        there.
+        (WebCore::HTMLInputElement::setValue): Call
+        InputType::canSetValue. Moved the type-specific logic there.
+        Clear the file list if it exists rather than checking the
+        type explicitly. We could probably do that a more elegant way.
+        (WebCore::HTMLInputElement::placeholder): Use fastGetAttribute.
+        (WebCore::HTMLInputElement::setValueFromRenderer): Use the
+        isFileUpload function in the assertion.
+        (WebCore::HTMLInputElement::setFileListFromRenderer): Put most
+        of the code from this function into FileInputType::setFileList.
+        (WebCore::HTMLInputElement::preDispatchEventHandler): Changed
+        to call InputType::willDispatchClick, which does the type-specific
+        work. Still need to use a single struct for all types, because
+        the type of the element could change during the event handling.
+        (WebCore::HTMLInputElement::postDispatchEventHandler): Changed
+        to call InputType::didDispatchClick.
+        (WebCore::HTMLInputElement::defaultValue): Use fastGetAttribute.
+        (WebCore::HTMLInputElement::accept): Use fastGetAttribute.
+        (WebCore::HTMLInputElement::alt): Use fastGetAttribute.
+        (WebCore::HTMLInputElement::src): Use fastGetAttribute.
+        (WebCore::HTMLInputElement::setAutofilled): Updated for name
+        changes.
+        (WebCore::HTMLInputElement::files): Use InputType::files.
+        (WebCore::HTMLInputElement::isAcceptableValue): Use
+        InputType::isAcceptableValue.
+        (WebCore::HTMLInputElement::sanitizeValue): Use
+        InputType::sanitizeValue.
+        (WebCore::HTMLInputElement::hasUnacceptableValue): Use
+        InputType::hasUnacceptableValue.
+        (WebCore::HTMLInputElement::needsActivationCallback): Use
+        InputType::shouldResetOnDocumentActivation.
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument): Use
+        InputType::willMoveToNewOwnerDocument.
+        (WebCore::HTMLInputElement::dataList): Use
+        InputType::shouldRespectListAttribute.
+        (WebCore::HTMLInputElement::selectedOption): Tweaked logic
+        and naming a bit.
+        (WebCore::HTMLInputElement::stepUpFromRenderer): Use
+        fastGetAttribute.
+        (WebCore::HTMLInputElement::isSpeechEnabled): Use
+        InputType::shouldRespectSpeechAttribute.
+        (WebCore::HTMLInputElement::isTextButton): No longer inline.
+        Calls through to InputType.
+        (WebCore::HTMLInputElement::isRadioButton): Ditto.
+        (WebCore::HTMLInputElement::isSearchField): Ditto.
+        (WebCore::HTMLInputElement::isInputTypeHidden): Ditto.
+        (WebCore::HTMLInputElement::isPasswordField): Ditto.
+        (WebCore::HTMLInputElement::isCheckbox): Ditto.
+        (WebCore::HTMLInputElement::isText): Ditto.
+        (WebCore::HTMLInputElement::isEmailField): Ditto.
+        (WebCore::HTMLInputElement::isFileUpload): Ditto.
+        (WebCore::HTMLInputElement::isImageButton): Ditto.
+        (WebCore::HTMLInputElement::isNumberField): Ditto.
+        (WebCore::HTMLInputElement::isSubmitButton): Ditto.
+        (WebCore::HTMLInputElement::isTelephoneField): Ditto.
+        (WebCore::HTMLInputElement::isURLField): Ditto.
+        (WebCore::HTMLInputElement::isEnumeratable): Ditto.
+        (WebCore::HTMLInputElement::isChecked): No longer inline.
+        Calls InputType::isCheckable.
+        (WebCore::HTMLInputElement::hasSpinButton): No longer inline.
+        Calls through to InputType.
+        (WebCore::HTMLInputElement::supportsPlaceholder): No longer
+        inline. Calls isTextType as before, but with no special case
+        for ISINDEX. That special case was unneeded since it returns
+        true from isTextType.
+        (WebCore::HTMLInputElement::checkedRadioButtons): No longer
+        inline.
+        (WebCore::HTMLInputElement::handleBeforeTextInsertedEvent):
+        No longer inline.
+
+        * html/HTMLInputElement.h: Removed multiple unneeded includes.
+        The big one is probably InputType.h, but also HTMLFormElement.h.
+        Removed unneeded forward declarations. Made many functions
+        no longer inline since they now need to make virtual function
+        dispatches. Removed the unneeded defaultChecked and
+        webkitdirectory functions. Both are handled by HTML attribute
+        reflection for DOM bindings, and the callers instead can get
+        at the attribute. Made updateCheckedRadioButtons public so it
+        can be called by an InputType class. Removed
+        DeprecatedInputType, InputTypeMap, createTypeMap,
+        deprecatedInputType, allowsIndeterminate,
+        respectHeightAndWidthAttrs, storesValueSeparateFromAttribute,
+        m_imageLoader, m_fileList, m_deprecatedTypeNumber,
+        m_defaultChecked, and m_inited. Renamed m_checked to
+        m_isChecked, m_useDefaultChecked to m_reflectsCheckedAttribute,
+        m_indeterminate tom_isIndeterminate, m_haveType to m_hasType,
+        m_activeSubmit to m_isActivatedSubmit, and m_autofilled to
+        m_isAutofilled.
+        
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::accessKeyAction): Added.
+        (WebCore::HiddenInputType::rendererIsNeeded) Added.:
+        (WebCore::HiddenInputType::storesValueSeparateFromAttribute): Added.
+        (WebCore::HiddenInputType::isHiddenType): Added.
+        (WebCore::HiddenInputType::shouldRespectHeightAndWidthAttributes): Added.
+        * html/HiddenInputType.h: Ditto.
+
+        * html/ImageInputType.cpp:
+        (WebCore::ImageInputType::ImageInputType): Moved out of the header file.
+        (WebCore::ImageInputType::srcAttributeChanged): Added.
+        (WebCore::ImageInputType::attach): Added.
+        (WebCore::ImageInputType::willMoveToNewOwnerDocument): Added.
+        (WebCore::ImageInputType::shouldRespectAlignAttribute): Added.
+        (WebCore::ImageInputType::canBeSuccessfulSubmitButton): Added.
+        (WebCore::ImageInputType::isImageButton): Added.
+        (WebCore::ImageInputType::isEnumeratable): Added.
+        (WebCore::ImageInputType::shouldRespectHeightAndWidthAttributes): Added.
+        * html/ImageInputType.h: Ditto.
+
+        * html/InputType.cpp:
+        (WebCore::InputType::create): Changed argument type to String. There
+        is no value in taking an AtomicString here.
+        (WebCore::InputType::scaledStepValueShouldBeInteger): Fixed typo in
+        this function name.
+        (WebCore::InputType::canSetStringValue): Added.
+        (WebCore::InputType::isKeyboardFocusable): Added.
+        (WebCore::InputType::shouldUseInputMethod): Added.
+        (WebCore::InputType::handleBlurEvent): Added.
+        (WebCore::InputType::accessKeyAction): Added.
+        (WebCore::InputType::attach): Added.
+        (WebCore::InputType::srcAttributeChanged): Added.
+        (WebCore::InputType::willMoveToNewOwnerDocument): Added.
+        (WebCore::InputType::shouldRespectAlignAttribute): Added.
+        (WebCore::InputType::canChangeFromAnotherType): Added.
+        (WebCore::InputType::minOrMaxAttributeChanged): Added.
+        (WebCore::InputType::canBeSuccessfulSubmitButton): Added.
+        (WebCore::InputType::rendererIsNeeded): Added.
+        (WebCore::InputType::files): Added.
+        (WebCore::InputType::getTypeSpecificValue): Added.
+        (WebCore::InputType::fallbackValue): Added.
+        (WebCore::InputType::defaultValue): Added.
+        (WebCore::InputType::canSetSuggestedValue): Added.
+        (WebCore::InputType::shouldSendChangeEventAfterCheckedChanged): Added.
+        (WebCore::InputType::storesValueSeparateFromAttribute): Added.
+        (WebCore::InputType::canSetValue): Added.
+        (WebCore::InputType::willDispatchClick): Added.
+        (WebCore::InputType::didDispatchClick): Added.
+        (WebCore::InputType::isAcceptableValue): Added.
+        (WebCore::InputType::sanitizeValue): Added.
+        (WebCore::InputType::hasUnacceptableValue): Added.
+        (WebCore::InputType::setFileList): Added.
+        (WebCore::InputType::shouldResetOnDocumentActivation): Added.
+        (WebCore::InputType::shouldRespectListAttribute): Added.
+        (WebCore::InputType::shouldRespectSpeechAttribute): Added.
+        (WebCore::InputType::isTextButton): Added.
+        (WebCore::InputType::isRadioButton): Added.
+        (WebCore::InputType::isSearchField): Added.
+        (WebCore::InputType::isHiddenType): Added.
+        (WebCore::InputType::isPasswordField): Added.
+        (WebCore::InputType::isCheckbox): Added.
+        (WebCore::InputType::isEmailField): Added.
+        (WebCore::InputType::isFileUpload): Added.
+        (WebCore::InputType::isImageButton): Added.
+        (WebCore::InputType::isNumberField): Added.
+        (WebCore::InputType::isSubmitButton): Added.
+        (WebCore::InputType::isTelephoneField): Added.
+        (WebCore::InputType::isURLField): Added.
+        (WebCore::InputType::isEnumeratable): Added.
+        (WebCore::InputType::isCheckable): Added.
+        (WebCore::InputType::hasSpinButton): Added.
+        (WebCore::InputType::shouldRespectHeightAndWidthAttributes): Added.
+
+        * html/InputType.h: Removed unneeded ExceptionCode.h include and
+        used a typedef instead as we do when we want for forward declare it.
+        Added includes and forward declarations needed for new functions.
+        Added ClickHandlingState structure. Changed the argument to create
+        to a String rather than AtomicString. Added many virtual functions.
+        
+        * html/IsIndexInputType.cpp:
+        (WebCore::IsIndexInputType::shouldRespectListAttribute): Added.
+        * html/IsIndexInputType.h: Ditto.
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::handleBlurEvent): Added.
+        (WebCore::NumberInputType::isAcceptableValue): Added.
+        (WebCore::NumberInputType::sanitizeValue): Added.
+        (WebCore::NumberInputType::hasUnacceptableValue): Added.
+        (WebCore::NumberInputType::shouldRespectSpeechAttribute): Added.
+        (WebCore::NumberInputType::isNumberField): Added.
+        (WebCore::NumberInputType::hasSpinButton): Added.
+        * html/NumberInputType.h: Ditto.
+
+        * html/PasswordInputType.cpp:
+        (WebCore::PasswordInputType::shouldUseInputMethod): Added.
+        (WebCore::PasswordInputType::shouldResetOnDocumentActivation): Added.
+        (WebCore::PasswordInputType::shouldRespectListAttribute): Added.
+        (WebCore::PasswordInputType::shouldRespectSpeechAttribute): Added.
+        (WebCore::PasswordInputType::isPasswordField): Added.
+        * html/PasswordInputType.h: Ditto.
+
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::isKeyboardFocusable): Added.
+        (WebCore::RadioInputType::attach): Added.
+        (WebCore::RadioInputType::shouldSendChangeEventAfterCheckedChanged): Added.
+        (WebCore::RadioInputType::willDispatchClick): Added.
+        (WebCore::RadioInputType::didDispatchClick): Added.
+        (WebCore::RadioInputType::isRadioButton): Added.
+        * html/RadioInputType.h: Ditto.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::accessKeyAction): Added.
+        (WebCore::RangeInputType::minOrMaxAttributeChanged): Added.
+        (WebCore::RangeInputType::fallbackValue): Added.
+        (WebCore::RangeInputType::sanitizeValue): Added.
+        (WebCore::RangeInputType::shouldRespectListAttribute): Added.
+        * html/RangeInputType.h: Ditto.
+
+        * html/ResetInputType.cpp:
+        (WebCore::ResetInputType::defaultValue): Added.
+        (WebCore::ResetInputType::isTextButton): Added.
+        * html/ResetInputType.h: Ditto.
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::shouldRespectSpeechAttribute): Added.
+        (WebCore::SearchInputType::isSearchField): Added.
+        * html/SearchInputType.h: Ditto.
+
+        * html/SubmitInputType.cpp:
+        (WebCore::SubmitInputType::canBeSuccessfulSubmitButton): Added.
+        (WebCore::SubmitInputType::defaultValue): Added.
+        (WebCore::SubmitInputType::isSubmitButton): Added.
+        (WebCore::SubmitInputType::isTextButton): Added.
+        * html/SubmitInputType.h: Ditto.
+
+        * html/TelephoneInputType.cpp:
+        (WebCore::TelephoneInputType::shouldRespectSpeechAttribute): Added.
+        (WebCore::TelephoneInputType::isTelephoneField): Added.
+        * html/TelephoneInputType.h: Ditto.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::shouldUseInputMethod): Added.
+        (WebCore::TextFieldInputType::sanitizeValue): Added.
+        (WebCore::TextFieldInputType::shouldRespectListAttribute): Added.
+        * html/TextFieldInputType.h: Ditto.
+
+        * html/TextInputType.cpp:
+        (WebCore::TextInputType::canSetSuggestedValue): Added.
+        (WebCore::TextInputType::shouldRespectSpeechAttribute): Added.
+        * html/TextInputType.h: Ditto.
+
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::scaledStepValueShouldBeInteger): Fixed
+        typo in the name of this function.
+        * html/TimeInputType.h: Ditto.
+
+        * html/URLInputType.cpp:
+        (WebCore::URLInputType::isURLField): Added.
+        * html/URLInputType.h: Ditto.
+
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed.

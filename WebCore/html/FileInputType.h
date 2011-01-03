@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,21 +33,34 @@
 #define FileInputType_h
 
 #include "BaseButtonInputType.h"
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class FileList;
 
 class FileInputType : public BaseButtonInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    FileInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    FileInputType(HTMLInputElement*);
     virtual const AtomicString& formControlType() const;
     virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool valueMissing(const String&) const;
     virtual String valueMissingText() const;
     virtual void handleDOMActivateEvent(Event*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual bool canSetStringValue() const;
+    virtual bool canChangeFromAnotherType() const;
+    virtual FileList* files();
+    virtual bool canSetValue(const String&);
+    virtual bool getTypeSpecificValue(String&); // Checked first, before internal storage or the value attribute.
+    virtual bool storesValueSeparateFromAttribute();
+    virtual void setFileList(const Vector<String>& paths);
+    virtual bool isFileUpload() const;
+
+    RefPtr<FileList> m_fileList;
 };
 
 } // namespace WebCore

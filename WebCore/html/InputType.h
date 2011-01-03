@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,15 +32,17 @@
 #ifndef InputType_h
 #define InputType_h
 
-#include "ExceptionCode.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class BeforeTextInsertedEvent;
 class DateComponents;
 class Event;
+class FileList;
 class FormDataList;
 class HTMLFormElement;
 class HTMLInputElement;
@@ -50,21 +53,53 @@ class RenderObject;
 class RenderStyle;
 class WheelEvent;
 
+typedef int ExceptionCode;
+
+struct ClickHandlingState {
+    bool checked;
+    bool indeterminate;
+    RefPtr<HTMLInputElement> checkedRadioButton;
+
+    WTF_MAKE_FAST_ALLOCATED
+};
+
 // An InputType object represents the type-specific part of an HTMLInputElement.
 // Do not expose instances of InputType and classes derived from it to classes
 // other than HTMLInputElement.
 class InputType : public Noncopyable {
 public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*, const AtomicString&);
+    static PassOwnPtr<InputType> create(HTMLInputElement*, const String&);
     static PassOwnPtr<InputType> createText(HTMLInputElement*);
     virtual ~InputType();
 
+    virtual const AtomicString& formControlType() const = 0;
+    virtual bool canChangeFromAnotherType() const;
+
     // Type query functions
 
+    // Any time we are using one of these functions it's best to refactor
+    // to add a virtual function to allow the input type object to do the
+    // work instead, or at least make a query function that asks a higher
+    // level question. These functions make the HTMLInputElement class
+    // inflexible because it's harder to add new input types if there is
+    // scattered code with special cases for various types.
+
+    virtual bool isCheckbox() const;
+    virtual bool isEmailField() const;
+    virtual bool isFileUpload() const;
+    virtual bool isHiddenType() const;
+    virtual bool isImageButton() const;
+    virtual bool isNumberField() const;
+    virtual bool isPasswordField() const;
+    virtual bool isRadioButton() const;
+    virtual bool isRangeControl() const;
+    virtual bool isSearchField() const;
+    virtual bool isSubmitButton() const;
+    virtual bool isTelephoneField() const;
+    virtual bool isTextButton() const;
     virtual bool isTextField() const;
     virtual bool isTextType() const;
-    virtual bool isRangeControl() const;
-    virtual const AtomicString& formControlType() const = 0;
+    virtual bool isURLField() const;
 
     // Form value functions
 
@@ -75,6 +110,9 @@ public:
 
     // DOM property functions
 
+    virtual bool getTypeSpecificValue(String&); // Checked first, before internal storage or the value attribute.
+    virtual String fallbackValue(); // Checked last, if both internal storage and value attribute are missing.
+    virtual String defaultValue(); // Checked after even fallbackValue, only when the valueWithDefault function is called.
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;
@@ -97,20 +135,26 @@ public:
     virtual double defaultValueForStepUp() const;
     virtual double minimum() const;
     virtual double maximum() const;
-    virtual bool stepMismatch(const String&, double) const;
+    virtual bool stepMismatch(const String&, double step) const;
     virtual double stepBase() const;
     virtual double stepBaseWithDecimalPlaces(unsigned*) const;
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
     virtual bool parsedStepValueShouldBeInteger() const;
-    virtual bool scaledStepValeuShouldBeInteger() const;
+    virtual bool scaledStepValueShouldBeInteger() const;
     virtual double acceptableError(double) const;
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
+    virtual bool canSetStringValue() const;
+    virtual bool isAcceptableValue(const String&);
+    virtual String sanitizeValue(const String&);
+    virtual bool hasUnacceptableValue();
 
     // Event handlers
 
     virtual void handleClickEvent(MouseEvent*);
+    virtual PassOwnPtr<ClickHandlingState> willDispatchClick();
+    virtual void didDispatchClick(Event*, const ClickHandlingState&);
     virtual void handleDOMActivateEvent(Event*);
     virtual void handleKeydownEvent(KeyboardEvent*);
     virtual void handleKeypressEvent(KeyboardEvent*);
@@ -121,25 +165,53 @@ public:
     // Helpers for event handlers.
     virtual bool shouldSubmitImplicitly(Event*);
     virtual PassRefPtr<HTMLFormElement> formForSubmission() const;
+    virtual bool isKeyboardFocusable() const;
+    virtual bool shouldUseInputMethod() const;
+    virtual void handleBlurEvent();
+    virtual void accessKeyAction(bool sendToAnyElement);
+    virtual bool canBeSuccessfulSubmitButton();
 
     // Miscellaneous functions
 
+    virtual bool rendererIsNeeded();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual void attach();
+    virtual void minOrMaxAttributeChanged();
+    virtual void altAttributeChanged();
+    virtual void srcAttributeChanged();
+    virtual void willMoveToNewOwnerDocument();
+    virtual bool shouldRespectAlignAttribute();
+    virtual FileList* files();
+    virtual bool canSetSuggestedValue();
+    virtual bool shouldSendChangeEventAfterCheckedChanged();
+    virtual bool canSetValue(const String&);
+    virtual bool storesValueSeparateFromAttribute();
+    virtual void setFileList(const Vector<String>& paths);
+    virtual bool shouldResetOnDocumentActivation();
+    virtual bool shouldRespectListAttribute();
+    virtual bool shouldRespectSpeechAttribute();
+    virtual bool isEnumeratable();
+    virtual bool isCheckable();
+    virtual bool hasSpinButton();
+    virtual bool shouldRespectHeightAndWidthAttributes();
 
     // Parses the specified string for the type, and return
     // the double value for the parsing result if the parsing
     // succeeds; Returns defaultValue otherwise. This function can
     // return NaN or Infinity only if defaultValue is NaN or Infinity.
     virtual double parseToDouble(const String&, double defaultValue) const;
+
     // Parses the specified string for the type as parseToDouble() does.
     // In addition, it stores the number of digits after the decimal point
     // into *decimalPlaces.
-    virtual double parseToDoubleWithDecimalPlaces(const String& src, double defaultValue, unsigned *decimalPlaces) const;
+    virtual double parseToDoubleWithDecimalPlaces(const String&, double defaultValue, unsigned* decimalPlaces) const;
+
     // Parses the specified string for this InputType, and returns true if it
     // is successfully parsed. An instance pointed by the DateComponents*
     // parameter will have parsed values and be modified even if the parsing
     // fails. The DateComponents* parameter may be 0.
     virtual bool parseToDateComponents(const String&, DateComponents*) const;
+
     // Create a string representation of the specified double value for the
     // input type. If NaN or Infinity is specified, this returns an empty
     // string. This should not be called for types without valueAsNumber.

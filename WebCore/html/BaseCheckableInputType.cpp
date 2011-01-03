@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -74,6 +75,36 @@ void BaseCheckableInputType::handleKeypressEvent(KeyboardEvent* event)
         // Prevent scrolling down the page.
         event->setDefaultHandled();
     }
+}
+
+bool BaseCheckableInputType::canSetStringValue() const
+{
+    return false;
+}
+
+// FIXME: Could share this with BaseButtonInputType and RangeInputType if we had a common base class.
+void BaseCheckableInputType::accessKeyAction(bool sendToAnyElement)
+{
+    InputType::accessKeyAction(sendToAnyElement);
+
+    // Send mouse button events if the caller specified sendToAnyElement.
+    // FIXME: The comment above is no good. It says what we do, but not why.
+    element()->dispatchSimulatedClick(0, sendToAnyElement);
+}
+
+String BaseCheckableInputType::fallbackValue()
+{
+    return element()->checked() ? "on" : "";
+}
+
+bool BaseCheckableInputType::storesValueSeparateFromAttribute()
+{
+    return false;
+}
+
+bool BaseCheckableInputType::isCheckable()
+{
+    return true;
 }
 
 } // namespace WebCore
