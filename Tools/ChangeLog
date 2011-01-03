@@ -1,5 +1,16 @@
 2011-01-03  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Simon Fraser.
+
+        webkit-patch should only hide update output if --quiet
+        https://bugs.webkit.org/show_bug.cgi?id=51838
+
+        As requested by smfr.
+
+        * Scripts/webkitpy/tool/steps/update.py:
+
+2011-01-03  Adam Barth  <abarth@webkit.org>
+
         Reviewed by David Levin.
 
         commit-queue shouldn't reject patches twice if two bots process the same patch

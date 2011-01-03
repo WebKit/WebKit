@@ -36,10 +36,11 @@ class Update(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.update,
+            Options.quiet,
         ]
 
     def run(self, state):
         if not self._options.update:
             return
         log("Updating working directory")
-        self._tool.executive.run_and_throw_if_fail(self._tool.port().update_webkit_command(), quiet=True)
+        self._tool.executive.run_and_throw_if_fail(self._tool.port().update_webkit_command(), quiet=self._options.quiet)
