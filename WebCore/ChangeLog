@@ -1,3 +1,16 @@
+2011-01-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8806570> REGRESSION (r73337): Incorrect text match count when a match occurs in a text field
+        https://bugs.webkit.org/show_bug.cgi?id=51623
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::countMatchesForText): Actually remember the original search range end
+        container and offset and restore them when needed, instead of using two references to the
+        same Range.
+        * manual-tests/find-count-matches-after-text-control.html: Added.
+
 2011-01-02  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

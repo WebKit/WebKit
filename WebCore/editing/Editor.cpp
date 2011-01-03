@@ -3362,17 +3362,18 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
     if (target.isEmpty())
         return 0;
 
-    RefPtr<Range> originalSearchRange;
+    RefPtr<Range> searchRange;
     if (range) {
         if (range->ownerDocument() == m_frame->document())
-            originalSearchRange = range;
+            searchRange = range;
         else if (!isFrameInRange(m_frame, range))
             return 0;
     }
-    if (!originalSearchRange)
-        originalSearchRange = rangeOfContents(m_frame->document());
+    if (!searchRange)
+        searchRange = rangeOfContents(m_frame->document());
 
-    RefPtr<Range> searchRange(originalSearchRange);
+    Node* originalEndContainer = searchRange->endContainer();
+    int originalEndOffset = searchRange->endOffset();
 
     ExceptionCode exception = 0;
     unsigned matchCount = 0;
@@ -3382,8 +3383,8 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
             if (!resultRange->startContainer()->isInShadowTree())
                 break;
 
-            searchRange = originalSearchRange;
             searchRange->setStartAfter(resultRange->startContainer()->shadowAncestorNode(), exception);
+            searchRange->setEnd(originalEndContainer, originalEndOffset, exception);
             continue;
         }
 
