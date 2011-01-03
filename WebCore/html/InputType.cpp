@@ -36,6 +36,7 @@
 #include "DateTimeInputType.h"
 #include "DateTimeLocalInputType.h"
 #include "EmailInputType.h"
+#include "ExceptionCode.h"
 #include "FileInputType.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"

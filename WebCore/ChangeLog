@@ -1,3 +1,10 @@
+2011-01-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed buildfix for --minimal build after r74895.
+
+        * html/InputType.cpp: Missing include added.
+        * html/NumberInputType.cpp: Missing include added.
+
 2011-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Kent Tamura.
