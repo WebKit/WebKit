@@ -1,5 +1,13 @@
 2011-01-02  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, test expectation update.
+
+        Two more fixes.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-02  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, correct test_expectations.txt syntax.
 
         * platform/chromium/test_expectations.txt:

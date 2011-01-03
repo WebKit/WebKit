@@ -3273,5 +3273,5 @@ BUGWK51721 DEBUG SLOW: fast/encoding/parser-tests.html = PASS
 BUGCR67463 MAC : editing/selection/caret-mode-paragraph-keys-navigation.html = TEXT
 BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
 
-BUGCR68436 LINUX MAC DEBUG SLOW : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
-BUGCR68436 WIN DEBUG SLOW : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
+BUGCR68436 LINUX MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
+BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
