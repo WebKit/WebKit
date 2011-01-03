@@ -76,9 +76,9 @@ namespace WebCore {
         {
             return adoptRef(new Gradient(p0, p1));
         }
-        static PassRefPtr<Gradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1)
+        static PassRefPtr<Gradient> create(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio = 1)
         {
-            return adoptRef(new Gradient(p0, r0, p1, r1));
+            return adoptRef(new Gradient(p0, r0, p1, r1, aspectRatio));
         }
         virtual ~Gradient();
 
@@ -98,9 +98,15 @@ namespace WebCore {
         void setP0(const FloatPoint& p) { m_p0 = p; }
         void setP1(const FloatPoint& p) { m_p1 = p; }
 
+        float startRadius() const { return m_r0; }
+        float endRadius() const { return m_r1; }
+
+        void setStartRadius(float r) { m_r0 = r; }
+        void setEndRadius(float r) { m_r1 = r; }
+        
+        float aspectRatio() const { return m_aspectRatio; }
+
 #if OS(WINCE) && !PLATFORM(QT)
-        float r0() const { return m_r0; }
-        float r1() const { return m_r1; }
         const Vector<ColorStop, 2>& getStops() const;
 #else
         PlatformGradient platformGradient();
@@ -134,7 +140,7 @@ namespace WebCore {
 #endif
     private:
         Gradient(const FloatPoint& p0, const FloatPoint& p1);
-        Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1);
+        Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio);
 
         void platformInit() { m_gradient = 0; }
         void platformDestroy();
@@ -147,6 +153,7 @@ namespace WebCore {
         FloatPoint m_p1;
         float m_r0;
         float m_r1;
+        float m_aspectRatio; // For elliptical gradient, width / height.
         mutable Vector<ColorStop, 2> m_stops;
         mutable bool m_stopsSorted;
         mutable int m_lastStop;

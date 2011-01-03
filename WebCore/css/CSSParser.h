@@ -84,8 +84,8 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseBackgroundColor();
 
         bool parseFillImage(RefPtr<CSSValue>&);
-        PassRefPtr<CSSValue> parseFillPositionXY(bool& xFound, bool& yFound);
-        void parseFillPosition(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+        PassRefPtr<CSSValue> parseFillPositionXY(CSSParserValueList*, bool& xFound, bool& yFound);
+        void parseFillPosition(CSSParserValueList*, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         void parseFillRepeat(RefPtr<CSSValue>&, RefPtr<CSSValue>&);
         PassRefPtr<CSSValue> parseFillSize(int propId, bool &allowComma);
 

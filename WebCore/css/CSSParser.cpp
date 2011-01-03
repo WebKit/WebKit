@@ -2455,9 +2455,9 @@ bool CSSParser::parseFillImage(RefPtr<CSSValue>& value)
     return false;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseFillPositionXY(bool& xFound, bool& yFound)
+PassRefPtr<CSSValue> CSSParser::parseFillPositionXY(CSSParserValueList* valueList, bool& xFound, bool& yFound)
 {
-    int id = m_valueList->current()->id;
+    int id = valueList->current()->id;
     if (id == CSSValueLeft || id == CSSValueTop || id == CSSValueRight || id == CSSValueBottom || id == CSSValueCenter) {
         int percent = 0;
         if (id == CSSValueLeft || id == CSSValueRight) {
@@ -2479,27 +2479,27 @@ PassRefPtr<CSSValue> CSSParser::parseFillPositionXY(bool& xFound, bool& yFound)
             percent = 50;
         return CSSPrimitiveValue::create(percent, CSSPrimitiveValue::CSS_PERCENTAGE);
     }
-    if (validUnit(m_valueList->current(), FPercent | FLength, m_strict))
-        return CSSPrimitiveValue::create(m_valueList->current()->fValue,
-                                         (CSSPrimitiveValue::UnitTypes)m_valueList->current()->unit);
+    if (validUnit(valueList->current(), FPercent | FLength, m_strict))
+        return CSSPrimitiveValue::create(valueList->current()->fValue,
+                                         (CSSPrimitiveValue::UnitTypes)valueList->current()->unit);
 
     return 0;
 }
 
-void CSSParser::parseFillPosition(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
+void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
 {
-    CSSParserValue* value = m_valueList->current();
+    CSSParserValue* value = valueList->current();
 
     // Parse the first value.  We're just making sure that it is one of the valid keywords or a percentage/length.
     bool value1IsX = false, value1IsY = false;
-    value1 = parseFillPositionXY(value1IsX, value1IsY);
+    value1 = parseFillPositionXY(valueList, value1IsX, value1IsY);
     if (!value1)
         return;
 
     // It only takes one value for background-position to be correctly parsed if it was specified in a shorthand (since we
     // can assume that any other values belong to the rest of the shorthand).  If we're not parsing a shorthand, though, the
     // value was explicitly specified for our property.
-    value = m_valueList->next();
+    value = valueList->next();
 
     // First check for the comma.  If so, we are finished parsing this value or value pair.
     if (value && value->unit == CSSParserValue::Operator && value->iValue == ',')
@@ -2507,9 +2507,9 @@ void CSSParser::parseFillPosition(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& va
 
     bool value2IsX = false, value2IsY = false;
     if (value) {
-        value2 = parseFillPositionXY(value2IsX, value2IsY);
+        value2 = parseFillPositionXY(valueList, value2IsX, value2IsY);
         if (value2)
-            m_valueList->next();
+            valueList->next();
         else {
             if (!inShorthand()) {
                 value1.clear();
@@ -2698,13 +2698,13 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                     break;
                 case CSSPropertyBackgroundPosition:
                 case CSSPropertyWebkitMaskPosition:
-                    parseFillPosition(currValue, currValue2);
+                    parseFillPosition(m_valueList, currValue, currValue2);
                     // parseFillPosition advances the m_valueList pointer
                     break;
                 case CSSPropertyBackgroundPositionX:
                 case CSSPropertyWebkitMaskPositionX: {
                     bool xFound = false, yFound = true;
-                    currValue = parseFillPositionXY(xFound, yFound);
+                    currValue = parseFillPositionXY(m_valueList, xFound, yFound);
                     if (currValue)
                         m_valueList->next();
                     break;
@@ -2712,7 +2712,7 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
                 case CSSPropertyBackgroundPositionY:
                 case CSSPropertyWebkitMaskPositionY: {
                     bool xFound = true, yFound = false;
-                    currValue = parseFillPositionXY(xFound, yFound);
+                    currValue = parseFillPositionXY(m_valueList, xFound, yFound);
                     if (currValue)
                         m_valueList->next();
                     break;
@@ -2863,7 +2863,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationProperty()
 
 bool CSSParser::parseTransformOriginShorthand(RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
 {
-    parseFillPosition(value1, value2);
+    parseFillPosition(m_valueList, value1, value2);
 
     // now get z
     if (m_valueList->current()) {
@@ -4988,10 +4988,152 @@ bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient)
     return true;
 }
 
-bool CSSParser::parseRadialGradient(RefPtr<CSSValue>&)
+bool CSSParser::parseRadialGradient(RefPtr<CSSValue>& gradient)
 {
-    // FIXME: implement.
-    return false;
+    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create();
+    
+    // Walk the arguments.
+    CSSParserValueList* args = m_valueList->current()->function->args.get();
+    if (!args || !args->size())
+        return false;
+
+    CSSParserValue* a = args->current();
+    if (!a)
+        return false;
+
+    bool expectComma = false;
+
+    // Optional background-position
+    RefPtr<CSSValue> centerX;
+    RefPtr<CSSValue> centerY;
+    // parseFillPosition advances the args next pointer.
+    parseFillPosition(args, centerX, centerY);
+    a = args->current();
+    
+    if (centerX || centerY) {
+        // Comma
+        if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+            return false;
+
+        a = args->next();
+        if (!a)
+            return false;
+    }
+    
+    ASSERT(!centerX || centerX->isPrimitiveValue());
+    ASSERT(!centerY || centerY->isPrimitiveValue());
+
+    result->setFirstX(static_cast<CSSPrimitiveValue*>(centerX.get()));
+    result->setSecondX(static_cast<CSSPrimitiveValue*>(centerX.get()));
+    // CSS3 radial gradients always share the same start and end point.
+    result->setFirstY(static_cast<CSSPrimitiveValue*>(centerY.get()));
+    result->setSecondY(static_cast<CSSPrimitiveValue*>(centerY.get()));
+    
+    RefPtr<CSSPrimitiveValue> shapeValue;
+    RefPtr<CSSPrimitiveValue> sizeValue;
+
+    // Optional shape and/or size in any order.
+    for (int i = 0; i < 2; ++i) {
+        if (a->unit != CSSPrimitiveValue::CSS_IDENT)
+            break;
+    
+        bool foundValue = false;
+        switch (a->id) {
+        case CSSValueCircle:
+        case CSSValueEllipse:
+            shapeValue = CSSPrimitiveValue::createIdentifier(a->id);
+            foundValue = true;
+            break;
+        case CSSValueClosestSide:
+        case CSSValueClosestCorner:
+        case CSSValueFarthestSide:
+        case CSSValueFarthestCorner:
+        case CSSValueContain:
+        case CSSValueCover:
+            sizeValue = CSSPrimitiveValue::createIdentifier(a->id);
+            foundValue = true;
+            break;
+        }
+
+        if (foundValue) {
+            a = args->next();
+            if (!a)
+                return false;
+
+            expectComma = true;
+        }
+    }
+    
+    result->setShape(shapeValue);
+    result->setSizingBehavior(sizeValue);
+    
+    // Or, two lengths or percentages
+    RefPtr<CSSPrimitiveValue> horizontalSize;
+    RefPtr<CSSPrimitiveValue> verticalSize;
+
+    if (!shapeValue && !sizeValue) {
+        if (validUnit(a, FLength | FPercent, m_strict)) {
+            horizontalSize = CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit);
+            a = args->next();
+            if (!a)
+                return false;
+
+            expectComma = true;
+        }
+
+        if (validUnit(a, FLength | FPercent, m_strict)) {
+            verticalSize = CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit);
+
+            a = args->next();
+            if (!a)
+                return false;
+            expectComma = true;
+        }
+    }
+
+    // Must have neither or both.
+    if (!horizontalSize != !verticalSize)
+        return false;
+    
+    result->setEndHorizontalSize(horizontalSize);
+    result->setEndVerticalSize(verticalSize);
+
+    // Now look for 0 or more color stops.
+    while (a) {
+        // Look for the comma before the next stop.
+        if (expectComma) {
+            if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+                return false;
+
+            a = args->next();
+            if (!a)
+                return false;
+        }
+
+        // <color-stop> = <color> [ <percentage> | <length> ]?
+        CSSGradientColorStop stop;
+        stop.m_color = parseGradientColorOrKeyword(this, a);
+        if (!stop.m_color)
+            return false;
+
+        a = args->next();
+        if (a) {
+            if (validUnit(a, FLength | FPercent, m_strict)) {
+                stop.m_position = CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes)a->unit);
+                a = args->next();
+            }
+        }
+        
+        result->addStop(stop);
+        expectComma = true;
+    }
+
+    Vector<CSSGradientColorStop>& stops = result->stops();
+    if (stops.isEmpty())
+        return false;
+
+    gradient = result.release();
+    return true;
 }
 
 bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const
@@ -5225,14 +5367,14 @@ bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, int
             break;
         case CSSPropertyWebkitTransformOriginX: {
             bool xFound = false, yFound = true;
-            value = parseFillPositionXY(xFound, yFound);
+            value = parseFillPositionXY(m_valueList, xFound, yFound);
             if (value)
                 m_valueList->next();
             break;
         }
         case CSSPropertyWebkitTransformOriginY: {
             bool xFound = true, yFound = false;
-            value = parseFillPositionXY(xFound, yFound);
+            value = parseFillPositionXY(m_valueList, xFound, yFound);
             if (value)
                 m_valueList->next();
             break;
@@ -5260,18 +5402,18 @@ bool CSSParser::parsePerspectiveOrigin(int propId, int& propId1, int& propId2, R
 
     switch (propId) {
         case CSSPropertyWebkitPerspectiveOrigin:
-            parseFillPosition(value, value2);
+            parseFillPosition(m_valueList, value, value2);
             break;
         case CSSPropertyWebkitPerspectiveOriginX: {
             bool xFound = false, yFound = true;
-            value = parseFillPositionXY(xFound, yFound);
+            value = parseFillPositionXY(m_valueList, xFound, yFound);
             if (value)
                 m_valueList->next();
             break;
         }
         case CSSPropertyWebkitPerspectiveOriginY: {
             bool xFound = true, yFound = false;
-            value = parseFillPositionXY(xFound, yFound);
+            value = parseFillPositionXY(m_valueList, xFound, yFound);
             if (value)
                 m_valueList->next();
             break;

@@ -780,3 +780,13 @@ dot
 double-circle
 triangle
 sesame
+
+# -webkit-radial-gradient
+# circle
+ellipse
+closest-side
+closest-corner
+farthest-side
+farthest-corner
+# contain
+# cover

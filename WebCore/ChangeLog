@@ -15,6 +15,71 @@
 
         Implement -webkit-linear-gradient and -webkit-radial-gradient
         https://bugs.webkit.org/show_bug.cgi?id=28152
+
+        Add support for -webkit-radial-gradients.
+
+        Tests: fast/gradients/css3-radial-gradients.html
+               fast/gradients/css3-radial-gradients2.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::blend): Used to blend colors, which is necessary when truncating
+        the start of radial gradients.
+        (WebCore::GradientStop): Small struct to aid gradient stop processing.
+        (WebCore::CSSGradientValue::addStops): Rename 'positions' to 'stops', and store
+        the color so that we can blend it when truncating radial gradients. Changed
+        to handle both linear and radial gradients.
+        (WebCore::CSSRadialGradientValue::cssText): Update to follow the spec.
+        (WebCore::CSSRadialGradientValue::resolveRadius): Stylistic change.
+        (WebCore::distanceToClosestCorner): New utility method.
+        (WebCore::distanceToFarthestCorner): Ditto.
+        (WebCore::CSSRadialGradientValue::createGradient): New logic to deal with shape and
+        fill rules.
+
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::isLinearGradient): Color-stop processing needs to know what
+        kind of gradient it's dealing with, so add new isFooGradient methods.
+        (WebCore::CSSGradientValue::isRadialGradient): Ditto.
+        (WebCore::CSSLinearGradientValue::isLinearGradient):
+        (WebCore::CSSRadialGradientValue::setShape): New setters for shape, size etc.
+        (WebCore::CSSRadialGradientValue::setSizingBehavior):
+        (WebCore::CSSRadialGradientValue::setEndHorizontalSize):
+        (WebCore::CSSRadialGradientValue::setEndVerticalSize):
+        (WebCore::CSSRadialGradientValue::isRadialGradient):
+
+        * css/CSSParser.h:
+        * css/CSSParser.h: Pass a CSSParserValueList* into parseFillPositionXY() and parseFillPosition()
+        so we can use parseFillPosition() when parsing a gradient function.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillPositionXY): Pass in a CSSParserValueList*
+        (WebCore::CSSParser::parseFillPosition): Ditto
+        (WebCore::CSSParser::parseFillProperty): Pass m_valueList to parseFillPosition.
+        (WebCore::CSSParser::parseTransformOriginShorthand): Ditto
+        (WebCore::CSSParser::parseRadialGradient): Flesh out radial gradient parsing.
+        (WebCore::CSSParser::parseTransformOrigin): Pass m_valueList to parseFillPosition.
+        (WebCore::CSSParser::parsePerspectiveOrigin): Ditto
+
+        * css/CSSValueKeywords.in: New keywords for radial gradient shape and fill behaviors.
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::Gradient): Pass aspect ratio for elliptical gradients.
+        * platform/graphics/Gradient.h: Add aspect ratio for elliptical gradients.
+        (WebCore::Gradient::create):
+        (WebCore::Gradient::startRadius): Expose radii.
+        (WebCore::Gradient::endRadius):
+        (WebCore::Gradient::setStartRadius): Setters are required for when we need to scale color stops.
+        (WebCore::Gradient::setEndRadius):
+        (WebCore::Gradient::aspectRatio):
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint): For elliptical gradients, scale the CTM.
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::fillRect): Use start/endRadius() rather than r0() and r1().
+
+2011-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Implement -webkit-linear-gradient and -webkit-radial-gradient
+        https://bugs.webkit.org/show_bug.cgi?id=28152
         
         Add support for the parsing and rendering of non-repeating CSS3 linear gradients,
         according to <http://dev.w3.org/csswg/css3-images/#linear-gradients>.

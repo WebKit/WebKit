@@ -57,6 +57,9 @@ public:
     Vector<CSSGradientColorStop>& stops() { return m_stops; }
 
     void sortStopsIfNeeded();
+    
+    virtual bool isLinearGradient() const { return false; }
+    virtual bool isRadialGradient() const { return false; }
 
     bool deprecatedType() const { return m_deprecatedType; } // came from -webkit-gradient
 
@@ -75,7 +78,7 @@ protected:
     // Resolve points/radii to front end values.
     FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, const IntSize&);
 
-    // Points. Some of these may be nil for linear gradients.
+    // Points. Some of these may be null for linear gradients.
     RefPtr<CSSPrimitiveValue> m_firstX;
     RefPtr<CSSPrimitiveValue> m_firstY;
     
@@ -106,6 +109,8 @@ private:
     {
     }
 
+    virtual bool isLinearGradient() const { return true; }
+
     // Create the gradient for a given size.
     virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
 
@@ -124,11 +129,19 @@ public:
     void setFirstRadius(PassRefPtr<CSSPrimitiveValue> val) { m_firstRadius = val; }
     void setSecondRadius(PassRefPtr<CSSPrimitiveValue> val) { m_secondRadius = val; }
 
+    void setShape(PassRefPtr<CSSPrimitiveValue> val) { m_shape = val; }
+    void setSizingBehavior(PassRefPtr<CSSPrimitiveValue> val) { m_sizingBehavior = val; }
+
+    void setEndHorizontalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endHorizontalSize = val; }
+    void setEndVerticalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endVerticalSize = val; }
+
 private:
     CSSRadialGradientValue(bool deprecatedType = false)
         : CSSGradientValue(deprecatedType)
     {
     }
+
+    virtual bool isRadialGradient() const { return true; }
 
     // Create the gradient for a given size.
     virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
@@ -136,8 +149,16 @@ private:
     // Resolve points/radii to front end values.
     float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle);
     
+    // These may be null for non-deprecated gradients.
     RefPtr<CSSPrimitiveValue> m_firstRadius;
     RefPtr<CSSPrimitiveValue> m_secondRadius;
+
+    // The below are only used for non-deprecated gradients.
+    RefPtr<CSSPrimitiveValue> m_shape;
+    RefPtr<CSSPrimitiveValue> m_sizingBehavior;
+
+    RefPtr<CSSPrimitiveValue> m_endHorizontalSize;
+    RefPtr<CSSPrimitiveValue> m_endVerticalSize;
 };
 
 } // namespace WebCore

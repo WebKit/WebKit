@@ -4,6 +4,27 @@
 
         Implement -webkit-linear-gradient and -webkit-radial-gradient
         https://bugs.webkit.org/show_bug.cgi?id=28152
+
+        Enhance gradient parsing test for radial gradients, and add new tests
+        for various radial gradients.
+
+        * fast/gradients/css3-gradient-parsing-expected.txt:
+        * fast/gradients/css3-gradient-parsing.html:
+        * fast/gradients/css3-radial-gradients-expected.txt: Added.
+        * fast/gradients/css3-radial-gradients.html: Added.
+        * fast/gradients/css3-radial-gradients2-expected.txt: Added.
+        * fast/gradients/css3-radial-gradients2.html: Added.
+        * platform/mac/fast/gradients/css3-radial-gradients-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-radial-gradients-expected.png: Added.
+        * platform/mac/fast/gradients/css3-radial-gradients2-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-radial-gradients2-expected.png: Added.
+
+2011-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Implement -webkit-linear-gradient and -webkit-radial-gradient
+        https://bugs.webkit.org/show_bug.cgi?id=28152
         
         Testcases for CSS3 linear-gradients.
 

@@ -1425,8 +1425,8 @@ void GraphicsContext::fillRect(const FloatRect& r, const Gradient* gradient)
         if (g_radialGradientFiller) {
             // FIXME: don't support 2D scaling at this time
             double scale = (m_data->m_transform.a() + m_data->m_transform.d()) * 0.5;
-            float r0 = gradient->r0() * scale;
-            float r1 = gradient->r1() * scale;
+            float r0 = gradient->startRadius() * scale;
+            float r1 = gradient->endRadius() * scale;
             g_radialGradientFiller(dc, rect, p0, p1, r0, r1, gradient->getStops());
             return;
         }
