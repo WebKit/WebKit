@@ -126,7 +126,7 @@ public:
     virtual void attachLineBoxToRenderObject();
     virtual void removeLineBoxFromRenderObject();
     
-    FontBaseline baselineType() const { return m_baselineType; }
+    FontBaseline baselineType() const { return static_cast<FontBaseline>(m_baselineType); }
 
     bool hasAnnotationsBefore() const { return m_hasAnnotationsBefore; }
     bool hasAnnotationsAfter() const { return m_hasAnnotationsAfter; }
@@ -158,7 +158,7 @@ private:
     int m_blockLogicalHeight;
 
     // Whether or not this line uses alphabetic or ideographic baselines by default.
-    FontBaseline m_baselineType;
+    unsigned m_baselineType : 1; // FontBaseline
     
     // If the line contains any ruby runs, then this will be true.
     bool m_hasAnnotationsBefore : 1;
