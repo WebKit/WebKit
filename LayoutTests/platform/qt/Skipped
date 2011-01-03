@@ -5361,7 +5361,3 @@ fast/text/emphasis-overlap.html
 [Qt] LayoutTests/http/tests/appcache/auth.html failed and skipped
 # https://bugs.webkit.org/show_bug.cgi?id=36688
 http/tests/appcache/auth.html
-
-# [Qt] DRT sideeffect revealed by r74896
-# https://bugs.webkit.org/show_bug.cgi?id=51829
-http/tests/misc/401-alternative-content.php
