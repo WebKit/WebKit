@@ -81,6 +81,16 @@ void WKAccessibilityHandleFocusChanged(void);
 AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+// Remote Accessibility API.
+void WKAXRegisterRemoteApp(void);
+void WKAXInitializeElementWithPresenterPid(id, pid_t);
+CFDataRef WKAXRemoteTokenForElement(id);
+id WKAXRemoteElementForToken(CFDataRef);
+void WKAXInitializeRemoteElementWithWindow(id remoteElement, id window);
+#endif
+
 void WKSetUpFontCache(void);
 
 void WKSignalCFReadStreamEnd(CFReadStreamRef stream);

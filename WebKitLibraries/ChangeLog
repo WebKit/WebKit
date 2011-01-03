@@ -1,3 +1,14 @@
+2011-01-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed, tweaked and landed by Sam Weinig.
+
+        WebKit2: Accessibility support (42130)
+        <rdar://problem/7660629>
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-01-02  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Simon Fraser.
