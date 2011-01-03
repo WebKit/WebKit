@@ -1,5 +1,11 @@
 2011-01-02  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, correct test_expectations.txt syntax.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-02  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, test expectation update.
 
         - Add expectation files for application-plugin-plugins-disabled.html

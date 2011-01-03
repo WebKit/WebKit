@@ -3120,7 +3120,7 @@ BUGCR59665 MAC : media/video-pause-immediately.html = CRASH PASS
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
 BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = CRASH TIMEOUT PASS
-BUGCR54334 DEBUG SLOW : media/video-timeupdate-during-playback.html = PASS TIMEOUT
+BUGCR54334 DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT
 
 // Also fails on the mac port; see http://webkit.org/b/34331
 BUG_DRT : http/tests/media/video-referer.html = TEXT PASS
