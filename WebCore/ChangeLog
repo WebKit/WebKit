@@ -1,3 +1,21 @@
+2011-01-03  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51328
+
+        Printing on a page with body { height: 100% } clips out the overflow contents.  This happened
+        because the computePageRects function was never correct.  It was using the layer's width and height
+        for the document's width and height, and the layer no longer includes overflow in its width and
+        height.  It was also incorrectly assuming the first page would begin at (0,0), and this is an invalid
+        assumption in RTL or vertical text environments.
+
+        Added printing/page-count-percentage-height.html
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computePageRects):
+        (WebCore::PrintContext::computePageRectsWithPageSizeInternal):
+
 2011-01-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed buildfix for --minimal build after r74895.

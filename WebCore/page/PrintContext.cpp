@@ -68,11 +68,11 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
         return;
     }
 
-    RenderView* root = toRenderView(m_frame->document()->renderer());
+    RenderView* view = toRenderView(m_frame->document()->renderer());
 
     float ratio = printRect.height() / printRect.width();
 
-    float pageWidth  = (float)root->rightLayoutOverflow();
+    float pageWidth  = view->docWidth();
     float pageHeight = pageWidth * ratio;
     outPageHeight = pageHeight; // this is the height of the page adjusted by margins
     pageHeight -= headerHeight + footerHeight;
@@ -96,20 +96,20 @@ void PrintContext::computePageRectsWithPageSizeInternal(const FloatSize& pageSiz
     if (!m_frame->document() || !m_frame->view() || !m_frame->document()->renderer())
         return;
 
-    RenderView* root = toRenderView(m_frame->document()->renderer());
+    RenderView* view = toRenderView(m_frame->document()->renderer());
 
-    int docWidth = root->layer()->width();
-    int docHeight = root->layer()->height();
+    IntRect docRect = view->documentRect();
+
     int pageWidth = pageSizeInPixels.width();
     int pageHeight = pageSizeInPixels.height();
 
-    unsigned pageCount = ceilf((float)docHeight / pageHeight);
+    unsigned pageCount = ceilf((float)docRect.height() / pageHeight);
     for (unsigned i = 0; i < pageCount; ++i) {
         if (allowHorizontalMultiPages) {
-            for (int currWidth = 0; currWidth < docWidth; currWidth += pageWidth)
-                m_pageRects.append(IntRect(currWidth, i * pageHeight, pageWidth, pageHeight));
+            for (int currentX = docRect.x(); currentX < docRect.right(); currentX += pageWidth)
+                m_pageRects.append(IntRect(currentX, docRect.y() + i * pageHeight, pageWidth, pageHeight));
         } else
-            m_pageRects.append(IntRect(0, i * pageHeight, pageWidth, pageHeight));
+            m_pageRects.append(IntRect(docRect.x(), docRect.y() + i * pageHeight, pageWidth, pageHeight));
     }
 }
 
