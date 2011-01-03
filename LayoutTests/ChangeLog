@@ -1,3 +1,13 @@
+2011-01-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: Regression: WebKit no longer auto-scrolls with VoiceOver navigation
+        https://bugs.webkit.org/show_bug.cgi?id=51833
+
+        * platform/mac/accessibility/webarea-size-equals-content-size-expected.txt: Added.
+        * platform/mac/accessibility/webarea-size-equals-content-size.html: Added.
+
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, Chromium test expectation update.

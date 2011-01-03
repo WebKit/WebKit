@@ -1,3 +1,17 @@
+2011-01-03  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: Regression: WebKit no longer auto-scrolls with VoiceOver navigation
+        https://bugs.webkit.org/show_bug.cgi?id=51833
+
+        Make sure the web area returns the contentsSize, not the same size as what is displayed.
+
+        Test: platform/mac/accessibility/webarea-size-equals-content-size.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+
 2011-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Fix warning in 32-bit builds.

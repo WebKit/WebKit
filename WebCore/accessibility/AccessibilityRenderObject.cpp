@@ -1418,6 +1418,11 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
             result.unite(r);
         }
     }
+
+    // The size of the web area should be the content size, not the clipped size.
+    if (isWebArea() && obj->frame()->view())
+        result.setSize(obj->frame()->view()->contentsSize());
+    
     return result;
 }
     
