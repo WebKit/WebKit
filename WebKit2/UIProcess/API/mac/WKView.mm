@@ -208,7 +208,13 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 - (BOOL)becomeFirstResponder
 {
+    NSSelectionDirection direction = [[self window] keyViewSelectionDirection];
+
     _data->_page->setFocused(true);
+
+    if (direction != NSDirectSelection)
+        _data->_page->setInitialFocus(direction == NSSelectingNext);
+
     return YES;
 }
 

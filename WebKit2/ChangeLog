@@ -1,3 +1,14 @@
+2011-01-03  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Ensure that the correct initial focusable area is focused when tabbing
+        and shift-tabbing into the WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView becomeFirstResponder]): Use the keyViewSelectionDirection to set
+        the initial focus.
+
 2011-01-02  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Simon Fraser.
@@ -14,7 +25,7 @@
         WebKit 2 does not build on 64bits with a recent GCC
         https://bugs.webkit.org/show_bug.cgi?id=51754
 
-        Change the argument coding for DatabaseDetails to use explicitely the 64 bits type.
+        Change the argument coding for DatabaseDetails to use explicitly the 64 bits type.
 
         * Shared/OriginAndDatabases.h:
         * Shared/WebCoreArgumentCoders.h:
