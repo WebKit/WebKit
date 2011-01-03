@@ -1,3 +1,18 @@
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed.
+
+        NSScrollView-based scrollbars and ScrollBarTheme-based scrollbars don't look the same
+        https://bugs.webkit.org/show_bug.cgi?id=51151
+
+        Flip switch to use WebThemeEngine for Chromium/Mac scrollbar rendering,
+        so that it can match Safari's (and thus use the same baselines).
+
+        No new tests, should be covered by layout tests (which will need
+        expectation changes)
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+
 2011-01-03  Antonio Gomes  <agomes@rim.com>
 
         Unreviewed build fix for WebKit/Gtk+.

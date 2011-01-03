@@ -27,9 +27,8 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumMac.h"
 
-// FIXME: Remove this (always use WebThemeEngine) once the implementation has
-// landed downstream in Chromium.
-#define USE_WEB_THEME_ENGINE_TO_PAINT_THUMB 0
+// FIXME: Remove this (always use WebThemeEngine) once we rebaseline tests
+#define USE_WEB_THEME_ENGINE_TO_PAINT_THUMB 1
 
 #if USE_WEB_THEME_ENGINE_TO_PAINT_THUMB
 #include "ChromiumBridge.h"
