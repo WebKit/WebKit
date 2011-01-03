@@ -5357,3 +5357,7 @@ http/tests/local/link-stylesheet-load-order-preload.html
 # [Qt] fast/text/emphasis-overlap.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=51324
 fast/text/emphasis-overlap.html
+
+[Qt] LayoutTests/http/tests/appcache/auth.html failed and skipped
+# https://bugs.webkit.org/show_bug.cgi?id=36688
+http/tests/appcache/auth.html

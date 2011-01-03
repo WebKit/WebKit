@@ -1,5 +1,14 @@
 2011-01-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
+        Unreviewed, build fix.
+
+        [Qt] Add back auth.html to the skipped list after r74896.
+
+        * platform/qt/Skipped:
+          Add http/tests/appcache/auth.html to the list.
+
+2011-01-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
         Reviewed by David Levin.
 
         [Qt] Unskip some passing tests as the bot is migrated to Qt 4.7+
