@@ -1,5 +1,63 @@
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed, Chromium test expectation update.
+        
+        Remove editing/, fast/backgrounds, fast/block, fast/blockflow, and
+        fast/borders chromium-mac baselines that are no longer necessary after
+        r74892 (now that chromium-mac scrollbars match mac ones).
+
+        * platform/chromium-mac/editing/deleting/delete-after-span-ws-001-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/delete-after-span-ws-001-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-after-span-ws-002-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/delete-after-span-ws-002-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-after-span-ws-003-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/delete-after-span-ws-003-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-line-end-ws-001-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/delete-line-end-ws-001-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/delete-line-end-ws-002-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/delete-line-end-ws-002-expected.png: Removed.
+        * platform/chromium-mac/editing/inserting/insert-div-023-expected.checksum: Removed.
+        * platform/chromium-mac/editing/inserting/insert-div-023-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/focus_editable_html-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/focus_editable_html-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/iframe-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/iframe-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/select-all-001-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/select-all-001-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/select-all-002-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/select-all-002-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/select-all-003-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/select-all-003-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/select-all-004-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/select-all-004-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-001-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-001-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-002-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-002-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-003-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-003-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-004-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-004-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-005-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/unrendered-005-expected.png: Removed.
+        * platform/chromium-mac/fast/backgrounds/background-inherit-color-bug-expected.checksum: Removed.
+        * platform/chromium-mac/fast/backgrounds/background-inherit-color-bug-expected.png: Removed.
+        * platform/chromium-mac/fast/block/basic/016-expected.checksum: Removed.
+        * platform/chromium-mac/fast/block/basic/truncation-rtl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/block/basic/truncation-rtl-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/border-radius-clipping-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/border-radius-clipping-vertical-lr-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-rl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/fieldsets-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/fieldsets-expected.png: Removed.
+        * platform/chromium-mac/fast/borders/border-image-scale-transform-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/border-image-scale-transform-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed Chromium test expectation update.
         
         Add failing expectations for tests that depend on elliptical gradient
