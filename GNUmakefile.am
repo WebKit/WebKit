@@ -86,6 +86,21 @@ CLEANFILES :=
 DISTCLEANFILES :=
 MAINTAINERCLEANFILES :=
 
+# We do not care at all about this implicit built-in make rules,
+# disable them to save some build time
+%: %.c
+%: %.cpp
+%: %.o
+(%): %
+%.out: %
+%.c: %.w %.ch
+%.tex: %.w %.ch
+%:: %,v
+%:: RCS/%,v
+%:: RCS/%
+%:: s.%
+%:: SCCS/s.%
+
 global_cppflags += \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \

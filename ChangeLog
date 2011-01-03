@@ -1,3 +1,26 @@
+2011-01-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Disable superfluous GNU make built-in implicit rules
+        https://bugs.webkit.org/show_bug.cgi?id=51826
+
+        GNU make ships some superflous built-in rules that we never use
+        and that end up adding up to a very significant portion of our
+        total Makefile processing time. Disable them completely by
+        defining the rule without any recipe, as suggested by the GNU make
+        manual (10.5.6, Cancelling Implicit Rules).
+
+        In my system the null-build goes from:
+
+        make  43.51s user 12.77s system 99% cpu 56.628 total
+
+        to:
+
+        make  31.45s user 11.59s system 99% cpu 43.227 total
+
+        * GNUmakefile.am: disable implicit built-in rules.
+
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed. Update .gitignore with new JavaScriptCore location.
