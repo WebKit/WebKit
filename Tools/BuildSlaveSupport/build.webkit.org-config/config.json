@@ -57,6 +57,8 @@
                     { "name": "google-new-tests", "platform": "mac-leopard" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
+
+                    { "name": "wince-1", "platform": "wince" },
                     
                     { "name": "efl-linux-slave-1", "platform": "efl" }
                   ],
@@ -214,6 +216,11 @@
                       "slavenames": ["wincairo-1"]
                     },
                     {
+                      "name": "WinCE Release (Build)", "type": "Build", "builddir": "wince-release",
+                      "platform": "wince", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["wince-1"]
+                    },
+                    {
                       "name": "EFL Linux Release (Build)", "type": "Build", "builddir": "efl-linux-release",
                       "platform": "efl", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["efl-linux-slave-1"]
@@ -228,7 +235,7 @@
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Win Release (Tests)", "Chromium Mac Release (Tests)", "Chromium Linux Release (Tests)",
-                                       "WinCairo Debug (Build)", "EFL Linux Release (Build)"]
+                                       "WinCairo Debug (Build)", "WinCE Release (Build)", "EFL Linux Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Windows Release (Build)", "Windows Debug (Build)"]

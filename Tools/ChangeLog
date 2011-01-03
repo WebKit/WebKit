@@ -2,6 +2,18 @@
 
         Reviewed by David Kilzer.
 
+        [WINCE] Adds a build slave.
+        https://bugs.webkit.org/show_bug.cgi?id=50523
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add an
+        entry for a release build of the WinCE port.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Add platform
+        flag to build the WinCE port.
+
+2011-01-03  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
         Add WinCE support to build-webkit
         https://bugs.webkit.org/show_bug.cgi?id=51642
 
