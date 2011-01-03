@@ -102,26 +102,6 @@ fast/text/hyphens.html
 inspector/dom-breakpoints.html
 
 # =========================================================================== #
-#       Passing HTTP tests - require confirmation on bot.                     #
-# =========================================================================== #
-
-http/tests/security/cross-frame-access-put.html
-http/tests/misc/isindex-with-no-form-base-href.html
-http/tests/misc/isindex-with-no-form.html
-http/tests/misc/timer-vs-loading.html
-
-http/tests/appcache/auth.html
-
-# Our expected results are out-of-date - need to be updated first.
-http/tests/loading/bad-scheme-subframe.html
-
-http/tests/navigation/onload-navigation-iframe-2.html
-http/tests/navigation/onload-navigation-iframe-timeout.html
-http/tests/navigation/onload-navigation-iframe.html
-http/tests/navigation/lockedhistory-iframe.html
-
-
-# =========================================================================== #
 #       Failing HTTP tests.                                                   #
 # =========================================================================== #
 
@@ -198,6 +178,7 @@ http/tests/navigation/timerredirect-goback.html
 # time out
 http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
+http/tests/misc/timer-vs-loading.html
 
 # drt prints additional output - looks harmless
 http/tests/multipart/policy-ignore-crash.php

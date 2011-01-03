@@ -1,7 +1,5 @@
 main frame - didStartProvisionalLoadForFrame
-main frame - willCloseFrame
 main frame - didCommitLoadForFrame
-main frame - didClearWindowObjectForFrame
 frame "f1" - didStartProvisionalLoadForFrame
 main frame - didFinishDocumentLoadForFrame
 main frame - didHandleOnloadEventsForFrame
