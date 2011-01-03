@@ -90,9 +90,10 @@ def archiveBuiltProduct(configuration, platform):
         os.mkdir(thinDirectory)
 
         for dirname in ["bin", "lib", "Source/JavaScriptCore"]:
-            fromDir = os.path.join(configurationBuildDirectory, dirname)
+            fromDir = os.path.join(configurationBuildDirectory, dirname, "*")
             toDir = os.path.join(thinDirectory, dirname)
-            if subprocess.call(["cp", "-R", fromDir, toDir]):
+            os.makedirs(toDir)
+            if subprocess.call('cp -R %s %s' % (fromDir, toDir), shell=True):
                 return 1
 
         for root, dirs, files in os.walk(thinDirectory, topdown=False):

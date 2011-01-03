@@ -1,5 +1,13 @@
 2011-01-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed fix after r74855 and r74875.
+
+        * BuildSlaveSupport/built-product-archive:
+         - Create directories explicitly.
+         - Pass shell=True to subprocess.call().
+
+2011-01-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed fix after r74855.
 
         Move JavaScriptCore to Source
