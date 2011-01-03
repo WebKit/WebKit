@@ -17,7 +17,7 @@ if test -z `which autoreconf`; then
     echo "Error: autoreconf not found, please install it."
     exit 1
 fi
-autoreconf --verbose --install -I Source/autotools || exit $?
+autoreconf --verbose --install -I Source/autotools $ACLOCAL_FLAGS|| exit $?
 
 cd $ORIGDIR || exit 1
 

@@ -1,3 +1,10 @@
+2011-01-03  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        * autogen.sh: also pass $ACLOCAL_FLAGS for tools that set that env
+        variable (like jhbuild).
+
 2011-01-03  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.
