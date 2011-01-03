@@ -14,11 +14,11 @@ tags
 *~
 
 # Ignore Chromium projects auto-generated from .gyp files:
-JavaScriptCore/JavaScriptCore.gyp/*.Makefile
-JavaScriptCore/JavaScriptCore.gyp/*.mk
-JavaScriptCore/JavaScriptCore.gyp/*.sln
-JavaScriptCore/JavaScriptCore.gyp/*.vcproj*
-JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
+Source/JavaScriptCore/JavaScriptCore.gyp/*.Makefile
+Source/JavaScriptCore/JavaScriptCore.gyp/*.mk
+Source/JavaScriptCore/JavaScriptCore.gyp/*.sln
+Source/JavaScriptCore/JavaScriptCore.gyp/*.vcproj*
+Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
 WebCore/WebCore.gyp/*.Makefile
 WebCore/WebCore.gyp/*.mk
 WebCore/WebCore.gyp/*.rules

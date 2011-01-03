@@ -1,3 +1,9 @@
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed. Update .gitignore with new JavaScriptCore location.
+
+        * .gitignore:
+
 2011-01-02  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Unreviewed build fix.
