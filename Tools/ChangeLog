@@ -1,3 +1,43 @@
+2011-01-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Move LayoutTestResults over to new-run-webkit-tests TestResult architecture
+        https://bugs.webkit.org/show_bug.cgi?id=51802
+
+        I'm not the biggest fan of the test_failures or test_results classes,
+        but it's better to have one shared set of classes, than separate ones
+        for new vs. old run-webkit-test result handling.
+
+        This moves the ORWT results class "LayoutTestResults" over to using
+        TestResult and TestFailure classes, making it easy for us to
+        make all our sheriff-bot and other webkitpy code NRWT ready.
+
+        This also makes it a trivial patch to generate results.json information
+        from ORWT results.html files (for flaky test analysis, etc.) as well
+        as making it a one-liner to report test failure types when the
+        commit-queue sees flaky tests.
+
+        This patch tried not to add new functionality, but only to replace
+        the guts of LayoutTestResults, while adding unit tests and hoping
+        not to break anything.
+
+        I also moved callers which assumed User.prompt* were static/class methods
+        to using them as instance methods (since we'll eventually want to make them such).
+
+        In the process of re-writing things, I broke the rebaseline command, so I wrote
+        a unit test to catch my breakage were I do do so again in the future.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results.py:
+        * Scripts/webkitpy/tool/commands/queries.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-01-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Simon Fraser.

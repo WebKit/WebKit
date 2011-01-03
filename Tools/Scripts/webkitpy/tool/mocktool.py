@@ -540,9 +540,13 @@ class MockCheckout(object):
 
 class MockUser(object):
 
-    @staticmethod
-    def prompt(message, repeat=1, raw_input=raw_input):
+    @classmethod
+    def prompt(cls, message, repeat=1, raw_input=raw_input):
         return "Mock user response"
+
+    @classmethod
+    def prompt_with_list(cls, list_title, list_items, can_choose_multiple=False, raw_input=raw_input):
+        pass
 
     def edit(self, files):
         pass

@@ -29,7 +29,8 @@
 import unittest
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults
-
+from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import test_failures
 
 class LayoutTestResultsTest(unittest.TestCase):
     _example_results_html = """
@@ -57,18 +58,13 @@ class LayoutTestResultsTest(unittest.TestCase):
 </html>
 """
 
-    _expected_layout_test_results = {
-        'Tests that had stderr output:': [
-            'accessibility/aria-activedescendant-crash.html',
-        ],
-        'Tests that had no expected results (probably new):': [
-            'fast/repaint/no-caret-repaint-in-non-content-editable-element.html',
-        ],
-    }
-
     def test_parse_layout_test_results(self):
+        failures = [test_failures.FailureMissingResult(), test_failures.FailureMissingImageHash(), test_failures.FailureMissingImage()]
+        testname = 'fast/repaint/no-caret-repaint-in-non-content-editable-element.html'
+        expected_results = [test_results.TestResult(testname, failures, test_run_time=None, total_time_for_all_diffs=None, time_for_diffs=None)]
+
         results = LayoutTestResults._parse_results_html(self._example_results_html)
-        self.assertEqual(self._expected_layout_test_results, results)
+        self.assertEqual(expected_results, results)
 
     def test_results_from_string(self):
         self.assertEqual(LayoutTestResults.results_from_string(None), None)

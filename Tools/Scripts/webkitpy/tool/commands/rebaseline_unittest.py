@@ -28,7 +28,19 @@
 
 import unittest
 
-from webkitpy.tool.commands.rebaseline import BuilderToPort
+from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.thirdparty.mock import Mock
+from webkitpy.tool.commands.rebaseline import BuilderToPort, Rebaseline
+from webkitpy.tool.mocktool import MockTool
+
+
+class RebaselineTest(unittest.TestCase):
+    # This just makes sure the code runs without exceptions.
+    def test_tests_to_update(self):
+        command = Rebaseline()
+        command.bind_to_tool(MockTool())
+        build = Mock()
+        OutputCapture().assert_outputs(self, command._tests_to_update, [build])
 
 
 class BuilderToPortTest(unittest.TestCase):

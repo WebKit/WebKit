@@ -30,10 +30,16 @@ import unittest
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.buildbot import BuildBot, Builder, Build
+from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
 class BuilderTest(unittest.TestCase):
+    def _mock_test_result(self, testname):
+        failures = [test_failures.FailureTextMismatch()]
+        return test_results.TestResult(testname, failures, test_run_time=None, total_time_for_all_diffs=None, time_for_diffs=None)
+
     def _install_fetch_build(self, failure):
         def _mock_fetch_build(build_number):
             build = Build(
@@ -42,8 +48,8 @@ class BuilderTest(unittest.TestCase):
                 revision=build_number + 1000,
                 is_green=build_number < 4
             )
-            parsed_results = {LayoutTestResults.fail_key: failure(build_number)}
-            build._layout_test_results = LayoutTestResults(parsed_results)
+            results = [self._mock_test_result(testname) for testname in failure(build_number)]
+            build._layout_test_results = LayoutTestResults(results)
             return build
         self.builder._fetch_build = _mock_fetch_build
 

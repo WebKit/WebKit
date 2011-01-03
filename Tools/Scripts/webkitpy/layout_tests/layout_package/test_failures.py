@@ -35,6 +35,9 @@ import test_expectations
 import cPickle
 
 
+# FIXME: This is backwards.  Each TestFailure subclass should know what
+# test_expectation type it corresponds too.  Then this method just
+# collects them all from the failure list and returns the worst one.
 def determine_result_type(failure_list):
     """Takes a set of test_failures and returns which result type best fits
     the list of failures. "Best fits" means we use the worst type of failure.

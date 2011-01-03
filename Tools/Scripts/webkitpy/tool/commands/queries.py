@@ -272,7 +272,7 @@ class FailureReason(AbstractDeclarativeCommand):
         print "%s failing" % (pluralize("builder", len(red_statuses)))
         builder_choices = [status["name"] for status in red_statuses]
         # We could offer an "All" choice here.
-        chosen_name = User.prompt_with_list("Which builder to diagnose:", builder_choices)
+        chosen_name = self._tool.user.prompt_with_list("Which builder to diagnose:", builder_choices)
         # FIXME: prompt_with_list should really take a set of objects and a set of names and then return the object.
         for status in red_statuses:
             if status["name"] == chosen_name:
@@ -345,7 +345,7 @@ class FindFlakyTests(AbstractDeclarativeCommand):
     def _builder_to_analyze(self):
         statuses = self._tool.buildbot.builder_statuses()
         choices = [status["name"] for status in statuses]
-        chosen_name = User.prompt_with_list("Which builder to analyze:", choices)
+        chosen_name = self._tool.user.prompt_with_list("Which builder to analyze:", choices)
         for status in statuses:
             if status["name"] == chosen_name:
                 return (self._tool.buildbot.builder_with_name(chosen_name), status["built_revision"])
