@@ -1,3 +1,11 @@
+2011-01-02  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        <rdar://problem/8812159> Update copyright strings
+
+        * win/tools/scripts/COPYRIGHT-END-YEAR:
+
 2010-12-21  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Anders Carlsson.

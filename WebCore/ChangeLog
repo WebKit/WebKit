@@ -1,5 +1,13 @@
 2011-01-02  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Simon Fraser.
+
+        <rdar://problem/8812159> Update copyright strings
+
+        * Info.plist:
+
+2011-01-02  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/8806570> REGRESSION (r73337): Incorrect text match count when a match occurs in a text field

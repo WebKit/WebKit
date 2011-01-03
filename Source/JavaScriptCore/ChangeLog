@@ -1,3 +1,11 @@
+2011-01-02  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        <rdar://problem/8812159> Update copyright strings
+
+        * Info.plist:
+
 2011-01-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Fix GTK+ build after r74855.
