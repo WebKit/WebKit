@@ -144,6 +144,13 @@ String contextMenuItemTagPaste()
     return platformStrategies()->localizationStrategy()->contextMenuItemTagPaste();
 }
 
+#if PLATFORM(QT)
+String contextMenuItemTagSelectAll()
+{
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagSelectAll();
+}
+#endif
+
 String contextMenuItemTagNoGuessesFound()
 {
     return platformStrategies()->localizationStrategy()->contextMenuItemTagNoGuessesFound();

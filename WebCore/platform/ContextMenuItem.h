@@ -76,7 +76,11 @@ namespace WebCore {
         ContextMenuItemTagPaste,
 #if PLATFORM(GTK)
         ContextMenuItemTagDelete,
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
         ContextMenuItemTagSelectAll,
+#endif
+#if PLATFORM(GTK)
         ContextMenuItemTagInputMethods,
         ContextMenuItemTagUnicode,
 #endif

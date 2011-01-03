@@ -65,9 +65,11 @@ public:
     virtual String contextMenuItemTagPaste() = 0;
 #if PLATFORM(GTK)
     virtual String contextMenuItemTagDelete() = 0;
-    virtual String contextMenuItemTagSelectAll() = 0;
     virtual String contextMenuItemTagInputMethods() = 0;
     virtual String contextMenuItemTagUnicode() = 0;
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
+    virtual String contextMenuItemTagSelectAll() = 0;
 #endif
     virtual String contextMenuItemTagNoGuessesFound() = 0;
     virtual String contextMenuItemTagIgnoreSpelling() = 0;

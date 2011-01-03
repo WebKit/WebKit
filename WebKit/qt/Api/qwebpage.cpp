@@ -418,6 +418,7 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
         case WebCore::ContextMenuItemTagBold: return QWebPage::ToggleBold;
         case WebCore::ContextMenuItemTagItalic: return QWebPage::ToggleItalic;
         case WebCore::ContextMenuItemTagUnderline: return QWebPage::ToggleUnderline;
+        case WebCore::ContextMenuItemTagSelectAll: return QWebPage::SelectAll;
 #if ENABLE(INSPECTOR)
         case WebCore::ContextMenuItemTagInspectElement: return QWebPage::InspectElement;
 #endif
@@ -2734,6 +2735,9 @@ QAction *QWebPage::action(WebAction action) const
         case Paste:
             text = contextMenuItemTagPaste();
             break;
+        case SelectAll:
+            text = contextMenuItemTagSelectAll();
+            break;
 #ifndef QT_NO_UNDOSTACK
         case Undo: {
             QAction *a = undoStack()->createUndoAction(d->q);
@@ -2781,9 +2785,6 @@ QAction *QWebPage::action(WebAction action) const
             break;
         case MoveToEndOfDocument:
             text = tr("Move the cursor to the end of the document");
-            break;
-        case SelectAll:
-            text = tr("Select all");
             break;
         case SelectNextChar:
             text = tr("Select to the next character");

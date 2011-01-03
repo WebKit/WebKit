@@ -290,6 +290,11 @@ String WebPlatformStrategies::contextMenuItemTagPaste()
     return QCoreApplication::translate("QWebPage", "Paste", "Paste context menu item");
 }
 
+String WebPlatformStrategies::contextMenuItemTagSelectAll()
+{
+    return QCoreApplication::translate("QWebPage", "Select All", "Select All context menu item");
+}
+
 String WebPlatformStrategies::contextMenuItemTagNoGuessesFound()
 {
     return QCoreApplication::translate("QWebPage", "No Guesses Found", "No Guesses Found context menu item");

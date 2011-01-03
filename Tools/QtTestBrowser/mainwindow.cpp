@@ -95,6 +95,7 @@ void MainWindow::buildUI()
     page()->action(QWebPage::Cut)->setShortcut(QKeySequence::Cut);
     page()->action(QWebPage::Copy)->setShortcut(QKeySequence::Copy);
     page()->action(QWebPage::Paste)->setShortcut(QKeySequence::Paste);
+    page()->action(QWebPage::SelectAll)->setShortcut(QKeySequence::SelectAll);
 
     page()->action(QWebPage::ToggleBold)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_B));
     page()->action(QWebPage::ToggleItalic)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));

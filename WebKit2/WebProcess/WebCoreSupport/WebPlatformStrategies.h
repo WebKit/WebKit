@@ -78,9 +78,11 @@ private:
     virtual String contextMenuItemTagPaste();
 #if PLATFORM(GTK)
     virtual String contextMenuItemTagDelete();
-    virtual String contextMenuItemTagSelectAll();
     virtual String contextMenuItemTagInputMethods();
     virtual String contextMenuItemTagUnicode();
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
+    virtual String contextMenuItemTagSelectAll();
 #endif
     virtual String contextMenuItemTagNoGuessesFound();
     virtual String contextMenuItemTagIgnoreSpelling();

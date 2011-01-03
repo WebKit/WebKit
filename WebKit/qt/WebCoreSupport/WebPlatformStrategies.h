@@ -74,6 +74,7 @@ private:
     virtual WTF::String contextMenuItemTagReload();
     virtual WTF::String contextMenuItemTagCut();
     virtual WTF::String contextMenuItemTagPaste();
+    virtual WTF::String contextMenuItemTagSelectAll();
     virtual WTF::String contextMenuItemTagNoGuessesFound();
     virtual WTF::String contextMenuItemTagIgnoreSpelling();
     virtual WTF::String contextMenuItemTagLearnSpelling();

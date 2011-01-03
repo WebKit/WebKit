@@ -1,3 +1,15 @@
+2011-01-03  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Add SelectAll option to the context menu for the editor
+        https://bugs.webkit.org/show_bug.cgi?id=50049
+
+        Set shortcut for the SelectAll action.
+
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::buildUI):
+
 2011-01-03  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

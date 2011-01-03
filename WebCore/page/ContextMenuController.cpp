@@ -680,6 +680,8 @@ void ContextMenuController::populate()
     ContextMenuItem PasteItem(ActionType, ContextMenuItemTagPaste, contextMenuItemTagPaste());
 #if PLATFORM(GTK)
     ContextMenuItem DeleteItem(ActionType, ContextMenuItemTagDelete, contextMenuItemTagDelete());
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
 #endif
 
@@ -862,6 +864,8 @@ void ContextMenuController::populate()
 #if PLATFORM(GTK)
         appendItem(DeleteItem, m_contextMenu.get());
         appendItem(*separatorItem(), m_contextMenu.get());
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
         appendItem(SelectAllItem, m_contextMenu.get());
 #endif
 

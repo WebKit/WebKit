@@ -1,3 +1,20 @@
+2011-01-03  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Add SelectAll option to the context menu for the editor
+        https://bugs.webkit.org/show_bug.cgi?id=50049
+
+        Enable SelectAll for the Qt context menu.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        * platform/ContextMenuItem.h:
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagSelectAll):
+        * platform/LocalizedStrings.h:
+
 2011-01-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

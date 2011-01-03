@@ -302,12 +302,6 @@ String WebPlatformStrategies::contextMenuItemTagDelete()
     return "Delete";
 }
 
-String WebPlatformStrategies::contextMenuItemTagSelectAll()
-{
-    notImplemented();
-    return "Select All";
-}
-
 String WebPlatformStrategies::contextMenuItemTagInputMethods()
 {
     notImplemented();
@@ -318,6 +312,16 @@ String WebPlatformStrategies::contextMenuItemTagUnicode()
 {
     notImplemented();
     return "Unicode";
+}
+
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(QT)
+
+String WebPlatformStrategies::contextMenuItemTagSelectAll()
+{
+    notImplemented();
+    return "Select All";
 }
 
 #endif

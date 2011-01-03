@@ -61,9 +61,11 @@ namespace WebCore {
     String contextMenuItemTagPaste();
 #if PLATFORM(GTK)
     String contextMenuItemTagDelete();
-    String contextMenuItemTagSelectAll();
     String contextMenuItemTagInputMethods();
     String contextMenuItemTagUnicode();
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
+    String contextMenuItemTagSelectAll();
 #endif
     String contextMenuItemTagNoGuessesFound();
     String contextMenuItemTagIgnoreSpelling();
