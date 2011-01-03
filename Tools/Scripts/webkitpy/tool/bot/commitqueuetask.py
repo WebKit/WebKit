@@ -192,8 +192,13 @@ class CommitQueueTask(object):
             return False
 
         if self._build_and_test_without_patch():
-            raise self._script_error  # The error from the previous ._test() run is real, report it.
+            return self.report_failure()  # The error from the previous ._test() run is real, report it.
         return False  # Tree must be red, just retry later.
+
+    def report_failure(self):
+        if not self._validate():
+            return False
+        raise self._script_error
 
     def run(self):
         if not self._validate():
@@ -203,11 +208,11 @@ class CommitQueueTask(object):
         if not self._update():
             return False
         if not self._apply():
-            raise self._script_error
+            return self.report_failure()
         if not self._build():
             if not self._build_without_patch():
                 return False
-            raise self._script_error
+            return self.report_failure()
         if not self._test_patch():
             return False
         # Make sure the patch is still valid before landing (e.g., make sure
@@ -216,5 +221,5 @@ class CommitQueueTask(object):
             return False
         # FIXME: We should understand why the land failure occured and retry if possible.
         if not self._land():
-            raise self._script_error
+            return self.report_failure()
         return True

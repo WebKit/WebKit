@@ -1,3 +1,16 @@
+2011-01-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        commit-queue shouldn't reject patches twice if two bots process the same patch
+        https://bugs.webkit.org/show_bug.cgi?id=51805
+
+        Before raising an error, we first check whether the patch is still in
+        the commit-queue.  This check is still racy, of course, but the time
+        window is much smaller.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+
 2011-01-03  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
