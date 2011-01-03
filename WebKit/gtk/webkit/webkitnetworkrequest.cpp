@@ -21,11 +21,11 @@
 #include "config.h"
 #include "webkitnetworkrequest.h"
 
+#include "GRefPtr.h"
 #include "ResourceRequest.h"
-#include "webkitprivate.h"
-#include <wtf/text/CString.h>
-
+#include "webkitglobalsprivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/text/CString.h>
 
 /**
  * SECTION:webkitnetworkrequest
@@ -120,7 +120,7 @@ static void webkit_network_request_class_init(WebKitNetworkRequestClass* request
     objectClass->get_property = webkit_network_request_get_property;
     objectClass->set_property = webkit_network_request_set_property;
 
-    webkit_init();
+    webkitInit();
 
     /**
      * WebKitNetworkRequest:uri:

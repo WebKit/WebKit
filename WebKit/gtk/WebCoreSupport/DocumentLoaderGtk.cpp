@@ -30,8 +30,9 @@
 #include "config.h"
 #include "DocumentLoaderGtk.h"
 
-#include "webkitprivate.h"
+#include "GRefPtr.h"
 #include "webkitwebdatasource.h"
+#include "webkitwebdatasourceprivate.h"
 
 using namespace WebCore;
 
@@ -68,9 +69,8 @@ void DocumentLoader::attachToFrame()
 
     // We may get to here without having a datasource, when the data
     // is coming from the page cache.
-    WebKitWebDataSource* dataSource = webkit_web_data_source_new_with_loader(this);
-    setDataSource(dataSource);
-    g_object_unref(dataSource);
+    PlatformRefPtr<WebKitWebDataSource> dataSource(adoptPlatformRef(kitNew(this)));
+    setDataSource(dataSource.get());
 }
 
 void DocumentLoader::detachFromFrame()

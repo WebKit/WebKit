@@ -25,14 +25,13 @@
 #include "PlatformString.h"
 #include "SharedBuffer.h"
 #include "webkitenumtypes.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
-#include "webkitprivate.h"
 #include "webkitwebresourceprivate.h"
-#include <wtf/Assertions.h>
-#include <wtf/text/CString.h>
-
 #include <glib.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 
 /**
  * SECTION:webkitwebresource
@@ -44,7 +43,6 @@
  */
 
 using namespace WebCore;
-using namespace WebKit;
 
 enum {
     PROP_0,

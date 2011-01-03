@@ -29,7 +29,9 @@ extern "C" {
 
 WEBKIT_API void webkit_web_settings_add_extra_plugin_directory(WebKitWebView*, const gchar* directory);
 
-GSList* webkit_web_settings_get_enchant_dicts(WebKitWebView*);
+GSList* webkitWebViewGetEnchantDicts(WebKitWebView*);
+
+WTF::String webkitUserAgent();
 
 }
 

@@ -19,10 +19,11 @@
  */
 
 #include "config.h"
+#include "webkitwebwindowfeatures.h"
 
 #include "WindowFeatures.h"
-#include "webkitwebwindowfeatures.h"
-#include "webkitprivate.h"
+#include "webkitglobalsprivate.h"
+#include "webkitwebwindowfeaturesprivate.h"
 
 /**
  * SECTION:webkitwebwindowfeatures
@@ -100,7 +101,7 @@ static void webkit_web_window_features_class_init(WebKitWebWindowFeaturesClass* 
 
     GParamFlags flags = (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
-    webkit_init();
+    webkitInit();
 
     /**
      * WebKitWebWindowFeatures:x:
@@ -378,35 +379,6 @@ WebKitWebWindowFeatures* webkit_web_window_features_new()
     return WEBKIT_WEB_WINDOW_FEATURES(g_object_new(WEBKIT_TYPE_WEB_WINDOW_FEATURES, NULL));
 }
 
-// for internal use only
-WebKitWebWindowFeatures* webkit_web_window_features_new_from_core_features(const WebCore::WindowFeatures& features)
-{
-    WebKitWebWindowFeatures *webWindowFeatures = webkit_web_window_features_new();
-
-    if(features.xSet)
-        g_object_set(webWindowFeatures, "x", static_cast<int>(features.x), NULL);
-
-    if(features.ySet)
-        g_object_set(webWindowFeatures, "y", static_cast<int>(features.y), NULL);
-
-    if(features.widthSet)
-        g_object_set(webWindowFeatures, "width", static_cast<int>(features.width), NULL);
-
-    if(features.heightSet)
-        g_object_set(webWindowFeatures, "height", static_cast<int>(features.height), NULL);
-
-    g_object_set(webWindowFeatures,
-                 "toolbar-visible", features.toolBarVisible,
-                 "statusbar-visible", features.statusBarVisible,
-                 "scrollbar-visible", features.scrollbarsVisible,
-                 "menubar-visible", features.menuBarVisible,
-                 "locationbar-visible", features.locationBarVisible,
-                 "fullscreen", features.fullscreen,
-                 NULL);
-
-    return webWindowFeatures;
-}
-
 /**
  * webkit_web_window_features_equal:
  * @features1: a #WebKitWebWindowFeatures instance
@@ -442,4 +414,36 @@ gboolean webkit_web_window_features_equal(WebKitWebWindowFeatures* features1, We
         && (priv1->fullscreen == priv2->fullscreen))
         return TRUE;
     return FALSE;
+}
+
+namespace WebKit {
+
+WebKitWebWindowFeatures* kitNew(const WebCore::WindowFeatures& features)
+{
+    WebKitWebWindowFeatures *webWindowFeatures = webkit_web_window_features_new();
+
+    if(features.xSet)
+        g_object_set(webWindowFeatures, "x", static_cast<int>(features.x), NULL);
+
+    if(features.ySet)
+        g_object_set(webWindowFeatures, "y", static_cast<int>(features.y), NULL);
+
+    if(features.widthSet)
+        g_object_set(webWindowFeatures, "width", static_cast<int>(features.width), NULL);
+
+    if(features.heightSet)
+        g_object_set(webWindowFeatures, "height", static_cast<int>(features.height), NULL);
+
+    g_object_set(webWindowFeatures,
+                 "toolbar-visible", features.toolBarVisible,
+                 "statusbar-visible", features.statusBarVisible,
+                 "scrollbar-visible", features.scrollbarsVisible,
+                 "menubar-visible", features.menuBarVisible,
+                 "locationbar-visible", features.locationBarVisible,
+                 "fullscreen", features.fullscreen,
+                 NULL);
+
+    return webWindowFeatures;
+}
+
 }

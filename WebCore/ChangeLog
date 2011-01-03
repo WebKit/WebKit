@@ -1,3 +1,16 @@
+2011-01-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Split webkitprivate.{cpp,h} in more manageable chunks
+        https://bugs.webkit.org/show_bug.cgi?id=50698
+
+        Fix DOM bindings generation to no longer include the now-gone
+        webkitprivate.h header, including the appropriate replacements
+        instead.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+
 2011-01-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

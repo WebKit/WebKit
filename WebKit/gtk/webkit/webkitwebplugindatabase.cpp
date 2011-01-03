@@ -20,7 +20,7 @@
 #include "webkitwebplugindatabase.h"
 
 #include "PluginDatabase.h"
-#include "webkitprivate.h"
+#include "webkitglobalsprivate.h"
 #include "webkitwebplugindatabaseprivate.h"
 #include "webkitwebpluginprivate.h"
 
@@ -47,7 +47,7 @@ static void webkit_web_plugin_database_dispose(GObject* object)
 
 static void webkit_web_plugin_database_class_init(WebKitWebPluginDatabaseClass* klass)
 {
-    webkit_init();
+    webkitInit();
 
     GObjectClass* gobjectClass = reinterpret_cast<GObjectClass*>(klass);
 

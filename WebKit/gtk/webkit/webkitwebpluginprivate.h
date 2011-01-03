@@ -21,6 +21,7 @@
 
 #include "webkitwebplugin.h"
 #include <glib-object.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 class PluginPackage;

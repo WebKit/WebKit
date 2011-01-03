@@ -26,16 +26,19 @@
 #include "config.h"
 #include "webkitwebsettings.h"
 
+#include "EditingBehavior.h"
 #include "FileSystem.h"
 #include "Language.h"
 #include "PluginDatabase.h"
 #include "webkitenumtypes.h"
-#include "webkitprivate.h"
+#include "webkitglobalsprivate.h"
 #include "webkitversion.h"
 #include "webkitwebsettingsprivate.h"
+#include <enchant.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 #include <glib/gi18n-lib.h>
+
 #if OS(UNIX)
 #include <sys/utsname.h>
 #endif
@@ -241,7 +244,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     gobject_class->set_property = webkit_web_settings_set_property;
     gobject_class->get_property = webkit_web_settings_get_property;
 
-    webkit_init();
+    webkitInit();
 
     GParamFlags flags = (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
@@ -1404,24 +1407,6 @@ void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* webView, cons
 }
 
 /**
- * webkit_web_settings_get_enchant_dicts:
- * @web_view: a #WebKitWebView
- *
- * Internal use only. Retrieves a GSList of EnchantDicts from the
- * #WebKitWebSettings of @web_view.
- *
- * Since: 1.1.22
- */
-GSList* webkit_web_settings_get_enchant_dicts(WebKitWebView* webView)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-
-    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
-
-    return settings->priv->enchant_dicts;
-}
-
-/**
  * webkit_web_settings_get_user_agent:
  * @web_settings: a #WebKitWebSettings
  *
@@ -1437,4 +1422,22 @@ G_CONST_RETURN gchar* webkit_web_settings_get_user_agent(WebKitWebSettings* webS
     WebKitWebSettingsPrivate* priv = webSettings->priv;
 
     return priv->user_agent;
+}
+
+GSList* webkitWebViewGetEnchantDicts(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+
+    return settings->priv->enchant_dicts;
+}
+
+namespace WebKit {
+
+WebCore::EditingBehaviorType core(WebKitEditingBehavior type)
+{
+    return (WebCore::EditingBehaviorType)type;
+}
+
 }

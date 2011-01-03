@@ -1333,8 +1333,9 @@ sub Generate {
     @cPrefix = split("\r", $licenceTemplate);
     push(@cPrefix, "\n");
 
+    $implIncludes{"webkitdefines.h"} = 1;
+    $implIncludes{"webkitglobalsprivate.h"} = 1;
     $implIncludes{"webkitmarshal.h"} = 1;
-    $implIncludes{"webkitprivate.h"} = 1;
     $implIncludes{"DOMObjectCache.h"} = 1;
     $implIncludes{"WebKitDOMBinding.h"} = 1;
     $implIncludes{"gobject/ConvertToUTF8String.h"} = 1;

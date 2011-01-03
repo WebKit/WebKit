@@ -20,10 +20,9 @@
 #include "config.h"
 #include "webkitgeolocationpolicydecision.h"
 
-#include "webkitprivate.h"
 #include "Geolocation.h"
+#include "webkitgeolocationpolicydecisionprivate.h"
 
-using namespace WebKit;
 using namespace WebCore;
 
 /**

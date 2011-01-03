@@ -23,13 +23,14 @@
 
 #include "GOwnPtr.h"
 #include "HitTestResult.h"
+#include "KURL.h"
 #include "WebKitDOMBinding.h"
 #include "WebKitDOMNode.h"
 #include "webkitenumtypes.h"
-#include "webkitprivate.h"
-#include <wtf/text/CString.h>
-
+#include "webkitglobals.h"
+#include "webkitglobalsprivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/text/CString.h>
 
 /**
  * SECTION:webkithittestresult
@@ -142,7 +143,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
     objectClass->get_property = webkit_hit_test_result_get_property;
     objectClass->set_property = webkit_hit_test_result_set_property;
 
-    webkit_init();
+    webkitInit();
 
     /**
      * WebKitHitTestResult:context:

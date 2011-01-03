@@ -20,39 +20,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef webkitwebframeprivate_h
-#define webkitwebframeprivate_h
+#ifndef webkitglobalsprivate_h
+#define webkitglobalsprivate_h
 
-#include "Frame.h"
-#include "webkitwebframe.h"
+#include <glib.h>
+
+#define WEBKIT_PARAM_READABLE ((GParamFlags)(G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
+#define WEBKIT_PARAM_READWRITE ((GParamFlags)(G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB))
 
 namespace WebKit {
 
-WebKitWebView* getViewFromFrame(WebKitWebFrame*);
-
-WebCore::Frame* core(WebKitWebFrame*);
-WebKitWebFrame* kit(WebCore::Frame*);
+class PasteboardHelperGtk;
+PasteboardHelperGtk* pasteboardHelperInstance();
 
 }
 
 extern "C" {
 
-typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
-struct _WebKitWebFramePrivate {
-    WebCore::Frame* coreFrame;
-    WebKitWebView* webView;
-
-    gchar* name;
-    gchar* title;
-    gchar* uri;
-    WebKitLoadStatus loadStatus;
-    WebKitSecurityOrigin* origin;
-};
-
-void webkit_web_frame_core_frame_gone(WebKitWebFrame*);
-
-// FIXME: move this functionality into 'WebKitWebDataSource'?
-WEBKIT_API gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame*);
+void webkitInit();
 
 }
 

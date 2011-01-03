@@ -20,7 +20,7 @@
 #include "webkitwebplugin.h"
 
 #include "PluginPackage.h"
-#include "webkitprivate.h"
+#include "webkitglobalsprivate.h"
 #include "webkitwebpluginprivate.h"
 #include <glib/gi18n-lib.h>
 
@@ -98,7 +98,7 @@ static void webkit_web_plugin_set_property(GObject* object, guint prop_id, const
 
 static void webkit_web_plugin_class_init(WebKitWebPluginClass* klass)
 {
-    webkit_init();
+    webkitInit();
 
     GObjectClass* gobjectClass = reinterpret_cast<GObjectClass*>(klass);
 

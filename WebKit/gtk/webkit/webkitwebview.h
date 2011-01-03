@@ -50,24 +50,6 @@ typedef enum {
     WEBKIT_NAVIGATION_RESPONSE_DOWNLOAD
 } WebKitNavigationResponse;
 
-/*  
- * WebKitCacheModel:
- * @WEBKIT_CACHE_MODEL_DEFAULT: The default cache model. This is
- *   WEBKIT_CACHE_MODEL_WEB_BROWSER.
- * @WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER: Disable the cache completely, which 
- *   substantially reduces memory usage. Useful for applications that only
- *   access local files.
- * @WEBKIT_CACHE_MODEL_WEB_BROWSER: Improve document load speed substantially
- *   by caching previously viewed content.
- * 
- * Enum values used for determining the webview cache model.
- */
-typedef enum {
-    WEBKIT_CACHE_MODEL_DEFAULT,
-    WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER,
-    WEBKIT_CACHE_MODEL_WEB_BROWSER
-} WebKitCacheModel;
-
 typedef enum
 {
     WEBKIT_WEB_VIEW_TARGET_INFO_HTML,
@@ -361,12 +343,6 @@ WEBKIT_API void
 webkit_web_view_set_full_content_zoom           (WebKitWebView        *webView,
                                                  gboolean              full_content_zoom);
 
-WEBKIT_API SoupSession*
-webkit_get_default_session                      (void);
-
-WEBKIT_API WebKitWebPluginDatabase *
-webkit_get_web_plugin_database                  (void);
-
 WEBKIT_API const gchar*
 webkit_web_view_get_encoding                    (WebKitWebView        * webView);
 
@@ -420,12 +396,6 @@ webkit_web_view_get_hit_test_result             (WebKitWebView        *webView,
 
 WEBKIT_API G_CONST_RETURN gchar *
 webkit_web_view_get_icon_uri                    (WebKitWebView        *webView);
-
-WEBKIT_API void
-webkit_set_cache_model                          (WebKitCacheModel     cache_model);
-
-WEBKIT_API WebKitCacheModel
-webkit_get_cache_model                          (void);
 
 WEBKIT_API WebKitDOMDocument *
 webkit_web_view_get_dom_document                (WebKitWebView        *webView);

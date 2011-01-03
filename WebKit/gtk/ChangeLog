@@ -1,3 +1,92 @@
+2011-01-03  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Split webkitprivate.{cpp,h} in more manageable chunks
+        https://bugs.webkit.org/show_bug.cgi?id=50698
+
+        Final patch, removing webkitprivate.{cpp,h}, and adding a
+        webkitglobals module to hold non-object-specific functions and
+        definitions that do not make sense on their own.
+
+        * GNUmakefile.am:
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::createWindow):
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        * WebCoreSupport/DocumentLoaderGtk.cpp:
+        (WebKit::DocumentLoader::attachToFrame):
+        * WebCoreSupport/DragClientGtk.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::ignoreWordInSpellDocument):
+        (WebKit::EditorClient::learnWord):
+        (WebKit::EditorClient::checkSpellingOfString):
+        (WebKit::EditorClient::getGuessesForWord):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createDocumentLoader):
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        * webkit/webkit.h:
+        * webkit/webkitapplicationcache.cpp:
+        (webkit_application_cache_set_maximum_size):
+        * webkit/webkitdownload.cpp:
+        (webkit_download_class_init):
+        * webkit/webkitgeolocationpolicydecision.cpp:
+        * webkit/webkitglobals.cpp: Added.
+        (webkit_get_default_session):
+        (webkit_set_cache_model):
+        (webkit_get_cache_model):
+        (webkit_get_web_plugin_database):
+        (currentToplevelCallback):
+        (closeIconDatabaseOnExit):
+        (webkitInit):
+        (WebKit::pasteboardHelperInstance):
+        * webkit/webkitglobals.h: Added.
+        * webkit/webkitglobalsprivate.h: Copied from WebKit/gtk/webkit/webkitwebsettingsprivate.h.
+        * webkit/webkithittestresult.cpp:
+        (webkit_hit_test_result_class_init):
+        * webkit/webkitnetworkrequest.cpp:
+        (webkit_network_request_class_init):
+        * webkit/webkitnetworkresponse.cpp:
+        (webkit_network_response_class_init):
+        * webkit/webkitprivate.cpp: Removed.
+        * webkit/webkitprivate.h: Removed.
+        * webkit/webkitsecurityorigin.cpp:
+        * webkit/webkitviewportattributes.cpp:
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_class_init):
+        * webkit/webkitwebdatabase.cpp:
+        * webkit/webkitwebdatasource.cpp:
+        (webkit_web_data_source_class_init):
+        (webkit_web_data_source_new_with_request):
+        (WebKit::kitNew):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+        * webkit/webkitwebframeprivate.h:
+        * webkit/webkitwebhistoryitem.cpp:
+        (webkit_web_history_item_class_init):
+        * webkit/webkitwebinspector.cpp:
+        * webkit/webkitwebnavigationaction.cpp:
+        * webkit/webkitwebplugin.cpp:
+        (webkit_web_plugin_class_init):
+        * webkit/webkitwebplugindatabase.cpp:
+        (webkit_web_plugin_database_class_init):
+        * webkit/webkitwebpluginprivate.h:
+        * webkit/webkitwebpolicydecision.cpp:
+        * webkit/webkitwebresource.cpp:
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkitWebViewGetEnchantDicts):
+        (WebKit::core):
+        * webkit/webkitwebsettingsprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+        * webkit/webkitwebview.h:
+        * webkit/webkitwebwindowfeatures.cpp:
+        (webkit_web_window_features_class_init):
+        (WebKit::kitNew):
+
 2011-01-02  Xan Lopez  <xlopez@igalia.com>
 
         Fix GTK+ build.

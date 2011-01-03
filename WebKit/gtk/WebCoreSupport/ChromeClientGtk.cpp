@@ -48,13 +48,14 @@
 #include "SecurityOrigin.h"
 #include "WindowFeatures.h"
 #include "webkitgeolocationpolicydecision.h"
+#include "webkitgeolocationpolicydecisionprivate.h"
 #include "webkitnetworkrequest.h"
-#include "webkitprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include "webkitviewportattributesprivate.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
+#include "webkitwebwindowfeaturesprivate.h"
 #include <glib.h>
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
@@ -156,9 +157,8 @@ Page* ChromeClient::createWindow(Frame* frame, const FrameLoadRequest& frameLoad
     if (!webView)
         return 0;
 
-    WebKitWebWindowFeatures* webWindowFeatures = webkit_web_window_features_new_from_core_features(coreFeatures);
-    g_object_set(webView, "window-features", webWindowFeatures, NULL);
-    g_object_unref(webWindowFeatures);
+    PlatformRefPtr<WebKitWebWindowFeatures> webWindowFeatures(adoptPlatformRef(kitNew(coreFeatures)));
+    g_object_set(webView, "window-features", webWindowFeatures.get(), NULL);
 
     if (!frameLoadRequest.isEmpty())
         webkit_web_view_open(webView, frameLoadRequest.resourceRequest().url().string().utf8().data());

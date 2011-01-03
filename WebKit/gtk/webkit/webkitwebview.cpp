@@ -76,16 +76,17 @@
 #include "ResourceHandle.h"
 #include "ScriptValue.h"
 #include "Scrollbar.h"
+#include "Settings.h"
 #include "webkit/WebKitDOMDocumentPrivate.h"
 #include "webkitdownload.h"
 #include "webkitdownloadprivate.h"
 #include "webkitenumtypes.h"
 #include "webkitgeolocationpolicydecision.h"
+#include "webkitglobalsprivate.h"
 #include "webkithittestresultprivate.h"
 #include "webkitmarshal.h"
 #include "webkitnetworkrequest.h"
 #include "webkitnetworkresponse.h"
-#include "webkitprivate.h"
 #include "webkitviewportattributes.h"
 #include "webkitviewportattributesprivate.h"
 #include "webkitwebbackforwardlist.h"
@@ -96,7 +97,9 @@
 #include "webkitwebinspectorprivate.h"
 #include "webkitwebpolicydecision.h"
 #include "webkitwebresource.h"
+#include "webkitwebsettingsprivate.h"
 #include "webkitwebplugindatabaseprivate.h"
+#include "webkitwebwindowfeatures.h"
 #include "webkitwebviewprivate.h"
 #include <gdk/gdkkeysyms.h>
 #include <glib/gi18n-lib.h>
@@ -137,7 +140,6 @@
  */
 
 static const double defaultDPI = 96.0;
-static WebKitCacheModel cacheModel = WEBKIT_CACHE_MODEL_DEFAULT;
 static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint);
 
 using namespace WebKit;
@@ -1757,7 +1759,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 {
     GtkBindingSet* binding_set;
 
-    webkit_init();
+    webkitInit();
 
     /*
      * Signals
@@ -3330,7 +3332,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setJavaScriptCanOpenWindowsAutomatically(javascriptCanOpenWindows);
     settings->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
     settings->setOfflineWebApplicationCacheEnabled(enableOfflineWebAppCache);
-    settings->setEditingBehaviorType(core(editingBehavior));
+    settings->setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(editingBehavior));
     settings->setAllowUniversalAccessFromFileURLs(enableUniversalAccessFromFileURI);
     settings->setAllowFileAccessFromFileURLs(enableFileAccessFromFileURI);
     settings->setDOMPasteAllowed(enableDOMPaste);
@@ -3436,7 +3438,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
     else if (name == g_intern_string("enable-offline-web-application-cache"))
         settings->setOfflineWebApplicationCacheEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("editing-behavior"))
-        settings->setEditingBehaviorType(core(static_cast<WebKitEditingBehavior>(g_value_get_enum(&value))));
+        settings->setEditingBehaviorType(static_cast<WebCore::EditingBehaviorType>(g_value_get_enum(&value)));
     else if (name == g_intern_string("enable-universal-access-from-file-uris"))
         settings->setAllowUniversalAccessFromFileURLs(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-file-access-from-file-uris"))
@@ -5048,138 +5050,6 @@ webkit_web_view_get_dom_document(WebKitWebView* webView)
         return 0;
 
     return kit(doc);
-}
-
-/**
- * SECTION:webkit
- * @short_description: Global functions controlling WebKit
- *
- * WebKit manages many resources which are not related to specific
- * views. These functions relate to cross-view limits, such as cache
- * sizes, database quotas, and the HTTP session management.
- */
-
-/**
- * webkit_get_default_session:
- *
- * Retrieves the default #SoupSession used by all web views.
- * Note that the session features are added by WebKit on demand,
- * so if you insert your own #SoupCookieJar before any network
- * traffic occurs, WebKit will use it instead of the default.
- *
- * Return value: (transfer none): the default #SoupSession
- *
- * Since: 1.1.1
- */
-SoupSession* webkit_get_default_session ()
-{
-    webkit_init();
-    return ResourceHandle::defaultSession();
-}
-
-/**
- * webkit_set_cache_model:
- * @cache_model: a #WebKitCacheModel
- *
- * Specifies a usage model for WebViews, which WebKit will use to
- * determine its caching behavior. All web views follow the cache
- * model. This cache model determines the RAM and disk space to use
- * for caching previously viewed content .
- *
- * Research indicates that users tend to browse within clusters of
- * documents that hold resources in common, and to revisit previously
- * visited documents. WebKit and the frameworks below it include
- * built-in caches that take advantage of these patterns,
- * substantially improving document load speed in browsing
- * situations. The WebKit cache model controls the behaviors of all of
- * these caches, including various WebCore caches.
- *
- * Browsers can improve document load speed substantially by
- * specifying WEBKIT_CACHE_MODEL_WEB_BROWSER. Applications without a
- * browsing interface can reduce memory usage substantially by
- * specifying WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER. Default value is
- * WEBKIT_CACHE_MODEL_WEB_BROWSER.
- *
- * Since: 1.1.18
- */
-void webkit_set_cache_model(WebKitCacheModel model)
-{
-    webkit_init();
-
-    if (cacheModel == model)
-        return;
-
-    // FIXME: Add disk cache handling when soup has the API
-    guint cacheTotalCapacity;
-    guint cacheMinDeadCapacity;
-    guint cacheMaxDeadCapacity;
-    gdouble deadDecodedDataDeletionInterval;
-    guint pageCacheCapacity;
-
-    switch (model) {
-    case WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER:
-        pageCacheCapacity = 0;
-        cacheTotalCapacity = 0;
-        cacheMinDeadCapacity = 0;
-        cacheMaxDeadCapacity = 0;
-        deadDecodedDataDeletionInterval = 0;
-        break;
-    case WEBKIT_CACHE_MODEL_WEB_BROWSER:
-        // Page cache capacity (in pages). Comment from Mac port:
-        // (Research indicates that value / page drops substantially after 3 pages.)
-        pageCacheCapacity = 3;
-        cacheTotalCapacity = 32 * 1024 * 1024;
-        cacheMinDeadCapacity = cacheTotalCapacity / 4;
-        cacheMaxDeadCapacity = cacheTotalCapacity / 2;
-        deadDecodedDataDeletionInterval = 60;
-        break;
-    default:
-        g_return_if_reached();
-    }
-
-    cache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
-    cache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
-    pageCache()->setCapacity(pageCacheCapacity);
-    cacheModel = model;
-}
-
-/**
- * webkit_get_cache_model:
- *
- * Returns the current cache model. For more information about this
- * value check the documentation of the function
- * webkit_set_cache_model().
- *
- * Return value: the current #WebKitCacheModel
- *
- * Since: 1.1.18
- */
-WebKitCacheModel webkit_get_cache_model()
-{
-    webkit_init();
-    return cacheModel;
-}
-
-/**
- * webkit_get_web_plugin_database:
- *
- * Returns the current #WebKitWebPluginDatabase with information about
- * all the plugins WebKit knows about in this instance.
- *
- * Return value: (transfer none): the current #WebKitWebPluginDatabase
- *
- * Since: 1.3.8
- */
-WebKitWebPluginDatabase* webkit_get_web_plugin_database()
-{
-    static WebKitWebPluginDatabase* database = 0;
-
-    webkit_init();
-
-    if (!database)
-        database = webkit_web_plugin_database_new();
-
-    return database;
 }
 
 GtkMenu* webkit_web_view_get_context_menu(WebKitWebView* webView)

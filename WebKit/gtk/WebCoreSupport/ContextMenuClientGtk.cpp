@@ -26,7 +26,6 @@
 #include "KURL.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "webkitprivate.h"
 #include "webkitwebviewprivate.h"
 #include <glib-object.h>
 #include <glib/gi18n-lib.h>

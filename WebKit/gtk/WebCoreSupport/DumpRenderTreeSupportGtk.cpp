@@ -21,15 +21,16 @@
 #include "config.h"
 #include "DumpRenderTreeSupportGtk.h"
 
-#include "AccessibilityObjectWrapperAtk.h"
-#include "AnimationController.h"
 #include "APICast.h"
 #include "AXObjectCache.h"
+#include "AccessibilityObjectWrapperAtk.h"
+#include "AnimationController.h"
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "FocusController.h"
 #include "FrameLoaderClientGtk.h"
-#include "FrameView.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "GCController.h"
 #include "GraphicsContext.h"
 #include "JSDOMWindow.h"
@@ -43,20 +44,19 @@
 #include "PlatformString.h"
 #include "PrintContext.h"
 #include "RenderListItem.h"
-#include "RenderView.h"
 #include "RenderTreeAsText.h"
+#include "RenderView.h"
 #include "SecurityOrigin.h"
+#include "WorkerThread.h"
+#include "webkitwebframe.h"
+#include "webkitwebframeprivate.h"
+#include "webkitwebview.h"
+#include "webkitwebviewprivate.h"
+#include <JavaScriptCore/APICast.h>
+
 #if ENABLE(SVG)
 #include "SVGSMILElement.h"
 #endif
-#include "WorkerThread.h"
-#include "webkitprivate.h"
-#include "webkitwebframeprivate.h"
-#include "webkitwebviewprivate.h"
-#include "webkitwebview.h"
-#include "webkitwebframe.h"
-#include "DOMWrapperWorld.h"
-#include <JavaScriptCore/APICast.h>
 
 using namespace JSC;
 using namespace WebCore;

@@ -22,7 +22,7 @@
 
 #include "DatabaseDetails.h"
 #include "DatabaseTracker.h"
-#include "webkitprivate.h"
+#include "webkitglobalsprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>

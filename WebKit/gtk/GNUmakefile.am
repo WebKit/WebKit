@@ -191,18 +191,20 @@ webkitgtk_sources += \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h \
 	WebKit/gtk/webkit/webkitapplicationcache.cpp \
+	WebKit/gtk/webkit/webkitapplicationcacheprivate.h \
 	WebKit/gtk/webkit/webkitdownload.cpp \
 	WebKit/gtk/webkit/webkitdownloadprivate.h \
 	WebKit/gtk/webkit/webkiterror.cpp \
 	WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
+	WebKit/gtk/webkit/webkitglobals.cpp \
+	WebKit/gtk/webkit/webkitglobals.h \
+	WebKit/gtk/webkit/webkitglobalsprivate.h \
 	WebKit/gtk/webkit/webkithittestresult.cpp \
 	WebKit/gtk/webkit/webkithittestresultprivate.h \
 	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
 	WebKit/gtk/webkit/webkitnetworkrequestprivate.h \
 	WebKit/gtk/webkit/webkitnetworkresponse.cpp \
 	WebKit/gtk/webkit/webkitnetworkresponseprivate.h \
-	WebKit/gtk/webkit/webkitprivate.cpp \
-	WebKit/gtk/webkit/webkitprivate.h \
 	WebKit/gtk/webkit/webkitsecurityorigin.cpp \
 	WebKit/gtk/webkit/webkitsecurityoriginprivate.h \
 	WebKit/gtk/webkit/webkitsoupauthdialog.c \

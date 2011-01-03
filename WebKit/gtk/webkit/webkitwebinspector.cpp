@@ -33,8 +33,8 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "webkit/WebKitDOMNodePrivate.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
-#include "webkitprivate.h"
 #include "webkitwebinspectorprivate.h"
 #include <glib/gi18n-lib.h>
 

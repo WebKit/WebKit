@@ -23,7 +23,8 @@
 
 #include "BackForwardListImpl.h"
 #include "HistoryItem.h"
-#include "webkitprivate.h"
+#include "Page.h"
+#include "webkitglobalsprivate.h"
 #include "webkitwebbackforwardlistprivate.h"
 #include "webkitwebhistoryitem.h"
 #include "webkitwebhistoryitemprivate.h"
@@ -84,7 +85,7 @@ static void webkit_web_back_forward_list_class_init(WebKitWebBackForwardListClas
 
     object_class->dispose = webkit_web_back_forward_list_dispose;
 
-    webkit_init();
+    webkitInit();
 
     g_type_class_add_private(klass, sizeof(WebKitWebBackForwardListPrivate));
 }

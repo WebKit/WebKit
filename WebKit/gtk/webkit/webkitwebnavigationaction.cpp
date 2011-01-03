@@ -18,16 +18,14 @@
  */
 
 #include "config.h"
-
-#include <wtf/Assertions.h>
-#include "FrameLoaderTypes.h"
-
-#include <glib/gi18n-lib.h>
 #include "webkitwebnavigationaction.h"
-#include "webkitprivate.h"
-#include "webkitenumtypes.h"
 
+#include "FrameLoaderTypes.h"
+#include "webkitenumtypes.h"
+#include "webkitglobalsprivate.h"
+#include <glib/gi18n-lib.h>
 #include <string.h>
+#include <wtf/Assertions.h>
 
 static void webkit_web_navigation_action_set_target_frame(WebKitWebNavigationAction* navigationAction, const gchar* targetFrame);
 

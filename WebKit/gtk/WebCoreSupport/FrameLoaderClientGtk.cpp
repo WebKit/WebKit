@@ -58,14 +58,17 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"
+#include "Settings.h"
 #include "webkiterror.h"
+#include "webkitglobals.h"
+#include "webkitglobalsprivate.h"
 #include "webkitnetworkrequest.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
 #include "webkitnetworkresponseprivate.h"
-#include "webkitprivate.h"
 #include "webkitviewportattributes.h"
 #include "webkitviewportattributesprivate.h"
+#include "webkitwebdatasourceprivate.h"
 #include "webkitwebframe.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebnavigationaction.h"
@@ -74,6 +77,7 @@
 #include "webkitwebpolicydecisionprivate.h"
 #include "webkitwebresource.h"
 #include "webkitwebresourceprivate.h"
+#include "webkitwebsettingsprivate.h"
 #include "webkitwebview.h"
 #include "webkitwebviewprivate.h"
 #include <JavaScriptCore/APICast.h>
@@ -240,9 +244,8 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClient::createDocumentLoader
 {
     RefPtr<WebKit::DocumentLoader> loader = WebKit::DocumentLoader::create(request, substituteData);
 
-    WebKitWebDataSource* webDataSource = webkit_web_data_source_new_with_loader(loader.get());
-    loader->setDataSource(webDataSource);
-    g_object_unref(webDataSource);
+    PlatformRefPtr<WebKitWebDataSource> webDataSource(adoptPlatformRef(kitNew(loader.get())));
+    loader->setDataSource(webDataSource.get());
 
     return loader.release();
 }

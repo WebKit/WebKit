@@ -44,8 +44,8 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMRangePrivate.h"
 #include "WindowsKeyboardCodes.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
-#include "webkitprivate.h"
 #include "webkitwebsettingsprivate.h"
 #include "webkitwebviewprivate.h"
 #include <wtf/text/CString.h>
@@ -889,7 +889,7 @@ void EditorClient::textDidChangeInTextArea(Element*)
 
 void EditorClient::ignoreWordInSpellDocument(const String& text)
 {
-    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
+    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
 
     for (; dicts; dicts = dicts->next) {
         EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
@@ -900,7 +900,7 @@ void EditorClient::ignoreWordInSpellDocument(const String& text)
 
 void EditorClient::learnWord(const String& text)
 {
-    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
+    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
 
     for (; dicts; dicts = dicts->next) {
         EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
@@ -911,7 +911,7 @@ void EditorClient::learnWord(const String& text)
 
 void EditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
 {
-    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
+    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
     if (!dicts)
         return;
 
@@ -1004,7 +1004,7 @@ bool EditorClient::spellingUIIsShowing()
 
 void EditorClient::getGuessesForWord(const String& word, const String& context, WTF::Vector<String>& guesses)
 {
-    GSList* dicts = webkit_web_settings_get_enchant_dicts(m_webView);
+    GSList* dicts = webkitWebViewGetEnchantDicts(m_webView);
     guesses.clear();
 
     for (; dicts; dicts = dicts->next) {

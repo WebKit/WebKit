@@ -19,12 +19,11 @@
  */
 
 #include "config.h"
-
 #include "webkitwebhistoryitem.h"
-#include "webkitprivate.h"
 
 #include "HistoryItem.h"
 #include "PlatformString.h"
+#include "webkitglobalsprivate.h"
 #include "webkitwebhistoryitemprivate.h"
 #include <glib.h>
 #include <glib/gi18n-lib.h>
@@ -128,7 +127,7 @@ static void webkit_web_history_item_class_init(WebKitWebHistoryItemClass* klass)
     gobject_class->set_property = webkit_web_history_item_set_property;
     gobject_class->get_property = webkit_web_history_item_get_property;
 
-    webkit_init();
+    webkitInit();
 
     /**
     * WebKitWebHistoryItem:title:

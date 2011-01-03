@@ -18,15 +18,14 @@
  */
 
 #include "config.h"
-#include "webkitprivate.h"
-
-#include <wtf/UnusedParam.h>
 
 #include "ApplicationCacheStorage.h"
+#include "webkitapplicationcacheprivate.h"
+#include <wtf/UnusedParam.h>
 
 void webkit_application_cache_set_maximum_size(unsigned long long size)
 {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)   
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     WebCore::cacheStorage().empty();
     WebCore::cacheStorage().vacuumDatabaseFile();
     WebCore::cacheStorage().setMaximumSize(size);

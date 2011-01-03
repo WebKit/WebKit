@@ -22,7 +22,9 @@
 #include "webkitviewportattributes.h"
 
 #include "Chrome.h"
-#include "webkitprivate.h"
+#include "Frame.h"
+#include "Page.h"
+#include "webkitglobalsprivate.h"
 #include "webkitviewportattributesprivate.h"
 #include "webkitwebviewprivate.h"
 #include <glib/gi18n-lib.h>

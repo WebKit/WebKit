@@ -51,10 +51,10 @@
 #include "ScriptController.h"
 #include "SubstituteData.h"
 #include "webkitenumtypes.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponseprivate.h"
-#include "webkitprivate.h"
 #include "webkitsecurityoriginprivate.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebview.h"
@@ -181,7 +181,7 @@ static void webkit_web_frame_finalize(GObject* object)
 
 static void webkit_web_frame_class_init(WebKitWebFrameClass* frameClass)
 {
-    webkit_init();
+    webkitInit();
 
     /*
      * signals

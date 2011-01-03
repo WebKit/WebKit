@@ -19,8 +19,8 @@
  */
 
 #include "config.h"
+#include "webkitdownload.h"
 
-#include <glib/gi18n-lib.h>
 #include "GRefPtr.h"
 #include "Noncopyable.h"
 #include "NotImplemented.h"
@@ -28,17 +28,17 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "webkitdownload.h"
 #include "webkitdownloadprivate.h"
 #include "webkitenumtypes.h"
+#include "webkitglobals.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
 #include "webkitnetworkrequestprivate.h"
 #include "webkitnetworkresponse.h"
 #include "webkitnetworkresponseprivate.h"
-#include "webkitprivate.h"
-#include <wtf/text/CString.h>
-
+#include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
+#include <wtf/text/CString.h>
 
 #ifdef ERROR
 #undef ERROR
@@ -230,7 +230,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
     objectClass->get_property = webkit_download_get_property;
     objectClass->set_property = webkit_download_set_property;
 
-    webkit_init();
+    webkitInit();
 
     /**
      * WebKitDownload::error:

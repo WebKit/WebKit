@@ -26,6 +26,7 @@
 #include <webkit/webkitdom.h>
 #include <webkit/webkitdownload.h>
 #include <webkit/webkitgeolocationpolicydecision.h>
+#include <webkit/webkitglobals.h>
 #include <webkit/webkithittestresult.h>
 #include <webkit/webkitnetworkrequest.h>
 #include <webkit/webkitnetworkresponse.h>

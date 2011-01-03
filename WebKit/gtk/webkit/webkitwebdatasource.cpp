@@ -30,8 +30,9 @@
 #include "SharedBuffer.h"
 #include "SubstituteData.h"
 #include "runtime/InitializeThreading.h"
+#include "webkitglobalsprivate.h"
 #include "webkitnetworkrequestprivate.h"
-#include "webkitprivate.h"
+#include "webkitwebdatasourceprivate.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebresource.h"
 #include "webkitwebviewprivate.h"
@@ -126,7 +127,7 @@ static void webkit_web_data_source_class_init(WebKitWebDataSourceClass* klass)
     gobject_class->dispose = webkit_web_data_source_dispose;
     gobject_class->finalize = webkit_web_data_source_finalize;
 
-    webkit_init();
+    webkitInit();
 
     g_type_class_add_private(gobject_class, sizeof(WebKitWebDataSourcePrivate));
 }
@@ -134,15 +135,6 @@ static void webkit_web_data_source_class_init(WebKitWebDataSourceClass* klass)
 static void webkit_web_data_source_init(WebKitWebDataSource* webDataSource)
 {
     webDataSource->priv = G_TYPE_INSTANCE_GET_PRIVATE(webDataSource, WEBKIT_TYPE_WEB_DATA_SOURCE, WebKitWebDataSourcePrivate);
-}
-
-WebKitWebDataSource* webkit_web_data_source_new_with_loader(PassRefPtr<WebKit::DocumentLoader> loader)
-{
-    WebKitWebDataSource* webDataSource = WEBKIT_WEB_DATA_SOURCE(g_object_new(WEBKIT_TYPE_WEB_DATA_SOURCE, NULL));
-    WebKitWebDataSourcePrivate* priv = webDataSource->priv;
-    priv->loader = loader.releaseRef();
-
-    return webDataSource;
 }
 
 /**
@@ -182,10 +174,8 @@ WebKitWebDataSource* webkit_web_data_source_new_with_request(WebKitNetworkReques
 
     const gchar* uri = webkit_network_request_get_uri(request);
 
-    WebKitWebDataSource* datasource;
-    datasource = webkit_web_data_source_new_with_loader(
-        WebKit::DocumentLoader::create(ResourceRequest(KURL(KURL(), String::fromUTF8(uri))),
-                                       SubstituteData()));
+    ResourceRequest resourceRequest(ResourceRequest(KURL(KURL(), String::fromUTF8(uri))));
+    WebKitWebDataSource* datasource = kitNew(WebKit::DocumentLoader::create(resourceRequest, SubstituteData()));
 
     WebKitWebDataSourcePrivate* priv = datasource->priv;
     priv->initialRequest = request;
@@ -436,4 +426,17 @@ GList* webkit_web_data_source_get_subresources(WebKitWebDataSource* webDataSourc
     WebKitWebView* webView = getViewFromFrame(webFrame);
 
     return webkit_web_view_get_subresources(webView);
+}
+
+namespace WebKit {
+
+WebKitWebDataSource* kitNew(PassRefPtr<WebKit::DocumentLoader> loader)
+{
+    WebKitWebDataSource* webDataSource = WEBKIT_WEB_DATA_SOURCE(g_object_new(WEBKIT_TYPE_WEB_DATA_SOURCE, NULL));
+    WebKitWebDataSourcePrivate* priv = webDataSource->priv;
+    priv->loader = loader.releaseRef();
+
+    return webDataSource;
+}
+
 }
