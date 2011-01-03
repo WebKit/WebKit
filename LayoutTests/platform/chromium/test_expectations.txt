@@ -3203,8 +3203,8 @@ BUG_MIHAIP MAC : tables/mozilla/other/wa_table_thtd_rowspan.html = IMAGE
 BUG_MIHAIP MAC : transforms/2d/transform-fixed-container.html = IMAGE
 
 // Platforms that use Skia don't support elliptical gradients.
-BUGWK51841 WIN LINUX : fast/gradients/css3-color-stop-units.html = IMAGE
-BUGWK51841 WIN LINUX : fast/gradients/css3-color-stops.html = IMAGE
-BUGWK51841 WIN LINUX : fast/gradients/css3-linear-angle-gradients.html = IMAGE
-BUGWK51841 WIN LINUX : fast/gradients/css3-radial-gradients.html = IMAGE
-BUGWK51841 WIN LINUX : fast/gradients/css3-radial-gradients2.html = IMAGE
+BUGWK51841 : fast/gradients/css3-color-stop-units.html = IMAGE
+BUGWK51841 : fast/gradients/css3-color-stops.html = IMAGE
+BUGWK51841 : fast/gradients/css3-linear-angle-gradients.html = IMAGE
+BUGWK51841 : fast/gradients/css3-radial-gradients.html = IMAGE
+BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE

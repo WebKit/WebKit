@@ -2,6 +2,14 @@
 
         Unreviewed, Chromium test expectation update.
         
+        New gradient tests fail on chromium-mac too.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, Chromium test expectation update.
+        
         Remove editing/, fast/backgrounds, fast/block, fast/blockflow, and
         fast/borders chromium-mac baselines that are no longer necessary after
         r74892 (now that chromium-mac scrollbars match mac ones).
