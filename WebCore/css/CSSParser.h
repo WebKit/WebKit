@@ -23,10 +23,11 @@
 #ifndef CSSParser_h
 #define CSSParser_h
 
-#include "Color.h"
+#include "CSSGradientValue.h"
 #include "CSSParserValues.h"
 #include "CSSPropertySourceData.h"
 #include "CSSSelectorList.h"
+#include "Color.h"
 #include "MediaQuery.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -155,7 +156,10 @@ namespace WebCore {
 
         // Image generators
         bool parseCanvas(RefPtr<CSSValue>&);
-        bool parseGradient(RefPtr<CSSValue>&);
+
+        bool parseDeprecatedGradient(RefPtr<CSSValue>&);
+        bool parseLinearGradient(RefPtr<CSSValue>&);
+        bool parseRadialGradient(RefPtr<CSSValue>&);
 
         PassRefPtr<CSSValueList> parseTransform();
         bool parseTransformOrigin(int propId, int& propId1, int& propId2, int& propId3, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
@@ -263,6 +267,9 @@ namespace WebCore {
         void checkForOrphanedUnits();
 
         void deleteFontFaceOnlyValues();
+
+        bool isGeneratedImageValue(CSSParserValue*) const;
+        bool parseGeneratedImage(RefPtr<CSSValue>&);
 
         enum SizeParameterType {
             None,

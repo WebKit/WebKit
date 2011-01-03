@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+
+
+<script type="text/javascript">
+description('Tests -webkit-linear-gradient and -webkit-radial-gradient');
+
+function testGradient(css, queryProp)
+{
+    var div = document.createElement('div');
+    div.setAttribute('style', css);
+    document.body.appendChild(div);
+
+    var result = getComputedStyle(div).getPropertyValue(queryProp);
+    document.body.removeChild(div);
+    return result;
+}
+
+function testSame(dir, prop, altProp, value)
+{
+    shouldBeEqualToString('test("' + dir + '", "' + prop + ': ' + value + '", "' + altProp + '")', value);
+    shouldBeEqualToString('test("' + dir + '", "' + altProp + ': ' + value + '", "' + prop + '")', value);
+}
+
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(top)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(10deg)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(top center, black 0%)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(10px 20%, black 0%)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(left left)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(left center)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0)", "background-image")', '"-webkit-linear-gradient(top, black 0px)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%)", "background-image")', '"-webkit-linear-gradient(top, black 0%)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%)", "background-image")', '"-webkit-linear-gradient(top, black 0%)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 10px, white 20px)", "background-image")', '"-webkit-linear-gradient(top, black 10px, white 20px)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(top left, black 0%)", "background-image")', '"-webkit-linear-gradient(left top, black 0%)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(top, black 0%)", "background-image")', '"-webkit-linear-gradient(top, black 0%)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(10deg, black 0%)", "background-image")', '"-webkit-linear-gradient(10deg, black 0%)"');
+
+successfullyParsed = true;
+  
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

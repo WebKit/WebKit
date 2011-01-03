@@ -1,3 +1,64 @@
+2011-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Implement -webkit-linear-gradient and -webkit-radial-gradient
+        https://bugs.webkit.org/show_bug.cgi?id=28152
+        
+        Add support for the parsing and rendering of non-repeating CSS3 linear gradients,
+        according to <http://dev.w3.org/csswg/css3-images/#linear-gradients>.
+
+        Tests: fast/gradients/css3-color-stop-units.html
+               fast/gradients/css3-color-stops.html
+               fast/gradients/css3-gradient-parsing.html
+               fast/gradients/css3-linear-angle-gradients.html
+
+        * css/CSSGradientValue.h:
+        Add subclasses of CSSGradientValue for linear and radial gradients.
+        
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image): Add FIXME comment about why we can't cache
+        the gradient sometimes.
+        (WebCore::compareStops): positions are CSSValues now.
+        (WebCore::CSSGradientValue::sortStopsIfNeeded): Add assertion that this is only called
+        for old-style gradients.
+        (WebCore::CSSGradientValue::addStops): New method that handles the spec rules about
+        missing positions, ensuring that stop position is ordered, and spacing out stops
+        without positions. Also normalize gradients which use stops outside the 0-1 range
+        so that platforms can render them correctly.
+        (WebCore::positionFromValue): Determin the position on the gradient line for percentage,
+        number and length values.
+        (WebCore::CSSGradientValue::computeEndPoint):
+        (WebCore::CSSLinearGradientValue::cssText):
+        (WebCore::endPointsFromAngle): Compute endpoints for a gradient which covers the rectangle
+        given an angle.
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::cssText):
+        (WebCore::CSSRadialGradientValue::resolveRadius):
+        (WebCore::CSSRadialGradientValue::createGradient):
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Style fix.
+        (WebCore::CSSParser::parseContent): Use isGeneratedImageValue() and parseGeneratedImage()
+        (WebCore::CSSParser::parseFillImage): Use isGeneratedImageValue() and parseGeneratedImage()
+        (WebCore::CSSParser::parseBorderImage): Use isGeneratedImageValue() and parseGeneratedImage()
+        (WebCore::parseDeprecatedGradientPoint): Renamed to indicate that it's only used for -webkit-gradient.
+        (WebCore::parseDeprecatedGradientColorStop): Renamed to indicate that it's only used for -webkit-gradient,
+        and fixed to store CSSValues for the stop position.
+        (WebCore::CSSParser::parseDeprecatedGradient): Renamed to indicate that it's only used for -webkit-gradient,
+        and create CSSLinearGradientValue and CSSRadialGradientValue as appropriate.
+        (WebCore::valueFromSideKeyword):
+        (WebCore::parseGradientColorOrKeyword): Color parsing utility.
+        (WebCore::CSSParser::parseLinearGradient): New method to parse linear gradients.
+        (WebCore::CSSParser::parseRadialGradient): Stub for new method to parse radial gradients.
+        (WebCore::CSSParser::isGeneratedImageValue): Detect gradients and CSS canvas.
+        (WebCore::CSSParser::parseGeneratedImage): Parser for generated images like gradients
+        and CSS canvas.
+        * css/CSSParser.h:
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::setP0): We need to be able to change the points when normalizing gradients.
+        (WebCore::Gradient::setP1): Ditto.
+
 2011-01-03  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -576,7 +576,7 @@ bool CSSParser::parseValue(int propId, bool important)
     if (!m_valueList)
         return false;
 
-    CSSParserValue *value = m_valueList->current();
+    CSSParserValue* value = m_valueList->current();
 
     if (!value)
         return false;
@@ -965,8 +965,8 @@ bool CSSParser::parseValue(int propId, bool important)
                 parsedValue = CSSImageValue::create(m_styleSheet->completeURL(value->string));
                 m_valueList->next();
             }
-        } else if (value->unit == CSSParserValue::Function && equalIgnoringCase(value->function->name, "-webkit-gradient(")) {
-            if (parseGradient(parsedValue))
+        } else if (isGeneratedImageValue(value)) {
+            if (parseGeneratedImage(parsedValue))
                 m_valueList->next();
             else
                 return false;
@@ -2362,11 +2362,8 @@ bool CSSParser::parseContent(int propId, bool important)
                 parsedValue = parseCounterContent(args, true);
                 if (!parsedValue)
                     return false;
-            } else if (equalIgnoringCase(val->function->name, "-webkit-gradient(")) {
-                if (!parseGradient(parsedValue))
-                    return false;
-            } else if (equalIgnoringCase(val->function->name, "-webkit-canvas(")) {
-                if (!parseCanvas(parsedValue))
+            } else if (isGeneratedImageValue(val)) {
+                if (!parseGeneratedImage(parsedValue))
                     return false;
             } else
                 return false;
@@ -2452,12 +2449,8 @@ bool CSSParser::parseFillImage(RefPtr<CSSValue>& value)
         return true;
     }
 
-    if (m_valueList->current()->unit == CSSParserValue::Function) {
-        if (equalIgnoringCase(m_valueList->current()->function->name, "-webkit-gradient("))
-            return parseGradient(value);
-        if (equalIgnoringCase(m_valueList->current()->function->name, "-webkit-canvas("))
-            return parseCanvas(value);
-    }
+    if (isGeneratedImageValue(m_valueList->current()))
+        return parseGeneratedImage(value);
 
     return false;
 }
@@ -4501,10 +4494,9 @@ bool CSSParser::parseBorderImage(int propId, bool important, RefPtr<CSSValue>& r
         // FIXME: The completeURL call should be done when using the CSSImageValue,
         // not when creating it.
         context.commitImage(CSSImageValue::create(m_styleSheet->completeURL(val->string)));
-    } else if (val->unit == CSSParserValue::Function) {
+    } else if (isGeneratedImageValue(val)) {
         RefPtr<CSSValue> value;
-        if ((equalIgnoringCase(val->function->name, "-webkit-gradient(") && parseGradient(value)) ||
-            (equalIgnoringCase(val->function->name, "-webkit-canvas(") && parseCanvas(value)))
+        if (parseGeneratedImage(value))
             context.commitImage(value);
         else
             return false;
@@ -4657,15 +4649,16 @@ bool CSSParser::parseCounter(int propId, int defaultValue, bool important)
     return false;
 }
 
-static PassRefPtr<CSSPrimitiveValue> parseGradientPoint(CSSParserValue* a, bool horizontal)
+// This should go away once we drop support for -webkit-gradient
+static PassRefPtr<CSSPrimitiveValue> parseDeprecatedGradientPoint(CSSParserValue* a, bool horizontal)
 {
     RefPtr<CSSPrimitiveValue> result;
     if (a->unit == CSSPrimitiveValue::CSS_IDENT) {
-        if ((equalIgnoringCase(a->string, "left") && horizontal)
-            || (equalIgnoringCase(a->string, "top") && !horizontal))
+        if ((equalIgnoringCase(a->string, "left") && horizontal) || 
+            (equalIgnoringCase(a->string, "top") && !horizontal))
             result = CSSPrimitiveValue::create(0., CSSPrimitiveValue::CSS_PERCENTAGE);
-        else if ((equalIgnoringCase(a->string, "right") && horizontal)
-                 || (equalIgnoringCase(a->string, "bottom") && !horizontal))
+        else if ((equalIgnoringCase(a->string, "right") && horizontal) ||
+                 (equalIgnoringCase(a->string, "bottom") && !horizontal))
             result = CSSPrimitiveValue::create(100., CSSPrimitiveValue::CSS_PERCENTAGE);
         else if (equalIgnoringCase(a->string, "center"))
             result = CSSPrimitiveValue::create(50., CSSPrimitiveValue::CSS_PERCENTAGE);
@@ -4674,7 +4667,7 @@ static PassRefPtr<CSSPrimitiveValue> parseGradientPoint(CSSParserValue* a, bool 
     return result;
 }
 
-static bool parseGradientColorStop(CSSParser* p, CSSParserValue* a, CSSGradientColorStop& stop)
+static bool parseDeprecatedGradientColorStop(CSSParser* p, CSSParserValue* a, CSSGradientColorStop& stop)
 {
     if (a->unit != CSSParserValue::Function)
         return false;
@@ -4688,16 +4681,16 @@ static bool parseGradientColorStop(CSSParser* p, CSSParserValue* a, CSSGradientC
     if (!args)
         return false;
 
-    if (equalIgnoringCase(a->function->name, "from(")
-        || equalIgnoringCase(a->function->name, "to(")) {
+    if (equalIgnoringCase(a->function->name, "from(") || 
+        equalIgnoringCase(a->function->name, "to(")) {
         // The "from" and "to" stops expect 1 argument.
         if (args->size() != 1)
             return false;
 
         if (equalIgnoringCase(a->function->name, "from("))
-            stop.m_stop = 0.f;
+            stop.m_position = CSSPrimitiveValue::create(0, CSSPrimitiveValue::CSS_NUMBER);
         else
-            stop.m_stop = 1.f;
+            stop.m_position = CSSPrimitiveValue::create(1, CSSPrimitiveValue::CSS_NUMBER);
 
         int id = args->current()->id;
         if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu)
@@ -4715,9 +4708,9 @@ static bool parseGradientColorStop(CSSParser* p, CSSParserValue* a, CSSGradientC
 
         CSSParserValue* stopArg = args->current();
         if (stopArg->unit == CSSPrimitiveValue::CSS_PERCENTAGE)
-            stop.m_stop = (float)stopArg->fValue / 100.f;
+            stop.m_position = CSSPrimitiveValue::create(stopArg->fValue / 100, CSSPrimitiveValue::CSS_NUMBER);
         else if (stopArg->unit == CSSPrimitiveValue::CSS_NUMBER)
-            stop.m_stop = (float)stopArg->fValue;
+            stop.m_position = CSSPrimitiveValue::create(stopArg->fValue, CSSPrimitiveValue::CSS_NUMBER);
         else
             return false;
 
@@ -4738,25 +4731,34 @@ static bool parseGradientColorStop(CSSParser* p, CSSParserValue* a, CSSGradientC
     return true;
 }
 
-bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
+bool CSSParser::parseDeprecatedGradient(RefPtr<CSSValue>& gradient)
 {
-    RefPtr<CSSGradientValue> result = CSSGradientValue::create();
-
     // Walk the arguments.
     CSSParserValueList* args = m_valueList->current()->function->args.get();
     if (!args || args->size() == 0)
         return false;
 
     // The first argument is the gradient type.  It is an identifier.
+    CSSGradientType gradientType;
     CSSParserValue* a = args->current();
     if (!a || a->unit != CSSPrimitiveValue::CSS_IDENT)
         return false;
     if (equalIgnoringCase(a->string, "linear"))
-        result->setType(CSSLinearGradient);
+        gradientType = CSSLinearGradient;
     else if (equalIgnoringCase(a->string, "radial"))
-        result->setType(CSSRadialGradient);
+        gradientType = CSSRadialGradient;
     else
         return false;
+
+    RefPtr<CSSGradientValue> result;
+    switch (gradientType) {
+        case CSSLinearGradient:
+            result = CSSLinearGradientValue::create(true);
+            break;
+        case CSSRadialGradient:
+            result = CSSRadialGradientValue::create(true);
+            break;
+    }
 
     // Comma.
     a = args->next();
@@ -4769,7 +4771,7 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
     a = args->next();
     if (!a)
         return false;
-    RefPtr<CSSPrimitiveValue> point = parseGradientPoint(a, true);
+    RefPtr<CSSPrimitiveValue> point = parseDeprecatedGradientPoint(a, true);
     if (!point)
         return false;
     result->setFirstX(point.release());
@@ -4778,7 +4780,7 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
     a = args->next();
     if (!a)
         return false;
-    point = parseGradientPoint(a, false);
+    point = parseDeprecatedGradientPoint(a, false);
     if (!point)
         return false;
     result->setFirstY(point.release());
@@ -4789,11 +4791,11 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
         return false;
 
     // For radial gradients only, we now expect a numeric radius.
-    if (result->type() == CSSRadialGradient) {
+    if (gradientType == CSSRadialGradient) {
         a = args->next();
         if (!a || a->unit != CSSPrimitiveValue::CSS_NUMBER)
             return false;
-        result->setFirstRadius(CSSPrimitiveValue::create(a->fValue, CSSPrimitiveValue::CSS_NUMBER));
+        static_cast<CSSRadialGradientValue*>(result.get())->setFirstRadius(CSSPrimitiveValue::create(a->fValue, CSSPrimitiveValue::CSS_NUMBER));
 
         // Comma after the first radius.
         a = args->next();
@@ -4806,7 +4808,7 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
     a = args->next();
     if (!a)
         return false;
-    point = parseGradientPoint(a, true);
+    point = parseDeprecatedGradientPoint(a, true);
     if (!point)
         return false;
     result->setSecondX(point.release());
@@ -4815,13 +4817,13 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
     a = args->next();
     if (!a)
         return false;
-    point = parseGradientPoint(a, false);
+    point = parseDeprecatedGradientPoint(a, false);
     if (!point)
         return false;
     result->setSecondY(point.release());
 
     // For radial gradients only, we now expect the second radius.
-    if (result->type() == CSSRadialGradient) {
+    if (gradientType == CSSRadialGradient) {
         // Comma after the second point.
         a = args->next();
         if (!a || a->unit != CSSParserValue::Operator || a->iValue != ',')
@@ -4830,7 +4832,7 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
         a = args->next();
         if (!a || a->unit != CSSPrimitiveValue::CSS_NUMBER)
             return false;
-        result->setSecondRadius(CSSPrimitiveValue::create(a->fValue, CSSPrimitiveValue::CSS_NUMBER));
+        static_cast<CSSRadialGradientValue*>(result.get())->setSecondRadius(CSSPrimitiveValue::create(a->fValue, CSSPrimitiveValue::CSS_NUMBER));
     }
 
     // We now will accept any number of stops (0 or more).
@@ -4847,7 +4849,7 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
 
         // The function name needs to be one of "from", "to", or "color-stop."
         CSSGradientColorStop stop;
-        if (!parseGradientColorStop(this, a, stop))
+        if (!parseDeprecatedGradientColorStop(this, a, stop))
             return false;
         result->addStop(stop);
 
@@ -4857,6 +4859,172 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
 
     gradient = result.release();
     return true;
+}
+
+static PassRefPtr<CSSPrimitiveValue> valueFromSideKeyword(CSSParserValue* a, bool& isHorizontal)
+{
+    if (a->unit != CSSPrimitiveValue::CSS_IDENT)
+        return 0;
+
+    switch (a->id) {
+        case CSSValueLeft:
+        case CSSValueRight:
+            isHorizontal = true;
+            break;
+        case CSSValueTop:
+        case CSSValueBottom:
+            isHorizontal = false;
+            break;
+        default:
+            return false;
+    }
+    return CSSPrimitiveValue::createIdentifier(a->id);
+}
+
+static PassRefPtr<CSSPrimitiveValue> parseGradientColorOrKeyword(CSSParser* p, CSSParserValue* value)
+{
+    int id = value->id;
+    if (id == CSSValueWebkitText || (id >= CSSValueAqua && id <= CSSValueWindowtext) || id == CSSValueMenu)
+        return CSSPrimitiveValue::createIdentifier(id);
+
+    return p->parseColor(value);
+}
+
+bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient)
+{
+    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create();
+    
+    // Walk the arguments.
+    CSSParserValueList* args = m_valueList->current()->function->args.get();
+    if (!args || !args->size())
+        return false;
+
+    CSSParserValue* a = args->current();
+    if (!a)
+        return false;
+
+    bool expectComma = false;
+    // Look for angle.
+    if (validUnit(a, FAngle, true)) {
+        result->setAngle(CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes)a->unit));
+        
+        a = args->next();
+        expectComma = true;
+    } else {
+    
+        // Look one or two optional keywords that indicate a side or corner.
+        RefPtr<CSSPrimitiveValue> startX, startY;
+        
+        RefPtr<CSSPrimitiveValue> location;
+        bool isHorizontal = false;
+        if (location = valueFromSideKeyword(a, isHorizontal)) {
+            if (isHorizontal)
+                startX = location;
+            else
+                startY = location;
+            
+            a = args->next();
+            if (a) {
+                if (location = valueFromSideKeyword(a, isHorizontal)) {
+                    if (isHorizontal) {
+                        if (startX)
+                            return false;
+                        startX = location;
+                    } else {
+                        if (startY)
+                            return false;
+                        startY = location;
+                    }
+
+                    a = args->next();
+                }
+            }
+
+            expectComma = true;
+        }
+        
+        if (!startX && !startY)
+            startY = CSSPrimitiveValue::createIdentifier(CSSValueTop);
+            
+        result->setFirstX(startX.release());
+        result->setFirstY(startY.release());
+    }
+
+    // Now look for 0 or more color stops.
+    while (a) {
+        // Look for the comma before the next stop.
+        if (expectComma) {
+            if (a->unit != CSSParserValue::Operator || a->iValue != ',')
+                return false;
+
+            a = args->next();
+            if (!a)
+                return false;
+        }
+
+        // <color-stop> = <color> [ <percentage> | <length> ]?
+        CSSGradientColorStop stop;
+        stop.m_color = parseGradientColorOrKeyword(this, a);
+        if (!stop.m_color)
+            return false;
+
+        a = args->next();
+        if (a) {
+            if (validUnit(a, FLength | FPercent, m_strict)) {
+                stop.m_position = CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes)a->unit);
+                a = args->next();
+            }
+        }
+        
+        result->addStop(stop);
+        expectComma = true;
+    }
+
+    Vector<CSSGradientColorStop>& stops = result->stops();
+    if (stops.isEmpty())
+        return false;
+
+    gradient = result.release();
+    return true;
+}
+
+bool CSSParser::parseRadialGradient(RefPtr<CSSValue>&)
+{
+    // FIXME: implement.
+    return false;
+}
+
+bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const
+{
+    if (val->unit != CSSParserValue::Function)
+        return false;
+
+    return equalIgnoringCase(val->function->name, "-webkit-gradient(")
+        || equalIgnoringCase(val->function->name, "-webkit-linear-gradient(")
+        || equalIgnoringCase(val->function->name, "-webkit-radial-gradient(")
+        || equalIgnoringCase(val->function->name, "-webkit-canvas(");
+}
+
+bool CSSParser::parseGeneratedImage(RefPtr<CSSValue>& value)
+{
+    CSSParserValue* val = m_valueList->current();
+
+    if (val->unit != CSSParserValue::Function)
+        return false;
+
+    if (equalIgnoringCase(val->function->name, "-webkit-gradient("))
+        return parseDeprecatedGradient(value);
+
+    if (equalIgnoringCase(val->function->name, "-webkit-linear-gradient("))
+        return parseLinearGradient(value);
+
+    if (equalIgnoringCase(val->function->name, "-webkit-radial-gradient("))
+        return parseRadialGradient(value);
+
+    if (equalIgnoringCase(val->function->name, "-webkit-canvas("))
+        return parseCanvas(value);
+
+    return false;
 }
 
 bool CSSParser::parseCanvas(RefPtr<CSSValue>& canvas)

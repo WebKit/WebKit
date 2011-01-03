@@ -39,72 +39,105 @@ class Gradient;
 enum CSSGradientType { CSSLinearGradient, CSSRadialGradient };
 
 struct CSSGradientColorStop {
-    CSSGradientColorStop()
-        : m_stop(0)
-    {
-    }
-    
-    float m_stop;
+    RefPtr<CSSPrimitiveValue> m_position; // percentage or length
     RefPtr<CSSPrimitiveValue> m_color;
 };
 
 class CSSGradientValue : public CSSImageGeneratorValue {
 public:
-    static PassRefPtr<CSSGradientValue> create()
-    {
-        return adoptRef(new CSSGradientValue);
-    }
-
-    virtual String cssText() const;
-
     virtual Image* image(RenderObject*, const IntSize&);
 
-    CSSGradientType type() const { return m_type; }
-    void setType(CSSGradientType type) { m_type = type; }
-    
     void setFirstX(PassRefPtr<CSSPrimitiveValue> val) { m_firstX = val; }
     void setFirstY(PassRefPtr<CSSPrimitiveValue> val) { m_firstY = val; }
     void setSecondX(PassRefPtr<CSSPrimitiveValue> val) { m_secondX = val; }
     void setSecondY(PassRefPtr<CSSPrimitiveValue> val) { m_secondY = val; }
     
-    void setFirstRadius(PassRefPtr<CSSPrimitiveValue> val) { m_firstRadius = val; }
-    void setSecondRadius(PassRefPtr<CSSPrimitiveValue> val) { m_secondRadius = val; }
-
     void addStop(const CSSGradientColorStop& stop) { m_stops.append(stop); }
+
+    Vector<CSSGradientColorStop>& stops() { return m_stops; }
 
     void sortStopsIfNeeded();
 
-private:
-    CSSGradientValue()
-        : m_type(CSSLinearGradient)
-        , m_stopsSorted(false)
+    bool deprecatedType() const { return m_deprecatedType; } // came from -webkit-gradient
+
+protected:
+    CSSGradientValue(bool deprecatedType = false)
+        : m_stopsSorted(false)
+        , m_deprecatedType(deprecatedType)
     {
     }
     
-    // Create the gradient for a given size.
-    PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
-    
-    // Resolve points/radii to front end values.
-    FloatPoint resolvePoint(CSSPrimitiveValue*, CSSPrimitiveValue*, const IntSize&, float zoomFactor);
-    float resolveRadius(CSSPrimitiveValue*, float zoomFactor);
-    
-    // Type
-    CSSGradientType m_type;
+    void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle);
 
-    // Points
+    // Create the gradient for a given size.
+    virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&) = 0;
+
+    // Resolve points/radii to front end values.
+    FloatPoint computeEndPoint(CSSPrimitiveValue*, CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, const IntSize&);
+
+    // Points. Some of these may be nil for linear gradients.
     RefPtr<CSSPrimitiveValue> m_firstX;
     RefPtr<CSSPrimitiveValue> m_firstY;
     
     RefPtr<CSSPrimitiveValue> m_secondX;
     RefPtr<CSSPrimitiveValue> m_secondY;
     
-    // Radii (for radial gradients only)
-    RefPtr<CSSPrimitiveValue> m_firstRadius;
-    RefPtr<CSSPrimitiveValue> m_secondRadius;
-    
     // Stops
     Vector<CSSGradientColorStop> m_stops;
     bool m_stopsSorted;
+    bool m_deprecatedType; // -webkit-gradient()
+};
+
+
+class CSSLinearGradientValue : public CSSGradientValue {
+public:
+    static PassRefPtr<CSSLinearGradientValue> create(bool deprecatedType = false)
+    {
+        return adoptRef(new CSSLinearGradientValue(deprecatedType));
+    }
+
+    void setAngle(PassRefPtr<CSSPrimitiveValue> val) { m_angle = val; }
+
+    virtual String cssText() const;
+
+private:
+    CSSLinearGradientValue(bool deprecatedType = false)
+        : CSSGradientValue(deprecatedType)
+    {
+    }
+
+    // Create the gradient for a given size.
+    virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
+
+    RefPtr<CSSPrimitiveValue> m_angle; // may be null.
+};
+
+class CSSRadialGradientValue : public CSSGradientValue {
+public:
+    static PassRefPtr<CSSRadialGradientValue> create(bool deprecatedType = false)
+    {
+        return adoptRef(new CSSRadialGradientValue(deprecatedType));
+    }
+
+    virtual String cssText() const;
+
+    void setFirstRadius(PassRefPtr<CSSPrimitiveValue> val) { m_firstRadius = val; }
+    void setSecondRadius(PassRefPtr<CSSPrimitiveValue> val) { m_secondRadius = val; }
+
+private:
+    CSSRadialGradientValue(bool deprecatedType = false)
+        : CSSGradientValue(deprecatedType)
+    {
+    }
+
+    // Create the gradient for a given size.
+    virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
+    
+    // Resolve points/radii to front end values.
+    float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle);
+    
+    RefPtr<CSSPrimitiveValue> m_firstRadius;
+    RefPtr<CSSPrimitiveValue> m_secondRadius;
 };
 
 } // namespace WebCore

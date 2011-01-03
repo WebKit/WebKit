@@ -1,3 +1,27 @@
+2011-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Implement -webkit-linear-gradient and -webkit-radial-gradient
+        https://bugs.webkit.org/show_bug.cgi?id=28152
+        
+        Testcases for CSS3 linear-gradients.
+
+        * fast/gradients/css3-color-stop-units-expected.txt: Added.
+        * fast/gradients/css3-color-stop-units.html: Added.
+        * fast/gradients/css3-color-stops-expected.txt: Added.
+        * fast/gradients/css3-color-stops.html: Added.
+        * fast/gradients/css3-gradient-parsing-expected.txt: Added.
+        * fast/gradients/css3-gradient-parsing.html: Added.
+        * fast/gradients/css3-linear-angle-gradients-expected.txt: Added.
+        * fast/gradients/css3-linear-angle-gradients.html: Added.
+        * platform/mac/fast/gradients/css3-color-stop-units-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-color-stop-units-expected.png: Added.
+        * platform/mac/fast/gradients/css3-color-stops-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-color-stops-expected.png: Added.
+        * platform/mac/fast/gradients/css3-linear-angle-gradients-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-linear-angle-gradients-expected.png: Added.
+
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, Chromium test expectation update.
