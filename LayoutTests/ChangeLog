@@ -1,3 +1,14 @@
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, Chromium test expectation update.
+        
+        Update expectations after r74892. A bunch of previously failing tests
+        now pass (since they match scrollbars with the mac port). Some tests
+        also started to fail, they should be fixed by removing their
+        chromium-mac baselines.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-02  Adam Barth  <abarth@webkit.org>
 
         Skip this test for now.  It's been failing for a while.  I'm
