@@ -63,6 +63,7 @@ my $isQt;
 my $isSymbian;
 my %qtFeatureDefaults;
 my $isGtk;
+my $isWinCE;
 my $isWx;
 my $isEfl;
 my @wxArgs;
@@ -272,6 +273,7 @@ sub argumentsForConfiguration()
     push(@args, '--symbian') if isSymbian();
     push(@args, '--gtk') if isGtk();
     push(@args, '--efl') if isEfl();
+    push(@args, '--wince') if isWinCE();
     push(@args, '--wx') if isWx();
     push(@args, '--chromium') if isChromium();
     push(@args, '--inspector-frontend') if isInspectorFrontend();
@@ -609,6 +611,9 @@ sub builtDylibPathForName
     if (isEfl()) {
         return "$configurationProductDir/$libraryName/../.libs/libewebkit.so";
     }
+    if (isWinCE()) {
+        return "$configurationProductDir/$libraryName";
+    }
     if (isAppleMacWebKit()) {
         return "$configurationProductDir/$libraryName.framework/Versions/A/$libraryName";
     }
@@ -762,6 +767,18 @@ sub determineIsGtk()
     $isGtk = checkForArgumentAndRemoveFromARGV("--gtk");
 }
 
+sub isWinCE()
+{
+    determineIsWinCE();
+    return $isWinCE;
+}
+
+sub determineIsWinCE()
+{
+    return if defined($isWinCE);
+    $isWinCE = checkForArgumentAndRemoveFromARGV("--wince");
+}
+
 sub isWx()
 {
     determineIsWx();
@@ -876,7 +893,7 @@ sub isLinux()
 
 sub isAppleWebKit()
 {
-    return !(isQt() or isGtk() or isWx() or isChromium() or isEfl());
+    return !(isQt() or isGtk() or isWx() or isChromium() or isEfl() or isWinCE());
 }
 
 sub isAppleMacWebKit()
@@ -963,7 +980,7 @@ sub relativeScriptsDir()
 sub launcherPath()
 {
     my $relativeScriptsPath = relativeScriptsDir();
-    if (isGtk() || isQt() || isWx() || isEfl()) {
+    if (isGtk() || isQt() || isWx() || isEfl() || isWinCE()) {
         return "$relativeScriptsPath/run-launcher";
     } elsif (isAppleWebKit()) {
         return "$relativeScriptsPath/run-safari";
@@ -982,6 +999,8 @@ sub launcherName()
         return "Safari";
     } elsif (isEfl()) {
         return "EWebLauncher";
+    } elsif (isWinCE()) {
+        return "WinCELauncher";
     }
 }
 
@@ -1439,10 +1458,19 @@ sub buildCMakeProject($@)
     my $dir = File::Spec->canonpath(baseProductDir());
     my $config = configuration();
     my $result;
+    my $cmakeBuildArgs = "";
     my $makeArgs = "";
     my @buildArgs;
-    
-    $makeArgs .= " -j" . numberOfCPUs() if ($makeArgs !~ m/-j\s*\d+/);
+
+    if ($port =~ m/wince/i) {
+        if ($config =~ m/debug/i) {
+            $cmakeBuildArgs .= " --config Debug";
+        } elsif ($config =~ m/release/i) {
+            $cmakeBuildArgs .= " --config Release";
+        }
+    } else {
+        $makeArgs .= " -j" . numberOfCPUs() if ($makeArgs !~ m/-j\s*\d+/);
+    }
 
     if ($clean) {
         print "Cleaning the build directory '$dir'\n";
@@ -1451,7 +1479,7 @@ sub buildCMakeProject($@)
         $result = 0;
     } else {
         my $cmakebin = "cmake";
-        my $make = "make";
+        my $cmakeBuildCommand = $cmakebin . " --build .";
 
         push @buildArgs, "-DPORT=$port";
 
@@ -1484,8 +1512,10 @@ sub buildCMakeProject($@)
             die "Failed while running $cmakebin to generate makefiles!\n";
         }
 
-        print "Calling '$make $makeArgs' in " . $dir . "\n\n";
-        $result = system "$make $makeArgs";
+        $cmakeBuildArgs .= " -- " . $makeArgs;
+
+        print "Calling '$cmakeBuildCommand $cmakeBuildArgs' in " . $dir . "\n\n";
+        $result = system "$cmakeBuildCommand $cmakeBuildArgs";
         if ($result ne 0) {
             die "Failed to build $port port\n";
         }
@@ -1500,6 +1530,12 @@ sub buildCMakeEflProject($@)
 {
     my ($clean, @buildArgs) = @_;
     return buildCMakeProject("Efl", $clean, @buildArgs);
+}
+
+sub buildCMakeWinCEProject($@)
+{
+    my ($sdk, $clean, @buildArgs) = @_;
+    return buildCMakeProject("WinCE -DCMAKE_WINCE_SDK=\"" . $sdk . "\"", $clean, @buildArgs);
 }
 
 sub buildQMakeProject($@)

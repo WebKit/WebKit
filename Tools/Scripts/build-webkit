@@ -300,11 +300,14 @@ Usage: $programName [options] [options to pass to build system]
   --help                            Show this help message
   --clean                           Cleanup the build directory
   --debug                           Compile in debug mode
-  --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
+
   --chromium                        Build the Chromium port on Mac/Win/Linux
+  --efl                             Build the EFL port
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port
-  --efl                             Build the EFL port
+  --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
+  --wince                           Build the WinCE port
+
   --inspector-frontend              Copy changes to the inspector front-end files to the build directory
 
   --install-headers=<path>          Set installation path for the headers (Qt only)
@@ -503,6 +506,21 @@ if (isEfl()) {
     push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
     push @options, "--prefix=" . $prefixPath if defined($prefixPath);
     my $result = buildCMakeEflProject($clean, @options);
+    exit exitStatus($result) if exitStatus($result);
+}
+
+if (isWinCE()) {
+    @options = ();
+    @projects = ();
+    foreach (@features) {
+        my $featureName = $_->{define};
+        if ($featureName) {
+            my $featureEnabled = ${$_->{value}} ? "ON" : "OFF";
+            push @options, "-D$featureName=$featureEnabled";
+        }
+    }
+    push @options, "--makeargs=" . $makeArgs if defined($makeArgs);
+    my $result = buildCMakeWinCEProject("STANDARDSDK_500 (ARMV4I)", $clean, @options);
     exit exitStatus($result) if exitStatus($result);
 }
 
