@@ -15,6 +15,139 @@
 
         Unreviewed, Chromium test expectation update.
         
+        Remove css1/ chromium-mac baselines that are no longer necessary after
+        r74892 (now that chromium-mac scrollbars match mac ones).
+
+        * platform/chromium-mac/css1/basic/comments-expected.checksum: Removed.
+        * platform/chromium-mac/css1/basic/comments-expected.png: Removed.
+        * platform/chromium-mac/css1/basic/containment-expected.checksum: Removed.
+        * platform/chromium-mac/css1/basic/containment-expected.png: Removed.
+        * platform/chromium-mac/css1/basic/id_as_selector-expected.checksum: Removed.
+        * platform/chromium-mac/css1/basic/id_as_selector-expected.png: Removed.
+        * platform/chromium-mac/css1/basic/inheritance-expected.checksum: Removed.
+        * platform/chromium-mac/css1/basic/inheritance-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_bottom-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_bottom-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_bottom_width-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_bottom_width-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_left-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_left-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_left_width-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_left_width-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_right_inline-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_right_inline-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_right_width-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_right_width-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_style-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_style-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_top-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_top-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_top_width-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_top_width-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/border_width-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/border_width-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/clear_float-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/float_elements_in_series-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/float_margin-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/float_margin-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/float_on_text_elements-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/height-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/height-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/margin-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/margin-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_bottom-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_bottom-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_inline-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_inline-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_left-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_left-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_right-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_right-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_top-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/margin_top-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/padding-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/padding-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_bottom-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_bottom-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_inline-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_inline-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_left-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_left-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_right-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_right-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_top-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/padding_top-expected.png: Removed.
+        * platform/chromium-mac/css1/box_properties/width-expected.checksum: Removed.
+        * platform/chromium-mac/css1/box_properties/width-expected.png: Removed.
+        * platform/chromium-mac/css1/cascade/cascade_order-expected.checksum: Removed.
+        * platform/chromium-mac/css1/cascade/cascade_order-expected.png: Removed.
+        * platform/chromium-mac/css1/classification/display-expected.checksum: Removed.
+        * platform/chromium-mac/css1/classification/display-expected.png: Removed.
+        * platform/chromium-mac/css1/classification/list_style_type-expected.checksum: Removed.
+        * platform/chromium-mac/css1/classification/list_style_type-expected.png: Removed.
+        * platform/chromium-mac/css1/classification/white_space-expected.checksum: Removed.
+        * platform/chromium-mac/css1/classification/white_space-expected.png: Removed.
+        * platform/chromium-mac/css1/color_and_background/background-expected.checksum: Removed.
+        * platform/chromium-mac/css1/color_and_background/background-expected.png: Removed.
+        * platform/chromium-mac/css1/color_and_background/background_attachment-expected.checksum: Removed.
+        * platform/chromium-mac/css1/color_and_background/background_attachment-expected.png: Removed.
+        * platform/chromium-mac/css1/color_and_background/background_position-expected.checksum: Removed.
+        * platform/chromium-mac/css1/color_and_background/background_position-expected.png: Removed.
+        * platform/chromium-mac/css1/color_and_background/background_repeat-expected.checksum: Removed.
+        * platform/chromium-mac/css1/color_and_background/background_repeat-expected.png: Removed.
+        * platform/chromium-mac/css1/conformance/forward_compatible_parsing-expected.checksum: Removed.
+        * platform/chromium-mac/css1/conformance/forward_compatible_parsing-expected.png: Removed.
+        * platform/chromium-mac/css1/font_properties/font-expected.checksum: Removed.
+        * platform/chromium-mac/css1/font_properties/font-expected.png: Removed.
+        * platform/chromium-mac/css1/font_properties/font_size-expected.checksum: Removed.
+        * platform/chromium-mac/css1/font_properties/font_size-expected.png: Removed.
+        * platform/chromium-mac/css1/font_properties/font_weight-expected.checksum: Removed.
+        * platform/chromium-mac/css1/font_properties/font_weight-expected.png: Removed.
+        * platform/chromium-mac/css1/formatting_model/floating_elements-expected.checksum: Removed.
+        * platform/chromium-mac/css1/formatting_model/floating_elements-expected.png: Removed.
+        * platform/chromium-mac/css1/formatting_model/height_of_lines-expected.checksum: Removed.
+        * platform/chromium-mac/css1/formatting_model/height_of_lines-expected.png: Removed.
+        * platform/chromium-mac/css1/formatting_model/horizontal_formatting-expected.checksum: Removed.
+        * platform/chromium-mac/css1/formatting_model/horizontal_formatting-expected.png: Removed.
+        * platform/chromium-mac/css1/formatting_model/inline_elements-expected.checksum: Removed.
+        * platform/chromium-mac/css1/formatting_model/inline_elements-expected.png: Removed.
+        * platform/chromium-mac/css1/formatting_model/replaced_elements-expected.checksum: Removed.
+        * platform/chromium-mac/css1/formatting_model/replaced_elements-expected.png: Removed.
+        * platform/chromium-mac/css1/formatting_model/vertical_formatting-expected.checksum: Removed.
+        * platform/chromium-mac/css1/formatting_model/vertical_formatting-expected.png: Removed.
+        * platform/chromium-mac/css1/pseudo/anchor-expected.checksum: Removed.
+        * platform/chromium-mac/css1/pseudo/anchor-expected.png: Removed.
+        * platform/chromium-mac/css1/pseudo/firstletter-expected.checksum: Removed.
+        * platform/chromium-mac/css1/pseudo/firstletter-expected.png: Removed.
+        * platform/chromium-mac/css1/pseudo/firstline-expected.checksum: Removed.
+        * platform/chromium-mac/css1/pseudo/firstline-expected.png: Removed.
+        * platform/chromium-mac/css1/pseudo/multiple_pseudo_elements-expected.checksum: Removed.
+        * platform/chromium-mac/css1/pseudo/multiple_pseudo_elements-expected.png: Removed.
+        * platform/chromium-mac/css1/text_properties/letter_spacing-expected.checksum: Removed.
+        * platform/chromium-mac/css1/text_properties/letter_spacing-expected.png: Removed.
+        * platform/chromium-mac/css1/text_properties/line_height-expected.checksum: Removed.
+        * platform/chromium-mac/css1/text_properties/line_height-expected.png: Removed.
+        * platform/chromium-mac/css1/text_properties/text_decoration-expected.checksum: Removed.
+        * platform/chromium-mac/css1/text_properties/text_decoration-expected.png: Removed.
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.checksum: Removed.
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.png: Removed.
+        * platform/chromium-mac/css1/text_properties/word_spacing-expected.checksum: Removed.
+        * platform/chromium-mac/css1/text_properties/word_spacing-expected.png: Removed.
+        * platform/chromium-mac/css1/units/color_units-expected.checksum: Removed.
+        * platform/chromium-mac/css1/units/color_units-expected.png: Removed.
+        * platform/chromium-mac/css1/units/length_units-expected.checksum: Removed.
+        * platform/chromium-mac/css1/units/length_units-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, Chromium test expectation update.
+        
         Update expectations after r74892. A bunch of previously failing tests
         now pass (since they match scrollbars with the mac port). Some tests
         also started to fail, they should be fixed by removing their

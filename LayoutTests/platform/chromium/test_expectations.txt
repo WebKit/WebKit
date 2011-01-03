@@ -3071,73 +3071,14 @@ BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
 BUGCR68436 LINUX MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
 
-// Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
-// should now pass with upstream mac baselines).
-BUG_MIHAIP MAC : css1/basic/comments.html = IMAGE
-BUG_MIHAIP MAC : css1/basic/containment.html = IMAGE
-BUG_MIHAIP MAC : css1/basic/id_as_selector.html = IMAGE
-BUG_MIHAIP MAC : css1/basic/inheritance.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_bottom.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_bottom_width.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_left.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_left_width.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_right_inline.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_right_width.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_style.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_top.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_top_width.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/border_width.html = IMAGE
+// Needs investigation after r74892 (simple removal of chromium-mac baselines
+// is not enough)
 BUG_MIHAIP MAC : css1/box_properties/clear.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/clear_float.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/float_elements_in_series.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/float_margin.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/float_on_text_elements.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/height.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/margin.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/margin_bottom.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/margin_inline.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/margin_left.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/margin_right.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/margin_top.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/padding.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/padding_bottom.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/padding_inline.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/padding_left.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/padding_right.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/padding_top.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/width.html = IMAGE
-BUG_MIHAIP MAC : css1/cascade/cascade_order.html = IMAGE
-BUG_MIHAIP MAC : css1/classification/display.html = IMAGE
-BUG_MIHAIP MAC : css1/classification/list_style_type.html = IMAGE
-BUG_MIHAIP MAC : css1/classification/white_space.html = IMAGE
-BUG_MIHAIP MAC : css1/color_and_background/background.html = IMAGE
-BUG_MIHAIP MAC : css1/color_and_background/background_attachment.html = IMAGE
-BUG_MIHAIP MAC : css1/color_and_background/background_position.html = IMAGE
-BUG_MIHAIP MAC : css1/color_and_background/background_repeat.html = IMAGE
-BUG_MIHAIP MAC : css1/conformance/forward_compatible_parsing.html = IMAGE
-BUG_MIHAIP MAC : css1/font_properties/font.html = IMAGE
-BUG_MIHAIP MAC : css1/font_properties/font_size.html = IMAGE
-BUG_MIHAIP MAC : css1/font_properties/font_weight.html = IMAGE
-BUG_MIHAIP MAC : css1/formatting_model/floating_elements.html = IMAGE
-BUG_MIHAIP MAC : css1/formatting_model/height_of_lines.html = IMAGE
-BUG_MIHAIP MAC : css1/formatting_model/horizontal_formatting.html = IMAGE
-BUG_MIHAIP MAC : css1/formatting_model/inline_elements.html = IMAGE
-BUG_MIHAIP MAC : css1/formatting_model/replaced_elements.html = IMAGE
-BUG_MIHAIP MAC : css1/formatting_model/vertical_formatting.html = IMAGE
-BUG_MIHAIP MAC : css1/pseudo/anchor.html = IMAGE
-BUG_MIHAIP MAC : css1/pseudo/firstletter.html = IMAGE
-BUG_MIHAIP MAC : css1/pseudo/firstline.html = IMAGE
-BUG_MIHAIP MAC : css1/pseudo/multiple_pseudo_elements.html = IMAGE
-BUG_MIHAIP MAC : css1/text_properties/letter_spacing.html = IMAGE
-BUG_MIHAIP MAC : css1/text_properties/line_height.html = IMAGE
-BUG_MIHAIP MAC : css1/text_properties/text_decoration.html = IMAGE
-BUG_MIHAIP MAC : css1/text_properties/text_indent.html = IMAGE
 BUG_MIHAIP MAC : css1/text_properties/text_transform.html = IMAGE
 BUG_MIHAIP MAC : css1/text_properties/vertical_align.html = IMAGE
-BUG_MIHAIP MAC : css1/text_properties/word_spacing.html = IMAGE
-BUG_MIHAIP MAC : css1/units/color_units.html = IMAGE
-BUG_MIHAIP MAC : css1/units/length_units.html = IMAGE
+
+// Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
+// should now pass with upstream mac baselines).
 BUG_MIHAIP MAC : css2.1/t0803-c5502-mrgn-r-02-c.html = IMAGE
 BUG_MIHAIP MAC : css2.1/t0803-c5505-mrgn-02-c.html = IMAGE
 BUG_MIHAIP MAC : css2.1/t080301-c411-vt-mrgn-00-b.html = IMAGE
