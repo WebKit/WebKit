@@ -3074,6 +3074,9 @@ BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-docty
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
 BUG_MIHAIP MAC : css1/box_properties/clear.html = IMAGE
+BUG_MIHAIP MAC : css1/box_properties/clear_float.html = IMAGE
+BUG_MIHAIP MAC : css1/box_properties/float_elements_in_series.html = IMAGE
+BUG_MIHAIP MAC : css1/box_properties/float_on_text_elements.html = IMAGE
 BUG_MIHAIP MAC : css1/text_properties/text_transform.html = IMAGE
 BUG_MIHAIP MAC : css1/text_properties/vertical_align.html = IMAGE
 
@@ -3244,5 +3247,8 @@ BUG_MIHAIP MAC : svg/zoom/text/zoom-svg-float-border-padding.xml = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/bugs/bug96334.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/bugs/bug96343.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/collapsing_borders/bug41262-3.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/other/wa_table_thtd_rowspan.html = IMAGE
 BUG_MIHAIP MAC : transforms/2d/transform-fixed-container.html = IMAGE
