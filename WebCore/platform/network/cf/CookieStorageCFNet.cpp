@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CookieStorageCFNet.h"
 
+#if USE(CFNETWORK)
+
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/MainThread.h>
@@ -61,4 +63,6 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
         s_cookieStorage = 0;
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CFNETWORK)

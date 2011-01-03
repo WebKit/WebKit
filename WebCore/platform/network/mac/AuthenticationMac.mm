@@ -25,6 +25,8 @@
 #import "config.h"
 #import "AuthenticationMac.h"
 
+#if !USE(CFNETWORK)
+
 #import "AuthenticationChallenge.h"
 #import "AuthenticationClient.h"
 #import "Credential.h"
@@ -357,4 +359,6 @@ Credential core(NSURLCredential *macCredential)
     return Credential([macCredential user], [macCredential password], persistence);
 }
 
-};
+} // namespace WebCore
+
+#endif // !USE(CFNETWORK)

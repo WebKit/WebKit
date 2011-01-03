@@ -25,6 +25,9 @@
 
 #import "config.h"
 #import "ResourceRequest.h"
+
+#if !USE(CFNETWORK)
+
 #import "WebCoreSystemInterface.h"
 
 #import "FormDataStreamMac.h"
@@ -158,4 +161,6 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 }
 
-}
+} // namespace WebCore
+
+#endif // !USE(CFNETWORK)

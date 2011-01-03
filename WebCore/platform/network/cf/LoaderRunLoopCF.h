@@ -26,6 +26,8 @@
 #ifndef LoaderRunLoopCF_h
 #define LoaderRunLoopCF_h
 
+#if USE(CFNETWORK)
+
 #if !PLATFORM(WIN)
 #error This code is not needed on platforms other than Windows, because main thread's CFRunLoop can be used.
 #endif
@@ -35,5 +37,7 @@ namespace WebCore {
 CFRunLoopRef loaderRunLoop();
 
 }
+
+#endif // USE(CFNETWORK)
 
 #endif // LoaderRunLoop_h

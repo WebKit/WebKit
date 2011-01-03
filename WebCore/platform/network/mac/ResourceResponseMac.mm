@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ResourceResponse.h"
 
+#if !USE(CFNETWORK)
+
 #import "HTTPParsers.h"
 #import "WebCoreURLResponse.h"
 #import "WebCoreSystemInterface.h"
@@ -106,4 +108,6 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
     return a.nsURLResponse() == b.nsURLResponse();
 }
 
-}
+} // namespace WebCore
+
+#endif // !USE(CFNETWORK)

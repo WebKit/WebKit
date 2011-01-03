@@ -25,6 +25,8 @@
 #ifndef AuthenticationMac_h
 #define AuthenticationMac_h
 
+#if !USE(CFNETWORK)
+
 #ifdef __OBJC__
 
 @class NSURLAuthenticationChallenge;
@@ -46,6 +48,8 @@ ProtectionSpace core(NSURLProtectionSpace *);
 Credential core(NSURLCredential *);
 
 }
-#endif
+#endif // __OBJC__
 
-#endif
+#endif // !USE(CFNETWORK)
+
+#endif // AuthenticationMac_h

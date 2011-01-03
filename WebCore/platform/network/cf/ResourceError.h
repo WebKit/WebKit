@@ -26,6 +26,8 @@
 #ifndef ResourceError_h
 #define ResourceError_h
 
+#if USE(CFNETWORK)
+
 #include "ResourceErrorBase.h"
 
 #include <wtf/RetainPtr.h>
@@ -69,5 +71,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(CFNETWORK)
 
 #endif // ResourceError_h

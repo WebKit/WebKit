@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AuthenticationCF.h"
 
+#if USE(CFNETWORK)
+
 #include "AuthenticationChallenge.h"
 #include "AuthenticationClient.h"
 #include "Credential.h"
@@ -265,3 +267,5 @@ ProtectionSpace core(CFURLProtectionSpaceRef cfSpace)
 }
 
 };
+
+#endif // USE(CFNETWORK)

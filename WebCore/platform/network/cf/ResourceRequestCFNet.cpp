@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ResourceRequestCFNet.h"
 
+#if USE(CFNETWORK)
+
 #include "FormDataStreamCFNet.h"
 #include "ResourceRequest.h"
 
@@ -193,4 +195,6 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     return wkInitializeMaximumHTTPConnectionCountPerHost(preferredConnectionCount);
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CFNETWORK)

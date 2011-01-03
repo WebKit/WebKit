@@ -1,3 +1,44 @@
+2011-01-03  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51850
+        Put CFNetwork loader code inside USE(CFNETWORK)
+
+        Add USE(CFNETWORK) macros around all the cf/mac network files. Also added all CFNetwork
+        files to the WebCore Xcode project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cf/ResourceLoaderCFNet.cpp:
+        * loader/mac/ResourceLoaderMac.mm:
+        * platform/network/cf/AuthenticationCF.cpp:
+        * platform/network/cf/AuthenticationCF.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        * platform/network/cf/CookieStorageCFNet.h:
+        * platform/network/cf/CredentialStorageCFNet.cpp:
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        * platform/network/cf/FormDataStreamCFNet.h:
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        * platform/network/cf/LoaderRunLoopCF.h:
+        * platform/network/cf/ResourceError.h:
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        * platform/network/mac/AuthenticationMac.h:
+        * platform/network/mac/AuthenticationMac.mm:
+        * platform/network/mac/FormDataStreamMac.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        * platform/network/mac/ResourceError.h:
+        * platform/network/mac/ResourceHandleMac.mm:
+        * platform/network/mac/ResourceRequest.h:
+        * platform/network/mac/ResourceRequestMac.mm:
+        * platform/network/mac/ResourceResponse.h:
+        * platform/network/mac/ResourceResponseMac.mm:
+
 2011-01-03  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Adam Barth.

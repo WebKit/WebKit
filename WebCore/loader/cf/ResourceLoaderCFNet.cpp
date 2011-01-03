@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
+#if USE(CFNETWORK)
+
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 
@@ -42,3 +44,5 @@ bool ResourceLoader::shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef
 }
 
 } // namespace WebCore
+
+#endif // USE(CFNETWORK)

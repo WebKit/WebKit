@@ -31,6 +31,8 @@
 #import "config.h"
 #import "FormDataStreamMac.h"
 
+#if !USE(CFNETWORK)
+
 #import "BlobRegistryImpl.h"
 #import "FileSystem.h"
 #import "FormData.h"
@@ -484,3 +486,5 @@ FormData* httpBodyFromStream(NSInputStream* stream)
 }
 
 } // namespace WebCore
+
+#endif // !USE(CFNETWORK)

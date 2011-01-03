@@ -29,6 +29,8 @@
 #include "config.h"
 #include "ResourceLoader.h"
 
+#if !USE(CFNETWORK)
+
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "ResourceHandle.h"
@@ -43,3 +45,5 @@ NSCachedURLResponse* ResourceLoader::willCacheResponse(ResourceHandle*, NSCached
 }
 
 }
+
+#endif // !USE(CFNETWORK)

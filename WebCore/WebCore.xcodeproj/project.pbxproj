@@ -1612,6 +1612,26 @@
 		7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AFD4FF4113277B60035B883 /* ScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E33CD00127F340D00BE8F17 /* PurgePriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7EE6845F12D26E3800E79415 /* AuthenticationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */; };
+		7EE6846012D26E3800E79415 /* AuthenticationCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6844D12D26E3800E79415 /* AuthenticationCF.h */; };
+		7EE6846112D26E3800E79415 /* AuthenticationChallenge.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */; };
+		7EE6846212D26E3800E79415 /* CookieJarCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */; };
+		7EE6846312D26E3800E79415 /* CookieStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */; };
+		7EE6846412D26E3800E79415 /* CookieStorageCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */; };
+		7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */; };
+		7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */; };
+		7EE6846712D26E3800E79415 /* FormDataStreamCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */; };
+		7EE6846812D26E3800E79415 /* LoaderRunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845512D26E3800E79415 /* LoaderRunLoopCF.cpp */; };
+		7EE6846912D26E3800E79415 /* LoaderRunLoopCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845612D26E3800E79415 /* LoaderRunLoopCF.h */; };
+		7EE6846A12D26E3800E79415 /* ResourceError.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845712D26E3800E79415 /* ResourceError.h */; };
+		7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845812D26E3800E79415 /* ResourceErrorCF.cpp */; };
+		7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845912D26E3800E79415 /* ResourceHandleCFNet.cpp */; };
+		7EE6846D12D26E3800E79415 /* ResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845A12D26E3800E79415 /* ResourceRequest.h */; };
+		7EE6846E12D26E3800E79415 /* ResourceRequestCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845B12D26E3800E79415 /* ResourceRequestCFNet.cpp */; };
+		7EE6846F12D26E3800E79415 /* ResourceRequestCFNet.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845C12D26E3800E79415 /* ResourceRequestCFNet.h */; };
+		7EE6847012D26E3800E79415 /* ResourceResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 7EE6845D12D26E3800E79415 /* ResourceResponse.h */; };
+		7EE6847112D26E3800E79415 /* ResourceResponseCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6845E12D26E3800E79415 /* ResourceResponseCFNet.cpp */; };
+		7EE6847512D26E7000E79415 /* ResourceLoaderCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7EE6847412D26E7000E79415 /* ResourceLoaderCFNet.cpp */; };
 		81A7325E1210189B00FC0D9E /* IDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A7325D1210189B00FC0D9E /* IDBCursor.h */; };
 		81A73260121018A400FC0D9E /* IDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81A7325F121018A400FC0D9E /* IDBCursor.cpp */; };
 		81A73278121019E100FC0D9E /* IDBCursorBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 81A73277121019E100FC0D9E /* IDBCursorBackendImpl.h */; };
@@ -7992,6 +8012,26 @@
 		7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptBreakpoint.h; sourceTree = "<group>"; };
 		7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptDebugListener.h; sourceTree = "<group>"; };
 		7E33CD00127F340D00BE8F17 /* PurgePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgePriority.h; sourceTree = "<group>"; };
+		7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationCF.cpp; sourceTree = "<group>"; };
+		7EE6844D12D26E3800E79415 /* AuthenticationCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationCF.h; sourceTree = "<group>"; };
+		7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallenge.h; sourceTree = "<group>"; };
+		7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieJarCFNet.cpp; sourceTree = "<group>"; };
+		7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CookieStorageCFNet.cpp; sourceTree = "<group>"; };
+		7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorageCFNet.h; sourceTree = "<group>"; };
+		7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialStorageCFNet.cpp; sourceTree = "<group>"; };
+		7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataStreamCFNet.cpp; sourceTree = "<group>"; };
+		7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataStreamCFNet.h; sourceTree = "<group>"; };
+		7EE6845512D26E3800E79415 /* LoaderRunLoopCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoaderRunLoopCF.cpp; sourceTree = "<group>"; };
+		7EE6845612D26E3800E79415 /* LoaderRunLoopCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoaderRunLoopCF.h; sourceTree = "<group>"; };
+		7EE6845712D26E3800E79415 /* ResourceError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceError.h; sourceTree = "<group>"; };
+		7EE6845812D26E3800E79415 /* ResourceErrorCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceErrorCF.cpp; sourceTree = "<group>"; };
+		7EE6845912D26E3800E79415 /* ResourceHandleCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceHandleCFNet.cpp; sourceTree = "<group>"; };
+		7EE6845A12D26E3800E79415 /* ResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRequest.h; sourceTree = "<group>"; };
+		7EE6845B12D26E3800E79415 /* ResourceRequestCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceRequestCFNet.cpp; sourceTree = "<group>"; };
+		7EE6845C12D26E3800E79415 /* ResourceRequestCFNet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceRequestCFNet.h; sourceTree = "<group>"; };
+		7EE6845D12D26E3800E79415 /* ResourceResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceResponse.h; sourceTree = "<group>"; };
+		7EE6845E12D26E3800E79415 /* ResourceResponseCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceResponseCFNet.cpp; sourceTree = "<group>"; };
+		7EE6847412D26E7000E79415 /* ResourceLoaderCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoaderCFNet.cpp; path = cf/ResourceLoaderCFNet.cpp; sourceTree = "<group>"; };
 		81A7325D1210189B00FC0D9E /* IDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursor.h; sourceTree = "<group>"; };
 		81A7325F121018A400FC0D9E /* IDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBCursor.cpp; sourceTree = "<group>"; };
 		81A73277121019E100FC0D9E /* IDBCursorBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBCursorBackendImpl.h; sourceTree = "<group>"; };
@@ -13870,6 +13910,14 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		7EE6847312D26E5500E79415 /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				7EE6847412D26E7000E79415 /* ResourceLoaderCFNet.cpp */,
+			);
+			name = cf;
+			sourceTree = "<group>";
+		};
 		850657040AAB476C002D15C0 /* StyleSheets */ = {
 			isa = PBXGroup;
 			children = (
@@ -17364,8 +17412,27 @@
 		B2F34FE70E82F81700F627CD /* cf */ = {
 			isa = PBXGroup;
 			children = (
+				7EE6844C12D26E3800E79415 /* AuthenticationCF.cpp */,
+				7EE6844D12D26E3800E79415 /* AuthenticationCF.h */,
+				7EE6844E12D26E3800E79415 /* AuthenticationChallenge.h */,
+				7EE6844F12D26E3800E79415 /* CookieJarCFNet.cpp */,
+				7EE6845012D26E3800E79415 /* CookieStorageCFNet.cpp */,
+				7EE6845112D26E3800E79415 /* CookieStorageCFNet.h */,
+				7EE6845212D26E3800E79415 /* CredentialStorageCFNet.cpp */,
 				B2F34FE80E82F82700F627CD /* DNSCFNet.cpp */,
+				7EE6845312D26E3800E79415 /* FormDataStreamCFNet.cpp */,
+				7EE6845412D26E3800E79415 /* FormDataStreamCFNet.h */,
+				7EE6845512D26E3800E79415 /* LoaderRunLoopCF.cpp */,
+				7EE6845612D26E3800E79415 /* LoaderRunLoopCF.h */,
 				1AF8E1C1125673E000230FF7 /* ProxyServerCFNet.cpp */,
+				7EE6845712D26E3800E79415 /* ResourceError.h */,
+				7EE6845812D26E3800E79415 /* ResourceErrorCF.cpp */,
+				7EE6845912D26E3800E79415 /* ResourceHandleCFNet.cpp */,
+				7EE6845A12D26E3800E79415 /* ResourceRequest.h */,
+				7EE6845B12D26E3800E79415 /* ResourceRequestCFNet.cpp */,
+				7EE6845C12D26E3800E79415 /* ResourceRequestCFNet.h */,
+				7EE6845D12D26E3800E79415 /* ResourceResponse.h */,
+				7EE6845E12D26E3800E79415 /* ResourceResponseCFNet.cpp */,
 				51ABAE1A103C18FF008C5260 /* SocketStreamError.h */,
 				51ABAE1C103C1913008C5260 /* SocketStreamHandle.h */,
 				51ABAE1D103C1913008C5260 /* SocketStreamHandleCFNet.cpp */,
@@ -17813,6 +17880,7 @@
 				1A8F6BB00DB55CDC001DB794 /* appcache */,
 				512DD8E80D91E691000F89EE /* archive */,
 				A8D2B2521287A56000AF4DDA /* cache */,
+				7EE6847312D26E5500E79415 /* cf */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				E1C416160F6563180092D2FB /* CrossOriginAccessControl.cpp */,
@@ -22197,6 +22265,15 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
+				7EE6846012D26E3800E79415 /* AuthenticationCF.h in Headers */,
+				7EE6846112D26E3800E79415 /* AuthenticationChallenge.h in Headers */,
+				7EE6846412D26E3800E79415 /* CookieStorageCFNet.h in Headers */,
+				7EE6846712D26E3800E79415 /* FormDataStreamCFNet.h in Headers */,
+				7EE6846912D26E3800E79415 /* LoaderRunLoopCF.h in Headers */,
+				7EE6846A12D26E3800E79415 /* ResourceError.h in Headers */,
+				7EE6846D12D26E3800E79415 /* ResourceRequest.h in Headers */,
+				7EE6846F12D26E3800E79415 /* ResourceRequestCFNet.h in Headers */,
+				7EE6847012D26E3800E79415 /* ResourceResponse.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24866,6 +24943,17 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				7EE6845F12D26E3800E79415 /* AuthenticationCF.cpp in Sources */,
+				7EE6846212D26E3800E79415 /* CookieJarCFNet.cpp in Sources */,
+				7EE6846312D26E3800E79415 /* CookieStorageCFNet.cpp in Sources */,
+				7EE6846512D26E3800E79415 /* CredentialStorageCFNet.cpp in Sources */,
+				7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */,
+				7EE6846812D26E3800E79415 /* LoaderRunLoopCF.cpp in Sources */,
+				7EE6846B12D26E3800E79415 /* ResourceErrorCF.cpp in Sources */,
+				7EE6846C12D26E3800E79415 /* ResourceHandleCFNet.cpp in Sources */,
+				7EE6846E12D26E3800E79415 /* ResourceRequestCFNet.cpp in Sources */,
+				7EE6847112D26E3800E79415 /* ResourceResponseCFNet.cpp in Sources */,
+				7EE6847512D26E7000E79415 /* ResourceLoaderCFNet.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

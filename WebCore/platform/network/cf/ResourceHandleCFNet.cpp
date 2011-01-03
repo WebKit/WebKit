@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if USE(CFNETWORK)
+
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
@@ -767,3 +769,5 @@ bool WebCoreSynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)
 }
 
 } // namespace WebCore
+
+#endif // USE(CFNETWORK)

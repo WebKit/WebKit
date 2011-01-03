@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ResourceResponse.h"
 
+#if USE(CFNETWORK)
+
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include <CFNetwork/CFURLResponsePriv.h>
@@ -113,4 +115,6 @@ bool ResourceResponse::platformCompare(const ResourceResponse& a, const Resource
 }
 
 
-}
+} // namespace WebCore
+
+#endif // USE(CFNETWORK)

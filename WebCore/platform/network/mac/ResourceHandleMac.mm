@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ResourceHandleInternal.h"
 
+#if !USE(CFNETWORK)
+
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
 #import "Base64.h"
@@ -1074,4 +1076,6 @@ void WebCoreSynchronousLoaderClient::didFail(ResourceHandle*, const ResourceErro
     m_isDone = true;
 }
 
-#endif
+#endif // BUILDING_ON_TIGER
+
+#endif // !USE(CFNETWORK)

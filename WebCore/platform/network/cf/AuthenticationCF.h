@@ -26,6 +26,8 @@
 #ifndef AuthenticationCF_h
 #define AuthenticationCF_h
 
+#if USE(CFNETWORK)
+
 #include <CFNetwork/CFURLCredentialPriv.h>
 
 typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
@@ -46,4 +48,6 @@ ProtectionSpace core(CFURLProtectionSpaceRef);
 
 }
 
-#endif
+#endif // USE(CFNETWORK)
+
+#endif // AuthenticationCF_h

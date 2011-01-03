@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CookieJar.h"
 
+#if USE(CFNETWORK)
+
 #include "Cookie.h"
 #include "CookieStorageCFNet.h"
 #include "Document.h"
@@ -184,4 +186,6 @@ void deleteCookie(const Document*, const KURL& url, const String& name)
     }
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CFNETWORK)

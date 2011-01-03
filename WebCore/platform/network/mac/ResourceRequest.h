@@ -27,6 +27,8 @@
 #ifndef ResourceRequest_h
 #define ResourceRequest_h
 
+#if !USE(CFNETWORK)
+
 #include "ResourceRequestBase.h"
 
 #include <wtf/RetainPtr.h>
@@ -84,5 +86,7 @@ namespace WebCore {
     };
 
 } // namespace WebCore
+
+#endif // !USE(CFNETWORK)
 
 #endif // ResourceRequest_h

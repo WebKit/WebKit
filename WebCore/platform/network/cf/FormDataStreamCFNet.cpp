@@ -31,6 +31,8 @@
 #include "config.h"
 #include "FormDataStreamCFNet.h"
 
+#if USE(CFNETWORK)
+
 #include "FileSystem.h"
 #include "FormData.h"
 #include <CFNetwork/CFURLRequestPriv.h>
@@ -381,4 +383,6 @@ PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
     return 0;
 }
 
-}
+} // namespace WebCore
+
+#endif // USE(CFNETWORK)

@@ -26,6 +26,8 @@
 #ifndef ResourceResponse_h
 #define ResourceResponse_h
 
+#if USE(CFNETWORK)
+
 #include "ResourceResponseBase.h"
 #include <wtf/RetainPtr.h>
 
@@ -84,5 +86,7 @@ struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataB
 };
 
 } // namespace WebCore
+
+#endif // USE(CFNETWORK)
 
 #endif // ResourceResponse_h

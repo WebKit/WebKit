@@ -26,6 +26,8 @@
 #ifndef CookieStorageCFNet_h
 #define CookieStorageCFNet_h
 
+#if USE(CFNETWORK)
+
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 
 namespace WebCore {
@@ -37,4 +39,6 @@ namespace WebCore {
 
 }
 
-#endif  // CookieStorageCFNet_h
+#endif // USE(CFNETWORK)
+
+#endif // CookieStorageCFNet_h

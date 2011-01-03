@@ -29,6 +29,8 @@
 #ifndef FormDataStreamMac_h
 #define FormDataStreamMac_h
 
+#if !USE(CFNETWORK)
+
 #include "FormData.h"
 
 @class NSMutableURLRequest;
@@ -45,5 +47,7 @@ namespace WebCore {
     void disassociateStreamWithResourceHandle(NSInputStream *);
 
 } // namespace WebCore
+
+#endif // !USE(CFNETWORK)
 
 #endif // FormDataStreamMac_h

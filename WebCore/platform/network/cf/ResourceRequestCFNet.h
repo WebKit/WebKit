@@ -26,6 +26,8 @@
 #ifndef ResourceRequestCFNet_h
 #define ResourceRequestCFNet_h
 
+#if USE(CFNETWORK)
+
 typedef const struct _CFURLRequest* CFURLRequestRef;
 
 namespace WebCore {
@@ -35,5 +37,7 @@ namespace WebCore {
     void getResourceRequest(ResourceRequest&, CFURLRequestRef);
     CFURLRequestRef cfURLRequest(const ResourceRequest&);
 }
+
+#endif // USE(CFNETWORK)
 
 #endif // ResourceRequestCFNet_h
