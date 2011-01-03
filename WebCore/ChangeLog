@@ -1,3 +1,14 @@
+2011-01-03  Antonio Gomes  <agomes@rim.com>
+
+        Unreviewed build fix for WebKit/Gtk+.
+
+        RenderThemeGtk::initMediaColors() in RenderThemeGtk2.cpp needs to be
+        guarded by ENABLE(VIDEO), as it is in its header.
+
+        No new tests.
+
+        * platform/gtk/RenderThemeGtk2.cpp:
+
 2011-01-02  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Simon Fraser.

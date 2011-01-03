@@ -49,6 +49,7 @@ namespace WebCore {
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
 extern GtkTextDirection gtkTextDirection(TextDirection);
 
+#if ENABLE(VIDEO)
 void RenderThemeGtk::initMediaColors()
 {
     GtkStyle* style = gtk_widget_get_style(GTK_WIDGET(gtkContainer()));
@@ -56,6 +57,7 @@ void RenderThemeGtk::initMediaColors()
     m_sliderColor = style->bg[GTK_STATE_ACTIVE];
     m_sliderThumbColor = style->bg[GTK_STATE_SELECTED];
 }
+#endif
 
 GtkStateType RenderThemeGtk::getGtkStateType(RenderObject* object)
 {
