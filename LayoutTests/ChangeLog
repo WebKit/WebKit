@@ -1,3 +1,12 @@
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectation update.
+        
+        Add failing expectations for tests that depend on elliptical gradient
+        support.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-03  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
