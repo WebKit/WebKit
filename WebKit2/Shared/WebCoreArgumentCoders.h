@@ -384,8 +384,8 @@ template<> struct ArgumentCoder<WebCore::DatabaseDetails> {
     {
         String name;
         String displayName;
-        unsigned long long expectedUsage;
-        unsigned long long currentUsage;
+        uint64_t expectedUsage;
+        uint64_t currentUsage;
         if (!decoder->decode(CoreIPC::Out(name, displayName, expectedUsage, currentUsage)))
             return false;
         

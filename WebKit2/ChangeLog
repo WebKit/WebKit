@@ -1,3 +1,15 @@
+2011-01-02  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        WebKit 2 does not build on 64bits with a recent GCC
+        https://bugs.webkit.org/show_bug.cgi?id=51754
+
+        Change the argument coding for DatabaseDetails to use explicitely the 64 bits type.
+
+        * Shared/OriginAndDatabases.h:
+        * Shared/WebCoreArgumentCoders.h:
+
 2011-01-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Barth.

@@ -42,8 +42,8 @@ struct OriginAndDatabases {
     static bool decode(CoreIPC::ArgumentDecoder*, OriginAndDatabases&);
 
     String originIdentifier;
-    unsigned long long originQuota;
-    unsigned long long originUsage;
+    uint64_t originQuota;
+    uint64_t originUsage;
     Vector<WebCore::DatabaseDetails> databases;
 };
 

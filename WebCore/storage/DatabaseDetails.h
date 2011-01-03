@@ -59,8 +59,8 @@ public:
 
     const String& name() const { return m_name; }
     const String& displayName() const { return m_displayName; }
-    unsigned long long expectedUsage() const { return m_expectedUsage; }
-    unsigned long long currentUsage() const { return m_currentUsage; }
+    uint64_t expectedUsage() const { return m_expectedUsage; }
+    uint64_t currentUsage() const { return m_currentUsage; }
 #ifndef NDEBUG
     ThreadIdentifier thread() const { return m_thread; }
 #endif
@@ -68,8 +68,8 @@ public:
 private:
     String m_name;
     String m_displayName;
-    unsigned long long m_expectedUsage;
-    unsigned long long m_currentUsage;
+    uint64_t m_expectedUsage;
+    uint64_t m_currentUsage;
 #ifndef NDEBUG
     ThreadIdentifier m_thread;
 #endif
