@@ -1,6 +1,15 @@
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, Chromium test expectation update.
+        
+        Group tests that fail on Leopard but pass on Snow Leopard (due to
+        stale platform/mac baselines).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-03  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, Chromium test expectation update.
 
         Missed a few failing tests.
 
