@@ -172,14 +172,15 @@ class SCM:
         return os.path.join(self.scripts_directory(), script_name)
 
     def ensure_clean_working_directory(self, force_clean):
-        if not force_clean and not self.working_directory_is_clean():
+        if self.working_directory_is_clean():
+            return
+        if not force_clean:
             # FIXME: Shouldn't this use cwd=self.checkout_root?
             print self.run(self.status_command(), error_handler=Executive.ignore_error)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
-        
         log("Cleaning working directory")
         self.clean_working_directory()
-    
+
     def ensure_no_local_commits(self, force):
         if not self.supports_local_commits():
             return

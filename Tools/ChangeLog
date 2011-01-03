@@ -2,6 +2,15 @@
 
         Reviewed by Simon Fraser.
 
+        webkit-patch shouldn't waste time cleaning a working directory that's already clean
+        https://bugs.webkit.org/show_bug.cgi?id=51840
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
+2011-01-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Simon Fraser.
+
         webkit-patch should only hide update output if --quiet
         https://bugs.webkit.org/show_bug.cgi?id=51838
 
