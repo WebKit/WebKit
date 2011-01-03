@@ -1,3 +1,10 @@
+2011-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix warning in 32-bit builds.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSLinearGradientValue::createGradient):
+
 2011-01-03  Benjamin C Meyer  <bmeyer@rim.com>
 
         Reviewed by Daniel Bates.

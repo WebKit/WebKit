@@ -440,7 +440,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
     FloatPoint firstPoint;
     FloatPoint secondPoint;
     if (m_angle) {
-        float angle = m_angle->getDoubleValue(CSSPrimitiveValue::CSS_DEG);
+        float angle = m_angle->getFloatValue(CSSPrimitiveValue::CSS_DEG);
         endPointsFromAngle(angle, size, firstPoint, secondPoint);
     } else {
         firstPoint = computeEndPoint(m_firstX.get(), m_firstY.get(), renderer->style(), rootStyle, size);
