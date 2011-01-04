@@ -1,3 +1,9 @@
+2011-01-03  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows build fix. Define WTF_USE_CFNETWORK in WebInspectorClientCF.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+
 2010-10-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Simon Fraser.
