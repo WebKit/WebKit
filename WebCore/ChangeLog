@@ -1,3 +1,18 @@
+2011-01-04  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        Provide an interface to require using fullscreen mediaplayer
+        https://bugs.webkit.org/show_bug.cgi?id=51133
+
+        Only video should be displayed in fullscreen when 
+        requiresFullscreenForVideoPlayback is specified.
+
+        No new tests because no client implements requiresFullscreenForVideoPlayback yet.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState):
+
 2011-01-04  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

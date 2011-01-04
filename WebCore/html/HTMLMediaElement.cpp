@@ -2109,7 +2109,7 @@ void HTMLMediaElement::updatePlayState()
         invalidateCachedTime();
 
         if (playerPaused) {
-            if (document() && document()->page() && document()->page()->chrome()->requiresFullscreenForVideoPlayback() && !m_isFullscreen)
+            if (!m_isFullscreen && isVideo() && document() && document()->page() && document()->page()->chrome()->requiresFullscreenForVideoPlayback())
                 enterFullscreen();
 
             // Set rate before calling play in case the rate was set before the media engine was setup.
