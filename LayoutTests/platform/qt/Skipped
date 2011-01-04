@@ -5364,4 +5364,4 @@ http/tests/appcache/auth.html
 
 # REGRESSION(r74971): [Qt] /editing/selection/caret-bidi-first-and-last-letters.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=51884
-/editing/selection/caret-bidi-first-and-last-letters.html
+editing/selection/caret-bidi-first-and-last-letters.html
