@@ -1,3 +1,16 @@
+2011-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        InsertTextCommand::m_charactersAdded is unused
+        https://bugs.webkit.org/show_bug.cgi?id=51849
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::InsertTextCommand): Don't initialize m_charactersAdded.
+        (WebCore::InsertTextCommand::input): Don't update m_charactersAdded.
+        * editing/InsertTextCommand.h: Removed charactersAdded function and
+        m_charactersAdded data member.
+
 2011-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

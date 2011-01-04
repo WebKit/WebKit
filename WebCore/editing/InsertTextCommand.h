@@ -43,7 +43,6 @@ private:
     InsertTextCommand(Document*);
 
     void deleteCharacter();
-    unsigned charactersAdded() const { return m_charactersAdded; }
     
     virtual void doApply();
     virtual bool isInsertTextCommand() const;
@@ -52,8 +51,6 @@ private:
     Position insertTab(const Position&);
     
     bool performTrivialReplace(const String&, bool selectInsertedText);
-
-    unsigned m_charactersAdded;
 
     friend class TypingCommand;
 };

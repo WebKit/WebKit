@@ -45,7 +45,7 @@
 namespace WebCore {
 
 InsertTextCommand::InsertTextCommand(Document *document) 
-    : CompositeEditCommand(document), m_charactersAdded(0)
+    : CompositeEditCommand(document)
 {
 }
 
@@ -161,7 +161,6 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText)
         startPosition = endPosition.previous();
         if (placeholder.isNotNull())
             removePlaceholderAt(placeholder);
-        m_charactersAdded += 1;
     } else {
         // Make sure the document is set up to receive text
         startPosition = prepareForTextInsertion(startPosition);
@@ -178,8 +177,6 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText)
         // Rebalancing on both sides isn't necessary if we've inserted a space.
         if (text != " ") 
             rebalanceWhitespaceAt(startPosition);
-            
-        m_charactersAdded += text.length();
     }
 
     // We could have inserted a part of composed character sequence,
