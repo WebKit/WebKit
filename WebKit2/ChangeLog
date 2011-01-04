@@ -2,6 +2,32 @@
 
         Reviewed by Darin Adler.
 
+        Get rid of an extra copy in the back/forward item IPC message by using a DataReference.
+
+        * UIProcess/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::setBackForwardData):
+        * UIProcess/WebBackForwardListItem.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dataCallback): Get rid of no-longer-needed check for size 0.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addBackForwardItem):
+        * UIProcess/WebProcessProxy.h:
+
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::data):
+        * WebProcess/WebPage/EncoderAdapter.h:
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+
+2011-01-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
         Store more data per history entry in the session state blob.
 
         * UIProcess/WebBackForwardListItem.cpp:

@@ -111,7 +111,7 @@ private:
 
     bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
 
-    void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title, const Vector<uint8_t>& encodedData);
+    void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title, const CoreIPC::DataReference& backForwardData);
 
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, CoreIPC::ArgumentEncoder* reply);

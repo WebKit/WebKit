@@ -25,6 +25,7 @@
 
 #include "WebProcessProxy.h"
 
+#include "DataReference.h"
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
 #include "TextChecker.h"
@@ -183,7 +184,7 @@ WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) con
     return m_backForwardListItemMap.get(itemID).get();
 }
 
-void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData)
+void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const CoreIPC::DataReference& backForwardData)
 {
     std::pair<WebBackForwardListItemMap::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);
     if (result.second) {
@@ -196,7 +197,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
     result.first->second->setOriginalURL(originalURL);
     result.first->second->setURL(url);
     result.first->second->setTitle(title);
-    result.first->second->setBackForwardData(backForwardData);
+    result.first->second->setBackForwardData(backForwardData.data(), backForwardData.size());
 }
 
 #if ENABLE(PLUGIN_PROCESS)

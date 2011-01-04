@@ -28,10 +28,11 @@
 
 #include <wtf/Encoder.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include <wtf/OwnPtr.h>
 
 namespace CoreIPC {
     class ArgumentEncoder;
+    class DataReference;
 }
 
 namespace WebKit {
@@ -40,7 +41,7 @@ class EncoderAdapter : public Encoder {
 public:
     EncoderAdapter();
 
-    Vector<uint8_t> data() const;
+    CoreIPC::DataReference data() const;
 
 private:
     virtual void encodeBytes(const uint8_t*, size_t);

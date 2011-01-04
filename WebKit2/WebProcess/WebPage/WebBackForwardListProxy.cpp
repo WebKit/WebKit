@@ -25,6 +25,7 @@
 
 #include "WebBackForwardListProxy.h"
 
+#include "DataReference.h"
 #include "EncoderAdapter.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"

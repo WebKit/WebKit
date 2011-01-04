@@ -1836,11 +1836,7 @@ void WebPageProxy::dataCallback(const CoreIPC::DataReference& dataReference, uin
         return;
     }
 
-    RefPtr<WebData> data;
-    if (size_t size = dataReference.size())
-        data = WebData::create(dataReference.data(), size);
-
-    callback->performCallbackWithReturnValue(data.get());
+    callback->performCallbackWithReturnValue(WebData::create(dataReference.data(), dataReference.size()).get());
 }
 
 void WebPageProxy::stringCallback(const String& resultString, uint64_t callbackID)

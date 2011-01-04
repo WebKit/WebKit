@@ -56,7 +56,7 @@ public:
     void setTitle(const String& title) { m_title = title; }
     const String& title() const { return m_title; }
     
-    void setBackForwardData(const Vector<uint8_t>& backForwardData) { m_backForwardData = backForwardData; }
+    void setBackForwardData(const uint8_t* buffer, size_t size);
     const Vector<uint8_t>& backForwardData() const { return m_backForwardData; }
 
 private:

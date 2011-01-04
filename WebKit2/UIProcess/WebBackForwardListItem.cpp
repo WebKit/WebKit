@@ -33,12 +33,17 @@ WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const 
     , m_title(title)
     , m_itemID(itemID)
 {
-    m_backForwardData.reserveCapacity(backForwardDataSize);
-    m_backForwardData.append(backForwardData, backForwardDataSize);
+    setBackForwardData(backForwardData, backForwardDataSize);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
+}
+
+void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size)
+{
+    m_backForwardData.reserveCapacity(size);
+    m_backForwardData.append(data, size);
 }
 
 } // namespace WebKit

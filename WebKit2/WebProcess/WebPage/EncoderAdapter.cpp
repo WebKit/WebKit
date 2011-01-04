@@ -25,6 +25,7 @@
 
 #include "EncoderAdapter.h"
 
+#include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
@@ -34,13 +35,9 @@ EncoderAdapter::EncoderAdapter()
 {
 }
 
-Vector<uint8_t> EncoderAdapter::data() const
+CoreIPC::DataReference EncoderAdapter::data() const
 {
-    Vector<uint8_t> vector;
-    size_t size = m_encoder->bufferSize();
-    vector.reserveCapacity(size);
-    vector.append(m_encoder->buffer(), size);
-    return vector;
+    return CoreIPC::DataReference(m_encoder->buffer(), m_encoder->bufferSize());
 }
 
 void EncoderAdapter::encodeBytes(const uint8_t* bytes, size_t size)
