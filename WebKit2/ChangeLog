@@ -1,5 +1,13 @@
 2011-01-04  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Don't use macros for the key names.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+
+2011-01-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Send over text checker state to the web process

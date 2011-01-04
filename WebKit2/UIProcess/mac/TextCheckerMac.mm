@@ -27,9 +27,9 @@
 
 #include "TextCheckerState.h"
 
-#define WebAutomaticSpellingCorrectionEnabled @"WebAutomaticSpellingCorrectionEnabled"
-#define WebContinuousSpellCheckingEnabled @"WebContinuousSpellCheckingEnabled"
-#define WebGrammarCheckingEnabled @"WebGrammarCheckingEnabled"
+static const NSString * const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";
+static const NSString * const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
+static const NSString * const WebGrammarCheckingEnabled = @"WebGrammarCheckingEnabled";
 
 namespace WebKit {
 
