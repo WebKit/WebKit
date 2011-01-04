@@ -38,7 +38,7 @@ namespace WebCore {
 
     class StorageMap : public RefCounted<StorageMap> {
     public:
-        // Quota size mesured in bytes.
+        // Quota size measured in bytes.
         static PassRefPtr<StorageMap> create(unsigned quotaSize);
 
         unsigned length() const;

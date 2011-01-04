@@ -1,3 +1,9 @@
+2011-01-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by a spell checker.
+
+        * storage/StorageMap.h: mesured?  Really?
+
 2011-01-04  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
