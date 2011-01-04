@@ -2,6 +2,13 @@
 
         Unreviewed build fix.
 
+        * win/WebKit2.vcproj: Correct the missing $(WebKitVSPropsRedirectionDir)
+        variables that Visual Studio helpfully removes when making changes.
+
+2011-01-04  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
         * win/WebKit2.vcproj: Disable CG-specific WKImageCG.cpp from
         Debug_Cairo_CFLite/Release_Cario_CFLite builds.
 
