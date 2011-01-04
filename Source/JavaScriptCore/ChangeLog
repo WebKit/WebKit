@@ -1,3 +1,9 @@
+2011-01-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the EFL build.
+
+        * wtf/CMakeLists.txt: Remove PlatformRefPtr from the CMake source list.
+
 2011-01-04  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Adler.

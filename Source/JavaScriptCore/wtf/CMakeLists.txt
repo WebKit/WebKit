@@ -54,7 +54,6 @@ SET(WTF_HEADERS
     PassOwnPtr.h
     PassRefPtr.h
     Platform.h
-    PlatformRefPtr.h
     PossiblyNull.h
     RandomNumber.h
     RandomNumberSeed.h
