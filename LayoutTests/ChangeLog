@@ -1,3 +1,11 @@
+2011-01-04  Xiaomei Ji  <xji@chromium.org>
+
+        Implement sel.modify('move', 'left'/'right', 'lineBoundary').
+        https://bugs.webkit.org/show_bug.cgi?id=33435
+
+        * editing/selection/home-end-expected.txt:
+        * editing/selection/home-end.html:
+
 2011-01-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

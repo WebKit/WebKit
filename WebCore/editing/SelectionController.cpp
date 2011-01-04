@@ -465,11 +465,13 @@ VisiblePosition SelectionController::modifyMovingRight(TextGranularity granulari
     case LineGranularity:
     case ParagraphGranularity:
     case SentenceBoundary:
-    case LineBoundary:
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: Implement all of the above.
         pos = modifyMovingForward(granularity);
+        break;
+    case LineBoundary:
+        pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
         break;
     }
     return pos;
@@ -616,11 +618,13 @@ VisiblePosition SelectionController::modifyMovingLeft(TextGranularity granularit
     case LineGranularity:
     case ParagraphGranularity:
     case SentenceBoundary:
-    case LineBoundary:
     case ParagraphBoundary:
     case DocumentBoundary:
         // FIXME: Implement all of the above.
         pos = modifyMovingBackward(granularity);
+        break;
+    case LineBoundary:
+        pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
         break;
     }
     return pos;

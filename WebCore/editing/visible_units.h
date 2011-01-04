@@ -59,6 +59,8 @@ bool isStartOfLine(const VisiblePosition &);
 bool isEndOfLine(const VisiblePosition &);
 VisiblePosition logicalStartOfLine(const VisiblePosition &);
 VisiblePosition logicalEndOfLine(const VisiblePosition &);
+VisiblePosition leftBoundaryOfLine(const VisiblePosition&, TextDirection);
+VisiblePosition rightBoundaryOfLine(const VisiblePosition&, TextDirection);
 
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
 VisiblePosition startOfParagraph(const VisiblePosition&, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);

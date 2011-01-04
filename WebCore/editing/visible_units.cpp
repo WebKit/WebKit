@@ -1133,6 +1133,8 @@ static VisiblePosition logicalStartPositionForLine(const VisiblePosition& c)
 
 VisiblePosition logicalStartOfLine(const VisiblePosition& c)
 {
+    // TODO: this is the current behavior that might need to be fixed.
+    // Please refer to https://bugs.webkit.org/show_bug.cgi?id=49107 for detail.
     VisiblePosition visPos = logicalStartPositionForLine(c);
     
     return c.honorEditableBoundaryAtOrAfter(visPos);
@@ -1179,6 +1181,9 @@ bool inSameLogicalLine(const VisiblePosition& a, const VisiblePosition& b)
 
 VisiblePosition logicalEndOfLine(const VisiblePosition& c)
 {
+    // TODO: this is the current behavior that might need to be fixed.
+    // Please refer to https://bugs.webkit.org/show_bug.cgi?id=49107 for detail.
+
     VisiblePosition visPos = logicalEndPositionForLine(c);
     
     // Make sure the end of line is at the same line as the given input position. For a wrapping line, the logical end
@@ -1190,6 +1195,16 @@ VisiblePosition logicalEndOfLine(const VisiblePosition& c)
         visPos = visPos.previous();
     
     return c.honorEditableBoundaryAtOrBefore(visPos);
+}
+
+VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direction)
+{
+    return direction == LTR ? logicalStartOfLine(c) : logicalEndOfLine(c);
+}
+
+VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection direction)
+{
+    return direction == LTR ? logicalEndOfLine(c) : logicalStartOfLine(c);
 }
 
 }

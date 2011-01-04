@@ -71,31 +71,64 @@
 
             var tests = document.getElementsByClassName("test");
             var sel = getSelection();
+            log("Test Moving forward/backward\n");
             for (var i = 0; i < tests.length; ++i) {
-                var positionsMovingRight;
-                var positionsMovingLeft;
+                var positionsMovingForward;
+                var positionsMovingBackward;
     
                 log("Test " + (i + 1) + ", LTR:\n  Moving forward: ");
                 sel.setPosition(tests[i], 0);
-                positionsMovingRight = positionsMovingInDirection(sel, "forward");
-                logPositions(positionsMovingRight);
+                positionsMovingForward = positionsMovingInDirection(sel, "forward");
+                logPositions(positionsMovingForward);
                 log("\n");
 
                 log("  Moving backward:  ");
-                positionsMovingLeft = positionsMovingInDirection(sel, "backward");
-                logPositions(positionsMovingLeft);
+                positionsMovingBackward = positionsMovingInDirection(sel, "backward");
+                logPositions(positionsMovingBackward);
                 log("\n");
 
                 tests[i].style.direction = "rtl";
 
                 log("Test " + (i + 1) + ", RTL:\n  Moving forward: ");
                 sel.setPosition(tests[i], 0);
-                positionsMovingLeft = positionsMovingInDirection(sel, "forward");
-                logPositions(positionsMovingLeft);
+                positionsMovingForward = positionsMovingInDirection(sel, "forward");
+                logPositions(positionsMovingForward);
                 log("\n");
 
                 log("  Moving backward:  ");
-                positionsMovingRight = positionsMovingInDirection(sel, "backward");
+                positionsMovingBackward = positionsMovingInDirection(sel, "backward");
+                logPositions(positionsMovingBackward);
+                log("\n");
+
+            }
+            log("Test Moving right/left\n");
+            for (var i = 0; i < tests.length; ++i) {
+                var positionsMovingRight;
+                var positionsMovingLeft;
+
+                tests[i].style.direction = "ltr";
+    
+                log("Test " + (i + 1) + ", LTR:\n  Moving right: ");
+                sel.setPosition(tests[i], 0);
+                positionsMovingRight = positionsMovingInDirection(sel, "right");
+                logPositions(positionsMovingRight);
+                log("\n");
+
+                log("  Moving left:  ");
+                positionsMovingLeft = positionsMovingInDirection(sel, "left");
+                logPositions(positionsMovingLeft);
+                log("\n");
+
+                tests[i].style.direction = "rtl";
+
+                log("Test " + (i + 1) + ", RTL:\n  Moving left: ");
+                sel.setPosition(tests[i], 0);
+                positionsMovingLeft = positionsMovingInDirection(sel, "left");
+                logPositions(positionsMovingLeft);
+                log("\n");
+
+                log("  Moving right:  ");
+                positionsMovingRight = positionsMovingInDirection(sel, "right");
                 logPositions(positionsMovingRight);
                 log("\n");
 
