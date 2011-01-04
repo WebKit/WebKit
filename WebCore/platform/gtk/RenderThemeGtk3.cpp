@@ -47,7 +47,7 @@
 
 namespace WebCore {
 
-typedef HashMap<GType, PlatformRefPtr<GtkStyleContext> > StyleContextMap;
+typedef HashMap<GType, GRefPtr<GtkStyleContext> > StyleContextMap;
 static StyleContextMap& styleContextMap();
 
 static void gtkStyleChangedCallback(GObject*, GParamSpec*)
@@ -82,7 +82,7 @@ static GtkStyleContext* getStyleContext(GType widgetType)
     GtkWidgetPath* path = gtk_widget_path_new();
     gtk_widget_path_append_type(path, widgetType);
 
-    PlatformRefPtr<GtkStyleContext> context = adoptPlatformRef(gtk_style_context_new());
+    GRefPtr<GtkStyleContext> context = adoptGRef(gtk_style_context_new());
     gtk_style_context_set_path(context.get(), path);
     gtk_widget_path_free(path);
 
@@ -410,7 +410,7 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
 }
 #endif
 
-PlatformRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
+GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
 {
     GtkStyleContext* context = getStyleContext(widgetType);
     GtkIconSet* iconSet = gtk_style_context_lookup_icon_set(context, iconName);
@@ -429,7 +429,7 @@ PlatformRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const c
 
     gtk_style_context_restore(context);
 
-    return adoptPlatformRef(icon);
+    return adoptGRefPtr(icon);
 }
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const

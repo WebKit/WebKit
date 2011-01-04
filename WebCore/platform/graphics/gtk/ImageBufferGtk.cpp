@@ -45,7 +45,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     if (type != "jpeg" && type != "png" && type != "tiff" && type != "ico" && type != "bmp")
         return "data:,";
 
-    PlatformRefPtr<GdkPixbuf> pixbuf = cairoImageSurfaceToGdkPixbuf(m_data.m_surface);
+    GRefPtr<GdkPixbuf> pixbuf = cairoImageSurfaceToGdkPixbuf(m_data.m_surface);
     if (!pixbuf)
         return "data:,";
 

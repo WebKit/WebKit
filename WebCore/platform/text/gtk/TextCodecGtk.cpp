@@ -422,14 +422,14 @@ void TextCodecGtk::createIConvDecoder() const
 {
     ASSERT(!m_iconvDecoder);
 
-    m_iconvDecoder = adoptPlatformRef(g_charset_converter_new(internalEncodingName, m_encoding.name(), 0));
+    m_iconvDecoder = adoptGRef(g_charset_converter_new(internalEncodingName, m_encoding.name(), 0));
 }
 
 void TextCodecGtk::createIConvEncoder() const
 {
     ASSERT(!m_iconvEncoder);
 
-    m_iconvEncoder = adoptPlatformRef(g_charset_converter_new(m_encoding.name(), internalEncodingName, 0));
+    m_iconvEncoder = adoptGRef(g_charset_converter_new(m_encoding.name(), internalEncodingName, 0));
 }
 
 String TextCodecGtk::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)

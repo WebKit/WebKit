@@ -375,16 +375,16 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
 }
 #endif
 
-PlatformRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
+GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
 {
     ASSERT(widgetType == GTK_TYPE_CONTAINER || widgetType == GTK_TYPE_ENTRY);
     GtkWidget* widget = widgetType == GTK_TYPE_CONTAINER ? GTK_WIDGET(gtkContainer()) : gtkEntry();
     GtkStyle* style = gtk_widget_get_style(widget);
     GtkIconSet* iconSet = gtk_style_lookup_icon_set(style, iconName);
-    return adoptPlatformRef(gtk_icon_set_render_icon(iconSet, style,
-                                                     static_cast<GtkTextDirection>(direction),
-                                                     static_cast<GtkStateType>(state),
-                                                     static_cast<GtkIconSize>(iconSize), 0, 0));
+    return adoptGRef(gtk_icon_set_render_icon(iconSet, style,
+                                              static_cast<GtkTextDirection>(direction),
+                                              static_cast<GtkStateType>(state),
+                                              static_cast<GtkIconSize>(iconSize), 0, 0));
 }
 
 

@@ -1,3 +1,48 @@
+2011-01-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Remove the last non-GObject usage of PlatformRefPtr and move the code to GRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=51846
+
+        * GNUmakefile.am: Remove PlatformRefPtr.h from the sources list.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * jit/ExecutableAllocator.h: Change references to PlatformRefPtr to RefPtr.
+        (JSC::ExecutableAllocator::cacheFlush): Ditto.
+        * wtf/PlatformRefPtr.h: Removed.
+        * wtf/RandomNumber.cpp: Change references to PlatformRefPtr to RefPtr.
+        (WTF::randomNumber): Ditto.
+        * wtf/brew/RefPtrBrew.h: Ditto.
+        (WTF::refIfNotNull): Added.
+        (WTF::derefIfNotNull): Added.
+        * wtf/brew/ShellBrew.h: Change references to PlatformRefPtr to RefPtr.
+        (WTF::createRefPtrInstance): Modified to return a RefPtr.
+        * wtf/gobject/GRefPtr.cpp: 
+        (WTF::refGPtr): Moved from PlatformRefPtr here.
+        (WTF::derefGPtr): Ditto.
+        * wtf/gobject/GRefPtr.h: Ditto.
+        (WTF::GRefPtr::GRefPtr): Ditto.
+        (WTF::GRefPtr::~GRefPtr): Ditto.
+        (WTF::GRefPtr::clear): Ditto.
+        (WTF::GRefPtr::isHashTableDeletedValue): Ditto.
+        (WTF::GRefPtr::get): Ditto.
+        (WTF::GRefPtr::operator*): Ditto.
+        (WTF::GRefPtr::operator->): Ditto.
+        (WTF::GRefPtr::operator!): Ditto.
+        (WTF::GRefPtr::operator UnspecifiedBoolType): Ditto.
+        (WTF::GRefPtr::hashTableDeletedValue): Ditto.
+        (WTF::::operator): Ditto.
+        (WTF::::swap): Ditto.
+        (WTF::swap): Ditto.
+        (WTF::operator==): Ditto.
+        (WTF::operator!=): Ditto.
+        (WTF::static_pointer_cast): Ditto.
+        (WTF::const_pointer_cast): Ditto.
+        (WTF::getPtr): Ditto.
+        (WTF::adoptGRef): Ditto.
+        (WTF::refGPtr): Ditto.
+        (WTF::derefGPtr): Ditto.
+
 2011-01-04  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Roben.

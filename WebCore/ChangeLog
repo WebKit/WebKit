@@ -1,3 +1,15 @@
+2011-01-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Remove the last non-GObject usage of PlatformRefPtr and move the code to GRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=51846
+
+        No new tests. This should not introduce any functional changes.
+
+        Changed all references to PlatformRefPtr in GTK+ code to GRefPtr. Changed
+        all references to PlatformRefPtr in Brew code to RefPtr.
+
 2011-01-04  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/51890> Move ResourceLoadPriority.h into WebCore/platform/network

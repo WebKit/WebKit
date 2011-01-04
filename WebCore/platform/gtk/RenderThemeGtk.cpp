@@ -70,7 +70,7 @@ void RenderThemeGtk::initMediaButtons()
     if (iconsInitialized)
         return;
 
-    PlatformRefPtr<GtkIconFactory> iconFactory = adoptPlatformRef(gtk_icon_factory_new());
+    GRefPtr<GtkIconFactory> iconFactory = adoptGRef(gtk_icon_factory_new());
     GtkIconSource* iconSource = gtk_icon_source_new();
     const char* icons[] = { "audio-volume-high", "audio-volume-muted" };
 
@@ -326,9 +326,9 @@ static IntPoint centerRectVerticallyInParentInputElement(RenderObject* object, c
 
 bool RenderThemeGtk::paintSearchFieldResultsDecoration(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    PlatformRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_FIND,
-                                                  gtkTextDirection(renderObject->style()->direction()),
-                                                  gtkIconState(renderObject), GTK_ICON_SIZE_MENU);
+    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_FIND,
+                                           gtkTextDirection(renderObject->style()->direction()),
+                                           gtkIconState(renderObject), GTK_ICON_SIZE_MENU);
     paintGdkPixbuf(paintInfo.context, icon.get(), centerRectVerticallyInParentInputElement(renderObject, rect));
     return false;
 }
@@ -346,9 +346,9 @@ void RenderThemeGtk::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* select
 
 bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    PlatformRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_CLEAR,
-                                                  gtkTextDirection(renderObject->style()->direction()),
-                                                  gtkIconState(renderObject), GTK_ICON_SIZE_MENU);
+    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_CLEAR,
+                                           gtkTextDirection(renderObject->style()->direction()),
+                                           gtkIconState(renderObject), GTK_ICON_SIZE_MENU);
     paintGdkPixbuf(paintInfo.context, icon.get(), centerRectVerticallyInParentInputElement(renderObject, rect));
     return false;
 }
@@ -447,10 +447,10 @@ String RenderThemeGtk::extraMediaControlsStyleSheet()
 
 bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* iconName)
 {
-    PlatformRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_CONTAINER, iconName,
-                                                  gtkTextDirection(renderObject->style()->direction()),
-                                                  gtkIconState(renderObject),
-                                                  getMediaButtonIconSize(m_mediaIconSize));
+    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_CONTAINER, iconName,
+                                           gtkTextDirection(renderObject->style()->direction()),
+                                           gtkIconState(renderObject),
+                                           getMediaButtonIconSize(m_mediaIconSize));
     IntPoint iconPoint(rect.x() + (rect.width() - m_mediaIconSize) / 2,
                        rect.y() + (rect.height() - m_mediaIconSize) / 2);
     context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);

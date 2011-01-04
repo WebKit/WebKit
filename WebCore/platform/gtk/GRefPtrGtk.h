@@ -21,15 +21,15 @@
 #ifndef GRefPtrGtk_h
 #define GRefPtrGtk_h
 
-#include "GRefPtr.h"
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WTF {
 
-template <> GtkTargetList* refPlatformPtr(GtkTargetList* ptr);
-template <> void derefPlatformPtr(GtkTargetList* ptr);
+template <> GtkTargetList* refGPtr(GtkTargetList* ptr);
+template <> void derefGPtr(GtkTargetList* ptr);
 
-template <> GdkCursor* refPlatformPtr(GdkCursor* ptr);
-template <> void derefPlatformPtr(GdkCursor* ptr);
+template <> GdkCursor* refGPtr(GdkCursor* ptr);
+template <> void derefGPtr(GdkCursor* ptr);
 
 }
 

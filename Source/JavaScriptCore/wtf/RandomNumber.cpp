@@ -99,7 +99,7 @@ double randomNumber()
     return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
 #elif PLATFORM(BREWMP)
     uint32_t bits;
-    PlatformRefPtr<ISource> randomSource = createRefPtrInstance<ISource>(AEECLSID_RANDOM);
+    RefPtr<ISource> randomSource = createRefPtrInstance<ISource>(AEECLSID_RANDOM);
     ISOURCE_Read(randomSource.get(), reinterpret_cast<char*>(&bits), 4);
 
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);

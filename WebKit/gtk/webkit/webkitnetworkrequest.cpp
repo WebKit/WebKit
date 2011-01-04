@@ -253,7 +253,7 @@ namespace WebKit {
 
 WebKitNetworkRequest* kitNew(const WebCore::ResourceRequest& resourceRequest)
 {
-    PlatformRefPtr<SoupMessage> soupMessage(adoptPlatformRef(resourceRequest.toSoupMessage()));
+    GRefPtr<SoupMessage> soupMessage(adoptGRef(resourceRequest.toSoupMessage()));
     if (soupMessage)
         return WEBKIT_NETWORK_REQUEST(g_object_new(WEBKIT_TYPE_NETWORK_REQUEST, "message", soupMessage.get(), NULL));
 

@@ -221,7 +221,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(AEEEvent event, uint16 code, uint32
     , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? windowsKeyCodeForKeyEvent(code) : 0)
 {
     if ((m_type == Char) && modifiers) {
-        PlatformRefPtr<IKeysMapping> keysMapping = createRefPtrInstance<IKeysMapping>(AEECLSID_KeysMapping);
+        RefPtr<IKeysMapping> keysMapping = createRefPtrInstance<IKeysMapping>(AEECLSID_KeysMapping);
         int result = IKeysMapping_GetMapping(keysMapping.get(), code, modifiers, reinterpret_cast<AECHAR*>(&code));
         if (result == AEE_SUCCESS) // Reset the modifier when key code is successfully mapped.
             modifiers = 0;

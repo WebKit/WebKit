@@ -88,7 +88,7 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
     unsigned int port = url.hasPort() ? url.port() : 80;
 
     m_id = activateHandle(this);
-    PlatformRefPtr<GSocketClient> socketClient = adoptPlatformRef(g_socket_client_new());
+    GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, 0,
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), m_id);
 }
@@ -107,7 +107,7 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
         return;
     }
 
-    m_socketConnection = adoptPlatformRef(socketConnection);
+    m_socketConnection = adoptGRef(socketConnection);
     m_outputStream = g_io_stream_get_output_stream(G_IO_STREAM(m_socketConnection.get()));
     m_inputStream = g_io_stream_get_input_stream(G_IO_STREAM(m_socketConnection.get()));
 
@@ -222,7 +222,7 @@ void SocketStreamHandle::beginWaitingForSocketWritability()
     if (m_writeReadySource) // Already waiting.
         return;
 
-    m_writeReadySource = adoptPlatformRef(g_socket_create_source(
+    m_writeReadySource = adoptGRef(g_socket_create_source(
         g_socket_connection_get_socket(m_socketConnection.get()), static_cast<GIOCondition>(G_IO_OUT), 0));
     g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(writeReadyCallback), m_id, 0);
     g_source_attach(m_writeReadySource.get(), 0);

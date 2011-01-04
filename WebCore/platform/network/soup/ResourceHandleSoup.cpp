@@ -353,14 +353,14 @@ static gboolean parseDataUrl(gpointer callbackData)
 
     SoupSession* session = handle->defaultSession();
     GOwnPtr<GError> error;
-    d->m_soupRequest = adoptPlatformRef(webkit_soup_requester_request(d->m_requester.get(), handle->firstRequest().url().string().utf8().data(), session, &error.outPtr()));
+    d->m_soupRequest = adoptGRef(webkit_soup_requester_request(d->m_requester.get(), handle->firstRequest().url().string().utf8().data(), session, &error.outPtr()));
     if (error) {
         d->m_soupRequest = 0;
         client->didFinishLoading(handle, 0);
         return false;
     }
 
-    d->m_inputStream = adoptPlatformRef(webkit_soup_request_send(d->m_soupRequest.get(), 0, &error.outPtr()));
+    d->m_inputStream = adoptGRef(webkit_soup_request_send(d->m_soupRequest.get(), 0, &error.outPtr()));
     if (error) {
         d->m_inputStream = 0;
         client->didFinishLoading(handle, 0);
@@ -374,7 +374,7 @@ static gboolean parseDataUrl(gpointer callbackData)
     // balanced by a deref() in cleanupSoupRequestOperation, which should always run
     handle->ref();
 
-    d->m_cancellable = adoptPlatformRef(g_cancellable_new());
+    d->m_cancellable = adoptGRef(g_cancellable_new());
     g_input_stream_read_async(d->m_inputStream.get(), d->m_buffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT,
                               d->m_cancellable.get(), readCallback, GINT_TO_POINTER(!isBase64));
 
@@ -531,7 +531,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
         return;
     }
 
-    d->m_inputStream = adoptPlatformRef(in);
+    d->m_inputStream = adoptGRef(in);
     d->m_buffer = static_cast<char*>(g_slice_alloc0(READ_BUFFER_SIZE));
     d->m_total = 0;
 
@@ -575,7 +575,7 @@ static bool startHttp(ResourceHandle* handle)
     request.setURL(url);
 
     GOwnPtr<GError> error;
-    d->m_soupRequest = adoptPlatformRef(webkit_soup_requester_request(d->m_requester.get(), url.string().utf8().data(), session, &error.outPtr()));
+    d->m_soupRequest = adoptGRef(webkit_soup_requester_request(d->m_requester.get(), url.string().utf8().data(), session, &error.outPtr()));
     if (error) {
         d->m_soupRequest = 0;
         return false;
@@ -583,7 +583,7 @@ static bool startHttp(ResourceHandle* handle)
 
     g_object_set_data(G_OBJECT(d->m_soupRequest.get()), "webkit-resource", handle);
 
-    d->m_soupMessage = adoptPlatformRef(webkit_soup_request_http_get_message(WEBKIT_SOUP_REQUEST_HTTP(d->m_soupRequest.get())));
+    d->m_soupMessage = adoptGRef(webkit_soup_request_http_get_message(WEBKIT_SOUP_REQUEST_HTTP(d->m_soupRequest.get())));
     if (!d->m_soupMessage)
         return false;
 
@@ -668,7 +668,7 @@ static bool startHttp(ResourceHandle* handle)
 
     // Send the request only if it's not been explicitely deferred.
     if (!d->m_defersLoading) {
-        d->m_cancellable = adoptPlatformRef(g_cancellable_new());
+        d->m_cancellable = adoptGRef(g_cancellable_new());
         webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
     }
 
@@ -751,7 +751,7 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
         return;
 
     if (!defersLoading && !d->m_cancellable && d->m_soupRequest.get()) {
-        d->m_cancellable = adoptPlatformRef(g_cancellable_new());
+        d->m_cancellable = adoptGRef(g_cancellable_new());
         webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
         return;
     }
@@ -888,7 +888,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
     CString urlStr = url.string().utf8();
 
     GOwnPtr<GError> error;
-    d->m_soupRequest = adoptPlatformRef(webkit_soup_requester_request(d->m_requester.get(), urlStr.data(), session, &error.outPtr()));
+    d->m_soupRequest = adoptGRef(webkit_soup_requester_request(d->m_requester.get(), urlStr.data(), session, &error.outPtr()));
     if (error) {
         d->m_soupRequest = 0;
         return false;
@@ -899,7 +899,7 @@ static bool startGio(ResourceHandle* handle, KURL url)
     // balanced by a deref() in cleanupSoupRequestOperation, which should always run
     handle->ref();
 
-    d->m_cancellable = adoptPlatformRef(g_cancellable_new());
+    d->m_cancellable = adoptGRef(g_cancellable_new());
     webkit_soup_request_send_async(d->m_soupRequest.get(), d->m_cancellable.get(), sendRequestCallback, 0);
 
     return true;

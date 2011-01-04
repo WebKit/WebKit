@@ -49,7 +49,7 @@ struct DisplayInfo {
 static void getDisplayInfo(DisplayInfo& info)
 {
     IDisplay* display = reinterpret_cast<AEEApplet*>(GETAPPINSTANCE())->m_pIDisplay;
-    PlatformRefPtr<IBitmap> bitmap = adoptPlatformRef(IDisplay_GetDestination(display));
+    RefPtr<IBitmap> bitmap = adoptRef(IDisplay_GetDestination(display));
 
     AEEBitmapInfo bitmapInfo;
     IBitmap_GetInfo(bitmap.get(), &bitmapInfo, sizeof(AEEBitmapInfo));

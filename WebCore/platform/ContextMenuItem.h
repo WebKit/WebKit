@@ -289,7 +289,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
         RetainPtr<NSMenuItem> m_platformDescription;
 #elif PLATFORM(GTK)
-        PlatformRefPtr<GtkMenuItem> m_platformDescription;
+        GRefPtr<GtkMenuItem> m_platformDescription;
 #else
         PlatformMenuItemDescription m_platformDescription;
 #endif

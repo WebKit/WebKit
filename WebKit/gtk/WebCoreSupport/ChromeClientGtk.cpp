@@ -157,7 +157,7 @@ Page* ChromeClient::createWindow(Frame* frame, const FrameLoadRequest& frameLoad
     if (!webView)
         return 0;
 
-    PlatformRefPtr<WebKitWebWindowFeatures> webWindowFeatures(adoptPlatformRef(kitNew(coreFeatures)));
+    GRefPtr<WebKitWebWindowFeatures> webWindowFeatures(adoptGRef(kitNew(coreFeatures)));
     g_object_set(webView, "window-features", webWindowFeatures.get(), NULL);
 
     if (!frameLoadRequest.isEmpty())
@@ -657,7 +657,7 @@ void ChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocatio
     WebKitWebFrame* webFrame = kit(frame);
     WebKitWebView* webView = getViewFromFrame(webFrame);
 
-    PlatformRefPtr<WebKitGeolocationPolicyDecision> policyDecision(adoptPlatformRef(webkit_geolocation_policy_decision_new(webFrame, geolocation)));
+    GRefPtr<WebKitGeolocationPolicyDecision> policyDecision(adoptGRef(webkit_geolocation_policy_decision_new(webFrame, geolocation)));
 
     gboolean isHandled = FALSE;
     g_signal_emit_by_name(webView, "geolocation-policy-decision-requested", webFrame, policyDecision.get(), &isHandled);

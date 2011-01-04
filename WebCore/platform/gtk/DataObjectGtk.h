@@ -73,8 +73,8 @@ private:
     KURL m_url;
     String m_uriList;
     Vector<String> m_filenames;
-    PlatformRefPtr<GdkPixbuf> m_image;
-    PlatformRefPtr<GdkDragContext> m_dragContext;
+    GRefPtr<GdkPixbuf> m_image;
+    GRefPtr<GdkDragContext> m_dragContext;
     RefPtr<Range> m_range;
 };
 

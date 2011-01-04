@@ -263,7 +263,7 @@ WebCore::ResourceResponse core(WebKitNetworkResponse* response)
 
 WebKitNetworkResponse* kitNew(const WebCore::ResourceResponse& resourceResponse)
 {
-    PlatformRefPtr<SoupMessage> soupMessage(adoptPlatformRef(resourceResponse.toSoupMessage()));
+    GRefPtr<SoupMessage> soupMessage(adoptGRef(resourceResponse.toSoupMessage()));
     if (soupMessage)
         return WEBKIT_NETWORK_RESPONSE(g_object_new(WEBKIT_TYPE_NETWORK_RESPONSE, "message", soupMessage.get(), NULL));
 

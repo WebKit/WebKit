@@ -392,8 +392,8 @@ public:
     void setScrollOffset(const IntSize& offset) { m_scrollOffset = offset; }
 
 private:
-    PlatformRefPtr<GtkAdjustment> m_horizontalAdjustment;
-    PlatformRefPtr<GtkAdjustment> m_verticalAdjustment;
+    GRefPtr<GtkAdjustment> m_horizontalAdjustment;
+    GRefPtr<GtkAdjustment> m_verticalAdjustment;
 #endif
 
 #if PLATFORM(WX)

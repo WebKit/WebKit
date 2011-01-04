@@ -745,10 +745,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\PlatformRefPtr.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\wtf\PossiblyNull.h"
 			>
 		</File>

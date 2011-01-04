@@ -52,26 +52,26 @@ extern "C" {
 typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
 struct _WebKitWebViewPrivate {
     WebCore::Page* corePage;
-    PlatformRefPtr<WebKitWebSettings> webSettings;
-    PlatformRefPtr<WebKitWebInspector> webInspector;
-    PlatformRefPtr<WebKitViewportAttributes> viewportAttributes;
-    PlatformRefPtr<WebKitWebWindowFeatures> webWindowFeatures;
+    GRefPtr<WebKitWebSettings> webSettings;
+    GRefPtr<WebKitWebInspector> webInspector;
+    GRefPtr<WebKitViewportAttributes> viewportAttributes;
+    GRefPtr<WebKitWebWindowFeatures> webWindowFeatures;
 
     WebKitWebFrame* mainFrame;
-    PlatformRefPtr<WebKitWebBackForwardList> backForwardList;
+    GRefPtr<WebKitWebBackForwardList> backForwardList;
 
-    PlatformRefPtr<GtkMenu> currentMenu;
+    GRefPtr<GtkMenu> currentMenu;
     gint lastPopupXPosition;
     gint lastPopupYPosition;
 
     HashSet<GtkWidget*> children;
     bool editable;
-    PlatformRefPtr<GtkIMContext> imContext;
+    GRefPtr<GtkIMContext> imContext;
 
     gboolean transparent;
 
-    PlatformRefPtr<GtkAdjustment> horizontalAdjustment;
-    PlatformRefPtr<GtkAdjustment> verticalAdjustment;
+    GRefPtr<GtkAdjustment> horizontalAdjustment;
+    GRefPtr<GtkAdjustment> verticalAdjustment;
 
 #ifndef GTK_API_VERSION_2
     // GtkScrollablePolicy needs to be checked when
@@ -96,9 +96,9 @@ struct _WebKitWebViewPrivate {
 
     // These are hosted here because the DataSource object is
     // created too late in the frame loading process.
-    PlatformRefPtr<WebKitWebResource> mainResource;
+    GRefPtr<WebKitWebResource> mainResource;
     CString mainResourceIdentifier;
-    PlatformRefPtr<GHashTable> subResources;
+    GRefPtr<GHashTable> subResources;
     CString tooltipText;
     WebCore::IntRect tooltipArea;
 

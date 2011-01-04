@@ -488,7 +488,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/PassOwnPtr.h \
 	Source/JavaScriptCore/wtf/PassRefPtr.h \
 	Source/JavaScriptCore/wtf/Platform.h \
-	Source/JavaScriptCore/wtf/PlatformRefPtr.h \
 	Source/JavaScriptCore/wtf/PossiblyNull.h \
 	Source/JavaScriptCore/wtf/RandomNumber.cpp \
 	Source/JavaScriptCore/wtf/RandomNumber.h \

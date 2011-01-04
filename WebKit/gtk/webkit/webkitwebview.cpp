@@ -3473,7 +3473,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     // members, which ensures they are initialized properly.
     new (priv) WebKitWebViewPrivate();
 
-    priv->imContext = adoptPlatformRef(gtk_im_multicontext_new());
+    priv->imContext = adoptGRef(gtk_im_multicontext_new());
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebKit::ChromeClient(webView);
@@ -3491,11 +3491,11 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     // We also add a simple wrapper class to provide the public
     // interface for the Web Inspector.
-    priv->webInspector = adoptPlatformRef(WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL)));
+    priv->webInspector = adoptGRef(WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL)));
     webkit_web_inspector_set_inspector_client(priv->webInspector.get(), priv->corePage);
 
     // And our ViewportAttributes friend.
-    priv->viewportAttributes = adoptPlatformRef(WEBKIT_VIEWPORT_ATTRIBUTES(g_object_new(WEBKIT_TYPE_VIEWPORT_ATTRIBUTES, NULL)));
+    priv->viewportAttributes = adoptGRef(WEBKIT_VIEWPORT_ATTRIBUTES(g_object_new(WEBKIT_TYPE_VIEWPORT_ATTRIBUTES, NULL)));
     priv->viewportAttributes->priv->webView = webView;
 
     // The smart pointer will call g_object_ref_sink on these adjustments.
@@ -3507,17 +3507,17 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->lastPopupXPosition = priv->lastPopupYPosition = -1;
     priv->editable = false;
 
-    priv->backForwardList = adoptPlatformRef(webkit_web_back_forward_list_new_with_web_view(webView));
+    priv->backForwardList = adoptGRef(webkit_web_back_forward_list_new_with_web_view(webView));
 
     priv->zoomFullContent = FALSE;
 
-    priv->webSettings = adoptPlatformRef(webkit_web_settings_new());
+    priv->webSettings = adoptGRef(webkit_web_settings_new());
     webkit_web_view_update_settings(webView);
     g_signal_connect(priv->webSettings.get(), "notify", G_CALLBACK(webkit_web_view_settings_notify), webView);
 
-    priv->webWindowFeatures = adoptPlatformRef(webkit_web_window_features_new());
+    priv->webWindowFeatures = adoptGRef(webkit_web_window_features_new());
 
-    priv->subResources = adoptPlatformRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref));
+    priv->subResources = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref));
 
     priv->currentClickCount = 0;
     priv->previousClickButton = 0;
@@ -4894,7 +4894,7 @@ void webkit_web_view_add_main_resource(WebKitWebView* webView, const char* ident
 {
     WebKitWebViewPrivate* priv = webView->priv;
 
-    priv->mainResource = adoptPlatformRef(webResource);
+    priv->mainResource = adoptGRef(webResource);
     priv->mainResourceIdentifier = identifier;
 }
 

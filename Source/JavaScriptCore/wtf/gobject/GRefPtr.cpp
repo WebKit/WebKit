@@ -25,27 +25,27 @@
 
 namespace WTF {
 
-template <> GHashTable* refPlatformPtr(GHashTable* ptr)
+template <> GHashTable* refGPtr(GHashTable* ptr)
 {
     if (ptr)
         g_hash_table_ref(ptr);
     return ptr;
 }
 
-template <> void derefPlatformPtr(GHashTable* ptr)
+template <> void derefGPtr(GHashTable* ptr)
 {
     g_hash_table_unref(ptr);
 }
 
 #if GLIB_CHECK_VERSION(2, 24, 0)
-template <> GVariant* refPlatformPtr(GVariant* ptr)
+template <> GVariant* refGPtr(GVariant* ptr)
 {
     if (ptr)
         g_variant_ref(ptr);
     return ptr;
 }
 
-template <> void derefPlatformPtr(GVariant* ptr)
+template <> void derefGPtr(GVariant* ptr)
 {
     g_variant_unref(ptr);
 }
@@ -57,25 +57,25 @@ typedef struct _GVariant {
     bool fake;
 } GVariant; 
 
-template <> GVariant* refPlatformPtr(GVariant* ptr)
+template <> GVariant* refGPtr(GVariant* ptr)
 {
     return ptr;
 }
 
-template <> void derefPlatformPtr(GVariant* ptr)
+template <> void derefGPtr(GVariant* ptr)
 {
 }
 
 #endif
 
-template <> GSource* refPlatformPtr(GSource* ptr)
+template <> GSource* refGPtr(GSource* ptr)
 {
     if (ptr)
         g_source_ref(ptr);
     return ptr;
 }
 
-template <> void derefPlatformPtr(GSource* ptr)
+template <> void derefGPtr(GSource* ptr)
 {
     if (ptr)
         g_source_unref(ptr);

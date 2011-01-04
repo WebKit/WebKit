@@ -59,7 +59,7 @@ private:
 
     PopupMenuClient* m_popupClient;
     IntPoint m_menuPosition;
-    PlatformRefPtr<GtkMenu> m_popup;
+    GRefPtr<GtkMenu> m_popup;
     HashMap<GtkWidget*, int> m_indexMap;
     String m_currentSearchString;
     uint32_t m_previousKeyEventTimestamp;

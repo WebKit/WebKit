@@ -132,7 +132,7 @@ namespace WebCore {
             m_pass = url.pass();
             m_firstRequest.removeCredentials();
 #if USE(SOUP)
-            m_requester = adoptPlatformRef(webkit_soup_requester_new());
+            m_requester = adoptGRef(webkit_soup_requester_new());
 #endif
         }
         
@@ -186,13 +186,13 @@ namespace WebCore {
         Vector<char> m_postBytes;
 #endif
 #if USE(SOUP)
-        PlatformRefPtr<SoupMessage> m_soupMessage;
+        GRefPtr<SoupMessage> m_soupMessage;
         ResourceResponse m_response;
         bool m_cancelled;
-        PlatformRefPtr<WebKitSoupRequest> m_soupRequest;
-        PlatformRefPtr<WebKitSoupRequester> m_requester;
-        PlatformRefPtr<GInputStream> m_inputStream;
-        PlatformRefPtr<GCancellable> m_cancellable;
+        GRefPtr<WebKitSoupRequest> m_soupRequest;
+        GRefPtr<WebKitSoupRequester> m_requester;
+        GRefPtr<GInputStream> m_inputStream;
+        GRefPtr<GCancellable> m_cancellable;
         char* m_buffer;
         gsize m_total;
         guint m_idleHandler;

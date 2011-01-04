@@ -24,28 +24,34 @@
 #ifndef RefPtrBrew_h
 #define RefPtrBrew_h
 
-#include "AlwaysInline.h"
-#include "PlatformRefPtr.h"
+#include "RefPtr.h"
 #include <AEEIBase.h>
-#include <algorithm>
 
 namespace WTF {
 
 // All Brew MP classes are derived from either IBase or IQI.
-// Technically, IBase and IQI are different types. However, it is
-// okay to cast both types to IBase because they have AddRef and Release
-// in the same method vtable slots.
-template <typename T> inline T* refPlatformPtr(T* ptr)
+template<> void refIfNotNull(IBase* ptr)
 {
-    if (ptr)
-        IBase_AddRef(reinterpret_cast<IBase*>(ptr));
-    return ptr;
+    if (LIKELY(ptr != 0))
+        IBase_AddRef(ptr);
 }
 
-template <typename T> inline void derefPlatformPtr(T* ptr)
+template<> void derefIfNotNull(IBase* ptr)
 {
-    if (ptr)
-        IBase_Release(reinterpret_cast<IBase*>(ptr));
+    if (LIKELY(ptr != 0))
+        IBase_Release(ptr);
+}
+
+template<> void refIfNotNull(IQI* ptr)
+{
+    if (LIKELY(ptr != 0))
+        IQI_AddRef(ptr);
+}
+
+template<> void derefIfNotNull(IQI* ptr)
+{
+    if (LIKELY(ptr != 0))
+        IQI_Release(ptr);
 }
 
 } // namespace WTF

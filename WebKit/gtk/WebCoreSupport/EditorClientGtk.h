@@ -140,7 +140,7 @@ namespace WebKit {
         bool m_treatContextCommitAsKeyEvent;
         GOwnPtr<gchar> m_pendingComposition;
         Vector<const char*> m_pendingEditorCommands;
-        PlatformRefPtr<GtkWidget> m_nativeWidget;
+        GRefPtr<GtkWidget> m_nativeWidget;
     };
 }
 

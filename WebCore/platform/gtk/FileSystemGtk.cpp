@@ -217,7 +217,7 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
     GOwnPtr<gchar> filename(g_strdup_printf("%s%s", prefix, createCanonicalUUIDString().utf8().data()));
     GOwnPtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), NULL));
-    PlatformRefPtr<GFile> file = adoptPlatformRef(g_file_new_for_path(tempPath.get()));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(tempPath.get()));
 
     handle = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
     if (!isHandleValid(handle))
@@ -231,7 +231,7 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
     if (fsRep.isNull())
         return invalidPlatformFileHandle;
 
-    PlatformRefPtr<GFile> file = adoptPlatformRef(g_file_new_for_path(fsRep.data()));
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(fsRep.data()));
     GFileIOStream* ioStream = 0;
     if (mode == OpenForRead)
         ioStream = g_file_open_readwrite(file.get(), 0, 0);

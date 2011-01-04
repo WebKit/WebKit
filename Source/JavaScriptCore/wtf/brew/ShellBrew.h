@@ -34,7 +34,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PlatformRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WTF {
 
@@ -51,7 +51,7 @@ static inline PassOwnPtr<T> createInstance(AEECLSID cls)
 }
 
 template <typename T>
-static inline PlatformRefPtr<T> createRefPtrInstance(AEECLSID cls)
+static inline RefPtr<T> createRefPtrInstance(AEECLSID cls)
 {
     T* instance = 0;
 
@@ -59,7 +59,7 @@ static inline PlatformRefPtr<T> createRefPtrInstance(AEECLSID cls)
     ISHELL_CreateInstance(shell, cls, reinterpret_cast<void**>(&instance));
     ASSERT(instance);
 
-    return adoptPlatformRef(instance);
+    return adoptRef(instance);
 }
 
 } // namespace WTF

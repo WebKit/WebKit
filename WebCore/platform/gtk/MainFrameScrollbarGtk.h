@@ -44,7 +44,7 @@ private:
     MainFrameScrollbarGtk(ScrollbarClient*, ScrollbarOrientation, GtkAdjustment*);
     static void gtkValueChanged(GtkAdjustment*, MainFrameScrollbarGtk*);
 
-    PlatformRefPtr<GtkAdjustment> m_adjustment;
+    GRefPtr<GtkAdjustment> m_adjustment;
 };
 
 }

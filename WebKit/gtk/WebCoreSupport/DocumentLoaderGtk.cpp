@@ -69,7 +69,7 @@ void DocumentLoader::attachToFrame()
 
     // We may get to here without having a datasource, when the data
     // is coming from the page cache.
-    PlatformRefPtr<WebKitWebDataSource> dataSource(adoptPlatformRef(kitNew(this)));
+    GRefPtr<WebKitWebDataSource> dataSource(adoptGRef(kitNew(this)));
     setDataSource(dataSource.get());
 }
 

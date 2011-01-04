@@ -1,3 +1,13 @@
+2011-01-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Remove the last non-GObject usage of PlatformRefPtr and move the code to GRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=51846
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp: Change usage of PlatformRefPtr
+        back to GRefPtr.
+
 2011-01-04  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Kenneth Russell.

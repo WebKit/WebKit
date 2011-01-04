@@ -376,7 +376,7 @@ static bool checkElementState(PlatformUIElement element, AtkStateType stateType)
     if (!ATK_IS_OBJECT(element))
          return false;
 
-    PlatformRefPtr<AtkStateSet> stateSet = adoptPlatformRef(atk_object_ref_state_set(ATK_OBJECT(element)));
+    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(element)));
     return atk_state_set_contains_state(stateSet.get(), stateType);
 }
 
@@ -408,7 +408,7 @@ bool AccessibilityUIElement::isFocused() const
     if (!ATK_IS_OBJECT(m_element))
         return false;
 
-    PlatformRefPtr<AtkStateSet> stateSet = adoptPlatformRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
+    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
     gboolean isFocused = atk_state_set_contains_state(stateSet.get(), ATK_STATE_FOCUSED);
 
     return isFocused;
@@ -670,7 +670,7 @@ bool AccessibilityUIElement::isFocusable() const
     if (!ATK_IS_OBJECT(m_element))
         return false;
 
-    PlatformRefPtr<AtkStateSet> stateSet = adoptPlatformRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
+    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(m_element)));
     gboolean isFocusable = atk_state_set_contains_state(stateSet.get(), ATK_STATE_FOCUSABLE);
 
     return isFocusable;

@@ -57,8 +57,8 @@ namespace WebCore {
         TextEncoding m_encoding;
         size_t m_numBufferedBytes;
         unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character        
-        mutable PlatformRefPtr<GCharsetConverter> m_iconvDecoder;
-        mutable PlatformRefPtr<GCharsetConverter> m_iconvEncoder;
+        mutable GRefPtr<GCharsetConverter> m_iconvDecoder;
+        mutable GRefPtr<GCharsetConverter> m_iconvEncoder;
     };
 
 } // namespace WebCore

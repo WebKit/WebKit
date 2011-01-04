@@ -58,10 +58,10 @@ namespace WebCore {
         virtual void platformClose();
 
     private:
-        PlatformRefPtr<GSocketConnection> m_socketConnection;
-        PlatformRefPtr<GInputStream> m_inputStream;
-        PlatformRefPtr<GOutputStream> m_outputStream;
-        PlatformRefPtr<GSource> m_writeReadySource;
+        GRefPtr<GSocketConnection> m_socketConnection;
+        GRefPtr<GInputStream> m_inputStream;
+        GRefPtr<GOutputStream> m_outputStream;
+        GRefPtr<GSource> m_writeReadySource;
         char* m_readBuffer;
         void* m_id;
 
