@@ -54,6 +54,9 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
+// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
+#define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
+
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
 @end
@@ -330,8 +333,18 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 {
     SEL action = [item action];
 
-    if (action == @selector(stopSpeaking:))
-        return [NSApp isSpeaking];
+    if (action == @selector(showGuessPanel:)) {
+        if (NSMenuItem *menuItem = ::menuItem(item)) {
+            BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
+            [menuItem setTitle:panelShowing
+                ? UI_STRING("Hide Spelling and Grammar", "menu item title")
+                : UI_STRING("Show Spelling and Grammar", "menu item title")];
+        }
+        return _data->_page->selectionState().isContentEditable;
+    }
+
+    if (action == @selector(checkSpelling:))
+        return _data->_page->selectionState().isContentEditable;
 
     if (action == @selector(toggleContinuousSpellChecking:)) {
         bool enabled = TextChecker::isContinuousSpellCheckingAllowed();
@@ -345,6 +358,15 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
         return YES;
     }
+
+    if (action == @selector(toggleAutomaticSpellingCorrection:)) {
+        bool checked = TextChecker::isAutomaticSpellingCorrectionEnabled();
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return _data->_page->selectionState().isContentEditable;
+    }
+
+    if (action == @selector(stopSpeaking:))
+        return [NSApp isSpeaking];
 
     // Next, handle editor commands. Start by returning YES for anything that is not an editor command.
     // Returning YES is the default thing to do in an AppKit validate method for any selector that is not recognized.
@@ -390,6 +412,16 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
     [NSApp stopSpeaking:sender];
 }
 
+- (IBAction)showGuessPanel:(id)sender
+{
+    // FIXME (WebKit2) <rdar://problem/8245958> Make Spelling/Grammar checking work in WebKit2
+}
+
+- (IBAction)checkSpelling:(id)sender
+{
+    // FIXME (WebKit2) <rdar://problem/8245958> Make Spelling/Grammar checking work in WebKit2
+}
+
 - (IBAction)toggleContinuousSpellChecking:(id)sender
 {
     bool spellCheckingEnabled = !TextChecker::isContinuousSpellCheckingEnabled();
@@ -406,6 +438,11 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
     if (!grammarCheckingEnabled)
         _data->_page->unmarkAllBadGrammar();
+}
+
+- (IBAction)toggleAutomaticSpellingCorrection:(id)sender
+{
+    TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::isAutomaticSpellingCorrectionEnabled());
 }
 
 // Events

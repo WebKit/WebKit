@@ -36,6 +36,9 @@ public:
 
     static bool isGrammarCheckingEnabled();
     static void setGrammarCheckingEnabled(bool);
+
+    static void setAutomaticSpellingCorrectionEnabled(bool);
+    static bool isAutomaticSpellingCorrectionEnabled();
 };
 
 } // namespace WebKit

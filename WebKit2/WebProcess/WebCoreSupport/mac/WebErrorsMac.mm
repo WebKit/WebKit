@@ -40,6 +40,7 @@ static NSString * const WebKitErrorMIMETypeKey =               @"WebKitErrorMIME
 static NSString * const WebKitErrorPlugInNameKey =             @"WebKitErrorPlugInNameKey";
 static NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageURLStringKey";
 
+// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
 #define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
 
 // Policy errors

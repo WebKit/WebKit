@@ -29,6 +29,7 @@ namespace WebKit {
 
 static bool continuousSpellCheckingEnabled;
 static bool grammarCheckingEnabled;
+static bool automaticSpellingCorrectionEnabled;
     
 bool TextChecker::isContinuousSpellCheckingAllowed()
 {
@@ -70,6 +71,20 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
     
     // We call preflightSpellChecker() when turning continuous spell checking on, but we don't need to do that here
     // because grammar checking only occurs on code paths that already preflight spell checking appropriately.
+}
+
+void TextChecker::setAutomaticSpellingCorrectionEnabled(bool isAutomaticSpellingCorrectionEnabled)
+{
+    if (automaticSpellingCorrectionEnabled == isAutomaticSpellingCorrectionEnabled)
+        return;
+
+    automaticSpellingCorrectionEnabled = isAutomaticSpellingCorrectionEnabled;
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+bool TextChecker::isAutomaticSpellingCorrectionEnabled()
+{
+    return automaticSpellingCorrectionEnabled;
 }
 
 } // namespace WebKit

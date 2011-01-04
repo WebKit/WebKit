@@ -41,7 +41,7 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-// FIXME: Implement localization.
+// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
 #define UI_STRING(string, description) String::fromUTF8(string, strlen(string))
 #define UI_STRING_KEY(string, key, description) String::fromUTF8(string, strlen(string))
 

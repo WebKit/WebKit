@@ -1,3 +1,35 @@
+2011-01-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Add more spelling/grammar related methods
+        https://bugs.webkit.org/show_bug.cgi?id=51886
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        Handle more selectors.
+
+        (-[WKView showGuessPanel:]):
+        Add stub.
+
+        (-[WKView checkSpelling:]):
+        Ditto.
+
+        (-[WKView toggleAutomaticSpellingCorrection:]):
+        Toggle automatic spelling correction.
+
+        * UIProcess/TextChecker.h:
+        Add setAutomaticSpellingCorrectionEnabled and isAutomaticSpellingCorrectionEnabled.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::setAutomaticSpellingCorrectionEnabled):
+        (WebKit::TextChecker::isAutomaticSpellingCorrectionEnabled):
+        Update the toggle.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        Add a Radar URL for the localization FIXMEs.
+
 2011-01-04  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.
