@@ -1,3 +1,9 @@
+2011-01-04  Ojan Vafai  <ojan@chromium.org>
+
+        Increment version number to avoid getting the cached JS file.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2010-12-15  Ojan Vafai  <ojan@chromium.org>
  
         Reviewed by Adam Barth.

@@ -362,7 +362,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=17"></script>
+<script src="code-review.js?version=18"></script>
 EOF
 
     def self.revisionOrDescription(string)
