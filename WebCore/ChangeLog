@@ -1,5 +1,14 @@
 2011-01-03  Darin Adler  <darin@apple.com>
 
+        Try to fix Chromium build.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTreeNode): Added a V8 case here.
+        Not sure this ever will be used with V8.
+        (WebCore::HistoryItem::decodeBackForwardTree): Ditto.
+
+2011-01-03  Darin Adler  <darin@apple.com>
+
         Try to fix Leopard build.
 
         * history/HistoryItem.cpp: Use a consistent type, uint64_t, for the
