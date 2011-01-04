@@ -1,3 +1,14 @@
+2011-01-04  Dihan Wickremasuriya  <dihan.wickremasuriya@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [Symbian] Do not remove 0 byte sized files from productDir
+
+        On Symbian productDir points to the source directory. Removing all the
+        empty files from the productDir directory corrupts the svn repository.
+
+        * Scripts/build-webkit:
+
 2011-01-03  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Adam Barth.
