@@ -1,3 +1,10 @@
+2011-01-04  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
+        * win/WebKit2.vcproj: Disable CG-specific WKImageCG.cpp from
+        Debug_Cairo_CFLite/Release_Cario_CFLite builds.
+
 2011-01-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
