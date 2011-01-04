@@ -62,7 +62,7 @@ v8::Handle<v8::Value> V8DataView::getInt8Callback(const v8::Arguments& args)
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
     EXCEPTION_BLOCK(unsigned, byteOffset, toUInt32(args[0]));
-    char result = imp->getInt8(byteOffset, ec);
+    int8_t result = imp->getInt8(byteOffset, ec);
     if (UNLIKELY(ec)) {
         V8Proxy::setDOMException(ec);
         return v8::Handle<v8::Value>();
@@ -79,7 +79,7 @@ v8::Handle<v8::Value> V8DataView::getUint8Callback(const v8::Arguments& args)
     DataView* imp = V8DataView::toNative(args.Holder());
     ExceptionCode ec = 0;
     EXCEPTION_BLOCK(unsigned, byteOffset, toUInt32(args[0]));
-    unsigned char result = imp->getUint8(byteOffset, ec);
+    uint8_t result = imp->getUint8(byteOffset, ec);
     if (UNLIKELY(ec)) {
         V8Proxy::setDOMException(ec);
         return v8::Handle<v8::Value>();
@@ -97,7 +97,7 @@ v8::Handle<v8::Value> V8DataView::setInt8Callback(const v8::Arguments& args)
     ExceptionCode ec = 0;
     EXCEPTION_BLOCK(unsigned, byteOffset, toUInt32(args[0]));
     EXCEPTION_BLOCK(int, value, toInt32(args[1]));
-    imp->setInt8(byteOffset, static_cast<char>(value), ec);
+    imp->setInt8(byteOffset, static_cast<int8_t>(value), ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec);
     return v8::Handle<v8::Value>();
@@ -113,7 +113,7 @@ v8::Handle<v8::Value> V8DataView::setUint8Callback(const v8::Arguments& args)
     ExceptionCode ec = 0;
     EXCEPTION_BLOCK(unsigned, byteOffset, toUInt32(args[0]));
     EXCEPTION_BLOCK(int, value, toInt32(args[1]));
-    imp->setUint8(byteOffset, static_cast<unsigned char>(value), ec);
+    imp->setUint8(byteOffset, static_cast<uint8_t>(value), ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec);
     return v8::Handle<v8::Value>();

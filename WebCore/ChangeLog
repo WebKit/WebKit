@@ -1,3 +1,26 @@
+2011-01-04  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Darin Adler.
+
+        Let DataView.getInt8() and DataView.setInt8() use int8_t instead of
+        ambiguous 'char' to fix fast/canvas/webgl/data-view-test.html failure
+        on ARM.
+        https://bugs.webkit.org/show_bug.cgi?id=51861
+
+        By the way, changed other getIntXX() and setIntXX() methods to use
+        more precise integer types.
+
+        * bindings/js/JSDataViewCustom.cpp:
+        (WebCore::setDataViewMember):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::getInt8Callback):
+        (WebCore::V8DataView::setInt8Callback):
+        * html/canvas/DataView.cpp:
+        (WebCore::DataView::getInt8):
+        (WebCore::DataView::setInt8):
+        * html/canvas/DataView.h:
+        * html/canvas/DataView.idl:
+
 2011-01-04  Yong Li  <yoli@rim.com>
 
         Reviewed by Adam Barth.

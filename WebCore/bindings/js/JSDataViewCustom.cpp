@@ -136,10 +136,10 @@ static JSValue setDataViewMember(ExecState* exec, DataView* imp, DataViewAccessT
         
     switch (type) {
     case AccessDataViewMemberAsInt8:
-        imp->setInt8(byteOffset, static_cast<char>(value), ec);
+        imp->setInt8(byteOffset, static_cast<int8_t>(value), ec);
         break;
     case AccessDataViewMemberAsUint8:
-        imp->setUint8(byteOffset, static_cast<unsigned char>(value), ec);
+        imp->setUint8(byteOffset, static_cast<uint8_t>(value), ec);
         break;
     default:
         ASSERT_NOT_REACHED();
