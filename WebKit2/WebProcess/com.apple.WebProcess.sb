@@ -18,6 +18,7 @@
 
        ;; System and user preferences
        (literal "/Library/Preferences/.GlobalPreferences.plist")
+       (literal "/Library/Preferences/com.apple.security.plist")
        (literal (string-append (param "_HOME") "/Library/Preferences/.GlobalPreferences.plist"))
        (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
        (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.ATS.plist"))

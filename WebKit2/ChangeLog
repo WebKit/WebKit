@@ -1,5 +1,15 @@
 2011-01-04  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8766999> WebKit2: Sandboxing causes certificate error on access to any HTTPS URL
+
+        Allow read access to /Library/Preferences/com.apple.security.plist.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-01-04  Anders Carlsson  <andersca@apple.com>
+
         Build fixes.
 
         * UIProcess/qt/TextCheckerQt.cpp:
