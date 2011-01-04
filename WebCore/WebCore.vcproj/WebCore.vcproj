@@ -24725,10 +24725,6 @@
 		<Filter
 			Name="loader"
 			>
-            <File
-				RelativePath="..\loader\ResourceLoadPriority.h"
-				>
-			</File>
 			<File
 				RelativePath="..\loader\ResourceLoadScheduler.h"
 				>
@@ -29062,6 +29058,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\ResourceLoadInfo.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\ResourceLoadPriority.h"
 					>
 				</File>
 				<File

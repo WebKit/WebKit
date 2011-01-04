@@ -1,3 +1,18 @@
+2011-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/51890> Move ResourceLoadPriority.h into WebCore/platform/network
+
+        Reviewed by Antti Koivisto.
+
+        This is needed to prevent a WebCore/platform policy violation in
+        my next patch.
+
+        * WebCore.gypi: Updated for moved header.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/network/ResourceLoadPriority.h: Renamed from WebCore/loader/ResourceLoadPriority.h.
+
 2011-01-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by a spell checker.

@@ -1987,7 +1987,6 @@ HEADERS += \
     loader/PlaceholderDocument.h \
     loader/ProgressTracker.h \
     loader/ResourceLoader.h \
-    loader/ResourceLoadPriority.h \
     loader/SubresourceLoader.h \
     loader/TextResourceDecoder.h \
     loader/ThreadableLoader.h \
@@ -2176,6 +2175,7 @@ HEADERS += \
     platform/network/ResourceErrorBase.h \
     platform/network/ResourceHandle.h \
     platform/network/ResourceLoadInfo.h \
+    platform/network/ResourceLoadPriority.h \
     platform/network/ResourceLoadTiming.h \
     platform/network/ResourceRequestBase.h \
     platform/network/ResourceResponseBase.h \
