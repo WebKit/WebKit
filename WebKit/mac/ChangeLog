@@ -1,3 +1,18 @@
+2011-01-04  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/51889> WebFrameLoaderClient::createMediaPlayerProxyPlugin() should use WebCore::PluginInfo.name
+
+        Reviewed by Eric Carlson.
+
+        This originally broke in r61581.  It is inside an
+        ENABLE(PLUGIN_PROXY_FOR_VIDEO) macro, so it didn't break the Mac
+        build then.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm: Call
+        (WebFrameLoaderClient::createMediaPlayerProxyPlugin): Updated to
+        use WebCore::PluginInfo.name instead of
+        -[WebBasePluginPackage name].
+
 2011-01-02  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Simon Fraser.

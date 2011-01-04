@@ -1866,7 +1866,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createMediaPlayerProxyPlugin(const IntS
 
     if (errorCode) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-            contentURL:URL pluginPageURL:nil pluginName:[pluginPackage name] MIMEType:mimeType];
+            contentURL:URL pluginPageURL:nil pluginName:[pluginPackage pluginInfo].name MIMEType:mimeType];
         WebNullPluginView *nullView = [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
             error:error DOMElement:kit(element)] autorelease];
         view = nullView;
