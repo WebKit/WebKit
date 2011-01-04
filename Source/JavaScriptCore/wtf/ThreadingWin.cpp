@@ -208,13 +208,13 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 {
     unsigned threadIdentifier = 0;
     ThreadIdentifier threadID = 0;
-    ThreadFunctionInvocation* invocation = new ThreadFunctionInvocation(entryPoint, data);
+    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
 #if OS(WINCE)
     // This is safe on WINCE, since CRT is in the core and innately multithreaded.
     // On desktop Windows, need to use _beginthreadex (not available on WinCE) if using any CRT functions
-    HANDLE threadHandle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)wtfThreadEntryPoint, invocation, 0, (LPDWORD)&threadIdentifier);
+    HANDLE threadHandle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)wtfThreadEntryPoint, invocation.get(), 0, (LPDWORD)&threadIdentifier);
 #else
-    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation, 0, &threadIdentifier));
+    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation.get(), 0, &threadIdentifier));
 #endif
     if (!threadHandle) {
 #if OS(WINCE)
@@ -226,6 +226,9 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
 #endif
         return 0;
     }
+
+    // The thread will take ownership of invocation.
+    invocation.leakPtr();
 
     threadID = static_cast<ThreadIdentifier>(threadIdentifier);
     storeThreadHandleByIdentifier(threadIdentifier, threadHandle);

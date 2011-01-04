@@ -1,3 +1,13 @@
+2011-01-04  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Roben.
+
+        LEAK: Deallocate instance of ThreadFunctionInvocation if thread creation fails
+        https://bugs.webkit.org/show_bug.cgi?id=51860
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::createThreadInternal):
+
 2011-01-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Ariya Hidayat.
