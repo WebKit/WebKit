@@ -87,6 +87,7 @@
 #include "Threading.h"
 
 #include "MainThread.h"
+#include "ThreadFunctionInvocation.h"
 #if !USE(PTHREADS) && OS(WINDOWS)
 #include "ThreadSpecific.h"
 #endif
@@ -102,6 +103,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RandomNumberSeed.h>
 
 namespace WTF {
@@ -187,19 +189,10 @@ static void clearThreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
-struct ThreadFunctionInvocation {
-    ThreadFunctionInvocation(ThreadFunction function, void* data) : function(function), data(data) {}
-
-    ThreadFunction function;
-    void* data;
-};
-
 static unsigned __stdcall wtfThreadEntryPoint(void* param)
 {
-    ThreadFunctionInvocation invocation = *static_cast<ThreadFunctionInvocation*>(param);
-    delete static_cast<ThreadFunctionInvocation*>(param);
-
-    void* result = invocation.function(invocation.data);
+    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(param));
+    void* result = invocation->function(invocation.data);
 
 #if !USE(PTHREADS) && OS(WINDOWS)
     // Do the TLS cleanup.

@@ -50,6 +50,8 @@
 
 #if OS(ANDROID)
 #include "JNIUtility.h"
+#include "ThreadFunctionInvocation.h"
+#include <wtf/OwnPtr.h>
 #endif
 
 namespace WTF {
@@ -136,38 +138,34 @@ void clearPthreadHandleForIdentifier(ThreadIdentifier id)
 }
 
 #if OS(ANDROID)
-// On the Android platform, threads must be registered with the VM before they run.
-struct ThreadData {
-    ThreadFunction entryPoint;
-    void* arg;
-};
-
 static void* runThreadWithRegistration(void* arg)
 {
-    ThreadData* data = static_cast<ThreadData*>(arg);
+    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(arg));
     JavaVM* vm = JSC::Bindings::getJavaVM();
     JNIEnv* env;
     void* ret = 0;
     if (vm->AttachCurrentThread(&env, 0) == JNI_OK) {
-        ret = data->entryPoint(data->arg);
+        ret = invocation->function(invocation.data);
         vm->DetachCurrentThread();
     }
-    delete data;
     return ret;
 }
 
 ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, const char*)
 {
     pthread_t threadHandle;
-    ThreadData* threadData = new ThreadData();
-    threadData->entryPoint = entryPoint;
-    threadData->arg = data;
 
-    if (pthread_create(&threadHandle, 0, runThreadWithRegistration, static_cast<void*>(threadData))) {
+    // On the Android platform, threads must be registered with the VM before they run.
+    OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(new ThreadFunctionInvocation(entryPoint, data));
+
+    if (pthread_create(&threadHandle, 0, runThreadWithRegistration, invocation.get())) {
         LOG_ERROR("Failed to create pthread at entry point %p with data %p", entryPoint, data);
-        delete threadData;
         return 0;
     }
+
+    // The thread will take ownership of invocation.
+    invocation.leakPtr();
+
     return establishIdentifierForPthreadHandle(threadHandle);
 }
 #else

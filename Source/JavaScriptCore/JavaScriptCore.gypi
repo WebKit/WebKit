@@ -440,6 +440,7 @@
             'wtf/TCSpinLock.h',
             'wtf/TCSystemAlloc.cpp',
             'wtf/TCSystemAlloc.h',
+            'wtf/ThreadFunctionInvocation.h',
             'wtf/ThreadIdentifierDataPthreads.cpp',
             'wtf/ThreadIdentifierDataPthreads.h',
             'wtf/Threading.cpp',
