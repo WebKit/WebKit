@@ -210,7 +210,10 @@ void GStreamerGWorld::setWindowOverlay(GstMessage* message)
 
     if (m_videoWindow) {
         m_videoWindow->prepareForOverlay(message);
-#if GST_CHECK_VERSION(0, 10, 31) || GST_VERSION_NANO
+
+// gst_x_overlay_set_window_handle was introduced in -plugins-base
+// 0.10.31, just like the macro for checking the version.
+#ifdef GST_CHECK_PLUGINS_BASE_VERSION
         gst_x_overlay_set_window_handle(GST_X_OVERLAY(sink), m_videoWindow->videoWindowId());
 #else
         gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(sink), m_videoWindow->videoWindowId());

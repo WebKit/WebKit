@@ -1,3 +1,19 @@
+2011-01-03  Philippe Normand  <pnormand@igalia.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        [GStreamer] build fails with gstreamer core 0.10.31 and -plugins-base 0.10.30
+        https://bugs.webkit.org/show_bug.cgi?id=51810
+
+        Based on a patch by Mart Raudsepp.
+
+        No new tests, build fix only.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::setWindowOverlay): Use the new xoverlay
+        API if the GST_CHECK_PLUGINS_BASE_VERSION macro is defined. It was
+        introduced in same version as the xoverlay API change.
+
 2011-01-04  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Dirk Schulze.
