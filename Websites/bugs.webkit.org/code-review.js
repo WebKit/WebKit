@@ -602,11 +602,20 @@
     $('#statusBubbleContainer').addClass('wrap');
   }
 
+  function onBodyResize() {
+    updateToolbarAnchorState();
+  }
+
+  function updateToolbarAnchorState() {
+    var has_scrollbar = window.innerWidth > document.documentElement.offsetWidth;
+    $('#toolbar').toggleClass('anchored', has_scrollbar);
+  }
+
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
     $(document.body).prepend('<div id="message"><div class="help">Select line numbers to add a comment.</div><div class="commentStatus"></div></div>');
-    $(document.body).prepend('<div id="toolbar">' +
+    $(document.body).append('<div id="toolbar">' +
         '<div class="overallComments">' +
             '<textarea placeholder="Overall comments"></textarea>' +
         '</div>' +
@@ -624,6 +633,14 @@
     $('.overallComments textarea').bind('click', openOverallComments);
 
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
+
+    // Create a dummy iframe and monitor resizes in it's contentWindow to detect when the top document's body changes size.
+    // FIXME: Should we setTimeout throttle these?
+    var resize_iframe = $('<iframe class="pseudo_resize_event_iframe"></iframe>');
+    $(document.body).append(resize_iframe);
+    $(resize_iframe[0].contentWindow).bind('resize', onBodyResize);
+
+    updateToolbarAnchorState();
   });
 
   function discardComment() {

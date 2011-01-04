@@ -114,7 +114,7 @@ private
     background-color: #f8f8f8;
     border: 1px solid #ddd;
     font-family: monospace;
-    margin: 2em 0px;
+    margin: 1em 0;
 }
 
 h1 {
@@ -230,14 +230,17 @@ body {
 #toolbar {
   display: -webkit-box;
   display: -moz-box;
-  position: fixed;
   padding: 3px;
   bottom: 0;
   left: 0;
   right: 0;
-  border-top: 1px solid #ddd;
+  border: 1px solid #ddd;
   background-color: #eee;
   font-family: sans-serif;
+}
+
+#toolbar.anchored {
+  position: fixed;
 }
 
 #toolbar .actions {
@@ -349,6 +352,13 @@ body {
   margin: 2px 2px 0 0;
   border: none;
   vertical-align: middle;
+}
+
+.pseudo_resize_event_iframe {
+  height: 10%;
+  width: 10%;
+  position: absolute;
+  top: -11%;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 

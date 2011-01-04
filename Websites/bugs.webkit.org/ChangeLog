@@ -1,3 +1,13 @@
+2010-12-15  Ojan Vafai  <ojan@chromium.org>
+ 
+        Reviewed by Adam Barth.
+
+        anchor the toolbar to the bottom of the diff if the diff doesn't take a full screen of height
+        https://bugs.webkit.org/show_bug.cgi?id=51162
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
