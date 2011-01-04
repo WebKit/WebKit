@@ -6,22 +6,22 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 328x19
         text run at (0,0) width 328: "This tests that you can set the placeholder text color."
       RenderBR {BR} at (328,15) size 0x0
-      RenderText {#text} at (208,54) size 4x19
-        text run at (208,54) width 4: " "
-      RenderText {#text} at (420,54) size 4x19
-        text run at (420,54) width 4: " "
-      RenderText {#text} at (632,54) size 4x19
-        text run at (632,54) width 4: " "
+      RenderText {#text} at (206,52) size 4x19
+        text run at (206,52) width 4: " "
+      RenderText {#text} at (416,52) size 4x19
+        text run at (416,52) width 4: " "
+      RenderText {#text} at (626,52) size 4x19
+        text run at (626,52) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (10,29) size 204x46 clip at (12,31) size 200x42
-  RenderTextControl {TEXTAREA} at (2,21) size 204x46 [bgcolor=#FFFFFF] [border: (2px solid #000000)]
-    RenderBlock {DIV} at (4,4) size 196x19
-layer at (222,29) size 204x46 clip at (224,31) size 200x42
-  RenderTextControl {TEXTAREA} at (214,21) size 204x46 [bgcolor=#FFFFFF] [border: (2px solid #000000)]
-    RenderBlock {DIV} at (4,4) size 196x19 [color=#545454]
-layer at (434,29) size 204x46 clip at (436,31) size 200x42
-  RenderTextControl {TEXTAREA} at (426,21) size 204x46 [bgcolor=#FFFFFF] [border: (2px solid #000000)]
-    RenderBlock {DIV} at (4,4) size 196x19
-layer at (10,83) size 204x46 clip at (12,85) size 200x42
-  RenderTextControl {TEXTAREA} at (2,75) size 204x46 [bgcolor=#FFFFFF] [border: (2px solid #000000)]
-    RenderBlock {DIV} at (4,4) size 196x19 [color=#545454]
+layer at (10,29) size 202x44 clip at (11,30) size 200x42
+  RenderTextControl {TEXTAREA} at (2,21) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 196x19
+layer at (220,29) size 202x44 clip at (221,30) size 200x42
+  RenderTextControl {TEXTAREA} at (212,21) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 196x19 [color=#545454]
+layer at (430,29) size 202x44 clip at (431,30) size 200x42
+  RenderTextControl {TEXTAREA} at (422,21) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 196x19
+layer at (10,81) size 202x44 clip at (11,82) size 200x42
+  RenderTextControl {TEXTAREA} at (2,73) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 196x19 [color=#545454]

@@ -1,3 +1,30 @@
+2011-01-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use the default CSS text input control border width of relying on the GTK+ theme
+        https://bugs.webkit.org/show_bug.cgi?id=51887
+
+        Update all results that use text areas. These controls now have a 1 pixel
+        border (the default in html.css) instead of using the border size from the
+        GTK+ theme.
+
+        * platform/gtk/fast/forms/basic-textareas-expected.txt:
+        * platform/gtk/fast/forms/form-element-geometry-expected.txt:
+        * platform/gtk/fast/forms/onselect-textarea-expected.txt:
+        * platform/gtk/fast/forms/placeholder-stripped-expected.txt:
+        * platform/gtk/fast/forms/search-styled-expected.txt:
+        * platform/gtk/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/gtk/fast/forms/textarea-align-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-set-attribute-expected.txt:
+        * platform/gtk/fast/forms/textarea-placeholder-set-value-expected.txt:
+        * platform/gtk/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/gtk/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/gtk/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/gtk/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/gtk/fast/forms/textarea-width-expected.txt:
+
 2011-01-04  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Kenneth Russell.

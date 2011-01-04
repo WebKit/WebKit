@@ -1,3 +1,22 @@
+2011-01-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use the default CSS text input control border width of relying on the GTK+ theme
+        https://bugs.webkit.org/show_bug.cgi?id=51887
+
+        Do not rely on the GTK+ theme to determine text control borders. This simplifies
+        the RenderTheme code, prevents metrics differences between GTK+ 2.x and 3.x and
+        doesn't break the rendering of any theme that I've encountered.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustSearchFieldStyle): No longer call setTextInputBorders, but
+        still disable any border radius.
+        * platform/gtk/RenderThemeGtk.h: Remove setTextInputBorders and no longer override the
+        default style of text areas and text input controls.
+        * platform/gtk/RenderThemeGtk2.cpp: Ditto.
+        * platform/gtk/RenderThemeGtk3.cpp: Ditto.
+
 2011-01-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Darin Adler.

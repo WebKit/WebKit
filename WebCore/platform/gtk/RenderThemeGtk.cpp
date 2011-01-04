@@ -265,16 +265,6 @@ bool RenderThemeGtk::paintMenuListButton(RenderObject* object, const PaintInfo& 
     return paintMenuList(object, info, rect);
 }
 
-void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
-{
-    RenderThemeGtk::setTextInputBorders(style);
-}
-
-void RenderThemeGtk::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
-{
-    RenderThemeGtk::setTextInputBorders(style);
-}
-
 bool RenderThemeGtk::paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
     return paintTextField(o, i, r);
@@ -355,8 +345,9 @@ bool RenderThemeGtk::paintSearchFieldCancelButton(RenderObject* renderObject, co
 
 void RenderThemeGtk::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
+    // We cannot give a proper rendering when border radius is active, unfortunately.
+    style->resetBorderRadius();
     style->setLineHeight(RenderStyle::initialLineHeight());
-    setTextInputBorders(style);
 }
 
 bool RenderThemeGtk::paintSearchField(RenderObject* o, const PaintInfo& i, const IntRect& rect)

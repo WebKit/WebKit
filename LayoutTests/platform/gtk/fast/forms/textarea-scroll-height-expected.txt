@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderText {#text} at (200,185) size 4x19
         text run at (200,185) width 4: " "
       RenderText {#text} at (204,185) size 52x19
-        text run at (204,185) width 52: "180 460"
-layer at (8,8) size 200x200 clip at (10,10) size 180x196 scrollHeight 460
-  RenderTextControl {TEXTAREA} at (0,0) size 200x200 [bgcolor=#FFFFFF] [border: (2px solid #000000)]
-    RenderBlock {DIV} at (4,4) size 176x456
+        text run at (204,185) width 52: "182 460"
+layer at (8,8) size 200x200 clip at (9,9) size 182x198 scrollHeight 460
+  RenderTextControl {TEXTAREA} at (0,0) size 200x200 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 178x456
       RenderText {#text} at (0,0) size 107x437
         text run at (0,0) width 107: "Lots of content."
         text run at (107,0) width 0: " "

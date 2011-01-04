@@ -233,24 +233,6 @@ bool RenderThemeGtk::paintMenuList(RenderObject* object, const PaintInfo& info, 
     return paintRenderObject(MOZ_GTK_DROPDOWN, object, info.context, rect);
 }
 
-void RenderThemeGtk::setTextInputBorders(RenderStyle* style)
-{
-    // If this control isn't drawn using the native theme, we don't touch the borders.
-    if (style->appearance() == NoControlPart)
-        return;
-
-    // We cannot give a proper rendering when border radius is active, unfortunately.
-    style->resetBorderRadius();
-
-    int left = 0, top = 0, right = 0, bottom = 0;
-    moz_gtk_get_widget_border(MOZ_GTK_ENTRY, &left, &top, &right, &bottom,
-                              gtkTextDirection(style->direction()), TRUE);
-    style->setBorderLeftWidth(left);
-    style->setBorderTopWidth(top);
-    style->setBorderRightWidth(right);
-    style->setBorderBottomWidth(bottom);
-}
-
 bool RenderThemeGtk::paintTextField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     return paintRenderObject(MOZ_GTK_ENTRY, object, info.context, rect);

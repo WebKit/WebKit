@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x19
         RenderText {#text} at (0,0) size 439x19
           text run at (0,0) width 439: "If you can see the word \"Placeholder\" in the text area, then all is well."
-      RenderBlock {P} at (0,35) size 784x50
-layer at (10,45) size 204x46 clip at (12,47) size 200x42
-  RenderTextControl {TEXTAREA} at (2,2) size 204x46 [bgcolor=#FFFFFF] [border: (2px solid #000000)]
-    RenderBlock {DIV} at (4,4) size 196x19
+      RenderBlock {P} at (0,35) size 784x48
+layer at (10,45) size 202x44 clip at (11,46) size 200x42
+  RenderTextControl {TEXTAREA} at (2,2) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 196x19
