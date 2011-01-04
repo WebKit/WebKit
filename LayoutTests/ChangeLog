@@ -1,3 +1,38 @@
+2011-01-03  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update
+
+        Add expectations of r74954 tests for Chromium.
+
+        * platform/chromium-linux/fast/css-generated-content/table-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-before-after-child-add-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-cell-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-cell-before-after-child-add-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-row-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-row-before-after-child-add-expected.png: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-table-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-linux/fast/css-generated-content/table-table-before-after-child-add-expected.png: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-before-after-child-add-expected.png: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-cell-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-cell-before-after-child-add-expected.png: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-row-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-row-before-after-child-add-expected.png: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-table-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-mac/fast/css-generated-content/table-table-before-after-child-add-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/table-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-win/fast/css-generated-content/table-before-after-child-add-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/table-before-after-child-add-expected.txt: Added.
+        * platform/chromium-win/fast/css-generated-content/table-cell-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-win/fast/css-generated-content/table-cell-before-after-child-add-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/table-cell-before-after-child-add-expected.txt: Added.
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-child-add-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-child-add-expected.txt: Added.
+        * platform/chromium-win/fast/css-generated-content/table-table-before-after-child-add-expected.checksum: Added.
+        * platform/chromium-win/fast/css-generated-content/table-table-before-after-child-add-expected.png: Added.
+        * platform/chromium-win/fast/css-generated-content/table-table-before-after-child-add-expected.txt: Added.
+
 2011-01-03  Julie-Jeongeun-Kim  <Jeongeun.Kim@obigo.com>
 
         Reviewed by Darin Adler.
