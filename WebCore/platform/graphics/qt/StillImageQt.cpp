@@ -74,19 +74,17 @@ void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     CompositeOperator previousOperator = ctxt->compositeOperation();
     ctxt->setCompositeOperation(op);
 
-    QPainter* painter = ctxt->platformContext();
-
     ContextShadow* shadow = ctxt->contextShadow();
     if (shadow->m_type != ContextShadow::NoShadow) {
-        QPainter* shadowPainter = shadow->beginShadowLayer(painter, normalizedDst);
+        QPainter* shadowPainter = shadow->beginShadowLayer(ctxt, normalizedDst);
         if (shadowPainter) {
             shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
             shadowPainter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
-            shadow->endShadowLayer(painter);
+            shadow->endShadowLayer(ctxt);
         }
     }
 
-    painter->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
+    ctxt->platformContext()->drawPixmap(normalizedDst, *m_pixmap, normalizedSrc);
     ctxt->setCompositeOperation(previousOperator);
 }
 

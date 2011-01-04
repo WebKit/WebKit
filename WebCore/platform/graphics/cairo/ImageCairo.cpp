@@ -138,13 +138,13 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     ContextShadow* shadow = context->contextShadow();
     ASSERT(shadow);
     if (shadow->m_type != ContextShadow::NoShadow) {
-        cairo_t* shadowContext = shadow->beginShadowLayer(cr, dstRect);
+        cairo_t* shadowContext = shadow->beginShadowLayer(context, dstRect);
         if (shadowContext) {
             cairo_translate(shadowContext, dstRect.x(), dstRect.y());
             cairo_set_source(shadowContext, pattern);
             cairo_rectangle(shadowContext, 0, 0, dstRect.width(), dstRect.height());
             cairo_fill(shadowContext);
-            shadow->endShadowLayer(cr);
+            shadow->endShadowLayer(context);
         }
     }
 

@@ -29,7 +29,9 @@
 #include "config.h"
 #include "ContextShadow.h"
 
+#include "AffineTransform.h"
 #include "CairoUtilities.h"
+#include "GraphicsContext.h"
 #include "OwnPtrCairo.h"
 #include "Path.h"
 #include "Timer.h"
@@ -81,20 +83,12 @@ static cairo_surface_t* getScratchBuffer(const IntSize& size)
     return scratchBuffer;
 }
 
-AffineTransform ContextShadow::getTransformationMatrixFromContext(PlatformContext context)
-{
-    cairo_matrix_t transform;
-    cairo_get_matrix(context, &transform);
-    return AffineTransform(transform.xx, transform.yx, transform.xy,
-                           transform.yy, transform.x0, transform.y0);
-}
-
-PlatformContext ContextShadow::beginShadowLayer(PlatformContext context, const FloatRect& layerArea)
+PlatformContext ContextShadow::beginShadowLayer(GraphicsContext* context, const FloatRect& layerArea)
 {
     adjustBlurDistance(context);
 
     double x1, x2, y1, y2;
-    cairo_clip_extents(context, &x1, &y1, &x2, &y2);
+    cairo_clip_extents(context->platformContext(), &x1, &y1, &x2, &y2);
     IntRect layerRect = calculateLayerBoundingRect(context, layerArea, IntRect(x1, y1, x2 - x1, y2 - y1));
 
     // Don't paint if we are totally outside the clip region.
@@ -113,7 +107,7 @@ PlatformContext ContextShadow::beginShadowLayer(PlatformContext context, const F
     return m_layerContext;
 }
 
-void ContextShadow::endShadowLayer(cairo_t* cr)
+void ContextShadow::endShadowLayer(GraphicsContext* context)
 {
     cairo_destroy(m_layerContext);
     m_layerContext = 0;
@@ -126,6 +120,7 @@ void ContextShadow::endShadowLayer(cairo_t* cr)
         cairo_surface_mark_dirty(m_layerImage);
     }
 
+    cairo_t* cr = context->platformContext();
     cairo_save(cr);
     setSourceRGBAFromColor(cr, m_color);
     cairo_mask_surface(cr, m_layerImage, m_layerOrigin.x(), m_layerOrigin.y());
@@ -135,7 +130,7 @@ void ContextShadow::endShadowLayer(cairo_t* cr)
     scheduleScratchBufferPurge();
 }
 
-void ContextShadow::drawRectShadowWithoutTiling(PlatformContext context, const IntRect& shadowRect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius, float alpha)
+void ContextShadow::drawRectShadowWithoutTiling(GraphicsContext* context, const IntRect& shadowRect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius, float alpha)
 {
     beginShadowLayer(context, shadowRect);
 
@@ -201,7 +196,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     cairo_t* cr = context->platformContext();
     if ((!context->getCTM().isIdentityOrTranslationOrFlipped()) || (radiusTwice > rect.width())
         || (radiusTwice > rect.height()) || (m_type != BlurShadow)) {
-        drawRectShadowWithoutTiling(cr, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
+        drawRectShadowWithoutTiling(context, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
         return;
     }
 
@@ -229,10 +224,10 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     // Reduce the size of what we have to draw with the clip area.
     double x1, x2, y1, y2;
     cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
-    calculateLayerBoundingRect(cr, shadowRect, IntRect(x1, y1, x2 - x1, y2 - y1));
+    calculateLayerBoundingRect(context, shadowRect, IntRect(x1, y1, x2 - x1, y2 - y1));
 
     if ((shadowTemplateSize.width() * shadowTemplateSize.height() > m_sourceRect.width() * m_sourceRect.height())) {
-        drawRectShadowWithoutTiling(cr, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
+        drawRectShadowWithoutTiling(context, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
         return;
     }
 

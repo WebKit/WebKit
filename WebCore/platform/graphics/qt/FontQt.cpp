@@ -146,20 +146,20 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
 
             if (ctxShadow->m_type != ContextShadow::NoShadow) {
                 ContextShadow* ctxShadow = ctx->contextShadow();
-                if (!ctxShadow->mustUseContextShadow(p)) {
+                if (!ctxShadow->mustUseContextShadow(ctx)) {
                     p->save();
                     p->setPen(ctxShadow->m_color);
                     p->translate(ctxShadow->offset());
                     line.draw(p, pt);
                     p->restore();
                 } else {
-                    QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
+                    QPainter* shadowPainter = ctxShadow->beginShadowLayer(ctx, boundingRect);
                     if (shadowPainter) {
                         // Since it will be blurred anyway, we don't care about render hints.
                         shadowPainter->setFont(p->font());
                         shadowPainter->setPen(ctxShadow->m_color);
                         line.draw(shadowPainter, pt);
-                        ctxShadow->endShadowLayer(p);
+                        ctxShadow->endShadowLayer(ctx);
                     }
                 }
             }
@@ -204,13 +204,13 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
 #else
                 QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string), fm.height());
 #endif
-                QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
+                QPainter* shadowPainter = ctxShadow->beginShadowLayer(ctx, boundingRect);
                 if (shadowPainter) {
                     // Since it will be blurred anyway, we don't care about render hints.
                     shadowPainter->setFont(p->font());
                     shadowPainter->setPen(ctxShadow->m_color);
                     shadowPainter->drawText(pt, string, flags, run.padding());
-                    ctxShadow->endShadowLayer(p);
+                    ctxShadow->endShadowLayer(ctx);
                 }
             }
         } else if (ctx->textDrawingMode() & TextModeStroke) {
@@ -225,12 +225,12 @@ static void drawTextCommon(GraphicsContext* ctx, const TextRun& run, const Float
 #else
                 QRectF boundingRect(pt.x(), point.y() - fm.ascent(), fm.width(string), fm.height());
 #endif
-                QPainter* shadowPainter = ctxShadow->beginShadowLayer(p, boundingRect);
+                QPainter* shadowPainter = ctxShadow->beginShadowLayer(ctx, boundingRect);
                 if (shadowPainter) {
                     // Since it will be blurred anyway, we don't care about render hints.
                     shadowPainter->setFont(p->font());
                     shadowPainter->strokePath(textStrokePath, QPen(ctxShadow->m_color));
-                    ctxShadow->endShadowLayer(p);
+                    ctxShadow->endShadowLayer(ctx);
                 }
             }
         }

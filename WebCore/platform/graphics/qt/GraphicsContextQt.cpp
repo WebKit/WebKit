@@ -510,13 +510,13 @@ void GraphicsContext::fillPath(const Path& path)
 
     if (m_data->hasShadow()) {
         ContextShadow* shadow = contextShadow();
-        if (shadow->mustUseContextShadow(p) || m_state.fillPattern || m_state.fillGradient)
+        if (shadow->mustUseContextShadow(this) || m_state.fillPattern || m_state.fillGradient)
         {
-            QPainter* shadowPainter = shadow->beginShadowLayer(p, platformPath.controlPointRect());
+            QPainter* shadowPainter = shadow->beginShadowLayer(this, platformPath.controlPointRect());
             if (shadowPainter) {
                 shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
                 shadowPainter->fillPath(platformPath, QColor(m_data->shadow.m_color));
-                shadow->endShadowLayer(p);
+                shadow->endShadowLayer(this);
             }
         } else {
             QPointF offset = shadow->offset();
@@ -548,15 +548,15 @@ void GraphicsContext::strokePath(const Path& path)
 
     if (m_data->hasShadow()) {
         ContextShadow* shadow = contextShadow();
-        if (shadow->mustUseContextShadow(p) || m_state.strokePattern || m_state.strokeGradient)
+        if (shadow->mustUseContextShadow(this) || m_state.strokePattern || m_state.strokeGradient)
         {
             FloatRect boundingRect = platformPath.controlPointRect();
             boundingRect.inflate(pen.miterLimit() + pen.widthF());
-            QPainter* shadowPainter = shadow->beginShadowLayer(p, boundingRect);
+            QPainter* shadowPainter = shadow->beginShadowLayer(this, boundingRect);
             if (shadowPainter) {
                 shadowPainter->setOpacity(static_cast<qreal>(m_data->shadow.m_color.alpha()) / 255);
                 shadowPainter->strokePath(platformPath, pen);
-                shadow->endShadowLayer(p);
+                shadow->endShadowLayer(this);
             }
         } else {
             QPen shadowPen(pen);
@@ -663,33 +663,33 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         AffineTransform affine;
         QBrush brush(m_state.fillPattern->createPlatformPattern(affine));
         QPixmap* image = m_state.fillPattern->tileImage()->nativeImageForCurrentFrame();
-        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(p, normalizedRect) : 0;
+        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
         if (shadowPainter) {
             drawRepeatPattern(shadowPainter, image, normalizedRect, m_state.fillPattern->repeatX(), m_state.fillPattern->repeatY());
             shadowPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
             shadowPainter->fillRect(normalizedRect, shadow->m_color);
-            shadow->endShadowLayer(p);
+            shadow->endShadowLayer(this);
         }
         drawRepeatPattern(p, image, normalizedRect, m_state.fillPattern->repeatX(), m_state.fillPattern->repeatY());
     } else if (m_state.fillGradient) {
         QBrush brush(*m_state.fillGradient->platformGradient());
         brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
-        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(p, normalizedRect) : 0;
+        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
         if (shadowPainter) {
             shadowPainter->fillRect(normalizedRect, brush);
             shadowPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
             shadowPainter->fillRect(normalizedRect, shadow->m_color);
-            shadow->endShadowLayer(p);
+            shadow->endShadowLayer(this);
         }
         p->fillRect(normalizedRect, brush);
     } else {
         if (m_data->hasShadow()) {
-            if (shadow->mustUseContextShadow(p)) {
-                QPainter* shadowPainter = shadow->beginShadowLayer(p, normalizedRect);
+            if (shadow->mustUseContextShadow(this)) {
+                QPainter* shadowPainter = shadow->beginShadowLayer(this, normalizedRect);
                 if (shadowPainter) {
                     shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
                     shadowPainter->fillRect(normalizedRect, p->brush());
-                    shadow->endShadowLayer(p);
+                    shadow->endShadowLayer(this);
                 }
             } else {
                 // Solid rectangle fill with no blur shadow or transformations applied can be done
@@ -716,12 +716,12 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
 
     if (m_data->hasShadow()) {
         ContextShadow* shadow = contextShadow();
-        if (shadow->mustUseContextShadow(p)) {
-            QPainter* shadowPainter = shadow->beginShadowLayer(p, normalizedRect);
+        if (shadow->mustUseContextShadow(this)) {
+            QPainter* shadowPainter = shadow->beginShadowLayer(this, normalizedRect);
             if (shadowPainter) {
                 shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
                 shadowPainter->fillRect(normalizedRect, shadow->m_color);
-                shadow->endShadowLayer(p);
+                shadow->endShadowLayer(this);
             }
         } else
             p->fillRect(normalizedRect.translated(shadow->offset()), shadow->m_color);
@@ -740,12 +740,12 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     QPainter* p = m_data->p();
     if (m_data->hasShadow()) {
         ContextShadow* shadow = contextShadow();
-        if (shadow->mustUseContextShadow(p)) {
-            QPainter* shadowPainter = shadow->beginShadowLayer(p, rect);
+        if (shadow->mustUseContextShadow(this)) {
+            QPainter* shadowPainter = shadow->beginShadowLayer(this, rect);
             if (shadowPainter) {
                 shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
                 shadowPainter->fillPath(path.platformPath(), QColor(m_data->shadow.m_color));
-                shadow->endShadowLayer(p);
+                shadow->endShadowLayer(this);
             }
         } else {
             p->translate(m_data->shadow.offset());

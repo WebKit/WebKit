@@ -72,7 +72,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
     if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow->m_type == ContextShadow::NoShadow)
         return;
 
-    if (!shadow->mustUseContextShadow(context)) {
+    if (!shadow->mustUseContextShadow(graphicsContext)) {
         // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
         cairo_save(context);
         cairo_translate(context, shadow->m_offset.width(), shadow->m_offset.height());
@@ -86,11 +86,11 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
     cairo_text_extents_t extents;
     cairo_scaled_font_glyph_extents(font->platformData().scaledFont(), glyphs, numGlyphs, &extents);
     FloatRect fontExtentsRect(point.x(), point.y() - extents.height, extents.width, extents.height);
-    cairo_t* shadowContext = shadow->beginShadowLayer(context, fontExtentsRect);
+    cairo_t* shadowContext = shadow->beginShadowLayer(graphicsContext, fontExtentsRect);
     if (shadowContext) {
         prepareContextForGlyphDrawing(shadowContext, font, point);
         drawGlyphsToContext(shadowContext, font, glyphs, numGlyphs);
-        shadow->endShadowLayer(context);
+        shadow->endShadowLayer(graphicsContext);
     }
 }
 

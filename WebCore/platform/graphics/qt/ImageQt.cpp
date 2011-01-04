@@ -209,11 +209,11 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
 
     ContextShadow* shadow = ctxt->contextShadow();
     if (shadow->m_type != ContextShadow::NoShadow) {
-        QPainter* shadowPainter = shadow->beginShadowLayer(painter, normalizedDst);
+        QPainter* shadowPainter = shadow->beginShadowLayer(ctxt, normalizedDst);
         if (shadowPainter) {
             shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
             shadowPainter->drawPixmap(normalizedDst, *image, normalizedSrc);
-            shadow->endShadowLayer(painter);
+            shadow->endShadowLayer(ctxt);
         }
     }
 

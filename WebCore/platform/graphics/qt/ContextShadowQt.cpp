@@ -28,6 +28,8 @@
 #include "config.h"
 #include "ContextShadow.h"
 
+#include "AffineTransform.h"
+#include "GraphicsContext.h"
 #include <QPainter>
 #include <QTimerEvent>
 
@@ -100,19 +102,14 @@ void ShadowBuffer::timerEvent(QTimerEvent* event)
     QObject::timerEvent(event);
 }
 
-AffineTransform ContextShadow::getTransformationMatrixFromContext(PlatformContext context)
-{
-    const QTransform& transform = context->transform();
-    return AffineTransform(transform.m11(), transform.m12(), transform.m21(),
-                           transform.m22(), transform.dx(), transform.dy());
-}
-
 Q_GLOBAL_STATIC(ShadowBuffer, scratchShadowBuffer)
 
-PlatformContext ContextShadow::beginShadowLayer(PlatformContext p, const FloatRect& layerArea)
+PlatformContext ContextShadow::beginShadowLayer(GraphicsContext* context, const FloatRect& layerArea)
 {
     // Set m_blurDistance.
-    adjustBlurDistance(p);
+    adjustBlurDistance(context);
+
+    PlatformContext p = context->platformContext();
 
     QRect clipRect;
     if (p->hasClipping())
@@ -126,7 +123,7 @@ PlatformContext ContextShadow::beginShadowLayer(PlatformContext p, const FloatRe
 
     // Set m_layerOrigin, m_layerContextTranslation, m_sourceRect.
     IntRect clip(clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
-    IntRect layerRect = calculateLayerBoundingRect(p, layerArea, clip);
+    IntRect layerRect = calculateLayerBoundingRect(context, layerArea, clip);
 
     // Don't paint if we are totally outside the clip region.
     if (layerRect.isEmpty())
@@ -143,7 +140,7 @@ PlatformContext ContextShadow::beginShadowLayer(PlatformContext p, const FloatRe
     return m_layerContext;
 }
 
-void ContextShadow::endShadowLayer(PlatformContext p)
+void ContextShadow::endShadowLayer(GraphicsContext* context)
 {
     m_layerContext->end();
     delete m_layerContext;
@@ -162,7 +159,7 @@ void ContextShadow::endShadowLayer(PlatformContext p)
         p.end();
     }
 
-    p->drawImage(m_layerOrigin, m_layerImage, m_sourceRect);
+    context->platformContext()->drawImage(m_layerOrigin, m_layerImage, m_sourceRect);
 
     scratchShadowBuffer()->schedulePurge();
 }

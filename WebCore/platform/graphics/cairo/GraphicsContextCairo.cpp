@@ -165,7 +165,7 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
         solidFigureExtents.unite(fillExtents);
     }
 
-    cairo_t* shadowContext = shadow->beginShadowLayer(cairoContext, solidFigureExtents);
+    cairo_t* shadowContext = shadow->beginShadowLayer(context, solidFigureExtents);
     if (!shadowContext)
         return;
 
@@ -179,7 +179,7 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
     if (drawingStyle & Stroke)
         setPlatformStroke(context, shadowContext);
 
-    shadow->endShadowLayer(cairoContext);
+    shadow->endShadowLayer(context);
 }
 
 static void fillCurrentCairoPath(GraphicsContext* context, cairo_t* cairoContext)

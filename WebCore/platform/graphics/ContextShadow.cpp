@@ -29,7 +29,9 @@
 #include "config.h"
 #include "ContextShadow.h"
 
+#include "AffineTransform.h"
 #include "FloatQuad.h"
+#include "GraphicsContext.h"
 #include <cmath>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
@@ -81,7 +83,7 @@ void ContextShadow::clear()
     m_offset = FloatSize();
 }
 
-bool ContextShadow::mustUseContextShadow(PlatformContext context)
+bool ContextShadow::mustUseContextShadow(GraphicsContext* context)
 {
     // We can't avoid ContextShadow, since the shadow has blur.
     if (m_type == ContextShadow::BlurShadow)
@@ -91,8 +93,7 @@ bool ContextShadow::mustUseContextShadow(PlatformContext context)
     if (!shadowsIgnoreTransforms())
         return false;
     // We can avoid ContextShadow, since there are no transformations to apply to the canvas.
-    const AffineTransform transform(getTransformationMatrixFromContext(context));
-    if (transform.isIdentity())
+    if (context->getCTM().isIdentity())
         return false;
     // Otherwise, no chance avoiding ContextShadow.
     return true;
@@ -170,15 +171,15 @@ void ContextShadow::blurLayerImage(unsigned char* imageData, const IntSize& size
     }
 }
 
-void ContextShadow::adjustBlurDistance(const PlatformContext context)
+void ContextShadow::adjustBlurDistance(GraphicsContext* context)
 {
-    // Adjust blur if we're scaling, since the radius must not be affected by transformations.
-    const AffineTransform transform(getTransformationMatrixFromContext(context));
+    const AffineTransform transform = context->getCTM();
 
+    // Adjust blur if we're scaling, since the radius must not be affected by transformations.
     if (transform.isIdentity())
         return;
 
-    // Calculale transformed unit vectors.
+    // Calculate transformed unit vectors.
     const FloatQuad unitQuad(FloatPoint(0, 0), FloatPoint(1, 0),
                              FloatPoint(0, 1), FloatPoint(1, 1));
     const FloatQuad transformedUnitQuad = transform.mapQuad(unitQuad);
@@ -198,13 +199,13 @@ void ContextShadow::adjustBlurDistance(const PlatformContext context)
     m_blurDistance = roundf(static_cast<float>(m_blurDistance) / scale);
 }
 
-IntRect ContextShadow::calculateLayerBoundingRect(const PlatformContext context, const FloatRect& layerArea, const IntRect& clipRect)
+IntRect ContextShadow::calculateLayerBoundingRect(GraphicsContext* context, const FloatRect& layerArea, const IntRect& clipRect)
 {
     // Calculate the destination of the blurred and/or transformed layer.
     FloatRect layerFloatRect;
     float inflation = 0;
 
-    const AffineTransform transform(getTransformationMatrixFromContext(context));
+    const AffineTransform transform = context->getCTM();
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
         FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(layerArea));
         transformedPolygon.move(m_offset);

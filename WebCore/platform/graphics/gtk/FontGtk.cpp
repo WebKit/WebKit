@@ -240,7 +240,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
 
     FloatRect extents(getPangoRegionExtents(renderRegion));
     extents.setLocation(FloatPoint(point.x(), point.y() - extents.height()));
-    cairo_t* shadowContext = shadow->beginShadowLayer(context, extents);
+    cairo_t* shadowContext = shadow->beginShadowLayer(graphicsContext, extents);
     if (shadowContext) {
         cairo_translate(shadowContext, point.x(), point.y());
         pango_cairo_show_layout_line(shadowContext, layoutLine);
@@ -255,7 +255,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
         cairo_clip(context);
         cairo_translate(context, -totalOffset.x(), -totalOffset.y());
 
-        shadow->endShadowLayer(context);
+        shadow->endShadowLayer(graphicsContext);
         cairo_restore(context);
     }
 }

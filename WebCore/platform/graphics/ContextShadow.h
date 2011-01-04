@@ -29,10 +29,8 @@
 #ifndef ContextShadow_h
 #define ContextShadow_h
 
-#include "AffineTransform.h"
 #include "Color.h"
 #include "FloatRect.h"
-#include "GraphicsContext.h"
 #include "IntRect.h"
 #include "RefCounted.h"
 
@@ -47,6 +45,9 @@ QT_END_NAMESPACE
 #endif
 
 namespace WebCore {
+
+class AffineTransform;
+class GraphicsContext;
 
 #if PLATFORM(CAIRO)
 typedef cairo_surface_t* PlatformImage;
@@ -82,7 +83,7 @@ public:
     ContextShadow();
     ContextShadow(const Color&, float radius, const FloatSize& offset);
 
-    bool mustUseContextShadow(PlatformContext);
+    bool mustUseContextShadow(GraphicsContext*);
     void clear();
 
     // The pair beginShadowLayer and endShadowLayer creates a temporary image
@@ -107,10 +108,9 @@ public:
     // original context. If blur radius is specified, the shadow will be
     // filtered first.
 
-    PlatformContext beginShadowLayer(PlatformContext, const FloatRect& layerArea);
-    void endShadowLayer(PlatformContext);
+    PlatformContext beginShadowLayer(GraphicsContext*, const FloatRect& layerArea);
+    void endShadowLayer(GraphicsContext*);
     static void purgeScratchBuffer();
-    static AffineTransform getTransformationMatrixFromContext(PlatformContext);
 
     void setShadowsIgnoreTransforms(bool enable) { m_shadowsIgnoreTransforms = enable; }
     bool shadowsIgnoreTransforms() const { return m_shadowsIgnoreTransforms; }
@@ -129,12 +129,12 @@ private:
     FloatPoint m_layerContextTranslation; // Translation to apply to m_layerContext for the shadow to be correctly clipped.
     bool m_shadowsIgnoreTransforms;
 
-    void adjustBlurDistance(const PlatformContext);
+    void adjustBlurDistance(GraphicsContext*);
     void blurLayerImage(unsigned char*, const IntSize& imageSize, int stride);
-    IntRect calculateLayerBoundingRect(const PlatformContext, const FloatRect& layerArea, const IntRect& clipRect);
+    IntRect calculateLayerBoundingRect(GraphicsContext*, const FloatRect& layerArea, const IntRect& clipRect);
 
 #if PLATFORM(CAIRO)
-    void drawRectShadowWithoutTiling(PlatformContext context, const IntRect& shadowRect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius, float alpha);
+    void drawRectShadowWithoutTiling(GraphicsContext*, const IntRect& shadowRect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius, float alpha);
 #endif
 };
 

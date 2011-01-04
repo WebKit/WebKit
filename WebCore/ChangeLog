@@ -1,3 +1,47 @@
+2011-01-03  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        ContextShadow can avoid code duplication for getting the CTM
+        https://bugs.webkit.org/show_bug.cgi?id=51799
+
+        ContextShadow defines its own getTransformationMatrixFromContext()
+        which does exactly the same as GraphicsContext::getCTM().
+
+        Existing tests: fast/canvas/canvas*shadow*html
+
+        * platform/graphics/ContextShadow.cpp:
+        (WebCore::ContextShadow::mustUseContextShadow):
+        (WebCore::ContextShadow::adjustBlurDistance):
+        (WebCore::ContextShadow::calculateLayerBoundingRect):
+        * platform/graphics/ContextShadow.h:
+        * platform/graphics/cairo/ContextShadowCairo.cpp:
+        (WebCore::ContextShadow::beginShadowLayer):
+        (WebCore::ContextShadow::endShadowLayer):
+        (WebCore::ContextShadow::drawRectShadowWithoutTiling):
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::drawGlyphsShadow):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawPathShadow):
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::drawGlyphsShadow):
+        * platform/graphics/qt/ContextShadowQt.cpp:
+        (WebCore::ContextShadow::beginShadowLayer):
+        (WebCore::ContextShadow::endShadowLayer):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::drawTextCommon):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/StillImageQt.cpp:
+        (WebCore::StillImage::draw):
+
 2011-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
