@@ -1,4 +1,11 @@
-2011-01-01  Abhishek Arya  <inferno@chromium.org>
+2011-01-03  Darin Adler  <darin@apple.com>
+
+        Try to fix Leopard build.
+
+        * history/HistoryItem.cpp: Use a consistent type, uint64_t, for the
+        size variable.
+
+2011-01-03  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Adler.
 

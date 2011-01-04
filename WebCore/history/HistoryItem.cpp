@@ -678,9 +678,9 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder* encoder) const
 struct DecodeRecursionStackElement {
     RefPtr<HistoryItem> node;
     size_t i;
-    size_t size;
+    uint64_t size;
 
-    DecodeRecursionStackElement(PassRefPtr<HistoryItem> node, size_t i, size_t size)
+    DecodeRecursionStackElement(PassRefPtr<HistoryItem> node, size_t i, uint64_t size)
         : node(node)
         , i(i)
         , size(size)
