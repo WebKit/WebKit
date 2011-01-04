@@ -114,7 +114,7 @@ public:
     virtual void print(WebCore::Frame*);
 
 #if ENABLE(DATABASE)
-    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName) = 0;
+    virtual void exceededDatabaseQuota(WebCore::Frame*, const WTF::String& databaseName);
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -123,7 +123,14 @@ public:
     // size or past the amount of free space on the device.
     // The chrome client would need to take some action such as evicting some
     // old caches.
-    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) = 0;
+    virtual void reachedMaxAppCacheSize(int64_t spaceNeeded);
+
+    // Callback invoked when the application cache origin quota is reached. This
+    // means that the resources attempting to be cached via the manifest are
+    // more than allowed on this origin. This callback allows the chrome client
+    // to take action, such as prompting the user to ask to increase the quota
+    // for this origin.
+    virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*);
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -131,7 +138,7 @@ public:
 #endif
 
 #if ENABLE(NOTIFICATIONS)
-    virtual WebCore::NotificationPresenter* notificationPresenter() const = 0;
+    virtual WebCore::NotificationPresenter* notificationPresenter() const;
 #endif
 
     // This can be either a synchronous or asynchronous call. The ChromeClient can display UI asking the user for permission

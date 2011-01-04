@@ -305,12 +305,17 @@ void ChromeClientWinCE::print(Frame*)
 #if ENABLE(DATABASE)
 void ChromeClientWinCE::exceededDatabaseQuota(Frame*, const String&)
 {
-    notImplemented()
+    notImplemented();
 }
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 void ChromeClientWinCE::reachedMaxAppCacheSize(int64_t)
+{
+    notImplemented();
+}
+
+void ChromeClientWinCE::reachedApplicationCacheOriginQuota(SecurityOrigin*)
 {
     notImplemented();
 }

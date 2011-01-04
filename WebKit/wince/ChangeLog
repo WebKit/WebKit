@@ -1,3 +1,12 @@
+2011-01-04  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix.
+
+        * WebCoreSupport/ChromeClientWinCE.cpp:
+        (WebKit::ChromeClientWinCE::exceededDatabaseQuota): Added missing semicolon.
+        (WebKit::ChromeClientWinCE::reachedApplicationCacheOriginQuota):
+        * WebCoreSupport/ChromeClientWinCE.h:
+
 2010-12-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for WinCE after r73802.
