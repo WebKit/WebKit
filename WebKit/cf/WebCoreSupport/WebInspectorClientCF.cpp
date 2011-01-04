@@ -33,15 +33,14 @@
 #define WTF_PLATFORM_CF 1
 #endif
 
-#ifndef WTF_USE_CFNETWORK
-#define WTF_USE_CFNETWORK 1
-#endif
-
 #ifndef WTF_USE_JSC
 #define WTF_USE_JSC 1
 #endif
 
 #if defined(WIN32) || defined(_WIN32)
+#ifndef WTF_USE_CFNETWORK
+#define WTF_USE_CFNETWORK 1
+#endif
 #if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
 #define JS_EXPORTDATA __declspec(dllexport)
 #else
