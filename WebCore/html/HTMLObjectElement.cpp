@@ -25,6 +25,7 @@
 #include "HTMLObjectElement.h"
 
 #include "Attribute.h"
+#include "CSSValueKeywords.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
@@ -113,6 +114,12 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
             document->addNamedItem(newName);
         }
         m_name = newName;
+    } else if (attr->name() == borderAttr) {
+        addCSSLength(attr, CSSPropertyBorderWidth, attr->value().toInt() ? attr->value() : "0");
+        addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
+        addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
+        addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);
+        addCSSProperty(attr, CSSPropertyBorderLeftStyle, CSSValueSolid);
     } else if (isIdAttributeName(attr->name())) {
         const AtomicString& newId = attr->value();
         if (isDocNamedItem() && inDocument() && document()->isHTMLDocument()) {

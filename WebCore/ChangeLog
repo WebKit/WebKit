@@ -1,3 +1,18 @@
+2011-01-03  Julie-Jeongeun-Kim  <Jeongeun.Kim@obigo.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 Conformance Test failure: approved/xhtml5/object_border_pixel.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=48596
+        
+        border attribute was not parsed in HTMLObjectElement.
+        I added code for it as HTMLImageElement handled.
+
+        new test:fast/html/object-border.html
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+
 2011-01-03  Darin Adler  <darin@apple.com>
 
         Try to fix Chromium build.

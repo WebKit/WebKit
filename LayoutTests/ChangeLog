@@ -1,3 +1,15 @@
+2011-01-03  Julie-Jeongeun-Kim  <Jeongeun.Kim@obigo.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 Conformance Test failure: approved/xhtml5/object_border_pixel.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=48596
+
+        * fast/html/object-border-expected.txt: Added.
+        * fast/html/object-border.html: Added.
+        * fast/html/resources/images/blue-border.png: Added.
+        * fast/html/resources/images/blue.png: Added.
+
 2010-12-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Darin Adler.
