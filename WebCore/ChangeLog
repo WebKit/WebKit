@@ -1,3 +1,13 @@
+2011-01-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, build fix.
+
+        Try to fix Clang build.
+
+        * css/CSSParser.cpp:
+        (WebCore::valueFromSideKeyword):
+        (WebCore::CSSParser::parseLinearGradient):
+
 2011-01-03  Julie-Jeongeun-Kim  <Jeongeun.Kim@obigo.com>
 
         Reviewed by Darin Adler.

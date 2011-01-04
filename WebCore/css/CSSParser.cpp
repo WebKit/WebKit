@@ -4876,7 +4876,7 @@ static PassRefPtr<CSSPrimitiveValue> valueFromSideKeyword(CSSParserValue* a, boo
             isHorizontal = false;
             break;
         default:
-            return false;
+            return 0;
     }
     return CSSPrimitiveValue::createIdentifier(a->id);
 }
@@ -4917,7 +4917,7 @@ bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient)
         
         RefPtr<CSSPrimitiveValue> location;
         bool isHorizontal = false;
-        if (location = valueFromSideKeyword(a, isHorizontal)) {
+        if ((location = valueFromSideKeyword(a, isHorizontal))) {
             if (isHorizontal)
                 startX = location;
             else
@@ -4925,7 +4925,7 @@ bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient)
             
             a = args->next();
             if (a) {
-                if (location = valueFromSideKeyword(a, isHorizontal)) {
+                if ((location = valueFromSideKeyword(a, isHorizontal))) {
                     if (isHorizontal) {
                         if (startX)
                             return false;
