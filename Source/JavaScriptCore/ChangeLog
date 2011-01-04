@@ -1,3 +1,14 @@
+2011-01-03  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Use __builtin_expect when compiling using RVCT in GNU mode
+        https://bugs.webkit.org/show_bug.cgi?id=51866
+
+        Derived from a patch by Dave Tapuska.
+
+        * wtf/AlwaysInline.h:
+
 2011-01-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.

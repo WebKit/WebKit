@@ -41,7 +41,7 @@
 #endif
 
 #ifndef UNLIKELY
-#if COMPILER(GCC)
+#if defined(__GNUC__)
 #define UNLIKELY(x) __builtin_expect((x), 0)
 #else
 #define UNLIKELY(x) (x)
@@ -49,7 +49,7 @@
 #endif
 
 #ifndef LIKELY
-#if COMPILER(GCC)
+#if defined(__GNUC__)
 #define LIKELY(x) __builtin_expect((x), 1)
 #else
 #define LIKELY(x) (x)
