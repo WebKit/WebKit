@@ -41,6 +41,7 @@ PassRefPtr<Element> PendingScript::releaseElementAndClear()
 {
     setCachedScript(0);
     m_watchingForLoad = false;
+    m_startingPosition = TextPosition1::belowRangePosition();
     return m_element.release();
 }
 

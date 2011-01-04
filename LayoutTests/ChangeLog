@@ -1,3 +1,19 @@
+2010-12-31  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Scripts should not be executed before preceding stylesheets are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=8852
+        
+        New tests plus a few test with slightly changed output due to different load serialization behavior.
+
+        * fast/tokenizer/inline-script-stylesheet-expected.txt: Added.
+        * fast/tokenizer/inline-script-stylesheet-write-expected.txt: Added.
+        * fast/tokenizer/inline-script-stylesheet-write.html: Added.
+        * fast/tokenizer/inline-script-stylesheet.html: Added.
+        * http/tests/security/mixedContent/insecure-css-in-main-frame-expected.txt:
+        * platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+
 2011-01-04  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix after r74976.

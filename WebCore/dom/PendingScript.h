@@ -45,6 +45,7 @@ class PendingScript : public CachedResourceClient {
 public:
     PendingScript()
         : m_watchingForLoad(false)
+        , m_startingPosition(TextPosition1::belowRangePosition())
     {
     }
 
@@ -52,6 +53,7 @@ public:
         : CachedResourceClient(other)
         , m_watchingForLoad(other.m_watchingForLoad)
         , m_element(other.m_element)
+        , m_startingPosition(other.m_startingPosition)
     {
         setCachedScript(other.cachedScript());
     }
@@ -65,10 +67,14 @@ public:
 
         m_watchingForLoad = other.m_watchingForLoad;
         m_element = other.m_element;
+        m_startingPosition = other.m_startingPosition;
         setCachedScript(other.cachedScript());
 
         return *this;
     }
+
+    TextPosition1 startingPosition() const { return m_startingPosition; }
+    void setStartingPosition(const TextPosition1& position) { m_startingPosition = position; }
 
     bool watchingForLoad() const { return m_watchingForLoad; }
     void setWatchingForLoad(bool b) { m_watchingForLoad = b; }
@@ -85,7 +91,8 @@ public:
 private:
     bool m_watchingForLoad;
     RefPtr<Element> m_element;
-    CachedResourceHandle<CachedScript> m_cachedScript;
+    TextPosition1 m_startingPosition; // Only used for inline script tags.
+    CachedResourceHandle<CachedScript> m_cachedScript; 
 };
 
 }

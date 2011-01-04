@@ -237,9 +237,13 @@ void HTMLLinkElement::process()
             m_cachedSheet = 0;
         }
 
+        RefPtr<Document> originalDocument = document();
         if (!dispatchBeforeLoadEvent(m_url))
             return;
-        
+        // A beforeload handler might have removed us from the document or changed the document.
+        if (!inDocument() || document() != originalDocument)
+            return;
+
         m_loading = true;
 
         bool mediaQueryMatches = true;

@@ -1,3 +1,33 @@
+2010-12-31  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Scripts should not be executed before preceding stylesheets are loaded
+        https://bugs.webkit.org/show_bug.cgi?id=8852
+
+        Block inline script execution on pending stylesheet loads. This matches
+        other browsers and HTML5.
+
+        Tests: fast/tokenizer/inline-script-stylesheet-write.html
+               fast/tokenizer/inline-script-stylesheet.html
+
+        * dom/PendingScript.cpp:
+        (WebCore::PendingScript::releaseElementAndClear):
+        * dom/PendingScript.h:
+        (WebCore::PendingScript::PendingScript):
+        (WebCore::PendingScript::operator=):
+        (WebCore::PendingScript::startingPosition):
+        (WebCore::PendingScript::setStartingPosition):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        
+        This fixes an unrelated bug with beforeload events that was exposed by the other
+        changes (fast/dom/beforeload/remove-link-in-beforeload-listener.html).
+        
+        * html/parser/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::sourceFromPendingScript):
+        (WebCore::HTMLScriptRunner::runScript):
+
 2011-01-04  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Darin Adler.

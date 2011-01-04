@@ -99,7 +99,7 @@ ScriptSourceCode HTMLScriptRunner::sourceFromPendingScript(const PendingScript& 
         return ScriptSourceCode(script.cachedScript());
     }
     errorOccurred = false;
-    return ScriptSourceCode(script.element()->textContent(), documentURLForScriptExecution(m_document));
+    return ScriptSourceCode(script.element()->textContent(), documentURLForScriptExecution(m_document), script.startingPosition());
 }
 
 bool HTMLScriptRunner::isPendingScriptReady(const PendingScript& script)
@@ -303,11 +303,14 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition1& scriptSta
                 requestDeferredScript(script);
             else
                 requestParsingBlockingScript(script);
+        } else if (!m_document->haveStylesheetsLoaded() && m_scriptNestingLevel == 1) {
+            // Block inline script execution on stylesheet load, unless we are in document.write().
+            // The latter case can only happen if a script both triggers a stylesheet load
+            // and writes an inline script. Since write is blocking we have to execute the
+            // written script immediately, ignoring the pending sheets.
+            m_parsingBlockingScript.adoptElement(script);
+            m_parsingBlockingScript.setStartingPosition(scriptStartPosition);
         } else {
-            // FIXME: We do not block inline <script> tags on stylesheets to match the
-            // old parser for now.  When we do, the ASSERT below should be added.
-            // See https://bugs.webkit.org/show_bug.cgi?id=40047
-            // ASSERT(document()->haveStylesheetsLoaded());
             ASSERT(isExecutingScript());
             ScriptSourceCode sourceCode(script->textContent(), documentURLForScriptExecution(m_document), scriptStartPosition);
             scriptElement->executeScript(sourceCode);
