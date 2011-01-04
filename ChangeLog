@@ -1,3 +1,14 @@
+2011-01-04  Dihan Wickremasuriya  <dihan.wickremasuriya@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [Symbian] Build system cleanup
+
+        After r74811 special handling for the Symbian build is no longer needed.
+        This patch reverts r58756.
+
+        * WebKit.pri:
+
 2011-01-03  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

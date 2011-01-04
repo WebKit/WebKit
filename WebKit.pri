@@ -55,11 +55,7 @@ CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }
 
-symbian {
-    INCLUDEPATH += $$PWD/include/QtWebKit
-} else {
-    INCLUDEPATH += $$OUTPUT_DIR/include/QtWebKit
-}
+INCLUDEPATH += $$OUTPUT_DIR/include/QtWebKit
 
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wall -Wextra -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
