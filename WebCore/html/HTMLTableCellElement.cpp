@@ -44,8 +44,6 @@ using namespace HTMLNames;
 
 inline HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document* document)
     : HTMLTablePartElement(tagName, document)
-    , m_row(-1)
-    , m_col(-1)
     , m_rowSpan(1)
     , m_colSpan(1)
 {

@@ -36,11 +36,6 @@ public:
 
     int cellIndex() const;
 
-    int col() const { return m_col; }
-    void setCol(int col) { m_col = col; }
-    int row() const { return m_row; }
-    void setRow(int row) { m_row = row; }
-
     int colSpan() const { return m_colSpan; }
     int rowSpan() const { return m_rowSpan; }
 
@@ -69,8 +64,6 @@ private:
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-    int m_row;
-    int m_col;
     int m_rowSpan;
     int m_colSpan;
 };

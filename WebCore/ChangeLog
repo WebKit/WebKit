@@ -1,3 +1,15 @@
+2011-01-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Shrink HTMLTableCellElement
+        https://bugs.webkit.org/show_bug.cgi?id=51858
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::HTMLTableCellElement): Removed intialization of m_row and
+        m_col.
+        * html/HTMLTableCellElement.h: Removed m_row and m_col and their accessors.
+
 2011-01-03  Darin Adler  <darin@apple.com>
 
         Fix build.
