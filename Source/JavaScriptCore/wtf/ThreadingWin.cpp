@@ -88,23 +88,25 @@
 
 #include "MainThread.h"
 #include "ThreadFunctionInvocation.h"
-#if !USE(PTHREADS) && OS(WINDOWS)
-#include "ThreadSpecific.h"
-#endif
-#if !OS(WINCE)
-#include <process.h>
-#endif
-#if HAVE(ERRNO_H)
-#include <errno.h>
-#else
-#define NO_ERRNO
-#endif
 #include <windows.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RandomNumberSeed.h>
+
+#if !USE(PTHREADS) && OS(WINDOWS)
+#include "ThreadSpecific.h"
+#endif
+
+#if !OS(WINCE)
+#include <process.h>
+#endif
+
+#if HAVE(ERRNO_H)
+#include <errno.h>
+#endif
 
 namespace WTF {
 
@@ -192,7 +194,7 @@ static void clearThreadHandleForIdentifier(ThreadIdentifier id)
 static unsigned __stdcall wtfThreadEntryPoint(void* param)
 {
     OwnPtr<ThreadFunctionInvocation> invocation = adoptPtr(static_cast<ThreadFunctionInvocation*>(param));
-    void* result = invocation->function(invocation.data);
+    void* result = invocation->function(invocation->data);
 
 #if !USE(PTHREADS) && OS(WINDOWS)
     // Do the TLS cleanup.
@@ -217,7 +219,7 @@ ThreadIdentifier createThreadInternal(ThreadFunction entryPoint, void* data, con
     if (!threadHandle) {
 #if OS(WINCE)
         LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, ::GetLastError());
-#elif defined(NO_ERRNO)
+#elif !HAVE(ERRNO_H)
         LOG_ERROR("Failed to create thread at entry point %p with data %p.", entryPoint, data);
 #else
         LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, errno);
