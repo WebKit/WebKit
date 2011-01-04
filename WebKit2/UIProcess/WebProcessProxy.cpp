@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -181,12 +181,12 @@ WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) con
     return m_backForwardListItemMap.get(itemID).get();
 }
 
-void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title)
+void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData)
 {
     std::pair<WebBackForwardListItemMap::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);
     if (result.second) {
         // New item.
-        result.first->second = WebBackForwardListItem::create(originalURL, url, title, itemID);
+        result.first->second = WebBackForwardListItem::create(originalURL, url, title, backForwardData, itemID);
         return;
     }
 
@@ -194,6 +194,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
     result.first->second->setOriginalURL(originalURL);
     result.first->second->setURL(url);
     result.first->second->setTitle(title);
+    result.first->second->setBackForwardData(backForwardData);
 }
 
 #if ENABLE(PLUGIN_PROCESS)

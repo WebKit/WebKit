@@ -84,14 +84,6 @@ QUrl QWKHistoryItem::url() const
     return WKURLCopyQUrl(url.get());
 }
 
-QUrl QWKHistoryItem::originalUrl() const
-{
-    if (!d->m_backForwardListItem)
-        return QUrl();
-    WKRetainPtr<WKURLRef> url = WKBackForwardListItemCopyOriginalURL(d->m_backForwardListItem.get());
-    return WKURLCopyQUrl(url.get());
-}
-
 QWKHistoryPrivate::QWKHistoryPrivate(WebKit::WebBackForwardList* list)
     : m_backForwardList(list)
 {

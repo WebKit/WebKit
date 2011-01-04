@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,6 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKBackForwardListItemGetTypeID();
 
-WK_EXPORT WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef item);
 WK_EXPORT WKURLRef WKBackForwardListItemCopyURL(WKBackForwardListItemRef item);
 WK_EXPORT WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef item);
 

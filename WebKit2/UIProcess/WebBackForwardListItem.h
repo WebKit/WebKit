@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +38,9 @@ class WebBackForwardListItem : public APIObject {
 public:
     static const Type APIType = TypeBackForwardListItem;
 
-    static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, uint64_t itemID)
+    static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData, uint64_t itemID)
     {
-        return adoptRef(new WebBackForwardListItem(originalURL, url, title, itemID));
+        return adoptRef(new WebBackForwardListItem(originalURL, url, title, backForwardData, itemID));
     }
 
     virtual ~WebBackForwardListItem();
@@ -55,9 +55,12 @@ public:
 
     void setTitle(const String& title) { m_title = title; }
     const String& title() const { return m_title; }
+    
+    void setBackForwardData(const Vector<uint8_t>& backForwardData) { m_backForwardData = backForwardData; }
+    const Vector<uint8_t>& backForwardData() const { return m_backForwardData; }
 
 private:
-    WebBackForwardListItem(const String& originalURL, const String& url, const String& title, uint64_t itemID);
+    WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData, uint64_t itemID);
 
     virtual Type type() const { return APIType; }
 
@@ -65,6 +68,7 @@ private:
     String m_url;
     String m_title;
     uint64_t m_itemID;
+    Vector<uint8_t> m_backForwardData;
 };
 
 } // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,12 @@
 
 namespace WebKit {
 
-WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, uint64_t itemID)
+WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData, uint64_t itemID)
     : m_originalURL(originalURL)
     , m_url(url)
     , m_title(title)
     , m_itemID(itemID)
+    , m_backForwardData(backForwardData)
 {
 }
 

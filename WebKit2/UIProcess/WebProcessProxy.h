@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +109,7 @@ private:
 
     bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
 
-    void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title);
+    void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title, const Vector<uint8_t>& encodedData);
 
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, CoreIPC::ArgumentEncoder* reply);

@@ -47,7 +47,6 @@ public:
     ~QWKHistoryItem();
     QString title() const;
     QUrl url() const;
-    QUrl originalUrl() const;
 
 private:
     QWKHistoryItem(WKBackForwardListItemRef item);

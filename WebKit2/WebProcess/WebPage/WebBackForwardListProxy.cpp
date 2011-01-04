@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,7 +87,8 @@ static void updateBackForwardItem(HistoryItem* item)
     const String& urlString = item->urlString();
     const String& title = item->title();
 
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, originalURLString, urlString, title), 0);
+    // FIXME: Pass the encoded backForwardData to the message here.
+    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, originalURLString, urlString, title, Vector<uint8_t>()), 0);
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)
