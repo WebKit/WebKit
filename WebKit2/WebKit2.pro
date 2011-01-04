@@ -277,7 +277,7 @@ HEADERS += \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
-    Shared/qt/CrashHandler.h \
+    Shared/qt/CleanupHandler.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
@@ -487,7 +487,7 @@ SOURCES += \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
     Shared/qt/BackingStoreQt.cpp \
-    Shared/qt/CrashHandler.cpp \
+    Shared/qt/CleanupHandler.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \

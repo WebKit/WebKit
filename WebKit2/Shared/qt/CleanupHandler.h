@@ -23,42 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "CrashHandler.h"
+#ifndef CleanupHandler_h
+#define CleanupHandler_h
 
-#include "MappedMemoryPool.h"
-#include <csignal>
-#include <cstdlib>
-#include <wtf/AlwaysInline.h>
+#include <QCoreApplication>
+#include <QList>
+#include <QObject>
+#include <wtf/HashSet.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
-CrashHandler* CrashHandler::theInstance = 0;
+class CleanupHandler : private QObject {
+    Q_OBJECT
+public:
+    static CleanupHandler* instance()
+    {
+        if (!theInstance)
+            theInstance = new CleanupHandler();
+        return theInstance;
+    }
 
-CrashHandler::CrashHandler()
-    : m_inDeleteObjects(false)
-{
-    signal(SIGABRT, &CrashHandler::signalHandler);
-    signal(SIGBUS, &CrashHandler::signalHandler);
-    signal(SIGILL, &CrashHandler::signalHandler);
-    signal(SIGINT, &CrashHandler::signalHandler);
-    signal(SIGFPE, &CrashHandler::signalHandler);
-    signal(SIGQUIT, &CrashHandler::signalHandler);
-    signal(SIGSEGV, &CrashHandler::signalHandler);
-    signal(SIGTRAP, &CrashHandler::signalHandler);
-}
+    void markForCleanup(QObject* object)
+    {
+        m_objects.append(object);
+    }
 
-NO_RETURN void CrashHandler::signalHandler(int)
-{
-    CrashHandler::theInstance->deleteObjects();
-    exit(EXIT_FAILURE);
-}
+    void unmark(QObject* object)
+    {
+        if (m_inDeleteObjects)
+            return;
+        m_objects.removeOne(object);
+    }
 
-void CrashHandler::deleteObjects()
-{
-    m_inDeleteObjects = true;
-    qDeleteAll(m_objects);
+private slots:
+    void deleteObjects();
 
-    MappedMemoryPool::instance()->clear();
-}
+private:
+    static void sigTermHandler(int);
+    static CleanupHandler* theInstance;
+
+    CleanupHandler();
+
+    QList<QObject*> m_objects;
+    bool m_inDeleteObjects;
+};
 
 } // namespace WebKit
+
+#endif // CleanupHandler_h

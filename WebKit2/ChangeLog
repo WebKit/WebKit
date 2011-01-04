@@ -1,3 +1,53 @@
+2011-01-04  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Incomplete clean up on termination
+        https://bugs.webkit.org/show_bug.cgi?id=51474
+
+        Do not kill the web process to force it's termination.
+        Fix object destruction and cleanup logic and make the cleanup more reliable.
+        Do not try to cleanup on crash because it is not reliable.
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::platformInvalidate): Do not delete the socket if we
+        do not own it. This is the case with a server connection.
+        * Platform/qt/MappedMemoryPool.cpp:
+        Turn MappedMemoryPool into a QObject so the CleanupHandler can destruct it
+        in the same way as the other objects.
+        (WebKit::MappedMemoryPool::instance):
+        (WebKit::MappedMemoryPool::~MappedMemoryPool):
+        * Platform/qt/MappedMemoryPool.h:
+        (WebKit::MappedMemoryPool::MappedMemoryPool):
+        * Platform/qt/SharedMemoryQt.cpp:
+        (WebKit::SharedMemory::create): No need to care about QCoreApplication::aboutToQuit.
+        It is handled by the CleanupHandler.
+        (WebKit::SharedMemory::~SharedMemory): Ditto.
+        * Shared/qt/CleanupHandler.cpp: Renamed from WebKit2/Shared/qt/CrashHandler.cpp.
+        No longer try to handle crash but just normal termination.
+        (WebKit::CleanupHandler::CleanupHandler): Connect deleteObjects with QCoreApplication::aboutToQuit.
+        Ensure appropriate thread affinity.
+        (WebKit::CleanupHandler::sigTermHandler): Stop the main event loop.
+        (WebKit::CleanupHandler::deleteObjects): Use deleteLater instead of delete since it is more reliable.
+        * Shared/qt/CleanupHandler.h: Renamed from WebKit2/Shared/qt/CrashHandler.h.
+        (WebKit::CleanupHandler::instance):
+        (WebKit::CleanupHandler::markForCleanup):
+        (WebKit::CleanupHandler::unmark):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        Do not kill the web process immidiately but give it a chance to cleanup.
+        Use QLocalServer::removeServer for assuring that the socket file will be removed.
+        (WebKit::ProcessLauncherHelper::serverName):
+        (WebKit::cleanupAtExit): Renamed from cleanupProcesses. Only kill the web process when it times
+        out terminating. Fixed the bug of changing the list while iterating it over by disconnecting
+        from the processStateChanged slot.
+        (WebKit::QtWebProcess::QtWebProcess): Added missing meta type registration of QProcess::ProcessState.
+        (WebKit::ProcessLauncherHelper::~ProcessLauncherHelper):
+        (WebKit::ProcessLauncherHelper::ProcessLauncherHelper): No need to add the the instance to the
+        CleanupHandler because we will remove the socket file in cleanupAtExit.
+        (WebKit::ProcessLauncherHelper::instance):
+        (WebKit::ProcessLauncher::terminateProcess):
+        * WebKit2.pro:
+
 2011-01-04  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

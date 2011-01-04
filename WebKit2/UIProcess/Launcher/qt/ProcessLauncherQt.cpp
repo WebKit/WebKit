@@ -27,9 +27,9 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
+#include "CleanupHandler.h"
 #include "NotImplemented.h"
 #include "RunLoop.h"
-#include "CrashHandler.h"
 #include "WebProcess.h"
 #include <runtime/InitializeThreading.h>
 #include <string>
@@ -42,7 +42,9 @@
 #include <QDebug>
 #include <QFile>
 #include <QLocalServer>
+#include <QMetaType>
 #include <QProcess>
+#include <QString>
 
 #include <QtCore/qglobal.h>
 
@@ -60,6 +62,9 @@ public:
     void launch(WebKit::ProcessLauncher*);
     QLocalSocket* takePendingConnection();
     static ProcessLauncherHelper* instance();
+
+    const QString serverName() const { return m_server.serverName(); }
+
 private:
     ProcessLauncherHelper();
     QLocalServer m_server;
@@ -70,13 +75,20 @@ private:
 
 Q_GLOBAL_STATIC(WTF::HashSet<QProcess*>, processes);
 
-static void cleanupProcesses()
+static void cleanupAtExit()
 {
-    WTF::HashSet<QProcess*>::const_iterator it = processes()->begin();
-    while (it != processes()->end()) {
-        (*it)->kill();
-        ++it;
+    // Terminate our web process(es).
+    WTF::HashSet<QProcess*>::const_iterator end = processes()->end();
+    for (WTF::HashSet<QProcess*>::const_iterator it = processes()->begin(); it != end; ++it) {
+        QProcess* process = *it;
+        process->disconnect(process);
+        process->terminate();
+        if (!process->waitForFinished(200))
+            process->kill();
     }
+
+    // Do not leave the socket file behind.
+    QLocalServer::removeServer(ProcessLauncherHelper::instance()->serverName());
 }
 
 class QtWebProcess : public QProcess
@@ -86,6 +98,12 @@ public:
     QtWebProcess(QObject* parent = 0)
         : QProcess(parent)
     {
+        static bool isRegistered = false;
+        if (!isRegistered) {
+            qRegisterMetaType<QProcess::ProcessState>("QProcess::ProcessState");
+            isRegistered = true;
+        }
+
         connect(this, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(processStateChanged(QProcess::ProcessState)));
     }
 
@@ -141,7 +159,6 @@ QLocalSocket* ProcessLauncherHelper::takePendingConnection()
 ProcessLauncherHelper::~ProcessLauncherHelper()
 {
     m_server.close();
-    CrashHandler::instance()->didDelete(this);
 }
 
 ProcessLauncherHelper::ProcessLauncherHelper()
@@ -152,10 +169,6 @@ ProcessLauncherHelper::ProcessLauncherHelper()
         ASSERT_NOT_REACHED();
     }
     connect(&m_server, SIGNAL(newConnection()), this, SLOT(newConnection()));
-    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), SLOT(deleteLater()), Qt::QueuedConnection);
-
-    // Do not leave socket files on the disk even on crash!
-    CrashHandler::instance()->markForDeletionOnCrash(this);
 }
 
 ProcessLauncherHelper* ProcessLauncherHelper::instance()
@@ -167,7 +180,7 @@ ProcessLauncherHelper* ProcessLauncherHelper::instance()
         // The purpose of the following line is to ensure that our static is initialized before the exit handler is installed.
         processes()->clear();
 
-        atexit(cleanupProcesses);
+        atexit(cleanupAtExit);
     }
     return result;
 }
@@ -192,7 +205,7 @@ void ProcessLauncher::terminateProcess()
         return;
 
     QObject::connect(m_processIdentifier, SIGNAL(finished(int)), m_processIdentifier, SLOT(deleteLater()), Qt::QueuedConnection);
-    m_processIdentifier->kill();
+    m_processIdentifier->terminate();
 }
 
 QLocalSocket* ProcessLauncher::takePendingConnection()

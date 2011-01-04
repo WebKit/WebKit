@@ -27,6 +27,7 @@
 
 #include "MappedMemoryPool.h"
 
+#include "CleanupHandler.h"
 #include "StdLibExtras.h"
 #include <QDir>
 #include <QIODevice>
@@ -34,13 +35,24 @@
 
 namespace WebKit {
 
-MappedMemoryPool::~MappedMemoryPool()
+MappedMemoryPool* MappedMemoryPool::theInstance = 0;
+
+MappedMemoryPool* MappedMemoryPool::instance()
 {
-    clear();
+    if (!theInstance) {
+        theInstance = new MappedMemoryPool;
+
+        // Do not leave mapping files on the disk.
+        CleanupHandler::instance()->markForCleanup(theInstance);
+    }
+
+    return theInstance;
 }
 
-void MappedMemoryPool::clear()
+MappedMemoryPool::~MappedMemoryPool()
 {
+    CleanupHandler::instance()->unmark(theInstance);
+
     for (unsigned n = 0; n < m_pool.size(); ++n) {
         MappedMemory& current = m_pool.at(n);
         if (!current.file)

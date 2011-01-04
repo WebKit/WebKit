@@ -29,6 +29,7 @@
 #define MappedMemoryPool_h
 
 #include <QFile>
+#include <QObject>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -86,22 +87,19 @@ private:
     size_t dataSize;
 };
 
-class MappedMemoryPool {
+class MappedMemoryPool : QObject {
+    Q_OBJECT
 public:
-    static MappedMemoryPool* instance()
-    {
-        DEFINE_STATIC_LOCAL(MappedMemoryPool, singleton, ());
-        return &singleton;
-    }
+    static MappedMemoryPool* instance();
 
     MappedMemory* mapMemory(size_t size);
     MappedMemory* mapFile(QString fileName, size_t size);
 
-    void clear();
-
 private:
-    MappedMemoryPool() { };
+    MappedMemoryPool() { }
     ~MappedMemoryPool();
+
+    static MappedMemoryPool* theInstance;
 
     Vector<MappedMemory> m_pool;
 };

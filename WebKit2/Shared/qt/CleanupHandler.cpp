@@ -23,50 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CrashHandler_h
-#define CrashHandler_h
+#include "CleanupHandler.h"
 
-#include <QList>
-#include <QObject>
-#include <wtf/HashSet.h>
-#include <wtf/StdLibExtras.h>
+#include "MappedMemoryPool.h"
+#include "RunLoop.h"
+#include <csignal>
+#include <cstdlib>
+#include <QApplication>
 
 namespace WebKit {
 
-class CrashHandler : private QObject {
-    Q_OBJECT
-public:
-    static CrashHandler* instance()
-    {
-        if (!theInstance)
-            theInstance = new CrashHandler();
-        return theInstance;
-    }
+CleanupHandler* CleanupHandler::theInstance = 0;
 
-    void markForDeletionOnCrash(QObject* object)
-    {
-        theInstance->m_objects.append(object);
-    }
+CleanupHandler::CleanupHandler()
+    : m_inDeleteObjects(false)
+{
+    moveToThread(qApp->thread()); // Ensure that we are acting on the main thread.
+    connect(qApp, SIGNAL(aboutToQuit()), SLOT(deleteObjects()), Qt::DirectConnection);
+    signal(SIGTERM, &CleanupHandler::sigTermHandler);
+}
 
-    void didDelete(QObject* object)
-    {
-        if (m_inDeleteObjects)
-            return;
-        theInstance->m_objects.removeOne(object);
-    }
+void CleanupHandler::sigTermHandler(int)
+{
+    ::RunLoop::main()->stop();
+}
 
-private:
-    static void signalHandler(int);
-    static CrashHandler* theInstance;
-
-    CrashHandler();
-
-    void deleteObjects();
-
-    QList<QObject*> m_objects;
-    bool m_inDeleteObjects;
-};
+void CleanupHandler::deleteObjects()
+{
+    m_inDeleteObjects = true;
+    for (unsigned i = 0; i < m_objects.size(); ++i)
+        m_objects[i]->deleteLater();
+}
 
 } // namespace WebKit
-
-#endif // CrashHandler_h

@@ -50,7 +50,9 @@ void Connection::platformInitialize(Identifier identifier)
 
 void Connection::platformInvalidate()
 {
-    delete m_socket;
+    m_socket->disconnect();
+    if (!m_isServer)
+        m_socket->deleteLater();
     m_socket = 0;
 }
 
