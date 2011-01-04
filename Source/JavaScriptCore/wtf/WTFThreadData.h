@@ -112,12 +112,12 @@ public:
     {
         m_currentIdentifierTable = m_defaultIdentifierTable;
     }
-#endif
 
     const StackBounds& stack() const
     {
         return m_stackBounds;
     }
+#endif
 
 private:
     AtomicStringTable* m_atomicStringTable;
@@ -126,6 +126,7 @@ private:
 #if USE(JSC)
     JSC::IdentifierTable* m_defaultIdentifierTable;
     JSC::IdentifierTable* m_currentIdentifierTable;
+    StackBounds m_stackBounds;
 #endif
 
 #if WTFTHREADDATA_MULTITHREADED
@@ -135,8 +136,6 @@ private:
 #endif
     friend WTFThreadData& wtfThreadData();
     friend class AtomicStringTable;
-
-    StackBounds m_stackBounds;
 };
 
 inline WTFThreadData& wtfThreadData()

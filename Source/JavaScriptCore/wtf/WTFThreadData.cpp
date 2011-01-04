@@ -41,8 +41,8 @@ WTFThreadData::WTFThreadData()
 #if USE(JSC)
     , m_defaultIdentifierTable(new JSC::IdentifierTable())
     , m_currentIdentifierTable(m_defaultIdentifierTable)
-#endif
     , m_stackBounds(StackBounds::currentThreadStackBounds())
+#endif
 {
 }
 

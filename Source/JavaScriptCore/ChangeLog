@@ -1,3 +1,17 @@
+2011-01-04  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        StackBounds initialization in WTFThreadData should be guarded by #if USE(JSC)
+        https://bugs.webkit.org/show_bug.cgi?id=51881
+
+        The StackBounds class is only used by JavaScriptCore.
+
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::resetCurrentIdentifierTable):
+
 2011-01-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Darin Adler.
