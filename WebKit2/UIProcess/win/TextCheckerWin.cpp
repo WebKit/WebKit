@@ -46,23 +46,9 @@ bool TextChecker::isContinuousSpellCheckingAllowed()
     return false;
 }
 
-bool TextChecker::isContinuousSpellCheckingEnabled()
-{
-    notImplemented();
-
-    return false;
-}
-
 void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
 {
     notImplemented();
-}
-
-bool TextChecker::isGrammarCheckingEnabled()
-{
-    notImplemented();
-
-    return false;
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)

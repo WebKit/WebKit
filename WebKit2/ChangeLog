@@ -1,5 +1,12 @@
 2011-01-04  Anders Carlsson  <andersca@apple.com>
 
+        Build fixes.
+
+        * UIProcess/qt/TextCheckerQt.cpp:
+        * UIProcess/win/TextCheckerWin.cpp:
+
+2011-01-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Don't use macros for the key names.
