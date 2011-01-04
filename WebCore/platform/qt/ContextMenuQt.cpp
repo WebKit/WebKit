@@ -73,10 +73,13 @@ PlatformMenuDescription ContextMenu::releasePlatformDescription()
     return PlatformMenuDescription();
 }
 
-Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription)
+Vector<ContextMenuItem> contextMenuItemVector(const QList<ContextMenuItem>* items)
 {
-    // FIXME - Implement    
-    return Vector<ContextMenuItem>();
+    int itemCount = items->size();
+    Vector<ContextMenuItem> menuItemVector(itemCount);
+    for (int i = 0; i < itemCount; ++i)
+        menuItemVector.append(items->at(i));
+    return menuItemVector;
 }
 
 PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>& menuItemVector)

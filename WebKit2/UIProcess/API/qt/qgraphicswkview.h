@@ -88,6 +88,9 @@ protected:
     virtual void focusInEvent(QFocusEvent*);
     virtual void focusOutEvent(QFocusEvent*);
 
+private Q_SLOTS:
+    void showContextMenu(QMenu*);
+
 private:
     Q_PRIVATE_SLOT(d, void onScaleChanged());
 

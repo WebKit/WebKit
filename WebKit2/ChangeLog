@@ -1,3 +1,31 @@
+2011-01-04  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] [WK2] create an initial implementation of the context menu handling for WebKit 2
+        https://bugs.webkit.org/show_bug.cgi?id=51825
+
+        Implement the necessary methods to get a basic context menu working for Qt.
+
+        Only 4 basic WebAction have been added on the UIProcess side: back, forward, stop and reload.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        (QGraphicsWKView::showContextMenu):
+        (QGraphicsWKViewPrivate::QGraphicsWKViewPrivate):
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createContextMenuProxy):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/qt/WebContextMenuProxyQt.cpp:
+        (WebKit::webActionForContextMenuAction):
+        (WebKit::WebContextMenuProxyQt::WebContextMenuProxyQt):
+        (WebKit::WebContextMenuProxyQt::create):
+        (WebKit::WebContextMenuProxyQt::showContextMenu):
+        (WebKit::WebContextMenuProxyQt::hideContextMenu):
+        (WebKit::WebContextMenuProxyQt::createContextMenu):
+        * UIProcess/qt/WebContextMenuProxyQt.h:
+
 2011-01-03  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Adam Barth.

@@ -29,17 +29,25 @@
 
 #include "WebContextMenuProxy.h"
 
+class QMenu;
+class QWKPage;
+class WebContextMenuItemData;
+
 namespace WebKit {
 
 class WebContextMenuProxyQt : public WebContextMenuProxy {
 public:
-    static PassRefPtr<WebContextMenuProxyQt> create();
+    static PassRefPtr<WebContextMenuProxyQt> create(QWKPage*);
 
 private:
-    WebContextMenuProxyQt();
+    WebContextMenuProxyQt(QWKPage*);
 
     virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
     virtual void hideContextMenu();
+
+    QMenu* createContextMenu(const Vector<WebContextMenuItemData>& items);
+
+    QWKPage* const m_page;
 };
 
 } // namespace WebKit

@@ -26,29 +26,103 @@
 
 #include "WebContextMenuProxyQt.h"
 
-#include "NotImplemented.h"
+#include <IntPoint.h>
+#include <WebContextMenuItemData.h>
+#include <qmenu.h>
+#include <qwkpage.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-inline WebContextMenuProxyQt::WebContextMenuProxyQt()
+static QWKPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAction action)
+{
+    switch (action) {
+    case WebCore::ContextMenuItemTagGoBack:
+        return QWKPage::Back;
+    case WebCore::ContextMenuItemTagGoForward:
+        return QWKPage::Forward;
+    case WebCore::ContextMenuItemTagStop:
+        return QWKPage::Stop;
+    case WebCore::ContextMenuItemTagReload:
+        return QWKPage::Reload;
+    default:
+        break;
+    }
+    return QWKPage::NoWebAction;
+}
+
+WebContextMenuProxyQt::WebContextMenuProxyQt(QWKPage* page)
+    : m_page(page)
 {
 }
 
-PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create()
+PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QWKPage* page)
 {
-    return adoptRef(new WebContextMenuProxyQt);
+    return adoptRef(new WebContextMenuProxyQt(page));
 }
 
-void WebContextMenuProxyQt::showContextMenu(const IntPoint&, const Vector<WebContextMenuItemData>&)
+void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vector<WebContextMenuItemData>& items)
 {
-    notImplemented();
+    if (QMenu* menu = createContextMenu(items)) {
+        menu->move(position);
+        emit m_page->showContextMenu(menu);
+    }
 }
 
 void WebContextMenuProxyQt::hideContextMenu()
 {
-    notImplemented();
+}
+
+QMenu* WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemData>& items)
+{
+    QMenu* menu = new QMenu;
+    for (int i = 0; i < items.size(); ++i) {
+        const WebContextMenuItemData& item = items.at(i);
+        switch (item.type()) {
+        case WebCore::CheckableActionType: /* fall through */
+        case WebCore::ActionType: {
+            QWKPage::WebAction action = webActionForContextMenuAction(item.action());
+            QAction* qtAction = m_page->action(action);
+            if (qtAction) {
+                qtAction->setEnabled(item.enabled());
+                qtAction->setChecked(item.checked());
+                qtAction->setCheckable(item.type() == WebCore::CheckableActionType);
+
+                menu->addAction(qtAction);
+            }
+            break;
+        }
+        case WebCore::SeparatorType:
+            menu->addSeparator();
+            break;
+        case WebCore::SubmenuType:
+            if (QMenu *subMenu = createContextMenu(item.submenu())) {
+                subMenu->setTitle(item.title());
+                menu->addAction(subMenu->menuAction());
+            }
+
+            break;
+        }
+    }
+
+    // Do not show sub-menus with just disabled actions.
+    if (menu->isEmpty()) {
+        delete menu;
+        return 0;
+    }
+    bool isAnyActionEnabled = false;
+    QList<QAction *> actions = menu->actions();
+    for (int i = 0; i < actions.count(); ++i) {
+        if (actions.at(i)->isVisible())
+            isAnyActionEnabled |= actions.at(i)->isEnabled();
+    }
+    if (!isAnyActionEnabled) {
+        delete menu;
+        return 0;
+    }
+
+    return menu;
 }
 
 } // namespace WebKit

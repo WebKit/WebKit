@@ -143,7 +143,7 @@ PassRefPtr<WebPopupMenuProxy> QWKPagePrivate::createPopupMenuProxy(WebPageProxy*
 
 PassRefPtr<WebContextMenuProxy> QWKPagePrivate::createContextMenuProxy(WebPageProxy*)
 {
-    return WebContextMenuProxyQt::create();
+    return WebContextMenuProxyQt::create(q);
 }
 
 void QWKPagePrivate::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)

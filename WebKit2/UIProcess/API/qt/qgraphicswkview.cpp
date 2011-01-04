@@ -28,9 +28,11 @@
 #include "WKAPICast.h"
 #include "qwkpage.h"
 #include "qwkpage_p.h"
+#include <QApplication>
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+#include <QMenu>
 #include <QPainter>
 #include <QScrollBar>
 #include <QStyleOptionGraphicsItem>
@@ -52,6 +54,7 @@ struct QGraphicsWKViewPrivate {
 
     QGraphicsWKView* q;
     QWKPage* page;
+    QMenu* activeMenu;
     RunLoop::Timer<QGraphicsWKViewPrivate> m_scaleCommitTimer;
     bool m_isChangingScale;
 };
@@ -89,6 +92,7 @@ QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingSt
     connect(d->page, SIGNAL(urlChanged(const QUrl&)), this, SIGNAL(urlChanged(const QUrl&)));
     connect(d->page, SIGNAL(cursorChanged(const QCursor&)), this, SLOT(updateCursor(const QCursor&)));
     connect(d->page, SIGNAL(focusNextPrevChild(bool)), this, SLOT(focusNextPrevChildCallback(bool)));
+    connect(d->page, SIGNAL(showContextMenu(QMenu*)), this, SLOT(showContextMenu(QMenu*)));
 }
 
 QGraphicsWKView::~QGraphicsWKView()
@@ -322,6 +326,33 @@ void QGraphicsWKView::focusOutEvent(QFocusEvent*)
     page()->d->page->setActive(false);
 }
 
+void QGraphicsWKView::showContextMenu(QMenu* menu)
+{
+    // Remove the active menu in case this function is called twice.
+    if (d->activeMenu)
+        d->activeMenu->hide();
+
+    d->activeMenu = menu;
+
+    QWidget* view = 0;
+    if (QGraphicsScene* myScene = scene()) {
+        const QList<QGraphicsView*> views = myScene->views();
+        for (unsigned i = 0; i < views.size(); ++i) {
+            if (views.at(i) == QApplication::focusWidget()) {
+                view = views.at(i);
+                break;
+            }
+        }
+        if (!view)
+            view = views.value(0, 0);
+    }
+    if (view)
+        menu->setParent(view, menu->windowFlags());
+    menu->exec(view->mapToGlobal(menu->pos()));
+    if (d->activeMenu == menu)
+        d->activeMenu = 0;
+}
+
 void QGraphicsWKView::takeSnapshot(const QSize& size, const QRect& contentsRect)
 {
 #if ENABLE(TILED_BACKING_STORE)
@@ -335,6 +366,7 @@ void QGraphicsWKView::takeSnapshot(const QSize& size, const QRect& contentsRect)
 
 QGraphicsWKViewPrivate::QGraphicsWKViewPrivate(QGraphicsWKView* view)
     : q(view)
+    , activeMenu(0)
     , m_scaleCommitTimer(RunLoop::current(), this, &QGraphicsWKViewPrivate::commitScale)
     , m_isChangingScale(false)
 {
