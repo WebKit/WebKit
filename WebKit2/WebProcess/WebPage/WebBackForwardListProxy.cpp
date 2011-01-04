@@ -25,6 +25,7 @@
 
 #include "WebBackForwardListProxy.h"
 
+#include "EncoderAdapter.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
@@ -87,8 +88,12 @@ static void updateBackForwardItem(HistoryItem* item)
     const String& urlString = item->urlString();
     const String& title = item->title();
 
-    // FIXME: Pass the encoded backForwardData to the message here.
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, originalURLString, urlString, title, Vector<uint8_t>()), 0);
+    // FIXME: We only want to do this work for top level back/forward items.
+    // The best way to do that is probably to arrange for this entire function to only be called by top leve back/forward items.
+    EncoderAdapter encoder;
+    item->encodeBackForwardTree(encoder);
+
+    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, originalURLString, urlString, title, encoder.data()), 0);
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)

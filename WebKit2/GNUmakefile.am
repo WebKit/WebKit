@@ -400,8 +400,12 @@ libWebKit2_la_SOURCES = \
 	WebKit2/WebProcess/WebKitMain.cpp \
 	WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
 	WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
+	WebKit2/WebProcess/WebPage/DecoderAdapter.cpp \
+	WebKit2/WebProcess/WebPage/DecoderAdapter.h \
 	WebKit2/WebProcess/WebPage/DrawingArea.cpp \
 	WebKit2/WebProcess/WebPage/DrawingArea.h \
+	WebKit2/WebProcess/WebPage/EncoderAdapter.cpp \
+	WebKit2/WebProcess/WebPage/EncoderAdapter.h \
 	WebKit2/WebProcess/WebPage/FindController.cpp \
 	WebKit2/WebProcess/WebPage/FindController.h \
 	WebKit2/WebProcess/WebPage/FindPageOverlay.cpp \

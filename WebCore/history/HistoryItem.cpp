@@ -625,59 +625,59 @@ void HistoryItem::setRedirectURLs(PassOwnPtr<Vector<String> > redirectURLs)
     m_redirectURLs = redirectURLs;
 }
 
-void HistoryItem::encodeBackForwardTree(Encoder* encoder) const
+void HistoryItem::encodeBackForwardTree(Encoder& encoder) const
 {
-    encoder->encodeUInt32(backForwardTreeEncodingVersion);
+    encoder.encodeUInt32(backForwardTreeEncodingVersion);
 
     encodeBackForwardTreeNode(encoder);
 }
 
-void HistoryItem::encodeBackForwardTreeNode(Encoder* encoder) const
+void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
 {
     size_t size = m_children.size();
-    encoder->encodeUInt64(size);
+    encoder.encodeUInt64(size);
     for (size_t i = 0; i < size; ++i) {
         const HistoryItem& child = *m_children[i];
 
-        encoder->encodeString(child.m_originalURLString);
+        encoder.encodeString(child.m_originalURLString);
 
-        encoder->encodeString(child.m_urlString);
+        encoder.encodeString(child.m_urlString);
 
         child.encodeBackForwardTreeNode(encoder);
     }
 
-    encoder->encodeInt64(m_documentSequenceNumber);
+    encoder.encodeInt64(m_documentSequenceNumber);
 
     size = m_documentState.size();
-    encoder->encodeUInt64(size);
+    encoder.encodeUInt64(size);
     for (size_t i = 0; i < size; ++i)
-        encoder->encodeString(m_documentState[i]);
+        encoder.encodeString(m_documentState[i]);
 
-    encoder->encodeString(m_formContentType);
+    encoder.encodeString(m_formContentType);
 
-    encoder->encodeBool(m_formData);
+    encoder.encodeBool(m_formData);
     if (m_formData)
         m_formData->encodeForBackForward(encoder);
 
-    encoder->encodeInt64(m_itemSequenceNumber);
+    encoder.encodeInt64(m_itemSequenceNumber);
 
-    encoder->encodeString(m_originalURLString);
+    encoder.encodeString(m_originalURLString);
 
-    encoder->encodeString(m_referrer);
+    encoder.encodeString(m_referrer);
 
-    encoder->encodeInt32(m_scrollPoint.x());
-    encoder->encodeInt32(m_scrollPoint.y());
+    encoder.encodeInt32(m_scrollPoint.x());
+    encoder.encodeInt32(m_scrollPoint.y());
 
-    encoder->encodeBool(m_stateObject);
+    encoder.encodeBool(m_stateObject);
     if (m_stateObject) {
 #if !USE(V8)
-        encoder->encodeBytes(m_stateObject->data().data(), m_stateObject->data().size());
+        encoder.encodeBytes(m_stateObject->data().data(), m_stateObject->data().size());
 #else
-        encoder->encodeString(m_stateObject->toWireString());
+        encoder.encodeString(m_stateObject->toWireString());
 #endif
     }
 
-    encoder->encodeString(m_target);
+    encoder.encodeString(m_target);
 }
 
 struct DecodeRecursionStackElement {
@@ -693,13 +693,13 @@ struct DecodeRecursionStackElement {
     }
 };
 
-PassRefPtr<HistoryItem> HistoryItem::decodeBackForwardTree(const String& topURLString, const String& topTitle, const String& topOriginalURLString, Decoder* decoder)
+PassRefPtr<HistoryItem> HistoryItem::decodeBackForwardTree(const String& topURLString, const String& topTitle, const String& topOriginalURLString, Decoder& decoder)
 {
     // Since the data stream is not trusted, the decode has to be non-recursive.
     // We don't want bad data to cause a stack overflow.
 
     uint32_t version;
-    if (!decoder->decodeUInt32(version))
+    if (!decoder.decodeUInt32(version))
         return 0;
     if (version != backForwardTreeEncodingVersion)
         return 0;
@@ -718,15 +718,15 @@ recurse:
     title = String();
 
     uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    if (!decoder.decodeUInt64(size))
         return 0;
     size_t i;
     RefPtr<HistoryItem> child;
     for (i = 0; i < size; ++i) {
-        if (!decoder->decodeString(originalURLString))
+        if (!decoder.decodeString(originalURLString))
             return 0;
 
-        if (!decoder->decodeString(urlString))
+        if (!decoder.decodeString(urlString))
             return 0;
 
         recursionStack.append(DecodeRecursionStackElement(node.release(), i, size));
@@ -736,23 +736,23 @@ resume:
         node->m_children.append(child.release());
     }
 
-    if (!decoder->decodeInt64(node->m_documentSequenceNumber))
+    if (!decoder.decodeInt64(node->m_documentSequenceNumber))
         return 0;
 
-    if (!decoder->decodeUInt64(size))
+    if (!decoder.decodeUInt64(size))
         return 0;
     for (i = 0; i < size; ++i) {
         String state;
-        if (!decoder->decodeString(state))
+        if (!decoder.decodeString(state))
             return 0;
         node->m_documentState.append(state);
     }
 
-    if (!decoder->decodeString(node->m_formContentType))
+    if (!decoder.decodeString(node->m_formContentType))
         return 0;
 
     bool hasFormData;
-    if (!decoder->decodeBool(hasFormData))
+    if (!decoder.decodeBool(hasFormData))
         return 0;
     if (hasFormData) {
         node->m_formData = FormData::decodeForBackForward(decoder);
@@ -760,41 +760,41 @@ resume:
             return 0;
     }
 
-    if (!decoder->decodeInt64(node->m_itemSequenceNumber))
+    if (!decoder.decodeInt64(node->m_itemSequenceNumber))
         return 0;
 
-    if (!decoder->decodeString(node->m_originalURLString))
+    if (!decoder.decodeString(node->m_originalURLString))
         return 0;
 
-    if (!decoder->decodeString(node->m_referrer))
+    if (!decoder.decodeString(node->m_referrer))
         return 0;
 
     int32_t x;
-    if (!decoder->decodeInt32(x))
+    if (!decoder.decodeInt32(x))
         return 0;
     int32_t y;
-    if (!decoder->decodeInt32(y))
+    if (!decoder.decodeInt32(y))
         return 0;
     node->m_scrollPoint = IntPoint(x, y);
 
     bool hasStateObject;
-    if (!decoder->decodeBool(hasStateObject))
+    if (!decoder.decodeBool(hasStateObject))
         return 0;
     if (hasStateObject) {
 #if !USE(V8)
         Vector<uint8_t> bytes;
-        if (!decoder->decodeBytes(bytes))
+        if (!decoder.decodeBytes(bytes))
             return 0;
         node->m_stateObject = SerializedScriptValue::adopt(bytes);
 #else
         String string;
-        if (!decoder->decodeString(string))
+        if (!decoder.decodeString(string))
             return 0;
         node->m_stateObject = SerializedScriptValue::createFromWire(string);
 #endif
     }
 
-    if (!decoder->decodeString(node->m_target))
+    if (!decoder.decodeString(node->m_target))
         return 0;
 
     // Simulate recursion with our own stack.

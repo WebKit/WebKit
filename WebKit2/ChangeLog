@@ -1,3 +1,25 @@
+2011-01-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Add back/forward encoding and decoding to WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51901
+
+        * GNUmakefile.am: Added new source files.
+        * WebKit2.pro: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+        * win/WebKit2.vcproj: Ditto.
+
+        * WebProcess/WebPage/DecoderAdapter.cpp: Added.
+        * WebProcess/WebPage/DecoderAdapter.h: Added.
+        * WebProcess/WebPage/EncoderAdapter.cpp: Added.
+        * WebProcess/WebPage/EncoderAdapter.h: Added.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem): Added code to encode the back/forward
+        tree and send it along. The code to decode needs to wait on Brady's
+        current project.
+
 2011-01-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

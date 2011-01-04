@@ -632,7 +632,9 @@ SOURCES += \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
+    WebProcess/WebPage/DecoderAdapter.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
+    WebProcess/WebPage/EncoderAdapter.cpp \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
     WebProcess/WebPage/TiledDrawingArea.cpp \

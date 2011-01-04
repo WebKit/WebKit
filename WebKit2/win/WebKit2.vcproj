@@ -1366,11 +1366,27 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\DecoderAdapter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\DecoderAdapter.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\DrawingArea.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\WebProcess\WebPage\DrawingArea.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\EncoderAdapter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\EncoderAdapter.h"
 					>
 				</File>
 				<File

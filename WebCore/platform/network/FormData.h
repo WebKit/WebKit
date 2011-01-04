@@ -101,8 +101,8 @@ public:
     PassRefPtr<FormData> deepCopy() const;
     ~FormData();
 
-    void encodeForBackForward(Encoder*) const;
-    static PassRefPtr<FormData> decodeForBackForward(Decoder*);
+    void encodeForBackForward(Encoder&) const;
+    static PassRefPtr<FormData> decodeForBackForward(Decoder&);
 
     void appendData(const void* data, size_t);
     void appendFile(const String& filePath, bool shouldGenerateFile = false);

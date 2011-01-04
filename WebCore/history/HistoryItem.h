@@ -88,8 +88,8 @@ public:
 
     PassRefPtr<HistoryItem> copy() const;
 
-    void encodeBackForwardTree(Encoder*) const;
-    static PassRefPtr<HistoryItem> decodeBackForwardTree(const String& urlString, const String& title, const String& originalURLString, Decoder*);
+    void encodeBackForwardTree(Encoder&) const;
+    static PassRefPtr<HistoryItem> decodeBackForwardTree(const String& urlString, const String& title, const String& originalURLString, Decoder&);
 
     const String& originalURLString() const;
     const String& urlString() const;
@@ -226,8 +226,8 @@ private:
 
     HistoryItem* findTargetItem();
 
-    void encodeBackForwardTreeNode(Encoder*) const;
-    static PassRefPtr<HistoryItem> decodeBackForwardTreeNode(const String& urlString, const String& title, const String& originalURLString, Decoder*);
+    void encodeBackForwardTreeNode(Encoder&) const;
+    static PassRefPtr<HistoryItem> decodeBackForwardTreeNode(const String& urlString, const String& title, const String& originalURLString, Decoder&);
 
     /* When adding new member variables to this class, please notify the Qt team.
      * qt/HistoryItemQt.cpp contains code to serialize history items.

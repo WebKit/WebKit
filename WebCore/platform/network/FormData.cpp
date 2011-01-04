@@ -329,32 +329,32 @@ void FormData::removeGeneratedFilesIfNeeded()
     m_hasGeneratedFiles = false;
 }
 
-static void encode(Encoder* encoder, const FormDataElement& element)
+static void encode(Encoder& encoder, const FormDataElement& element)
 {
-    encoder->encodeUInt32(element.m_type);
+    encoder.encodeUInt32(element.m_type);
 
     switch (element.m_type) {
     case FormDataElement::data:
-        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(element.m_data.data()), element.m_data.size());
+        encoder.encodeBytes(reinterpret_cast<const uint8_t*>(element.m_data.data()), element.m_data.size());
         return;
 
     case FormDataElement::encodedFile:
-        encoder->encodeString(element.m_filename);
-        encoder->encodeBool(element.m_shouldGenerateFile);
+        encoder.encodeString(element.m_filename);
+        encoder.encodeBool(element.m_shouldGenerateFile);
 #if ENABLE(BLOB)
-        encoder->encodeInt64(element.m_fileStart);
-        encoder->encodeInt64(element.m_fileLength);
-        encoder->encodeDouble(element.m_expectedFileModificationTime);
+        encoder.encodeInt64(element.m_fileStart);
+        encoder.encodeInt64(element.m_fileLength);
+        encoder.encodeDouble(element.m_expectedFileModificationTime);
 #else
-        encoder->encodeInt64(0);
-        encoder->encodeInt64(0);
-        encoder->encodeDouble(0);
+        encoder.encodeInt64(0);
+        encoder.encodeInt64(0);
+        encoder.encodeDouble(0);
 #endif
         return;
 
 #if ENABLE(BLOB)
     case FormDataElement::encodedBlob:
-        encoder->encodeString(element.m_blobURL.string());
+        encoder.encodeString(element.m_blobURL.string());
         return;
 #endif
     }
@@ -362,7 +362,7 @@ static void encode(Encoder* encoder, const FormDataElement& element)
     ASSERT_NOT_REACHED();
 }
 
-static bool decode(Decoder* decoder, FormDataElement& element)
+static bool decode(Decoder& decoder, FormDataElement& element)
 {
     uint32_t type = element.m_type;
 
@@ -370,7 +370,7 @@ static bool decode(Decoder* decoder, FormDataElement& element)
     case FormDataElement::data: {
         element.m_type = FormDataElement::data;
         Vector<uint8_t> data;
-        if (!decoder->decodeBytes(data))
+        if (!decoder.decodeBytes(data))
             return false;
         size_t size = data.size();
         element.m_data.resize(size);
@@ -380,22 +380,22 @@ static bool decode(Decoder* decoder, FormDataElement& element)
 
     case FormDataElement::encodedFile: {
         element.m_type = FormDataElement::encodedFile;
-        if (!decoder->decodeString(element.m_filename))
+        if (!decoder.decodeString(element.m_filename))
             return false;
-        if (!decoder->decodeBool(element.m_shouldGenerateFile))
+        if (!decoder.decodeBool(element.m_shouldGenerateFile))
             return false;
         int64_t fileStart;
-        if (!decoder->decodeInt64(fileStart))
+        if (!decoder.decodeInt64(fileStart))
             return false;
         if (fileStart < 0)
             return false;
         int64_t fileLength;
-        if (!decoder->decodeInt64(fileLength))
+        if (!decoder.decodeInt64(fileLength))
             return false;
         if (fileLength < fileStart)
             return false;
         double expectedFileModificationTime;
-        if (!decoder->decodeDouble(expectedFileModificationTime))
+        if (!decoder.decodeDouble(expectedFileModificationTime))
             return false;
 #if ENABLE(BLOB)
         element.m_fileStart = fileStart;
@@ -409,7 +409,7 @@ static bool decode(Decoder* decoder, FormDataElement& element)
     case FormDataElement::encodedBlob:
         element.m_type = FormDataElement::encodedBlob;
         String blobURLString;
-        if (!decoder->decodeString(blobURLString))
+        if (!decoder.decodeString(blobURLString))
             return false;
         element.m_blobURL = KURL(KURL(), blobURLString);
         return true;
@@ -419,38 +419,38 @@ static bool decode(Decoder* decoder, FormDataElement& element)
     return false;
 }
 
-void FormData::encodeForBackForward(Encoder* encoder) const
+void FormData::encodeForBackForward(Encoder& encoder) const
 {
-    encoder->encodeBool(m_alwaysStream);
+    encoder.encodeBool(m_alwaysStream);
 
-    encoder->encodeBytes(reinterpret_cast<const uint8_t*>(m_boundary.data()), m_boundary.size());
+    encoder.encodeBytes(reinterpret_cast<const uint8_t*>(m_boundary.data()), m_boundary.size());
 
     size_t size = m_elements.size();
-    encoder->encodeUInt64(size);
+    encoder.encodeUInt64(size);
     for (size_t i = 0; i < size; ++i)
         encode(encoder, m_elements[i]);
 
-    encoder->encodeBool(m_hasGeneratedFiles);
+    encoder.encodeBool(m_hasGeneratedFiles);
 
-    encoder->encodeBool(m_identifier);
+    encoder.encodeBool(m_identifier);
 }
 
-PassRefPtr<FormData> FormData::decodeForBackForward(Decoder* decoder)
+PassRefPtr<FormData> FormData::decodeForBackForward(Decoder& decoder)
 {
     RefPtr<FormData> data = FormData::create();
 
-    if (!decoder->decodeBool(data->m_alwaysStream))
+    if (!decoder.decodeBool(data->m_alwaysStream))
         return 0;
 
     Vector<uint8_t> boundary;
-    if (!decoder->decodeBytes(boundary))
+    if (!decoder.decodeBytes(boundary))
         return 0;
     size_t size = boundary.size();
     data->m_boundary.resize(size);
     memcpy(data->m_boundary.data(), boundary.data(), size);
 
     uint64_t elementsSize;
-    if (!decoder->decodeUInt64(elementsSize))
+    if (!decoder.decodeUInt64(elementsSize))
         return 0;
     for (size_t i = 0; i < elementsSize; ++i) {
         FormDataElement element;
@@ -459,10 +459,10 @@ PassRefPtr<FormData> FormData::decodeForBackForward(Decoder* decoder)
         data->m_elements.append(element);
     }
 
-    if (!decoder->decodeBool(data->m_hasGeneratedFiles))
+    if (!decoder.decodeBool(data->m_hasGeneratedFiles))
         return 0;
 
-    if (!decoder->decodeInt64(data->m_identifier))
+    if (!decoder.decodeInt64(data->m_identifier))
         return 0;
 
     return data.release();
