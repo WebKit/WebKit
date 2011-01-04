@@ -136,7 +136,7 @@ struct FormStreamFields {
 #if ENABLE(BLOB)
     long long currentStreamRangeLength;
 #endif
-    char* currentData;
+    uint8_t* currentData;
     CFReadStreamRef formStream;
     unsigned long long streamLength;
     unsigned long long bytesSent;
@@ -172,8 +172,8 @@ static bool advanceCurrentStream(FormStreamFields* form)
 
     if (nextInput.m_type == FormDataElement::data) {
         size_t size = nextInput.m_data.size();
-        char* data = nextInput.m_data.releaseBuffer();
-        form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, reinterpret_cast<const UInt8*>(data), size, kCFAllocatorNull);
+        uint8_t* data = nextInput.m_data.releaseBuffer();
+        form->currentStream = CFReadStreamCreateWithBytesNoCopy(0, data, size, kCFAllocatorNull);
         form->currentData = data;
     } else {
 #if ENABLE(BLOB)

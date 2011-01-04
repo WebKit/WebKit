@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,11 +35,11 @@ class TextEncoding;
 class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
-    FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
+    explicit FormDataElement(const Vector<uint8_t>& array) : m_type(data), m_data(array) { }
 
 #if ENABLE(BLOB)
     FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
-    FormDataElement(const KURL& blobURL) : m_type(encodedBlob), m_blobURL(blobURL) { }
+    explicit FormDataElement(const KURL& blobURL) : m_type(encodedBlob), m_blobURL(blobURL) { }
 #else
     FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
 #endif
@@ -51,7 +51,7 @@ public:
         , encodedBlob
 #endif
     } m_type;
-    Vector<char> m_data;
+    Vector<uint8_t> m_data;
     String m_filename;
 #if ENABLE(BLOB)
     long long m_fileStart;
@@ -94,12 +94,15 @@ public:
     static PassRefPtr<FormData> create();
     static PassRefPtr<FormData> create(const void*, size_t);
     static PassRefPtr<FormData> create(const CString&);
-    static PassRefPtr<FormData> create(const Vector<char>&);
+    static PassRefPtr<FormData> create(const Vector<uint8_t>&);
     static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&);
     static PassRefPtr<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
     PassRefPtr<FormData> copy() const;
     PassRefPtr<FormData> deepCopy() const;
     ~FormData();
+
+    void encodeForBackForward(Encoder*) const;
+    static PassRefPtr<FormData> decodeForBackForward(Decoder*);
 
     void appendData(const void* data, size_t);
     void appendFile(const String& filePath, bool shouldGenerateFile = false);
@@ -108,7 +111,7 @@ public:
     void appendBlob(const KURL& blobURL);
 #endif
 
-    void flatten(Vector<char>&) const; // omits files
+    void flatten(Vector<uint8_t>&) const; // omits files
     String flattenToString() const; // omits files
 
     bool isEmpty() const { return m_elements.isEmpty(); }

@@ -1,3 +1,30 @@
+2011-01-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Add code to encode/decode the back/forward tree
+        https://bugs.webkit.org/show_bug.cgi?id=51853
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::encodeBackForwardTree): Added.
+        (WebCore::HistoryItem::encodeBackForwardTreeNode): Added.
+        (WebCore::HistoryItem::decodeBackForwardTree): Added.
+        * history/HistoryItem.h: Added functions above.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::create): Changed type to Vector<uint8_t> instead of
+        Vector<char>. This type is used in our newer code for vectors of bytes.
+        (WebCore::FormData::flatten): Ditto.
+        (WebCore::FormData::flattenToString): Ditto. Had to add a cast here.
+        (WebCore::FormData::encodeForBackForward): Added.
+        (WebCore::FormData::decodeForBackForward): Added.
+        * platform/network/FormData.h: Changed type to Vector<uint8_t> instead of
+        Vector<char>. Also made some single-argument constructors explicit.
+        Also added the new functions.
+
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream): Changed to use uint8_t to match above.
+
 2011-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         Attempt to fix GTK build.

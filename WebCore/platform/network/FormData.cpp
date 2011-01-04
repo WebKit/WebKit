@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -34,6 +34,8 @@
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "TextEncoding.h"
+#include <wtf/Decoder.h>
+#include <wtf/Encoder.h>
 
 namespace WebCore {
 
@@ -90,7 +92,7 @@ PassRefPtr<FormData> FormData::create(const CString& string)
     return result.release();
 }
 
-PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
+PassRefPtr<FormData> FormData::create(const Vector<uint8_t>& vector)
 {
     RefPtr<FormData> result = create();
     result->appendData(vector.data(), vector.size());
@@ -267,7 +269,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
     appendData(encodedData.data(), encodedData.size());
 }
 
-void FormData::flatten(Vector<char>& data) const
+void FormData::flatten(Vector<uint8_t>& data) const
 {
     // Concatenate all the byte arrays, but omit any files.
     data.clear();
@@ -281,9 +283,9 @@ void FormData::flatten(Vector<char>& data) const
 
 String FormData::flattenToString() const
 {
-    Vector<char> bytes;
+    Vector<uint8_t> bytes;
     flatten(bytes);
-    return Latin1Encoding().decode(bytes.data(), bytes.size());
+    return Latin1Encoding().decode(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 }
 
 void FormData::generateFiles(Document* document)
@@ -325,6 +327,137 @@ void FormData::removeGeneratedFilesIfNeeded()
         }
     }
     m_hasGeneratedFiles = false;
+}
+
+static void encode(Encoder* encoder, const FormDataElement& element)
+{
+    encoder->encodeUInt32(element.m_type);
+
+    switch (element.m_type) {
+    case FormDataElement::data:
+        encoder->encodeBytes(element.m_data.data(), element.m_data.size());
+        return;
+
+    case FormDataElement::encodedFile:
+        encoder->encodeString(element.m_filename);
+        encoder->encodeBool(element.m_shouldGenerateFile);
+#if ENABLE(BLOB)
+        encoder->encodeInt64(element.m_fileStart);
+        encoder->encodeInt64(element.m_fileLength);
+        encoder->encodeDouble(element.m_expectedFileModificationTime);
+#else
+        encoder->encodeInt64(0);
+        encoder->encodeInt64(0);
+        encoder->encodeDouble(0);
+#endif
+        return;
+
+#if ENABLE(BLOB)
+    case FormDataElement::encodedBlob:
+        encoder->encodeString(element.m_blobURL.string());
+        return;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+static bool decode(Decoder* decoder, FormDataElement& element)
+{
+    uint32_t type = element.m_type;
+
+    switch (type) {
+    case FormDataElement::data:
+        return decoder->decodeBytes(element.m_data);
+
+    case FormDataElement::encodedFile: {
+        element.m_type = FormDataElement::encodedFile;
+        if (!decoder->decodeString(element.m_filename))
+            return false;
+        if (!decoder->decodeBool(element.m_shouldGenerateFile))
+            return false;
+        int64_t fileStart;
+        if (!decoder->decodeInt64(fileStart))
+            return false;
+        if (fileStart < 0)
+            return false;
+        int64_t fileLength;
+        if (!decoder->decodeInt64(fileLength))
+            return false;
+        if (fileLength < fileStart)
+            return false;
+        double expectedFileModificationTime;
+        if (!decoder->decodeDouble(expectedFileModificationTime))
+            return false;
+#if ENABLE(BLOB)
+        element.m_fileStart = fileStart;
+        element.m_fileLength = fileLength;
+        element.m_expectedFileModificationTime = expectedFileModificationTime;
+#endif
+        return true;
+    }
+
+#if ENABLE(BLOB)
+    case FormDataElement::encodedBlob:
+        element.m_type = FormDataElement::encodedBlob;
+        String blobURLString;
+        if (!decoder->decodeString(blobURLString))
+            return false;
+        element.m_blobURL = KURL(KURL(), blobURLString);
+        return true;
+#endif
+    }
+
+    return false;
+}
+
+void FormData::encodeForBackForward(Encoder* encoder) const
+{
+    encoder->encodeBool(m_alwaysStream);
+
+    encoder->encodeBytes(reinterpret_cast<const uint8_t*>(m_boundary.data()), m_boundary.size());
+
+    size_t size = m_elements.size();
+    encoder->encodeUInt64(size);
+    for (size_t i = 0; i < size; ++i)
+        encode(encoder, m_elements[i]);
+
+    encoder->encodeBool(m_hasGeneratedFiles);
+
+    encoder->encodeBool(m_identifier);
+}
+
+PassRefPtr<FormData> FormData::decodeForBackForward(Decoder* decoder)
+{
+    RefPtr<FormData> data = FormData::create();
+
+    if (!decoder->decodeBool(data->m_alwaysStream))
+        return 0;
+
+    Vector<uint8_t> boundary;
+    if (!decoder->decodeBytes(boundary))
+        return 0;
+    size_t size = boundary.size();
+    data->m_boundary.resize(size);
+    memcpy(data->m_boundary.data(), boundary.data(), size);
+
+    uint64_t elementsSize;
+    if (!decoder->decodeUInt64(elementsSize))
+        return 0;
+    for (size_t i = 0; i < elementsSize; ++i) {
+        FormDataElement element;
+        if (!decode(decoder, element))
+            return 0;
+        data->m_elements.append(element);
+    }
+
+    if (!decoder->decodeBool(data->m_hasGeneratedFiles))
+        return 0;
+
+    if (!decoder->decodeInt64(data->m_identifier))
+        return 0;
+
+    return data.release();
 }
 
 } // namespace WebCore
