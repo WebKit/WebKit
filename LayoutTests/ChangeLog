@@ -1,3 +1,28 @@
+2010-12-20  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Tests that "before" and "after" childs are added to table correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=50932
+
+        * fast/css-generated-content/table-before-after-child-add.html: Added.
+        * fast/css-generated-content/table-before-child-add.html: Removed.
+        * fast/css-generated-content/table-cell-before-after-child-add.html: Added.
+        * fast/css-generated-content/table-row-before-after-child-add.html: Added.
+        * platform/mac/fast/css-generated-content/table-before-after-child-add-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-before-after-child-add-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-before-after-child-add-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/table-before-child-add-expected.txt: Removed.
+        * platform/mac/fast/css-generated-content/table-cell-before-after-child-add-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-cell-before-after-child-add-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-cell-before-after-child-add-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/table-row-before-after-child-add-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-row-before-after-child-add-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-row-before-after-child-add-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/table-table-before-after-child-add-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-table-before-after-child-add-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-table-before-after-child-add-expected.txt: Added.
+
 2011-01-03  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, Chromium test expectation update.

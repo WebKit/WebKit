@@ -1,3 +1,27 @@
+2011-01-01  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fixes before child calculation when adding anonymous childs to table parts.
+        https://bugs.webkit.org/show_bug.cgi?id=50932
+
+        Fix in r74364 was incomplete. When before child is equal to the table part(to
+        which the new child is getting added), it confuses the table part to add it
+        incorrectly as an after child. The patch fixes by passing the before child as
+        the table part's first child.
+
+        Tests: fast/css-generated-content/table-before-after-child-add.html
+               fast/css-generated-content/table-cell-before-after-child-add.html
+               fast/css-generated-content/table-row-before-after-child-add.html
+               fast/css-generated-content/table-row-before-after-child-add.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+
 2011-01-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
