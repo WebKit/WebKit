@@ -1,3 +1,12 @@
+2011-01-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by David Levin.
+
+        .gitignore should be updated to reflect Sources rename to Source
+        https://bugs.webkit.org/show_bug.cgi?id=51893
+
+        * .gitignore: Change all paths that reference the "Sources" directory to say "Source".
+
 2011-01-04  Dihan Wickremasuriya  <dihan.wickremasuriya@nokia.com>
 
         Reviewed by Laszlo Gombos.
