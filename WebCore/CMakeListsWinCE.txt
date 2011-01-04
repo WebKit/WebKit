@@ -12,6 +12,8 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${3RDPARTY_DIR}/libjpeg"
     "${3RDPARTY_DIR}/libpng"
     "${3RDPARTY_DIR}/libxml2/include"
+    "${3RDPARTY_DIR}/libxslt/include"
+    "${3RDPARTY_DIR}/sqlite"
     "${3RDPARTY_DIR}/zlib"
 )
 
@@ -42,6 +44,7 @@ LIST(APPEND WebCore_SOURCES
     platform/win/ContextMenuWin.cpp
     platform/win/CursorWin.cpp
     platform/win/EditorWin.cpp
+    platform/win/EventLoopWin.cpp
     platform/win/KeyEventWin.cpp
     platform/win/LanguageWin.cpp
     platform/win/PasteboardWin.cpp
@@ -72,6 +75,7 @@ LIST(APPEND WebCore_SOURCES
     platform/network/win/CookieJarWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
     platform/network/win/ResourceHandleWin.cpp
+    platform/network/win/SocketStreamHandleWin.cpp
 
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
@@ -107,6 +111,8 @@ LIST(APPEND WebCore_LIBRARIES
     libjpeg
     libpng
     libxml2
+    libxslt
+    sqlite
     crypt32
     iphlpapi
     wininet
