@@ -31,6 +31,7 @@
 #include "DOMWindow.h"
 #include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
+#include "DocumentMarkerController.h"
 #include "DragController.h"
 #include "EditorClient.h"
 #include "Event.h"

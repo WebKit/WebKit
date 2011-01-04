@@ -63,6 +63,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/DocumentMarkerController.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>

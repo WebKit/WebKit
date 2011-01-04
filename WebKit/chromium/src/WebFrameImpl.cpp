@@ -82,6 +82,7 @@
 #include "DocumentFragment.h" // Only needed for ReplaceSelectionCommand.h :(
 #include "DocumentLoader.h"
 #include "DocumentMarker.h"
+#include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FormState.h"

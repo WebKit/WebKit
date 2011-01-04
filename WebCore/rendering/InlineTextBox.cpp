@@ -26,6 +26,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
+#include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EllipsisBox.h"
 #include "Frame.h"

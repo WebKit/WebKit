@@ -36,6 +36,7 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "NotImplemented.h"
 #include "RenderLayerBacking.h"
 #include "VideoFrameChromium.h"
 #include "VideoFrameProvider.h"

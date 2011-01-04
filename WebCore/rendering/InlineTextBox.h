@@ -29,6 +29,7 @@
 namespace WebCore {
 
 struct CompositionUnderline;
+struct DocumentMarker;
 
 const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;

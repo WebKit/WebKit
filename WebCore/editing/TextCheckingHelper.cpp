@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TextCheckingHelper.h"
 
+#include "DocumentMarkerController.h"
 #include "Range.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"

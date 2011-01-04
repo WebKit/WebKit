@@ -75,6 +75,7 @@
 #include <WebCore/ContextMenuController.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Document.h>
+#include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/Editor.h>

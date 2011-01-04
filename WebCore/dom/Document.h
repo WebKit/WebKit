@@ -27,13 +27,11 @@
 #ifndef Document_h
 #define Document_h
 
-#include "CachedResourceHandle.h"
 #include "CheckedRadioButtons.h"
 #include "CollectionCache.h"
 #include "CollectionType.h"
 #include "Color.h"
 #include "ContainerNode.h"
-#include "DocumentMarkerController.h"
 #include "DocumentTiming.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
@@ -55,6 +53,7 @@ class Attr;
 class AXObjectCache;
 class CDATASection;
 class CachedCSSStyleSheet;
+class CachedResourceLoader;
 class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
@@ -62,13 +61,13 @@ class CSSStyleDeclaration;
 class CSSStyleSelector;
 class CSSStyleSheet;
 class Comment;
-class Database;
 class DOMImplementation;
 class DOMSelection;
 class DOMWindow;
+class Database;
 class DatabaseThread;
-class CachedResourceLoader;
 class DocumentFragment;
+class DocumentMarkerController;
 class DocumentType;
 class DocumentWeakReference;
 class EditingText;

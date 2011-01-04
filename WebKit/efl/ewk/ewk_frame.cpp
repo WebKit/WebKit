@@ -24,6 +24,7 @@
 #include "config.h"
 #include "ewk_frame.h"
 
+#include "DocumentMarkerController.h"
 #include "EWebKit.h"
 #include "EventHandler.h"
 #include "FocusController.h"

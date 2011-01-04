@@ -26,13 +26,14 @@
 #ifndef SpellChecker_h
 #define SpellChecker_h
 
-#include "Document.h"
+#include "DocumentMarker.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class EditorClient;
 class Frame;
+class Node;
 
 class SpellCheckingResult {
 public:

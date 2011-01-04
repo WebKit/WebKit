@@ -1,3 +1,25 @@
+2010-12-29  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove 2 unnecessary includes from Document.h
+        https://bugs.webkit.org/show_bug.cgi?id=51727
+
+        No new tests because no changed functionality.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * editing/Editor.cpp:
+        * editing/SpellChecker.h:
+        * editing/SplitTextNodeCommand.cpp:
+        * editing/TextCheckingHelper.cpp:
+        * page/FrameView.cpp:
+        * page/Page.cpp:
+        * rendering/HitTestResult.cpp:
+        * rendering/InlineTextBox.cpp:
+        * rendering/InlineTextBox.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+
 2011-01-04  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix.

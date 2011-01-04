@@ -25,6 +25,7 @@
 #include "SVGInlineFlowBox.h"
 
 #if ENABLE(SVG)
+#include "DocumentMarkerController.h"
 #include "GraphicsContext.h"
 #include "RenderSVGInlineText.h"
 #include "SVGInlineTextBox.h"

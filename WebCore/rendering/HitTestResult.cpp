@@ -21,6 +21,7 @@
 #include "config.h"
 #include "HitTestResult.h"
 
+#include "DocumentMarkerController.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLAnchorElement.h"

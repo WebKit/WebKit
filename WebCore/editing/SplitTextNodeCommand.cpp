@@ -27,6 +27,7 @@
 #include "SplitTextNodeCommand.h"
 
 #include "Document.h"
+#include "DocumentMarkerController.h"
 #include "Text.h"
 #include <wtf/Assertions.h>
 
