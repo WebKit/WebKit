@@ -188,7 +188,7 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
     std::pair<WebBackForwardListItemMap::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);
     if (result.second) {
         // New item.
-        result.first->second = WebBackForwardListItem::create(originalURL, url, title, backForwardData, itemID);
+        result.first->second = WebBackForwardListItem::create(originalURL, url, title, backForwardData.data(), backForwardData.size(), itemID);
         return;
     }
 

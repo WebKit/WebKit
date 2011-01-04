@@ -38,9 +38,9 @@ class WebBackForwardListItem : public APIObject {
 public:
     static const Type APIType = TypeBackForwardListItem;
 
-    static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData, uint64_t itemID)
+    static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     {
-        return adoptRef(new WebBackForwardListItem(originalURL, url, title, backForwardData, itemID));
+        return adoptRef(new WebBackForwardListItem(originalURL, url, title, backForwardData, backForwardDataSize, itemID));
     }
 
     virtual ~WebBackForwardListItem();
@@ -60,7 +60,7 @@ public:
     const Vector<uint8_t>& backForwardData() const { return m_backForwardData; }
 
 private:
-    WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData, uint64_t itemID);
+    WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
 
     virtual Type type() const { return APIType; }
 

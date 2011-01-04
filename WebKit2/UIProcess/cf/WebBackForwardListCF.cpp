@@ -36,6 +36,8 @@ DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryCurrentIndexKey, (CFSTR("Session
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntriesKey, (CFSTR("SessionHistoryEntries")));
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryTitleKey, (CFSTR("SessionHistoryEntryTitle")));
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryURLKey, (CFSTR("SessionHistoryEntryURL")));
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryOriginalURLKey, (CFSTR("SessionHistoryEntryOriginalURL")));
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryDataKey, (CFSTR("SessionHistoryEntryData")));
 
 CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback filter, void* context) const
 {
@@ -54,11 +56,13 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
         
         RetainPtr<CFStringRef> url(AdoptCF, m_entries[i]->url().createCFString());
         RetainPtr<CFStringRef> title(AdoptCF, m_entries[i]->title().createCFString());
+        RetainPtr<CFStringRef> originalURL(AdoptCF, m_entries[i]->originalURL().createCFString());
+        RetainPtr<CFDataRef> entryData(AdoptCF, CFDataCreate(kCFAllocatorDefault, m_entries[i]->backForwardData().data(), m_entries[i]->backForwardData().size()));
         
-        const void* keys[2] = { SessionHistoryEntryURLKey(), SessionHistoryEntryTitleKey() };
-        const void* values[2] = { url.get(), title.get() };
+        const void* keys[4] = { SessionHistoryEntryURLKey(), SessionHistoryEntryTitleKey(), SessionHistoryEntryOriginalURLKey(), SessionHistoryEntryDataKey() };
+        const void* values[4] = { url.get(), title.get(), originalURL.get(), entryData.get() };
 
-        RetainPtr<CFDictionaryRef> entryDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr<CFDictionaryRef> entryDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
     

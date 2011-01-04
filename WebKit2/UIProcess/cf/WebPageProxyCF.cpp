@@ -38,7 +38,7 @@ namespace WebKit {
 
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryKey, (CFSTR("SessionHistory")));
 
-static const UInt32 CurrentSessionStateDataVersion = 1;
+static const UInt32 CurrentSessionStateDataVersion = 2;
 
 PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback filter, void* context) const
 {

@@ -27,13 +27,14 @@
 
 namespace WebKit {
 
-WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const Vector<uint8_t>& backForwardData, uint64_t itemID)
+WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     : m_originalURL(originalURL)
     , m_url(url)
     , m_title(title)
     , m_itemID(itemID)
-    , m_backForwardData(backForwardData)
 {
+    m_backForwardData.reserveCapacity(backForwardDataSize);
+    m_backForwardData.append(backForwardData, backForwardDataSize);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()

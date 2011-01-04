@@ -1,3 +1,22 @@
+2011-01-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Store more data per history entry in the session state blob.
+
+        * UIProcess/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        * UIProcess/WebBackForwardListItem.h:
+        (WebKit::WebBackForwardListItem::create):
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addBackForwardItem):
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+
 2011-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.
