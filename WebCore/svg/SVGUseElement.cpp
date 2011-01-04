@@ -682,6 +682,11 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     ASSERT(target);
     ASSERT(targetInstance);
 
+    // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
+    // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
+    if (target->hasTagName(SVGNames::useTag))
+        handleDeepUseReferencing(static_cast<SVGUseElement*>(target), targetInstance, foundProblem);
+
     // A general description from the SVG spec, describing what buildInstanceTree() actually does.
     //
     // Spec: If the 'use' element references a 'g' which contains two 'rect' elements, then the instance tree
@@ -706,11 +711,6 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
         // Enter recursion, appending new instance tree nodes to the "instance" object.
         buildInstanceTree(element, instancePtr, foundProblem);
     }
-
-    // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
-    // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
-    if (target->hasTagName(SVGNames::useTag))
-        handleDeepUseReferencing(static_cast<SVGUseElement*>(target), targetInstance, foundProblem);
 }
 
 void SVGUseElement::handleDeepUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, bool& foundProblem)
