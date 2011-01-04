@@ -253,6 +253,11 @@ bool WebPopupMenuImpl::confirmComposition()
     return false;
 }
 
+bool WebPopupMenuImpl::confirmComposition(const WebString& text)
+{
+    return false;
+}
+
 WebTextInputType WebPopupMenuImpl::textInputType()
 {
     return WebTextInputTypeNone;

@@ -3043,8 +3043,6 @@ BUGWK51398 MAC : inspector/debugger-expand-scope.html = TIMEOUT
 // WebKit roll 74534:74545
 BUGWK51536 : fast/css/box-shadow.html = FAIL TIMEOUT
 
-BUGCR67960 : editing/input/ime-composition-clearpreedit.html = TEXT
-
 // WebKit roll 74667:74679
 BUGCR68067 LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
 

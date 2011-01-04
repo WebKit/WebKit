@@ -1303,11 +1303,16 @@ bool WebViewImpl::setComposition(
 
 bool WebViewImpl::confirmComposition()
 {
+    return confirmComposition(WebString());
+}
+
+bool WebViewImpl::confirmComposition(const WebString& text)
+{
     Frame* focused = focusedWebCoreFrame();
     if (!focused || !m_imeAcceptEvents)
         return false;
     Editor* editor = focused->editor();
-    if (!editor || !editor->hasComposition())
+    if (!editor || (!editor->hasComposition() && !text.length()))
         return false;
 
     // We should verify the parent node of this IME composition node are
@@ -1321,7 +1326,14 @@ bool WebViewImpl::confirmComposition()
             return false;
     }
 
-    editor->confirmComposition();
+    if (editor->hasComposition()) {
+        if (text.length())
+            editor->confirmComposition(String(text));
+        else
+            editor->confirmComposition();
+    } else
+        editor->insertText(String(text), 0);
+
     return true;
 }
 

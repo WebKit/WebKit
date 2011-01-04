@@ -1074,15 +1074,18 @@ void WebFrameImpl::replaceSelection(const WebString& text)
 
 void WebFrameImpl::insertText(const WebString& text)
 {
-    frame()->editor()->insertText(text, 0);
+    Editor* editor = frame()->editor();
+
+    if (editor->hasComposition())
+        editor->confirmComposition(text);
+    else
+        editor->insertText(text, 0);
 }
 
 void WebFrameImpl::setMarkedText(
     const WebString& text, unsigned location, unsigned length)
 {
     Editor* editor = frame()->editor();
-
-    editor->confirmComposition(text);
 
     Vector<CompositionUnderline> decorations;
     editor->setComposition(text, decorations, location, length);

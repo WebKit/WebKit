@@ -139,6 +139,7 @@ public:
         int selectionStart,
         int selectionEnd) { return true; }
     virtual bool confirmComposition() { return true; }
+    virtual bool confirmComposition(const WebString& text) { return true; }
     virtual WebTextInputType textInputType() { return WebKit::WebTextInputTypeNone; }
     virtual WebRect caretOrSelectionBounds() { return WebRect(); }
     virtual void setTextDirection(WebTextDirection) { }

@@ -79,17 +79,10 @@ void TextInputController::insertText(const CppArgumentList& arguments, CppVarian
 {
     result->setNull();
 
-    WebFrame* mainFrame = getMainFrame();
-    if (!mainFrame)
-        return;
     if (arguments.size() < 1 || !arguments[0].isString())
         return;
 
-    if (mainFrame->hasMarkedText()) {
-        mainFrame->unmarkText();
-        mainFrame->replaceSelection(WebString());
-    }
-    mainFrame->insertText(WebString::fromUTF8(arguments[0].toString()));
+    testShell->webView()->confirmComposition(WebString::fromUTF8(arguments[0].toString()));
 }
 
 void TextInputController::doCommand(const CppArgumentList& arguments, CppVariant* result)
@@ -108,15 +101,13 @@ void TextInputController::setMarkedText(const CppArgumentList& arguments, CppVar
 {
     result->setNull();
 
-    WebFrame* mainFrame = getMainFrame();
-    if (!mainFrame)
-        return;
-
     if (arguments.size() >= 3 && arguments[0].isString()
         && arguments[1].isNumber() && arguments[2].isNumber()) {
-        mainFrame->setMarkedText(WebString::fromUTF8(arguments[0].toString()),
-                                 arguments[1].toInt32(),
-                                 arguments[2].toInt32());
+        WebVector<WebCompositionUnderline> underlines;
+        testShell->webView()->setComposition(WebString::fromUTF8(arguments[0].toString()),
+                                             underlines,
+                                             arguments[1].toInt32(),
+                                             arguments[1].toInt32() + arguments[2].toInt32());
     }
 }
 
@@ -124,11 +115,7 @@ void TextInputController::unmarkText(const CppArgumentList&, CppVariant* result)
 {
     result->setNull();
 
-    WebFrame* mainFrame = getMainFrame();
-    if (!mainFrame)
-        return;
-
-    mainFrame->unmarkText();
+    testShell->webView()->confirmComposition();
 }
 
 void TextInputController::hasMarkedText(const CppArgumentList&, CppVariant* result)

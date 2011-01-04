@@ -1,3 +1,21 @@
+2011-01-04  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fix insertText, setMarkedText and unmarkText methods of
+        TextInputController to call corresponding methods of WebKit::WebView
+        rather than WebKit::WebFrame. This change matches the behavior of
+        chromium browser.
+        insertText corresponds to WebView::confirmComposition(text)
+        setMarkedText corresponds to WebView::setComposition(...)
+        unmarkText corresponds to WebView::confirmComposition()
+        https://bugs.webkit.org/show_bug.cgi?id=51693
+
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        (TextInputController::insertText):
+        (TextInputController::setMarkedText):
+        (TextInputController::unmarkText):
+
 2011-01-04  Dihan Wickremasuriya  <dihan.wickremasuriya@nokia.com>
 
         Reviewed by Laszlo Gombos.

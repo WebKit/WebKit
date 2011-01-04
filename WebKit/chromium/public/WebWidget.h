@@ -103,8 +103,17 @@ public:
         int selectionEnd) = 0;
 
     // Called to inform the WebWidget to confirm an ongoing composition.
+    // This method is same as confirmComposition(WebString());
     // Returns true if there is an ongoing composition.
     virtual bool confirmComposition() = 0;
+
+    // Called to inform the WebWidget to confirm an ongoing composition with a
+    // new composition text. If the text is empty then the current composition
+    // text is confirmed. If there is no ongoing composition, then deletes the
+    // current selection and inserts the text. This method has no effect if
+    // there is no ongoing composition and the text is empty.
+    // Returns true if there is an ongoing composition or the text is inserted.
+    virtual bool confirmComposition(const WebString& text) = 0;
 
     // Returns the current text input type of this WebWidget.
     virtual WebTextInputType textInputType() = 0;

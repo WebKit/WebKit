@@ -47,6 +47,16 @@ if (window.layoutTestController) {
     textInputController.setMarkedText('6', 0, 1);
     textInputController.setMarkedText('7', 0, 1);
     textInputController.setMarkedText('', 0, 0);
+
+    // Case 3: Insert a text without composition.
+    textInputController.insertText('8');
+
+    // Case 4: Compose a text and commit it by removing the mark.
+    // Only Mac and Chromium ports support unmarkText.
+    if (textInputController.unmarkText) {
+        textInputController.setMarkedText('9', 0, 1);
+        textInputController.unmarkText();
+    }
 }
 </script>
 </body>

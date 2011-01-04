@@ -1,3 +1,20 @@
+2011-01-04  Zhe Su  <suzhe@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        1. Remove entry for editing/input/ime-composition-clearpreedit.html test.
+        2. Improve fast/events/ime-composition-events-001.html to cover more
+           cases. And fix test expectations of chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=51693
+
+        * fast/events/ime-composition-events-001-expected.txt:
+        * fast/events/ime-composition-events-001.html:
+        * platform/chromium-mac/fast/events/ime-composition-events-001-expected.txt: Removed.
+        * platform/chromium-win/fast/events/ime-composition-events-001-expected.txt: Removed.
+        * platform/chromium/fast/events/ime-composition-events-001-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/fast/events/ime-composition-events-001-expected.txt: Added.
+
 2010-12-31  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -105,6 +105,7 @@ public:
         int selectionStart,
         int selectionEnd);
     virtual bool confirmComposition();
+    virtual bool confirmComposition(const WebString& text);
     virtual WebTextInputType textInputType();
     virtual WebRect caretOrSelectionBounds();
     virtual void setTextDirection(WebTextDirection direction);
