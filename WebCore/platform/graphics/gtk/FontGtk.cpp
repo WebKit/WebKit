@@ -225,7 +225,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
     FloatPoint totalOffset(point + shadow->m_offset);
 
     // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
-    if (!shadow->mustUseContextShadow(context)) {
+    if (!shadow->mustUseContextShadow(graphicsContext)) {
         cairo_save(context);
         cairo_translate(context, totalOffset.x(), totalOffset.y());
 

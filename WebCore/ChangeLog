@@ -1,3 +1,10 @@
+2011-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix GTK build.
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::drawGlyphsShadow):
+
 2011-01-03  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.
