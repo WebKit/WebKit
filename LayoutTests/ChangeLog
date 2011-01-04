@@ -1,3 +1,17 @@
+2011-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Clicking on the first or the last letter of LTR/RTL text in a RTL/LTR block puts caret on the opposite side.
+        https://bugs.webkit.org/show_bug.cgi?id=50992
+
+        Added a test to ensure WebKit places the caret on the side user clicked even when text's natural direction
+        and the containing block's direction do not match.
+
+        * editing/selection/caret-bidi-first-and-last-letters-expected.txt: Added.
+        * editing/selection/caret-bidi-first-and-last-letters.html: Added.
+        * editing/selection/resources/caret-edge-shared.js: Avoid calling verify() outside of DRT.
+
 2011-01-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74960.

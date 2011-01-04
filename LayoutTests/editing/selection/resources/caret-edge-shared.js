@@ -2,10 +2,8 @@
 function runTest() {
     var div = document.getElementsByTagName('div')[0];
 
-    if (!window.layoutTestController) {
-        div.addEventListener('mouseup', verify);
+    if (!window.layoutTestController)
         return;
-    }
 
     if (clickOn == 'left')
         x = 5;
