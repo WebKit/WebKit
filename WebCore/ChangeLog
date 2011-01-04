@@ -1,5 +1,20 @@
 2011-01-03  Darin Adler  <darin@apple.com>
 
+        Fix build.
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::create): Roll back uint8_t change.
+        (WebCore::FormData::flatten): Ditto.
+        (WebCore::FormData::flattenToString): Ditto.
+        (WebCore::encode): Ditto.
+        (WebCore::decode): Ditto.
+        (WebCore::FormData::encodeForBackForward):
+        * platform/network/FormData.h: Ditto.
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::advanceCurrentStream): Ditto.
+
+2011-01-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Brady Eidson.
 
         Add code to encode/decode the back/forward tree

@@ -35,7 +35,7 @@ class TextEncoding;
 class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
-    explicit FormDataElement(const Vector<uint8_t>& array) : m_type(data), m_data(array) { }
+    explicit FormDataElement(const Vector<char>& array) : m_type(data), m_data(array) { }
 
 #if ENABLE(BLOB)
     FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
@@ -51,7 +51,7 @@ public:
         , encodedBlob
 #endif
     } m_type;
-    Vector<uint8_t> m_data;
+    Vector<char> m_data;
     String m_filename;
 #if ENABLE(BLOB)
     long long m_fileStart;
@@ -94,7 +94,7 @@ public:
     static PassRefPtr<FormData> create();
     static PassRefPtr<FormData> create(const void*, size_t);
     static PassRefPtr<FormData> create(const CString&);
-    static PassRefPtr<FormData> create(const Vector<uint8_t>&);
+    static PassRefPtr<FormData> create(const Vector<char>&);
     static PassRefPtr<FormData> create(const FormDataList&, const TextEncoding&);
     static PassRefPtr<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
     PassRefPtr<FormData> copy() const;
@@ -111,7 +111,7 @@ public:
     void appendBlob(const KURL& blobURL);
 #endif
 
-    void flatten(Vector<uint8_t>&) const; // omits files
+    void flatten(Vector<char>&) const; // omits files
     String flattenToString() const; // omits files
 
     bool isEmpty() const { return m_elements.isEmpty(); }

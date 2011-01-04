@@ -92,7 +92,7 @@ PassRefPtr<FormData> FormData::create(const CString& string)
     return result.release();
 }
 
-PassRefPtr<FormData> FormData::create(const Vector<uint8_t>& vector)
+PassRefPtr<FormData> FormData::create(const Vector<char>& vector)
 {
     RefPtr<FormData> result = create();
     result->appendData(vector.data(), vector.size());
@@ -269,7 +269,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
     appendData(encodedData.data(), encodedData.size());
 }
 
-void FormData::flatten(Vector<uint8_t>& data) const
+void FormData::flatten(Vector<char>& data) const
 {
     // Concatenate all the byte arrays, but omit any files.
     data.clear();
@@ -283,7 +283,7 @@ void FormData::flatten(Vector<uint8_t>& data) const
 
 String FormData::flattenToString() const
 {
-    Vector<uint8_t> bytes;
+    Vector<char> bytes;
     flatten(bytes);
     return Latin1Encoding().decode(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 }
@@ -335,7 +335,7 @@ static void encode(Encoder* encoder, const FormDataElement& element)
 
     switch (element.m_type) {
     case FormDataElement::data:
-        encoder->encodeBytes(element.m_data.data(), element.m_data.size());
+        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(element.m_data.data()), element.m_data.size());
         return;
 
     case FormDataElement::encodedFile:
@@ -367,8 +367,16 @@ static bool decode(Decoder* decoder, FormDataElement& element)
     uint32_t type = element.m_type;
 
     switch (type) {
-    case FormDataElement::data:
-        return decoder->decodeBytes(element.m_data);
+    case FormDataElement::data: {
+        element.m_type = FormDataElement::data;
+        Vector<uint8_t> data;
+        if (!decoder->decodeBytes(data))
+            return false;
+        size_t size = data.size();
+        element.m_data.resize(size);
+        memcpy(element.m_data.data(), data.data(), size);
+        return true;
+    }
 
     case FormDataElement::encodedFile: {
         element.m_type = FormDataElement::encodedFile;
