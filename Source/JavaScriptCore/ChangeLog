@@ -54,7 +54,7 @@
         it can be shared with the Android implementation of createThreadInternal().
         (WTF::wtfThreadEntryPoint): Use OwnPtr to hold passed instance of ThreadFunctionInvocation.
 
-2011-01-03  Daniel Bates  <dbates@rim.com>
+2011-01-04  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Darin Adler.
 
