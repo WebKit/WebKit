@@ -102,6 +102,8 @@ public:
     void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
     size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
 
+    void updateTextCheckerState();
+
 private:
     explicit WebProcessProxy(WebContext*);
 

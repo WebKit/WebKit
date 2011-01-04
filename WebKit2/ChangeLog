@@ -1,3 +1,74 @@
+2011-01-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Send over text checker state to the web process
+        https://bugs.webkit.org/show_bug.cgi?id=51896
+
+        * Platform/CoreIPC/Arguments.h:
+        Remove 'const' from the argument, this matches all the other Arguments classes.
+
+        * Shared/TextCheckerState.h: Added.
+        New class with text checker state.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Add textCheckerState.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):        
+        (-[WKView toggleContinuousSpellChecking:]):
+        (-[WKView toggleGrammarChecking:]):
+        (-[WKView toggleAutomaticSpellingCorrection:]):
+        Get the needed flags from the text checker state.
+
+        * UIProcess/TextChecker.h:
+        Add state() function, remove getters.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        Initialize the text checker state.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::updateTextCheckerState):
+        Send the SetTextCheckerState message to the web process.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::initializeState):
+        Initialize the state from the user defaults.
+
+        (WebKit::TextChecker::state):
+        Return the state.
+
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::setAutomaticSpellingCorrectionEnabled):
+        Make sure to write the new state.
+        
+        * UIProcess/qt/TextCheckerQt.cpp:
+        (WebKit::TextChecker::state):
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::state):
+        Add stubs.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add TextCheckerState.h.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        Initialize m_textCheckerState.
+
+        (WebKit::WebProcess::setTextCheckerState):
+        Update.
+
+        * WebProcess/WebProcess.messages.in:
+        Add SetTextCheckerState message.
+
+        * win/WebKit2.vcproj:
+        Add TextCheckerState.h.
+
 2011-01-04  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Anders Carlsson.

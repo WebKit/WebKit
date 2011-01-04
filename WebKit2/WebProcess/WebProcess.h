@@ -30,6 +30,7 @@
 #include "ChildProcess.h"
 #include "DrawingArea.h"
 #include "SharedMemory.h"
+#include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
 #include "WebPageGroupProxy.h"
 #include <WebCore/LinkHash.h>
@@ -101,6 +102,8 @@ public:
 
     bool shouldUseCustomRepresentationForMIMEType(const String& mimeType) const { return m_mimeTypesWithCustomRepresentations.contains(mimeType); }
 
+    const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
+
 private:
     WebProcess();
 
@@ -131,6 +134,8 @@ private:
     void clearApplicationCache();
 
     void cancelDownload(uint64_t downloadID);
+
+    void setTextCheckerState(const TextCheckerState&);
 
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -167,6 +172,8 @@ private:
     HashMap<uint64_t, WebFrame*> m_frameMap;
 
     HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomRepresentations;
+
+    TextCheckerState m_textCheckerState;
 };
 
 } // namespace WebKit

@@ -35,6 +35,7 @@
 #import "PageClientImpl.h"
 #import "RunLoop.h"
 #import "TextChecker.h"
+#import "TextCheckerState.h"
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
@@ -348,19 +349,19 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
 
     if (action == @selector(toggleContinuousSpellChecking:)) {
         bool enabled = TextChecker::isContinuousSpellCheckingAllowed();
-        bool checked = enabled && TextChecker::isContinuousSpellCheckingEnabled();
+        bool checked = enabled && TextChecker::state().isContinuousSpellCheckingEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
         return enabled;
     }
 
     if (action == @selector(toggleGrammarChecking:)) {
-        bool checked = TextChecker::isGrammarCheckingEnabled();
+        bool checked = TextChecker::state().isGrammarCheckingEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
         return YES;
     }
 
     if (action == @selector(toggleAutomaticSpellingCorrection:)) {
-        bool checked = TextChecker::isAutomaticSpellingCorrectionEnabled();
+        bool checked = TextChecker::state().isAutomaticSpellingCorrectionEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
         return _data->_page->selectionState().isContentEditable;
     }
@@ -424,8 +425,10 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
 - (IBAction)toggleContinuousSpellChecking:(id)sender
 {
-    bool spellCheckingEnabled = !TextChecker::isContinuousSpellCheckingEnabled();
+    bool spellCheckingEnabled = !TextChecker::state().isContinuousSpellCheckingEnabled;
     TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
+
+    _data->_page->process()->updateTextCheckerState();
 
     if (!spellCheckingEnabled)
         _data->_page->unmarkAllMisspellings();
@@ -433,8 +436,10 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
 - (IBAction)toggleGrammarChecking:(id)sender
 {
-    bool grammarCheckingEnabled = !TextChecker::isGrammarCheckingEnabled();
+    bool grammarCheckingEnabled = !TextChecker::state().isGrammarCheckingEnabled;
     TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
+
+    _data->_page->process()->updateTextCheckerState();
 
     if (!grammarCheckingEnabled)
         _data->_page->unmarkAllBadGrammar();
@@ -442,7 +447,9 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
 - (IBAction)toggleAutomaticSpellingCorrection:(id)sender
 {
-    TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::isAutomaticSpellingCorrectionEnabled());
+    TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
+
+    _data->_page->process()->updateTextCheckerState();
 }
 
 // Events

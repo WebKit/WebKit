@@ -28,17 +28,19 @@
 
 namespace WebKit {
 
+class TextCheckerState;
+
 class TextChecker {
 public:
+    static const TextCheckerState& state();
     static bool isContinuousSpellCheckingAllowed();
-    static bool isContinuousSpellCheckingEnabled();
-    static void setContinuousSpellCheckingEnabled(bool);
 
-    static bool isGrammarCheckingEnabled();
+    static void setContinuousSpellCheckingEnabled(bool);
     static void setGrammarCheckingEnabled(bool);
 
+#if PLATFORM(MAC)
     static void setAutomaticSpellingCorrectionEnabled(bool);
-    static bool isAutomaticSpellingCorrectionEnabled();
+#endif
 };
 
 } // namespace WebKit

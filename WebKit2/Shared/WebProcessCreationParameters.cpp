@@ -54,6 +54,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(shouldTrackVisitedLinks);
     encoder->encode(shouldAlwaysUseComplexTextCodePath);
     encoder->encode(languageCode);
+    encoder->encode(textCheckerState);
 #if PLATFORM(MAC)
     encoder->encode(nsURLCachePath);
     encoder->encode(nsURLCacheMemoryCapacity);
@@ -88,6 +89,9 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.languageCode))
         return false;
+    if (!decoder->decode(parameters.textCheckerState))
+        return false;
+
 #if PLATFORM(MAC)
     if (!decoder->decode(parameters.nsURLCachePath))
         return false;

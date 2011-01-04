@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TextChecker.h"
+#ifndef TextCheckerState_h
+#define TextCheckerState_h
 
-#include "NotImplemented.h"
-#include "TextCheckerState.h"
+#include "ArgumentCoders.h"
 
 namespace WebKit {
-  
-static TextCheckerState textCheckerState;
 
-const TextCheckerState& TextChecker::state()
-{
-    notImplemented();
-    
-    return textCheckerState;
-}
+struct TextCheckerState {
+    bool isContinuousSpellCheckingEnabled;
+    bool isGrammarCheckingEnabled;
 
-bool TextChecker::isContinuousSpellCheckingAllowed()
-{
-    notImplemented();
-
-    return false;
-}
-
-bool TextChecker::isContinuousSpellCheckingEnabled()
-{
-    notImplemented();
-
-    return false;
-}
-
-void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
-{
-    notImplemented();
-}
-
-bool TextChecker::isGrammarCheckingEnabled()
-{
-    notImplemented();
-
-    return false;
-}
-
-void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
-{
-    notImplemented();
-}
+#if PLATFORM(MAC)
+    bool isAutomaticSpellingCorrectionEnabled;
+#endif
+};
 
 } // namespace WebKit
+
+namespace CoreIPC {
+template<> struct ArgumentCoder<WebKit::TextCheckerState> : SimpleArgumentCoder<WebKit::TextCheckerState> { };
+};
+
+#endif // TextCheckerState_h

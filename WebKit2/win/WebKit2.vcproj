@@ -499,6 +499,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\TextCheckerState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\UserMessageCoders.h"
 				>
 			</File>

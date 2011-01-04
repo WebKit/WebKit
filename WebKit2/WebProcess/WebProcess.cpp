@@ -105,6 +105,7 @@ WebProcess::WebProcess()
 #if PLATFORM(QT)
     , m_networkAccessManager(0)
 #endif
+    , m_textCheckerState()
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -608,6 +609,11 @@ void WebProcess::clearApplicationCache()
 void WebProcess::cancelDownload(uint64_t downloadID)
 {
     DownloadManager::shared().cancelDownload(downloadID);
+}
+
+void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
+{
+    m_textCheckerState = textCheckerState;
 }
 
 } // namespace WebKit

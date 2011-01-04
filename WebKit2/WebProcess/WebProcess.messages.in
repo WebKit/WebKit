@@ -50,4 +50,6 @@ messages -> WebProcess {
     # Downloads. This should really be in a Download.messages.in, but it seemed unnecessary to create a new file just for
     # a single message.
     CancelDownload(uint64_t downloadID)
+
+    SetTextCheckerState(WebKit::TextCheckerState textCheckerState)
 }

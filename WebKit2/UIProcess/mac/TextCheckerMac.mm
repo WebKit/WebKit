@@ -25,12 +25,40 @@
 
 #include "TextChecker.h"
 
+#include "TextCheckerState.h"
+
+#define WebAutomaticSpellingCorrectionEnabled @"WebAutomaticSpellingCorrectionEnabled"
+#define WebContinuousSpellCheckingEnabled @"WebContinuousSpellCheckingEnabled"
+#define WebGrammarCheckingEnabled @"WebGrammarCheckingEnabled"
+
 namespace WebKit {
 
-static bool continuousSpellCheckingEnabled;
-static bool grammarCheckingEnabled;
-static bool automaticSpellingCorrectionEnabled;
+TextCheckerState textCheckerState;
+
+static void initializeState()
+{
+    static bool didInitializeState;
+    if (didInitializeState)
+        return;
+
+    textCheckerState.isContinuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed();
+    textCheckerState.isGrammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
+    textCheckerState.isAutomaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
     
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
+        textCheckerState.isAutomaticSpellingCorrectionEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
+#endif
+
+    didInitializeState = true;
+}
+
+const TextCheckerState& TextChecker::state()
+{
+    initializeState();
+    return textCheckerState;
+}
+
 bool TextChecker::isContinuousSpellCheckingAllowed()
 {
     static bool allowContinuousSpellChecking = true;
@@ -46,27 +74,24 @@ bool TextChecker::isContinuousSpellCheckingAllowed()
     return allowContinuousSpellChecking;
 }
 
-bool TextChecker::isContinuousSpellCheckingEnabled()
-{
-    return continuousSpellCheckingEnabled && isContinuousSpellCheckingAllowed();
-}
-
 void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
 {
-    continuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
+    if (state().isContinuousSpellCheckingEnabled == isContinuousSpellCheckingEnabled)
+        return;
+                                                                                      
+    textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:isContinuousSpellCheckingEnabled forKey:WebContinuousSpellCheckingEnabled];
 
     // FIXME: preflight the spell checker.
 }
 
-bool TextChecker::isGrammarCheckingEnabled()
-{
-    return grammarCheckingEnabled;
-}
-
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
 {
-    grammarCheckingEnabled = isGrammarCheckingEnabled;
+    if (state().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
+        return;
 
+    textCheckerState.isGrammarCheckingEnabled = isGrammarCheckingEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:isGrammarCheckingEnabled forKey:WebGrammarCheckingEnabled];    
     [[NSSpellChecker sharedSpellChecker] updatePanels];
     
     // We call preflightSpellChecker() when turning continuous spell checking on, but we don't need to do that here
@@ -75,16 +100,13 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
 
 void TextChecker::setAutomaticSpellingCorrectionEnabled(bool isAutomaticSpellingCorrectionEnabled)
 {
-    if (automaticSpellingCorrectionEnabled == isAutomaticSpellingCorrectionEnabled)
+    if (state().isAutomaticSpellingCorrectionEnabled == isAutomaticSpellingCorrectionEnabled)
         return;
 
-    automaticSpellingCorrectionEnabled = isAutomaticSpellingCorrectionEnabled;
-    [[NSSpellChecker sharedSpellChecker] updatePanels];
-}
+    textCheckerState.isAutomaticSpellingCorrectionEnabled = isAutomaticSpellingCorrectionEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];    
 
-bool TextChecker::isAutomaticSpellingCorrectionEnabled()
-{
-    return automaticSpellingCorrectionEnabled;
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
 }
 
 } // namespace WebKit

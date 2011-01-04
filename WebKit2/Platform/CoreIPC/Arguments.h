@@ -56,7 +56,7 @@ inline Arguments0 Out()
 }
 
 template<typename T1> struct Arguments1 {
-    typedef Arguments1<typename WTF::RemoveReference<T1>::Type> ValueType;
+    typedef Arguments1<typename WTF::RemoveConst<typename WTF::RemoveReference<T1>::Type>::Type> ValueType;
 
     Arguments1()
     {

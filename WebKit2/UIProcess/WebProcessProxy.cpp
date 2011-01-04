@@ -27,6 +27,8 @@
 
 #include "PluginInfoStore.h"
 #include "PluginProcessManager.h"
+#include "TextChecker.h"
+#include "TextCheckerState.h"
 #include "WebBackForwardListItem.h"
 #include "WebContext.h"
 #include "WebNavigationDataStore.h"
@@ -389,6 +391,14 @@ size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
             ++result;
     }
     return result;
+}
+
+void WebProcessProxy::updateTextCheckerState()
+{
+    if (!isValid())
+        return;
+
+    send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
 }
 
 } // namespace WebKit

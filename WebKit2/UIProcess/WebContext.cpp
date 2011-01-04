@@ -29,6 +29,7 @@
 #include "ImmutableArray.h"
 #include "InjectedBundleMessageKinds.h"
 #include "RunLoop.h"
+#include "TextChecker.h"
 #include "WKContextPrivate.h"
 #include "WebContextMessageKinds.h"
 #include "WebContextUserMessageCoders.h"
@@ -173,6 +174,8 @@ void WebContext::ensureWebProcess()
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
+
+    parameters.textCheckerState = TextChecker::state();
 
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);

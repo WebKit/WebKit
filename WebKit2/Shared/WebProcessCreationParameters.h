@@ -28,6 +28,7 @@
 
 #include "CacheModel.h"
 #include "SandboxExtension.h"
+#include "TextCheckerState.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -68,6 +69,8 @@ struct WebProcessCreationParameters {
     bool shouldAlwaysUseComplexTextCodePath;
 
     String languageCode;
+
+    TextCheckerState textCheckerState;
 
 #if PLATFORM(MAC)
     String nsURLCachePath;

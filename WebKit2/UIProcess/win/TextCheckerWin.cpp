@@ -26,9 +26,19 @@
 #include "TextChecker.h"
 
 #include "NotImplemented.h"
+#include "TextCheckerState.h"
 
 namespace WebKit {
-    
+
+static TextCheckerState textCheckerState;
+
+const TextCheckerState& TextChecker::state()
+{
+    notImplemented();
+
+    return textCheckerState;
+}
+  
 bool TextChecker::isContinuousSpellCheckingAllowed()
 {
     notImplemented();
