@@ -1,5 +1,12 @@
 2011-01-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; Added editing/selection/caret-bidi-first-and-last-letters.html to Qt's skipped list.
+        The tracking bug 51884 (https://bugs.webkit.org/show_bug.cgi?id=51884) has been filed.
+
+        * platform/qt/Skipped:
+
+2011-01-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Clicking on the first or the last letter of LTR/RTL text in a RTL/LTR block puts caret on the opposite side.

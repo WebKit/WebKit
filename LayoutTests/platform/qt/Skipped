@@ -5358,6 +5358,10 @@ http/tests/local/link-stylesheet-load-order-preload.html
 # https://bugs.webkit.org/show_bug.cgi?id=51324
 fast/text/emphasis-overlap.html
 
-[Qt] LayoutTests/http/tests/appcache/auth.html failed and skipped
+#[Qt] LayoutTests/http/tests/appcache/auth.html failed and skipped
 # https://bugs.webkit.org/show_bug.cgi?id=36688
 http/tests/appcache/auth.html
+
+# REGRESSION(r74971): [Qt] /editing/selection/caret-bidi-first-and-last-letters.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=51884
+/editing/selection/caret-bidi-first-and-last-letters.html
