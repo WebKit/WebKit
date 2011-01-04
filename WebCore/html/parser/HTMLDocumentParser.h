@@ -72,6 +72,8 @@ public:
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
     virtual TextPosition0 textPosition() const;
+    virtual void suspendScheduledTasks();
+    virtual void resumeScheduledTasks();
 
 protected:
     virtual void insert(const SegmentedString&);
