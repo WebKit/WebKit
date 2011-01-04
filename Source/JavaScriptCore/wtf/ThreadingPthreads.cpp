@@ -52,6 +52,7 @@
 #include "JNIUtility.h"
 #include "ThreadFunctionInvocation.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #endif
 
 namespace WTF {
@@ -145,7 +146,7 @@ static void* runThreadWithRegistration(void* arg)
     JNIEnv* env;
     void* ret = 0;
     if (vm->AttachCurrentThread(&env, 0) == JNI_OK) {
-        ret = invocation->function(invocation.data);
+        ret = invocation->function(invocation->data);
         vm->DetachCurrentThread();
     }
     return ret;

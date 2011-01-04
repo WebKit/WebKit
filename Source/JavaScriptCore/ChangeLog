@@ -1,3 +1,11 @@
+2011-01-04  Daniel Bates  <dbates@rim.com>
+
+        Fix the Android build after changeset 74975 <http://trac.webkit.org/changeset/74975>
+        (https://bugs.webkit.org/show_bug.cgi?id=51855).
+
+        * wtf/ThreadingPthreads.cpp: Add include of PassOwnPtr.h.
+        (WTF::runThreadWithRegistration): Use -> instead of . to dereference pointer.
+
 2011-01-04  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the EFL build.
