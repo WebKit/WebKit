@@ -20,15 +20,7 @@ CONFIG(standalone_package) {
 
 CONFIG(standalone_package): DEFINES *= NDEBUG
 
-symbian: {
-    # Need to guarantee this comes before system includes of /epoc32/include
-    MMP_RULES += "USERINCLUDE ../JavaScriptCore/profiler"
-    LIBS += -lhal
-    # For hal.h
-    INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
-}
-
-INCLUDEPATH = \
+JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD \
     $$PWD/.. \
     $$PWD/../.. \ # FIXME: Remove this include once we finish moving the source to Source
@@ -49,8 +41,19 @@ INCLUDEPATH = \
     $$PWD/yarr \
     $$PWD/API \
     $$PWD/ForwardingHeaders \
-    $$JSC_GENERATED_SOURCES_DIR \
-    $$INCLUDEPATH
+    $$JSC_GENERATED_SOURCES_DIR
+
+symbian {
+    PREPEND_INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$PREPEND_INCLUDEPATH
+} else {
+    INCLUDEPATH = $$JAVASCRIPTCORE_INCLUDEPATH $$INCLUDEPATH
+}
+
+symbian: {
+    LIBS += -lhal
+    # For hal.h
+    INCLUDEPATH *= $$MW_LAYER_SYSTEMINCLUDE
+}
 
 win32-*: DEFINES += _HAS_TR1=0
 

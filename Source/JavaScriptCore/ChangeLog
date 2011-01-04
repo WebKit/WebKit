@@ -1,3 +1,18 @@
+2011-01-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt][Symbian] Make sure that WebKit headers are included before platform headers on Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=31273
+
+        On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers
+        are included before platform headers. On all other platforms continue to use
+        INCLUDEPATH (as before). This is a continuation of r65877.
+
+        No new tests as there is no new functionality.
+
+        * JavaScriptCore.pri:
+
 2011-01-04  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build.
