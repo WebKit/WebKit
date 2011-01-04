@@ -32,6 +32,7 @@
 #include "GtkVersioning.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
+#include "Page.h"
 #include "RenderObject.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
@@ -45,6 +46,49 @@
 #endif
 
 namespace WebCore {
+
+typedef HashMap<GType, PlatformRefPtr<GtkStyleContext> > StyleContextMap;
+static StyleContextMap& styleContextMap();
+
+static void gtkStyleChangedCallback(GObject*, GParamSpec*)
+{
+    StyleContextMap::const_iterator end = styleContextMap().end();
+    for (StyleContextMap::const_iterator iter = styleContextMap().begin(); iter != end; ++iter)
+        gtk_style_context_invalidate(iter->second.get());
+
+    Page::scheduleForcedStyleRecalcForAllPages();
+}
+
+static StyleContextMap& styleContextMap()
+{
+    DEFINE_STATIC_LOCAL(StyleContextMap, map, ());
+
+    static bool initialized = false;
+    if (!initialized) {
+        GtkSettings* settings = gtk_settings_get_default();
+        g_signal_connect(settings, "notify::gtk-theme-name", G_CALLBACK(gtkStyleChangedCallback), 0);
+        g_signal_connect(settings, "notify::gtk-color-scheme", G_CALLBACK(gtkStyleChangedCallback), 0);
+        initialized = true;
+    }
+    return map;
+}
+
+static GtkStyleContext* getStyleContext(GType widgetType)
+{
+    std::pair<StyleContextMap::iterator, bool> result = styleContextMap().add(widgetType, 0);
+    if (!result.second)
+        return result.first->second.get();
+
+    GtkWidgetPath* path = gtk_widget_path_new();
+    gtk_widget_path_append_type(path, widgetType);
+
+    PlatformRefPtr<GtkStyleContext> context = adoptPlatformRef(gtk_style_context_new());
+    gtk_style_context_set_path(context.get(), path);
+    gtk_widget_path_free(path);
+
+    result.first->second = context;
+    return context.get();
+}
 
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
 extern GtkTextDirection gtkTextDirection(TextDirection);
@@ -365,6 +409,28 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
     return paintRenderObject(MOZ_GTK_PROGRESS_CHUNK, renderObject, paintInfo.context, chunkRect);
 }
 #endif
+
+PlatformRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
+{
+    GtkStyleContext* context = getStyleContext(widgetType);
+    GtkIconSet* iconSet = gtk_style_context_lookup_icon_set(context, iconName);
+
+    gtk_style_context_save(context);
+
+    guint flags = 0;
+    if (state == GTK_STATE_PRELIGHT)
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    else if (state == GTK_STATE_INSENSITIVE)
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(direction));
+    GdkPixbuf* icon = gtk_icon_set_render_icon_pixbuf(iconSet, context, static_cast<GtkIconSize>(iconSize));
+
+    gtk_style_context_restore(context);
+
+    return adoptPlatformRef(icon);
+}
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
 {

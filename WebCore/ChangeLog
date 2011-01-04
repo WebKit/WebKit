@@ -1,3 +1,30 @@
+2011-01-04  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Port stock icon painting to GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=51764
+
+        Port stock icon painting for media and search input elements to
+        GtkStyleContext. Also create the initial machinery for accessing
+        style contexts for all GTK+ 3.x based widgets.
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintGdkPixbuf):
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeGtk::paintMediaButton):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::getStockIcon):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::gtkStyleChangedCallback):
+        (WebCore::styleContextMap):
+        (WebCore::getStyleContext):
+        (WebCore::RenderThemeGtk::paintMenuList):
+
 2010-12-31  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

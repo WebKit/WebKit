@@ -174,6 +174,7 @@ private:
 #endif
     GtkStateType gtkIconState(RenderObject*);
     static void setTextInputBorders(RenderStyle*);
+    PlatformRefPtr<GdkPixbuf> getStockIcon(GType, const char* iconName, gint direction, gint state, gint iconSize);
 
     mutable GtkWidget* m_gtkWindow;
     mutable GtkWidget* m_gtkContainer;
