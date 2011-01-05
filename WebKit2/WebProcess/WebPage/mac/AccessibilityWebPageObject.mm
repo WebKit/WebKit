@@ -27,7 +27,6 @@
 
 #import "WebFrame.h"
 #import "WebPage.h"
-#import <AppKit/NSAccessibilityRemoteUIElement.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>

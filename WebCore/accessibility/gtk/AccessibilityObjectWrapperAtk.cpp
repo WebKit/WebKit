@@ -76,7 +76,8 @@ using namespace WebCore;
 
 static AccessibilityObject* fallbackObject()
 {
-    static AXObjectCache* fallbackCache = new AXObjectCache;
+    // FIXME: An AXObjectCache with a Document is meaningless.
+    static AXObjectCache* fallbackCache = new AXObjectCache(0);
     static AccessibilityObject* object = 0;
     if (!object) {
         // FIXME: using fallbackCache->getOrCreate(ListBoxOptionRole) is a hack
