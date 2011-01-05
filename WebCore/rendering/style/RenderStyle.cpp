@@ -843,8 +843,9 @@ const AtomicString& RenderStyle::hyphenString() const
         return hyphenationString;
 
     // FIXME: This should depend on locale.
-    DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphen, 1));
-    return hyphenMinusString;
+    DEFINE_STATIC_LOCAL(AtomicString, hyphenMinusString, (&hyphenMinus, 1));
+    DEFINE_STATIC_LOCAL(AtomicString, hyphenString, (&hyphen, 1));
+    return font().primaryFontHasGlyphForCharacter(hyphen) ? hyphenString : hyphenMinusString;
 }
 
 const AtomicString& RenderStyle::textEmphasisMarkString() const

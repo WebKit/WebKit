@@ -412,6 +412,12 @@ bool Font::canReturnFallbackFontsForComplexText()
     return false;
 }
 
+bool Font::primaryFontHasGlyphForCharacter(UChar32) const
+{
+    notImplemented();
+    return true;
+}
+
 QFont Font::font() const
 {
     QFont f = primaryFont()->getQtFont();

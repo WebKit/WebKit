@@ -1,3 +1,22 @@
+2011-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8799835> hyphenate-character: auto should fall back to hyphen-minus if the primary font lacks a hyphen glyph
+        https://bugs.webkit.org/show_bug.cgi?id=51915
+
+        This changes the results of existing tests in fast/text.
+
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::primaryFontHasGlyphForCharacter): Added.
+        * rendering/style/RenderStyle.cpp:
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::primaryFontHasGlyphForCharacter): Added a stub.
+        (WebCore::RenderStyle::hyphenString): For hyphenate-character: auto, return a
+        hyphen only if the primary font has a hyphen glyph, and otherwise return a
+        hyphen-minus.
+
 2011-01-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Ariya Hidayat.

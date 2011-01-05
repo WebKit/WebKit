@@ -144,6 +144,7 @@ public:
     const SimpleFontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
     GlyphData glyphDataForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
+    bool primaryFontHasGlyphForCharacter(UChar32) const;
     // Used for complex text, and does not utilize the glyph map cache.
     const FontData* fontDataForCharacters(const UChar*, int length) const;
 
