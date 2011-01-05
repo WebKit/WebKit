@@ -25,6 +25,9 @@
 
 #include "WebBackForwardListItem.h"
 
+#include "DataReference.h"
+#include "WebCoreArgumentCoders.h"
+
 namespace WebKit {
 
 WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
@@ -44,6 +47,40 @@ void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size
 {
     m_backForwardData.reserveCapacity(size);
     m_backForwardData.append(data, size);
+}
+
+void WebBackForwardListItem::encode(CoreIPC::ArgumentEncoder& encoder) const
+{
+    encoder.encode(m_originalURL);
+    encoder.encode(m_url);
+    encoder.encode(m_title);
+    encoder.encode(m_itemID);
+    encoder.encode(CoreIPC::DataReference(m_backForwardData.data(), m_backForwardData.size()));
+}
+
+PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::decode(CoreIPC::ArgumentDecoder& decoder)
+{
+    String originalURL;
+    if (!decoder.decode(originalURL))
+        return 0;
+
+    String url;
+    if (!decoder.decode(url))
+        return 0;
+
+    String title;
+    if (!decoder.decode(title))
+        return 0;
+
+    uint64_t itemID;
+    if (!decoder.decode(itemID))
+        return 0;
+    
+    CoreIPC::DataReference data;
+    if (!decoder.decode(data))
+        return 0;
+
+    return create(originalURL, url, title, data.data(), data.size(), itemID);
 }
 
 } // namespace WebKit

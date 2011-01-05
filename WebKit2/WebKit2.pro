@@ -257,6 +257,7 @@ HEADERS += \
     Shared/StringPairVector.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
+    Shared/WebBackForwardListItem.h \
     Shared/WebCertificateInfo.h \
     Shared/WebContextMenuItem.h \
     Shared/WebContextMenuItemData.h \
@@ -467,6 +468,7 @@ SOURCES += \
     Shared/OriginAndDatabases.cpp \
     Shared/PlatformPopupMenuData.cpp \
     Shared/VisitedLinkTable.cpp \
+    Shared/WebBackForwardListItem.cpp \
     Shared/WebContextMenuItem.cpp \
     Shared/WebContextMenuItemData.cpp \
     Shared/WebError.cpp \
@@ -538,7 +540,6 @@ SOURCES += \
     UIProcess/TiledDrawingAreaProxy.cpp \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebBackForwardList.cpp \
-    UIProcess/WebBackForwardListItem.cpp \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebContextMenuProxy.cpp \

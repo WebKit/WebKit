@@ -515,6 +515,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebBackForwardListItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebBackForwardListItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebCertificateInfo.h"
 				>
 			</File>
@@ -2020,14 +2028,6 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebBackForwardList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebBackForwardListItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebBackForwardListItem.h"
 				>
 			</File>
 			<File

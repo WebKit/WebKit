@@ -30,9 +30,12 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebKit {
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
-class WebPageProxy;
+namespace WebKit {
 
 class WebBackForwardListItem : public APIObject {
 public:
@@ -58,6 +61,9 @@ public:
     
     void setBackForwardData(const uint8_t* buffer, size_t size);
     const Vector<uint8_t>& backForwardData() const { return m_backForwardData; }
+
+    void encode(CoreIPC::ArgumentEncoder&) const;
+    static PassRefPtr<WebBackForwardListItem> decode(CoreIPC::ArgumentDecoder&);
 
 private:
     WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
