@@ -26,12 +26,18 @@
 #ifndef ResourceError_h
 #define ResourceError_h
 
-#if USE(CFNETWORK)
-
 #include "ResourceErrorBase.h"
 
 #include <wtf/RetainPtr.h>
+#if USE(CFNETWORK)
 #include <CoreFoundation/CFStream.h>
+#else
+#ifdef __OBJC__
+@class NSError;
+#else
+class NSError;
+#endif
+#endif
 
 namespace WebCore {
 
@@ -48,6 +54,7 @@ public:
     {
     }
 
+#if USE(CFNETWORK)
     ResourceError(CFStreamError error);
 
     ResourceError(CFErrorRef error)
@@ -59,6 +66,16 @@ public:
 
     operator CFErrorRef() const;
     operator CFStreamError() const;
+#else
+    ResourceError(NSError* error)
+        : m_dataIsUpToDate(false)
+        , m_platformError(error)
+    {
+        m_isNull = !error;
+    }
+
+    operator NSError*() const;
+#endif
 
 private:
     friend class ResourceErrorBase;
@@ -67,11 +84,13 @@ private:
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
     bool m_dataIsUpToDate;
+#if USE(CFNETWORK)
     mutable RetainPtr<CFErrorRef> m_platformError;
+#else
+    mutable RetainPtr<NSError> m_platformError;
+#endif
 };
 
 } // namespace WebCore
-
-#endif // USE(CFNETWORK)
 
 #endif // ResourceError_h

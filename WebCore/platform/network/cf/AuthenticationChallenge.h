@@ -30,7 +30,16 @@
 #include "AuthenticationClient.h"
 #include <wtf/RefPtr.h>
 
+#if USE(CFNETWORK)
 typedef struct _CFURLAuthChallenge* CFURLAuthChallengeRef;
+#else
+#ifndef __OBJC__
+typedef struct objc_object *id;
+class NSURLAuthenticationChallenge;
+#else
+@class NSURLAuthenticationChallenge;
+#endif
+#endif
 
 namespace WebCore {
 
@@ -38,19 +47,34 @@ class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge() {}
     AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error);
+#if USE(CFNETWORK)
     AuthenticationChallenge(CFURLAuthChallengeRef, AuthenticationClient*);
 
     AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
     void setAuthenticationClient(AuthenticationClient* client) { m_authenticationClient = client; }
 
     CFURLAuthChallengeRef cfURLAuthChallengeRef() const { return m_cfChallenge.get(); }
+#else
+    AuthenticationChallenge(NSURLAuthenticationChallenge *);
+
+    id sender() const { return m_sender.get(); }
+    NSURLAuthenticationChallenge *nsURLAuthenticationChallenge() const { return m_nsChallenge.get(); }
+
+    void setAuthenticationClient(AuthenticationClient*); // Changes sender to one that invokes client methods.
+    AuthenticationClient* authenticationClient() const;
+#endif
 
 private:
     friend class AuthenticationChallengeBase;
     static bool platformCompare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
 
+#if USE(CFNETWORK)
     RefPtr<AuthenticationClient> m_authenticationClient;
     RetainPtr<CFURLAuthChallengeRef> m_cfChallenge;
+#else
+    RetainPtr<id> m_sender; // Always the same as [m_macChallenge.get() sender], cached here for performance.
+    RetainPtr<NSURLAuthenticationChallenge *> m_nsChallenge;
+#endif
 };
 
 }

@@ -26,12 +26,18 @@
 #ifndef ResourceResponse_h
 #define ResourceResponse_h
 
-#if USE(CFNETWORK)
-
 #include "ResourceResponseBase.h"
 #include <wtf/RetainPtr.h>
 
+#if USE(CFNETWORK)
 typedef struct _CFURLResponse* CFURLResponseRef;
+#else
+#ifdef __OBJC__
+@class NSURLResponse;
+#else
+class NSURLResponse;
+#endif
+#endif
 
 namespace WebCore {
 
@@ -42,12 +48,21 @@ public:
     {
     }
 
+#if USE(CFNETWORK)
     ResourceResponse(CFURLResponseRef cfResponse)
         : m_cfResponse(cfResponse)
         , m_isUpToDate(false)
     {
         m_isNull = !cfResponse;
     }
+#else
+    ResourceResponse(NSURLResponse* nsResponse)
+        : m_nsResponse(nsResponse)
+        , m_isUpToDate(false)
+    {
+        m_isNull = !nsResponse;
+    }
+#endif
 
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
@@ -67,7 +82,11 @@ public:
          */
     }
 
+#if USE(CFNETWORK)
     CFURLResponseRef cfURLResponse() const;
+#else
+    NSURLResponse *nsURLResponse() const;
+#endif
 
 private:
     friend class ResourceResponseBase;
@@ -78,7 +97,11 @@ private:
 
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
+#if USE(CFNETWORK)
     RetainPtr<CFURLResponseRef> m_cfResponse;
+#else
+    RetainPtr<NSURLResponse> m_nsResponse;
+#endif
     bool m_isUpToDate;
 };
 
@@ -86,7 +109,5 @@ struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataB
 };
 
 } // namespace WebCore
-
-#endif // USE(CFNETWORK)
 
 #endif // ResourceResponse_h

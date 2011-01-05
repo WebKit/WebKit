@@ -27,12 +27,18 @@
 #ifndef ResourceRequest_h
 #define ResourceRequest_h
 
-#if USE(CFNETWORK)
-
 #include "ResourceRequestBase.h"
 
 #include <wtf/RetainPtr.h>
+#if USE(CFNETWORK)
 typedef const struct _CFURLRequest* CFURLRequestRef;
+#else
+#ifdef __OBJC__
+@class NSURLRequest;
+#else
+class NSURLRequest;
+#endif
+#endif
 
 namespace WebCore {
 
@@ -59,11 +65,20 @@ namespace WebCore {
         {
         }
         
+#if USE(CFNETWORK)
         ResourceRequest(CFURLRequestRef cfRequest)
             : ResourceRequestBase()
             , m_cfRequest(cfRequest) { }
-        
-        CFURLRequestRef cfURLRequest() const;       
+
+        CFURLRequestRef cfURLRequest() const;
+#else
+        ResourceRequest(NSURLRequest* nsRequest)
+            : ResourceRequestBase()
+            , m_nsRequest(nsRequest) { }
+
+        void applyWebArchiveHackForMail();
+        NSURLRequest* nsURLRequest() const;
+#endif
 
     private:
         friend class ResourceRequestBase;
@@ -74,14 +89,16 @@ namespace WebCore {
         PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const { return data; }
         void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>) { }
 
-        RetainPtr<CFURLRequestRef> m_cfRequest;      
+#if USE(CFNETWORK)
+        RetainPtr<CFURLRequestRef> m_cfRequest;
+#else
+        RetainPtr<NSURLRequest> m_nsRequest;
+#endif
     };
 
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
     };
 
 } // namespace WebCore
-
-#endif // USE(CFNETWORK)
 
 #endif // ResourceRequest_h

@@ -1,3 +1,28 @@
+2011-01-05  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Merge cf and mac header files with same name
+        https://bugs.webkit.org/show_bug.cgi?id=51916
+
+        Since most of the code in the header files is identical, we can merge them and have #if
+        USE(CFNETWORK) to separate out the network specific parts.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/cf/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::sender):
+        (WebCore::AuthenticationChallenge::nsURLAuthenticationChallenge):
+        * platform/network/cf/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/mac/AuthenticationChallenge.h: Removed.
+        * platform/network/mac/ResourceError.h: Removed.
+        * platform/network/mac/ResourceRequest.h: Removed.
+        * platform/network/mac/ResourceResponse.h: Removed.
+
 2011-01-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adele Peterson.
