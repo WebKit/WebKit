@@ -2,6 +2,15 @@
 
         Unreviewed, test expectation update.
 
+        Add home-end-expected.txt for Chromium-win again.  It's a
+        platform-dependent text test.
+
+        * platform/chromium-win/editing/selection/home-end-expected.txt: Added.
+
+2011-01-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         * platform/chromium/test_expectations.txt: Fix a syntax error in the previous change
 
 2011-01-04  Kent Tamura  <tkent@chromium.org>
