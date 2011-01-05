@@ -988,11 +988,25 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
             nextBlock->moveAllChildrenTo(prevBlock, nextBlock->hasLayer() || prevBlock->hasLayer());
-       
+
+            // FIXME: When we destroy nextBlock, it might happen that nextBlock's next sibling block and
+            // oldChild can get merged. Since oldChild is getting removed, we do not want to move
+            // nextBlock's next sibling block's children into it. By setting a fake continuation,
+            // we prevent this from happening.
+            RenderBlock* oldChildBlock;
+            if (oldChild->isAnonymous() && oldChild->isRenderBlock() && !toRenderBlock(oldChild)->continuation()) {
+                oldChildBlock = toRenderBlock(oldChild);
+                oldChildBlock->setContinuation(oldChildBlock);                
+            }          
+            
             // Delete the now-empty block's lines and nuke it.
             nextBlock->deleteLineBoxTree();
             nextBlock->destroy();
             next = 0;
+
+            // FIXME: Revert the continuation change done above.
+            if (oldChildBlock)
+                oldChildBlock->setContinuation(0);
         }
     }
 

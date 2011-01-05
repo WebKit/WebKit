@@ -1,3 +1,14 @@
+2011-01-05  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash when trying to merge two anonymous blocks,
+        one of which is getting removed.
+        https://bugs.webkit.org/show_bug.cgi?id=51919
+
+        * fast/block/merge-anonymous-block-remove-child-crash-expected.txt: Added.
+        * fast/block/merge-anonymous-block-remove-child-crash.html: Added.
+
 2011-01-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
