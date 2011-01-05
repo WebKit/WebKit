@@ -1,3 +1,12 @@
+2011-01-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51903
+        Tell UI process which subframe is largest
+
+        * WebCore.exp.in: Exported FrameView::contentsSize().
+
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed. GTK build fix.

@@ -77,11 +77,14 @@ public:
     String contentsAsString() const;
     String selectionAsString() const;
 
+    WebCore::IntSize size() const;
+
     // WKBundleFrame API and SPI functions
     bool isMainFrame() const;
     String name() const;
     String url() const;
     String innerText() const;
+    bool isFrameSet() const;
     PassRefPtr<ImmutableArray> childFrames();
     JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
     JSGlobalContextRef jsContext();
@@ -121,8 +124,6 @@ private:
     void init(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
 
     virtual Type type() const { return APIType; }
-
-    bool isFrameSet() const;
 
     WebCore::Frame* m_coreFrame;
 

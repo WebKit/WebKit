@@ -33,6 +33,7 @@
 
 namespace WebKit {
 
+class WebFrame;
 class WebPage;
 
 class WebChromeClient : public WebCore::ChromeClient {
@@ -202,6 +203,7 @@ private:
     virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments&) const;
 
     String m_cachedToolTip;
+    mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     WebPage* m_page;
 };
 

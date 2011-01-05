@@ -1216,6 +1216,8 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
     MESSAGE_CHECK(frame);
 
     frame->setIsFrameSet(value);
+    if (frame->isMainFrame())
+        m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
 // PolicyClient
@@ -1914,6 +1916,19 @@ void WebPageProxy::focusedFrameChanged(uint64_t frameID)
     MESSAGE_CHECK(frame);
 
     m_focusedFrame = frame;
+}
+
+void WebPageProxy::frameSetLargestFrameChanged(uint64_t frameID)
+{
+    if (!frameID) {
+        m_frameSetLargestFrame = 0;
+        return;
+    }
+
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    m_frameSetLargestFrame = frame;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

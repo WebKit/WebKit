@@ -41,6 +41,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
@@ -285,6 +286,18 @@ String WebFrame::selectionAsString() const
         return String();
 
     return m_coreFrame->displayStringModifiedByEncoding(m_coreFrame->editor()->selectedText());
+}
+
+IntSize WebFrame::size() const
+{
+    if (!m_coreFrame)
+        return IntSize();
+
+    FrameView* frameView = m_coreFrame->view();
+    if (!frameView)
+        return IntSize();
+
+    return frameView->contentsSize();
 }
 
 bool WebFrame::isFrameSet() const

@@ -59,6 +59,32 @@ using namespace HTMLNames;
 
 namespace WebKit {
 
+static double area(WebFrame* frame)
+{
+    IntSize size = frame->size();
+    return static_cast<double>(size.height()) * size.width();
+}
+
+
+static WebFrame* findLargestFrameInFrameSet(WebPage* page)
+{
+    WebFrame* mainFrame = page->mainFrame();
+    if (!mainFrame->isFrameSet())
+        return 0;
+
+    WebFrame* largestSoFar = 0;
+
+    RefPtr<ImmutableArray> frameChildren = mainFrame->childFrames();
+    size_t count = frameChildren->size();
+    for (size_t i = 0; i < count; ++i) {
+        WebFrame* childFrame = frameChildren->at<WebFrame>(i);
+        if (!largestSoFar || area(childFrame) > area(largestSoFar))
+            largestSoFar = childFrame;
+    }
+
+    return largestSoFar;
+}
+
 void WebChromeClient::chromeDestroyed()
 {
     delete this;
@@ -384,6 +410,12 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
 
     m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
 #endif
+
+    WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
+    if (largestFrame != m_cachedFrameSetLargestFrame.get()) {
+        m_cachedFrameSetLargestFrame = largestFrame;
+        WebProcess::shared().connection()->send(Messages::WebPageProxy::FrameSetLargestFrameChanged(largestFrame ? largestFrame->frameID() : 0), m_page->pageID());
+    }
 }
 
 void WebChromeClient::scrollRectIntoView(const IntRect&, const ScrollView*) const

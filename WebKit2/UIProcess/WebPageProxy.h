@@ -112,6 +112,7 @@ public:
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
+    WebFrameProxy* frameSetLargestFrame() const { return m_frameSetLargestFrame.get(); }
 
     DrawingAreaProxy* drawingArea() { return m_drawingArea.get(); }
     void setDrawingArea(PassOwnPtr<DrawingAreaProxy>);
@@ -446,6 +447,7 @@ private:
     void stringCallback(const String&, uint64_t);
 
     void focusedFrameChanged(uint64_t frameID);
+    void frameSetLargestFrameChanged(uint64_t frameID);
 
 #if USE(ACCELERATED_COMPOSITING)
     void didChangeAcceleratedCompositing(bool compositing, DrawingAreaInfo&);
@@ -476,6 +478,7 @@ private:
     RefPtr<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;
+    RefPtr<WebFrameProxy> m_frameSetLargestFrame;
 
     String m_userAgent;
     String m_applicationNameForUserAgent;
