@@ -3155,4 +3155,4 @@ BUGWK51841 : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
 
 // Regression by r74995
-BUG_TKENT : MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE
+BUG_TKENT MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE
