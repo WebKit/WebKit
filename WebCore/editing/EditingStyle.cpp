@@ -82,19 +82,24 @@ static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(Pass
     return copyEditingProperties(style.get());
 }
 
+float EditingStyle::NoFontDelta = 0.0f;
+
 EditingStyle::EditingStyle()
     : m_shouldUseFixedDefaultFontSize(false)
+    , m_fontSizeDelta(NoFontDelta)
 {
 }
 
 EditingStyle::EditingStyle(Node* node)
     : m_shouldUseFixedDefaultFontSize(false)
+    , m_fontSizeDelta(NoFontDelta)
 {
     init(node);
 }
 
 EditingStyle::EditingStyle(const Position& position)
     : m_shouldUseFixedDefaultFontSize(false)
+    , m_fontSizeDelta(NoFontDelta)
 {
     init(position.node());
 }
@@ -102,7 +107,9 @@ EditingStyle::EditingStyle(const Position& position)
 EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
     : m_mutableStyle(style->copy())
     , m_shouldUseFixedDefaultFontSize(false)
+    , m_fontSizeDelta(NoFontDelta)
 {
+    extractFontSizeDelta();
 }
 
 EditingStyle::~EditingStyle()
@@ -121,6 +128,7 @@ void EditingStyle::init(Node* node)
     }
 
     m_shouldUseFixedDefaultFontSize = computedStyleAtPosition->useFixedFontDefaultSize();
+    extractFontSizeDelta();
 }
 
 void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(RenderStyle* renderStyle)
@@ -143,9 +151,33 @@ void EditingStyle::replaceFontSizeByKeywordIfPossible(RenderStyle* renderStyle, 
         m_mutableStyle->setProperty(CSSPropertyFontSize, computedStyle->getFontSizeCSSValuePreferringKeyword()->cssText());
 }
 
+void EditingStyle::extractFontSizeDelta()
+{
+    if (m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize)) {
+        // Explicit font size overrides any delta.
+        m_mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
+        return;
+    }
+
+    // Get the adjustment amount out of the style.
+    RefPtr<CSSValue> value = m_mutableStyle->getPropertyCSSValue(CSSPropertyWebkitFontSizeDelta);
+    if (!value || value->cssValueType() != CSSValue::CSS_PRIMITIVE_VALUE)
+        return;
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value.get());
+
+    // Only PX handled now. If we handle more types in the future, perhaps
+    // a switch statement here would be more appropriate.
+    if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_PX)
+        return;
+
+    m_fontSizeDelta = primitiveValue->getFloatValue();
+    m_mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
+}
+
 bool EditingStyle::isEmpty() const
 {
-    return !m_mutableStyle || m_mutableStyle->isEmpty();
+    return (!m_mutableStyle || m_mutableStyle->isEmpty()) && m_fontSizeDelta == NoFontDelta;
 }
 
 bool EditingStyle::textDirection(WritingDirection& writingDirection) const
@@ -181,6 +213,7 @@ void EditingStyle::setStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
     // FIXME: We should be able to figure out whether or not font is fixed width for mutable style.
     // We need to check font-family is monospace as in FontDescription but we don't want to duplicate code here.
     m_shouldUseFixedDefaultFontSize = false;
+    extractFontSizeDelta();
 }
 
 void EditingStyle::overrideWithStyle(const CSSMutableStyleDeclaration* style)
@@ -190,12 +223,14 @@ void EditingStyle::overrideWithStyle(const CSSMutableStyleDeclaration* style)
     if (!m_mutableStyle)
         m_mutableStyle = CSSMutableStyleDeclaration::create();
     m_mutableStyle->merge(style);
+    extractFontSizeDelta();
 }
 
 void EditingStyle::clear()
 {
     m_mutableStyle.clear();
     m_shouldUseFixedDefaultFontSize = false;
+    m_fontSizeDelta = NoFontDelta;
 }
 
 PassRefPtr<EditingStyle> EditingStyle::copy() const
@@ -204,6 +239,7 @@ PassRefPtr<EditingStyle> EditingStyle::copy() const
     if (m_mutableStyle)
         copy->m_mutableStyle = m_mutableStyle->copy();
     copy->m_shouldUseFixedDefaultFontSize = m_shouldUseFixedDefaultFontSize;
+    copy->m_fontSizeDelta = m_fontSizeDelta;
     return copy;
 }
 

@@ -525,7 +525,7 @@ void ApplyStyleCommand::doApply()
         // Apply any remaining styles to the inline elements.
         if (!m_style->isEmpty() || m_styledInlineElement || m_isInlineElementToRemoveFunction) {
             RefPtr<CSSMutableStyleDeclaration> style = m_style->style() ? m_style->style() : CSSMutableStyleDeclaration::create();
-            applyRelativeFontStyleChange(style.get());
+            applyRelativeFontStyleChange(m_style.get());
             applyInlineStyle(style.get());
         }
         break;
@@ -607,35 +607,13 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
         updateStartEnd(startRange->startPosition(), endRange->startPosition());
 }
 
-#define NoFontDelta (0.0f)
-#define MinimumFontSize (0.1f)
-
-void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration *style)
+void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 {
-    RefPtr<CSSValue> value = style->getPropertyCSSValue(CSSPropertyFontSize);
-    if (value) {
-        // Explicit font size overrides any delta.
-        style->removeProperty(CSSPropertyWebkitFontSizeDelta);
-        return;
-    }
+    static const float MinimumFontSize = 0.1f;
 
-    // Get the adjustment amount out of the style.
-    value = style->getPropertyCSSValue(CSSPropertyWebkitFontSizeDelta);
-    if (!value)
+    if (!style || !style->hasFontSizeDelta())
         return;
-    float adjustment = NoFontDelta;
-    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
-        CSSPrimitiveValue *primitiveValue = static_cast<CSSPrimitiveValue *>(value.get());
-        if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PX) {
-            // Only PX handled now. If we handle more types in the future, perhaps
-            // a switch statement here would be more appropriate.
-            adjustment = primitiveValue->getFloatValue();
-        }
-    }
-    style->removeProperty(CSSPropertyWebkitFontSizeDelta);
-    if (adjustment == NoFontDelta)
-        return;
-    
+
     Position start = startPosition();
     Position end = endPosition();
     if (comparePositions(end, start) < 0) {
@@ -643,7 +621,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
         start = end;
         end = swap;
     }
-    
+
     // Join up any adjacent text nodes.
     if (start.node()->isTextNode()) {
         joinChildTextNodes(start.node()->parentNode(), start, end);
@@ -714,7 +692,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
 
         CSSMutableStyleDeclaration* inlineStyleDecl = element->getInlineStyleDecl();
         float currentFontSize = computedFontSize(node);
-        float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + adjustment);
+        float desiredFontSize = max(MinimumFontSize, startingFontSizes.get(node) + style->fontSizeDelta());
         RefPtr<CSSValue> value = inlineStyleDecl->getPropertyCSSValue(CSSPropertyFontSize);
         if (value) {
             inlineStyleDecl->removeProperty(CSSPropertyFontSize, true);
@@ -736,9 +714,6 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclaration 
     for (size_t i = 0; i < size; ++i)
         removeNodePreservingChildren(unstyledSpans[i].get());
 }
-
-#undef NoFontDelta
-#undef MinimumFontSize
 
 static Node* dummySpanAncestorForNode(const Node* node)
 {

@@ -46,8 +46,9 @@ class RenderStyle;
 
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
-    
+
     enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
+    static float NoFontDelta;
 
     static PassRefPtr<EditingStyle> create()
     {
@@ -85,6 +86,9 @@ public:
     void removeNonEditingProperties();
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
 
+    float fontSizeDelta() const { return m_fontSizeDelta; }
+    bool hasFontSizeDelta() const { return m_fontSizeDelta != NoFontDelta; }
+
 private:
     EditingStyle();
     EditingStyle(Node*);
@@ -93,9 +97,11 @@ private:
     void init(Node*);
     void removeTextFillAndStrokeColorsIfNeeded(RenderStyle*);
     void replaceFontSizeByKeywordIfPossible(RenderStyle*, CSSComputedStyleDeclaration*);
+    void extractFontSizeDelta();
 
     RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;
+    float m_fontSizeDelta;
 };
 
 PassRefPtr<EditingStyle> editingStyleIncludingTypingStyle(const Position&);

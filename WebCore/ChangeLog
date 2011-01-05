@@ -1,3 +1,35 @@
+2011-01-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        ApplyStyleCommand::applyRelativeFontStyleChange should take EditingStyle*
+        https://bugs.webkit.org/show_bug.cgi?id=50641
+
+        Modified applyRelativeFontStyleChange to take EditingStyle instead of CSSMutableStyleDeclaration.
+        Also extracted the logic to obtain the font size delta from ApplyStyleCommand to EditingStyle.
+        The font size delta is now stored as a member variable of EditingStyle as supposed to a property
+        in CSSMutableStyleDeclration as soon as EditingStyle is instantiated.
+
+        No new tests are added since this is a refactoring.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::doApply): Calls applyRelativeFontStyleChange.
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Takes EditingStyle.
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::EditingStyle): Initializes m_fontSizeDelta.
+        (WebCore::EditingStyle::init): Ditto.
+        (WebCore::EditingStyle::extractFontSizeDelta): Extracted from applyRelativeFontStyleChange.
+        (WebCore::EditingStyle::isEmpty): Takes care of m_fontSizeDelta.
+        (WebCore::EditingStyle::setStyle): Calls extractFontSizeDelta.
+        (WebCore::EditingStyle::overrideWithStyle): Ditto.
+        (WebCore::EditingStyle::clear): Initializes m_fontSizeDelta.
+        (WebCore::EditingStyle::copy): Calls extractFontSizeDelta.
+        * editing/EditingStyle.h:
+        (WebCore::EditingStyle::fontSizeDelta): Added.
+        (WebCore::EditingStyle::hasFontSizeDelta): Added.
+        * editing/Editor.h:
+
 2011-01-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

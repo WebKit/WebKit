@@ -91,7 +91,7 @@ private:
 
     // style-application helpers
     void applyBlockStyle(CSSMutableStyleDeclaration*);
-    void applyRelativeFontStyleChange(CSSMutableStyleDeclaration*);
+    void applyRelativeFontStyleChange(EditingStyle*);
     void applyInlineStyle(CSSMutableStyleDeclaration*);
     void fixRangeAndApplyInlineStyle(CSSMutableStyleDeclaration*, const Position& start, const Position& end);
     void applyInlineStyleToNodeRange(CSSMutableStyleDeclaration*, Node* startNode, Node* pastEndNode);
