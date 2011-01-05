@@ -3154,3 +3154,8 @@ BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
 
 // Regression by r74995
 BUG_TKENT MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE
+
+// This was introduced by r75077.
+BUG_SENORBLANCO : fast/text/basic/014.html = IMAGE
+BUG_SENORBLANCO LINUX : fast/text/capitalize-boundaries.html = IMAGE
+BUG_SENORBLANCO : fast/text/midword-break-after-breakable-char.html = IMAGE

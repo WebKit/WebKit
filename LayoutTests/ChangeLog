@@ -2,6 +2,16 @@
 
         Unreviewed; test expectations fix.
 
+        * platform/chromium/test_expectations.txt:
+        Add a few failing tests to chromium's test expectations file.
+        * platform/chromium-gpu/test_expectations.txt:
+        Mark the shadow-offset tests as crashing on win debug (GPU).  Remove
+        a duplicate MAC expectation.
+
+2011-01-05  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations fix.
+
         Update chromium GPU test_expectations.txt file to match the
         layout of the CPU results more closely.
 

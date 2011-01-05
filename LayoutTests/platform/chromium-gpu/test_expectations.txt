@@ -68,13 +68,13 @@ BUGNONE WIN LINUX : canvas/philip = PASS
 WONTFIX : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 
 // Shadow offset tests crash occasionally on Mac and Linux debug.
-BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-1.html = PASS CRASH
-BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-2.html = PASS CRASH
-BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
-BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
-BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
-BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
-BUGCR67732 MAC LINUX DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
+BUGCR67732 DEBUG : fast/canvas/shadow-offset-1.html = PASS CRASH
+BUGCR67732 DEBUG : fast/canvas/shadow-offset-2.html = PASS CRASH
+BUGCR67732 DEBUG : fast/canvas/shadow-offset-3.html = PASS CRASH
+BUGCR67732 DEBUG : fast/canvas/shadow-offset-4.html = PASS CRASH
+BUGCR67732 DEBUG : fast/canvas/shadow-offset-5.html = PASS CRASH
+BUGCR67732 DEBUG : fast/canvas/shadow-offset-6.html = PASS CRASH
+BUGCR67732 DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
 
 BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
@@ -200,7 +200,6 @@ BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
-BUGWK45991 MAC : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT PASS
 // BUGWK40147 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT PASS
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
