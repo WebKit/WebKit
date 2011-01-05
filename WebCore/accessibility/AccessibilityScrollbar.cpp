@@ -29,25 +29,77 @@
 #include "config.h"
 #include "AccessibilityScrollbar.h"
 
+#include "AXObjectCache.h"
+#include "FrameView.h"
+#include "ScrollView.h"
 #include "Scrollbar.h"
 
 namespace WebCore {
 
-AccessibilityScrollbar::AccessibilityScrollbar()
-    : m_scrollbar(0)
+AccessibilityScrollbar::AccessibilityScrollbar(Scrollbar* scrollbar)
+    : m_scrollbar(scrollbar)
+    , m_parent(0)
 {
+    ASSERT(scrollbar);
 }
 
-PassRefPtr<AccessibilityScrollbar> AccessibilityScrollbar::create()
+PassRefPtr<AccessibilityScrollbar> AccessibilityScrollbar::create(Scrollbar* scrollbar)
 {
-    return adoptRef(new AccessibilityScrollbar);
+    return adoptRef(new AccessibilityScrollbar(scrollbar));
+}
+    
+IntRect AccessibilityScrollbar::elementRect() const
+{
+    if (!m_scrollbar)
+        return IntRect();
+    
+    return m_scrollbar->frameRect();
+}
+    
+Document* AccessibilityScrollbar::document() const
+{
+    AccessibilityObject* parent = parentObject();
+    if (!parent)
+        return 0;
+    return parent->document();
 }
 
+AccessibilityOrientation AccessibilityScrollbar::orientation() const
+{
+    if (!m_scrollbar)
+        return AccessibilityOrientationHorizontal;
+
+    if (m_scrollbar->orientation() == HorizontalScrollbar)
+        return AccessibilityOrientationHorizontal;
+    if (m_scrollbar->orientation() == VerticalScrollbar)
+        return AccessibilityOrientationVertical;
+
+    return AccessibilityOrientationHorizontal;
+}
+
+bool AccessibilityScrollbar::isEnabled() const
+{
+    if (!m_scrollbar)
+        return false;
+    return m_scrollbar->enabled();
+}
+    
 float AccessibilityScrollbar::valueForRange() const
 {
     if (!m_scrollbar)
         return 0;
-    return m_scrollbar->currentPos();
+
+    return m_scrollbar->currentPos() / m_scrollbar->maximum();
 }
 
+void AccessibilityScrollbar::setValue(float value)
+{
+    if (!m_scrollbar)
+        return;
+    
+    float newValue = value * m_scrollbar->maximum();
+    
+    m_scrollbar->setValue(newValue, Scrollbar::NotFromScrollAnimator);    
+}
+    
 } // namespace WebCore

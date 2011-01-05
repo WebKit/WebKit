@@ -26,6 +26,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "PageClientImpl.h"
 
+#import "DataReference.h"
 #import "FindIndicator.h"
 #import "WKAPICast.h"
 #import "WKStringCF.h"
@@ -257,6 +258,12 @@ void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, b
     [m_wkView _setFindIndicator:findIndicator fadeOut:fadeOut];
 }
 
+void PageClientImpl::accessibilityChildTokenReceived(const CoreIPC::DataReference& data)
+{
+    NSData* remoteToken = [NSData dataWithBytes:data.data() length:data.size()];
+    [m_wkView _setAccessibilityChildToken:remoteToken];
+}
+    
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::pageDidEnterAcceleratedCompositing()
 {

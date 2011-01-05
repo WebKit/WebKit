@@ -68,7 +68,6 @@ public:
     virtual String stringValueForMSAA() const;
     virtual String nameForMSAA() const;
 
-    virtual IntSize size() const;
     virtual IntRect elementRect() const;
 
 private:    

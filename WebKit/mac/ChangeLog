@@ -1,3 +1,25 @@
+2011-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2: Support Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=51859
+
+        Use rootObject() method to get top of AX tree.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        (WebFrameLoaderClient::accessibilityRemoteObject):
+        * WebView/WebFrame.mm:
+        (-[WebFrame setAccessibleName:]):
+        (-[WebFrame accessibilityRoot]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFramePrivate.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView accessibilityAttributeValue:]):
+        (-[WebHTMLView accessibilityFocusedUIElement]):
+        (-[WebHTMLView accessibilityHitTest:]):
+        (-[WebHTMLView _accessibilityParentForSubview:]):
+
 2011-01-04  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/51889> WebFrameLoaderClient::createMediaPlayerProxyPlugin() should use WebCore::PluginInfo.name

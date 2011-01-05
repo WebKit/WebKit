@@ -28,8 +28,10 @@
 #import "AccessibilityController.h"
 
 #import "AccessibilityUIElement.h"
+#import <AppKit/NSColor.h>
 #import <Foundation/Foundation.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLView.h>
 
 AccessibilityController::AccessibilityController()
@@ -49,14 +51,14 @@ AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
 AccessibilityUIElement AccessibilityController::focusedElement()
 {
     // FIXME: we could do some caching here.
-    id accessibilityObject = [[[mainFrame frameView] documentView] accessibilityFocusedUIElement];
+    id accessibilityObject = [[mainFrame accessibilityRoot] accessibilityFocusedUIElement];
     return AccessibilityUIElement(accessibilityObject);
 }
 
 AccessibilityUIElement AccessibilityController::rootElement()
 {
     // FIXME: we could do some caching here.
-    id accessibilityObject = [[mainFrame frameView] documentView];
+    id accessibilityObject = [mainFrame accessibilityRoot];
     return AccessibilityUIElement(accessibilityObject);
 }
 

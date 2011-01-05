@@ -1,3 +1,72 @@
+2011-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2: Support Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=51859
+
+        Implement remote accessibility API to support cross process accessibility
+        on the Mac platform.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::accessibilityChildTokenReceived):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView _updateWindowAndViewFrames]):
+        (-[WKView _setAccessibilityChildToken:]):
+        (-[WKView accessibilityIsIgnored]):
+        (-[WKView accessibilityHitTest:]):
+        (-[WKView accessibilityAttributeValue:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        (WebKit::WebPageProxy::didReceiveAccessibilityPageToken):
+        (WebKit::WebPageProxy::sendAccessibilityPresenterToken):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::accessibilityRemoteObject):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::accessibilityPosition):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/AccessibilityWebPageObject.h: Added.
+        * WebProcess/WebPage/mac/AccessibilityWebPageObject.mm: Added.
+        (-[AccessibilityWebPageObject setWebPage:]):
+        (-[AccessibilityWebPageObject setRemoteParent:]):
+        (-[AccessibilityWebPageObject dealloc]):
+        (-[AccessibilityWebPageObject accessibilityIsIgnored]):
+        (-[AccessibilityWebPageObject accessibilityAttributeNames]):
+        (-[AccessibilityWebPageObject accessibilityIsAttributeSettable:]):
+        (-[AccessibilityWebPageObject accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityWebPageObject accessibilityActionNames]):
+        (-[AccessibilityWebPageObject accessibilityChildren]):
+        (-[AccessibilityWebPageObject accessibilityAttributeValue:]):
+        (-[AccessibilityWebPageObject accessibilityShouldUseUniqueId]):
+        (-[AccessibilityWebPageObject accessibilityHitTest:]):
+        (-[AccessibilityWebPageObject accessibilityFocusedUIElement]):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::sendAccessibilityPresenterToken):
+        (WebKit::WebPage::accessibilityRemoteObject):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::presenterApplicationPid):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
 2011-01-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

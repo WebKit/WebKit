@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,11 +42,14 @@ class WebCoreTextMarker;
 
 namespace WebCore {
 
+class Document;
 class HTMLAreaElement;
 class Node;
 class Page;
 class RenderObject;
+class ScrollView;
 class VisiblePosition;
+class Widget;
 
 struct TextMarkerData {
     AXID axID;
@@ -59,14 +62,17 @@ enum PostType { PostSynchronously, PostAsynchronously };
 
 class AXObjectCache : public Noncopyable {
 public:
-    AXObjectCache();
+    AXObjectCache(const Document*);
     ~AXObjectCache();
 
     static AccessibilityObject* focusedUIElementForPage(const Page*);
 
-    // to be used with render objects
-    AccessibilityObject* getOrCreate(RenderObject*);
+    AccessibilityObject* rootObject();
     
+    // For AX objects with elements that back them.
+    AccessibilityObject* getOrCreate(RenderObject*);
+    AccessibilityObject* getOrCreate(Widget*);
+
     // used for objects without backing elements
     AccessibilityObject* getOrCreate(AccessibilityRole);
     
@@ -74,6 +80,7 @@ public:
     AccessibilityObject* get(RenderObject*);
     
     void remove(RenderObject*);
+    void remove(Widget*);
     void remove(AXID);
 
     void detachWrapper(AccessibilityObject*);
@@ -88,6 +95,7 @@ public:
     void handleFocusedUIElementChanged(RenderObject* oldFocusedRenderer, RenderObject* newFocusedRenderer);
     void handleScrolledToAnchor(const Node* anchorNode);
     void handleAriaExpandedChange(RenderObject*);
+    void handleScrollbarUpdate(ScrollView*);
     
     static void enableAccessibility() { gAccessibilityEnabled = true; }
     static void enableEnhancedUserInterfaceAccessibility() { gAccessibilityEnhancedUserInterfaceEnabled = true; }
@@ -145,8 +153,10 @@ protected:
     void nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned offset, unsigned count);
 
 private:
+    Document* m_document;
     HashMap<AXID, RefPtr<AccessibilityObject> > m_objects;
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
+    HashMap<Widget*, AXID> m_widgetObjectMapping;
     HashSet<Node*> m_textMarkerNodes;
     static bool gAccessibilityEnabled;
     static bool gAccessibilityEnhancedUserInterfaceEnabled;
@@ -160,6 +170,7 @@ private:
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement*);
     
     AXID getAXID(AccessibilityObject*);
+    AccessibilityObject* get(Widget*);
 };
 
 bool nodeHasRole(Node*, const String& role);
@@ -179,6 +190,7 @@ inline void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderOb
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::contentChanged(RenderObject*) { }
 inline void AXObjectCache::handleAriaExpandedChange(RenderObject*) { }
+inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 #endif
 
 }

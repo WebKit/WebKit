@@ -518,6 +518,8 @@
             'accessibility/AccessibilityRenderObject.h',
             'accessibility/AccessibilityScrollbar.cpp',
             'accessibility/AccessibilityScrollbar.h',
+            'accessibility/AccessibilityScrollView.cpp',
+            'accessibility/AccessibilityScrollView.h',
             'accessibility/AccessibilitySlider.cpp',
             'accessibility/AccessibilitySlider.h',
             'accessibility/AccessibilityTable.cpp',

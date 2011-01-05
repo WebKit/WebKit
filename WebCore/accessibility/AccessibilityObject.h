@@ -260,6 +260,8 @@ public:
     
     virtual bool isAccessibilityRenderObject() const { return false; }
     virtual bool isAccessibilityScrollbar() const { return false; }
+    virtual bool isAccessibilityScrollView() const { return false; }
+    
     virtual bool isAnchor() const { return false; }
     virtual bool isAttachment() const { return false; }
     virtual bool isHeading() const { return false; }
@@ -309,6 +311,7 @@ public:
     bool isButton() const { return roleValue() == ButtonRole; }
     bool isListItem() const { return roleValue() == ListItemRole; }
     bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }
+    bool isScrollView() const { return roleValue() == ScrollAreaRole; }
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
@@ -332,6 +335,7 @@ public:
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }
     virtual bool canSetValueAttribute() const { return false; }
+    virtual bool canSetNumericValue() const { return false; }
     virtual bool canSetSelectedAttribute() const { return false; }
     virtual bool canSetSelectedChildrenAttribute() const { return false; }
     virtual bool canSetExpandedAttribute() const { return false; }
@@ -373,9 +377,9 @@ public:
     // Called on the root AX object to return the deepest available element.
     virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const { return 0; }
     // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
-    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const { return const_cast<AccessibilityObject*>(this); }
+    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
 
-    virtual AccessibilityObject* focusedUIElement() const { return 0; }
+    virtual AccessibilityObject* focusedUIElement() const;
 
     virtual AccessibilityObject* firstChild() const { return 0; }
     virtual AccessibilityObject* lastChild() const { return 0; }
@@ -391,7 +395,8 @@ public:
     virtual AccessibilityObject* titleUIElement() const { return 0; }
     virtual bool exposesTitleUIElement() const { return true; }
     virtual AccessibilityObject* correspondingControlForLabelElement() const { return 0; }
-
+    virtual AccessibilityObject* scrollBar(AccessibilityOrientation) const { return 0; }
+    
     virtual AccessibilityRole ariaRoleAttribute() const { return UnknownRole; }
     virtual bool isPresentationalChildOfAriaRole() const { return false; }
     virtual bool ariaRoleHasPresentationalChildren() const { return false; }
@@ -402,7 +407,7 @@ public:
     virtual String ariaDescribedByAttribute() const { return String(); }
     virtual String accessibilityDescription() const { return String(); }
 
-    virtual AXObjectCache* axObjectCache() const { return 0; }
+    virtual AXObjectCache* axObjectCache() const;
     AXID axObjectID() const { return m_id; }
     void setAXObjectID(AXID axObjectID) { m_id = axObjectID; }
     
@@ -411,7 +416,7 @@ public:
     virtual Element* actionElement() const { return 0; }
     virtual IntRect boundingBoxRect() const { return IntRect(); }
     virtual IntRect elementRect() const = 0;
-    virtual IntSize size() const = 0;
+    virtual IntSize size() const { return elementRect().size(); }
     virtual IntPoint clickPoint() const;
 
     virtual PlainTextRange selectedTextRange() const { return PlainTextRange(); }
@@ -442,6 +447,7 @@ public:
     virtual void setSelectedText(const String&) { }
     virtual void setSelectedTextRange(const PlainTextRange&) { }
     virtual void setValue(const String&) { }
+    virtual void setValue(float) { }
     virtual void setSelected(bool) { }
     virtual void setSelectedRows(AccessibilityChildrenVector&) { }
     
@@ -459,7 +465,7 @@ public:
     virtual void addChildren() { }
     virtual bool canHaveChildren() const { return true; }
     virtual bool hasChildren() const { return m_haveChildren; }
-    virtual void updateChildrenIfNecessary() { }
+    virtual void updateChildrenIfNecessary();
     virtual void selectedChildren(AccessibilityChildrenVector&) { }
     virtual void visibleChildren(AccessibilityChildrenVector&) { }
     virtual void tabChildren(AccessibilityChildrenVector&) { }

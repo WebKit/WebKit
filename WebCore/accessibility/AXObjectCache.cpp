@@ -42,6 +42,7 @@
 #include "AccessibilityMenuListPopup.h"
 #include "AccessibilityProgressIndicator.h"
 #include "AccessibilityRenderObject.h"
+#include "AccessibilityScrollView.h"
 #include "AccessibilityScrollbar.h"
 #include "AccessibilitySlider.h"
 #include "AccessibilityTable.h"
@@ -49,6 +50,7 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
+#include "Document.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "HTMLAreaElement.h"
@@ -61,12 +63,13 @@
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "RenderProgress.h"
+#include "RenderSlider.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
-#include "RenderProgress.h"
-#include "RenderSlider.h"
 #include "RenderView.h"
+#include "ScrollView.h"
 
 #include <wtf/PassRefPtr.h>
 
@@ -77,9 +80,10 @@ using namespace HTMLNames;
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
-AXObjectCache::AXObjectCache()
+AXObjectCache::AXObjectCache(const Document* doc)
     : m_notificationPostTimer(this, &AXObjectCache::notificationPostTimerFired)
 {
+    m_document = const_cast<Document*>(doc);
 }
 
 AXObjectCache::~AXObjectCache()
@@ -151,19 +155,30 @@ AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page* page)
     return obj;
 }
 
+AccessibilityObject* AXObjectCache::get(Widget* widget)
+{
+    if (!widget)
+        return 0;
+        
+    AXID axID = m_widgetObjectMapping.get(widget);
+    ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
+    if (!axID)
+        return 0;
+    
+    return m_objects.get(axID).get();    
+}
+    
 AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
 {
     if (!renderer)
         return 0;
     
-    AccessibilityObject* obj = 0;
     AXID axID = m_renderObjectMapping.get(renderer);
     ASSERT(!HashTraits<AXID>::isDeletedValue(axID));
-
-    if (axID)
-        obj = m_objects.get(axID).get();
+    if (!axID)
+        return 0;
     
-    return obj;
+    return m_objects.get(axID).get();    
 }
 
 // FIXME: This probably belongs on Node.
@@ -230,6 +245,28 @@ static PassRefPtr<AccessibilityObject> createFromRenderer(RenderObject* renderer
     return AccessibilityRenderObject::create(renderer);
 }
 
+AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
+{
+    if (!widget)
+        return 0;
+
+    if (AccessibilityObject* obj = get(widget))
+        return obj;
+    
+    RefPtr<AccessibilityObject> newObj = 0;
+    if (widget->isFrameView())
+        newObj = AccessibilityScrollView::create(static_cast<ScrollView*>(widget));
+    else if (widget->isScrollbar())
+        newObj = AccessibilityScrollbar::create(static_cast<Scrollbar*>(widget));
+        
+    getAXID(newObj.get());
+    
+    m_widgetObjectMapping.set(widget, newObj->axObjectID());
+    m_objects.set(newObj->axObjectID(), newObj);    
+    attachWrapper(newObj.get());
+    return newObj.get();
+}
+    
 AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
 {
     if (!renderer)
@@ -246,6 +283,11 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     m_objects.set(newObj->axObjectID(), newObj);
     attachWrapper(newObj.get());
     return newObj.get();
+}
+    
+AccessibilityObject* AXObjectCache::rootObject()
+{
+    return getOrCreate(m_document->view());
 }
 
 AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
@@ -274,9 +316,6 @@ AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole role)
         break;
     case MenuListOptionRole:
         obj = AccessibilityMenuListOption::create();
-        break;
-    case ScrollBarRole:
-        obj = AccessibilityScrollbar::create();
         break;
     default:
         obj = 0;
@@ -323,6 +362,17 @@ void AXObjectCache::remove(RenderObject* renderer)
     m_renderObjectMapping.remove(renderer);
 }
 
+void AXObjectCache::remove(Widget* view)
+{
+    if (!view)
+        return;
+        
+    AXID axID = m_widgetObjectMapping.get(view);
+    remove(axID);
+    m_widgetObjectMapping.remove(view);
+}
+    
+    
 #if !PLATFORM(WIN) || OS(WINCE)
 AXID AXObjectCache::platformGenerateAXID() const
 {
@@ -478,6 +528,18 @@ void AXObjectCache::nodeTextChangeNotification(RenderObject* renderer, AXTextCha
 #endif
 
 #if HAVE(ACCESSIBILITY)
+
+void AXObjectCache::handleScrollbarUpdate(ScrollView* view)
+{
+    if (!view)
+        return;
+    
+    // We don't want to create a scroll view from this method, only update an existing one.
+    AccessibilityObject* scrollViewObject = get(view);
+    if (scrollViewObject)
+        scrollViewObject->updateChildrenIfNecessary();
+}
+    
 void AXObjectCache::handleAriaExpandedChange(RenderObject *renderer)
 {
     if (!renderer)

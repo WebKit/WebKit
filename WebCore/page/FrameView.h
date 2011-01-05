@@ -308,6 +308,7 @@ private:
     virtual void updateScrollCorner();
     virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
+    virtual AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
     
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache

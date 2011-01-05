@@ -34,7 +34,7 @@ using namespace WebCore;
 
 // AccessibleDocument
 AccessibleDocument::AccessibleDocument(Document* doc)
-    : AccessibleBase(doc->axObjectCache()->getOrCreate(doc->renderer()))
+    : AccessibleBase(doc->axObjectCache()->rootObject())
 {
 }
 

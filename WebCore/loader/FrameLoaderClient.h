@@ -34,6 +34,15 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(MAC)
+#ifdef __OBJC__ 
+#import <Foundation/Foundation.h>
+typedef id RemoteAXObjectRef;
+#else
+typedef void* RemoteAXObjectRef;
+#endif
+#endif
+
 typedef class _jobject* jobject;
 
 #if PLATFORM(MAC) && !defined(__OBJC__)
@@ -265,6 +274,8 @@ namespace WebCore {
         virtual void registerForIconNotification(bool listen = true) = 0;
         
 #if PLATFORM(MAC)
+        // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
+        virtual RemoteAXObjectRef accessibilityRemoteObject() = 0;
 #if ENABLE(JAVA_BRIDGE)
         virtual jobject javaApplet(NSView*) { return 0; }
 #endif

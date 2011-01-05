@@ -69,6 +69,7 @@ public:
     virtual void clearAllEditCommands() = 0;
     virtual void setEditCommandState(const String& commandName, bool isEnabled, int state) = 0;
 #if PLATFORM(MAC)
+    virtual void accessibilityChildTokenReceived(const CoreIPC::DataReference&) = 0;
     virtual void interceptKeyEvent(const NativeWebKeyboardEvent&, Vector<WebCore::KeypressCommand>&, uint32_t, uint32_t, Vector<WebCore::CompositionUnderline>&) = 0;
 #endif
 #if PLATFORM(WIN)

@@ -494,12 +494,12 @@ void WebPageProxy::updateWindowIsVisible(bool windowIsVisible)
     process()->send(Messages::WebPage::SetWindowIsVisible(windowIsVisible), m_pageID);
 }
 
-void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
+void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates, const IntPoint& accessibilityViewCoordinates)
 {
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates), m_pageID);
+    process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
 
 void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
@@ -1197,6 +1197,13 @@ void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::Argu
     m_loaderClient.didRunInsecureContentForFrame(this, frame, userData.get());
 }
 
+void WebPageProxy::didReceiveAccessibilityPageToken(const CoreIPC::DataReference& data)
+{
+#if PLATFORM(MAC)
+    m_pageClient->accessibilityChildTokenReceived(data);
+#endif
+}
+    
 void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
@@ -1849,6 +1856,16 @@ void WebPageProxy::stringCallback(const String& resultString, uint64_t callbackI
 
     callback->performCallbackWithReturnValue(resultString.impl());
 }
+
+#if PLATFORM(MAC)
+void WebPageProxy::sendAccessibilityPresenterToken(const CoreIPC::DataReference& token)
+{
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::SendAccessibilityPresenterToken(token), m_pageID);
+}
+#endif
 
 void WebPageProxy::focusedFrameChanged(uint64_t frameID)
 {

@@ -1915,7 +1915,7 @@ AXObjectCache* Document::axObjectCache() const
         return doc->axObjectCache();
     
     // this is the top-level document, so install a new cache
-    m_axObjectCache = new AXObjectCache;
+    m_axObjectCache = new AXObjectCache(this);
     return m_axObjectCache;
 }
 

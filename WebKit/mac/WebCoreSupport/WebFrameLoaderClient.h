@@ -227,6 +227,10 @@ private:
     virtual jobject javaApplet(NSView*);
 #endif
 
+#if PLATFORM(MAC)
+    virtual RemoteAXObjectRef accessibilityRemoteObject() { return 0; }
+#endif
+    
     void setOriginalURLForDownload(WebDownload *, const WebCore::ResourceRequest&) const;
 
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);

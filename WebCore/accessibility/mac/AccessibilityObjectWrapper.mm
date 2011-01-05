@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #import "AccessibilityListBox.h"
 #import "AccessibilityList.h"
 #import "AccessibilityRenderObject.h"
+#import "AccessibilityScrollView.h"
 #import "AccessibilityTable.h"
 #import "AccessibilityTableCell.h"
 #import "AccessibilityTableRow.h"
@@ -43,6 +44,7 @@
 #import "ColorMac.h"
 #import "EditorClient.h"
 #import "Frame.h"
+#import "FrameLoaderClient.h"
 #import "HTMLAnchorElement.h"
 #import "HTMLAreaElement.h"
 #import "HTMLFrameOwnerElement.h"
@@ -53,6 +55,7 @@
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
+#import "ScrollView.h"
 #import "SelectionController.h"
 #import "SimpleFontData.h"
 #import "TextIterator.h"
@@ -704,6 +707,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
     static NSArray* outlineAttrs = nil;
     static NSArray* outlineRowAttrs = nil;
     static NSArray* buttonAttrs = nil;
+    static NSArray* scrollViewAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -944,6 +948,14 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
         outlineRowAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (scrollViewAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityContentsAttribute];
+        [tempArray addObject:NSAccessibilityHorizontalScrollBarAttribute];
+        [tempArray addObject:NSAccessibilityVerticalScrollBarAttribute];
+        scrollViewAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
     
     NSArray *objectAttributes = attributes;
     
@@ -1001,6 +1013,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
         objectAttributes = groupAttrs;
     else if (m_object->isTabList())
         objectAttributes = tabListAttrs;
+    else if (m_object->isScrollView())
+        objectAttributes = scrollViewAttrs;
     
     else if (m_object->isMenu())
         objectAttributes = menuAttrs;
@@ -1010,7 +1024,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
         objectAttributes = menuButtonAttrs;
     else if (m_object->isMenuItem())
         objectAttributes = menuItemAttrs;
-
+    
     NSArray *additionalAttributes = [self additionalAccessibilityAttributeNames];
     if ([additionalAttributes count])
         objectAttributes = [objectAttributes arrayByAddingObjectsFromArray:additionalAttributes];
@@ -1032,6 +1046,14 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
     if (!widget)
         return nil;
     return [(widget->platformWidget()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
+}
+
+- (id)remoteAccessibilityParentObject
+{
+    if (!m_object || !m_object->document())
+        return nil;
+    
+    return m_object->document()->frame()->loader()->client()->accessibilityRemoteObject();
 }
 
 static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
@@ -1075,16 +1097,40 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
 - (NSValue*)position
 {
     IntRect rect = m_object->elementRect();
+    NSPoint point;
     
-    // The Cocoa accessibility API wants the lower-left corner.
-    NSPoint point = NSMakePoint(rect.x(), rect.bottom());
     FrameView* frameView = m_object->documentFrameView();
-    if (frameView) {
-        NSView* view = frameView->documentView();
-        point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
+    id remoteParent = [self remoteAccessibilityParentObject];
+    if (remoteParent) {
+        point = NSMakePoint(rect.x(), rect.y());
+        
+        NSPoint remotePosition = [[remoteParent accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
+        NSSize remoteSize = [[remoteParent accessibilityAttributeValue:NSAccessibilitySizeAttribute] sizeValue];
+
+        // Get the y position of the WKView (we have to screen-flip and go from bottom left to top left).
+        CGFloat screenHeight = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
+        remotePosition.y = (screenHeight - remotePosition.y) - remoteSize.height;
+        
+        NSPoint scrollPosition = NSMakePoint(0, 0);
+        if (frameView && !m_object->isScrollbar() && !m_object->isScrollView()) {
+            IntPoint frameScrollPos = frameView->scrollPosition();
+            scrollPosition = NSMakePoint(frameScrollPos.x(), frameScrollPos.y());
+        }
+        
+        point.x += remotePosition.x - scrollPosition.x;
+        // Set the new position, which means getting bottom y, and then flipping to screen coordinates.
+        point.y = screenHeight - (point.y + remotePosition.y + rect.height() - scrollPosition.y);
+    } else {
+        // The Cocoa accessibility API wants the lower-left corner.
+        point = NSMakePoint(rect.x(), rect.bottom());
+        
+        if (frameView) {
+            NSView* view = frameView->documentView();
+            point = [[view window] convertBaseToScreen:[view convertPoint: point toView:nil]];
+        }
     }
 
-    return [NSValue valueWithPoint: point];
+    return [NSValue valueWithPoint:point];
 }
 
 typedef HashMap<int, NSString*> AccessibilityRoleMap;
@@ -1390,6 +1436,27 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
 }
 
+- (id)scrollViewParent
+{
+    if (!m_object || !m_object->isAccessibilityScrollView())
+        return nil;
+    
+    // If this scroll view provides it's parent object (because it's a sub-frame), then
+    // we should not find the remoteAccessibilityParent.
+    if (m_object->parentObject())
+        return nil;
+    
+    AccessibilityScrollView* scrollView = toAccessibilityScrollView(m_object);
+    ScrollView* scroll = scrollView->scrollView();
+    if (!scroll)
+        return nil;
+    
+    if (scroll->platformWidget())
+        return scroll->platformWidget();
+
+    return [self remoteAccessibilityParentObject];
+}
+
 // FIXME: split up this function in a better way.  
 // suggestions: Use a hash table that maps attribute names to function calls,
 // or maybe pointers to member functions
@@ -1408,11 +1475,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [self roleDescription];
 
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
-        if (m_object->isAccessibilityRenderObject()) {
-            FrameView* fv = static_cast<AccessibilityRenderObject*>(m_object)->frameViewIfRenderView();
-            if (fv)
-                return fv->platformWidget();
-        }
+
+        // This will return the parent of the AXWebArea, if this is a web area.
+        id scrollViewParent = [self scrollViewParent];
+        if (scrollViewParent)
+            return scrollViewParent;
         
         // Tree item (changed to AXRows) can only report the tree (AXOutline) as its parent.
         if (m_object->isTreeItem()) {
@@ -1424,7 +1491,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             }
         }
         
-        return m_object->parentObjectUnignored()->wrapper();
+        AccessibilityObject* parent = m_object->parentObjectUnignored();
+        if (parent)
+            return parent->wrapper();
+        return nil;
     }
 
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
@@ -1613,6 +1683,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if ([attributeName isEqualToString: NSAccessibilityWindowAttribute] ||
         [attributeName isEqualToString: NSAccessibilityTopLevelUIElementAttribute]) {
+        
+        id remoteParent = [self remoteAccessibilityParentObject];
+        if (remoteParent)
+            return [remoteParent accessibilityAttributeValue:attributeName];
+        
         FrameView* fv = m_object->documentFrameView();
         if (fv)
             return [fv->platformWidget() window];
@@ -1648,6 +1723,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                     contents.append(children[k]);
             }
             return convertToNSArray(contents);
+        } else if (m_object->isScrollView()) {
+            AccessibilityObject::AccessibilityChildrenVector children = m_object->children();
+            
+            // A scrollView's contents are everything except the scroll bars.
+            AccessibilityObject::AccessibilityChildrenVector contents;
+            unsigned childrenSize = children.size();
+            for (unsigned k = 0; k < childrenSize; ++k) {
+                if (!children[k]->isScrollbar())
+                    contents.append(children[k]);
+            }
+            return convertToNSArray(contents);            
         }
     }    
     
@@ -1874,6 +1960,19 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return nil;
     }
     
+    if ([attributeName isEqualToString:NSAccessibilityHorizontalScrollBarAttribute]) {
+        AccessibilityObject* scrollBar = m_object->scrollBar(AccessibilityOrientationHorizontal);
+        if (scrollBar)
+            return scrollBar->wrapper();
+        return nil;
+    }
+    if ([attributeName isEqualToString:NSAccessibilityVerticalScrollBarAttribute]) {
+        AccessibilityObject* scrollBar = m_object->scrollBar(AccessibilityOrientationVertical);
+        if (scrollBar)
+            return scrollBar->wrapper();
+        return nil;
+    }
+    
     if ([attributeName isEqualToString:NSAccessibilityLanguageAttribute]) 
         return m_object->language();
     
@@ -1967,6 +2066,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (![self updateObjectBackingStore])
         return nil;
 
+    m_object->updateChildrenIfNecessary();
     RefPtr<AccessibilityObject> axObject = m_object->accessibilityHitTest(IntPoint(point));
     if (axObject)
         return NSAccessibilityUnignoredAncestor(axObject->wrapper());
@@ -2239,9 +2339,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         ASSERT(number);
         m_object->setFocused([number intValue] != 0);
     } else if ([attributeName isEqualToString: NSAccessibilityValueAttribute]) {
-        if (!string)
-            return;
-        m_object->setValue(string);
+        if (number && m_object->canSetNumericValue())
+            m_object->setValue([number floatValue]);
+        else if (string)
+            m_object->setValue(string);
     } else if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute]) {
         if (!number)
             return;

@@ -126,7 +126,6 @@ public:
     virtual int layoutCount() const;
     virtual double estimatedLoadingProgress() const;
     
-    virtual AccessibilityObject* focusedUIElement() const;
     virtual AccessibilityObject* firstChild() const;
     virtual AccessibilityObject* lastChild() const;
     virtual AccessibilityObject* previousSibling() const;
@@ -147,8 +146,6 @@ public:
     virtual bool ariaRoleHasPresentationalChildren() const;
     void updateAccessibilityRole();
     
-    virtual AXObjectCache* axObjectCache() const;
-
     // Should be called on the root accessibility object to kick off a hit test.
     virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
 
@@ -290,7 +287,7 @@ private:
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     AccessibilityObject* internalLinkElement() const;
     AccessibilityObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
-    AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement* map) const;
+    AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
     bool renderObjectIsObservable(RenderObject*) const;
     RenderObject* renderParentObject() const;
     
@@ -300,7 +297,7 @@ private:
     void setElementAttributeValue(const QualifiedName&, bool);
     
     String accessibilityDescriptionForElements(Vector<Element*> &elements) const;
-    void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& name) const;
+    void elementsFromAttribute(Vector<Element*>& elements, const QualifiedName&) const;
     String ariaAccessibilityDescription() const;
     
     virtual ESpeak speakProperty() const;

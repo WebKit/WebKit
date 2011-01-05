@@ -730,6 +730,12 @@ FrameView* AccessibilityObject::documentFrameView() const
 
     return object->documentFrameView();
 }
+    
+void AccessibilityObject::updateChildrenIfNecessary()
+{
+    if (!hasChildren())
+        addChildren();    
+}
 
 void AccessibilityObject::clearChildren()
 {
@@ -1000,6 +1006,39 @@ bool AccessibilityObject::supportsARIALiveRegion() const
 {
     const AtomicString& liveRegion = ariaLiveRegionStatus();
     return equalIgnoringCase(liveRegion, "polite") || equalIgnoringCase(liveRegion, "assertive");
+}
+
+AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
+{ 
+    // Send the hit test back into the sub-frame if necessary.
+    if (isAttachment()) {
+        Widget* widget = widgetForAttachmentView();
+        if (widget && widget->isFrameView())
+            return axObjectCache()->getOrCreate(static_cast<ScrollView*>(widget))->accessibilityHitTest(point);
+    }
+
+    return const_cast<AccessibilityObject*>(this); 
+}
+    
+AXObjectCache* AccessibilityObject::axObjectCache() const
+{
+    Document* doc = document();
+    if (doc)
+        return doc->axObjectCache();
+    return 0;
+}
+    
+AccessibilityObject* AccessibilityObject::focusedUIElement() const
+{
+    Document* doc = document();
+    if (!doc)
+        return 0;
+    
+    Page* page = doc->page();
+    if (!page)
+        return 0;
+    
+    return AXObjectCache::focusedUIElementForPage(page);
 }
     
 AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const

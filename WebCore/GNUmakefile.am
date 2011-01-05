@@ -662,6 +662,8 @@ webcore_sources += \
 	WebCore/accessibility/AccessibilityRenderObject.h \
 	WebCore/accessibility/AccessibilityScrollbar.cpp \
 	WebCore/accessibility/AccessibilityScrollbar.h \
+	WebCore/accessibility/AccessibilityScrollView.cpp \
+	WebCore/accessibility/AccessibilityScrollView.h \
 	WebCore/accessibility/AccessibilitySlider.cpp \
 	WebCore/accessibility/AccessibilitySlider.h \
 	WebCore/accessibility/AccessibilityTableCell.cpp \

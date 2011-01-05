@@ -434,7 +434,15 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
             return parent;
     }
     
-    return axObjectCache()->getOrCreate(renderParentObject());
+    RenderObject* parentObj = renderParentObject();
+    if (parentObj)
+        return axObjectCache()->getOrCreate(parentObj);
+    
+    // WebArea's parent should be the scroll view containing it.
+    if (isWebArea())
+        return axObjectCache()->getOrCreate(m_renderer->frame()->view());
+    
+    return 0;
 }
 
 bool AccessibilityRenderObject::isWebArea() const
@@ -2316,12 +2324,6 @@ Widget* AccessibilityRenderObject::widget() const
     return toRenderWidget(m_renderer)->widget();
 }
 
-AXObjectCache* AccessibilityRenderObject::axObjectCache() const
-{
-    ASSERT(m_renderer);
-    return m_renderer->document()->axObjectCache();
-}
-
 AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(HTMLMapElement* map) const
 {
     // find an image that is using this map
@@ -2739,8 +2741,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     
     RenderLayer* layer = toRenderBox(m_renderer)->layer();
      
-    HitTestRequest request(HitTestRequest::ReadOnly |
-                           HitTestRequest::Active);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
     HitTestResult hitTestResult = HitTestResult(point);
     layer->hitTest(request, hitTestResult);
     if (!hitTestResult.innerNode())
@@ -2773,15 +2774,6 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     }
 
     return result;
-}
-
-AccessibilityObject* AccessibilityRenderObject::focusedUIElement() const
-{
-    Page* page = m_renderer->document()->page();
-    if (!page)
-        return 0;
-
-    return AXObjectCache::focusedUIElementForPage(page);
 }
 
 bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
@@ -3315,8 +3307,7 @@ void AccessibilityRenderObject::updateChildrenIfNecessary()
     if (needsToUpdateChildren())
         clearChildren();        
     
-    if (!hasChildren())
-        addChildren();    
+    AccessibilityObject::updateChildrenIfNecessary();
 }
     
 const AccessibilityObject::AccessibilityChildrenVector& AccessibilityRenderObject::children()
@@ -3353,6 +3344,13 @@ void AccessibilityRenderObject::addChildren()
             ASSERT(obj->parentObject() == this);
             m_children.append(obj);
         }
+    }
+    
+    // FrameView's need to be inserted into the AX hierarchy when encountered.
+    if (isAttachment()) {
+        Widget* widget = widgetForAttachmentView();
+        if (widget && widget->isFrameView())
+            m_children.append(axObjectCache()->getOrCreate(widget));
     }
     
     // for a RenderImage, add the <area> elements as individual accessibility objects

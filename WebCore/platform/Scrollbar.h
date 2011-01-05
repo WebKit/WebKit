@@ -171,6 +171,7 @@ protected:
 
 private:
     virtual bool isScrollbar() const { return true; }
+    virtual AXObjectCache* axObjectCache() const;
 
     bool setCurrentPos(float pos, ScrollSource source);
 };

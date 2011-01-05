@@ -36,6 +36,7 @@
 #include <AccessibilityMediaControls.cpp>
 #include <AccessibilityObject.cpp>
 #include <AccessibilityRenderObject.cpp>
+#include <AccessibilityScrollView.cpp>
 #include <AccessibilityScrollbar.cpp>
 #include <AccessibilitySlider.cpp>
 #include <AccessibilityTable.cpp>

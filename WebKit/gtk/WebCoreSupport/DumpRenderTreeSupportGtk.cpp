@@ -425,11 +425,7 @@ AtkObject* DumpRenderTreeSupportGtk::getFocusedAccessibleElement(WebKitWebFrame*
     if (!priv->coreFrame || !priv->coreFrame->document())
         return 0;
 
-    RenderView* root = toRenderView(priv->coreFrame->document()->renderer());
-    if (!root)
-        return 0;
-
-    AtkObject* wrapper =  priv->coreFrame->document()->axObjectCache()->getOrCreate(root)->wrapper();
+    AtkObject* wrapper =  priv->coreFrame->document()->axObjectCache()->rootObject()->wrapper();
     if (!wrapper)
         return 0;
 

@@ -133,6 +133,10 @@ int WebProcessMain(const CommandLine& commandLine)
      // Initialize AppKit.
     [NSApplication sharedApplication];
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    WKAXRegisterRemoteApp();
+#endif
+    
     RunLoop::run();
 
     // FIXME: Do more cleanup here.

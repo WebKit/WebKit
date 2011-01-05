@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#include "AXObjectCache.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "PlatformMouseEvent.h"
@@ -96,6 +97,9 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
         removeChild(m_horizontalScrollbar.get());
         m_horizontalScrollbar = 0;
     }
+    
+    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
+        axObjectCache()->handleScrollbarUpdate(this);
 }
 
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
@@ -111,6 +115,9 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
         removeChild(m_verticalScrollbar.get());
         m_verticalScrollbar = 0;
     }
+    
+    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
+        axObjectCache()->handleScrollbarUpdate(this);
 }
 
 #if !PLATFORM(GTK)

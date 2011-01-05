@@ -1,3 +1,16 @@
+2011-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2: Support Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=51859
+
+        Use rootObject() method to get top of accessibility tree.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::focusedElement):
+        (AccessibilityController::rootElement):
+
 2011-01-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Darin Adler.

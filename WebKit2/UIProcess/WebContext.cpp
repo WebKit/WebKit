@@ -165,7 +165,10 @@ void WebContext::ensureWebProcess()
     parameters.applicationCacheDirectory = applicationCacheDirectory();
     parameters.clearResourceCaches = m_clearResourceCachesForNewWebProcess;
     parameters.clearApplicationCache = m_clearApplicationCacheForNewWebProcess;
-    
+#if PLATFORM(MAC)
+    parameters.presenterApplicationPid = getpid();
+#endif
+
     m_clearResourceCachesForNewWebProcess = false;
     m_clearApplicationCacheForNewWebProcess = false;
     

@@ -52,6 +52,7 @@ namespace WebKit {
 - (void)_pageDidLeaveAcceleratedCompositing;
 #endif
 
+- (void)_setAccessibilityChildToken:(NSData *)data;
 - (void)_setComplexTextInputEnabled:(BOOL)complexTextInputEnabled pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation;

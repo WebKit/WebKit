@@ -96,6 +96,9 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
 
 Scrollbar::~Scrollbar()
 {
+    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
+        axObjectCache()->remove(this);
+    
     stopTimerIfNeeded();
     
     m_theme->unregisterScrollbar(this);
@@ -131,15 +134,8 @@ void Scrollbar::setSteps(int lineStep, int pageStep, int pixelsPerStep)
 bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
 #if HAVE(ACCESSIBILITY)
-    if (AXObjectCache::accessibilityEnabled()) {
-        if (parent() && parent()->isFrameView()) {
-            Document* document = static_cast<FrameView*>(parent())->frame()->document();
-            AXObjectCache* cache = document->axObjectCache();
-            AccessibilityScrollbar* axObject = static_cast<AccessibilityScrollbar*>(cache->getOrCreate(ScrollBarRole));
-            axObject->setScrollbar(this);
-            cache->postNotification(axObject, document, AXObjectCache::AXValueChanged, true);
-        }
-    }
+    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
+        axObjectCache()->postNotification(axObjectCache()->getOrCreate(this), 0, AXObjectCache::AXValueChanged, true);
 #endif
 
     // Ignore perpendicular scrolls.
@@ -475,7 +471,16 @@ bool Scrollbar::isWindowActive() const
 {
     return m_client && m_client->isActive();
 }
- 
+    
+AXObjectCache* Scrollbar::axObjectCache() const
+{
+    if (!parent() || !parent()->isFrameView())
+        return 0;
+    
+    Document* document = static_cast<FrameView*>(parent())->frame()->document();
+    return document->axObjectCache();
+}
+
 void Scrollbar::invalidateRect(const IntRect& rect)
 {
     if (suppressInvalidation())

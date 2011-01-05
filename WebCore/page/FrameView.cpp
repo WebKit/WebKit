@@ -161,7 +161,10 @@ FrameView::~FrameView()
         m_scheduledEvents.clear();
         m_enqueueEvents = 0;
     }
-
+    
+    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
+        axObjectCache()->remove(this);
+    
     resetScrollbars();
 
     // Custom scrollbars should already be destroyed at this point
@@ -2480,6 +2483,11 @@ void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
         if (RenderView* root = frame->contentRenderer())
             root->notifyWidgets(notification);
     }
+}
+    
+AXObjectCache* FrameView::axObjectCache() const
+{
+    return frame()->document()->axObjectCacheExists() ? frame()->document()->axObjectCache() : 0;
 }
     
 } // namespace WebCore

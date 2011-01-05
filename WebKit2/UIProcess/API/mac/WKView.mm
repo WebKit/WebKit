@@ -26,6 +26,7 @@
 #import "WKView.h"
 
 #import "ChunkedUpdateDrawingAreaProxy.h"
+#import "DataReference.h"
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
 #import "LayerBackedDrawingAreaProxy.h"
@@ -52,6 +53,7 @@
 #import <WebCore/IntRect.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -98,6 +100,8 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     NSView *_layerHostingView;
 #endif
 
+    RetainPtr<id> _remoteAccessibilityChild;
+    
     // For asynchronous validation.
     ValidationMap _validationMap;
 
@@ -166,6 +170,12 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
     WebContext::statistics().wkViewCount++;
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    NSData *remoteToken = (NSData *)WKAXRemoteTokenForElement(self);
+    CoreIPC::DataReference dataToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
+    _data->_page->sendAccessibilityPresenterToken(dataToken);
+#endif
+    
     return self;
 }
 
@@ -247,8 +257,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     
     NSRect windowFrameInScreenCoordinates = [window frame];
     NSRect viewFrameInWindowCoordinates = [self convertRect:[self frame] toView:nil];
+    NSPoint accessibilityPosition = [[self accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
     
-    _data->_page->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
+    _data->_page->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates), IntPoint(accessibilityPosition));
 }
 
 - (void)renewGState
@@ -952,6 +963,43 @@ static bool isViewVisible(NSView *view)
 - (void)viewDidUnhide
 {
     [self _updateVisibility];
+}
+
+- (void)_setAccessibilityChildToken:(NSData *)data
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    _data->_remoteAccessibilityChild = WKAXRemoteElementForToken((CFDataRef)data);
+    WKAXInitializeRemoteElementWithWindow(_data->_remoteAccessibilityChild.get(), [self window]);
+#endif
+}
+
+- (BOOL)accessibilityIsIgnored
+{
+    return NO;
+}
+
+- (id)accessibilityHitTest:(NSPoint)point
+{
+    return _data->_remoteAccessibilityChild.get();
+}
+
+- (id)accessibilityAttributeValue:(NSString*)attribute
+{
+    if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
+        if (!_data->_remoteAccessibilityChild)
+            return nil;
+        return [NSArray arrayWithObject:_data->_remoteAccessibilityChild.get()];
+    }
+    if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
+        return NSAccessibilityGroupRole;
+    if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
+        return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
+    if ([attribute isEqualToString:NSAccessibilityParentAttribute])
+        return NSAccessibilityUnignoredAncestor([self superview]);
+    if ([attribute isEqualToString:NSAccessibilityEnabledAttribute])
+        return [NSNumber numberWithBool:YES];
+    
+    return [super accessibilityAttributeValue:attribute];
 }
 
 - (NSView *)hitTest:(NSPoint)point

@@ -56,6 +56,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(languageCode);
     encoder->encode(textCheckerState);
 #if PLATFORM(MAC)
+    encoder->encode(presenterApplicationPid);
     encoder->encode(nsURLCachePath);
     encoder->encode(nsURLCacheMemoryCapacity);
     encoder->encode(nsURLCacheDiskCapacity);
@@ -93,6 +94,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
 
 #if PLATFORM(MAC)
+    if (!decoder->decode(parameters.presenterApplicationPid))
+        return false;
     if (!decoder->decode(parameters.nsURLCachePath))
         return false;
     if (!decoder->decode(parameters.nsURLCacheMemoryCapacity))

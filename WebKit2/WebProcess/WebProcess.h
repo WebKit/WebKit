@@ -92,7 +92,10 @@ public:
     WebPageGroupProxy* webPageGroup(uint64_t pageGroupID);
     WebPageGroupProxy* webPageGroup(const WebPageGroupData&);
     static WebCore::PageGroup* sharedPageGroup();
-
+#if PLATFORM(MAC)
+    pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }
+#endif 
+    
 #if PLATFORM(QT)
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
 #endif
@@ -163,6 +166,9 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     mach_port_t m_compositingRenderServerPort;
+#endif
+#if PLATFORM(MAC)
+    pid_t m_presenterApplicationPid;
 #endif
 
 #if PLATFORM(QT)

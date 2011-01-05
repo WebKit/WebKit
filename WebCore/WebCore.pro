@@ -321,6 +321,7 @@ SOURCES += \
     accessibility/AccessibilityProgressIndicator.cpp \    
     accessibility/AccessibilityRenderObject.cpp \    
     accessibility/AccessibilityScrollbar.cpp \
+    accessibility/AccessibilityScrollView.cpp \
     accessibility/AccessibilitySlider.cpp \    
     accessibility/AccessibilityARIAGrid.cpp \    
     accessibility/AccessibilityARIAGridCell.cpp \    
@@ -1398,6 +1399,7 @@ HEADERS += \
     accessibility/AccessibilityProgressIndicator.h \
     accessibility/AccessibilityRenderObject.h \
     accessibility/AccessibilityScrollbar.h \
+    accessibility/AccessibilityScrollView.h \
     accessibility/AccessibilitySlider.h \
     accessibility/AccessibilityTableCell.h \
     accessibility/AccessibilityTableColumn.h \

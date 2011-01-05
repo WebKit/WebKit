@@ -29,16 +29,23 @@
 #if HAVE(ACCESSIBILITY)
 
 #import "AccessibilityObjectWrapper.h"
+#import "Widget.h"
 
 namespace WebCore {
 
 bool AccessibilityObject::accessibilityIgnoreAttachment() const
 {
-    NSView* attachment = [wrapper() attachmentView];
-    if (!attachment)
+    // FrameView attachments are now handled by AccessibilityScrollView, 
+    // so if this is the attachment, it should be ignored.
+    Widget* widget = 0;
+    if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isFrameView())
         return true;
+
+    if ([wrapper() attachmentView])
+        return [[wrapper() attachmentView] accessibilityIsIgnored];
     
-    return [attachment accessibilityIsIgnored];
+    // Attachments are ignored by default (unless we determine that we should expose them).
+    return true;
 }
 
 AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesObject() const

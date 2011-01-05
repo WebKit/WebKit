@@ -25,11 +25,15 @@
 
 #include "WebPage.h"
 
+#include "AccessibilityWebPageObject.h"
+#include "DataReference.h"
 #include "PluginView.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
+#include "WebFrame.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/AXObjectCache.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -40,6 +44,7 @@
 #include <WebCore/ScrollView.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/WindowsKeyboardCodes.h>
+#include <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -48,6 +53,21 @@ namespace WebKit {
 void WebPage::platformInitialize()
 {
     m_page->addSchedulePair(SchedulePair::create([NSRunLoop currentRunLoop], kCFRunLoopCommonModes));
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    AccessibilityWebPageObject* mockAccessibilityElement = [[[AccessibilityWebPageObject alloc] init] autorelease];
+
+    // Get the pid for the starting process.
+    pid_t pid = WebProcess::shared().presenterApplicationPid();    
+    WKAXInitializeElementWithPresenterPid(mockAccessibilityElement, pid);
+    [mockAccessibilityElement setWebPage:this];
+    
+    // send data back over
+    NSData* remoteToken = (NSData *)WKAXRemoteTokenForElement(mockAccessibilityElement); 
+    CoreIPC::DataReference dataToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteToken bytes]), [remoteToken length]);
+    send(Messages::WebPageProxy::DidReceiveAccessibilityPageToken(dataToken));
+    m_mockAccessibilityElement = mockAccessibilityElement;
+#endif
 }
 
 void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
@@ -314,6 +334,19 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     return true;
 }
 
+void WebPage::sendAccessibilityPresenterToken(const CoreIPC::DataReference& data)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    NSData* tokenData = [NSData dataWithBytes:data.data() length:data.size()];
+    [m_mockAccessibilityElement.get() setRemoteParent:WKAXRemoteElementForToken((CFDataRef)tokenData)];
+#endif
+}
+
+AccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
+{
+    return m_mockAccessibilityElement.get();
+}
+         
 bool WebPage::platformHasLocalDataForURL(const WebCore::KURL& url)
 {
     NSMutableURLRequest* request = [[NSMutableURLRequest alloc] initWithURL:url];

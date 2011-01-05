@@ -136,11 +136,6 @@ IntRect AccessibilityImageMapLink::elementRect() const
     return m_areaElement->getRect(renderer);
 }
     
-IntSize AccessibilityImageMapLink::size() const
-{
-    return elementRect().size();
-}
-
 String AccessibilityImageMapLink::stringValueForMSAA() const
 {
     return url();

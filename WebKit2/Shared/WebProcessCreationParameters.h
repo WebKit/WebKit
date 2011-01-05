@@ -73,6 +73,7 @@ struct WebProcessCreationParameters {
     TextCheckerState textCheckerState;
 
 #if PLATFORM(MAC)
+    pid_t presenterApplicationPid;
     String nsURLCachePath;
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;

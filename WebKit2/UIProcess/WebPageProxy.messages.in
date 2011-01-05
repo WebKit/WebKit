@@ -113,6 +113,8 @@ messages -> WebPageProxy {
     DataCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
     StringCallback(WTF::String resultString, uint64_t callbackID)
 
+    DidReceiveAccessibilityPageToken(CoreIPC::DataReference data)
+
 #if PLATFORM(MAC)
     # Keyboard support messages.
     InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline> underlines)

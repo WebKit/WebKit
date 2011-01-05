@@ -178,6 +178,10 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
         clearResourceCaches();
     if (parameters.clearApplicationCache)
         clearApplicationCache();
+    
+#if PLATFORM(MAC)
+    m_presenterApplicationPid = parameters.presenterApplicationPid;
+#endif
 
     if (parameters.shouldAlwaysUseComplexTextCodePath)
         setAlwaysUsesComplexTextCodePath(true);

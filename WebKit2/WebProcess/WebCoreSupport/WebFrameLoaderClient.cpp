@@ -1257,6 +1257,12 @@ void WebFrameLoaderClient::registerForIconNotification(bool listen)
 }
 
 #if PLATFORM(MAC)
+    
+RemoteAXObjectRef WebFrameLoaderClient::accessibilityRemoteObject() 
+{
+    return m_frame->page()->accessibilityRemoteObject();
+}
+    
 #if ENABLE(MAC_JAVA_BRIDGE)
 jobject WebFrameLoaderClient::javaApplet(NSView*) { return 0; }
 #endif

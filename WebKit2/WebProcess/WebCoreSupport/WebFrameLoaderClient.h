@@ -201,6 +201,8 @@ private:
     virtual void registerForIconNotification(bool listen = true);
     
 #if PLATFORM(MAC)
+    virtual RemoteAXObjectRef accessibilityRemoteObject();
+    
 #if ENABLE(MAC_JAVA_BRIDGE)
     virtual jobject javaApplet(NSView*);
 #endif

@@ -1,3 +1,121 @@
+2011-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2: Support Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=51859
+
+        WK2 doesn't use platform scroll views anymore. Accessibility code
+        needs to have its own scroll views. 
+
+        Test: platform/mac/accessibility/webkit-scrollarea.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::AXObjectCache):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::rootObject):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::handleScrollbarUpdate):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::handleScrollbarUpdate):
+        * accessibility/AccessibilityARIAGrid.h:
+        * accessibility/AccessibilityAllInOne.cpp:
+        * accessibility/AccessibilityImageMapLink.cpp:
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityListBoxOption.cpp:
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateChildrenIfNecessary):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        (WebCore::AccessibilityObject::axObjectCache):
+        (WebCore::AccessibilityObject::focusedUIElement):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isAccessibilityScrollView):
+        (WebCore::AccessibilityObject::isScrollView):
+        (WebCore::AccessibilityObject::canSetNumericValue):
+        (WebCore::AccessibilityObject::scrollBar):
+        (WebCore::AccessibilityObject::size):
+        (WebCore::AccessibilityObject::setValue):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest):
+        (WebCore::AccessibilityRenderObject::updateChildrenIfNecessary):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollView.cpp: Added.
+        (WebCore::AccessibilityScrollView::AccessibilityScrollView):
+        (WebCore::AccessibilityScrollView::create):
+        (WebCore::AccessibilityScrollView::scrollBar):
+        (WebCore::AccessibilityScrollView::children):
+        (WebCore::AccessibilityScrollView::updateChildrenIfNecessary):
+        (WebCore::AccessibilityScrollView::removeChildScrollbar):
+        (WebCore::AccessibilityScrollView::addChildScrollbar):
+        (WebCore::AccessibilityScrollView::addChildren):
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        (WebCore::AccessibilityScrollView::accessibilityHitTest):
+        (WebCore::AccessibilityScrollView::document):
+        (WebCore::AccessibilityScrollView::elementRect):
+        (WebCore::AccessibilityScrollView::parentObject):
+        * accessibility/AccessibilityScrollView.h: Added.
+        (WebCore::AccessibilityScrollView::roleValue):
+        (WebCore::AccessibilityScrollView::scrollView):
+        (WebCore::AccessibilityScrollView::accessibilityIsIgnored):
+        (WebCore::AccessibilityScrollView::isAccessibilityScrollView):
+        (WebCore::toAccessibilityScrollView):
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::AccessibilityScrollbar):
+        (WebCore::AccessibilityScrollbar::create):
+        (WebCore::AccessibilityScrollbar::elementRect):
+        (WebCore::AccessibilityScrollbar::document):
+        (WebCore::AccessibilityScrollbar::orientation):
+        (WebCore::AccessibilityScrollbar::isEnabled):
+        (WebCore::AccessibilityScrollbar::valueForRange):
+        (WebCore::AccessibilityScrollbar::setValue):
+        * accessibility/AccessibilityScrollbar.h:
+        (WebCore::AccessibilityScrollbar::setParent):
+        (WebCore::AccessibilityScrollbar::canSetValueAttribute):
+        (WebCore::AccessibilityScrollbar::canSetNumericValue):
+        (WebCore::AccessibilityScrollbar::isAccessibilityScrollbar):
+        (WebCore::AccessibilityScrollbar::parentObject):
+        (WebCore::AccessibilityScrollbar::roleValue):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[AccessibilityObjectWrapper remoteAccessibilityParentObject]):
+        (-[AccessibilityObjectWrapper position]):
+        (-[AccessibilityObjectWrapper scrollViewParent]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityHitTest:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        * dom/Document.cpp:
+        (WebCore::Document::axObjectCache):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::accessibilityRemoteObject):
+        * loader/FrameLoaderClient.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::axObjectCache):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::setHasVerticalScrollbar):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::~Scrollbar):
+        (WebCore::Scrollbar::scroll):
+        (WebCore::Scrollbar::axObjectCache):
+        * platform/Scrollbar.h:
+        * platform/Widget.h:
+        (WebCore::Widget::axObjectCache):
+
 2011-01-04  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by Kenneth Russell.

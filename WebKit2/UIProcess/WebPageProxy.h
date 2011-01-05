@@ -176,7 +176,7 @@ public:
 
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
-    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
@@ -230,6 +230,9 @@ public:
 
     void scaleWebView(double scale, const WebCore::IntPoint& origin);
     double viewScaleFactor() const { return m_viewScaleFactor; }
+#if PLATFORM(MAC)
+    void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
+#endif
 
     // Find.
     void findString(const String&, FindOptions, unsigned maxMatchCount);
@@ -333,6 +336,7 @@ private:
     void didStartProgress();
     void didChangeProgress(double);
     void didFinishProgress();
+    void didReceiveAccessibilityPageToken(const CoreIPC::DataReference&);
     
     void decidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const String& url, uint64_t listenerID);
     void decidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, const String& url, uint64_t listenerID);

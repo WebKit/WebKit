@@ -152,11 +152,6 @@ String AccessibilityListBoxOption::stringValue() const
     return String();
 }
 
-IntSize AccessibilityListBoxOption::size() const
-{
-    return elementRect().size();
-}
-
 Element* AccessibilityListBoxOption::actionElement() const
 {
     return m_optionElement;

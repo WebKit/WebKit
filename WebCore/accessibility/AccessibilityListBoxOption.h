@@ -61,7 +61,6 @@ public:
     virtual bool canSetSelectedAttribute() const;
 
     virtual IntRect elementRect() const;
-    virtual IntSize size() const;
     virtual AccessibilityObject* parentObject() const;
     bool isListBoxOption() const { return true; }
     
@@ -72,7 +71,7 @@ private:
     HTMLSelectElement* listBoxOptionParentNode() const;
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
-    AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement* element) const;
+    AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
 };
     
 } // namespace WebCore 

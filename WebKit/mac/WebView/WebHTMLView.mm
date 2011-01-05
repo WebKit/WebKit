@@ -4274,7 +4274,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 - (id)accessibilityAttributeValue:(NSString*)attributeName
 {
     if ([attributeName isEqualToString: NSAccessibilityChildrenAttribute]) {
-        id accTree = [[self _frame] _accessibilityTree];
+        id accTree = [[self _frame] accessibilityRoot];
         if (accTree)
             return [NSArray arrayWithObject:accTree];
         return nil;
@@ -4284,7 +4284,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
 - (id)accessibilityFocusedUIElement
 {
-    id accTree = [[self _frame] _accessibilityTree];
+    id accTree = [[self _frame] accessibilityRoot];
     if (accTree)
         return [accTree accessibilityFocusedUIElement];
     return self;
@@ -4292,7 +4292,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
-    id accTree = [[self _frame] _accessibilityTree];
+    id accTree = [[self _frame] accessibilityRoot];
     if (accTree) {
         NSPoint windowCoord = [[self window] convertScreenToBase:point];
         return [accTree accessibilityHitTest:[self convertPoint:windowCoord fromView:nil]];
@@ -4302,7 +4302,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
 - (id)_accessibilityParentForSubview:(NSView *)subview
 {
-    id accTree = [[self _frame] _accessibilityTree];
+    id accTree = [[self _frame] accessibilityRoot];
     if (!accTree)
         return self;
     id parent = [accTree _accessibilityParentForSubview:subview];

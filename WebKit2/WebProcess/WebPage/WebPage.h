@@ -52,6 +52,15 @@
 #include <WebCore/PlatformTouchEvent.h>
 #endif
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#ifdef __OBJC__
+@class AccessibilityWebPageObject;
+#else
+class AccessibilityWebPageObject;
+#endif
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
@@ -253,6 +262,10 @@ public:
     static void getLocationAndLengthFromRange(WebCore::Range*, uint64_t& location, uint64_t& length);
 
 #if PLATFORM(MAC)
+    void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
+    AccessibilityWebPageObject* accessibilityRemoteObject();
+    WebCore::IntPoint accessibilityPosition() const { return m_accessibilityPosition; }    
+    
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
     void getMarkedRange(uint64_t& location, uint64_t& length);
@@ -340,7 +353,7 @@ private:
 
 #if PLATFORM(MAC)
     void setWindowIsVisible(bool windowIsVisible);
-    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates);
+    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);
 #endif
 
     void unapplyEditCommand(uint64_t commandID);
@@ -397,8 +410,13 @@ private:
     // The frame of the view in window coordinates.
     WebCore::IntRect m_viewFrameInWindowCoordinates;
 
+    // The accessibility position of the view.
+    WebCore::IntPoint m_accessibilityPosition;
+    
     // All plug-in views on this web page.
     HashSet<PluginView*> m_pluginViews;
+    
+    RetainPtr<AccessibilityWebPageObject> m_mockAccessibilityElement;
 #elif PLATFORM(WIN)
     // Our view's window (in the UI process).
     HWND m_nativeWindow;

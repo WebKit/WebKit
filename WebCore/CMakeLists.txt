@@ -575,6 +575,7 @@ SET(WebCore_SOURCES
     accessibility/AccessibilityObject.cpp
     accessibility/AccessibilityRenderObject.cpp
     accessibility/AccessibilityScrollbar.cpp
+    accessibility/AccessibilityScrollView.cpp
     accessibility/AccessibilitySlider.cpp
     accessibility/AccessibilityTable.cpp
     accessibility/AccessibilityTableCell.cpp

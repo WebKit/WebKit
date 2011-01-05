@@ -75,6 +75,7 @@ private:
     virtual void pageDidLeaveAcceleratedCompositing();
 #endif
 
+    virtual void accessibilityChildTokenReceived(const CoreIPC::DataReference&);    
     virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
 
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
