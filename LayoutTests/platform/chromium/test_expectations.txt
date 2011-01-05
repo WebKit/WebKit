@@ -3055,6 +3055,8 @@ BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
 BUGCR68436 LINUX MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
 
+BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS TIMEOUT CRASH
+
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
 BUG_MIHAIP MAC : css1/box_properties/clear_float.html = IMAGE
@@ -3151,3 +3153,6 @@ BUGWK51841 : fast/gradients/css3-color-stops.html = IMAGE
 BUGWK51841 : fast/gradients/css3-linear-angle-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
+
+// Regression by r74995
+BUG_TKENT : MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE
