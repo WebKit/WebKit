@@ -3156,9 +3156,11 @@ BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
 BUG_TKENT MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE
 
 // This was introduced by r75077.
-BUG_SENORBLANCO : fast/text/basic/014.html = IMAGE
+BUG_SENORBLANCO LINUX MAC : fast/text/basic/014.html = IMAGE
+BUG_SENORBLANCO LINUX MAC : fast/text/midword-break-after-breakable-char.html = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/capitalize-boundaries.html = IMAGE
-BUG_SENORBLANCO : fast/text/midword-break-after-breakable-char.html = IMAGE
+BUG_SENORBLANCO WIN : fast/text/basic/014.html = IMAGE+TEXT
+BUG_SENORBLANCO WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
 // New tests introduced by r75097.  Results look ok; need rebaseline.
 BUG_SENORBLANCO : fast/gradients/css3-repeating-linear-gradients.html = IMAGE

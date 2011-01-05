@@ -1,5 +1,13 @@
 2011-01-05  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; test expectations update..
+
+        Fix the expectations for the hyphenation tests on chromium-win.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-05  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; test expectations fix.
 
         * platform/chromium/test_expectations.txt:
