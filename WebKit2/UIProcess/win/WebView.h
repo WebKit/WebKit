@@ -66,6 +66,7 @@ private:
     static LRESULT CALLBACK WebViewWndProc(HWND, UINT, WPARAM, LPARAM);
     LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+    void setWasActivatedByMouseEvent(bool flag) { m_wasActivatedByMouseEvent = flag; }
     LRESULT onMouseEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onWheelEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onKeyEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
@@ -145,6 +146,7 @@ private:
     HCURSOR m_webCoreCursor;
     HCURSOR m_overrideCursor;
 
+    bool m_wasActivatedByMouseEvent;
     bool m_trackingMouseLeave;
     bool m_isBeingDestroyed;
 

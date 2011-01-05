@@ -1,3 +1,39 @@
+2011-01-04  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Mouse events in WebKit2 on Windows need to know whether the click activated the WebView to match WebKit1 behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=51228
+
+        * Shared/WebEvent.h:
+        (WebKit::WebMouseEvent::didActivateWebView):
+        Add m_didActivateWebView to WebMouseEvent on Windows.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformMouseEvent::WebKit2PlatformMouseEvent):
+        Propagate whether the click activated the WebView when converting to a PlatformMouseEvent.
+
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        Add m_didActivateWebView to WebMouseEvent on Windows.
+
+        (WebKit::WebMouseEvent::encode):
+        (WebKit::WebMouseEvent::decode):
+        Encode and decode new m_didActivateWebView member variable.
+
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        * Shared/win/WebEventFactory.h:
+        Add didActivateWebView parameter to createWebMouseEvent().
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::onMouseEvent):
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::setWasActivatedByMouseEvent):
+        Keep track of whether the click activated the WebView.
+
 2011-01-04  Ivan Krstić  <ike@apple.com>
 
         Reviewed and landed by Anders Carlsson.

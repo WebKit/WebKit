@@ -85,6 +85,11 @@ namespace WebCore {
             , m_metaKey(false)
             , m_timestamp(0)
             , m_modifierFlags(0)
+#if PLATFORM(MAC)
+            , m_eventNumber(0)
+#elif PLATFORM(WIN)
+            , m_didActivateWebView(false)
+#endif
         {
         }
 
@@ -101,6 +106,11 @@ namespace WebCore {
             , m_metaKey(meta)
             , m_timestamp(timestamp)
             , m_modifierFlags(0)
+#if PLATFORM(MAC)
+            , m_eventNumber(0)
+#elif PLATFORM(WIN)
+            , m_didActivateWebView(false)
+#endif
         {
         }
 
@@ -150,9 +160,9 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(WIN)
-        PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool activatedWebView = false);
+        PlatformMouseEvent(HWND, UINT, WPARAM, LPARAM, bool didActivateWebView = false);
         void setClickCount(int count) { m_clickCount = count; }
-        bool activatedWebView() const { return m_activatedWebView; }
+        bool didActivateWebView() const { return m_didActivateWebView; }
 #endif
 
 #if PLATFORM(WX)
@@ -182,10 +192,8 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
         int m_eventNumber;
-#endif
-
-#if PLATFORM(WIN)
-        bool m_activatedWebView;
+#elif PLATFORM(WIN)
+        bool m_didActivateWebView;
 #endif
     };
 

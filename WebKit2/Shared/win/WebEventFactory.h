@@ -35,9 +35,9 @@ namespace WebKit {
 
 class WebEventFactory {
 public:
-    static WebMouseEvent createWebMouseEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
-    static WebWheelEvent createWebWheelEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
-    static WebKeyboardEvent createWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+    static WebMouseEvent createWebMouseEvent(HWND, UINT message, WPARAM, LPARAM, bool didActivateWebView);
+    static WebWheelEvent createWebWheelEvent(HWND, UINT message, WPARAM, LPARAM);
+    static WebKeyboardEvent createWebKeyboardEvent(HWND, UINT message, WPARAM, LPARAM);
 };
 
 } // namespace WebKit

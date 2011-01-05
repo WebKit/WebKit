@@ -88,7 +88,7 @@ bool EventHandler::tabsToAllControls(KeyboardEvent*) const
 
 bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 {
-    return event.activatedWebView();
+    return event.didActivateWebView();
 }
 
 PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const

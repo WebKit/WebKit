@@ -323,7 +323,7 @@ static String keyIdentifierFromEvent(WPARAM wparam, WebEvent::Type type)
     }
 }
 
-WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool didActivateWebView)
 {
     WebEvent::Type type;
     WebMouseEvent::Button button = WebMouseEvent::NoButton;
@@ -391,7 +391,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     int clickCount = WebKit::clickCount(type, button, position, timestamp);
     WebEvent::Modifiers modifiers = modifiersForEvent(wParam);
 
-    return WebMouseEvent(type, button, position, globalPosition, 0, 0, 0, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, position, globalPosition, 0, 0, 0, clickCount, modifiers, timestamp, didActivateWebView);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

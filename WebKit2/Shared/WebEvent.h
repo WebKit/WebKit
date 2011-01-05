@@ -110,6 +110,9 @@ public:
     WebMouseEvent() { }
 
     WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp);
+#if PLATFORM(WIN)
+    WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp, bool didActivateWebView);
+#endif
 
     Button button() const { return static_cast<Button>(m_button); }
     const WebCore::IntPoint& position() const { return m_position; }
@@ -118,6 +121,9 @@ public:
     float deltaY() const { return m_deltaY; }
     float deltaZ() const { return m_deltaZ; }
     int32_t clickCount() const { return m_clickCount; }
+#if PLATFORM(WIN)
+    bool didActivateWebView() const { return m_didActivateWebView; }
+#endif
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebMouseEvent&);
@@ -132,6 +138,9 @@ private:
     float m_deltaY;
     float m_deltaZ;
     int32_t m_clickCount;
+#if PLATFORM(WIN)
+    bool m_didActivateWebView;
+#endif
 };
 
 // FIXME: Move this class to its own header file.

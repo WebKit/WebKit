@@ -116,6 +116,10 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_PRINTCLIENT:
             lResult = onPrintClientEvent(hWnd, message, wParam, lParam, handled);
             break;
+        case WM_MOUSEACTIVATE:
+            setWasActivatedByMouseEvent(true);
+            handled = false;
+            break;
         case WM_MOUSEMOVE:
         case WM_LBUTTONDOWN:
         case WM_MBUTTONDOWN:
@@ -224,6 +228,7 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_webCoreCursor(0)
     , m_overrideCursor(0)
     , m_trackingMouseLeave(false)
+    , m_wasActivatedByMouseEvent(false)
     , m_isBeingDestroyed(false)
     , m_inIMEComposition(0)
 {
@@ -317,6 +322,9 @@ void WebView::windowAncestryDidChange()
 
 LRESULT WebView::onMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
+    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(hWnd, message, wParam, lParam, m_wasActivatedByMouseEvent);
+    setWasActivatedByMouseEvent(false);
+    
     switch (message) {
         case WM_LBUTTONDOWN:
         case WM_MBUTTONDOWN:
@@ -343,7 +351,6 @@ LRESULT WebView::onMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
             ASSERT_NOT_REACHED();
     }
 
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(hWnd, message, wParam, lParam);
     m_page->handleMouseEvent(mouseEvent);
 
     handled = true;
