@@ -1,3 +1,16 @@
+2011-01-04  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] depend on harfbuzz explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=51895
+
+        platform/graphics/chromium uses Harfbuzz directly.  Rather than
+        expecting Skia to adjust the include paths, be explicit about
+        the dependency.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-01-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Brady Eidson.

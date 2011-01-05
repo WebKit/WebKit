@@ -1104,6 +1104,9 @@
             ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
           ],
+          'dependencies': [
+            '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
+          ],
         }],
         ['OS=="mac"', {
           # Necessary for Mac .mm stuff.

@@ -1,3 +1,15 @@
+2011-01-04  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] depend on harfbuzz explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=51895
+
+        Update Chromium DEPS to pick up newer Chromium version
+        that simplifies expressing the Harfbuzz dependency.
+
+        * DEPS:
+
 2011-01-04  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Kenneth Russell.
