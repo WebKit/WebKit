@@ -1,3 +1,18 @@
+2011-01-05  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [Chromium] Crash when drawing PDF plug-in scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=51942
+
+        Pepper plug-in scrollbars don't have a parent, guard against that before
+        seeing if the parent is a FrameView.
+
+        Not testable via layout tests, verified fix by hand.
+        
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+
 2011-01-05  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.

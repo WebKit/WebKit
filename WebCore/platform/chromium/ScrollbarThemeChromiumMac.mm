@@ -472,7 +472,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
 #if USE_WEB_THEME_ENGINE_TO_PAINT_THUMB
         ChromiumBridge::ThemePaintScrollbarInfo scrollbarInfo;
         scrollbarInfo.orientation = scrollbar->orientation() == HorizontalScrollbar ? ChromiumBridge::ScrollbarOrientationHorizontal : ChromiumBridge::ScrollbarOrientationVertical;
-        scrollbarInfo.parent = scrollbar->parent()->isFrameView() && static_cast<FrameView*>(scrollbar->parent())->isScrollViewScrollbar(scrollbar) ? ChromiumBridge::ScrollbarParentScrollView : ChromiumBridge::ScrollbarParentRenderLayer;
+        scrollbarInfo.parent = scrollbar->parent() && scrollbar->parent()->isFrameView() && static_cast<FrameView*>(scrollbar->parent())->isScrollViewScrollbar(scrollbar) ? ChromiumBridge::ScrollbarParentScrollView : ChromiumBridge::ScrollbarParentRenderLayer;
         scrollbarInfo.maxValue = scrollbar->maximum();
         scrollbarInfo.currentValue = scrollbar->currentPos();
         scrollbarInfo.visibleSize = scrollbar->visibleSize();
