@@ -1,3 +1,40 @@
+2011-01-05  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fast/encoding/parser-tests.html is slow on debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=51721
+
+        Break up parser tests to run 10 tests per batch.
+
+        * fast/encoding/parser-tests-10-expected.txt: Added.
+        * fast/encoding/parser-tests-10.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-100-expected.txt: Added.
+        * fast/encoding/parser-tests-100.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-110-expected.txt: Added.
+        * fast/encoding/parser-tests-110.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-120-expected.txt: Added.
+        * fast/encoding/parser-tests-120.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-20-expected.txt: Added.
+        * fast/encoding/parser-tests-20.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-30-expected.txt: Added.
+        * fast/encoding/parser-tests-30.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-40-expected.txt: Added.
+        * fast/encoding/parser-tests-40.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-50-expected.txt: Added.
+        * fast/encoding/parser-tests-50.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-60-expected.txt: Added.
+        * fast/encoding/parser-tests-60.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-70-expected.txt: Added.
+        * fast/encoding/parser-tests-70.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-80-expected.txt: Added.
+        * fast/encoding/parser-tests-80.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-90-expected.txt: Added.
+        * fast/encoding/parser-tests-90.html: Copied from LayoutTests/fast/encoding/parser-tests.html.
+        * fast/encoding/parser-tests-expected.txt:
+        * fast/encoding/parser-tests.html:
+        * fast/encoding/resources/parser-tests.js: Added.
+
 2011-01-05  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
