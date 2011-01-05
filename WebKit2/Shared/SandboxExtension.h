@@ -93,7 +93,7 @@ inline void SandboxExtension::createHandle(const String& path, Type type, Handle
 inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::invalidate() { return true; }
 inline bool SandboxExtension::consume() { return true; }
-inline void SandboxExtension::consumePermanently() { return true; }
+inline bool SandboxExtension::consumePermanently() { return true; }
 #endif
 
 } // namespace WebKit

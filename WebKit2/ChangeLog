@@ -1,3 +1,10 @@
+2011-01-04  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows build fix. Change the inline type of consumePermanently.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::consumePermanently):
+
 2011-01-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
