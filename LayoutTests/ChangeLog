@@ -1,3 +1,14 @@
+2011-01-04  Tony Gentilcore  <tonyg@chromium.org>
+
+        Unreviewed expectations update.
+
+        Fix text metrics for "You should not see this at all" message
+        https://bugs.webkit.org/show_bug.cgi?id=51909
+
+        * http/tests/misc/acid3-expected.checksum:
+        * http/tests/misc/acid3-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Sam Weinig.

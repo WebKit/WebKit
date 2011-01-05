@@ -2207,9 +2207,6 @@ BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
 BUGWK40740 : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
 
-// WebKit r60999 updated acid3.html, doesn't match expected on Chromium Mac.
-BUGCR46375 MAC : http/tests/misc/acid3.html = IMAGE
-
 BUGCR46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
 BUGCR46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
 
