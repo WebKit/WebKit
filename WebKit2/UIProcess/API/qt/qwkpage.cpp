@@ -53,6 +53,32 @@
 using namespace WebKit;
 using namespace WebCore;
 
+static WebCore::ContextMenuAction contextMenuActionForWebAction(QWKPage::WebAction action)
+{
+    switch (action) {
+    case QWKPage::OpenLink:
+        return WebCore::ContextMenuItemTagOpenLink;
+    case QWKPage::OpenLinkInNewWindow:
+        return WebCore::ContextMenuItemTagOpenLinkInNewWindow;
+    case QWKPage::CopyLinkToClipboard:
+        return WebCore::ContextMenuItemTagCopyLinkToClipboard;
+    case QWKPage::OpenImageInNewWindow:
+        return WebCore::ContextMenuItemTagOpenImageInNewWindow;
+    case QWKPage::Cut:
+        return WebCore::ContextMenuItemTagCut;
+    case QWKPage::Copy:
+        return WebCore::ContextMenuItemTagCopy;
+    case QWKPage::Paste:
+        return WebCore::ContextMenuItemTagPaste;
+    case QWKPage::SelectAll:
+        return WebCore::ContextMenuItemTagSelectAll;
+    default:
+        ASSERT(false);
+        break;
+    }
+    return WebCore::ContextMenuItemTagNoAction;
+}
+
 QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     : q(qq)
     , context(c)
@@ -556,24 +582,28 @@ void QWKPage::setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize)
 }
 
 #ifndef QT_NO_ACTION
-void QWKPage::triggerAction(WebAction action, bool)
+void QWKPage::triggerAction(WebAction webAction, bool)
 {
-    switch (action) {
+    switch (webAction) {
     case Back:
         d->page->goBack();
-        break;
+        return;
     case Forward:
         d->page->goForward();
-        break;
+        return;
     case Stop:
         d->page->stopLoading();
-        break;
+        return;
     case Reload:
         d->page->reload(/* reloadFromOrigin */ true);
-        break;
+        return;
     default:
         break;
     }
+
+    QAction* qtAction = action(webAction);
+    WebKit::WebContextMenuItemData menuItemData(ActionType, contextMenuActionForWebAction(webAction), qtAction->text(), qtAction->isEnabled(), qtAction->isChecked());
+    d->page->contextMenuItemSelected(menuItemData);
 }
 #endif // QT_NO_ACTION
 
@@ -592,6 +622,18 @@ QAction* QWKPage::action(WebAction action) const
     bool checkable = false;
 
     switch (action) {
+    case OpenLink:
+        text = contextMenuItemTagOpenLink();
+        break;
+    case OpenLinkInNewWindow:
+        text = contextMenuItemTagOpenLinkInNewWindow();
+        break;
+    case CopyLinkToClipboard:
+        text = contextMenuItemTagCopyLinkToClipboard();
+        break;
+    case OpenImageInNewWindow:
+        text = contextMenuItemTagOpenImageInNewWindow();
+        break;
     case Back:
         text = contextMenuItemTagGoBack();
         icon = style->standardIcon(QStyle::SP_ArrowBack);
@@ -607,6 +649,18 @@ QAction* QWKPage::action(WebAction action) const
     case Reload:
         text = contextMenuItemTagReload();
         icon = style->standardIcon(QStyle::SP_BrowserReload);
+        break;
+    case Cut:
+        text = contextMenuItemTagCut();
+        break;
+    case Copy:
+        text = contextMenuItemTagCopy();
+        break;
+    case Paste:
+        text = contextMenuItemTagPaste();
+        break;
+    case SelectAll:
+        text = contextMenuItemTagSelectAll();
         break;
     default:
         return 0;

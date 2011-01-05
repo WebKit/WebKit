@@ -262,6 +262,8 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
     case ContextMenuItemTagDelete:
         frame->editor()->performDelete();
         break;
+#endif
+#if PLATFORM(GTK) || PLATFORM(QT)
     case ContextMenuItemTagSelectAll:
         frame->editor()->command("SelectAll").execute();
         break;

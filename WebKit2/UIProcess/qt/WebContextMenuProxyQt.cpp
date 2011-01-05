@@ -38,6 +38,14 @@ namespace WebKit {
 static QWKPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAction action)
 {
     switch (action) {
+    case WebCore::ContextMenuItemTagOpenLink:
+        return QWKPage::OpenLink;
+    case WebCore::ContextMenuItemTagOpenLinkInNewWindow:
+        return QWKPage::OpenLinkInNewWindow;
+    case WebCore::ContextMenuItemTagCopyLinkToClipboard:
+        return QWKPage::CopyLinkToClipboard;
+    case WebCore::ContextMenuItemTagOpenImageInNewWindow:
+        return QWKPage::OpenImageInNewWindow;
     case WebCore::ContextMenuItemTagGoBack:
         return QWKPage::Back;
     case WebCore::ContextMenuItemTagGoForward:
@@ -46,6 +54,14 @@ static QWKPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuActi
         return QWKPage::Stop;
     case WebCore::ContextMenuItemTagReload:
         return QWKPage::Reload;
+    case WebCore::ContextMenuItemTagCut:
+        return QWKPage::Cut;
+    case WebCore::ContextMenuItemTagCopy:
+        return QWKPage::Copy;
+    case WebCore::ContextMenuItemTagPaste:
+        return QWKPage::Paste;
+    case WebCore::ContextMenuItemTagSelectAll:
+        return QWKPage::SelectAll;
     default:
         break;
     }

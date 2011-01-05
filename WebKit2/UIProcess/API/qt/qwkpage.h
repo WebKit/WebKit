@@ -28,10 +28,20 @@ public:
     enum WebAction {
         NoWebAction = - 1,
 
+        OpenLink,
+        OpenLinkInNewWindow,
+        CopyLinkToClipboard,
+        OpenImageInNewWindow,
+
         Back,
         Forward,
         Stop,
         Reload,
+
+        Cut,
+        Copy,
+        Paste,
+        SelectAll,
 
         WebActionCount
     };
