@@ -289,4 +289,14 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
         guesses.append(guess);
 }
 
+void TextChecker::learnWord(const String& word)
+{
+    [[NSSpellChecker sharedSpellChecker] learnWord:word];
+}
+
+void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
+{
+    [[NSSpellChecker sharedSpellChecker] ignoreWord:word inSpellDocumentWithTag:spellDocumentTag];
+}
+
 } // namespace WebKit

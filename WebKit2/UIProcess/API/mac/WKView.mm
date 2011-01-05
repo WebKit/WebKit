@@ -355,7 +355,7 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         return _data->_page->selectionState().isContentEditable;
     }
 
-    if (action == @selector(checkSpelling:))
+    if (action == @selector(checkSpelling:) || action == @selector(changeSpelling:))
         return _data->_page->selectionState().isContentEditable;
 
     if (action == @selector(toggleContinuousSpellChecking:)) {
@@ -460,12 +460,32 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
 - (IBAction)showGuessPanel:(id)sender
 {
-    // FIXME (WebKit2) <rdar://problem/8245958> Make Spelling/Grammar checking work in WebKit2
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        LOG_ERROR("No NSSpellChecker");
+        return;
+    }
+    
+    NSPanel *spellingPanel = [checker spellingPanel];
+    if ([spellingPanel isVisible]) {
+        [spellingPanel orderOut:sender];
+        return;
+    }
+    
+    _data->_page->advanceToNextMisspelling(true);
+    [spellingPanel orderFront:sender];
 }
 
 - (IBAction)checkSpelling:(id)sender
 {
-    _data->_page->advanceToNextMisspelling();
+    _data->_page->advanceToNextMisspelling(false);
+}
+
+- (void)changeSpelling:(id)sender
+{
+    NSString *word = [[sender selectedCell] stringValue];
+
+    _data->_page->changeSpellingToWord(word);
 }
 
 - (IBAction)toggleContinuousSpellChecking:(id)sender

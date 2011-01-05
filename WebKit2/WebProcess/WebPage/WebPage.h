@@ -374,7 +374,8 @@ private:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
-    void advanceToNextMisspelling();
+    void advanceToNextMisspelling(bool startBeforeSelection);
+    void changeSpellingToWord(const String& word);
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 

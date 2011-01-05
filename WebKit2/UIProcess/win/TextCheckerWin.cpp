@@ -85,4 +85,14 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
     notImplemented();
 }
 
+void TextChecker::learnWord(const String& word)
+{
+    notImplemented();
+}
+
+void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

@@ -364,14 +364,14 @@ void WebEditorClient::textWillBeDeletedInTextField(Element* element)
     m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, static_cast<HTMLInputElement*>(element), WKInputFieldActionTypeInsertDelete, webFrame);
 }
 
-void WebEditorClient::ignoreWordInSpellDocument(const String&)
+void WebEditorClient::ignoreWordInSpellDocument(const String& word)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::IgnoreWord(word));
 }
 
-void WebEditorClient::learnWord(const String&)
+void WebEditorClient::learnWord(const String& word)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::LearnWord(word));
 }
 
 void WebEditorClient::checkSpellingOfString(const UChar*, int, int*, int*)

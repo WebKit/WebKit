@@ -62,6 +62,7 @@
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
+#include <WebCore/DocumentFragment.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/EventHandler.h>
@@ -74,11 +75,13 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/ReplaceSelectionCommand.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Settings.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/markup.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
 
@@ -1256,10 +1259,21 @@ void WebPage::didCancelForOpenPanel()
     m_activeOpenPanelResultListener = 0;
 }
 
-void WebPage::advanceToNextMisspelling()
+void WebPage::advanceToNextMisspelling(bool startBeforeSelection)
 {
-    if (Frame* frame = m_page->focusController()->focusedOrMainFrame())
-        frame->editor()->advanceToNextMisspelling();
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    frame->editor()->advanceToNextMisspelling(startBeforeSelection);
+}
+
+void WebPage::changeSpellingToWord(const String& word)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (frame->selection()->isNone())
+        return;
+
+    RefPtr<DocumentFragment> textFragment = createFragmentFromText(frame->selection()->toNormalizedRange().get(), word);
+    applyCommand(ReplaceSelectionCommand::create(frame->document(), textFragment.release(), true, false, true));
+    frame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 void WebPage::unmarkAllMisspellings()

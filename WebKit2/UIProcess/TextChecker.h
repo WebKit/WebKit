@@ -54,6 +54,8 @@ public:
     static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes);
     static void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
     static void getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses);
+    static void learnWord(const String& word);
+    static void ignoreWord(int64_t spellDocumentTag, const String& word);
 };
 
 } // namespace WebKit

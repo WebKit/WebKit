@@ -299,7 +299,8 @@ public:
     void findZoomableAreaForPoint(const WebCore::IntPoint&);
 #endif
 
-    void advanceToNextMisspelling();
+    void advanceToNextMisspelling(bool startBeforeSelection);
+    void changeSpellingToWord(const String& word);
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 
@@ -435,6 +436,8 @@ private:
     void checkTextOfParagraph(const String& text, uint64_t checkingTypes, Vector<WebCore::TextCheckingResult>& results);
     void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
     void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
+    void learnWord(const String& word);
+    void ignoreWord(const String& word);
 
     void takeFocus(bool direction);
     void setToolTip(const String&);
@@ -543,6 +546,7 @@ private:
 
     int64_t m_spellDocumentTag;
     bool m_hasSpellDocumentTag;
+    unsigned m_pendingLearnOrIgnoreWordMessageCount;
 
     bool m_mainFrameHasCustomRepresentation;
 };

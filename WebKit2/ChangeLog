@@ -1,5 +1,79 @@
 2011-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        More work on spelling
+        https://bugs.webkit.org/show_bug.cgi?id=51939
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        Handle changeSpelling: as well.
+
+        (-[WKView showGuessPanel:]):
+        Show or hide the guess panel.
+
+        (-[WKView checkSpelling:]):
+        Pass false to advanceToNextMisspelling.
+
+        (-[WKView changeSpelling:]):
+        Call changeSpellingToWord.
+
+        * UIProcess/TextChecker.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize m_pendingLearnOrIgnoreWordMessageCount.
+
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        Handle smart toggles directly in the UI process, keep track of whether
+        we're asked to learn or ignore a word.
+
+        (WebKit::WebPageProxy::advanceToNextMisspelling):
+        Pass the boolean through.
+
+        (WebKit::WebPageProxy::changeSpellingToWord):
+        Send a ChangeSpellingToWord message.
+
+        (WebKit::WebPageProxy::learnWord):
+        (WebKit::WebPageProxy::ignoreWord):
+        Check that we do have a pending learn or ignore word message. Call through to
+        the text checker.
+
+        (WebKit::WebPageProxy::processDidCrash):
+        Reset the m_pendingLearnOrIgnoreWordMessageCount variable.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Add new messages.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        Implement in terms of NSSpellChecker.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::ignoreWordInSpellDocument):
+        (WebKit::WebEditorClient::learnWord):
+        Send IgnoreWord and LearnWord messages.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::toggleAutomaticQuoteSubstitution):
+        (WebKit::WebEditorClient::toggleAutomaticLinkDetection):
+        (WebKit::WebEditorClient::toggleAutomaticDashSubstitution):
+        (WebKit::WebEditorClient::toggleAutomaticTextReplacement):
+        Add assertions.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::advanceToNextMisspelling):
+        Pass the bool along to the Editor.
+
+        (WebKit::WebPage::changeSpellingToWord):
+        Replace the selected text.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add new ChangeSpellingToWord message and add a boolean to AdvanceToNextMisspelling.
+
+2011-01-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Keep track of active text substitution preferences

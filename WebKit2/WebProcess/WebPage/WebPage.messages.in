@@ -101,7 +101,8 @@ messages -> WebPage {
     DidCancelForOpenPanel()
 
     # Speling and grammer.
-    AdvanceToNextMisspelling()
+    AdvanceToNextMisspelling(bool startBeforeSelection)
+    ChangeSpellingToWord(WTF::String word)
     UnmarkAllMisspellings()
     UnmarkAllBadGrammar()
 

@@ -35,6 +35,7 @@
 #include "PageClient.h"
 #include "StringPairVector.h"
 #include "TextChecker.h"
+#include "TextCheckerState.h"
 #include "WKContextPrivate.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
@@ -114,6 +115,7 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
     , m_pageID(pageID)
     , m_spellDocumentTag(0)
     , m_hasSpellDocumentTag(false)
+    , m_pendingLearnOrIgnoreWordMessageCount(0)
     , m_mainFrameHasCustomRepresentation(false)
 {
 #ifndef NDEBUG
@@ -1704,7 +1706,33 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         m_contextMenuClient.customContextMenuItemSelected(this, item);
         return;
     }
-    
+
+#if PLATFORM(MAC)
+    if (item.action() == ContextMenuItemTagSmartQuotes) {
+        TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
+        process()->updateTextCheckerState();
+        return;
+    }
+    if (item.action() == ContextMenuItemTagSmartDashes) {
+        TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
+        process()->updateTextCheckerState();
+        return;
+    }
+    if (item.action() == ContextMenuItemTagSmartLinks) {
+        TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
+        process()->updateTextCheckerState();
+        return;
+    }
+    if (item.action() == ContextMenuItemTagTextReplacement) {
+        TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
+        process()->updateTextCheckerState();
+        return;
+    }
+#endif
+
+    if (item.action() == ContextMenuItemTagLearnSpelling || item.action() == ContextMenuItemTagIgnoreSpelling)
+        ++m_pendingLearnOrIgnoreWordMessageCount;
+
     process()->send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item), m_pageID);
 }
 
@@ -1731,9 +1759,17 @@ void WebPageProxy::didCancelForOpenPanel()
     m_openPanelResultListener = 0;
 }
 
-void WebPageProxy::advanceToNextMisspelling()
+void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection)
 {
-    process()->send(Messages::WebPage::AdvanceToNextMisspelling(), m_pageID);
+    process()->send(Messages::WebPage::AdvanceToNextMisspelling(startBeforeSelection), m_pageID);
+}
+
+void WebPageProxy::changeSpellingToWord(const String& word)
+{
+    if (word.isEmpty())
+        return;
+
+    process()->send(Messages::WebPage::ChangeSpellingToWord(word), m_pageID);
 }
 
 void WebPageProxy::unmarkAllMisspellings()
@@ -1788,6 +1824,22 @@ void WebPageProxy::updateSpellingUIWithMisspelledWord(const String& misspelledWo
 void WebPageProxy::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
 {
     TextChecker::getGuessesForWord(spellDocumentTag(), word, context, guesses);
+}
+
+void WebPageProxy::learnWord(const String& word)
+{
+    MESSAGE_CHECK(m_pendingLearnOrIgnoreWordMessageCount);
+    --m_pendingLearnOrIgnoreWordMessageCount;
+
+    TextChecker::learnWord(word);
+}
+
+void WebPageProxy::ignoreWord(const String& word)
+{
+    MESSAGE_CHECK(m_pendingLearnOrIgnoreWordMessageCount);
+    --m_pendingLearnOrIgnoreWordMessageCount;
+
+    TextChecker::ignoreWord(spellDocumentTag(), word);
 }
 
 // Other
@@ -1991,6 +2043,8 @@ void WebPageProxy::processDidCrash()
     m_activePopupMenu = 0;
 
     m_estimatedProgress = 0.0;
+
+    m_pendingLearnOrIgnoreWordMessageCount = 0;
 
     m_pageClient->processDidCrash();
     m_loaderClient.processDidCrash(this);

@@ -169,7 +169,8 @@ bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticQuoteSubstitution()
 {
-    notImplemented();
+    // This should be handled in the UI process.
+    ASSERT_NOT_REACHED();
 }
 
 bool WebEditorClient::isAutomaticLinkDetectionEnabled()
@@ -179,7 +180,8 @@ bool WebEditorClient::isAutomaticLinkDetectionEnabled()
 
 void WebEditorClient::toggleAutomaticLinkDetection()
 {
-    notImplemented();
+    // This should be handled in the UI process.
+    ASSERT_NOT_REACHED();
 }
 
 bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
@@ -189,7 +191,8 @@ bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticDashSubstitution()
 {
-    notImplemented();
+    // This should be handled in the UI process.
+    ASSERT_NOT_REACHED();
 }
 
 bool WebEditorClient::isAutomaticTextReplacementEnabled()
@@ -199,7 +202,8 @@ bool WebEditorClient::isAutomaticTextReplacementEnabled()
 
 void WebEditorClient::toggleAutomaticTextReplacement()
 {
-    notImplemented();
+    // This should be handled in the UI process.
+    ASSERT_NOT_REACHED();
 }
 
 bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()
