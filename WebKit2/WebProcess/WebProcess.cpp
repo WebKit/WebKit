@@ -59,6 +59,10 @@
 #include <WebCore/GCController.h>
 #endif
 
+#if !OS(WINDOWS)
+#include <unistd.h>
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {

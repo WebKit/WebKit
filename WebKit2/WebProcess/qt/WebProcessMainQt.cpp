@@ -41,6 +41,12 @@
 #include <MComponentData>
 #endif
 
+#ifndef NDEBUG
+#if !OS(WINDOWS)
+#include <unistd.h>
+#endif
+#endif
+
 #if !defined(QWEBKIT_EXPORT)
 #if defined(QT_SHARED)
 #define QWEBKIT_EXPORT Q_DECL_EXPORT
