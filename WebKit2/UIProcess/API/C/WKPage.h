@@ -268,6 +268,7 @@ WK_EXPORT WKStringRef WKPageCopyTitle(WKPageRef page);
 
 WK_EXPORT WKFrameRef WKPageGetMainFrame(WKPageRef page);
 WK_EXPORT WKFrameRef WKPageGetFocusedFrame(WKPageRef page); // The focused frame may be inactive.
+WK_EXPORT WKFrameRef WKPageGetFrameSetLargestFrame(WKPageRef page);
 WK_EXPORT double WKPageGetEstimatedProgress(WKPageRef page);
 
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR

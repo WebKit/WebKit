@@ -152,6 +152,11 @@ WKFrameRef WKPageGetFocusedFrame(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->focusedFrame());
 }
 
+WKFrameRef WKPageGetFrameSetLargestFrame(WKPageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->frameSetLargestFrame());
+}
+
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
