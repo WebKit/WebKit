@@ -29,6 +29,7 @@
 import unittest
 
 from webkitpy.common.net.layouttestresults import LayoutTestResults
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
@@ -75,8 +76,11 @@ class LayoutTestResultsTest(unittest.TestCase):
         self.assertEqual(len(results.failing_tests()), 0)
 
     def test_failures_from_fail_row(self):
-        row_html = "<tr><td><a>25%</a></td></tr>"
-        row = BeautifulSoup(row_html)
+        row = BeautifulSoup("<tr><td><a>25%</a></td></tr>")
         failures = LayoutTestResults._failures_from_fail_row(row)
         self.assertEqual(len(failures), 1)
         self.assertEqual(type(sorted(failures)[0]), test_failures.FailureImageHashMismatch)
+
+        row = BeautifulSoup("<tr><td><a>foo</a></td></tr>")
+        expected_stderr = "Unhandled link text in results.html parsing: foo.  Please file a bug against webkitpy.\n"
+        OutputCapture().assert_outputs(self, LayoutTestResults._failures_from_fail_row, [row], expected_stderr=expected_stderr)
