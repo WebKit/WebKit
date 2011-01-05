@@ -1,7 +1,7 @@
 # Sets extra compile flags for a target, depending on the compiler being used.
 # Currently, only GCC is supported.
 MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
-  IF (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     GET_TARGET_PROPERTY(OLD_COMPILE_FLAGS ${_target} COMPILE_FLAGS)
     IF (${OLD_COMPILE_FLAGS} STREQUAL "OLD_COMPILE_FLAGS-NOTFOUND")
         SET(OLD_COMPILE_FLAGS "")
