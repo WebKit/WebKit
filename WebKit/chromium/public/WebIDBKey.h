@@ -50,10 +50,6 @@ public:
     WEBKIT_API static WebIDBKey createInvalid();
     WEBKIT_API static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
-    // FIXME: Remove these two constructors after Chromium side is done.
-    WebIDBKey(const WebString& string) { assignString(string); }
-    WebIDBKey(double number) { assignNumber(number); }
-
     WebIDBKey(const WebIDBKey& e) { assign(e); }
     WebIDBKey& operator=(const WebIDBKey& e)
     {
