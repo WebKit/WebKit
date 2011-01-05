@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2011 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +30,25 @@ Color::Color(const GdkColor& c)
     , m_valid(true)
 {
 }
+
+#ifndef GTK_API_VERSION_2
+Color::Color(const GdkRGBA& c)
+    : m_color(makeRGBA(static_cast<int>(c.red * 255),
+                       static_cast<int>(c.green * 255),
+                       static_cast<int>(c.blue * 255),
+                       static_cast<int>(c.alpha * 255)))
+    , m_valid(true)
+{
+}
+
+Color::operator GdkRGBA() const
+{
+    double red, green, blue, alpha;
+    getRGBA(red, green, blue, alpha);
+    GdkRGBA rgba = { red, green, blue, alpha };
+    return rgba;
+}
+#endif
 
 }
 

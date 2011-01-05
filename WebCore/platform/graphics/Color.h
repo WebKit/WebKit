@@ -44,6 +44,9 @@ QT_END_NAMESPACE
 
 #if PLATFORM(GTK)
 typedef struct _GdkColor GdkColor;
+#ifndef GTK_API_VERSION_2
+typedef struct _GdkRGBA GdkRGBA;
+#endif
 #endif
 
 #if PLATFORM(WX)
@@ -125,6 +128,10 @@ public:
 #if PLATFORM(GTK)
     Color(const GdkColor&);
     // We can't sensibly go back to GdkColor without losing the alpha value
+#ifndef GTK_API_VERSION_2
+    Color(const GdkRGBA&);
+    operator GdkRGBA() const;
+#endif
 #endif
 
 #if PLATFORM(WX)

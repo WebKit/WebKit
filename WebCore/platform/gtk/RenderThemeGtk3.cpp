@@ -416,59 +416,71 @@ GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* ic
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
 {
-    GtkWidget* widget = gtkEntry();
-    return gtk_widget_get_style(widget)->base[GTK_STATE_SELECTED];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::platformInactiveSelectionBackgroundColor() const
 {
-    GtkWidget* widget = gtkEntry();
-    return gtk_widget_get_style(widget)->base[GTK_STATE_ACTIVE];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::platformActiveSelectionForegroundColor() const
 {
-    GtkWidget* widget = gtkEntry();
-    return gtk_widget_get_style(widget)->text[GTK_STATE_SELECTED];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::platformInactiveSelectionForegroundColor() const
 {
-    GtkWidget* widget = gtkEntry();
-    return gtk_widget_get_style(widget)->text[GTK_STATE_ACTIVE];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::activeListBoxSelectionBackgroundColor() const
 {
-    GtkWidget* widget = gtkTreeView();
-    return gtk_widget_get_style(widget)->base[GTK_STATE_SELECTED];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::inactiveListBoxSelectionBackgroundColor() const
 {
-    GtkWidget* widget = gtkTreeView();
-    return gtk_widget_get_style(widget)->base[GTK_STATE_ACTIVE];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_background_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::activeListBoxSelectionForegroundColor() const
 {
-    GtkWidget* widget = gtkTreeView();
-    return gtk_widget_get_style(widget)->text[GTK_STATE_SELECTED];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_SELECTED, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::inactiveListBoxSelectionForegroundColor() const
 {
-    GtkWidget* widget = gtkTreeView();
-    return gtk_widget_get_style(widget)->text[GTK_STATE_ACTIVE];
+    GdkRGBA gdkRGBAColor;
+    gtk_style_context_get_color(getStyleContext(GTK_TYPE_TREE_VIEW), GTK_STATE_FLAG_ACTIVE, &gdkRGBAColor);
+    return gdkRGBAColor;
 }
 
 Color RenderThemeGtk::systemColor(int cssValueId) const
 {
+    GdkRGBA gdkRGBAColor;
+
     switch (cssValueId) {
     case CSSValueButtontext:
-        return Color(gtk_widget_get_style(gtkButton())->fg[GTK_STATE_NORMAL]);
+        gtk_style_context_get_color(getStyleContext(GTK_TYPE_BUTTON), static_cast<GtkStateFlags>(0), &gdkRGBAColor);
+        return gdkRGBAColor;
     case CSSValueCaptiontext:
-        return Color(gtk_widget_get_style(gtkEntry())->fg[GTK_STATE_NORMAL]);
+        gtk_style_context_get_color(getStyleContext(GTK_TYPE_ENTRY), static_cast<GtkStateFlags>(0), &gdkRGBAColor);
+        return gdkRGBAColor;
     default:
         return RenderTheme::systemColor(cssValueId);
     }

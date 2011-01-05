@@ -1,5 +1,32 @@
 2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [GTK] Use GtkStyleContext to get platform colors
+        https://bugs.webkit.org/show_bug.cgi?id=51830
+
+        Use GtkStyleContext API to get platform colors when building with
+        GTK+ 3.x.
+
+        No new tests. This should not change functionality.
+
+        * platform/graphics/Color.h: Add specialized constructor for GdkRGBA.
+        * platform/graphics/gtk/ColorGtk.cpp:
+        (WebCore::Color::Color):
+        (WebCore::Color::operator GdkRGBA):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeGtk::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::inactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeGtk::systemColor):
+
+2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Build fix for GTK when using gtk+-3 after r75009.
 
         * platform/gtk/RenderThemeGtk3.cpp:
