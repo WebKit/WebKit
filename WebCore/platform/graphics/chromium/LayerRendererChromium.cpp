@@ -107,6 +107,7 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     , m_currentShader(0)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
+    , m_compositeOffscreen(false)
     , m_context(context)
     , m_defaultRenderSurface(0)
 {
@@ -180,10 +181,6 @@ void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect, co
 
 void LayerRendererChromium::updateAndDrawRootLayer(TilePaintInterface& tilePaint, TilePaintInterface& scrollbarPaint, const IntRect& visibleRect, const IntRect& contentRect)
 {
-    // Mask out writes to alpha channel: subpixel antialiasing via Skia results in invalid
-    // zero alpha values on text glyphs. The root layer is always opaque.
-    GLC(m_context.get(), m_context->colorMask(true, true, true, false));
-
     m_rootLayerTiler->update(tilePaint, visibleRect);
     m_rootLayerTiler->draw(visibleRect);
 
@@ -228,6 +225,11 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     // and viewport.
     int visibleRectWidth = visibleRect.width();
     int visibleRectHeight = visibleRect.height();
+
+    if (!m_rootLayer->m_renderSurface)
+        m_rootLayer->createRenderSurface();
+    m_rootLayer->m_renderSurface->m_contentRect = IntRect(0, 0, visibleRectWidth, visibleRectHeight);
+
     if (visibleRectWidth != m_rootLayerTextureWidth || visibleRectHeight != m_rootLayerTextureHeight) {
         m_rootLayerTextureWidth = visibleRectWidth;
         m_rootLayerTextureHeight = visibleRectHeight;
@@ -252,16 +254,18 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
 
     m_scrollPosition = scrollPosition;
 
+    ASSERT(m_rootLayer->m_renderSurface);
     m_defaultRenderSurface = m_rootLayer->m_renderSurface.get();
-    if (!m_defaultRenderSurface)
-        m_defaultRenderSurface = m_rootLayer->createRenderSurface();
-    m_defaultRenderSurface->m_contentRect = IntRect(0, 0, m_rootLayerTextureWidth, m_rootLayerTextureHeight);
 
     useRenderSurface(m_defaultRenderSurface);
 
     // Clear to blue to make it easier to spot unrendered regions.
     m_context->clearColor(0, 0, 1, 1);
+    m_context->colorMask(true, true, true, true);
     m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+    // Mask out writes to alpha channel: subpixel antialiasing via Skia results in invalid
+    // zero alpha values on text glyphs. The root layer is always opaque.
+    m_context->colorMask(true, true, true, false);
 
     updateAndDrawRootLayer(tilePaint, scrollbarPaint, visibleRect, contentRect);
 
@@ -615,6 +619,23 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
         std::stable_sort(&descendants.at(thisLayerIndex), descendants.end(), compareLayerZ);
 }
 
+void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
+{
+    m_compositeOffscreen = compositeOffscreen;
+
+    if (!m_rootLayer) {
+        m_compositeOffscreen = false;
+        return;
+    }
+
+    if (m_compositeOffscreen) {
+        // Need to explicitly set a LayerRendererChromium for the layer with the offscreen texture,
+        // or else the call to prepareContentsTexture() in useRenderSurface() will fail.
+        m_rootLayer->setLayerRenderer(this);
+    } else
+        m_rootLayer->m_renderSurface.clear();
+}
+
 bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurface)
 {
     if (m_currentRenderSurface == renderSurface)
@@ -622,7 +643,7 @@ bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurfac
 
     m_currentRenderSurface = renderSurface;
 
-    if (renderSurface == m_defaultRenderSurface) {
+    if (renderSurface == m_defaultRenderSurface && !m_compositeOffscreen) {
         GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
         setDrawViewportRect(renderSurface->m_contentRect, true);
         return true;
@@ -690,8 +711,9 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
     int scissorX = scissorRect.x() - m_currentRenderSurface->m_contentRect.x();
     // When rendering to the default render surface we're rendering upside down so the top
     // of the GL scissor is the bottom of our layer.
+    // But, if rendering to offscreen texture, we reverse our sense of 'upside down'.
     int scissorY;
-    if (m_currentRenderSurface == m_defaultRenderSurface)
+    if (m_currentRenderSurface == m_defaultRenderSurface && !m_compositeOffscreen)
         scissorY = m_currentRenderSurface->m_contentRect.height() - (scissorRect.bottom() - m_currentRenderSurface->m_contentRect.y());
     else
         scissorY = scissorRect.y() - m_currentRenderSurface->m_contentRect.y();

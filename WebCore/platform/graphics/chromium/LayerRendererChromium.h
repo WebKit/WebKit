@@ -87,6 +87,10 @@ public:
 
     bool hardwareCompositing() const { return m_hardwareCompositing; }
 
+    void setCompositeOffscreen(bool);
+    bool isCompositingOffscreen() { return m_compositeOffscreen; }
+    LayerTexture* getOffscreenLayerTexture() { return m_compositeOffscreen ? m_rootLayer->m_renderSurface->m_contentsTexture.get() : 0; }
+
     void setRootLayerCanvasSize(const IntSize&);
 
     GraphicsContext* rootLayerGraphicsContext() const { return m_rootLayerGraphicsContext.get(); }
@@ -160,6 +164,7 @@ private:
     RenderSurfaceChromium* m_currentRenderSurface;
 
     unsigned m_offscreenFramebufferId;
+    bool m_compositeOffscreen;
 
 #if PLATFORM(SKIA)
     OwnPtr<skia::PlatformCanvas> m_rootLayerCanvas;

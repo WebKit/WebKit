@@ -1,3 +1,25 @@
+2011-01-04  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Add support to compositor to composite to offscreen texture.
+        https://bugs.webkit.org/show_bug.cgi?id=50833
+
+        A patch to extend compositor to be able to composite into an offscreen texture instead
+        of just directly to the display buffer. Builds on RenderSurfaceChromium support.
+        Explicitly resets alpha channel before rendering to display.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateAndDrawRootLayer):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::setCompositeOffscreen):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::isCompositingOffscreen):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+
 2011-01-04  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
