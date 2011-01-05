@@ -1435,6 +1435,8 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('((a+b))', '')
         self.assert_lint('foo (foo)', 'Extra space before ( in function call'
                          '  [whitespace/parens] [4]')
+        self.assert_lint('#elif (foo(bar))', '')
+        self.assert_lint('#elif (foo(bar) && foo(baz))', '')
         self.assert_lint('typedef foo (*foo)(foo)', '')
         self.assert_lint('typedef foo (*foo12bar_)(foo)', '')
         self.assert_lint('typedef foo (Foo::*bar)(foo)', '')

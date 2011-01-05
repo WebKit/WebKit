@@ -1338,7 +1338,7 @@ def check_spacing_for_function_call(line, line_number, error):
             error(line_number, 'whitespace/parens', 2,
                   'Extra space after (')
         if (search(r'\w\s+\(', function_call)
-            and not search(r'#\s*define|typedef', function_call)):
+            and not match(r'\s*(#|typedef)', function_call)):
             error(line_number, 'whitespace/parens', 4,
                   'Extra space before ( in function call')
         # If the ) is followed only by a newline or a { + newline, assume it's

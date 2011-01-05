@@ -1,3 +1,17 @@
+2011-01-04  Koan-Sin Tan  <koansin.tan@gmail.com>
+
+        Reviewed by David Levin.
+
+        check-webkit-style treated some macros with parentheses after #elif as function calls
+        https://bugs.webkit.org/show_bug.cgi?id=51695
+
+        Ingore function call space checking in any preprocessor directives
+        (things starting with #). Change search() to match() because 
+        preprocessor directives are supposed to be in the beginning of lines.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: make sure there is no false positives for #elif cases
+
 2011-01-04  Søren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Tony Chang.
