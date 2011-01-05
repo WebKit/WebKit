@@ -1,3 +1,11 @@
+2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Build fix for GTK when using gtk+-3 after r75009.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::getStockIcon): Use adoptGRef instead of
+        adoptGRefPtr which doesn't exist.
+
 2011-01-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

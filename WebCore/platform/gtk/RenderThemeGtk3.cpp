@@ -411,7 +411,7 @@ GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* ic
 
     gtk_style_context_restore(context);
 
-    return adoptGRefPtr(icon);
+    return adoptGRef(icon);
 }
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
