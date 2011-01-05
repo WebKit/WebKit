@@ -28,6 +28,8 @@
 #include "NotImplemented.h"
 #include "TextCheckerState.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 static TextCheckerState textCheckerState;
@@ -52,6 +54,33 @@ void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellChecki
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
+{
+    notImplemented();
+}
+
+int64_t TextChecker::uniqueSpellDocumentTag()
+{
+    notImplemented();
+    return 0;
+}
+
+void TextChecker::closeSpellDocumentWithTag(int64_t)
+{
+    notImplemented();
+}
+
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
+{
+    notImplemented();
+    return Vector<WebCore::TextCheckingResult>();
+}
+
+void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+{
+    notImplemented();
+}
+
+void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
 {
     notImplemented();
 }

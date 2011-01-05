@@ -69,6 +69,7 @@ namespace WebCore {
     class FloatRect;
     class IntSize;
     class ProtectionSpace;
+    struct TextCheckingResult;
     struct ViewportArguments;
     struct WindowFeatures;
 }
@@ -297,6 +298,7 @@ public:
     void findZoomableAreaForPoint(const WebCore::IntPoint&);
 #endif
 
+    void advanceToNextMisspelling();
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 
@@ -427,6 +429,12 @@ private:
     void stopSpeaking();
 #endif
 
+    // Spelling and grammar.
+    int64_t spellDocumentTag();
+    void checkTextOfParagraph(const String& text, uint64_t checkingTypes, Vector<WebCore::TextCheckingResult>& results);
+    void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
+    void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
+
     void takeFocus(bool direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
@@ -529,6 +537,9 @@ private:
     OwnPtr<WebMouseEvent> m_nextMouseMoveEvent;
 
     uint64_t m_pageID;
+
+    int64_t m_spellDocumentTag;
+    bool m_hasSpellDocumentTag;
 
     bool m_mainFrameHasCustomRepresentation;
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2010, 2011 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
 #include "NotImplemented.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebFrame.h"
 #include "WebPageProxyMessages.h"
@@ -207,8 +208,7 @@ void WebEditorClient::toggleAutomaticTextReplacement()
 
 bool WebEditorClient::isAutomaticSpellingCorrectionEnabled()
 {
-    notImplemented();
-    return false;
+    return WebProcess::shared().textCheckerState().isAutomaticSpellingCorrectionEnabled;
 }
 
 void WebEditorClient::toggleAutomaticSpellingCorrection()
@@ -216,9 +216,10 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
     notImplemented();
 }
 
-void WebEditorClient::checkTextOfParagraph(const UChar *, int length, uint64_t, Vector<TextCheckingResult>&)
+void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64_t checkingTypes, Vector<TextCheckingResult>& results)
 {
-    notImplemented();
+    // FIXME: It would be nice if we wouldn't have to copy the text here.
+    m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
 }
 
 #endif

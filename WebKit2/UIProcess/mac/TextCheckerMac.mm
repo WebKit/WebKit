@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,13 @@
 #include "TextChecker.h"
 
 #include "TextCheckerState.h"
+#include <wtf/RetainPtr.h>
 
 static const NSString * const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";
 static const NSString * const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 static const NSString * const WebGrammarCheckingEnabled = @"WebGrammarCheckingEnabled";
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -107,6 +110,127 @@ void TextChecker::setAutomaticSpellingCorrectionEnabled(bool isAutomaticSpelling
     [[NSUserDefaults standardUserDefaults] setBool:isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];    
 
     [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+int64_t TextChecker::uniqueSpellDocumentTag()
+{
+    return [NSSpellChecker uniqueSpellDocumentTag];
+}
+
+void TextChecker::closeSpellDocumentWithTag(int64_t tag)
+{
+    [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:tag];
+}
+
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
+{
+    Vector<TextCheckingResult> results;
+
+    RetainPtr<NSString> textString(AdoptNS, [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO]);
+    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString .get()
+                                                                          range:NSMakeRange(0, length)
+                                                                          types:checkingTypes | NSTextCheckingTypeOrthography
+                                                                        options:nil
+                                                         inSpellDocumentWithTag:spellDocumentTag 
+                                                                    orthography:NULL
+                                                                      wordCount:NULL];
+    for (NSTextCheckingResult *incomingResult in incomingResults) {
+        NSRange resultRange = [incomingResult range];
+        NSTextCheckingType resultType = [incomingResult resultType];
+        ASSERT(resultRange.location != NSNotFound);
+        ASSERT(resultRange.length > 0);
+        if (resultType == NSTextCheckingTypeSpelling && (checkingTypes & NSTextCheckingTypeSpelling)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeSpelling;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            results.append(result);
+        } else if (resultType == NSTextCheckingTypeGrammar && (checkingTypes & NSTextCheckingTypeGrammar)) {
+            TextCheckingResult result;
+            NSArray *details = [incomingResult grammarDetails];
+            result.type = TextCheckingTypeGrammar;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            for (NSDictionary *incomingDetail in details) {
+                ASSERT(incomingDetail);
+                GrammarDetail detail;
+                NSValue *detailRangeAsNSValue = [incomingDetail objectForKey:NSGrammarRange];
+                ASSERT(detailRangeAsNSValue);
+                NSRange detailNSRange = [detailRangeAsNSValue rangeValue];
+                ASSERT(detailNSRange.location != NSNotFound);
+                ASSERT(detailNSRange.length > 0);
+                detail.location = detailNSRange.location;
+                detail.length = detailNSRange.length;
+                detail.userDescription = [incomingDetail objectForKey:NSGrammarUserDescription];
+                NSArray *guesses = [incomingDetail objectForKey:NSGrammarCorrections];
+                for (NSString *guess in guesses)
+                    detail.guesses.append(String(guess));
+                result.details.append(detail);
+            }
+            results.append(result);
+        } else if (resultType == NSTextCheckingTypeLink && (checkingTypes & NSTextCheckingTypeLink)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeLink;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [[incomingResult URL] absoluteString];
+            results.append(result);
+        } else if (resultType == NSTextCheckingTypeQuote && (checkingTypes & NSTextCheckingTypeQuote)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeQuote;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
+            results.append(result);
+        } else if (resultType == NSTextCheckingTypeDash && (checkingTypes & NSTextCheckingTypeDash)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeDash;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
+            results.append(result);
+        } else if (resultType == NSTextCheckingTypeReplacement && (checkingTypes & NSTextCheckingTypeReplacement)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeReplacement;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
+            results.append(result);
+        } else if (resultType == NSTextCheckingTypeCorrection && (checkingTypes & NSTextCheckingTypeCorrection)) {
+            TextCheckingResult result;
+            result.type = TextCheckingTypeCorrection;
+            result.location = resultRange.location;
+            result.length = resultRange.length;
+            result.replacement = [incomingResult replacementString];
+            results.append(result);
+        }
+    }
+
+    return results;
+}
+
+void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+{
+    [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:misspelledWord];
+}
+
+void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    NSString* language = nil;
+    NSOrthography* orthography = nil;
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (context.length()) {
+        [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:0 inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:&orthography wordCount:0];
+        language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
+    }
+    NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellCheckerDocumentTag()];
+#else
+    NSArray* stringsArray = [[NSSpellChecker sharedSpellChecker] guessesForWord:word];
+#endif
+
+    for (NSString *guess in stringsArray)
+        guesses.append(guess);
 }
 
 } // namespace WebKit

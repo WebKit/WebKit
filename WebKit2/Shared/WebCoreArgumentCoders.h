@@ -35,6 +35,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/Editor.h>
+#include <WebCore/EditorClient.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
@@ -390,6 +391,56 @@ template<> struct ArgumentCoder<WebCore::DatabaseDetails> {
             return false;
         
         details = WebCore::DatabaseDetails(name, displayName, expectedUsage, currentUsage);
+        return true;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::GrammarDetail> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::GrammarDetail& detail)
+    {
+        encoder->encodeInt32(detail.location);
+        encoder->encodeInt32(detail.length);
+        encoder->encode(detail.guesses);
+        encoder->encode(detail.userDescription);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::GrammarDetail& detail)
+    {
+        if (!decoder->decodeInt32(detail.location))
+            return false;
+        if (!decoder->decodeInt32(detail.length))
+            return false;
+        if (!decoder->decode(detail.guesses))
+            return false;
+        if (!decoder->decode(detail.userDescription))
+            return false;
+
+        return true;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::TextCheckingResult& result)
+    {
+        encoder->encodeEnum(result.type);
+        encoder->encodeInt32(result.location);
+        encoder->encodeInt32(result.length);
+        encoder->encode(result.details);
+        encoder->encode(result.replacement);
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::TextCheckingResult& result)
+    {
+        if (!decoder->decodeEnum(result.type))
+            return false;
+        if (!decoder->decodeInt32(result.location))
+            return false;
+        if (!decoder->decodeInt32(result.length))
+            return false;
+        if (!decoder->decode(result.details))
+            return false;
+        if (!decoder->decode(result.replacement))
+            return false;
         return true;
     }
 };

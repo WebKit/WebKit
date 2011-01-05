@@ -82,8 +82,7 @@ bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
 
 bool WebEditorClient::isContinuousSpellCheckingEnabled()
 {
-    notImplemented();
-    return false;
+    return WebProcess::shared().textCheckerState().isContinuousSpellCheckingEnabled;
 }
 
 void WebEditorClient::toggleContinuousSpellChecking()
@@ -93,8 +92,7 @@ void WebEditorClient::toggleContinuousSpellChecking()
 
 bool WebEditorClient::isGrammarCheckingEnabled()
 {
-    notImplemented();
-    return false;
+    return WebProcess::shared().textCheckerState().isGrammarCheckingEnabled;
 }
 
 void WebEditorClient::toggleGrammarChecking()
@@ -397,9 +395,9 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String&, const Gra
     notImplemented();
 }
 
-void WebEditorClient::updateSpellingUIWithMisspelledWord(const String&)
+void WebEditorClient::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::UpdateSpellingUIWithMisspelledWord(misspelledWord));
 }
 
 void WebEditorClient::showSpellingUI(bool)
@@ -413,9 +411,9 @@ bool WebEditorClient::spellingUIIsShowing()
     return false;
 }
 
-void WebEditorClient::getGuessesForWord(const String&, const String&, Vector<String>&)
+void WebEditorClient::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
 {
-    notImplemented();
+    m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context), Messages::WebPageProxy::GetGuessesForWord::Reply(guesses));
 }
 
 void WebEditorClient::willSetInputMethodState()

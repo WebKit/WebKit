@@ -1,3 +1,85 @@
+2011-01-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        More work on spelling and grammar
+        https://bugs.webkit.org/show_bug.cgi?id=51910
+
+        * Scripts/webkit2/messages.py:
+        Add special case for WebCore::TextCheckingResult.
+
+        * Shared/NotImplemented.h:
+        Fix macro so that defining DISABLE_NOT_IMPLEMENTED_WARNINGS to 0 will enable the warnings.
+        
+        * Shared/WebCoreArgumentCoders.h:
+        Add argument coders for WebCore::GrammarDetail and WebCore::TextCheckingResult.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView checkSpelling:]):
+        Call advanceToNextMisspelling.
+
+        * UIProcess/TextChecker.h:
+        Add new NSSpellChecker wrappers.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize the new member variables.
+
+        (WebKit::WebPageProxy::~WebPageProxy):
+        Call TextChecker::closeSpellDocumentWithTag.
+
+        (WebKit::WebPageProxy::advanceToNextMisspelling):
+        Send the AdvanceToNextMisspelling message.
+
+        (WebKit::WebPageProxy::spellDocumentTag):
+        Create a spell document tag if necessary.
+
+        (WebKit::WebPageProxy::checkTextOfParagraph):
+        (WebKit::WebPageProxy::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebPageProxy::getGuessesForWord):
+        Call the TextChecker.
+        
+        * UIProcess/WebPageProxy.messages.in:
+        Add new messages.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::getGuessesForWord):
+        Add NSSpellChecker wrappers.
+
+        * UIProcess/qt/TextCheckerQt.cpp:
+        * UIProcess/win/TextCheckerWin.cpp:
+        Add stubs.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::isContinuousSpellCheckingEnabled):
+        (WebKit::WebEditorClient::isGrammarCheckingEnabled):
+        Get the text checking state from the web process.
+
+        (WebKit::WebEditorClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebEditorClient::getGuessesForWord):
+        Proxy calls to the UI process.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::isAutomaticSpellingCorrectionEnabled):
+        
+        (WebKit::WebEditorClient::checkTextOfParagraph):
+        Proxy calls to the UI process.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::advanceToNextMisspelling):
+        Call the frame.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add AdvanceToNextMisspelling message.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Set the text checker state.
+
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed. Build fix.

@@ -26,6 +26,8 @@
 #ifndef TextChecker_h
 #define TextChecker_h
 
+#include <WebCore/EditorClient.h>
+
 namespace WebKit {
 
 class TextCheckerState;
@@ -41,6 +43,13 @@ public:
 #if PLATFORM(MAC)
     static void setAutomaticSpellingCorrectionEnabled(bool);
 #endif
+
+    static int64_t uniqueSpellDocumentTag();
+    static void closeSpellDocumentWithTag(int64_t);
+
+    static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes);
+    static void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
+    static void getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses);
 };
 
 } // namespace WebKit

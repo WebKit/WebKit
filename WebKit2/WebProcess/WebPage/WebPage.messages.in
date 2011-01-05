@@ -101,6 +101,7 @@ messages -> WebPage {
     DidCancelForOpenPanel()
 
     # Speling and grammer.
+    AdvanceToNextMisspelling()
     UnmarkAllMisspellings()
     UnmarkAllBadGrammar()
 

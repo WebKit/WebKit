@@ -374,6 +374,7 @@ private:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
+    void advanceToNextMisspelling();
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 

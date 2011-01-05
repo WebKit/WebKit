@@ -431,7 +431,7 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
 - (IBAction)checkSpelling:(id)sender
 {
-    // FIXME (WebKit2) <rdar://problem/8245958> Make Spelling/Grammar checking work in WebKit2
+    _data->_page->advanceToNextMisspelling();
 }
 
 - (IBAction)toggleContinuousSpellChecking:(id)sender

@@ -415,6 +415,7 @@ def headers_for_type(type):
         'WebCore::CompositionUnderline': '<WebCore/Editor.h>',
         'WebCore::KeypressCommand': '<WebCore/KeyboardEvent.h>',
         'WebCore::PluginInfo': '<WebCore/PluginData.h>',
+        'WebCore::TextCheckingResult': '<WebCore/EditorClient.h>',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',
         'WebKit::WebTouchEvent': '"WebEvent.h"',

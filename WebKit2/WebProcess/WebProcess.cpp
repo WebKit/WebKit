@@ -162,6 +162,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     if (!parameters.languageCode.isEmpty())
         overrideDefaultLanguage(parameters.languageCode);
 
+    m_textCheckerState = parameters.textCheckerState;
+
     for (size_t i = 0; i < parameters.urlSchemesRegistererdAsEmptyDocument.size(); ++i)
         registerURLSchemeAsEmptyDocument(parameters.urlSchemesRegistererdAsEmptyDocument[i]);
 

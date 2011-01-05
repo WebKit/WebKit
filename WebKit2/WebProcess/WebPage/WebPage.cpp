@@ -1256,6 +1256,12 @@ void WebPage::didCancelForOpenPanel()
     m_activeOpenPanelResultListener = 0;
 }
 
+void WebPage::advanceToNextMisspelling()
+{
+    if (Frame* frame = m_page->focusController()->focusedOrMainFrame())
+        frame->editor()->advanceToNextMisspelling();
+}
+
 void WebPage::unmarkAllMisspellings()
 {
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {

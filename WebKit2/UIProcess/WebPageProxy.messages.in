@@ -175,4 +175,9 @@ messages -> WebPageProxy {
     Speak(WTF::String string)
     StopSpeaking()
 #endif
+
+    # Spelling and grammar.
+    CheckTextOfParagraph(WTF::String text, uint64_t checkingTypes) -> (Vector<WebCore::TextCheckingResult> results)
+    UpdateSpellingUIWithMisspelledWord(WTF::String misspelledWord)
+    GetGuessesForWord(WTF::String word, WTF::String context) -> (Vector<WTF::String> guesses)
 }

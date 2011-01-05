@@ -34,6 +34,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "PageClient.h"
 #include "StringPairVector.h"
+#include "TextChecker.h"
 #include "WKContextPrivate.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
@@ -111,6 +112,8 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
     , m_processingWheelEvent(false)
     , m_processingMouseMoveEvent(false)
     , m_pageID(pageID)
+    , m_spellDocumentTag(0)
+    , m_hasSpellDocumentTag(false)
     , m_mainFrameHasCustomRepresentation(false)
 {
 #ifndef NDEBUG
@@ -125,6 +128,9 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
 WebPageProxy::~WebPageProxy()
 {
     WebContext::statistics().wkPageCount--;
+
+    if (m_hasSpellDocumentTag)
+        TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag);
 
     m_pageGroup->removePage(this);
 
@@ -1723,6 +1729,11 @@ void WebPageProxy::didCancelForOpenPanel()
     m_openPanelResultListener = 0;
 }
 
+void WebPageProxy::advanceToNextMisspelling()
+{
+    process()->send(Messages::WebPage::AdvanceToNextMisspelling(), m_pageID);
+}
+
 void WebPageProxy::unmarkAllMisspellings()
 {
     process()->send(Messages::WebPage::UnmarkAllMisspellings(), m_pageID);
@@ -1750,6 +1761,31 @@ void WebPageProxy::removeEditCommand(WebEditCommandProxy* command)
     if (!isValid())
         return;
     process()->send(Messages::WebPage::DidRemoveEditCommand(command->commandID()), m_pageID);
+}
+
+int64_t WebPageProxy::spellDocumentTag()
+{
+    if (!m_hasSpellDocumentTag) {
+        m_spellDocumentTag = TextChecker::uniqueSpellDocumentTag();
+        m_hasSpellDocumentTag = true;
+    }
+
+    return m_spellDocumentTag;
+}
+
+void WebPageProxy::checkTextOfParagraph(const String& text, uint64_t checkingTypes, Vector<TextCheckingResult>& results)
+{
+    results = TextChecker::checkTextOfParagraph(spellDocumentTag(), text.characters(), text.length(), checkingTypes);
+}
+
+void WebPageProxy::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+{
+    TextChecker::updateSpellingUIWithMisspelledWord(misspelledWord);
+}
+
+void WebPageProxy::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
+{
+    TextChecker::getGuessesForWord(spellDocumentTag(), word, context, guesses);
 }
 
 // Other
