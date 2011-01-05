@@ -1,3 +1,11 @@
+2011-01-05  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][V8] Fix the build after recent changes.
+
+        * pcre/pcre.pri: Correct the path after Source was introduced.
+
 2011-01-04  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix. Update path to FindSafari after source code reorganization.

@@ -1,6 +1,6 @@
 # Perl Compatible Regular Expressions - Qt4 build info
 VPATH += $$PWD
-INCLUDEPATH += $$PWD $$OUTPUT_DIR/JavaScriptCore/tmp
+INCLUDEPATH += $$PWD $$OUTPUT_DIR/Source/JavaScriptCore/generated
 DEPENDPATH += $$PWD
 
 SOURCES += \

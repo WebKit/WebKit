@@ -1,3 +1,13 @@
+2011-01-05  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][V8] Fix the build after recent changes.
+
+        No new tests needed.
+
+        * WebCore.pro: Add missing files, and remove obsolete ones.
+
 2011-01-05  Yong Li  <yoli@rim.com>
 
         Reviewed by Adam Barth.

@@ -390,6 +390,7 @@ v8 {
         bindings/v8/V8DOMMap.cpp \
         bindings/v8/V8DOMWrapper.cpp \
         bindings/v8/V8DataGridDataSource.cpp \
+        bindings/v8/V8EventListener.cpp \
         bindings/v8/V8EventListenerList.cpp \
         bindings/v8/V8GCController.cpp \
         bindings/v8/V8GCForContextDispose.cpp \
@@ -422,7 +423,6 @@ v8 {
         bindings/v8/custom/V8ImageDataCustom.cpp \
         bindings/v8/custom/V8InjectedScriptHostCustom.cpp \
         bindings/v8/custom/V8InspectorFrontendHostCustom.cpp \
-        bindings/v8/custom/V8CustomEventListener.cpp \
         bindings/v8/custom/V8DOMSettableTokenListCustom.cpp \
         bindings/v8/custom/V8DOMStringMapCustom.cpp \
         bindings/v8/custom/V8DOMTokenListCustom.cpp
@@ -448,6 +448,7 @@ v8 {
     }
 
     SOURCES += \
+        bindings/generic/RuntimeEnabledFeatures.cpp \
         bindings/v8/custom/V8HTMLCanvasElementCustom.cpp \
         bindings/v8/custom/V8HTMLCollectionCustom.cpp \
         bindings/v8/custom/V8HTMLDataGridElementCustom.cpp \
@@ -1412,7 +1413,7 @@ HEADERS += \
 
 v8 {
     HEADERS += \
-        bindings/v8/custom/V8CustomEventListener.h \
+        bindings/generic/RuntimeEnabledFeatures.h \
         bindings/v8/custom/V8CustomPositionCallback.h \
         bindings/v8/custom/V8CustomPositionErrorCallback.h  \
         bindings/v8/custom/V8CustomVoidCallback.h \
@@ -1462,6 +1463,7 @@ v8 {
         bindings/v8/V8DOMMap.h \
         bindings/v8/V8DOMWindowShell.h \
         bindings/v8/V8DOMWrapper.h \
+        bindings/v8/V8EventListener.h \
         bindings/v8/V8EventListenerList.h \
         bindings/v8/V8GCController.h \
         bindings/v8/V8Helpers.h \
