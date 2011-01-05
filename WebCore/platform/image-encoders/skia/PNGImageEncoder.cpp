@@ -83,8 +83,17 @@ bool PNGImageEncoder::encode(const SkBitmap& bitmap, Vector<unsigned char>* outp
         return false;
     }
 
-    png_set_compression_level(png, Z_BEST_SPEED);
-    png_set_compression_strategy(png, Z_HUFFMAN_ONLY);
+    // Optimize compression for speed.
+    // The parameters are the same as what libpng uses by default for RGB and RGBA images, except:
+    // - the zlib compression level is 3 instead of 6, to avoid the lazy Ziv-Lempel match searching;
+    // - the delta filter is 1 ("sub") instead of 5 ("all"), to reduce the filter computations.
+    // The zlib memory level (8) and strategy (Z_FILTERED) will be set inside libpng.
+    //
+    // Avoid the zlib strategies Z_HUFFMAN_ONLY or Z_RLE.
+    // Although they are the fastest for poorly-compressible images (e.g. photographs),
+    // they are very slow for highly-compressible images (e.g. text, drawings or business graphics).
+    png_set_compression_level(png, 3);
+    png_set_filter(png, PNG_FILTER_TYPE_BASE, PNG_FILTER_SUB);
 
     png_set_write_fn(png, output, writeOutput, 0);
     png_set_IHDR(png, info, imageSize.width(), imageSize.height(),

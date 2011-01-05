@@ -1,3 +1,21 @@
+2011-01-04  Cosmin Truta  <ctruta@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] PNG compression settings optimized for speed
+        https://bugs.webkit.org/show_bug.cgi?id=51719
+
+        Although Z_HUFFMAN_ONLY is the fastest on hard-to-compress images,
+        it is also the slowest, by a wide margin, on easy-to-compress images.
+        Use a more balanced configuration, based on the libpng compression defaults,
+        but with a faster compression level (3 instead of 6), and a faster filter
+        ("sub" instead of "all").
+
+        No change in behaviour, so no new tests.
+
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::PNGImageEncoder::encode):
+
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Sam Weinig.
