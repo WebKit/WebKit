@@ -125,9 +125,9 @@ using namespace WebKit;
     if ([attribute isEqualToString:NSAccessibilityParentAttribute])
         return m_parent;
     if ([attribute isEqualToString:NSAccessibilityWindowAttribute])
-        return [m_parent windowUIElement];
+        return [m_parent accessibilityAttributeValue:NSAccessibilityWindowAttribute];
     if ([attribute isEqualToString:NSAccessibilityTopLevelUIElementAttribute])
-        return [m_parent topLevelUIElement];
+        return [m_parent accessibilityAttributeValue:NSAccessibilityTopLevelUIElementAttribute];
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
     if ([attribute isEqualToString:NSAccessibilityRoleDescriptionAttribute])
