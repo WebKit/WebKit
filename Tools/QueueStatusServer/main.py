@@ -62,6 +62,7 @@ routes = [
     (r'/results/(.*)', ShowResults),
     (r'/status-bubble/(.*)', StatusBubble),
     (r'/svn-revision/(.*)', SVNRevision),
+    (r'/queue-status/(.*)/bots/(.*)', QueueStatus),
     (r'/queue-status/(.*)', QueueStatus),
     (r'/next-patch/(.*)', NextPatch),
     (r'/release-patch', ReleasePatch),

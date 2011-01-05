@@ -56,17 +56,31 @@ class QueueStatus(webapp.RequestHandler):
     def _build_status_groups(self, statuses):
         return [list(group) for key, group in itertools.groupby(statuses, self._grouping_key_for_status)]
 
-    def get(self, queue_name):
+    def _fetch_statuses(self, queue, bot_id):
+        statuses = queuestatus.QueueStatus.all()
+        statuses = statuses.filter("queue_name =", queue.name())
+        if bot_id:
+            statuses.filter("bot_id =", bot_id)
+        return statuses.order("-date").fetch(15)
+
+    def _page_title(self, queue, bot_id):
+        title = "%s Messages" % queue.display_name()
+        if bot_id:
+            title += " from \"%s\"" % (bot_id)
+        return title
+
+    def get(self, queue_name, bot_id=None):
         queue_name = queue_name.lower()
         queue = Queue.queue_with_name(queue_name)
         if not queue:
             self.error(404)
             return
 
-        statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue.name()).order("-date").fetch(15)
+        statuses = self._fetch_statuses(queue, bot_id)
         template_values = {
-            "display_queue_name": queue.display_name(),
+            "page_title": self._page_title(queue, bot_id),
             "work_item_rows": self._rows_for_work_items(queue),
             "status_groups": self._build_status_groups(statuses),
+            "bot_id": bot_id,
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))

@@ -1,3 +1,29 @@
+2011-01-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        queues.webkit.org should have per-bot status pages
+        https://bugs.webkit.org/show_bug.cgi?id=51906
+
+        Just adds a /queue-status/QUEUE_NAME/bots/BOT_ID page to show
+        statuses from a single queue.  Now that we have many bots servicing
+        some queues (commit-queue, win-ews, etc.) its easy to have the messages
+        you care about scroll off the end of the 15-message limit on the main page.
+
+        Eventually we should probably rename /queue-status to /queue or /queues,
+        but that's fodder for another patch.
+
+        * QueueStatusServer/handlers/queuestatus.py:
+        * QueueStatusServer/index.yaml:
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/templates/includes/singlequeuestatus.html:
+         - This probably should use a custom filter instead of hard-coding
+           the URL scheme here, but I couldn't figure out how to easily
+           create such a filter.  Most filters work with "strings" so we can't
+           pass the status object.  We could add a method to the status
+           object and call that, but that seemed a bit strange too.
+        * QueueStatusServer/templates/queuestatus.html:
+
 2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Adding myself to the list of committers.
