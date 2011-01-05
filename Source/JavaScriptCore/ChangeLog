@@ -1,3 +1,10 @@
+2011-01-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
+        * wtf/Encoder.h: Add <stdint.h> include for systems that
+        do not natively know about uint8_t, etc.
+
 2011-01-05  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

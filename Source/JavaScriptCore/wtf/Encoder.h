@@ -26,6 +26,8 @@
 #ifndef Encoder_h
 #define Encoder_h
 
+#include <stdint.h>
+
 namespace WTF {
 
 class String;
