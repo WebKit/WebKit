@@ -23,7 +23,7 @@ url             ([!#$%&*-~]|{nonascii}|{escape})*
 w               [ \t\r\n\f]*
 nl              \n|\r\n|\r|\f
 range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|{h})))))
-nth             [\+-]?{intnum}*n([\+-]{intnum})?
+nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 
 %%
 

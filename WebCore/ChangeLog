@@ -1,3 +1,16 @@
+2011-01-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        CSS3 :nth-child selector and valid whitespace test fails
+        https://bugs.webkit.org/show_bug.cgi?id=36279
+
+        Teach the tokenizer to allow white spaces around [+/-] signs in nth constructs.
+
+        Test: fast/css/css3-nth-space.html
+
+        * css/tokenizer.flex:
+
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed. Build fix.
