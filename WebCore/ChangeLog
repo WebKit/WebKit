@@ -1,3 +1,21 @@
+2011-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        ContextShadow::blurLayerImage() not endian-safe
+        https://bugs.webkit.org/show_bug.cgi?id=51822
+
+        Correct the channel map in ContextShadow to reflect the different
+        ordering of pixels on processors with different endianness.
+
+        No new tests. This is covered by the existing shadow tests. It was
+        not discovered, because all of the bots using ContextShadow are
+        little-endian.
+
+        * platform/graphics/ContextShadow.cpp:
+        (WebCore::ContextShadow::blurLayerImage): Initialize the channel mapping
+        based on machine endianness.
+
 2011-01-05  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Nate Chapin.

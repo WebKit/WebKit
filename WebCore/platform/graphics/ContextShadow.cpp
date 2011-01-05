@@ -108,7 +108,14 @@ static const int BlurSumShift = 15;
 
 void ContextShadow::blurLayerImage(unsigned char* imageData, const IntSize& size, int rowStride)
 {
+#if CPU(BIG_ENDIAN)
+    int channels[4] = { 0, 3, 2, 0 };
+#elif CPU(MIDDLE_ENDIAN)
+    int channels[4] = { 1, 2, 3, 1 };
+#else
     int channels[4] = { 3, 0, 1, 3 };
+#endif
+
     int d = max(2, static_cast<int>(floorf((2 / 3.f) * m_blurDistance)));
     int dmax = d >> 1;
     int dmin = dmax - 1 + (d & 1);
