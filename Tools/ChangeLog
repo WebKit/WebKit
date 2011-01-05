@@ -1,3 +1,9 @@
+2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Adding myself to the list of committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-01-04  Koan-Sin Tan  <koansin.tan@gmail.com>
 
         Reviewed by David Levin.
