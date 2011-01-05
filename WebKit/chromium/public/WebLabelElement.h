@@ -44,15 +44,15 @@ namespace WebKit {
 class WebLabelElement : public WebElement {
 public:
     WebLabelElement() : WebElement() { }
-    WebLabelElement(const WebLabelElement& e) : WebElement(e) { }
+    WebLabelElement(const WebLabelElement& element) : WebElement(element) { }
 
-    WebLabelElement& operator=(const WebLabelElement& e)
+    WebLabelElement& operator=(const WebLabelElement& element)
     {
-        WebElement::assign(e);
+        WebElement::assign(element);
         return *this;
     }
 
-    WEBKIT_API void assign(const WebLabelElement& e) { WebElement::assign(e); }
+    void assign(const WebLabelElement& element) { WebElement::assign(element); }
 
     WEBKIT_API WebElement correspondingControl();
 

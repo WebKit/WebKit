@@ -43,16 +43,17 @@ class WebURL;
 // owned by a WebFrame and its life span is bound to that WebFrame.
 class WebAnimationController {
 public:
-    WEBKIT_API virtual bool pauseAnimationAtTime(WebElement&,
-                                                 const WebString& animationName,
-                                                 double time) = 0;
-    WEBKIT_API virtual bool pauseTransitionAtTime(WebElement&,
-                                                  const WebString& propertyName,
-                                                  double time) = 0;
+    virtual bool pauseAnimationAtTime(WebElement&,
+                                      const WebString& animationName,
+                                      double time) = 0;
+    virtual bool pauseTransitionAtTime(WebElement&,
+                                       const WebString& propertyName,
+                                       double time) = 0;
 
-    WEBKIT_API virtual unsigned numberOfActiveAnimations() const = 0;
-    WEBKIT_API virtual void suspendAnimations() const = 0;
-    WEBKIT_API virtual void resumeAnimations() const = 0;
+    virtual unsigned numberOfActiveAnimations() const = 0;
+    virtual void suspendAnimations() const = 0;
+    virtual void resumeAnimations() const = 0;
+
 protected:
     ~WebAnimationController() { }
 };

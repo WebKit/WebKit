@@ -50,14 +50,14 @@ namespace WebKit {
         ~WebFormElement() { reset(); }
 
         WebFormElement() : WebElement() { }
-        WebFormElement(const WebFormElement& e) : WebElement(e) { }
+        WebFormElement(const WebFormElement& element) : WebElement(element) { }
 
-        WebFormElement& operator=(const WebFormElement& e)
+        WebFormElement& operator=(const WebFormElement& element)
         {
-            WebElement::assign(e);
+            WebElement::assign(element);
             return *this;
         }
-        WEBKIT_API void assign(const WebFormElement& e) { WebElement::assign(e); }
+        void assign(const WebFormElement& element) { WebElement::assign(element); }
 
         WEBKIT_API bool autoComplete() const;
         WEBKIT_API WebString action() const;

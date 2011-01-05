@@ -44,14 +44,14 @@ namespace WebKit {
 class WebOptionElement : public WebFormControlElement {
 public:
     WebOptionElement() : WebFormControlElement() { }
-    WebOptionElement(const WebOptionElement& e) : WebFormControlElement(e) { }
+    WebOptionElement(const WebOptionElement& element) : WebFormControlElement(element) { }
 
-    WebOptionElement& operator=(const WebOptionElement& e)
+    WebOptionElement& operator=(const WebOptionElement& element)
     {
-        WebFormControlElement::assign(e);
+        WebFormControlElement::assign(element);
         return *this;
     }
-    WEBKIT_API void assign(const WebOptionElement& e) { WebFormControlElement::assign(e); }
+    void assign(const WebOptionElement& element) { WebFormControlElement::assign(element); }
 
     WEBKIT_API void setValue(const WebString&);
     WEBKIT_API WebString value() const;

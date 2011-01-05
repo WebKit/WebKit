@@ -45,14 +45,14 @@ namespace WebKit {
 class WebSelectElement : public WebFormControlElement {
 public:
     WebSelectElement() : WebFormControlElement() { }
-    WebSelectElement(const WebSelectElement& e) : WebFormControlElement(e) { }
+    WebSelectElement(const WebSelectElement& element) : WebFormControlElement(element) { }
 
-    WebSelectElement& operator=(const WebSelectElement& e)
-    { 
-        WebFormControlElement::assign(e); 
-        return *this; 
+    WebSelectElement& operator=(const WebSelectElement& element)
+    {
+        WebFormControlElement::assign(element);
+        return *this;
     }
-    WEBKIT_API void assign(const WebSelectElement& e) { WebFormControlElement::assign(e); }
+    void assign(const WebSelectElement& element) { WebFormControlElement::assign(element); }
 
     WEBKIT_API void setValue(const WebString&);
     WEBKIT_API WebString value();

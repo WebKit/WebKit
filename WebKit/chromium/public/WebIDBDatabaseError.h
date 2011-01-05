@@ -42,11 +42,11 @@ class WebIDBDatabaseError {
 public:
     ~WebIDBDatabaseError() { reset(); }
 
-    WEBKIT_API WebIDBDatabaseError(unsigned short code, const WebString& message) { assign(code, message); }
-    WEBKIT_API WebIDBDatabaseError(const WebIDBDatabaseError& e) { assign(e); }
-    WEBKIT_API WebIDBDatabaseError& operator=(const WebIDBDatabaseError& e)
+    WebIDBDatabaseError(unsigned short code, const WebString& message) { assign(code, message); }
+    WebIDBDatabaseError(const WebIDBDatabaseError& error) { assign(error); }
+    WebIDBDatabaseError& operator=(const WebIDBDatabaseError& error)
     {
-        assign(e);
+        assign(error);
         return *this;
     }
 

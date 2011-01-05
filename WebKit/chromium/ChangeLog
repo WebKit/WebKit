@@ -1,3 +1,39 @@
+2011-01-05  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] WEBKIT_API and styling fixes for the chromium api.
+        https://bugs.webkit.org/show_bug.cgi?id=51863
+
+        Removed some incorrect uses of WEBKIT_API.
+        Fixed some abbreviations by making them whole words.
+
+        * public/WebAnimationController.h: Removed WEBKIT_API from virtual functions.
+        * public/WebFormElement.h: Removed WEBKIT_API from inline functions
+        and fixed some abbreviations.
+        (WebKit::WebFormElement::WebFormElement):
+        (WebKit::WebFormElement::operator=):
+        (WebKit::WebFormElement::assign):
+        * public/WebIDBDatabaseError.h: Ditto.
+        (WebKit::WebIDBDatabaseError::WebIDBDatabaseError):
+        (WebKit::WebIDBDatabaseError::operator=):
+        * public/WebInputElement.h: Ditto.
+        (WebKit::WebInputElement::WebInputElement):
+        (WebKit::WebInputElement::operator=):
+        (WebKit::WebInputElement::assign):
+        * public/WebLabelElement.h: Ditto.
+        (WebKit::WebLabelElement::WebLabelElement):
+        (WebKit::WebLabelElement::operator=):
+        (WebKit::WebLabelElement::assign):
+        * public/WebOptionElement.h: Ditto.
+        (WebKit::WebOptionElement::WebOptionElement):
+        (WebKit::WebOptionElement::operator=):
+        (WebKit::WebOptionElement::assign):
+        * public/WebSelectElement.h: Ditto (and minor spacing cleanup).
+        (WebKit::WebSelectElement::WebSelectElement):
+        (WebKit::WebSelectElement::operator=):
+        (WebKit::WebSelectElement::assign):
+
 2011-01-05  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by David Levin.

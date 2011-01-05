@@ -43,14 +43,14 @@ namespace WebKit {
     class WebInputElement : public WebFormControlElement {
     public:
         WebInputElement() : WebFormControlElement() { }
-        WebInputElement(const WebInputElement& e) : WebFormControlElement(e) { }
+        WebInputElement(const WebInputElement& element) : WebFormControlElement(element) { }
 
-        WebInputElement& operator=(const WebInputElement& e)
+        WebInputElement& operator=(const WebInputElement& element)
         {
-            WebFormControlElement::assign(e);
+            WebFormControlElement::assign(element);
             return *this;
         }
-        WEBKIT_API void assign(const WebInputElement& e) { WebFormControlElement::assign(e); }
+        void assign(const WebInputElement& element) { WebFormControlElement::assign(element); }
 
         // This returns true for all of textfield-looking types such as text,
         // password, search, email, url, and number.
