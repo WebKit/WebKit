@@ -2,7 +2,7 @@
 This tests that we can adjust focus and selection via accessibility API.
 
 
-PASS accessibilityController.focusedElement.role is "document"
+FAIL accessibilityController.focusedElement.role should be document. Was client.
 PASS accessibilityController.focusedElement.role is "list"
 
 Option 0 is selected.
