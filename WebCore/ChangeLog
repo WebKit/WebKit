@@ -1,3 +1,15 @@
+2011-01-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51907
+        Style selector should only be recalculated when the pending sheet count goes to zero
+        
+        Shark says this is a significant performance improvement on some sites with lots of stylesheets.
+
+        * dom/Document.cpp:
+        (WebCore::Document::removePendingSheet):
+
 2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

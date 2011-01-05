@@ -2868,10 +2868,10 @@ void Document::removePendingSheet()
         printf("Stylesheet loaded at time %d. %d stylesheets still remain.\n", elapsedTime(), m_pendingStylesheets);
 #endif
 
-    styleSelectorChanged(RecalcStyleImmediately);
-
     if (m_pendingStylesheets)
         return;
+
+    styleSelectorChanged(RecalcStyleImmediately);
 
     ScriptableDocumentParser* parser = scriptableDocumentParser();
     if (parser)
