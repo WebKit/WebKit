@@ -1,3 +1,12 @@
+2011-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        Cleaned up com.apple.WebProcess.sb
+
+        * WebProcess/com.apple.WebProcess.sb: Moved the closing parentheses of multi-line blocks to
+        their own lines. Changed to use WebKit-standard 4-space indentation.
+
 2011-01-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.
