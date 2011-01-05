@@ -137,6 +137,7 @@ function checkMetadata()
 }
 
 var testDate = new Date("August 25, 1991 20:57:08");
+var testDateB = new Date("Wed Jan 05 2011 15:54:49");
 
 function addData()
 {
@@ -164,7 +165,7 @@ function addDateSuccess()
     }
 
     debug("Try to insert data where key path yields a Date key:");
-    result = evalAndLog("store.add({x: new Date(), y: 'value'}, 'key')");
+    result = evalAndLog("store.add({x: testDateB, y: 'value'}, 'key')");
     result.onsuccess = addSuccess;
     result.onerror = unexpectedErrorCallback;
 }

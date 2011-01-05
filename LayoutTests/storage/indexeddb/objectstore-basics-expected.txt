@@ -104,7 +104,7 @@ store.add({x: 'bar', y: document.getElementById('console')}, 'bar')
 PASS Exception thrown
 PASS code is DOMException.NOT_SUPPORTED_ERR
 Try to insert data where key path yields a Date key:
-store.add({x: new Date(), y: 'value'}, 'key')
+store.add({x: testDateB, y: 'value'}, 'key')
 addSuccess():
 Success event fired:
 PASS 'result' in event is true

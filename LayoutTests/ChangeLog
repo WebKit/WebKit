@@ -1,3 +1,20 @@
+2011-01-05  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] storage/indexeddb/objectstore-basics.html is flaky after r74266
+        https://bugs.webkit.org/show_bug.cgi?id=51731
+
+        Fix the layout test by using a known-good date value rather than
+        new Date(), which sometimes causes the test to fail.
+
+        (The underlying reason for failing to store certain Date values
+        should of course be fixed too, but that will come in a later patch.)
+
+        * platform/chromium/test_expectations.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+
 2011-01-05  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; test expectations update..
