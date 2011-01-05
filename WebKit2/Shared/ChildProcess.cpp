@@ -25,6 +25,10 @@
 
 #include "ChildProcess.h"
 
+#if !OS(WINDOWS)
+#include <unistd.h>
+#endif
+
 namespace WebKit {
 
 ChildProcess::ChildProcess()
