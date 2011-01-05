@@ -35,6 +35,10 @@
 static const NSString * const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";
 static const NSString * const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 static const NSString * const WebGrammarCheckingEnabled = @"WebGrammarCheckingEnabled";
+static const NSString * const WebAutomaticQuoteSubstitutionEnabled = @"WebAutomaticQuoteSubstitutionEnabled";
+static const NSString * const WebAutomaticDashSubstitutionEnabled = @"WebAutomaticDashSubstitutionEnabled";
+static const NSString * const WebAutomaticLinkDetectionEnabled = @"WebAutomaticLinkDetectionEnabled";
+static const NSString * const WebAutomaticTextReplacementEnabled = @"WebAutomaticTextReplacementEnabled";
 
 using namespace WebCore;
 
@@ -51,7 +55,11 @@ static void initializeState()
     textCheckerState.isContinuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled] && TextChecker::isContinuousSpellCheckingAllowed();
     textCheckerState.isGrammarCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebGrammarCheckingEnabled];
     textCheckerState.isAutomaticSpellingCorrectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticSpellingCorrectionEnabled];
-    
+    textCheckerState.isAutomaticQuoteSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticQuoteSubstitutionEnabled];
+    textCheckerState.isAutomaticDashSubstitutionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticDashSubstitutionEnabled];
+    textCheckerState.isAutomaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
+    textCheckerState.isAutomaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
+
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
         textCheckerState.isAutomaticSpellingCorrectionEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
@@ -112,6 +120,50 @@ void TextChecker::setAutomaticSpellingCorrectionEnabled(bool isAutomaticSpelling
 
     textCheckerState.isAutomaticSpellingCorrectionEnabled = isAutomaticSpellingCorrectionEnabled;
     [[NSUserDefaults standardUserDefaults] setBool:isAutomaticSpellingCorrectionEnabled forKey:WebAutomaticSpellingCorrectionEnabled];    
+
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+void TextChecker::setAutomaticQuoteSubstitutionEnabled(bool isAutomaticQuoteSubstitutionEnabled)
+{
+    if (state().isAutomaticQuoteSubstitutionEnabled == isAutomaticQuoteSubstitutionEnabled)
+        return;
+
+    textCheckerState.isAutomaticQuoteSubstitutionEnabled = isAutomaticQuoteSubstitutionEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticQuoteSubstitutionEnabled forKey:WebAutomaticQuoteSubstitutionEnabled];    
+    
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+void TextChecker::setAutomaticDashSubstitutionEnabled(bool isAutomaticDashSubstitutionEnabled)
+{
+    if (state().isAutomaticDashSubstitutionEnabled == isAutomaticDashSubstitutionEnabled)
+        return;
+
+    textCheckerState.isAutomaticDashSubstitutionEnabled = isAutomaticDashSubstitutionEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticDashSubstitutionEnabled forKey:WebAutomaticDashSubstitutionEnabled];
+
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+void TextChecker::setAutomaticLinkDetectionEnabled(bool isAutomaticLinkDetectionEnabled)
+{
+    if (state().isAutomaticLinkDetectionEnabled == isAutomaticLinkDetectionEnabled)
+        return;
+    
+    textCheckerState.isAutomaticLinkDetectionEnabled = isAutomaticLinkDetectionEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticLinkDetectionEnabled forKey:WebAutomaticLinkDetectionEnabled];
+    
+    [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+void TextChecker::setAutomaticTextReplacementEnabled(bool isAutomaticTextReplacementEnabled)
+{
+    if (state().isAutomaticTextReplacementEnabled == isAutomaticTextReplacementEnabled)
+        return;
+    
+    textCheckerState.isAutomaticTextReplacementEnabled = isAutomaticTextReplacementEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
 
     [[NSSpellChecker sharedSpellChecker] updatePanels];
 }

@@ -1,3 +1,52 @@
+2011-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Keep track of active text substitution preferences
+        https://bugs.webkit.org/show_bug.cgi?id=51931
+
+        * Shared/TextCheckerState.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        Handle new selectors, mostly copied from WebKit1 code.
+
+        (-[WKView orderFrontSubstitutionsPanel:]):
+        Open the substitution panel.
+
+        (-[WKView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WKView setAutomaticQuoteSubstitutionEnabled:]):
+        (-[WKView toggleAutomaticQuoteSubstitution:]):
+        (-[WKView isAutomaticDashSubstitutionEnabled]):
+        (-[WKView setAutomaticDashSubstitutionEnabled:]):
+        (-[WKView toggleAutomaticDashSubstitution:]):
+        (-[WKView isAutomaticLinkDetectionEnabled]):
+        (-[WKView setAutomaticLinkDetectionEnabled:]):
+        (-[WKView toggleAutomaticLinkDetection:]):
+        (-[WKView isAutomaticTextReplacementEnabled]):
+        (-[WKView setAutomaticTextReplacementEnabled:]):
+        (-[WKView toggleAutomaticTextReplacement:]):
+        Call the text checker, and update the state in the web process if needed.
+
+        * UIProcess/TextChecker.h:
+        Add new flags.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::initializeState):
+        Initialize flags from user defaults.
+
+        (WebKit::TextChecker::setAutomaticQuoteSubstitutionEnabled):
+        (WebKit::TextChecker::setAutomaticDashSubstitutionEnabled):
+        (WebKit::TextChecker::setAutomaticLinkDetectionEnabled):
+        (WebKit::TextChecker::setAutomaticTextReplacementEnabled):
+        Update and save the flags.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::isAutomaticQuoteSubstitutionEnabled):
+        (WebKit::WebEditorClient::isAutomaticLinkDetectionEnabled):
+        (WebKit::WebEditorClient::isAutomaticDashSubstitutionEnabled):
+        (WebKit::WebEditorClient::isAutomaticTextReplacementEnabled):
+        Get the text checker state.
+
 2011-01-05  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Darin Adler.

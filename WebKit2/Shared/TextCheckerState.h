@@ -36,6 +36,10 @@ struct TextCheckerState {
 
 #if PLATFORM(MAC)
     bool isAutomaticSpellingCorrectionEnabled;
+    bool isAutomaticQuoteSubstitutionEnabled;
+    bool isAutomaticDashSubstitutionEnabled;
+    bool isAutomaticLinkDetectionEnabled;
+    bool isAutomaticTextReplacementEnabled;
 #endif
 };
 

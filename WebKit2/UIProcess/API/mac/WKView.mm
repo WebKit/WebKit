@@ -377,6 +377,40 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         return _data->_page->selectionState().isContentEditable;
     }
 
+    if (action == @selector(orderFrontSubstitutionsPanel:)) {
+        if (NSMenuItem *menuItem = ::menuItem(item)) {
+            BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible];
+            [menuItem setTitle:panelShowing
+                ? UI_STRING("Hide Substitutions", "menu item title")
+                : UI_STRING("Show Substitutions", "menu item title")];
+        }
+        return _data->_page->selectionState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
+        bool checked = TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return _data->_page->selectionState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticDashSubstitution:)) {
+        bool checked = TextChecker::state().isAutomaticDashSubstitutionEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return _data->_page->selectionState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticLinkDetection:)) {
+        bool checked = TextChecker::state().isAutomaticLinkDetectionEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return _data->_page->selectionState().isContentEditable;
+    }
+
+    if (action == @selector(toggleAutomaticTextReplacement:)) {
+        bool checked = TextChecker::state().isAutomaticTextReplacementEnabled;
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return _data->_page->selectionState().isContentEditable;
+    }
+
     if (action == @selector(stopSpeaking:))
         return [NSApp isSpeaking];
 
@@ -460,6 +494,102 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 {
     TextChecker::setAutomaticSpellingCorrectionEnabled(!TextChecker::state().isAutomaticSpellingCorrectionEnabled);
 
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (void)orderFrontSubstitutionsPanel:(id)sender
+{
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        LOG_ERROR("No NSSpellChecker");
+        return;
+    }
+    
+    NSPanel *substitutionsPanel = [checker substitutionsPanel];
+    if ([substitutionsPanel isVisible]) {
+        [substitutionsPanel orderOut:sender];
+        return;
+    }
+    [substitutionsPanel orderFront:sender];
+}
+
+- (BOOL)isAutomaticQuoteSubstitutionEnabled
+{
+    return TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
+}
+
+- (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticQuoteSubstitutionEnabled)
+        return;
+
+    TextChecker::setAutomaticQuoteSubstitutionEnabled(flag);
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (void)toggleAutomaticQuoteSubstitution:(id)sender
+{
+    TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (BOOL)isAutomaticDashSubstitutionEnabled
+{
+    return TextChecker::state().isAutomaticDashSubstitutionEnabled;
+}
+
+- (void)setAutomaticDashSubstitutionEnabled:(BOOL)flag
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticDashSubstitutionEnabled)
+        return;
+
+    TextChecker::setAutomaticDashSubstitutionEnabled(flag);
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (void)toggleAutomaticDashSubstitution:(id)sender
+{
+    TextChecker::setAutomaticDashSubstitutionEnabled(!TextChecker::state().isAutomaticDashSubstitutionEnabled);
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (BOOL)isAutomaticLinkDetectionEnabled
+{
+    return TextChecker::state().isAutomaticLinkDetectionEnabled;
+}
+
+- (void)setAutomaticLinkDetectionEnabled:(BOOL)flag
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticLinkDetectionEnabled)
+        return;
+
+    TextChecker::setAutomaticLinkDetectionEnabled(flag);
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (void)toggleAutomaticLinkDetection:(id)sender
+{
+    TextChecker::setAutomaticLinkDetectionEnabled(!TextChecker::state().isAutomaticLinkDetectionEnabled);
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (BOOL)isAutomaticTextReplacementEnabled
+{
+    return TextChecker::state().isAutomaticTextReplacementEnabled;
+}
+
+- (void)setAutomaticTextReplacementEnabled:(BOOL)flag
+{
+    if (static_cast<bool>(flag) == TextChecker::state().isAutomaticTextReplacementEnabled)
+        return;
+
+    TextChecker::setAutomaticTextReplacementEnabled(flag);
+    _data->_page->process()->updateTextCheckerState();
+}
+
+- (void)toggleAutomaticTextReplacement:(id)sender
+{
+    TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
     _data->_page->process()->updateTextCheckerState();
 }
 

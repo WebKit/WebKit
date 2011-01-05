@@ -164,8 +164,7 @@ void WebEditorClient::toggleSmartInsertDelete()
 
 bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 {
-    notImplemented();
-    return false;
+    return WebProcess::shared().textCheckerState().isAutomaticQuoteSubstitutionEnabled;
 }
 
 void WebEditorClient::toggleAutomaticQuoteSubstitution()
@@ -175,8 +174,7 @@ void WebEditorClient::toggleAutomaticQuoteSubstitution()
 
 bool WebEditorClient::isAutomaticLinkDetectionEnabled()
 {
-    notImplemented();
-    return false;
+    return WebProcess::shared().textCheckerState().isAutomaticLinkDetectionEnabled;
 }
 
 void WebEditorClient::toggleAutomaticLinkDetection()
@@ -186,8 +184,7 @@ void WebEditorClient::toggleAutomaticLinkDetection()
 
 bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 {
-    notImplemented();
-    return false;
+    return WebProcess::shared().textCheckerState().isAutomaticDashSubstitutionEnabled;
 }
 
 void WebEditorClient::toggleAutomaticDashSubstitution()
@@ -197,8 +194,7 @@ void WebEditorClient::toggleAutomaticDashSubstitution()
 
 bool WebEditorClient::isAutomaticTextReplacementEnabled()
 {
-    notImplemented();
-    return false;
+    return WebProcess::shared().textCheckerState().isAutomaticTextReplacementEnabled;
 }
 
 void WebEditorClient::toggleAutomaticTextReplacement()
@@ -221,7 +217,6 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64
     // FIXME: It would be nice if we wouldn't have to copy the text here.
     m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
 }
-
 #endif
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

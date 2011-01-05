@@ -42,6 +42,10 @@ public:
 
 #if PLATFORM(MAC)
     static void setAutomaticSpellingCorrectionEnabled(bool);
+    static void setAutomaticQuoteSubstitutionEnabled(bool);
+    static void setAutomaticDashSubstitutionEnabled(bool);
+    static void setAutomaticLinkDetectionEnabled(bool);
+    static void setAutomaticTextReplacementEnabled(bool);
 #endif
 
     static int64_t uniqueSpellDocumentTag();
