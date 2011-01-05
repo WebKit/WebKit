@@ -269,7 +269,7 @@ bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Elemen
     // FIXME: We need to resolve the url relative to the element.
     if (!script->dispatchBeforeLoadEvent(srcValue))
         return false;
-    pendingScript.adoptElement(script);
+    pendingScript.setElement(script);
     // This should correctly return 0 for empty or invalid srcValues.
     CachedScript* cachedScript = m_document->cachedResourceLoader()->requestScript(srcValue, toScriptElement(script)->scriptCharset());
     if (!cachedScript) {
@@ -308,7 +308,7 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition1& scriptSta
             // The latter case can only happen if a script both triggers a stylesheet load
             // and writes an inline script. Since write is blocking we have to execute the
             // written script immediately, ignoring the pending sheets.
-            m_parsingBlockingScript.adoptElement(script);
+            m_parsingBlockingScript.setElement(script);
             m_parsingBlockingScript.setStartingPosition(scriptStartPosition);
         } else {
             ASSERT(isExecutingScript());

@@ -36,6 +36,7 @@ namespace WebCore {
 
 class CachedScript;
 class Document;
+class PendingScript;
 class ScriptElement;
     
 class AsyncScriptRunner : public Noncopyable {
@@ -54,7 +55,7 @@ private:
     void timerFired(Timer<AsyncScriptRunner>*);
 
     Document* m_document;
-    Vector<std::pair<ScriptElement*, CachedResourceHandle<CachedScript> > > m_scriptsToExecuteSoon;
+    Vector<PendingScript> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
     Timer<AsyncScriptRunner> m_timer;
 };
 

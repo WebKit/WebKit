@@ -1,3 +1,27 @@
+2011-01-04  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Avoid manual ref/deref in AsyncScriptRunner by using PendingScript
+        https://bugs.webkit.org/show_bug.cgi?id=51723
+
+        ScriptElement should also be able to keep its Element+CachedScript in
+        a PendingScript, and then executeScriptSoon can accept a PendingScript.
+        Once HTMLScriptRunner, ScriptElement, and AsyncScriptRunner all use
+        PendingScripts, then generic request and execute which operate on
+        PendingScripts can be factored out to avoid code duplicate that we have.
+
+        No new tests because no new functionality.
+
+        * dom/AsyncScriptRunner.cpp:
+        (WebCore::AsyncScriptRunner::~AsyncScriptRunner):
+        (WebCore::AsyncScriptRunner::executeScriptSoon):
+        (WebCore::AsyncScriptRunner::timerFired):
+        * dom/AsyncScriptRunner.h:
+        * dom/PendingScript.h: Add ctor which sets element and cachedScript. Rename adoptElement->setElement.
+        * dom/HTMLScriptRunner.cpp:
+        (WebCore::HTMLScriptRunner::requestPendingScript):
+
 2011-01-04  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

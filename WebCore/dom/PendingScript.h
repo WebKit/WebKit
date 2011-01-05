@@ -49,6 +49,13 @@ public:
     {
     }
 
+    PendingScript(Element* element, CachedScript* cachedScript)
+        : m_watchingForLoad(false)
+        , m_element(element)
+    {
+        setCachedScript(cachedScript);
+    }
+
     PendingScript(const PendingScript& other)
         : CachedResourceClient(other)
         , m_watchingForLoad(other.m_watchingForLoad)
@@ -80,7 +87,7 @@ public:
     void setWatchingForLoad(bool b) { m_watchingForLoad = b; }
 
     Element* element() const { return m_element.get(); }
-    void adoptElement(Element* element) { m_element = element; }
+    void setElement(Element* element) { m_element = element; }
     PassRefPtr<Element> releaseElementAndClear();
 
     CachedScript* cachedScript() const;
