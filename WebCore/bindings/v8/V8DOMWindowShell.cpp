@@ -349,6 +349,16 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
     return result;
 }
 
+void V8DOMWindowShell::setContext(v8::Handle<v8::Context> context)
+{
+    // if we already have a context, clear it before setting the new one.
+    if (!m_context.IsEmpty()) {
+        m_context.Dispose();
+        m_context.Clear();
+    }
+    m_context = v8::Persistent<v8::Context>::New(context);
+}
+
 bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWindow* window)
 {
     // Create a new JS window object and use it as the prototype for the  shadow global object.

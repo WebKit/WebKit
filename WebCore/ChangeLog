@@ -1,3 +1,16 @@
+2011-01-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r74778.
+        http://trac.webkit.org/changeset/74778
+        https://bugs.webkit.org/show_bug.cgi?id=51930
+
+        Android and QtWebKit-V8 uses V8DOMWindowShell::setContext.
+        (Requested by bbandix on #webkit).
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::setContext):
+        * bindings/v8/V8DOMWindowShell.h:
+
 2011-01-05  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.

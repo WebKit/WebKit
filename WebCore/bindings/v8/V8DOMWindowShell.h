@@ -66,7 +66,8 @@ public:
     bool isContextInitialized();
 
     v8::Persistent<v8::Context> createNewContext(v8::Handle<v8::Object> global, int extensionGroup);
-    static bool installDOMWindow(v8::Handle<v8::Context>, DOMWindow*);
+    void setContext(v8::Handle<v8::Context>);
+    static bool installDOMWindow(v8::Handle<v8::Context> context, DOMWindow*);
 
     bool initContextIfNeeded();
     void updateDocumentWrapper(v8::Handle<v8::Object> wrapper);
