@@ -1,3 +1,12 @@
+2011-01-05  Antti Koivisto  <antti@apple.com>
+
+        Not reviewed.
+
+        Update a pixel test result for https://bugs.webkit.org/show_bug.cgi?id=8852.
+
+        * platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.checksum:
+        * platform/mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+
 2011-01-04  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
