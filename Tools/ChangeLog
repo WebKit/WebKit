@@ -1,3 +1,25 @@
+2011-01-04  Søren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Change the --multi-load test option to --stress-opt
+        https://bugs.webkit.org/show_bug.cgi?id=50751
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest):
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::stressOpt):
+        (TestShell::setStressOpt):
+        (TestShell::stressDeopt):
+        (TestShell::setStressDeopt):
+        (TestShell::javaScriptFlags):
+        (TestShell::setJavaScriptFlags):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Sam Weinig.

@@ -380,8 +380,11 @@ class ChromiumDriver(base.Driver):
         if self._port.get_option('js_flags') is not None:
             cmd.append('--js-flags="' + self._port.get_option('js_flags') + '"')
 
-        if self._port.get_option('multiple_loads') > 0:
-            cmd.append('--multiple-loads=' + str(self._port.get_option('multiple_loads')))
+        if self._port.get_option('stress_opt'):
+            cmd.append('--stress-opt')
+
+        if self._port.get_option('stress_deopt'):
+            cmd.append('--stress-deopt')
 
         # test_shell does not support accelerated compositing.
         if not self._port.get_option("use_test_shell"):

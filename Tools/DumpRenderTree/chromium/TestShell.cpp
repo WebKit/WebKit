@@ -86,7 +86,8 @@ TestShell::TestShell(bool testShellMode)
     , m_allowExternalPages(false)
     , m_acceleratedCompositingEnabled(false)
     , m_accelerated2dCanvasEnabled(false)
-    , m_loadCount(1)
+    , m_stressOpt(false)
+    , m_stressDeopt(false)
     , m_dumpWhenFinished(true)
 {
     WebRuntimeFeatures::enableGeolocation(true);
