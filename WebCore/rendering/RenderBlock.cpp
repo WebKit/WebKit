@@ -992,8 +992,9 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // FIXME: When we destroy nextBlock, it might happen that nextBlock's next sibling block and
             // oldChild can get merged. Since oldChild is getting removed, we do not want to move
             // nextBlock's next sibling block's children into it. By setting a fake continuation,
-            // we prevent this from happening.
-            RenderBlock* oldChildBlock;
+            // we prevent this from happening. This is not the best approach, we should replace this
+            // something better later to automatically detect that oldChild is getting removed.
+            RenderBlock* oldChildBlock = 0;
             if (oldChild->isAnonymous() && oldChild->isRenderBlock() && !toRenderBlock(oldChild)->continuation()) {
                 oldChildBlock = toRenderBlock(oldChild);
                 oldChildBlock->setContinuation(oldChildBlock);                

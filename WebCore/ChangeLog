@@ -1,5 +1,14 @@
 2011-01-05  Abhishek Arya  <inferno@chromium.org>
 
+        Unreviewed.
+
+        Update FIXME comment to sound better. Also initialize the block to fix compile.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+
+2011-01-05  Abhishek Arya  <inferno@chromium.org>
+
         Reviewed by Dave Hyatt.
 
         Do not merge anonymous blocks when one of them is the one getting removed.
