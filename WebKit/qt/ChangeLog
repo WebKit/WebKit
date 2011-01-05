@@ -1,3 +1,15 @@
+2011-01-05  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Sync qwebkitplatformplugin.h in the plugin example
+        https://bugs.webkit.org/show_bug.cgi?id=51882
+
+        Make examples/platformplugin/qwebkitplatformplugin.h exactly the same
+        as the one in the Api folder.
+
+        * examples/platformplugin/qwebkitplatformplugin.h:
+
 2011-01-04  Zhe Su  <suzhe@chromium.org>
 
         Reviewed by Kenneth Russell.

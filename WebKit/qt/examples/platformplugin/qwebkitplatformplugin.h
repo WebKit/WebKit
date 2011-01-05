@@ -84,9 +84,13 @@ Q_SIGNALS:
     void notificationClicked();
 };
 
-class QWebHapticFeedbackPlayer
+class QWebHapticFeedbackPlayer: public QObject
 {
+    Q_OBJECT
 public:
+    QWebHapticFeedbackPlayer() {}
+    virtual ~QWebHapticFeedbackPlayer() {}
+
     enum HapticStrength {
         None, Weak, Medium, Strong
     };
@@ -127,6 +131,8 @@ public:
     virtual QObject* createExtension(Extension extension) const = 0;
 };
 
+QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.6");
+QT_END_NAMESPACE
 
 #endif // QWEBKITPLATFORMPLUGIN_H
