@@ -64,6 +64,7 @@ public:
     static void resumeAnimations(WebKitWebFrame*);
     static void clearMainFrameName(WebKitWebFrame*);
     static AtkObject* getFocusedAccessibleElement(WebKitWebFrame*);
+    static AtkObject* getRootAccessibleElement(WebKitWebFrame*);
     static void layoutFrame(WebKitWebFrame*);
 
     // WebKitWebView

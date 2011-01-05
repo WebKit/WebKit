@@ -413,7 +413,7 @@ void DumpRenderTreeSupportGtk::clearMainFrameName(WebKitWebFrame* frame)
     core(frame)->tree()->clearName();
 }
 
-AtkObject* DumpRenderTreeSupportGtk::getFocusedAccessibleElement(WebKitWebFrame* frame)
+AtkObject* DumpRenderTreeSupportGtk::getRootAccessibleElement(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
@@ -426,6 +426,19 @@ AtkObject* DumpRenderTreeSupportGtk::getFocusedAccessibleElement(WebKitWebFrame*
         return 0;
 
     AtkObject* wrapper =  priv->coreFrame->document()->axObjectCache()->rootObject()->wrapper();
+    if (!wrapper)
+        return 0;
+
+    return wrapper;
+#else
+    return 0;
+#endif
+}
+
+AtkObject* DumpRenderTreeSupportGtk::getFocusedAccessibleElement(WebKitWebFrame* frame)
+{
+#if HAVE(ACCESSIBILITY)
+    AtkObject* wrapper = getRootAccessibleElement(frame);
     if (!wrapper)
         return 0;
 

@@ -60,13 +60,11 @@ AccessibilityUIElement AccessibilityController::focusedElement()
 
 AccessibilityUIElement AccessibilityController::rootElement()
 {
-    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    AtkObject* accessible = DumpRenderTreeSupportGtk::getRootAccessibleElement(mainFrame);
+    if (!accessible)
+        return 0;
 
-    // The presumed, desired rootElement is the parent of the web view.
-    GtkWidget* webViewParent = gtk_widget_get_parent(GTK_WIDGET(view));
-    AtkObject* axObject = gtk_widget_get_accessible(webViewParent);
- 
-    return AccessibilityUIElement(axObject);
+    return AccessibilityUIElement(accessible);
 }
 
 void AccessibilityController::setLogFocusEvents(bool)

@@ -1,5 +1,17 @@
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
+        Reviewed by Martin Robinson.
+
+        GTK: AX: DRT needs to use correct root object method.
+        https://bugs.webkit.org/show_bug.cgi?id=51911
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::getRootAccessibleElement):
+        (DumpRenderTreeSupportGtk::getFocusedAccessibleElement):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
+2011-01-04  Chris Fleizach  <cfleizach@apple.com>
+
         Reviewed by Sam Weinig.
 
         WK2: Support Accessibility
