@@ -1,3 +1,15 @@
+2011-01-05  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Animated GIF images does not animate 10x as expected by default.
+        https://bugs.webkit.org/show_bug.cgi?id=36818
+
+        Add a test animated GIF which should be displayed 2 times and stop.
+
+        * manual-tests/animated-gif-looping.html:
+        * manual-tests/resources/animated-2x.gif: Added.
+
 2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
