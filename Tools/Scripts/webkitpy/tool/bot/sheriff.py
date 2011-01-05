@@ -59,7 +59,6 @@ class Sheriff(object):
         except:
             raise ScriptError(message="Invalid svn revision number \"%s\"."
                               % " ".join(svn_revision_list))
-        svn_revisions = "'%s'" % svn_revisions
 
         if rollout_reason.startswith("-"):
             raise ScriptError(message="The rollout reason may not begin "
