@@ -51,14 +51,15 @@ class Sheriff(object):
 
         self._tool.irc().post(irc_message)
 
-    def post_rollout_patch(self, svn_revision, rollout_reason):
-        # Ensure that svn_revision is a number (and not an option to
+    def post_rollout_patch(self, svn_revision_list, rollout_reason):
+        # Ensure that svn revisions are numbers (and not options to
         # create-rollout).
         try:
-            svn_revision = int(svn_revision)
+            svn_revisions = " ".join([str(int(revision)) for revision in svn_revision_list])
         except:
             raise ScriptError(message="Invalid svn revision number \"%s\"."
-                              % svn_revision)
+                              % " ".join(svn_revision_list))
+        svn_revisions = "'%s'" % svn_revisions
 
         if rollout_reason.startswith("-"):
             raise ScriptError(message="The rollout reason may not begin "
@@ -72,7 +73,7 @@ class Sheriff(object):
             # pass it prophylactically because we reject unrecognized command
             # line switches.
             "--parent-command=sheriff-bot",
-            svn_revision,
+            svn_revisions,
             rollout_reason,
         ])
         return parse_bug_id(output)

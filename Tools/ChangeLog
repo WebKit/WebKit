@@ -1,3 +1,14 @@
+2011-01-05  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Adam Barth.
+
+        sheriff-bot should be able to do multi-revision rollouts
+        https://bugs.webkit.org/show_bug.cgi?id=51176
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py:
+
 2011-01-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

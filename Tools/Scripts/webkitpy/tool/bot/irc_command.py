@@ -30,9 +30,10 @@ import random
 import webkitpy.common.config.irc as config_irc
 
 from webkitpy.common.config import urls
-from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.tool.bot.queueengine import TerminateQueue
+from webkitpy.tool.grammar import join_with_separators
 
 # FIXME: Merge with Command?
 class IRCCommand(object):
@@ -53,17 +54,38 @@ class Restart(IRCCommand):
 
 
 class Rollout(IRCCommand):
+    def _parse_args(self, args):
+        read_revision = True
+        rollout_reason = []
+        # the first argument must be a revision number
+        svn_revision_list = [args[0].lstrip("r")]
+        if not svn_revision_list[0].isdigit():
+            read_revision = False
+
+        for arg in args[1:]:
+            if arg.lstrip("r").isdigit() and read_revision:
+                svn_revision_list.append(arg.lstrip("r"))
+            else:
+                read_revision = False
+                rollout_reason.append(arg)
+
+        return svn_revision_list, rollout_reason
+
     def execute(self, nick, args, tool, sheriff):
-        if len(args) < 2:
-            tool.irc().post("%s: Usage: SVN_REVISION REASON" % nick)
+        svn_revision_list, rollout_reason = self._parse_args(args)
+
+        if (len(svn_revision_list) == 0) or (len(rollout_reason) == 0):
+            tool.irc().post("%s: Usage: SVN_REVISION [SVN_REVISIONS] REASON" % nick)
             return
-        svn_revision = args[0].lstrip("r")
-        rollout_reason = " ".join(args[1:])
-        tool.irc().post("Preparing rollout for r%s..." % svn_revision)
+
+        rollout_reason = " ".join(rollout_reason)
+
+        tool.irc().post("Preparing rollout for %s..." %
+                        join_with_separators(["r" + str(revision) for revision in svn_revision_list]))
         try:
             complete_reason = "%s (Requested by %s on %s)." % (
                 rollout_reason, nick, config_irc.channel)
-            bug_id = sheriff.post_rollout_patch(svn_revision, complete_reason)
+            bug_id = sheriff.post_rollout_patch(svn_revision_list, complete_reason)
             bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
             tool.irc().post("%s: Created rollout: %s" % (nick, bug_url))
         except ScriptError, e:
