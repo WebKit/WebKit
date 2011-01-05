@@ -66,8 +66,8 @@ class LayoutTestResults(object):
         # of new-run-webkit-test failures they equate to.
         failures = set()
         for anchor in row.findAll("a"):
-            anchor_text = anchor.string
-            if anchor_text in ["expected image", "image diffs"] or anchor_text.contains('%'):
+            anchor_text = unicode(anchor.string)
+            if anchor_text in ["expected image", "image diffs"] or '%' in anchor_text:
                 failures.add(test_failures.FailureImageHashMismatch())
             elif anchor_text in ["expected", "actual", "diff", "pretty diff"]:
                 failures.add(test_failures.FailureTextMismatch())
@@ -75,6 +75,7 @@ class LayoutTestResults(object):
                 log("Unhandled link text in results.html parsing: %s.  Please file a bug against webkitpy." % anchor_text)
         # FIXME: Its possible the row contained no links due to ORWT brokeness.
         # We should probably assume some type of failure anyway.
+        return failures
 
     @classmethod
     def _failures_from_row(cls, row, table_title):

@@ -1,3 +1,15 @@
+2011-01-05  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Move LayoutTestResults over to new-run-webkit-tests TestResult architecture
+        https://bugs.webkit.org/show_bug.cgi?id=51802
+
+        Fix two exceptions seen on the bots after my original commit.
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+
 2011-01-05  Kundu Suchismita  <suchi.kundu@nokia.com>
 
         Reviewed by Andreas Kling.
