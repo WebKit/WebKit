@@ -889,7 +889,40 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
 
     GstFormat fmt = GST_FORMAT_BYTES;
     gint64 length = 0;
-    gst_element_query_duration(m_source, &fmt, &length);
+    if (gst_element_query_duration(m_source, &fmt, &length)) {
+        LOG_VERBOSE(Media, "totalBytes %" G_GINT64_FORMAT, length);
+        return static_cast<unsigned>(length);
+    }
+
+    // Fall back to querying the source pads manually.
+    // See also https://bugzilla.gnome.org/show_bug.cgi?id=638749
+    GstIterator* iter = gst_element_iterate_src_pads(m_source);
+    bool done = false;
+    while (!done) {
+        gpointer data;
+
+        switch (gst_iterator_next(iter, &data)) {
+        case GST_ITERATOR_OK: {
+            GstPad* pad = GST_PAD_CAST(data);
+            gint64 padLength = 0;
+            if (gst_pad_query_duration(pad, &fmt, &padLength)
+                && padLength > length)
+                length = padLength;
+            gst_object_unref(pad);
+            break;
+        }
+        case GST_ITERATOR_RESYNC:
+            gst_iterator_resync(iter);
+            break;
+        case GST_ITERATOR_ERROR:
+            // Fall through.
+        case GST_ITERATOR_DONE:
+            done = true;
+            break;
+        }
+    }
+    gst_iterator_free(iter);
+
     LOG_VERBOSE(Media, "totalBytes %" G_GINT64_FORMAT, length);
 
     return static_cast<unsigned>(length);

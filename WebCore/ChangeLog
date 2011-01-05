@@ -1,3 +1,22 @@
+2011-01-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen, Gustavo Noronha Silva
+
+        [GStreamer] MediaPlayerPrivateGStreamer::totalBytes() does not work reliably
+        https://bugs.webkit.org/show_bug.cgi?id=51926
+
+        Work around potential upstream bug: Querying a GstBin for the duration,
+        will forward the query to all sink children. Our WebKitWebSrc however
+        is a bin with only source children, therefore the query fails. Until
+        this is changed upstream, this patch works around it as follows,
+        based on suggestion by Philippe Normand and Sebastian Dröge:
+
+        When the initial query fails, attempt the same query on all source
+        pads and take the maximum length reported.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes):
+
 2011-01-05  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Eric Seidel.
