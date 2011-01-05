@@ -1,3 +1,10 @@
+2011-01-05  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations fix.
+
+        * platform/chromium/test_expectations.txt:
+        Add expectations for new tests introduced by r75097.
+
 2011-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
