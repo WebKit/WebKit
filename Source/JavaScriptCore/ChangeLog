@@ -1,3 +1,9 @@
+2011-01-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix. Update path to FindSafari after source code reorganization.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+
 2011-01-04  Daniel Bates  <dbates@rim.com>
 
         Fix the Android build after changeset 74975 <http://trac.webkit.org/changeset/74975>
