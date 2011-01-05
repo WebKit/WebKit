@@ -411,6 +411,9 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         return _data->_page->selectionState().isContentEditable;
     }
 
+    if (action == @selector(uppercaseWord:) || action == @selector(lowercaseWord:) || action == @selector(capitalizeWord:))
+        return _data->_page->selectionState().selectedRangeLength && _data->_page->selectionState().isContentEditable;
+    
     if (action == @selector(stopSpeaking:))
         return [NSApp isSpeaking];
 
@@ -611,6 +614,21 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 {
     TextChecker::setAutomaticTextReplacementEnabled(!TextChecker::state().isAutomaticTextReplacementEnabled);
     _data->_page->process()->updateTextCheckerState();
+}
+
+- (void)uppercaseWord:(id)sender
+{
+    _data->_page->uppercaseWord();
+}
+
+- (void)lowercaseWord:(id)sender
+{
+    _data->_page->lowercaseWord();
+}
+
+- (void)capitalizeWord:(id)sender
+{
+    _data->_page->capitalizeWord();
 }
 
 // Events

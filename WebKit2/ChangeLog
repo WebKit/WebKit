@@ -1,3 +1,49 @@
+2011-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Implement word transformation
+        https://bugs.webkit.org/show_bug.cgi?id=51943
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        Handle the word transformation selectors.
+
+        (-[WKView uppercaseWord:]):
+        (-[WKView lowercaseWord:]):
+        (-[WKView capitalizeWord:]):
+        Call down to the WebPageProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::uppercaseWord):
+        (WebKit::WebPageProxy::lowercaseWord):
+        (WebKit::WebPageProxy::capitalizeWord):
+        Send messages to the WebPage.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::changeWordCase):
+        Add helper function.
+
+        (WebKit::WebEditorClient::uppercaseWord):
+        (WebKit::WebEditorClient::lowercaseWord):
+        (WebKit::WebEditorClient::capitalizeWord):
+        Call helper function.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeSpellingToWord):
+        Call replaceSelectionWithText.
+
+        (WebKit::WebPage::uppercaseWord):
+        (WebKit::WebPage::lowercaseWord):
+        (WebKit::WebPage::capitalizeWord):
+        Call the editor functions.
+
+        (WebKit::WebPage::replaceSelectionWithText):
+        New helper function that replaces the selected string with another string.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add new messages.
+
 2011-01-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

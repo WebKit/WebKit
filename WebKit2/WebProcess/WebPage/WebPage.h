@@ -288,6 +288,8 @@ public:
     void stopSpeaking();
 #endif
 
+    void replaceSelectionWithText(WebCore::Frame*, const String&);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -378,6 +380,11 @@ private:
     void changeSpellingToWord(const String& word);
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
+#if PLATFORM(MAC)
+    void uppercaseWord();
+    void lowercaseWord();
+    void capitalizeWord();
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
     void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);

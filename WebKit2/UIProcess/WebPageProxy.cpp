@@ -1782,6 +1782,23 @@ void WebPageProxy::unmarkAllBadGrammar()
     process()->send(Messages::WebPage::UnmarkAllBadGrammar(), m_pageID);
 }
 
+#if PLATFORM(MAC)
+void WebPageProxy::uppercaseWord()
+{
+    process()->send(Messages::WebPage::UppercaseWord(), m_pageID);
+}
+
+void WebPageProxy::lowercaseWord()
+{
+    process()->send(Messages::WebPage::LowercaseWord(), m_pageID);
+}
+
+void WebPageProxy::capitalizeWord()
+{
+    process()->send(Messages::WebPage::CapitalizeWord(), m_pageID);
+}
+#endif
+
 void WebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> commandProxy, UndoOrRedo undoOrRedo)
 {
     m_pageClient->registerEditCommand(commandProxy, undoOrRedo);

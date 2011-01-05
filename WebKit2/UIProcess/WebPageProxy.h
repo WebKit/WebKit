@@ -303,6 +303,11 @@ public:
     void changeSpellingToWord(const String& word);
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
+#if PLATFORM(MAC)
+    void uppercaseWord();
+    void lowercaseWord();
+    void capitalizeWord();
+#endif
 
 private:
     WebPageProxy(WebContext*, WebPageGroup*, uint64_t pageID);

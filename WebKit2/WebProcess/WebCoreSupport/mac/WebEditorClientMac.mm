@@ -130,20 +130,31 @@ NSArray *WebEditorClient::pasteboardTypesForSelection(Frame*)
 }
 #endif
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+static void changeWordCase(WebPage* page, SEL selector)
+{
+    Frame* frame = page->corePage()->focusController()->focusedOrMainFrame();
+    if (!frame->editor()->canEdit())
+        return;
+
+    frame->editor()->command("selectWord").execute();
+
+    NSString *selectedString = frame->displayStringModifiedByEncoding(frame->editor()->selectedText());
+    page->replaceSelectionWithText(frame, [selectedString performSelector:selector]);
+}
+
 void WebEditorClient::uppercaseWord()
 {
-    notImplemented();
+    changeWordCase(m_page, @selector(uppercaseString));
 }
 
 void WebEditorClient::lowercaseWord()
 {
-    notImplemented();
+    changeWordCase(m_page, @selector(lowercaseString));
 }
 
 void WebEditorClient::capitalizeWord()
 {
-    notImplemented();
+    changeWordCase(m_page, @selector(capitalizedString));
 }
 
 void WebEditorClient::showSubstitutionsPanel(bool)
@@ -221,7 +232,6 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64
     // FIXME: It would be nice if we wouldn't have to copy the text here.
     m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
 }
-#endif
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, const Vector<String>& alternativeReplacementStrings, WebCore::Editor*)

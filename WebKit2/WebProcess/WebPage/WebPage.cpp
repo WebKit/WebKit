@@ -1267,13 +1267,7 @@ void WebPage::advanceToNextMisspelling(bool startBeforeSelection)
 
 void WebPage::changeSpellingToWord(const String& word)
 {
-    Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (frame->selection()->isNone())
-        return;
-
-    RefPtr<DocumentFragment> textFragment = createFragmentFromText(frame->selection()->toNormalizedRange().get(), word);
-    applyCommand(ReplaceSelectionCommand::create(frame->document(), textFragment.release(), true, false, true));
-    frame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
+    replaceSelectionWithText(m_page->focusController()->focusedOrMainFrame(), word);
 }
 
 void WebPage::unmarkAllMisspellings()
@@ -1292,6 +1286,21 @@ void WebPage::unmarkAllBadGrammar()
     }
 }
 
+void WebPage::uppercaseWord()
+{
+    m_page->focusController()->focusedOrMainFrame()->editor()->uppercaseWord();
+}
+
+void WebPage::lowercaseWord()
+{
+    m_page->focusController()->focusedOrMainFrame()->editor()->lowercaseWord();
+}
+
+void WebPage::capitalizeWord()
+{
+    m_page->focusController()->focusedOrMainFrame()->editor()->capitalizeWord();
+}
+    
 void WebPage::setTextForActivePopupMenu(int32_t index)
 {
     if (!m_activePopupMenu)
@@ -1305,6 +1314,16 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
     ASSERT(m_contextMenu);
     m_contextMenu->itemSelected(item);
     m_contextMenu = 0;
+}
+
+void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
+{
+    if (frame->selection()->isNone())
+        return;
+    
+    RefPtr<DocumentFragment> textFragment = createFragmentFromText(frame->selection()->toNormalizedRange().get(), text);
+    applyCommand(ReplaceSelectionCommand::create(frame->document(), textFragment.release(), true, false, true));
+    frame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 #if PLATFORM(MAC)

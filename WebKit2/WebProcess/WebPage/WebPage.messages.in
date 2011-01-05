@@ -105,6 +105,11 @@ messages -> WebPage {
     ChangeSpellingToWord(WTF::String word)
     UnmarkAllMisspellings()
     UnmarkAllBadGrammar()
+#if PLATFORM(MAC)
+    UppercaseWord();
+    LowercaseWord();
+    CapitalizeWord();
+#endif
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
