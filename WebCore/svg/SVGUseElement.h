@@ -83,7 +83,7 @@ private:
 
     // Instance tree handling
     void buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundCycle);
-    void handleDeepUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, bool& foundCycle);
+    bool hasCycleUseReferencing(SVGUseElement*, SVGElementInstance* targetInstance, SVGElement*& newTarget);
 
     // Shadow tree handling
     void buildShadowTree(SVGShadowTreeRootElement*, SVGElement* target, SVGElementInstance* targetInstance);

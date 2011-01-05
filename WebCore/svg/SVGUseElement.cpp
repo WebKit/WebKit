@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ * Copyright (C) 2011 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -682,6 +683,16 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     ASSERT(target);
     ASSERT(targetInstance);
 
+    // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
+    // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
+    bool targetHasUseTag = target->hasTagName(SVGNames::useTag);
+    SVGElement* newTarget = 0;
+    if (targetHasUseTag) {
+        foundProblem = hasCycleUseReferencing(static_cast<SVGUseElement*>(target), targetInstance, newTarget);
+        if (foundProblem)
+            return;
+    }
+
     // A general description from the SVG spec, describing what buildInstanceTree() actually does.
     //
     // Spec: If the 'use' element references a 'g' which contains two 'rect' elements, then the instance tree
@@ -707,50 +718,41 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
         buildInstanceTree(element, instancePtr, foundProblem);
     }
 
-    // Spec: If the referenced object is itself a 'use', or if there are 'use' subelements within the referenced
-    // object, the instance tree will contain recursive expansion of the indirect references to form a complete tree.
-    if (target->hasTagName(SVGNames::useTag))
-        handleDeepUseReferencing(static_cast<SVGUseElement*>(target), targetInstance, foundProblem);
+    if (!targetHasUseTag || !newTarget)
+        return;
+
+    RefPtr<SVGElementInstance> newInstance = SVGElementInstance::create(this, newTarget);
+    SVGElementInstance* newInstancePtr = newInstance.get();
+    targetInstance->appendChild(newInstance.release());
+    buildInstanceTree(newTarget, newInstancePtr, foundProblem);
 }
 
-void SVGUseElement::handleDeepUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, bool& foundProblem)
+bool SVGUseElement::hasCycleUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, SVGElement*& newTarget)
 {
     String id = SVGURIReference::getTarget(use->href());
     Element* targetElement = document()->getElementById(id); 
-    SVGElement* target = 0;
+    newTarget = 0;
     if (targetElement && targetElement->isSVGElement())
-        target = static_cast<SVGElement*>(targetElement);
+        newTarget = static_cast<SVGElement*>(targetElement);
 
-    if (!target)
-        return;
-
-    // Cycle detection first!
-    foundProblem = (target == this);
+    if (!newTarget)
+        return false;
 
     // Shortcut for self-references
-    if (foundProblem)
-        return;
+    if (newTarget == this)
+        return true;
 
     SVGElementInstance* instance = targetInstance->parentNode();
     while (instance) {
         SVGElement* element = instance->correspondingElement();
 
         // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
-        if (element->hasID() && element->idForStyleResolution() == id) {
-            foundProblem = true;
-            return;
-        }
+        if (element->hasID() && element->idForStyleResolution() == id)
+            return true;
     
         instance = instance->parentNode();
     }
-
-    // Create an instance object, even if we're dealing with a cycle
-    RefPtr<SVGElementInstance> newInstance = SVGElementInstance::create(this, target);
-    SVGElementInstance* newInstancePtr = newInstance.get();
-    targetInstance->appendChild(newInstance.release());
-
-    // Eventually enter recursion to build SVGElementInstance objects for the sub-tree children
-    buildInstanceTree(target, newInstancePtr, foundProblem);
+    return false;
 }
 
 void SVGUseElement::removeDisallowedElementsFromSubtree(Node* subtree)
