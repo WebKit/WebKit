@@ -3053,7 +3053,7 @@ BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
 BUGCR68436 LINUX MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
 BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS TIMEOUT CRASH
-BUGCR68599 WIN : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
+BUGCR68599 LINUX WIN : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
 
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
