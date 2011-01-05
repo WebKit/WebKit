@@ -2487,7 +2487,9 @@ void FrameView::notifyWidgetsInAllFrames(WidgetNotification notification)
     
 AXObjectCache* FrameView::axObjectCache() const
 {
-    return frame()->document()->axObjectCacheExists() ? frame()->document()->axObjectCache() : 0;
+    if (frame() && frame()->document() && frame()->document()->axObjectCacheExists())
+        return frame()->document()->axObjectCache();
+    return 0;
 }
     
 } // namespace WebCore
