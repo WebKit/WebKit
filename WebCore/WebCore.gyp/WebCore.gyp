@@ -1099,6 +1099,7 @@
           'sources/': [
             # Cherry-pick files excluded by the broader regular expressions above.
             ['include', 'platform/chromium/KeyCodeConversionGtk\\.cpp$'],
+            ['include', 'platform/graphics/chromium/ComplexTextControllerLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontCacheLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],

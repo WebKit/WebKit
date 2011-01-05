@@ -1,3 +1,58 @@
+2011-01-05  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] refactor complex text on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=51956
+
+        Pull out TextRunWalker from FontLinux.cpp.  Put it in its own file.
+        Rename it to ComplexTextController, to match platform/graphics/mac
+        more closely.
+
+        No tests because the change is just renaming a class.
+
+        * WebCore.gyp/WebCore.gyp:
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp: Added.
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::~ComplexTextController):
+        (WebCore::ComplexTextController::isWordBreak):
+        (WebCore::ComplexTextController::determineWordBreakSpacing):
+        (WebCore::ComplexTextController::setPadding):
+        (WebCore::ComplexTextController::reset):
+        (WebCore::ComplexTextController::setBackwardsIteration):
+        (WebCore::ComplexTextController::nextScriptRun):
+        (WebCore::ComplexTextController::widthOfFullRun):
+        (WebCore::ComplexTextController::setupFontForScriptRun):
+        (WebCore::ComplexTextController::allocHarfbuzzFont):
+        (WebCore::ComplexTextController::deleteGlyphArrays):
+        (WebCore::ComplexTextController::createGlyphArrays):
+        (WebCore::ComplexTextController::resetGlyphArrays):
+        (WebCore::ComplexTextController::shapeGlyphs):
+        (WebCore::ComplexTextController::setGlyphXPositions):
+        (WebCore::ComplexTextController::normalizeSpacesAndMirrorChars):
+        (WebCore::ComplexTextController::getNormalizedTextRun):
+        * platform/graphics/chromium/ComplexTextControllerLinux.h: Added.
+        (WebCore::ComplexTextController::setWordSpacingAdjustment):
+        (WebCore::ComplexTextController::setLetterSpacingAdjustment):
+        (WebCore::ComplexTextController::letterSpacing):
+        (WebCore::ComplexTextController::setXOffsetToZero):
+        (WebCore::ComplexTextController::rtl):
+        (WebCore::ComplexTextController::glyphs):
+        (WebCore::ComplexTextController::length):
+        (WebCore::ComplexTextController::xPositions):
+        (WebCore::ComplexTextController::advances):
+        (WebCore::ComplexTextController::width):
+        (WebCore::ComplexTextController::logClusters):
+        (WebCore::ComplexTextController::numCodePoints):
+        (WebCore::ComplexTextController::fontPlatformDataForScriptRun):
+        (WebCore::ComplexTextController::isCodepointSpace):
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::glyphIndexForXPositionInScriptRun):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+
 2011-01-05  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Darin Adler.
