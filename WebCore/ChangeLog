@@ -1,3 +1,32 @@
+2011-01-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fork code of ScrollbarThemeGtk that will differ for GTK+ 3
+        https://bugs.webkit.org/show_bug.cgi?id=51923
+
+        Split out pieces of ScrollbarThemeGtk into ScrollbarThemeGtk2 and
+        ScrollbarThemeGtk3 that will differ between GTK+ 2 and GTK+ 3.
+
+        No new tests. This should not change functionality.
+
+        * GNUmakefile.am: Add ScrollbarThemeGtk2.cpp and ScrollbarThemeGtk3.cpp
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::updateScrollbarsFrameThickness):
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/gtk/ScrollbarThemeGtk2.cpp: Added.
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground):
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeGtk::paintThumb):
+        (WebCore::ScrollbarThemeGtk::paintButton):
+        * platform/gtk/ScrollbarThemeGtk3.cpp: Added.
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground):
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeGtk::paintThumb):
+        (WebCore::ScrollbarThemeGtk::paintButton):
+
 2011-01-05  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

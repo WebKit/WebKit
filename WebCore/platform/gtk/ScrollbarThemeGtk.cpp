@@ -30,9 +30,6 @@
 #include "RenderThemeGtk.h"
 #include "ScrollView.h"
 #include "Scrollbar.h"
-#include "WidgetRenderingContext.h"
-#include "gtkdrawing.h"
-#include <gtk/gtk.h>
 
 namespace WebCore {
 
@@ -72,20 +69,8 @@ void ScrollbarThemeGtk::unregisterScrollbar(Scrollbar* scrollbar)
     }
 }
 
-void ScrollbarThemeGtk::updateThemeProperties()
+void ScrollbarThemeGtk::updateScrollbarsFrameThickness()
 {
-    MozGtkScrollbarMetrics metrics;
-    moz_gtk_get_scrollbar_metrics(&metrics);
-
-    m_thumbFatness = metrics.slider_width;
-    m_troughBorderWidth = metrics.trough_border;
-    m_stepperSize = metrics.stepper_size;
-    m_stepperSpacing = metrics.stepper_spacing;
-    m_minThumbLength = metrics.min_slider_size;
-    m_troughUnderSteppers = metrics.trough_under_steppers;
-    m_hasForwardButtonStartPart = metrics.has_secondary_forward_stepper;
-    m_hasBackButtonEndPart = metrics.has_secondary_backward_stepper;
-
     if (!gScrollbars)
         return;
 
@@ -199,54 +184,6 @@ IntRect ScrollbarThemeGtk::trackRect(Scrollbar* scrollbar, bool)
                    thickness, scrollbar->height() - (2 * movementAxisPadding) - alternateButtonWidth);
 }
 
-void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
-{
-    GtkWidgetState state;
-    state.focused = FALSE;
-    state.isDefault = FALSE;
-    state.canDefault = FALSE;
-    state.disabled = FALSE;
-    state.active = FALSE;
-    state.inHover = FALSE;
-
-    // Paint the track background. If the trough-under-steppers property is true, this
-    // should be the full size of the scrollbar, but if is false, it should only be the
-    // track rect.
-    IntRect fullScrollbarRect = rect;
-    if (m_troughUnderSteppers)
-        fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
-
-    GtkThemeWidgetType type = scrollbar->orientation() == VerticalScrollbar ? MOZ_GTK_SCROLLBAR_TRACK_VERTICAL : MOZ_GTK_SCROLLBAR_TRACK_HORIZONTAL;
-    WidgetRenderingContext widgetContext(context, fullScrollbarRect);
-    widgetContext.paintMozillaWidget(type, &state, 0);
-}
-
-void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
-{
-    // This is unused by the moz_gtk_scrollecd_window_paint.
-    GtkWidgetState state;
-    IntRect fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
-    WidgetRenderingContext widgetContext(context, fullScrollbarRect);
-    widgetContext.paintMozillaWidget(MOZ_GTK_SCROLLED_WINDOW, &state, 0);
-}
-
-void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
-{
-    GtkWidgetState state;
-    state.focused = FALSE;
-    state.isDefault = FALSE;
-    state.canDefault = FALSE;
-    state.disabled = FALSE;
-    state.active = scrollbar->pressedPart() == ThumbPart;
-    state.inHover = scrollbar->hoveredPart() == ThumbPart;
-    state.maxpos = scrollbar->maximum();
-    state.curpos = scrollbar->currentPos();
-
-    GtkThemeWidgetType type = scrollbar->orientation() == VerticalScrollbar ? MOZ_GTK_SCROLLBAR_THUMB_VERTICAL : MOZ_GTK_SCROLLBAR_THUMB_HORIZONTAL;
-    WidgetRenderingContext widgetContext(context, rect);
-    widgetContext.paintMozillaWidget(type, &state, 0);
-}
-
 IntRect ScrollbarThemeGtk::thumbRect(Scrollbar* scrollbar, const IntRect& unconstrainedTrackRect)
 {
     IntRect trackRect = constrainTrackRectToTrackPieces(scrollbar, unconstrainedTrackRect);
@@ -324,40 +261,6 @@ bool ScrollbarThemeGtk::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCon
         paintThumb(graphicsContext, scrollbar, currentThumbRect);
 
     return true;
-}
-
-void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
-{
-    int flags = 0;
-    if (scrollbar->orientation() == VerticalScrollbar)
-        flags |= MOZ_GTK_STEPPER_VERTICAL;
-
-    if (part == ForwardButtonEndPart)
-        flags |= (MOZ_GTK_STEPPER_DOWN | MOZ_GTK_STEPPER_BOTTOM);
-    if (part == ForwardButtonStartPart)
-        flags |= MOZ_GTK_STEPPER_DOWN;
-
-    GtkWidgetState state;
-    state.focused = TRUE;
-    state.isDefault = TRUE;
-    state.canDefault = TRUE;
-    state.depressed = FALSE;
-
-    if ((BackButtonStartPart == part && scrollbar->currentPos())
-        || (BackButtonEndPart == part && scrollbar->currentPos())
-        || (ForwardButtonEndPart == part && scrollbar->currentPos() != scrollbar->maximum())
-        || (ForwardButtonStartPart == part && scrollbar->currentPos() != scrollbar->maximum())) {
-        state.disabled = FALSE;
-        state.active = part == scrollbar->pressedPart();
-        state.inHover = part == scrollbar->hoveredPart();
-    } else {
-        state.disabled = TRUE;
-        state.active = FALSE;
-        state.inHover = FALSE;
-    }
-
-    WidgetRenderingContext widgetContext(context, rect);
-    widgetContext.paintMozillaWidget(MOZ_GTK_SCROLLBAR_BUTTON, &state, flags);
 }
 
 void ScrollbarThemeGtk::paintScrollCorner(ScrollView* view, GraphicsContext* context, const IntRect& cornerRect)

@@ -58,6 +58,7 @@ public:
     virtual double initialAutoscrollTimerDelay() { return 0.20; }
     virtual double autoscrollTimerDelay() { return 0.02; }
     void updateThemeProperties();
+    void updateScrollbarsFrameThickness();
     void registerScrollbar(Scrollbar*);
     void unregisterScrollbar(Scrollbar*);
 
