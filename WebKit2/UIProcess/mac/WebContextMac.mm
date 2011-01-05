@@ -74,6 +74,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
     parameters.nsURLCachePath = cachePath.get();
+    SandboxExtension::createHandle(cachePath.get(), SandboxExtension::ReadWrite, parameters.nsURLCachePathExtensionHandle);
+
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 

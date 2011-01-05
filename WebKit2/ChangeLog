@@ -1,5 +1,33 @@
 2011-01-04  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8821203> Sandbox violations trying to access the Safari cache
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::consumePermanently):
+        New function which consumes a sandbox extension and destroys it, making it impossible
+        to later revoke it.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        Encode and decode the path extension handle.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandle):
+        Standardize the path before creating the handle.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Create a sandbox extension for the cache path.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Consume the sandbox extension.
+
+2011-01-04  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * UIProcess/mac/TextCheckerMac.mm:

@@ -73,6 +73,7 @@ public:
 
     bool invalidate();
     bool consume();
+    bool consumePermanently();
 
 private:
     explicit SandboxExtension(const Handle&);
@@ -92,6 +93,7 @@ inline void SandboxExtension::createHandle(const String& path, Type type, Handle
 inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::invalidate() { return true; }
 inline bool SandboxExtension::consume() { return true; }
+inline void SandboxExtension::consumePermanently() { return true; }
 #endif
 
 } // namespace WebKit

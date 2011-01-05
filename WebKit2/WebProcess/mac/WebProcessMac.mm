@@ -25,6 +25,7 @@
 
 #include "WebProcess.h"
 
+#include "SandboxExtension.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/MemoryCache.h>
 #include <WebCore/PageCache.h>
@@ -110,6 +111,9 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
         CString utf8CachePath = parameters.nsURLCachePath.utf8();
         NSString *nsCachePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:utf8CachePath.data() length:utf8CachePath.length()];
+
+        RefPtr<SandboxExtension> parentProcessURLCacheSandboxExtension = SandboxExtension::create(parameters.nsURLCachePathExtensionHandle);
+        parentProcessURLCacheSandboxExtension->consumePermanently();
 
         RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:nsCachePath]);
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];

@@ -75,6 +75,8 @@ struct WebProcessCreationParameters {
 #if PLATFORM(MAC)
     pid_t presenterApplicationPid;
     String nsURLCachePath;
+    SandboxExtension::Handle nsURLCachePathExtensionHandle;
+
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;
     CoreIPC::MachPort acceleratedCompositingPort;

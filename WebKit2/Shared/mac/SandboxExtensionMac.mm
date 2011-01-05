@@ -110,7 +110,9 @@ static WKSandboxExtensionType wkSandboxExtensionType(SandboxExtension::Type type
 void SandboxExtension::createHandle(const String& path, Type type, Handle& handle)
 {
     ASSERT(!handle.m_sandboxExtension);
-    handle.m_sandboxExtension = WKSandboxExtensionCreate(fileSystemRepresentation(path).data(), wkSandboxExtensionType(type));
+
+    NSString *standardizedPath = [(NSString *)path stringByStandardizingPath];
+    handle.m_sandboxExtension = WKSandboxExtensionCreate([standardizedPath fileSystemRepresentation], wkSandboxExtensionType(type));
 }
 
 SandboxExtension::SandboxExtension(const Handle& handle)
@@ -144,6 +146,19 @@ bool SandboxExtension::consume()
     ASSERT(m_sandboxExtension);
 
     return WKSandboxExtensionConsume(m_sandboxExtension);
+}
+
+bool SandboxExtension::consumePermanently()
+{
+    ASSERT(m_sandboxExtension);
+
+    bool result = WKSandboxExtensionConsume(m_sandboxExtension);
+
+    // Destroy the extension without invalidating it.
+    WKSandboxExtensionDestroy(m_sandboxExtension);
+    m_sandboxExtension = 0;
+
+    return result;
 }
 
 } // namespace WebKit
