@@ -27,7 +27,6 @@
 #include "config.h"
 #include "Gradient.h"
 
-#include "CSSParser.h"
 #include "GraphicsContextCG.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/RetainPtr.h>

@@ -107,7 +107,7 @@ struct GradientStop {
     { }
 };
 
-void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, RenderStyle* rootStyle)
+void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, RenderStyle* rootStyle, float maxLengthForRepeat)
 {
     RenderStyle* style = renderer->style();
     
@@ -224,8 +224,70 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
             }
         }
     }
+
+    // If the gradient is repeating, repeat the color stops.
+    // We can't just push this logic down into the platform-specific Gradient code,
+    // because we have to know the extent of the gradient, and possible move the end points.
+    if (m_repeating && numStops > 1) {
+        float maxExtent = 1;
+
+        // Radial gradients may need to extend further than the endpoints, because they have
+        // to repeat out to the corners of the box.
+        if (isRadialGradient()) {
+            if (!computedGradientLength) {
+                FloatSize gradientSize(gradientStart - gradientEnd);
+                gradientLength = gradientSize.diagonalLength();
+            }
+            
+            if (maxLengthForRepeat > gradientLength)
+                maxExtent = maxLengthForRepeat / gradientLength;
+        }
+
+        size_t originalNumStops = numStops;
+        size_t originalFirstStopIndex = 0;
+
+        // Work backwards from the first, adding stops until we get one before 0.
+        float firstOffset = stops[0].offset;
+        if (firstOffset > 0) {
+            float currOffset = firstOffset;
+            size_t srcStopOrdinal = originalNumStops - 1;
+            
+            while (true) {
+                GradientStop newStop = stops[originalFirstStopIndex + srcStopOrdinal];
+                newStop.offset = currOffset;
+                stops.prepend(newStop);
+                ++originalFirstStopIndex;
+                if (currOffset < 0)
+                    break;
+
+                if (srcStopOrdinal)
+                    currOffset -= stops[originalFirstStopIndex + srcStopOrdinal].offset - stops[originalFirstStopIndex + srcStopOrdinal - 1].offset;
+                srcStopOrdinal = (srcStopOrdinal + originalNumStops - 1) % originalNumStops;
+            }
+        }
+        
+        // Work forwards from the end, adding stops until we get one after 1.
+        float lastOffset = stops[stops.size() - 1].offset;
+        if (lastOffset < maxExtent) {
+            float currOffset = lastOffset;
+            size_t srcStopOrdinal = 0;
+
+            while (true) {
+                GradientStop newStop = stops[srcStopOrdinal];
+                newStop.offset = currOffset;
+                stops.append(newStop);
+                if (currOffset > maxExtent)
+                    break;
+                if (srcStopOrdinal < originalNumStops - 1)
+                    currOffset += stops[originalFirstStopIndex + srcStopOrdinal + 1].offset - stops[originalFirstStopIndex + srcStopOrdinal].offset;
+                srcStopOrdinal = (srcStopOrdinal + 1) % originalNumStops;
+            }
+        }
+    }
     
-    // If the gradient goes outside the 0-1 range, normalize it by moving the endpoints, and ajusting the stops.
+    numStops = stops.size();
+    
+    // If the gradient goes outside the 0-1 range, normalize it by moving the endpoints, and adjusting the stops.
     if (numStops > 1 && (stops[0].offset < 0 || stops[numStops - 1].offset > 1)) {
         if (isLinearGradient()) {
             float firstOffset = stops[0].offset;
@@ -246,7 +308,7 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
             float scale = lastOffset - firstOffset;
 
             // Reset points below 0 to the first visible color.
-            size_t firstZeroOrGreaterIndex = 0;
+            size_t firstZeroOrGreaterIndex = numStops;
             for (size_t i = 0; i < numStops; ++i) {
                 if (stops[i].offset >= 0) {
                     firstZeroOrGreaterIndex = i;
@@ -254,17 +316,23 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
                 }
             }
             
-            if (firstZeroOrGreaterIndex > 0 && stops[firstZeroOrGreaterIndex].offset > 0) {
-                float prevOffset = stops[firstZeroOrGreaterIndex - 1].offset;
-                float nextOffset = stops[firstZeroOrGreaterIndex].offset;
-                
-                float interStopProportion = -prevOffset / (nextOffset - prevOffset);
-                Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, interStopProportion);
+            if (firstZeroOrGreaterIndex > 0) {
+                if (firstZeroOrGreaterIndex < numStops && stops[firstZeroOrGreaterIndex].offset > 0) {
+                    float prevOffset = stops[firstZeroOrGreaterIndex - 1].offset;
+                    float nextOffset = stops[firstZeroOrGreaterIndex].offset;
+                    
+                    float interStopProportion = -prevOffset / (nextOffset - prevOffset);
+                    Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, interStopProportion);
 
-                // Clamp the positions to 0 and set the color.
-                for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i) {
-                    stops[i].offset = 0;
-                    stops[i].color = blendedColor;
+                    // Clamp the positions to 0 and set the color.
+                    for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i) {
+                        stops[i].offset = 0;
+                        stops[i].color = blendedColor;
+                    }
+                } else {
+                    // All stops are below 0; just clamp them.
+                    for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i)
+                        stops[i].offset = 0;
                 }
             }
             
@@ -348,7 +416,7 @@ String CSSLinearGradientValue::cssText() const
                 result += "color-stop(" + String::number(stop.m_position->getDoubleValue(CSSPrimitiveValue::CSS_NUMBER)) + ", " + stop.m_color->cssText() + ")";
         }
     } else {
-        result = "-webkit-linear-gradient(";
+        result = m_repeating ? "-webkit-repeating-linear-gradient(" : "-webkit-linear-gradient(";
         if (m_angle)
             result += m_angle->cssText();
         else {
@@ -458,7 +526,7 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
     RefPtr<Gradient> gradient = Gradient::create(firstPoint, secondPoint);
 
     // Now add the stops.
-    addStops(gradient.get(), renderer, rootStyle);
+    addStops(gradient.get(), renderer, rootStyle, 1);
 
     return gradient.release();
 }
@@ -491,7 +559,7 @@ String CSSRadialGradientValue::cssText() const
         }
     } else {
 
-        result = "-webkit-radial-gradient(";
+        result = m_repeating ? "-webkit-repeating-radial-gradient(" : "-webkit-radial-gradient(";
         if (m_firstX && m_firstY) {
             result += m_firstX->cssText() + " " + m_firstY->cssText();
         } else if (m_firstX)
@@ -745,8 +813,15 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* render
 
     RefPtr<Gradient> gradient = Gradient::create(firstPoint, firstRadius, secondPoint, secondRadius, aspectRatio);
 
+    // addStops() only uses maxExtent for repeating gradients.
+    float maxExtent = 0;
+    if (m_repeating) {
+        FloatPoint corner;
+        maxExtent = distanceToFarthestCorner(secondPoint, size, corner);
+    }
+
     // Now add the stops.
-    addStops(gradient.get(), renderer, rootStyle);
+    addStops(gradient.get(), renderer, rootStyle, maxExtent);
 
     return gradient.release();
 }

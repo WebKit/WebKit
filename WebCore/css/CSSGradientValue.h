@@ -37,6 +37,7 @@ class FloatPoint;
 class Gradient;
 
 enum CSSGradientType { CSSLinearGradient, CSSRadialGradient };
+enum CSSGradientRepeat { NonRepeating, Repeating };
 
 struct CSSGradientColorStop {
     RefPtr<CSSPrimitiveValue> m_position; // percentage or length
@@ -60,17 +61,20 @@ public:
     
     virtual bool isLinearGradient() const { return false; }
     virtual bool isRadialGradient() const { return false; }
+    
+    bool isRepeating() const { return m_repeating; }
 
     bool deprecatedType() const { return m_deprecatedType; } // came from -webkit-gradient
 
 protected:
-    CSSGradientValue(bool deprecatedType = false)
+    CSSGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
         : m_stopsSorted(false)
         , m_deprecatedType(deprecatedType)
+        , m_repeating(repeat == Repeating)
     {
     }
     
-    void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle);
+    void addStops(Gradient*, RenderObject*, RenderStyle* rootStyle, float maxLengthForRepeat = 0);
 
     // Create the gradient for a given size.
     virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&) = 0;
@@ -89,14 +93,15 @@ protected:
     Vector<CSSGradientColorStop> m_stops;
     bool m_stopsSorted;
     bool m_deprecatedType; // -webkit-gradient()
+    bool m_repeating;
 };
 
 
 class CSSLinearGradientValue : public CSSGradientValue {
 public:
-    static PassRefPtr<CSSLinearGradientValue> create(bool deprecatedType = false)
+    static PassRefPtr<CSSLinearGradientValue> create(CSSGradientRepeat repeat, bool deprecatedType = false)
     {
-        return adoptRef(new CSSLinearGradientValue(deprecatedType));
+        return adoptRef(new CSSLinearGradientValue(repeat, deprecatedType));
     }
 
     void setAngle(PassRefPtr<CSSPrimitiveValue> val) { m_angle = val; }
@@ -104,8 +109,8 @@ public:
     virtual String cssText() const;
 
 private:
-    CSSLinearGradientValue(bool deprecatedType = false)
-        : CSSGradientValue(deprecatedType)
+    CSSLinearGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
+        : CSSGradientValue(repeat, deprecatedType)
     {
     }
 
@@ -119,9 +124,9 @@ private:
 
 class CSSRadialGradientValue : public CSSGradientValue {
 public:
-    static PassRefPtr<CSSRadialGradientValue> create(bool deprecatedType = false)
+    static PassRefPtr<CSSRadialGradientValue> create(CSSGradientRepeat repeat, bool deprecatedType = false)
     {
-        return adoptRef(new CSSRadialGradientValue(deprecatedType));
+        return adoptRef(new CSSRadialGradientValue(repeat, deprecatedType));
     }
 
     virtual String cssText() const;
@@ -136,8 +141,8 @@ public:
     void setEndVerticalSize(PassRefPtr<CSSPrimitiveValue> val) { m_endVerticalSize = val; }
 
 private:
-    CSSRadialGradientValue(bool deprecatedType = false)
-        : CSSGradientValue(deprecatedType)
+    CSSRadialGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
+        : CSSGradientValue(repeat, deprecatedType)
     {
     }
 

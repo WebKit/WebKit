@@ -1,3 +1,48 @@
+2011-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Implement repeating CSS3 gradients
+        https://bugs.webkit.org/show_bug.cgi?id=51843
+        
+        Add support for repeating gradients, via the new gradient functions
+        -webkit-repeating-linear-gradient and -webkit-repeating-radial-gradient.
+
+        Tests: fast/gradients/css3-repeating-linear-gradients.html
+               fast/gradients/css3-repeating-radial-gradients.html
+
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientValue::isRepeating): Accessor for whethe the gradient repeats.
+        (WebCore::CSSGradientValue::CSSGradientValue): Pass CSSGradientRepeat in.
+        (WebCore::CSSLinearGradientValue::create): Pass CSSGradientRepeat.
+        (WebCore::CSSLinearGradientValue::CSSLinearGradientValue): Ditto
+        (WebCore::CSSRadialGradientValue::create): Ditto.
+        (WebCore::CSSRadialGradientValue::CSSRadialGradientValue): Ditto.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops): Pass maxLengthForRepeat, which
+        is used for repeating radial gradients. Add code to repeat the stops,
+        adding stops before the start, and after the end until the 0-N range is
+        covered, where N is large enough to ensure the box is covered. Fix an issue
+        with repeating gradients where if both stops were < 0, it would fail to clamp
+        them to 0.
+        
+        (WebCore::CSSLinearGradientValue::cssText): Output strings for repeating gradients.
+        (WebCore::CSSLinearGradientValue::createGradient): maxExtent for linear gradients is 1,
+        because they are guaranteed to fill the box already.
+        (WebCore::CSSRadialGradientValue::cssText): Output strings for repeating gradients.
+        (WebCore::CSSRadialGradientValue::createGradient): Compute the distance to the furthest
+        corner in order to inform addStops() how much additional extent is required.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseDeprecatedGradient): Old gradients never repeat.
+        (WebCore::CSSParser::parseLinearGradient): Pass down CSSGradientRepeat.
+        (WebCore::CSSParser::parseRadialGradient): Ditto.
+        (WebCore::CSSParser::isGeneratedImageValue): Add repeating gradient functions.
+        (WebCore::CSSParser::parseGeneratedImage): Ditto.
+        * css/CSSParser.h: Pass CSSGradientRepeat to gradient functions.
+        * platform/graphics/cg/GradientCG.cpp: Remove unused #include.
+
 2011-01-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ariya Hidayat.

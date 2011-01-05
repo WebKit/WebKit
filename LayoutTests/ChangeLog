@@ -1,3 +1,23 @@
+2011-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Implement repeating CSS3 gradients
+        https://bugs.webkit.org/show_bug.cgi?id=51843
+        
+        Tests for repeating gradient parsing, and repeating linear and radial gradients.
+
+        * fast/gradients/css3-gradient-parsing-expected.txt:
+        * fast/gradients/css3-gradient-parsing.html:
+        * fast/gradients/css3-repeating-linear-gradients-expected.txt: Added.
+        * fast/gradients/css3-repeating-linear-gradients.html: Added.
+        * fast/gradients/css3-repeating-radial-gradients-expected.txt: Added.
+        * fast/gradients/css3-repeating-radial-gradients.html: Added.
+        * platform/mac/fast/gradients/css3-repeating-linear-gradients-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-repeating-linear-gradients-expected.png: Added.
+        * platform/mac/fast/gradients/css3-repeating-radial-gradients-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-repeating-radial-gradients-expected.png: Added.
+
 2011-01-05  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; test expectations fix.

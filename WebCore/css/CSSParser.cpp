@@ -4753,10 +4753,10 @@ bool CSSParser::parseDeprecatedGradient(RefPtr<CSSValue>& gradient)
     RefPtr<CSSGradientValue> result;
     switch (gradientType) {
         case CSSLinearGradient:
-            result = CSSLinearGradientValue::create(true);
+            result = CSSLinearGradientValue::create(NonRepeating, true);
             break;
         case CSSRadialGradient:
-            result = CSSRadialGradientValue::create(true);
+            result = CSSRadialGradientValue::create(NonRepeating, true);
             break;
     }
 
@@ -4890,9 +4890,9 @@ static PassRefPtr<CSSPrimitiveValue> parseGradientColorOrKeyword(CSSParser* p, C
     return p->parseColor(value);
 }
 
-bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient)
+bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
 {
-    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create();
+    RefPtr<CSSLinearGradientValue> result = CSSLinearGradientValue::create(repeating);
     
     // Walk the arguments.
     CSSParserValueList* args = m_valueList->current()->function->args.get();
@@ -4988,9 +4988,9 @@ bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient)
     return true;
 }
 
-bool CSSParser::parseRadialGradient(RefPtr<CSSValue>& gradient)
+bool CSSParser::parseRadialGradient(RefPtr<CSSValue>& gradient, CSSGradientRepeat repeating)
 {
-    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create();
+    RefPtr<CSSRadialGradientValue> result = CSSRadialGradientValue::create(repeating);
     
     // Walk the arguments.
     CSSParserValueList* args = m_valueList->current()->function->args.get();
@@ -5143,7 +5143,9 @@ bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const
 
     return equalIgnoringCase(val->function->name, "-webkit-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-linear-gradient(")
+        || equalIgnoringCase(val->function->name, "-webkit-repeating-linear-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-radial-gradient(")
+        || equalIgnoringCase(val->function->name, "-webkit-repeating-radial-gradient(")
         || equalIgnoringCase(val->function->name, "-webkit-canvas(");
 }
 
@@ -5158,10 +5160,16 @@ bool CSSParser::parseGeneratedImage(RefPtr<CSSValue>& value)
         return parseDeprecatedGradient(value);
 
     if (equalIgnoringCase(val->function->name, "-webkit-linear-gradient("))
-        return parseLinearGradient(value);
+        return parseLinearGradient(value, NonRepeating);
+
+    if (equalIgnoringCase(val->function->name, "-webkit-repeating-linear-gradient("))
+        return parseLinearGradient(value, Repeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-radial-gradient("))
-        return parseRadialGradient(value);
+        return parseRadialGradient(value, NonRepeating);
+
+    if (equalIgnoringCase(val->function->name, "-webkit-repeating-radial-gradient("))
+        return parseRadialGradient(value, Repeating);
 
     if (equalIgnoringCase(val->function->name, "-webkit-canvas("))
         return parseCanvas(value);
