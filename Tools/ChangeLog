@@ -1,3 +1,9 @@
+2011-01-05  James Simonsen  <simonjam@chromium.org>
+
+        Unreviewed. Adding myself to the list of committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-01-05  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.
