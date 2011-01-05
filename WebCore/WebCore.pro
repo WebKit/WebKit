@@ -74,6 +74,8 @@ symbian: {
         QMAKE_CXXFLAGS -= --thumb
     }
     CONFIG(release, debug|release): QMAKE_CXXFLAGS.ARMCC += -OTime -O3
+
+    !CONFIG(production):CONFIG-=def_files
 }
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..

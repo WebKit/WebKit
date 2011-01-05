@@ -1,3 +1,17 @@
+2011-01-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] [Symbian] Make CONFIG-=def_files the default configuration for trunk builds
+        https://bugs.webkit.org/show_bug.cgi?id=51888
+
+        Overrule Qt's default from qconfig.pri for non-production builds so
+        that CONFIG(def_files) evaluates to false and QtWebKit trunk builds succeed.
+
+        No new tests as there is no new functionality.
+
+        * WebCore.pro:
+
 2011-01-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74778.
