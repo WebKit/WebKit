@@ -11,6 +11,7 @@
        (subpath "/Library/Frameworks")
        (subpath "/Library/Keychains")
        (subpath "/private/var/db/mds")
+       (regex #"^/private/etc/(hosts|group|passwd)$")
 
        ;; Plugins
        (subpath "/Library/Internet Plug-Ins")
@@ -78,8 +79,8 @@
        (global-name "com.apple.pasteboard.1")
        (global-name "com.apple.window_proxies")
        (global-name "com.apple.windowserver.active")
-       (global-name-regex #"^com\.apple\.WebKit\.WebProcess-"))
-       (global-name-regex #"^com\.apple\.qtkitserver\.")
+       (global-name-regex #"^com\.apple\.WebKit\.WebProcess-")
+       (global-name-regex #"^com\.apple\.qtkitserver\."))
 
 ;; FIXME: These rules are required until <rdar://problem/8448410> is addressed. See <rdar://problem/8349882> for discussion.
 (allow network-outbound)

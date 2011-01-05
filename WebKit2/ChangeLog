@@ -1,3 +1,13 @@
+2011-01-04  Ivan Krstić  <ike@apple.com>
+
+        Reviewed and landed by Anders Carlsson.
+
+        <rdar://problem/8602585>
+        <rdar://problem/8711641>
+
+        * WebProcess/com.apple.WebProcess.sb:
+        Fix a misplaced right parenthesis and add a new system path regex.
+
 2011-01-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
