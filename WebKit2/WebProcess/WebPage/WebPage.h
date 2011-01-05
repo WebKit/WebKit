@@ -286,6 +286,8 @@ public:
     bool isSpeaking();
     void speak(const String&);
     void stopSpeaking();
+
+    bool isSmartInsertDeleteEnabled() const { return m_isSmartInsertDeleteEnabled; }
 #endif
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
@@ -384,6 +386,8 @@ private:
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();
+
+    void setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled) { m_isSmartInsertDeleteEnabled = isSmartInsertDeleteEnabled; }
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -412,6 +416,9 @@ private:
 #if PLATFORM(MAC)
     // Whether the containing window is visible or not.
     bool m_windowIsVisible;
+
+    // Whether smart insert/delete is enabled or not.
+    bool m_isSmartInsertDeleteEnabled;
 
     // The frame of the containing window in screen coordinates.
     WebCore::IntRect m_windowFrameInScreenCoordinates;

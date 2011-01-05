@@ -70,8 +70,12 @@ bool WebEditorClient::shouldShowDeleteInterface(HTMLElement*)
 
 bool WebEditorClient::smartInsertDeleteEnabled()
 {
-    notImplemented();
+    // FIXME: Why isn't this Mac specific like toggleSmartInsertDeleteEnabled?
+#if PLATFORM(MAC)
+    return m_page->isSmartInsertDeleteEnabled();
+#else
     return true;
+#endif
 }
  
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled()

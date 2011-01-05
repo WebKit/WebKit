@@ -39,6 +39,10 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(drawsTransparentBackground);
     encoder->encode(userAgent);
 
+#if PLATFORM(MAC)
+    encoder->encode(isSmartInsertDeleteEnabled);
+#endif
+
 #if PLATFORM(WIN)
     encoder->encode(reinterpret_cast<uint64_t>(nativeWindow));
 #endif
@@ -60,6 +64,10 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
         return false;
     if (!decoder->decode(parameters.userAgent))
         return false;
+#if PLATFORM(MAC)
+    if (!decoder->decode(parameters.isSmartInsertDeleteEnabled))
+        return false;
+#endif
 
 #if PLATFORM(WIN)
     uint64_t nativeWindow;

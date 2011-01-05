@@ -53,6 +53,9 @@ struct WebPageCreationParameters {
 
     String userAgent;
 
+#if PLATFORM(MAC)
+    bool isSmartInsertDeleteEnabled;
+#endif
 #if PLATFORM(WIN)
     HWND nativeWindow;
 #endif

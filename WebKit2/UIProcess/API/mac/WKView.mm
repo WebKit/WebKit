@@ -387,6 +387,12 @@ static NSToolbarItem *toolbarItem(id <NSValidatedUserInterfaceItem> item)
         return _data->_page->selectionState().isContentEditable;
     }
 
+    if (action == @selector(toggleSmartInsertDelete:)) {
+        bool checked = _data->_page->isSmartInsertDeleteEnabled();
+        [menuItem(item) setState:checked ? NSOnState : NSOffState];
+        return _data->_page->selectionState().isContentEditable;
+    }
+
     if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
         bool checked = TextChecker::state().isAutomaticQuoteSubstitutionEnabled;
         [menuItem(item) setState:checked ? NSOnState : NSOffState];
@@ -534,6 +540,11 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         return;
     }
     [substitutionsPanel orderFront:sender];
+}
+
+- (IBAction)toggleSmartInsertDelete:(id)sender
+{
+    _data->_page->setSmartInsertDeleteEnabled(!_data->_page->isSmartInsertDeleteEnabled());
 }
 
 - (BOOL)isAutomaticQuoteSubstitutionEnabled

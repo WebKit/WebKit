@@ -35,6 +35,7 @@
 static const NSString * const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";
 static const NSString * const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 static const NSString * const WebGrammarCheckingEnabled = @"WebGrammarCheckingEnabled";
+static const NSString * const WebSmartInsertDeleteEnabled = @"WebSmartInsertDeleteEnabled";
 static const NSString * const WebAutomaticQuoteSubstitutionEnabled = @"WebAutomaticQuoteSubstitutionEnabled";
 static const NSString * const WebAutomaticDashSubstitutionEnabled = @"WebAutomaticDashSubstitutionEnabled";
 static const NSString * const WebAutomaticLinkDetectionEnabled = @"WebAutomaticLinkDetectionEnabled";
@@ -166,6 +167,31 @@ void TextChecker::setAutomaticTextReplacementEnabled(bool isAutomaticTextReplace
     [[NSUserDefaults standardUserDefaults] setBool:isAutomaticTextReplacementEnabled forKey:WebAutomaticTextReplacementEnabled];
 
     [[NSSpellChecker sharedSpellChecker] updatePanels];
+}
+
+static bool smartInsertDeleteEnabled;
+    
+bool TextChecker::isSmartInsertDeleteEnabled()
+{
+    static bool readSmartInsertDeleteEnabledDefault;
+
+    if (!readSmartInsertDeleteEnabledDefault) {
+        smartInsertDeleteEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];
+
+        readSmartInsertDeleteEnabledDefault = true;
+    }
+
+    return smartInsertDeleteEnabled;
+}
+
+void TextChecker::setSmartInsertDeleteEnabled(bool flag)
+{
+    if (flag == isSmartInsertDeleteEnabled())
+        return;
+
+    smartInsertDeleteEnabled = flag;
+
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebSmartInsertDeleteEnabled];
 }
 
 int64_t TextChecker::uniqueSpellDocumentTag()

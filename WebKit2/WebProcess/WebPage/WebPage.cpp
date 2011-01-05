@@ -130,6 +130,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_tabToLinks(false)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
+    , m_isSmartInsertDeleteEnabled(parameters.isSmartInsertDeleteEnabled)
 #elif PLATFORM(WIN)
     , m_nativeWindow(parameters.nativeWindow)
 #endif

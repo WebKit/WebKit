@@ -170,7 +170,8 @@ bool WebEditorClient::substitutionsPanelIsShowing()
 
 void WebEditorClient::toggleSmartInsertDelete()
 {
-    notImplemented();
+    // This is handled in the UI process.
+    ASSERT_NOT_REACHED();
 }
 
 bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
@@ -180,7 +181,7 @@ bool WebEditorClient::isAutomaticQuoteSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticQuoteSubstitution()
 {
-    // This should be handled in the UI process.
+    // This is handled in the UI process.
     ASSERT_NOT_REACHED();
 }
 
@@ -191,7 +192,7 @@ bool WebEditorClient::isAutomaticLinkDetectionEnabled()
 
 void WebEditorClient::toggleAutomaticLinkDetection()
 {
-    // This should be handled in the UI process.
+    // This is handled in the UI process.
     ASSERT_NOT_REACHED();
 }
 
@@ -202,7 +203,7 @@ bool WebEditorClient::isAutomaticDashSubstitutionEnabled()
 
 void WebEditorClient::toggleAutomaticDashSubstitution()
 {
-    // This should be handled in the UI process.
+    // This is handled in the UI process.
     ASSERT_NOT_REACHED();
 }
 
@@ -213,7 +214,7 @@ bool WebEditorClient::isAutomaticTextReplacementEnabled()
 
 void WebEditorClient::toggleAutomaticTextReplacement()
 {
-    // This should be handled in the UI process.
+    // This is handled in the UI process.
     ASSERT_NOT_REACHED();
 }
 

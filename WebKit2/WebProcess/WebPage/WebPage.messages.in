@@ -109,6 +109,8 @@ messages -> WebPage {
     UppercaseWord();
     LowercaseWord();
     CapitalizeWord();
+
+    SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled);
 #endif
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)

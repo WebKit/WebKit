@@ -46,6 +46,9 @@ public:
     static void setAutomaticDashSubstitutionEnabled(bool);
     static void setAutomaticLinkDetectionEnabled(bool);
     static void setAutomaticTextReplacementEnabled(bool);
+
+    static bool isSmartInsertDeleteEnabled();
+    static void setSmartInsertDeleteEnabled(bool);
 #endif
 
     static int64_t uniqueSpellDocumentTag();

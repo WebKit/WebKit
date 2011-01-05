@@ -307,6 +307,9 @@ public:
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();
+
+    bool isSmartInsertDeleteEnabled() const { return m_isSmartInsertDeleteEnabled; }
+    void setSmartInsertDeleteEnabled(bool);
 #endif
 
 private:
@@ -548,6 +551,10 @@ private:
     OwnPtr<WebMouseEvent> m_nextMouseMoveEvent;
 
     uint64_t m_pageID;
+
+#if PLATFORM(MAC)
+    bool m_isSmartInsertDeleteEnabled;
+#endif
 
     int64_t m_spellDocumentTag;
     bool m_hasSpellDocumentTag;

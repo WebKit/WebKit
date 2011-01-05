@@ -113,6 +113,9 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
     , m_processingWheelEvent(false)
     , m_processingMouseMoveEvent(false)
     , m_pageID(pageID)
+#if PLATFORM(MAC)
+    , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
+#endif
     , m_spellDocumentTag(0)
     , m_hasSpellDocumentTag(false)
     , m_pendingLearnOrIgnoreWordMessageCount(0)
@@ -1708,6 +1711,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 
 #if PLATFORM(MAC)
+    if (item.action() == ContextMenuItemTagSmartCopyPaste) {
+        setSmartInsertDeleteEnabled(!isSmartInsertDeleteEnabled());
+        return;
+    }
     if (item.action() == ContextMenuItemTagSmartQuotes) {
         TextChecker::setAutomaticQuoteSubstitutionEnabled(!TextChecker::state().isAutomaticQuoteSubstitutionEnabled);
         process()->updateTextCheckerState();
@@ -1796,6 +1803,16 @@ void WebPageProxy::lowercaseWord()
 void WebPageProxy::capitalizeWord()
 {
     process()->send(Messages::WebPage::CapitalizeWord(), m_pageID);
+}
+
+void WebPageProxy::setSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
+{ 
+    if (m_isSmartInsertDeleteEnabled == isSmartInsertDeleteEnabled)
+        return;
+
+    TextChecker::setSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled);
+    m_isSmartInsertDeleteEnabled = isSmartInsertDeleteEnabled;
+    process()->send(Messages::WebPage::SetSmartInsertDeleteEnabled(isSmartInsertDeleteEnabled), m_pageID);
 }
 #endif
 
@@ -2077,6 +2094,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) 
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
     parameters.userAgent = userAgent();
+
+#if PLATFORM(MAC)
+    parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;
+#endif
 
 #if PLATFORM(WIN)
     parameters.nativeWindow = m_pageClient->nativeWindow();

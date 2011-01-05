@@ -1,5 +1,70 @@
 2011-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Handle smart insert/delete
+        https://bugs.webkit.org/show_bug.cgi?id=51946
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        Add isSmartInsertDelete enabled.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        Handle toggleSmartInsertDelete:.
+
+        (-[WKView toggleSmartInsertDelete:]):
+        Toggle the smart insert/delete state.
+
+        * UIProcess/TextChecker.h:
+        Add isSmartInsertDeleteEnabled and setSmartInsertDeleteEnabled.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize m_isSmartInsertDeleteEnabled.
+
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        Handle ContextMenuItemTagSmartCopyPaste.
+
+        (WebKit::WebPageProxy::setSmartInsertDeleteEnabled):
+        Update the state and send a SetSmartInsertDeleteEnabled message.
+
+        (WebKit::WebPageProxy::creationParameters):
+        Initialize isSmartInsertDeleteEnabled.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isSmartInsertDeleteEnabled):
+        Return m_isSmartInsertDeleteEnabled.
+
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::isSmartInsertDeleteEnabled):
+        (WebKit::TextChecker::setSmartInsertDeleteEnabled):
+        Store and fetch the smart insert delete state.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::smartInsertDeleteEnabled):
+        Call WebPage::isSmartInsertDeleteEnabled.
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::toggleSmartInsertDelete):
+        Assert that this is never called.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Initialize m_isSmartInsertDeleteEnabled
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::isSmartInsertDeleteEnabled):
+        (WebKit::WebPage::setSmartInsertDeleteEnabled):
+        Add getter and setter.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add SetSmartInsertDeleteEnabled message.
+
+2011-01-05  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
         
         * WebProcess/WebPage/WebPage.cpp:
