@@ -239,22 +239,6 @@ ENDIF ()
 INCLUDE_IF_EXISTS(${JAVASCRIPTCORE_DIR}/CMakeLists${PORT}.txt)
 
 
-# Declare source groups for Visual Studio folders
-SOURCE_GROUP(API "API/")
-SOURCE_GROUP(assembler "assembler/")
-SOURCE_GROUP(bytecode "bytecode/")
-SOURCE_GROUP(bytecompiler "bytecompiler/")
-SOURCE_GROUP(debugger "debugger/")
-SOURCE_GROUP(bytecode "bytecode/")
-SOURCE_GROUP(interpreter "interpreter/")
-SOURCE_GROUP(jit "jit/")
-SOURCE_GROUP(parser "parser/")
-SOURCE_GROUP(pcre "pcre/")
-SOURCE_GROUP(profiler "profiler/")
-SOURCE_GROUP(runtime "runtime/")
-SOURCE_GROUP(yarr "yarr/")
-SOURCE_GROUP(wtf "wtf/")
-
 ADD_SUBDIRECTORY(wtf)
 ADD_SUBDIRECTORY(shell)
 
