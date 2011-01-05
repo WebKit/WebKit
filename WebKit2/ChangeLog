@@ -1,5 +1,11 @@
 2011-01-05  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+
+2011-01-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adele Peterson.
 
         Implement word transformation

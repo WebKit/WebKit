@@ -1286,6 +1286,7 @@ void WebPage::unmarkAllBadGrammar()
     }
 }
 
+#if PLATFORM(MAC)
 void WebPage::uppercaseWord()
 {
     m_page->focusController()->focusedOrMainFrame()->editor()->uppercaseWord();
@@ -1300,6 +1301,7 @@ void WebPage::capitalizeWord()
 {
     m_page->focusController()->focusedOrMainFrame()->editor()->capitalizeWord();
 }
+#endif
     
 void WebPage::setTextForActivePopupMenu(int32_t index)
 {
