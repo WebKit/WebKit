@@ -1,3 +1,12 @@
+2011-01-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update
+
+        - slow-loading-image-in-pattern.html had a wrong expectation for Chromium-win.
+        - insecure-css-in-main-frame.html is flaky on Chromium-win?
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-04  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

@@ -2864,6 +2864,8 @@ BUG_DRT MAC : fast/css/input-search-padding.html = IMAGE
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
+// The background color of Apple Mac results also look wrong.
+BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 
 // Extra didFinishDocumentLoadForFrame line.
 // The first didFinishDocumentLoadForFrame line is for the previous test document.
@@ -2938,7 +2940,6 @@ BUG_DRT LINUX : fast/text/backslash-to-yen-sign.html = IMAGE
 BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS CRASH
-BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUGCR8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
 BUG_DRT MAC : media/video-poster.html = TEXT PASS
@@ -3051,8 +3052,8 @@ BUGWK51731 : storage/indexeddb/objectstore-basics.html = PASS TEXT
 
 BUGCR68436 LINUX MAC DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TIMEOUT
 BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-doctype.html = PASS TEXT TIMEOUT
-
 BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS TIMEOUT CRASH
+BUGCR68599 WIN : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
 
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
