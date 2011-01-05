@@ -1,3 +1,12 @@
+2011-01-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Remove entries from WebKit2 skipped list that no longer exist
+        https://bugs.webkit.org/show_bug.cgi?id=51936
+
+        * platform/mac-wk2/Skipped:
+
 2011-01-05  Brian Weinstein  <bweinstein@apple.com>
 
         Land failing Windows results after r75031. Fixing the tests is being tracked by

@@ -99,7 +99,6 @@ editing/selection/4895428-3.html
 editing/selection/4895428-4.html
 editing/selection/5057506-2.html
 editing/selection/5057506.html
-editing/selection/5109817.html
 editing/selection/5131716-1.html
 editing/selection/5131716-2.html
 editing/selection/5131716-3.html
@@ -992,7 +991,6 @@ fast/canvas/webgl/buffer-data-array-buffer.html
 fast/canvas/webgl/canvas-test.html
 fast/canvas/webgl/constants.html
 fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
-fast/canvas/webgl/context-attributes.html
 fast/canvas/webgl/copy-tex-image-and-sub-image-2d.html
 fast/canvas/webgl/css-webkit-canvas-repaint.html
 fast/canvas/webgl/css-webkit-canvas.html
@@ -1419,8 +1417,6 @@ http/tests/loading/state-object-security-exception.html
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/ime-composition-clearpreedit.html
-editing/spelling/spelling-contenteditable.html
-editing/spelling/spelling-textarea.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
@@ -1682,7 +1678,6 @@ http/tests/security/local-user-CSS-from-remote.html
 
 # WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42679> 
-platform/mac/fast/loader/user-stylesheet-fast-path.html
 
 # WebKitTestRunner needs layoutTestController.setPOSIXLocale
 # <https://bugs.webkit.org/show_bug.cgi?id=42682>
@@ -1766,7 +1761,6 @@ security/set-form-autocomplete-attribute.html
 
 # WebKitTestRunner needs layoutTestController.setPrivateBrowsingEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42697>
-storage/private-browsing-readonly.html
 storage/domstorage/localstorage/private-browsing-affects-storage.html
 storage/domstorage/sessionstorage/private-browsing-affects-storage.html
 
