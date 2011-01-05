@@ -1,3 +1,14 @@
+2011-01-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Build fix for GTK+ 3.x. Remove the call to gtk_range_set_update_policy.
+        GTK+ 3.x has removed this method and the default in GTK+ 2.x is continuous,
+        so this call is unnecessary.
+
+        * WebCoreSupport/FullscreenVideoController.cpp:
+        (FullscreenVideoController::createHud): Remove call to gtk_range_set_update_policy().
+
 2011-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Martin Robinson.

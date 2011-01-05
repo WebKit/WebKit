@@ -545,7 +545,6 @@ void FullscreenVideoController::createHud()
     m_timeHScale = gtk_hscale_new(adjustment);
     gtk_scale_set_draw_value(GTK_SCALE(m_timeHScale), FALSE);
     gtk_range_set_show_fill_level(GTK_RANGE(m_timeHScale), TRUE);
-    gtk_range_set_update_policy(GTK_RANGE(m_timeHScale), GTK_UPDATE_CONTINUOUS);
     g_signal_connect(m_timeHScale, "button-press-event", G_CALLBACK(timeScaleButtonPressed), this);
     g_signal_connect(m_timeHScale, "button-release-event", G_CALLBACK(timeScaleButtonReleased), this);
     m_hscaleUpdateId = g_signal_connect(m_timeHScale, "value-changed", G_CALLBACK(timeScaleValueChanged), this);
