@@ -28,6 +28,10 @@
 #include "TextCheckerState.h"
 #include <wtf/RetainPtr.h>
 
+#ifndef BUILDING_ON_SNOW_LEOPARD
+#import <AppKit/NSTextChecker.h>
+#endif
+
 static const NSString * const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";
 static const NSString * const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 static const NSString * const WebGrammarCheckingEnabled = @"WebGrammarCheckingEnabled";
@@ -221,10 +225,10 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (context.length()) {
-        [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:0 inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:&orthography wordCount:0];
+        [checker checkString:context range:NSMakeRange(0, context.length()) types:NSTextCheckingTypeOrthography options:0 inSpellDocumentWithTag:spellDocumentTag orthography:&orthography wordCount:0];
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
     }
-    NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellCheckerDocumentTag()];
+    NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellDocumentTag];
 #else
     NSArray* stringsArray = [[NSSpellChecker sharedSpellChecker] guessesForWord:word];
 #endif
