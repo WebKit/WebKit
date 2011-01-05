@@ -1,3 +1,15 @@
+2011-01-05  Kundu Suchismita  <suchi.kundu@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt]Add local storage settings to QtTestBrowser command line arguments 
+        https://bugs.webkit.org/show_bug.cgi?id=51750
+
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::handleUserOptions):
+         Local storage settings can be enable form command line arguments for
+         QtTestBrowser.
+
 2011-01-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Martin Robinson.

@@ -126,6 +126,10 @@ void LauncherApplication::handleUserOptions()
              << "[-inspector-url location]"
              << "[-tiled-backing-store]"
              << "[-resizes-to-contents]"
+             << "[-local-storage-enabled]"
+             << "[-offline-storage-database-enabled]"
+             << "[-offline-web-application-cache-enabled]"
+             << "[-set-offline-storage-default-quota maxSize]"
              << "URLs";
         appQuit(0);
     }
@@ -158,7 +162,22 @@ void LauncherApplication::handleUserOptions()
         requiresGraphicsView("-resizes-to-contents");
         windowOptions.resizesToContents = true;
     }
-
+    
+    if (args.contains("-local-storage-enabled"))
+        QWebSettings::globalSettings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
+        
+    if (args.contains("-offline-storage-database-enabled"))
+        QWebSettings::globalSettings()->setAttribute(QWebSettings::OfflineStorageDatabaseEnabled, true);
+        
+    if (args.contains("-offline-web-application-cache-enabled"))   
+        QWebSettings::globalSettings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, true);
+    
+    int setOfflineStorageDefaultQuotaIndex = args.indexOf("-set-offline-storage-default-quota");
+    if (setOfflineStorageDefaultQuotaIndex != -1) {
+        int maxSize = takeOptionValue(&args, setOfflineStorageDefaultQuotaIndex).toInt();
+        QWebSettings::globalSettings()->setOfflineStorageDefaultQuota(maxSize);
+    }   
+    
     if (defaultForAnimations)
         windowOptions.viewportUpdateMode = QGraphicsView::BoundingRectViewportUpdate;
 
