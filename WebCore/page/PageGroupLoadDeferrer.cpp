@@ -22,6 +22,7 @@
 #include "PageGroupLoadDeferrer.h"
 
 #include "AsyncScriptRunner.h"
+#include "DocumentParser.h"
 #include "Frame.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -49,6 +50,8 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
                 for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
                     frame->document()->suspendActiveDOMObjects(ActiveDOMObject::WillShowDialog);
                     frame->document()->asyncScriptRunner()->suspend();
+                    if (DocumentParser* parser = frame->document()->parser())
+                        parser->suspendScheduledTasks();
                 }
             }
         }
@@ -69,6 +72,8 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
             for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
                 frame->document()->resumeActiveDOMObjects();
                 frame->document()->asyncScriptRunner()->resume();
+                if (DocumentParser* parser = frame->document()->parser())
+                    parser->resumeScheduledTasks();
             }
         }
     }

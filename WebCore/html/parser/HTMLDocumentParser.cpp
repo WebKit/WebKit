@@ -520,4 +520,16 @@ bool HTMLDocumentParser::usePreHTML5ParserQuirks(Document* document)
     return document->settings() && document->settings()->usePreHTML5ParserQuirks();
 }
 
+void HTMLDocumentParser::suspendScheduledTasks()
+{
+    if (m_parserScheduler)
+        m_parserScheduler->suspend();
+}
+
+void HTMLDocumentParser::resumeScheduledTasks()
+{
+    if (m_parserScheduler)
+        m_parserScheduler->resume();
+}
+
 }

@@ -68,5 +68,13 @@ void DocumentParser::detach()
     m_document = 0;
 }
 
+void DocumentParser::suspendScheduledTasks()
+{
+}
+
+void DocumentParser::resumeScheduledTasks()
+{
+}
+
 };
 
