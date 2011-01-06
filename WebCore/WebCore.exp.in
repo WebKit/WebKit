@@ -1654,7 +1654,7 @@ __ZN7WebCore23ApplicationCacheStorage5emptyEv
 __ZNK7WebCore23ApplicationCacheStorage11maximumSizeEv
 #endif
 
-#if defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 __ZN7WebCore6Editor13lowercaseWordEv
 __ZN7WebCore6Editor13uppercaseWordEv
 __ZN7WebCore6Editor14capitalizeWordEv
