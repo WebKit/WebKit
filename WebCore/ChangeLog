@@ -1,3 +1,15 @@
+2011-01-06  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Web Timing] Remove vendor prefix
+        https://bugs.webkit.org/show_bug.cgi?id=48922
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::performance): Rename to performance.
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl: Rename to performance and make replaceable.
+
 2011-01-06  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

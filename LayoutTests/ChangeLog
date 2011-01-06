@@ -1,3 +1,21 @@
+2011-01-06  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Web Timing] Remove vendor prefix
+        https://bugs.webkit.org/show_bug.cgi?id=48922
+
+        * fast/dom/Window/window-properties-performance-expected.txt: Test replaceability.
+        * fast/dom/Window/window-properties-performance.html: Ditto.
+        * fast/dom/Window/window-properties.html: Rename to performance.
+        * fast/dom/resources/navigation-type-matches-querystring.html: Ditto.
+        * fast/dom/script-tests/prototype-inheritance.js: Ditto.
+        * fast/dom/script-tests/webtiming-document-open.js: Ditto.
+        * fast/dom/script-tests/webtiming-navigate-within-document.js: Ditto.
+        * fast/dom/script-tests/webtiming.js: Ditto.
+        * http/tests/misc/resources/webtiming-one-redirect.html: Ditto.
+        * http/tests/misc/resources/webtiming-two-redirects.html: Ditto.
+
 2011-01-06  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

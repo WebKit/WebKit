@@ -713,7 +713,7 @@ WebPerformance WebFrameImpl::performance() const
     if (!m_frame || !m_frame->domWindow())
         return WebPerformance();
 
-    return WebPerformance(m_frame->domWindow()->webkitPerformance());
+    return WebPerformance(m_frame->domWindow()->performance());
 }
 
 WebSecurityOrigin WebFrameImpl::securityOrigin() const

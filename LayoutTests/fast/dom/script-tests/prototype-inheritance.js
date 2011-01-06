@@ -14,7 +14,7 @@ var skippedProperties = [
     "appleScriptController", "plainText", "accessibilityController",
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
     "webkitNotifications",
-    "webkitPerformance",
+    "performance",
     "WebGLRenderingContext", "WebGLActiveInfo", "WebGLBuffer", "WebGLFramebuffer", "WebGLProgram", "WebGLRenderbuffer", "WebGLShader", "WebGLTexture", "WebGLUniformLocation",
     "ArrayBuffer",
     "DataView", "Int8Array", "Uint8Array", "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array",

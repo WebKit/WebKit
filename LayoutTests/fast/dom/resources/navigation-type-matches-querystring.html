@@ -12,7 +12,7 @@
 
     description("This tests that performance.navigation.type is " + expectedType);
 
-    var performance = window.webkitPerformance || {};
+    var performance = window.performance || {};
     var navigation = performance.navigation || {};
     shouldBe("navigation.type", stringify(expectedType));
 

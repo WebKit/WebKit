@@ -12,7 +12,7 @@
 <script>
 description("This test checks that Web Timing reports sslHandshakeStart correctly and has reasonable values for connectStart and connectEnd. Note that DumpRenderTree doesn't set sslHandshakeStart.");
 
-var performance = window.webkitPerformance || {};
+var performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 

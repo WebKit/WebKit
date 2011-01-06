@@ -10,7 +10,7 @@
 <script>
 description("Web Timing should zero out redirect stats after a cross-origin redirect.");
 
-var performance = window.webkitPerformance || {};
+var performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 

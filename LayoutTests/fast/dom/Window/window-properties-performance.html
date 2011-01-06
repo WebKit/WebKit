@@ -1,4 +1,4 @@
-<p>This test dumps all of the properties that are reachable from the window.webkitPerformance object, along with their types.</p>
+<p>This test dumps all of the properties that are reachable from the window.performance object, along with their types.</p>
 <hr>
 <pre id="pre"></pre>
 
@@ -88,6 +88,12 @@ function logProperties(object, objectName)
     }
 }
 
-logValue('window.webkitPerformance');
+logValue('window.performance');
+window.performance.timing = 'timing is not replaceable';
+logValue('window.performance.timing');
+window.performance.navigation = 'navigation is not replaceable';
+logValue('window.performance.navigation');
+window.performance = 'performance is replaceable';
+logValue('window.performance');
 flushLog();
 </script>

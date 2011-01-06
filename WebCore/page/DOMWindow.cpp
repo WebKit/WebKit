@@ -592,7 +592,7 @@ Navigator* DOMWindow::navigator() const
 }
 
 #if ENABLE(WEB_TIMING)
-Performance* DOMWindow::webkitPerformance() const
+Performance* DOMWindow::performance() const
 {
     if (!m_performance)
         m_performance = Performance::create(m_frame);

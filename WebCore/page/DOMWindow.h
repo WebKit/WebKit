@@ -409,8 +409,8 @@ namespace WebCore {
 #endif
 
 #if ENABLE(WEB_TIMING)
-        Performance* webkitPerformance() const;
-        Performance* optionalWebkitPerformance() const { return m_performance.get(); }
+        Performance* performance() const;
+        Performance* optionalPerformance() const { return m_performance.get(); }
 #endif
 
     private:
