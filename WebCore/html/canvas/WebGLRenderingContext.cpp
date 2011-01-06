@@ -3336,6 +3336,17 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, 
     UNUSED_PARAM(ec);
     if (isContextLost())
         return;
+    switch (type) {
+    case GraphicsContext3D::BYTE:
+    case GraphicsContext3D::UNSIGNED_BYTE:
+    case GraphicsContext3D::SHORT:
+    case GraphicsContext3D::UNSIGNED_SHORT:
+    case GraphicsContext3D::FLOAT:
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return;
+    }
     if (index >= m_maxVertexAttribs) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
@@ -3349,23 +3360,22 @@ void WebGLRenderingContext::vertexAttribPointer(unsigned long index, long size, 
         return;
     }
     // Determine the number of elements the bound buffer can hold, given the offset, size, type and stride
-    long bytesPerElement = size * sizeInBytes(type);
-    if (bytesPerElement <= 0) {
+    long typeSize = sizeInBytes(type);
+    if (typeSize <= 0) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }
+    if ((stride % typeSize) || (offset % typeSize)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
+    long bytesPerElement = size * typeSize;
 
     if (index >= m_vertexAttribState.size())
         m_vertexAttribState.resize(index + 1);
 
-    long validatedStride = bytesPerElement;
-    if (stride) {
-        if ((long) stride < bytesPerElement) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-            return;
-        }
-        validatedStride = stride;
-    }
+    long validatedStride = stride ? stride : bytesPerElement;
+
     m_vertexAttribState[index].bufferBinding = m_boundArrayBuffer;
     m_vertexAttribState[index].bytesPerElement = bytesPerElement;
     m_vertexAttribState[index].size = size;
