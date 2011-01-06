@@ -663,8 +663,8 @@ AC_MSG_RESULT([$enable_web_timing])
 AC_MSG_CHECKING([whether to enable Blob support])
 AC_ARG_ENABLE(blob,
               AC_HELP_STRING([--enable-blob],
-                             [enable support for Blob [default=no]]),
-              [],[enable_blob="no"])
+                             [enable support for Blob [default=yes]]),
+              [],[enable_blob="yes"])
 AC_MSG_RESULT([$enable_blob])
 
 # check whether to enable Fast Mobile Scrolling support
