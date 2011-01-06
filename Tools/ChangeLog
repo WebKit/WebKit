@@ -1,3 +1,20 @@
+2011-01-06  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [gdb] handle inaccessible memory and UChar*
+        https://bugs.webkit.org/show_bug.cgi?id=52003
+
+        To pretty-print a UChar*, we just grope around in the memory
+        looking for a terminating NUL.  We need to handle the exception
+        that can occur when we poke into an invalid location.
+
+        Additionally, the logic for choosing which pretty-printer would
+        early return before hitting the point where we'd use the UChar*
+        printer.  (Did this ever work?  How did it regress?)
+
+        * gdb/webkit.py:
+
 2011-01-05  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Ada Chan.

@@ -49,12 +49,18 @@ def ustring_to_string(ptr, length=None):
     if length is None:
         # Try to guess at the length.
         for i in xrange(0, 2048):
-            if int((ptr + i).dereference()) == 0:
+            try:
+                if int((ptr + i).dereference()) == 0:
+                    length = i
+                    break
+            except RuntimeError:
+                # We indexed into inaccessible memory; give up.
                 length = i
+                extra = u' (gdb hit inaccessible memory)'
                 break
         if length is None:
             length = 256
-            extra = u' (no trailing NUL found)'
+            extra = u' (gdb found no trailing NUL)'
     else:
         length = int(length)
 
@@ -229,15 +235,15 @@ class WTFVectorPrinter:
         return 'array'
 
 def add_pretty_printers():
-    pretty_printers_dict = {
-        re.compile("^WTF::Vector<.*>$"): WTFVectorPrinter,
-        re.compile("^WTF::AtomicString$"): WTFAtomicStringPrinter,
-        re.compile("^WTF::String$"): WTFStringPrinter,
-        re.compile("^WebCore::QualifiedName$"): WebCoreQualifiedNamePrinter,
-        re.compile("^JSC::UString$"): JSCUStringPrinter,
-        re.compile("^JSC::Identifier$"): JSCIdentifierPrinter,
-        re.compile("^JSC::JSString$"): JSCJSStringPrinter,
-    }
+    pretty_printers = (
+        (re.compile("^WTF::Vector<.*>$"), WTFVectorPrinter),
+        (re.compile("^WTF::AtomicString$"), WTFAtomicStringPrinter),
+        (re.compile("^WTF::String$"), WTFStringPrinter),
+        (re.compile("^WebCore::QualifiedName$"), WebCoreQualifiedNamePrinter),
+        (re.compile("^JSC::UString$"), JSCUStringPrinter),
+        (re.compile("^JSC::Identifier$"), JSCIdentifierPrinter),
+        (re.compile("^JSC::JSString$"), JSCJSStringPrinter),
+    )
 
     def lookup_function(val):
         """Function used to load pretty printers; will be passed to GDB."""
@@ -245,12 +251,11 @@ def add_pretty_printers():
         if type.code == gdb.TYPE_CODE_REF:
             type = type.target()
         type = type.unqualified().strip_typedefs()
-        typename = type.tag
-        if not typename:
-            return None
-        for function, pretty_printer in pretty_printers_dict.items():
-            if function.search(typename):
-                return pretty_printer(val)
+        tag = type.tag
+        if tag:
+            for function, pretty_printer in pretty_printers:
+                if function.search(tag):
+                    return pretty_printer(val)
 
         if type.code == gdb.TYPE_CODE_PTR:
             name = str(type.target().unqualified())
