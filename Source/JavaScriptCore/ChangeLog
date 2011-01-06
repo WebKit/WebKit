@@ -1,5 +1,11 @@
 2011-01-05  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops: Revert change to additional library search path needed to find ICU.
+
+2011-01-05  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Darin Adler.
 
         Debug and Release builds on Windows clobber each other
