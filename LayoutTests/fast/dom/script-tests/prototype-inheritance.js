@@ -66,6 +66,9 @@ for (var x = 0; x < windowProperites.length; x++) {
     // Skip enumerable properties which default to null (like on* listeners)
     if (value === null)
         continue;
+    // Ignore primitive types like numbers because their prototype rules are different.
+    if (typeof value !== "object" && typeof value !== "function")
+        continue;
     shouldBeTrue("inner." + property + ".isInner");
     shouldBeTrue("inner." + property + ".constructor.isInner");
 }

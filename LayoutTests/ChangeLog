@@ -1,3 +1,22 @@
+2011-01-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        prototype-inheritance prints FAIL when it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=52007
+
+        Before this patch, we were testing the prototypes of primitive values,
+        but the rules for primitive values are different than the rules for
+        objects.  Primitive values get their prototypes from the current
+        lexical scope when they get boxed.  This test is designed to test that
+        objects get their prototypes from their original holder.
+
+        In this patch, we skip testing non-object/non-functions.  We can add
+        another test for primitives if we think that would be valuable.
+
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/dom/script-tests/prototype-inheritance.js:
+
 2011-01-06  James Robinson  <jamesr@chromium.org>
 
         Update expectations for tests that enumerate properties on the window to reflect newly added property.
