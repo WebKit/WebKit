@@ -141,7 +141,7 @@ contains(MOBILITY_CONFIG, sensors) {
     }
 }
 
-DEFINES += ENABLE_TOUCH_EVENTS=1
+!contains(DEFINES, ENABLE_TOUCH_EVENTS=.): DEFINES += ENABLE_TOUCH_EVENTS=1
 
 # HTML5 Media Support
 # We require QtMultimedia or Phonon
