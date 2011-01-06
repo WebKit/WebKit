@@ -1,3 +1,32 @@
+2011-01-06  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Introduce QDRTNode for passing WebCore::Node across JS bridge
+
+        This allows LayoutTestController to pass WebCore::Node back to
+        layout tests.
+
+        Also amend nodesFromRect-links-and-text.html and
+        nodesFromRect-inner-documents.html so that they do not produce
+        platform-specific results.
+
+        Unskip:
+        fast/dom/nodesFromRect-links-and-text.html
+        fast/dom/nodesFromRect-inner-documents.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=48957
+
+        * fast/dom/nodesFromRect-inner-documents-expected.txt:
+        * fast/dom/nodesFromRect-inner-documents.html:
+        * fast/dom/nodesFromRect-links-and-text-expected.txt:
+        * fast/dom/nodesFromRect-links-and-text.html:
+        * fast/dom/resources/nodesFromRect.js:
+        (check):
+        (getTopFor):
+        (getBottomFor):
+        * platform/qt/Skipped:
+
 2011-01-06  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; test expectations update.

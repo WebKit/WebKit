@@ -34,16 +34,25 @@ function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list,
     }
   }
 
-  testPassed("All correct nodes found for rect "  +
-             "[" + x + "," + y + "], " +
-             "[" + topPadding + "," + rightPadding +
-             "," + bottomPadding + "," + leftPadding + "]");
+  testPassed("All correct nodes found for rect");
 }
 
 function getCenterFor(element)
 {
   var rect = element.getBoundingClientRect();
   return { x : parseInt((rect.left + rect.right) / 2) , y : parseInt((rect.top + rect.bottom) / 2)};
+}
+
+function getTopFor(element)
+{
+  var rect = element.getBoundingClientRect();
+  return { x : parseInt((rect.left + rect.right) / 2) , y : parseInt(rect.top)};
+}
+
+function getBottomFor(element)
+{
+  var rect = element.getBoundingClientRect();
+  return { x : parseInt((rect.left + rect.right) / 2) , y : parseInt(rect.bottom)};
 }
 
 var successfullyParsed = true;

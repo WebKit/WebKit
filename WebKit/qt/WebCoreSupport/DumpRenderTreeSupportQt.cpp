@@ -82,6 +82,27 @@ using namespace WebCore;
 
 QMap<int, QWebScriptWorld*> m_worldMap;
 
+QDRTNode::QDRTNode()
+    : m_node(0)
+{
+}
+
+QDRTNode::QDRTNode(WebCore::Node* node)
+    : m_node(0)
+{
+    if (node) {
+        m_node = node;
+        m_node->ref();
+    }
+}
+
+QDRTNode::~QDRTNode()
+{
+    if (m_node)
+        m_node->deref();
+}
+
+
 DumpRenderTreeSupportQt::DumpRenderTreeSupportQt()
 {
 }
@@ -854,7 +875,10 @@ QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document,
     for (int i = 0; i < nodes->length(); i++) {
         QVariant v;
         // QWebElement will be null if the Node is not an HTML Element
-        v.setValue(QWebElement(nodes->item(i)));
+        if (nodes->item(i)->isHTMLElement())
+            v.setValue(QWebElement(nodes->item(i)));
+        else
+            v.setValue(QDRTNode(nodes->item(i)));
         res << v;
     }
     return res;

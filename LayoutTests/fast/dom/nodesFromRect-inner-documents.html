@@ -38,9 +38,11 @@
       var p = innerDocument.getElementsByTagName('p')[0];
       var body = innerDocument.getElementsByTagName('body')[0];
       var divCenter = getCenterFor(div);
+      var divBottom = getBottomFor(div);
+      var pCenter = getCenterFor(p);
       check(divCenter.x, divCenter.y, 0, 0, 0, 0, [div], innerDocument);
-      check(divCenter.x, divCenter.y, 0, 0, 10, 0, [div, body], innerDocument);
-      check(divCenter.x, divCenter.y, 0, 0, 25, 0, [p, div, body], innerDocument);
+      check(divCenter.x, divCenter.y, 0, 0, divBottom.y - divCenter.y, 0, [div, body], innerDocument);
+      check(divCenter.x, divCenter.y, 0, 0, pCenter.y - divCenter.y, 0, [p, div, body], innerDocument);
 
       if (window.layoutTestController)
         layoutTestController.notifyDone();

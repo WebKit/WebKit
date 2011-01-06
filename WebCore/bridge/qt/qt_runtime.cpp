@@ -24,6 +24,7 @@
 #include "DateInstance.h"
 #include "DateMath.h"
 #include "DatePrototype.h"
+#include "DumpRenderTreeSupportQt.h"
 #include "FunctionPrototype.h"
 #include "Interpreter.h"
 #include "JSArray.h"
@@ -130,6 +131,22 @@ public:
     static Element* get(const QWebElement& element)
     {
         return element.m_element;
+    }
+};
+
+// this is here as a proxy, so we'd have a class to friend in QDRTNode,
+// as getting/setting a WebCore in QDRTNode is private.
+// We only need to pass WebCore Nodes for layout tests.
+class QtDRTNodeRuntime {
+public:
+    static QDRTNode create(Node* node)
+    {
+        return QDRTNode(node);
+    }
+
+    static Node* get(const QDRTNode& node)
+    {
+        return node.m_node;
     }
 };
 
@@ -752,6 +769,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                     ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSDocument*>(object))->impl()->documentElement()));
                 else
                     ret = QVariant::fromValue<QWebElement>(QWebElement());
+            } else if (hint == (QMetaType::Type) qMetaTypeId<QDRTNode>()) {
+                if (object && object->inherits(&JSNode::s_info))
+                    ret = QVariant::fromValue<QDRTNode>(QtDRTNodeRuntime::create((static_cast<JSNode*>(object))->impl()));
             } else if (hint == (QMetaType::Type) qMetaTypeId<QVariant>()) {
                 if (value.isUndefinedOrNull()) {
                     if (distance)
@@ -896,6 +916,17 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
             return jsUndefined();
 
         return toJS(exec, toJSDOMGlobalObject(document, exec), QtWebElementRuntime::get(variant.value<QWebElement>()));
+    }
+
+    if (type == qMetaTypeId<QDRTNode>()) {
+        if (!root->globalObject()->inherits(&JSDOMWindow::s_info))
+            return jsUndefined();
+
+        Document* document = (static_cast<JSDOMWindow*>(root->globalObject()))->impl()->document();
+        if (!document)
+            return jsUndefined();
+
+        return toJS(exec, toJSDOMGlobalObject(document, exec), QtDRTNodeRuntime::get(variant.value<QDRTNode>()));
     }
 
     if (type == QMetaType::QVariantMap) {
