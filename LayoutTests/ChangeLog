@@ -1,5 +1,19 @@
 2011-01-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Ariya Hidayat.
+
+        Directly composited SVG images fail to render
+        https://bugs.webkit.org/show_bug.cgi?id=51975
+        
+        New testcase with directly composited SVG image.
+
+        * compositing/images/direct-svg-image-expected.checksum: Added.
+        * compositing/images/direct-svg-image-expected.png: Added.
+        * compositing/images/direct-svg-image-expected.txt: Added.
+        * compositing/images/direct-svg-image.html: Added.
+
+2011-01-05  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix percentage values in radius of radial gradients

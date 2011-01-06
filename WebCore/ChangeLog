@@ -1,5 +1,30 @@
 2011-01-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Ariya Hidayat.
+
+        Directly composited SVG images fail to render
+        https://bugs.webkit.org/show_bug.cgi?id=51975
+        
+        There was already code, added in r67900, to detect whether an image
+        may be directly composited, by checking to see if it's a bitmap image.
+        
+        However, CachedImage::image() returns the nullImage() if m_image is null,
+        which is a BitmapImage, confusing this test.
+
+        Test: compositing/images/direct-svg-image.html
+
+        * loader/cache/CachedImage.cpp: Remove nullImage(), since Image has
+        exactly the same method.
+        (WebCore::CachedImage::image): Use Image::nullImage().
+        * loader/cache/CachedImage.h:
+        (WebCore::CachedImage::hasImage): New method to ask whether the m_image is
+        non-null.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage): Use hasImage()
+        so that we don't test the nullImage.
+
+2011-01-05  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix percentage values in radius of radial gradients

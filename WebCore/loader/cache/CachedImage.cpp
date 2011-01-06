@@ -117,12 +117,6 @@ static Image* brokenImage()
     return brokenImage.get();
 }
 
-static Image* nullImage()
-{
-    DEFINE_STATIC_LOCAL(RefPtr<BitmapImage>, nullImage, (BitmapImage::create()));
-    return nullImage.get();
-}
-
 Image* CachedImage::image() const
 {
     ASSERT(!isPurgeable());
@@ -133,7 +127,7 @@ Image* CachedImage::image() const
     if (m_image)
         return m_image.get();
 
-    return nullImage();
+    return Image::nullImage();
 }
 
 void CachedImage::setImageContainerSize(const IntSize& containerSize)
