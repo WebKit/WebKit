@@ -112,28 +112,33 @@ void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 void Gradient::paint(GraphicsContext* context)
 {
     CGContextRef ctx = context->platformContext();
+    paint(ctx);
+}
+
+void Gradient::paint(CGContextRef context)
+{
 #if USE_CG_SHADING
-    CGContextDrawShading(ctx, platformGradient());
+    CGContextDrawShading(context, platformGradient());
 #else
     CGGradientDrawingOptions extendOptions = kCGGradientDrawsBeforeStartLocation | kCGGradientDrawsAfterEndLocation;
     if (m_radial) {
         bool needScaling = aspectRatio() != 1;
         if (needScaling) {
-            CGContextSaveGState(ctx);
+            CGContextSaveGState(context);
             // Scale from the center of the gradient. We only ever scale non-deprecated gradients,
             // for which m_p0 == m_p1.
             ASSERT(m_p0 == m_p1);
-            CGContextTranslateCTM(ctx, m_p0.x(), m_p0.y());
-            CGContextScaleCTM(ctx, 1, 1 / aspectRatio());
-            CGContextTranslateCTM(ctx, -m_p0.x(), -m_p0.y());
+            CGContextTranslateCTM(context, m_p0.x(), m_p0.y());
+            CGContextScaleCTM(context, 1, 1 / aspectRatio());
+            CGContextTranslateCTM(context, -m_p0.x(), -m_p0.y());
         }
 
-        CGContextDrawRadialGradient(ctx, platformGradient(), m_p0, m_r0, m_p1, m_r1, extendOptions);
-        
+        CGContextDrawRadialGradient(context, platformGradient(), m_p0, m_r0, m_p1, m_r1, extendOptions);
+
         if (needScaling)
-            CGContextRestoreGState(ctx);
+            CGContextRestoreGState(context);
     } else
-        CGContextDrawLinearGradient(ctx, platformGradient(), m_p0, m_p1, extendOptions);
+        CGContextDrawLinearGradient(context, platformGradient(), m_p0, m_p1, extendOptions);
 #endif
 }
 

@@ -148,6 +148,12 @@ void GraphicsContext::clearShadow()
     clearPlatformShadow();
 }
 
+bool GraphicsContext::hasShadow() const
+{
+    return m_state.shadowColor.isValid() && m_state.shadowColor.alpha()
+           && (m_state.shadowBlur || m_state.shadowOffset.width() || m_state.shadowOffset.height());
+}
+
 bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color, ColorSpace& colorSpace) const
 {
     offset = m_state.shadowOffset;
@@ -155,7 +161,7 @@ bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color, Co
     color = m_state.shadowColor;
     colorSpace = m_state.shadowColorSpace;
 
-    return color.isValid() && color.alpha() && (blur || offset.width() || offset.height());
+    return hasShadow();
 }
 
 float GraphicsContext::strokeThickness() const

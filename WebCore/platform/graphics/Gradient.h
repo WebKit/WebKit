@@ -35,6 +35,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(WIN)
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
 #if PLATFORM(CG)
 
 #define USE_CG_SHADING defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
@@ -136,6 +140,7 @@ namespace WebCore {
         void setPlatformGradientSpaceTransform(const AffineTransform& gradientSpaceTransformation);
 
 #if PLATFORM(CG)
+        void paint(CGContextRef);
         void paint(GraphicsContext*);
 #endif
     private:

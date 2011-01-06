@@ -346,6 +346,7 @@ namespace WebCore {
         void beginTransparencyLayer(float opacity);
         void endTransparencyLayer();
 
+        bool hasShadow() const;
         void setShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
         void clearShadow();

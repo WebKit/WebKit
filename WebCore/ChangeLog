@@ -1,3 +1,28 @@
+2011-01-05  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        Shadows are not drawn when filling a rect with a gradient fillStyle on Mac and Chromium-Mac
+        https://bugs.webkit.org/show_bug.cgi?id=51869
+
+        GraphicsContext::fillRect(const FloatRect&) is clipping to the rect.
+        The shadow is being drawn, but getting clipped to the rect being filled.
+        The solution is to draw the gradient into a CGLayer (when a shadow is
+        required), then render the layer to the GraphicsContext.
+
+        This patch also fixes:
+        canvas/philip/tests/2d.shadow.gradient.alpha.html
+        canvas/philip/tests/2d.shadow.gradient.basic.html
+        canvas/philip/tests/2d.shadow.gradient.transparent.2.html
+
+        Test: fast/canvas/canvas-fillRect-gradient-shadow.html
+
+        * platform/graphics/Gradient.h:
+        * platform/graphics/cg/GradientCG.cpp:
+        (WebCore::Gradient::paint):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRect):
+
 2011-01-05  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
