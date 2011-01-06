@@ -242,13 +242,20 @@ void QNetworkReplyHandler::setLoadMode(LoadMode mode)
     case LoadNormal:
         m_loadMode = LoadResuming;
         emit processQueuedItems();
-        // Restart forwarding only after processQueuedItems to make sure
-        // our buffered data was handled before any incoming data.
-        m_reply->setForwardingDefered(false);
+
+        // sendQueuedItems() may cause m_reply to be set to 0 due to the finish() call causing
+        // the ResourceHandle instance that owns this QNetworkReplyHandler to be destroyed.
+        if (m_reply) {
+            // Restart forwarding only after processQueuedItems to make sure
+            // our buffered data was handled before any incoming data.
+            m_reply->setForwardingDefered(false);
+        }
         break;
     case LoadDeferred:
-        m_loadMode = LoadDeferred;
-        m_reply->setForwardingDefered(true);
+        if (m_reply) {
+            m_loadMode = LoadDeferred;
+            m_reply->setForwardingDefered(true);
+        }
         break;
     case LoadResuming:
         Q_ASSERT(0); // should never happen
@@ -347,6 +354,9 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 {
     m_shouldSendResponse = (m_loadMode != LoadNormal);
     if (m_shouldSendResponse)
+        return;
+
+    if (!m_reply)
         return;
 
     if (m_reply->error() && !ignoreHttpError(m_reply, m_responseContainsData))
