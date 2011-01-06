@@ -76,7 +76,7 @@ class LayoutTestResultsTest(unittest.TestCase):
         self.assertEqual(len(results.failing_tests()), 0)
 
     def test_failures_from_fail_row(self):
-        row = BeautifulSoup("<tr><td><a>test.hml</a><a>25%</a></td></tr>")
+        row = BeautifulSoup("<tr><td><a>test.hml</a></td><td><a>expected image</a></td><td><a>25%</a></td></tr>")
         test_name = unicode(row.find("a").string)
         # Even if the caller has already found the test name, findAll inside _failures_from_fail_row will see it again.
         failures = OutputCapture().assert_outputs(self, LayoutTestResults._failures_from_fail_row, [row])

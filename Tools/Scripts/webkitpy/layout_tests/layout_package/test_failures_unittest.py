@@ -80,5 +80,15 @@ class Test(unittest.TestCase):
         for c in ALL_FAILURE_CLASSES:
             self.assert_loads(c)
 
+    def test_equals(self):
+        self.assertEqual(FailureCrash(), FailureCrash())
+        self.assertNotEqual(FailureCrash(), FailureTimeout())
+        crash_set = set([FailureCrash(), FailureCrash()])
+        self.assertEqual(len(crash_set), 1)
+        # The hash happens to be the name of the class, but sets still work:
+        crash_set = set([FailureCrash(), "FailureCrash"])
+        self.assertEqual(len(crash_set), 2)
+
+
 if __name__ == '__main__':
     unittest.main()

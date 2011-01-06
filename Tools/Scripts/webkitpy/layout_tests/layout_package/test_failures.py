@@ -91,6 +91,9 @@ class TestFailure(object):
     def __ne__(self, other):
         return self.__class__.__name__ != other.__class__.__name__
 
+    def __hash__(self):
+        return hash(self.__class__.__name__)
+
     def dumps(self):
         """Returns the string/JSON representation of a TestFailure."""
         return cPickle.dumps(self)
@@ -127,9 +130,6 @@ class FailureWithType(TestFailure):
     Subclasses may commonly choose to override the ResultHtmlOutput, but still
     use the standard OutputLinks.
     """
-
-    def __init__(self):
-        TestFailure.__init__(self)
 
     # Filename suffixes used by ResultHtmlOutput.
     OUT_FILENAMES = ()

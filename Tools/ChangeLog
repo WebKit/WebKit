@@ -1,3 +1,24 @@
+2011-01-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        commit-queue mentions "Text diff mismatch" 4 times instead of once per failure
+        https://bugs.webkit.org/show_bug.cgi?id=52002
+
+        See an example of this here:
+        https://bugs.webkit.org/show_bug.cgi?id=51314#c2
+
+        It's due to the fact that we pass around TestFailure() instance
+        objects and yet expect them to all compare to be the same.
+
+        This is bad.  We should either have shared instances of these values
+        or we should just pass around the class names.  There are already hacks
+        in place to make TestFailure objects pass equality tests, I just added
+        a __hash__ implementation so they can be used in sets as expected.
+
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+
 2011-01-06  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
