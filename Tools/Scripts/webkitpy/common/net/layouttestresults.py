@@ -62,12 +62,15 @@ class LayoutTestResults(object):
 
     @classmethod
     def _failures_from_fail_row(self, row):
-        # The first anchor should have already been fetched by the caller,
-        # we look at all remaining anchors in this row, and guess what type
+        # Look at all anchors in this row, and guess what type
         # of new-run-webkit-test failures they equate to.
         failures = set()
+        test_name = None
         for anchor in row.findAll("a"):
             anchor_text = unicode(anchor.string)
+            if not test_name:
+                test_name = anchor_text
+                continue
             if anchor_text in ["expected image", "image diffs"] or '%' in anchor_text:
                 failures.add(test_failures.FailureImageHashMismatch())
             elif anchor_text in ["expected", "actual", "diff", "pretty diff"]:

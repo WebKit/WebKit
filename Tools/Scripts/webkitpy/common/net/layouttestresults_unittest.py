@@ -76,11 +76,13 @@ class LayoutTestResultsTest(unittest.TestCase):
         self.assertEqual(len(results.failing_tests()), 0)
 
     def test_failures_from_fail_row(self):
-        row = BeautifulSoup("<tr><td><a>25%</a></td></tr>")
-        failures = LayoutTestResults._failures_from_fail_row(row)
+        row = BeautifulSoup("<tr><td><a>test.hml</a><a>25%</a></td></tr>")
+        test_name = unicode(row.find("a").string)
+        # Even if the caller has already found the test name, findAll inside _failures_from_fail_row will see it again.
+        failures = OutputCapture().assert_outputs(self, LayoutTestResults._failures_from_fail_row, [row])
         self.assertEqual(len(failures), 1)
         self.assertEqual(type(sorted(failures)[0]), test_failures.FailureImageHashMismatch)
 
-        row = BeautifulSoup("<tr><td><a>foo</a></td></tr>")
+        row = BeautifulSoup("<tr><td><a>test.hml</a><a>foo</a></td></tr>")
         expected_stderr = "Unhandled link text in results.html parsing: foo.  Please file a bug against webkitpy.\n"
         OutputCapture().assert_outputs(self, LayoutTestResults._failures_from_fail_row, [row], expected_stderr=expected_stderr)

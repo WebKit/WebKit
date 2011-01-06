@@ -1,3 +1,18 @@
+2011-01-05  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, just fixing one more log error from my previous python patch.
+
+        Move LayoutTestResults over to new-run-webkit-tests TestResult architecture
+        https://bugs.webkit.org/show_bug.cgi?id=51802
+
+        webkit-patch failure-reason was logging about parsing errors
+        due to my misunderstanding of how BeautifulSoup.findAll worked.
+
+        Fixed, and added a unit test.
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+
 2011-01-05  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
