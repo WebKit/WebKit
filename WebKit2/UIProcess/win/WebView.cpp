@@ -221,8 +221,7 @@ bool WebView::registerWebViewWindowClass()
 }
 
 WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND parentWindow)
-    : m_rect(rect)
-    , m_topLevelParentWindow(0)
+    : m_topLevelParentWindow(0)
     , m_toolTipWindow(0)
     , m_lastCursorSet(0)
     , m_webCoreCursor(0)
@@ -239,10 +238,10 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     m_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(this, m_page.get()));
 
     m_window = ::CreateWindowEx(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-        m_rect.top, m_rect.left, m_rect.right - m_rect.left, m_rect.bottom - m_rect.top, parentWindow ? parentWindow : HWND_MESSAGE, 0, instanceHandle(), this);
+        rect.top, rect.left, rect.right - rect.left, rect.bottom - rect.top, parentWindow ? parentWindow : HWND_MESSAGE, 0, instanceHandle(), this);
     ASSERT(::IsWindow(m_window));
 
-    m_page->initializeWebPage(IntRect(m_rect).size());
+    m_page->initializeWebPage(IntRect(rect).size());
 
     ::ShowWindow(m_window, SW_SHOW);
 

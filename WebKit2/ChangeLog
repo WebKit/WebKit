@@ -1,3 +1,17 @@
+2011-01-06  Adam Roben  <aroben@apple.com>
+
+        Remove WebView::m_rect
+
+        It was only used in the constructor, and wasn't even kept up-to-date as
+        the WebView's size changed.
+
+        Fixes <http://webkit.org/b/52000> WebView::m_rect is unnecessary
+
+        Reviewed by Ada Chan.
+
+        * UIProcess/win/WebView.cpp:
+        * UIProcess/win/WebView.h:
+
 2011-01-05  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Ada Chan.

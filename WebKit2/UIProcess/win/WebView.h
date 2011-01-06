@@ -46,8 +46,6 @@ public:
     }
     ~WebView();
 
-    RECT rect() const { return m_rect; }
-
     HWND window() const { return m_window; }
     void setParentWindow(HWND);
     void windowAncestryDidChange();
@@ -137,7 +135,6 @@ private:
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
-    RECT m_rect;
     HWND m_window;
     HWND m_topLevelParentWindow;
     HWND m_toolTipWindow;
