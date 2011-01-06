@@ -182,7 +182,7 @@
     descriptor = comments.length + ' comment';
     if (comments.length > 1)
       descriptor += 's';
-    $('.message .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
+    $('#message .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
   }
 
   function scanForComments(author, text) {
