@@ -1,3 +1,28 @@
+2011-01-05  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add WebKitClient::createAudioDevice() for Chromium port of web audio API
+        https://bugs.webkit.org/show_bug.cgi?id=51424
+
+        * WebKit.gyp:
+        * public/WebAudioDevice.h: Added.
+        (WebKit::WebAudioDevice::RenderCallback::~RenderCallback):
+        (WebKit::WebAudioDevice::~WebAudioDevice):
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::createAudioDevice):
+        * src/AudioDestinationChromium.cpp: Added.
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        (WebCore::AudioDestinationChromium::~AudioDestinationChromium):
+        (WebCore::AudioDestinationChromium::start):
+        (WebCore::AudioDestinationChromium::stop):
+        (WebCore::AudioDestination::hardwareSampleRate):
+        (WebCore::AudioDestinationChromium::render):
+        * src/AudioDestinationChromium.h: Added.
+        (WebCore::AudioDestinationChromium::isPlaying):
+        (WebCore::AudioDestinationChromium::sampleRate):
+
 2011-01-05  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Fisher.

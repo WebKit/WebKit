@@ -32,6 +32,7 @@
 #define WebKitClient_h
 
 #include "WebAudioBus.h"
+#include "WebAudioDevice.h"
 #include "WebCommon.h"
 #include "WebData.h"
 #include "WebLocalizedString.h"
@@ -276,6 +277,10 @@ public:
     // May return null if WebGL is not supported.
     // Returns newly allocated WebGraphicsContext3D instance.
     virtual WebGraphicsContext3D* createGraphicsContext3D() { return 0; }
+
+    // Audio --------------------------------------------------------------
+
+    virtual WebAudioDevice* createAudioDevice(size_t bufferSize, unsigned numberOfChannels, double sampleRate, WebAudioDevice::RenderCallback*) { return 0; }
 
     // FileSystem ----------------------------------------------------------
 

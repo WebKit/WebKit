@@ -2429,6 +2429,7 @@
             'platform/audio/ReverbInputBuffer.cpp',
             'platform/audio/VectorMath.h',
             'platform/audio/VectorMath.cpp',
+            'platform/audio/chromium/AudioBusChromium.cpp',
             'platform/audio/mac/AudioBusMac.mm',
             'platform/audio/mac/AudioDestinationMac.h',
             'platform/audio/mac/AudioDestinationMac.cpp',

@@ -1,3 +1,15 @@
+2011-01-05  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Add WebKitClient::createAudioDevice() for Chromium port of web audio API
+        https://bugs.webkit.org/show_bug.cgi?id=51424
+
+        No new tests since audio API is not yet implemented.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-01-05  Anders Carlsson  <andersca@apple.com>
 
         Try again.
