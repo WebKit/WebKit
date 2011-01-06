@@ -1,3 +1,11 @@
+2011-01-06  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed, fixing WinCE build after r75196.
+
+        WinCE port does not (yet) support NPAPI.
+
+        * Scripts/build-webkit:
+
 2011-01-06  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Darin Adler.
