@@ -28,13 +28,20 @@
 
 #include "BrowserWindow.h"
 
-BrowserWindow::BrowserWindow(QGraphicsWKView::BackingStoreType type)
-    : m_backingStoreType(type)
+static QWKPage* newPageFunction(QWKPage*)
+{
+    BrowserWindow* window = new BrowserWindow();
+    return window->page();
+}
+
+QGraphicsWKView::BackingStoreType BrowserWindow::backingStoreTypeForNewWindow = QGraphicsWKView::Simple;
+
+BrowserWindow::BrowserWindow()
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
     m_menu = new QMenuBar();
-    m_browser = new BrowserView(m_backingStoreType);
+    m_browser = new BrowserView(backingStoreTypeForNewWindow);
     m_addressBar = new QLineEdit();
 
     m_menu->addAction("New Window", this, SLOT(newWindow()));
@@ -51,10 +58,10 @@ BrowserWindow::BrowserWindow(QGraphicsWKView::BackingStoreType type)
     connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
 
     QToolBar* bar = addToolBar("Navigation");
-    bar->addAction(m_browser->view()->page()->action(QWKPage::Back));
-    bar->addAction(m_browser->view()->page()->action(QWKPage::Forward));
-    bar->addAction(m_browser->view()->page()->action(QWKPage::Reload));
-    bar->addAction(m_browser->view()->page()->action(QWKPage::Stop));
+    bar->addAction(page()->action(QWKPage::Back));
+    bar->addAction(page()->action(QWKPage::Forward));
+    bar->addAction(page()->action(QWKPage::Reload));
+    bar->addAction(page()->action(QWKPage::Stop));
     bar->addWidget(m_addressBar);
 
     this->setMenuBar(m_menu);
@@ -64,6 +71,8 @@ BrowserWindow::BrowserWindow(QGraphicsWKView::BackingStoreType type)
 
     QShortcut* selectAddressBar = new QShortcut(Qt::CTRL | Qt::Key_L, this);
     connect(selectAddressBar, SIGNAL(activated()), this, SLOT(openLocation()));
+
+    page()->setCreateNewPageFunction(newPageFunction);
 
     resize(960, 640);
     show();
@@ -75,9 +84,14 @@ void BrowserWindow::load(const QString& url)
     m_browser->load(url);
 }
 
+QWKPage* BrowserWindow::page()
+{
+    return m_browser->view()->page();
+}
+
 BrowserWindow* BrowserWindow::newWindow(const QString& url)
 {
-    BrowserWindow* window = new BrowserWindow(m_backingStoreType);
+    BrowserWindow* window = new BrowserWindow;
     window->load(url);
     return window;
 }
@@ -125,8 +139,6 @@ void BrowserWindow::urlChanged(const QUrl& url)
 
 void BrowserWindow::updateUserAgentList()
 {
-    QWKPage* page = m_browser->view()->page();
-
     QFile file(":/useragentlist.txt");
 
     if (file.open(QIODevice::ReadOnly)) {
@@ -139,9 +151,9 @@ void BrowserWindow::updateUserAgentList()
     }
 
     Q_ASSERT(!m_userAgentList.isEmpty());
-
-    if (!(page->customUserAgent().isEmpty() || m_userAgentList.contains(page->customUserAgent())))
-        m_userAgentList << page->customUserAgent();
+    QWKPage* wkPage = page();
+    if (!(wkPage->customUserAgent().isEmpty() || m_userAgentList.contains(wkPage->customUserAgent())))
+        m_userAgentList << wkPage->customUserAgent();
 }
 
 void BrowserWindow::showUserAgentDialog()
@@ -160,7 +172,7 @@ void BrowserWindow::showUserAgentDialog()
     combo->insertItems(0, m_userAgentList);
     layout->addWidget(combo);
 
-    int index = combo->findText(m_browser->view()->page()->customUserAgent());
+    int index = combo->findText(page()->customUserAgent());
     combo->setCurrentIndex(index);
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel
@@ -170,7 +182,7 @@ void BrowserWindow::showUserAgentDialog()
     layout->addWidget(buttonBox);
 
     if (dialog.exec() && !combo->currentText().isEmpty())
-        m_browser->view()->page()->setCustomUserAgent(combo->currentText());
+        page()->setCustomUserAgent(combo->currentText());
 }
 
 BrowserWindow::~BrowserWindow()

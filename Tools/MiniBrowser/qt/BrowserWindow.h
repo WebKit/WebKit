@@ -38,9 +38,13 @@ class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    BrowserWindow(QGraphicsWKView::BackingStoreType);
+    BrowserWindow();
     ~BrowserWindow();
     void load(const QString& url);
+
+    QWKPage* page();
+
+    static QGraphicsWKView::BackingStoreType backingStoreTypeForNewWindow;
 
 public slots:
     BrowserWindow* newWindow(const QString& url = "about:blank");
@@ -60,7 +64,6 @@ private:
     QMenuBar* m_menu;
     QLineEdit* m_addressBar;
     QStringList m_userAgentList;
-    QGraphicsWKView::BackingStoreType m_backingStoreType;
 };
 
 #endif

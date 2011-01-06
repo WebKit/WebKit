@@ -53,7 +53,8 @@ int main(int argc, char** argv) {
             args.append("http://www.google.com");
     }
 
-    BrowserWindow* window = new BrowserWindow(backingStoreTypeToUse);
+    BrowserWindow::backingStoreTypeForNewWindow = backingStoreTypeToUse;
+    BrowserWindow* window = new BrowserWindow;
     window->load(args[0]);
 
     for (int i = 1; i < args.size(); ++i)
