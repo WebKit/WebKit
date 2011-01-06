@@ -1,5 +1,41 @@
 2011-01-05  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Ojan Vafai.
+
+        commit-queue should report failure type when reporting flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=51900
+
+        This patch was a ridiculous amount of plumbing.  In the end I like
+        the NRWT-style TestResult class even less.  But now we're passing
+        a list of TestResult objects from the queue to the FlakyTestReporter.
+        Thus the FlakyTestReporter can more easily report what type of failure
+        occurred.
+
+        In the process, I found that I was not alone in finding TestResult
+        cumbersome to use.  A bunch of code was trying to create a TestResult
+        object with default values.  However since the constructor didn't make
+        this easy, some places were getting it wrong (including the TestResult unit test)!
+        I've fixed the TestResult constructor to have default values for non-essential
+        arguments.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2011-01-05  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.
 
         Move LayoutTestResults over to new-run-webkit-tests TestResult architecture

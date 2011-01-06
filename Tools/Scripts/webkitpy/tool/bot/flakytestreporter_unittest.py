@@ -31,6 +31,8 @@ import unittest
 from webkitpy.common.config.committers import Committer
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.mocktool import MockTool, MockStatusServer
 
@@ -49,6 +51,9 @@ class MockCommitInfo(object):
 
 
 class FlakyTestReporterTest(unittest.TestCase):
+    def _mock_test_result(self, testname):
+        return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
+
     def _assert_emails_for_test(self, emails):
         tool = MockTool()
         reporter = FlakyTestReporter(tool, 'dummy-queue')
@@ -112,7 +117,7 @@ foo/bar.html has been flaky on the dummy-queue.
 foo/bar.html was authored by abarth@webkit.org.
 http://trac.webkit.org/browser/trunk/LayoutTests/foo/bar.html
 
-The dummy-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
+The dummy-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
 Bot: mock-bot-id  Port: MockPort  Platform: MockPlatform 1.0
 
 The bots will update this with information from each new failure.
@@ -134,7 +139,8 @@ The dummy-queue is continuing to process your patch.
 --- End comment ---
 
 """
-        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [['foo/bar.html'], patch], expected_stderr=expected_stderr)
+        test_results = [self._mock_test_result('foo/bar.html')]
+        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [test_results, patch], expected_stderr=expected_stderr)
 
     def test_optional_author_string(self):
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')

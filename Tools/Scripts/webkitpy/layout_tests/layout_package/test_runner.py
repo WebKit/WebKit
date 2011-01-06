@@ -251,6 +251,7 @@ class TestRunner:
             overrides=overrides_str)
         return self._expectations
 
+    # FIXME: This method is way too long and needs to be broken into pieces.
     def prepare_lists_and_print_output(self):
         """Create appropriate subsets of test lists and returns a
         ResultSummary object. Also prints expected test counts.
@@ -384,9 +385,7 @@ class TestRunner:
             # subtracted out of self._test_files, above), but we stub out the
             # results here so the statistics can remain accurate.
             for test in skip_chunk:
-                result = test_results.TestResult(test,
-                    failures=[], test_run_time=0, total_time_for_all_diffs=0,
-                    time_for_diffs=0)
+                result = test_results.TestResult(test)
                 result.type = test_expectations.SKIP
                 result_summary.add(result, expected=True)
         self._printer.print_expected('')

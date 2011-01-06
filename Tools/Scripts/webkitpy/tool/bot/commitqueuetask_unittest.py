@@ -31,6 +31,8 @@ import unittest
 
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.commitqueuetask import *
 from webkitpy.tool.mocktool import MockTool
@@ -62,11 +64,15 @@ class MockCommitQueue(CommitQueueTaskDelegate):
     def layout_test_results(self):
         return None
 
-    def report_flaky_tests(self, patch, flaky_tests):
+    def report_flaky_tests(self, patch, flaky_results):
+        flaky_tests = [result.filename for result in flaky_results]
         log("report_flaky_tests: patch='%s' flaky_tests='%s'" % (patch.id(), flaky_tests))
 
 
 class CommitQueueTaskTest(unittest.TestCase):
+    def _mock_test_result(self, testname):
+        return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
+
     def _run_through_task(self, commit_queue, expected_stderr, expected_exception=None, expect_retry=False):
         tool = MockTool(log_executive=True)
         patch = tool.bugs.fetch_attachment(197)
@@ -189,7 +195,7 @@ run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--n
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK tests failure' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
-report_flaky_tests: patch='197' flaky_tests='None'
+report_flaky_tests: patch='197' flaky_tests='[]'
 run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
 command_passed: success_message='Landed patch' patch='197'
 """
@@ -227,13 +233,13 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
         task = CommitQueueTask(commit_queue, patch)
         self._double_flaky_test_counter = 0
 
-        def mock_failing_tests_from_last_run():
+        def mock_failing_results_from_last_run():
             CommitQueueTaskTest._double_flaky_test_counter += 1
             if CommitQueueTaskTest._double_flaky_test_counter % 2:
-                return ['foo.html']
-            return ['bar.html']
+                return [self._mock_test_result('foo.html')]
+            return [self._mock_test_result('bar.html')]
 
-        task._failing_tests_from_last_run = mock_failing_tests_from_last_run
+        task._failing_results_from_last_run = mock_failing_results_from_last_run
         success = OutputCapture().assert_outputs(self, task.run, expected_stderr=expected_stderr)
         self.assertEqual(success, False)
 

@@ -312,9 +312,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
 
-    def report_flaky_tests(self, patch, flaky_tests):
+    def report_flaky_tests(self, patch, flaky_test_results):
         reporter = FlakyTestReporter(self._tool, self.name)
-        reporter.report_flaky_tests(flaky_tests, patch)
+        reporter.report_flaky_tests(flaky_test_results, patch)
 
     # StepSequenceErrorHandler methods
 

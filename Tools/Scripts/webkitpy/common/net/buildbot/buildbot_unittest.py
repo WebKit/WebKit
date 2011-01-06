@@ -37,8 +37,7 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 class BuilderTest(unittest.TestCase):
     def _mock_test_result(self, testname):
-        failures = [test_failures.FailureTextMismatch()]
-        return test_results.TestResult(testname, failures, test_run_time=None, total_time_for_all_diffs=None, time_for_diffs=None)
+        return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
 
     def _install_fetch_build(self, failure):
         def _mock_fetch_build(build_number):

@@ -126,8 +126,9 @@ If you would like to track this test fix with another bug, please close this bug
         bot_id_string = "Bot: %s  " % (bot_id) if bot_id else ""
         return "%sPort: %s  Platform: %s" % (bot_id_string, self._tool.port().name(), self._tool.platform.display_name())
 
-    def _latest_flake_message(self, flaky_test, patch):
-        flake_message = "The %s just saw %s flake while processing attachment %s on bug %s." % (self._bot_name, flaky_test, patch.id(), patch.bug_id())
+    def _latest_flake_message(self, flaky_result, patch):
+        failure_messages = [failure.message() for failure in flaky_result.failures]
+        flake_message = "The %s just saw %s flake (%s) while processing attachment %s on bug %s." % (self._bot_name, flaky_result.filename, ", ".join(failure_messages), patch.id(), patch.bug_id())
         return "%s\n%s" % (flake_message, self._bot_information())
 
     def _results_diff_path_for_test(self, flaky_test):
@@ -152,11 +153,12 @@ If you would like to track this test fix with another bug, please close this bug
         else:
             self._tool.bugs.post_comment_to_bug(bug.id(), latest_flake_message)
 
-    def report_flaky_tests(self, flaky_tests, patch):
+    def report_flaky_tests(self, flaky_test_results, patch):
         message = "The %s encountered the following flaky tests while processing attachment %s:\n\n" % (self._bot_name, patch.id())
-        for flaky_test in flaky_tests:
+        for flaky_result in flaky_test_results:
+            flaky_test = flaky_result.filename
             bug = self._lookup_bug_for_flaky_test(flaky_test)
-            latest_flake_message = self._latest_flake_message(flaky_test, patch)
+            latest_flake_message = self._latest_flake_message(flaky_result, patch)
             author_emails = self._author_emails_for_test(flaky_test)
             if not bug:
                 _log.info("Bug does not already exist for %s, creating." % flaky_test)

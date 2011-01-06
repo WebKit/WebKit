@@ -500,11 +500,9 @@ class TestShellThread(WatchableThread):
             result = worker.get_test_result()
         except AttributeError, e:
             # This gets raised if the worker thread has already exited.
-            failures = []
-            _log.error('Cannot get results of test: %s' %
-                       test_input.filename)
-            result = test_results.TestResult(test_input.filename, failures=[],
-                test_run_time=0, total_time_for_all_diffs=0, time_for_diffs={})
+            _log.error('Cannot get results of test: %s' % test_input.filename)
+            # FIXME: Seems we want a unique failure type here.
+            result = test_results.TestResult(test_input.filename)
 
         return result
 

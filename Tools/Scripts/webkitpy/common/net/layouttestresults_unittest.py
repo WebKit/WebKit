@@ -64,7 +64,7 @@ class LayoutTestResultsTest(unittest.TestCase):
     def test_parse_layout_test_results(self):
         failures = [test_failures.FailureMissingResult(), test_failures.FailureMissingImageHash(), test_failures.FailureMissingImage()]
         testname = 'fast/repaint/no-caret-repaint-in-non-content-editable-element.html'
-        expected_results = [test_results.TestResult(testname, failures, test_run_time=None, total_time_for_all_diffs=None, time_for_diffs=None)]
+        expected_results = [test_results.TestResult(testname, failures)]
 
         results = LayoutTestResults._parse_results_html(self._example_results_html)
         self.assertEqual(expected_results, results)

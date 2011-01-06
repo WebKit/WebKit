@@ -139,9 +139,7 @@ class  Testprinter(unittest.TestCase):
         elif result_type == test_expectations.CRASH:
             failures = [test_failures.FailureCrash()]
         path = os.path.join(self._port.layout_tests_dir(), test)
-        return test_results.TestResult(path, failures, run_time,
-                                       total_time_for_all_diffs=0,
-                                       time_for_diffs=0)
+        return test_results.TestResult(path, failures=failures, test_run_time=run_time)
 
     def get_result_summary(self, tests, expectations_str):
         test_paths = [os.path.join(self._port.layout_tests_dir(), test) for

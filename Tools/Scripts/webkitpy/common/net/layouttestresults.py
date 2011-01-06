@@ -97,7 +97,7 @@ class LayoutTestResults(object):
         # TestResult is a class designed to work with new-run-webkit-tests.
         # old-run-webkit-tests does not save quite enough information in results.html for us to parse.
         # FIXME: It's unclear if test_name should include LayoutTests or not.
-        return test_results.TestResult(test_name, failures, test_run_time=None, total_time_for_all_diffs=None, time_for_diffs=None)
+        return test_results.TestResult(test_name, failures)
 
     @classmethod
     def _parse_results_table(cls, table):
@@ -131,10 +131,16 @@ class LayoutTestResults(object):
     def test_results(self):
         return self._test_results
 
-    def tests_matching_failure_types(self, failure_types):
-        return [result.filename for result in self._test_results if result.has_failure_matching_types(failure_types)]
+    def results_matching_failure_types(self, failure_types):
+        return [result for result in self._test_results if result.has_failure_matching_types(failure_types)]
 
-    def failing_tests(self):
+    def tests_matching_failure_types(self, failure_types):
+        return [result.filename for result in self.results_matching_failure_types(failure_types)]
+
+    def failing_test_results(self):
         # These should match the "fail", "crash", and "timeout" keys.
         failure_types = [test_failures.FailureTextMismatch, test_failures.FailureImageHashMismatch, test_failures.FailureCrash, test_failures.FailureTimeout]
-        return self.tests_matching_failure_types(failure_types)
+        return self.results_matching_failure_types(failure_types)
+
+    def failing_tests(self):
+        return [result.filename for result in self.failing_test_results()]

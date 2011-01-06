@@ -31,6 +31,8 @@ import os
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.layout_tests.layout_package import test_results
+from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
@@ -198,6 +200,9 @@ class SecondThoughtsCommitQueue(CommitQueue):
 
 
 class CommitQueueTest(QueuesTest):
+    def _mock_test_result(self, testname):
+        return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
+
     def test_commit_queue(self):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
@@ -333,13 +338,13 @@ MOCK: release_work_item: commit-queue 197
         queue.bind_to_tool(MockTool())
         expected_stderr = """MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
-The commit-queue just saw foo/bar.html flake while processing attachment 197 on bug 42.
+The commit-queue just saw foo/bar.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
 MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
-The commit-queue just saw bar/baz.html flake while processing attachment 197 on bug 42.
+The commit-queue just saw bar/baz.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
@@ -353,7 +358,9 @@ The commit-queue is continuing to process your patch.
 --- End comment ---
 
 """
-        OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, ["foo/bar.html", "bar/baz.html"]], expected_stderr=expected_stderr)
+        test_names = ["foo/bar.html", "bar/baz.html"]
+        test_results = [self._mock_test_result(name) for name in test_names]
+        OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, test_results], expected_stderr=expected_stderr)
 
     def test_layout_test_results(self):
         queue = CommitQueue()

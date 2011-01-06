@@ -46,6 +46,7 @@ import webkitpy.thirdparty.simplejson as simplejson
 
 _log = logging.getLogger("webkitpy.layout_tests.layout_package.json_results_generator")
 
+# FIXME: We already have a TestResult class in test_results.py
 class TestResult(object):
     """A simple class that represents a single test result."""
 
