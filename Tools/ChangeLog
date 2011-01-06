@@ -1,5 +1,15 @@
 2011-01-05  Steve Falkenburg  <sfalken@apple.com>
 
+        Windows build fix.
+        Include configuration name when unpacking a build archive.
+
+        Needed, since we split Windows build results into configuration-specific directories
+        under WebKitOutputDir.
+
+        * BuildSlaveSupport/built-product-archive:
+
+2011-01-05  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Darin Adler.
 
         Debug and Release builds on Windows clobber each other
