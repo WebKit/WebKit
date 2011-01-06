@@ -202,11 +202,6 @@ public:
     ContextShadow shadow;
     QStack<ContextShadow> shadowStack;
 
-    bool hasShadow() const
-    {
-        return shadow.m_type != ContextShadow::NoShadow;
-    }
-
     QRectF clipBoundingRect() const
     {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
@@ -455,7 +450,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, shouldAntialias);
 
-    if (m_data->hasShadow()) {
+    if (hasShadow()) {
         p->save();
         p->translate(m_data->shadow.offset());
         if (p->brush().style() != Qt::NoBrush)
@@ -508,7 +503,7 @@ void GraphicsContext::fillPath(const Path& path)
     QPainterPath platformPath = path.platformPath();
     platformPath.setFillRule(toQtFillRule(fillRule()));
 
-    if (m_data->hasShadow()) {
+    if (hasShadow()) {
         ContextShadow* shadow = contextShadow();
         if (shadow->mustUseContextShadow(this) || m_state.fillPattern || m_state.fillGradient)
         {
@@ -546,7 +541,7 @@ void GraphicsContext::strokePath(const Path& path)
     QPainterPath platformPath = path.platformPath();
     platformPath.setFillRule(toQtFillRule(fillRule()));
 
-    if (m_data->hasShadow()) {
+    if (hasShadow()) {
         ContextShadow* shadow = contextShadow();
         if (shadow->mustUseContextShadow(this) || m_state.strokePattern || m_state.strokeGradient)
         {
@@ -663,7 +658,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         AffineTransform affine;
         QBrush brush(m_state.fillPattern->createPlatformPattern(affine));
         QPixmap* image = m_state.fillPattern->tileImage()->nativeImageForCurrentFrame();
-        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
+        QPainter* shadowPainter = hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
         if (shadowPainter) {
             drawRepeatPattern(shadowPainter, image, normalizedRect, m_state.fillPattern->repeatX(), m_state.fillPattern->repeatY());
             shadowPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
@@ -674,7 +669,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     } else if (m_state.fillGradient) {
         QBrush brush(*m_state.fillGradient->platformGradient());
         brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
-        QPainter* shadowPainter = m_data->hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
+        QPainter* shadowPainter = hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
         if (shadowPainter) {
             shadowPainter->fillRect(normalizedRect, brush);
             shadowPainter->setCompositionMode(QPainter::CompositionMode_SourceIn);
@@ -683,7 +678,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         }
         p->fillRect(normalizedRect, brush);
     } else {
-        if (m_data->hasShadow()) {
+        if (hasShadow()) {
             if (shadow->mustUseContextShadow(this)) {
                 QPainter* shadowPainter = shadow->beginShadowLayer(this, normalizedRect);
                 if (shadowPainter) {
@@ -714,7 +709,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     QPainter* p = m_data->p();
     QRectF normalizedRect = rect.normalized();
 
-    if (m_data->hasShadow()) {
+    if (hasShadow()) {
         ContextShadow* shadow = contextShadow();
         if (shadow->mustUseContextShadow(this)) {
             QPainter* shadowPainter = shadow->beginShadowLayer(this, normalizedRect);
@@ -738,7 +733,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     Path path;
     path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
     QPainter* p = m_data->p();
-    if (m_data->hasShadow()) {
+    if (hasShadow()) {
         ContextShadow* shadow = contextShadow();
         if (shadow->mustUseContextShadow(this)) {
             QPainter* shadowPainter = shadow->beginShadowLayer(this, rect);

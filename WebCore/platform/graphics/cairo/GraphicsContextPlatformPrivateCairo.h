@@ -99,7 +99,6 @@ public:
 
     ContextShadow shadow;
     Vector<ContextShadow> shadowStack;
-    bool hasShadow() const { return shadow.m_type != ContextShadow::NoShadow; }
 
 #if PLATFORM(GTK)
     GdkEventExpose* expose;

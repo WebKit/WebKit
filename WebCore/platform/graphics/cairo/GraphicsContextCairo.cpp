@@ -563,7 +563,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (paintingDisabled())
         return;
 
-    if (m_data->hasShadow())
+    if (hasShadow())
         m_data->shadow.drawRectShadow(this, enclosingIntRect(rect));
 
     if (color.alpha())
@@ -1091,7 +1091,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
     if (paintingDisabled())
         return;
 
-    if (m_data->hasShadow())
+    if (hasShadow())
         m_data->shadow.drawRectShadow(this, r, topLeft, topRight, bottomLeft, bottomRight);
 
     cairo_t* cr = m_data->cr;
