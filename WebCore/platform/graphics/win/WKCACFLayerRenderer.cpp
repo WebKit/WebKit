@@ -106,14 +106,6 @@ private:
     WKCACFLayerRenderer* m_renderer;
 };
 
-typedef HashMap<WKCACFContext*, WKCACFLayerRenderer*> ContextToWindowMap;
-
-static ContextToWindowMap& windowsForContexts()
-{
-    DEFINE_STATIC_LOCAL(ContextToWindowMap, map, ());
-    return map;
-}
-
 static D3DPRESENT_PARAMETERS initialPresentationParameters()
 {
     D3DPRESENT_PARAMETERS parameters = {0};
@@ -204,15 +196,6 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
     return available;
 }
 
-void WKCACFLayerRenderer::didFlushContext(WKCACFContext* context)
-{
-    WKCACFLayerRenderer* window = windowsForContexts().get(context);
-    if (!window)
-        return;
-
-    window->renderSoon();
-}
-
 PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create(WKCACFLayerRendererClient* client)
 {
     if (!acceleratedCompositingAvailable())
@@ -230,8 +213,6 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
     , m_backingStoreDirty(false)
     , m_mustResetLostDeviceBeforeRendering(false)
 {
-    windowsForContexts().set(m_context, this);
-
     // Under the root layer, we have a clipping layer to clip the content,
     // that contains a scroll layer that we use for scrolling the content.
     // The root layer is the size of the client area of the window.
@@ -380,10 +361,8 @@ bool WKCACFLayerRenderer::createRenderer()
 
 void WKCACFLayerRenderer::destroyRenderer()
 {
-    if (m_context) {
-        windowsForContexts().remove(m_context);
+    if (m_context)
         WKCACFContextFlusher::shared().removeContext(m_context);
-    }
 
     m_d3dDevice = 0;
     if (s_d3d)

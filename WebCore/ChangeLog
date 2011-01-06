@@ -1,3 +1,17 @@
+2011-01-05  Adam Roben  <aroben@apple.com>
+
+        Remove some dead code from WKCACFLayerRenderer
+
+        Fixes <http://webkit.org/b/51954> WKCACFLayerRenderer has dead and
+        redundant code for reacting to changes to the layer tree
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        Removed didFlushContext and the HashMap it depended on. We react to
+        changes to the layer tree in layerTreeDidChange instead.
+
 2011-01-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

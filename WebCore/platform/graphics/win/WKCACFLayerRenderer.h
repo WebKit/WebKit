@@ -62,7 +62,6 @@ public:
     ~WKCACFLayerRenderer();
 
     static bool acceleratedCompositingAvailable();
-    static void didFlushContext(WKCACFContext*);
 
     void setRootContents(CGImageRef);
     void setRootContentsAndDisplay(CGImageRef);
