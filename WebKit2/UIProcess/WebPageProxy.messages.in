@@ -151,7 +151,7 @@ messages -> WebPageProxy {
     HidePopupMenu()
     
     # ContextMenu messages.
-    ShowContextMenu(WebCore::IntPoint point, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
+    ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::ContextMenuState state, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
 
 #if USE(ACCELERATED_COMPOSITING)
     # Accelerated compositing messages.

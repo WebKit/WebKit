@@ -1678,12 +1678,14 @@ void WebPageProxy::hidePopupMenu()
     m_activePopupMenu = 0;
 }
 
-void WebPageProxy::showContextMenu(const WebCore::IntPoint& menuLocation, const Vector<WebContextMenuItemData>& proposedItems, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const ContextMenuState& contextMenuState, const Vector<WebContextMenuItemData>& proposedItems, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, context());
     if (!arguments->decode(messageDecoder))
         return;
+
+    m_activeContextMenuState = contextMenuState;
 
     if (m_activeContextMenu)
         m_activeContextMenu->hideContextMenu();
@@ -1736,7 +1738,15 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         return;
     }
 #endif
-
+    if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
+        m_context->download(this, KURL(KURL(), m_activeContextMenuState.absoluteImageURLString));
+        return;    
+    }
+    if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
+        m_context->download(this, KURL(KURL(), m_activeContextMenuState.absoluteLinkURLString));
+        return;
+    }
+    
     if (item.action() == ContextMenuItemTagLearnSpelling || item.action() == ContextMenuItemTagIgnoreSpelling)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 

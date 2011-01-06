@@ -235,6 +235,14 @@ void WebContext::relaunchProcessIfNecessary()
     ensureWebProcess();
 }
 
+void WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
+{
+    uint64_t downloadID = createDownloadProxy();
+    uint64_t initiatingPageID = initiatingPage ? initiatingPage->pageID() : 0;
+
+    process()->send(Messages::WebProcess::DownloadRequest(downloadID, initiatingPageID, request), 0);
+}
+
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
     if (!m_process || !m_process->canSendMessage()) {

@@ -107,6 +107,8 @@ WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKCo
 WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClient* client);
 WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClient* client);
 
+WK_EXPORT void WKContextDownloadURLRequest(WKContextRef context, const WKURLRequestRef request);
+
 WK_EXPORT void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef context, WKTypeRef userData);
 WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody);
 

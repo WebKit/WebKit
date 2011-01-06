@@ -27,6 +27,7 @@
 #define WebPageProxy_h
 
 #include "APIObject.h"
+#include "ContextMenuState.h"
 #include "DrawingAreaProxy.h"
 #include "SelectionState.h"
 #include "SharedMemory.h"
@@ -76,6 +77,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class ContextMenuState;
 class DrawingAreaProxy;
 class NativeWebKeyboardEvent;
 class PageClient;
@@ -430,7 +432,7 @@ private:
     void hidePopupMenu();
 
     // Context Menu.
-    void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&, CoreIPC::ArgumentDecoder*);
+    void showContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuState&, const Vector<WebContextMenuItemData>&, CoreIPC::ArgumentDecoder*);
 
     // Speech.
 #if PLATFORM(MAC)
@@ -507,6 +509,7 @@ private:
 
     RefPtr<WebPopupMenuProxy> m_activePopupMenu;
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
+    ContextMenuState m_activeContextMenuState;
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
 
     double m_estimatedProgress;

@@ -1,3 +1,57 @@
+2011-01-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8750248>
+        Need a way to create a new DownloadProxy from an arbitrary resource request
+
+        <rdar://problem/8750465>
+        Need a way to start a download in WKDownload
+        
+        <rdar://problem/8752204>
+        WK2 Context Menus - "Save linked file" support
+
+        * Shared/ContextMenuState.h: Added.
+        Add a ContextMenuState struct which contains state for context menus.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextDownloadURLRequest):
+        Call WebContext::download.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::download):
+        Send a DownloadRequest message to the web process.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        Set the active context menu state.
+
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        Handle ContextMenuItemTagDownloadImageToDisk and ContextMenuItemTagDownloadLinkToDisk by calling
+        WebContext::Download, passing the respective URLs.
+
+        * UIProcess/WebPageProxy.messages.in:
+        ShowContextMenu now takes state as well.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::downloadURL):
+        Assert that this is never reached; downloads are handled in the UI process.
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show):
+        Pass the context menu state along when sending the ShowContextMenu message.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::downloadRequest):
+        Call the shared DownloadManager.
+
+        * WebProcess/WebProcess.messages.in:
+        Add DownloadRequest message.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add ContextMenuState.h.
+
 2011-01-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Unreviewed build fix.

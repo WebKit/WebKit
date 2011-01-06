@@ -616,6 +616,13 @@ void WebProcess::clearApplicationCache()
 #endif
 }
 
+void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const ResourceRequest& request)
+{
+    WebPage* initiatingPage = initiatingPageID ? webPage(initiatingPageID) : 0;
+
+    DownloadManager::shared().startDownload(downloadID, initiatingPage, request);
+}
+
 void WebProcess::cancelDownload(uint64_t downloadID)
 {
     DownloadManager::shared().cancelDownload(downloadID);

@@ -423,6 +423,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\ContextMenuState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\DrawingAreaInfo.h"
 				>
 			</File>

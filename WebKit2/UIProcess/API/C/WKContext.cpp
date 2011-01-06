@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebContext.h"
+#include "WebURLRequest.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -80,6 +81,11 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
     if (wkClient && wkClient->version)
         return;
     toImpl(contextRef)->initializeDownloadClient(wkClient);
+}
+
+void WKContextDownloadURLRequest(WKContextRef contextRef, const WKURLRequestRef requestRef)
+{
+    toImpl(contextRef)->download(0, toImpl(requestRef)->resourceRequest());
 }
 
 void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef contextRef,  WKTypeRef userDataRef)

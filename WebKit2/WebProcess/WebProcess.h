@@ -49,6 +49,7 @@ class QNetworkAccessManager;
 namespace WebCore {
     class IntSize;
     class PageGroup;
+    class ResourceRequest;
 }
 
 namespace WebKit {
@@ -136,6 +137,7 @@ private:
     void platformClearResourceCaches();
     void clearApplicationCache();
 
+    void downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
 
     void setTextCheckerState(const TextCheckerState&);

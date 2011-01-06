@@ -65,8 +65,8 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem*, const Conte
 
 void WebContextMenuClient::downloadURL(const KURL& url)
 {
-    // FIXME <rdar://problem/8750248> - Need the ability to start a Download from an arbitrary URL
-    notImplemented();
+    // This is handled in the UI process.
+    ASSERT_NOT_REACHED();
 }
 
 void WebContextMenuClient::searchWithGoogle(const Frame* frame)
