@@ -1,3 +1,15 @@
+2011-01-06  James Robinson  <jamesr@chromium.org>
+
+        Update expectations for tests that enumerate properties on the window to reflect newly added property.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+
 2010-12-28  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
