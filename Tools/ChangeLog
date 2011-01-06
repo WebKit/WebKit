@@ -1,3 +1,13 @@
+2011-01-05  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        check-webkit-style should allow unnecessary parameter names in WebKit2 APIs because we're matching CF's header style
+        https://bugs.webkit.org/show_bug.cgi?id=51970
+
+        * Scripts/webkitpy/style/checker.py:
+        Add -readability/naming for WebKit2 C API directories.
+
 2011-01-05  Eric Seidel  <eric@webkit.org>
 
         Unreviewed, just fixing one more log error from my previous python patch.
