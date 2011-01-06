@@ -112,6 +112,7 @@
                 'public/WebAttribute.h',
                 'public/WebAudioBus.h',
                 'public/WebAudioDevice.h',
+                'public/WebAutoFillClient.h',
                 'public/WebBindings.h',
                 'public/WebBlobData.h',
                 'public/WebBlobRegistry.h',
