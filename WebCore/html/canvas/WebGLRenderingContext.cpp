@@ -86,6 +86,21 @@ namespace {
         *clippedRange = range;
     }
 
+    // Return true if a character belongs to the ASCII subset as defined in
+    // GLSL ES 1.0 spec section 3.1.
+    bool validateCharacter(unsigned char c)
+    {
+        // Printing characters are valid except " $ ` @ \ ' DEL.
+        if (c >= 32 && c <= 126
+            && c != '"' && c != '$' && c != '`' && c != '@' && c != '\\' && c != '\'')
+            return true;
+        // Horizontal tab, line feed, vertical tab, form feed, carriage return
+        // are also valid.
+        if (c >= 9 && c <= 13)
+            return true;
+        return false;
+    }
+
 } // namespace anonymous
 
 class WebGLStateRestorer {
@@ -309,6 +324,8 @@ void WebGLRenderingContext::bindAttribLocation(WebGLProgram* program, unsigned l
 {
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateWebGLObject(program))
+        return;
+    if (!validateString(name))
         return;
     m_context->bindAttribLocation(objectOrZero(program), index, name);
     cleanupAfterGraphicsCall(false);
@@ -1460,6 +1477,8 @@ int WebGLRenderingContext::getAttribLocation(WebGLProgram* program, const String
 {
     if (isContextLost())
         return -1;
+    if (!validateString(name))
+        return -1;
     return m_context->getAttribLocation(objectOrZero(program), name);
 }
 
@@ -2085,6 +2104,8 @@ PassRefPtr<WebGLUniformLocation> WebGLRenderingContext::getUniformLocation(WebGL
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateWebGLObject(program))
         return 0;
+    if (!validateString(name))
+        return 0;
     WebGLStateRestorer(this, false);
     long uniformLocation = m_context->getUniformLocation(objectOrZero(program), name);
     if (uniformLocation == -1)
@@ -2468,6 +2489,8 @@ void WebGLRenderingContext::shaderSource(WebGLShader* shader, const String& stri
 {
     UNUSED_PARAM(ec);
     if (isContextLost() || !validateWebGLObject(shader))
+        return;
+    if (!validateString(string))
         return;
     m_context->shaderSource(objectOrZero(shader), string);
     cleanupAfterGraphicsCall(false);
@@ -3700,6 +3723,17 @@ bool WebGLRenderingContext::validateSize(long x, long y)
     if (x < 0 || y < 0) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return false;
+    }
+    return true;
+}
+
+bool WebGLRenderingContext::validateString(const String& string)
+{
+    for (size_t i = 0; i < string.length(); ++i) {
+        if (!validateCharacter(string[i])) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return false;
+        }
     }
     return true;
 }

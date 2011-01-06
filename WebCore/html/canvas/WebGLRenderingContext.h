@@ -515,6 +515,10 @@ public:
     // Generate GL error and return false for negative inputs; otherwise, return true.
     bool validateSize(long x, long y);
 
+    // Helper function to check if all characters in the string belong to the
+    // ASCII subset as defined in GLSL ES 1.0 spec section 3.1.
+    bool validateString(const String&);
+
     // Helper function to check target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
     // null.  Otherwise, return the texture bound to the target.
