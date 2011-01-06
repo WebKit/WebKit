@@ -30,6 +30,7 @@
 #define ImageData_h
 
 #include "CanvasPixelArray.h"
+#include "IntSize.h"
 #include <wtf/ByteArray.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -38,19 +39,19 @@ namespace WebCore {
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    static PassRefPtr<ImageData> create(unsigned width, unsigned height);
-    static PassRefPtr<ImageData> create(unsigned width, unsigned height, PassRefPtr<ByteArray>);
+    static PassRefPtr<ImageData> create(const IntSize&);
+    static PassRefPtr<ImageData> create(const IntSize&, PassRefPtr<ByteArray>);
 
-    unsigned width() const { return m_width; }
-    unsigned height() const { return m_height; }
+    IntSize size() const { return m_size; }
+    int width() const { return m_size.width(); }
+    int height() const { return m_size.height(); }
     CanvasPixelArray* data() const { return m_data.get(); }
 
 private:
-    ImageData(unsigned width, unsigned height);
-    ImageData(unsigned width, unsigned height, PassRefPtr<ByteArray>);
+    ImageData(const IntSize&);
+    ImageData(const IntSize&, PassRefPtr<ByteArray>);
 
-    unsigned m_width;
-    unsigned m_height;
+    IntSize m_size;
     RefPtr<CanvasPixelArray> m_data;
 };
 

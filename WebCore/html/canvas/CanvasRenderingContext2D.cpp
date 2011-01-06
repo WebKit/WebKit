@@ -1516,7 +1516,7 @@ GraphicsContext* CanvasRenderingContext2D::drawingContext() const
 
 static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
-    RefPtr<ImageData> data = ImageData::create(size.width(), size.height());
+    RefPtr<ImageData> data = ImageData::create(size);
     memset(data->data()->data()->data(), 0, data->data()->data()->length());
     return data.release();
 }
@@ -1528,8 +1528,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(PassRefPtr<Image
         return 0;
     }
 
-    IntSize size(imageData->width(), imageData->height());
-    return createEmptyImageData(size);
+    return createEmptyImageData(imageData->size());
 }
 
 PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float sh, ExceptionCode& ec) const
@@ -1587,7 +1586,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
     ImageBuffer* buffer = canvas()->buffer();
     if (!buffer)
         return createEmptyImageData(scaledRect.size());
-    return ImageData::create(scaledRect.width(), scaledRect.height(), buffer->getUnmultipliedImageData(scaledRect));
+    return ImageData::create(scaledRect.size(), buffer->getUnmultipliedImageData(scaledRect));
 }
 
 void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, ExceptionCode& ec)

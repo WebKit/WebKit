@@ -1,3 +1,38 @@
+2011-01-06  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51811
+        Merge m_height and m_width members of ImageData into the new m_size member.
+
+        Image (BitmapImage, ImageSource) types in WebKit use IntSize to store their
+        width and height argument, except ImageData. This patch refactors ImageData
+        to follow the style of other Image types in WebKit.
+        Using of PassRefPtrs other than argument passing is not allowed in WebKit anymore.
+        This patch also refactors the PassRefPtr usages of ImageData.
+
+        It's just a refactoring, so we don't need any new tests.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::readTerminal):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::ZigZag::Reader::readImageData):
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create):
+        (WebCore::ImageData::ImageData):
+        * html/ImageData.h:
+        (WebCore::ImageData::size):
+        (WebCore::ImageData::width):
+        (WebCore::ImageData::height):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::createEmptyImageData):
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/haiku/ImageBufferHaiku.cpp:
+        (WebCore::getImageData):
+
 2011-01-06  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Darin Adler.

@@ -31,26 +31,24 @@
 
 namespace WebCore {
 
-PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height)
+PassRefPtr<ImageData> ImageData::create(const IntSize& size)
 {
-    return adoptRef(new ImageData(width, height));
+    return adoptRef(new ImageData(size));
 }
 
-PassRefPtr<ImageData> ImageData::create(unsigned width, unsigned height, PassRefPtr<ByteArray> byteArray)
+PassRefPtr<ImageData> ImageData::create(const IntSize& size, PassRefPtr<ByteArray> byteArray)
 {
-    return adoptRef(new ImageData(width, height, byteArray));
+    return adoptRef(new ImageData(size, byteArray));
 }
 
-ImageData::ImageData(unsigned width, unsigned height)
-    : m_width(width)
-    , m_height(height)
-    , m_data(CanvasPixelArray::create(width * height * 4))
+ImageData::ImageData(const IntSize& size)
+    : m_size(size)
+    , m_data(CanvasPixelArray::create(size.width() * size.height() * 4))
 {
 }
 
-ImageData::ImageData(unsigned width, unsigned height, PassRefPtr<ByteArray> byteArray)
-    : m_width(width)
-    , m_height(height)
+ImageData::ImageData(const IntSize& size, PassRefPtr<ByteArray> byteArray)
+    : m_size(size)
     , m_data(CanvasPixelArray::create(byteArray))
 {
 }

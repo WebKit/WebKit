@@ -209,7 +209,7 @@ static inline void convertToInternalData(const uint8* sourceRows, unsigned sourc
 
 static PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size, bool premultiplied)
 {
-    PassRefPtr<ImageData> result = ImageData::create(rect.width(), rect.height());
+    RefPtr<ImageData> result = ImageData::create(IntSize(rect.width(), rect.height()));
     unsigned char* data = result->data()->data()->data();
 
     // If the destination image is larger than the source image, the outside
@@ -221,7 +221,7 @@ static PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBuffer
     // If the requested image is outside the source image, we can return at
     // this point.
     if (rect.x() > size.width() || rect.y() > size.height() || rect.right() < 0 || rect.bottom() < 0)
-        return result;
+        return result.release();
 
     // Now we know there must be an intersection rect which we need to extract.
     BRect sourceRect(0, 0, size.width() - 1, size.height() - 1);
@@ -246,7 +246,7 @@ static PassRefPtr<ImageData> getImageData(const IntRect& rect, const ImageBuffer
     convertFromInternalData(sourceRows, sourceBytesPerRow, destRows, destBytesPerRow,
         rows, columns, premultiplied);
 
-    return result;
+    return result.release();
 }
 
 

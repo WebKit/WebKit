@@ -879,13 +879,13 @@ private:
             return false;
         if (m_position + pixelDataLength > m_length)
             return false;
-        PassRefPtr<ImageData> imageData = ImageData::create(width, height);
+        RefPtr<ImageData> imageData = ImageData::create(IntSize(width, height));
         WTF::ByteArray* pixelArray = imageData->data()->data();
         ASSERT(pixelArray);
         ASSERT(pixelArray->length() >= pixelDataLength);
         memcpy(pixelArray->data(), m_buffer + m_position, pixelDataLength);
         m_position += pixelDataLength;
-        *value = toV8(imageData);
+        *value = toV8(imageData.release());
         return true;
     }
     

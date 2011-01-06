@@ -151,7 +151,7 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *    FileListTag <length:uint32_t>(<file:FileData>){length}
  *
  * ImageData :-
- *    ImageDataTag <width:uint32_t><height:uint32_t><length:uint32_t><data:uint8_t{length}>
+ *    ImageDataTag <width:int32_t><height:int32_t><length:uint32_t><data:uint8_t{length}>
  *
  * Blob :-
  *    BlobTag <url:StringData><type:StringData><size:long long>
@@ -494,6 +494,11 @@ private:
         } u;
         u.d = d;
         writeLittleEndian(m_buffer, u.i);
+    }
+
+    void write(int32_t i)
+    {
+        writeLittleEndian(m_buffer, i);
     }
 
     void write(unsigned long long i)
@@ -1120,10 +1125,10 @@ private:
             return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
         }
         case ImageDataTag: {
-            uint32_t width;
+            int32_t width;
             if (!read(width))
                 return JSValue();
-            uint32_t height;
+            int32_t height;
             if (!read(height))
                 return JSValue();
             uint32_t length;
@@ -1137,7 +1142,7 @@ private:
                 m_ptr += length;
                 return jsNull();
             }
-            RefPtr<ImageData> result = ImageData::create(width, height);
+            RefPtr<ImageData> result = ImageData::create(IntSize(width, height));
             memcpy(result->data()->data()->data(), m_ptr, length);
             m_ptr += length;
             return toJS(m_exec, static_cast<JSDOMGlobalObject*>(m_globalObject), result.get());
