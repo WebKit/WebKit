@@ -1,3 +1,22 @@
+2011-01-04  Girish Ramakrishnan  <girish@forwardbias.in>
+
+        Reviewed by Simon Hausmann.
+        Acked by Aaron Kennedy <aaron.kennedy@nokia.com>
+
+        [Qt] QML WebView does not transfer focus to underlying QGraphicsWebView
+
+        QML WebView creates QGraphicsWebView as it's child. The WebView is not
+        setup as a focus proxy of the QGraphicsWebView. Thus, even though the
+        WebView gets focus, the QGraphicsWebView does not get focus.
+        In QML, focus proxies or "focus scopes" are created using FocusScope.
+        This change makes WebView a FocusScope and sets the focus on the
+        QGraphicsWebView. 
+
+        https://bugs.webkit.org/show_bug.cgi?id=51094
+
+        * declarative/qdeclarativewebview.cpp:
+        (QDeclarativeWebView::init):
+
 2011-01-05  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.

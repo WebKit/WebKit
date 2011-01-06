@@ -253,10 +253,12 @@ void QDeclarativeWebView::init()
 
     setAcceptedMouseButtons(Qt::LeftButton);
     setFlag(QGraphicsItem::ItemHasNoContents, true);
+    setFlag(QGraphicsItem::ItemIsFocusScope, true);
     setClip(true);
 
     d->view = new GraphicsWebView(this);
     d->view->setResizesToContents(true);
+    d->view->setFocus();
     QWebPage* wp = new QDeclarativeWebPage(this);
     setPage(wp);
     connect(d->view, SIGNAL(geometryChanged()), this, SLOT(updateDeclarativeWebViewSize()));
