@@ -156,6 +156,12 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned lon
     if (!webPage)
         return;
 
+    if (!webPage->injectedBundleLoaderClient().shouldLoadResourceForFrame(webPage, m_frame, request.url().string())) {
+        request = ResourceRequest();
+        // FIXME: We should probably send a message saying we cancelled the request for the resource.
+        return;
+    }
+
     webPage->send(Messages::WebPageProxy::DidSendRequestForResource(m_frame->frameID(), identifier, request, redirectResponse));
 }
 

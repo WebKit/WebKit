@@ -1,3 +1,23 @@
+2011-01-05  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Ada Chan.
+
+        WebKit2: Should be able to call into injected bundle to ask if we should allow resource loads
+        https://bugs.webkit.org/show_bug.cgi?id=51969
+        
+        Add the ability to call into the injected bundle to ask if we should allow resource loads.
+        If the injected bundle says we should cancel, we clear out the ResourceRequest that was
+        passed into willSendRequest, which cancels the resource load.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Add the new callback for allowing/cancelling
+            resource loads.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::shouldLoadResourceForFrame): Calls through to the client.
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest): Ask the InjectedBundlePageLoaderClient if we
+            should load the resource or not.
+
 2011-01-06  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

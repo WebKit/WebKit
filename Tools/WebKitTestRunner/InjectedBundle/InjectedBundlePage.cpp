@@ -190,7 +190,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didClearWindowForFrame,
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
-        didHandleOnloadEventsForFrame
+        didHandleOnloadEventsForFrame,
+        shouldLoadResourceForFrame
     };
     WKBundlePageSetLoaderClient(m_page, &loaderClient);
 
@@ -320,6 +321,11 @@ void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundlePageRef page,
 void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
+}
+
+bool InjectedBundlePage::shouldLoadResourceForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef, const void* clientInfo)
+{
+    return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldLoadResourceForFrame(frame);
 }
 
 
@@ -559,6 +565,11 @@ void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundleFrameRef fram
 
 void InjectedBundlePage::didRunInsecureContentForFrame(WKBundleFrameRef frame)
 {
+}
+
+bool InjectedBundlePage::shouldLoadResourceForFrame(WKBundleFrameRef frame)
+{
+    return true;
 }
 
 // UI Client Callbacks
