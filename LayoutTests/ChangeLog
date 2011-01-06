@@ -5,6 +5,27 @@
         [Chromium] canvas/canvas-fillRect-gradient-shadow.html fails on Chromium.
         https://bugs.webkit.org/show_bug.cgi?id=51989
 
+        Added suppressions for
+        svg/batik/text/textEffect.svg
+        svg/batik/text/textEffect3.svg
+        svg/css/composite-shadow-text.svg
+        svg/custom/js-late-gradient-and-object-creation.svg
+        svg/custom/js-late-gradient-creation.svg
+        svg/text/selection-background-color.xhtml
+        svg/text/selection-styles.xhtml
+        svg/text/text-gradient-positioning.svg
+
+        These tests are all failing as a result of the same change: r75153.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-06  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed, build fix.
+
+        [Chromium] canvas/canvas-fillRect-gradient-shadow.html fails on Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=51989
+
         Updating Chromium expectations until we find a fix.
 
         * platform/chromium/test_expectations.txt:

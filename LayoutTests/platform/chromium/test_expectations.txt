@@ -3159,5 +3159,13 @@ BUG_SENORBLANCO WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+
 BUG_SENORBLANCO : fast/gradients/css3-repeating-linear-gradients.html = IMAGE
 BUG_SENORBLANCO : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
-// This was introduced by r75139
+// These were introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
+BUGWK51989 MAC : svg/batik/text/textEffect.svg = IMAGE
+BUGWK51989 MAC : svg/batik/text/textEffect3.svg = IMAGE
+BUGWK51989 MAC : svg/css/composite-shadow-text.svg = IMAGE
+BUGWK51989 MAC : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
+BUGWK51989 MAC : svg/custom/js-late-gradient-creation.svg = IMAGE
+BUGWK51989 MAC : svg/text/selection-background-color.xhtml = IMAGE
+BUGWK51989 MAC : svg/text/selection-styles.xhtml = IMAGE
+BUGWK51989 MAC : svg/text/text-gradient-positioning.svg = IMAGE
