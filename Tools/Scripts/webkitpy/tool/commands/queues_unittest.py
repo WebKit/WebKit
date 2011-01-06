@@ -55,7 +55,7 @@ class TestFeederQueue(FeederQueue):
 
 class AbstractQueueTest(CommandsTest):
     def test_log_directory(self):
-        self.assertEquals(TestQueue()._log_directory(), "test-queue-logs")
+        self.assertEquals(TestQueue()._log_directory(), os.path.join("..", "test-queue-logs"))
 
     def _assert_run_webkit_patch(self, run_args, port=None):
         queue = TestQueue()
