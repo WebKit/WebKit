@@ -1,5 +1,11 @@
 2011-01-06  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed Windows build fix for r75161.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp: Missing include added.
+
+2011-01-06  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed WinCE build fix for r75139.
 
         Try to remove include after adding forward-declaration in r75145.

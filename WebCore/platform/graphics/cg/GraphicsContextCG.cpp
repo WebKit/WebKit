@@ -36,8 +36,7 @@
 #include "Path.h"
 #include "Pattern.h"
 
-#include <CoreGraphics/CGBitmapContext.h>
-#include <CoreGraphics/CGPDFContext.h>
+#include <CoreGraphics/CoreGraphics.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
