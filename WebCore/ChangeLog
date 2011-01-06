@@ -1,3 +1,13 @@
+2011-01-05  Darin Adler  <darin@apple.com>
+
+        Fix Chromium Mac build.
+
+        * platform/graphics/Gradient.h: Forward-declare CGContextRef.
+        This might even make it possible to remove the include of
+        <CoreGraphics/CoreGraphics.h> for PLATFORM(WIN), but I did not
+        do that at this time because I don't want to break the Windows
+        build when fixing the Chromium build.
+
 2011-01-05  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by David Levin.

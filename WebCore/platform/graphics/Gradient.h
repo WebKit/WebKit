@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Torch Mobile, Inc.
  *
@@ -40,6 +40,8 @@
 #endif
 
 #if PLATFORM(CG)
+
+typedef struct CGContext* CGContextRef;
 
 #define USE_CG_SHADING defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
 
@@ -115,6 +117,7 @@ namespace WebCore {
 #else
         PlatformGradient platformGradient();
 #endif
+
         struct ColorStop {
             float stop;
             float red;
@@ -143,6 +146,7 @@ namespace WebCore {
         void paint(CGContextRef);
         void paint(GraphicsContext*);
 #endif
+
     private:
         Gradient(const FloatPoint& p0, const FloatPoint& p1);
         Gradient(const FloatPoint& p0, float r0, const FloatPoint& p1, float r1, float aspectRatio);
