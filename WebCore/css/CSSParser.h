@@ -359,6 +359,7 @@ namespace WebCore {
     String quoteCSSStringIfNeeded(const String&);
     String quoteCSSURLIfNeeded(const String&);
 
+    bool isValidNthToken(const CSSParserString&);
 } // namespace WebCore
 
 #endif // CSSParser_h

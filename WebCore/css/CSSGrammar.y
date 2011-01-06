@@ -1205,8 +1205,11 @@ pseudo:
                  type == CSSSelector::PseudoNthOfType ||
                  type == CSSSelector::PseudoNthLastChild ||
                  type == CSSSelector::PseudoNthLastOfType) {
-            if (p->document())
-                p->document()->setUsesSiblingRules(true);
+            if (isValidNthToken($4)) {
+                if (p->document())
+                    p->document()->setUsesSiblingRules(true);
+            } else
+                $$ = 0;
         }
     }
     // used by :not

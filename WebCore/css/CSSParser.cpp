@@ -6309,6 +6309,13 @@ String quoteCSSURLIfNeeded(const String& string)
     return isCSSTokenizerURL(string) ? string : quoteCSSString(string);
 }
 
+bool isValidNthToken(const CSSParserString& token)
+{
+    // The tokenizer checks for the construct of an+b.
+    // nth can also accept "odd" or "even" but should not accept any other token.
+    return equalIgnoringCase(token, "odd") || equalIgnoringCase(token, "even");
+}
+
 #define YY_DECL int CSSParser::lex()
 #define yyconst const
 typedef int yy_state_type;
