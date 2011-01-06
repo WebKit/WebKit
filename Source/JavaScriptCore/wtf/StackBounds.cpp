@@ -179,11 +179,6 @@ void StackBounds::initialize()
 
 #elif OS(WINCE)
 
-} // namespace WTF
-// FIXME: this is not threadsafe, and should probably be removed.
-namespace JSC { JS_EXPORTDATA void* g_stackBase = 0; }
-namespace WTF {
-
 static bool detectGrowingDownward(void* previousFrame)
 {
     // Find the address of this stack frame by taking the address of a local variable.

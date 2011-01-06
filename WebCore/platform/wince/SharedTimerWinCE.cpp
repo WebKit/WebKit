@@ -35,10 +35,6 @@
 #include <wtf/CurrentTime.h>
 #include <windows.h>
 
-namespace JSC {
-JS_EXPORTDATA extern void* g_stackBase;
-}
-
 namespace WebCore {
 
 enum {
@@ -55,22 +51,17 @@ const LPCWSTR kTimerWindowClassName = L"TimerWindowClass";
 
 LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    int dummy;
-    JSC::g_stackBase = &dummy;
-
     if (message == WM_TIMER) {
         if (timerID != TimerIdNone)
             sharedTimerFiredFunction();
-    } else if (message == WM_USER)    {
+    } else if (message == WM_USER) {
         if (timerID = TimerIdManual) {
             sharedTimerFiredFunction();
             PostMessage(hWnd, WM_USER, 0, 0);
         }
-    } else {
-        JSC::g_stackBase = 0;
+    } else
         return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-    JSC::g_stackBase = 0;
+
     return 0;
 }
 
