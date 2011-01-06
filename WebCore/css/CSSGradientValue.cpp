@@ -600,13 +600,15 @@ String CSSRadialGradientValue::cssText() const
     return result;
 }
 
-float CSSRadialGradientValue::resolveRadius(CSSPrimitiveValue* radius, RenderStyle* style, RenderStyle* rootStyle)
+float CSSRadialGradientValue::resolveRadius(CSSPrimitiveValue* radius, RenderStyle* style, RenderStyle* rootStyle, float* widthOrHeight)
 {
     float zoomFactor = style->effectiveZoom();
 
     float result = 0;
     if (radius->primitiveType() == CSSPrimitiveValue::CSS_NUMBER)  // Can the radius be a percentage?
         result = radius->getFloatValue() * zoomFactor;
+    else if (widthOrHeight && radius->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+        result = *widthOrHeight * radius->getFloatValue() / 100;
     else
         result = radius->computeLengthFloat(style, rootStyle, zoomFactor);
  
@@ -717,8 +719,10 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* render
     if (m_secondRadius)
         secondRadius = resolveRadius(m_secondRadius.get(), renderer->style(), rootStyle);
     else if (m_endHorizontalSize || m_endVerticalSize) {
-        secondRadius = resolveRadius(m_endHorizontalSize.get(), renderer->style(), rootStyle);
-        aspectRatio = secondRadius / resolveRadius(m_endVerticalSize.get(), renderer->style(), rootStyle);
+        float width = size.width();
+        float height = size.height();
+        secondRadius = resolveRadius(m_endHorizontalSize.get(), renderer->style(), rootStyle, &width);
+        aspectRatio = secondRadius / resolveRadius(m_endVerticalSize.get(), renderer->style(), rootStyle, &height);
     } else {
         enum GradientShape { Circle, Ellipse };
         GradientShape shape = Ellipse;

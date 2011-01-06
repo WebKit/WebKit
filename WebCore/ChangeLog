@@ -1,3 +1,21 @@
+2011-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix percentage values in radius of radial gradients
+        https://bugs.webkit.org/show_bug.cgi?id=51979
+        
+        Handle percentage values for the ending size of radial gradients.
+
+        Test: fast/gradients/css3-radial-gradients3.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSRadialGradientValue::resolveRadius): Add parameter for height or width, which is
+        non-null if percentage values are allowed, and compute percentage values when we see them.
+        (WebCore::CSSRadialGradientValue::createGradient): Pass height or width down to say that
+        percentages are OK when resolving end radii.
+        * css/CSSGradientValue.h: New parameter for resolveRadius.
+
 2011-01-05  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.

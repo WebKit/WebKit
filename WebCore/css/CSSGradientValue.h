@@ -152,7 +152,7 @@ private:
     virtual PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
     
     // Resolve points/radii to front end values.
-    float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle);
+    float resolveRadius(CSSPrimitiveValue*, RenderStyle*, RenderStyle* rootStyle, float* widthOrHeight = 0);
     
     // These may be null for non-deprecated gradients.
     RefPtr<CSSPrimitiveValue> m_firstRadius;

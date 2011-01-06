@@ -1,3 +1,15 @@
+2011-01-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix percentage values in radius of radial gradients
+        https://bugs.webkit.org/show_bug.cgi?id=51979
+
+        * fast/gradients/css3-radial-gradients3-expected.txt: Added.
+        * fast/gradients/css3-radial-gradients3.html: Added.
+        * platform/mac/fast/gradients/css3-radial-gradients3-expected.checksum: Added.
+        * platform/mac/fast/gradients/css3-radial-gradients3-expected.png: Added.
+
 2011-01-05  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.
