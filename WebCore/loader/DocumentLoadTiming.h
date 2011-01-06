@@ -40,6 +40,8 @@ struct DocumentLoadTiming {
         , responseEnd(0.0)
         , loadEventStart(0.0)
         , loadEventEnd(0.0)
+        , hasCrossOriginRedirect(false)
+        , hasSameOriginAsPreviousDocument(false)
     {
     }
 
@@ -53,6 +55,8 @@ struct DocumentLoadTiming {
     double responseEnd;
     double loadEventStart;
     double loadEventEnd;
+    bool hasCrossOriginRedirect;
+    bool hasSameOriginAsPreviousDocument;
 };
 
 }

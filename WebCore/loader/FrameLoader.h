@@ -480,11 +480,13 @@ private:
     bool m_didPerformFirstNavigation;
     bool m_loadingFromCachedPage;
     bool m_suppressOpenerInNewFrame;
-    
+
     SandboxFlags m_sandboxFlags;
     SandboxFlags m_forcedSandboxFlags;
 
     RefPtr<FrameNetworkingContext> m_networkingContext;
+
+    KURL m_previousUrl;
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

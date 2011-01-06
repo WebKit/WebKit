@@ -4,8 +4,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS timing.navigationStart is >= oneHourAgoUTC
-PASS timing.unloadEventStart is >= timing.navigationStart
-PASS timing.unloadEventEnd is >= timing.unloadEventStart
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
 PASS navigation.redirectCount is 0
@@ -25,8 +23,6 @@ PASS timing.domComplete is 0
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
-PASS timing.unloadEventStart is >= timing.navigationStart
-PASS timing.unloadEventEnd is >= timing.unloadEventStart
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
 PASS navigation.redirectCount is 0
@@ -46,8 +42,6 @@ PASS timing.domComplete is 0
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
-PASS timing.unloadEventStart is >= timing.navigationStart
-PASS timing.unloadEventEnd is >= timing.unloadEventStart
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
 PASS navigation.redirectCount is 0
@@ -67,8 +61,6 @@ PASS timing.domComplete is 0
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
-PASS timing.unloadEventStart is >= timing.navigationStart
-PASS timing.unloadEventEnd is >= timing.unloadEventStart
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
 PASS navigation.redirectCount is 0
@@ -88,8 +80,6 @@ PASS timing.domComplete is 0
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
-PASS timing.unloadEventStart is >= timing.navigationStart
-PASS timing.unloadEventEnd is >= timing.unloadEventStart
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
 PASS navigation.redirectCount is 0
@@ -110,8 +100,6 @@ PASS timing.domComplete is >= timing.domContentLoadedEventEnd
 PASS timing.loadEventStart is >= timing.responseEnd
 PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
-PASS timing.unloadEventStart is >= timing.navigationStart
-PASS timing.unloadEventEnd is >= timing.unloadEventStart
 PASS timing.redirectStart is 0
 PASS timing.redirectEnd is 0
 PASS navigation.redirectCount is 0

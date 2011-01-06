@@ -19,9 +19,6 @@ function checkTimingBeforeLoad()
 {
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
 
-    shouldBeGreaterThanOrEqual("timing.unloadEventStart", "timing.navigationStart");
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.unloadEventStart");
-
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
     shouldBe("navigation.redirectCount", "0");
@@ -53,9 +50,6 @@ function checkTimingBeforeLoad()
 function checkTimingWhileDeferred()
 {
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
-
-    shouldBeGreaterThanOrEqual("timing.unloadEventStart", "timing.navigationStart");
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.unloadEventStart");
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
@@ -89,9 +83,6 @@ function checkTimingWhileDeferred()
 
 function checkWebTimingOnDOMContentLoaded() {
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
-
-    shouldBeGreaterThanOrEqual("timing.unloadEventStart", "timing.navigationStart");
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.unloadEventStart");
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
@@ -132,9 +123,6 @@ function checkWebTimingWhileAsync()
 {
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
 
-    shouldBeGreaterThanOrEqual("timing.unloadEventStart", "timing.navigationStart");
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.unloadEventStart");
-
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
     shouldBe("navigation.redirectCount", "0");
@@ -168,9 +156,6 @@ function checkWebTimingWhileAsync()
 function checkWebTimingOnLoad()
 {
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
-
-    shouldBeGreaterThanOrEqual("timing.unloadEventStart", "timing.navigationStart");
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.unloadEventStart");
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");
@@ -206,9 +191,6 @@ function checkWebTimingOnLoad()
 function checkWebTimingAfterLoad()
 {
     shouldBeGreaterThanOrEqual("timing.navigationStart", "oneHourAgoUTC");
-
-    shouldBeGreaterThanOrEqual("timing.unloadEventStart", "timing.navigationStart");
-    shouldBeGreaterThanOrEqual("timing.unloadEventEnd", "timing.unloadEventStart");
 
     shouldBe("timing.redirectStart", "0");
     shouldBe("timing.redirectEnd", "0");

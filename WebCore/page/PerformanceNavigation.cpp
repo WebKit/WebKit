@@ -83,7 +83,11 @@ unsigned short PerformanceNavigation::redirectCount() const
     if (!loader)
         return 0;
 
-    return loader->timing()->redirectCount;
+    DocumentLoadTiming* timing = loader->timing();
+    if (timing->hasCrossOriginRedirect)
+        return 0;
+
+    return timing->redirectCount;
 }
 
 } // namespace WebCore

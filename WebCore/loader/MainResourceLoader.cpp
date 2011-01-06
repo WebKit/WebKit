@@ -164,7 +164,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // deferrals plays less of a part in this function in preventing the bad behavior deferring 
     // callbacks is meant to prevent.
     ASSERT(!newRequest.isNull());
-    
+
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
@@ -172,6 +172,12 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     ASSERT(documentLoader()->timing()->fetchStart);
     if (!redirectResponse.isNull()) {
         DocumentLoadTiming* documentLoadTiming = documentLoader()->timing();
+
+        // Check if the redirected url is allowed to access the redirecting url's timing information.
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(newRequest.url());
+        if (!securityOrigin->canRequest(redirectResponse.url()))
+            documentLoadTiming->hasCrossOriginRedirect = true;
+
         documentLoadTiming->redirectCount++;
         if (!documentLoadTiming->redirectStart)
             documentLoadTiming->redirectStart = documentLoadTiming->fetchStart;
@@ -183,7 +189,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     // URL of the main frame which doesn't change when we redirect.
     if (frameLoader()->isLoadingMainFrame())
         newRequest.setFirstPartyForCookies(newRequest.url());
-    
+
     // If we're fielding a redirect in response to a POST, force a load from origin, since
     // this is a common site technique to return to a page viewing some data that the POST
     // just modified.
@@ -192,7 +198,7 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
         newRequest.setCachePolicy(ReloadIgnoringCacheData);
 
     ResourceLoader::willSendRequest(newRequest, redirectResponse);
-    
+
     // Don't set this on the first request. It is set when the main load was started.
     m_documentLoader->setRequest(newRequest);
 

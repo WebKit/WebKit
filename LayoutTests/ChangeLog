@@ -1,3 +1,31 @@
+2011-01-05  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Web Timing] Zero out some values on cross-origin redirects
+        https://bugs.webkit.org/show_bug.cgi?id=49294
+
+        * fast/dom/script-tests/webtiming.js:
+        (checkTimingBeforeLoad): Remove unload. Its behavior depends on prior navigation and is tested separately.
+        (checkTimingWhileDeferred): Ditto.
+        (checkWebTimingOnDOMContentLoaded): Ditto.
+        (checkWebTimingWhileAsync): Ditto.
+        (checkWebTimingOnLoad): Ditto.
+        (checkWebTimingAfterLoad): Ditto.
+        * fast/dom/webtiming-expected.txt:
+        * http/tests/misc/resources/webtiming-cross-origin-and-back-redirect1.php: Added.
+        * http/tests/misc/resources/webtiming-cross-origin-and-back-redirect2.php: Added.
+        * http/tests/misc/resources/webtiming-cross-origin-and-back1.html: Added.
+        * http/tests/misc/resources/webtiming-cross-origin-and-back2.html: Added.
+        * http/tests/misc/resources/webtiming-cross-origin-redirect.html: Added.
+        * http/tests/misc/resources/webtiming-cross-origin-redirect.php: Added.
+        * http/tests/misc/resources/webtiming-no-origin.html: Added.
+        * http/tests/misc/webtiming-origins-expected.txt: Added.
+        * http/tests/misc/webtiming-origins.html: Added.
+        * platform/gtk/Skipped: Skip new web timing test.
+        * platform/mac/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+
 2011-01-05  Helder Correia  <helder@sencha.com>
 
         Reviewed by Ariya Hidayat.

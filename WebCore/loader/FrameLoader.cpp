@@ -212,7 +212,7 @@ FrameLoader::~FrameLoader()
     HashSet<Frame*>::iterator end = m_openedFrames.end();
     for (HashSet<Frame*>::iterator it = m_openedFrames.begin(); it != end; ++it)
         (*it)->loader()->m_opener = 0;
-        
+
     m_client->frameLoaderDestroyed();
 
     if (m_networkingContext)
@@ -383,11 +383,10 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy, DatabasePolic
                         // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed
                         // while dispatching the event, so protect it to prevent writing the end
                         // time into freed memory.
-                        if (RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader) {
+                        RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader;
+                        if (documentLoader && !documentLoader->timing()->unloadEventStart && !documentLoader->timing()->unloadEventEnd) {
                             DocumentLoadTiming* timing = documentLoader->timing();
                             ASSERT(timing->navigationStart);
-                            ASSERT(!timing->unloadEventStart);
-                            ASSERT(!timing->unloadEventEnd);
                             m_frame->domWindow()->dispatchTimedEvent(unloadEvent, m_frame->domWindow()->document(), &timing->unloadEventStart, &timing->unloadEventEnd);
                             ASSERT(timing->unloadEventStart >= timing->navigationStart);
                         } else
@@ -1186,7 +1185,7 @@ void FrameLoader::completed()
 
     for (Frame* descendant = m_frame->tree()->traverseNext(m_frame); descendant; descendant = descendant->tree()->traverseNext(m_frame))
         descendant->navigationScheduler()->startTimer();
-    
+
     if (Frame* parent = m_frame->tree()->parent())
         parent->loader()->checkCompleted();
 
@@ -1437,6 +1436,9 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     if (m_pageDismissalEventBeingDispatched)
         return;
+
+    if (m_frame->document())
+        m_previousUrl = m_frame->document()->url();
 
     policyChecker()->setLoadType(type);
     RefPtr<FormState> formState = prpFormState;
@@ -1834,15 +1836,21 @@ void FrameLoader::commitProvisionalLoad()
     HistoryItem* item = history()->currentItem();
     if (!m_frame->tree()->parent() && PageCache::canCache(m_frame->page()) && !item->isInPageCache())
         pageCache()->add(item, m_frame->page());
-    
+
     if (m_loadType != FrameLoadTypeReplace)
         closeOldDataSources();
-    
+
     if (!cachedPage && !m_stateMachine.creatingInitialEmptyDocument())
         m_client->makeRepresentation(pdl.get());
-    
+
     transitionToCommitted(cachedPage);
-    
+
+    if (pdl) {
+        // Check if the destination page is allowed to access the previous page's timing information.
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(pdl->request().url());
+        m_documentLoader->timing()->hasSameOriginAsPreviousDocument = securityOrigin->canRequest(m_previousUrl);
+    }
+
     // Call clientRedirectCancelledOrFinished() here so that the frame load delegate is notified that the redirect's
     // status has changed, if there was a redirect.  The frame load delegate may have saved some state about
     // the redirect in its -webView:willPerformClientRedirectToURL:delay:fireDate:forFrame:.  Since we are
