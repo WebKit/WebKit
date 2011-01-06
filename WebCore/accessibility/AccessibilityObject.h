@@ -327,7 +327,7 @@ public:
     virtual bool isVisited() const { return false; }
     virtual bool isRequired() const { return false; }
     virtual bool isLinked() const { return false; }
-    virtual bool isExpanded() const { return false; }
+    virtual bool isExpanded() const;
     virtual bool isVisible() const { return true; }
     virtual bool isCollapsed() const { return false; }
     virtual void setIsExpanded(bool) { }
@@ -366,7 +366,8 @@ public:
     virtual bool ariaHasPopup() const { return false; }
     bool ariaIsMultiline() const;
     virtual const AtomicString& invalidStatus() const;
-
+    bool supportsARIAExpanded() const;
+    
     // ARIA drag and drop
     virtual bool supportsARIADropping() const { return false; }
     virtual bool supportsARIADragging() const { return false; }

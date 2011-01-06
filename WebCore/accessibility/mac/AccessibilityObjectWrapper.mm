@@ -645,6 +645,9 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
     if (m_object->supportsARIAOwns())
         [additional addObject:NSAccessibilityOwnsAttribute];
 
+    if (m_object->supportsARIAExpanded())
+        [additional addObject:NSAccessibilityExpandedAttribute];
+    
     if (m_object->isScrollbar())
         [additional addObject:NSAccessibilityOrientationAttribute];
     

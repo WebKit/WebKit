@@ -1041,6 +1041,19 @@ AccessibilityObject* AccessibilityObject::focusedUIElement() const
     return AXObjectCache::focusedUIElementForPage(page);
 }
     
+bool AccessibilityObject::supportsARIAExpanded() const
+{
+    return !getAttribute(aria_expandedAttr).isEmpty();
+}
+    
+bool AccessibilityObject::isExpanded() const
+{
+    if (equalIgnoringCase(getAttribute(aria_expandedAttr), "true"))
+        return true;
+    
+    return false;  
+}
+    
 AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
 {
     // If this is a real checkbox or radio button, AccessibilityRenderObject will handle.

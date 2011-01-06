@@ -101,7 +101,6 @@ public:
     virtual bool isVisited() const;        
     virtual bool isRequired() const;
     virtual bool isLinked() const;
-    virtual bool isExpanded() const;
     virtual void setIsExpanded(bool);
 
     virtual bool canSetFocusAttribute() const;

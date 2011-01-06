@@ -1,3 +1,13 @@
+2011-01-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: "AXExpanded" not exposed on most ARIA roles that use aria-expanded
+        https://bugs.webkit.org/show_bug.cgi?id=51995
+
+        * platform/mac/accessibility/aria-expanded-standard-items-expected.txt: Added.
+        * platform/mac/accessibility/aria-expanded-standard-items.html: Added.
+
 2011-01-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,22 @@
+2011-01-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: "AXExpanded" not exposed on most ARIA roles that use aria-expanded
+        https://bugs.webkit.org/show_bug.cgi?id=51995
+
+        Test: platform/mac/accessibility/aria-expanded-standard-items.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::supportsARIAExpanded):
+        (WebCore::AccessibilityObject::isExpanded):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isVisited):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper additionalAccessibilityAttributeNames]):
+
 2010-12-28  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

@@ -2054,14 +2054,6 @@ bool AccessibilityRenderObject::isVisited() const
     // FIXME: Is it a privacy violation to expose visited information to accessibility APIs?
     return m_renderer->style()->isLink() && m_renderer->style()->insideLink() == InsideVisitedLink;
 }
-    
-bool AccessibilityRenderObject::isExpanded() const
-{
-    if (equalIgnoringCase(getAttribute(aria_expandedAttr), "true"))
-        return true;
-    
-    return false;  
-}
 
 void AccessibilityRenderObject::setElementAttributeValue(const QualifiedName& attributeName, bool value)
 {
