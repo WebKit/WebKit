@@ -44,8 +44,6 @@ public:
     {
         if (index >= TypedArrayBase<float>::m_length)
             return;
-        if (isnan(value)) // Clamp NaN to 0
-            value = 0;
         TypedArrayBase<float>::data()[index] = static_cast<float>(value);
     }
 
@@ -55,10 +53,6 @@ public:
     {
         ASSERT(index < TypedArrayBase<float>::m_length);
         float result = TypedArrayBase<float>::data()[index];
-        if (isnan(result)) {
-            // Clamp NaN to 0
-            result = 0;
-        }
         return result;
     }
 

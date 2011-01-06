@@ -554,6 +554,81 @@ function negativeTestGetAndSetMethods(type, name) {
     }
 }
 
+function testNaNConversion(type, name) {
+  running('test storing NaN in ' + name);
+
+  var array = new type([1, 1]);
+  var results = [];
+
+  // The code block in each of the case statements below is identical, but some
+  // JavaScript engines need separate copies in order to exercise all of
+  // their optimized code paths.
+  try {
+    switch (type) {
+    case Float32Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
+    case Int8Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
+    case Int16Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
+    case Int32Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
+    case Uint8Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
+    case Uint16Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
+    case Uint32Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
+    default:
+      fail("Unhandled type");
+      break;
+    }
+
+    // Some types preserve NaN values; all other types convert NaN to zero.
+    if (type === Float32Array) {
+      assert('initial NaN preserved', isNaN(new type([NaN])[0]));
+      for (var i = 0; i < array.length; ++i)
+        assert('NaN preserved via setter', isNaN(results[i]));
+    } else {
+      assertEq('initial NaN converted to zero', 0, new type([NaN])[0]);
+      for (var i = 0; i < array.length; ++i)
+        assertEq('NaN converted to zero by setter', 0, results[i]);
+    }
+
+    pass();
+  } catch (e) {
+      fail(e);
+  }
+}
+
 //
 // Test driver
 //
@@ -659,6 +734,7 @@ function runTests() {
     testSettingFromFakeArrayWithOutOfRangeLength(type, name);
     testSettingFromTypedArrayWithOutOfRangeOffset(type, name);
     negativeTestGetAndSetMethods(type, name);
+    testNaNConversion(type, name);
   }
 
   printSummary();

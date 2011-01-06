@@ -1,3 +1,13 @@
+2011-01-04  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add test cases for storing NaN in typed arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=46990
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+
 2011-01-06  Andrei Popescu  <andreip@google.com>
 
         Unreviewed, build fix.

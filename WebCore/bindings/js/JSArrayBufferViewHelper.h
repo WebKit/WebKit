@@ -104,6 +104,25 @@ PassRefPtr<C> constructArrayBufferViewWithArrayBufferArgument(JSC::ExecState* ex
     return array;
 }
 
+template<typename T>
+inline T convertArrayValue(JSC::ExecState* exec, JSC::JSValue v)
+{
+    // For integral types, NaN values must be converted to zero.
+    return static_cast<T>(v.toInteger(exec));
+}
+
+template<>
+inline float convertArrayValue(JSC::ExecState* exec, JSC::JSValue v)
+{
+    return static_cast<float>(v.toNumber(exec));
+}
+
+template<>
+inline double convertArrayValue(JSC::ExecState* exec, JSC::JSValue v)
+{
+    return static_cast<double>(v.toNumber(exec));
+}
+
 template<class C, typename T>
 PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
 {
@@ -144,9 +163,7 @@ PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
         OwnFastMallocPtr<T> values(static_cast<T*>(tempValues));
         for (unsigned i = 0; i < length; ++i) {
             JSC::JSValue v = array->get(exec, i);
-            if (exec->hadException())
-                return 0;
-            values.get()[i] = static_cast<T>(v.toNumber(exec));
+            values.get()[i] = convertArrayValue<T>(exec, v);
         }
         
         RefPtr<C> result = C::create(values.get(), length);
