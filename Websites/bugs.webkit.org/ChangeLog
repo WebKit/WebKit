@@ -2,6 +2,17 @@
 
         Reviewed by Adam Barth.
 
+        assorted cleanups to prepare for side-by-side diffing
+        https://bugs.webkit.org/show_bug.cgi?id=51961
+
+        Mostly, use selector queries instead of assuming comments are next siblings.
+
+        * code-review.js:
+
+2011-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         fix message container selector for code review tool
         https://bugs.webkit.org/show_bug.cgi?id=51959
 

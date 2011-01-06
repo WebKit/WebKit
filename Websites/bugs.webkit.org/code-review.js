@@ -92,21 +92,21 @@
     });
   }
 
+  function diffSectionFrom(line) {
+    return line.parents('.FileDiff');
+  }
+
   function previousCommentsFor(line) {
-    var comments = [];
-    var position = line;
-    while (position.next() && position.next().hasClass('previousComment')) {
-      position = position.next();
-      comments.push(position.get());
-    }
-    return $(comments);
+    // Scope to the diffSection as a performance improvement.
+    return $('div[data-comment-for~="' + line[0].id + '"].previousComment', diffSectionFrom(line));
   }
 
   function findCommentPositionFor(line) {
-    var position = line;
-    while (position.next() && position.next().hasClass('previousComment'))
-      position = position.next();
-    return position;
+    var previous_comments = previousCommentsFor(line);
+    var num_previous_comments = previous_comments.size();
+    if (num_previous_comments)
+      return $(previous_comments[num_previous_comments - 1])
+    return line;
   }
 
   function findCommentBlockFor(line) {
@@ -194,6 +194,7 @@
         continue;
       var quote_markers = parts[1];
       var file_name = parts[2];
+      // FIXME: Store multiple lines for multiline comments and correctly import them here.
       var line_number = parts[3];
       if (!file_name in files)
         continue;
@@ -361,19 +362,24 @@
         (amount ? amount + " " : "") + direction + "</a>";
   }
 
-  $(window).bind('click', function (e) {
-    var target = e.target;
-    if (target.className != 'ExpandLink')
-      return;
-
-    // Can't use $ here because something in the window's scope sets $ to something other than jQuery.
-    var expand_bar = jQuery(target).parents('.ExpandBar');
+  function handleExpandLinkClick(target) {
+    var expand_bar = $(target).parents('.ExpandBar');
     var file_name = expand_bar.parents('.FileDiff').children('h1')[0].textContent;
     var expand_function = partial(expand, expand_bar[0], file_name, target.getAttribute('data-direction'), Number(target.getAttribute('data-amount')));
     if (file_name in original_file_contents)
       expand_function();
     else
       getWebKitSourceFile(file_name, expand_function, expand_bar);
+  };
+
+  $(window).bind('click', function (e) {
+    var target = e.target;
+
+    switch(target.className) {
+    case 'ExpandLink':
+      handleExpandLinkClick(target);
+      break;
+    }
   });
 
   function getWebKitSourceFile(file_name, onLoad, expand_bar) {
