@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,16 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+static uint64_t generateWebBackForwardItemID()
+{
+    // These IDs exist in the UIProcess for items created by the UIProcess.
+    // The IDs generated here need to never collide with the IDs created in WebBackForwardListProxy in the WebProcess.
+    // We accomplish this by starting from 2, and only ever using even ids.
+    static uint64_t uniqueHistoryItemID = 0;
+    uniqueHistoryItemID += 2;
+    return uniqueHistoryItemID;
+}
 
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryCurrentIndexKey, (CFSTR("SessionHistoryCurrentIndex")));
 DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntriesKey, (CFSTR("SessionHistoryEntries")));
@@ -90,6 +100,8 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
     }
 
     CFIndex size = CFArrayGetCount(cfEntries);
+    BackForwardListItemVector newEntries;
+    newEntries.reserveCapacity(size);
     for (CFIndex i = 0; i < size; ++i) {
         CFDictionaryRef entryDictionary = (CFDictionaryRef)CFArrayGetValueAtIndex(cfEntries, i);
         if (!entryDictionary || CFGetTypeID(entryDictionary) != CFDictionaryGetTypeID()) {
@@ -108,16 +120,24 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
             LOG(SessionState, "WebBackForwardList entry at index %i does not have a valid title", (int)i);
             return false;
         }
-        
-        // FIXME <rdar://problem/8261624> and https://bugs.webkit.org/show_bug.cgi?id=47355 - 
-        // The data for the above entry needs to be added to the full back/forward list.
-        // When we have a solution that restores the full back/forwardlist then causes a load of the current item,
-        // we will no longer need this.
-        if (i == currentIndex) {
-            m_restoredCurrentURL = entryURL;
-            break;
+
+        CFStringRef originalURL = (CFStringRef)CFDictionaryGetValue(entryDictionary, SessionHistoryEntryOriginalURLKey());
+        if (!originalURL || CFGetTypeID(originalURL) != CFStringGetTypeID()) {
+            LOG(SessionState, "WebBackForwardList entry at index %i does not have a valid original URL", (int)i);
+            return false;
         }
+
+        CFDataRef backForwardData = (CFDataRef)CFDictionaryGetValue(entryDictionary, SessionHistoryEntryDataKey());
+        if (!backForwardData || CFGetTypeID(backForwardData) != CFDataGetTypeID()) {
+            LOG(SessionState, "WebBackForwardList entry at index %i does not have back/forward data", (int)i);
+            return false;
+        }
+        
+        newEntries.append(WebBackForwardListItem::create(originalURL, entryURL, entryTitle, CFDataGetBytePtr(backForwardData), CFDataGetLength(backForwardData), generateWebBackForwardItemID()));
     }
+    
+    m_current = currentIndex;
+    m_entries = newEntries;
     return true;
 }
 

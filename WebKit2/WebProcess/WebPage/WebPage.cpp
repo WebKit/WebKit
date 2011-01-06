@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -845,6 +845,11 @@ void WebPage::validateMenuItem(const String& commandName)
 void WebPage::executeEditCommand(const String& commandName)
 {
     executeEditingCommand(commandName, String());
+}
+
+void WebPage::restoreSession(const SessionState&)
+{
+    // FIXME: Implement
 }
 
 #if ENABLE(TOUCH_EVENTS)

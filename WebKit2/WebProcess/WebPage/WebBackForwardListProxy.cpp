@@ -62,8 +62,12 @@ static HistoryItemToIDMap& historyItemToIDMap()
 
 static uint64_t generateHistoryItemID()
 {
+    // These IDs exist in the WebProcess for items created by the WebProcess.
+    // The IDs generated here need to never collide with the IDs created in WebBackForwardList in the UIProcess.
+    // We accomplish this by starting from 3, and only ever using odd ids.
     static uint64_t uniqueHistoryItemID = 1;
-    return uniqueHistoryItemID++;
+    uniqueHistoryItemID += 2;
+    return uniqueHistoryItemID;
 }
 
 static uint64_t getIDForHistoryItem(HistoryItem* item)

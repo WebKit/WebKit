@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,7 +66,10 @@ public:
     WebBackForwardListItem* backItem();
     WebBackForwardListItem* forwardItem();
     WebBackForwardListItem* itemAtIndex(int);
+    
+    const BackForwardListItemVector& entries() const { return m_entries; }
 
+    uint32_t currentIndex() { return m_current; }
     int backListCount();
     int forwardListCount();
 
@@ -85,18 +88,10 @@ private:
 
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;
-    unsigned m_current;
-    unsigned m_capacity;
+    uint32_t m_current;
+    uint32_t m_capacity;
     bool m_closed;
     bool m_enabled;
-    
-// FIXME - <rdar://problem/8261624> and https://bugs.webkit.org/show_bug.cgi?id=47355 - 
-// When we have a solution for restoring the full back/forward list 
-// then causing a load of the current item, we will no longer need this.
-public:
-    const WTF::String& restoredCurrentURL() const { return m_restoredCurrentURL; }
-private:
-    WTF::String m_restoredCurrentURL;
 };
 
 } // namespace WebKit

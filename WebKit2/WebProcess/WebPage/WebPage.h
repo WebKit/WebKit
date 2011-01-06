@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,7 @@ class DrawingArea;
 class InjectedBundleBackForwardList;
 class PageOverlay;
 class PluginView;
+class SessionState;
 class WebContextMenu;
 class WebContextMenuItemData;
 class WebEvent;
@@ -335,6 +336,8 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
 #endif
+
+    void restoreSession(const SessionState&);
 
     void setDrawsBackground(bool);
     void setDrawsTransparentBackground(bool);

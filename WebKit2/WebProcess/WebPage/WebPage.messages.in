@@ -46,6 +46,8 @@ messages -> WebPage {
     LoadURLRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     Reload(bool reloadFromOrigin)
     StopLoading()
+    
+    RestoreSession(WebKit::SessionState state)
 
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
 
@@ -100,7 +102,7 @@ messages -> WebPage {
     DidChooseFilesForOpenPanel(Vector<WTF::String> fileURLs)
     DidCancelForOpenPanel()
 
-    # Speling and grammer.
+    # Spelling and grammar.
     AdvanceToNextMisspelling(bool startBeforeSelection)
     ChangeSpellingToWord(WTF::String word)
     UnmarkAllMisspellings()

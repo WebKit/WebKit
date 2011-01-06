@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,11 @@
 #include "WebPageProxy.h"
 
 #include "Logging.h"
+#include "SessionState.h"
 #include "WebBackForwardList.h"
 #include "WebData.h"
+#include "WebPageMessages.h"
+#include "WebProcessProxy.h"
 
 #include <wtf/RetainPtr.h>
 #include <CoreFoundation/CFPropertyList.h>
@@ -122,10 +125,8 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
         LOG(SessionState, "Failed to restore back/forward list from SessionHistoryDictionary");
         return;
     }
-
-    // FIXME: When we have a solution for restoring the full back/forward list then causing a load of the current item,
-    // we will trigger that load here.  Until then, we use the "restored current URL" which can later be removed.
-    loadURL(m_backForwardList->restoredCurrentURL());
+    
+    process()->send(Messages::WebPage::RestoreSession(SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex())), m_pageID);
 }
 
 } // namespace WebKit
