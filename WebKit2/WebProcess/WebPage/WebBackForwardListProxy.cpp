@@ -70,45 +70,36 @@ static uint64_t generateHistoryItemID()
     return uniqueHistoryItemID;
 }
 
-static uint64_t getIDForHistoryItem(HistoryItem* item)
+static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
 {
-    uint64_t itemID = 0;
-
-    std::pair<HistoryItemToIDMap::iterator, bool> result = historyItemToIDMap().add(item, 0);
-    if (result.second) {
-        itemID = generateHistoryItemID();
-        result.first->second = itemID;
-        idToHistoryItemMap().set(itemID, item);
-    } else
-        itemID = result.first->second;
-
-    ASSERT(itemID);
-    return itemID;
-}
-
-static void updateBackForwardItem(HistoryItem* item)
-{
-    uint64_t itemID = getIDForHistoryItem(item);
-    const String& originalURLString = item->originalURLString();
-    const String& urlString = item->urlString();
-    const String& title = item->title();
-
-    // FIXME: We only want to do this work for top level back/forward items.
-    // The best way to do that is probably to arrange for this entire function to only be called by top leve back/forward items.
     EncoderAdapter encoder;
     item->encodeBackForwardTree(encoder);
 
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, originalURLString, urlString, title, encoder.data()), 0);
+    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID,
+        item->originalURLString(), item->urlString(), item->title(), encoder.data()), 0);
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)
 {
-    updateBackForwardItem(item);
+    uint64_t itemID = historyItemToIDMap().get(item);
+    if (!itemID)
+        return;
+
+    updateBackForwardItem(itemID, item);
 }
 
 HistoryItem* WebBackForwardListProxy::itemForID(uint64_t itemID)
 {
     return idToHistoryItemMap().get(itemID).get();
+}
+
+void WebBackForwardListProxy::removeBackForwardItem(uint64_t itemID)
+{
+    IDToHistoryItemMap::iterator it = idToHistoryItemMap().find(itemID);
+    if (it == idToHistoryItemMap().end())
+        return;
+    historyItemToIDMap().remove(it->second);
+    idToHistoryItemMap().remove(it);
 }
 
 WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
@@ -119,11 +110,21 @@ WebBackForwardListProxy::WebBackForwardListProxy(WebPage* page)
 
 void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
 {
+    RefPtr<HistoryItem> item = prpItem;
+
+    ASSERT(!historyItemToIDMap().contains(item));
+
     if (!m_page)
         return;
 
-    RefPtr<HistoryItem> item = prpItem;
-    uint64_t itemID = historyItemToIDMap().get(item);
+    uint64_t itemID = generateHistoryItemID();
+
+    ASSERT(!idToHistoryItemMap().contains(itemID));
+
+    historyItemToIDMap().set(item, itemID);
+    idToHistoryItemMap().set(itemID, item);
+
+    updateBackForwardItem(itemID, item.get());
     m_page->send(Messages::WebPageProxy::BackForwardAddItem(itemID));
 }
 
@@ -132,8 +133,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem* item)
     if (!m_page)
         return;
 
-    uint64_t itemID = historyItemToIDMap().get(item);
-    m_page->send(Messages::WebPageProxy::BackForwardGoToItem(itemID));
+    m_page->send(Messages::WebPageProxy::BackForwardGoToItem(historyItemToIDMap().get(item)));
 }
 
 HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
@@ -148,8 +148,7 @@ HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
     if (!itemID)
         return 0;
 
-    RefPtr<HistoryItem> item = idToHistoryItemMap().get(itemID);
-    return item.get();
+    return idToHistoryItemMap().get(itemID).get();
 }
 
 int WebBackForwardListProxy::backListCount()

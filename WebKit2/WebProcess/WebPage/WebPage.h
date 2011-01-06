@@ -339,6 +339,8 @@ private:
 
     void restoreSession(const SessionState&);
 
+    void didRemoveBackForwardItem(uint64_t);
+
     void setDrawsBackground(bool);
     void setDrawsTransparentBackground(bool);
 

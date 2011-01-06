@@ -49,6 +49,8 @@ messages -> WebPage {
     
     RestoreSession(WebKit::SessionState state)
 
+    DidRemoveBackForwardItem(uint64_t backForwardItemID)
+
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
 
     # Callbacks.

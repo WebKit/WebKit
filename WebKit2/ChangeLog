@@ -1,3 +1,59 @@
+2011-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Back/Forward entries in WebKit2 leak
+        https://bugs.webkit.org/show_bug.cgi?id=51983
+
+        Besides fixing the leak, this also fixes a problem where
+        all history items were sent over to the UI process, but
+        we wanted to send only back/forward items.
+
+        * UIProcess/WebBackForwardList.cpp:
+        (WebKit::WebBackForwardList::pageClosed): Added.
+        Tells the web process about all the back/forward
+        items being removed.
+        (WebKit::WebBackForwardList::addItem): Ditto.
+        Also removed a redundant call to didChangeBackForwardList.
+        (WebKit::WebBackForwardList::clear): Ditto.
+
+        * UIProcess/WebBackForwardList.h: Added pageClosed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Added a call to pageClosed.
+        (WebKit::WebPageProxy::backForwardRemovedItem): Added.
+        Sends a message to the web page in the web process.
+
+        * UIProcess/WebPageProxy.h: Added backForwardRemovedItem.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem): Added an itemID argument,
+        since callers will now be getting it and we don't want to
+        get it twice. Removed the code to generate an ID. Also
+        removed some local variables to make the code a little
+        tighter and clearer.
+        (WebKit::WK2NotifyHistoryItemChanged): Only call
+        updateBackForwardItem for items that already have IDs.
+        We don't want to send cross-process messages for every
+        history item; just the ones that are top level back/forward
+        items.
+        (WebKit::WebBackForwardListProxy::removeItem):
+        Added. For use when the UI process tells us to remove it.
+        (WebKit::WebBackForwardListProxy::addItem): Added code to
+        assign an ID and put this item into the maps. This is called
+        exactly once on each back/forward item.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.h: Added
+        removeItem.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didRemoveBackForwardItem): Added.
+
+        * WebProcess/WebPage/WebPage.h: Added didRemoveBackForwardItem.
+
+        * WebProcess/WebPage/WebPage.messages.in: Added
+        DidRemoveBackForwardItem message.
+
 2011-01-05  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

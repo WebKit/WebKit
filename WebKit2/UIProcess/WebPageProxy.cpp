@@ -242,6 +242,8 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
+    m_backForwardList->pageClosed();
+
     process()->disconnectFramesFromPage(this);
     m_mainFrame = 0;
 
@@ -2117,6 +2119,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) 
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+
 void WebPageProxy::didEnterAcceleratedCompositing()
 {
     m_pageClient->pageDidEnterAcceleratedCompositing();
@@ -2126,6 +2129,7 @@ void WebPageProxy::didLeaveAcceleratedCompositing()
 {
     m_pageClient->pageDidLeaveAcceleratedCompositing();
 }
+
 #endif // USE(ACCELERATED_COMPOSITING)
 
 void WebPageProxy::backForwardClear()
@@ -2174,5 +2178,10 @@ void WebPageProxy::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIde
     m_pageClient->setComplexTextInputEnabled(pluginComplexTextInputIdentifier, complexTextInputEnabled);
 }
 #endif
+
+void WebPageProxy::backForwardRemovedItem(uint64_t itemID)
+{
+    process()->send(Messages::WebPage::DidRemoveBackForwardItem(itemID), m_pageID);
+}
 
 } // namespace WebKit

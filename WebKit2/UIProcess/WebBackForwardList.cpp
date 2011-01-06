@@ -45,16 +45,28 @@ WebBackForwardList::~WebBackForwardList()
 {
 }
 
+void WebBackForwardList::pageClosed()
+{
+    if (m_page) {
+        size_t size = m_entries.size();
+        for (size_t i = 0; i < size; ++i)
+            m_page->backForwardRemovedItem(m_entries[i]->itemID());
+    }
+
+    m_page = 0;
+}
+
 void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
 {
     if (m_capacity == 0 || !m_enabled)
         return;
-    
+
     // Toss anything in the forward list    
     if (m_current != NoCurrentItemIndex) {
         unsigned targetSize = m_current + 1;
         while (m_entries.size() > targetSize) {
-            RefPtr<WebBackForwardListItem> item = m_entries.last();
+            if (m_page)
+                m_page->backForwardRemovedItem(m_entries.last()->itemID());
             m_entries.removeLast();
         }
     }
@@ -62,12 +74,10 @@ void WebBackForwardList::addItem(WebBackForwardListItem* newItem)
     // Toss the first item if the list is getting too big, as long as we're not using it
     // (or even if we are, if we only want 1 entry).
     if (m_entries.size() == m_capacity && (m_current != 0 || m_capacity == 1)) {
-        RefPtr<WebBackForwardListItem> item = m_entries[0];
+        if (m_page)
+            m_page->backForwardRemovedItem(m_entries[0]->itemID());
         m_entries.remove(0);
         m_current--;
-        
-        if (m_page)
-            m_page->didChangeBackForwardList();
     }
 
     m_entries.insert(m_current + 1, newItem);
@@ -173,12 +183,21 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
 
 void WebBackForwardList::clear()
 {
-    if (m_entries.size() <= 1)
+    size_t size = m_entries.size();
+    if (size <= 1)
         return;
 
-    RefPtr<WebBackForwardListItem> item = currentItem();
-    m_entries.resize(1);
-    m_entries[0] = item.release();
+    RefPtr<WebBackForwardListItem> currentItem = this->currentItem();
+
+    if (m_page) {
+        for (size_t i = 0; i < size; ++i) {
+            if (m_entries[i] != currentItem)
+                m_page->backForwardRemovedItem(m_entries[i]->itemID());
+        }
+    }
+
+    m_entries.shrink(1);
+    m_entries[0] = currentItem.release();
 
     m_current = 0;
 

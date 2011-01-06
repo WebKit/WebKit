@@ -1518,6 +1518,11 @@ void WebPage::setCustomTextEncodingName(const String& encoding)
     m_page->mainFrame()->loader()->reloadWithOverrideEncoding(encoding);
 }
 
+void WebPage::didRemoveBackForwardItem(uint64_t itemID)
+{
+    WebBackForwardListProxy::removeItem(itemID);
+}
+
 #if PLATFORM(MAC)
 
 bool WebPage::isSpeaking()

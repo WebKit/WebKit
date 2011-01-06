@@ -55,6 +55,7 @@ public:
     {
         return adoptRef(new WebBackForwardList(page));
     }
+    void pageClosed();
 
     virtual ~WebBackForwardList();
 
