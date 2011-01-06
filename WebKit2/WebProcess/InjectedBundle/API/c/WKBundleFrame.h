@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,6 +51,9 @@ WK_EXPORT JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleF
 WK_EXPORT WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frame);
 
 WK_EXPORT bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frame, WKURLRef url);
+
+WK_EXPORT WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frame);
+WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frame);
 
 #ifdef __cplusplus
 }

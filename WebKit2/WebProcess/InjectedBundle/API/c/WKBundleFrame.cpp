@@ -30,6 +30,7 @@
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -137,4 +138,37 @@ WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frameRef)
 bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frameRef, WKURLRef urlRef)
 {
     return toImpl(frameRef)->allowsFollowingLink(WebCore::KURL(WebCore::KURL(), toImpl(urlRef)->string()));
+}
+
+WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frameRef)
+{
+    WKRect contentBounds = { {0, 0}, {0, 0} };
+    
+    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    if (!coreFrame)
+        return contentBounds;
+    
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return contentBounds;
+    
+    contentBounds.size.width = view->contentsWidth();
+    contentBounds.size.height = view->contentsHeight();
+    
+    return contentBounds;
+}
+
+WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frameRef)
+{
+    WKSize scrollOffset = { 0, 0 };
+    
+    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    if (!coreFrame)
+        return scrollOffset;
+    
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return scrollOffset;
+    
+    return toAPI(view->scrollOffset());
 }
