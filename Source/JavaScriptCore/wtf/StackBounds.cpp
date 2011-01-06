@@ -65,7 +65,7 @@ namespace WTF {
 //     WINDOWS, SOLARIS, OPENBSD, SYMBIAN, HAIKU, WINCE
 //
 // FIXME: remove this! - this code unsafely guesses at stack sizes!
-#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD) || OS(SYMBIAN) || OS(HAIKU) || OS(WINCE)
+#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD) || OS(SYMBIAN) || OS(HAIKU)
 // Based on the current limit used by the JSC parser, guess the stack size.
 static const ptrdiff_t estimatedStackSize = 128 * sizeof(void*) * 1024;
 // This method assumes the stack is growing downwards.
@@ -184,7 +184,14 @@ void StackBounds::initialize()
 namespace JSC { JS_EXPORTDATA void* g_stackBase = 0; }
 namespace WTF {
 
-inline bool isPageWritable(void* page)
+static bool detectGrowingDownward(void* previousFrame)
+{
+    // Find the address of this stack frame by taking the address of a local variable.
+    int thisFrame;
+    return previousFrame > &thisFrame;
+}
+
+static inline bool isPageWritable(void* page)
 {
     MEMORY_BASIC_INFORMATION memoryInformation;
     DWORD result = VirtualQuery(page, &memoryInformation, sizeof(memoryInformation));
@@ -200,50 +207,49 @@ inline bool isPageWritable(void* page)
         || protect == PAGE_EXECUTE_WRITECOPY;
 }
 
-static void* getStackMax(void* previousFrame, bool& isGrowingDownward)
+static inline void* getLowerStackBound(char* currentPage, DWORD pageSize)
+{
+    while (currentPage > 0) {
+        // check for underflow
+        if (currentPage >= reinterpret_cast<char*>(pageSize))
+            currentPage -= pageSize;
+        else
+            currentPage = 0;
+
+        if (!isPageWritable(currentPage))
+            return currentPage + pageSize;
+    }
+
+    return 0;
+}
+
+static inline void* getUpperStackBound(char* currentPage, DWORD pageSize)
+{
+    do {
+        // guaranteed to complete because isPageWritable returns false at end of memory
+        currentPage += pageSize;
+    } while (isPageWritable(currentPage));
+
+    return currentPage - pageSize;
+}
+
+void StackBounds::initialize()
 {
     // find the address of this stack frame by taking the address of a local variable
     void* thisFrame = &thisFrame;
-    isGrowingDownward = previousFrame < &thisFrame;
-
-    if (JSC::g_stackBase)
-        return JSC::g_stackBase;
+    bool isGrowingDownward = detectGrowingDownward(thisFrame);
 
     SYSTEM_INFO systemInfo;
     GetSystemInfo(&systemInfo);
     DWORD pageSize = systemInfo.dwPageSize;
 
     // scan all of memory starting from this frame, and return the last writeable page found
-    register char* currentPage = (char*)((DWORD)thisFrame & ~(pageSize - 1));
-    if (isGrowingDownward) {
-        while (currentPage > 0) {
-            // check for underflow
-            if (currentPage >= (char*)pageSize)
-                currentPage -= pageSize;
-            else
-                currentPage = 0;
-            if (!isPageWritable(currentPage))
-                return currentPage + pageSize;
-        }
-        return 0;
-    } else {
-        while (true) {
-            // guaranteed to complete because isPageWritable returns false at end of memory
-            currentPage += pageSize;
-            if (!isPageWritable(currentPage))
-                return currentPage;
-        }
-    }
-}
+    char* currentPage = reinterpret_cast<char*>(reinterpret_cast<DWORD>(thisFrame) & ~(pageSize - 1));
+    void* lowerStackBound = getLowerStackBound(currentPage, pageSize);
+    void* upperStackBound = getUpperStackBound(currentPage, pageSize);
 
-void StackBounds::initialize()
-{
-    int dummy;
-    bool isGrowingDownward;
-    m_origin = getStackMax(&dummy, isGrowingDownward);
-    m_bound = isGrowingDownward
-        ? static_cast<char*>(m_origin) - estimatedStackSize
-        : static_cast<char*>(m_origin) + estimatedStackSize;
+    m_origin = isGrowingDownward ? upperStackBound : lowerStackBound;
+    m_bound = isGrowingDownward ? lowerStackBound : upperStackBound;
 }
 
 #elif OS(WINDOWS)
