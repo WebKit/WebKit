@@ -5189,6 +5189,8 @@ printing/setPrinting.html
 # https://bugs.webkit.org/show_bug.cgi?id=51245
 fast/dom/webtiming.html
 http/tests/misc/webtiming-ssl.php
+http/tests/misc/webtiming-origins.html
+http/tests/misc/webtiming-slow-load.php
 
 # Advanced credential handling
 http/tests/security/401-logout/401-logout.php
