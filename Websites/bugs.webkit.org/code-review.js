@@ -539,6 +539,10 @@
     return Number(line.querySelector('.to').textContent);
   }
 
+  function textContentsFor(line) {
+    return $('.text', line).text();
+  }
+
   function lineNumberForFirstNonContextLine(patched_file, line, prev_line, context, hunk_num) {
     if (context.length) {
       var prev_line_num = fromLineNumber(prev_line) - 1;
@@ -566,7 +570,7 @@
 
       for (var j = 0, lines_len = lines.length; j < lines_len; j++) {
         var line = lines[j];
-        var line_contents = line.querySelector('.text').textContent;
+        var line_contents = textContentsFor(line);
         if ($(line).hasClass('add')) {
           if (current_line == -1) {
             current_line = lineNumberForFirstNonContextLine(patched_file, line, lines[j-1], context, hunk_num);
@@ -789,8 +793,7 @@
         action = '+';
       else if ($(this).hasClass('remove'))
         action = '-';
-      var text = $(this).children('.text').text();
-      snippets.push(indent + action + text);
+      snippets.push(indent + action + textContentsFor(this));
     });
     return snippets.join('\n');
   }
@@ -805,7 +808,7 @@
 
   function snippetFor(line, indent) {
     var file_name = fileNameFor(line);
-    var line_number = line.hasClass('remove') ? '-' + line.children('.from').text() : line.children('.to').text();
+    var line_number = line.hasClass('remove') ? '-' + fromLineNumber(line[0]) : toLineNumber(line[0]);
     return indent + file_name + ':' + line_number + '\n' + contextSnippetFor(line, indent);
   }
 
