@@ -1903,9 +1903,6 @@ BUGCR32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 // New flakiness?
 BUGCR32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
-BUGCR32195 LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = PASS IMAGE+TEXT
-BUGCR32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE
-
 // Expectations from roll to 53171:53194
 // As of Oct 7, 2010, times out on all platforms when doing DEBUG costing 13 seconds on average. Skipping.
 BUGCR32308 DEBUG SKIP : fast/frames/cached-frame-counter.html = TIMEOUT
@@ -3150,9 +3147,6 @@ BUGWK51841 : fast/gradients/css3-color-stops.html = IMAGE
 BUGWK51841 : fast/gradients/css3-linear-angle-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
-
-// Regression by r74995
-BUG_TKENT MAC : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE
 
 // This was introduced by r75077.
 BUG_SENORBLANCO LINUX MAC : fast/text/basic/014.html = IMAGE

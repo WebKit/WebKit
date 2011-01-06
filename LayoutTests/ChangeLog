@@ -1,3 +1,18 @@
+2011-01-05  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Rebaseline of renderer-destruction-by-invalidateSelection-crash.html
+
+        * platform/chromium-linux/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.checksum:
+        * platform/chromium-linux/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png: Added.
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.checksum:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-05  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Adam Barth.
