@@ -1,3 +1,16 @@
+2011-01-05  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Unreviewed build fix.
+
+        [Qt] [Symbian] Fix building NPAPI support
+
+        NPEvent is mapped to QAction on Symbian. QAction has no
+        default constructor, so toNP() fails to build. Add a case for
+        Symbian behind the OS(SYMBIAN) guard.
+
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp:
+        (WebKit::toNP):
+
 2011-01-05  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Dan Bernstein.

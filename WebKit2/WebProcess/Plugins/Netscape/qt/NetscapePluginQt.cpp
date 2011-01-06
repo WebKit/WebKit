@@ -63,7 +63,11 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 
 NPEvent toNP(const WebMouseEvent& event)
 {
+#if OS(SYMBIAN)
+    NPEvent npEvent = QEvent(QEvent::None);
+#else
     NPEvent npEvent = NPEvent();
+#endif
 
     notImplemented();
 
