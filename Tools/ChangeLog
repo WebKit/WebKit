@@ -1,3 +1,14 @@
+2011-01-05  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] TestNetscapePlugin doesn't link on OS X
+        https://bugs.webkit.org/show_bug.cgi?id=51948
+
+        Only add a dependency on libX11 on X11 systems
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
 2011-01-05  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

@@ -45,6 +45,6 @@ mac {
     SOURCES += ../../unix/TestNetscapePlugin/TestNetscapePlugin.cpp
 }
 
-unix {
+!win32:!embedded:!mac:!symbian {
     LIBS += -lX11
 }
