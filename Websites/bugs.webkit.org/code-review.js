@@ -727,20 +727,26 @@
       focusPreviousComment();
   });
 
-  function contextLinesFor(line) {
-    var context = [];
-    while (line.hasClass('commentContext')) {
-      $.merge(context, line);
-      line = line.prev();
-    }
-    return $(context.reverse());
+  function contextLinesFor(line_id) {
+    return $('div[data-comment-base-line~="' + line_id + '"]');
+  }
+
+  function numberFrom(line_id) {
+    return Number(line_id.replace('line', ''));
   }
 
   function trimCommentContextToBefore(line) {
-    while (line.hasClass('commentContext') && line.attr('data-has-comment') != 'true') {
-      line.removeClass('commentContext');
-      line = line.prev();
-    }
+    var base_line_id = line.attr('data-comment-base-line');
+    var line_to_trim_to = numberFrom(line.attr('id'));
+    contextLinesFor(base_line_id).each(function() {
+      var id = $(this).attr('id');
+      if (numberFrom(id) > line_to_trim_to)
+        return;
+
+      removeDataCommentBaseLine(this, base_line_id);
+      if (!$(this).attr('data-comment-base-line'))
+        $(this).removeClass('commentContext');
+    });
   }
 
   var in_drag_select = false;
@@ -756,38 +762,84 @@
       trimCommentContextToBefore(line.prev());
   }).live('mousedown', function() {
     in_drag_select = true;
-    $(this).parent().addClass('selected');
+    $(lineFromLineDescendant(this)).addClass('selected');
     event.preventDefault();
   });
-  
+
   $('.Line').live('mouseenter', function() {
     if (!in_drag_select)
       return;
 
-    var before = $(this).prevUntil('.selected')
-    if (before.prev().hasClass('selected'))
-      before.addClass('selected');
-
-    var after = $(this).nextUntil('.selected')
-    if (after.next().hasClass('selected'))
-      after.addClass('selected');
-
-    $(this).addClass('selected');
+    var line = lineFromLineContainer(this);
+    line.addClass('selected');
   }).live('mouseup', function() {
     if (!in_drag_select)
       return;
     var selected = $('.selected');
     var should_add_comment = !selected.last().next().hasClass('commentContext');
     selected.addClass('commentContext');
-    if (should_add_comment)
-      addCommentFor(selected.last());
+
+    var id;
+    if (should_add_comment) {
+      var last = lineFromLineDescendant(selected.last()[0]);
+      addCommentFor($(last));
+      id = last.id;
+    } else {
+      id = selected.last().next()[0].getAttribute('data-comment-base-line');
+    }
+
+    selected.each(function() {
+      addDataCommentBaseLine(this, id);
+    });
   });
+
+  function addDataCommentBaseLine(line, id) {
+    var val = $(line).attr('data-comment-base-line');
+
+    var parts = val ? val.split(' ') : [];
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i] == id)
+        return;
+    }
+
+    parts.push(id);
+    $(line).attr('data-comment-base-line', parts.join(' '));
+  }
+
+  function removeDataCommentBaseLine(line, id) {
+    var val = $(line).attr('data-comment-base-line');
+    if (!val)
+      return;
+
+    var parts = val.split(' ');
+    var newVal = [];
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i] != id)
+        newVal.push(parts[i]);
+    }
+
+    $(line).attr('data-comment-base-line', newVal.join(' '));
+  }
+
+  function lineFromLineDescendant(descendant) {
+    while (descendant && !$(descendant).hasClass('Line')) {
+      descendant = descendant.parentNode;
+    }
+    return descendant;
+  }
+
+  function lineFromLineContainer(lineContainer) {
+    var line = $(lineContainer);
+    if (!line.hasClass('Line'))
+      line = $('.Line', line);
+    return line;
+  }
 
   $('.DiffSection').live('mouseleave', stopDragSelect).live('mouseup', stopDragSelect);
 
   function contextSnippetFor(line, indent) {
     var snippets = []
-    contextLinesFor(line).each(function() {
+    contextLinesFor(line.attr('id')).each(function() {
       var action = ' ';
       if ($(this).hasClass('add'))
         action = '+';

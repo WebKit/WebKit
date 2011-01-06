@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        change the way we do comment highlighting in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=51971
+
+        Store a space-separated list of base line IDs on each line that has
+        comments associated with that line. This allows for overlapping comments,
+        but more importantly, makes adding side-by-side diff support easier.
+
+        * code-review.js:
+
+2011-01-05  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         minor code cleanup for code review tool
         https://bugs.webkit.org/show_bug.cgi?id=51962
 
