@@ -893,12 +893,19 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken& token)
         || token.name() == brTag
         || token.name() == embedTag
         || token.name() == imgTag
-        || token.name() == inputTag
         || token.name() == keygenTag
         || token.name() == wbrTag) {
         m_tree.reconstructTheActiveFormattingElements();
         m_tree.insertSelfClosingHTMLElement(token);
         m_framesetOk = false;
+        return;
+    }
+    if (token.name() == inputTag) {
+        RefPtr<Attribute> typeAttribute = token.getAttributeItem(typeAttr);
+        m_tree.reconstructTheActiveFormattingElements();
+        m_tree.insertSelfClosingHTMLElement(token);
+        if (!typeAttribute || !equalIgnoringCase(typeAttribute->value(), "hidden"))
+            m_framesetOk = false;
         return;
     }
     if (token.name() == paramTag

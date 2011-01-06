@@ -587,3 +587,23 @@ console.log("FOO<span>BAR</span>BAZ");
 |             "1"
 |         <math mi>
 |           "a"
+
+#data
+<!doctype html><input type="hidden"><frameset>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <frameset>
+
+#data
+<!doctype html><input type="button"><frameset>
+#errors
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <input>
+|       type="button"
