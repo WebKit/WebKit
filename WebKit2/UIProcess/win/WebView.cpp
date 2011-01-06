@@ -582,6 +582,7 @@ void WebView::close()
 
 void WebView::processDidCrash()
 {
+    updateNativeCursor();
     ::InvalidateRect(m_window, 0, TRUE);
 }
 
@@ -594,6 +595,7 @@ void WebView::didRelaunchProcess()
     m_page->reinitializeWebPage(IntRect(clientRect).size());
     updateActiveState();
     m_page->setFocused(::GetFocus() == m_window);
+    updateNativeCursor();
 
     ::InvalidateRect(m_window, 0, TRUE);
 }
@@ -624,8 +626,12 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
 
 HCURSOR WebView::cursorToShow() const
 {
-    // We only show the override cursor if the default (arrow) cursor is showing.
     static HCURSOR arrowCursor = ::LoadCursor(0, IDC_ARROW);
+
+    if (!m_page->isValid())
+        return arrowCursor;
+
+    // We only show the override cursor if the default (arrow) cursor is showing.
     if (m_overrideCursor && m_webCoreCursor == arrowCursor)
         return m_overrideCursor;
 

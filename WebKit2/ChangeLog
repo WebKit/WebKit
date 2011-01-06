@@ -1,5 +1,22 @@
 2011-01-06  Adam Roben  <aroben@apple.com>
 
+        Always show the arrow cursor when the web process has crashed
+
+        Fixes <http://webkit.org/b/52006> WKView shows a stale cursor when the
+        web process crashes
+
+        Reviewed by Ada Chan.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::processDidCrash):
+        (WebKit::WebView::didRelaunchProcess):
+        Update the cursor to reflect the new state.
+
+        (WebKit::WebView::cursorToShow): Always show the arrow cursor when the
+        web process has crashed.
+
+2011-01-06  Adam Roben  <aroben@apple.com>
+
         Reduce code duplication in WebView::updateNativeCursor
 
         Fixes <http://webkit.org/b/52005> It's not easy to add new behavior to
