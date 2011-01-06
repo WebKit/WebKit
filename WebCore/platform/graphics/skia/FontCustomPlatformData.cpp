@@ -149,18 +149,15 @@ public:
             // This is request for the length of the stream.
             return m_buffer->size();
         }
-        if (!buffer) {
-            // This is a request to skip bytes. This operation is not supported.
-            return 0;
-        }
-        // This is a request to read bytes.
+        // This is a request to read bytes or skip bytes (when buffer is 0).
         if (!m_buffer->data() || !m_buffer->size())
             return 0;
         size_t left = m_buffer->size() - m_offset;
-        size_t toRead = (left > size) ? size : left;
-        std::memcpy(buffer, m_buffer->data() + m_offset, toRead);
-        m_offset += toRead;
-        return toRead;
+        size_t bytesToConsume = std::min(left, size);
+        if (buffer)
+            std::memcpy(buffer, m_buffer->data() + m_offset, bytesToConsume);
+        m_offset += bytesToConsume;
+        return bytesToConsume;
     }
 
 private:
