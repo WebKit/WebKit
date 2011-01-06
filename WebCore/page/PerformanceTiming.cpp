@@ -39,6 +39,7 @@
 #include "Frame.h"
 #include "ResourceLoadTiming.h"
 #include "ResourceResponse.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -58,6 +59,9 @@ static double getPossiblySkewedTimeInKnownRange(double skewedTime, double lowerB
     // that eliminates the skew.
     if (skewedTime <= lowerBound)
         return lowerBound;
+
+    if (upperBound <= 0.0)
+        upperBound = currentTime();
 
     if (skewedTime >= upperBound)
         return upperBound;
@@ -378,7 +382,7 @@ unsigned long long PerformanceTiming::resourceLoadTimeRelativeToAbsolute(int rel
     //
     // Since ResourceLoadTimings came from the network platform layer, we must
     // check them for skew because they may be from another thread/process.
-    double baseTime = getPossiblySkewedTimeInKnownRange(resourceTiming->requestTime, documentTiming->fetchStart, documentTiming->responseEnd - (resourceTiming->receiveHeadersEnd / 1000.0));
+    double baseTime = getPossiblySkewedTimeInKnownRange(resourceTiming->requestTime, documentTiming->fetchStart, documentTiming->responseEnd);
     return toIntegerMilliseconds(baseTime) + relativeSeconds;
 }
 

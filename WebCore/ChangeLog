@@ -1,3 +1,16 @@
+2011-01-05  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Web Timing] requestStart and responseStart should be available even if the document is still loading
+        https://bugs.webkit.org/show_bug.cgi?id=51368
+
+        Test: http/tests/misc/webtiming-slow-load.php
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::getPossiblySkewedTimeInKnownRange): Handle case where response is not yet complete.
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToAbsolute): Use full upper bound.
+
 2011-01-05  Chris Rogers  <crogers@google.com>
 
         Reviewed by Darin Fisher.
