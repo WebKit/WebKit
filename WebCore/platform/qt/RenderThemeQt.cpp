@@ -61,7 +61,6 @@
 
 #include <QApplication>
 #include <QColor>
-#include <QDebug>
 #include <QFile>
 #include <QLineEdit>
 #include <QPainter>
@@ -373,6 +372,12 @@ Color RenderThemeQt::platformInactiveSelectionForegroundColor() const
 {
     QPalette pal = QApplication::palette();
     return pal.brush(QPalette::Inactive, QPalette::HighlightedText).color();
+}
+
+Color RenderThemeQt::platformFocusRingColor() const
+{
+    QPalette pal = QApplication::palette();
+    return pal.brush(QPalette::Active, QPalette::Highlight).color();
 }
 
 void RenderThemeQt::systemFont(int, FontDescription&) const

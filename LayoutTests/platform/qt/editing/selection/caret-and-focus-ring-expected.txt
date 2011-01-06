@@ -1,0 +1,19 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 742x42
+          text run at (0,0) width 742: "This tests that the caret and the focus halo are not displayed when the WebView is not focused (using the pixel"
+          text run at (0,21) width 221: "output from DumpRenderTree)."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 69x21
+          text run at (0,0) width 69: "This is an "
+        RenderInline {SPAN} at (0,0) size 53x21
+          RenderText {#text} at (69,0) size 53x21
+            text run at (69,0) width 53: "editable"
+        RenderText {#text} at (122,0) size 434x21
+          text run at (122,0) width 434: " region. No caret or focus ring should appear in the pixel results."
+caret: position 11 of child 0 {#text} of child 3 {DIV} of body

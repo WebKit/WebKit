@@ -1,3 +1,19 @@
+2011-01-05  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Default focus ring is too wide
+        https://bugs.webkit.org/show_bug.cgi?id=51854
+
+        This is an intermediate step to solve this bug. Use QPalette::Highlight
+        instead of default half-transparent black as the focus ring color.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::drawFocusRingForPath):
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::platformFocusRingColor):
+        * platform/qt/RenderThemeQt.h:
+
 2011-01-05  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Darin Fisher.

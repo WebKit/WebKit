@@ -794,7 +794,7 @@ void drawFocusRingForPath(QPainter* p, const QPainterPath& path, int width, cons
     const QBrush oldBrush = p->brush();
 
     QPen nPen = p->pen();
-    nPen.setColor(QColor(color.red(), color.green(), color.blue(), 127));
+    nPen.setColor(color);
     nPen.setWidth(width);
     p->setBrush(Qt::NoBrush);
     nPen.setStyle(Qt::SolidLine);

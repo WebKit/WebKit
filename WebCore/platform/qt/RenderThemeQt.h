@@ -70,6 +70,8 @@ public:
     virtual Color platformActiveSelectionForegroundColor() const;
     virtual Color platformInactiveSelectionForegroundColor() const;
 
+    virtual Color platformFocusRingColor() const;
+
     virtual void systemFont(int propId, FontDescription&) const;
 
     virtual int minimumMenuListSize(RenderStyle*) const;

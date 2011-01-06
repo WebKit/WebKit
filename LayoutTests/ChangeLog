@@ -1,3 +1,23 @@
+2011-01-05  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Default focus ring is too wide
+        https://bugs.webkit.org/show_bug.cgi?id=51854
+
+        This is an intermediate step to solve this bug. Use QPalette::Highlight
+        instead of default half-transparent black as the focus ring color.
+
+        * platform/qt/editing/selection/caret-and-focus-ring-expected.checksum: Added.
+        * platform/qt/editing/selection/caret-and-focus-ring-expected.png: Added.
+        * platform/qt/editing/selection/caret-and-focus-ring-expected.txt: Added.
+        * platform/qt/fast/css/focus-ring-outline-color-expected.checksum:
+        * platform/qt/fast/css/focus-ring-outline-color-expected.png:
+        * platform/qt/fast/css/focus-ring-outline-offset-expected.checksum:
+        * platform/qt/fast/css/focus-ring-outline-offset-expected.png:
+        * platform/qt/fast/css/focus-ring-outline-width-expected.checksum:
+        * platform/qt/fast/css/focus-ring-outline-width-expected.png:
+
 2011-01-05  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Darin Fisher.
