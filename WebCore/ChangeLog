@@ -1,3 +1,79 @@
+2011-01-06  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Changed PlatformCALayer API. Added PlatformCALayerClient abstract class which is
+        used to communicate from PlatformCALayer to the owner. This replaces passing
+        GraphicsLayerCA pointer when creating PlatformCALayer. It also includes the
+        API that used to be in PlatformCALayerLayout. GraphicsLayerCA now implements
+        the PlatformCALayerClient API.
+
+        This change has little impact on the Mac side but makes the Windows
+        interface simpler, especially when handling video layers on Windows.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * config.h:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::layerDidDisplay):
+        (WebCore::GraphicsLayer::showDebugBorders):
+        (WebCore::GraphicsLayer::showRepaintCounter):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        (WebCore::GraphicsLayerCA::setContentsToMedia):
+        (WebCore::GraphicsLayerCA::layerDidDisplay):
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::platformCALayerLayoutSublayersOfLayer):
+        (WebCore::GraphicsLayerCA::platformCALayerRespondsToLayoutChanges):
+        (WebCore::GraphicsLayerCA::platformCALayerContentsOrientation):
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        (WebCore::GraphicsLayerCA::platformCALayerShowDebugBorders):
+        (WebCore::GraphicsLayerCA::platformCALayerShowRepaintCounter):
+        (WebCore::GraphicsLayerCA::platformCALayerIncrementRepaintCount):
+        (WebCore::GraphicsLayerCA::platformCALayerContentsOpaque):
+        (WebCore::GraphicsLayerCA::platformCALayerDrawsContent):
+        (WebCore::GraphicsLayerCA::platformCALayerLayerDidDisplay):
+        (WebCore::GraphicsLayerCA::platformCALayer):
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::owner):
+        (WebCore::PlatformCALayer::animationStarted):
+        * platform/graphics/ca/PlatformCALayerClient.h: Added.
+        (WebCore::PlatformCALayerClient::~PlatformCALayerClient):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::setOwner):
+        (PlatformCALayer::create):
+        (PlatformCALayer::PlatformCALayer):
+        (PlatformCALayer::contents):
+        (PlatformCALayer::setContents):
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer display]):
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+        (setLayerNeedsDisplayInRect):
+        (-[WebLayer setNeedsDisplay]):
+        (-[WebLayer display]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer setNeedsDisplay]):
+        (-[WebTiledLayer display]):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::showDebugBorders):
+        (WebCore::RenderLayerBacking::showRepaintCounter):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::compositorShowDebugBorders):
+        (WebCore::RenderLayerCompositor::compositorShowRepaintCounter):
+        (WebCore::RenderLayerCompositor::notifyAnimationStarted):
+        (WebCore::RenderLayerCompositor::notifySyncRequired):
+        (WebCore::RenderLayerCompositor::paintContents):
+        (WebCore::RenderLayerCompositor::showDebugBorders):
+        (WebCore::RenderLayerCompositor::showRepaintCounter):
+
 2011-01-06  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.

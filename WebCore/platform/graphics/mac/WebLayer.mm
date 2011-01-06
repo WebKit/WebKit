@@ -40,7 +40,7 @@ using namespace WebCore;
 
 @implementation WebLayer
 
-void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::GraphicsLayer* layerContents)
+void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCALayerClient* layerContents)
 {
     if (!layerContents)
         return;
@@ -48,50 +48,38 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::GraphicsLa
     CGContextSaveGState(context);
 
     CGRect layerBounds = [layer bounds];
-    if (layerContents->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp) {
+    if (layerContents->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp) {
         CGContextScaleCTM(context, 1, -1);
         CGContextTranslateCTM(context, 0, -layerBounds.size.height);
     }
 
-    if (layerContents->client()) {
-        [NSGraphicsContext saveGraphicsState];
+    [NSGraphicsContext saveGraphicsState];
 
-        // Set up an NSGraphicsContext for the context, so that parts of AppKit that rely on
-        // the current NSGraphicsContext (e.g. NSCell drawing) get the right one.
-        NSGraphicsContext* layerContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
-        [NSGraphicsContext setCurrentContext:layerContext];
+    // Set up an NSGraphicsContext for the context, so that parts of AppKit that rely on
+    // the current NSGraphicsContext (e.g. NSCell drawing) get the right one.
+    NSGraphicsContext* layerContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
+    [NSGraphicsContext setCurrentContext:layerContext];
 
-        GraphicsContext graphicsContext(context);
+    GraphicsContext graphicsContext(context);
 
-        if (!layerContents->contentsOpaque()) {
-            // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
-            graphicsContext.setShouldSmoothFonts(false);
-        }
-        
-        // It's important to get the clip from the context, because it may be significantly
-        // smaller than the layer bounds (e.g. tiled layers)
-        CGRect clipBounds = CGContextGetClipBoundingBox(context);
-        IntRect clip(enclosingIntRect(clipBounds));
-        layerContents->paintGraphicsLayerContents(graphicsContext, clip);
-
-        [NSGraphicsContext restoreGraphicsState];
+    if (!layerContents->platformCALayerContentsOpaque()) {
+        // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
+        graphicsContext.setShouldSmoothFonts(false);
     }
-#ifndef NDEBUG
-    else {
-        ASSERT_NOT_REACHED();
+    
+    // It's important to get the clip from the context, because it may be significantly
+    // smaller than the layer bounds (e.g. tiled layers)
+    CGRect clipBounds = CGContextGetClipBoundingBox(context);
+    IntRect clip(enclosingIntRect(clipBounds));
+    layerContents->platformCALayerPaintContents(graphicsContext, clip);
 
-        // FIXME: ideally we'd avoid calling -setNeedsDisplay on a layer that is a plain color,
-        // so CA never makes backing store for it (which is what -setNeedsDisplay will do above).
-        CGContextSetRGBFillColor(context, 0.0f, 1.0f, 0.0f, 1.0f);
-        CGContextFillRect(context, layerBounds);
-    }
-#endif
+    [NSGraphicsContext restoreGraphicsState];
 
-    if (layerContents->showRepaintCounter()) {
+    if (layerContents->platformCALayerShowRepaintCounter()) {
         bool isTiledLayer = [layer isKindOfClass:[CATiledLayer class]];
 
         char text[16]; // that's a lot of repaints
-        snprintf(text, sizeof(text), "%d", layerContents->incrementRepaintCount());
+        snprintf(text, sizeof(text), "%d", layerContents->platformCALayerIncrementRepaintCount());
 
         CGContextSaveGState(context);
         if (isTiledLayer)
@@ -117,26 +105,26 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::GraphicsLa
     CGContextRestoreGState(context);
 }
 
-void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::GraphicsLayer* layerContents, CGRect rect)
+void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::PlatformCALayerClient* layerContents, CGRect rect)
 {
-    if (layerContents && layerContents->client() && layerContents->drawsContent()) {
+    if (layerContents && layerContents->platformCALayerDrawsContent()) {
         struct objc_super layerSuper = { layer, class_getSuperclass(object_getClass(layer)) };
 #if defined(BUILDING_ON_LEOPARD)
         rect = CGRectApplyAffineTransform(rect, [layer contentsTransform]);
 #else
-        if (layerContents->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+        if (layerContents->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
             rect.origin.y = [layer bounds].size.height - rect.origin.y - rect.size.height;
 #endif
         objc_msgSendSuper(&layerSuper, @selector(setNeedsDisplayInRect:), rect);
 
 #ifndef NDEBUG
-        if (layerContents->showRepaintCounter()) {
+        if (layerContents->platformCALayerShowRepaintCounter()) {
             CGRect bounds = [layer bounds];
             CGRect indicatorRect = CGRectMake(bounds.origin.x, bounds.origin.y, 46, 25);
 #if defined(BUILDING_ON_LEOPARD)
             indicatorRect = CGRectApplyAffineTransform(indicatorRect, [layer contentsTransform]);
 #else
-            if (layerContents->contentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
+            if (layerContents->platformCALayerContentsOrientation() == WebCore::GraphicsLayer::CompositingCoordinatesBottomUp)
                 indicatorRect.origin.y = [layer bounds].size.height - indicatorRect.origin.y - indicatorRect.size.height;
 #endif
             objc_msgSendSuper(&layerSuper, @selector(setNeedsDisplayInRect:), indicatorRect);
@@ -155,7 +143,7 @@ void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::GraphicsLayer* layerCon
 - (void)setNeedsDisplay
 {
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
-    if (layer && layer->owner() && layer->owner()->client() && layer->owner()->drawsContent())
+    if (layer && layer->owner() && layer->owner()->platformCALayerDrawsContent())
         [super setNeedsDisplay];
 }
 
@@ -171,7 +159,7 @@ void setLayerNeedsDisplayInRect(CALayer *layer, WebCore::GraphicsLayer* layerCon
     [super display];
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer && layer->owner())
-        layer->owner()->didDisplay(self);
+        layer->owner()->platformCALayerLayerDidDisplay(self);
 }
 
 - (void)drawInContext:(CGContextRef)context

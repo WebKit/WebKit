@@ -53,10 +53,7 @@ typedef CALayer PlatformLayer;
 typedef void* PlatformLayer;
 #endif
 #elif PLATFORM(WIN)
-namespace WebCore {
-class WKCACFLayer;
-typedef WKCACFLayer PlatformLayer;
-}
+typedef struct _CACFLayer PlatformLayer;
 #elif PLATFORM(QT)
 #if USE(TEXTURE_MAPPER)
 namespace WebCore {
@@ -314,7 +311,7 @@ public:
     // Callback from the underlying graphics system to draw layer contents.
     void paintGraphicsLayerContents(GraphicsContext&, const IntRect& clip);
     // Callback from the underlying graphics system when the layer has been displayed
-    virtual void didDisplay(PlatformLayer*) { }
+    virtual void layerDidDisplay(PlatformLayer*) { }
     
     // For hosting this GraphicsLayer in a native layer hierarchy.
     virtual PlatformLayer* platformLayer() const { return 0; }
@@ -330,8 +327,8 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation) { m_contentsOrientation = orientation; }
     CompositingCoordinatesOrientation contentsOrientation() const { return m_contentsOrientation; }
 
-    bool showDebugBorders() { return m_client ? m_client->showDebugBorders() : false; }
-    bool showRepaintCounter() { return m_client ? m_client->showRepaintCounter() : false; }
+    bool showDebugBorders() const { return m_client ? m_client->showDebugBorders() : false; }
+    bool showRepaintCounter() const { return m_client ? m_client->showRepaintCounter() : false; }
     
     void updateDebugIndicators();
     

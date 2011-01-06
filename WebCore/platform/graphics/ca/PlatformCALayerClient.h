@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebLayer_h
-#define WebLayer_h
+#ifndef PlatformCALayerClient_h
+#define PlatformCALayerClient_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#import <QuartzCore/QuartzCore.h>
+#include "GraphicsContext.h"
+#include "GraphicsLayer.h"
+#include "PlatformCAAnimation.h"
+#include "PlatformString.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
-    class GraphicsLayer;
-    class PlatformCALayerClient;
+
+class PlatformCALayer;
+
+class PlatformCALayerClient {
+public:
+    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) = 0;
+    virtual bool platformCALayerRespondsToLayoutChanges() const = 0;
+
+    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) = 0;
+    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const = 0;
+    virtual void platformCALayerPaintContents(GraphicsContext&, const IntRect& inClip) = 0;
+    virtual bool platformCALayerShowDebugBorders() const = 0;
+    virtual bool platformCALayerShowRepaintCounter() const = 0;
+    virtual int platformCALayerIncrementRepaintCount() = 0;
+    
+    virtual bool platformCALayerContentsOpaque() const = 0;
+    virtual bool platformCALayerDrawsContent() const = 0;
+    virtual void platformCALayerLayerDidDisplay(PlatformLayer*) = 0;
+
+protected:
+    virtual ~PlatformCALayerClient() {}
+};
+
 }
-
-#if defined(BUILDING_ON_LEOPARD)
-@interface CALayer(WebLayerInternal)
-- (CGAffineTransform)contentsTransform;
-- (void)setContentsTransform:(CGAffineTransform)t;
-@end
-#endif
-
-@interface WebLayer : CALayer 
-{
-}
-@end
-
-// Functions allows us to share implementation across WebTiledLayer and WebLayer
-void drawLayerContents(CGContextRef, CALayer *, WebCore::PlatformCALayerClient*);
-void setLayerNeedsDisplayInRect(CALayer *, WebCore::PlatformCALayerClient*, CGRect);
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // WebLayer_h
+#endif // PlatformCALayerClient_h
