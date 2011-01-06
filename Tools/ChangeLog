@@ -1,3 +1,19 @@
+2011-01-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Windows bots need to archive/unarchive builds to/from configuration-specific directories
+        https://bugs.webkit.org/show_bug.cgi?id=51996
+        
+        After the configuration directory change, we were archiving the incorrect directory for
+        build product, so we were running tests on the wrong binaries.
+        
+        This change archives the correct directory, and also unarchives it into a configuration-
+        specific directory.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Use a configuration-specific directory on Windows.
+        * BuildSlaveSupport/built-product-archive: Unarchive/archive to/from proper directory.
+
 2011-01-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mihai Parparita.

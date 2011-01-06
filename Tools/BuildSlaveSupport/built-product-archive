@@ -58,12 +58,13 @@ def archiveBuiltProduct(configuration, platform):
         if e.errno != 2:
             raise
 
+    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
+
     if platform == 'mac':
-        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
         return subprocess.call(["ditto", "-c", "-k", "--keepParent", "--sequesterRsrc", configurationBuildDirectory, archiveFile])
     elif platform == 'win':
-        binDirectory = os.path.join(buildDirectory, "bin")
-        thinDirectory = os.path.join(buildDirectory, "thin")
+        binDirectory = os.path.join(configurationBuildDirectory, "bin")
+        thinDirectory = os.path.join(configurationBuildDirectory, "thin")
         thinBinDirectory = os.path.join(thinDirectory, "bin")
 
         if os.path.isdir(thinDirectory):
@@ -82,7 +83,6 @@ def archiveBuiltProduct(configuration, platform):
         shutil.rmtree(thinDirectory)
 
     elif platform == 'qt':
-        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
         if os.path.isdir(thinDirectory):
@@ -108,10 +108,9 @@ def extractBuiltProduct(configuration, platform):
     assert platform in ('mac', 'win','qt')
 
     archiveFile = os.path.join(buildDirectory, configuration + ".zip")
+    configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
 
     if platform == 'mac':
-        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
-
         if os.path.isdir(configurationBuildDirectory):
             shutil.rmtree(configurationBuildDirectory)
 
@@ -120,11 +119,11 @@ def extractBuiltProduct(configuration, platform):
         os.unlink(archiveFile)
 
     elif platform == 'win':
-        binDirectory = os.path.join(buildDirectory, "bin")
+        binDirectory = os.path.join(configurationBuildDirectory, "bin")        
         if os.path.isdir(binDirectory):
             shutil.rmtree(binDirectory)
 
-        os.mkdir(binDirectory)
+        os.makedirs(binDirectory)
 
         safariPath = subprocess.Popen('cygpath -w "$PROGRAMFILES"/Safari',
                                       shell=True, stdout=subprocess.PIPE).communicate()[0].strip()
@@ -132,12 +131,10 @@ def extractBuiltProduct(configuration, platform):
         if subprocess.call('cp -R "%s"/*.dll "%s"/*.resources %s' % (safariPath, safariPath, binDirectory), shell=True):
             return 1
 
-        if subprocess.call(["unzip", "-o", archiveFile], cwd=buildDirectory):
+        if subprocess.call(["unzip", "-o", archiveFile], cwd=configurationBuildDirectory):
             return 1
 
     elif platform == 'qt':
-        configurationBuildDirectory = os.path.join(buildDirectory, configuration.title())
-
         if os.path.isdir(configurationBuildDirectory):
             shutil.rmtree(configurationBuildDirectory)
 
