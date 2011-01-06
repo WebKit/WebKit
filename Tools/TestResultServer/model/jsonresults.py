@@ -114,6 +114,7 @@ class JsonResults(object):
         Args:
             aggregated_json: aggregated json object.
             incremental_json: incremental json object.
+            num_runs: number of total runs to include.
 
         Returns:
             True if merge succeeds or
@@ -140,6 +141,7 @@ class JsonResults(object):
         Args:
             aggregated_json: aggregated json object.
             incremental_json: incremental json object.
+            num_runs: number of total runs to include.
 
         Returns:
             True if merge succeeds or
@@ -188,6 +190,7 @@ class JsonResults(object):
             aggregated_json: aggregated json object.
             incremental_json: incremental json object.
             incremental_index: index of the incremental json results to merge.
+            num_runs: number of total runs to include.
         """
 
         for key in incremental_json.keys():
@@ -211,6 +214,7 @@ class JsonResults(object):
         Args:
             aggregated_json: aggregated json object.
             incremental_json: incremental json object.
+            num_runs: number of total runs to include.
         """
 
         all_tests = (set(aggregated_json.iterkeys()) |
@@ -230,7 +234,7 @@ class JsonResults(object):
                     results, aggregated_test[JSON_RESULTS_RESULTS], num_runs)
                 cls._insert_item_run_length_encoded(
                     times, aggregated_test[JSON_RESULTS_TIMES], num_runs)
-                cls._normalize_results_json(test_name, aggregated_json)
+                cls._normalize_results_json(test_name, aggregated_json, num_runs)
             else:
                 aggregated_json[test_name] = incremental_json[test_name]
 
@@ -242,6 +246,7 @@ class JsonResults(object):
         Args:
             incremental_item: incremental run-length encoded results.
             aggregated_item: aggregated run-length encoded results.
+            num_runs: number of total runs to include.
         """
 
         for item in incremental_item:
@@ -252,23 +257,24 @@ class JsonResults(object):
                 aggregated_item.insert(0, item)
 
     @classmethod
-    def _normalize_results_json(cls, test_name, aggregated_json):
+    def _normalize_results_json(cls, test_name, aggregated_json, num_runs):
         """ Prune tests where all runs pass or tests that no longer exist and
-        truncate all results to JSON_RESULTS_MAX_BUILDS.
+        truncate all results to num_runs.
 
         Args:
           test_name: Name of the test.
           aggregated_json: The JSON object with all the test results for
                            this builder.
+          num_runs: number of total runs to include.
         """
 
         aggregated_test = aggregated_json[test_name]
         aggregated_test[JSON_RESULTS_RESULTS] = \
             cls._remove_items_over_max_number_of_builds(
-                aggregated_test[JSON_RESULTS_RESULTS])
+                aggregated_test[JSON_RESULTS_RESULTS], num_runs)
         aggregated_test[JSON_RESULTS_TIMES] = \
             cls._remove_items_over_max_number_of_builds(
-                aggregated_test[JSON_RESULTS_TIMES])
+                aggregated_test[JSON_RESULTS_TIMES], num_runs)
 
         is_all_pass = cls._is_results_all_of_type(
             aggregated_test[JSON_RESULTS_RESULTS], JSON_RESULTS_PASS)
@@ -285,20 +291,21 @@ class JsonResults(object):
             del aggregated_json[test_name]
 
     @classmethod
-    def _remove_items_over_max_number_of_builds(cls, encoded_list):
+    def _remove_items_over_max_number_of_builds(cls, encoded_list, num_runs):
         """Removes items from the run-length encoded list after the final
         item that exceeds the max number of builds to track.
 
         Args:
           encoded_results: run-length encoded results. An array of arrays, e.g.
               [[3,'A'],[1,'Q']] encodes AAAQ.
+          num_runs: number of total runs to include.
         """
         num_builds = 0
         index = 0
         for result in encoded_list:
             num_builds = num_builds + result[0]
             index = index + 1
-            if num_builds > JSON_RESULTS_MAX_BUILDS:
+            if num_builds > num_runs:
                 return encoded_list[:index]
 
         return encoded_list

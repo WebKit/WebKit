@@ -118,11 +118,11 @@ class JsonResultsTest(unittest.TestCase):
 
         return JSON_RESULTS_PREFIX + json + JSON_RESULTS_SUFFIX
 
-    def _test_merge(self, aggregated_data, incremental_data, expected_data):
+    def _test_merge(self, aggregated_data, incremental_data, expected_data, max_builds=jsonresults.JSON_RESULTS_MAX_BUILDS):
         aggregated_results = self._make_test_json(aggregated_data)
         incremental_results = self._make_test_json(incremental_data)
         merged_results = JsonResults.merge(self._builder,
-            aggregated_results, incremental_results, jsonresults.JSON_RESULTS_MAX_BUILDS,
+            aggregated_results, incremental_results, max_builds,
             sort_keys=True)
 
         if expected_data:
@@ -299,7 +299,7 @@ class JsonResultsTest(unittest.TestCase):
             # Expected results
             (["3", "2", "1"], [["001.html", "[201,\"P\"]", "[1,1],[200,0]"], ["002.html", "[1,\"P\"],[10,\"F\"]", "[11,0]"]]))
 
-        # Remove items from test results and times that exceeds the max number
+        # Remove items from test results and times that exceed the max number
         # of builds to track.
         max_builds = str(jsonresults.JSON_RESULTS_MAX_BUILDS)
         self._test_merge(
@@ -309,6 +309,18 @@ class JsonResultsTest(unittest.TestCase):
             (["3"], [["001.html", "[1,\"T\"]", "[1,1]"]]),
             # Expected results
             (["3", "2", "1"], [["001.html", "[1,\"T\"],[" + max_builds + ",\"F\"]", "[1,1],[" + max_builds + ",0]"]]))
+
+        # Remove items from test results and times that exceed the max number
+        # of builds to track, using smaller threshold.
+        max_builds = str(jsonresults.JSON_RESULTS_MAX_BUILDS_SMALL)
+        self._test_merge(
+            # Aggregated results
+            (["2", "1"], [["001.html", "[" + max_builds + ",\"F\"],[1,\"I\"]", "[" + max_builds + ",0],[1,1]"]]),
+            # Incremental results
+            (["3"], [["001.html", "[1,\"T\"]", "[1,1]"]]),
+            # Expected results
+            (["3", "2", "1"], [["001.html", "[1,\"T\"],[" + max_builds + ",\"F\"]", "[1,1],[" + max_builds + ",0]"]]),
+            int(max_builds))
 
         # Get test name list only. Don't include non-test-list data and
         # of test result details.
