@@ -385,5 +385,8 @@ BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
 // WebKit roll 74667:74679
 BUGCR68067 LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
 
+// Has been timing out on win debug for a while.
+BUGWEBGL WIN DEBUG : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TIMEOUT
+
 // This was introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT

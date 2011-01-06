@@ -2492,6 +2492,7 @@ BUGCR52572 WIN LINUX DEBUG : http/tests/misc/image-blocked-src-change.html = PAS
 BUGCR52573 LINUX RELEASE : fast/js/array-every.html = PASS CRASH
 
 BUGWK44199 : perf = PASS TEXT
+BUGWK44199 DEBUG : perf/array-binary-search.html = PASS TEXT TIMEOUT
 
 // Failing after http://trac.webkit.org/changeset/65665/
 BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IMAGE+TEXT
@@ -2574,6 +2575,7 @@ BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
+BUGWEBGL WIN DEBUG : fast/canvas/webgl/texture-complete.html = PASS TEXT
 
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
@@ -2897,7 +2899,9 @@ BUGCR59665 MAC : media/video-pause-immediately.html = CRASH PASS
 // See https://bugs.webkit.org/show_bug.cgi?id=45021 for more info.
 // UNIMPLEMENTED for chrome
 BUGCR59665 BUGWK45021 SKIP : media/context-menu-actions.html = CRASH TIMEOUT PASS
-BUGCR54334 DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT
+BUGCR54334 MAC LINUX DEBUG : media/video-timeupdate-during-playback.html = PASS TIMEOUT
+// Started flakily failing on win debug around r70597, WebKit r75136.
+BUGCR54334 WIN DEBUG : media/video-timeupdate-during-playback.html = PASS TEXT TIMEOUT
 
 // Also fails on the mac port; see http://webkit.org/b/34331
 BUG_DRT : http/tests/media/video-referer.html = TEXT PASS
@@ -2918,7 +2922,7 @@ BUG_DRT MAC : fast/dom/Window/alert-undefined.html = TIMEOUT PASS
 BUG_DRT MAC : fast/dom/beforeload/script-before-load-dynamic.html = TIMEOUT PASS
 BUG_DRT : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
-BUG_DRT LINUX : fast/frames/calculate-round.html = TIMEOUT PASS
+BUG_DRT DEBUG : fast/frames/calculate-round.html = TIMEOUT PASS
 BUG_DRT BUGCR43890 LINUX : fast/forms/implicit-submission.html = CRASH PASS TEXT
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-double-onchange.html = CRASH FAIL
 BUG_DRT BUGCR21141 LINUX : fast/forms/select-script-onchange.html = CRASH FAIL
@@ -3170,3 +3174,9 @@ BUGWK51989 MAC : svg/custom/js-late-gradient-creation.svg = IMAGE
 BUGWK51989 MAC : svg/text/selection-background-color.xhtml = IMAGE
 BUGWK51989 MAC : svg/text/selection-styles.xhtml = IMAGE
 BUGWK51989 MAC : svg/text/text-gradient-positioning.svg = IMAGE
+
+// These have been flaky for as long as we have test history.
+BUG_SENORBLANCO WIN DEBUG : fast/events/overflow-events.html = PASS TEXT
+BUG_SENORBLANCO WIN DEBUG : http/tests/media/text-served-as-text.html = PASS TEXT TIMEOUT
+BUG_SENORBLANCO WIN : http/tests/navigation/ping-cross-origin.html = PASS TEXT TIMEOUT
+BUG_SENORBLANCO MAC SLOW : http/tests/navigation/ping-cross-origin.html = PASS
