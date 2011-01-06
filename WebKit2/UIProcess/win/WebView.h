@@ -101,6 +101,7 @@ private:
 
     void close();
 
+    HCURSOR cursorToShow() const;
     void updateNativeCursor();
 
     // PageClient

@@ -622,15 +622,19 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
     ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !newToolTip.isEmpty(), 0);
 }
 
-void WebView::updateNativeCursor()
+HCURSOR WebView::cursorToShow() const
 {
     // We only show the override cursor if the default (arrow) cursor is showing.
     static HCURSOR arrowCursor = ::LoadCursor(0, IDC_ARROW);
     if (m_overrideCursor && m_webCoreCursor == arrowCursor)
-        m_lastCursorSet = m_overrideCursor;
-    else
-        m_lastCursorSet = m_webCoreCursor;
+        return m_overrideCursor;
 
+    return m_webCoreCursor;
+}
+
+void WebView::updateNativeCursor()
+{
+    m_lastCursorSet = cursorToShow();
     ::SetCursor(m_lastCursorSet);
 }
 
