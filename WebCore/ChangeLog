@@ -1,3 +1,13 @@
+2011-01-06  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][V8] Fix the build when DEVICE_ORIENTATION is enabled.
+
+        No new tests needed.
+
+        * WebCore.pro: remove duplications and globally add RuntimeEnabledFeatures.
+
 2011-01-06  Helder Correia  <helder@sencha.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -334,7 +334,8 @@ SOURCES += \
     accessibility/AccessibilityTableHeaderContainer.cpp \    
     accessibility/AccessibilityTableRow.cpp \    
     accessibility/AXObjectCache.cpp \
-    bindings/generic/ActiveDOMCallback.cpp
+    bindings/generic/ActiveDOMCallback.cpp \
+    bindings/generic/RuntimeEnabledFeatures.cpp
 
 v8 {
     include($$PWD/../Source/JavaScriptCore/pcre/pcre.pri)
@@ -450,7 +451,6 @@ v8 {
     }
 
     SOURCES += \
-        bindings/generic/RuntimeEnabledFeatures.cpp \
         bindings/v8/custom/V8HTMLCanvasElementCustom.cpp \
         bindings/v8/custom/V8HTMLCollectionCustom.cpp \
         bindings/v8/custom/V8HTMLDataGridElementCustom.cpp \
@@ -1411,11 +1411,11 @@ HEADERS += \
     accessibility/AccessibilityTableRow.h \
     accessibility/AXObjectCache.h \
     bindings/ScriptControllerBase.h \
-    bindings/generic/ActiveDOMCallback.h
+    bindings/generic/ActiveDOMCallback.h \
+    bindings/generic/RuntimeEnabledFeatures.h
 
 v8 {
     HEADERS += \
-        bindings/generic/RuntimeEnabledFeatures.h \
         bindings/v8/custom/V8CustomPositionCallback.h \
         bindings/v8/custom/V8CustomPositionErrorCallback.h  \
         bindings/v8/custom/V8CustomVoidCallback.h \
@@ -3442,15 +3442,14 @@ contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
         ../WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.h \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.h \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientMockQt.h \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.h \
-        bindings/generic/RuntimeEnabledFeatures.h
+        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.h
+
     SOURCES += \
         ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.cpp \
         ../WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.cpp \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.cpp \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientMockQt.cpp \
-        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.cpp \
-        bindings/generic/RuntimeEnabledFeatures.cpp
+        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.cpp
 
     CONFIG += mobility
     MOBILITY += sensors
