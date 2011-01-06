@@ -382,12 +382,73 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release_PGO|Win32"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\jscCommon.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
 		<File
-			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\AtomicString.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\AtomicString.cpp"
 			>
 		</File>
 		<File
@@ -395,15 +456,15 @@
 			>
 		</File>
 		<File
-			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\StringBuilder.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\StringBuilder.cpp"
 			>
 		</File>
 		<File
-			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\StringImpl.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\StringImpl.cpp"
 			>
 		</File>
 		<File
-			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\WTFString.cpp"
+			RelativePath="$(ConfigurationBuildDir)\include\private\JavaScriptCore\WTFString.cpp"
 			>
 		</File>
 	</Files>

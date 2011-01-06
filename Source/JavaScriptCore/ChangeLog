@@ -1,3 +1,48 @@
+2011-01-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Debug and Release builds on Windows clobber each other
+        https://bugs.webkit.org/show_bug.cgi?id=49185
+        
+        Changes the structure of WebKitBuild build products directory so we
+        completely separate each build configuration into independent directories.
+        
+        Although we previously had per-configuration directories for obj, this change adds
+        per-configuration directories for bin, lib, obj, and include. Each configuration's
+        build products are stored within a directory inside of WebKitBuild.
+        
+        Most use of $(WebKitOutputDir) in the build files has been replaced by $(ConfigurationBuildDir),
+        defined in common.vsprops to be $(WebKitOutputDir)\$(ConfigurationName).
+        
+        For PGO, $(ConfigurationBuildDir) points to the same directory (Release_PGO) to allow
+        for proper operation of the instrumentation/optimization scripts.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePGOOptimize.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePostBuild.cmd:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCorePreBuild.cmd:
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTFCommon.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFPostBuild.cmd:
+        * JavaScriptCore.vcproj/WTF/WTFPreBuild.cmd:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscPostBuild.cmd:
+        * JavaScriptCore.vcproj/jsc/jscPreBuild.cmd:
+        * JavaScriptCore.vcproj/testapi/testapiCommon.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiPostBuild.cmd:
+        * JavaScriptCore.vcproj/testapi/testapiPreBuild.cmd:
+
 2011-01-05  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.

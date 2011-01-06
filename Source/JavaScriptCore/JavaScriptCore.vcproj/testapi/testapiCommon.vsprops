@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\API&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\API&quot;;&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(ConfigurationBuildDir)\include\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\include\private\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;"
 		WarningLevel="4"
 		Detect64BitPortabilityProblems="true"
 		ForcedIncludeFiles="ICUVersion.h"

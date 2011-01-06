@@ -1,6 +1,6 @@
 @echo off
 
-set ResourcesDirectory=%WebKitOutputDir%\bin\TestWebKitAPI.resources
+set ResourcesDirectory=%CONFIGURATIONBUILDDIR%\bin\TestWebKitAPI.resources
 
 if "%1" EQU "clean" goto :clean
 if "%1" EQU "rebuild" call :clean

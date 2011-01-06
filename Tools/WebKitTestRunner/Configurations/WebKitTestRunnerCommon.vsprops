@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ProjectDir)\..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\private&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)\..&quot;;&quot;$(ConfigurationBuildDir)\Include&quot;;&quot;$(ConfigurationBuildDir)\Include\private&quot;;&quot;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;"
 		PreprocessorDefinitions="__WIN32__;_CONSOLE"
 		DisableSpecificWarnings="4146"
 		ForcedIncludeFiles="WebKitTestRunnerPrefix.h"

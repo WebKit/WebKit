@@ -3,12 +3,12 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="InterfacesCommon"
-	OutputDirectory="$(WebKitOutputDir)\include\WebKit"
+	OutputDirectory="$(ConfigurationBuildDir)\include\WebKit"
 	>
 	<Tool
 		Name="VCMIDLTool"
-		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces;&quot;$(IntDir)\include&quot;"
-		TypeLibraryName="$(WebKitOutputDir)\lib\WebKit.tlb"
-		OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
+		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces;&quot;$(IntDir)\include&quot;"
+		TypeLibraryName="$(ConfigurationBuildDir)\lib\WebKit.tlb"
+		OutputDirectory="$(ConfigurationBuildDir)\obj\WebKit\$(ProjectName)"
 	/>
 </VisualStudioPropertySheet>

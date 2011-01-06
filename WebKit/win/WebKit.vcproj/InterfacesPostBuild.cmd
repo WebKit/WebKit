@@ -2,6 +2,6 @@
 if errorlevel 1 set PATH=%SystemDrive%\cygwin\bin;%PATH%
 cmd /c
 
-perl FixMIDLHeaders.pl "%WEBKITOUTPUTDIR%/include/webkit/"
+perl FixMIDLHeaders.pl "%CONFIGURATIONBUILDDIR%/include/webkit/"
 
-if exist "%WEBKITOUTPUTDIR%\buildfailed" del "%WEBKITOUTPUTDIR%\buildfailed"
+if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"

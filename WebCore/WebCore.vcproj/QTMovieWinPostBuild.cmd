@@ -1,4 +1,4 @@
-mkdir 2>NUL "%WEBKITOUTPUTDIR%\include\QTMovieWin"
-xcopy /y /d "%PROJECTDIR%..\platform\graphics\win\QTMovieWin.h" "%WEBKITOUTPUTDIR%\include\QTMovieWin"
+mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\QTMovieWin"
+xcopy /y /d "%PROJECTDIR%..\platform\graphics\win\QTMovie.h" "%CONFIGURATIONBUILDDIR%\include\QTMovieWin"
 
-if exist "%WEBKITOUTPUTDIR%\buildfailed" del "%WEBKITOUTPUTDIR%\buildfailed"
+if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"

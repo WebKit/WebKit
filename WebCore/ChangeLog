@@ -1,3 +1,34 @@
+2011-01-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Debug and Release builds on Windows clobber each other
+        https://bugs.webkit.org/show_bug.cgi?id=49185
+
+        Changes the structure of WebKitBuild build products directory so we
+        completely separate each build configuration into independent directories.
+        
+        Although we previously had per-configuration directories for obj, this change adds
+        per-configuration directories for bin, lib, obj, and include. Each configuration's
+        build products are stored within a directory inside of WebKitBuild.
+        
+        Most use of $(WebKitOutputDir) in the build files has been replaced by $(ConfigurationBuildDir),
+        defined in common.vsprops to be $(WebKitOutputDir)\$(ConfigurationName).
+
+        * WebCore.vcproj/QTMovieWinCommon.vsprops:
+        * WebCore.vcproj/QTMovieWinPostBuild.cmd:
+        * WebCore.vcproj/QTMovieWinPreBuild.cmd:
+        * WebCore.vcproj/WebCore.make:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/WebCoreGeneratedCairo.vsprops:
+        * WebCore.vcproj/WebCoreGeneratedCommon.vsprops:
+        * WebCore.vcproj/WebCoreMediaQT.vsprops:
+        * WebCore.vcproj/WebCorePostBuild.cmd:
+        * WebCore.vcproj/WebCorePreBuild.cmd:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.vcproj/copyInspectorFiles.cmd:
+
 2011-01-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Ariya Hidayat.

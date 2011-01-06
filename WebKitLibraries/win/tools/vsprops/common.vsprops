@@ -3,8 +3,8 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="common"
-	OutputDirectory="$(WebKitOutputDir)\bin"
-	IntermediateDirectory="$(WebKitOutputDir)\obj\$(ProjectName)\$(ConfigurationName)"
+	OutputDirectory="$(ConfigurationBuildDir)\bin"
+	IntermediateDirectory="$(ConfigurationBuildDir)\obj\$(ProjectName)"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
@@ -27,10 +27,10 @@
 		LinkLibraryDependencies="false"
 		AdditionalOptions="/SAFESEH /FIXED:NO /dynamicbase /ignore:4221"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
-		AdditionalLibraryDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
+		AdditionalLibraryDirectories="&quot;$(ConfigurationBuildDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 		GenerateDebugInformation="true"
 		SubSystem="2"
-		ImportLibrary="$(WebKitOutputDir)\lib\$(TargetName).lib"
+		ImportLibrary="$(ConfigurationBuildDir)\lib\$(TargetName).lib"
 		TargetMachine="1"
 	/>
 	<Tool
@@ -41,26 +41,30 @@
 	/>
 	<Tool
 		Name="VCPostBuildEventTool"
-		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PostBuild.cmd file&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;REM If any of the above variables didn&apos;t exist previously and&#x0D;&#x0A;REM were set to an empty string, set will set the errorlevel to 1,&#x0D;&#x0A;REM which will cause the project-specific script to think the build&#x0D;&#x0A;REM has failed. This cmd /c call will clear the errorlevel.&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot;&#x0D;&#x0A;"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PostBuild.cmd file&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;REM If any of the above variables didn&apos;t exist previously and&#x0D;&#x0A;REM were set to an empty string, set will set the errorlevel to 1,&#x0D;&#x0A;REM which will cause the project-specific script to think the build&#x0D;&#x0A;REM has failed. This cmd /c call will clear the errorlevel.&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PostBuild.cmd&quot;&#x0D;&#x0A;"
 	/>
 	<Tool
 		Name="VCPreBuildEventTool"
-		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreBuild.cmd file.&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;REM If any of the above variables didn&apos;t exist previously and&#x0D;&#x0A;REM were set to an empty string, set will set the errorlevel to 1,&#x0D;&#x0A;REM which will cause the project-specific script to think the build&#x0D;&#x0A;REM has failed. This cmd /c call will clear the errorlevel.&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot;&#x0D;&#x0A;"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreBuild.cmd file.&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;REM If any of the above variables didn&apos;t exist previously and&#x0D;&#x0A;REM were set to an empty string, set will set the errorlevel to 1,&#x0D;&#x0A;REM which will cause the project-specific script to think the build&#x0D;&#x0A;REM has failed. This cmd /c call will clear the errorlevel.&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PreBuild.cmd&quot;&#x0D;&#x0A;"
 	/>
 	<Tool
 		Name="VCPreLinkEventTool"
-		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreLink.cmd file.&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;REM If any of the above variables didn&apos;t exist previously and&#x0D;&#x0A;REM were set to an empty string, set will set the errorlevel to 1,&#x0D;&#x0A;REM which will cause the project-specific script to think the build&#x0D;&#x0A;REM has failed. This cmd /c call will clear the errorlevel.&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot;&#x0D;&#x0A;"
+		CommandLine="REM Do not edit from the Visual Studio IDE! Customize via a $(ProjectName)PreLink.cmd file.&#x0D;&#x0A;if not exist &quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot; exit /b&#x0D;&#x0A;&#x0D;&#x0A;set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)&#x0D;&#x0A;set CONFIGURATIONNAME=$(ConfigurationName)&#x0D;&#x0A;set INPUTDIR=$(InputDir)&#x0D;&#x0A;set INPUTFILENAME=$(InputFileName)&#x0D;&#x0A;set INPUTPATH=$(InputPath)&#x0D;&#x0A;set INTDIR=$(IntDir)&#x0D;&#x0A;set LIBRARYCONFIGSUFFIX=$(LibraryConfigSuffix)&#x0D;&#x0A;set OUTDIR=$(OutDir)&#x0D;&#x0A;set PLATFORMNAME=$(PlatformName)&#x0D;&#x0A;set PROJECTDIR=$(ProjectDir)&#x0D;&#x0A;set PROJECTFILENAME=$(ProjectFileName)&#x0D;&#x0A;set PROJECTNAME=$(ProjectName)&#x0D;&#x0A;set PROJECTPATH=$(ProjectPath)&#x0D;&#x0A;set SOLUTIONDIR=$(SolutionDir)&#x0D;&#x0A;set SOLUTIONFILENAME=$(SolutionFileName)&#x0D;&#x0A;set SOLUTIONNAME=$(SolutionName)&#x0D;&#x0A;set SOLUTIONPATH=$(SolutionPath)&#x0D;&#x0A;set TARGETDIR=$(TargetDir)&#x0D;&#x0A;set TARGETEXT=$(TargetExt)&#x0D;&#x0A;set TARGETFILENAME=$(TargetFileName)&#x0D;&#x0A;set TARGETPATH=$(TargetPath)&#x0D;&#x0A;set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)&#x0D;&#x0A;set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)&#x0D;&#x0A;&#x0D;&#x0A;REM If any of the above variables didn&apos;t exist previously and&#x0D;&#x0A;REM were set to an empty string, set will set the errorlevel to 1,&#x0D;&#x0A;REM which will cause the project-specific script to think the build&#x0D;&#x0A;REM has failed. This cmd /c call will clear the errorlevel.&#x0D;&#x0A;cmd /c&#x0D;&#x0A;&#x0D;&#x0A;&quot;$(ProjectDir)$(ProjectName)PreLink.cmd&quot;&#x0D;&#x0A;"
 	/>
 	<Tool
 		Name="VCResourceCompilerTool"
 		Culture="1033"
 		AdditionalIncludeDirectories="&quot;$(IntDir)\include&quot;"
 	/>
-	<UserMacro
+  <UserMacro
 		Name="ProductionBuild"
 		Value="$(PRODUCTION)"
 	/>
-	<UserMacro
+  <UserMacro
+		Name="ConfigurationBuildDir"
+		Value="$(WebKitOutputDir)\$(ConfigurationName)"
+	/>
+  <UserMacro
 		Name="AnalyzeWithLargeStack"
 		Value=""
 	/>

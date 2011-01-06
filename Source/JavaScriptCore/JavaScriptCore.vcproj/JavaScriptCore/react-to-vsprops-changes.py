@@ -18,7 +18,7 @@ def main():
 
     # Delete any manifest-related files because Visual Studio isn't smart
     # enough to figure out that it might need to rebuild them.
-    obj_directory = os.path.join(os.environ['WEBKITOUTPUTDIR'], 'obj')
+    obj_directory = os.path.join(os.environ['CONFIGURATIONBUILDDIR'], 'obj')
     for manifest_file in glob.iglob(os.path.join(obj_directory, '*', '*', '*.manifest*')):
         manifest_time = os.path.getmtime(manifest_file)
         if manifest_time < newest_vsprops_time:

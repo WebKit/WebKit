@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
+		AdditionalIncludeDirectories="&quot;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\&quot;;../../;../../API/;../../pcre/;../../parser/;../../bytecompiler/;../../jit/;../../runtime/;../../bytecode/;../../interpreter/;../../wtf/;../../profiler;../../assembler/;../../debugger/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\JavaScriptCore&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
 		PreprocessorDefinitions="__STD_C"
 		ForcedIncludeFiles="ICUVersion.h"
 	/>
@@ -14,7 +14,7 @@
 		Name="VCLinkerTool"
 		AdditionalDependencies="gdi32.lib oleaut32.lib winmm.lib libicuin$(LibraryConfigSuffix).lib libicuuc$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib WTF$(WebKitConfigSuffix).lib"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitDLLConfigSuffix).dll"
-		AdditionalLibraryDirectories="&quot;$(IntDir)\lib&quot;"
+		AdditionalLibraryDirectories="&quot;$(ConfigurationBuildDir)\lib&quot;"
 		ModuleDefinitionFile="JavaScriptCore.def"
 	/>
 </VisualStudioPropertySheet>

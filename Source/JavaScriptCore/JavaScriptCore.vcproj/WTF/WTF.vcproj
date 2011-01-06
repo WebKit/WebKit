@@ -328,6 +328,58 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release_PGO|Win32"
+			ConfigurationType="4"
+			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WTFCommon.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -571,6 +623,14 @@
 					DisableSpecificWarnings="4702"
 				/>
 			</FileConfiguration>
+			<FileConfiguration
+				Name="Release_PGO|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					DisableSpecificWarnings="4702"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\wtf\FastMalloc.h"
@@ -705,14 +765,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\PageBlock.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\wtf\PageBlock.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\wtf\PageAllocation.h"
 			>
 		</File>
@@ -722,6 +774,14 @@
 		</File>
 		<File
 			RelativePath="..\..\wtf\PageAllocationAligned.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PageBlock.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\PageBlock.h"
 			>
 		</File>
 		<File

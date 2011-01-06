@@ -1,3 +1,54 @@
+2011-01-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Debug and Release builds on Windows clobber each other
+        https://bugs.webkit.org/show_bug.cgi?id=49185
+
+        Changes the structure of WebKitBuild build products directory so we
+        completely separate each build configuration into independent directories.
+        
+        Although we previously had per-configuration directories for obj, this change adds
+        per-configuration directories for bin, lib, obj, and include. Each configuration's
+        build products are stored within a directory inside of WebKitBuild.
+        
+        Most use of $(WebKitOutputDir) in the build files has been replaced by $(ConfigurationBuildDir),
+        defined in common.vsprops to be $(WebKitOutputDir)\$(ConfigurationName).
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginCommon.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginPostBuild.cmd:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginPreBuild.cmd:
+        * DumpRenderTree/win/DumpRenderTreeCommon.vsprops:
+        * DumpRenderTree/win/DumpRenderTreePostBuild.cmd:
+        * DumpRenderTree/win/DumpRenderTreePreBuild.cmd:
+        * DumpRenderTree/win/ImageDiffCommon.vsprops:
+        * DumpRenderTree/win/ImageDiffPostBuild.cmd:
+        * DumpRenderTree/win/ImageDiffPreBuild.cmd:
+        * FindSafari/FindSafari.vcproj:
+        * MiniBrowser/Configurations/MiniBrowserCommon.vsprops:
+        * MiniBrowser/MiniBrowserPostBuild.cmd:
+        * MiniBrowser/MiniBrowserPreBuild.cmd:
+        * Scripts/webkitdirs.pm:
+        * TestWebKitAPI/Configurations/TestWebKitAPICommon.vsprops:
+        * TestWebKitAPI/win/TestWebKitAPIGeneratedCommon.vsprops:
+        * TestWebKitAPI/win/TestWebKitAPIPostBuild.cmd:
+        * TestWebKitAPI/win/TestWebKitAPIPreBuild.cmd:
+        * TestWebKitAPI/win/copy-resources.cmd:
+        * WebKitAPITest/WebKitAPITestCommon.vsprops:
+        * WebKitAPITest/WebKitAPITestPostBuild.cmd:
+        * WebKitAPITest/WebKitAPITestPreBuild.cmd:
+        * WebKitTestRunner/Configurations/InjectedBundleCommon.vsprops:
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+        * WebKitTestRunner/win/InjectedBundleGeneratedCommon.vsprops:
+        * WebKitTestRunner/win/InjectedBundlePostBuild.cmd:
+        * WebKitTestRunner/win/InjectedBundlePreBuild.cmd:
+        * WebKitTestRunner/win/WebKitTestRunnerPostBuild.cmd:
+        * WebKitTestRunner/win/WebKitTestRunnerPreBuild.cmd:
+        * WinLauncher/WinLauncherCommon.vsprops:
+        * WinLauncher/WinLauncherPostBuild.cmd:
+        * WinLauncher/WinLauncherPreBuild.cmd:
+
 2011-01-05  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Ariya Hidayat.

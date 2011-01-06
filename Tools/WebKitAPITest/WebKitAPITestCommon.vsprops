@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitOutputDir)\include\private&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\WebCore\ForwardingHeaders&quot;"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ConfigurationBuildDir)\include&quot;;&quot;$(ConfigurationBuildDir)\include\private&quot;;&quot;$(ConfigurationBuildDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\private&quot;;&quot;$(WebKitLibrariesDir)\include\WebCore\ForwardingHeaders&quot;"
 		PreprocessorDefinitions="_CONSOLE;NOMINMAX"
 	/>
 	<Tool

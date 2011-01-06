@@ -69,6 +69,15 @@
 				Name="VCNMakeTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release_PGO|Win32"
+			ConfigurationType="0"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			>
+			<Tool
+				Name="VCNMakeTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>

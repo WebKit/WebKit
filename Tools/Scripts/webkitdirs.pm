@@ -296,7 +296,7 @@ sub usesPerConfigurationBuildDirectory
     # allows us to run run-webkit-tests without using build-webkit.
     #
     # Symbian builds do not have Release/Debug configurations either.
-    return ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) || isSymbian();
+    return ($ENV{"WEBKITOUTPUTDIR"} && (isGtk() || isEfl())) || isSymbian() || isAppleWinWebKit();
 }
 
 sub determineConfigurationProductDir
@@ -305,7 +305,7 @@ sub determineConfigurationProductDir
     determineBaseProductDir();
     determineConfiguration();
     if (isAppleWinWebKit() && !isWx()) {
-        $configurationProductDir = File::Spec->catdir($baseProductDir, "bin");
+        $configurationProductDir = File::Spec->catdir($baseProductDir, configurationForVisualStudio(), "bin");
     } else {
         if (usesPerConfigurationBuildDirectory()) {
             $configurationProductDir = "$baseProductDir";

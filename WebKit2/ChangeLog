@@ -1,3 +1,30 @@
+2011-01-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Debug and Release builds on Windows clobber each other
+        https://bugs.webkit.org/show_bug.cgi?id=49185
+
+        Changes the structure of WebKitBuild build products directory so we
+        completely separate each build configuration into independent directories.
+        
+        Although we previously had per-configuration directories for obj, this change adds
+        per-configuration directories for bin, lib, obj, and include. Each configuration's
+        build products are stored within a directory inside of WebKitBuild.
+        
+        Most use of $(WebKitOutputDir) in the build files has been replaced by $(ConfigurationBuildDir),
+        defined in common.vsprops to be $(WebKitOutputDir)\$(ConfigurationName).
+
+        * win/WebKit2.make:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+        * win/WebKit2Generated.make:
+        * win/WebKit2GeneratedCommon.vsprops:
+        * win/WebKit2WebProcessPostBuild.cmd:
+        * win/WebKit2WebProcessPreBuild.cmd:
+        * win/WebKitPostBuild.cmd:
+        * win/WebKitPreBuild.cmd:
+
 2011-01-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

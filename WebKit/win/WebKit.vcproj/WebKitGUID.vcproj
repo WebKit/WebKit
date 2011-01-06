@@ -339,7 +339,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="$(WebKitOutputDir)\obj\WebKit\Interfaces\WebKit_i.c"
+			RelativePath="$(ConfigurationBuildDir)\obj\WebKit\Interfaces\WebKit_i.c"
 			>
 		</File>
 	</Files>

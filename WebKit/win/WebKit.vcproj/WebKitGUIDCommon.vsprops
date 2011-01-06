@@ -3,11 +3,11 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="WebKitGUIDCommon"
-	OutputDirectory="$(WebKitOutputDir)\lib"
+	OutputDirectory="$(ConfigurationBuildDir)\lib"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="$(WebKitOutputDir)\$(ConfigurationName)\WebKit"
+		AdditionalIncludeDirectories="$(ConfigurationBuildDir)\WebKit"
 		PreprocessorDefinitions="_USRDLL;WEBKITGUID_EXPORTS"
 	/>
   <Tool

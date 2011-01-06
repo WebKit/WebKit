@@ -6,6 +6,6 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="$(WebKitOutputDir)\include\QTMovieWin"
+		AdditionalIncludeDirectories="$(ConfigurationBuildDir)\include\QTMovieWin"
 	/>
 </VisualStudioPropertySheet>
