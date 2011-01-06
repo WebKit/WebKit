@@ -93,7 +93,7 @@ HistoryItem* WebBackForwardListProxy::itemForID(uint64_t itemID)
     return idToHistoryItemMap().get(itemID).get();
 }
 
-void WebBackForwardListProxy::removeBackForwardItem(uint64_t itemID)
+void WebBackForwardListProxy::removeItem(uint64_t itemID)
 {
     IDToHistoryItemMap::iterator it = idToHistoryItemMap().find(itemID);
     if (it == idToHistoryItemMap().end())

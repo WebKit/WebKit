@@ -1520,7 +1520,7 @@ void WebPage::setCustomTextEncodingName(const String& encoding)
 
 void WebPage::didRemoveBackForwardItem(uint64_t itemID)
 {
-    WebBackForwardListProxy::removeBackForwardItem(itemID);
+    WebBackForwardListProxy::removeItem(itemID);
 }
 
 #if PLATFORM(MAC)
