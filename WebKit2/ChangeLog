@@ -1,3 +1,21 @@
+2011-01-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51973
+        Make main frame PDF printing work
+
+        * UIProcess/API/mac/PDFViewController.h:
+        * UIProcess/API/mac/PDFViewController.mm: (WebKit::PDFViewController::makePrintOperation):
+        Ask PDFDocument to create an NSPrintOperation.
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView printOperationWithPrintInfo:forFrame:]): Create a new NSPrintOperation, either
+        from scratch or from a PDF view.
+        (-[WKView canPrintHeadersAndFooters]): Report if the view can be re-paginated to add headers
+        and footers.
+
 2011-01-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

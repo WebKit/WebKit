@@ -32,6 +32,10 @@
 @class PDFDocument;
 @class PDFView;
 
+@interface PDFDocument (PDFDocumentDetails)
+- (NSPrintOperation *)getPrintOperationForPrintInfo:(NSPrintInfo *)printInfo autoRotate:(BOOL)doRotate;
+@end
+
 extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
     
 @interface WKPDFView : NSView
@@ -177,6 +181,11 @@ NSBundle* PDFViewController::pdfKitBundle()
     if (![pdfKitBundle load])
         LOG_ERROR("Couldn't load PDFKit.framework");
     return pdfKitBundle;
+}
+
+NSPrintOperation *PDFViewController::makePrintOperation(NSPrintInfo *printInfo)
+{
+    return [[m_pdfView document] getPrintOperationForPrintInfo:printInfo autoRotate:YES];
 }
 
 } // namespace WebKit

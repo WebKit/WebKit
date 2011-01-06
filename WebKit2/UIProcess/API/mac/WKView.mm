@@ -1196,6 +1196,22 @@ static bool isViewVisible(NSView *view)
     return (NSInteger)self;
 }
 
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
+{
+    // Only the top frame can currently contain a PDF view.
+    if (_data->_pdfViewController) {
+        ASSERT(toImpl(frameRef)->isMainFrame());
+        return _data->_pdfViewController->makePrintOperation(printInfo);
+    }
+    return [NSPrintOperation printOperationWithView:self printInfo:printInfo];
+}
+
+- (BOOL)canPrintHeadersAndFooters
+{
+    // PDF documents are already paginated, so we can't change them to add headers and footers.
+    return !_data->_pdfViewController;
+}
+
 @end
 
 @implementation WKView (Internal)

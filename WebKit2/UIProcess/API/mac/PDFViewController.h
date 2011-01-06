@@ -53,6 +53,8 @@ public:
 
     static Class pdfDocumentClass();
     static Class pdfPreviewViewClass();
+
+    NSPrintOperation *makePrintOperation(NSPrintInfo *);
     
 private:
     explicit PDFViewController(WKView *wkView);
