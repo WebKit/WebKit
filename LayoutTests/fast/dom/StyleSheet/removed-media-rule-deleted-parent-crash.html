@@ -19,9 +19,9 @@ function runTest()
     document.head.removeChild(style);
     
     gc();
-    obj = ruleList[0].parentStyleSheet;
 
-    document.getElementById('result').innerHTML = "PASS";
+    if (!ruleList[0].parentStyleSheet)
+        document.getElementById('result').innerHTML = "PASS";
     if (window.layoutTestController)
         layoutTestController.notifyDone();
 }
