@@ -3158,3 +3158,6 @@ BUG_SENORBLANCO WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+
 // New tests introduced by r75097.  Results look ok; need rebaseline.
 BUG_SENORBLANCO : fast/gradients/css3-repeating-linear-gradients.html = IMAGE
 BUG_SENORBLANCO : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
+
+// This was introduced by r75139
+BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
