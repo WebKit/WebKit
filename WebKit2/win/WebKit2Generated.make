@@ -5,6 +5,7 @@ all:
     xcopy /y /d "..\Shared\API\c\cf\WKURLCF.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\cf\WKURLRequestCF.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\cf\WKURLResponseCF.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\Shared\API\c\cg\WKImageCG.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\win\WKBaseWin.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\win\WKCertificateInfoWin.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKArray.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"

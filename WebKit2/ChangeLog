@@ -1,3 +1,13 @@
+2011-01-05  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Copy WKImageCG.h to include\WebKit2 in build output
+        https://bugs.webkit.org/show_bug.cgi?id=51944
+
+        * win/WebKit2Generated.make:
+        Add xcopy command to copy WKImageCG.h.
+
 2011-01-05  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
