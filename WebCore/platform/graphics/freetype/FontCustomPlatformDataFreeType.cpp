@@ -24,6 +24,7 @@
 
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
+#include "WOFFFileFormat.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 
@@ -67,6 +68,16 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 {
     ASSERT_ARG(buffer, buffer);
 
+    RefPtr<SharedBuffer> sfntBuffer;
+    if (isWOFF(buffer)) {
+        Vector<char> sfnt;
+        if (!convertWOFFToSfnt(buffer, sfnt))
+            return 0;
+
+        sfntBuffer = SharedBuffer::adoptVector(sfnt);
+        buffer = sfntBuffer.get();
+    }
+
     static FT_Library library = 0;
     if (!library && FT_Init_FreeType(&library)) {
         library = 0;
@@ -81,7 +92,7 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 
 bool FontCustomPlatformData::supportsFormat(const String& format)
 {
-    return equalIgnoringCase(format, "truetype") || equalIgnoringCase(format, "opentype");
+    return equalIgnoringCase(format, "truetype") || equalIgnoringCase(format, "opentype") || equalIgnoringCase(format, "woff");
 }
 
 }

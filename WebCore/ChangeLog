@@ -1,3 +1,16 @@
+2011-01-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Freetype backend does not support WOFF
+        https://bugs.webkit.org/show_bug.cgi?id=51904
+
+        * CMakeListsEfl.txt: Add WOFF support to the sources list.
+        * GNUmakefile.am: Add WOFF support to the sources list.
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::createFontCustomPlatformData): Call the WOFF decoder when appropriate.
+        (WebCore::FontCustomPlatformData::supportsFormat): Advertise support for WOFF.
+
 2011-01-06  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Darin Fisher.

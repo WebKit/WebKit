@@ -40,6 +40,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/audio \
 	-I$(srcdir)/WebCore/platform/graphics \
 	-I$(srcdir)/WebCore/platform/graphics/filters \
+	-I$(srcdir)/WebCore/platform/graphics/opentype \
 	-I$(srcdir)/WebCore/platform/graphics/transforms \
 	-I$(srcdir)/WebCore/platform/image-decoders \
 	-I$(srcdir)/WebCore/platform/image-decoders/bmp \
@@ -2466,6 +2467,8 @@ webcore_sources += \
 	WebCore/platform/graphics/UnitBezier.h \
 	WebCore/platform/graphics/WidthIterator.cpp \
 	WebCore/platform/graphics/WidthIterator.h \
+	WebCore/platform/graphics/WOFFFileFormat.cpp \
+	WebCore/platform/graphics/WOFFFileFormat.h \
 	WebCore/platform/HostWindow.h \
 	WebCore/platform/KillRing.h \
 	WebCore/platform/KillRingNone.cpp \

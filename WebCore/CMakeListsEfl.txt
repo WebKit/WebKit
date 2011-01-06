@@ -90,6 +90,7 @@ IF (WTF_PLATFORM_CAIRO)
       "${WEBCORE_DIR}/platform/graphics/freetype"
     )
     LIST(APPEND WebCore_SOURCES
+      platform/graphics/WOFFFileFormat.cpp
       platform/graphics/freetype/FontCacheFreeType.cpp
       platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
       platform/graphics/freetype/FontPlatformDataFreeType.cpp
