@@ -1,3 +1,13 @@
+2011-01-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Dan Bernstein.
+
+        Fix build for Darin's previous change w/ the obvious renaming.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didRemoveBackForwardItem):
+
 2011-01-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

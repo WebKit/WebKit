@@ -38,7 +38,7 @@ public:
     static PassRefPtr<WebBackForwardListProxy> create(WebPage* page) { return adoptRef(new WebBackForwardListProxy(page)); }
 
     static WebCore::HistoryItem* itemForID(uint64_t);
-    static void removeItem(uint64_t itemID);
+    static void removeBackForwardItem(uint64_t itemID);
 
     void clear();
 
