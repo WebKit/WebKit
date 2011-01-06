@@ -35,10 +35,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(WIN)
-#include <CoreGraphics/CoreGraphics.h>
-#endif
-
 #if PLATFORM(CG)
 
 typedef struct CGContext* CGContextRef;
