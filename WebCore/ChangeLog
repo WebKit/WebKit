@@ -1,3 +1,18 @@
+2011-01-06  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Null out the parent stylesheet pointer when a css rule is removed.
+        https://bugs.webkit.org/show_bug.cgi?id=51993
+
+        Tests: fast/dom/StyleSheet/removed-media-rule-deleted-parent-crash.html
+               fast/dom/StyleSheet/removed-stylesheet-rule-deleted-parent-crash.html
+
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::deleteRule):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::deleteRule):
+
 2011-01-04  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.
