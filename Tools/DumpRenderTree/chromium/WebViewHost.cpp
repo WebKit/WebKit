@@ -1482,6 +1482,7 @@ void WebViewHost::paintInvalidatedRegion()
         paintRect(rect);
     }
     ASSERT(m_paintRect.isEmpty());
+    webWidget()->clearCurrentAnimationTime();
 }
 
 PlatformCanvas* WebViewHost::canvas()

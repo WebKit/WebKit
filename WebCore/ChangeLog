@@ -1,3 +1,48 @@
+2011-01-06  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Implement mozilla's animationTime property
+        https://bugs.webkit.org/show_bug.cgi?id=51952
+
+        Implements mozilla's animationTime property as described here:
+        https://developer.mozilla.org/en/DOM/window.mozAnimationStartTime
+        and http://hacks.mozilla.org/2010/08/more-efficient-javascript-animations-with-mozrequestanimationframe/
+        The property is called webkitAnimationTime as calling it the 'Start' time is not very informative.
+        This property exposes a notion of a 'current' time to use for declarative animations and allows
+        scripts to synchronize imperative animations with declarative ones if they choose to.  Once queried
+        this time is saved and used for all declarative animation updates until the embedder paints/composites
+        the next frame and clears it, or 15ms elapse (in case the embedder isn't producing frames, for example
+        if the page is in a background tab).
+
+        This patch also ensures that all declarative animations started in the same script execution block
+        are synchronized even if some time elapses while script is running.
+
+        Test: fast/animation/animation-time.html
+
+        * WebCore.gypi:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitAnimationTime):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/Frame.cpp:
+        (WebCore::Frame::currentAnimationTime):
+        * page/Frame.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::animationTime):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+        * page/animation/AnimationTimeController.cpp: Added.
+        (WebCore::AnimationTimeController::AnimationTimeController):
+        (WebCore::AnimationTimeController::~AnimationTimeController):
+        (WebCore::AnimationTimeController::currentAnimationTime):
+        (WebCore::AnimationTimeController::clearCurrentAnimationTime):
+        (WebCore::AnimationTimeController::clearCurrentAnimationTimeTimerFired):
+        * page/animation/AnimationTimeController.h: Added.
+        (WebCore::AnimationTimeController::create):
+
 2011-01-06  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.

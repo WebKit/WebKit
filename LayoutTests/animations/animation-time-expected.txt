@@ -1,0 +1,12 @@
+Tests that window.webkitAnimationTime remains the same during a script run and that all animations started within a script run are synchronized
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS startAnimationTime is defined.
+PASS startAnimationTime is endAnimationTime
+PASS window.getComputedStyle(div1).left is window.getComputedStyle(div2).left
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

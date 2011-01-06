@@ -29,6 +29,7 @@
 #include "config.h"
 #include "Frame.h"
 
+#include "AnimationTimeController.h"
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
@@ -83,6 +84,7 @@
 #include "markup.h"
 #include "npruntime_impl.h"
 #include "visible_units.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
@@ -751,6 +753,14 @@ void Frame::transferChildFrameToNewDocument()
             child->transferChildFrameToNewDocument();
     }
 }
+
+double Frame::currentAnimationTime()
+{
+    if (Page* p = page())
+        return p->animationTime()->currentAnimationTime();
+    return currentTime();
+}
+
 
 String Frame::documentTypeString() const
 {

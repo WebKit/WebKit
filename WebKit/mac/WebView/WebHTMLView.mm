@@ -75,6 +75,7 @@
 #import "WebViewInternal.h"
 #import <AppKit/NSAccessibility.h>
 #import <ApplicationServices/ApplicationServices.h>
+#import <WebCore/AnimationTimeController.h>
 #import <WebCore/CSSMutableStyleDeclaration.h>
 #import <WebCore/CachedImage.h>
 #import <WebCore/CachedResourceClient.h>
@@ -3504,6 +3505,10 @@ static void setMenuTargets(NSMenu* menu)
         [webView _setNeedsOneShotDrawingSynchronization:NO];
     }
 #endif
+
+    Frame* frame = [webView _mainCoreFrame];
+    if (frame && frame->page())
+        frame->page()->animationTime()->clearCurrentAnimationTime();
 
     if (webView)
         CallUIDelegate(webView, @selector(webView:didDrawFrame:), [self _frame]);

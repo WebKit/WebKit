@@ -107,6 +107,8 @@ namespace WebCore {
 
         void transferChildFrameToNewDocument();
 
+        double currentAnimationTime();
+
     // ======== All public functions below this point are candidates to move out of Frame into another class. ========
 
         bool isDisconnected() const;

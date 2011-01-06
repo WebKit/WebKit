@@ -1,3 +1,16 @@
+2011-01-06  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Implement mozilla's animationTime property
+        https://bugs.webkit.org/show_bug.cgi?id=51952
+
+        Tests for window.webkitAnimationTime.
+
+        * animations/animation-time-expected.txt: Added.
+        * animations/animation-time.html: Added.
+        * animations/script-tests/animation-time.js: Added.
+
 2011-01-06  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.

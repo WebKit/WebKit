@@ -151,6 +151,10 @@ void WebPopupMenuImpl::resize(const WebSize& newSize)
     }
 }
 
+void WebPopupMenuImpl::clearCurrentAnimationTime()
+{
+}
+
 void WebPopupMenuImpl::layout()
 {
 }

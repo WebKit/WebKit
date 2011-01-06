@@ -56,6 +56,10 @@ public:
     // Called to resize the WebWidget.
     virtual void resize(const WebSize&) = 0;
 
+    // Called to indicate that this widget has been rendered and the widget
+    // no longer needs to store the animation time.
+    virtual void clearCurrentAnimationTime() = 0;
+
     // Called to layout the WebWidget.  This MUST be called before Paint,
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
     virtual void layout() = 0;

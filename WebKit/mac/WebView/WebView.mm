@@ -110,6 +110,7 @@
 #import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/AbstractDatabase.h>
 #import <WebCore/ApplicationCacheStorage.h>
+#import <WebCore/AnimationTimeController.h>
 #import <WebCore/BackForwardListImpl.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/ColorMac.h>
@@ -5957,6 +5958,10 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
         // so that the layers draw with up-to-date layout. 
         [webView _viewWillDrawInternal];
     }
+
+    Frame* frame = [webView _mainCoreFrame];
+    if (frame && frame->page())
+        frame->page()->animationTime()->clearCurrentAnimationTime();
 }
 
 - (void)_scheduleCompositingLayerSync

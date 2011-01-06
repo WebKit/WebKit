@@ -39,6 +39,7 @@ namespace JSC {
 
 namespace WebCore {
 
+    class AnimationTimeController;
     class BackForwardController;
     class BackForwardList;
     class Chrome;
@@ -182,6 +183,7 @@ namespace WebCore {
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
         BackForwardController* backForward() const { return m_backForwardController.get(); }
+        AnimationTimeController* animationTime() const { return m_animationTimeController.get(); }
 
         enum ViewMode {
             ViewModeInvalid,
@@ -327,6 +329,7 @@ namespace WebCore {
         OwnPtr<ProgressTracker> m_progress;
         
         OwnPtr<BackForwardController> m_backForwardController;
+        OwnPtr<AnimationTimeController> m_animationTimeController;
         RefPtr<Frame> m_mainFrame;
 
         RefPtr<HistoryItem> m_globalHistoryItem;
@@ -379,6 +382,8 @@ namespace WebCore {
 #if ENABLE(NOTIFICATIONS)
         NotificationPresenter* m_notificationPresenter;
 #endif
+
+        double m_currentAnimationTime;
 
         ViewMode m_viewMode;
 

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebViewImpl.h"
 
+#include "AnimationTimeController.h"
 #include "AutoFillPopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "BackForwardListImpl.h"
@@ -975,6 +976,13 @@ void WebViewImpl::resize(const WebSize& newSize)
                                                        std::max(1, m_size.height)));
     }
 #endif
+}
+
+void WebViewImpl::clearCurrentAnimationTime()
+{
+    WebFrameImpl* webframe = mainFrameImpl();
+    if (webframe)
+        webframe->frame()->page()->animationTime()->clearCurrentAnimationTime();
 }
 
 void WebViewImpl::layout()

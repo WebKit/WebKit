@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Page.h"
 
+#include "AnimationTimeController.h"
 #include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "Base64.h"
@@ -156,6 +157,7 @@ Page::Page(const PageClients& pageClients)
     , m_settings(adoptPtr(new Settings(this)))
     , m_progress(adoptPtr(new ProgressTracker))
     , m_backForwardController(adoptPtr(new BackForwardController(this, pageClients.backForwardClient)))
+    , m_animationTimeController(AnimationTimeController::create())
     , m_theme(RenderTheme::themeForPage(this))
     , m_editorClient(pageClients.editorClient)
     , m_frameCount(0)
