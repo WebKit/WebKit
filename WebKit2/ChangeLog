@@ -1,5 +1,28 @@
 2011-01-06  Adam Roben  <aroben@apple.com>
 
+        Make WKView fill with white when the web process has crashed
+
+        Previously we would just draw whatever we had last drawn into the
+        WKView (i.e., a stale picture of the web page), which was confusing
+        (because the web page would mysteriously not respond to input) and ugly
+        (because it wouldn't behave properly if the window was resized).
+
+        Fixes <http://webkit.org/b/52004> WKView keeps painting a stale
+        picture of the web page when the web process crashes
+
+        Reviewed by Ada Chan.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onPaintEvent): Ported code from -[WKView drawRect:]
+        to fill with white if the page is invalid or has no DrawingArea. As a
+        bonus, also ported the call to WebPageProxy::didDraw from that method.
+
+        (WebKit::WebView::processDidCrash):
+        (WebKit::WebView::didRelaunchProcess):
+        Invalidate our window so that we'll redraw with white or the new page.
+
+2011-01-06  Adam Roben  <aroben@apple.com>
+
         Make WKViews work on Windows after a crashed web process gets relaunched
 
         Fixes <http://webkit.org/b/52001> Relaunching the web process fails to

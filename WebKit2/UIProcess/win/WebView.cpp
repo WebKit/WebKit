@@ -387,7 +387,15 @@ LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& han
     PAINTSTRUCT paintStruct;
     HDC hdc = ::BeginPaint(m_window, &paintStruct);
 
-    m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc);
+    if (m_page->isValid() && m_page->drawingArea()) {
+        m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc);
+        m_page->didDraw();
+    } else {
+        // Mac checks WebPageProxy::drawsBackground and
+        // WebPageProxy::drawsTransparentBackground here, but those are always false on Windows
+        // currently (see <http://webkit.org/b/52009>).
+        ::FillRect(hdc, &paintStruct.rcPaint, reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1));
+    }
 
     ::EndPaint(m_window, &paintStruct);
 
@@ -574,6 +582,7 @@ void WebView::close()
 
 void WebView::processDidCrash()
 {
+    ::InvalidateRect(m_window, 0, TRUE);
 }
 
 void WebView::didRelaunchProcess()
@@ -585,6 +594,8 @@ void WebView::didRelaunchProcess()
     m_page->reinitializeWebPage(IntRect(clientRect).size());
     updateActiveState();
     m_page->setFocused(::GetFocus() == m_window);
+
+    ::InvalidateRect(m_window, 0, TRUE);
 }
 
 void WebView::takeFocus(bool)
