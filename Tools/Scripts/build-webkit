@@ -86,8 +86,10 @@ my (
     $linkPrefetchSupport,
     $mathmlSupport,
     $meterTagSupport,
+    $netscapePluginSupport,
     $notificationsSupport,
     $offlineWebApplicationSupport,
+    $orientationEventsSupport,
     $progressTagSupport,
     $sharedWorkersSupport,
     $svgSupport,
@@ -99,6 +101,7 @@ my (
     $svgUseSupport,
     $systemMallocSupport,
     $tiledBackingStoreSupport,
+    $touchEventsSupport,
     $videoSupport,
     $wcssSupport,
     $webAudioSupport,
@@ -194,11 +197,17 @@ my @features = (
     { option => "meter-tag", desc => "Meter Tag support",
       define => "ENABLE_METER_TAG", default => !isGtk() && !isAppleWinWebKit(), value => \$meterTagSupport },
 
+    { option => "netscape-plugin", desc => "Netscape Plugin support",
+      define => "ENABLE_NETSCAPE_PLUGIN_API", default => 1, value => \$netscapePluginSupport },
+
     { option => "notifications", desc => "Toggle Desktop Notifications Support",
       define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },
 
     { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
       define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },
+
+    { option => "orientation-events", desc => "Toggle Orientation Events support",
+      define => "ENABLE_ORIENTATION_EVENTS", default => 0, value => \$orientationEventsSupport },
 
     { option => "progress-tag", desc => "Progress Tag support",
       define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
@@ -232,6 +241,9 @@ my @features = (
 
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
       define => "ENABLE_TILED_BACKING_STORE", default => isQt(), value => \$tiledBackingStoreSupport },
+
+    { option => "touch-events", desc => "Toggle Touch Events support",
+      define => "ENABLE_TOUCH_EVENTS", default => isQt(), value => \$touchEventsSupport },
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },
