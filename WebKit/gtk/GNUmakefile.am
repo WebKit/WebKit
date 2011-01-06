@@ -114,6 +114,7 @@ webkitgtk_static_h_api += \
 	$(srcdir)/WebKit/gtk/webkit/webkitdownload.h \
 	$(srcdir)/WebKit/gtk/webkit/webkiterror.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitglobals.h \
 	$(srcdir)/WebKit/gtk/webkit/webkithittestresult.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitnetworkrequest.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitnetworkresponse.h \
