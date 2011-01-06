@@ -2113,9 +2113,6 @@ BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html =
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html = TEXT
 BUGWK39168 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT
-BUGWK15266 : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
-BUGWK15266 : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
-BUGWK15266 : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
@@ -2159,6 +2156,9 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
+BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
+BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
+BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.scale.html = TEXT
@@ -3147,6 +3147,7 @@ BUGWK51841 : fast/gradients/css3-color-stops.html = IMAGE
 BUGWK51841 : fast/gradients/css3-linear-angle-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
+BUGWK51841 : fast/gradients/css3-radial-gradients3.html = IMAGE
 
 // This was introduced by r75077.
 BUG_SENORBLANCO LINUX MAC : fast/text/basic/014.html = IMAGE
