@@ -1,5 +1,18 @@
 2011-01-06  Adam Roben  <aroben@apple.com>
 
+        Make WKViews work on Windows after a crashed web process gets relaunched
+
+        Fixes <http://webkit.org/b/52001> Relaunching the web process fails to
+        revivify WKViews on Windows
+
+        Reviewed by Ada Chan.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::didRelaunchProcess): Implemented by porting code from
+        -[WKView _didRelaunchProcess].
+
+2011-01-06  Adam Roben  <aroben@apple.com>
+
         Remove WebView::m_rect
 
         It was only used in the constructor, and wasn't even kept up-to-date as

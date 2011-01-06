@@ -578,6 +578,13 @@ void WebView::processDidCrash()
 
 void WebView::didRelaunchProcess()
 {
+    RECT clientRect;
+    if (!::GetClientRect(m_window, &clientRect))
+        return;
+
+    m_page->reinitializeWebPage(IntRect(clientRect).size());
+    updateActiveState();
+    m_page->setFocused(::GetFocus() == m_window);
 }
 
 void WebView::takeFocus(bool)
