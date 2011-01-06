@@ -216,6 +216,8 @@ BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 // BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
 BUGWK47243 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
+// Failing after r75175
+BUGWEBGL : fast/canvas/webgl/glsl-conformance.html = CRASH
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 

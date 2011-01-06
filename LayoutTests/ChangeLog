@@ -1,3 +1,10 @@
+2011-01-06  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, add glsl-conformance.html to test_expectations.txt temporarily.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-06  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.
