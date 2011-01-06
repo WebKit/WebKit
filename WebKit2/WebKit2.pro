@@ -254,6 +254,7 @@ HEADERS += \
     Shared/OriginAndDatabases.h \
     Shared/PlatformPopupMenuData.h \
     Shared/SameDocumentNavigationType.h \
+    Shared/SessionState.h \
     Shared/StringPairVector.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
@@ -467,6 +468,7 @@ SOURCES += \
     Shared/MutableDictionary.cpp \
     Shared/OriginAndDatabases.cpp \
     Shared/PlatformPopupMenuData.cpp \
+    Shared/SessionState.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \
     Shared/WebContextMenuItem.cpp \

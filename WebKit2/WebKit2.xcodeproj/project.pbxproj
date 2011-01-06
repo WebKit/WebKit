@@ -251,6 +251,8 @@
 		518ACF1112B015F800B04B83 /* WKCredentialTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACF1012B015F800B04B83 /* WKCredentialTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		518D2CAD12D5153B003BB93B /* WebBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */; };
 		518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */; };
+		518D2CCA12D51DFB003BB93B /* SessionState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 518D2CC812D51DFB003BB93B /* SessionState.cpp */; };
+		518D2CCB12D51DFB003BB93B /* SessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 518D2CC912D51DFB003BB93B /* SessionState.h */; };
 		51A555F5128C6C47009ABCEC /* WKContextMenuItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */; };
 		51A555F6128C6C47009ABCEC /* WKContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51A55601128C6D92009ABCEC /* WKContextMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A55600128C6D92009ABCEC /* WKContextMenuItemTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -931,6 +933,8 @@
 		518ACF1012B015F800B04B83 /* WKCredentialTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKCredentialTypes.h; sourceTree = "<group>"; };
 		518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardListItem.cpp; sourceTree = "<group>"; };
 		518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardListItem.h; sourceTree = "<group>"; };
+		518D2CC812D51DFB003BB93B /* SessionState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionState.cpp; sourceTree = "<group>"; };
+		518D2CC912D51DFB003BB93B /* SessionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionState.h; sourceTree = "<group>"; };
 		51A555F3128C6C47009ABCEC /* WKContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKContextMenuItem.cpp; sourceTree = "<group>"; };
 		51A555F4128C6C47009ABCEC /* WKContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuItem.h; sourceTree = "<group>"; };
 		51A55600128C6D92009ABCEC /* WKContextMenuItemTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuItemTypes.h; sourceTree = "<group>"; };
@@ -1645,6 +1649,8 @@
 				BC2D021612AC41CB00E732A3 /* SameDocumentNavigationType.h */,
 				1AAB4A8C1296F0A20023952F /* SandboxExtension.h */,
 				1AA41AB412C02EC4002BE67B /* SelectionState.h */,
+				518D2CC812D51DFB003BB93B /* SessionState.cpp */,
+				518D2CC912D51DFB003BB93B /* SessionState.h */,
 				BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */,
 				1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */,
 				BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */,
@@ -2846,6 +2852,7 @@
 				93FC67C012D3CCF200A60610 /* EncoderAdapter.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
+				518D2CCB12D51DFB003BB93B /* SessionState.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3278,6 +3285,7 @@
 				93FC67BD12D3CCF200A60610 /* DecoderAdapter.cpp in Sources */,
 				93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */,
 				518D2CAD12D5153B003BB93B /* WebBackForwardListItem.cpp in Sources */,
+				518D2CCA12D51DFB003BB93B /* SessionState.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
