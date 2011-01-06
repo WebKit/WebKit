@@ -1,3 +1,23 @@
+2011-01-06  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        WML Parser should treat line/column number in a consistent way
+        https://bugs.webkit.org/show_bug.cgi?id=51601
+
+        XML Parser treats line/column number as 1-based values, but WML ErrorHandler treat them as 0-based.
+        Therefore, this patch allows WML ErrorHandler to use 1-based values.
+
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::handleError): Treat line/column number as 1 based values.
+        * dom/XMLDocumentParser.h: Make textPositionOneBased public and Add TextPosition1(m_lastErrorPosition) to keep error line/column number.
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser): Initialize m_lastErrorPosition. 
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser): Initialize m_lastErrorPosition. 
+        * wml/WMLErrorHandling.cpp:
+        (WebCore::reportWMLError): Use 1 based value instead of 0 based value to report error line/column number.
+
 2011-01-05  Adam Roben  <aroben@apple.com>
 
         Remove some dead code from WKCACFLayerRenderer

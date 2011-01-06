@@ -148,18 +148,22 @@ void XMLDocumentParser::append(const SegmentedString& s)
 
 void XMLDocumentParser::handleError(ErrorType type, const char* m, int lineNumber, int columnNumber)
 {
-    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorLine != lineNumber && m_lastErrorColumn != columnNumber)) {
+    handleError(type, m, TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(lineNumber), WTF::OneBasedNumber::fromOneBasedInt(columnNumber)));
+}
+
+void XMLDocumentParser::handleError(ErrorType type, const char* m, TextPosition1 position)
+{
+    if (type == fatal || (m_errorCount < maxErrors && m_lastErrorPosition.m_line != position.m_line && m_lastErrorPosition.m_column != position.m_column)) {
         switch (type) {
             case warning:
-                m_errorMessages += makeString("warning on line ", String::number(lineNumber), " at column ", String::number(columnNumber), ": ", m);
+                m_errorMessages += makeString("warning on line ", String::number(position.m_line.oneBasedInt()), " at column ", String::number(position.m_column.oneBasedInt()), ": ", m);
                 break;
             case fatal:
             case nonFatal:
-                m_errorMessages += makeString("error on line ", String::number(lineNumber), " at column ", String::number(columnNumber), ": ", m);
+                m_errorMessages += makeString("error on line ", String::number(position.m_line.oneBasedInt()), " at column ", String::number(position.m_column.oneBasedInt()), ": ", m);
         }
 
-        m_lastErrorLine = lineNumber;
-        m_lastErrorColumn = columnNumber;
+        m_lastErrorPosition = position;
         ++m_errorCount;
     }
 

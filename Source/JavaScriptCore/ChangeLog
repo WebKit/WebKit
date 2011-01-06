@@ -1,3 +1,21 @@
+2011-01-06  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        WML Parser should treat line/column number in a consistent way
+        https://bugs.webkit.org/show_bug.cgi?id=51601
+
+        Add the equality operators to TextPosition class.
+
+        * wtf/text/TextPosition.h:
+        (WTF::TextPosition::operator==): Added.
+        (WTF::TextPosition::operator!=): Added.
+        (WTF::TextPosition::belowRangePosition): Use belowBase() instead of base().
+        (WTF::ZeroBasedNumber::operator==): Added.
+        (WTF::ZeroBasedNumber::operator!=): Added.
+        (WTF::OneBasedNumber::operator==): Added.
+        (WTF::OneBasedNumber::operator!=): Added.
+
 2011-01-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Gavin Barraclough.

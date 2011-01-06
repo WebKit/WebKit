@@ -66,11 +66,14 @@ public:
     }
     TextPosition() {}
 
+    bool operator==(const TextPosition& other) { return m_line == other.m_line && m_column == other.m_column; }
+    bool operator!=(const TextPosition& other) { return !((*this) == other); }
+
     // A 'minimum' value of position, used as a default value.
     static TextPosition<NUMBER> minimumPosition() { return TextPosition<NUMBER>(NUMBER::base(), NUMBER::base()); }
 
     // A value with line value less than a minimum; used as an impossible position.
-    static TextPosition<NUMBER> belowRangePosition() { return TextPosition<NUMBER>(NUMBER::belowBase(), NUMBER::base()); }
+    static TextPosition<NUMBER> belowRangePosition() { return TextPosition<NUMBER>(NUMBER::belowBase(), NUMBER::belowBase()); }
 
     NUMBER m_line;
     NUMBER m_column;
@@ -89,6 +92,9 @@ public:
 
     OneBasedNumber convertToOneBased() const;
 
+    bool operator==(ZeroBasedNumber other) { return m_value == other.m_value; }
+    bool operator!=(ZeroBasedNumber other) { return !((*this) == other); }
+
     static ZeroBasedNumber base() { return 0; }
     static ZeroBasedNumber belowBase() { return -1; }
 
@@ -106,6 +112,9 @@ public:
     int oneBasedInt() const { return m_value; }
     int convertAsZeroBasedInt() const { return m_value - 1; }
     ZeroBasedNumber convertToZeroBased() const { return ZeroBasedNumber::fromZeroBasedInt(m_value - 1); }
+
+    bool operator==(OneBasedNumber other) { return m_value == other.m_value; }
+    bool operator!=(OneBasedNumber other) { return !((*this) == other); }
 
     static OneBasedNumber base() { return 1; }
     static OneBasedNumber belowBase() { return 0; }

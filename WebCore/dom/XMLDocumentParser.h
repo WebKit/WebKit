@@ -86,6 +86,7 @@ namespace WebCore {
         // Exposed for callbacks:
         enum ErrorType { warning, nonFatal, fatal };
         void handleError(ErrorType, const char* message, int lineNumber, int columnNumber);
+        void handleError(ErrorType, const char* message, TextPosition1);
 
         void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
         bool isXHTMLDocument() const { return m_isXHTMLDocument; }
@@ -101,7 +102,9 @@ namespace WebCore {
 
         // WMLErrorHandling uses these functions.
         virtual bool wellFormed() const { return !m_sawError; }
+
         TextPosition0 textPosition() const;
+        TextPosition1 textPositionOneBased() const;
 
         static bool supportsXMLVersion(const String&);
 
@@ -129,13 +132,6 @@ namespace WebCore {
         void resumeParsing();
 
         bool appendFragmentSource(const String&);
-
-
-        // This method is introduced to temporary legalize existing line/column
-        // coordinate bug: it is believed that numbers that originally were zero-based
-        // eventually becomes one-based.
-        // FIXME: Investigate and get rid of this method.
-        TextPosition1 textPositionOneBased() const;
 
 #if USE(QXMLSTREAM)
 private:
@@ -210,8 +206,7 @@ public:
         bool m_finishCalled;
 
         int m_errorCount;
-        int m_lastErrorLine;
-        int m_lastErrorColumn;
+        TextPosition1 m_lastErrorPosition;
         String m_errorMessages;
 
         CachedResourceHandle<CachedScript> m_pendingScript;
