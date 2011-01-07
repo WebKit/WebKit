@@ -49,6 +49,7 @@ public:
     typedef typename HashMap<KeyType, MappedType>::const_iterator const_iterator;
     
     bool isEmpty() { return m_map.isEmpty(); }
+    void clear() { m_map.clear(); }
 
     MappedType get(const KeyType& key) const;
     pair<iterator, bool> set(const KeyType&, const MappedType&); 

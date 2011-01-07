@@ -1,3 +1,32 @@
+2011-01-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 52035 - Unregistering DOMWrapperWorlds is unsafe
+
+        The method DOMWrapperWorld::unregisterWorld() effectively calls the DOMWrapperWorld's
+        destructor early, in order to release wrappers once we know we no longer intend to use them.
+        Whilst it is okay to have a method to throw away wrappers (assuming we know we're willing to
+        lose any state stored on them) it is not okay to deregister the world from the JSGlobalData.
+        A sequence of events that triggers the bug would look like this:
+
+        (1) Create a DOMWrapperWorld.
+        (2) Register a timer in the world.
+        (3) Call unregisterWorld() on the world.
+        (4) Timer goes off, code is executed in the world, creates a Node not attached to a Document.
+        (5) We attempt to lookup a wrapper map for the world on the JSGlobalData, but because we've
+            called forgetWorld() none exists.
+        (6) Attempt to add a wrapper to a NULL map.
+
+        Fix the problem by not removing the JSGlobalData's wrapper map until the world really goes away.
+
+        * WebCore.exp.in:
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::clearWrappers):
+        * bindings/js/DOMWrapperWorld.h:
+
 2011-01-07  Chris Marrin  <cmarrin@apple.com>
 
         Rubber-stamped by Simon Fraser.

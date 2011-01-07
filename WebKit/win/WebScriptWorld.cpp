@@ -139,6 +139,6 @@ HRESULT WebScriptWorld::scriptWorldForGlobalContext(JSGlobalContextRef context, 
 
 HRESULT WebScriptWorld::unregisterWorld()
 {
-    m_world->unregisterWorld();
+    m_world->clearWrappers();
     return S_OK;
 }

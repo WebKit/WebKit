@@ -77,7 +77,7 @@ static WorldMap& allWorlds()
 
 - (void)unregisterWorld
 {
-    _private->world->unregisterWorld();
+    _private->world->clearWrappers();
 }
 
 - (void)dealloc

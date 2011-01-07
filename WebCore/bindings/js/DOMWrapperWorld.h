@@ -42,9 +42,9 @@ public:
         return adoptRef(new DOMWrapperWorld(globalData, isNormal));
     }
     ~DOMWrapperWorld();
-    
-    void registerWorld();
-    void unregisterWorld();
+
+    // Free as much memory held onto by this world as possible.
+    void clearWrappers();
 
     void didCreateWrapperCache(Document* document) { m_documentsWithWrapperCaches.add(document); }
     void didDestroyWrapperCache(Document* document) { m_documentsWithWrapperCaches.remove(document); }
@@ -66,7 +66,6 @@ private:
     HashSet<Document*> m_documentsWithWrapperCaches;
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
-    bool m_isRegistered;
 };
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);

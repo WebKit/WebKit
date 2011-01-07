@@ -32,33 +32,30 @@ namespace WebCore {
 DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
     : m_globalData(globalData)
     , m_isNormal(isNormal)
-    , m_isRegistered(false)
-{
-    registerWorld();
-}
-
-DOMWrapperWorld::~DOMWrapperWorld()
-{
-    unregisterWorld();
-}
-
-void DOMWrapperWorld::registerWorld()
 {
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->rememberWorld(this);
-    m_isRegistered = true;
 }
 
-void DOMWrapperWorld::unregisterWorld()
+DOMWrapperWorld::~DOMWrapperWorld()
 {
-    if (!m_isRegistered)
-        return;
-    m_isRegistered = false;
-
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
+
+    // These items are created lazily.
+    while (!m_documentsWithWrapperCaches.isEmpty())
+        (*m_documentsWithWrapperCaches.begin())->destroyWrapperCache(this);
+
+    while (!m_scriptControllersWithWindowShells.isEmpty())
+        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
+}
+
+void DOMWrapperWorld::clearWrappers()
+{
+    m_wrappers.clear();
+    m_stringCache.clear();
 
     // These items are created lazily.
     while (!m_documentsWithWrapperCaches.isEmpty())
