@@ -1,3 +1,11 @@
+2011-01-07  Jer Noble  <jer.noble@apple.com>
+
+        No review, build fix only.  Removed parameter who was causing
+        a warning in Release builds.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitDidExitFullScreenForElement):
+
 2011-01-07  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.

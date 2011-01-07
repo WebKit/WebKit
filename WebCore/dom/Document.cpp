@@ -4861,9 +4861,8 @@ void Document::webkitWillExitFullScreenForElement(Element*)
     recalcStyle(Force);
 }
 
-void Document::webkitDidExitFullScreenForElement(Element* element)
+void Document::webkitDidExitFullScreenForElement(Element*)
 {
-    ASSERT(element);
     m_isFullScreen = false;
     m_areKeysEnabledInFullScreen = false;
 
