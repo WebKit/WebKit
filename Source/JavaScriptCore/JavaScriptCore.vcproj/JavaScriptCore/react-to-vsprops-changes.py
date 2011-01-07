@@ -7,9 +7,9 @@ import sys
 
 
 def main():
-    # It's a little unfortunate that we're relying on the location of this
-    # script to find the top-level source directory.
-    top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    # It's fragile to rely on the location of this script to find the top-level
+    # source directory.
+    top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 
     vsprops_directory = os.path.join(top_level_directory, 'WebKitLibraries', 'win', 'tools', 'vsprops')
     vsprops_files = glob.glob(os.path.join(vsprops_directory, '*.vsprops'))
@@ -27,7 +27,7 @@ def main():
 
     # Touch wtf/Platform.h so all files will be recompiled. This is necessary
     # to pick up changes to preprocessor macros (e.g., ENABLE_*).
-    wtf_platform_h = os.path.join(top_level_directory, 'JavaScriptCore', 'wtf', 'Platform.h')
+    wtf_platform_h = os.path.join(top_level_directory, 'Source', 'JavaScriptCore', 'wtf', 'Platform.h')
     if os.path.getmtime(wtf_platform_h) < newest_vsprops_time:
         print 'Touching wtf/Platform.h'
         os.utime(wtf_platform_h, None)

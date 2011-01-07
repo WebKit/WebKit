@@ -1,3 +1,9 @@
+2011-01-07  Adam Roben  <aroben@apple.com>
+
+        Update react-to-vsprops-changes.py after r74855
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+
 2011-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
