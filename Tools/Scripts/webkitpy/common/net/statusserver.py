@@ -69,6 +69,13 @@ class StatusServer:
             return
         self._browser.add_file(results_file, "text/plain", "results.txt", 'results_file')
 
+    # 500 is the AppEngine limit for TEXT fields (which most of our fields are).
+    # Exceeding the limit will result in a 500 error from the server.
+    def _set_field(self, field_name, value, limit=500):
+        if len(value) > limit:
+            _log.warn("Attempted to set %s to value exceeding %s characters, truncating." % (field_name, limit))
+        self._browser[field_name] = value[:limit]
+
     def _post_status_to_server(self, queue_name, status, patch, results_file):
         if results_file:
             # We might need to re-wind the file if we've already tried to post it.
@@ -81,7 +88,7 @@ class StatusServer:
         if self.bot_id:
             self._browser["bot_id"] = self.bot_id
         self._add_patch(patch)
-        self._browser["status"] = status
+        self._set_field("status", status, limit=500)
         self._add_results_file(results_file)
         return self._browser.submit().read()  # This is the id of the newly created status object.
 
