@@ -1,3 +1,11 @@
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
+        Use new wkCACFLayerGetContextUserData function
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+
 2011-01-07  James Robinson  <jamesr@chromium.org>
 
         Fix compile bustage due to bad merge in 75276.

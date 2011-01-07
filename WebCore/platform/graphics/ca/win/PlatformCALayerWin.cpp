@@ -34,6 +34,7 @@
 #include "PlatformCALayerWinInternal.h"
 #include "WKCACFLayerRenderer.h"
 #include <QuartzCore/CoreAnimationCF.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 
@@ -67,13 +68,11 @@ static CFStringRef toCACFFilterType(PlatformCALayer::FilterType type)
 static WKCACFLayerRenderer* rendererForLayer(const PlatformCALayer* layer)
 {
     // We need the WKCACFLayerRenderer associated with this layer, which is stored in the UserData of the CACFContext
-    CACFContextRef context = CACFLayerGetContext(layer->platformLayer());
-    if (!context)
+    void* userData = wkCACFLayerGetContextUserData(layer->platformLayer());
+    if (!userData)
         return 0;
 
-    WKCACFLayerRenderer* renderer = static_cast<WKCACFLayerRenderer*>(CACFContextGetUserData(context));
-    ASSERT(renderer);
-    return renderer;
+    return static_cast<WKCACFLayerRenderer*>(userData);
 }
 
 static PlatformCALayerWinInternal* intern(const PlatformCALayer* layer)
