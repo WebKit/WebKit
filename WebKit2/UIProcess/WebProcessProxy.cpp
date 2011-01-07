@@ -184,6 +184,15 @@ WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) con
     return m_backForwardListItemMap.get(itemID).get();
 }
 
+void WebProcessProxy::registerNewWebBackForwardListItem(WebBackForwardListItem* item)
+{
+    // This item was just created by the UIProcess and is being added to the map for the first time
+    // so we should not already have an item for this ID.
+    ASSERT(!m_backForwardListItemMap.contains(item->itemID()));
+
+    m_backForwardListItemMap.set(item->itemID(), item);
+}
+
 void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title, const CoreIPC::DataReference& backForwardData)
 {
     std::pair<WebBackForwardListItemMap::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);

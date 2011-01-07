@@ -104,6 +104,8 @@ public:
 
     void updateTextCheckerState();
 
+    void registerNewWebBackForwardListItem(WebBackForwardListItem*);
+    
 private:
     explicit WebProcessProxy(WebContext*);
 

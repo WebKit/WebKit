@@ -27,6 +27,7 @@
 
 #include "Arguments.h"
 #include "DataReference.h"
+#include "DecoderAdapter.h"
 #include "DrawingArea.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardList.h"
@@ -35,6 +36,9 @@
 #include "PageOverlay.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
+#include "SessionState.h"
+#include "WebBackForwardList.h"
+#include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
 #include "WebChromeClient.h"
 #include "WebContextMenu.h"
@@ -850,9 +854,29 @@ void WebPage::executeEditCommand(const String& commandName)
     executeEditingCommand(commandName, String());
 }
 
-void WebPage::restoreSession(const SessionState&)
+void WebPage::restoreSession(const SessionState& sessionState)
 {
-    // FIXME: Implement
+    const BackForwardListItemVector& list = sessionState.list();
+    size_t size = list.size();
+    RefPtr<HistoryItem> currentItem;
+    for (size_t i = 0; i < size; ++i) {
+        WebBackForwardListItem* webItem = list[i].get();
+        DecoderAdapter decoder(webItem->backForwardData().data(), webItem->backForwardData().size());
+        
+        RefPtr<HistoryItem> item = HistoryItem::decodeBackForwardTree(webItem->url(), webItem->title(), webItem->originalURL(), decoder);
+        if (!item) {
+            LOG_ERROR("Failed to decode a HistoryItem from session state data.");
+            return;
+        }
+        
+        if (i == sessionState.currentIndex())
+            currentItem = item;
+        
+        WebBackForwardListProxy::addItemFromUIProcess(list[i]->itemID(), item.release());
+    }    
+    ASSERT(currentItem);
+
+    m_page->goToItem(currentItem.get(), FrameLoadTypeIndexedBackForward);
 }
 
 #if ENABLE(TOUCH_EVENTS)

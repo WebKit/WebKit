@@ -79,6 +79,21 @@ static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
         item->originalURLString(), item->urlString(), item->title(), encoder.data()), 0);
 }
 
+void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem)
+{
+    RefPtr<HistoryItem> item = prpItem;
+
+    // UIProcess itemIDs should be even.
+    ASSERT(!(itemID % 2));
+    
+    // This item/itemID pair should not already exist in our maps.
+    ASSERT(!historyItemToIDMap().contains(item.get()));
+    ASSERT(!idToHistoryItemMap().contains(itemID));
+        
+    historyItemToIDMap().set(item, itemID);
+    idToHistoryItemMap().set(itemID, item);
+}
+
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)
 {
     uint64_t itemID = historyItemToIDMap().get(item);

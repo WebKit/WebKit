@@ -1,3 +1,29 @@
+2011-01-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8261624> and https://bugs.webkit.org/show_bug.cgi?id=47355
+        Change WebKit2 session restoring to restore the full back/forward list.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::registerNewWebBackForwardListItem): Let the UIProcess register its own
+          WebBackForwardListItems in its ID map upon creation.
+        * UIProcess/WebProcessProxy.h:
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Register each new list entry in the
+          UIProcess ID map.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess): Add this method to register UIProcess
+          created items without doing any of the other work normally associated with adding a new back/forward item
+          (such as notifying the UIProcess).
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreSession): Map all of the back/forward list entries from the UIProcess then
+          cause a load of the current entry.
+
 2011-01-06  Adam Roben  <aroben@apple.com>
 
         Always show the arrow cursor when the web process has crashed

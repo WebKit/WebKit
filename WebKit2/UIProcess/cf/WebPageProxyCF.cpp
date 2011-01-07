@@ -25,6 +25,7 @@
 
 #include "WebPageProxy.h"
 
+#include "DataReference.h"
 #include "Logging.h"
 #include "SessionState.h"
 #include "WebBackForwardList.h"
@@ -126,6 +127,11 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
         return;
     }
     
+    const BackForwardListItemVector& entries = m_backForwardList->entries();
+    size_t size = entries.size();
+    for (size_t i = 0; i < size; ++i)
+        process()->registerNewWebBackForwardListItem(entries[i].get());
+
     process()->send(Messages::WebPage::RestoreSession(SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex())), m_pageID);
 }
 
