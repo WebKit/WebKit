@@ -1,3 +1,37 @@
+2011-01-06  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, test expectation update.
+        
+        Add mac-leopard baselines for tests that currently have Snow Leopard
+        baselines in platform/mac.
+
+        * platform/mac-leopard/fast/multicol/client-rects-expected.checksum:
+        * platform/mac-leopard/fast/multicol/client-rects-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/column-break-with-balancing-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/column-break-with-balancing-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/float-multicol-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/float-multicol-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/float-paginate-complex-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/float-paginate-complex-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/float-paginate-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/float-paginate-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/layers-in-multicol-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/layers-in-multicol-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/layers-split-across-columns-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/layers-split-across-columns-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/paginate-block-replaced-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/paginate-block-replaced-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/span/anonymous-style-inheritance-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/span/anonymous-style-inheritance-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/span/span-as-nested-columns-child-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/table-vertical-align-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/mac-leopard/fast/repaint/overflow-scroll-body-appear-expected.checksum: Added.
+        * platform/mac-leopard/fast/repaint/overflow-scroll-body-appear-expected.png: Added.
+
 2011-01-06  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations update.
