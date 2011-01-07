@@ -1,3 +1,10 @@
+2011-01-07  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+        A few tests that were flaky before are failing more frequently now.
+
 2011-01-07  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
