@@ -1,3 +1,49 @@
+2011-01-07 Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] WebKit2 GNUmakefile is out of date from trunk
+        Adding new stub files for compiling on latest revision
+        https://bugs.webkit.org/show_bug.cgi?id=51883
+
+        * UIProcess/gtk: Added.
+        * UIProcess/gtk/TextCheckerGtk.cpp: Added.
+        (WebKit::TextChecker::state):
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkTextOfParagraph):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+        * UIProcess/gtk/WebInspectorGtk.cpp: Added.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformOpen):
+        (WebKit::WebInspectorProxy::platformClose):
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        * UIProcess/gtk/WebPageProxyGtk.cpp: Added.
+        (WebKit::WebPageProxy::standardUserAgent):
+        * UIProcess/gtk/WebPreferencesGtk.cpp: Added.
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        * WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp: Added.
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        (WebKit::WebContextMenuClient::isSpeaking):
+        (WebKit::WebContextMenuClient::speak):
+        (WebKit::WebContextMenuClient::stopSpeaking):
+        * WebProcess/WebCoreSupport/gtk/WebDatabaseManagerGtk.cpp: Added.
+        (WebKit::WebDatabaseManager::databaseDirectory):
+        * WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp: Added.
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebPage/gtk: Added.
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp: Added.
+        (WebKit::WebInspector::localizedStringsURL):
+
 2011-01-06  Adam Roben  <aroben@apple.com>
 
         Don't ever call ::SetCursor(0)
