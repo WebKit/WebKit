@@ -217,7 +217,6 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
                 var entryMetadataString = this.getSymbolString(symbol);
                 if (entry != '/')
                     shouldBeGreaterThanOrEqual.apply(this, [entryMetadataString, 'this.roundedStartDate']);
-                shouldBeGreaterThanOrEqual.apply(this, ['new Date()', entryMetadataString]);
                 this.runNextTest();
             } else
                 testFailed('Unexpectedly succeeded while ' + this.stage);

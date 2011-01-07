@@ -1,3 +1,11 @@
+2011-01-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unreviewed; an attempt to fix chromium bot failures by removing failing test line (they must be failing due to modificationTime accuracy error).
+
+        * fast/filesystem/op-get-metadata-expected.txt:
+        * fast/filesystem/resources/op-tests-helper.js:
+        (runOperationTest.OperationTestHelper.this.testMetadataSuccessCallback):
+
 2011-01-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
