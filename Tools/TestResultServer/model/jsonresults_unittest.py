@@ -322,6 +322,18 @@ class JsonResultsTest(unittest.TestCase):
             (["3", "2", "1"], [["001.html", "[1,\"T\"],[" + max_builds + ",\"F\"]", "[1,1],[" + max_builds + ",0]"]]),
             int(max_builds))
 
+        # Test that merging in a new result of the same type as the last result
+        # causes old results to fall off.
+        max_builds = str(jsonresults.JSON_RESULTS_MAX_BUILDS_SMALL)
+        self._test_merge(
+            # Aggregated results
+            (["2", "1"], [["001.html", "[" + max_builds + ",\"F\"],[1,\"N\"]", "[" + max_builds + ",0],[1,1]"]]),
+            # Incremental results
+            (["3"], [["001.html", "[1,\"F\"]", "[1,0]"]]),
+            # Expected results
+            (["3", "2", "1"], [["001.html", "[" + max_builds + ",\"F\"]", "[" + max_builds + ",0]"]]),
+            int(max_builds))
+
         # Get test name list only. Don't include non-test-list data and
         # of test result details.
         self._test_get_test_list(

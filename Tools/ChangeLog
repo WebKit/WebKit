@@ -1,3 +1,16 @@
+2011-01-06  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Test Result Server not removing old results.
+        https://bugs.webkit.org/show_bug.cgi?id=52012
+
+        * TestResultServer/model/jsonresults.py:
+        Fix off-by-one: Truncate if >= num_runs, not just >.
+        * TestResultServer/model/jsonresults_unittest.py:
+        Add unit test to test that merging in a new result with the same value
+        as the last result causes previous result to fall off.
+
 2011-01-06  James Kozianski  <koz@chromium.org>
 
         Reviewed by Mihai Parparita.

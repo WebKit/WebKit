@@ -305,7 +305,7 @@ class JsonResults(object):
         for result in encoded_list:
             num_builds = num_builds + result[0]
             index = index + 1
-            if num_builds > num_runs:
+            if num_builds >= num_runs:
                 return encoded_list[:index]
 
         return encoded_list
