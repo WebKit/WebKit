@@ -150,6 +150,8 @@ CFTimeInterval wkCACFContextGetNextUpdateTime(WKCACFContext*);
 void* wkCACFContextGetUserData(WKCACFContext*);
 void wkCACFContextSetUserData(WKCACFContext*, void*);
 
+void* wkCACFLayerGetContextUserData(CACFLayerRef);
+
 void wkCACFContextInitializeD3DDevice(WKCACFContext*, IDirect3DDevice9*);
 void wkCACFContextReleaseD3DResources(WKCACFContext*);
 

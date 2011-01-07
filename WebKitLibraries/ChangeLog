@@ -2,6 +2,17 @@
 
         Unreviewed.
 
+        Added one more API to WKSI to get the user data
+        out of the CACFContext.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
         Adding updated WKSI files missed in http://trac.webkit.org/changeset/75262
 
         * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
