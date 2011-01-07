@@ -3191,3 +3191,6 @@ BUG_SENORBLANCO MAC SLOW : http/tests/navigation/ping-cross-origin.html = PASS
 BUG_SENORBLANCO : animations/animation-time.html = TEXT
 BUG_SENORBLANCO : fast/css/css3-nth-tokens-script.html = TEXT
 BUG_SENORBLANCO : fast/css/css3-nth-tokens-style.html = TEXT
+
+// New test introduced at r75217 is failing on Win.
+BUG_SENORBLANCO WIN : fast/frames/iframe-reparenting-plugins.html = TEXT
