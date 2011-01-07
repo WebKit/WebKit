@@ -38,7 +38,6 @@
 #include "ScaleTransformOperation.h"
 #include "SystemTime.h"
 #include "TranslateTransformOperation.h"
-#include <QuartzCore/CoreAnimationCF.h>
 #include <limits.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/StringConcatenate.h>
