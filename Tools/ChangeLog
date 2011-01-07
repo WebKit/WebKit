@@ -1,3 +1,19 @@
+2011-01-07  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        run-qtwebkit-tests should be able to kill a testsuite.
+
+        Add new option in the script that can setup a timeout for a test.
+        If the test execution takes more then specified time then the test
+        would be terminated.
+
+        [Qt] run-qtwebkit-tests needs timeout
+        https://bugs.webkit.org/show_bug.cgi?id=51894
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        * Scripts/run-qtwebkit-tests:
+
 2011-01-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r75233.

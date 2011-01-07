@@ -67,6 +67,9 @@ class Options(Log):
         opt.add_option("-d", "--developer-mode", action="store_true",
               dest="developer", default=False,
               help="Special mode for debugging. In general it simulates human behavior, running all autotests. In the mode everything is executed synchronously, no html output will be generated, no changes or transformation will be applied to stderr or stdout. In this mode options; parallel-level, output-file, browser and do-not-open-results will be ignored.")
+        opt.add_option("-t", "--timeout", action="store", type="int",
+              dest="timeout", default=0,
+              help="Timeout in seconds for each testsuite. Zero value means that there is not timeout. Default: %default.")
 
         self._o, self._a = opt.parse_args(args)
         verbose = self._o.verbose
@@ -111,15 +114,42 @@ def run_test(args):
       str with options that should be passed to the autotest executable
       bool if true then the stdout will be buffered and separated from the stderr, if it is false
         then the stdout and the stderr will be merged together and left unbuffered (the TestSuiteResult output will be None).
+      int time after which the autotest executable would be killed
     """
     log = logging.getLogger("Exec")
-    test_suite, options, buffered = args
+    test_suite, options, buffered, timeout = args
+    timer = None
     try:
         log.info("Running... %s", test_suite.test_file_name())
         if buffered:
-            tst = Popen(test_suite.test_file_name() + options, stdout=PIPE, stderr=None, shell=True)
+            tst = Popen([test_suite.test_file_name()] + options.split(), stdout=PIPE, stderr=None)
         else:
-            tst = Popen(test_suite.test_file_name() + options, stdout=None, stderr=STDOUT, shell=True)
+            tst = Popen([test_suite.test_file_name()] + options.split(), stdout=None, stderr=STDOUT)
+        if timeout:
+            from threading import Timer
+            log.debug("Setting timeout timer %i sec on %s (process %s)", timeout, test_suite.test_file_name(), tst.pid)
+            def process_killer():
+                try:
+                    try:
+                        tst.terminate()
+                    except AttributeError:
+                        # Workaround for python version < 2.6 it can be removed as soon as we drop support for python2.5
+                        try:
+                            import ctypes
+                            PROCESS_TERMINATE = 1
+                            handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE, False, tst.pid)
+                            ctypes.windll.kernel32.TerminateProcess(handle, -1)
+                            ctypes.windll.kernel32.CloseHandle(handle)
+                        except AttributeError:
+                            # windll is not accessible so we are on *nix like system
+                            import signal
+                            os.kill(tst.pid, signal.SIGTERM)
+                    log.error("Timeout, process '%s' (%i) was terminated", test_suite.test_file_name(), tst.pid)
+                except OSError, e:
+                    # the process was finished before got killed
+                    pass
+            timer = Timer(timeout, process_killer)
+            timer.start()
     except OSError, e:
         log.exception("Can't open an autotest file: '%s'. Skipping the test...", e.filename)
     else:
@@ -207,7 +237,7 @@ class Main(Log):
         workers = self._Pool(processes=self._options.parallel_level)
         # to each file add options.
         self.debug("Using %s the workers pool, number of workers %i", repr(workers), self._options.parallel_level)
-        package = map(lambda w: [w, self._options.tests_options, not self._options.developer], files)
+        package = map(lambda w: [w, self._options.tests_options, not self._options.developer, self._options.timeout], files)
         self.debug("Generated packages for workers: %s", repr(package))
         results = workers.map(run_test, package)  # Collects results.
         return results
