@@ -750,8 +750,8 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
         if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
             unsigned long format = tex->getInternalFormat(target, level);
             unsigned long type = tex->getType(target, level);
-            unsigned long componentsPerPixel = 0;
-            unsigned long bytesPerComponent = 0;
+            unsigned int componentsPerPixel = 0;
+            unsigned int bytesPerComponent = 0;
             bool valid = m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent);
             if (!valid) {
                 m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);

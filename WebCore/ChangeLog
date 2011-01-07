@@ -1,3 +1,10 @@
+2011-01-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, build fix.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D):
+
 2011-01-06  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
