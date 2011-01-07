@@ -70,9 +70,10 @@ public:
     void setHasHyphen(bool hasHyphen) { m_hasEllipsisBoxOrHyphen = hasHyphen; }
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    
     virtual int baselinePosition(FontBaseline) const;
     virtual int lineHeight() const;
+
+    bool getEmphasisMarkPosition(RenderStyle*, TextEmphasisPosition&) const;
 
 private:
     int selectionTop();

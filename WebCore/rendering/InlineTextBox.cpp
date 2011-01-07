@@ -35,6 +35,8 @@
 #include "Page.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderRubyRun.h"
+#include "RenderRubyText.h"
 #include "RenderTheme.h"
 #include "Text.h"
 #include "break_lines.h"
@@ -400,6 +402,29 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
     } while (shadow || stroked || !opaque);
 }
 
+bool InlineTextBox::getEmphasisMarkPosition(RenderStyle* style, TextEmphasisPosition& emphasisPosition) const
+{
+    // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
+    if (style->textEmphasisMark() == TextEmphasisMarkNone)
+        return false;
+
+    emphasisPosition = style->textEmphasisPosition();
+    if (emphasisPosition == TextEmphasisPositionUnder)
+        return true; // Ruby text is always over, so it cannot suppress emphasis marks under.
+
+    RenderBlock* containingBlock = renderer()->containingBlock();
+    if (!containingBlock->isRubyBase())
+        return true; // This text is not inside a ruby base, so it does not have ruby text over it.
+
+    if (!containingBlock->parent()->isRubyRun())
+        return true; // Cannot get the ruby text.
+
+    RenderRubyText* rubyText = static_cast<RenderRubyRun*>(containingBlock->parent())->rubyText();
+
+    // The emphasis marks over are suppressed only if there is a ruby text box and it not empty.
+    return !rubyText || !rubyText->firstLineBox();
+}
+
 void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE ||
@@ -595,13 +620,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     int emphasisMarkOffset = 0;
-    const AtomicString& emphasisMark = styleToUse->textEmphasisMarkString();
-    if (!emphasisMark.isEmpty()) {
-        if (styleToUse->textEmphasisPosition() == TextEmphasisPositionOver)
-            emphasisMarkOffset = -font.ascent() - font.emphasisMarkDescent(emphasisMark);
-        else
-            emphasisMarkOffset = font.descent() + font.emphasisMarkAscent(emphasisMark);
-    }
+    TextEmphasisPosition emphasisMarkPosition;
+    bool hasTextEmphasis = getEmphasisMarkPosition(styleToUse, emphasisMarkPosition);
+    const AtomicString& emphasisMark = hasTextEmphasis ? styleToUse->textEmphasisMarkString() : nullAtom;
+    if (!emphasisMark.isEmpty())
+        emphasisMarkOffset = emphasisMarkPosition == TextEmphasisPositionOver ? -font.ascent() - font.emphasisMarkDescent(emphasisMark) : font.descent() + font.emphasisMarkAscent(emphasisMark);
 
     if (!paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode.  It's probably dangerous to leave that mutated as a side

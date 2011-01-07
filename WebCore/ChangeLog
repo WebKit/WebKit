@@ -1,3 +1,25 @@
+2011-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8783318> Text emphasis marks should not appear over characters that have ruby annotations
+        https://bugs.webkit.org/show_bug.cgi?id=51267
+
+        Test: fast/text/emphasis-avoid-ruby.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection): Use getEmphasisMarkPosition() to check if
+        there are text emphasis marks.
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow): Ditto.
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment): Ditto.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::getEmphasisMarkPosition): Added. Returns true and sets the emphasis mark
+        position if the text is style with emphasis marks and there isn’t a ruby annotation that should
+        suppress them. Otherwise returns false.
+        (WebCore::InlineTextBox::paint): Use getEmphasisMarkPosition() to check if emphasis marks should
+        be painted.
+        * rendering/InlineTextBox.h:
+
 2011-01-07  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

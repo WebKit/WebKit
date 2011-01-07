@@ -1,3 +1,15 @@
+2011-01-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8783318> Text emphasis marks should not appear over characters that have ruby annotations
+        https://bugs.webkit.org/show_bug.cgi?id=51267
+
+        * fast/text/emphasis-avoid-ruby-expected.checksum: Added.
+        * fast/text/emphasis-avoid-ruby-expected.png: Added.
+        * fast/text/emphasis-avoid-ruby-expected.txt: Added.
+        * fast/text/emphasis-avoid-ruby.html: Added.
+
 2011-01-07  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

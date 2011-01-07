@@ -643,12 +643,15 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
                     boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
                 }
             }
-            if (curr->isInlineTextBox() && curr->renderer()->style(m_firstLine)->textEmphasisMark() != TextEmphasisMarkNone) {
-                bool emphasisMarkIsOver = curr->renderer()->style(m_firstLine)->textEmphasisPosition() == TextEmphasisPositionOver;
-                if (emphasisMarkIsOver != curr->renderer()->style(m_firstLine)->isFlippedLinesWritingMode())
-                    hasAnnotationsBefore = true;
-                else
-                    hasAnnotationsAfter = true;
+            if (curr->isInlineTextBox()) {
+                TextEmphasisPosition emphasisMarkPosition;
+                if (static_cast<InlineTextBox*>(curr)->getEmphasisMarkPosition(curr->renderer()->style(m_firstLine), emphasisMarkPosition)) {
+                    bool emphasisMarkIsOver = emphasisMarkPosition == TextEmphasisPositionOver;
+                    if (emphasisMarkIsOver != curr->renderer()->style(m_firstLine)->isFlippedLinesWritingMode())
+                        hasAnnotationsBefore = true;
+                    else
+                        hasAnnotationsAfter = true;
+                }
             }
 
             if (!setLineTop) {
@@ -745,9 +748,10 @@ void InlineFlowBox::addTextBoxVisualOverflow(const InlineTextBox* textBox, Glyph
     int leftGlyphOverflow = -strokeOverflow - leftGlyphEdge;
     int rightGlyphOverflow = strokeOverflow + rightGlyphEdge;
 
-    if (style->textEmphasisMark() != TextEmphasisMarkNone) {
+    TextEmphasisPosition emphasisMarkPosition;
+    if (style->textEmphasisMark() != TextEmphasisMarkNone && textBox->getEmphasisMarkPosition(style, emphasisMarkPosition)) {
         int emphasisMarkHeight = style->font().emphasisMarkHeight(style->textEmphasisMarkString());
-        if ((style->textEmphasisPosition() == TextEmphasisPositionOver) == (!style->isFlippedLinesWritingMode()))
+        if ((emphasisMarkPosition == TextEmphasisPositionOver) == (!style->isFlippedLinesWritingMode()))
             topGlyphOverflow = min(topGlyphOverflow, -emphasisMarkHeight);
         else
             bottomGlyphOverflow = max(bottomGlyphOverflow, emphasisMarkHeight);
@@ -1292,7 +1296,8 @@ int InlineFlowBox::computeOverAnnotationAdjustment(int allowedPosition) const
 
         if (curr->isInlineTextBox()) {
             RenderStyle* style = curr->renderer()->style(m_firstLine);
-            if (style->textEmphasisMark() != TextEmphasisMarkNone && style->textEmphasisPosition() == TextEmphasisPositionOver) {
+            TextEmphasisPosition emphasisMarkPosition;
+            if (style->textEmphasisMark() != TextEmphasisMarkNone && static_cast<InlineTextBox*>(curr)->getEmphasisMarkPosition(style, emphasisMarkPosition) && emphasisMarkPosition == TextEmphasisPositionOver) {
                 if (!style->isFlippedLinesWritingMode()) {
                     int topOfEmphasisMark = curr->logicalTop() - style->font().emphasisMarkHeight(style->textEmphasisMarkString());
                     result = max(result, allowedPosition - topOfEmphasisMark);
