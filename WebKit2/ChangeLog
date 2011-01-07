@@ -1,5 +1,27 @@
 2011-01-06  Adam Roben  <aroben@apple.com>
 
+        Don't ever call ::SetCursor(0)
+
+        Doing so makes the cursor disappear from the screen.
+
+        Fixes <http://webkit.org/b/52024> Mouse cursor flashes when moving it
+        around a WKView before the web process has finished launching
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onSetCursor): If we don't have a cursor to set, just
+        let Windows do its default thing (which is to set the cursor to the
+        window class's cursor, which in our case is the arrow cursor).
+        (WebKit::WebView::cursorToShow): Just return 0 when the page has
+        crashed so that we'll show the default cursor (which is the arrow
+        cursor). This change has no visible effect, but seems slightly better
+        conceptually.
+        (WebKit::WebView::updateNativeCursor): Don't do anything if we don't
+        have a cursor to set.
+
+2011-01-06  Adam Roben  <aroben@apple.com>
+
         Fill the WKView with white when the web process hasn't drawn anything
         yet
 

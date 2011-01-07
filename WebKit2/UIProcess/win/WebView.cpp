@@ -482,7 +482,12 @@ LRESULT WebView::onShowWindowEvent(HWND hWnd, UINT message, WPARAM wParam, LPARA
 
 LRESULT WebView::onSetCursor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
-    handled = ::SetCursor(m_lastCursorSet);
+    if (!m_lastCursorSet) {
+        handled = false;
+        return 0;
+    }
+
+    ::SetCursor(m_lastCursorSet);
     return 0;
 }
 
@@ -625,12 +630,11 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
 
 HCURSOR WebView::cursorToShow() const
 {
-    static HCURSOR arrowCursor = ::LoadCursor(0, IDC_ARROW);
-
     if (!m_page->isValid())
-        return arrowCursor;
+        return 0;
 
     // We only show the override cursor if the default (arrow) cursor is showing.
+    static HCURSOR arrowCursor = ::LoadCursor(0, IDC_ARROW);
     if (m_overrideCursor && m_webCoreCursor == arrowCursor)
         return m_overrideCursor;
 
@@ -640,6 +644,8 @@ HCURSOR WebView::cursorToShow() const
 void WebView::updateNativeCursor()
 {
     m_lastCursorSet = cursorToShow();
+    if (!m_lastCursorSet)
+        return;
     ::SetCursor(m_lastCursorSet);
 }
 
