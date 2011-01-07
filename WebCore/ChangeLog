@@ -1,3 +1,10 @@
+2011-01-07  James Robinson  <jamesr@chromium.org>
+
+        Fix compile bustage due to bad merge in 75276.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+
 2010-12-17  Jer Noble  <jer@kokode.apple.com>
 
         Reviewed by Simon Fraser.
