@@ -3142,6 +3142,7 @@ BUGWK51841 : fast/gradients/css3-linear-angle-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients2.html = IMAGE
 BUGWK51841 : fast/gradients/css3-radial-gradients3.html = IMAGE
+BUGWK51841 : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
 BUG_SENORBLANCO LINUX MAC : fast/text/basic/014.html = IMAGE
@@ -3149,12 +3150,6 @@ BUG_SENORBLANCO LINUX MAC : fast/text/midword-break-after-breakable-char.html = 
 BUG_SENORBLANCO LINUX : fast/text/capitalize-boundaries.html = IMAGE
 BUG_SENORBLANCO WIN : fast/text/basic/014.html = IMAGE+TEXT
 BUG_SENORBLANCO WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
-
-// New test introduced in r75097.  The "aspect ratio" of the gradients is wrong
-// for some reason.  (The Safari results are "squished", but ours are not).
-BUG_SENORBLANCO : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
-// This needs a rebaseline, but the automatic tool is giving me grief.
-BUG_SENORBLANCO LINUX : fast/gradients/css3-repeating-linear-gradients.html = IMAGE
 
 // These were introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
@@ -3187,3 +3182,7 @@ BUGWK52061 DEBUG : transitions/suspend-transform-transition.html = IMAGE PASS
 BUGWK52061 DEBUG : transitions/change-values-during-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/interrupted-accelerated-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
+
+// New test introduced in r75257.  Not sure if the results are correct
+// (some boxes moved around).  Looks like redacted CIA covert ops text.
+BUG_SENORBLANCO : fast/text/emphasis-avoid-ruby.html = IMAGE

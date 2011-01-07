@@ -131,9 +131,6 @@ BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html =
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html = TEXT
 BUGWK39168 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT
-BUGWK15266 : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
-BUGWK15266 : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
-BUGWK15266 : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
@@ -176,6 +173,9 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.canvas.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
+BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
+BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
+BUGWK15266 LINUX WIN : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.alpha.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.basic.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.image.scale.html = TEXT
@@ -288,9 +288,9 @@ BUGWK47944 WIN LINUX : compositing/geometry/limit-layer-bounds-overflow-root.htm
 BUGWK47946 : compositing/geometry/limit-layer-bounds-transformed-overflow.html = TIMEOUT TEXT
 
 // All of the tests involving masks appear to be failing right now.
-BUGWK47947 : compositing/masks/masked-ancestor.html = FAIL
-BUGWK47947 : compositing/masks/multiple-masks.html = FAIL
-BUGWK47947 : compositing/masks/simple-composited-mask.html = FAIL
+BUGWK47947 LINUX WIN : compositing/masks/masked-ancestor.html = FAIL
+BUGWK47947 LINUX WIN : compositing/masks/multiple-masks.html = FAIL
+BUGWK47947 LINUX WIN : compositing/masks/simple-composited-mask.html = FAIL
 
 // Nearly all tests involving reflections are failing right now.
 BUGWK47949 : compositing/reflections/animation-inside-reflection.html = FAIL
