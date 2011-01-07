@@ -1,3 +1,19 @@
+2011-01-07  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Let PingLoader send cookies if FrameLoaderClient permits it.
+        https://bugs.webkit.org/show_bug.cgi?id=51898
+
+        Test: http/tests/navigation/ping-cookie.html
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::PingLoader): Set m_shouldUseCredentialStorage
+            at load start time, since we won't be able to call 
+            FrameLoaderClient::shouldUseCredentialStorage() later.
+        * loader/PingLoader.h:
+        (WebCore::PingLoader::shouldUseCredentialStorage):
+
 2011-01-07  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed, rolling out r75256.

@@ -65,9 +65,11 @@ private:
     void didFinishLoading(ResourceHandle*, double) { delete this; }
     void didFail(ResourceHandle*, const ResourceError&) { delete this; }
     void timeout(Timer<PingLoader>*) { delete this; }
+    bool shouldUseCredentialStorage(ResourceHandle*) { return m_shouldUseCredentialStorage; }
 
     RefPtr<ResourceHandle> m_handle;
     Timer<PingLoader> m_timeout;
+    bool m_shouldUseCredentialStorage;
 };
 
 }

@@ -34,6 +34,9 @@
 
 #include "FormData.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
+#include "Page.h"
+#include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include <wtf/OwnPtr.h>
@@ -91,6 +94,8 @@ void PingLoader::sendPing(Frame* frame, const KURL& pingURL, const KURL& destina
 PingLoader::PingLoader(Frame* frame, const ResourceRequest& request)
     : m_timeout(this, &PingLoader::timeout)
 {
+    unsigned long identifier = frame->page()->progress()->createUniqueIdentifier();
+    m_shouldUseCredentialStorage = frame->loader()->client()->shouldUseCredentialStorage(frame->loader()->activeDocumentLoader(), identifier);
     m_handle = ResourceHandle::create(frame->loader()->networkingContext(), request, this, false, false);
 
     // If the server never responds, FrameLoader won't be able to cancel this load and

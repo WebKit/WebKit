@@ -1,3 +1,13 @@
+2011-01-07  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=51898.
+
+        * http/tests/navigation/ping-cookie-expected.txt: Added.
+        * http/tests/navigation/ping-cookie.html: Added.
+        * http/tests/navigation/resources/save-ping.php:
+
 2011-01-07  Xan Lopez  <xlopez@igalia.com>
 
         Unreviewed, rolling out r75256.
