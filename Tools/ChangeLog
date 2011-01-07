@@ -1,3 +1,14 @@
+2011-01-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r75233.
+
+        Based on idea from Eric Seidel.
+
+        Add remote zip file handling to webkitpy.
+        https://bugs.webkit.org/show_bug.cgi?id=50901
+
+        * Scripts/webkitpy/common/system/fileset.py: Make python 2.5 happy.
+
 2011-01-07  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by Eric Seidel.
