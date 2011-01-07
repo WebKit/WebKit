@@ -1,0 +1,48 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x43
+        RenderRuby (inline) {RUBY} at (0,0) size 59x19
+          RenderRubyRun (anonymous) at (0,12) size 59x31
+            RenderRubyText {RT} at (0,-12) size 59x12
+              RenderText {#text} at (0,0) size 59x12
+                text run at (0,0) width 59: "K\x{14D}kakukid\x{14D}tai"
+            RenderRubyBase (anonymous) at (0,0) size 59x31
+              RenderRuby (inline) {RUBY} at (0,0) size 58x19
+                RenderRubyRun (anonymous) at (0,12) size 12x19
+                  RenderRubyText {RT} at (0,-12) size 12x12
+                    RenderText {#text} at (0,0) size 12x12
+                      text run at (0,0) width 12: "\x{3053}\x{3046}"
+                  RenderRubyBase (anonymous) at (0,0) size 12x19
+                    RenderText {#text} at (1,0) size 10x19
+                      text run at (1,0) width 10: "\x{653B}"
+                RenderRubyRun (anonymous) at (12,12) size 12x19
+                  RenderRubyText {RT} at (0,-12) size 12x12
+                    RenderText {#text} at (0,0) size 12x12
+                      text run at (0,0) width 12: "\x{304B}\x{304F}"
+                  RenderRubyBase (anonymous) at (0,0) size 12x19
+                    RenderText {#text} at (1,0) size 10x19
+                      text run at (1,0) width 10: "\x{6BBB}"
+                RenderRubyRun (anonymous) at (24,12) size 10x19
+                  RenderRubyText {RT} at (0,-12) size 10x12
+                    RenderText {#text} at (2,0) size 6x12
+                      text run at (2,0) width 6: "\x{304D}"
+                  RenderRubyBase (anonymous) at (0,0) size 10x19
+                    RenderText {#text} at (0,0) size 10x19
+                      text run at (0,0) width 10: "\x{6A5F}"
+                RenderRubyRun (anonymous) at (34,12) size 12x19
+                  RenderRubyText {RT} at (0,-12) size 12x12
+                    RenderText {#text} at (0,0) size 12x12
+                      text run at (0,0) width 12: "\x{3069}\x{3046}"
+                  RenderRubyBase (anonymous) at (0,0) size 12x19
+                    RenderText {#text} at (1,0) size 10x19
+                      text run at (1,0) width 10: "\x{52D5}"
+                RenderRubyRun (anonymous) at (46,12) size 12x19
+                  RenderRubyText {RT} at (0,-12) size 12x12
+                    RenderText {#text} at (0,0) size 12x12
+                      text run at (0,0) width 12: "\x{305F}\x{3044}"
+                  RenderRubyBase (anonymous) at (0,0) size 12x19
+                    RenderText {#text} at (1,0) size 10x19
+                      text run at (1,0) width 10: "\x{968A}"

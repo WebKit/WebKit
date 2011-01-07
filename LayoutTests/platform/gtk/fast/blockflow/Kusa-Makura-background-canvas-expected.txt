@@ -1,0 +1,2870 @@
+layer at (0,0) size 3377x581
+  RenderView at (0,0) size 800x581
+layer at (-2577,0) size 3377x581 backgroundClip at (0,0) size 3377x581 clip at (0,0) size 3377x581 outlineClip at (0,0) size 3377x581
+  RenderBlock {HTML} at (0,0) size 3377x581
+    RenderBody {BODY} at (58,46) size 3261x489
+      RenderBlock {H1} at (0,21) size 48x447
+        RenderText {#text} at (6,0) size 36x38
+          text run at (6,0) width 38: "\x{8349}\x{6795}"
+      RenderBlock {H2} at (48,19) size 36x451
+        RenderText {#text} at (4,0) size 28x56
+          text run at (4,0) width 56: "\x{590F}\x{76EE}\x{6F31}\x{77F3}"
+      RenderBlock {DIV} at (84,0) size 3177x489
+        RenderBlock (anonymous) at (0,0) size 1766x489
+          RenderBR {BR} at (0,0) size 19x0
+          RenderBR {BR} at (19,0) size 19x0
+          RenderBR {BR} at (38,0) size 19x0
+          RenderText {#text} at (57,0) size 19x90
+            text run at (57,0) width 90: "\x{3000}\x{3000}\x{3000}\x{3000}\x{3000}\x{3000}\x{3000}\x{3000}\x{4E00}"
+          RenderBR {BR} at (57,90) size 19x0
+          RenderBR {BR} at (76,0) size 19x0
+          RenderText {#text} at (107,0) size 19x10
+            text run at (107,0) width 10: "\x{3000}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (107,10) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3084}\x{307E}\x{307F}\x{3061}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5C71}\x{8DEF}"
+          RenderText {#text} at (107,34) size 19x130
+            text run at (107,34) width 130: "\x{3092}\x{767B}\x{308A}\x{306A}\x{304C}\x{3089}\x{3001}\x{3053}\x{3046}\x{8003}\x{3048}\x{305F}\x{3002}"
+          RenderBR {BR} at (107,164) size 19x0
+          RenderText {#text} at (138,0) size 19x10
+            text run at (138,0) width 10: "\x{3000}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (138,10) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3061}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{667A}"
+          RenderText {#text} at (138,20) size 19x40
+            text run at (138,20) width 40: "\x{306B}\x{50CD}\x{3051}\x{3070}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (138,60) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304B}\x{3069}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{89D2}"
+          RenderText {#text} at (138,72) size 19x40
+            text run at (138,72) width 40: "\x{304C}\x{7ACB}\x{3064}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (138,112) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3058}\x{3087}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{60C5}"
+          RenderText {#text} at (138,130) size 19x10
+            text run at (138,130) width 10: "\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (138,140) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3055}\x{304A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{68F9}"
+          RenderText {#text} at (138,152) size 19x110
+            text run at (138,152) width 110: "\x{3055}\x{305B}\x{3070}\x{6D41}\x{3055}\x{308C}\x{308B}\x{3002}\x{610F}\x{5730}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (138,262) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3068}\x{304A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{901A}"
+          RenderText {#text} at (138,274) size 19x20
+            text run at (138,274) width 20: "\x{305B}\x{3070}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (138,294) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{304D}\x{3085}\x{3046}\x{304F}\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{7AAE}\x{5C48}"
+          RenderText {#text} at (138,324) size 19x164
+            text run at (138,324) width 164: "\x{3060}\x{3002}\x{3068}\x{304B}\x{304F}\x{306B}\x{4EBA}\x{306E}\x{4E16}\x{306F}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3044}\x{3002}"
+          RenderBR {BR} at (138,488) size 19x0
+          RenderText {#text} at (169,0) size 19x70
+            text run at (169,0) width 70: "\x{3000}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3055}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (169,70) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3053}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{9AD8}"
+          RenderText {#text} at (169,82) size 19x300
+            text run at (169,82) width 300: "\x{3058}\x{308B}\x{3068}\x{3001}\x{5B89}\x{3044}\x{6240}\x{3078}\x{5F15}\x{304D}\x{8D8A}\x{3057}\x{305F}\x{304F}\x{306A}\x{308B}\x{3002}\x{3069}\x{3053}\x{3078}\x{8D8A}\x{3057}\x{3066}\x{3082}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3044}\x{3068}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (169,382) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3055}\x{3068}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{609F}"
+          RenderText {#text} at (169,394) size 50x474
+            text run at (169,394) width 80: "\x{3063}\x{305F}\x{6642}\x{3001}\x{8A69}\x{304C}\x{751F}\x{308C}"
+            text run at (200,0) width 20: "\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (200,20) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3048}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{753B}"
+          RenderText {#text} at (200,30) size 19x50
+            text run at (200,30) width 50: "\x{304C}\x{51FA}\x{6765}\x{308B}\x{3002}"
+          RenderBR {BR} at (200,80) size 19x0
+          RenderText {#text} at (231,0) size 19x10
+            text run at (231,0) width 10: "\x{3000}"
+          RenderInline {STRONG} at (0,0) size 19x34
+            RenderText {#text} at (231,10) size 19x34
+              text run at (231,10) width 34: "\x{4EBA}\x{306E}\x{4E16}"
+          RenderText {#text} at (231,44) size 19x274
+            text run at (231,44) width 274: "\x{3092}\x{4F5C}\x{3063}\x{305F}\x{3082}\x{306E}\x{306F}\x{795E}\x{3067}\x{3082}\x{306A}\x{3051}\x{308C}\x{3070}\x{9B3C}\x{3067}\x{3082}\x{306A}\x{3044}\x{3002}\x{3084}\x{306F}\x{308A}\x{5411}\x{3046}\x{4E09}\x{8ED2}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (231,318) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{308A}\x{3087}\x{3046}\x{3069}\x{306A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{4E21}\x{96A3}"
+          RenderText {#text} at (231,348) size 38x482
+            text run at (231,348) width 134: "\x{308A}\x{306B}\x{3061}\x{3089}\x{3061}\x{3089}\x{3059}\x{308B}\x{305F}\x{3060}\x{306E}\x{4EBA}\x{3067}"
+            text run at (250,0) width 114: "\x{3042}\x{308B}\x{3002}\x{305F}\x{3060}\x{306E}\x{4EBA}\x{304C}\x{4F5C}\x{3063}\x{305F}"
+          RenderInline {STRONG} at (0,0) size 19x34
+            RenderText {#text} at (250,114) size 19x34
+              text run at (250,114) width 34: "\x{4EBA}\x{306E}\x{4E16}"
+          RenderText {#text} at (250,148) size 19x230
+            text run at (250,148) width 230: "\x{304C}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3044}\x{304B}\x{3089}\x{3068}\x{3066}\x{3001}\x{8D8A}\x{3059}\x{56FD}\x{306F}\x{3042}\x{308B}\x{307E}\x{3044}\x{3002}\x{3042}\x{308C}\x{3070}"
+          RenderInline {STRONG} at (0,0) size 19x40
+            RenderText {#text} at (250,378) size 19x40
+              text run at (250,378) width 40: "\x{4EBA}\x{3067}\x{306A}\x{3057}"
+          RenderText {#text} at (250,418) size 38x482
+            text run at (250,418) width 64: "\x{306E}\x{56FD}\x{3078}\x{884C}\x{304F}\x{3070}"
+            text run at (269,0) width 40: "\x{304B}\x{308A}\x{3060}\x{3002}"
+          RenderInline {STRONG} at (0,0) size 19x40
+            RenderText {#text} at (269,40) size 19x40
+              text run at (269,40) width 40: "\x{4EBA}\x{3067}\x{306A}\x{3057}"
+          RenderText {#text} at (269,80) size 19x34
+            text run at (269,80) width 34: "\x{306E}\x{56FD}\x{306F}"
+          RenderInline {STRONG} at (0,0) size 19x34
+            RenderText {#text} at (269,114) size 19x34
+              text run at (269,114) width 34: "\x{4EBA}\x{306E}\x{4E16}"
+          RenderText {#text} at (269,148) size 19x130
+            text run at (269,148) width 130: "\x{3088}\x{308A}\x{3082}\x{306A}\x{304A}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{304B}\x{308D}\x{3046}\x{3002}"
+          RenderBR {BR} at (269,278) size 19x0
+          RenderText {#text} at (300,0) size 19x314
+            text run at (300,0) width 314: "\x{3000}\x{8D8A}\x{3059}\x{4E8B}\x{306E}\x{306A}\x{3089}\x{306C}\x{4E16}\x{304C}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3051}\x{308C}\x{3070}\x{3001}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{3044}\x{6240}\x{3092}\x{3069}\x{308C}\x{307B}\x{3069}\x{304B}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (300,314) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{304F}\x{3064}\x{308D}\x{3052}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5BDB}\x{5BB9}"
+          RenderText {#text} at (300,338) size 19x20
+            text run at (300,338) width 20: "\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (300,358) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3064}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{675F}"
+          RenderText {#text} at (300,370) size 19x14
+            text run at (300,370) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (300,384) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{9593}"
+          RenderText {#text} at (300,394) size 50x482
+            text run at (300,394) width 88: "\x{306E}\x{547D}\x{3092}\x{3001}\x{675F}\x{306E}\x{9593}\x{3067}"
+            text run at (331,0) width 380: "\x{3082}\x{4F4F}\x{307F}\x{3088}\x{304F}\x{305B}\x{306D}\x{3070}\x{306A}\x{3089}\x{306C}\x{3002}\x{3053}\x{3053}\x{306B}\x{8A69}\x{4EBA}\x{3068}\x{3044}\x{3046}\x{5929}\x{8077}\x{304C}\x{51FA}\x{6765}\x{3066}\x{3001}\x{3053}\x{3053}\x{306B}\x{753B}\x{5BB6}\x{3068}\x{3044}\x{3046}\x{4F7F}\x{547D}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (331,380) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304F}\x{3060}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{964D}"
+          RenderText {#text} at (331,392) size 50x486
+            text run at (331,392) width 94: "\x{308B}\x{3002}\x{3042}\x{3089}\x{3086}\x{308B}\x{82B8}\x{8853}\x{306E}"
+            text run at (362,0) width 64: "\x{58EB}\x{306F}\x{4EBA}\x{306E}\x{4E16}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x21
+            RenderRubyRun (anonymous) at (362,64) size 19x21
+              RenderRubyText {RT} at (-12,0) size 12x21
+                RenderText {#text} at (0,0) size 12x21
+                  text run at (0,0) width 21: "\x{306E}\x{3069}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x21
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{9577}\x{9591}"
+          RenderText {#text} at (362,85) size 19x134
+            text run at (362,85) width 134: "\x{306B}\x{3057}\x{3001}\x{4EBA}\x{306E}\x{5FC3}\x{3092}\x{8C4A}\x{304B}\x{306B}\x{3059}\x{308B}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (362,219) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3086}\x{3048}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{6545}"
+          RenderText {#text} at (362,231) size 19x10
+            text run at (362,231) width 10: "\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (362,241) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305F}\x{3063}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5C0A}"
+          RenderText {#text} at (362,253) size 19x30
+            text run at (362,253) width 30: "\x{3068}\x{3044}\x{3002}"
+          RenderBR {BR} at (362,283) size 19x0
+          RenderText {#text} at (393,0) size 19x150
+            text run at (393,0) width 150: "\x{3000}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{304D}\x{4E16}\x{304B}\x{3089}\x{3001}\x{4F4F}\x{307F}\x{306B}\x{304F}\x{304D}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (393,150) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{308F}\x{305A}\x{3089}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{7169}"
+          RenderText {#text} at (393,168) size 19x318
+            text run at (393,168) width 318: "\x{3044}\x{3092}\x{5F15}\x{304D}\x{629C}\x{3044}\x{3066}\x{3001}\x{3042}\x{308A}\x{304C}\x{305F}\x{3044}\x{4E16}\x{754C}\x{3092}\x{307E}\x{306E}\x{3042}\x{305F}\x{308A}\x{306B}\x{5199}\x{3059}\x{306E}\x{304C}\x{8A69}\x{3067}\x{3042}\x{308B}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (424,0) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3048}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{753B}"
+          RenderText {#text} at (424,10) size 19x200
+            text run at (424,10) width 200: "\x{3067}\x{3042}\x{308B}\x{3002}\x{3042}\x{308B}\x{306F}\x{97F3}\x{697D}\x{3068}\x{5F6B}\x{523B}\x{3067}\x{3042}\x{308B}\x{3002}\x{3053}\x{307E}\x{304B}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (424,210) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{4E91}"
+          RenderText {#text} at (424,220) size 50x484
+            text run at (424,220) width 264: "\x{3048}\x{3070}\x{5199}\x{3055}\x{306A}\x{3044}\x{3067}\x{3082}\x{3088}\x{3044}\x{3002}\x{305F}\x{3060}\x{307E}\x{306E}\x{3042}\x{305F}\x{308A}\x{306B}\x{898B}\x{308C}\x{3070}\x{3001}\x{305D}\x{3053}\x{306B}"
+            text run at (455,0) width 70: "\x{8A69}\x{3082}\x{751F}\x{304D}\x{3001}\x{6B4C}\x{3082}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (455,70) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{308F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{6E67}"
+          RenderText {#text} at (455,80) size 19x120
+            text run at (455,80) width 120: "\x{304F}\x{3002}\x{7740}\x{60F3}\x{3092}\x{7D19}\x{306B}\x{843D}\x{3055}\x{306C}\x{3068}\x{3082}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (455,200) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{304D}\x{3085}\x{3046}\x{305D}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x10
+                    text run at (0,5) width 10: "\x{7486}"
+                  RenderText {#text} at (0,15) size 19x10
+                    text run at (0,15) width 10: "\x{93D8}"
+          RenderText {#text} at (455,230) size 19x14
+            text run at (455,230) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (455,244) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304A}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{97F3}"
+          RenderText {#text} at (455,256) size 19x10
+            text run at (455,256) width 10: "\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (455,266) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{304D}\x{3087}\x{3046}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{80F8}\x{88CF}"
+          RenderText {#text} at (455,290) size 19x10
+            text run at (455,290) width 10: "\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (455,300) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304A}\x{3053}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{8D77}"
+          RenderText {#text} at (455,312) size 19x20
+            text run at (455,312) width 20: "\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (455,332) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{305F}\x{3093}\x{305B}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{4E39}\x{9752}"
+          RenderText {#text} at (455,356) size 19x10
+            text run at (455,356) width 10: "\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (455,366) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,4) size 12x12
+                  text run at (0,4) width 12: "\x{304C}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{753B}\x{67B6}"
+          RenderText {#text} at (455,386) size 19x40
+            text run at (455,386) width 40: "\x{306B}\x{5411}\x{3063}\x{3066}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (455,426) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3068}\x{307E}\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{5857}\x{62B9}"
+          RenderText {#text} at (455,446) size 19x40
+            text run at (455,446) width 40: "\x{305B}\x{3093}\x{3067}\x{3082}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (486,0) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3054}\x{3055}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{4E94}\x{5F69}"
+          RenderText {#text} at (486,20) size 19x14
+            text run at (486,20) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (486,34) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3051}\x{3093}\x{3089}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{7D62}\x{721B}"
+          RenderText {#text} at (486,58) size 19x10
+            text run at (486,58) width 10: "\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x21
+            RenderRubyRun (anonymous) at (486,68) size 19x21
+              RenderRubyText {RT} at (-12,0) size 12x21
+                RenderText {#text} at (0,0) size 12x21
+                  text run at (0,0) width 21: "\x{304A}\x{306E}\x{305A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x21
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,5) size 19x10
+                    text run at (0,5) width 10: "\x{81EA}"
+          RenderText {#text} at (486,89) size 19x20
+            text run at (486,89) width 20: "\x{304B}\x{3089}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (486,109) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3057}\x{3093}\x{304C}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5FC3}\x{773C}"
+          RenderText {#text} at (486,133) size 19x164
+            text run at (486,133) width 164: "\x{306B}\x{6620}\x{308B}\x{3002}\x{305F}\x{3060}\x{304A}\x{306E}\x{304C}\x{4F4F}\x{3080}\x{4E16}\x{3092}\x{3001}\x{304B}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (486,297) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304B}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{89B3}"
+          RenderText {#text} at (486,309) size 19x40
+            text run at (486,309) width 40: "\x{3058}\x{5F97}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x48
+            RenderRubyRun (anonymous) at (486,349) size 19x48
+              RenderRubyText {RT} at (-12,0) size 12x48
+                RenderText {#text} at (0,0) size 12x48
+                  text run at (0,0) width 48: "\x{308C}\x{3044}\x{3060}\x{3044}\x{307B}\x{3046}\x{3059}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x48
+                RenderInline {RB} at (0,0) size 19x40
+                  RenderText {#text} at (0,4) size 19x40
+                    text run at (0,4) width 40: "\x{970A}\x{53F0}\x{65B9}\x{5BF8}"
+          RenderText {#text} at (486,397) size 19x54
+            text run at (486,397) width 54: "\x{306E}\x{30AB}\x{30E1}\x{30E9}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x48
+            RenderRubyRun (anonymous) at (517,0) size 19x48
+              RenderRubyText {RT} at (-12,0) size 12x48
+                RenderText {#text} at (0,0) size 12x48
+                  text run at (0,0) width 48: "\x{304E}\x{3087}\x{3046}\x{304D}\x{3053}\x{3093}\x{3060}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x48
+                RenderInline {RB} at (0,0) size 19x40
+                  RenderText {#text} at (0,4) size 19x40
+                    text run at (0,4) width 40: "\x{6F86}\x{5B63}\x{6EB7}\x{6FC1}"
+          RenderText {#text} at (517,48) size 19x134
+            text run at (517,48) width 134: "\x{306E}\x{4FD7}\x{754C}\x{3092}\x{6E05}\x{304F}\x{3046}\x{3089}\x{3089}\x{304B}\x{306B}\x{53CE}\x{3081}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (517,182) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{5F97}"
+          RenderText {#text} at (517,192) size 19x20
+            text run at (517,192) width 20: "\x{308C}\x{3070}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (517,212) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{305F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{8DB3}"
+          RenderText {#text} at (517,222) size 19x64
+            text run at (517,222) width 64: "\x{308B}\x{3002}\x{3053}\x{306E}\x{6545}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (517,286) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3080}\x{305B}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{7121}\x{58F0}"
+          RenderText {#text} at (517,306) size 19x104
+            text run at (517,306) width 104: "\x{306E}\x{8A69}\x{4EBA}\x{306B}\x{306F}\x{4E00}\x{53E5}\x{306A}\x{304F}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (517,410) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3080}\x{3057}\x{3087}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{7121}\x{8272}"
+          RenderText {#text} at (517,434) size 19x54
+            text run at (517,434) width 54: "\x{306E}\x{753B}\x{5BB6}\x{306B}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (548,0) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{305B}\x{3063}\x{3051}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5C3A}\x{7E11}"
+          RenderText {#text} at (548,24) size 19x60
+            text run at (548,24) width 60: "\x{306A}\x{304D}\x{3082}\x{3001}\x{304B}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (548,84) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3058}\x{3093}\x{305B}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{4EBA}\x{4E16}"
+          RenderText {#text} at (548,108) size 19x144
+            text run at (548,108) width 144: "\x{3092}\x{89B3}\x{3058}\x{5F97}\x{308B}\x{306E}\x{70B9}\x{306B}\x{304A}\x{3044}\x{3066}\x{3001}\x{304B}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x27
+            RenderRubyRun (anonymous) at (548,252) size 19x27
+              RenderRubyText {RT} at (-12,0) size 12x27
+                RenderText {#text} at (0,0) size 12x27
+                  text run at (0,0) width 27: "\x{307C}\x{3093}\x{306E}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x27
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,3) size 19x20
+                    text run at (0,3) width 20: "\x{7169}\x{60A9}"
+          RenderText {#text} at (548,279) size 19x10
+            text run at (548,279) width 10: "\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (548,289) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3052}\x{3060}\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{89E3}\x{8131}"
+          RenderText {#text} at (548,309) size 19x114
+            text run at (548,309) width 114: "\x{3059}\x{308B}\x{306E}\x{70B9}\x{306B}\x{304A}\x{3044}\x{3066}\x{3001}\x{304B}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x48
+            RenderRubyRun (anonymous) at (548,423) size 19x48
+              RenderRubyText {RT} at (-12,0) size 12x48
+                RenderText {#text} at (0,0) size 12x48
+                  text run at (0,0) width 48: "\x{3057}\x{3087}\x{3046}\x{3058}\x{3087}\x{3046}\x{304B}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x48
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,9) size 19x30
+                    text run at (0,9) width 30: "\x{6E05}\x{6D44}\x{754C}"
+          RenderText {#text} at (548,471) size 19x10
+            text run at (548,471) width 10: "\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x36
+            RenderRubyRun (anonymous) at (579,0) size 19x36
+              RenderRubyText {RT} at (-12,0) size 12x36
+                RenderText {#text} at (0,0) size 12x36
+                  text run at (0,0) width 36: "\x{3057}\x{3085}\x{3064}\x{306B}\x{3085}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x36
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,8) size 19x20
+                    text run at (0,8) width 20: "\x{51FA}\x{5165}"
+          RenderText {#text} at (579,36) size 19x148
+            text run at (579,36) width 148: "\x{3057}\x{5F97}\x{308B}\x{306E}\x{70B9}\x{306B}\x{304A}\x{3044}\x{3066}\x{3001}\x{307E}\x{305F}\x{3053}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x40
+            RenderRubyRun (anonymous) at (579,184) size 19x40
+              RenderRubyText {RT} at (-12,0) size 12x40
+                RenderText {#text} at (0,5) size 12x30
+                  text run at (0,5) width 30: "\x{3075}\x{3069}\x{3046}\x{3075}\x{3058}"
+              RenderRubyBase (anonymous) at (0,0) size 19x40
+                RenderInline {RB} at (0,0) size 19x40
+                  RenderText {#text} at (0,0) size 19x40
+                    text run at (0,0) width 40: "\x{4E0D}\x{540C}\x{4E0D}\x{4E8C}"
+          RenderText {#text} at (579,224) size 19x14
+            text run at (579,224) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (579,238) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3051}\x{3093}\x{3053}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{4E7E}\x{5764}"
+          RenderText {#text} at (579,262) size 19x10
+            text run at (579,262) width 10: "\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (579,272) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{3053}\x{3093}\x{308A}\x{3085}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{5EFA}\x{7ACB}"
+          RenderText {#text} at (579,302) size 19x104
+            text run at (579,302) width 104: "\x{3057}\x{5F97}\x{308B}\x{306E}\x{70B9}\x{306B}\x{304A}\x{3044}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x40
+            RenderRubyRun (anonymous) at (579,406) size 19x40
+              RenderRubyText {RT} at (-12,0) size 12x40
+                RenderText {#text} at (0,5) size 12x30
+                  text run at (0,5) width 30: "\x{304C}\x{308A}\x{3057}\x{3088}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x40
+                RenderInline {RB} at (0,0) size 19x40
+                  RenderText {#text} at (0,0) size 19x40
+                    text run at (0,0) width 40: "\x{6211}\x{5229}\x{79C1}\x{617E}"
+          RenderText {#text} at (579,446) size 19x14
+            text run at (579,446) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (579,460) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{304D}\x{306F}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{898A}\x{7D46}"
+          RenderText {#text} at (610,0) size 19x10
+            text run at (610,0) width 10: "\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (610,10) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{305D}\x{3046}\x{3068}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{6383}\x{8569}"
+          RenderText {#text} at (610,34) size 19x126
+            text run at (610,34) width 126: "\x{3059}\x{308B}\x{306E}\x{70B9}\x{306B}\x{304A}\x{3044}\x{3066}\x{3001}\x{2015}\x{2015}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (610,160) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{305B}\x{3093}\x{304D}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5343}\x{91D1}"
+          RenderText {#text} at (610,184) size 19x64
+            text run at (610,184) width 64: "\x{306E}\x{5B50}\x{3088}\x{308A}\x{3082}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (610,248) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{3070}\x{3093}\x{3058}\x{3087}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{4E07}\x{4E57}"
+          RenderText {#text} at (610,278) size 19x138
+            text run at (610,278) width 138: "\x{306E}\x{541B}\x{3088}\x{308A}\x{3082}\x{3001}\x{3042}\x{3089}\x{3086}\x{308B}\x{4FD7}\x{754C}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (610,416) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3061}\x{3087}\x{3046}\x{3058}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5BF5}\x{5150}"
+          RenderText {#text} at (610,440) size 38x480
+            text run at (610,440) width 40: "\x{3088}\x{308A}\x{3082}\x{5E78}"
+            text run at (629,0) width 50: "\x{798F}\x{3067}\x{3042}\x{308B}\x{3002}"
+          RenderBR {BR} at (629,50) size 19x0
+          RenderText {#text} at (660,0) size 19x170
+            text run at (660,0) width 170: "\x{3000}\x{4E16}\x{306B}\x{4F4F}\x{3080}\x{3053}\x{3068}\x{4E8C}\x{5341}\x{5E74}\x{306B}\x{3057}\x{3066}\x{3001}\x{4F4F}\x{3080}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (660,170) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,4) size 12x12
+                  text run at (0,4) width 12: "\x{304B}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{7532}\x{6590}"
+          RenderText {#text} at (660,190) size 19x180
+            text run at (660,190) width 180: "\x{3042}\x{308B}\x{4E16}\x{3068}\x{77E5}\x{3063}\x{305F}\x{3002}\x{4E8C}\x{5341}\x{4E94}\x{5E74}\x{306B}\x{3057}\x{3066}\x{660E}\x{6697}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (660,370) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3072}\x{3087}\x{3046}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{8868}\x{88CF}"
+          RenderText {#text} at (660,394) size 50x482
+            text run at (660,394) width 88: "\x{306E}\x{3054}\x{3068}\x{304F}\x{3001}\x{65E5}\x{306E}\x{3042}"
+            text run at (691,0) width 204: "\x{305F}\x{308B}\x{6240}\x{306B}\x{306F}\x{304D}\x{3063}\x{3068}\x{5F71}\x{304C}\x{3055}\x{3059}\x{3068}\x{609F}\x{3063}\x{305F}\x{3002}\x{4E09}\x{5341}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (691,204) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3053}\x{3093}\x{306B}\x{3061}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{4ECA}\x{65E5}"
+          RenderText {#text} at (691,228) size 19x196
+            text run at (691,228) width 196: "\x{306F}\x{3053}\x{3046}\x{601D}\x{3046}\x{3066}\x{3044}\x{308B}\x{3002}\x{2015}\x{2015}\x{559C}\x{3073}\x{306E}\x{6DF1}\x{304D}\x{3068}\x{304D}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (691,424) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3046}\x{308C}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{6182}"
+          RenderText {#text} at (691,442) size 50x482
+            text run at (691,442) width 40: "\x{3044}\x{3088}\x{3044}\x{3088}"
+            text run at (722,0) width 30: "\x{6DF1}\x{304F}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x21
+            RenderRubyRun (anonymous) at (722,30) size 19x21
+              RenderRubyText {RT} at (-12,0) size 12x21
+                RenderText {#text} at (0,0) size 12x21
+                  text run at (0,0) width 21: "\x{305F}\x{306E}\x{3057}"
+              RenderRubyBase (anonymous) at (0,0) size 19x21
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,5) size 19x10
+                    text run at (0,5) width 10: "\x{697D}"
+          RenderText {#text} at (722,51) size 19x344
+            text run at (722,51) width 344: "\x{307F}\x{306E}\x{5927}\x{3044}\x{306A}\x{308B}\x{307B}\x{3069}\x{82E6}\x{3057}\x{307F}\x{3082}\x{5927}\x{304D}\x{3044}\x{3002}\x{3053}\x{308C}\x{3092}\x{5207}\x{308A}\x{653E}\x{305D}\x{3046}\x{3068}\x{3059}\x{308B}\x{3068}\x{8EAB}\x{304C}\x{6301}\x{3066}\x{306C}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (722,395) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304B}\x{305F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{7247}"
+          RenderText {#text} at (722,407) size 50x487
+            text run at (722,407) width 80: "\x{3065}\x{3051}\x{3088}\x{3046}\x{3068}\x{3059}\x{308C}\x{3070}"
+            text run at (753,0) width 184: "\x{4E16}\x{304C}\x{7ACB}\x{305F}\x{306C}\x{3002}\x{91D1}\x{306F}\x{5927}\x{4E8B}\x{3060}\x{3001}\x{5927}\x{4E8B}\x{306A}\x{3082}\x{306E}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (753,184) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3075}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{6B96}"
+          RenderText {#text} at (753,194) size 19x30
+            text run at (753,194) width 30: "\x{3048}\x{308C}\x{3070}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (753,224) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{306D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{5BDD}"
+          RenderText {#text} at (753,234) size 19x10
+            text run at (753,234) width 10: "\x{308B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (753,244) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{9593}"
+          RenderText {#text} at (753,254) size 50x474
+            text run at (753,254) width 220: "\x{3082}\x{5FC3}\x{914D}\x{3060}\x{308D}\x{3046}\x{3002}\x{604B}\x{306F}\x{3046}\x{308C}\x{3057}\x{3044}\x{3001}\x{5B09}\x{3057}\x{3044}\x{604B}\x{304C}\x{7A4D}\x{3082}\x{308C}"
+            text run at (784,0) width 298: "\x{3070}\x{3001}\x{604B}\x{3092}\x{305B}\x{306C}\x{6614}\x{304C}\x{304B}\x{3048}\x{3063}\x{3066}\x{604B}\x{3057}\x{304B}\x{308D}\x{3002}\x{95A3}\x{50DA}\x{306E}\x{80A9}\x{306F}\x{6570}\x{767E}\x{4E07}\x{4EBA}\x{306E}\x{8DB3}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (784,298) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3055}\x{3055}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{652F}"
+          RenderText {#text} at (784,310) size 19x50
+            text run at (784,310) width 50: "\x{3048}\x{3066}\x{3044}\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (784,360) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{305B}\x{306A}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{80CC}\x{4E2D}"
+          RenderText {#text} at (784,380) size 50x470
+            text run at (784,380) width 90: "\x{306B}\x{306F}\x{91CD}\x{3044}\x{5929}\x{4E0B}\x{304C}\x{304A}\x{3076}"
+            text run at (815,0) width 240: "\x{3055}\x{3063}\x{3066}\x{3044}\x{308B}\x{3002}\x{3046}\x{307E}\x{3044}\x{7269}\x{3082}\x{98DF}\x{308F}\x{306D}\x{3070}\x{60DC}\x{3057}\x{3044}\x{3002}\x{5C11}\x{3057}\x{98DF}\x{3048}\x{3070}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (815,240) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3042}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{98FD}"
+          RenderText {#text} at (815,250) size 19x10
+            text run at (815,250) width 10: "\x{304D}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (815,260) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{305F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{8DB3}"
+          RenderText {#text} at (815,270) size 19x192
+            text run at (815,270) width 192: "\x{3089}\x{306C}\x{3002}\x{5B58}\x{5206}\x{98DF}\x{3048}\x{3070}\x{3042}\x{3068}\x{304C}\x{4E0D}\x{6109}\x{5FEB}\x{3060}\x{3002}\x{2026}\x{2026}"
+          RenderBR {BR} at (815,462) size 19x0
+          RenderText {#text} at (846,0) size 19x10
+            text run at (846,0) width 10: "\x{3000}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (846,10) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3088}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{4F59}"
+          RenderText {#text} at (846,20) size 19x14
+            text run at (846,20) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (846,34) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{304B}\x{3093}\x{304C}\x{3048}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,7) size 19x10
+                    text run at (0,7) width 10: "\x{8003}"
+          RenderText {#text} at (846,58) size 19x164
+            text run at (846,58) width 164: "\x{304C}\x{3053}\x{3053}\x{307E}\x{3067}\x{6F02}\x{6D41}\x{3057}\x{3066}\x{6765}\x{305F}\x{6642}\x{306B}\x{3001}\x{4F59}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (846,222) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3046}\x{305D}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{53F3}\x{8DB3}"
+          RenderText {#text} at (846,242) size 19x30
+            text run at (846,242) width 30: "\x{306F}\x{7A81}\x{7136}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (846,272) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3059}\x{308F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5750}"
+          RenderText {#text} at (846,284) size 19x54
+            text run at (846,284) width 54: "\x{308A}\x{306E}\x{308F}\x{308B}\x{3044}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (846,338) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{304B}\x{304F}\x{3044}\x{3057}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{89D2}\x{77F3}"
+          RenderText {#text} at (846,362) size 19x14
+            text run at (846,362) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (846,376) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{306F}\x{3057}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{7AEF}"
+          RenderText {#text} at (846,388) size 19x30
+            text run at (846,388) width 30: "\x{3092}\x{8E0F}\x{307F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (846,418) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{305D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{640D}"
+          RenderText {#text} at (846,428) size 19x50
+            text run at (846,428) width 50: "\x{304F}\x{306A}\x{3063}\x{305F}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (877,0) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3078}\x{3044}\x{3053}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5E73}\x{8861}"
+          RenderText {#text} at (877,24) size 19x180
+            text run at (877,24) width 180: "\x{3092}\x{4FDD}\x{3064}\x{305F}\x{3081}\x{306B}\x{3001}\x{3059}\x{308F}\x{3084}\x{3068}\x{524D}\x{306B}\x{98DB}\x{3073}\x{51FA}\x{3057}\x{305F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (877,204) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3055}\x{305D}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{5DE6}\x{8DB3}"
+          RenderText {#text} at (877,224) size 19x20
+            text run at (877,224) width 20: "\x{304C}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (877,244) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3057}\x{305D}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{4ED5}\x{640D}"
+          RenderText {#text} at (877,264) size 19x24
+            text run at (877,264) width 24: "\x{3058}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (877,288) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{57CB}"
+          RenderText {#text} at (877,298) size 19x10
+            text run at (877,298) width 10: "\x{3081}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (877,308) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3042}\x{308F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5408}"
+          RenderText {#text} at (877,320) size 19x164
+            text run at (877,320) width 164: "\x{305B}\x{3092}\x{3059}\x{308B}\x{3068}\x{5171}\x{306B}\x{3001}\x{4F59}\x{306E}\x{8170}\x{306F}\x{5177}\x{5408}\x{3088}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (908,0) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{307B}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{65B9}"
+          RenderText {#text} at (908,12) size 19x94
+            text run at (908,12) width 94: "\x{4E09}\x{5C3A}\x{307B}\x{3069}\x{306A}\x{5CA9}\x{306E}\x{4E0A}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (908,106) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{304A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{5378}"
+          RenderText {#text} at (908,116) size 19x134
+            text run at (908,116) width 134: "\x{308A}\x{305F}\x{3002}\x{80A9}\x{306B}\x{304B}\x{3051}\x{305F}\x{7D75}\x{306E}\x{5177}\x{7BB1}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (908,250) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{308F}\x{304D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{814B}"
+          RenderText {#text} at (908,262) size 19x44
+            text run at (908,262) width 44: "\x{306E}\x{4E0B}\x{304B}\x{3089}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (908,306) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304A}\x{3069}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{8E8D}"
+          RenderText {#text} at (908,318) size 19x110
+            text run at (908,318) width 110: "\x{308A}\x{51FA}\x{3057}\x{305F}\x{3060}\x{3051}\x{3067}\x{3001}\x{5E78}\x{3044}\x{3068}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (908,428) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{306A}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{4F55}"
+          RenderText {#text} at (908,440) size 38x484
+            text run at (908,440) width 44: "\x{306E}\x{4E8B}\x{3082}\x{306A}"
+            text run at (927,0) width 40: "\x{304B}\x{3063}\x{305F}\x{3002}"
+          RenderBR {BR} at (927,40) size 19x0
+          RenderText {#text} at (958,0) size 19x150
+            text run at (958,0) width 150: "\x{3000}\x{7ACB}\x{3061}\x{4E0A}\x{304C}\x{308B}\x{6642}\x{306B}\x{5411}\x{3046}\x{3092}\x{898B}\x{308B}\x{3068}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (958,150) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{307F}\x{3061}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{8DEF}"
+          RenderText {#text} at (958,162) size 19x184
+            text run at (958,162) width 184: "\x{304B}\x{3089}\x{5DE6}\x{306E}\x{65B9}\x{306B}\x{30D0}\x{30B1}\x{30C4}\x{3092}\x{4F0F}\x{305B}\x{305F}\x{3088}\x{3046}\x{306A}\x{5CF0}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (958,346) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305D}\x{3073}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{8073}"
+          RenderText {#text} at (958,358) size 19x70
+            text run at (958,358) width 70: "\x{3048}\x{3066}\x{3044}\x{308B}\x{3002}\x{6749}\x{304B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x21
+            RenderRubyRun (anonymous) at (958,428) size 19x21
+              RenderRubyText {RT} at (-12,0) size 12x21
+                RenderText {#text} at (0,0) size 12x21
+                  text run at (0,0) width 21: "\x{3072}\x{306E}\x{304D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x21
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,5) size 19x10
+                    text run at (0,5) width 10: "\x{6A9C}"
+          RenderText {#text} at (958,449) size 50x489
+            text run at (958,449) width 40: "\x{304B}\x{5206}\x{304B}\x{3089}"
+            text run at (989,0) width 30: "\x{306A}\x{3044}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (989,30) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{306D}\x{3082}\x{3068}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{6839}\x{5143}"
+          RenderText {#text} at (989,50) size 19x20
+            text run at (989,50) width 20: "\x{304B}\x{3089}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (989,70) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3044}\x{305F}\x{3060}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{9802}"
+          RenderText {#text} at (989,88) size 19x80
+            text run at (989,88) width 80: "\x{304D}\x{307E}\x{3067}\x{3053}\x{3068}\x{3054}\x{3068}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (989,168) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3042}\x{304A}\x{3050}\x{308D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{84BC}\x{9ED2}"
+          RenderText {#text} at (989,192) size 19x150
+            text run at (989,192) width 150: "\x{3044}\x{4E2D}\x{306B}\x{3001}\x{5C71}\x{685C}\x{304C}\x{8584}\x{8D64}\x{304F}\x{3060}\x{3093}\x{3060}\x{3089}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (989,342) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{305F}\x{306A}\x{3073}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{68DA}\x{5F15}"
+          RenderText {#text} at (989,362) size 19x30
+            text run at (989,362) width 30: "\x{3044}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (989,392) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{7D9A}"
+          RenderText {#text} at (989,402) size 19x10
+            text run at (989,402) width 10: "\x{304E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (989,412) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3081}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{76EE}"
+          RenderText {#text} at (989,422) size 19x10
+            text run at (989,422) width 10: "\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (989,432) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3057}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{78BA}"
+          RenderText {#text} at (989,444) size 50x484
+            text run at (989,444) width 40: "\x{3068}\x{898B}\x{3048}\x{306C}"
+            text run at (1020,0) width 30: "\x{304F}\x{3089}\x{3044}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1020,30) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3082}\x{3084}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{9744}"
+          RenderText {#text} at (1020,42) size 19x90
+            text run at (1020,42) width 90: "\x{304C}\x{6FC3}\x{3044}\x{3002}\x{5C11}\x{3057}\x{624B}\x{524D}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1020,132) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{306F}\x{3052}\x{3084}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{79BF}\x{5C71}"
+          RenderText {#text} at (1020,156) size 19x40
+            text run at (1020,156) width 40: "\x{304C}\x{4E00}\x{3064}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1020,196) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3050}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{7FA4}"
+          RenderText {#text} at (1020,208) size 19x60
+            text run at (1020,208) width 60: "\x{3092}\x{306C}\x{304D}\x{3093}\x{3067}\x{3066}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1020,268) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{307E}\x{3086}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{7709}"
+          RenderText {#text} at (1020,280) size 19x10
+            text run at (1020,280) width 10: "\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1020,290) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305B}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{903C}"
+          RenderText {#text} at (1020,302) size 19x20
+            text run at (1020,302) width 20: "\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1020,322) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{306F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{79BF}"
+          RenderText {#text} at (1020,332) size 19x84
+            text run at (1020,332) width 84: "\x{3052}\x{305F}\x{5074}\x{9762}\x{306F}\x{5DE8}\x{4EBA}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x15
+            RenderRubyRun (anonymous) at (1020,416) size 19x15
+              RenderRubyText {RT} at (-12,0) size 12x15
+                RenderText {#text} at (0,0) size 12x15
+                  text run at (0,0) width 15: "\x{304A}\x{306E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x15
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,2) size 19x10
+                    text run at (0,2) width 10: "\x{65A7}"
+          RenderText {#text} at (1020,431) size 19x10
+            text run at (1020,431) width 10: "\x{3067}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1020,441) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3051}\x{305A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{524A}"
+          RenderText {#text} at (1020,453) size 50x483
+            text run at (1020,453) width 30: "\x{308A}\x{53BB}\x{3063}"
+            text run at (1051,0) width 164: "\x{305F}\x{304B}\x{3001}\x{92ED}\x{3069}\x{304D}\x{5E73}\x{9762}\x{3092}\x{3084}\x{3051}\x{306B}\x{8C37}\x{306E}\x{5E95}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1051,164) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3046}\x{305A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{57CB}"
+          RenderText {#text} at (1051,176) size 19x50
+            text run at (1051,176) width 50: "\x{3081}\x{3066}\x{3044}\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1051,226) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3066}\x{3063}\x{307A}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5929}\x{8FBA}"
+          RenderText {#text} at (1051,250) size 19x222
+            text run at (1051,250) width 222: "\x{306B}\x{4E00}\x{672C}\x{898B}\x{3048}\x{308B}\x{306E}\x{306F}\x{8D64}\x{677E}\x{3060}\x{308D}\x{3046}\x{3002}\x{679D}\x{306E}\x{9593}\x{306E}\x{7A7A}\x{3055}\x{3048}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1082,0) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{306F}\x{3063}\x{304D}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5224}\x{7136}"
+          RenderText {#text} at (1082,24) size 19x280
+            text run at (1082,24) width 280: "\x{3057}\x{3066}\x{3044}\x{308B}\x{3002}\x{884C}\x{304F}\x{624B}\x{306F}\x{4E8C}\x{4E01}\x{307B}\x{3069}\x{3067}\x{5207}\x{308C}\x{3066}\x{3044}\x{308B}\x{304C}\x{3001}\x{9AD8}\x{3044}\x{6240}\x{304B}\x{3089}\x{8D64}\x{3044}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1082,304) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3051}\x{3063}\x{3068}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{6BDB}\x{5E03}"
+          RenderText {#text} at (1082,324) size 50x488
+            text run at (1082,324) width 164: "\x{304C}\x{52D5}\x{3044}\x{3066}\x{6765}\x{308B}\x{306E}\x{3092}\x{898B}\x{308B}\x{3068}\x{3001}\x{767B}\x{308C}\x{3070}\x{3042}"
+            text run at (1113,0) width 164: "\x{3059}\x{3053}\x{3078}\x{51FA}\x{308B}\x{306E}\x{3060}\x{308D}\x{3046}\x{3002}\x{8DEF}\x{306F}\x{3059}\x{3053}\x{3076}\x{308B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1113,164) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{306A}\x{3093}\x{304E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{96E3}\x{7FA9}"
+          RenderText {#text} at (1113,184) size 19x20
+            text run at (1113,184) width 20: "\x{3060}\x{3002}"
+          RenderBR {BR} at (1113,204) size 19x0
+          RenderText {#text} at (1144,0) size 19x130
+            text run at (1144,0) width 130: "\x{3000}\x{571F}\x{3092}\x{306A}\x{3089}\x{3059}\x{3060}\x{3051}\x{306A}\x{3089}\x{3055}\x{307B}\x{3069}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1144,130) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,4) size 12x12
+                  text run at (0,4) width 12: "\x{3066}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{624B}\x{9593}"
+          RenderText {#text} at (1144,150) size 19x10
+            text run at (1144,150) width 10: "\x{3082}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1144,160) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{5165}"
+          RenderText {#text} at (1144,170) size 19x204
+            text run at (1144,170) width 204: "\x{308B}\x{307E}\x{3044}\x{304C}\x{3001}\x{571F}\x{306E}\x{4E2D}\x{306B}\x{306F}\x{5927}\x{304D}\x{306A}\x{77F3}\x{304C}\x{3042}\x{308B}\x{3002}\x{571F}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1144,374) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305F}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5E73}"
+          RenderText {#text} at (1144,386) size 50x486
+            text run at (1144,386) width 100: "\x{3089}\x{306B}\x{3057}\x{3066}\x{3082}\x{77F3}\x{306F}\x{5E73}\x{3089}\x{306B}"
+            text run at (1175,0) width 220: "\x{306A}\x{3089}\x{306C}\x{3002}\x{77F3}\x{306F}\x{5207}\x{308A}\x{7815}\x{3044}\x{3066}\x{3082}\x{3001}\x{5CA9}\x{306F}\x{59CB}\x{672B}\x{304C}\x{3064}\x{304B}\x{306C}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1175,220) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{307B}\x{308A}\x{304F}\x{305A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{6398}\x{5D29}"
+          RenderText {#text} at (1175,244) size 19x64
+            text run at (1175,244) width 64: "\x{3057}\x{305F}\x{571F}\x{306E}\x{4E0A}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1175,308) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3086}\x{3046}\x{305C}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{60A0}\x{7136}"
+          RenderText {#text} at (1175,332) size 19x10
+            text run at (1175,332) width 10: "\x{3068}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (1175,342) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{305D}\x{3070}\x{3060}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{5CD9}"
+          RenderText {#text} at (1175,360) size 50x484
+            text run at (1175,360) width 124: "\x{3063}\x{3066}\x{3001}\x{543E}\x{3089}\x{306E}\x{305F}\x{3081}\x{306B}\x{9053}\x{3092}\x{8B72}"
+            text run at (1206,0) width 10: "\x{308B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1206,10) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3051}\x{3057}\x{304D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{666F}\x{8272}"
+          RenderText {#text} at (1206,30) size 19x280
+            text run at (1206,30) width 280: "\x{306F}\x{306A}\x{3044}\x{3002}\x{5411}\x{3046}\x{3067}\x{805E}\x{304B}\x{306C}\x{4E0A}\x{306F}\x{4E57}\x{308A}\x{8D8A}\x{3059}\x{304B}\x{3001}\x{5EFB}\x{3089}\x{306A}\x{3051}\x{308C}\x{3070}\x{306A}\x{3089}\x{3093}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1206,310) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3044}\x{308F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5DCC}"
+          RenderText {#text} at (1206,322) size 19x74
+            text run at (1206,322) width 74: "\x{306E}\x{306A}\x{3044}\x{6240}\x{3067}\x{3055}\x{3048}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1206,396) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3042}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{6B69}"
+          RenderText {#text} at (1206,406) size 50x486
+            text run at (1206,406) width 80: "\x{308B}\x{304D}\x{3088}\x{304F}\x{306F}\x{306A}\x{3044}\x{3002}"
+            text run at (1237,0) width 110: "\x{5DE6}\x{53F3}\x{304C}\x{9AD8}\x{304F}\x{3063}\x{3066}\x{3001}\x{4E2D}\x{5FC3}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1237,110) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304F}\x{307C}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{7AAA}"
+          RenderText {#text} at (1237,122) size 19x80
+            text run at (1237,122) width 80: "\x{3093}\x{3067}\x{3001}\x{307E}\x{308B}\x{3067}\x{4E00}\x{9593}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1237,202) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{306F}\x{3070}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5E45}"
+          RenderText {#text} at (1237,214) size 19x40
+            text run at (1237,214) width 40: "\x{3092}\x{4E09}\x{89D2}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1237,254) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{7A7F}"
+          RenderText {#text} at (1237,264) size 19x84
+            text run at (1237,264) width 84: "\x{3063}\x{3066}\x{3001}\x{305D}\x{306E}\x{9802}\x{70B9}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1237,348) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{307E}\x{3093}\x{306A}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{771F}\x{4E2D}"
+          RenderText {#text} at (1237,372) size 19x10
+            text run at (1237,372) width 10: "\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (1237,382) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3064}\x{3089}\x{306C}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{8CAB}"
+          RenderText {#text} at (1237,400) size 50x480
+            text run at (1237,400) width 80: "\x{3044}\x{3066}\x{3044}\x{308B}\x{3068}\x{8A55}\x{3057}\x{3066}"
+            text run at (1268,0) width 170: "\x{3082}\x{3088}\x{3044}\x{3002}\x{8DEF}\x{3092}\x{884C}\x{304F}\x{3068}\x{4E91}\x{308F}\x{3093}\x{3088}\x{308A}\x{5DDD}\x{5E95}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1268,170) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{308F}\x{305F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{6E09}"
+          RenderText {#text} at (1268,182) size 19x100
+            text run at (1268,182) width 100: "\x{308B}\x{3068}\x{4E91}\x{3046}\x{65B9}\x{304C}\x{9069}\x{5F53}\x{3060}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1268,282) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3082}\x{3068}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{56FA}"
+          RenderText {#text} at (1268,294) size 19x160
+            text run at (1268,294) width 160: "\x{3088}\x{308A}\x{6025}\x{3050}\x{65C5}\x{3067}\x{306A}\x{3044}\x{304B}\x{3089}\x{3001}\x{3076}\x{3089}\x{3076}\x{3089}\x{3068}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1268,454) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{306A}\x{306A}\x{307E}\x{304C}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{4E03}\x{66F2}"
+          RenderText {#text} at (1268,478) size 38x488
+            text run at (1268,478) width 10: "\x{308A}"
+            text run at (1287,0) width 50: "\x{3078}\x{304B}\x{304B}\x{308B}\x{3002}"
+          RenderBR {BR} at (1287,50) size 19x0
+          RenderText {#text} at (1318,0) size 19x94
+            text run at (1318,0) width 94: "\x{3000}\x{305F}\x{3061}\x{307E}\x{3061}\x{8DB3}\x{306E}\x{4E0B}\x{3067}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1318,94) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3072}\x{3070}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{96F2}\x{96C0}"
+          RenderText {#text} at (1318,114) size 19x104
+            text run at (1318,114) width 104: "\x{306E}\x{58F0}\x{304C}\x{3057}\x{51FA}\x{3057}\x{305F}\x{3002}\x{8C37}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1318,218) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{307F}\x{304A}\x{308D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{898B}\x{4E0B}"
+          RenderText {#text} at (1318,238) size 50x488
+            text run at (1318,238) width 250: "\x{3057}\x{305F}\x{304C}\x{3001}\x{3069}\x{3053}\x{3067}\x{9CF4}\x{3044}\x{3066}\x{308B}\x{304B}\x{5F71}\x{3082}\x{5F62}\x{3082}\x{898B}\x{3048}\x{306C}\x{3002}\x{305F}\x{3060}\x{58F0}\x{3060}\x{3051}"
+            text run at (1349,0) width 130: "\x{304C}\x{660E}\x{3089}\x{304B}\x{306B}\x{805E}\x{3048}\x{308B}\x{3002}\x{305B}\x{3063}\x{305B}\x{3068}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1349,130) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305B}\x{308F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5FD9}"
+          RenderText {#text} at (1349,142) size 19x30
+            text run at (1349,142) width 30: "\x{3057}\x{304F}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1349,172) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{305F}\x{3048}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{7D76}\x{9593}"
+          RenderText {#text} at (1349,192) size 19x80
+            text run at (1349,192) width 80: "\x{306A}\x{304F}\x{9CF4}\x{3044}\x{3066}\x{3044}\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1349,272) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{307B}\x{3046}\x{3044}\x{304F}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,0) size 19x30
+                    text run at (0,0) width 30: "\x{65B9}\x{5E7E}\x{91CC}"
+          RenderText {#text} at (1349,302) size 19x74
+            text run at (1349,302) width 74: "\x{306E}\x{7A7A}\x{6C17}\x{304C}\x{4E00}\x{9762}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x15
+            RenderRubyRun (anonymous) at (1349,376) size 19x15
+              RenderRubyText {RT} at (-12,0) size 12x15
+                RenderText {#text} at (0,0) size 12x15
+                  text run at (0,0) width 15: "\x{306E}\x{307F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x15
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,2) size 19x10
+                    text run at (0,2) width 10: "\x{86A4}"
+          RenderText {#text} at (1349,391) size 50x481
+            text run at (1349,391) width 90: "\x{306B}\x{523A}\x{3055}\x{308C}\x{3066}\x{3044}\x{305F}\x{305F}\x{307E}"
+            text run at (1380,0) width 178: "\x{308C}\x{306A}\x{3044}\x{3088}\x{3046}\x{306A}\x{6C17}\x{304C}\x{3059}\x{308B}\x{3002}\x{3042}\x{306E}\x{9CE5}\x{306E}\x{9CF4}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1380,178) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{306D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{97F3}"
+          RenderText {#text} at (1380,188) size 69x480
+            text run at (1380,188) width 292: "\x{306B}\x{306F}\x{77AC}\x{6642}\x{306E}\x{4F59}\x{88D5}\x{3082}\x{306A}\x{3044}\x{3002}\x{306E}\x{3069}\x{304B}\x{306A}\x{6625}\x{306E}\x{65E5}\x{3092}\x{9CF4}\x{304D}\x{5C3D}\x{304F}\x{3057}\x{3001}\x{9CF4}\x{304D}\x{3042}"
+            text run at (1399,0) width 474: "\x{304B}\x{3057}\x{3001}\x{307E}\x{305F}\x{9CF4}\x{304D}\x{66AE}\x{3089}\x{3055}\x{306A}\x{3051}\x{308C}\x{3070}\x{6C17}\x{304C}\x{6E08}\x{307E}\x{3093}\x{3068}\x{898B}\x{3048}\x{308B}\x{3002}\x{305D}\x{306E}\x{4E0A}\x{3069}\x{3053}\x{307E}\x{3067}\x{3082}\x{767B}\x{3063}\x{3066}\x{884C}\x{304F}\x{3001}\x{3044}\x{3064}\x{307E}\x{3067}\x{3082}\x{767B}\x{3063}\x{3066}\x{884C}"
+            text run at (1430,0) width 254: "\x{304F}\x{3002}\x{96F2}\x{96C0}\x{306F}\x{304D}\x{3063}\x{3068}\x{96F2}\x{306E}\x{4E2D}\x{3067}\x{6B7B}\x{306C}\x{306B}\x{76F8}\x{9055}\x{306A}\x{3044}\x{3002}\x{767B}\x{308A}\x{8A70}\x{3081}\x{305F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1430,254) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3042}\x{3052}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{63DA}\x{53E5}"
+          RenderText {#text} at (1430,274) size 19x70
+            text run at (1430,274) width 70: "\x{306F}\x{3001}\x{6D41}\x{308C}\x{3066}\x{96F2}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1430,344) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{5165}"
+          RenderText {#text} at (1430,354) size 19x30
+            text run at (1430,354) width 30: "\x{3063}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (1430,384) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{305F}\x{3060}\x{3088}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{6F02}"
+          RenderText {#text} at (1430,402) size 50x482
+            text run at (1430,402) width 80: "\x{3046}\x{3066}\x{3044}\x{308B}\x{3046}\x{3061}\x{306B}\x{5F62}"
+            text run at (1461,0) width 184: "\x{306F}\x{6D88}\x{3048}\x{3066}\x{306A}\x{304F}\x{306A}\x{3063}\x{3066}\x{3001}\x{305F}\x{3060}\x{58F0}\x{3060}\x{3051}\x{304C}\x{7A7A}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1461,184) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3046}\x{3061}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{88E1}"
+          RenderText {#text} at (1461,196) size 19x114
+            text run at (1461,196) width 114: "\x{306B}\x{6B8B}\x{308B}\x{306E}\x{304B}\x{3082}\x{77E5}\x{308C}\x{306A}\x{3044}\x{3002}"
+          RenderBR {BR} at (1461,310) size 19x0
+          RenderText {#text} at (1492,0) size 19x10
+            text run at (1492,0) width 10: "\x{3000}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1492,10) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3044}\x{308F}\x{304B}\x{3069}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5DCC}\x{89D2}"
+          RenderText {#text} at (1492,34) size 19x80
+            text run at (1492,34) width 80: "\x{3092}\x{92ED}\x{3069}\x{304F}\x{5EFB}\x{3063}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1492,114) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3042}\x{3093}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{6309}\x{6469}"
+          RenderText {#text} at (1492,134) size 19x20
+            text run at (1492,134) width 20: "\x{306A}\x{3089}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x36
+            RenderRubyRun (anonymous) at (1492,154) size 19x36
+              RenderRubyText {RT} at (-12,0) size 12x36
+                RenderText {#text} at (0,0) size 12x36
+                  text run at (0,0) width 36: "\x{307E}\x{3063}\x{3055}\x{304B}\x{3055}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x36
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,3) size 19x30
+                    text run at (0,3) width 30: "\x{771F}\x{9006}\x{69D8}"
+          RenderText {#text} at (1492,190) size 19x90
+            text run at (1492,190) width 90: "\x{306B}\x{843D}\x{3064}\x{308B}\x{3068}\x{3053}\x{308D}\x{3092}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1492,280) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304D}\x{308F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{969B}"
+          RenderText {#text} at (1492,292) size 19x100
+            text run at (1492,292) width 100: "\x{3069}\x{304F}\x{53F3}\x{3078}\x{5207}\x{308C}\x{3066}\x{3001}\x{6A2A}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1492,392) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{307F}\x{304A}\x{308D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{898B}\x{4E0B}"
+          RenderText {#text} at (1492,412) size 19x30
+            text run at (1492,412) width 30: "\x{3059}\x{3068}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1492,442) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{306A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{83DC}"
+          RenderText {#text} at (1492,452) size 50x486
+            text run at (1492,452) width 34: "\x{306E}\x{82B1}\x{304C}"
+            text run at (1523,0) width 308: "\x{4E00}\x{9762}\x{306B}\x{898B}\x{3048}\x{308B}\x{3002}\x{96F2}\x{96C0}\x{306F}\x{3042}\x{3059}\x{3053}\x{3078}\x{843D}\x{3061}\x{308B}\x{306E}\x{304B}\x{3068}\x{601D}\x{3063}\x{305F}\x{3002}\x{3044}\x{3044}\x{3084}\x{3001}\x{3042}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1523,308) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3053}\x{304C}\x{306D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{9EC4}\x{91D1}"
+          RenderText {#text} at (1523,328) size 50x486
+            text run at (1523,328) width 158: "\x{306E}\x{539F}\x{304B}\x{3089}\x{98DB}\x{3073}\x{4E0A}\x{304C}\x{3063}\x{3066}\x{304F}\x{308B}\x{306E}\x{304B}\x{3068}"
+            text run at (1554,0) width 140: "\x{601D}\x{3063}\x{305F}\x{3002}\x{6B21}\x{306B}\x{306F}\x{843D}\x{3061}\x{308B}\x{96F2}\x{96C0}\x{3068}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1554,140) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3042}\x{304C}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{4E0A}"
+          RenderText {#text} at (1554,152) size 19x10
+            text run at (1554,152) width 10: "\x{308B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1554,162) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3072}\x{3070}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{96F2}\x{96C0}"
+          RenderText {#text} at (1554,182) size 50x476
+            text run at (1554,182) width 294: "\x{304C}\x{5341}\x{6587}\x{5B57}\x{306B}\x{3059}\x{308C}\x{9055}\x{3046}\x{306E}\x{304B}\x{3068}\x{601D}\x{3063}\x{305F}\x{3002}\x{6700}\x{5F8C}\x{306B}\x{3001}\x{843D}\x{3061}\x{308B}\x{6642}\x{3082}\x{3001}\x{4E0A}\x{308B}\x{6642}"
+            text run at (1585,0) width 80: "\x{3082}\x{3001}\x{307E}\x{305F}\x{5341}\x{6587}\x{5B57}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1585,80) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3059}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{64E6}"
+          RenderText {#text} at (1585,90) size 19x250
+            text run at (1585,90) width 250: "\x{308C}\x{9055}\x{3046}\x{3068}\x{304D}\x{306B}\x{3082}\x{5143}\x{6C17}\x{3088}\x{304F}\x{9CF4}\x{304D}\x{3064}\x{3065}\x{3051}\x{308B}\x{3060}\x{308D}\x{3046}\x{3068}\x{601D}\x{3063}\x{305F}\x{3002}"
+          RenderBR {BR} at (1585,340) size 19x0
+          RenderText {#text} at (1616,0) size 19x120
+            text run at (1616,0) width 120: "\x{3000}\x{6625}\x{306F}\x{7720}\x{304F}\x{306A}\x{308B}\x{3002}\x{732B}\x{306F}\x{9F20}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1616,120) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3068}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{6355}"
+          RenderText {#text} at (1616,130) size 19x268
+            text run at (1616,130) width 268: "\x{308B}\x{4E8B}\x{3092}\x{5FD8}\x{308C}\x{3001}\x{4EBA}\x{9593}\x{306F}\x{501F}\x{91D1}\x{306E}\x{3042}\x{308B}\x{4E8B}\x{3092}\x{5FD8}\x{308C}\x{308B}\x{3002}\x{6642}\x{306B}\x{306F}\x{81EA}\x{5206}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1616,398) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{305F}\x{307E}\x{3057}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,7) size 19x10
+                    text run at (0,7) width 10: "\x{9B42}"
+          RenderText {#text} at (1616,422) size 19x14
+            text run at (1616,422) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1616,436) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3044}\x{3069}\x{3053}\x{308D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5C45}\x{6240}"
+          RenderText {#text} at (1616,460) size 50x480
+            text run at (1616,460) width 20: "\x{3055}\x{3048}"
+            text run at (1647,0) width 264: "\x{5FD8}\x{308C}\x{3066}\x{6B63}\x{4F53}\x{306A}\x{304F}\x{306A}\x{308B}\x{3002}\x{305F}\x{3060}\x{83DC}\x{306E}\x{82B1}\x{3092}\x{9060}\x{304F}\x{671B}\x{3093}\x{3060}\x{3068}\x{304D}\x{306B}\x{773C}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1647,264) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3055}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{9192}"
+          RenderText {#text} at (1647,274) size 19x208
+            text run at (1647,274) width 208: "\x{3081}\x{308B}\x{3002}\x{96F2}\x{96C0}\x{306E}\x{58F0}\x{3092}\x{805E}\x{3044}\x{305F}\x{3068}\x{304D}\x{306B}\x{9B42}\x{306E}\x{3042}\x{308A}\x{304B}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1678,0) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{306F}\x{3093}\x{305C}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5224}\x{7136}"
+          RenderText {#text} at (1678,24) size 38x478
+            text run at (1678,24) width 454: "\x{3059}\x{308B}\x{3002}\x{96F2}\x{96C0}\x{306E}\x{9CF4}\x{304F}\x{306E}\x{306F}\x{53E3}\x{3067}\x{9CF4}\x{304F}\x{306E}\x{3067}\x{306F}\x{306A}\x{3044}\x{3001}\x{9B42}\x{5168}\x{4F53}\x{304C}\x{9CF4}\x{304F}\x{306E}\x{3060}\x{3002}\x{9B42}\x{306E}\x{6D3B}\x{52D5}\x{304C}\x{58F0}\x{306B}\x{3042}\x{3089}\x{308F}\x{308C}\x{305F}\x{3082}\x{306E}"
+            text run at (1697,0) width 476: "\x{306E}\x{3046}\x{3061}\x{3067}\x{3001}\x{3042}\x{308C}\x{307B}\x{3069}\x{5143}\x{6C17}\x{306E}\x{3042}\x{308B}\x{3082}\x{306E}\x{306F}\x{306A}\x{3044}\x{3002}\x{3042}\x{3042}\x{6109}\x{5FEB}\x{3060}\x{3002}\x{3053}\x{3046}\x{601D}\x{3063}\x{3066}\x{3001}\x{3053}\x{3046}\x{6109}\x{5FEB}\x{306B}\x{306A}\x{308B}\x{306E}\x{304C}\x{8A69}\x{3067}\x{3042}\x{308B}\x{3002}"
+          RenderBR {BR} at (1697,476) size 19x0
+          RenderText {#text} at (1728,0) size 19x352
+            text run at (1728,0) width 352: "\x{3000}\x{305F}\x{3061}\x{307E}\x{3061}\x{30B7}\x{30A7}\x{30EC}\x{30FC}\x{306E}\x{96F2}\x{96C0}\x{306E}\x{8A69}\x{3092}\x{601D}\x{3044}\x{51FA}\x{3057}\x{3066}\x{3001}\x{53E3}\x{306E}\x{3046}\x{3061}\x{3067}\x{899A}\x{3048}\x{305F}\x{3068}\x{3053}\x{308D}\x{3060}\x{3051}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1728,352) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{3042}\x{3093}\x{3057}\x{3087}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{6697}\x{8AA6}"
+          RenderText {#text} at (1728,382) size 38x482
+            text run at (1728,382) width 100: "\x{3057}\x{3066}\x{898B}\x{305F}\x{304C}\x{3001}\x{899A}\x{3048}\x{3066}\x{3044}"
+            text run at (1747,0) width 332: "\x{308B}\x{3068}\x{3053}\x{308D}\x{306F}\x{4E8C}\x{4E09}\x{53E5}\x{3057}\x{304B}\x{306A}\x{304B}\x{3063}\x{305F}\x{3002}\x{305D}\x{306E}\x{4E8C}\x{4E09}\x{53E5}\x{306E}\x{306A}\x{304B}\x{306B}\x{3053}\x{3093}\x{306A}\x{306E}\x{304C}\x{3042}\x{308B}\x{3002}"
+          RenderBR {BR} at (1747,332) size 19x0
+        RenderBlock {DIV} at (1766,32) size 95x457
+          RenderText {#text} at (0,0) size 19x177
+            text run at (0,0) width 177: "\x{3000}\x{3000}We look before and after"
+          RenderBR {BR} at (0,177) size 19x0
+          RenderText {#text} at (19,0) size 19x198
+            text run at (19,0) width 198: "\x{3000}\x{3000}\x{3000}\x{3000}And pine for what is not:"
+          RenderBR {BR} at (19,198) size 19x0
+          RenderText {#text} at (38,0) size 19x158
+            text run at (38,0) width 158: "\x{3000}\x{3000}Our sincerest laughter"
+          RenderBR {BR} at (38,158) size 19x0
+          RenderText {#text} at (57,0) size 19x206
+            text run at (57,0) width 206: "\x{3000}\x{3000}\x{3000}\x{3000}With some pain is fraught;"
+          RenderBR {BR} at (57,206) size 19x0
+          RenderText {#text} at (76,0) size 19x355
+            text run at (76,0) width 355: "Our sweetest songs are those that tell of saddest thought."
+          RenderBR {BR} at (76,355) size 19x0
+        RenderBlock (anonymous) at (1861,0) size 1316x489
+          RenderText {#text} at (12,0) size 19x70
+            text run at (12,0) width 70: "\x{300C}\x{524D}\x{3092}\x{307F}\x{3066}\x{306F}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (12,70) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3057}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5F8C}"
+          RenderText {#text} at (12,82) size 19x60
+            text run at (12,82) width 60: "\x{3048}\x{3092}\x{898B}\x{3066}\x{306F}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x21
+            RenderRubyRun (anonymous) at (12,142) size 19x21
+              RenderRubyText {RT} at (-12,0) size 12x21
+                RenderText {#text} at (0,0) size 12x21
+                  text run at (0,0) width 21: "\x{3082}\x{306E}\x{307B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x21
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{7269}\x{6B32}"
+          RenderText {#text} at (12,163) size 50x481
+            text run at (12,163) width 318: "\x{3057}\x{3068}\x{3001}\x{3042}\x{3053}\x{304C}\x{308B}\x{308B}\x{304B}\x{306A}\x{308F}\x{308C}\x{3002}\x{8179}\x{304B}\x{3089}\x{306E}\x{3001}\x{7B11}\x{3068}\x{3044}\x{3048}\x{3069}\x{3001}\x{82E6}\x{3057}\x{307F}\x{306E}\x{3001}\x{305D}\x{3053}"
+            text run at (43,0) width 120: "\x{306B}\x{3042}\x{308B}\x{3079}\x{3057}\x{3002}\x{3046}\x{3064}\x{304F}\x{3057}\x{304D}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (43,120) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304D}\x{308F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{6975}"
+          RenderText {#text} at (43,132) size 19x142
+            text run at (43,132) width 142: "\x{307F}\x{306E}\x{6B4C}\x{306B}\x{3001}\x{60B2}\x{3057}\x{3055}\x{306E}\x{3001}\x{6975}\x{307F}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (43,274) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{304A}\x{3082}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{60F3}"
+          RenderText {#text} at (43,292) size 19x10
+            text run at (43,292) width 10: "\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (43,302) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3053}\x{3082}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{7C60}"
+          RenderText {#text} at (43,314) size 19x60
+            text run at (43,314) width 60: "\x{308B}\x{3068}\x{305E}\x{77E5}\x{308C}\x{300D}"
+          RenderBR {BR} at (43,374) size 19x0
+          RenderText {#text} at (62,0) size 50x488
+            text run at (62,0) width 488: "\x{3000}\x{306A}\x{308B}\x{307B}\x{3069}\x{3044}\x{304F}\x{3089}\x{8A69}\x{4EBA}\x{304C}\x{5E78}\x{798F}\x{3067}\x{3082}\x{3001}\x{3042}\x{306E}\x{96F2}\x{96C0}\x{306E}\x{3088}\x{3046}\x{306B}\x{601D}\x{3044}\x{5207}\x{3063}\x{3066}\x{3001}\x{4E00}\x{5FC3}\x{4E0D}\x{4E71}\x{306B}\x{3001}\x{524D}\x{5F8C}\x{3092}\x{5FD8}\x{5374}\x{3057}\x{3066}\x{3001}\x{308F}\x{304C}\x{559C}\x{3073}"
+            text run at (93,0) width 30: "\x{3092}\x{6B4C}\x{3046}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (93,30) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{308F}\x{3051}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{8A33}"
+          RenderText {#text} at (93,42) size 19x272
+            text run at (93,42) width 272: "\x{306B}\x{306F}\x{884C}\x{304F}\x{307E}\x{3044}\x{3002}\x{897F}\x{6D0B}\x{306E}\x{8A69}\x{306F}\x{7121}\x{8AD6}\x{306E}\x{4E8B}\x{3001}\x{652F}\x{90A3}\x{306E}\x{8A69}\x{306B}\x{3082}\x{3001}\x{3088}\x{304F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (93,314) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3070}\x{3093}\x{3053}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{4E07}\x{659B}"
+          RenderText {#text} at (93,338) size 19x14
+            text run at (93,338) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (93,352) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3046}\x{308C}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{6101}"
+          RenderText {#text} at (93,370) size 50x480
+            text run at (93,370) width 110: "\x{306A}\x{3069}\x{3068}\x{4E91}\x{3046}\x{5B57}\x{304C}\x{3042}\x{308B}\x{3002}\x{8A69}"
+            text run at (124,0) width 70: "\x{4EBA}\x{3060}\x{304B}\x{3089}\x{4E07}\x{659B}\x{3067}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (124,70) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3057}\x{308D}\x{3046}\x{3068}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{7D20}\x{4EBA}"
+          RenderText {#text} at (124,94) size 19x30
+            text run at (124,94) width 30: "\x{306A}\x{3089}\x{4E00}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (124,124) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3054}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5408}"
+          RenderText {#text} at (124,136) size 19x284
+            text run at (124,136) width 284: "\x{3067}\x{6E08}\x{3080}\x{304B}\x{3082}\x{77E5}\x{308C}\x{306C}\x{3002}\x{3057}\x{3066}\x{898B}\x{308B}\x{3068}\x{8A69}\x{4EBA}\x{306F}\x{5E38}\x{306E}\x{4EBA}\x{3088}\x{308A}\x{3082}\x{82E6}\x{52B4}\x{6027}\x{3067}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (124,420) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{307C}\x{3093}\x{3053}\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{51E1}\x{9AA8}"
+          RenderText {#text} at (124,444) size 50x488
+            text run at (124,444) width 44: "\x{306E}\x{500D}\x{4EE5}\x{4E0A}"
+            text run at (155,0) width 292: "\x{306B}\x{795E}\x{7D4C}\x{304C}\x{92ED}\x{654F}\x{306A}\x{306E}\x{304B}\x{3082}\x{77E5}\x{308C}\x{3093}\x{3002}\x{8D85}\x{4FD7}\x{306E}\x{559C}\x{3073}\x{3082}\x{3042}\x{308D}\x{3046}\x{304C}\x{3001}\x{7121}\x{91CF}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (155,292) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{304B}\x{306A}\x{3057}\x{307F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,7) size 19x10
+                    text run at (0,7) width 10: "\x{60B2}"
+          RenderText {#text} at (155,316) size 38x476
+            text run at (155,316) width 160: "\x{3082}\x{591A}\x{304B}\x{308D}\x{3046}\x{3002}\x{305D}\x{3093}\x{306A}\x{3089}\x{3070}\x{8A69}\x{4EBA}\x{306B}\x{306A}\x{308B}"
+            text run at (174,0) width 74: "\x{306E}\x{3082}\x{8003}\x{3048}\x{7269}\x{3060}\x{3002}"
+          RenderBR {BR} at (174,74) size 19x0
+          RenderText {#text} at (205,0) size 19x80
+            text run at (205,0) width 80: "\x{3000}\x{3057}\x{3070}\x{3089}\x{304F}\x{306F}\x{8DEF}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (205,80) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{305F}\x{3044}\x{3089}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{5E73}"
+          RenderText {#text} at (205,98) size 19x40
+            text run at (205,98) width 40: "\x{3067}\x{3001}\x{53F3}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (205,138) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{305E}\x{3046}\x{304D}\x{3084}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,0) size 19x30
+                    text run at (0,0) width 30: "\x{96D1}\x{6728}\x{5C71}"
+          RenderText {#text} at (205,168) size 19x222
+            text run at (205,168) width 222: "\x{3001}\x{5DE6}\x{306F}\x{83DC}\x{306E}\x{82B1}\x{306E}\x{898B}\x{3064}\x{3065}\x{3051}\x{3067}\x{3042}\x{308B}\x{3002}\x{8DB3}\x{306E}\x{4E0B}\x{306B}\x{6642}\x{3005}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (205,390) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,3) size 12x24
+                  text run at (0,3) width 24: "\x{305F}\x{3093}\x{307D}\x{307D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,0) size 19x30
+                    text run at (0,0) width 30: "\x{84B2}\x{516C}\x{82F1}"
+          RenderText {#text} at (205,420) size 50x470
+            text run at (205,420) width 50: "\x{3092}\x{8E0F}\x{307F}\x{3064}\x{3051}"
+            text run at (236,0) width 20: "\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x27
+            RenderRubyRun (anonymous) at (236,20) size 19x27
+              RenderRubyText {RT} at (-12,0) size 12x27
+                RenderText {#text} at (0,0) size 12x27
+                  text run at (0,0) width 27: "\x{306E}\x{3053}\x{304E}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x27
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,8) size 19x10
+                    text run at (0,8) width 10: "\x{92F8}"
+          RenderText {#text} at (236,47) size 19x228
+            text run at (236,47) width 228: "\x{306E}\x{3088}\x{3046}\x{306A}\x{8449}\x{304C}\x{9060}\x{616E}\x{306A}\x{304F}\x{56DB}\x{65B9}\x{3078}\x{306E}\x{3057}\x{3066}\x{771F}\x{4E2D}\x{306B}\x{9EC4}\x{8272}\x{306A}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (236,275) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305F}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{73E0}"
+          RenderText {#text} at (236,287) size 50x481
+            text run at (236,287) width 194: "\x{3092}\x{64C1}\x{8B77}\x{3057}\x{3066}\x{3044}\x{308B}\x{3002}\x{83DC}\x{306E}\x{82B1}\x{306B}\x{6C17}\x{3092}\x{3068}\x{3089}\x{308C}\x{3066}\x{3001}"
+            text run at (267,0) width 438: "\x{8E0F}\x{307F}\x{3064}\x{3051}\x{305F}\x{3042}\x{3068}\x{3067}\x{3001}\x{6C17}\x{306E}\x{6BD2}\x{306A}\x{4E8B}\x{3092}\x{3057}\x{305F}\x{3068}\x{3001}\x{632F}\x{308A}\x{5411}\x{3044}\x{3066}\x{898B}\x{308B}\x{3068}\x{3001}\x{9EC4}\x{8272}\x{306A}\x{73E0}\x{306F}\x{4F9D}\x{7136}\x{3068}\x{3057}\x{3066}\x{92F8}\x{306E}\x{306A}\x{304B}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (267,438) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3061}\x{3093}\x{3056}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{93AE}\x{5EA7}"
+          RenderText {#text} at (267,458) size 50x488
+            text run at (267,458) width 30: "\x{3057}\x{3066}\x{3044}"
+            text run at (298,0) width 20: "\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x21
+            RenderRubyRun (anonymous) at (298,20) size 19x21
+              RenderRubyText {RT} at (-12,0) size 12x21
+                RenderText {#text} at (0,0) size 12x21
+                  text run at (0,0) width 21: "\x{306E}\x{3093}\x{304D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x21
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{5451}\x{6C17}"
+          RenderText {#text} at (298,41) size 19x154
+            text run at (298,41) width 154: "\x{306A}\x{3082}\x{306E}\x{3060}\x{3002}\x{307E}\x{305F}\x{8003}\x{3048}\x{3092}\x{3064}\x{3065}\x{3051}\x{308B}\x{3002}"
+          RenderBR {BR} at (298,195) size 19x0
+          RenderText {#text} at (329,0) size 19x40
+            text run at (329,0) width 40: "\x{3000}\x{8A69}\x{4EBA}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (329,40) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3046}\x{308C}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{6182}"
+          RenderText {#text} at (329,58) size 19x158
+            text run at (329,58) width 158: "\x{306F}\x{3064}\x{304D}\x{3082}\x{306E}\x{304B}\x{3082}\x{77E5}\x{308C}\x{306A}\x{3044}\x{304C}\x{3001}\x{3042}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (329,216) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3072}\x{3070}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{96F2}\x{96C0}"
+          RenderText {#text} at (329,236) size 19x90
+            text run at (329,236) width 90: "\x{3092}\x{805E}\x{304F}\x{5FC3}\x{6301}\x{306B}\x{306A}\x{308C}\x{3070}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (329,326) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{307F}\x{3058}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{5FAE}\x{5875}"
+          RenderText {#text} at (329,346) size 19x14
+            text run at (329,346) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (329,360) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{82E6}"
+          RenderText {#text} at (329,370) size 50x474
+            text run at (329,370) width 104: "\x{3082}\x{306A}\x{3044}\x{3002}\x{83DC}\x{306E}\x{82B1}\x{3092}\x{898B}\x{3066}"
+            text run at (360,0) width 110: "\x{3082}\x{3001}\x{305F}\x{3060}\x{3046}\x{308C}\x{3057}\x{304F}\x{3066}\x{80F8}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (360,110) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304A}\x{3069}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{8E8D}"
+          RenderText {#text} at (360,122) size 50x488
+            text run at (360,122) width 366: "\x{308B}\x{3070}\x{304B}\x{308A}\x{3060}\x{3002}\x{84B2}\x{516C}\x{82F1}\x{3082}\x{305D}\x{306E}\x{901A}\x{308A}\x{3001}\x{685C}\x{3082}\x{2015}\x{2015}\x{685C}\x{306F}\x{3044}\x{3064}\x{304B}\x{898B}\x{3048}\x{306A}\x{304F}\x{306A}\x{3063}\x{305F}\x{3002}\x{3053}\x{3046}\x{5C71}"
+            text run at (391,0) width 88: "\x{306E}\x{4E2D}\x{3078}\x{6765}\x{3066}\x{81EA}\x{7136}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (391,88) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3051}\x{3044}\x{3076}\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{666F}\x{7269}"
+          RenderText {#text} at (391,112) size 50x474
+            text run at (391,112) width 362: "\x{306B}\x{63A5}\x{3059}\x{308C}\x{3070}\x{3001}\x{898B}\x{308B}\x{3082}\x{306E}\x{3082}\x{805E}\x{304F}\x{3082}\x{306E}\x{3082}\x{9762}\x{767D}\x{3044}\x{3002}\x{9762}\x{767D}\x{3044}\x{3060}\x{3051}\x{3067}\x{5225}\x{6BB5}\x{306E}\x{82E6}\x{3057}\x{307F}\x{3082}\x{8D77}\x{3089}"
+            text run at (422,0) width 100: "\x{306C}\x{3002}\x{8D77}\x{308B}\x{3068}\x{3059}\x{308C}\x{3070}\x{8DB3}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (422,100) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{304F}\x{305F}\x{3073}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{8349}\x{81E5}"
+          RenderText {#text} at (422,120) size 19x30
+            text run at (422,120) width 30: "\x{308C}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (422,150) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3046}\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{65E8}"
+          RenderText {#text} at (422,162) size 19x188
+            text run at (422,162) width 188: "\x{3044}\x{3082}\x{306E}\x{304C}\x{98DF}\x{3079}\x{3089}\x{308C}\x{306C}\x{304F}\x{3089}\x{3044}\x{306E}\x{4E8B}\x{3060}\x{308D}\x{3046}\x{3002}"
+          RenderBR {BR} at (422,350) size 19x0
+          RenderText {#text} at (453,0) size 19x272
+            text run at (453,0) width 272: "\x{3000}\x{3057}\x{304B}\x{3057}\x{82E6}\x{3057}\x{307F}\x{306E}\x{306A}\x{3044}\x{306E}\x{306F}\x{306A}\x{305C}\x{3060}\x{308D}\x{3046}\x{3002}\x{305F}\x{3060}\x{3053}\x{306E}\x{666F}\x{8272}\x{3092}\x{4E00}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (453,272) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3077}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5E45}"
+          RenderText {#text} at (453,284) size 19x14
+            text run at (453,284) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (453,298) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3048}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{753B}"
+          RenderText {#text} at (453,308) size 19x30
+            text run at (453,308) width 30: "\x{3068}\x{3057}\x{3066}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (453,338) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{307F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{89B3}"
+          RenderText {#text} at (453,348) size 19x20
+            text run at (453,348) width 20: "\x{3001}\x{4E00}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (453,368) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304B}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5DFB}"
+          RenderText {#text} at (453,380) size 50x484
+            text run at (453,380) width 104: "\x{306E}\x{8A69}\x{3068}\x{3057}\x{3066}\x{8AAD}\x{3080}\x{304B}\x{3089}\x{3067}"
+            text run at (484,0) width 30: "\x{3042}\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (484,30) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{304C}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{753B}"
+          RenderText {#text} at (484,40) size 19x100
+            text run at (484,40) width 100: "\x{3067}\x{3042}\x{308A}\x{8A69}\x{3067}\x{3042}\x{308B}\x{4EE5}\x{4E0A}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (484,140) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3058}\x{3081}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{5730}\x{9762}"
+          RenderText {#text} at (484,160) size 19x230
+            text run at (484,160) width 230: "\x{3092}\x{8CB0}\x{3063}\x{3066}\x{3001}\x{958B}\x{62D3}\x{3059}\x{308B}\x{6C17}\x{306B}\x{3082}\x{306A}\x{3089}\x{306D}\x{3070}\x{3001}\x{9244}\x{9053}\x{3092}\x{304B}\x{3051}\x{3066}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (484,390) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3072}\x{3068}\x{3082}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{4E00}\x{5132}"
+          RenderText {#text} at (484,414) size 19x30
+            text run at (484,414) width 30: "\x{3051}\x{3059}\x{308B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (484,444) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{308A}\x{3087}\x{3046}\x{3051}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{4E86}\x{898B}"
+          RenderText {#text} at (484,474) size 50x484
+            text run at (484,474) width 10: "\x{3082}"
+            text run at (515,0) width 170: "\x{8D77}\x{3089}\x{306C}\x{3002}\x{305F}\x{3060}\x{3053}\x{306E}\x{666F}\x{8272}\x{304C}\x{2015}\x{2015}\x{8179}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (515,170) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{305F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{8DB3}"
+          RenderText {#text} at (515,180) size 50x472
+            text run at (515,180) width 292: "\x{3057}\x{306B}\x{3082}\x{306A}\x{3089}\x{306C}\x{3001}\x{6708}\x{7D66}\x{306E}\x{88DC}\x{3044}\x{306B}\x{3082}\x{306A}\x{3089}\x{306C}\x{3053}\x{306E}\x{666F}\x{8272}\x{304C}\x{666F}\x{8272}\x{3068}\x{3057}\x{3066}\x{306E}"
+            text run at (546,0) width 210: "\x{307F}\x{3001}\x{4F59}\x{304C}\x{5FC3}\x{3092}\x{697D}\x{307E}\x{305B}\x{3064}\x{3064}\x{3042}\x{308B}\x{304B}\x{3089}\x{82E6}\x{52B4}\x{3082}\x{5FC3}\x{914D}\x{3082}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (546,210) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3068}\x{3082}\x{306A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{4F34}"
+          RenderText {#text} at (546,228) size 19x188
+            text run at (546,228) width 188: "\x{308F}\x{306C}\x{306E}\x{3060}\x{308D}\x{3046}\x{3002}\x{81EA}\x{7136}\x{306E}\x{529B}\x{306F}\x{3053}\x{3053}\x{306B}\x{304A}\x{3044}\x{3066}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (546,416) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305F}\x{3063}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5C0A}"
+          RenderText {#text} at (546,428) size 50x478
+            text run at (546,428) width 50: "\x{3068}\x{3044}\x{3002}\x{543E}\x{4EBA}"
+            text run at (577,0) width 74: "\x{306E}\x{6027}\x{60C5}\x{3092}\x{77AC}\x{523B}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (577,74) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3068}\x{3046}\x{3084}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{9676}\x{51B6}"
+          RenderText {#text} at (577,94) size 19x20
+            text run at (577,94) width 20: "\x{3057}\x{3066}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (577,114) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3058}\x{3085}\x{3093}\x{3053}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{9187}\x{4E4E}"
+          RenderText {#text} at (577,138) size 19x224
+            text run at (577,138) width 224: "\x{3068}\x{3057}\x{3066}\x{9187}\x{306A}\x{308B}\x{8A69}\x{5883}\x{306B}\x{5165}\x{3089}\x{3057}\x{3080}\x{308B}\x{306E}\x{306F}\x{81EA}\x{7136}\x{3067}\x{3042}\x{308B}\x{3002}"
+          RenderBR {BR} at (577,362) size 19x0
+          RenderText {#text} at (608,0) size 19x384
+            text run at (608,0) width 384: "\x{3000}\x{604B}\x{306F}\x{3046}\x{3064}\x{304F}\x{3057}\x{304B}\x{308D}\x{3001}\x{5B5D}\x{3082}\x{3046}\x{3064}\x{304F}\x{3057}\x{304B}\x{308D}\x{3001}\x{5FE0}\x{541B}\x{611B}\x{56FD}\x{3082}\x{7D50}\x{69CB}\x{3060}\x{308D}\x{3046}\x{3002}\x{3057}\x{304B}\x{3057}\x{81EA}\x{8EAB}\x{304C}\x{305D}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (608,384) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{304D}\x{3087}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{5C40}"
+          RenderText {#text} at (608,402) size 19x74
+            text run at (608,402) width 74: "\x{306B}\x{5F53}\x{308C}\x{3070}\x{5229}\x{5BB3}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (639,0) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3064}\x{3080}\x{3058}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{65CB}\x{98A8}"
+          RenderText {#text} at (639,20) size 19x10
+            text run at (639,20) width 10: "\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (639,30) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{307E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{6372}"
+          RenderText {#text} at (639,40) size 19x240
+            text run at (639,40) width 240: "\x{304D}\x{8FBC}\x{307E}\x{308C}\x{3066}\x{3001}\x{3046}\x{3064}\x{304F}\x{3057}\x{304D}\x{4E8B}\x{306B}\x{3082}\x{3001}\x{7D50}\x{69CB}\x{306A}\x{4E8B}\x{306B}\x{3082}\x{3001}\x{76EE}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (639,280) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{304F}\x{3089}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{7729}"
+          RenderText {#text} at (639,292) size 50x482
+            text run at (639,292) width 190: "\x{3093}\x{3067}\x{3057}\x{307E}\x{3046}\x{3002}\x{3057}\x{305F}\x{304C}\x{3063}\x{3066}\x{3069}\x{3053}\x{306B}\x{8A69}\x{304C}\x{3042}\x{308B}\x{304B}"
+            text run at (670,0) width 40: "\x{81EA}\x{8EAB}\x{306B}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (670,40) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3052}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{89E3}"
+          RenderText {#text} at (670,50) size 19x50
+            text run at (670,50) width 50: "\x{3057}\x{304B}\x{306D}\x{308B}\x{3002}"
+          RenderBR {BR} at (670,100) size 19x0
+          RenderText {#text} at (689,0) size 50x486
+            text run at (689,0) width 486: "\x{3000}\x{3053}\x{308C}\x{304C}\x{308F}\x{304B}\x{308B}\x{305F}\x{3081}\x{306B}\x{306F}\x{3001}\x{308F}\x{304B}\x{308B}\x{3060}\x{3051}\x{306E}\x{4F59}\x{88D5}\x{306E}\x{3042}\x{308B}\x{7B2C}\x{4E09}\x{8005}\x{306E}\x{5730}\x{4F4D}\x{306B}\x{7ACB}\x{305F}\x{306D}\x{3070}\x{306A}\x{3089}\x{306C}\x{3002}\x{4E09}\x{8005}\x{306E}\x{5730}\x{4F4D}\x{306B}\x{7ACB}\x{3066}\x{3070}"
+            text run at (720,0) width 50: "\x{3053}\x{305D}\x{829D}\x{5C45}\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (720,50) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{307F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{89B3}"
+          RenderText {#text} at (720,60) size 50x484
+            text run at (720,60) width 424: "\x{3066}\x{9762}\x{767D}\x{3044}\x{3002}\x{5C0F}\x{8AAC}\x{3082}\x{898B}\x{3066}\x{9762}\x{767D}\x{3044}\x{3002}\x{829D}\x{5C45}\x{3092}\x{898B}\x{3066}\x{9762}\x{767D}\x{3044}\x{4EBA}\x{3082}\x{3001}\x{5C0F}\x{8AAC}\x{3092}\x{8AAD}\x{3093}\x{3067}\x{9762}\x{767D}\x{3044}\x{4EBA}\x{3082}\x{3001}\x{81EA}\x{5DF1}\x{306E}\x{5229}\x{5BB3}"
+            text run at (751,0) width 10: "\x{306F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (751,10) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305F}\x{306A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{68DA}"
+          RenderText {#text} at (751,22) size 19x260
+            text run at (751,22) width 260: "\x{3078}\x{4E0A}\x{3052}\x{3066}\x{3044}\x{308B}\x{3002}\x{898B}\x{305F}\x{308A}\x{8AAD}\x{3093}\x{3060}\x{308A}\x{3059}\x{308B}\x{9593}\x{3060}\x{3051}\x{306F}\x{8A69}\x{4EBA}\x{3067}\x{3042}\x{308B}\x{3002}"
+          RenderBR {BR} at (751,282) size 19x0
+          RenderText {#text} at (782,0) size 19x194
+            text run at (782,0) width 194: "\x{3000}\x{305D}\x{308C}\x{3059}\x{3089}\x{3001}\x{666E}\x{901A}\x{306E}\x{829D}\x{5C45}\x{3084}\x{5C0F}\x{8AAC}\x{3067}\x{306F}\x{4EBA}\x{60C5}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (782,194) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{307E}\x{306C}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{514D}"
+          RenderText {#text} at (782,206) size 50x486
+            text run at (782,206) width 280: "\x{304B}\x{308C}\x{306C}\x{3002}\x{82E6}\x{3057}\x{3093}\x{3060}\x{308A}\x{3001}\x{6012}\x{3063}\x{305F}\x{308A}\x{3001}\x{9A12}\x{3044}\x{3060}\x{308A}\x{3001}\x{6CE3}\x{3044}\x{305F}\x{308A}\x{3059}\x{308B}\x{3002}\x{898B}"
+            text run at (813,0) width 388: "\x{308B}\x{3082}\x{306E}\x{3082}\x{3044}\x{3064}\x{304B}\x{305D}\x{306E}\x{4E2D}\x{306B}\x{540C}\x{5316}\x{3057}\x{3066}\x{82E6}\x{3057}\x{3093}\x{3060}\x{308A}\x{3001}\x{6012}\x{3063}\x{305F}\x{308A}\x{3001}\x{9A12}\x{3044}\x{3060}\x{308A}\x{3001}\x{6CE3}\x{3044}\x{305F}\x{308A}\x{3059}\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (813,388) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3068}\x{308A}\x{3048}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{53D6}\x{67C4}"
+          RenderText {#text} at (813,408) size 19x40
+            text run at (813,408) width 40: "\x{306F}\x{5229}\x{617E}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (813,448) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{307E}\x{3058}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{4EA4}"
+          RenderText {#text} at (813,460) size 50x480
+            text run at (813,460) width 20: "\x{3089}\x{306C}"
+            text run at (844,0) width 50: "\x{3068}\x{4E91}\x{3046}\x{70B9}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (844,50) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305D}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5B58}"
+          RenderText {#text} at (844,62) size 19x198
+            text run at (844,62) width 198: "\x{3059}\x{308B}\x{304B}\x{3082}\x{77E5}\x{308C}\x{306C}\x{304C}\x{3001}\x{4EA4}\x{3089}\x{306C}\x{3060}\x{3051}\x{306B}\x{305D}\x{306E}\x{4ED6}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (844,260) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{3058}\x{3087}\x{3046}\x{3057}\x{3087}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{60C5}\x{7DD2}"
+          RenderText {#text} at (844,290) size 19x190
+            text run at (844,290) width 190: "\x{306F}\x{5E38}\x{3088}\x{308A}\x{306F}\x{4F59}\x{8A08}\x{306B}\x{6D3B}\x{52D5}\x{3059}\x{308B}\x{3060}\x{308D}\x{3046}\x{3002}\x{305D}\x{308C}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (875,0) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3044}\x{3084}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5ACC}"
+          RenderText {#text} at (875,12) size 19x20
+            text run at (875,12) width 20: "\x{3060}\x{3002}"
+          RenderBR {BR} at (875,32) size 19x0
+          RenderText {#text} at (906,0) size 19x432
+            text run at (906,0) width 432: "\x{3000}\x{82E6}\x{3057}\x{3093}\x{3060}\x{308A}\x{3001}\x{6012}\x{3063}\x{305F}\x{308A}\x{3001}\x{9A12}\x{3044}\x{3060}\x{308A}\x{3001}\x{6CE3}\x{3044}\x{305F}\x{308A}\x{306F}\x{4EBA}\x{306E}\x{4E16}\x{306B}\x{3064}\x{304D}\x{3082}\x{306E}\x{3060}\x{3002}\x{4F59}\x{3082}\x{4E09}\x{5341}\x{5E74}\x{306E}\x{9593}\x{305D}\x{308C}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (906,432) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3057}\x{3068}\x{304A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{4ED5}\x{901A}"
+          RenderText {#text} at (906,452) size 19x30
+            text run at (906,452) width 30: "\x{3057}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (937,0) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3042}\x{304D}\x{3042}\x{304D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{98FD}\x{3005}"
+          RenderText {#text} at (937,24) size 19x30
+            text run at (937,24) width 30: "\x{3057}\x{305F}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (937,54) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{3042}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{98FD}"
+          RenderText {#text} at (937,64) size 50x488
+            text run at (937,64) width 424: "\x{304D}\x{98FD}\x{304D}\x{3057}\x{305F}\x{4E0A}\x{306B}\x{829D}\x{5C45}\x{3084}\x{5C0F}\x{8AAC}\x{3067}\x{540C}\x{3058}\x{523A}\x{6FC0}\x{3092}\x{7E70}\x{308A}\x{8FD4}\x{3057}\x{3066}\x{306F}\x{5927}\x{5909}\x{3060}\x{3002}\x{4F59}\x{304C}\x{6B32}\x{3059}\x{308B}\x{8A69}\x{306F}\x{305D}\x{3093}\x{306A}\x{4E16}\x{9593}\x{7684}\x{306E}"
+            text run at (968,0) width 30: "\x{4EBA}\x{60C5}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (968,30) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,4) size 12x12
+                  text run at (0,4) width 12: "\x{3053}\x{3076}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{9F13}\x{821E}"
+          RenderText {#text} at (968,50) size 19x264
+            text run at (968,50) width 264: "\x{3059}\x{308B}\x{3088}\x{3046}\x{306A}\x{3082}\x{306E}\x{3067}\x{306F}\x{306A}\x{3044}\x{3002}\x{4FD7}\x{5FF5}\x{3092}\x{653E}\x{68C4}\x{3057}\x{3066}\x{3001}\x{3057}\x{3070}\x{3089}\x{304F}\x{3067}\x{3082}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (968,314) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3058}\x{3093}\x{304B}\x{3044}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5875}\x{754C}"
+          RenderText {#text} at (968,338) size 69x480
+            text run at (968,338) width 140: "\x{3092}\x{96E2}\x{308C}\x{305F}\x{5FC3}\x{6301}\x{3061}\x{306B}\x{306A}\x{308C}\x{308B}\x{8A69}\x{3067}\x{3042}"
+            text run at (987,0) width 480: "\x{308B}\x{3002}\x{3044}\x{304F}\x{3089}\x{5091}\x{4F5C}\x{3067}\x{3082}\x{4EBA}\x{60C5}\x{3092}\x{96E2}\x{308C}\x{305F}\x{829D}\x{5C45}\x{306F}\x{306A}\x{3044}\x{3001}\x{7406}\x{975E}\x{3092}\x{7D76}\x{3057}\x{305F}\x{5C0F}\x{8AAC}\x{306F}\x{5C11}\x{304B}\x{308D}\x{3046}\x{3002}\x{3069}\x{3053}\x{307E}\x{3067}\x{3082}\x{4E16}\x{9593}\x{3092}\x{51FA}\x{308B}\x{4E8B}\x{304C}\x{51FA}"
+            text run at (1018,0) width 402: "\x{6765}\x{306C}\x{306E}\x{304C}\x{5F7C}\x{3089}\x{306E}\x{7279}\x{8272}\x{3067}\x{3042}\x{308B}\x{3002}\x{3053}\x{3068}\x{306B}\x{897F}\x{6D0B}\x{306E}\x{8A69}\x{306B}\x{306A}\x{308B}\x{3068}\x{3001}\x{4EBA}\x{4E8B}\x{304C}\x{6839}\x{672C}\x{306B}\x{306A}\x{308B}\x{304B}\x{3089}\x{3044}\x{308F}\x{3086}\x{308B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1018,402) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3057}\x{3044}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{8A69}\x{6B4C}"
+          RenderText {#text} at (1018,422) size 50x486
+            text run at (1018,422) width 64: "\x{306E}\x{7D14}\x{7C8B}\x{306A}\x{308B}\x{3082}"
+            text run at (1049,0) width 48: "\x{306E}\x{3082}\x{3053}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (1049,48) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{304D}\x{3087}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{5883}"
+          RenderText {#text} at (1049,66) size 19x10
+            text run at (1049,66) width 10: "\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1049,76) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3052}\x{3060}\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{89E3}\x{8131}"
+          RenderText {#text} at (1049,96) size 19x360
+            text run at (1049,96) width 360: "\x{3059}\x{308B}\x{4E8B}\x{3092}\x{77E5}\x{3089}\x{306C}\x{3002}\x{3069}\x{3053}\x{307E}\x{3067}\x{3082}\x{540C}\x{60C5}\x{3060}\x{3068}\x{304B}\x{3001}\x{611B}\x{3060}\x{3068}\x{304B}\x{3001}\x{6B63}\x{7FA9}\x{3060}\x{3068}\x{304B}\x{3001}\x{81EA}\x{7531}\x{3060}\x{3068}\x{304B}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1049,456) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3046}\x{304D}\x{3088}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{6D6E}\x{4E16}"
+          RenderText {#text} at (1080,0) size 19x14
+            text run at (1080,0) width 14: "\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1080,14) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{304B}\x{3093}\x{3053}\x{3046}\x{3070}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,0) size 19x30
+                    text run at (0,0) width 30: "\x{52E7}\x{5DE5}\x{5834}"
+          RenderText {#text} at (1080,44) size 19x104
+            text run at (1080,44) width 104: "\x{306B}\x{3042}\x{308B}\x{3082}\x{306E}\x{3060}\x{3051}\x{3067}\x{7528}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1080,148) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3079}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{5F01}"
+          RenderText {#text} at (1080,160) size 19x204
+            text run at (1080,160) width 204: "\x{3058}\x{3066}\x{3044}\x{308B}\x{3002}\x{3044}\x{304F}\x{3089}\x{8A69}\x{7684}\x{306B}\x{306A}\x{3063}\x{3066}\x{3082}\x{5730}\x{9762}\x{306E}\x{4E0A}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x10
+            RenderRubyRun (anonymous) at (1080,364) size 19x10
+              RenderRubyText {RT} at (-12,0) size 12x10
+                RenderText {#text} at (0,2) size 12x6
+                  text run at (0,2) width 6: "\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x10
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,0) size 19x10
+                    text run at (0,0) width 10: "\x{99B3}"
+          RenderText {#text} at (1080,374) size 19x70
+            text run at (1080,374) width 70: "\x{3051}\x{3066}\x{3042}\x{308B}\x{3044}\x{3066}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1080,444) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{305C}\x{306B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{92AD}"
+          RenderText {#text} at (1080,456) size 50x480
+            text run at (1080,456) width 24: "\x{306E}\x{52D8}"
+            text run at (1111,0) width 160: "\x{5B9A}\x{3092}\x{5FD8}\x{308C}\x{308B}\x{3072}\x{307E}\x{304C}\x{306A}\x{3044}\x{3002}\x{30B7}\x{30A7}\x{30EC}\x{30FC}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1111,160) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3072}\x{3070}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{96F2}\x{96C0}"
+          RenderText {#text} at (1111,180) size 19x164
+            text run at (1111,180) width 164: "\x{3092}\x{805E}\x{3044}\x{3066}\x{5606}\x{606F}\x{3057}\x{305F}\x{306E}\x{3082}\x{7121}\x{7406}\x{306F}\x{306A}\x{3044}\x{3002}"
+          RenderBR {BR} at (1111,344) size 19x0
+          RenderText {#text} at (1142,0) size 19x104
+            text run at (1142,0) width 104: "\x{3000}\x{3046}\x{308C}\x{3057}\x{3044}\x{4E8B}\x{306B}\x{6771}\x{6D0B}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1142,104) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3057}\x{3044}\x{304B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{8A69}\x{6B4C}"
+          RenderText {#text} at (1142,124) size 19x40
+            text run at (1142,124) width 40: "\x{306F}\x{305D}\x{3053}\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1142,164) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{3052}\x{3060}\x{3064}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{89E3}\x{8131}"
+          RenderText {#text} at (1142,184) size 19x74
+            text run at (1142,184) width 74: "\x{3057}\x{305F}\x{306E}\x{304C}\x{3042}\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1142,258) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{304D}\x{304F}\x{3092}\x{3068}\x{308B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{63A1}\x{83CA}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x39
+            RenderRubyRun (anonymous) at (1142,288) size 19x39
+              RenderRubyText {RT} at (-12,0) size 12x39
+                RenderText {#text} at (0,0) size 12x39
+                  text run at (0,0) width 39: "\x{3068}\x{3046}\x{308A}\x{306E}\x{3082}\x{3068}"
+              RenderRubyBase (anonymous) at (0,0) size 19x39
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,4) size 19x30
+                    text run at (0,4) width 30: "\x{6771}\x{7C6C}\x{4E0B}"
+          RenderText {#text} at (1142,327) size 19x10
+            text run at (1142,327) width 10: "\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x42
+            RenderRubyRun (anonymous) at (1142,337) size 19x42
+              RenderRubyText {RT} at (-12,0) size 12x42
+                RenderText {#text} at (0,0) size 12x42
+                  text run at (0,0) width 42: "\x{3086}\x{3046}\x{305C}\x{3093}\x{3068}\x{3057}\x{3066}"
+              RenderRubyBase (anonymous) at (0,0) size 19x42
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,11) size 19x20
+                    text run at (0,11) width 20: "\x{60A0}\x{7136}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x42
+            RenderRubyRun (anonymous) at (1142,379) size 19x42
+              RenderRubyText {RT} at (-12,0) size 12x42
+                RenderText {#text} at (0,0) size 12x42
+                  text run at (0,0) width 42: "\x{306A}\x{3093}\x{3056}\x{3093}\x{3092}\x{307F}\x{308B}"
+              RenderRubyBase (anonymous) at (0,0) size 19x42
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,6) size 19x30
+                    text run at (0,6) width 30: "\x{898B}\x{5357}\x{5C71}"
+          RenderText {#text} at (1142,421) size 50x481
+            text run at (1142,421) width 60: "\x{3002}\x{305F}\x{3060}\x{305D}\x{308C}\x{304E}"
+            text run at (1173,0) width 24: "\x{308A}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1173,24) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3046}\x{3061}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{88CF}"
+          RenderText {#text} at (1173,36) size 19x342
+            text run at (1173,36) width 342: "\x{306B}\x{6691}\x{82E6}\x{3057}\x{3044}\x{4E16}\x{306E}\x{4E2D}\x{3092}\x{307E}\x{308B}\x{3067}\x{5FD8}\x{308C}\x{305F}\x{5149}\x{666F}\x{304C}\x{51FA}\x{3066}\x{304F}\x{308B}\x{3002}\x{57A3}\x{306E}\x{5411}\x{3046}\x{306B}\x{96A3}\x{308A}\x{306E}\x{5A18}\x{304C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x15
+            RenderRubyRun (anonymous) at (1173,378) size 19x15
+              RenderRubyText {RT} at (-12,0) size 12x15
+                RenderText {#text} at (0,0) size 12x15
+                  text run at (0,0) width 15: "\x{306E}\x{305E}"
+              RenderRubyBase (anonymous) at (0,0) size 19x15
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,2) size 19x10
+                    text run at (0,2) width 10: "\x{8997}"
+          RenderText {#text} at (1173,393) size 50x483
+            text run at (1173,393) width 90: "\x{3044}\x{3066}\x{308B}\x{8A33}\x{3067}\x{3082}\x{306A}\x{3051}\x{308C}"
+            text run at (1204,0) width 20: "\x{3070}\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1204,20) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{306A}\x{3093}\x{3056}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{5357}\x{5C71}"
+          RenderText {#text} at (1204,44) size 19x200
+            text run at (1204,44) width 200: "\x{306B}\x{89AA}\x{53CB}\x{304C}\x{5949}\x{8077}\x{3057}\x{3066}\x{3044}\x{308B}\x{6B21}\x{7B2C}\x{3067}\x{3082}\x{306A}\x{3044}\x{3002}\x{8D85}\x{7136}\x{3068}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x48
+            RenderRubyRun (anonymous) at (1204,244) size 19x48
+              RenderRubyText {RT} at (-12,0) size 12x48
+                RenderText {#text} at (0,0) size 12x48
+                  text run at (0,0) width 48: "\x{3057}\x{3085}\x{3063}\x{305B}\x{3051}\x{3093}\x{3066}\x{304D}"
+              RenderRubyBase (anonymous) at (0,0) size 19x48
+                RenderInline {RB} at (0,0) size 19x40
+                  RenderText {#text} at (0,4) size 19x40
+                    text run at (0,4) width 40: "\x{51FA}\x{4E16}\x{9593}\x{7684}"
+          RenderText {#text} at (1204,292) size 50x486
+            text run at (1204,292) width 194: "\x{306B}\x{5229}\x{5BB3}\x{640D}\x{5F97}\x{306E}\x{6C57}\x{3092}\x{6D41}\x{3057}\x{53BB}\x{3063}\x{305F}\x{5FC3}\x{6301}\x{3061}\x{306B}\x{306A}\x{308C}"
+            text run at (1235,0) width 20: "\x{308B}\x{3002}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x18
+            RenderRubyRun (anonymous) at (1235,20) size 19x18
+              RenderRubyText {RT} at (-12,0) size 12x18
+                RenderText {#text} at (0,0) size 12x18
+                  text run at (0,0) width 18: "\x{3072}\x{3068}\x{308A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x18
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,4) size 19x10
+                    text run at (0,4) width 10: "\x{72EC}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x63
+            RenderRubyRun (anonymous) at (1235,38) size 19x63
+              RenderRubyText {RT} at (-12,0) size 12x63
+                RenderText {#text} at (0,0) size 12x63
+                  text run at (0,0) width 63: "\x{3086}\x{3046}\x{3053}\x{3046}\x{306E}\x{3046}\x{3061}\x{306B}\x{3056}\x{3057}"
+              RenderRubyBase (anonymous) at (0,0) size 19x63
+                RenderInline {RB} at (0,0) size 19x40
+                  RenderText {#text} at (0,11) size 19x40
+                    text run at (0,11) width 40: "\x{5750}\x{5E7D}\x{7BC1}\x{88CF}"
+          RenderText {#text} at (1235,101) size 19x10
+            text run at (1235,101) width 10: "\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x42
+            RenderRubyRun (anonymous) at (1235,111) size 19x42
+              RenderRubyText {RT} at (-12,0) size 12x42
+                RenderText {#text} at (0,0) size 12x42
+                  text run at (0,0) width 42: "\x{304D}\x{3093}\x{3092}\x{3060}\x{3093}\x{3058}\x{3066}"
+              RenderRubyBase (anonymous) at (0,0) size 19x42
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,11) size 19x20
+                    text run at (0,11) width 20: "\x{5F3E}\x{7434}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x54
+            RenderRubyRun (anonymous) at (1235,153) size 19x54
+              RenderRubyText {RT} at (-12,0) size 12x54
+                RenderText {#text} at (0,0) size 12x54
+                  text run at (0,0) width 54: "\x{307E}\x{305F}\x{3061}\x{3087}\x{3046}\x{3057}\x{3087}\x{3046}\x{3059}"
+              RenderRubyBase (anonymous) at (0,0) size 19x54
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,12) size 19x30
+                    text run at (0,12) width 30: "\x{5FA9}\x{9577}\x{562F}"
+          RenderText {#text} at (1235,207) size 19x10
+            text run at (1235,207) width 10: "\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x24
+            RenderRubyRun (anonymous) at (1235,217) size 19x24
+              RenderRubyText {RT} at (-12,0) size 12x24
+                RenderText {#text} at (0,0) size 12x24
+                  text run at (0,0) width 24: "\x{3057}\x{3093}\x{308A}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x24
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,2) size 19x20
+                    text run at (0,2) width 20: "\x{6DF1}\x{6797}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1235,241) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{3072}\x{3068}\x{3057}\x{3089}\x{305A}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,0) size 19x30
+                    text run at (0,0) width 30: "\x{4EBA}\x{4E0D}\x{77E5}"
+          RenderText {#text} at (1235,271) size 19x10
+            text run at (1235,271) width 10: "\x{3001}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x48
+            RenderRubyRun (anonymous) at (1235,281) size 19x48
+              RenderRubyText {RT} at (-12,0) size 12x48
+                RenderText {#text} at (0,0) size 12x48
+                  text run at (0,0) width 48: "\x{3081}\x{3044}\x{3052}\x{3064}\x{304D}\x{305F}\x{308A}\x{3066}"
+              RenderRubyBase (anonymous) at (0,0) size 19x48
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,9) size 19x30
+                    text run at (0,9) width 30: "\x{660E}\x{6708}\x{6765}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1235,329) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{3042}\x{3044}\x{3066}\x{3089}\x{3059}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{76F8}\x{7167}"
+          RenderText {#text} at (1235,359) size 19x104
+            text run at (1235,359) width 104: "\x{3002}\x{305F}\x{3060}\x{4E8C}\x{5341}\x{5B57}\x{306E}\x{3046}\x{3061}\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x12
+            RenderRubyRun (anonymous) at (1235,463) size 19x12
+              RenderRubyText {RT} at (-12,0) size 12x12
+                RenderText {#text} at (0,0) size 12x12
+                  text run at (0,0) width 12: "\x{3086}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x12
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,1) size 19x10
+                    text run at (0,1) width 10: "\x{512A}"
+          RenderText {#text} at (1235,475) size 19x10
+            text run at (1235,475) width 10: "\x{306B}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x36
+            RenderRubyRun (anonymous) at (1266,0) size 19x36
+              RenderRubyText {RT} at (-12,0) size 12x36
+                RenderText {#text} at (0,0) size 12x36
+                  text run at (0,0) width 36: "\x{3079}\x{3064}\x{3051}\x{3093}\x{3053}\x{3093}"
+              RenderRubyBase (anonymous) at (0,0) size 19x36
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,3) size 19x30
+                    text run at (0,3) width 30: "\x{5225}\x{4E7E}\x{5764}"
+          RenderText {#text} at (1266,36) size 19x10
+            text run at (1266,36) width 10: "\x{3092}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1266,46) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{3053}\x{3093}\x{308A}\x{3085}\x{3046}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,5) size 19x20
+                    text run at (0,5) width 20: "\x{5EFA}\x{7ACB}"
+          RenderText {#text} at (1266,76) size 19x108
+            text run at (1266,76) width 108: "\x{3057}\x{3066}\x{3044}\x{308B}\x{3002}\x{3053}\x{306E}\x{4E7E}\x{5764}\x{306E}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x20
+            RenderRubyRun (anonymous) at (1266,184) size 19x20
+              RenderRubyText {RT} at (-12,0) size 12x20
+                RenderText {#text} at (0,1) size 12x18
+                  text run at (0,1) width 18: "\x{304F}\x{3069}\x{304F}"
+              RenderRubyBase (anonymous) at (0,0) size 19x20
+                RenderInline {RB} at (0,0) size 19x20
+                  RenderText {#text} at (0,0) size 19x20
+                    text run at (0,0) width 20: "\x{529F}\x{5FB3}"
+          RenderText {#text} at (1266,204) size 19x20
+            text run at (1266,204) width 20: "\x{306F}\x{300C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x30
+            RenderRubyRun (anonymous) at (1266,224) size 19x30
+              RenderRubyText {RT} at (-12,0) size 12x30
+                RenderText {#text} at (0,0) size 12x30
+                  text run at (0,0) width 30: "\x{307B}\x{3068}\x{3068}\x{304E}\x{3059}"
+              RenderRubyBase (anonymous) at (0,0) size 19x30
+                RenderInline {RB} at (0,0) size 19x30
+                  RenderText {#text} at (0,0) size 19x30
+                    text run at (0,0) width 30: "\x{4E0D}\x{5982}\x{5E30}"
+          RenderText {#text} at (1266,254) size 19x30
+            text run at (1266,254) width 30: "\x{300D}\x{3084}\x{300C}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x42
+            RenderRubyRun (anonymous) at (1266,284) size 19x42
+              RenderRubyText {RT} at (-12,0) size 12x42
+                RenderText {#text} at (0,0) size 12x42
+                  text run at (0,0) width 42: "\x{3053}\x{3093}\x{3058}\x{304D}\x{3084}\x{3057}\x{3083}"
+              RenderRubyBase (anonymous) at (0,0) size 19x42
+                RenderInline {RB} at (0,0) size 19x40
+                  RenderText {#text} at (0,1) size 19x40
+                    text run at (0,1) width 40: "\x{91D1}\x{8272}\x{591C}\x{53C9}"
+          RenderText {#text} at (1266,326) size 50x480
+            text run at (1266,326) width 154: "\x{300D}\x{306E}\x{529F}\x{5FB3}\x{3067}\x{306F}\x{306A}\x{3044}\x{3002}\x{6C7D}\x{8239}\x{3001}\x{6C7D}\x{8ECA}\x{3001}"
+            text run at (1297,0) width 170: "\x{6A29}\x{5229}\x{3001}\x{7FA9}\x{52D9}\x{3001}\x{9053}\x{5FB3}\x{3001}\x{793C}\x{7FA9}\x{3067}\x{75B2}\x{308C}\x{679C}\x{3066}\x{305F}"
+          RenderRuby (inline) {RUBY} at (0,0) size 19x15
+            RenderRubyRun (anonymous) at (1297,170) size 19x15
+              RenderRubyText {RT} at (-12,0) size 12x15
+                RenderText {#text} at (0,0) size 12x15
+                  text run at (0,0) width 15: "\x{306E}\x{3061}"
+              RenderRubyBase (anonymous) at (0,0) size 19x15
+                RenderInline {RB} at (0,0) size 19x10
+                  RenderText {#text} at (0,2) size 19x10
+                    text run at (0,2) width 10: "\x{5F8C}"
+          RenderText {#text} at (1297,185) size 19x260
+            text run at (1297,185) width 260: "\x{306B}\x{3001}\x{3059}\x{3079}\x{3066}\x{3092}\x{5FD8}\x{5374}\x{3057}\x{3066}\x{3050}\x{3063}\x{3059}\x{308A}\x{5BDD}\x{8FBC}\x{3080}\x{3088}\x{3046}\x{306A}\x{529F}\x{5FB3}\x{3067}\x{3042}\x{308B}\x{3002}"
+          RenderBR {BR} at (1297,445) size 19x0

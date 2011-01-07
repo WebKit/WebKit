@@ -5467,6 +5467,14 @@ canvas/philip/tests/2d.path.isPointInPath.edge.html
 # https://bugs.webkit.org/show_bug.cgi?id=47481
 fast/viewport/viewport-45.html
 
+# viewport meta tag tests that differ from the Opera results
+fast/viewport/viewport-65.html
+fast/viewport/viewport-82.html
+fast/viewport/viewport-84.html
+fast/viewport/viewport-87.html
+fast/viewport/viewport-126.html
+fast/viewport/viewport-127.html
+
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html
 
