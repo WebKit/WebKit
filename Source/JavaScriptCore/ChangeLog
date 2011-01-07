@@ -1,3 +1,16 @@
+2011-01-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 26276 - Need a mechanism to determine stack extent on WINDOWS, SOLARIS, OPENBSD, SYMBIAN, HAIKU, WINCE platforms
+
+        Fix for win32.  The base of the stack is stored in the "deallocation stack" field of the
+        Thread Information Block - see: http://en.wikipedia.org/wiki/Win32_Thread_Information_Block
+        for more information!
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
 2011-01-07  Adam Roben  <aroben@apple.com>
 
         Update react-to-vsprops-changes.py after r74855
