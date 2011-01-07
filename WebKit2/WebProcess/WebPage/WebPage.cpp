@@ -412,6 +412,11 @@ void WebPage::stopLoading()
     m_mainFrame->coreFrame()->loader()->stopForUserCancel();
 }
 
+void WebPage::setDefersLoading(bool defersLoading)
+{
+    m_page->setDefersLoading(defersLoading);
+}
+
 void WebPage::reload(bool reloadFromOrigin)
 {
     m_mainFrame->coreFrame()->loader()->reload(reloadFromOrigin);

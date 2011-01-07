@@ -93,6 +93,11 @@ void WKBundlePageStopLoading(WKBundlePageRef pageRef)
     toImpl(pageRef)->stopLoading();
 }
 
+void WKBundlePageSetDefersLoading(WKBundlePageRef pageRef, bool defersLoading)
+{
+    toImpl(pageRef)->setDefersLoading(defersLoading);
+}
+
 WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
 {
     return toCopiedAPI(toImpl(pageRef)->renderTreeExternalRepresentation());

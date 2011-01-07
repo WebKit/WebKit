@@ -195,6 +195,7 @@ public:
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
 
     void stopLoading();
+    void setDefersLoading(bool deferLoading);
 
 #if USE(ACCELERATED_COMPOSITING)
     void changeAcceleratedCompositingMode(WebCore::GraphicsLayer*);
