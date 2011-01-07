@@ -1,3 +1,16 @@
+2011-01-07  Jan Erik Hanssen  <jhanssen@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Black text on black buttons using a dark theme
+        https://bugs.webkit.org/show_bug.cgi?id=35024
+
+        Implement RenderThemeQt::systemColor to apply the correct colors from the current Qt style.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::systemColor):
+        * platform/qt/RenderThemeQt.h:
+
 2011-01-05  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

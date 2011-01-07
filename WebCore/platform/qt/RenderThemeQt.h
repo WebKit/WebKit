@@ -73,6 +73,7 @@ public:
     virtual Color platformFocusRingColor() const;
 
     virtual void systemFont(int propId, FontDescription&) const;
+    virtual Color systemColor(int cssValueId) const;
 
     virtual int minimumMenuListSize(RenderStyle*) const;
 

@@ -32,6 +32,7 @@
 
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
+#include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClientQt.h"
 #include "Color.h"
@@ -383,6 +384,19 @@ Color RenderThemeQt::platformFocusRingColor() const
 void RenderThemeQt::systemFont(int, FontDescription&) const
 {
     // no-op
+}
+
+Color RenderThemeQt::systemColor(int cssValueId) const
+{
+    QPalette pal = QApplication::palette();
+    switch (cssValueId) {
+    case CSSValueButtontext:
+        return pal.brush(QPalette::Active, QPalette::ButtonText).color();
+    case CSSValueCaptiontext:
+        return pal.brush(QPalette::Active, QPalette::Text).color();
+    default:
+        return RenderTheme::systemColor(cssValueId);
+    }
 }
 
 int RenderThemeQt::minimumMenuListSize(RenderStyle*) const
