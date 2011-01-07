@@ -2351,7 +2351,7 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
         return;
     }
     // Validate input parameters.
-    unsigned long componentsPerPixel, bytesPerComponent;
+    unsigned int componentsPerPixel, bytesPerComponent;
     if (!m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
@@ -3900,7 +3900,7 @@ bool WebGLRenderingContext::validateTexFuncData(long width, long height,
         ASSERT_NOT_REACHED();
     }
 
-    unsigned long componentsPerPixel, bytesPerComponent;
+    unsigned int componentsPerPixel, bytesPerComponent;
     if (!m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return false;

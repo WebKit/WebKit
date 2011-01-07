@@ -368,76 +368,76 @@ rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 
 }
 
 DELEGATE_TO_IMPL_R(makeContextCurrent, bool)
-DELEGATE_TO_IMPL_1R(sizeInBytes, int, int)
+DELEGATE_TO_IMPL_1R(sizeInBytes, GC3Denum, unsigned int)
 
 bool GraphicsContext3DInternal::isGLES2Compliant() const
 {
     return m_impl->isGLES2Compliant();
 }
 
-DELEGATE_TO_IMPL_1(activeTexture, unsigned long)
+DELEGATE_TO_IMPL_1(activeTexture, GC3Denum)
 DELEGATE_TO_IMPL_2(attachShader, Platform3DObject, Platform3DObject)
 
-void GraphicsContext3DInternal::bindAttribLocation(Platform3DObject program, unsigned long index, const String& name)
+void GraphicsContext3DInternal::bindAttribLocation(Platform3DObject program, GC3Duint index, const String& name)
 {
     m_impl->bindAttribLocation(program, index, name.utf8().data());
 }
 
-DELEGATE_TO_IMPL_2(bindBuffer, unsigned long, Platform3DObject)
-DELEGATE_TO_IMPL_2(bindFramebuffer, unsigned long, Platform3DObject)
-DELEGATE_TO_IMPL_2(bindRenderbuffer, unsigned long, Platform3DObject)
-DELEGATE_TO_IMPL_2(bindTexture, unsigned long, Platform3DObject)
-DELEGATE_TO_IMPL_4(blendColor, double, double, double, double)
-DELEGATE_TO_IMPL_1(blendEquation, unsigned long)
-DELEGATE_TO_IMPL_2(blendEquationSeparate, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_2(blendFunc, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_4(blendFuncSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
+DELEGATE_TO_IMPL_2(bindBuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_IMPL_2(bindFramebuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_IMPL_2(bindRenderbuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_IMPL_2(bindTexture, GC3Denum, Platform3DObject)
+DELEGATE_TO_IMPL_4(blendColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
+DELEGATE_TO_IMPL_1(blendEquation, GC3Denum)
+DELEGATE_TO_IMPL_2(blendEquationSeparate, GC3Denum, GC3Denum)
+DELEGATE_TO_IMPL_2(blendFunc, GC3Denum, GC3Denum)
+DELEGATE_TO_IMPL_4(blendFuncSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
 
-void GraphicsContext3DInternal::bufferData(unsigned long target, int size, unsigned long usage)
+void GraphicsContext3DInternal::bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage)
 {
     m_impl->bufferData(target, size, 0, usage);
 }
 
-void GraphicsContext3DInternal::bufferData(unsigned long target, int size, const void* data, unsigned long usage)
+void GraphicsContext3DInternal::bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage)
 {
     m_impl->bufferData(target, size, data, usage);
 }
 
-void GraphicsContext3DInternal::bufferSubData(unsigned long target, long offset, int size, const void* data)
+void GraphicsContext3DInternal::bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data)
 {
     m_impl->bufferSubData(target, offset, size, data);
 }
 
-DELEGATE_TO_IMPL_1R(checkFramebufferStatus, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_1(clear, unsigned long)
-DELEGATE_TO_IMPL_4(clearColor, double, double, double, double)
-DELEGATE_TO_IMPL_1(clearDepth, double)
-DELEGATE_TO_IMPL_1(clearStencil, long)
-DELEGATE_TO_IMPL_4(colorMask, bool, bool, bool, bool)
+DELEGATE_TO_IMPL_1R(checkFramebufferStatus, GC3Denum, GC3Denum)
+DELEGATE_TO_IMPL_1(clear, GC3Dbitfield)
+DELEGATE_TO_IMPL_4(clearColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
+DELEGATE_TO_IMPL_1(clearDepth, GC3Dclampf)
+DELEGATE_TO_IMPL_1(clearStencil, GC3Dint)
+DELEGATE_TO_IMPL_4(colorMask, GC3Dboolean, GC3Dboolean, GC3Dboolean, GC3Dboolean)
 DELEGATE_TO_IMPL_1(compileShader, Platform3DObject)
 
-DELEGATE_TO_IMPL_8(copyTexImage2D, unsigned long, long, unsigned long, long, long, unsigned long, unsigned long, long)
-DELEGATE_TO_IMPL_8(copyTexSubImage2D, unsigned long, long, long, long, long, long, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_1(cullFace, unsigned long)
-DELEGATE_TO_IMPL_1(depthFunc, unsigned long)
-DELEGATE_TO_IMPL_1(depthMask, bool)
-DELEGATE_TO_IMPL_2(depthRange, double, double)
+DELEGATE_TO_IMPL_8(copyTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint)
+DELEGATE_TO_IMPL_8(copyTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
+DELEGATE_TO_IMPL_1(cullFace, GC3Denum)
+DELEGATE_TO_IMPL_1(depthFunc, GC3Denum)
+DELEGATE_TO_IMPL_1(depthMask, GC3Dboolean)
+DELEGATE_TO_IMPL_2(depthRange, GC3Dclampf, GC3Dclampf)
 DELEGATE_TO_IMPL_2(detachShader, Platform3DObject, Platform3DObject)
-DELEGATE_TO_IMPL_1(disable, unsigned long)
-DELEGATE_TO_IMPL_1(disableVertexAttribArray, unsigned long)
-DELEGATE_TO_IMPL_3(drawArrays, unsigned long, long, long)
-DELEGATE_TO_IMPL_4(drawElements, unsigned long, unsigned long, unsigned long, long)
+DELEGATE_TO_IMPL_1(disable, GC3Denum)
+DELEGATE_TO_IMPL_1(disableVertexAttribArray, GC3Duint)
+DELEGATE_TO_IMPL_3(drawArrays, GC3Denum, GC3Dint, GC3Dsizei)
+DELEGATE_TO_IMPL_4(drawElements, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizeiptr)
 
-DELEGATE_TO_IMPL_1(enable, unsigned long)
-DELEGATE_TO_IMPL_1(enableVertexAttribArray, unsigned long)
+DELEGATE_TO_IMPL_1(enable, GC3Denum)
+DELEGATE_TO_IMPL_1(enableVertexAttribArray, GC3Duint)
 DELEGATE_TO_IMPL(finish)
 DELEGATE_TO_IMPL(flush)
-DELEGATE_TO_IMPL_4(framebufferRenderbuffer, unsigned long, unsigned long, unsigned long, Platform3DObject)
-DELEGATE_TO_IMPL_5(framebufferTexture2D, unsigned long, unsigned long, unsigned long, Platform3DObject, long)
-DELEGATE_TO_IMPL_1(frontFace, unsigned long)
-DELEGATE_TO_IMPL_1(generateMipmap, unsigned long)
+DELEGATE_TO_IMPL_4(framebufferRenderbuffer, GC3Denum, GC3Denum, GC3Denum, Platform3DObject)
+DELEGATE_TO_IMPL_5(framebufferTexture2D, GC3Denum, GC3Denum, GC3Denum, Platform3DObject, GC3Dint)
+DELEGATE_TO_IMPL_1(frontFace, GC3Denum)
+DELEGATE_TO_IMPL_1(generateMipmap, GC3Denum)
 
-bool GraphicsContext3DInternal::getActiveAttrib(Platform3DObject program, unsigned long index, ActiveInfo& info)
+bool GraphicsContext3DInternal::getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
     WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
     if (!m_impl->getActiveAttrib(program, index, webInfo))
@@ -448,7 +448,7 @@ bool GraphicsContext3DInternal::getActiveAttrib(Platform3DObject program, unsign
     return true;
 }
 
-bool GraphicsContext3DInternal::getActiveUniform(Platform3DObject program, unsigned long index, ActiveInfo& info)
+bool GraphicsContext3DInternal::getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo& info)
 {
     WebKit::WebGraphicsContext3D::ActiveInfo webInfo;
     if (!m_impl->getActiveUniform(program, index, webInfo))
@@ -459,16 +459,16 @@ bool GraphicsContext3DInternal::getActiveUniform(Platform3DObject program, unsig
     return true;
 }
 
-DELEGATE_TO_IMPL_4(getAttachedShaders, Platform3DObject, int, int*, unsigned int*)
+DELEGATE_TO_IMPL_4(getAttachedShaders, Platform3DObject, GC3Dsizei, GC3Dsizei*, Platform3DObject*)
 
-int GraphicsContext3DInternal::getAttribLocation(Platform3DObject program, const String& name)
+GC3Dint GraphicsContext3DInternal::getAttribLocation(Platform3DObject program, const String& name)
 {
     return m_impl->getAttribLocation(program, name.utf8().data());
 }
 
-DELEGATE_TO_IMPL_2(getBooleanv, unsigned long, unsigned char*)
+DELEGATE_TO_IMPL_2(getBooleanv, GC3Denum, GC3Dboolean*)
 
-DELEGATE_TO_IMPL_3(getBufferParameteriv, unsigned long, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getBufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
 
 GraphicsContext3D::Attributes GraphicsContext3DInternal::getContextAttributes()
 {
@@ -482,24 +482,24 @@ GraphicsContext3D::Attributes GraphicsContext3DInternal::getContextAttributes()
     return attributes;
 }
 
-DELEGATE_TO_IMPL_R(getError, unsigned long)
+DELEGATE_TO_IMPL_R(getError, GC3Denum)
 
-DELEGATE_TO_IMPL_2(getFloatv, unsigned long, float*)
+DELEGATE_TO_IMPL_2(getFloatv, GC3Denum, GC3Dfloat*)
 
-DELEGATE_TO_IMPL_4(getFramebufferAttachmentParameteriv, unsigned long, unsigned long, unsigned long, int*)
+DELEGATE_TO_IMPL_4(getFramebufferAttachmentParameteriv, GC3Denum, GC3Denum, GC3Denum, GC3Dint*)
 
-DELEGATE_TO_IMPL_2(getIntegerv, unsigned long, int*)
+DELEGATE_TO_IMPL_2(getIntegerv, GC3Denum, GC3Dint*)
 
-DELEGATE_TO_IMPL_3(getProgramiv, Platform3DObject, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getProgramiv, Platform3DObject, GC3Denum, GC3Dint*)
 
 String GraphicsContext3DInternal::getProgramInfoLog(Platform3DObject program)
 {
     return m_impl->getProgramInfoLog(program);
 }
 
-DELEGATE_TO_IMPL_3(getRenderbufferParameteriv, unsigned long, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getRenderbufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
 
-DELEGATE_TO_IMPL_3(getShaderiv, Platform3DObject, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getShaderiv, Platform3DObject, GC3Denum, GC3Dint*)
 
 String GraphicsContext3DInternal::getShaderInfoLog(Platform3DObject shader)
 {
@@ -511,139 +511,138 @@ String GraphicsContext3DInternal::getShaderSource(Platform3DObject shader)
     return m_impl->getShaderSource(shader);
 }
 
-String GraphicsContext3DInternal::getString(unsigned long name)
+String GraphicsContext3DInternal::getString(GC3Denum name)
 {
     return m_impl->getString(name);
 }
 
-DELEGATE_TO_IMPL_3(getTexParameterfv, unsigned long, unsigned long, float*)
-DELEGATE_TO_IMPL_3(getTexParameteriv, unsigned long, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getTexParameterfv, GC3Denum, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_IMPL_3(getTexParameteriv, GC3Denum, GC3Denum, GC3Dint*)
 
-DELEGATE_TO_IMPL_3(getUniformfv, Platform3DObject, long, float*)
-DELEGATE_TO_IMPL_3(getUniformiv, Platform3DObject, long, int*)
+DELEGATE_TO_IMPL_3(getUniformfv, Platform3DObject, GC3Dint, GC3Dfloat*)
+DELEGATE_TO_IMPL_3(getUniformiv, Platform3DObject, GC3Dint, GC3Dint*)
 
-long GraphicsContext3DInternal::getUniformLocation(Platform3DObject program, const String& name)
+GC3Dint GraphicsContext3DInternal::getUniformLocation(Platform3DObject program, const String& name)
 {
     return m_impl->getUniformLocation(program, name.utf8().data());
 }
 
-DELEGATE_TO_IMPL_3(getVertexAttribfv, unsigned long, unsigned long, float*)
-DELEGATE_TO_IMPL_3(getVertexAttribiv, unsigned long, unsigned long, int*)
+DELEGATE_TO_IMPL_3(getVertexAttribfv, GC3Duint, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_IMPL_3(getVertexAttribiv, GC3Duint, GC3Denum, GC3Dint*)
 
-DELEGATE_TO_IMPL_2R(getVertexAttribOffset, unsigned long, unsigned long, long)
+DELEGATE_TO_IMPL_2R(getVertexAttribOffset, GC3Duint, GC3Denum, GC3Dsizeiptr)
 
-DELEGATE_TO_IMPL_2(hint, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_1R(isBuffer, Platform3DObject, bool)
-DELEGATE_TO_IMPL_1R(isEnabled, unsigned long, bool)
-DELEGATE_TO_IMPL_1R(isFramebuffer, Platform3DObject, bool)
-DELEGATE_TO_IMPL_1R(isProgram, Platform3DObject, bool)
-DELEGATE_TO_IMPL_1R(isRenderbuffer, Platform3DObject, bool)
-DELEGATE_TO_IMPL_1R(isShader, Platform3DObject, bool)
-DELEGATE_TO_IMPL_1R(isTexture, Platform3DObject, bool)
-DELEGATE_TO_IMPL_1(lineWidth, double)
+DELEGATE_TO_IMPL_2(hint, GC3Denum, GC3Denum)
+DELEGATE_TO_IMPL_1R(isBuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_IMPL_1R(isEnabled, GC3Denum, GC3Dboolean)
+DELEGATE_TO_IMPL_1R(isFramebuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_IMPL_1R(isProgram, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_IMPL_1R(isRenderbuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_IMPL_1R(isShader, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_IMPL_1R(isTexture, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_IMPL_1(lineWidth, GC3Dfloat)
 DELEGATE_TO_IMPL_1(linkProgram, Platform3DObject)
-DELEGATE_TO_IMPL_2(pixelStorei, unsigned long, long)
-DELEGATE_TO_IMPL_2(polygonOffset, double, double)
-DELEGATE_TO_IMPL_7(readPixels, long, long, unsigned long, unsigned long, unsigned long, unsigned long, void*)
+DELEGATE_TO_IMPL_2(pixelStorei, GC3Denum, GC3Dint)
+DELEGATE_TO_IMPL_2(polygonOffset, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_IMPL_7(readPixels, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, void*)
 DELEGATE_TO_IMPL(releaseShaderCompiler)
-DELEGATE_TO_IMPL_4(renderbufferStorage, unsigned long, unsigned long, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_2(sampleCoverage, double, bool)
-DELEGATE_TO_IMPL_4(scissor, long, long, unsigned long, unsigned long)
+DELEGATE_TO_IMPL_4(renderbufferStorage, GC3Denum, GC3Denum, GC3Dsizei, GC3Dsizei)
+DELEGATE_TO_IMPL_2(sampleCoverage, GC3Dclampf, GC3Dboolean)
+DELEGATE_TO_IMPL_4(scissor, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 
 void GraphicsContext3DInternal::shaderSource(Platform3DObject shader, const String& string)
 {
     m_impl->shaderSource(shader, string.utf8().data());
 }
 
-DELEGATE_TO_IMPL_3(stencilFunc, unsigned long, long, unsigned long)
-DELEGATE_TO_IMPL_4(stencilFuncSeparate, unsigned long, unsigned long, long, unsigned long)
-DELEGATE_TO_IMPL_1(stencilMask, unsigned long)
-DELEGATE_TO_IMPL_2(stencilMaskSeparate, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_3(stencilOp, unsigned long, unsigned long, unsigned long)
-DELEGATE_TO_IMPL_4(stencilOpSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
+DELEGATE_TO_IMPL_3(stencilFunc, GC3Denum, GC3Dint, GC3Duint)
+DELEGATE_TO_IMPL_4(stencilFuncSeparate, GC3Denum, GC3Denum, GC3Dint, GC3Duint)
+DELEGATE_TO_IMPL_1(stencilMask, GC3Duint)
+DELEGATE_TO_IMPL_2(stencilMaskSeparate, GC3Denum, GC3Duint)
+DELEGATE_TO_IMPL_3(stencilOp, GC3Denum, GC3Denum, GC3Denum)
+DELEGATE_TO_IMPL_4(stencilOpSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
 
-int GraphicsContext3DInternal::texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels)
+bool GraphicsContext3DInternal::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
     m_impl->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
-    return 0;
+    return true;
 }
 
-DELEGATE_TO_IMPL_3(texParameterf, unsigned, unsigned, float)
-DELEGATE_TO_IMPL_3(texParameteri, unsigned, unsigned, int)
+DELEGATE_TO_IMPL_3(texParameterf, GC3Denum, GC3Denum, GC3Dfloat)
+DELEGATE_TO_IMPL_3(texParameteri, GC3Denum, GC3Denum, GC3Dint)
 
-int GraphicsContext3DInternal::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels)
+void GraphicsContext3DInternal::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels)
 {
     m_impl->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
-    return 0;
 }
 
-DELEGATE_TO_IMPL_2(uniform1f, long, float)
+DELEGATE_TO_IMPL_2(uniform1f, GC3Dint, GC3Dfloat)
 
-void GraphicsContext3DInternal::uniform1fv(long location, float* v, int size)
+void GraphicsContext3DInternal::uniform1fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
 {
     m_impl->uniform1fv(location, size, v);
 }
 
-DELEGATE_TO_IMPL_2(uniform1i, long, int)
+DELEGATE_TO_IMPL_2(uniform1i, GC3Dint, GC3Dint)
 
-void GraphicsContext3DInternal::uniform1iv(long location, int* v, int size)
+void GraphicsContext3DInternal::uniform1iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
 {
     m_impl->uniform1iv(location, size, v);
 }
 
-DELEGATE_TO_IMPL_3(uniform2f, long, float, float)
+DELEGATE_TO_IMPL_3(uniform2f, GC3Dint, GC3Dfloat, GC3Dfloat)
 
-void GraphicsContext3DInternal::uniform2fv(long location, float* v, int size)
+void GraphicsContext3DInternal::uniform2fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
 {
     m_impl->uniform2fv(location, size, v);
 }
 
-DELEGATE_TO_IMPL_3(uniform2i, long, int, int)
+DELEGATE_TO_IMPL_3(uniform2i, GC3Dint, GC3Dint, GC3Dint)
 
-void GraphicsContext3DInternal::uniform2iv(long location, int* v, int size)
+void GraphicsContext3DInternal::uniform2iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
 {
     m_impl->uniform2iv(location, size, v);
 }
 
-DELEGATE_TO_IMPL_4(uniform3f, long, float, float, float)
+DELEGATE_TO_IMPL_4(uniform3f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
 
-void GraphicsContext3DInternal::uniform3fv(long location, float* v, int size)
+void GraphicsContext3DInternal::uniform3fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
 {
     m_impl->uniform3fv(location, size, v);
 }
 
-DELEGATE_TO_IMPL_4(uniform3i, long, int, int, int)
+DELEGATE_TO_IMPL_4(uniform3i, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
 
-void GraphicsContext3DInternal::uniform3iv(long location, int* v, int size)
+void GraphicsContext3DInternal::uniform3iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
 {
     m_impl->uniform3iv(location, size, v);
 }
 
-DELEGATE_TO_IMPL_5(uniform4f, long, float, float, float, float)
+DELEGATE_TO_IMPL_5(uniform4f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
 
-void GraphicsContext3DInternal::uniform4fv(long location, float* v, int size)
+void GraphicsContext3DInternal::uniform4fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size)
 {
     m_impl->uniform4fv(location, size, v);
 }
 
-DELEGATE_TO_IMPL_5(uniform4i, long, int, int, int, int)
+DELEGATE_TO_IMPL_5(uniform4i, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
 
-void GraphicsContext3DInternal::uniform4iv(long location, int* v, int size)
+void GraphicsContext3DInternal::uniform4iv(GC3Dint location, GC3Dint* v, GC3Dsizei size)
 {
     m_impl->uniform4iv(location, size, v);
 }
 
-void GraphicsContext3DInternal::uniformMatrix2fv(long location, bool transpose, float* value, int size)
+void GraphicsContext3DInternal::uniformMatrix2fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
 {
     m_impl->uniformMatrix2fv(location, size, transpose, value);
 }
 
-void GraphicsContext3DInternal::uniformMatrix3fv(long location, bool transpose, float* value, int size)
+void GraphicsContext3DInternal::uniformMatrix3fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
 {
     m_impl->uniformMatrix3fv(location, size, transpose, value);
 }
 
-void GraphicsContext3DInternal::uniformMatrix4fv(long location, bool transpose, float* value, int size)
+void GraphicsContext3DInternal::uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size)
 {
     m_impl->uniformMatrix4fv(location, size, transpose, value);
 }
@@ -651,33 +650,33 @@ void GraphicsContext3DInternal::uniformMatrix4fv(long location, bool transpose, 
 DELEGATE_TO_IMPL_1(useProgram, Platform3DObject)
 DELEGATE_TO_IMPL_1(validateProgram, Platform3DObject)
 
-DELEGATE_TO_IMPL_2(vertexAttrib1f, unsigned long, float)
-DELEGATE_TO_IMPL_2(vertexAttrib1fv, unsigned long, float*)
-DELEGATE_TO_IMPL_3(vertexAttrib2f, unsigned long, float, float)
-DELEGATE_TO_IMPL_2(vertexAttrib2fv, unsigned long, float*)
-DELEGATE_TO_IMPL_4(vertexAttrib3f, unsigned long, float, float, float)
-DELEGATE_TO_IMPL_2(vertexAttrib3fv, unsigned long, float*)
-DELEGATE_TO_IMPL_5(vertexAttrib4f, unsigned long, float, float, float, float)
-DELEGATE_TO_IMPL_2(vertexAttrib4fv, unsigned long, float*)
-DELEGATE_TO_IMPL_6(vertexAttribPointer, unsigned long, int, int, bool, unsigned long, unsigned long)
+DELEGATE_TO_IMPL_2(vertexAttrib1f, GC3Duint, GC3Dfloat)
+DELEGATE_TO_IMPL_2(vertexAttrib1fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_IMPL_3(vertexAttrib2f, GC3Duint, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_IMPL_2(vertexAttrib2fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_IMPL_4(vertexAttrib3f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_IMPL_2(vertexAttrib3fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_IMPL_5(vertexAttrib4f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_IMPL_2(vertexAttrib4fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_IMPL_6(vertexAttribPointer, GC3Duint, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dsizeiptr)
 
-DELEGATE_TO_IMPL_4(viewport, long, long, unsigned long, unsigned long)
+DELEGATE_TO_IMPL_4(viewport, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 
-DELEGATE_TO_IMPL_R(createBuffer, unsigned)
-DELEGATE_TO_IMPL_R(createFramebuffer, unsigned)
-DELEGATE_TO_IMPL_R(createProgram, unsigned)
-DELEGATE_TO_IMPL_R(createRenderbuffer, unsigned)
-DELEGATE_TO_IMPL_1R(createShader, unsigned long, unsigned)
-DELEGATE_TO_IMPL_R(createTexture, unsigned)
+DELEGATE_TO_IMPL_R(createBuffer, Platform3DObject)
+DELEGATE_TO_IMPL_R(createFramebuffer, Platform3DObject)
+DELEGATE_TO_IMPL_R(createProgram, Platform3DObject)
+DELEGATE_TO_IMPL_R(createRenderbuffer, Platform3DObject)
+DELEGATE_TO_IMPL_1R(createShader, GC3Denum, Platform3DObject)
+DELEGATE_TO_IMPL_R(createTexture, Platform3DObject)
 
-DELEGATE_TO_IMPL_1(deleteBuffer, unsigned)
-DELEGATE_TO_IMPL_1(deleteFramebuffer, unsigned)
-DELEGATE_TO_IMPL_1(deleteProgram, unsigned)
-DELEGATE_TO_IMPL_1(deleteRenderbuffer, unsigned)
-DELEGATE_TO_IMPL_1(deleteShader, unsigned)
-DELEGATE_TO_IMPL_1(deleteTexture, unsigned)
+DELEGATE_TO_IMPL_1(deleteBuffer, Platform3DObject)
+DELEGATE_TO_IMPL_1(deleteFramebuffer, Platform3DObject)
+DELEGATE_TO_IMPL_1(deleteProgram, Platform3DObject)
+DELEGATE_TO_IMPL_1(deleteRenderbuffer, Platform3DObject)
+DELEGATE_TO_IMPL_1(deleteShader, Platform3DObject)
+DELEGATE_TO_IMPL_1(deleteTexture, Platform3DObject)
 
-DELEGATE_TO_IMPL_1(synthesizeGLError, unsigned long)
+DELEGATE_TO_IMPL_1(synthesizeGLError, GC3Denum)
 
 Extensions3D* GraphicsContext3DInternal::getExtensions()
 {
@@ -736,11 +735,11 @@ bool GraphicsContext3DInternal::ensureExtensionEnabled(const String& name)
     return m_enabledExtensions.contains(name);
 }
 
-DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, unsigned, int, int, unsigned, void*)
+DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, GC3Denum, GC3Dsizeiptr, GC3Dsizei, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
-DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, unsigned, int, int, int, int, int, unsigned, unsigned, unsigned, void*)
+DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
-DELEGATE_TO_IMPL_2(copyTextureToParentTextureCHROMIUM, unsigned, unsigned)
+DELEGATE_TO_IMPL_2(copyTextureToParentTextureCHROMIUM, Platform3DObject, Platform3DObject)
 
 //----------------------------------------------------------------------
 // GraphicsContext3D
@@ -845,6 +844,12 @@ void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8
     m_internal->name(a1, a2, a3, a4, a5, a6, a7, a8);      \
 }
 
+#define DELEGATE_TO_INTERNAL_9(name, t1, t2, t3, t4, t5, t6, t7, t8, t9) \
+void GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
+{ \
+    m_internal->name(a1, a2, a3, a4, a5, a6, a7, a8, a9);   \
+}
+
 #define DELEGATE_TO_INTERNAL_9R(name, t1, t2, t3, t4, t5, t6, t7, t8, t9, rt) \
 rt GraphicsContext3D::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 a7, t8 a8, t9 a9) \
 { \
@@ -895,170 +900,150 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 #endif
 
 DELEGATE_TO_INTERNAL(makeContextCurrent)
-DELEGATE_TO_INTERNAL_1R(sizeInBytes, int, int)
+DELEGATE_TO_INTERNAL_1R(sizeInBytes, GC3Denum, unsigned int)
 DELEGATE_TO_INTERNAL_2(reshape, int, int)
 DELEGATE_TO_INTERNAL_R(getInternalFramebufferSize, IntSize)
 
-DELEGATE_TO_INTERNAL_1(activeTexture, unsigned long)
+DELEGATE_TO_INTERNAL_1(activeTexture, GC3Denum)
 DELEGATE_TO_INTERNAL_2(attachShader, Platform3DObject, Platform3DObject)
-DELEGATE_TO_INTERNAL_3(bindAttribLocation, Platform3DObject, unsigned long, const String&)
+DELEGATE_TO_INTERNAL_3(bindAttribLocation, Platform3DObject, GC3Duint, const String&)
 
-DELEGATE_TO_INTERNAL_2(bindBuffer, unsigned long, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(bindFramebuffer, unsigned long, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(bindRenderbuffer, unsigned long, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(bindTexture, unsigned long, Platform3DObject)
-DELEGATE_TO_INTERNAL_4(blendColor, double, double, double, double)
-DELEGATE_TO_INTERNAL_1(blendEquation, unsigned long)
-DELEGATE_TO_INTERNAL_2(blendEquationSeparate, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_2(blendFunc, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_4(blendFuncSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
+DELEGATE_TO_INTERNAL_2(bindBuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_INTERNAL_2(bindFramebuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_INTERNAL_2(bindRenderbuffer, GC3Denum, Platform3DObject)
+DELEGATE_TO_INTERNAL_2(bindTexture, GC3Denum, Platform3DObject)
+DELEGATE_TO_INTERNAL_4(blendColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
+DELEGATE_TO_INTERNAL_1(blendEquation, GC3Denum)
+DELEGATE_TO_INTERNAL_2(blendEquationSeparate, GC3Denum, GC3Denum)
+DELEGATE_TO_INTERNAL_2(blendFunc, GC3Denum, GC3Denum)
+DELEGATE_TO_INTERNAL_4(blendFuncSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
 
-DELEGATE_TO_INTERNAL_3(bufferData, unsigned long, int, unsigned long)
-DELEGATE_TO_INTERNAL_4(bufferData, unsigned long, int, const void*, unsigned long)
-DELEGATE_TO_INTERNAL_4(bufferSubData, unsigned long, long, int, const void*)
+DELEGATE_TO_INTERNAL_3(bufferData, GC3Denum, GC3Dsizeiptr, GC3Denum)
+DELEGATE_TO_INTERNAL_4(bufferData, GC3Denum, GC3Dsizeiptr, const void*, GC3Denum)
+DELEGATE_TO_INTERNAL_4(bufferSubData, GC3Denum, GC3Dintptr, GC3Dsizeiptr, const void*)
 
-DELEGATE_TO_INTERNAL_1R(checkFramebufferStatus, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_1(clear, unsigned long)
-DELEGATE_TO_INTERNAL_4(clearColor, double, double, double, double)
-DELEGATE_TO_INTERNAL_1(clearDepth, double)
-DELEGATE_TO_INTERNAL_1(clearStencil, long)
-DELEGATE_TO_INTERNAL_4(colorMask, bool, bool, bool, bool)
+DELEGATE_TO_INTERNAL_1R(checkFramebufferStatus, GC3Denum, GC3Denum)
+DELEGATE_TO_INTERNAL_1(clear, GC3Dbitfield)
+DELEGATE_TO_INTERNAL_4(clearColor, GC3Dclampf, GC3Dclampf, GC3Dclampf, GC3Dclampf)
+DELEGATE_TO_INTERNAL_1(clearDepth, GC3Dclampf)
+DELEGATE_TO_INTERNAL_1(clearStencil, GC3Dint)
+DELEGATE_TO_INTERNAL_4(colorMask, GC3Dboolean, GC3Dboolean, GC3Dboolean, GC3Dboolean)
 DELEGATE_TO_INTERNAL_1(compileShader, Platform3DObject)
 
-DELEGATE_TO_INTERNAL_8(copyTexImage2D, unsigned long, long, unsigned long, long, long, unsigned long, unsigned long, long)
-DELEGATE_TO_INTERNAL_8(copyTexSubImage2D, unsigned long, long, long, long, long, long, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_1(cullFace, unsigned long)
-DELEGATE_TO_INTERNAL_1(depthFunc, unsigned long)
-DELEGATE_TO_INTERNAL_1(depthMask, bool)
-DELEGATE_TO_INTERNAL_2(depthRange, double, double)
+DELEGATE_TO_INTERNAL_8(copyTexImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Dint)
+DELEGATE_TO_INTERNAL_8(copyTexSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
+DELEGATE_TO_INTERNAL_1(cullFace, GC3Denum)
+DELEGATE_TO_INTERNAL_1(depthFunc, GC3Denum)
+DELEGATE_TO_INTERNAL_1(depthMask, GC3Dboolean)
+DELEGATE_TO_INTERNAL_2(depthRange, GC3Dclampf, GC3Dclampf)
 DELEGATE_TO_INTERNAL_2(detachShader, Platform3DObject, Platform3DObject)
-DELEGATE_TO_INTERNAL_1(disable, unsigned long)
-DELEGATE_TO_INTERNAL_1(disableVertexAttribArray, unsigned long)
-DELEGATE_TO_INTERNAL_3(drawArrays, unsigned long, long, long)
-DELEGATE_TO_INTERNAL_4(drawElements, unsigned long, unsigned long, unsigned long, long)
+DELEGATE_TO_INTERNAL_1(disable, GC3Denum)
+DELEGATE_TO_INTERNAL_1(disableVertexAttribArray, GC3Duint)
+DELEGATE_TO_INTERNAL_3(drawArrays, GC3Denum, GC3Dint, GC3Dsizei)
+DELEGATE_TO_INTERNAL_4(drawElements, GC3Denum, GC3Dsizei, GC3Denum, GC3Dintptr)
 
-DELEGATE_TO_INTERNAL_1(enable, unsigned long)
-DELEGATE_TO_INTERNAL_1(enableVertexAttribArray, unsigned long)
+DELEGATE_TO_INTERNAL_1(enable, GC3Denum)
+DELEGATE_TO_INTERNAL_1(enableVertexAttribArray, GC3Duint)
 DELEGATE_TO_INTERNAL(finish)
 DELEGATE_TO_INTERNAL(flush)
-DELEGATE_TO_INTERNAL_4(framebufferRenderbuffer, unsigned long, unsigned long, unsigned long, Platform3DObject)
-DELEGATE_TO_INTERNAL_5(framebufferTexture2D, unsigned long, unsigned long, unsigned long, Platform3DObject, long)
-DELEGATE_TO_INTERNAL_1(frontFace, unsigned long)
-DELEGATE_TO_INTERNAL_1(generateMipmap, unsigned long)
+DELEGATE_TO_INTERNAL_4(framebufferRenderbuffer, GC3Denum, GC3Denum, GC3Denum, Platform3DObject)
+DELEGATE_TO_INTERNAL_5(framebufferTexture2D, GC3Denum, GC3Denum, GC3Denum, Platform3DObject, GC3Dint)
+DELEGATE_TO_INTERNAL_1(frontFace, GC3Denum)
+DELEGATE_TO_INTERNAL_1(generateMipmap, GC3Denum)
 
-DELEGATE_TO_INTERNAL_3R(getActiveAttrib, Platform3DObject, unsigned long, ActiveInfo&, bool)
-DELEGATE_TO_INTERNAL_3R(getActiveUniform, Platform3DObject, unsigned long, ActiveInfo&, bool)
-
-DELEGATE_TO_INTERNAL_4(getAttachedShaders, Platform3DObject, int, int*, unsigned int*)
-
-DELEGATE_TO_INTERNAL_2R(getAttribLocation, Platform3DObject, const String&, int)
-
-DELEGATE_TO_INTERNAL_2(getBooleanv, unsigned long, unsigned char*)
-
-DELEGATE_TO_INTERNAL_3(getBufferParameteriv, unsigned long, unsigned long, int*)
-
+DELEGATE_TO_INTERNAL_3R(getActiveAttrib, Platform3DObject, GC3Duint, ActiveInfo&, bool)
+DELEGATE_TO_INTERNAL_3R(getActiveUniform, Platform3DObject, GC3Duint, ActiveInfo&, bool)
+DELEGATE_TO_INTERNAL_4(getAttachedShaders, Platform3DObject, GC3Dsizei, GC3Dsizei*, Platform3DObject*)
+DELEGATE_TO_INTERNAL_2R(getAttribLocation, Platform3DObject, const String&, GC3Dint)
+DELEGATE_TO_INTERNAL_2(getBooleanv, GC3Denum, GC3Dboolean*)
+DELEGATE_TO_INTERNAL_3(getBufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
 DELEGATE_TO_INTERNAL_R(getContextAttributes, GraphicsContext3D::Attributes)
-
-DELEGATE_TO_INTERNAL_R(getError, unsigned long)
-
-DELEGATE_TO_INTERNAL_2(getFloatv, unsigned long, float*)
-
-DELEGATE_TO_INTERNAL_4(getFramebufferAttachmentParameteriv, unsigned long, unsigned long, unsigned long, int*)
-
-DELEGATE_TO_INTERNAL_2(getIntegerv, unsigned long, int*)
-
-DELEGATE_TO_INTERNAL_3(getProgramiv, Platform3DObject, unsigned long, int*)
-
+DELEGATE_TO_INTERNAL_R(getError, GC3Denum)
+DELEGATE_TO_INTERNAL_2(getFloatv, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_4(getFramebufferAttachmentParameteriv, GC3Denum, GC3Denum, GC3Denum, GC3Dint*)
+DELEGATE_TO_INTERNAL_2(getIntegerv, GC3Denum, GC3Dint*)
+DELEGATE_TO_INTERNAL_3(getProgramiv, Platform3DObject, GC3Denum, GC3Dint*)
 DELEGATE_TO_INTERNAL_1R(getProgramInfoLog, Platform3DObject, String)
-
-DELEGATE_TO_INTERNAL_3(getRenderbufferParameteriv, unsigned long, unsigned long, int*)
-
-DELEGATE_TO_INTERNAL_3(getShaderiv, Platform3DObject, unsigned long, int*)
-
+DELEGATE_TO_INTERNAL_3(getRenderbufferParameteriv, GC3Denum, GC3Denum, GC3Dint*)
+DELEGATE_TO_INTERNAL_3(getShaderiv, Platform3DObject, GC3Denum, GC3Dint*)
 DELEGATE_TO_INTERNAL_1R(getShaderInfoLog, Platform3DObject, String)
-
 DELEGATE_TO_INTERNAL_1R(getShaderSource, Platform3DObject, String)
-DELEGATE_TO_INTERNAL_1R(getString, unsigned long, String)
+DELEGATE_TO_INTERNAL_1R(getString, GC3Denum, String)
+DELEGATE_TO_INTERNAL_3(getTexParameterfv, GC3Denum, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_3(getTexParameteriv, GC3Denum, GC3Denum, GC3Dint*)
+DELEGATE_TO_INTERNAL_3(getUniformfv, Platform3DObject, GC3Dint, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_3(getUniformiv, Platform3DObject, GC3Dint, GC3Dint*)
+DELEGATE_TO_INTERNAL_2R(getUniformLocation, Platform3DObject, const String&, GC3Dint)
+DELEGATE_TO_INTERNAL_3(getVertexAttribfv, GC3Duint, GC3Denum, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_3(getVertexAttribiv, GC3Duint, GC3Denum, GC3Dint*)
+DELEGATE_TO_INTERNAL_2R(getVertexAttribOffset, GC3Duint, GC3Denum, GC3Dsizeiptr)
 
-DELEGATE_TO_INTERNAL_3(getTexParameterfv, unsigned long, unsigned long, float*)
-DELEGATE_TO_INTERNAL_3(getTexParameteriv, unsigned long, unsigned long, int*)
-
-DELEGATE_TO_INTERNAL_3(getUniformfv, Platform3DObject, long, float*)
-DELEGATE_TO_INTERNAL_3(getUniformiv, Platform3DObject, long, int*)
-
-DELEGATE_TO_INTERNAL_2R(getUniformLocation, Platform3DObject, const String&, long)
-
-DELEGATE_TO_INTERNAL_3(getVertexAttribfv, unsigned long, unsigned long, float*)
-DELEGATE_TO_INTERNAL_3(getVertexAttribiv, unsigned long, unsigned long, int*)
-
-DELEGATE_TO_INTERNAL_2R(getVertexAttribOffset, unsigned long, unsigned long, long)
-
-DELEGATE_TO_INTERNAL_2(hint, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_1R(isBuffer, Platform3DObject, bool)
-DELEGATE_TO_INTERNAL_1R(isEnabled, unsigned long, bool)
-DELEGATE_TO_INTERNAL_1R(isFramebuffer, Platform3DObject, bool)
-DELEGATE_TO_INTERNAL_1R(isProgram, Platform3DObject, bool)
-DELEGATE_TO_INTERNAL_1R(isRenderbuffer, Platform3DObject, bool)
-DELEGATE_TO_INTERNAL_1R(isShader, Platform3DObject, bool)
-DELEGATE_TO_INTERNAL_1R(isTexture, Platform3DObject, bool)
-DELEGATE_TO_INTERNAL_1(lineWidth, double)
+DELEGATE_TO_INTERNAL_2(hint, GC3Denum, GC3Denum)
+DELEGATE_TO_INTERNAL_1R(isBuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_INTERNAL_1R(isEnabled, GC3Denum, GC3Dboolean)
+DELEGATE_TO_INTERNAL_1R(isFramebuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_INTERNAL_1R(isProgram, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_INTERNAL_1R(isRenderbuffer, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_INTERNAL_1R(isShader, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_INTERNAL_1R(isTexture, Platform3DObject, GC3Dboolean)
+DELEGATE_TO_INTERNAL_1(lineWidth, GC3Dfloat)
 DELEGATE_TO_INTERNAL_1(linkProgram, Platform3DObject)
-DELEGATE_TO_INTERNAL_2(pixelStorei, unsigned long, long)
-DELEGATE_TO_INTERNAL_2(polygonOffset, double, double)
+DELEGATE_TO_INTERNAL_2(pixelStorei, GC3Denum, GC3Dint)
+DELEGATE_TO_INTERNAL_2(polygonOffset, GC3Dfloat, GC3Dfloat)
 
-DELEGATE_TO_INTERNAL_7(readPixels, long, long, unsigned long, unsigned long, unsigned long, unsigned long, void*)
+DELEGATE_TO_INTERNAL_7(readPixels, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, void*)
 
 DELEGATE_TO_INTERNAL(releaseShaderCompiler)
-DELEGATE_TO_INTERNAL_4(renderbufferStorage, unsigned long, unsigned long, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_2(sampleCoverage, double, bool)
-DELEGATE_TO_INTERNAL_4(scissor, long, long, unsigned long, unsigned long)
+DELEGATE_TO_INTERNAL_4(renderbufferStorage, GC3Denum, GC3Denum, GC3Dsizei, GC3Dsizei)
+DELEGATE_TO_INTERNAL_2(sampleCoverage, GC3Dclampf, GC3Dboolean)
+DELEGATE_TO_INTERNAL_4(scissor, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 DELEGATE_TO_INTERNAL_2(shaderSource, Platform3DObject, const String&)
-DELEGATE_TO_INTERNAL_3(stencilFunc, unsigned long, long, unsigned long)
-DELEGATE_TO_INTERNAL_4(stencilFuncSeparate, unsigned long, unsigned long, long, unsigned long)
-DELEGATE_TO_INTERNAL_1(stencilMask, unsigned long)
-DELEGATE_TO_INTERNAL_2(stencilMaskSeparate, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_3(stencilOp, unsigned long, unsigned long, unsigned long)
-DELEGATE_TO_INTERNAL_4(stencilOpSeparate, unsigned long, unsigned long, unsigned long, unsigned long)
+DELEGATE_TO_INTERNAL_3(stencilFunc, GC3Denum, GC3Dint, GC3Duint)
+DELEGATE_TO_INTERNAL_4(stencilFuncSeparate, GC3Denum, GC3Denum, GC3Dint, GC3Duint)
+DELEGATE_TO_INTERNAL_1(stencilMask, GC3Duint)
+DELEGATE_TO_INTERNAL_2(stencilMaskSeparate, GC3Denum, GC3Duint)
+DELEGATE_TO_INTERNAL_3(stencilOp, GC3Denum, GC3Denum, GC3Denum)
+DELEGATE_TO_INTERNAL_4(stencilOpSeparate, GC3Denum, GC3Denum, GC3Denum, GC3Denum)
 
-DELEGATE_TO_INTERNAL_9R(texImage2D, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, void*, int)
-DELEGATE_TO_INTERNAL_3(texParameterf, unsigned, unsigned, float)
-DELEGATE_TO_INTERNAL_3(texParameteri, unsigned, unsigned, int)
-DELEGATE_TO_INTERNAL_9R(texSubImage2D, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, unsigned, void*, int)
+DELEGATE_TO_INTERNAL_9R(texImage2D, GC3Denum, GC3Dint, GC3Denum, GC3Dsizei, GC3Dsizei, GC3Dint, GC3Denum, GC3Denum, const void*, bool)
+DELEGATE_TO_INTERNAL_3(texParameterf, GC3Denum, GC3Denum, GC3Dfloat)
+DELEGATE_TO_INTERNAL_3(texParameteri, GC3Denum, GC3Denum, GC3Dint)
+DELEGATE_TO_INTERNAL_9(texSubImage2D, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, const void*)
 
-DELEGATE_TO_INTERNAL_2(uniform1f, long, float)
-DELEGATE_TO_INTERNAL_3(uniform1fv, long, float*, int)
-DELEGATE_TO_INTERNAL_2(uniform1i, long, int)
-DELEGATE_TO_INTERNAL_3(uniform1iv, long, int*, int)
-DELEGATE_TO_INTERNAL_3(uniform2f, long, float, float)
-DELEGATE_TO_INTERNAL_3(uniform2fv, long, float*, int)
-DELEGATE_TO_INTERNAL_3(uniform2i, long, int, int)
-DELEGATE_TO_INTERNAL_3(uniform2iv, long, int*, int)
-DELEGATE_TO_INTERNAL_4(uniform3f, long, float, float, float)
-DELEGATE_TO_INTERNAL_3(uniform3fv, long, float*, int)
-DELEGATE_TO_INTERNAL_4(uniform3i, long, int, int, int)
-DELEGATE_TO_INTERNAL_3(uniform3iv, long, int*, int)
-DELEGATE_TO_INTERNAL_5(uniform4f, long, float, float, float, float)
-DELEGATE_TO_INTERNAL_3(uniform4fv, long, float*, int)
-DELEGATE_TO_INTERNAL_5(uniform4i, long, int, int, int, int)
-DELEGATE_TO_INTERNAL_3(uniform4iv, long, int*, int)
-DELEGATE_TO_INTERNAL_4(uniformMatrix2fv, long, bool, float*, int)
-DELEGATE_TO_INTERNAL_4(uniformMatrix3fv, long, bool, float*, int)
-DELEGATE_TO_INTERNAL_4(uniformMatrix4fv, long, bool, float*, int)
+DELEGATE_TO_INTERNAL_2(uniform1f, GC3Dint, GC3Dfloat)
+DELEGATE_TO_INTERNAL_3(uniform1fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_2(uniform1i, GC3Dint, GC3Dint)
+DELEGATE_TO_INTERNAL_3(uniform1iv, GC3Dint, GC3Dint*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform2f, GC3Dint, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_INTERNAL_3(uniform2fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_3(uniform2i, GC3Dint, GC3Dint, GC3Dint)
+DELEGATE_TO_INTERNAL_3(uniform2iv, GC3Dint, GC3Dint*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_4(uniform3f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_INTERNAL_3(uniform3fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_4(uniform3i, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
+DELEGATE_TO_INTERNAL_3(uniform3iv, GC3Dint, GC3Dint*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_5(uniform4f, GC3Dint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_INTERNAL_3(uniform4fv, GC3Dint, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_5(uniform4i, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint)
+DELEGATE_TO_INTERNAL_3(uniform4iv, GC3Dint, GC3Dint*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_4(uniformMatrix2fv, GC3Dint, GC3Dboolean, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_4(uniformMatrix3fv, GC3Dint, GC3Dboolean, GC3Dfloat*, GC3Dsizei)
+DELEGATE_TO_INTERNAL_4(uniformMatrix4fv, GC3Dint, GC3Dboolean, GC3Dfloat*, GC3Dsizei)
 
 DELEGATE_TO_INTERNAL_1(useProgram, Platform3DObject)
 DELEGATE_TO_INTERNAL_1(validateProgram, Platform3DObject)
 
-DELEGATE_TO_INTERNAL_2(vertexAttrib1f, unsigned long, float)
-DELEGATE_TO_INTERNAL_2(vertexAttrib1fv, unsigned long, float*)
-DELEGATE_TO_INTERNAL_3(vertexAttrib2f, unsigned long, float, float)
-DELEGATE_TO_INTERNAL_2(vertexAttrib2fv, unsigned long, float*)
-DELEGATE_TO_INTERNAL_4(vertexAttrib3f, unsigned long, float, float, float)
-DELEGATE_TO_INTERNAL_2(vertexAttrib3fv, unsigned long, float*)
-DELEGATE_TO_INTERNAL_5(vertexAttrib4f, unsigned long, float, float, float, float)
-DELEGATE_TO_INTERNAL_2(vertexAttrib4fv, unsigned long, float*)
-DELEGATE_TO_INTERNAL_6(vertexAttribPointer, unsigned long, int, int, bool, unsigned long, unsigned long)
+DELEGATE_TO_INTERNAL_2(vertexAttrib1f, GC3Duint, GC3Dfloat)
+DELEGATE_TO_INTERNAL_2(vertexAttrib1fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_3(vertexAttrib2f, GC3Duint, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_INTERNAL_2(vertexAttrib2fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_4(vertexAttrib3f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_INTERNAL_2(vertexAttrib3fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_5(vertexAttrib4f, GC3Duint, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat)
+DELEGATE_TO_INTERNAL_2(vertexAttrib4fv, GC3Duint, GC3Dfloat*)
+DELEGATE_TO_INTERNAL_6(vertexAttribPointer, GC3Duint, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr)
 
-DELEGATE_TO_INTERNAL_4(viewport, long, long, unsigned long, unsigned long)
+DELEGATE_TO_INTERNAL_4(viewport, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
 
 DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, CanvasRenderingContext*)
 
@@ -1067,21 +1052,21 @@ bool GraphicsContext3D::paintsIntoCanvasBuffer() const
     return m_internal->paintsIntoCanvasBuffer();
 }
 
-DELEGATE_TO_INTERNAL_R(createBuffer, unsigned)
-DELEGATE_TO_INTERNAL_R(createFramebuffer, unsigned)
-DELEGATE_TO_INTERNAL_R(createProgram, unsigned)
-DELEGATE_TO_INTERNAL_R(createRenderbuffer, unsigned)
-DELEGATE_TO_INTERNAL_1R(createShader, unsigned long, unsigned)
-DELEGATE_TO_INTERNAL_R(createTexture, unsigned)
+DELEGATE_TO_INTERNAL_R(createBuffer, Platform3DObject)
+DELEGATE_TO_INTERNAL_R(createFramebuffer, Platform3DObject)
+DELEGATE_TO_INTERNAL_R(createProgram, Platform3DObject)
+DELEGATE_TO_INTERNAL_R(createRenderbuffer, Platform3DObject)
+DELEGATE_TO_INTERNAL_1R(createShader, GC3Denum, Platform3DObject)
+DELEGATE_TO_INTERNAL_R(createTexture, Platform3DObject)
 
-DELEGATE_TO_INTERNAL_1(deleteBuffer, unsigned)
-DELEGATE_TO_INTERNAL_1(deleteFramebuffer, unsigned)
-DELEGATE_TO_INTERNAL_1(deleteProgram, unsigned)
-DELEGATE_TO_INTERNAL_1(deleteRenderbuffer, unsigned)
-DELEGATE_TO_INTERNAL_1(deleteShader, unsigned)
-DELEGATE_TO_INTERNAL_1(deleteTexture, unsigned)
+DELEGATE_TO_INTERNAL_1(deleteBuffer, Platform3DObject)
+DELEGATE_TO_INTERNAL_1(deleteFramebuffer, Platform3DObject)
+DELEGATE_TO_INTERNAL_1(deleteProgram, Platform3DObject)
+DELEGATE_TO_INTERNAL_1(deleteRenderbuffer, Platform3DObject)
+DELEGATE_TO_INTERNAL_1(deleteShader, Platform3DObject)
+DELEGATE_TO_INTERNAL_1(deleteTexture, Platform3DObject)
 
-DELEGATE_TO_INTERNAL_1(synthesizeGLError, unsigned long)
+DELEGATE_TO_INTERNAL_1(synthesizeGLError, GC3Denum)
 DELEGATE_TO_INTERNAL_R(getExtensions, Extensions3D*)
 
 bool GraphicsContext3D::isGLES2Compliant() const

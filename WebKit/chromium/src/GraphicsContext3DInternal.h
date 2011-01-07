@@ -62,7 +62,7 @@ public:
 
     bool makeContextCurrent();
 
-    int sizeInBytes(int type);
+    unsigned int sizeInBytes(GC3Denum type);
 
     void reshape(int width, int height);
     IntSize getInternalFramebufferSize();
@@ -77,191 +77,169 @@ public:
 #endif
     bool isGLES2Compliant() const;
 
+    void releaseShaderCompiler();
+    bool isContextLost();
+
     //----------------------------------------------------------------------
     // Entry points for WebGL.
     //
-    void activeTexture(unsigned long texture);
+    void activeTexture(GC3Denum texture);
     void attachShader(Platform3DObject program, Platform3DObject shader);
-    void bindAttribLocation(Platform3DObject, unsigned long index, const String& name);
-    void bindBuffer(unsigned long target, Platform3DObject);
-    void bindFramebuffer(unsigned long target, Platform3DObject);
-    void bindRenderbuffer(unsigned long target, Platform3DObject);
-    void bindTexture(unsigned long target, Platform3DObject texture);
-    void blendColor(double red, double green, double blue, double alpha);
-    void blendEquation(unsigned long mode);
-    void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
-    void blendFunc(unsigned long sfactor, unsigned long dfactor);
-    void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
+    void bindAttribLocation(Platform3DObject, GC3Duint index, const String& name);
+    void bindBuffer(GC3Denum target, Platform3DObject);
+    void bindFramebuffer(GC3Denum target, Platform3DObject);
+    void bindRenderbuffer(GC3Denum target, Platform3DObject);
+    void bindTexture(GC3Denum target, Platform3DObject);
+    void blendColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha);
+    void blendEquation(GC3Denum mode);
+    void blendEquationSeparate(GC3Denum modeRGB, GC3Denum modeAlpha);
+    void blendFunc(GC3Denum sfactor, GC3Denum dfactor);
+    void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha);
 
-    void bufferData(unsigned long target, int size, unsigned long usage);
-    void bufferData(unsigned long target, int size, const void* data, unsigned long usage);
-    void bufferSubData(unsigned long target, long offset, int size, const void* data);
+    void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage);
+    void bufferData(GC3Denum target, GC3Dsizeiptr size, const void* data, GC3Denum usage);
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, GC3Dsizeiptr size, const void* data);
 
-    unsigned long checkFramebufferStatus(unsigned long target);
-    void clear(unsigned long mask);
-    void clearColor(double red, double green, double blue, double alpha);
-    void clearDepth(double depth);
-    void clearStencil(long s);
-    void colorMask(bool red, bool green, bool blue, bool alpha);
+    GC3Denum checkFramebufferStatus(GC3Denum target);
+    void clear(GC3Dbitfield mask);
+    void clearColor(GC3Dclampf red, GC3Dclampf green, GC3Dclampf blue, GC3Dclampf alpha);
+    void clearDepth(GC3Dclampf depth);
+    void clearStencil(GC3Dint s);
+    void colorMask(GC3Dboolean red, GC3Dboolean green, GC3Dboolean blue, GC3Dboolean alpha);
     void compileShader(Platform3DObject);
 
-    void copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, unsigned long width, unsigned long height, long border);
-    void copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, unsigned long width, unsigned long height);
-    void cullFace(unsigned long mode);
-    void depthFunc(unsigned long func);
-    void depthMask(bool flag);
-    void depthRange(double zNear, double zFar);
+    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border);
+    void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
+    void cullFace(GC3Denum mode);
+    void depthFunc(GC3Denum func);
+    void depthMask(GC3Dboolean flag);
+    void depthRange(GC3Dclampf zNear, GC3Dclampf zFar);
     void detachShader(Platform3DObject, Platform3DObject);
-    void disable(unsigned long cap);
-    void disableVertexAttribArray(unsigned long index);
-    void drawArrays(unsigned long mode, long first, long count);
-    void drawElements(unsigned long mode, unsigned long count, unsigned long type, long offset);
+    void disable(GC3Denum cap);
+    void disableVertexAttribArray(GC3Duint index);
+    void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count);
+    void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset);
 
-    void enable(unsigned long cap);
-    void enableVertexAttribArray(unsigned long index);
+    void enable(GC3Denum cap);
+    void enableVertexAttribArray(GC3Duint index);
     void finish();
     void flush();
-    void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, Platform3DObject);
-    void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, Platform3DObject, long level);
-    void frontFace(unsigned long mode);
-    void generateMipmap(unsigned long target);
+    void framebufferRenderbuffer(GC3Denum target, GC3Denum attachment, GC3Denum renderbuffertarget, Platform3DObject);
+    void framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, Platform3DObject, GC3Dint level);
+    void frontFace(GC3Denum mode);
+    void generateMipmap(GC3Denum target);
 
-    bool getActiveAttrib(Platform3DObject program, unsigned long index, ActiveInfo&);
-    bool getActiveUniform(Platform3DObject program, unsigned long index, ActiveInfo&);
-
-    void getAttachedShaders(Platform3DObject program, int maxCount, int* count, unsigned int* shaders);
-
-    int getAttribLocation(Platform3DObject, const String& name);
-
-    void getBooleanv(unsigned long pname, unsigned char* value);
-
-    void getBufferParameteriv(unsigned long target, unsigned long pname, int* value);
-
+    bool getActiveAttrib(Platform3DObject program, GC3Duint index, ActiveInfo&);
+    bool getActiveUniform(Platform3DObject program, GC3Duint index, ActiveInfo&);
+    void getAttachedShaders(Platform3DObject program, GC3Dsizei maxCount, GC3Dsizei* count, Platform3DObject* shaders);
+    GC3Dint getAttribLocation(Platform3DObject, const String& name);
+    void getBooleanv(GC3Denum pname, GC3Dboolean* value);
+    void getBufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
     GraphicsContext3D::Attributes getContextAttributes();
-
-    unsigned long getError();
-
-    bool isContextLost();
-
-    void getFloatv(unsigned long pname, float* value);
-
-    void getFramebufferAttachmentParameteriv(unsigned long target, unsigned long attachment, unsigned long pname, int* value);
-
-    void getIntegerv(unsigned long pname, int* value);
-
-    void getProgramiv(Platform3DObject program, unsigned long pname, int* value);
-
+    GC3Denum getError();
+    void getFloatv(GC3Denum pname, GC3Dfloat* value);
+    void getFramebufferAttachmentParameteriv(GC3Denum target, GC3Denum attachment, GC3Denum pname, GC3Dint* value);
+    void getIntegerv(GC3Denum pname, GC3Dint* value);
+    void getProgramiv(Platform3DObject program, GC3Denum pname, GC3Dint* value);
     String getProgramInfoLog(Platform3DObject);
-
-    void getRenderbufferParameteriv(unsigned long target, unsigned long pname, int* value);
-
-    void getShaderiv(Platform3DObject, unsigned long pname, int* value);
-
+    void getRenderbufferParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
+    void getShaderiv(Platform3DObject, GC3Denum pname, GC3Dint* value);
     String getShaderInfoLog(Platform3DObject);
 
     String getShaderSource(Platform3DObject);
-    String getString(unsigned long name);
+    String getString(GC3Denum name);
+    void getTexParameterfv(GC3Denum target, GC3Denum pname, GC3Dfloat* value);
+    void getTexParameteriv(GC3Denum target, GC3Denum pname, GC3Dint* value);
+    void getUniformfv(Platform3DObject program, GC3Dint location, GC3Dfloat* value);
+    void getUniformiv(Platform3DObject program, GC3Dint location, GC3Dint* value);
+    GC3Dint getUniformLocation(Platform3DObject, const String& name);
+    void getVertexAttribfv(GC3Duint index, GC3Denum pname, GC3Dfloat* value);
+    void getVertexAttribiv(GC3Duint index, GC3Denum pname, GC3Dint* value);
+    GC3Dsizeiptr getVertexAttribOffset(GC3Duint index, GC3Denum pname);
 
-    void getTexParameterfv(unsigned long target, unsigned long pname, float* value);
-    void getTexParameteriv(unsigned long target, unsigned long pname, int* value);
-
-    void getUniformfv(Platform3DObject program, long location, float* value);
-    void getUniformiv(Platform3DObject program, long location, int* value);
-
-    long getUniformLocation(Platform3DObject, const String& name);
-
-    void getVertexAttribfv(unsigned long index, unsigned long pname, float* value);
-    void getVertexAttribiv(unsigned long index, unsigned long pname, int* value);
-
-    long getVertexAttribOffset(unsigned long index, unsigned long pname);
-
-    void hint(unsigned long target, unsigned long mode);
-    bool isBuffer(Platform3DObject);
-    bool isEnabled(unsigned long cap);
-    bool isFramebuffer(Platform3DObject);
-    bool isProgram(Platform3DObject);
-    bool isRenderbuffer(Platform3DObject);
-    bool isShader(Platform3DObject);
-    bool isTexture(Platform3DObject);
-    void lineWidth(double);
+    void hint(GC3Denum target, GC3Denum mode);
+    GC3Dboolean isBuffer(Platform3DObject);
+    GC3Dboolean isEnabled(GC3Denum cap);
+    GC3Dboolean isFramebuffer(Platform3DObject);
+    GC3Dboolean isProgram(Platform3DObject);
+    GC3Dboolean isRenderbuffer(Platform3DObject);
+    GC3Dboolean isShader(Platform3DObject);
+    GC3Dboolean isTexture(Platform3DObject);
+    void lineWidth(GC3Dfloat);
     void linkProgram(Platform3DObject);
-    void pixelStorei(unsigned long pname, long param);
-    void polygonOffset(double factor, double units);
+    void pixelStorei(GC3Denum pname, GC3Dint param);
+    void polygonOffset(GC3Dfloat factor, GC3Dfloat units);
 
-    void readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* data);
+    void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data);
 
-    void releaseShaderCompiler();
-    void renderbufferStorage(unsigned long target, unsigned long internalformat, unsigned long width, unsigned long height);
-    void sampleCoverage(double value, bool invert);
-    void scissor(long x, long y, unsigned long width, unsigned long height);
+    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
+    void sampleCoverage(GC3Dclampf value, GC3Dboolean invert);
+    void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
     void shaderSource(Platform3DObject, const String& string);
-    void stencilFunc(unsigned long func, long ref, unsigned long mask);
-    void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
-    void stencilMask(unsigned long mask);
-    void stencilMaskSeparate(unsigned long face, unsigned long mask);
-    void stencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass);
-    void stencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass);
+    void stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask);
+    void stencilFuncSeparate(GC3Denum face, GC3Denum func, GC3Dint ref, GC3Duint mask);
+    void stencilMask(GC3Duint mask);
+    void stencilMaskSeparate(GC3Denum face, GC3Duint mask);
+    void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
+    void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
 
-    // These next several functions return an error code (0 if no errors) rather than using an ExceptionCode.
-    // Currently they return -1 on any error.
-    int texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels);
+    // texImage2D return false on any error rather than using an ExceptionCode.
+    bool texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
+    void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
+    void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels);
 
-    void texParameterf(unsigned target, unsigned pname, float param);
-    void texParameteri(unsigned target, unsigned pname, int param);
-
-    int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels);
-
-    void uniform1f(long location, float x);
-    void uniform1fv(long location, float* v, int size);
-    void uniform1i(long location, int x);
-    void uniform1iv(long location, int* v, int size);
-    void uniform2f(long location, float x, float y);
-    void uniform2fv(long location, float* v, int size);
-    void uniform2i(long location, int x, int y);
-    void uniform2iv(long location, int* v, int size);
-    void uniform3f(long location, float x, float y, float z);
-    void uniform3fv(long location, float* v, int size);
-    void uniform3i(long location, int x, int y, int z);
-    void uniform3iv(long location, int* v, int size);
-    void uniform4f(long location, float x, float y, float z, float w);
-    void uniform4fv(long location, float* v, int size);
-    void uniform4i(long location, int x, int y, int z, int w);
-    void uniform4iv(long location, int* v, int size);
-    void uniformMatrix2fv(long location, bool transpose, float* value, int size);
-    void uniformMatrix3fv(long location, bool transpose, float* value, int size);
-    void uniformMatrix4fv(long location, bool transpose, float* value, int size);
+    void uniform1f(GC3Dint location, GC3Dfloat x);
+    void uniform1fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform1i(GC3Dint location, GC3Dint x);
+    void uniform1iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform2f(GC3Dint location, GC3Dfloat x, float y);
+    void uniform2fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform2i(GC3Dint location, GC3Dint x, GC3Dint y);
+    void uniform2iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform3f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
+    void uniform3fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform3i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z);
+    void uniform3iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniform4f(GC3Dint location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
+    void uniform4fv(GC3Dint location, GC3Dfloat* v, GC3Dsizei size);
+    void uniform4i(GC3Dint location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w);
+    void uniform4iv(GC3Dint location, GC3Dint* v, GC3Dsizei size);
+    void uniformMatrix2fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
+    void uniformMatrix3fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
+    void uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size);
 
     void useProgram(Platform3DObject);
     void validateProgram(Platform3DObject);
 
-    void vertexAttrib1f(unsigned long indx, float x);
-    void vertexAttrib1fv(unsigned long indx, float* values);
-    void vertexAttrib2f(unsigned long indx, float x, float y);
-    void vertexAttrib2fv(unsigned long indx, float* values);
-    void vertexAttrib3f(unsigned long indx, float x, float y, float z);
-    void vertexAttrib3fv(unsigned long indx, float* values);
-    void vertexAttrib4f(unsigned long indx, float x, float y, float z, float w);
-    void vertexAttrib4fv(unsigned long indx, float* values);
-    void vertexAttribPointer(unsigned long indx, int size, int type, bool normalized,
-                             unsigned long stride, unsigned long offset);
+    void vertexAttrib1f(GC3Duint index, GC3Dfloat x);
+    void vertexAttrib1fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y);
+    void vertexAttrib2fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
+    void vertexAttrib3fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
+    void vertexAttrib4fv(GC3Duint index, GC3Dfloat* values);
+    void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized,
+                             GC3Dsizei stride, GC3Dintptr offset);
 
-    void viewport(long x, long y, unsigned long width, unsigned long height);
+    void viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
 
-    unsigned createBuffer();
-    unsigned createFramebuffer();
-    unsigned createProgram();
-    unsigned createRenderbuffer();
-    unsigned createShader(unsigned long);
-    unsigned createTexture();
+    Platform3DObject createBuffer();
+    Platform3DObject createFramebuffer();
+    Platform3DObject createProgram();
+    Platform3DObject createRenderbuffer();
+    Platform3DObject createShader(GC3Denum);
+    Platform3DObject createTexture();
 
-    void deleteBuffer(unsigned);
-    void deleteFramebuffer(unsigned);
-    void deleteProgram(unsigned);
-    void deleteRenderbuffer(unsigned);
-    void deleteShader(unsigned);
-    void deleteTexture(unsigned);
+    void deleteBuffer(Platform3DObject);
+    void deleteFramebuffer(Platform3DObject);
+    void deleteProgram(Platform3DObject);
+    void deleteRenderbuffer(Platform3DObject);
+    void deleteShader(Platform3DObject);
+    void deleteTexture(Platform3DObject);
 
-    void synthesizeGLError(unsigned long error);
+    void synthesizeGLError(GC3Denum error);
 
     // Extensions3D support.
     Extensions3D* getExtensions();
@@ -273,14 +251,14 @@ public:
 
     // GL_CHROMIUM_map_sub
     bool supportsMapSubCHROMIUM();
-    void* mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access);
+    void* mapBufferSubDataCHROMIUM(GC3Denum target, GC3Dsizeiptr offset, GC3Dsizei size, GC3Denum access);
     void unmapBufferSubDataCHROMIUM(const void*);
-    void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access);
+    void* mapTexSubImage2DCHROMIUM(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Denum access);
     void unmapTexSubImage2DCHROMIUM(const void*);
 
     // GL_CHROMIUM_copy_texture_to_parent_texture
     bool supportsCopyTextureToParentTextureCHROMIUM();
-    void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
+    void copyTextureToParentTextureCHROMIUM(Platform3DObject texture, Platform3DObject parentTexture);
 
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;

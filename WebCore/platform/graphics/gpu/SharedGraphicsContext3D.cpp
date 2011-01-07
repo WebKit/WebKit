@@ -38,8 +38,6 @@
 #include "Color.h"
 #include "Extensions3D.h"
 #include "FloatRect.h"
-#include "GraphicsContext3D.h"
-#include "GraphicsTypes.h"
 #include "IntSize.h"
 #include "SolidFillShader.h"
 #include "TexShader.h"
@@ -98,12 +96,12 @@ void SharedGraphicsContext3D::scissor(const FloatRect& rect)
     m_context->scissor(rect.x(), rect.y(), rect.width(), rect.height());
 }
 
-void SharedGraphicsContext3D::enable(unsigned capacity)
+void SharedGraphicsContext3D::enable(GC3Denum capacity)
 {
     m_context->enable(capacity);
 }
 
-void SharedGraphicsContext3D::disable(unsigned capacity)
+void SharedGraphicsContext3D::disable(GC3Denum capacity)
 {
     m_context->disable(capacity);
 }
@@ -115,22 +113,22 @@ void SharedGraphicsContext3D::clearColor(const Color& color)
     m_context->clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
 }
 
-void SharedGraphicsContext3D::clear(unsigned mask)
+void SharedGraphicsContext3D::clear(GC3Dbitfield mask)
 {
     m_context->clear(mask);
 }
 
-void SharedGraphicsContext3D::drawArrays(unsigned long mode, long first, long count)
+void SharedGraphicsContext3D::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count)
 {
     m_context->drawArrays(mode, first, count);
 }
 
-unsigned long SharedGraphicsContext3D::getError()
+GC3Denum SharedGraphicsContext3D::getError()
 {
     return m_context->getError();
 }
 
-void SharedGraphicsContext3D::getIntegerv(unsigned long pname, int* value)
+void SharedGraphicsContext3D::getIntegerv(GC3Denum pname, GC3Dint* value)
 {
     m_context->getIntegerv(pname, value);
 }
@@ -140,51 +138,49 @@ void SharedGraphicsContext3D::flush()
     m_context->flush();
 }
 
-unsigned SharedGraphicsContext3D::createFramebuffer()
+Platform3DObject SharedGraphicsContext3D::createFramebuffer()
 {
     return m_context->createFramebuffer();
 }
 
-unsigned SharedGraphicsContext3D::createTexture()
+Platform3DObject SharedGraphicsContext3D::createTexture()
 {
     return m_context->createTexture();
 }
 
-void SharedGraphicsContext3D::deleteFramebuffer(unsigned framebuffer)
+void SharedGraphicsContext3D::deleteFramebuffer(Platform3DObject framebuffer)
 {
     m_context->deleteFramebuffer(framebuffer);
 }
 
-void SharedGraphicsContext3D::deleteTexture(unsigned texture)
+void SharedGraphicsContext3D::deleteTexture(Platform3DObject texture)
 {
     m_context->deleteTexture(texture);
 }
 
-void SharedGraphicsContext3D::framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned texture, long level)
+void SharedGraphicsContext3D::framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, Platform3DObject texture, GC3Dint level)
 {
     m_context->framebufferTexture2D(target, attachment, textarget, texture, level);
 }
 
-void SharedGraphicsContext3D::texParameteri(unsigned target, unsigned pname, int param)
+void SharedGraphicsContext3D::texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param)
 {
     m_context->texParameteri(target, pname, param);
 }
 
-int SharedGraphicsContext3D::texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels)
+bool SharedGraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels)
 {
-    if (!pixels) {
-        m_context->texImage2DResourceSafe(target, level, internalformat, width, height, border, format, type);
-        return 0;
-    }
+    if (!pixels)
+        return m_context->texImage2DResourceSafe(target, level, internalformat, width, height, border, format, type);
     return m_context->texImage2D(target, level, internalformat, width, height, border, format, type, pixels);
 }
 
-int SharedGraphicsContext3D::texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels)
+void SharedGraphicsContext3D::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels)
 {
-    return m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
+    m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
-void SharedGraphicsContext3D::readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* data)
+void SharedGraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {
     m_context->readPixels(x, y, width, height, format, type, data);
 }
@@ -312,12 +308,12 @@ void SharedGraphicsContext3D::useQuadVertices()
     }
 }
 
-void SharedGraphicsContext3D::setActiveTexture(unsigned textureUnit)
+void SharedGraphicsContext3D::setActiveTexture(GC3Denum textureUnit)
 {
     m_context->activeTexture(textureUnit);
 }
 
-void SharedGraphicsContext3D::bindTexture(unsigned target, unsigned texture)
+void SharedGraphicsContext3D::bindTexture(GC3Denum target, Platform3DObject texture)
 {
     m_context->bindTexture(target, texture);
 }
@@ -332,7 +328,7 @@ void SharedGraphicsContext3D::useTextureProgram(const AffineTransform& transform
     m_texShader->use(transform, texTransform, 0, alpha);
 }
 
-void SharedGraphicsContext3D::bindFramebuffer(unsigned framebuffer)
+void SharedGraphicsContext3D::bindFramebuffer(Platform3DObject framebuffer)
 {
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, framebuffer);
 }

@@ -31,6 +31,7 @@
 #ifndef SharedGraphicsContext3D_h
 #define SharedGraphicsContext3D_h
 
+#include "GraphicsContext3D.h"
 #include "GraphicsTypes.h"
 #include "ImageSource.h"
 #include "Texture.h"
@@ -45,7 +46,6 @@ namespace WebCore {
 
 class AffineTransform;
 class Color;
-class GraphicsContext3D;
 class FloatRect;
 class HostWindow;
 class IntSize;
@@ -61,30 +61,30 @@ public:
 
     // Functions that delegate directly to GraphicsContext3D, with caching
     void makeContextCurrent();
-    void bindFramebuffer(unsigned framebuffer);
+    void bindFramebuffer(Platform3DObject framebuffer);
     void setViewport(const IntSize&);
     void scissor(const FloatRect&);
-    void enable(unsigned capacity);
-    void disable(unsigned capacity);
+    void enable(GC3Denum capacity);
+    void disable(GC3Denum capacity);
     void clearColor(const Color&);
-    void clear(unsigned mask);
-    void drawArrays(unsigned long mode, long first, long count);
-    unsigned long getError();
-    void getIntegerv(unsigned long pname, int* value);
+    void clear(GC3Dbitfield mask);
+    void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count);
+    GC3Denum getError();
+    void getIntegerv(GC3Denum pname, GC3Dint* value);
     void flush();
 
-    unsigned createFramebuffer();
-    unsigned createTexture();
+    Platform3DObject createFramebuffer();
+    Platform3DObject createTexture();
 
-    void deleteFramebuffer(unsigned framebuffer);
-    void deleteTexture(unsigned texture);
+    void deleteFramebuffer(Platform3DObject framebuffer);
+    void deleteTexture(Platform3DObject texture);
 
-    void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, unsigned, long level);
-    void texParameteri(unsigned target, unsigned pname, int param);
-    int texImage2D(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type, void* pixels);
-    int texSubImage2D(unsigned target, unsigned level, unsigned xoffset, unsigned yoffset, unsigned width, unsigned height, unsigned format, unsigned type, void* pixels);
+    void framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, Platform3DObject, GC3Dint level);
+    void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
+    bool texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels);
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels);
 
-    void readPixels(long x, long y, unsigned long width, unsigned long height, unsigned long format, unsigned long type, void* data);
+    void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data);
 
     bool paintsIntoCanvasBuffer() const;
 
@@ -95,8 +95,8 @@ public:
     void useFillSolidProgram(const AffineTransform&, const Color&);
     void useTextureProgram(const AffineTransform&, const AffineTransform&, float alpha);
 
-    void setActiveTexture(unsigned textureUnit);
-    void bindTexture(unsigned target, unsigned texture);
+    void setActiveTexture(GC3Denum textureUnit);
+    void bindTexture(GC3Denum target, Platform3DObject texture);
 
     bool supportsBGRA();
 

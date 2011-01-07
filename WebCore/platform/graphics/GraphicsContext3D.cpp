@@ -43,7 +43,7 @@ namespace WebCore {
 
 namespace {
 
-    unsigned bytesPerComponent(unsigned type)
+    unsigned int bytesPerComponent(GC3Denum type)
     {
         switch (type) {
         case GraphicsContext3D::UNSIGNED_BYTE:
@@ -59,7 +59,7 @@ namespace {
         }
     }
 
-    unsigned componentsPerPixel(unsigned format, unsigned type)
+    unsigned int componentsPerPixel(GC3Denum format, GC3Denum type)
     {
         switch (type) {
         case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
@@ -87,9 +87,9 @@ namespace {
 
     // This function should only be called if width and height is non-zero and
     // format/type are valid.  Return 0 if overflow happens.
-    size_t imageSizeInBytes(unsigned width, unsigned height, unsigned format, unsigned type)
+    unsigned int imageSizeInBytes(GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type)
     {
-        ASSERT(width && height);
+        ASSERT(width > 0 && height > 0);
         CheckedInt<uint32_t> checkedWidth(width);
         CheckedInt<uint32_t> checkedHeight(height);
         CheckedInt<uint32_t> checkedBytesPerPixel(bytesPerComponent(type) * componentsPerPixel(format, type));
@@ -117,26 +117,29 @@ PassRefPtr<DrawingBuffer> GraphicsContext3D::createDrawingBuffer(const IntSize& 
     return DrawingBuffer::create(this, size);
 }
 
-bool GraphicsContext3D::texImage2DResourceSafe(unsigned target, unsigned level, unsigned internalformat, unsigned width, unsigned height, unsigned border, unsigned format, unsigned type)
+bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type)
 {
     OwnArrayPtr<unsigned char> zero;
-    if (width && height) {
-        size_t size = imageSizeInBytes(width, height, format, type);
+    if (width > 0 && height > 0) {
+        unsigned int size = imageSizeInBytes(width, height, format, type);
         if (!size) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return false;
         }
         zero = adoptArrayPtr(new unsigned char[size]);
+        if (!zero.get()) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return false;
+        }
         memset(zero.get(), 0, size);
     }
-    texImage2D(target, level, internalformat, width, height, border, format, type, zero.get());
-    return true;
+    return texImage2D(target, level, internalformat, width, height, border, format, type, zero.get());
 }
 
-bool GraphicsContext3D::computeFormatAndTypeParameters(unsigned int format,
-                                                       unsigned int type,
-                                                       unsigned long* componentsPerPixel,
-                                                       unsigned long* bytesPerComponent)
+bool GraphicsContext3D::computeFormatAndTypeParameters(GC3Denum format,
+                                                       GC3Denum type,
+                                                       unsigned int* componentsPerPixel,
+                                                       unsigned int* bytesPerComponent)
 {
     switch (format) {
     case GraphicsContext3D::ALPHA:
@@ -177,8 +180,8 @@ bool GraphicsContext3D::computeFormatAndTypeParameters(unsigned int format,
 }
 
 bool GraphicsContext3D::extractImageData(Image* image,
-                                         unsigned int format,
-                                         unsigned int type,
+                                         GC3Denum format,
+                                         GC3Denum type,
                                          bool flipY,
                                          bool premultiplyAlpha,
                                          bool ignoreGammaAndColorProfile,
@@ -189,7 +192,7 @@ bool GraphicsContext3D::extractImageData(Image* image,
     if (!getImageData(image, format, type, premultiplyAlpha, ignoreGammaAndColorProfile, data))
         return false;
     if (flipY) {
-        unsigned long componentsPerPixel, bytesPerComponent;
+        unsigned int componentsPerPixel, bytesPerComponent;
         if (!computeFormatAndTypeParameters(format, type,
                                             &componentsPerPixel,
                                             &bytesPerComponent))
@@ -204,8 +207,8 @@ bool GraphicsContext3D::extractImageData(Image* image,
 }
 
 bool GraphicsContext3D::extractImageData(ImageData* imageData,
-                                         unsigned int format,
-                                         unsigned int type,
+                                         GC3Denum format,
+                                         GC3Denum type,
                                          bool flipY,
                                          bool premultiplyAlpha,
                                          Vector<uint8_t>& data)
@@ -227,7 +230,7 @@ bool GraphicsContext3D::extractImageData(ImageData* imageData,
                     data.data()))
         return false;
     if (flipY) {
-        unsigned long componentsPerPixel, bytesPerComponent;
+        unsigned int componentsPerPixel, bytesPerComponent;
         if (!computeFormatAndTypeParameters(format, type,
                                             &componentsPerPixel,
                                             &bytesPerComponent))
@@ -242,7 +245,7 @@ bool GraphicsContext3D::extractImageData(ImageData* imageData,
 }
 
 bool GraphicsContext3D::extractTextureData(unsigned int width, unsigned int height,
-                                           unsigned int format, unsigned int type,
+                                           GC3Denum format, GC3Denum type,
                                            unsigned int unpackAlignment,
                                            bool flipY, bool premultiplyAlpha,
                                            const void* pixels,
@@ -307,12 +310,12 @@ bool GraphicsContext3D::extractTextureData(unsigned int width, unsigned int heig
     }
 
     // Resize the output buffer.
-    unsigned long componentsPerPixel, bytesPerComponent;
+    unsigned int componentsPerPixel, bytesPerComponent;
     if (!computeFormatAndTypeParameters(format, type,
                                         &componentsPerPixel,
                                         &bytesPerComponent))
         return false;
-    unsigned long bytesPerPixel = componentsPerPixel * bytesPerComponent;
+    unsigned int bytesPerPixel = componentsPerPixel * bytesPerComponent;
     data.resize(width * height * bytesPerPixel);
 
     if (!packPixels(static_cast<const uint8_t*>(pixels),

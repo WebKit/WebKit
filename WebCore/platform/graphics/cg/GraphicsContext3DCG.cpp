@@ -89,8 +89,8 @@ static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int comp
 }
 
 bool GraphicsContext3D::getImageData(Image* image,
-                                     unsigned int format,
-                                     unsigned int type,
+                                     GC3Denum format,
+                                     GC3Denum type,
                                      bool premultiplyAlpha,
                                      bool ignoreGammaAndColorProfile,
                                      Vector<uint8_t>& outputVector)
