@@ -30,9 +30,9 @@ namespace WebCore {
 class Plugin;
 class PluginData;
 
-class DOMPlugin : public RefCounted<DOMPlugin> {
+class DOMPlugin : public RefCounted<DOMPlugin>, private FrameDestructionObserver {
 public:
-    static PassRefPtr<DOMPlugin> create(PluginData* pluginData, unsigned index) { return adoptRef(new DOMPlugin(pluginData, index)); }
+    static PassRefPtr<DOMPlugin> create(PluginData* pluginData, Frame* frame, unsigned index) { return adoptRef(new DOMPlugin(pluginData, frame, index)); }
     ~DOMPlugin();
 
     String name() const;
@@ -45,11 +45,15 @@ public:
     bool canGetItemsForName(const AtomicString& propertyName);
     PassRefPtr<DOMMimeType> namedItem(const AtomicString& propertyName);
 
+    // FrameDestructionObserver
+    virtual void frameDestroyed() { m_frame = 0; }
+
 private:
     const PluginInfo& pluginInfo() const { return m_pluginData->plugins()[m_index]; }
 
-    DOMPlugin(PluginData*, unsigned index);
+    DOMPlugin(PluginData*, Frame*, unsigned index);
     RefPtr<PluginData> m_pluginData;
+    Frame* m_frame;
     unsigned m_index;
 };
 

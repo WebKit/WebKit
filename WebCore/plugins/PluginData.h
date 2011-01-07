@@ -51,9 +51,6 @@ struct PluginInfo {
 class PluginData : public RefCounted<PluginData> {
 public:
     static PassRefPtr<PluginData> create(const Page* page) { return adoptRef(new PluginData(page)); }
- 
-    void disconnectPage() { m_page = 0; }
-    const Page* page() const { return m_page; }
 
     const Vector<PluginInfo>& plugins() const { return m_plugins; }
     const Vector<MimeClassInfo>& mimes() const { return m_mimes; }
@@ -66,13 +63,11 @@ public:
 
 private:
     PluginData(const Page*);
-    void initPlugins();
+    void initPlugins(const Page*);
 
     Vector<PluginInfo> m_plugins;
     Vector<MimeClassInfo> m_mimes;
     Vector<size_t> m_mimePluginIndices;
-    
-    const Page* m_page;
 };
 
 }

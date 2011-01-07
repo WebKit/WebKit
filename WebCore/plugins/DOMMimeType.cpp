@@ -29,14 +29,19 @@
 
 namespace WebCore {
 
-DOMMimeType::DOMMimeType(PassRefPtr<PluginData> pluginData, unsigned index)
+DOMMimeType::DOMMimeType(PassRefPtr<PluginData> pluginData, Frame* frame, unsigned index)
     : m_pluginData(pluginData)
+    , m_frame(frame)
     , m_index(index)
 {
+    if (m_frame)
+        m_frame->addDestructionObserver(this);
 }
 
 DOMMimeType::~DOMMimeType()
 {
+    if (m_frame)
+        m_frame->removeDestructionObserver(this);
 }
 
 const String &DOMMimeType::type() const
@@ -64,11 +69,10 @@ const String &DOMMimeType::description() const
 
 PassRefPtr<DOMPlugin> DOMMimeType::enabledPlugin() const
 {
-    const Page* p = m_pluginData->page();
-    if (!p || !p->mainFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
+    if (!m_frame || !m_frame->page() || !m_frame->page()->mainFrame()->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
         return 0;
 
-    return DOMPlugin::create(m_pluginData.get(), m_pluginData->mimePluginIndices()[m_index]);
+    return DOMPlugin::create(m_pluginData.get(), m_frame, m_pluginData->mimePluginIndices()[m_index]);
 }
 
 } // namespace WebCore

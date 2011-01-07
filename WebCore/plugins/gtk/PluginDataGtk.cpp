@@ -27,7 +27,7 @@
 #include <stdio.h>
 namespace WebCore {
 
-void PluginData::initPlugins()
+void PluginData::initPlugins(const Page*)
 {
     PluginDatabase *db = PluginDatabase::installedPlugins();
     const Vector<PluginPackage*> &plugins = db->plugins();

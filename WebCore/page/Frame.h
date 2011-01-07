@@ -71,6 +71,13 @@ namespace WebCore {
     class TiledBackingStoreClient { };
 #endif
 
+    class FrameDestructionObserver {
+    public:
+        virtual ~FrameDestructionObserver() { }
+
+        virtual void frameDestroyed() = 0;
+    };
+
     class Frame : public RefCounted<Frame>, public TiledBackingStoreClient {
     public:
         static PassRefPtr<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
@@ -82,6 +89,9 @@ namespace WebCore {
             ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
         ~Frame();
+
+        void addDestructionObserver(FrameDestructionObserver*);
+        void removeDestructionObserver(FrameDestructionObserver*);
 
         void detachFromPage();
         void pageDestroyed();
@@ -198,6 +208,8 @@ namespace WebCore {
 
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
         void lifeSupportTimerFired(Timer<Frame>*);
+
+        HashSet<FrameDestructionObserver*> m_destructionObservers;
 
         Page* m_page;
         mutable FrameTree m_treeNode;

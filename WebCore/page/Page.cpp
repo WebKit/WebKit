@@ -211,8 +211,6 @@ Page::~Page()
         frame->pageDestroyed();
 
     m_editorClient->pageDestroyed();
-    if (m_pluginData)
-        m_pluginData->disconnectPage();
     
 #if ENABLE(INSPECTOR)
     m_inspectorController->inspectedPageDestroyed();
@@ -450,10 +448,8 @@ void Page::refreshPlugins(bool reload)
         Page* page = *it;
         
         // Clear out the page's plug-in data.
-        if (page->m_pluginData) {
-            page->m_pluginData->disconnectPage();
+        if (page->m_pluginData)
             page->m_pluginData = 0;
-        }
 
         if (!reload)
             continue;

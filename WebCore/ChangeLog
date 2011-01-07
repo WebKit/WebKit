@@ -1,3 +1,64 @@
+2011-01-06  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        When a live frame is moved between pages, some plug-in DOM methods cease to function
+        https://bugs.webkit.org/show_bug.cgi?id=45770
+
+        Test: fast/frames/iframe-reparenting-plugins.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::addObserver):
+        (WebCore::Frame::removeObserver):
+        * page/Frame.h:
+        (WebCore::FrameDestructionObserver::~FrameDestructionObserver):
+        Added observer to be notified when frame is destroyed.
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        (WebCore::Page::refreshPlugins):
+        PluginData no longer stores page pointer.
+        * plugins/DOMMimeType.cpp:
+        (WebCore::DOMMimeType::DOMMimeType):
+        (WebCore::DOMMimeType::~DOMMimeType):
+        (WebCore::DOMMimeType::enabledPlugin):
+        * plugins/DOMMimeType.h:
+        (WebCore::DOMMimeType::create):
+        (WebCore::DOMMimeType::frameDestroyed):
+        Store frame instead of page pointer in DOMMimeType.
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::item):
+        (WebCore::DOMMimeTypeArray::namedItem):
+        Provide frame to create DOMMimeType.
+        * plugins/DOMPlugin.cpp:
+        (WebCore::DOMPlugin::DOMPlugin):
+        (WebCore::DOMPlugin::~DOMPlugin):
+        (WebCore::DOMPlugin::item):
+        (WebCore::DOMPlugin::namedItem):
+        * plugins/DOMPlugin.h:
+        (WebCore::DOMPlugin::create):
+        (WebCore::DOMPlugin::frameDestroyed):
+        Store frame instead of page pointer in DOMPlugin.
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::item):
+        (WebCore::DOMPluginArray::namedItem):
+        Provide frame to create DOMPlugin.
+        * plugins/PluginData.cpp:
+        (WebCore::PluginData::PluginData):
+        (WebCore::PluginData::initPlugins):
+        * plugins/PluginData.h:
+        No longer stores a pointer to the page.
+        Added page parameter to initPlugins.
+        * plugins/PluginDataNone.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/gtk/PluginDataGtk.cpp:
+        (WebCore::PluginData::initPlugins):
+        * plugins/wx/PluginDataWx.cpp:
+        (WebCore::PluginData::initPlugins):
+        Updated platforms to add (unused) page parameter to initPlugins.
+
 2011-01-05  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

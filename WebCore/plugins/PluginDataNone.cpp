@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-void PluginData::initPlugins()
+void PluginData::initPlugins(const Page*)
 {
 }
 

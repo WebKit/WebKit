@@ -234,12 +234,26 @@ Frame::~Frame()
     for (HashSet<DOMWindow*>::iterator it = m_liveFormerWindows.begin(); it != end; ++it)
         (*it)->disconnectFrame();
 
+    HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
+    for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
+        (*it)->frameDestroyed();
+
     if (m_view) {
         m_view->hide();
         m_view->clearFrame();
     }
 
     ASSERT(!m_lifeSupportTimer.isActive());
+}
+
+void Frame::addDestructionObserver(FrameDestructionObserver* observer)
+{
+    m_destructionObservers.add(observer);
+}
+
+void Frame::removeDestructionObserver(FrameDestructionObserver* observer)
+{
+    m_destructionObservers.remove(observer);
 }
 
 void Frame::setView(PassRefPtr<FrameView> view)

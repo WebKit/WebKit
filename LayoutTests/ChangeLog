@@ -1,3 +1,15 @@
+2011-01-06  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        When a live frame is moved between pages, some plug-in DOM methods cease to function
+        https://bugs.webkit.org/show_bug.cgi?id=45770
+
+        * fast/frames/iframe-reparenting-plugins-expected.txt: Added.
+        * fast/frames/iframe-reparenting-plugins.html: Added.
+        * fast/frames/resources/iframe-reparenting-plugins-iframe-content.html: Added.
+        * fast/frames/resources/iframe-reparenting-plugins-new-page.html: Added.
+
 2011-01-06  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; test expectations update.

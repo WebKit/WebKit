@@ -65,7 +65,7 @@ private:
 
 static PluginCache pluginCache;
 
-void PluginData::initPlugins()
+void PluginData::initPlugins(const Page*)
 {
     const Vector<PluginInfo>& plugins = pluginCache.plugins();
     for (size_t i = 0; i < plugins.size(); ++i)

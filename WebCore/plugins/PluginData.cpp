@@ -32,9 +32,8 @@
 namespace WebCore {
 
 PluginData::PluginData(const Page* page)
-    : m_page(page)
 {
-    initPlugins();
+    initPlugins(page);
 
     for (unsigned i = 0; i < m_plugins.size(); ++i) {
         const PluginInfo& plugin = m_plugins[i];
@@ -71,11 +70,11 @@ void PluginData::refresh()
     platformStrategies()->pluginStrategy()->refreshPlugins();
 }
 
-void PluginData::initPlugins()
+void PluginData::initPlugins(const Page* page)
 {
     ASSERT(m_plugins.isEmpty());
     
-    platformStrategies()->pluginStrategy()->getPluginInfo(m_page, m_plugins);
+    platformStrategies()->pluginStrategy()->getPluginInfo(page, m_plugins);
 }
 #endif
 
