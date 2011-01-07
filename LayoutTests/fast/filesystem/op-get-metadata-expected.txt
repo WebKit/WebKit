@@ -1,0 +1,21 @@
+* Running: GetMetadata
+PASS Succeeded: "/".getMetadata()
+PASS new Date() is >= this.environment["/.modificationTime"]
+PASS Succeeded: "/".getDirectory("/a")
+PASS Succeeded: "/a".getMetadata()
+PASS this.environment["/a.modificationTime"] is >= this.roundedStartDate
+PASS new Date() is >= this.environment["/a.modificationTime"]
+PASS Succeeded: "/".getFile("/b")
+PASS Succeeded: "/b".getMetadata()
+PASS this.environment["/b.modificationTime"] is >= this.roundedStartDate
+PASS new Date() is >= this.environment["/b.modificationTime"]
+PASS Succeeded: "/tmp".remove()
+PASS this.expectedErrorCode + "" is "1"
+PASS this.environment["/a.modificationTime"] is >= this.environment["/.modificationTime"]
+PASS this.environment["/b.modificationTime"] is >= this.environment["/.modificationTime"]
+PASS this.environment["/b.modificationTime"] is >= this.environment["/a.modificationTime"]
+Finished running tests.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

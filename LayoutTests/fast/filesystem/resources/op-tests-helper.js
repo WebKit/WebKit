@@ -141,15 +141,18 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
         this.currentReader = null;
         this.readEntries = [];
 
+        this.getSymbolString = function(symbol)
+        {
+            return 'this.environment["' + symbol + '"]';
+        };
+
         this.testSuccessCallback = function()
         {
             if (!this.expectedErrorCode) {
                 testPassed('Succeeded: ' + this.stage);
                 this.runNextTest();
-            } else {
+            } else
                 testFailed('Unexpectedly succeeded while ' + this.stage);
-                this.errorCallback();
-            }
         };
 
         this.entry = null;
@@ -162,10 +165,8 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
                 shouldBe.apply(this, ['this.environment[this.entry.fullPath].isFile + ""', '"' + entry.isFile + '"']);
                 shouldBe.apply(this, ['this.environment[this.entry.fullPath].isDirectory + ""', '"' + entry.isDirectory + '"']);
                 this.runNextTest();
-            } else {
+            } else
                 testFailed('Unexpectedly succeeded while ' + this.stage);
-                this.errorCallback(error);
-            }
         };
 
         this.testCreateSuccessCallback = function(entry)
@@ -174,10 +175,8 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
                 testPassed('Succeeded: ' + this.stage);
                 this.environment[entry.fullPath] = entry;
                 this.runNextTest();
-            } else {
+            } else
                 testFailed('Unexpectedly succeeded while ' + this.stage);
-                this.errorCallback();
-            }
         };
 
         this.testGetParentSuccessCallback = function(entry)
@@ -186,19 +185,14 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
                 testPassed('Succeeded: ' + this.stage);
                 debug('Parent entry: ' + toString(entry));
                 this.runNextTest();
-            } else {
+            } else
                 testFailed('Unexpectedly succeeded while ' + this.stage);
-                this.errorCallback();
-            }
         };
 
         this.testReadEntriesSuccessCallback = function(entries)
         {
-            if (this.expectedErrorCode) {
+            if (this.expectedErrorCode)
                 testFailed('Unexpectedly succeeded while ' + this.stage);
-                this.errorCallback(error);
-                return;
-            }
 
             for (var i = 0; i < entries.length; ++i)
                 this.readEntries.push(entries[i]);
@@ -211,6 +205,22 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
             testPassed('Succeeded: ' + this.stage);
             debug('Entries: ' + toString(this.readEntries));
             this.runNextTest();
+        };
+
+        this.testMetadataSuccessCallback = function(metadata, entry)
+        {
+            if (!this.expectedErrorCode) {
+                testPassed('Succeeded: ' + this.stage);
+                var symbol = entry + '.modificationTime';
+                this.environment[symbol] = metadata.modificationTime;
+
+                var entryMetadataString = this.getSymbolString(symbol);
+                if (entry != '/')
+                    shouldBeGreaterThanOrEqual.apply(this, [entryMetadataString, 'this.roundedStartDate']);
+                shouldBeGreaterThanOrEqual.apply(this, ['new Date()', entryMetadataString]);
+                this.runNextTest();
+            } else
+                testFailed('Unexpectedly succeeded while ' + this.stage);
         };
 
         this.testErrorCallback = function(error)
@@ -253,7 +263,7 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
         {
             this.expectedErrorCode = expectedErrorCode;
             this.stage = '"' + entry + '".getMetadata()';
-            this.environment[entry].getMetadata(bindCallback(this, this.testSuccessCallback), bindCallback(this, this.testErrorCallback));
+            this.environment[entry].getMetadata(bindCallback(this, this.testMetadataSuccessCallback, entry), bindCallback(this, this.testErrorCallback));
         };
 
         this.remove = function(entry, expectedErrorCode)
@@ -293,11 +303,25 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
             this.environment[entry].moveTo(this.environment[destinationParent], newName, bindCallback(this, this.testSuccessCallback), bindCallback(this, this.testErrorCallback));
         };
 
+        this.shouldBe = function(symbol1, symbol2)
+        {
+            shouldBe.apply(this, [this.getSymbolString(symbol1), this.getSymbolString(symbol2)]);
+            this.runNextTest();
+        };
+
+        this.shouldBeGreaterThanOrEqual = function(symbol1, symbol2)
+        {
+            shouldBeGreaterThanOrEqual.apply(this, [this.getSymbolString(symbol1), this.getSymbolString(symbol2)]);
+            this.runNextTest();
+        };
+
         //---------------------------------------------------------------
         this.start = function()
         {
             this.expectedErrorCode = '';
             this.stage = 'resetting filesystem';
+            // Record rounded start date (current time minus 999 msec) here for the comparison. Entry.getMetadata() may return the last mod time in seconds accuracy while new Date() is milliseconds accuracy.
+            this.roundedStartDate = new Date((new Date()).getTime() - 999);
             removeAllInDirectory(this.fileSystem.root, bindCallback(this, this.setUp), bindCallback(this, this.testErrorCallback));
         };
 
