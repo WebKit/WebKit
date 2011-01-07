@@ -44,11 +44,13 @@ BEGIN {
     $VERSION     = 1.00;
     @ISA         = qw(Exporter);
     @EXPORT      = qw(
+        &applyGitBinaryPatchDelta
         &callSilently
         &canonicalizePath
         &changeLogEmailAddress
         &changeLogName
         &chdirReturningRelativePath
+        &decodeGitBinaryChunk
         &decodeGitBinaryPatch
         &determineSVNRoot
         &determineVCSRoot
@@ -1742,7 +1744,6 @@ sub decodeGitBinaryPatch($$)
     #
     # Each chunk a line which starts from either "literal" or "delta",
     # followed by a number which specifies decoded size of the chunk.
-    # The "delta" type chunks aren't supported by this function yet.
     #
     # Then, content of the chunk comes. To decode the content, we
     # need decode it with base85 first, and then zlib.
@@ -1763,10 +1764,94 @@ sub decodeGitBinaryPatch($$)
     my $reverseBinaryChunk = decodeGitBinaryChunk($encodedReverseChunk, $fullPath);
     my $reverseBinaryChunkActualSize = length($reverseBinaryChunk);
 
-    die "$fullPath: unexpected size of the first chunk (expected $binaryChunkExpectedSize but was $binaryChunkActualSize" if ($binaryChunkExpectedSize != $binaryChunkActualSize);
-    die "$fullPath: unexpected size of the second chunk (expected $reverseBinaryChunkExpectedSize but was $reverseBinaryChunkActualSize" if ($reverseBinaryChunkExpectedSize != $reverseBinaryChunkActualSize);
+    die "$fullPath: unexpected size of the first chunk (expected $binaryChunkExpectedSize but was $binaryChunkActualSize" if ($binaryChunkType eq "literal" and $binaryChunkExpectedSize != $binaryChunkActualSize);
+    die "$fullPath: unexpected size of the second chunk (expected $reverseBinaryChunkExpectedSize but was $reverseBinaryChunkActualSize" if ($reverseBinaryChunkType eq "literal" and $reverseBinaryChunkExpectedSize != $reverseBinaryChunkActualSize);
 
     return ($binaryChunkType, $binaryChunk, $reverseBinaryChunkType, $reverseBinaryChunk);
+}
+
+sub readByte($$)
+{
+    my ($data, $location) = @_;
+    
+    # Return the byte at $location in $data as a numeric value. 
+    return ord(substr($data, $location, 1));
+}
+
+# The git binary delta format is undocumented, except in code:
+# - https://github.com/git/git/blob/master/delta.h:get_delta_hdr_size is the source
+#   of the algorithm in decodeGitBinaryPatchDeltaSize.
+# - https://github.com/git/git/blob/master/patch-delta.c:patch_delta is the source
+#   of the algorithm in applyGitBinaryPatchDelta.
+sub decodeGitBinaryPatchDeltaSize($)
+{
+    my ($binaryChunk) = @_;
+    
+    # Source and destination buffer sizes are stored in 7-bit chunks at the
+    # start of the binary delta patch data.  The highest bit in each byte
+    # except the last is set; the remaining 7 bits provide the next
+    # chunk of the size.  The chunks are stored in ascending significance
+    # order.
+    my $cmd;
+    my $size = 0;
+    my $shift = 0;
+    for (my $i = 0; $i < length($binaryChunk);) {
+        $cmd = readByte($binaryChunk, $i++);
+        $size |= ($cmd & 0x7f) << $shift;
+        $shift += 7;
+        if (!($cmd & 0x80)) {
+            return ($size, $i);
+        }
+    }
+}
+
+sub applyGitBinaryPatchDelta($$)
+{
+    my ($binaryChunk, $originalContents) = @_;
+    
+    # Git delta format consists of two headers indicating source buffer size
+    # and result size, then a series of commands.  Each command is either
+    # a copy-from-old-version (the 0x80 bit is set) or a copy-from-delta
+    # command.  Commands are applied sequentially to generate the result.
+    #
+    # A copy-from-old-version command encodes an offset and size to copy
+    # from in subsequent bits, while a copy-from-delta command consists only
+    # of the number of bytes to copy from the delta.
+
+    # We don't use these values, but we need to know how big they are so that
+    # we can skip to the diff data.
+    my ($size, $bytesUsed) = decodeGitBinaryPatchDeltaSize($binaryChunk);
+    $binaryChunk = substr($binaryChunk, $bytesUsed);
+    ($size, $bytesUsed) = decodeGitBinaryPatchDeltaSize($binaryChunk);
+    $binaryChunk = substr($binaryChunk, $bytesUsed);
+
+    my $out = "";
+    for (my $i = 0; $i < length($binaryChunk); ) {
+        my $cmd = ord(substr($binaryChunk, $i++, 1));
+        if ($cmd & 0x80) {
+            # Extract an offset and size from the delta data, then copy
+            # $size bytes from $offset in the original data into the output.
+            my $offset = 0;
+            my $size = 0;
+            if ($cmd & 0x01) { $offset = readByte($binaryChunk, $i++); }
+            if ($cmd & 0x02) { $offset |= readByte($binaryChunk, $i++) << 8; }
+            if ($cmd & 0x04) { $offset |= readByte($binaryChunk, $i++) << 16; }
+            if ($cmd & 0x08) { $offset |= readByte($binaryChunk, $i++) << 24; }
+            if ($cmd & 0x10) { $size = readByte($binaryChunk, $i++); }
+            if ($cmd & 0x20) { $size |= readByte($binaryChunk, $i++) << 8; }
+            if ($cmd & 0x40) { $size |= readByte($binaryChunk, $i++) << 16; }
+            if ($size == 0) { $size = 0x10000; }
+            $out .= substr($originalContents, $offset, $size);
+        } elsif ($cmd) {
+            # Copy $cmd bytes from the delta data into the output.
+            $out .= substr($binaryChunk, $i, $cmd);
+            $i += $cmd;
+        } else {
+            die "unexpected delta opcode 0";
+        }
+    }
+
+    return $out;
 }
 
 1;
