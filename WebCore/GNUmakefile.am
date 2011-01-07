@@ -568,6 +568,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLBuffer.h \
 	DerivedSources/WebCore/JSWebGLContextAttributes.cpp \
 	DerivedSources/WebCore/JSWebGLContextAttributes.h \
+	DerivedSources/WebCore/JSWebGLContextEvent.cpp \
+	DerivedSources/WebCore/JSWebGLContextEvent.h \
 	DerivedSources/WebCore/JSWebGLFramebuffer.cpp \
 	DerivedSources/WebCore/JSWebGLFramebuffer.h \
 	DerivedSources/WebCore/JSWebGLProgram.cpp \
@@ -696,6 +698,7 @@ webcore_sources += \
 	WebCore/bindings/js/GCController.h \
 	WebCore/bindings/js/IDBBindingUtilities.h \
 	WebCore/bindings/js/JSArrayBufferCustom.cpp \
+	WebCore/bindings/js/JSArrayBufferViewHelper.h \
 	WebCore/bindings/js/JSAttrCustom.cpp \
 	WebCore/bindings/js/JSAudioConstructor.cpp \
 	WebCore/bindings/js/JSAudioConstructor.h \
@@ -845,11 +848,12 @@ webcore_sources += \
 	WebCore/bindings/js/JSTouchCustom.cpp \
 	WebCore/bindings/js/JSTouchListCustom.cpp \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
-	WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
-	WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
 	WebCore/bindings/js/JSUint16ArrayCustom.cpp \
 	WebCore/bindings/js/JSUint32ArrayCustom.cpp \
 	WebCore/bindings/js/JSUint8ArrayCustom.cpp \
+	WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \
+	WebCore/bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp \
+	WebCore/bindings/js/JSWebGLRenderingContextCustom.cpp \
 	WebCore/bindings/js/JSWebKitCSSMatrixCustom.cpp \
 	WebCore/bindings/js/JSWebKitPointCustom.cpp \
 	WebCore/bindings/js/JSWebSocketCustom.cpp \
@@ -1541,6 +1545,7 @@ webcore_sources += \
 	WebCore/html/canvas/ArrayBuffer.h \
 	WebCore/html/canvas/ArrayBufferView.cpp \
 	WebCore/html/canvas/ArrayBufferView.h \
+	WebCore/html/canvas/CanvasContextAttributes.cpp \
 	WebCore/html/canvas/CanvasContextAttributes.h \
 	WebCore/html/canvas/CanvasGradient.cpp \
 	WebCore/html/canvas/CanvasGradient.h \
@@ -4641,6 +4646,40 @@ if ENABLE_BLOB
 FEATURE_DEFINES += ENABLE_BLOB=1
 webcore_cppflags += -DENABLE_BLOB=1
 endif  # END ENABLE_BLOB
+
+# ---
+# 3D canvas (WebGL) support
+# ---
+if ENABLE_3D_CANVAS
+FEATURE_DEFINES += ENABLE_3D_CANVAS=1
+webcore_cppflags += -DENABLE_3D_CANVAS=1
+webcore_sources += \
+	WebCore/html/canvas/WebGLActiveInfo.h \
+	WebCore/html/canvas/WebGLBuffer.cpp \
+	WebCore/html/canvas/WebGLBuffer.h \
+	WebCore/html/canvas/WebGLContextAttributes.cpp \
+	WebCore/html/canvas/WebGLContextAttributes.h \
+	WebCore/html/canvas/WebGLContextEvent.cpp \
+	WebCore/html/canvas/WebGLContextEvent.h \
+	WebCore/html/canvas/WebGLFramebuffer.cpp \
+	WebCore/html/canvas/WebGLFramebuffer.h \
+	WebCore/html/canvas/WebGLGetInfo.cpp \
+	WebCore/html/canvas/WebGLGetInfo.h \
+	WebCore/html/canvas/WebGLObject.cpp \
+	WebCore/html/canvas/WebGLObject.h \
+	WebCore/html/canvas/WebGLProgram.cpp \
+	WebCore/html/canvas/WebGLProgram.h \
+	WebCore/html/canvas/WebGLRenderbuffer.cpp \
+	WebCore/html/canvas/WebGLRenderbuffer.h \
+	WebCore/html/canvas/WebGLRenderingContext.cpp \
+	WebCore/html/canvas/WebGLRenderingContext.h \
+	WebCore/html/canvas/WebGLShader.cpp \
+	WebCore/html/canvas/WebGLShader.h \
+	WebCore/html/canvas/WebGLTexture.cpp \
+	WebCore/html/canvas/WebGLTexture.h \
+	WebCore/html/canvas/WebGLUniformLocation.cpp \
+	WebCore/html/canvas/WebGLUniformLocation.h
+endif  # END ENABLE_3D_CANVAS
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl

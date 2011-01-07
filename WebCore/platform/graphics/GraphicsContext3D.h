@@ -26,6 +26,7 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
+#include "IntSize.h"
 #include "GraphicsLayer.h"
 #include "PlatformString.h"
 
@@ -36,18 +37,15 @@
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
 #if ((PLATFORM(CHROMIUM) && OS(WINDOWS)) || PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS)))
 #undef NO_ERROR
+#elif PLATFORM(GTK)
+// This define is from the X11 headers, but it's used below, so we must undefine it.
+#undef VERSION
 #endif
 
 #if PLATFORM(MAC)
 #include "ANGLEWebKitBridge.h"
 #include <OpenGL/OpenGL.h>
 #include <wtf/RetainPtr.h>
-
-typedef CGLContextObj PlatformGraphicsContext3D;
-const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
-typedef GLuint Platform3DObject;
-const Platform3DObject NullPlatform3DObject = 0;
-
 #ifdef __OBJC__
 @class CALayer;
 @class WebGLLayer;
@@ -60,16 +58,25 @@ QT_BEGIN_NAMESPACE
 class QPainter;
 class QRect;
 QT_END_NAMESPACE
-typedef void* PlatformGraphicsContext3D;
-const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
-typedef int Platform3DObject;
-const Platform3DObject NullPlatform3DObject = 0;
+#elif PLATFORM(GTK)
+typedef unsigned int GLuint;
+#endif
+
+#if PLATFORM(MAC)
+typedef CGLContextObj PlatformGraphicsContext3D;
 #else
 typedef void* PlatformGraphicsContext3D;
-const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
-typedef int Platform3DObject;
-const Platform3DObject NullPlatform3DObject = 0;
 #endif
+
+#if PLATFORM(MAC) || PLATFORM(GTK)
+typedef GLuint Platform3DObject;
+#else
+typedef int Platform3DObject;
+#endif
+
+// These are currently the same among all implementations.
+const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
+const Platform3DObject NullPlatform3DObject = 0;
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CGContext.h>
