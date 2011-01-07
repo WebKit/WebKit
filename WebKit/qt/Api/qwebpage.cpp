@@ -2650,7 +2650,7 @@ bool QWebPage::hasSelection() const
 
     By default, this property contains an empty string.
 
-    \sa selectionChanged()
+    \sa selectionChanged(), selectedHtml()
 */
 QString QWebPage::selectedText() const
 {
@@ -2659,6 +2659,21 @@ QString QWebPage::selectedText() const
     if (frame->selection()->selection().selectionType() == VisibleSelection::NoSelection)
         return QString();
     return frame->editor()->selectedText();
+}
+
+/*!
+    \since 4.8
+    \property QWebPage::selectedHtml
+    \brief the HTML currently selected
+
+    By default, this property contains an empty string.
+
+    \sa selectionChanged(), selectedText()
+*/
+QString QWebPage::selectedHtml() const
+{
+    d->createMainFrame();
+    return d->page->focusController()->focusedOrMainFrame()->editor()->selectedRange()->toHTML();
 }
 
 #ifndef QT_NO_ACTION

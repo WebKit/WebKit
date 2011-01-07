@@ -935,6 +935,7 @@ void tst_QWebPage::cursorMovements()
         "getSelection().addRange(range);";
     page->mainFrame()->evaluateJavaScript(script);
     QCOMPARE(page->selectedText().trimmed(), QString::fromLatin1("The quick brown fox"));
+    QCOMPARE(page->selectedHtml().trimmed(), QString::fromLatin1("<span class=\"Apple-style-span\" style=\"border-collapse: separate; color: rgb(0, 0, 0); font-family: Times; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-align: -webkit-auto; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; -webkit-text-decorations-in-effect: none; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; font-size: medium; \"><p id=\"one\">The quick brown fox</p></span>"));
 
     // these actions must exist
     QVERIFY(page->action(QWebPage::MoveToNextChar) != 0);
@@ -1165,6 +1166,7 @@ void tst_QWebPage::textSelection()
         "getSelection().addRange(range);";
     page->mainFrame()->evaluateJavaScript(selectScript);
     QCOMPARE(page->selectedText().trimmed(), QString::fromLatin1("The quick brown fox"));
+    QCOMPARE(page->selectedHtml().trimmed(), QString::fromLatin1("<span class=\"Apple-style-span\" style=\"border-collapse: separate; color: rgb(0, 0, 0); font-family: Times; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-align: -webkit-auto; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; -webkit-text-decorations-in-effect: none; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; font-size: medium; \"><p id=\"one\">The quick brown fox</p></span>"));
 
     // Make sure hasSelection returns true, since there is selected text now...
     QCOMPARE(page->hasSelection(), true);
@@ -2380,6 +2382,10 @@ void tst_QWebPage::crashTests_LazyInitializationOfMainFrame()
     }
     {
         QWebPage webPage;
+        webPage.selectedHtml();
+    }
+    {
+        QWebPage webPage;
         webPage.triggerAction(QWebPage::Back, true);
     }
     {
@@ -2574,14 +2580,18 @@ void tst_QWebPage::findText()
     m_view->setHtml(QString("<html><head></head><body><div>foo bar</div></body></html>"));
     m_page->triggerAction(QWebPage::SelectAll);
     QVERIFY(!m_page->selectedText().isEmpty());
+    QVERIFY(!m_page->selectedHtml().isEmpty());
     m_page->findText("");
     QVERIFY(m_page->selectedText().isEmpty());
+    QVERIFY(m_page->selectedHtml().isEmpty());
     QStringList words = (QStringList() << "foo" << "bar");
     foreach (QString subString, words) {
         m_page->findText(subString, QWebPage::FindWrapsAroundDocument);
         QCOMPARE(m_page->selectedText(), subString);
+        QCOMPARE(m_page->selectedHtml(), QString("<span class=\"Apple-style-span\" style=\"border-collapse: separate; color: rgb(0, 0, 0); font-family: Times; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-align: -webkit-auto; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; -webkit-text-decorations-in-effect: none; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; font-size: medium; \">%1</span>").arg(subString));
         m_page->findText("");
         QVERIFY(m_page->selectedText().isEmpty());
+        QVERIFY(m_page->selectedHtml().isEmpty());
     }
 }
 
