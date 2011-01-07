@@ -101,22 +101,39 @@ void RenderThemeGtk::initMediaColors()
     m_sliderThumbColor = style->bg[GTK_STATE_SELECTED];
 }
 
+static void adjustRectForFocus(GtkStyleContext* context, IntRect& rect)
+{
+    gint focusWidth, focusPad;
+    gtk_style_context_get_style(context,
+                                "focus-line-width", &focusWidth,
+                                "focus-padding", &focusPad, NULL);
+    rect.inflate(focusWidth + focusPad);
+}
+
 void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect& rect)
 {
+    GtkStyleContext* context = 0;
     ControlPart part = renderObject->style()->appearance();
     switch (part) {
     case SliderVerticalPart:
-    case SliderHorizontalPart: {
-        GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ?  GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
-        gint focusWidth, focusPad;
-        gtk_style_context_get_style(context,
-                                    "focus-line-width", &focusWidth,
-                                    "focus-padding", &focusPad, NULL);
-        rect.inflate(focusWidth + focusPad);
-    }
-    default:
+    case SliderHorizontalPart:
+        context = getStyleContext(part == SliderThumbHorizontalPart ?  GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
         break;
+    case ButtonPart:
+        context = getStyleContext(GTK_TYPE_BUTTON);
+
+        gboolean interiorFocus;
+        gtk_style_context_get_style(context, "interior-focus", &interiorFocus, NULL);
+        if (interiorFocus)
+            return;
+
+        break;
+    default:
+        return;
     }
+
+    ASSERT(context);
+    adjustRectForFocus(context, rect);
 }
 
 GtkStateType RenderThemeGtk::getGtkStateType(RenderObject* object)
@@ -198,48 +215,80 @@ bool RenderThemeGtk::paintRadio(RenderObject* object, const PaintInfo& info, con
     return paintRenderObject(MOZ_GTK_RADIOBUTTON, object, info.context, rect, isChecked(object));
 }
 
-bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (info.context->paintingDisabled())
-        return false;
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_BUTTON);
+    gtk_style_context_save(context);
 
-    GtkWidget* widget = gtkButton();
-    IntRect buttonRect(IntPoint(), rect.size());
-    IntRect focusRect(buttonRect);
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
 
-    GtkStateType state = getGtkStateType(object);
-    gtk_widget_set_state(widget, state);
-    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
+    IntRect buttonRect(rect);
 
-    if (isFocused(object)) {
-        if (isEnabled(object))
-            g_object_set(widget, "has-focus", TRUE, NULL);
+    if (isDefault(renderObject)) {
+        GtkBorder* borderPtr = 0;
+        GtkBorder border = { 1, 1, 1, 1 };
 
-        gboolean interiorFocus = 0, focusWidth = 0, focusPadding = 0;
-        gtk_widget_style_get(widget,
-                             "interior-focus", &interiorFocus,
-                             "focus-line-width", &focusWidth,
-                             "focus-padding", &focusPadding, NULL);
-        // If we are using exterior focus, we shrink the button rect down before
-        // drawing. If we are using interior focus we shrink the focus rect. This
-        // approach originates from the Mozilla theme drawing code (gtk2drawing.c).
-        if (interiorFocus) {
-            GtkStyle* style = gtk_widget_get_style(widget);
-            focusRect.inflateX(-style->xthickness - focusPadding);
-            focusRect.inflateY(-style->ythickness - focusPadding);
-        } else {
-            buttonRect.inflateX(-focusWidth - focusPadding);
-            buttonRect.inflateY(-focusPadding - focusPadding);
+        gtk_style_context_get_style(context, "default-border", &borderPtr, NULL);
+        if (borderPtr) {
+            border = *borderPtr;
+            gtk_border_free(borderPtr);
         }
+
+        buttonRect.move(border.left, border.top);
+        buttonRect.setWidth(buttonRect.width() - (border.left + border.right));
+        buttonRect.setHeight(buttonRect.height() - (border.top + border.bottom));
+
+        gtk_style_context_add_class(context, GTK_STYLE_CLASS_DEFAULT);
     }
 
-    WidgetRenderingContext widgetContext(info.context, rect);
-    GtkShadowType shadowType = state == GTK_STATE_ACTIVE ? GTK_SHADOW_IN : GTK_SHADOW_OUT;
-    widgetContext.gtkPaintBox(buttonRect, widget, state, shadowType, "button");
-    if (isFocused(object))
-        widgetContext.gtkPaintFocus(focusRect, widget, state, "button");
+    guint flags = 0;
+    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    else if (isHovered(renderObject))
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    if (isPressed(renderObject))
+        flags |= GTK_STATE_FLAG_ACTIVE;
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
-    g_object_set(widget, "has-focus", FALSE, NULL);
+    gtk_render_background(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+
+    if (isFocused(renderObject)) {
+        gint focusWidth, focusPad;
+        gboolean displaceFocus, interiorFocus;
+        gtk_style_context_get_style(context,
+                                    "focus-line-width", &focusWidth,
+                                    "focus-padding", &focusPad,
+                                    "interior-focus", &interiorFocus,
+                                    "displace-focus", &displaceFocus,
+                                    NULL);
+
+        if (interiorFocus) {
+            GtkBorder borderWidth;
+            gtk_style_context_get_border(context, static_cast<GtkStateFlags>(flags), &borderWidth);
+
+            buttonRect = IntRect(buttonRect.x() + borderWidth.left + focusPad, buttonRect.y() + borderWidth.top + focusPad,
+                                 buttonRect.width() - (2 * focusPad + borderWidth.left + borderWidth.right),
+                                 buttonRect.height() - (2 * focusPad + borderWidth.top + borderWidth.bottom));
+        } else
+            buttonRect.inflate(focusWidth + focusPad);
+
+        if (displaceFocus && isPressed(renderObject)) {
+            gint childDisplacementX;
+            gint childDisplacementY;
+            gtk_style_context_get_style(context,
+                                        "child-displacement-x", &childDisplacementX,
+                                        "child-displacement-y", &childDisplacementY,
+                                        NULL);
+            buttonRect.move(childDisplacementX, childDisplacementY);
+        }
+
+        gtk_render_focus(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    }
+
+    gtk_style_context_restore(context);
+
     return false;
 }
 
