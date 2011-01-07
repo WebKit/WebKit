@@ -550,7 +550,7 @@ private:
     }
 
     NSView* animationView = [[self _fullscreenWindow] animationView];
-    CGRect layerEndFrame = NSRectToCGRect([animationView convertRect:_initialFrame fromView:nil]);
+    CGRect layerEndFrame = NSRectToCGRect([animationView convertRect:NSRectFromCGRect(_initialFrame) fromView:nil]);
 
     // The _renderer might be NULL due to its ancestor being removed:
     CGRect layerStartFrame = CGRectZero;

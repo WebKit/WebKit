@@ -1,5 +1,13 @@
 2011-01-07  Jer Noble  <jer.noble@apple.com>
 
+        Yet another Leopard build fix: NSRect and CGRect are not inter-
+        changable in 32-bit.  
+        
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController exitFullscreen]):
+
+2011-01-07  Jer Noble  <jer.noble@apple.com>
+
         Fix the Leopard build: Replace CoreAnimation SL-only functions
         with Leopard equivalents.
 
