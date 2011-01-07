@@ -1,3 +1,10 @@
+2011-01-07  Adam Roben  <aroben@apple.com>
+
+        Build master fix
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests.start): Don't try to concatenate a list and a string.
+
 2011-01-07  Jedrzej Nowacki  <jedrzej.nowacki@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
