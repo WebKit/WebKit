@@ -1,3 +1,13 @@
+2011-01-07  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations update.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        Removed some no-longer-failing tests; moved some lines around to
+        match the CPU results.
+        * platform/chromium/test_expectations.txt:
+        Bug assignment and cleanup.
+
 2011-01-05  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

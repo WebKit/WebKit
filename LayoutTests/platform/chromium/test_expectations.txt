@@ -3029,6 +3029,7 @@ BUGCR67209 WIN DEBUG : inspector/styles-disable-then-delete.html = CRASH TIMEOUT
 BUGCR67416 : fast/text/emphasis.html = FAIL
 BUGCR67416 : fast/text/emphasis-vertical.html = FAIL
 BUGCR67540 WIN LINUX : fast/text/emphasis-overlap.html = IMAGE+TEXT
+BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
@@ -3145,11 +3146,11 @@ BUGWK51841 : fast/gradients/css3-radial-gradients3.html = IMAGE
 BUGWK51841 : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // This was introduced by r75077.
-BUG_SENORBLANCO LINUX MAC : fast/text/basic/014.html = IMAGE
-BUG_SENORBLANCO LINUX MAC : fast/text/midword-break-after-breakable-char.html = IMAGE
-BUG_SENORBLANCO LINUX : fast/text/capitalize-boundaries.html = IMAGE
-BUG_SENORBLANCO WIN : fast/text/basic/014.html = IMAGE+TEXT
-BUG_SENORBLANCO WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
+BUGWK52082 LINUX MAC : fast/text/basic/014.html = IMAGE
+BUGWK52082 LINUX MAC : fast/text/midword-break-after-breakable-char.html = IMAGE
+BUGWK52082 LINUX : fast/text/capitalize-boundaries.html = IMAGE
+BUGWK52082 WIN : fast/text/basic/014.html = IMAGE+TEXT
+BUGWK52082 WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
 // These were introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
@@ -3168,12 +3169,6 @@ BUGWK52063 WIN DEBUG : http/tests/media/text-served-as-text.html = PASS TEXT TIM
 BUGWK52063 WIN : http/tests/navigation/ping-cross-origin.html = PASS TEXT TIMEOUT
 BUGWK52063 MAC SLOW : http/tests/navigation/ping-cross-origin.html = PASS
 
-// These are actually passing, but the Safari results have "failing" results
-// checked in.  A rebaseline should do the trick.
-BUG_SENORBLANCO LINUX : animations/animation-time.html = TEXT
-BUG_SENORBLANCO LINUX : fast/css/css3-nth-tokens-script.html = TEXT
-BUG_SENORBLANCO LINUX : fast/css/css3-nth-tokens-style.html = TEXT
-
 // New test introduced at r75217 is failing on Win.
 BUGWK52062 WIN : fast/frames/iframe-reparenting-plugins.html = TEXT
 
@@ -3182,7 +3177,3 @@ BUGWK52061 DEBUG : transitions/suspend-transform-transition.html = IMAGE PASS
 BUGWK52061 DEBUG : transitions/change-values-during-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/interrupted-accelerated-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
-
-// New test introduced in r75257.  Not sure if the results are correct
-// (some boxes moved around).  Looks like redacted CIA covert ops text.
-BUG_SENORBLANCO : fast/text/emphasis-avoid-ruby.html = IMAGE

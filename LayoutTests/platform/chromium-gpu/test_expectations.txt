@@ -186,10 +186,6 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.pattern.transparent.2.html 
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.cone.front.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.drawImage.incomplete.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.current.basic.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.current.changed.html = TEXT PASS
-BUGWK45991 : canvas/philip/tests/2d.fillStyle.parse.current.removed.html = TEXT PASS
 BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside2.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.inside3.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.gradient.radial.outside1.html = TEXT
@@ -200,7 +196,6 @@ BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUGWK45991 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
-// BUGWK40147 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT PASS
 BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 BUGWK43086 : fast/canvas/canvas-ImageData-behaviour.html = TEXT
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
@@ -212,12 +207,11 @@ BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 BUGCR60651 MAC WIN LINUX RELEASE: fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
 BUGCR60651 MAC LINUX DEBUG: fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
 BUGWK47243 WIN DEBUG : fast/canvas/webgl/gl-object-get-calls.html = PASS CRASH
-// BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
-// BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
-BUGWK47243 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
-BUGWK47243 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
 // Failing after r75175
 BUGWEBGL : fast/canvas/webgl/glsl-conformance.html = CRASH
+// BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
+BUGCR60651 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
+BUGCR60651 LINUX : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 
