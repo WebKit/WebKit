@@ -1,3 +1,13 @@
+2011-01-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        NetworkTransaction should log the url it is retrying
+        https://bugs.webkit.org/show_bug.cgi?id=52043
+
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+
 2011-01-06  Steve Falkenburg  <sfalken@apple.com>
 
         Windows build fix.
