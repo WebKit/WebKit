@@ -820,7 +820,7 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
 
 #if ENABLE(SVG)
     if (!m_parentNode && e && e->isSVGElement() && e->isShadowRoot())
-        m_parentNode = e->shadowParentNode();
+        m_parentNode = e->shadowHost();
 #endif
 
     if (parentStyle)

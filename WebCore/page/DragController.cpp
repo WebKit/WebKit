@@ -256,7 +256,7 @@ static HTMLInputElement* asFileInput(Node* node)
     // In order to get around this problem we assume any non-FILE input element
     // is this internal button, and try querying the shadow parent node.
     if (node->hasTagName(HTMLNames::inputTag) && node->isShadowRoot() && !static_cast<HTMLInputElement*>(node)->isFileUpload())
-        node = node->shadowParentNode();
+        node = node->shadowHost();
 
     if (!node || !node->hasTagName(HTMLNames::inputTag))
         return 0;

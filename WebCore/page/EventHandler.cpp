@@ -1383,7 +1383,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         // If a mouse event handler changes the input element type to one that has a widget associated,
         // we'd like to EventHandler::handleMousePressEvent to pass the event to the widget and thus the
         // event target node can't still be the shadow node.
-        if (mev.targetNode()->isShadowRoot() && mev.targetNode()->shadowParentNode()->hasTagName(inputTag)) {
+        if (mev.targetNode()->isShadowRoot() && mev.targetNode()->shadowHost()->hasTagName(inputTag)) {
             HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
             mev = m_frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
         }
@@ -1795,7 +1795,7 @@ static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* 
     if (!shadowTreeElement)
         return 0;
 
-    Node* shadowTreeParentElement = shadowTreeElement->shadowParentNode();
+    Element* shadowTreeParentElement = shadowTreeElement->shadowHost();
     if (!shadowTreeParentElement)
         return 0;
 
@@ -1913,7 +1913,7 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
                 // focused if the user does a mouseup over it, however, because the mouseup
                 // will set a selection inside it, which will call setFocuseNodeIfNeeded.
                 ExceptionCode ec = 0;
-                Node* n = node->isShadowRoot() ? node->shadowParentNode() : node;
+                Node* n = node->isShadowRoot() ? node->shadowHost() : node;
                 if (m_frame->selection()->isRange()
                     && m_frame->selection()->toNormalizedRange()->compareNode(n, ec) == Range::NODE_INSIDE
                     && n->isDescendantOf(m_frame->document()->focusedNode()))

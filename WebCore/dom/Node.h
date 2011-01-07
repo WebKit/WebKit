@@ -206,14 +206,12 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
-    // FIXME: Eliminate all uses, fold into shadowHost.
-    ContainerNode* shadowParentNode() const;
     Node* shadowAncestorNode();
     Node* shadowTreeRootNode();
     bool isInShadowTree();
     // Node's parent or shadow tree host.
     ContainerNode* parentOrHostNode() const;
-    // Use when it's guaranteed to that shadowParentNode is 0.
+    // Use when it's guaranteed to that shadowHost is 0.
     ContainerNode* parentNodeGuaranteedHostFree() const;
 
     Element* shadowHost() const;
@@ -726,11 +724,6 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
     ASSERT(!getFlag(IsShadowRootFlag));
     return parentOrHostNode();
-}
-
-inline ContainerNode* Node::shadowParentNode() const
-{
-    return getFlag(IsShadowRootFlag) ? parent() : 0;
 }
 
 } //namespace

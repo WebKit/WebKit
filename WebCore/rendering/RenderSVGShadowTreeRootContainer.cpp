@@ -59,7 +59,7 @@ void RenderSVGShadowTreeRootContainer::updateFromElement()
         useElement->buildPendingResource();
     }
 
-    ASSERT(m_shadowRoot->shadowParentNode() == useElement);
+    ASSERT(m_shadowRoot->shadowHost() == useElement);
 
     bool shouldRecreateTree = m_recreateTree;
     if (m_recreateTree) {

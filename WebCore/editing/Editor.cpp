@@ -3309,9 +3309,9 @@ bool Editor::findString(const String& target, FindOptions options)
     if (resultRange->collapsed(exception) && shadowTreeRoot) {
         searchRange = rangeOfContents(m_frame->document());
         if (forward)
-            searchRange->setStartAfter(shadowTreeRoot->shadowParentNode(), exception);
+            searchRange->setStartAfter(shadowTreeRoot->shadowHost(), exception);
         else
-            searchRange->setEndBefore(shadowTreeRoot->shadowParentNode(), exception);
+            searchRange->setEndBefore(shadowTreeRoot->shadowHost(), exception);
 
         resultRange = findPlainText(searchRange.get(), target, options);
     }

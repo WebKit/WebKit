@@ -487,7 +487,7 @@ NodeRareData* Node::createRareData()
 
 Element* Node::shadowHost() const
 {
-    return toElement(shadowParentNode());
+    return toElement(getFlag(IsShadowRootFlag) ? parent() : 0);
 }
 
 void Node::setShadowHost(Element* host)
@@ -1467,7 +1467,7 @@ Node* Node::shadowAncestorNode()
 
     Node* root = shadowTreeRootNode();
     if (root)
-        return root->shadowParentNode();
+        return root->shadowHost();
     return this;
 }
 
@@ -2543,7 +2543,7 @@ static inline EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNo
         if (!n->isShadowRoot() || !n->isSVGElement())
             continue;
 
-        ContainerNode* shadowTreeParentElement = n->shadowParentNode();
+        Element* shadowTreeParentElement = n->shadowHost();
         ASSERT(shadowTreeParentElement->hasTagName(SVGNames::useTag));
 
         if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))
@@ -2566,7 +2566,7 @@ void Node::getEventAncestors(Vector<EventContext>& ancestors, EventTarget* origi
         if (ancestor->isShadowRoot()) {
             if (behavior == StayInsideShadowDOM)
                 return;
-            ancestor = ancestor->shadowParentNode();
+            ancestor = ancestor->shadowHost();
             if (!shouldSkipNextAncestor)
                 target = ancestor;
         } else

@@ -1,3 +1,37 @@
+2011-01-07  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Cleanup: Fold shadowParentNode into shadowHost
+        https://bugs.webkit.org/show_bug.cgi?id=51059
+
+        Replaces all uses of shadowParentNode.
+
+        No new tests because no behavior has changed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        * dom/Node.cpp:
+        (WebCore::Node::shadowHost):
+        (WebCore::Node::shadowAncestorNode):
+        (WebCore::eventTargetRespectingSVGTargetRules):
+        (WebCore::Node::getEventAncestors):
+        * dom/Node.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::findString):
+        * page/DragController.cpp:
+        (WebCore::asFileInput):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::instanceAssociatedWithShadowTreeElement):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        * rendering/RenderSVGShadowTreeRootContainer.cpp:
+        (WebCore::RenderSVGShadowTreeRootContainer::updateFromElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::title):
+
 2011-01-07  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.
