@@ -93,7 +93,7 @@ class FileSystem(object):
     def maybe_make_directory(self, *path):
         """Create the specified directory if it doesn't already exist."""
         try:
-            os.makedirs(os.path.join(*path))
+            os.makedirs(self.join(*path))
         except OSError, e:
             if e.errno != errno.EEXIST:
                 raise
@@ -152,3 +152,9 @@ class FileSystem(object):
         """Copies the contents of the file at the given path to the destination
         path."""
         shutil.copyfile(source, destination)
+
+    def files_under(self, path):
+        """Return the list of all files under the given path."""
+        return [self.join(path_to_file, filename)
+            for (path_to_file, _, filenames) in os.walk(path)
+            for filename in filenames]

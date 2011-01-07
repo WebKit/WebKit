@@ -1,3 +1,22 @@
+2011-01-06  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Add classes to provide a consistent interface to a set of files.
+        https://bugs.webkit.org/show_bug.cgi?id=50901
+
+        These classes allow us to write code that is agnostic to whether a
+        particular set of files resides in a local directory or in a zip file
+        on a remote machine.
+
+        * Scripts/webkitpy/common/system/directoryfileset.py: Added.
+        * Scripts/webkitpy/common/system/directoryfileset_unittest.py: Added.
+        * Scripts/webkitpy/common/system/fileset.py: Added.
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/common/system/zipfileset.py: Added.
+        * Scripts/webkitpy/common/system/zipfileset_unittest.py: Added.
+
 2011-01-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

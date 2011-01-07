@@ -29,6 +29,7 @@
 import errno
 import os
 import path
+import re
 
 
 class MockFileSystem(object):
@@ -57,7 +58,7 @@ class MockFileSystem(object):
         return any(f.startswith(path) for f in self.files)
 
     def join(self, *comps):
-        return '/'.join(comps)
+        return re.sub(re.escape(os.path.sep), '/', os.path.join(*comps))
 
     def listdir(self, path):
         if not self.isdir(path):
@@ -107,3 +108,11 @@ class MockFileSystem(object):
             raise IOError(errno.EISDIR, destination, os.strerror(errno.ISDIR))
 
         self.files[destination] = self.files[source]
+
+    def files_under(self, path):
+        if not path.endswith('/'):
+            path += '/'
+        return [file for file in self.files if file.startswith(path)]
+
+    def remove(self, path):
+        del self.files[path]
