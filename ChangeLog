@@ -1,3 +1,12 @@
+2011-01-06  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Enhancement: Add Regexp Debug Compare between JIT and Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=51834
+
+        * JavaScriptCore: Copied from JavaScriptCore.
+
 2011-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

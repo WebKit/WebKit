@@ -1,3 +1,25 @@
+2011-01-06  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Added debug code to compare the results of JIT regexp with 
+        interpreted regexp and displays discrepencies.  This debug code is
+        controlled by the ENABLE_YARR_JIT_DEBUG macro in wtf/Platform.h and
+        is only valid if ENABLE_YARR_JIT is enabled.
+
+        Fixed a discovered problem in RegExp::printTraceData, changing
+        m_pattern to the getter pattern().
+        Also deleted an extraneous semicolon.
+
+        Enhancement: Add Regexp Debug Compare between JIT and Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=51834
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        (JSC::RegExp::printTraceData):
+        * wtf/Platform.h:
+
 2011-01-06  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

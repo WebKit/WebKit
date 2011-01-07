@@ -1021,6 +1021,9 @@
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
 #if ENABLE(JIT) && !defined(ENABLE_YARR_JIT)
 #define ENABLE_YARR_JIT 1
+
+/* Setting this flag compares JIT results with interpreter results. */
+#define ENABLE_YARR_JIT_DEBUG 0
 #endif
 
 #if ENABLE(JIT) || ENABLE(YARR_JIT)

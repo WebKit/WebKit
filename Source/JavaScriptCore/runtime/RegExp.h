@@ -64,6 +64,10 @@ namespace JSC {
 
         RegExpState compile(JSGlobalData*);
 
+#if ENABLE(YARR_JIT_DEBUG)
+        void matchCompareWithInterpreter(const UString&, int startOffset, int* offsetVector, int jitResult);
+#endif
+
         enum FlagBits { Global = 1, IgnoreCase = 2, Multiline = 4 };
         UString m_patternString;
         int m_flagBits;
