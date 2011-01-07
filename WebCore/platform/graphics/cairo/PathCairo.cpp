@@ -5,6 +5,7 @@
                   2005, 2007 Apple Inc. All Rights reserved.
                   2007 Alp Toker <alp@atoker.com>
                   2008 Dirk Schulze <krit@webkit.org>
+                  2011 Igalia S.L.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -151,10 +152,21 @@ void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlo
         return;
 
     cairo_t* cr = platformPath()->context();
-    if (anticlockwise)
-        cairo_arc_negative(cr, p.x(), p.y(), r, sa, ea);
-    else
-        cairo_arc(cr, p.x(), p.y(), r, sa, ea);
+    float sweep = ea - sa;
+    const float twoPI = 2 * M_PI;
+    if (sweep <= -twoPI || sweep >= twoPI) {
+        if (anticlockwise)
+            cairo_arc_negative(cr, p.x(), p.y(), r, sa, sa - twoPI);
+        else
+            cairo_arc(cr, p.x(), p.y(), r, sa, sa + twoPI);
+        cairo_new_sub_path(cr);
+        cairo_arc(cr, p.x(), p.y(), r, ea, ea);
+    } else {
+        if (anticlockwise)
+            cairo_arc_negative(cr, p.x(), p.y(), r, sa, ea);
+        else
+            cairo_arc(cr, p.x(), p.y(), r, sa, ea);
+    }
 }
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)

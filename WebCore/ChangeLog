@@ -1,3 +1,18 @@
+2011-01-07  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [cairo] Rendering a lot of arcs on top of each other causes time
+        outs in some tests
+        https://bugs.webkit.org/show_bug.cgi?id=50869
+
+        We avoid the situation where we have to render the same arc
+        multiple times over itself. Now it renders just one oval and
+        moves to the end angle.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addArc):
+
 2011-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
