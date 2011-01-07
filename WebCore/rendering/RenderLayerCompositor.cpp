@@ -1325,7 +1325,11 @@ bool RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing(Ren
     
 bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* renderer) const
 {
+#if ENABLE(FULLSCREEN_API)
     return renderer->isRenderFullScreen() && toRenderFullScreen(renderer)->isAnimating();
+#else
+    return false;
+#endif
 }
 
 // If an element has negative z-index children, those children render in front of the 
