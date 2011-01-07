@@ -32,8 +32,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/AnimationTimeController.h>
-#include <WebCore/Page.h>
 
 using namespace WebCore;
 
@@ -92,8 +90,6 @@ void ChunkedUpdateDrawingArea::display()
     paintIntoUpdateChunk(&updateChunk);
 
     WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::Update, m_webPage->pageID(), CoreIPC::In(updateChunk));
-    
-    m_webPage->corePage()->animationTime()->clearCurrentAnimationTime();
 
     m_isWaitingForUpdate = true;
     m_displayTimer.stop();
@@ -147,7 +143,6 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
     m_displayTimer.stop();
 
     WebProcess::shared().connection()->send(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(updateChunk));
-    m_webPage->corePage()->animationTime()->clearCurrentAnimationTime();
 }
 
 void ChunkedUpdateDrawingArea::suspendPainting()

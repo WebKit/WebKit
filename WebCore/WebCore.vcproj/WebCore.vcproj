@@ -24242,14 +24242,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\animation\AnimationTimeController.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\animation\AnimationTimeController.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\BarInfo.cpp"
 				>
 			</File>

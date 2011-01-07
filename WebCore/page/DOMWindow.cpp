@@ -1464,13 +1464,6 @@ void DOMWindow::clearInterval(int timeoutId)
     DOMTimer::removeById(context, timeoutId);
 }
 
-DOMTimeStamp DOMWindow::webkitAnimationTime()
-{
-    if (Frame* f = frame())
-        return convertSecondsToDOMTimeStamp(f->currentAnimationTime());
-    return convertSecondsToDOMTimeStamp(currentTime());
-}
-
 bool DOMWindow::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     if (!EventTarget::addEventListener(eventType, listener, useCapture))

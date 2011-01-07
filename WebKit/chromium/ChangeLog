@@ -1,3 +1,16 @@
+2011-01-07  James Robinson  <jamesr@chromium.org>
+
+        Revert "Implement mozilla's animationTime property"
+        https://bugs.webkit.org/show_bug.cgi?id=51952
+
+        This approach isn't quite right.
+
+        * public/WebWidget.h:
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+
 2011-01-05  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

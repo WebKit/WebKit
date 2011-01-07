@@ -1,3 +1,31 @@
+2011-01-07  James Robinson  <jamesr@chromium.org>
+
+        Revert "Implement mozilla's animationTime property"
+        https://bugs.webkit.org/show_bug.cgi?id=51952
+
+        This approach isn't quite right.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+        * page/animation/AnimationTimeController.cpp: Removed.
+        * page/animation/AnimationTimeController.h: Removed.
+
 2011-01-07  Jan Erik Hanssen  <jhanssen@sencha.com>
 
         Reviewed by Andreas Kling.

@@ -235,9 +235,6 @@ module window {
         // [Custom] long setInterval(in DOMString code, in long timeout);
         void clearInterval(in long handle);
 
-        // WebKit animation extensions
-        readonly attribute DOMTimeStamp webkitAnimationTime;
-
         // Base64
         DOMString atob(in [ConvertNullToNullString] DOMString string)
             raises(DOMException);

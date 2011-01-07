@@ -31,7 +31,6 @@
 #include "WebKitSystemInterface.h"
 #include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/AnimationTimeController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsLayer.h>
@@ -122,8 +121,6 @@ void LayerBackedDrawingArea::syncCompositingLayers()
     if (!didSync) {
     
     }
-
-    m_webPage->corePage()->animationTime()->clearCurrentAnimationTime();
 }
 
 void LayerBackedDrawingArea::setUpUpdateLayoutRunLoopObserver()

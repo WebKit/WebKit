@@ -1113,7 +1113,6 @@ SOURCES += \
     notifications/NotificationCenter.cpp \
     page/animation/AnimationBase.cpp \
     page/animation/AnimationController.cpp \
-    page/animation/AnimationTimeController.cpp \
     page/animation/CompositeAnimation.cpp \
     page/animation/ImplicitAnimation.cpp \
     page/animation/KeyframeAnimation.cpp \

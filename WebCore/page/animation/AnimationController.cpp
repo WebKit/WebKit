@@ -317,7 +317,6 @@ double AnimationControllerPrivate::beginAnimationUpdateTime()
 {
     if (m_beginAnimationUpdateTime == cBeginAnimationUpdateTimeNotSet)
         m_beginAnimationUpdateTime = m_frame->currentAnimationTime();
-
     return m_beginAnimationUpdateTime;
 }
 

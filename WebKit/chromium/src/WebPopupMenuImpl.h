@@ -61,7 +61,6 @@ public:
     virtual void close();
     virtual WebSize size() { return m_size; }
     virtual void resize(const WebSize&);
-    virtual void clearCurrentAnimationTime();
     virtual void layout();
     virtual void paint(WebCanvas* canvas, const WebRect& rect);
     virtual void themeChanged();

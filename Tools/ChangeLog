@@ -1,3 +1,13 @@
+2011-01-07  James Robinson  <jamesr@chromium.org>
+
+        Revert "Implement mozilla's animationTime property"
+        https://bugs.webkit.org/show_bug.cgi?id=51952
+
+        This approach isn't quite right.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintInvalidatedRegion):
+
 2011-01-07  Adam Roben  <aroben@apple.com>
 
         Build master fix

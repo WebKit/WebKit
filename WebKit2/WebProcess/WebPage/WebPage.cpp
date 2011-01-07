@@ -63,7 +63,6 @@
 #include "WebProcessProxyMessageKinds.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/AbstractDatabase.h>
-#include <WebCore/AnimationTimeController.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
@@ -525,8 +524,6 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
         m_pageOverlay->drawRect(graphicsContext, rect);
         graphicsContext.restore();
     }
-    
-    m_page->animationTime()->clearCurrentAnimationTime();
 }
 
 double WebPage::textZoomFactor() const

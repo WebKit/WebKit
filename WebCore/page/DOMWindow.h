@@ -27,7 +27,6 @@
 #ifndef DOMWindow_h
 #define DOMWindow_h
 
-#include "DOMTimeStamp.h"
 #include "KURL.h"
 #include "MessagePort.h"
 #include "SecurityOrigin.h"
@@ -237,9 +236,6 @@ namespace WebCore {
         void clearTimeout(int timeoutId);
         int setInterval(PassOwnPtr<ScheduledAction>, int timeout, ExceptionCode&);
         void clearInterval(int timeoutId);
-
-        // WebKit animation extensions
-        DOMTimeStamp webkitAnimationTime();
 
         // Events
         // EventTarget API

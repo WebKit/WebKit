@@ -2223,8 +2223,6 @@
             'page/animation/AnimationController.cpp',
             'page/animation/AnimationController.h',
             'page/animation/AnimationControllerPrivate.h',
-            'page/animation/AnimationTimeController.cpp',
-            'page/animation/AnimationTimeController.h',
             'page/animation/CompositeAnimation.cpp',
             'page/animation/CompositeAnimation.h',
             'page/animation/ImplicitAnimation.cpp',
