@@ -1,3 +1,11 @@
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
+        Get rid of include of <QuartzCore/QuartzCore.h>
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+
 2011-01-07  Jer Noble  <jer.noble@apple.com>
 
         Further build fixes.  Add a ENABLE(FULLSCREEN_API) guard around
