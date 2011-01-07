@@ -1,3 +1,13 @@
+2011-01-07  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed, rolling out r75256.
+        http://trac.webkit.org/changeset/75256
+        https://bugs.webkit.org/show_bug.cgi?id=50869
+
+        Broke GTK+ canvas tests
+
+        * platform/gtk/Skipped:
+
 2011-01-07  Jessie Berlin  <jberlin@apple.com>
 
         Unreviewed, rolling out r75205.

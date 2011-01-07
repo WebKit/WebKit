@@ -5580,6 +5580,11 @@ fast/dom/StyleSheet/detached-style-pi-2.xhtml
 fast/dom/StyleSheet/detached-style-pi.xhtml
 fast/dom/StyleSheet/detached-style.html
 
+# The test times out, we have to improve the performance of the
+# rendering in these situations to
+# https://bugs.webkit.org/show_bug.cgi?id=50869
+fast/canvas/canvas-largedraws.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=50886
 fast/dom/Window/timer-resume-on-navigation-back.html
 
