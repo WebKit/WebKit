@@ -1,3 +1,16 @@
+2011-01-07  Takashi Toyoshima  <toyoshim@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        cleanupAfterGraphicsCall() is never called in
+        WebGLRenderingContext::checkFramebufferStatus()
+        https://bugs.webkit.org/show_bug.cgi?id=51668
+
+        No new tests. This is a trivial bug.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::checkFramebufferStatus):
+
 2011-01-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

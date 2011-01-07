@@ -598,8 +598,9 @@ unsigned long WebGLRenderingContext::checkFramebufferStatus(unsigned long target
         return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
     if (m_framebufferBinding->isIncomplete(true))
         return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
-    return m_context->checkFramebufferStatus(target);
+    unsigned long result = m_context->checkFramebufferStatus(target);
     cleanupAfterGraphicsCall(false);
+    return result;
 }
 
 void WebGLRenderingContext::clear(unsigned long mask)
