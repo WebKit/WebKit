@@ -1816,16 +1816,30 @@ public:
         failureCases.append(branchDouble(DoubleNotEqualOrUnordered, fpTemp, src));
     }
 
-    void zeroDouble(FPRegisterID dest)
+    Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
 #if WTF_MIPS_ISA_REV(2) && WTF_MIPS_FP64
-        m_assembler.mtc1(MIPSRegisters::zero, dest);
-        m_assembler.mthc1(MIPSRegisters::zero, dest);
+        m_assembler.mtc1(MIPSRegisters::zero, scratch);
+        m_assembler.mthc1(MIPSRegisters::zero, scratch);
 #else
-        m_assembler.mtc1(MIPSRegisters::zero, dest);
-        m_assembler.mtc1(MIPSRegisters::zero, FPRegisterID(dest + 1));
+        m_assembler.mtc1(MIPSRegisters::zero, scratch);
+        m_assembler.mtc1(MIPSRegisters::zero, FPRegisterID(scratch + 1));
 #endif
+        return branchDouble(DoubleNotEqual, reg, scratch);
     }
+
+    Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID scratch)
+    {
+#if WTF_MIPS_ISA_REV(2) && WTF_MIPS_FP64
+        m_assembler.mtc1(MIPSRegisters::zero, scratch);
+        m_assembler.mthc1(MIPSRegisters::zero, scratch);
+#else
+        m_assembler.mtc1(MIPSRegisters::zero, scratch);
+        m_assembler.mtc1(MIPSRegisters::zero, FPRegisterID(scratch + 1));
+#endif
+        return branchDouble(DoubleEqualOrUnordered, reg, scratch);
+    }
+
 
 private:
     // If m_fixedWidth is true, we will generate a fixed number of instructions.

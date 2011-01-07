@@ -527,12 +527,19 @@ public:
         failureCases.append(m_assembler.jne());
     }
 
-    void zeroDouble(FPRegisterID srcDest)
+    Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
         ASSERT(isSSE2Present());
-        m_assembler.xorpd_rr(srcDest, srcDest);
+        m_assembler.xorpd_rr(scratch, scratch);
+        return branchDouble(DoubleNotEqual, reg, scratch);
     }
 
+    Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID scratch)
+    {
+        ASSERT(isSSE2Present());
+        m_assembler.xorpd_rr(scratch, scratch);
+        return branchDouble(DoubleEqualOrUnordered, reg, scratch);
+    }
 
     // Stack manipulation operations:
     //

@@ -1,3 +1,38 @@
+2011-01-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Bug 52021 - zeroDouble broken on ARMv7
+
+        The bug here is that zeroDouble was working incorrectly,
+        leading to op_loop_if_true failing - specifically in the
+        case where the value being checked is 0.0 encoded as a
+        double (rather than an integer immediate).
+
+        Additionally this patch removes a redundant duplicate compare
+        in some (many) case.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::vcmp_F64):
+        (JSC::ARMv7Assembler::vcmpz_F64):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branchDoubleNonZero):
+        (JSC::MacroAssemblerARM::branchDoubleZeroOrNaN):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchDouble):
+        (JSC::MacroAssemblerARMv7::branchDoubleNonZero):
+        (JSC::MacroAssemblerARMv7::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerARMv7::compare32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchDoubleNonZero):
+        (JSC::MacroAssemblerMIPS::branchDoubleZeroOrNaN):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchDoubleNonZero):
+        (JSC::MacroAssemblerX86Common::branchDoubleZeroOrNaN):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+
 2011-01-06  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

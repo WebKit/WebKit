@@ -676,7 +676,7 @@ public:
             Jump unordered = makeBranch(ARMv7Assembler::ConditionVS);
             Jump notEqual = makeBranch(ARMv7Assembler::ConditionNE);
             unordered.link(this);
-            // We get here if either unordered, or equal.
+            // We get here if either unordered or equal.
             Jump result = makeJump();
             notEqual.link(this);
             return result;
@@ -707,9 +707,27 @@ public:
         failureCases.append(branchTest32(Zero, dest));
     }
 
-    void zeroDouble(FPRegisterID dest)
+    Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID)
     {
-        m_assembler.vmov_F64_0(dest);
+        m_assembler.vcmpz_F64(reg);
+        m_assembler.vmrs();
+        Jump unordered = makeBranch(ARMv7Assembler::ConditionVS);
+        Jump result = makeBranch(ARMv7Assembler::ConditionNE);
+        unordered.link(this);
+        return result;
+    }
+
+    Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID)
+    {
+        m_assembler.vcmpz_F64(reg);
+        m_assembler.vmrs();
+        Jump unordered = makeBranch(ARMv7Assembler::ConditionVS);
+        Jump notEqual = makeBranch(ARMv7Assembler::ConditionNE);
+        unordered.link(this);
+        // We get here if either unordered or equal.
+        Jump result = makeJump();
+        notEqual.link(this);
+        return result;
     }
 
     // Stack manipulation operations:
@@ -828,7 +846,7 @@ private:
             ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm);
             if (armImm.isValid())
                 m_assembler.cmp(left, armImm);
-            if ((armImm = ARMThumbImmediate::makeEncodedImm(-imm)).isValid())
+            else if ((armImm = ARMThumbImmediate::makeEncodedImm(-imm)).isValid())
                 m_assembler.cmn(left, armImm);
             else {
                 move(Imm32(imm), dataTempRegister);

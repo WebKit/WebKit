@@ -931,10 +931,18 @@ public:
         failureCases.append(branchTest32(Zero, dest));
     }
 
-    void zeroDouble(FPRegisterID srcDest)
+    Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
         m_assembler.mov_r(ARMRegisters::S0, ARMAssembler::getOp2(0));
-        convertInt32ToDouble(ARMRegisters::S0, srcDest);
+        convertInt32ToDouble(ARMRegisters::S0, scratch);
+        return branchDouble(DoubleNotEqual, reg, scratch);
+    }
+
+    Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID scratch)
+    {
+        m_assembler.mov_r(ARMRegisters::S0, ARMAssembler::getOp2(0));
+        convertInt32ToDouble(ARMRegisters::S0, scratch);
+        return branchDouble(DoubleEqualOrUnordered, reg, scratch);
     }
 
 protected:

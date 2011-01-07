@@ -655,7 +655,7 @@ private:
         OP_VADD_T2      = 0xEE30,
         OP_VSUB_T2      = 0xEE30,
         OP_VDIV         = 0xEE80,
-        OP_VCMP_T1      = 0xEEB0,
+        OP_VCMP         = 0xEEB0,
         OP_VCVT_FPIVFP  = 0xEEB0,
         OP_VMOV_IMM_T2  = 0xEEB0,
         OP_VMRS         = 0xEEB0,
@@ -709,7 +709,7 @@ private:
         OP_VMOV_CtoSb   = 0x0A10,
         OP_VMOV_StoCb   = 0x0A10,
         OP_VMRSb        = 0x0A10,
-        OP_VCMP_T1b     = 0x0A40,
+        OP_VCMPb        = 0x0A40,
         OP_VCVT_FPIVFPb = 0x0A40,
         OP_VSUB_T2b     = 0x0A40,
         OP_NOP_T2b      = 0x8000,
@@ -1563,7 +1563,12 @@ public:
 
     void vcmp_F64(FPDoubleRegisterID rd, FPDoubleRegisterID rm)
     {
-        m_formatter.vfpOp(OP_VCMP_T1, OP_VCMP_T1b, true, VFPOperand(4), rd, rm);
+        m_formatter.vfpOp(OP_VCMP, OP_VCMPb, true, VFPOperand(4), rd, rm);
+    }
+
+    void vcmpz_F64(FPDoubleRegisterID rd)
+    {
+        m_formatter.vfpOp(OP_VCMP, OP_VCMPb, true, VFPOperand(5), rd, VFPOperand(0));
     }
 
     void vcvt_F64_S32(FPDoubleRegisterID rd, FPSingleRegisterID rm)
@@ -1586,11 +1591,6 @@ public:
     void vldr(FPDoubleRegisterID rd, RegisterID rn, int32_t imm)
     {
         m_formatter.vfpMemOp(OP_VLDR, OP_VLDRb, true, rn, rd, imm);
-    }
-
-    void vmov_F64_0(FPDoubleRegisterID rd)
-    {
-        m_formatter.vfpOp(OP_VMOV_IMM_T2, OP_VMOV_IMM_T2b, true, VFPOperand(0), rd, VFPOperand(0));
     }
 
     void vmov(RegisterID rd, FPSingleRegisterID rn)

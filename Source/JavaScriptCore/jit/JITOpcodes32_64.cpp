@@ -871,9 +871,8 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
 
         addSlowCase(branch32(Above, regT1, Imm32(JSValue::LowestTag)));
 
-        zeroDouble(fpRegT0);
-        emitLoadDouble(cond, fpRegT1);
-        addJump(branchDouble(DoubleEqualOrUnordered, fpRegT0, fpRegT1), target);
+        emitLoadDouble(cond, fpRegT0);
+        addJump(branchDoubleZeroOrNaN(fpRegT0, fpRegT1), target);
     } else
         addSlowCase(isNotInteger);
 
@@ -912,9 +911,8 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
 
         addSlowCase(branch32(Above, regT1, Imm32(JSValue::LowestTag)));
 
-        zeroDouble(fpRegT0);
-        emitLoadDouble(cond, fpRegT1);
-        addJump(branchDouble(DoubleNotEqual, fpRegT0, fpRegT1), target);
+        emitLoadDouble(cond, fpRegT0);
+        addJump(branchDoubleNonZero(fpRegT0, fpRegT1), target);
     } else
         addSlowCase(isNotInteger);
 
