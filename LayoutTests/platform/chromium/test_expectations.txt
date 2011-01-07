@@ -2586,7 +2586,7 @@ BUGWEBGL : fast/canvas/webgl/glsl-conformance.html = CRASH
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS
-BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
+// BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUGCR60651 WIN : fast/canvas/webgl/uniform-location.html = TIMEOUT CRASH
 BUGCR60651 LINUX MAC : fast/canvas/webgl/uniform-location.html = TEXT
 
