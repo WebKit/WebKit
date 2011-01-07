@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "GraphicsLayer.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
@@ -51,7 +50,7 @@ class IntSize;
 class IntRect;
 
 #if USE(ACCELERATED_COMPOSITING)
-class WKCACFLayer;
+class PlatformCALayer;
 class WKCAImageQueue;
 #endif
 
@@ -67,8 +66,9 @@ private:
     virtual bool supportsFullscreen() const;
     virtual PlatformMedia platformMedia() const;
 #if USE(ACCELERATED_COMPOSITING)
-    PlatformLayer* platformLayer() const;
+    virtual PlatformLayer* platformLayer() const;
 #endif
+
     IntSize naturalSize() const;
     bool hasVideo() const;
     bool hasAudio() const;
@@ -161,10 +161,6 @@ private:
     class LayerClient;
     friend class LayerClient;
     OwnPtr<LayerClient> m_layerClient;
-
-    class LayoutClient;
-    friend class LayoutClient;
-    OwnPtr<LayoutClient> m_layoutClient;
 #endif
 
     class VisualContextClient;
@@ -178,8 +174,8 @@ private:
     MediaPlayer* m_player;
     RefPtr<QTMovie> m_movie;
 #if USE(ACCELERATED_COMPOSITING)
-    RefPtr<WKCACFLayer> m_qtVideoLayer;
-    OwnPtr<GraphicsLayer> m_transformLayer;
+    RefPtr<PlatformCALayer> m_qtVideoLayer;
+    RefPtr<PlatformCALayer> m_transformLayer;
     OwnPtr<WKCAImageQueue> m_imageQueue;
     OwnPtr<QTDecompressionSession> m_decompressionSession;
     CGAffineTransform m_movieTransform; 

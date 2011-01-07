@@ -50,7 +50,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerCACF.h"
-#include "WKCACFLayer.h"
+#include "PlatformCALayer.h"
 #endif
 
 #if DRAW_FRAME_RATE
@@ -760,7 +760,7 @@ void MediaPlayerPrivate::movieNewImageAvailable(QTMovieGWorld* movie)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (m_qtVideoLayer)
-        m_qtVideoLayer->platformLayer()->setNeedsDisplay();
+        m_qtVideoLayer->setNeedsDisplay();
     else
 #endif
         m_player->repaint();
@@ -887,7 +887,7 @@ void MediaPlayerPrivate::createLayerForMovie()
         return;
 
     // Create a GraphicsLayer that won't be inserted directly into the render tree, but will used 
-    // as a wrapper for a WKCACFLayer which gets inserted as the content layer of the video 
+    // as a wrapper for a PlatformCALayer which gets inserted as the content layer of the video 
     // renderer's GraphicsLayer.
     m_qtVideoLayer.set(new GraphicsLayerCACF(this));
     if (!m_qtVideoLayer)

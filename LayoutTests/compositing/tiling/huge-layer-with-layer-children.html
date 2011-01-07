@@ -39,11 +39,14 @@
 
         function testOnLoad()
         {
+            // Wait for a layer update and the tiled layer to fill in.
             window.setTimeout(function() {
-                if (window.layoutTestController) {
-                    document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
-                    layoutTestController.notifyDone();
-                }
+                window.setTimeout(function() {
+                    if (window.layoutTestController) {
+                        document.getElementById('layers').innerHTML = layoutTestController.layerTreeAsText();
+                        layoutTestController.notifyDone();
+                    }
+                }, 0);
             }, 0);
         }
       

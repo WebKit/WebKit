@@ -44,10 +44,8 @@ typedef void* CAPropertyAnimation; // So the m_animation declaration works
 typedef void* PlatformAnimationRef;
 #endif
 #elif PLATFORM(WIN)
-namespace WebCore {
-class WKCACFAnimation;
-typedef WKCACFAnimation* PlatformAnimationRef;
-}
+typedef struct _CACFAnimation* CACFAnimationRef;
+typedef CACFAnimationRef PlatformAnimationRef;
 #endif
 
 namespace WebCore {

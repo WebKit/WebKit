@@ -26996,46 +26996,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\GraphicsLayerCACF.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\GraphicsLayerCACF.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\IconWin.cpp"
 						>
 					</File>
@@ -27328,86 +27288,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\WebLayer.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\WebLayer.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\WebTiledLayer.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\WebTiledLayer.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\WKCACFContextFlusher.cpp"
 						>
 						<FileConfiguration
@@ -27429,46 +27309,6 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\WKCACFContextFlusher.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\WKCACFLayer.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\WKCACFLayer.h"
 						>
 						<FileConfiguration
 							Name="Debug_Cairo_CFLite|Win32"
@@ -28956,7 +28796,55 @@
 						>
 					</File>
 				</Filter>
-			</Filter>
+				<Filter
+					Name="ca"
+					>
+					<File
+						RelativePath="..\platform\graphics\ca\GraphicsLayerCA.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\ca\GraphicsLayerCA.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\ca\PlatformCAAnimation.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\ca\PlatformCALayer.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\ca\PlatformCALayerClient.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\ca\TransformationMatrixCA.cpp"
+						>
+					</File>
+					<Filter
+						Name="win"
+						>
+						<File
+							RelativePath="..\platform\graphics\ca\win\PlatformCAAnimationWin.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\platform\graphics\ca\win\PlatformCALayerWin.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\platform\graphics\ca\win\PlatformCALayerWinInternal.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\platform\graphics\ca\win\PlatformCALayerWinInternal.h"
+							>
+						</File>
+					</Filter>
+				</Filter>
+            </Filter>
 			<Filter
 				Name="network"
 				>

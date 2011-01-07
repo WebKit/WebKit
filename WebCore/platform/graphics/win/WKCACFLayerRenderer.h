@@ -30,33 +30,40 @@
 
 #include "COMPtr.h"
 #include "Timer.h"
-#include "WKCACFLayer.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
 
 #include <CoreGraphics/CGGeometry.h>
 
 interface IDirect3DDevice9;
 struct WKCACFContext;
 
+typedef struct CGImage* CGImageRef;
+
 namespace WebCore {
 
-class WKCACFRootLayer;
+class PlatformCALayer;
 
 class WKCACFLayerRendererClient {
 public:
     virtual ~WKCACFLayerRendererClient() { }
     virtual bool shouldRender() const = 0;
+    virtual void animationsStarted(CFTimeInterval) { }
+    virtual void syncCompositingState() { }
 };
 
 // FIXME: Currently there is a WKCACFLayerRenderer for each WebView and each
 // has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.
 // (https://bugs.webkit.org/show_bug.cgi?id=31855)
 class WKCACFLayerRenderer : public Noncopyable {
+    friend PlatformCALayer;
+
 public:
     static PassOwnPtr<WKCACFLayerRenderer> create(WKCACFLayerRendererClient*);
     ~WKCACFLayerRenderer();
@@ -65,9 +72,9 @@ public:
 
     void setRootContents(CGImageRef);
     void setRootContentsAndDisplay(CGImageRef);
-    void setRootChildLayer(WKCACFLayer* layer);
+    void setRootChildLayer(PlatformCALayer*);
     void layerTreeDidChange();
-    void setNeedsDisplay();
+    void setNeedsDisplay(bool sync = false);
     void setHostWindow(HWND window) { m_hostWindow = window; }
     void setBackingStoreDirty(bool dirty) { m_backingStoreDirty = dirty; }
     bool createRenderer();
@@ -76,7 +83,8 @@ public:
     void renderSoon();
 
 protected:
-    WKCACFLayer* rootLayer() const;
+    PlatformCALayer* rootLayer() const;
+    void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>);
 
 private:
     WKCACFLayerRenderer(WKCACFLayerRendererClient*);
@@ -99,13 +107,16 @@ private:
     WKCACFLayerRendererClient* m_client;
     bool m_mightBeAbleToCreateDeviceLater;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
-    RefPtr<WKCACFRootLayer> m_rootLayer;
-    RefPtr<WKCACFLayer> m_rootChildLayer;
+    RefPtr<PlatformCALayer> m_rootLayer;
+    RefPtr<PlatformCALayer> m_rootChildLayer;
     WKCACFContext* m_context;
     HWND m_hostWindow;
     Timer<WKCACFLayerRenderer> m_renderTimer;
     bool m_backingStoreDirty;
     bool m_mustResetLostDeviceBeforeRendering;
+    bool m_syncLayerChanges;
+    HashSet<RefPtr<PlatformCALayer> > m_pendingAnimatedLayers;
+
 #ifndef NDEBUG
     bool m_printTree;
 #endif

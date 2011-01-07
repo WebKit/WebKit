@@ -38,8 +38,8 @@
 #include <WebCore/FontSelector.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
+#include <WebCore/PlatformCALayer.h>
 #include <WebCore/TextRun.h>
-#include <WebCore/WKCACFLayer.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windowsx.h>
 #include <wtf/StdLibExtras.h>
@@ -174,20 +174,29 @@ void HUDSlider::drag(const IntPoint& point, bool start)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-class FullscreenVideoController::LayoutClient : public WKCACFLayerLayoutClient {
+class FullscreenVideoController::LayerClient : public WebCore::PlatformCALayerClient {
 public:
-    LayoutClient(FullscreenVideoController* parent);
-    void layoutSublayersOfLayer(WKCACFLayer* layer);
+    LayerClient(FullscreenVideoController* parent) : m_parent(parent) { }
+
+private:
+    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*);
+    virtual bool platformCALayerRespondsToLayoutChanges() const { return true; }
+
+    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) { }
+    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesBottomUp; }
+    virtual void platformCALayerPaintContents(GraphicsContext&, const IntRect& inClip) { }
+    virtual bool platformCALayerShowDebugBorders() const { return false; }
+    virtual bool platformCALayerShowRepaintCounter() const { return false; }
+    virtual int platformCALayerIncrementRepaintCount() { return 0; }
+
+    virtual bool platformCALayerContentsOpaque() const { return false; }
+    virtual bool platformCALayerDrawsContent() const { return false; }
+    virtual void platformCALayerLayerDidDisplay(PlatformLayer*) { }
 
     FullscreenVideoController* m_parent;
 };
 
-FullscreenVideoController::LayoutClient::LayoutClient(FullscreenVideoController* parent)
-    : m_parent(parent)
-{
-}
-
-void FullscreenVideoController::LayoutClient::layoutSublayersOfLayer(WKCACFLayer* layer) 
+void FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLayer(PlatformCALayer* layer) 
 {
     ASSERT_ARG(layer, layer == m_parent->m_rootChild);
 
@@ -195,7 +204,8 @@ void FullscreenVideoController::LayoutClient::layoutSublayersOfLayer(WKCACFLayer
     if (!mediaElement)
         return;
 
-    WKCACFLayer* videoLayer = mediaElement->platformLayer();
+
+    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(mediaElement->platformLayer());
     if (!videoLayer || videoLayer->superlayer() != layer)
         return;
 
@@ -232,20 +242,17 @@ FullscreenVideoController::FullscreenVideoController()
     , m_movingWindow(false)
     , m_timer(this, &FullscreenVideoController::timerFired)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_rootChild(WKCACFLayer::create(WKCACFLayer::Layer))
-    , m_layoutClient(new LayoutClient(this))
+    , m_layerClient(new LayerClient(this))
+    , m_rootChild(PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get()))
 #endif
     , m_fullscreenWindow(new MediaPlayerPrivateFullscreenWindow(this))
 {
-#if USE(ACCELERATED_COMPOSITING)
-    m_rootChild->setLayoutClient(m_layoutClient.get());
-#endif
 }
 
 FullscreenVideoController::~FullscreenVideoController()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    m_rootChild->setLayoutClient(0);
+    m_rootChild->setOwner(0);
 #endif
 }
 
@@ -273,8 +280,8 @@ void FullscreenVideoController::enterFullscreen()
 #if USE(ACCELERATED_COMPOSITING)
     m_fullscreenWindow->setRootChildLayer(m_rootChild);
 
-    WKCACFLayer* videoLayer = m_mediaElement->platformLayer();
-    m_rootChild->addSublayer(videoLayer);
+    PlatformCALayer* videoLayer = PlatformCALayer::platformCALayer(m_mediaElement->platformLayer());
+    m_rootChild->appendSublayer(videoLayer);
     m_rootChild->setNeedsLayout();
     m_rootChild->setGeometryFlipped(1);
 #endif

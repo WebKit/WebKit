@@ -1,3 +1,17 @@
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Use a double nested zero length timer like other tests here do
+        to give the renderer time to do the render and switch into tiled
+        layers.
+
+        * compositing/tiling/huge-layer-with-layer-children.html:
+        * compositing/tiling/huge-layer.html:
+
 2011-01-07  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

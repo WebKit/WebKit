@@ -90,7 +90,7 @@ void MediaPlayerPrivateFullscreenWindow::close()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<WKCACFLayer> rootChild)
+void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<PlatformCALayer> rootChild)
 {
     if (m_rootChild == rootChild)
         return;
@@ -104,7 +104,7 @@ void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<WKCACFLaye
         return;
 
     m_layerRenderer->setRootChildLayer(m_rootChild.get());
-    WKCACFLayer* rootLayer = m_rootChild->rootLayer();
+    PlatformCALayer* rootLayer = m_rootChild->rootLayer();
     CGRect rootBounds = m_rootChild->rootLayer()->bounds();
     m_rootChild->setFrame(rootBounds);
     m_rootChild->setBackgroundColor(CGColorGetConstantColor(kCGColorBlack));
@@ -160,7 +160,7 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
                 break;
 #if USE(ACCELERATED_COMPOSITING)
             m_layerRenderer->resize();
-            WKCACFLayer* rootLayer = m_rootChild->rootLayer();
+            PlatformCALayer* rootLayer = m_rootChild->rootLayer();
             CGRect rootBounds = m_rootChild->rootLayer()->bounds();
             m_rootChild->setFrame(rootBounds);
             m_rootChild->setNeedsLayout();

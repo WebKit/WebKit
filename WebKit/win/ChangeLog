@@ -1,3 +1,42 @@
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Change client API for the fullscreen video controller. It now uses a 
+        PlatformCALayerClient so it can use a PlaformCALayer directly. Also
+        updated how to connect the layer tree to the view to reflect the updated
+        hardware compositing logic.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::LayerClient::LayerClient):
+        (FullscreenVideoController::LayerClient::platformCALayerRespondsToLayoutChanges):
+        (FullscreenVideoController::LayerClient::platformCALayerAnimationStarted):
+        (FullscreenVideoController::LayerClient::platformCALayerContentsOrientation):
+        (FullscreenVideoController::LayerClient::platformCALayerPaintContents):
+        (FullscreenVideoController::LayerClient::platformCALayerShowDebugBorders):
+        (FullscreenVideoController::LayerClient::platformCALayerShowRepaintCounter):
+        (FullscreenVideoController::LayerClient::platformCALayerIncrementRepaintCount):
+        (FullscreenVideoController::LayerClient::platformCALayerContentsOpaque):
+        (FullscreenVideoController::LayerClient::platformCALayerDrawsContent):
+        (FullscreenVideoController::LayerClient::platformCALayerLayerDidDisplay):
+        (FullscreenVideoController::LayerClient::platformCALayerLayoutSublayersOfLayer):
+        (FullscreenVideoController::FullscreenVideoController):
+        (FullscreenVideoController::~FullscreenVideoController):
+        (FullscreenVideoController::enterFullscreen):
+        * FullscreenVideoController.h:
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::attachRootGraphicsLayer):
+        (WebChromeClient::scheduleCompositingLayerSync):
+        * WebView.cpp:
+        (WebView::setRootChildLayer):
+        (WebView::animationsStarted):
+        (WebView::syncCompositingState):
+        * WebView.h:
+        (WebView::setRootLayerNeedsDisplay):
+
 2011-01-05  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

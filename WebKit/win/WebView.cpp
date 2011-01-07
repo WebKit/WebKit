@@ -6231,7 +6231,7 @@ void WebView::downloadURL(const KURL& url)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebView::setRootChildLayer(WebCore::WKCACFLayer* layer)
+void WebView::setRootChildLayer(WebCore::PlatformCALayer* layer)
 {
     setAcceleratedCompositing(layer ? true : false);
     if (m_layerRenderer)
@@ -6469,6 +6469,20 @@ bool WebView::shouldRender() const
 
     return !frameView->layoutPending();
 }
+
+void WebView::animationsStarted(CFTimeInterval t)
+{
+    // Tell the animation controller that its animations have started
+    m_page->mainFrame()->animation()->notifyAnimationStarted(0, t);
+}
+
+void WebView::syncCompositingState()
+{
+    Frame* coreFrame = core(m_mainFrame);
+    if (coreFrame && coreFrame->view())
+        coreFrame->view()->syncCompositingStateRecursive();
+}
+
 #endif
 
 class EnumTextMatches : public IEnumTextMatches

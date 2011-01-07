@@ -57,8 +57,7 @@
 #include <wtf/text/StringHash.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "GraphicsLayerCACF.h"
-#include "WKCACFLayer.h"
+#include "PlatformCALayer.h"
 #include "WKCAImageQueue.h"
 #endif
 
@@ -85,48 +84,49 @@ private:
 };
 
 #if USE(ACCELERATED_COMPOSITING)
-// Interface declaration for MediaPlayerPrivateQuickTimeVisualContext's GraphicsLayerClient aggregate
-class MediaPlayerPrivateQuickTimeVisualContext::LayerClient : public GraphicsLayerClient {
+class MediaPlayerPrivateQuickTimeVisualContext::LayerClient : public PlatformCALayerClient {
 public:
     LayerClient(MediaPlayerPrivateQuickTimeVisualContext* parent) : m_parent(parent) {}
     virtual ~LayerClient() { m_parent = 0; }
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip);
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double time) { }
-    virtual void notifySyncRequired(const GraphicsLayer*) { }
-    virtual bool showDebugBorders() const { return false; }
-    virtual bool showRepaintCounter() const { return false; }
+
 private:
+    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*);
+    virtual bool platformCALayerRespondsToLayoutChanges() const { return true; }
+
+    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime) { }
+    virtual GraphicsLayer::CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return GraphicsLayer::CompositingCoordinatesBottomUp; }
+    virtual void platformCALayerPaintContents(GraphicsContext&, const IntRect& inClip) { }
+    virtual bool platformCALayerShowDebugBorders() const { return false; }
+    virtual bool platformCALayerShowRepaintCounter() const { return false; }
+    virtual int platformCALayerIncrementRepaintCount() { return 0; }
+
+    virtual bool platformCALayerContentsOpaque() const { return false; }
+    virtual bool platformCALayerDrawsContent() const { return false; }
+    virtual void platformCALayerLayerDidDisplay(PlatformLayer*) { }
+
     MediaPlayerPrivateQuickTimeVisualContext* m_parent;
 };
 
-class MediaPlayerPrivateQuickTimeVisualContext::LayoutClient : public WKCACFLayerLayoutClient {
-public:
-    LayoutClient(MediaPlayerPrivateQuickTimeVisualContext* parent) : m_parent(parent) {}
-    virtual void layoutSublayersOfLayer(WKCACFLayer*);
-private:
-    MediaPlayerPrivateQuickTimeVisualContext* m_parent;
-};
-
-void MediaPlayerPrivateQuickTimeVisualContext::LayoutClient::layoutSublayersOfLayer(WKCACFLayer* layer)
+void MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerLayoutSublayersOfLayer(PlatformCALayer* layer)
 {
     ASSERT(m_parent);
-    ASSERT(m_parent->m_transformLayer->platformLayer() == layer);
+    ASSERT(m_parent->m_transformLayer == layer);
 
-    CGSize parentSize = layer->bounds().size;
-    CGSize naturalSize = m_parent->naturalSize();
+    FloatSize parentSize = layer->bounds().size();
+    FloatSize naturalSize = m_parent->naturalSize();
 
     // Calculate the ratio of these two sizes and use that ratio to scale the qtVideoLayer:
-    CGSize ratio = CGSizeMake(parentSize.width / naturalSize.width, parentSize.height / naturalSize.height);
+    FloatSize ratio(parentSize.width() / naturalSize.width(), parentSize.height() / naturalSize.height());
 
     int videoWidth = 0;
     int videoHeight = 0;
     m_parent->m_movie->getNaturalSize(videoWidth, videoHeight);
-    CGRect videoBounds = CGRectMake(0, 0, videoWidth * ratio.width, videoHeight * ratio.height);
-    CGPoint videoAnchor = m_parent->m_qtVideoLayer->anchorPoint();
+    FloatRect videoBounds(0, 0, videoWidth * ratio.width(), videoHeight * ratio.height());
+    FloatPoint3D videoAnchor = m_parent->m_qtVideoLayer->anchorPoint();
 
     // Calculate the new position based on the parent's size:
-    CGPoint position = CGPointMake(parentSize.width * 0.5 - videoBounds.size.width * (0.5 - videoAnchor.x),
-        parentSize.height * 0.5 - videoBounds.size.height * (0.5 - videoAnchor.y)); 
+    FloatPoint position(parentSize.width() * 0.5 - videoBounds.width() * (0.5 - videoAnchor.x()),
+        parentSize.height() * 0.5 - videoBounds.height() * (0.5 - videoAnchor.y())); 
 
     m_parent->m_qtVideoLayer->setBounds(videoBounds);
     m_parent->m_qtVideoLayer->setPosition(position);
@@ -171,7 +171,6 @@ MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualConte
     , m_movieClient(new MediaPlayerPrivateQuickTimeVisualContext::MovieClient(this))
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerClient(new MediaPlayerPrivateQuickTimeVisualContext::LayerClient(this))
-    , m_layoutClient(new MediaPlayerPrivateQuickTimeVisualContext::LayoutClient(this))
     , m_movieTransform(CGAffineTransformIdentity)
 #endif
     , m_visualContextClient(new MediaPlayerPrivateQuickTimeVisualContext::VisualContextClient(this))
@@ -203,8 +202,8 @@ PlatformMedia MediaPlayerPrivateQuickTimeVisualContext::platformMedia() const
     p.media.qtMovieVisualContext = m_visualContext.get();
     return p;
 }
-
 #if USE(ACCELERATED_COMPOSITING)
+
 PlatformLayer* MediaPlayerPrivateQuickTimeVisualContext::platformLayer() const
 {
     return m_transformLayer ? m_transformLayer->platformLayer() : 0;
@@ -866,7 +865,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage()
         if (!buffer.pixelBufferRef())
             return;
 
-        WKCACFLayer* layer = m_qtVideoLayer.get();
+        PlatformCALayer* layer = m_qtVideoLayer.get();
 
         if (!buffer.lockBaseAddress()) {
             if (requiredDllsAvailable()) {
@@ -900,7 +899,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage()
             }
 
             buffer.unlockBaseAddress();
-            layer->rootLayer()->setNeedsRender();
+            layer->setNeedsCommit();
         }
     } else
 #endif
@@ -1179,20 +1178,16 @@ void MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie()
     if (!m_movie || m_qtVideoLayer)
         return;
 
-    // Create a GraphicsLayer that won't be inserted directly into the render tree, but will used 
-    // as a wrapper for a WKCACFLayer which gets inserted as the content layer of the video 
-    // renderer's GraphicsLayer.
-    m_transformLayer.set(new GraphicsLayerCACF(m_layerClient.get()));
+    // Create a PlatformCALayer which will transform the contents of the video layer
+    // which is in m_qtVideoLayer.
+    m_transformLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, m_layerClient.get());
     if (!m_transformLayer)
         return;
 
-    // Mark the layer as drawing itself, anchored in the top left, and bottom-up.
-    m_transformLayer->setDrawsContent(false);
+    // Mark the layer as anchored in the top left.
     m_transformLayer->setAnchorPoint(FloatPoint3D());
-    m_transformLayer->setContentsOrientation(GraphicsLayer::CompositingCoordinatesBottomUp);
-    m_transformLayer->platformLayer()->setLayoutClient(m_layoutClient.get());
 
-    m_qtVideoLayer = WKCACFLayer::create(WKCACFLayer::Layer);
+    m_qtVideoLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, 0);
     if (!m_qtVideoLayer)
         return;
 
@@ -1209,8 +1204,8 @@ void MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie()
 #ifndef NDEBUG
     m_qtVideoLayer->setName("Video layer");
 #endif
-    m_transformLayer->platformLayer()->addSublayer(m_qtVideoLayer.get());
-    m_transformLayer->platformLayer()->setNeedsLayout();
+    m_transformLayer->appendSublayer(m_qtVideoLayer.get());
+    m_transformLayer->setNeedsLayout();
     // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration().
 #endif
 
@@ -1238,10 +1233,6 @@ void MediaPlayerPrivateQuickTimeVisualContext::destroyLayerForMovie()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void MediaPlayerPrivateQuickTimeVisualContext::LayerClient::paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip)
-{
-}
-
 bool MediaPlayerPrivateQuickTimeVisualContext::supportsAcceleratedRendering() const
 {
     return isReadyForRendering();

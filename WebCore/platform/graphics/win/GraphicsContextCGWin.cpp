@@ -43,7 +43,15 @@ static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
     BITMAP info;
 
     GetObject(bitmap, sizeof(info), &info);
-    ASSERT(info.bmBitsPixel == 32);
+
+    // FIXME: We can get here because we asked for a bitmap that is too big
+    // when we have a tiled layer and we're compositing. In that case 
+    // bmBitsPixel will be 0. This seems to be benign, so for now we will
+    // exit gracefully and look at it later:
+    //  https://bugs.webkit.org/show_bug.cgi?id=52041   
+    // ASSERT(info.bmBitsPixel == 32);
+    if (info.bmBitsPixel != 32)
+        return 0;
 
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | (hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst);
     CGContextRef context = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,

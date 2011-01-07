@@ -33,10 +33,12 @@
 
 #include "WKCACFLayerRenderer.h"
 
+#include "PlatformCALayer.h"
 #include "WKCACFContextFlusher.h"
-#include "WKCACFLayer.h"
 #include "WebCoreInstanceHandle.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <limits.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
@@ -44,6 +46,8 @@
 #include <wtf/StdLibExtras.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+
+using namespace std;
 
 #pragma comment(lib, "d3d9")
 #pragma comment(lib, "d3dx9")
@@ -78,33 +82,6 @@ inline static CGRect winRectToCGRect(RECT rc, RECT relativeToRect)
 }
 
 namespace WebCore {
-
-// Subclass of WKCACFLayer to allow the root layer to have a back pointer to the layer renderer
-// to fire off a draw
-class WKCACFRootLayer : public WKCACFLayer {
-public:
-    WKCACFRootLayer(WKCACFLayerRenderer* renderer)
-        : WKCACFLayer(WKCACFLayer::Layer)
-    {
-        m_renderer = renderer;
-    }
-
-    static PassRefPtr<WKCACFRootLayer> create(WKCACFLayerRenderer* renderer)
-    {
-        if (!WKCACFLayerRenderer::acceleratedCompositingAvailable())
-            return 0;
-        return adoptRef(new WKCACFRootLayer(renderer));
-    }
-
-    virtual void setNeedsRender() { m_renderer->layerTreeDidChange(); }
-
-    // Overload this to avoid calling setNeedsDisplay on the layer, which would override the contents
-    // we have placed on the root layer.
-    virtual void setNeedsDisplay(const CGRect* dirtyRect) { setNeedsCommit(); }
-
-private:
-    WKCACFLayerRenderer* m_renderer;
-};
 
 static D3DPRESENT_PARAMETERS initialPresentationParameters()
 {
@@ -206,13 +183,17 @@ PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create(WKCACFLayerRendererC
 WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
     : m_client(client)
     , m_mightBeAbleToCreateDeviceLater(true)
-    , m_rootLayer(WKCACFRootLayer::create(this))
+    , m_rootLayer(PlatformCALayer::create(PlatformCALayer::LayerTypeRootLayer, 0))
     , m_context(wkCACFContextCreate())
     , m_hostWindow(0)
     , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
     , m_backingStoreDirty(false)
     , m_mustResetLostDeviceBeforeRendering(false)
+    , m_syncLayerChanges(false)
 {
+    // Point the CACFContext to this
+    wkCACFContextSetUserData(m_context, this);
+
     // Under the root layer, we have a clipping layer to clip the content,
     // that contains a scroll layer that we use for scrolling the content.
     // The root layer is the size of the client area of the window.
@@ -223,7 +204,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
     // Scrolling will affect only the position of the scroll layer without affecting the bounds.
 
     m_rootLayer->setName("WKCACFLayerRenderer rootLayer");
-    m_rootLayer->setAnchorPoint(CGPointMake(0, 0));
+    m_rootLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
     m_rootLayer->setGeometryFlipped(true);
 
 #ifndef NDEBUG
@@ -233,7 +214,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
 #endif
 
     if (m_context)
-        m_rootLayer->becomeRootLayerForContext(m_context);
+        wkCACFContextSetLayer(m_context, m_rootLayer->platformLayer());
 
 #ifndef NDEBUG
     char* printTreeFlag = getenv("CA_PRINT_TREE");
@@ -247,9 +228,14 @@ WKCACFLayerRenderer::~WKCACFLayerRenderer()
     wkCACFContextDestroy(m_context);
 }
 
-WKCACFLayer* WKCACFLayerRenderer::rootLayer() const
+PlatformCALayer* WKCACFLayerRenderer::rootLayer() const
 {
     return m_rootLayer.get();
+}
+
+void WKCACFLayerRenderer::addPendingAnimatedLayer(PassRefPtr<PlatformCALayer> layer)
+{
+    m_pendingAnimatedLayers.add(layer);
 }
 
 void WKCACFLayerRenderer::setRootContents(CGImageRef image)
@@ -266,12 +252,12 @@ void WKCACFLayerRenderer::setRootContentsAndDisplay(CGImageRef image)
     paint();
 }
 
-void WKCACFLayerRenderer::setRootChildLayer(WKCACFLayer* layer)
+void WKCACFLayerRenderer::setRootChildLayer(PlatformCALayer* layer)
 {
     m_rootLayer->removeAllSublayers();
     m_rootChildLayer = layer;
     if (m_rootChildLayer)
-        m_rootLayer->addSublayer(m_rootChildLayer);
+        m_rootLayer->appendSublayer(m_rootChildLayer.get());
 }
    
 void WKCACFLayerRenderer::layerTreeDidChange()
@@ -280,8 +266,11 @@ void WKCACFLayerRenderer::layerTreeDidChange()
     renderSoon();
 }
 
-void WKCACFLayerRenderer::setNeedsDisplay()
+void WKCACFLayerRenderer::setNeedsDisplay(bool sync)
 {
+    if (!m_syncLayerChanges && sync)
+        m_syncLayerChanges = true;
+
     ASSERT(m_rootLayer);
     m_rootLayer->setNeedsDisplay(0);
     renderSoon();
@@ -361,8 +350,7 @@ bool WKCACFLayerRenderer::createRenderer()
 
 void WKCACFLayerRenderer::destroyRenderer()
 {
-    if (m_context)
-        WKCACFContextFlusher::shared().removeContext(m_context);
+    wkCACFContextSetLayer(m_context, m_rootLayer->platformLayer());
 
     m_d3dDevice = 0;
     if (s_d3d)
@@ -463,20 +451,40 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& windowDirtyRects)
         return;
     }
 
+    // Sync the layer if needed
+    if (m_syncLayerChanges) {
+        m_client->syncCompositingState();
+        m_syncLayerChanges = false;
+    }
+
     // Flush the root layer to the render tree.
-    WKCACFContextFlusher::shared().flushAllContexts();
+    wkCACFContextFlush(m_context);
+
+    // All pending animations will have been started with the flush. Fire the animationStarted calls
+    double currentTime = WTF::currentTime();
+    double currentMediaTime = CACurrentMediaTime();
+    double t = currentTime + wkCACFContextGetLastCommitTime(m_context) - currentMediaTime;
+    ASSERT(t <= currentTime);
+
+    HashSet<RefPtr<PlatformCALayer> >::iterator end = m_pendingAnimatedLayers.end();
+    for (HashSet<RefPtr<PlatformCALayer> >::iterator it = m_pendingAnimatedLayers.begin(); it != end; ++it) {
+        PlatformCALayerClient* owner = (*it)->owner();
+        owner->platformCALayerAnimationStarted(t);
+    }
+
+    m_pendingAnimatedLayers.clear();
 
     CGRect bounds = this->bounds();
-
-    CFTimeInterval t = CACurrentMediaTime();
 
     // Give the renderer some space to use. This needs to be valid until the
     // wkCACFContextFinishUpdate() call below.
     char space[4096];
-    if (!wkCACFContextBeginUpdate(m_context, space, sizeof(space), t, bounds, windowDirtyRects.data(), windowDirtyRects.size()))
+    if (!wkCACFContextBeginUpdate(m_context, space, sizeof(space), currentMediaTime, bounds, windowDirtyRects.data(), windowDirtyRects.size()))
         return;
 
     HRESULT err = S_OK;
+    CFTimeInterval timeToNextRender = numeric_limits<CFTimeInterval>::infinity();
+
     do {
         // FIXME: don't need to clear dirty region if layer tree is opaque.
 
@@ -495,6 +503,8 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& windowDirtyRects)
             rects.append(rect);
         }
         wkCACFUpdateRectEnumeratorRelease(e);
+
+        timeToNextRender = wkCACFContextGetNextUpdateTime(m_context);
 
         if (rects.isEmpty())
             break;
@@ -523,6 +533,10 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& windowDirtyRects)
     if (m_printTree)
         m_rootLayer->printTree();
 #endif
+
+    // If timeToNextRender is not infinity, it means animations are running, so queue up to render again
+    if (timeToNextRender != numeric_limits<CFTimeInterval>::infinity())
+        renderSoon();
 }
 
 void WKCACFLayerRenderer::renderSoon()

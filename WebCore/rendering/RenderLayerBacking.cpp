@@ -1101,12 +1101,12 @@ void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& co
 
 bool RenderLayerBacking::showDebugBorders() const
 {
-    return compositor() ? compositor()->showDebugBorders() : false;
+    return compositor() ? compositor()->compositorShowDebugBorders() : false;
 }
 
 bool RenderLayerBacking::showRepaintCounter() const
 {
-    return compositor() ? compositor()->showRepaintCounter() : false;
+    return compositor() ? compositor()->compositorShowRepaintCounter() : false;
 }
 
 bool RenderLayerBacking::startAnimation(double timeOffset, const Animation* anim, const KeyframeList& keyframes)

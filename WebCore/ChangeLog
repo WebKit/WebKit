@@ -1,3 +1,139 @@
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Rubber-stamped by Simon Fraser.
+
+        Share code between Mac (CA) and Windows (CACF) GraphicsLayer implementations
+        https://bugs.webkit.org/show_bug.cgi?id=49388
+
+        Final step in unifying GraphicsLayer logic across Win and Mac. This 
+        implements the Windows side classes for PlatformCALayer and supporting
+        classes. Also changed MediaPlayer to use new PlatformCALayerClient
+        so it can use PlatformCALayer directly rather than a dummy GraphicsLayer.
+        WKCACFLayerRenderer now does the task of notifying animations of their
+        start time. Also commented out an assert in AnimationBase because
+        AnimationController's frame time is not in sync with the new 
+        AnimationTimeController. I've opened a new bug for that issue:
+
+            https://bugs.webkit.org/show_bug.cgi?id=52037
+            
+        This also includes the Mac side changes backed out in 
+        http://trac.webkit.org/changeset/75227.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreCommon.vsprops:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * WebCore.xcodeproj/project.pbxproj:
+        * config.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::freezeAtTime):
+        (WebCore::AnimationBase::getElapsedTime):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::beginAnimationUpdateTime):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::fetchIntervalEndpointsForProperty):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::layerDidDisplay):
+        (WebCore::GraphicsLayer::showDebugBorders):
+        (WebCore::GraphicsLayer::showRepaintCounter):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::platformCALayerAnimationStarted):
+        (WebCore::GraphicsLayerCA::setContentsToImage):
+        (WebCore::GraphicsLayerCA::setContentsToMedia):
+        (WebCore::GraphicsLayerCA::layerDidDisplay):
+        (WebCore::GraphicsLayerCA::updateSublayerList):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::platformCALayer):
+        (WebCore::GraphicsLayerCA::platformCALayerLayoutSublayersOfLayer):
+        (WebCore::GraphicsLayerCA::platformCALayerRespondsToLayoutChanges):
+        (WebCore::GraphicsLayerCA::platformCALayerContentsOrientation):
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        (WebCore::GraphicsLayerCA::platformCALayerShowDebugBorders):
+        (WebCore::GraphicsLayerCA::platformCALayerShowRepaintCounter):
+        (WebCore::GraphicsLayerCA::platformCALayerIncrementRepaintCount):
+        (WebCore::GraphicsLayerCA::platformCALayerContentsOpaque):
+        (WebCore::GraphicsLayerCA::platformCALayerDrawsContent):
+        (WebCore::GraphicsLayerCA::platformCALayerLayerDidDisplay):
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        (WebCore::PlatformCALayer::owner):
+        (WebCore::PlatformCALayer::animationStarted):
+        * platform/graphics/ca/PlatformCALayerClient.h: Copied from WebCore/platform/graphics/ca/PlatformCALayerClient.h.
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::setOwner):
+        (PlatformCALayer::create):
+        (PlatformCALayer::PlatformCALayer):
+        (PlatformCALayer::contents):
+        (PlatformCALayer::setContents):
+        * platform/graphics/ca/win: Added.
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp: Added.
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp: Added.
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp: Added.
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.h: Added.
+        (WebCore::PlatformCALayerWinInternal::owner):
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer display]):
+        * platform/graphics/mac/WebLayer.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+        (setLayerNeedsDisplayInRect):
+        (-[WebLayer setNeedsDisplay]):
+        (-[WebLayer display]):
+        * platform/graphics/mac/WebTiledLayer.mm:
+        (-[WebTiledLayer setNeedsDisplay]):
+        (-[WebTiledLayer display]):
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::CGContextWithHDC):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::setRootChildLayer):
+        (WebCore::MediaPlayerPrivateFullscreenWindow::wndProc):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::rootChildLayer):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::~LayerClient):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerRespondsToLayoutChanges):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerAnimationStarted):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerContentsOrientation):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerPaintContents):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerShowDebugBorders):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerShowRepaintCounter):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerIncrementRepaintCount):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerContentsOpaque):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerDrawsContent):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerLayerDidDisplay):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::LayerClient::platformCALayerLayoutSublayersOfLayer):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::platformMedia):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveCurrentImage):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::createLayerForMovie):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::movieNewImageAvailable):
+        (WebCore::MediaPlayerPrivate::createLayerForMovie):
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::rootLayer):
+        (WebCore::WKCACFLayerRenderer::addPendingAnimatedLayer):
+        (WebCore::WKCACFLayerRenderer::setRootChildLayer):
+        (WebCore::WKCACFLayerRenderer::setNeedsDisplay):
+        (WebCore::WKCACFLayerRenderer::destroyRenderer):
+        (WebCore::WKCACFLayerRenderer::render):
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        (WebCore::WKCACFLayerRendererClient::animationsStarted):
+        (WebCore::WKCACFLayerRendererClient::syncCompositingState):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::showDebugBorders):
+        (WebCore::RenderLayerBacking::showRepaintCounter):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::compositorShowDebugBorders):
+        (WebCore::RenderLayerCompositor::compositorShowRepaintCounter):
+        (WebCore::RenderLayerCompositor::notifyAnimationStarted):
+        (WebCore::RenderLayerCompositor::notifySyncRequired):
+        (WebCore::RenderLayerCompositor::paintContents):
+        (WebCore::RenderLayerCompositor::showDebugBorders):
+        (WebCore::RenderLayerCompositor::showRepaintCounter):
+
 2011-01-07  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

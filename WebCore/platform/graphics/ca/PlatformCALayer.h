@@ -29,8 +29,8 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsContext.h"
-#include "GraphicsLayerCA.h"
 #include "PlatformCAAnimation.h"
+#include "PlatformCALayerClient.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -47,27 +47,17 @@ typedef Vector<RefPtr<PlatformCALayer> > PlatformCALayerList;
 
 class PlatformCALayer : public RefCounted<PlatformCALayer> {
 public:
-    // TiledLayer used in GraphicsLayer has constant settings:
-    //      cTiledLayerTileSize = 512
-    //      setTileSize:(cTiledLayerTileSize, cTiledLayerTileSize)
-    //      setLevelsOfDetail:1
-    //      setLevelsOfDetailBias:0
-    //      setContentsGravity:@"bottomLeft"
-    //
-    // TiledLayer also has drawing functions like WebLayer
-    //
-    // WebLayer is a CALayer with drawing functions specific to WebKit
-    //
-    // Layer and TransformLayer are used as is
-
-    enum LayerType { LayerTypeLayer, LayerTypeWebLayer, LayerTypeTransformLayer, LayerTypeWebTiledLayer, LayerTypeCustom };
+    // LayerTypeRootLayer is used on some platforms. It has no backing store, so setNeedsDisplay
+    // should not call CACFLayerSetNeedsDisplay, but rather just notify the renderer that it
+    // has changed and should be re-rendered.
+    enum LayerType { LayerTypeLayer, LayerTypeWebLayer, LayerTypeTransformLayer, LayerTypeWebTiledLayer, LayerTypeRootLayer, LayerTypeCustom };
     enum FilterType { Linear, Nearest, Trilinear };
 
-    static PassRefPtr<PlatformCALayer> create(LayerType, GraphicsLayerCA*);
+    static PassRefPtr<PlatformCALayer> create(LayerType, PlatformCALayerClient*);
     
     // This function passes the layer as a void* rather than a PlatformLayer because PlatformLayer
     // is defined differently for Obj C and C++. This allows callers from both languages.
-    static PassRefPtr<PlatformCALayer> create(void* platformLayer, GraphicsLayerCA*);
+    static PassRefPtr<PlatformCALayer> create(void* platformLayer, PlatformCALayerClient*);
 
     ~PlatformCALayer();
     
@@ -76,20 +66,29 @@ public:
     static PlatformCALayer* platformCALayer(void* platformLayer);
     
     PlatformLayer* platformLayer() const;
+
+    PlatformCALayer* rootLayer() const;
     
     static bool isValueFunctionSupported();
     
-    GraphicsLayerCA* owner() const { return m_owner; }
-    void setOwner(GraphicsLayerCA* owner);
+    PlatformCALayerClient* owner() const { return m_owner; }
+    void setOwner(PlatformCALayerClient*);
 
     void animationStarted(CFTimeInterval beginTime)
     {
         if (m_owner)
-            m_owner->animationStarted(beginTime);
+            m_owner->platformCALayerAnimationStarted(beginTime);
     }
+
+    // Layout support
+    void setNeedsLayout();
+
 
     void setNeedsDisplay(const FloatRect* dirtyRect = 0);
     
+    // This tells the layer tree to commit changes and perform a render, without do a setNeedsDisplay on any layer.
+    void setNeedsCommit();
+
     void setContentsChanged();
     
     LayerType layerType() const { return m_layerType; }
@@ -104,6 +103,7 @@ public:
     size_t sublayerCount() const;
 
     // This method removes the sublayers from the source and reparents them to the current layer.
+    // Any sublayers previously in the current layer are removed.
     void adoptSublayers(PlatformCALayer* source);
     
     void addAnimationForKey(const String& key, PlatformCAAnimation* animation);    
@@ -150,8 +150,8 @@ public:
     bool acceleratesDrawing() const;
     void setAcceleratesDrawing(bool);
 
-    void* contents() const;
-    void setContents(void*);
+    CFTypeRef contents() const;
+    void setContents(CFTypeRef);
 
     FloatRect contentsRect() const;
     void setContentsRect(const FloatRect&);
@@ -183,16 +183,23 @@ public:
     CFTimeInterval timeOffset() const;
     void setTimeOffset(CFTimeInterval);
 
+#if PLATFORM(WIN) && !defined(NDEBUG)
+    void printTree() const;
+#endif
+
 protected:
-    PlatformCALayer(LayerType, PlatformLayer*, GraphicsLayerCA*);
+    PlatformCALayer(LayerType, PlatformLayer*, PlatformCALayerClient*);
     
 private:
-    
-    GraphicsLayerCA* m_owner;
+    PlatformCALayerClient* m_owner;
     LayerType m_layerType;
     
 #if PLATFORM(MAC) || PLATFORM(WIN)
     RetainPtr<PlatformLayer> m_layer;
+#endif
+
+#if PLATFORM(WIN)
+    HashMap<String, RefPtr<PlatformCAAnimation> > m_animations;
 #endif
 
 #if PLATFORM(MAC)

@@ -820,12 +820,12 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
 #if USE(ACCELERATED_COMPOSITING)
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
-    m_webView->setRootChildLayer(graphicsLayer ? static_cast<WKCACFLayer*>(graphicsLayer->platformLayer()) : 0);
+    m_webView->setRootChildLayer(graphicsLayer ? PlatformCALayer::platformCALayer(graphicsLayer->platformLayer()) : 0);
 }
 
 void WebChromeClient::scheduleCompositingLayerSync()
 {
-    m_webView->setRootLayerNeedsDisplay();
+    m_webView->setRootLayerNeedsDisplay(true);
 }
 
 #endif

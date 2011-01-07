@@ -74,7 +74,11 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(int property, const Re
 
     double fractionalTime = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1;
 
-    ASSERT(fractionalTime >= 0);
+    // FIXME: startTime can be before the current animation "frame" time. This is to sync with the frame time
+    // concept in AnimationTimeController. So we need to somehow sync the two. Until then, the possible
+    // error is small and will probably not be noticeable. Until we fix this, remove the assert.
+    // https://bugs.webkit.org/show_bug.cgi?id=52037
+    // ASSERT(fractionalTime >= 0);
     if (fractionalTime < 0)
         fractionalTime = 0;
 

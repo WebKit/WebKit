@@ -1362,6 +1362,11 @@ void AnimationBase::goIntoEndingOrLoopingState()
   
 void AnimationBase::freezeAtTime(double t)
 {
+    if (!m_startTime) {
+        // If we haven't started yet, just generate the start event now
+        m_compAnim->animationController()->receivedStartTimeResponse(currentTime());
+    }
+
     ASSERT(m_startTime);        // if m_startTime is zero, we haven't started yet, so we'll get a bad pause time.
     m_pauseTime = m_startTime + t - m_animation->delay();
 
@@ -1387,6 +1392,7 @@ double AnimationBase::getElapsedTime() const
         return 0;
     if (postActive())
         return 1;
+
     return beginAnimationUpdateTime() - m_startTime;
 }
     

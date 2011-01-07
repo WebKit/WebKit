@@ -40,7 +40,7 @@
 #include <wtf/RefPtr.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include <WebCore/WKCACFLayer.h>
+#include <WebCore/PlatformCALayer.h>
 #include <WebCore/WKCACFLayerRenderer.h>
 #endif
 
@@ -904,8 +904,12 @@ public:
     void downloadURL(const WebCore::KURL&);
 
 #if USE(ACCELERATED_COMPOSITING)
-    void setRootLayerNeedsDisplay() { if (m_layerRenderer) m_layerRenderer->setNeedsDisplay(); }
-    void setRootChildLayer(WebCore::WKCACFLayer* layer);
+    void setRootLayerNeedsDisplay(bool sync = false)
+    {
+        if (m_layerRenderer)
+            m_layerRenderer->setNeedsDisplay(sync);
+    }
+    void setRootChildLayer(WebCore::PlatformCALayer*);
 #endif
 
     void enterFullscreenForNode(WebCore::Node*);
@@ -941,6 +945,8 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     // WKCACFLayerRendererClient
     virtual bool shouldRender() const;
+    virtual void animationsStarted(CFTimeInterval);
+    virtual void syncCompositingState();
 #endif
 
 protected:

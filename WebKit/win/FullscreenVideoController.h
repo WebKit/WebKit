@@ -39,7 +39,7 @@
 namespace WebCore {
 class GraphicsContext;
 #if USE(ACCELERATED_COMPOSITING)
-class WKCACFLayer;
+class PlatformCALayer;
 #endif
 }
 
@@ -157,10 +157,10 @@ private:
     WebCore::IntPoint m_hudPosition;
     OwnPtr<WebCore::MediaPlayerPrivateFullscreenWindow> m_fullscreenWindow;
 #if USE(ACCELERATED_COMPOSITING)
-    RefPtr<WebCore::WKCACFLayer> m_rootChild;
-    class LayoutClient;
-    friend class LayoutClient;
-    OwnPtr<LayoutClient> m_layoutClient;
+    class LayerClient;
+    friend class LayerClient;
+    OwnPtr<LayerClient> m_layerClient;
+    RefPtr<WebCore::PlatformCALayer> m_rootChild;
 #endif
 
     HUDButton m_playPauseButton;
