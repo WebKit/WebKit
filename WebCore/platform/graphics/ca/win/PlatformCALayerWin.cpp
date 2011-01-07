@@ -33,9 +33,7 @@
 #include "GraphicsContext.h"
 #include "PlatformCALayerWinInternal.h"
 #include "WKCACFLayerRenderer.h"
-#include <QuartzCore/CACFAnimation.h>
-#include <QuartzCore/CACFContext.h>
-#include <QuartzCore/CACFLayer.h>
+#include <QuartzCore/CoreAnimationCF.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/text/CString.h>
 

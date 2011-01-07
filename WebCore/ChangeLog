@@ -1,3 +1,11 @@
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
+        Build fix.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+
 2011-01-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
