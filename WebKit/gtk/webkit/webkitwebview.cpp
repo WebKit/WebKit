@@ -1440,23 +1440,36 @@ static AtkObject* webkit_web_view_get_accessible(GtkWidget* widget)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
     if (!core(webView))
-        return NULL;
+        return 0;
 
     AXObjectCache::enableAccessibility();
 
     Frame* coreFrame = core(webView)->mainFrame();
     if (!coreFrame)
-        return NULL;
+        return 0;
 
     Document* doc = coreFrame->document();
     if (!doc)
-        return NULL;
+        return 0;
 
-    AccessibilityObject* coreAccessible = doc->axObjectCache()->rootObject();
-    if (!coreAccessible || !coreAccessible->wrapper())
-        return NULL;
+    AccessibilityObject* rootAccessible = doc->axObjectCache()->rootObject();
+    if (!rootAccessible)
+        return 0;
 
-    return coreAccessible->wrapper();
+    // We need to return the root accessibility object's first child
+    // to get to the actual ATK Object associated with the web view.
+    // See https://bugs.webkit.org/show_bug.cgi?id=51932
+    AtkObject* axRoot = rootAccessible->wrapper();
+    if (!axRoot || !ATK_IS_OBJECT(axRoot))
+        return 0;
+
+    AtkObject* axWebView = atk_object_ref_accessible_child(ATK_OBJECT(axRoot), 0);
+    if (!axWebView || !ATK_IS_OBJECT(axWebView))
+        return 0;
+
+    // We don't want the extra reference returned by ref_accessible_child.
+    g_object_unref(axWebView);
+    return axWebView;
 }
 
 static gdouble webViewGetDPI(WebKitWebView* webView)

@@ -1,3 +1,30 @@
+2011-01-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        GTK: AX: atk tests need to be updated after recent changes
+        https://bugs.webkit.org/show_bug.cgi?id=51932
+
+        Fix gtk_widget_get_accessible() in WebKitWebView to keep returning
+        the AtkObject of role ATK_ROLE_DOCUMENT_FRAME.
+
+        With the change to support WK2 accessibility, the root object of
+        the AX hierarchy is different from what GTK expects as the current
+        hirarchy right now includes a new accessible object as the parent
+        of the accessible web area (AXScrollView).
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_accessible): Return the first child of the
+        wrapper associated to the root accessible object in the document,
+        to keep everything in the GTK port working as it used to be.
+
+        Re-enable skipped ATK unit tests now they are passing again.
+
+        * tests/testatk.c:
+        (main): Re-enable skipped tests.
+        * tests/testatkroles.c:
+        (main): Ditto.
+
 2011-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

@@ -307,7 +307,6 @@ int main(int argc, char** argv)
 
     g_test_bug_base("https://bugs.webkit.org/");
 
-    /* See: https://bugs.webkit.org/show_bug.cgi?id=51932
     g_test_add("/webkit/atk/test_webkit_atk_get_role_document_frame",
                AtkRolesFixture, HTML_DOCUMENT_FRAME,
                atk_roles_fixture_setup,
@@ -368,7 +367,7 @@ int main(int argc, char** argv)
                test_webkit_atk_get_role_combobox,
                atk_roles_fixture_teardown);
 
-    // Form roles
+    /* Form roles */
     g_test_add("/webkit/atk/test_webkit_atk_get_role_form",
                AtkRolesFixture, HTML_FORM,
                atk_roles_fixture_setup,
@@ -415,7 +414,6 @@ int main(int argc, char** argv)
                atk_roles_fixture_setup,
                test_webkit_atk_get_role_radio_button,
                atk_roles_fixture_teardown);
-    */
 
     return g_test_run();
 }

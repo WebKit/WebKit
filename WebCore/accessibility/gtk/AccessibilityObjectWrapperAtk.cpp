@@ -234,21 +234,36 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
 
 static gpointer webkit_accessible_parent_class = 0;
 
-static AtkObject* atkParentOfWebView(AtkObject* object)
+static bool isRootObject(AccessibilityObject* coreObject)
 {
-    AccessibilityObject* coreParent = core(object)->parentObjectUnignored();
+    // The root accessible object in WebCore is always an object with
+    // the ScrolledArea role with one child with the WebArea role.
+    if (!coreObject || !coreObject->isScrollView())
+        return false;
 
-    // The top level web view claims to not have a parent. This makes it
+    AccessibilityObject* firstChild = coreObject->firstChild();
+    if (!firstChild || !firstChild->isWebArea())
+        return false;
+
+    return true;
+}
+
+static AtkObject* atkParentOfRootObject(AtkObject* object)
+{
+    AccessibilityObject* coreObject = core(object);
+    AccessibilityObject* coreParent = coreObject->parentObjectUnignored();
+
+    // The top level object claims to not have a parent. This makes it
     // impossible for assistive technologies to ascend the accessible
     // hierarchy all the way to the application. (Bug 30489)
-    if (!coreParent && core(object)->isWebArea()) {
-        HostWindow* hostWindow = core(object)->document()->view()->hostWindow();
+    if (!coreParent && isRootObject(coreObject)) {
+        HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
         if (hostWindow) {
-            PlatformPageClient webView = hostWindow->platformPageClient();
-            if (webView) {
-                GtkWidget* webViewParent = gtk_widget_get_parent(webView);
-                if (webViewParent)
-                    return gtk_widget_get_accessible(webViewParent);
+            PlatformPageClient scrollView = hostWindow->platformPageClient();
+            if (scrollView) {
+                GtkWidget* scrollViewParent = gtk_widget_get_parent(scrollView);
+                if (scrollViewParent)
+                    return gtk_widget_get_accessible(scrollViewParent);
             }
         }
     }
@@ -261,9 +276,10 @@ static AtkObject* atkParentOfWebView(AtkObject* object)
 
 static AtkObject* webkit_accessible_get_parent(AtkObject* object)
 {
-    AccessibilityObject* coreParent = core(object)->parentObjectUnignored();
-    if (!coreParent && core(object)->isWebArea())
-        return atkParentOfWebView(object);
+    AccessibilityObject* coreObject = core(object);
+    AccessibilityObject* coreParent = coreObject->parentObjectUnignored();
+    if (!coreParent && isRootObject(coreObject))
+        return atkParentOfRootObject(object);
 
     if (!coreParent)
         return 0;
@@ -300,8 +316,8 @@ static gint webkit_accessible_get_index_in_parent(AtkObject* object)
     AccessibilityObject* coreObject = core(object);
     AccessibilityObject* parent = coreObject->parentObjectUnignored();
 
-    if (!parent && core(object)->isWebArea()) {
-        AtkObject* atkParent = atkParentOfWebView(object);
+    if (!parent && isRootObject(coreObject)) {
+        AtkObject* atkParent = atkParentOfRootObject(object);
         if (!atkParent)
             return -1;
 
@@ -416,6 +432,8 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_LIST;
     case ScrollBarRole:
         return ATK_ROLE_SCROLL_BAR;
+    case ScrollAreaRole:
+        return ATK_ROLE_SCROLL_PANE;
     case GridRole: // Is this right?
     case TableRole:
         return ATK_ROLE_TABLE;

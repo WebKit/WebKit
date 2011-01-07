@@ -1313,7 +1313,6 @@ int main(int argc, char** argv)
     g_thread_init(0);
     gtk_test_init(&argc, &argv, 0);
 
-    /* See: https://bugs.webkit.org/show_bug.cgi?id=51932
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/atk/comboBox", testWebkitAtkComboBox);
     g_test_add_func("/webkit/atk/getTextAtOffset", testWebkitAtkGetTextAtOffset);
@@ -1333,7 +1332,6 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/linksWithInlineImages", testWebkitAtkLinksWithInlineImages);
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     g_test_add_func("/webkit/atk/textChangedNotifications", testWebkitAtkTextChangedNotifications);
-    */
     return g_test_run ();
 }
 

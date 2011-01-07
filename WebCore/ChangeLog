@@ -1,3 +1,24 @@
+2011-01-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        GTK: AX: atk tests need to be updated after recent changes
+        https://bugs.webkit.org/show_bug.cgi?id=51932
+
+        Make sure we can always get the right accesssible parent for an
+        AtkObject when traversing the hierarchy bottom up.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (isRootObject): New function to check whether an
+        AccessibilityObject is the root one or not, according to the
+        latest changes in the hierarchy.
+        (atkParentOfRootObject): Gets the appropriate AtkObject from GTK's
+        GAIL as the parent of the root AtkObject from WebCore.
+        (webkit_accessible_get_parent): Use atkParentOfRootObject.
+        (webkit_accessible_get_index_in_parent): Ditto.
+        (atkRole): Expose AccessibilityObjects with ScrollAreaRole as
+        AtkObject's of role ATK_ROLE_SCROLLED_PANE.
+
 2011-01-07  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, Mac 32-bit build fix.
