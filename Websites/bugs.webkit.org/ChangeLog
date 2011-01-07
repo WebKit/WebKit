@@ -1,3 +1,9 @@
+2011-01-06  Ojan Vafai  <ojan@chromium.org>
+
+        Fix line context when replying to comments.
+
+        * code-review.js:
+
 2011-01-05  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

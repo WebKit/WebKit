@@ -145,10 +145,11 @@
   }
 
   function addPreviousComment(line, author, comment_text) {
-    var comment_block = $('<div data-comment-for="' + line.attr('id') + '" class="previousComment"></div>');
-    var author_block = $('<div class="author"></div>').text(author + ':');
+    var line_id = line.attr('id');
+    var comment_block = $('<div data-comment-for="' + line_id + '" class="previousComment"></div>');    var author_block = $('<div class="author"></div>').text(author + ':');
     var text_block = $('<div class="content"></div>').text(comment_text);
     comment_block.append(author_block).append(text_block).each(hoverify).click(addCommentField);
+    addDataCommentBaseLine(line, line_id);
     insertCommentFor(line, comment_block);
   }
 
