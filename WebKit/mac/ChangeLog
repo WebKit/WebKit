@@ -1,3 +1,14 @@
+2011-01-07  Jer Noble  <jer.noble@apple.com>
+
+        Fix the Leopard build: Replace CoreAnimation SL-only functions
+        with Leopard equivalents.
+
+        * WebView/WebFullScreenController.mm:
+        (+[CATransaction setDisableActions:]):
+        (+[CATransaction setAnimationDuration:]):
+        (-[WebFullScreenController _animationDuration]):
+        (-[WebFullscreenWindow initWithContentRect:styleMask:backing:defer:]):
+
 2010-12-21  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.

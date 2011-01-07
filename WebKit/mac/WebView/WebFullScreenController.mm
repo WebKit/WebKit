@@ -58,6 +58,26 @@ static NSString* const isEnteringFullscreenKey = @"isEnteringFullscreen";
 
 using namespace WebCore;
 
+#if defined(BUILDING_ON_LEOPARD)
+@interface CATransaction(SnowLeopardConvenienceFunctions)
++ (void)setDisableActions:(BOOL)flag;
++ (void)setAnimationDuration:(CFTimeInterval)dur;
+@end
+
+@implementation CATransaction(SnowLeopardConvenienceFunctions)
++ (void)setDisableActions:(BOOL)flag
+{
+    [self setValue:[NSNumber numberWithBool:flag] forKey:kCATransactionDisableActions];
+}
+
++ (void)setAnimationDuration:(CFTimeInterval)dur
+{
+    [self setValue:[NSNumber numberWithDouble:dur] forKey:kCATransactionAnimationDuration];
+}
+@end
+
+#endif
+
 @interface WebFullscreenWindow : NSWindow
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_TIGER)
 <NSAnimationDelegate>
@@ -761,7 +781,7 @@ private:
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     NSUInteger modifierFlags = [NSEvent modifierFlags];
 #else
-    NSUInteger modifierFlags = [[NSEvent currentEvent] modifierFlags];
+    NSUInteger modifierFlags = [[NSApp currentEvent] modifierFlags];
 #endif
     if ((modifierFlags & NSControlKeyMask) == NSControlKeyMask)
         duration *= 2;
@@ -791,7 +811,11 @@ private:
     [self setAcceptsMouseMovedEvents:YES];
     [self setReleasedWhenClosed:NO];
     [self setHasShadow:YES];
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     [self setMovable:NO];
+#else
+    [self setMovableByWindowBackground:NO];
+#endif
     
     NSView* contentView = [self contentView];
     _animationView = [[NSView alloc] initWithFrame:[contentView bounds]];
@@ -804,7 +828,11 @@ private:
     
     _backgroundLayer = [[CALayer alloc] init];
     [contentLayer addSublayer:_backgroundLayer];
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     [contentLayer setGeometryFlipped:YES];
+#else
+    [contentLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)];
+#endif
     [contentLayer setOpacity:0];
     
     [_backgroundLayer setBackgroundColor:CGColorGetConstantColor(kCGColorBlack)];
