@@ -63,14 +63,17 @@ public:
     void unregisterScrollbar(Scrollbar*);
 
 protected:
+#ifndef GTK_API_VERSION_2
+    GtkStyleContext* m_context;
+#endif
     int m_thumbFatness;
     int m_troughBorderWidth;
     int m_stepperSize;
     int m_stepperSpacing;
     int m_minThumbLength;
-    bool m_troughUnderSteppers;
-    bool m_hasForwardButtonStartPart;
-    bool m_hasBackButtonEndPart;
+    gboolean m_troughUnderSteppers;
+    gboolean m_hasForwardButtonStartPart;
+    gboolean m_hasBackButtonEndPart;
 };
 
 }

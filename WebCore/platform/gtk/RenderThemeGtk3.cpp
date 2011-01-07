@@ -633,9 +633,9 @@ GtkWidget* RenderThemeGtk::gtkHScale() const
     return m_gtkHScale;
 }
 
-GtkWidget* RenderThemeGtk::gtkScrollbar()
+GtkStyleContext* RenderThemeGtk::gtkScrollbarStyle()
 {
-    return moz_gtk_get_scrollbar_widget();
+    return getStyleContext(GTK_TYPE_SCROLLBAR);
 }
 
 } // namespace WebCore

@@ -34,19 +34,11 @@
 namespace WebCore {
 
 static HashSet<Scrollbar*>* gScrollbars;
-static void gtkStyleSetCallback(GtkWidget*, GtkStyle*, ScrollbarThemeGtk*);
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeGtk theme;
     return &theme;
-}
-
-ScrollbarThemeGtk::ScrollbarThemeGtk()
-{
-    updateThemeProperties();
-    g_signal_connect(static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->gtkScrollbar(),
-         "style-set", G_CALLBACK(gtkStyleSetCallback), this);
 }
 
 ScrollbarThemeGtk::~ScrollbarThemeGtk()
@@ -92,11 +84,6 @@ void ScrollbarThemeGtk::updateScrollbarsFrameThickness()
         else
             scrollbar->setFrameRect(IntRect(scrollbar->parent()->width() - thickness, 0, thickness, scrollbar->height()));
     }
-}
-
-static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, ScrollbarThemeGtk* scrollbarTheme)
-{
-    scrollbarTheme->updateThemeProperties();
 }
 
 bool ScrollbarThemeGtk::hasThumb(Scrollbar* scrollbar)

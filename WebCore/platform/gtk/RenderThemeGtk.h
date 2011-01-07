@@ -88,7 +88,11 @@ public:
 
     void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing) const;
 
+#ifdef GTK_API_VERSION_2
     GtkWidget* gtkScrollbar();
+#else
+    GtkStyleContext* gtkScrollbarStyle();
+#endif
 
 protected:
     virtual bool paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& r);

@@ -89,6 +89,7 @@ typedef struct _GdkDrawable GdkWindow;
 typedef struct _GdkWindow GdkWindow;
 typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 typedef cairo_rectangle_int_t GdkRectangle;
+typedef struct _GtkStyleContext GtkStyleContext;
 #endif
 
 #endif

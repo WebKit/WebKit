@@ -38,6 +38,18 @@
 
 namespace WebCore {
 
+static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, ScrollbarThemeGtk* scrollbarTheme)
+{
+    scrollbarTheme->updateThemeProperties();
+}
+
+ScrollbarThemeGtk::ScrollbarThemeGtk()
+{
+    updateThemeProperties();
+    g_signal_connect(static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->gtkScrollbar(),
+         "style-set", G_CALLBACK(gtkStyleSetCallback), this);
+}
+
 void ScrollbarThemeGtk::updateThemeProperties()
 {
     MozGtkScrollbarMetrics metrics;

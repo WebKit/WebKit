@@ -1,3 +1,32 @@
+2011-01-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Port scrollbar painting to GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=52051
+
+        Use GtkStyleContext API to paint scrollbars when building with
+        GTK+ 3.x.
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::gtkScrollbarStyle):
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        * platform/gtk/ScrollbarThemeGtk.h:
+        * platform/gtk/ScrollbarThemeGtk2.cpp:
+        (WebCore::gtkStyleSetCallback):
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+        * platform/gtk/ScrollbarThemeGtk3.cpp:
+        (WebCore::gtkStyleChangedCallback):
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+        (WebCore::ScrollbarThemeGtk::updateThemeProperties):
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground):
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeGtk::paintThumb):
+        (WebCore::ScrollbarThemeGtk::paintButton):
+
 2011-01-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

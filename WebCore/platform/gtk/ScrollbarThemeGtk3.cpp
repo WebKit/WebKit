@@ -32,109 +32,165 @@
 #include "RenderThemeGtk.h"
 #include "ScrollView.h"
 #include "Scrollbar.h"
-#include "WidgetRenderingContext.h"
-#include "gtkdrawing.h"
 #include <gtk/gtk.h>
 
 namespace WebCore {
 
+static void gtkStyleChangedCallback(GtkWidget*, ScrollbarThemeGtk* scrollbarTheme)
+{
+    scrollbarTheme->updateThemeProperties();
+}
+
+ScrollbarThemeGtk::ScrollbarThemeGtk()
+    : m_context(static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->gtkScrollbarStyle())
+{
+    updateThemeProperties();
+    g_signal_connect(m_context, "changed", G_CALLBACK(gtkStyleChangedCallback), this);
+}
+
 void ScrollbarThemeGtk::updateThemeProperties()
 {
-    MozGtkScrollbarMetrics metrics;
-    moz_gtk_get_scrollbar_metrics(&metrics);
-
-    m_thumbFatness = metrics.slider_width;
-    m_troughBorderWidth = metrics.trough_border;
-    m_stepperSize = metrics.stepper_size;
-    m_stepperSpacing = metrics.stepper_spacing;
-    m_minThumbLength = metrics.min_slider_size;
-    m_troughUnderSteppers = metrics.trough_under_steppers;
-    m_hasForwardButtonStartPart = metrics.has_secondary_forward_stepper;
-    m_hasBackButtonEndPart = metrics.has_secondary_backward_stepper;
-
+    gtk_style_context_get_style(m_context,
+                                "min-slider-length", &m_minThumbLength,
+                                "slider-width", &m_thumbFatness,
+                                "trough-border", &m_troughBorderWidth,
+                                "stepper-size", &m_stepperSize,
+                                "stepper-spacing", &m_stepperSpacing,
+                                "trough-under-steppers", &m_troughUnderSteppers,
+                                "has-secondary-backward-stepper", &m_hasBackButtonEndPart,
+                                "has-secondary-forward-stepper", &m_hasForwardButtonStartPart,
+                                NULL);
     updateScrollbarsFrameThickness();
 }
 
 void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
 {
-    GtkWidgetState state;
-    state.focused = FALSE;
-    state.isDefault = FALSE;
-    state.canDefault = FALSE;
-    state.disabled = FALSE;
-    state.active = FALSE;
-    state.inHover = FALSE;
-
     // Paint the track background. If the trough-under-steppers property is true, this
     // should be the full size of the scrollbar, but if is false, it should only be the
     // track rect.
-    IntRect fullScrollbarRect = rect;
+    IntRect fullScrollbarRect(rect);
     if (m_troughUnderSteppers)
         fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
 
-    GtkThemeWidgetType type = scrollbar->orientation() == VerticalScrollbar ? MOZ_GTK_SCROLLBAR_TRACK_VERTICAL : MOZ_GTK_SCROLLBAR_TRACK_HORIZONTAL;
-    WidgetRenderingContext widgetContext(context, fullScrollbarRect);
-    widgetContext.paintMozillaWidget(type, &state, 0);
+    gtk_style_context_save(m_context);
+
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_SCROLLBAR);
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_TROUGH);
+
+    gtk_render_background(m_context, context->platformContext(),
+                          fullScrollbarRect.x(), fullScrollbarRect.y(), fullScrollbarRect.width(), fullScrollbarRect.height());
+    gtk_render_frame(m_context, context->platformContext(),
+                     fullScrollbarRect.x(), fullScrollbarRect.y(), fullScrollbarRect.width(), fullScrollbarRect.height());
+
+    gtk_style_context_restore(m_context);
 }
 
 void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
 {
-    // This is unused by the moz_gtk_scrollecd_window_paint.
-    GtkWidgetState state;
-    IntRect fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
-    WidgetRenderingContext widgetContext(context, fullScrollbarRect);
-    widgetContext.paintMozillaWidget(MOZ_GTK_SCROLLED_WINDOW, &state, 0);
+    gtk_style_context_save(m_context);
+
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_SCROLLBAR);
+    gtk_style_context_add_class(m_context, "scrolled-window");
+    gtk_render_frame(m_context, context->platformContext(), scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
+
+    gtk_style_context_restore(m_context);
 }
 
 void ScrollbarThemeGtk::paintThumb(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
 {
-    GtkWidgetState state;
-    state.focused = FALSE;
-    state.isDefault = FALSE;
-    state.canDefault = FALSE;
-    state.disabled = FALSE;
-    state.active = scrollbar->pressedPart() == ThumbPart;
-    state.inHover = scrollbar->hoveredPart() == ThumbPart;
-    state.maxpos = scrollbar->maximum();
-    state.curpos = scrollbar->currentPos();
+    gtk_style_context_save(m_context);
 
-    GtkThemeWidgetType type = scrollbar->orientation() == VerticalScrollbar ? MOZ_GTK_SCROLLBAR_THUMB_VERTICAL : MOZ_GTK_SCROLLBAR_THUMB_HORIZONTAL;
-    WidgetRenderingContext widgetContext(context, rect);
-    widgetContext.paintMozillaWidget(type, &state, 0);
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_SCROLLBAR);
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_SLIDER);
+
+    guint flags = 0;
+    if (scrollbar->pressedPart() == ThumbPart)
+        flags |= GTK_STATE_FLAG_ACTIVE;
+    if (scrollbar->hoveredPart() == ThumbPart)
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    gtk_style_context_set_state(m_context, static_cast<GtkStateFlags>(flags));
+
+    gtk_render_slider(m_context, context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height(),
+                      scrollbar->orientation() == VerticalScrollbar ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL);
+
+    gtk_style_context_restore(m_context);
 }
 
 void ScrollbarThemeGtk::paintButton(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    int flags = 0;
-    if (scrollbar->orientation() == VerticalScrollbar)
-        flags |= MOZ_GTK_STEPPER_VERTICAL;
+    gtk_style_context_save(m_context);
 
-    if (part == ForwardButtonEndPart)
-        flags |= (MOZ_GTK_STEPPER_DOWN | MOZ_GTK_STEPPER_BOTTOM);
-    if (part == ForwardButtonStartPart)
-        flags |= MOZ_GTK_STEPPER_DOWN;
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_SCROLLBAR);
 
-    GtkWidgetState state;
-    state.focused = TRUE;
-    state.isDefault = TRUE;
-    state.canDefault = TRUE;
-    state.depressed = FALSE;
-
+    guint flags = 0;
     if ((BackButtonStartPart == part && scrollbar->currentPos())
         || (BackButtonEndPart == part && scrollbar->currentPos())
         || (ForwardButtonEndPart == part && scrollbar->currentPos() != scrollbar->maximum())
         || (ForwardButtonStartPart == part && scrollbar->currentPos() != scrollbar->maximum())) {
-        state.disabled = FALSE;
-        state.active = part == scrollbar->pressedPart();
-        state.inHover = part == scrollbar->hoveredPart();
-    } else {
-        state.disabled = TRUE;
-        state.active = FALSE;
-        state.inHover = FALSE;
+        if (part == scrollbar->pressedPart())
+            flags |= GTK_STATE_FLAG_ACTIVE;
+        if (part == scrollbar->hoveredPart())
+            flags |= GTK_STATE_FLAG_PRELIGHT;
+    } else
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    gtk_style_context_set_state(m_context, static_cast<GtkStateFlags>(flags));
+
+    guint sides = gtk_style_context_get_junction_sides(m_context);
+    if (scrollbar->orientation() == VerticalScrollbar)
+        sides &= ~(GTK_JUNCTION_TOP | GTK_JUNCTION_BOTTOM);
+    else
+        sides &= ~(GTK_JUNCTION_LEFT | GTK_JUNCTION_RIGHT);
+
+    switch (part) {
+    case BackButtonStartPart:
+        sides |= (scrollbar->orientation() == VerticalScrollbar) ? GTK_JUNCTION_BOTTOM : GTK_JUNCTION_RIGHT;
+        break;
+    case BackButtonEndPart:
+    case ForwardButtonEndPart:
+        sides |= (scrollbar->orientation() == VerticalScrollbar) ?
+                GTK_JUNCTION_TOP | GTK_JUNCTION_BOTTOM : GTK_JUNCTION_RIGHT | GTK_JUNCTION_LEFT;
+        break;
+    case ForwardButtonStartPart:
+        sides |= (scrollbar->orientation() == VerticalScrollbar) ? GTK_JUNCTION_TOP : GTK_JUNCTION_LEFT;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    gtk_style_context_set_junction_sides(m_context, static_cast<GtkJunctionSides>(sides));
+    gtk_style_context_add_class(m_context, GTK_STYLE_CLASS_BUTTON);
+
+    gtk_render_background(m_context, context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(m_context, context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+
+    gfloat arrowScaling;
+    gtk_style_context_get_style(m_context, "arrow-scaling", &arrowScaling, NULL);
+
+    IntSize arrowSize = rect.size();
+    arrowSize.scale(arrowScaling);
+    IntPoint arrowPoint(rect.x() + (rect.width() - arrowSize.width()) / 2,
+                        rect.y() + (rect.height() - arrowSize.height()) / 2);
+
+    if (flags & GTK_STATE_FLAG_ACTIVE) {
+        gint arrowDisplacementX, arrowDisplacementY;
+        gtk_style_context_get_style(m_context,
+                                    "arrow-displacement-x", &arrowDisplacementX,
+                                    "arrow-displacement-y", &arrowDisplacementY,
+                                    NULL);
+        arrowPoint.move(arrowDisplacementX, arrowDisplacementY);
     }
 
-    WidgetRenderingContext widgetContext(context, rect);
-    widgetContext.paintMozillaWidget(MOZ_GTK_SCROLLBAR_BUTTON, &state, flags);
+    gdouble angle, size;
+    if (scrollbar->orientation() == VerticalScrollbar) {
+        size = arrowSize.width();
+        angle = (part == ForwardButtonEndPart || part == ForwardButtonStartPart) ? G_PI : 0;
+    } else {
+        size = arrowSize.height();
+        angle = (part == ForwardButtonEndPart || part == ForwardButtonStartPart) ? G_PI / 2 : 3 * (G_PI / 2);
+    }
+
+    gtk_render_arrow(m_context, context->platformContext(), angle, arrowPoint.x(), arrowPoint.y(), size);
+
+    gtk_style_context_restore(m_context);
 }
 
 } // namespace WebCore
