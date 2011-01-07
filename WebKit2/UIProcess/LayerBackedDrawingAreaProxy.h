@@ -67,7 +67,7 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
-    virtual void paint(const WebCore::IntRect&, PlatformDrawingContext);
+    virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();
     virtual void setPageIsVisible(bool isVisible);
 

@@ -1,3 +1,39 @@
+2011-01-06  Adam Roben  <aroben@apple.com>
+
+        Fill the WKView with white when the web process hasn't drawn anything
+        yet
+
+        Fixes <http://webkit.org/b/52023> WKView accumulates pixel garbage
+        before web process has had a chance to draw anything (if Aero is
+        disabled)
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::paint):
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::paint):
+        * UIProcess/LayerBackedDrawingAreaProxy.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::paint):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint):
+        * UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint):
+        * UIProcess/win/ChunkedUpdateDrawingAreaProxyWin.cpp:
+        (WebKit::ChunkedUpdateDrawingAreaProxy::platformPaint):
+        * UIProcess/win/LayerBackedDrawingAreaProxyWin.cpp:
+        (WebKit::LayerBackedDrawingAreaProxy::paint):
+        Changed these functions to return a boolean indicating whether we
+        actually painted anything.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onPaintEvent): Fill with white (and don't call
+        didDraw) when the DrawingAreaProxy isn't able to paint.
+
 2011-01-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Jon Honeycutt.

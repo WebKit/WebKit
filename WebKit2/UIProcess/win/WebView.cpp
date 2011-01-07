@@ -387,10 +387,9 @@ LRESULT WebView::onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& han
     PAINTSTRUCT paintStruct;
     HDC hdc = ::BeginPaint(m_window, &paintStruct);
 
-    if (m_page->isValid() && m_page->drawingArea()) {
-        m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc);
+    if (m_page->isValid() && m_page->drawingArea() && m_page->drawingArea()->paint(IntRect(paintStruct.rcPaint), hdc))
         m_page->didDraw();
-    } else {
+    else {
         // Mac checks WebPageProxy::drawsBackground and
         // WebPageProxy::drawsTransparentBackground here, but those are always false on Windows
         // currently (see <http://webkit.org/b/52009>).

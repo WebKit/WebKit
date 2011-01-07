@@ -315,15 +315,15 @@ void TiledDrawingAreaProxy::tileBufferUpdateComplete()
     m_tileCreationTimer.startOneShot(0);
 }
 
-void TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
+bool TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
 {
     if (m_isWaitingForDidSetFrameNotification) {
         WebPageProxy* page = this->page();
         if (!page->isValid())
-            return;
+            return false;
 
         if (page->process()->isLaunching())
-            return;
+            return false;
     }
 
     adjustVisibleRect();
@@ -348,7 +348,9 @@ void TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext co
                 currentTile->paint(&gc, dirtyRect);
         }
     }
+
     gc.restore();
+    return true;
 }
 
 void TiledDrawingAreaProxy::adjustVisibleRect()

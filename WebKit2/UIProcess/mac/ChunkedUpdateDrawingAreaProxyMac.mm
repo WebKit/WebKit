@@ -60,10 +60,10 @@ void ChunkedUpdateDrawingAreaProxy::invalidateBackingStore()
     m_bitmapContext = 0;
 }
 
-void ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, CGContextRef context)
+bool ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, CGContextRef context)
 {
     if (!m_bitmapContext)
-        return;
+        return false;
 
     CGContextSaveGState(context);
 
@@ -79,6 +79,7 @@ void ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, CGContext
     CGContextDrawImage(context, CGRectMake(0, 0, CGImageGetWidth(image.get()), CGImageGetHeight(image.get())), image.get());
 
     CGContextRestoreGState(context);
+    return true;
 }
 
 void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)

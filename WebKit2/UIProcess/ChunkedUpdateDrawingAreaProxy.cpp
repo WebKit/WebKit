@@ -55,22 +55,22 @@ ChunkedUpdateDrawingAreaProxy::~ChunkedUpdateDrawingAreaProxy()
 {
 }
 
-void ChunkedUpdateDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
+bool ChunkedUpdateDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
 {
     if (m_isWaitingForDidSetFrameNotification) {
         WebPageProxy* page = this->page();
         if (!page->isValid())
-            return;
+            return false;
         
         if (page->process()->isLaunching())
-            return;
+            return false;
 
         OwnPtr<CoreIPC::ArgumentDecoder> arguments = page->process()->connection()->waitFor(DrawingAreaProxyLegacyMessage::DidSetSize, page->pageID(), 0.04);
         if (arguments)
             didReceiveMessage(page->process()->connection(), CoreIPC::MessageID(DrawingAreaProxyLegacyMessage::DidSetSize), arguments.get());
     }
 
-    platformPaint(rect, context);
+    return platformPaint(rect, context);
 }
 
 void ChunkedUpdateDrawingAreaProxy::sizeDidChange()

@@ -56,12 +56,13 @@ void ChunkedUpdateDrawingAreaProxy::invalidateBackingStore()
     m_backingStoreImage = QImage();
 }
 
-void ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, QPainter* painter)
+bool ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, QPainter* painter)
 {
     if (m_backingStoreImage.isNull())
-        return;
+        return false;
 
     painter->drawImage(QPoint(0, 0), m_backingStoreImage);
+    return true;
 }
 
 void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)

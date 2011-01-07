@@ -64,13 +64,14 @@ void ChunkedUpdateDrawingAreaProxy::invalidateBackingStore()
     m_backingStoreBitmap.clear();
 }
 
-void ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, HDC hdc)
+bool ChunkedUpdateDrawingAreaProxy::platformPaint(const IntRect& rect, HDC hdc)
 {
     if (!m_backingStoreBitmap)
-        return;
+        return false;
 
     // BitBlt from the backing-store to the passed in hdc.
     ::BitBlt(hdc, rect.x(), rect.y(), rect.width(), rect.height(), m_backingStoreDC.get(), rect.x(), rect.y(), SRCCOPY);
+    return true;
 }
 
 void ChunkedUpdateDrawingAreaProxy::drawUpdateChunkIntoBackingStore(UpdateChunk* updateChunk)

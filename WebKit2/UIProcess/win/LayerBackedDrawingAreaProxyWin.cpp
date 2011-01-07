@@ -55,8 +55,9 @@ void LayerBackedDrawingAreaProxy::detachCompositingContext()
 {
 }
 
-void LayerBackedDrawingAreaProxy::paint(const IntRect&, PlatformDrawingContext)
+bool LayerBackedDrawingAreaProxy::paint(const IntRect&, PlatformDrawingContext)
 {
+    return false;
 }
 
 } // namespace WebKit

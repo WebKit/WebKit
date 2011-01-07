@@ -56,8 +56,9 @@ LayerBackedDrawingAreaProxy::~LayerBackedDrawingAreaProxy()
 }
 
 #if !PLATFORM(WIN)
-void LayerBackedDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
+bool LayerBackedDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
 {
+    return true;
 }
 #endif
 

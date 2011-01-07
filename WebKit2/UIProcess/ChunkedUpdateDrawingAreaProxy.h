@@ -68,13 +68,13 @@ private:
 
     // DrawingAreaProxy
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    virtual void paint(const WebCore::IntRect&, PlatformDrawingContext);
+    virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();
     virtual void setPageIsVisible(bool isVisible);
     
     void ensureBackingStore();
     void invalidateBackingStore();
-    void platformPaint(const WebCore::IntRect&, PlatformDrawingContext);
+    bool platformPaint(const WebCore::IntRect&, PlatformDrawingContext);
     void drawUpdateChunkIntoBackingStore(UpdateChunk*);
     void didSetSize(UpdateChunk*);
     void update(UpdateChunk*);
