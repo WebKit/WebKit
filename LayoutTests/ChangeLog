@@ -1,3 +1,11 @@
+2011-01-06  Robert Hogan  <robert@webkit.org>
+
+        [Qt] Update expected results after r75177
+
+        Unreviewed, update expected results.
+
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+
 2011-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Barth.
