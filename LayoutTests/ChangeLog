@@ -1,5 +1,18 @@
 2011-01-07  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; new test results and expectations updates.
+
+        Created new results for tests which do not fail on chrome win (failing
+        Safari results were recently checked in).  Also assigned bugs to many
+        of my recent test_expectations updates.
+
+        * platform/chromium-win/animations/animation-time-expected.txt: Added.
+        * platform/chromium-win/fast/css/css3-nth-tokens-script-expected.txt: Added.
+        * platform/chromium-win/fast/css/css3-nth-tokens-style-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-01-07  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; chromium test expectations update.
 
         * platform/chromium/test_expectations.txt:
