@@ -48,8 +48,8 @@
 #include "RenderLayerBacking.h"
 #include "RenderStyle.h"
 #include "UnitBezier.h"
-
 #include <algorithm>
+#include <wtf/CurrentTime.h>
 
 using namespace std;
 

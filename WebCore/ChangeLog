@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Build fix for Chromium. Missing include.
+
+        * page/animation/AnimationBase.cpp:
+
+2011-01-07  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
         Build fix.
 
         * platform/graphics/ca/win/PlatformCALayerWin.cpp:
