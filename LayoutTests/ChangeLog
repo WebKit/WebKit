@@ -1,3 +1,17 @@
+2011-01-07  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Cairo's ContextShadow may mis-render some box shadows
+        https://bugs.webkit.org/show_bug.cgi?id=51374
+
+        Added new test to check rectangular tiled shadows.
+
+        * platform/gtk/fast/css/rect-shadow-tiled-expected.checksum: Added.
+        * platform/gtk/fast/css/rect-shadow-tiled-expected.png: Added.
+        * platform/gtk/fast/css/rect-shadow-tiled-expected.txt: Added.
+        * platform/gtk/fast/css/rect-shadow-tiled.html: Added.
+
 2011-01-07  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unreviewed; an attempt to fix chromium bot failures by removing failing test line (they must be failing due to modificationTime accuracy error).

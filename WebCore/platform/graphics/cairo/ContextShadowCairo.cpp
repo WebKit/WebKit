@@ -190,12 +190,20 @@ static inline FloatPoint getPhase(const FloatRect& dest, const FloatRect& tile)
 void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius)
 {
 
+    float radiusTwice = m_blurDistance * 2;
+
+    // Find the space the corners need inside the rect for its shadows.
+    int internalShadowWidth = radiusTwice + max(topLeftRadius.width(), bottomLeftRadius.width()) +
+        max(topRightRadius.width(), bottomRightRadius.width());
+    int internalShadowHeight = radiusTwice + max(topLeftRadius.height(), topRightRadius.height()) +
+        max(bottomLeftRadius.height(), bottomRightRadius.height());
+
+    cairo_t* cr = context->platformContext();
+
     // drawShadowedRect still does not work with rotations.
     // https://bugs.webkit.org/show_bug.cgi?id=45042
-    float radiusTwice = m_blurDistance * 2;
-    cairo_t* cr = context->platformContext();
-    if ((!context->getCTM().isIdentityOrTranslationOrFlipped()) || (radiusTwice > rect.width())
-        || (radiusTwice > rect.height()) || (m_type != BlurShadow)) {
+    if ((!context->getCTM().isIdentityOrTranslationOrFlipped()) || (internalShadowWidth > rect.width())
+        || (internalShadowHeight > rect.height()) || (m_type != BlurShadow)) {
         drawRectShadowWithoutTiling(context, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
         return;
     }
@@ -210,16 +218,10 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     // Size of the tiling side.
     int sideTileWidth = 1;
 
-    // Find the extra space needed from the curve of the corners.
-    int extraWidthFromCornerRadii = radiusTwice + max(topLeftRadius.width(), bottomLeftRadius.width()) +
-        radiusTwice + max(topRightRadius.width(), bottomRightRadius.width());
-    int extraHeightFromCornerRadii = radiusTwice + max(topLeftRadius.height(), topRightRadius.height()) +
-        radiusTwice + max(bottomLeftRadius.height(), bottomRightRadius.height());
-
     // The length of a side of the buffer is the enough space for four blur radii,
     // the radii of the corners, and then 1 pixel to draw the side tiles.
-    IntSize shadowTemplateSize = IntSize(sideTileWidth + extraWidthFromCornerRadii,
-                                         sideTileWidth + extraHeightFromCornerRadii);
+    IntSize shadowTemplateSize = IntSize(sideTileWidth + radiusTwice + internalShadowWidth,
+                                         sideTileWidth + radiusTwice + internalShadowHeight);
 
     // Reduce the size of what we have to draw with the clip area.
     double x1, x2, y1, y2;
