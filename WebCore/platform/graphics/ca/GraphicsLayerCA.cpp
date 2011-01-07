@@ -640,7 +640,7 @@ void GraphicsLayerCA::removeAnimation(const String& animationName)
     noteLayerPropertyChanged(AnimationChanged);
 }
 
-void GraphicsLayerCA::platformCALayerAnimationStarted(CFTimeInterval startTime)
+void GraphicsLayerCA::animationStarted(CFTimeInterval startTime)
 {
     if (m_client)
         m_client->notifyAnimationStarted(this, startTime);
@@ -660,8 +660,6 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
         
         m_uncorrectedContentsImage = newImage;
         m_pendingContentsImage = newImage;
-
-#if !PLATFORM(WIN)
         CGColorSpaceRef colorSpace = CGImageGetColorSpace(m_pendingContentsImage.get());
 
         static CGColorSpaceRef deviceRGB = CGColorSpaceCreateDeviceRGB();
@@ -671,7 +669,6 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
             static CGColorSpaceRef genericRGB = CGDisplayCopyColorSpace(kCGDirectMainDisplay);
             m_pendingContentsImage.adoptCF(CGImageCreateCopyWithColorSpace(m_pendingContentsImage.get(), genericRGB));
         }
-#endif
         m_contentsLayerPurpose = ContentsLayerForImage;
         if (!m_contentsLayer)
             noteSublayersChanged();
@@ -691,15 +688,9 @@ void GraphicsLayerCA::setContentsToMedia(PlatformLayer* mediaLayer)
     if (m_contentsLayer && mediaLayer == m_contentsLayer->platformLayer())
         return;
         
-    // FIXME: The passed in layer might be a raw layer or an externally created 
-    // PlatformCALayer. To determine this we attempt to get the
-    // PlatformCALayer pointer. If this returns a null pointer we assume it's
-    // raw. This test might be invalid if the raw layer is, for instance, the
-    // PlatformCALayer is using a user data pointer in the raw layer, and
-    // the creator of the raw layer is using it for some other purpose.
-    // For now we don't support such a case.
-    PlatformCALayer* platformCALayer = PlatformCALayer::platformCALayer(mediaLayer);
-    m_contentsLayer = mediaLayer ? (platformCALayer ? platformCALayer : PlatformCALayer::create(mediaLayer, this)) : 0;
+    // Create the PlatformCALayer to wrap the incoming layer
+    m_contentsLayer = mediaLayer ? PlatformCALayer::create(mediaLayer, this) : 0;
+
     m_contentsLayerPurpose = mediaLayer ? ContentsLayerForMedia : NoContentsLayer;
 
     noteSublayersChanged();
@@ -720,7 +711,7 @@ void GraphicsLayerCA::setContentsToCanvas(PlatformLayer* canvasLayer)
     noteLayerPropertyChanged(ContentsCanvasLayerChanged);
 }
     
-void GraphicsLayerCA::layerDidDisplay(PlatformLayer* layer)
+void GraphicsLayerCA::didDisplay(PlatformLayer* layer)
 {
     PlatformCALayer* currentLayer = PlatformCALayer::platformCALayer(layer);
     PlatformCALayer* sourceLayer;
@@ -912,7 +903,7 @@ void GraphicsLayerCA::updateSublayerList()
             newSublayers.append(childLayer);
         }
 
-        for (size_t i = 0; i < newSublayers.size(); --i)
+        for (size_t i = 0; i < newSublayers.size(); ++i)
             newSublayers[i]->removeFromSuperlayer();
     }
 

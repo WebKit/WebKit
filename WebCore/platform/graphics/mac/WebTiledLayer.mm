@@ -60,7 +60,7 @@ using namespace WebCore;
 - (void)setNeedsDisplay
 {
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
-    if (layer && layer->owner() && layer->owner()->platformCALayerDrawsContent())
+    if (layer && layer->owner() && layer->owner()->client() && layer->owner()->drawsContent())
         [super setNeedsDisplay];
 }
 
@@ -76,7 +76,7 @@ using namespace WebCore;
     [super display];
     PlatformCALayer* layer = PlatformCALayer::platformCALayer(self);
     if (layer && layer->owner())
-        layer->owner()->platformCALayerLayerDidDisplay(self);
+        layer->owner()->didDisplay(self);
 }
 
 - (void)drawInContext:(CGContextRef)context

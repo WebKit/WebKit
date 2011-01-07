@@ -144,7 +144,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 {
     [super display];
     if (m_layerOwner)
-        m_layerOwner->layerDidDisplay(self);
+        m_layerOwner->didDisplay(self);
 }
 
 @end

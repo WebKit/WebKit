@@ -31,7 +31,6 @@
 #include "GraphicsLayer.h"
 #include "Image.h"
 #include "PlatformCAAnimation.h"
-#include "PlatformCALayerClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
@@ -41,7 +40,7 @@ namespace WebCore {
 
 class PlatformCALayer;
 
-class GraphicsLayerCA : public GraphicsLayer, public PlatformCALayerClient {
+class GraphicsLayerCA : public GraphicsLayer {
 public:
     // The width and height of a single tile in a tiled layer. Should be large enough to
     // avoid lots of small tiles (and therefore lots of drawing callbacks), but small enough
@@ -50,11 +49,12 @@ public:
 
     GraphicsLayerCA(GraphicsLayerClient*);
     virtual ~GraphicsLayerCA();
+    
+    virtual void animationStarted(CFTimeInterval beginTime);
 
     virtual void setName(const String&);
 
     virtual PlatformLayer* platformLayer() const;
-    virtual PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void addChild(GraphicsLayer*);
@@ -112,7 +112,7 @@ public:
     virtual void setDebugBackgroundColor(const Color&);
     virtual void setDebugBorder(const Color&, float borderWidth);
 
-    virtual void layerDidDisplay(PlatformLayer*);
+    virtual void didDisplay(PlatformLayer*);
 
     void recursiveCommitChanges();
 
@@ -123,21 +123,6 @@ protected:
     virtual void setOpacityInternal(float);
 
 private:
-    // PlatformCALayerClient overrides
-    virtual void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) { }
-    virtual bool platformCALayerRespondsToLayoutChanges() const { return false; }
-
-    virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime);
-    virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return contentsOrientation(); }
-    virtual void platformCALayerPaintContents(GraphicsContext& context, const IntRect& clip) { paintGraphicsLayerContents(context, clip); }
-    virtual bool platformCALayerShowDebugBorders() const { return showDebugBorders(); }
-    virtual bool platformCALayerShowRepaintCounter() const { return showRepaintCounter(); }
-    virtual int platformCALayerIncrementRepaintCount() { return incrementRepaintCount(); }
-
-    virtual bool platformCALayerContentsOpaque() const { return contentsOpaque(); }
-    virtual bool platformCALayerDrawsContent() const { return drawsContent(); }
-    virtual void platformCALayerLayerDidDisplay(PlatformLayer* layer) { return layerDidDisplay(layer); }
-
     void updateOpacityOnLayer();
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }

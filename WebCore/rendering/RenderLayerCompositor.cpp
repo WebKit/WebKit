@@ -1351,13 +1351,13 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
         if (!m_clipLayer) {
             ASSERT(!m_scrollLayer);
             // Create a clipping layer if this is an iframe
-            m_clipLayer = GraphicsLayer::create(this);
+            m_clipLayer = GraphicsLayer::create(0);
 #ifndef NDEBUG
             m_clipLayer->setName("iframe Clipping");
 #endif
             m_clipLayer->setMasksToBounds(true);
             
-            m_scrollLayer = GraphicsLayer::create(this);
+            m_scrollLayer = GraphicsLayer::create(0);
 #ifndef NDEBUG
             m_scrollLayer->setName("iframe scrolling");
 #endif

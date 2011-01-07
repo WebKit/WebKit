@@ -105,7 +105,7 @@ bool PlatformCALayer::isValueFunctionSupported()
     return sHaveValueFunction;
 }
 
-void PlatformCALayer::setOwner(PlatformCALayerClient* owner)
+void PlatformCALayer::setOwner(GraphicsLayerCA* owner)
 {
     m_owner = owner;
     
@@ -145,17 +145,17 @@ static NSString* toCAFilterType(PlatformCALayer::FilterType type)
 }
 #endif
 
-PassRefPtr<PlatformCALayer> PlatformCALayer::create(LayerType layerType, PlatformCALayerClient* owner)
+PassRefPtr<PlatformCALayer> PlatformCALayer::create(LayerType layerType, GraphicsLayerCA* owner)
 {
     return adoptRef(new PlatformCALayer(layerType, 0, owner));
 }
 
-PassRefPtr<PlatformCALayer> PlatformCALayer::create(void* platformLayer, PlatformCALayerClient* owner)
+PassRefPtr<PlatformCALayer> PlatformCALayer::create(void* platformLayer, GraphicsLayerCA* owner)
 {
     return adoptRef(new PlatformCALayer(LayerTypeCustom, static_cast<PlatformLayer*>(platformLayer), owner));
 }
 
-PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, PlatformCALayerClient* owner)
+PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, GraphicsLayerCA* owner)
     : m_owner(owner)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -168,7 +168,6 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
         Class layerClass = Nil;
         switch(layerType) {
             case LayerTypeLayer:
-            case LayerTypeRootLayer:
                 layerClass = [CALayer class];
                 break;
             case LayerTypeWebLayer:
@@ -569,15 +568,15 @@ void PlatformCALayer::setAcceleratesDrawing(bool acceleratesDrawing)
 #endif
 }
 
-CFTypeRef PlatformCALayer::contents() const
+void* PlatformCALayer::contents() const
 {
     return [m_layer.get() contents];
 }
 
-void PlatformCALayer::setContents(CFTypeRef value)
+void PlatformCALayer::setContents(void* value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_layer.get() setContents:static_cast<id>(const_cast<void*>(value))];
+    [m_layer.get() setContents:static_cast<id>(value)];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

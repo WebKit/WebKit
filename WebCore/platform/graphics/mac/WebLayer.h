@@ -32,7 +32,6 @@
 
 namespace WebCore {
     class GraphicsLayer;
-    class PlatformCALayerClient;
 }
 
 #if defined(BUILDING_ON_LEOPARD)
@@ -48,8 +47,8 @@ namespace WebCore {
 @end
 
 // Functions allows us to share implementation across WebTiledLayer and WebLayer
-void drawLayerContents(CGContextRef, CALayer *, WebCore::PlatformCALayerClient*);
-void setLayerNeedsDisplayInRect(CALayer *, WebCore::PlatformCALayerClient*, CGRect);
+void drawLayerContents(CGContextRef, CALayer *, WebCore::GraphicsLayer*);
+void setLayerNeedsDisplayInRect(CALayer *, WebCore::GraphicsLayer*, CGRect);
 
 #endif // USE(ACCELERATED_COMPOSITING)
 

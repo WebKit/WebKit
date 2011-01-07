@@ -54,11 +54,11 @@ enum CompositingUpdateType {
 // 
 // There is one RenderLayerCompositor per RenderView.
 
-class RenderLayerCompositor : public GraphicsLayerClient {
+class RenderLayerCompositor {
 public:
     RenderLayerCompositor(RenderView*);
     ~RenderLayerCompositor();
-
+    
     // Return true if this RenderView is in "compositing mode" (i.e. has one or more
     // composited RenderLayers)
     bool inCompositingMode() const { return m_compositing; }
@@ -71,6 +71,9 @@ public:
 
     bool canRender3DTransforms() const;
 
+    bool showDebugBorders() const { return m_showDebugBorders; }
+    bool showRepaintCounter() const { return m_showRepaintCounter; }
+    
     // Copy the accelerated compositing related flags from Settings
     void cacheAcceleratedCompositingFlags();
 
@@ -169,22 +172,7 @@ public:
 
     String layerTreeAsText();
 
-    // These are named to avoid conflicts with the functions in GraphicsLayerClient
-    // These return the actual internal variables.
-    bool compositorShowDebugBorders() const { return m_showDebugBorders; }
-    bool compositorShowRepaintCounter() const { return m_showRepaintCounter; }
-
 private:
-    // GraphicsLayerClient Implementation
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double) { }
-    virtual void notifySyncRequired(const GraphicsLayer*) { scheduleSync(); }
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&) { }
-
-    // These calls return false always. They are saying that the layers associated with this client
-    // (the clipLayer and scrollLayer) should never show debugging info.
-    virtual bool showDebugBorders() const { return false; }
-    virtual bool showRepaintCounter() const { return false; }
-    
     // Whether the given RL needs a compositing layer.
     bool needsToBeComposited(const RenderLayer*) const;
     // Whether the layer has an intrinsic need for compositing layer.
