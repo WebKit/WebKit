@@ -303,6 +303,7 @@ SET(WebCore_IDL_FILES
     html/canvas/WebGLShader.idl
     html/canvas/WebGLTexture.idl
     html/canvas/WebGLUniformLocation.idl
+    html/canvas/WebKitLoseContext.idl
 
     inspector/InjectedScriptHost.idl
     inspector/InspectorFrontendHost.idl

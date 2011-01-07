@@ -51,6 +51,7 @@ class WebGLRenderbuffer;
 class WebGLShader;
 class WebGLTexture;
 class WebGLUniformLocation;
+class WebKitLoseContext;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageBuffer;
@@ -284,7 +285,8 @@ public:
 
     void viewport(long x, long y, long width, long height);
 
-    void loseContext();
+    void forceLostContext();
+    void onLostContext();
     void restoreContext();
 
     GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
@@ -468,6 +470,7 @@ public:
 
     // Enabled extension objects.
     RefPtr<OESTextureFloat> m_oesTextureFloat;
+    RefPtr<WebKitLoseContext> m_webkitLoseContext;
 
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(unsigned long pname);

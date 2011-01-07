@@ -35,35 +35,33 @@
 #include "V8WebGLRenderingContext.h"
 
 #include "ExceptionCode.h"
-
 #include "NotImplemented.h"
-
-#include <wtf/FastMalloc.h>
-
+#include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
-#include "V8ArrayBufferView.h"
-#include "V8WebGLBuffer.h"
-#include "V8Int8Array.h"
+#include "V8WebKitLoseContext.h"
 #include "V8Float32Array.h"
-#include "V8WebGLFramebuffer.h"
-#include "V8Int32Array.h"
-#include "V8WebGLProgram.h"
-#include "V8WebGLRenderbuffer.h"
-#include "V8WebGLShader.h"
-#include "V8Int16Array.h"
-#include "V8WebGLTexture.h"
-#include "V8WebGLUniformLocation.h"
-#include "V8Uint8Array.h"
-#include "V8Uint32Array.h"
-#include "V8Uint16Array.h"
 #include "V8HTMLCanvasElement.h"
 #include "V8HTMLImageElement.h"
 #include "V8HTMLVideoElement.h"
 #include "V8ImageData.h"
+#include "V8Int16Array.h"
+#include "V8Int32Array.h"
+#include "V8Int8Array.h"
 #include "V8OESTextureFloat.h"
 #include "V8Proxy.h"
+#include "V8Uint16Array.h"
+#include "V8Uint32Array.h"
+#include "V8Uint8Array.h"
+#include "V8WebGLBuffer.h"
+#include "V8WebGLFramebuffer.h"
+#include "V8WebGLProgram.h"
+#include "V8WebGLRenderbuffer.h"
+#include "V8WebGLShader.h"
+#include "V8WebGLTexture.h"
+#include "V8WebGLUniformLocation.h"
 #include "WebGLRenderingContext.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -159,6 +157,9 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
         return v8::Null();
     v8::Handle<v8::Value> extensionObject;
     switch (extension->getName()) {
+    case WebGLExtension::WebKitLoseContextName:
+        extensionObject = toV8(static_cast<WebKitLoseContext*>(extension));
+        break;
     case WebGLExtension::OESTextureFloatName:
         extensionObject = toV8(static_cast<OESTextureFloat*>(extension));
         break;
@@ -375,6 +376,9 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getSupportedExtensionsCallback(co
 {
     INC_STATS("DOM.WebGLRenderingContext.getSupportedExtensionsCallback()");
     WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
+    if (imp->isContextLost())
+        return v8::Null();
+
     Vector<String> value = imp->getSupportedExtensions();
     v8::Local<v8::Array> array = v8::Array::New(value.size());
     for (size_t ii = 0; ii < value.size(); ++ii)

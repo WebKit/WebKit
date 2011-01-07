@@ -23,28 +23,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLExtension_h
-#define WebGLExtension_h
+#ifndef WebKitLoseContext_h
+#define WebKitLoseContext_h
 
+#include "WebGLExtension.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLExtension : public RefCounted<WebGLExtension> {
+class WebGLRenderingContext;
+
+class WebKitLoseContext : public WebGLExtension {
 public:
-    // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName {
-        WebKitLoseContextName,
-        OESTextureFloatName,
-    };
+    static PassRefPtr<WebKitLoseContext> create(WebGLRenderingContext*);
 
-    virtual ~WebGLExtension();
-    virtual ExtensionName getName() const = 0;
+    virtual ~WebKitLoseContext();
+    virtual ExtensionName getName() const;
 
-protected:
-    WebGLExtension();
+    void loseContext();
+
+private:
+    WebKitLoseContext(WebGLRenderingContext*);
+
+    WebGLRenderingContext* m_context;
 };
 
 } // namespace WebCore
 
-#endif // WebGLExtension_h
+#endif // WebKitLoseContext_h

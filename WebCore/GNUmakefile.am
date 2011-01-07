@@ -594,6 +594,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitCSSMatrix.h \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp \
 	DerivedSources/WebCore/JSWebKitCSSTransformValue.h \
+	DerivedSources/WebCore/JSWebKitLoseContext.cpp \
+	DerivedSources/WebCore/JSWebKitLoseContext.h \
 	DerivedSources/WebCore/JSWebKitPoint.cpp \
 	DerivedSources/WebCore/JSWebKitPoint.h \
 	DerivedSources/WebCore/JSWebKitTransitionEvent.cpp \
@@ -1571,6 +1573,8 @@ webcore_sources += \
 	WebCore/html/canvas/Int8Array.h \
 	WebCore/html/canvas/OESTextureFloat.cpp \
 	WebCore/html/canvas/OESTextureFloat.h \
+	WebCore/html/canvas/WebKitLoseContext.cpp \
+	WebCore/html/canvas/WebKitLoseContext.h \
 	WebCore/html/canvas/Uint16Array.cpp \
 	WebCore/html/canvas/Uint16Array.h \
 	WebCore/html/canvas/Uint32Array.cpp \

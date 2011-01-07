@@ -204,6 +204,7 @@ IDL_BINDINGS += \
     html/canvas/Int16Array.idl \
     html/canvas/WebGLTexture.idl \
     html/canvas/WebGLUniformLocation.idl \
+    html/canvas/WebKitLoseContext.idl \
     html/canvas/Uint8Array.idl \
     html/canvas/Uint32Array.idl \
     html/canvas/Uint16Array.idl \

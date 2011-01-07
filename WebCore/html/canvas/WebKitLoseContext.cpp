@@ -23,28 +23,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLExtension_h
-#define WebGLExtension_h
+#include "config.h"
 
-#include <wtf/RefCounted.h>
+#if ENABLE(3D_CANVAS)
+
+#include "WebKitLoseContext.h"
+
+#include "WebGLRenderingContext.h"
 
 namespace WebCore {
 
-class WebGLExtension : public RefCounted<WebGLExtension> {
-public:
-    // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName {
-        WebKitLoseContextName,
-        OESTextureFloatName,
-    };
+WebKitLoseContext::WebKitLoseContext(WebGLRenderingContext* context)
+    : WebGLExtension()
+    , m_context(context)
+{
+}
 
-    virtual ~WebGLExtension();
-    virtual ExtensionName getName() const = 0;
+WebKitLoseContext::~WebKitLoseContext()
+{
+}
 
-protected:
-    WebGLExtension();
-};
+WebGLExtension::ExtensionName WebKitLoseContext::getName() const
+{
+    return WebKitLoseContextName;
+}
+
+PassRefPtr<WebKitLoseContext> WebKitLoseContext::create(WebGLRenderingContext* context)
+{
+    return adoptRef(new WebKitLoseContext(context));
+}
+
+void WebKitLoseContext::loseContext()
+{
+    m_context->forceLostContext();
+}
 
 } // namespace WebCore
 
-#endif // WebGLExtension_h
+#endif // ENABLE(3D_CANVAS)

@@ -1,3 +1,15 @@
+2011-01-05  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add tests for WebGL's lost context events.
+        https://bugs.webkit.org/show_bug.cgi?id=51492
+
+        * fast/canvas/webgl/context-lost-expected.txt: Added.
+        * fast/canvas/webgl/context-lost-restored-expected.txt: Added.
+        * fast/canvas/webgl/context-lost-restored.html: Added.
+        * fast/canvas/webgl/context-lost.html: Added.
+
 2011-01-07  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new test baselines and updated chromium expectations.

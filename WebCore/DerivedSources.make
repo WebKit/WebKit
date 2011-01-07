@@ -508,6 +508,7 @@ DOM_CLASSES = \
     WebKitCSSKeyframesRule \
     WebKitCSSMatrix \
     WebKitCSSTransformValue \
+    WebKitLoseContext \
     WebKitPoint \
     WebKitTransitionEvent \
     WebSocket \

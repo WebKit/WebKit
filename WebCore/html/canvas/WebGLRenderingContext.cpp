@@ -32,6 +32,7 @@
 #include "CachedImage.h"
 #include "CanvasPixelArray.h"
 #include "CheckedInt.h"
+#include "WebKitLoseContext.h"
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Extensions3D.h"
@@ -137,11 +138,11 @@ private:
 void WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired()
 {
     // Timer is started when m_contextLost is false.  It will first call
-    // loseContext, which will set m_contextLost to true.  Then it will keep
+    // onLostContext, which will set m_contextLost to true.  Then it will keep
     // calling restoreContext and reschedule itself until m_contextLost is back
     // to false.
     if (!m_context->m_contextLost) {
-        m_context->loseContext();
+        m_context->onLostContext();
         startOneShot(secondsBetweenRestoreAttempts);
     } else {
         // The rendering context is not restored if there is no handler for
@@ -1573,6 +1574,9 @@ unsigned long WebGLRenderingContext::getError()
 
 WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
 {
+    if (isContextLost())
+        return 0;
+
     if (equalIgnoringCase(name, "OES_texture_float")
         && m_context->getExtensions()->supports("GL_OES_texture_float")) {
         if (!m_oesTextureFloat) {
@@ -1580,6 +1584,10 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_oesTextureFloat = OESTextureFloat::create();
         }
         return m_oesTextureFloat.get();
+    } else if (equalIgnoringCase(name, "WEBKIT_lose_context")) {
+        if (!m_webkitLoseContext)
+            m_webkitLoseContext = WebKitLoseContext::create(this);
+        return m_webkitLoseContext.get();
     }
 
     return 0;
@@ -1985,6 +1993,7 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     Vector<String> result;
     if (m_context->getExtensions()->supports("GL_OES_texture_float"))
         result.append("OES_texture_float");
+    result.append("WEBKIT_lose_context");
     return result;
 }
 
@@ -3458,7 +3467,17 @@ void WebGLRenderingContext::viewport(long x, long y, long width, long height)
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::loseContext()
+void WebGLRenderingContext::forceLostContext()
+{
+    if (isContextLost()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
+
+    m_restoreTimer.startOneShot(0);
+}
+
+void WebGLRenderingContext::onLostContext()
 {
     m_contextLost = true;
 
@@ -4345,11 +4364,16 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
 
 int WebGLRenderingContext::getNumberOfExtensions()
 {
-    return (m_oesTextureFloat ? 1 : 0);
+    return (m_webkitLoseContext ? 1 : 0) + (m_oesTextureFloat ? 1 : 0);
 }
 
 WebGLExtension* WebGLRenderingContext::getExtensionNumber(int i)
 {
+    if (m_webkitLoseContext) {
+        if (!i)
+            return m_webkitLoseContext.get();
+        --i;
+    }
     if (m_oesTextureFloat) {
         if (!i)
             return m_oesTextureFloat.get();

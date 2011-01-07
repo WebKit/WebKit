@@ -29,9 +29,11 @@
 
 #include "JSWebGLRenderingContext.h"
 
+#include "WebKitLoseContext.h"
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "JSWebKitLoseContext.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
@@ -169,6 +171,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     if (!extension)
         return jsNull();
     switch (extension->getName()) {
+    case WebGLExtension::WebKitLoseContextName:
+        return toJS(exec, globalObject, static_cast<WebKitLoseContext*>(extension));
     case WebGLExtension::OESTextureFloatName:
         return toJS(exec, globalObject, static_cast<OESTextureFloat*>(extension));
     }
@@ -320,6 +324,8 @@ JSValue JSWebGLRenderingContext::getShaderParameter(ExecState* exec)
 JSValue JSWebGLRenderingContext::getSupportedExtensions(ExecState* exec)
 {
     WebGLRenderingContext* context = static_cast<WebGLRenderingContext*>(impl());
+    if (context->isContextLost())
+        return jsNull();
     Vector<String> value = context->getSupportedExtensions();
     MarkedArgumentBuffer list;
     for (size_t ii = 0; ii < value.size(); ++ii)

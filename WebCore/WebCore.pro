@@ -3797,6 +3797,7 @@ contains(DEFINES, ENABLE_3D_CANVAS=1) {
         html/canvas/OESTextureFloat.h \
         html/canvas/WebGLTexture.h \
         html/canvas/WebGLUniformLocation.h \
+        html/canvas/WebKitLoseContext.h \
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \
         platform/graphics/qt/Extensions3DQt.h
@@ -3820,6 +3821,7 @@ contains(DEFINES, ENABLE_3D_CANVAS=1) {
         html/canvas/OESTextureFloat.cpp \
         html/canvas/WebGLTexture.cpp \
         html/canvas/WebGLUniformLocation.cpp \
+        html/canvas/WebKitLoseContext.cpp \
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/qt/Extensions3DQt.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp

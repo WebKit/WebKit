@@ -1,3 +1,45 @@
+2011-01-05  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add WEBKIT_lose_context WebGL extension.
+        https://bugs.webkit.org/show_bug.cgi?id=51492
+
+        Tests: fast/canvas/webgl/context-lost-restored.html
+               fast/canvas/webgl/context-lost.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::JSWebGLRenderingContext::getSupportedExtensions):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        (WebCore::V8WebGLRenderingContext::getSupportedExtensionsCallback):
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::WebGLRenderingContextRestoreTimer::fired):
+        (WebCore::WebGLRenderingContext::getExtension):
+        (WebCore::WebGLRenderingContext::getSupportedExtensions):
+        (WebCore::WebGLRenderingContext::forceLostContext):
+        (WebCore::WebGLRenderingContext::onLostContext):
+        (WebCore::WebGLRenderingContext::getNumberOfExtensions):
+        (WebCore::WebGLRenderingContext::getExtensionNumber):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebKitLoseContext.cpp: Copied from WebCore/html/canvas/WebGLExtension.h.
+        (WebCore::WebKitLoseContext::WebKitLoseContext):
+        (WebCore::WebKitLoseContext::~WebKitLoseContext):
+        (WebCore::WebKitLoseContext::getName):
+        (WebCore::WebKitLoseContext::create):
+        (WebCore::WebKitLoseContext::loseContext):
+        * html/canvas/WebKitLoseContext.h: Copied from WebCore/html/canvas/WebGLExtension.h.
+        * html/canvas/WebKitLoseContext.idl: Copied from WebCore/html/canvas/WebGLExtension.h.
+
 2011-01-07  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.

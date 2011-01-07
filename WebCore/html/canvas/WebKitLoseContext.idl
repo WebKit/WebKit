@@ -23,28 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGLExtension_h
-#define WebGLExtension_h
-
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class WebGLExtension : public RefCounted<WebGLExtension> {
-public:
-    // Extension names are needed to properly wrap instances in JavaScript objects.
-    enum ExtensionName {
-        WebKitLoseContextName,
-        OESTextureFloatName,
+module html {
+    interface [Conditional=3D_CANVAS, OmitConstructor] WebKitLoseContext {
+        [StrictTypeChecking] void loseContext();
     };
-
-    virtual ~WebGLExtension();
-    virtual ExtensionName getName() const = 0;
-
-protected:
-    WebGLExtension();
-};
-
-} // namespace WebCore
-
-#endif // WebGLExtension_h
+}
