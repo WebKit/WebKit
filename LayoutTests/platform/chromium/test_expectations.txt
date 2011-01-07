@@ -3166,6 +3166,8 @@ BUG_SENORBLANCO WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+
 // New test introduced in r75097.  The "aspect ratio" of the gradients is wrong
 // for some reason.  (The Safari results are "squished", but ours are not).
 BUG_SENORBLANCO : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
+// This needs a rebaseline, but the automatic tool is giving me grief.
+BUG_SENORBLANCO LINUX : fast/gradients/css3-repeating-linear-gradients.html = IMAGE
 
 // These were introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
