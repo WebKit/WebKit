@@ -78,13 +78,13 @@ unsigned SegmentedString::length() const
 
 void SegmentedString::setExcludeLineNumbers()
 {
+    m_currentString.setExcludeLineNumbers();
     if (m_composite) {
         Deque<SegmentedSubstring>::iterator it = m_substrings.begin();
         Deque<SegmentedSubstring>::iterator e = m_substrings.end();
         for (; it != e; ++it)
             it->setExcludeLineNumbers();
-    } else
-        m_currentString.setExcludeLineNumbers();
+    }
 }
 
 void SegmentedString::clear()
