@@ -71,8 +71,12 @@
 #endif
 
 /* COMPILER(RVCT)  - ARM RealView Compilation Tools */
+/* COMPILER(RVCT4_OR_GREATER) - ARM RealView Compilation Tools 4.0 or greater */
 #if defined(__CC_ARM) || defined(__ARMCC__)
 #define WTF_COMPILER_RVCT 1
+#if __ARMCC_VERSION >= 400000
+#define WTF_COMPILER_RVCT4_OR_GREATER 1
+#endif
 #endif
 
 /* COMPILER(GCC) - GNU Compiler Collection */
@@ -1008,7 +1012,7 @@
 #endif
 
 /* Configure the interpreter */
-#if COMPILER(GCC)
+#if COMPILER(GCC) || (COMPILER(RVCT4_OR_GREATER) && defined(__GNUC__))
 #define HAVE_COMPUTED_GOTO 1
 #endif
 #if HAVE(COMPUTED_GOTO) && ENABLE(INTERPRETER)

@@ -1,3 +1,19 @@
+2011-01-07  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Enable PCRE computed gotos when compiling with RCVT 4.0 or greater in GNU mode
+        https://bugs.webkit.org/show_bug.cgi?id=52034
+
+        Derived from a patch by Eli Fidler.
+
+        RVCT 4 or greater in GNU mode supports the computed goto GNU language extension
+        as per <http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0348c/ch03s07s12.html>.
+
+        * pcre/pcre_exec.cpp: Modified to check for feature, HAVE(COMPUTED_GOTO), instead
+        of hardcoding the GCC compiler.
+        * wtf/Platform.h: Define WTF_COMPILER_RVCT4_OR_GREATER if __ARMCC_VERSION >= 400000.
+
 2011-01-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.
