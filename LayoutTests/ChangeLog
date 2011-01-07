@@ -1,3 +1,20 @@
+2011-01-07  Jessie Berlin  <jberlin@apple.com>
+
+        Unreviewed, rolling out r75205.
+        http://trac.webkit.org/changeset/75205
+        https://bugs.webkit.org/show_bug.cgi?id=52026
+        https://bugs.webkit.org/show_bug.cgi?id=52028
+        https://bugs.webkit.org/show_bug.cgi?id=52029
+
+        The Windows 7 Release Test Bots are fixed.
+
+        * platform/win/animations: Removed.
+        * platform/win/animations/animation-time-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-fillRect-gradient-shadow-expected.txt: Removed.
+        * platform/win/fast/css/css3-nth-tokens-script-expected.txt: Removed.
+        * platform/win/fast/css/css3-nth-tokens-style-expected.txt: Removed.
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+
 2011-01-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
