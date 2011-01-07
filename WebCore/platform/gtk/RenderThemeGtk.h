@@ -54,6 +54,8 @@ public:
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
+    virtual void adjustRepaintRect(const RenderObject*, IntRect&);
+
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
@@ -138,6 +140,7 @@ protected:
 #if ENABLE(VIDEO)
     void initMediaColors();
     void initMediaButtons();
+    void adjustMediaSliderThumbSize(RenderObject*) const;
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);

@@ -1,3 +1,26 @@
+2011-01-07  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Port slider painting to GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=51874
+
+        Use GtkStyleContext API to paint sliders when building with GTK+
+        3.x. Also move the code to adjust media slider to its own method
+        in RenderThemeGtk.cpp since it's common to both gtk 2 and 3.
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustMediaSliderThumbSize):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+
 2011-01-07  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

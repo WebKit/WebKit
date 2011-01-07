@@ -101,6 +101,24 @@ void RenderThemeGtk::initMediaColors()
     m_sliderThumbColor = style->bg[GTK_STATE_SELECTED];
 }
 
+void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect& rect)
+{
+    ControlPart part = renderObject->style()->appearance();
+    switch (part) {
+    case SliderVerticalPart:
+    case SliderHorizontalPart: {
+        GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ?  GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
+        gint focusWidth, focusPad;
+        gtk_style_context_get_style(context,
+                                    "focus-line-width", &focusWidth,
+                                    "focus-padding", &focusPad, NULL);
+        rect.inflate(focusWidth + focusPad);
+    }
+    default:
+        break;
+    }
+}
+
 GtkStateType RenderThemeGtk::getGtkStateType(RenderObject* object)
 {
     if (!isEnabled(object) || isReadOnlyControl(object))
@@ -273,94 +291,99 @@ bool RenderThemeGtk::paintTextField(RenderObject* object, const PaintInfo& info,
     return paintRenderObject(MOZ_GTK_ENTRY, object, info.context, rect);
 }
 
-bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (info.context->paintingDisabled())
-        return false;
-
-    ControlPart part = object->style()->appearance();
+    ControlPart part = renderObject->style()->appearance();
     ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
 
-    // We shrink the trough rect slightly to make room for the focus indicator.
-    IntRect troughRect(IntPoint(), rect.size()); // This is relative to rect.
-    GtkWidget* widget = 0;
-    if (part == SliderVerticalPart) {
-        widget = gtkVScale();
-        troughRect.inflateY(-gtk_widget_get_style(widget)->ythickness);
-    } else {
-        widget = gtkHScale();
-        troughRect.inflateX(-gtk_widget_get_style(widget)->xthickness);
+    GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
+    gtk_style_context_save(context);
+
+    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCALE);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
+
+    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+        gtk_style_context_set_state(context, GTK_STATE_FLAG_INSENSITIVE);
+
+    gtk_render_background(context, paintInfo.context->platformContext(),
+                          rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext(),
+                     rect.x(), rect.y(), rect.width(), rect.height());
+
+    if (isFocused(renderObject)) {
+        gint focusWidth, focusPad;
+        gtk_style_context_get_style(context,
+                                    "focus-line-width", &focusWidth,
+                                    "focus-padding", &focusPad, NULL);
+        IntRect focusRect(rect);
+        focusRect.inflate(focusWidth + focusPad);
+        gtk_render_focus(context, paintInfo.context->platformContext(),
+                         focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
     }
-    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
 
-    WidgetRenderingContext widgetContext(info.context, rect);
-    widgetContext.gtkPaintBox(troughRect, widget, GTK_STATE_ACTIVE, GTK_SHADOW_OUT, "trough");
-    if (isFocused(object))
-        widgetContext.gtkPaintFocus(IntRect(IntPoint(), rect.size()), widget, getGtkStateType(object), "trough");
-
+    gtk_style_context_restore(context);
     return false;
 }
 
-bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (info.context->paintingDisabled())
-        return false;
-
-    ControlPart part = object->style()->appearance();
+    ControlPart part = renderObject->style()->appearance();
     ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart);
 
-    GtkWidget* widget = 0;
-    const char* detail = 0;
-    GtkOrientation orientation;
-    if (part == SliderThumbVerticalPart) {
-        widget = gtkVScale();
-        detail = "vscale";
-        orientation = GTK_ORIENTATION_VERTICAL;
-    } else {
-        widget = gtkHScale();
-        detail = "hscale";
-        orientation = GTK_ORIENTATION_HORIZONTAL;
-    }
-    gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
+    GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
+    gtk_style_context_save(context);
 
-    // Only some themes have slider thumbs respond to clicks and some don't. This information is
-    // gathered via the 'activate-slider' property, but it's deprecated in GTK+ 2.22 and removed in
-    // GTK+ 3.x. The drawback of not honoring it is that slider thumbs change color when you click
-    // on them. 
-    IntRect thumbRect(IntPoint(), rect.size());
-    WidgetRenderingContext widgetContext(info.context, rect);
-    widgetContext.gtkPaintSlider(thumbRect, widget, getGtkStateType(object), GTK_SHADOW_OUT, detail, orientation);
+    gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_SCALE);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_SLIDER);
+
+    gint troughBorder;
+    gtk_style_context_get_style(context, "trough-border", &troughBorder, NULL);
+
+    IntRect sliderRect(rect);
+    sliderRect.inflate(-troughBorder);
+
+    guint flags = 0;
+    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    else if (isHovered(renderObject))
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    if (isPressed(renderObject))
+        flags |= GTK_STATE_FLAG_ACTIVE;
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
+
+    gtk_render_slider(context, paintInfo.context->platformContext(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height(),
+                      part == SliderThumbHorizontalPart ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL);
+
+    gtk_style_context_restore(context);
+
     return false;
 }
 
-void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeGtk::adjustSliderThumbSize(RenderObject* renderObject) const
 {
-    ControlPart part = o->style()->appearance();
+    ControlPart part = renderObject->style()->appearance();
 #if ENABLE(VIDEO)
-    if (part == MediaSliderThumbPart) {
-        o->style()->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
-        o->style()->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
+    if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) {
+        adjustMediaSliderThumbSize(renderObject);
         return;
     }
-    if (part == MediaVolumeSliderThumbPart)
-        return;
 #endif
 
-    GtkWidget* widget = part == SliderThumbHorizontalPart ? gtkHScale() : gtkVScale();
-    int length = 0, width = 0;
-    gtk_widget_style_get(widget,
-                         "slider_length", &length,
-                         "slider_width", &width,
-                         NULL);
-
+    gint sliderWidth, sliderLength;
+    gtk_style_context_get_style(getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE),
+                                "slider-width", &sliderWidth,
+                                "slider-length", &sliderLength,
+                                NULL);
     if (part == SliderThumbHorizontalPart) {
-        o->style()->setWidth(Length(length, Fixed));
-        o->style()->setHeight(Length(width, Fixed));
+        renderObject->style()->setWidth(Length(sliderLength, Fixed));
+        renderObject->style()->setHeight(Length(sliderWidth, Fixed));
         return;
     }
     ASSERT(part == SliderThumbVerticalPart);
-    o->style()->setWidth(Length(width, Fixed));
-    o->style()->setHeight(Length(length, Fixed));
+    renderObject->style()->setWidth(Length(sliderWidth, Fixed));
+    renderObject->style()->setHeight(Length(sliderLength, Fixed));
 }
 
 #if ENABLE(PROGRESS_TAG)

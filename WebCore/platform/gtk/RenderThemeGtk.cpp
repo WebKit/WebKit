@@ -436,6 +436,16 @@ String RenderThemeGtk::extraMediaControlsStyleSheet()
     return String(mediaControlsGtkUserAgentStyleSheet, sizeof(mediaControlsGtkUserAgentStyleSheet));
 }
 
+void RenderThemeGtk::adjustMediaSliderThumbSize(RenderObject* renderObject) const
+{
+    ControlPart part = renderObject->style()->appearance();
+
+    if (part == MediaSliderThumbPart) {
+        renderObject->style()->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
+        renderObject->style()->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
+    }
+}
+
 bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* iconName)
 {
     GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_CONTAINER, iconName,

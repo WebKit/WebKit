@@ -59,6 +59,10 @@ void RenderThemeGtk::initMediaColors()
 }
 #endif
 
+void RenderThemeGtk::adjustRepaintRect(const RenderObject*, IntRect&)
+{
+}
+
 GtkStateType RenderThemeGtk::getGtkStateType(RenderObject* object)
 {
     if (!isEnabled(object) || isReadOnlyControl(object))
@@ -302,13 +306,10 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
 {
     ControlPart part = o->style()->appearance();
 #if ENABLE(VIDEO)
-    if (part == MediaSliderThumbPart) {
-        o->style()->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
-        o->style()->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
+    if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) {
+        adjustMediaSliderThumbSize(o);
         return;
     }
-    if (part == MediaVolumeSliderThumbPart)
-        return;
 #endif
 
     GtkWidget* widget = part == SliderThumbHorizontalPart ? gtkHScale() : gtkVScale();
