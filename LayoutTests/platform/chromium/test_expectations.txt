@@ -3163,8 +3163,8 @@ BUG_SENORBLANCO LINUX : fast/text/capitalize-boundaries.html = IMAGE
 BUG_SENORBLANCO WIN : fast/text/basic/014.html = IMAGE+TEXT
 BUG_SENORBLANCO WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
-// New tests introduced by r75097.  Results look ok; need rebaseline.
-BUG_SENORBLANCO : fast/gradients/css3-repeating-linear-gradients.html = IMAGE
+// New test introduced in r75097.  The "aspect ratio" of the gradients is wrong
+// for some reason.  (The Safari results are "squished", but ours are not).
 BUG_SENORBLANCO : fast/gradients/css3-repeating-radial-gradients.html = IMAGE
 
 // These were introduced by r75139

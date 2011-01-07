@@ -1,3 +1,16 @@
+2011-01-06  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; test expectations update.
+
+        Add new results for new tests introduced in r75097.
+
+        * platform/chromium-mac/fast/gradients/css3-repeating-linear-gradients-expected.checksum: Added.
+        * platform/chromium-mac/fast/gradients/css3-repeating-linear-gradients-expected.png: Added.
+        * platform/chromium-win/fast/gradients/css3-repeating-linear-gradients-expected.checksum: Added.
+        * platform/chromium-win/fast/gradients/css3-repeating-linear-gradients-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        
+
 2011-01-06  Robert Hogan  <robert@webkit.org>
 
         [Qt] Update expected results after r75177
