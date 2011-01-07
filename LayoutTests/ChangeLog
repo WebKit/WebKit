@@ -3,6 +3,13 @@
         Unreviewed; chromium test expectations update.
 
         * platform/chromium/test_expectations.txt:
+        Add some expected "failing" tests post-r75205.
+
+2011-01-06  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
         Remove duplicate expectations.
 
 2011-01-06  Adam Roben  <aroben@apple.com>

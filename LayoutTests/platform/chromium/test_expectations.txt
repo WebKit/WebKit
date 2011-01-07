@@ -3183,3 +3183,9 @@ BUG_SENORBLANCO WIN DEBUG : fast/events/overflow-events.html = PASS TEXT
 BUG_SENORBLANCO WIN DEBUG : http/tests/media/text-served-as-text.html = PASS TEXT TIMEOUT
 BUG_SENORBLANCO WIN : http/tests/navigation/ping-cross-origin.html = PASS TEXT TIMEOUT
 BUG_SENORBLANCO MAC SLOW : http/tests/navigation/ping-cross-origin.html = PASS
+
+// These are actually passing, but the Safari results have "failing" results
+// checked in.  A rebaseline should do the trick.
+BUG_SENORBLANCO : animations/animation-time.html = TEXT
+BUG_SENORBLANCO : fast/css/css3-nth-tokens-script.html = TEXT
+BUG_SENORBLANCO : fast/css/css3-nth-tokens-style.html = TEXT
