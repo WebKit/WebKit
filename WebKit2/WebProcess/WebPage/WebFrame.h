@@ -106,6 +106,8 @@ public:
     
     bool allowsFollowingLink(const WebCore::KURL&) const;
 
+    String provisionalURL() const;
+
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener {
     public:

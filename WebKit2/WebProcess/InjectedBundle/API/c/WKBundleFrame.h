@@ -41,6 +41,7 @@ WK_EXPORT WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frame);
 
 WK_EXPORT WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frame);
 WK_EXPORT WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frame);
+WK_EXPORT WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frame);
 
 WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frame);
 WK_EXPORT JSGlobalContextRef WKBundleFrameGetJavaScriptContextForWorld(WKBundleFrameRef frame, WKBundleScriptWorldRef world);

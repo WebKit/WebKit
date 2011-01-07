@@ -50,6 +50,11 @@ WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frameRef)
     return toCopiedURLAPI(toImpl(frameRef)->url());
 }
 
+WKURLRef WKBundleFrameCopyProvisionalURL(WKBundleFrameRef frameRef)
+{
+    return toCopiedURLAPI(toImpl(frameRef)->provisionalURL());
+}
+
 WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->childFrames().releaseRef());    

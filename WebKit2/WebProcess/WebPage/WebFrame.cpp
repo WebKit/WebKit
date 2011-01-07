@@ -506,4 +506,12 @@ String WebFrame::markerText(JSObjectRef element)
     return markerTextForListItem(static_cast<JSElement*>(toJS(element))->impl());
 }
 
+String WebFrame::provisionalURL() const
+{
+    if (!m_coreFrame)
+        return String();
+
+    return m_coreFrame->loader()->provisionalDocumentLoader()->url().string();
+}
+
 } // namespace WebKit
