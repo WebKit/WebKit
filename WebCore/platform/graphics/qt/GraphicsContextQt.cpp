@@ -450,19 +450,6 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, shouldAntialias);
 
-    if (hasShadow()) {
-        p->save();
-        p->translate(m_data->shadow.offset());
-        if (p->brush().style() != Qt::NoBrush)
-            p->setBrush(QBrush(m_data->shadow.m_color));
-        QPen pen(p->pen());
-        if (pen.style() != Qt::NoPen) {
-            pen.setColor(m_data->shadow.m_color);
-            p->setPen(pen);
-        }
-        p->drawConvexPolygon(polygon);
-        p->restore();
-    }
     p->drawConvexPolygon(polygon);
 
     p->setRenderHint(QPainter::Antialiasing, antiAlias);
