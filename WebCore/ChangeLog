@@ -1,3 +1,20 @@
+2011-01-06  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        copyTexSubImage2D shouldn't have undefined pixels
+        https://bugs.webkit.org/show_bug.cgi?id=51559
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Refactor to share some code with copyTexSubImage2D through helper function clip2D.
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D): Initialize undefined pixels to 0.
+        (WebCore::WebGLRenderingContext::validateTexFuncLevel): Seperate the validation of level from validateTexFuncParameters.
+        (WebCore::WebGLRenderingContext::validateTexFuncParameters): Ditto.
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLTexture.cpp:
+        (WebCore::WebGLTexture::getType): Expose the type of a texture.
+        * html/canvas/WebGLTexture.h:
+
 2011-01-07  Takashi Toyoshima  <toyoshim@google.com>
 
         Reviewed by Kenneth Russell.

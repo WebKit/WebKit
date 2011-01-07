@@ -60,6 +60,7 @@
 
 #include <wtf/ByteArray.h>
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
 
 namespace WebCore {
 
@@ -72,7 +73,7 @@ namespace {
         return object ? object->object() : 0;
     }
 
-    void clip(long start, long range, long sourceRange, long* clippedStart, long* clippedRange)
+    void clip1D(long start, long range, long sourceRange, long* clippedStart, long* clippedRange)
     {
         ASSERT(clippedStart && clippedRange);
         if (start < 0) {
@@ -84,6 +85,17 @@ namespace {
             range -= end - sourceRange;
         *clippedStart = start;
         *clippedRange = range;
+    }
+
+    // Returns false if no clipping is necessary, i.e., x, y, width, height stay the same.
+    bool clip2D(long x, long y, long width, long height,
+                long sourceWidth, long sourceHeight,
+                long* clippedX, long* clippedY, long* clippedWidth, long*clippedHeight)
+    {
+        ASSERT(clippedX && clippedY && clippedWidth && clippedHeight);
+        clip1D(x, width, sourceWidth, clippedX, clippedWidth);
+        clip1D(y, height, sourceHeight, clippedY, clippedHeight);
+        return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
     }
 
     // Return true if a character belongs to the ASCII subset as defined in
@@ -693,9 +705,7 @@ void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, uns
         m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
     else {
         long clippedX, clippedY, clippedWidth, clippedHeight;
-        clip(x, width, getBoundFramebufferWidth(), &clippedX, &clippedWidth);
-        clip(y, height, getBoundFramebufferHeight(), &clippedY, &clippedHeight);
-        if (clippedX != x || clippedY != y || clippedWidth != static_cast<long>(width) || clippedHeight != static_cast<long>(height)) {
+        if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
             m_context->texImage2DResourceSafe(target, level, internalformat, width, height, border,
                                               internalformat, GraphicsContext3D::UNSIGNED_BYTE);
             if (clippedWidth > 0 && clippedHeight > 0) {
@@ -714,11 +724,17 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
 {
     if (isContextLost())
         return;
+    if (!validateTexFuncLevel(target, level))
+        return;
     WebGLTexture* tex = validateTextureBinding(target, true);
     if (!tex)
         return;
     if (!validateSize(xoffset, yoffset) || !validateSize(width, height))
         return;
+    if (xoffset + width > tex->getWidth(target, level) || yoffset + height > tex->getHeight(target, level)) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return;
+    }
     if (!isTexInternalFormatColorBufferCombinationValid(tex->getInternalFormat(target, level), getBoundFramebufferColorFormat())) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
@@ -727,7 +743,42 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
-    m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    if (isResourceSafe())
+        m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    else {
+        long clippedX, clippedY, clippedWidth, clippedHeight;
+        if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
+            unsigned long format = tex->getInternalFormat(target, level);
+            unsigned long type = tex->getType(target, level);
+            unsigned long componentsPerPixel = 0;
+            unsigned long bytesPerComponent = 0;
+            bool valid = m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent);
+            if (!valid) {
+                m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+                return;
+            }
+            OwnArrayPtr<unsigned char> zero;
+            if (width && height) {
+                unsigned long size = componentsPerPixel * bytesPerComponent * width * height;
+                zero = adoptArrayPtr(new unsigned char[size]);
+                if (!zero) {
+                    m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+                    return;
+                }
+                memset(zero.get(), 0, size);
+            }
+            if (zero)
+                m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
+            m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, zero.get());
+            if (zero)
+                m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
+            if (clippedWidth > 0 && clippedHeight > 0) {
+                m_context->copyTexSubImage2D(target, level, xoffset + clippedX - x, yoffset + clippedY - y,
+                                             clippedX, clippedY, clippedWidth, clippedHeight);
+            }
+        } else
+            m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+    }
     cleanupAfterGraphicsCall(false);
 }
 
@@ -3814,25 +3865,15 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(unsigned long format, u
     return true;
 }
 
-bool WebGLRenderingContext::validateTexFuncParameters(unsigned long target, long level,
-                                                      unsigned long internalformat,
-                                                      long width, long height, long border,
-                                                      unsigned long format, unsigned long type)
+bool WebGLRenderingContext::validateTexFuncLevel(unsigned long target, long level)
 {
-    // We absolutely have to validate the format and type combination.
-    // The texImage2D entry points taking HTMLImage, etc. will produce
-    // temporary data based on this combination, so it must be legal.
-    if (!validateTexFuncFormatAndType(format, type))
-        return false;
-
-    if (width < 0 || height < 0 || level < 0) {
+    if (level < 0) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return false;
     }
-
     switch (target) {
     case GraphicsContext3D::TEXTURE_2D:
-        if (width > m_maxTextureSize || height > m_maxTextureSize || level > m_maxTextureLevel) {
+        if (level > m_maxTextureLevel) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return false;
         }
@@ -3843,7 +3884,47 @@ bool WebGLRenderingContext::validateTexFuncParameters(unsigned long target, long
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        if (width != height || width > m_maxCubeMapTextureSize || level > m_maxCubeMapTextureLevel) {
+        if (level > m_maxCubeMapTextureLevel) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return false;
+        }
+        break;
+    }
+    // This function only checks if level is legal, so we return true and don't
+    // generate INVALID_ENUM if target is illegal.
+    return true;
+}
+
+bool WebGLRenderingContext::validateTexFuncParameters(unsigned long target, long level,
+                                                      unsigned long internalformat,
+                                                      long width, long height, long border,
+                                                      unsigned long format, unsigned long type)
+{
+    // We absolutely have to validate the format and type combination.
+    // The texImage2D entry points taking HTMLImage, etc. will produce
+    // temporary data based on this combination, so it must be legal.
+    if (!validateTexFuncFormatAndType(format, type) || !validateTexFuncLevel(target, level))
+        return false;
+
+    if (width < 0 || height < 0) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return false;
+    }
+
+    switch (target) {
+    case GraphicsContext3D::TEXTURE_2D:
+        if (width > m_maxTextureSize || height > m_maxTextureSize) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+            return false;
+        }
+        break;
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_X:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Y:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_POSITIVE_Z:
+    case GraphicsContext3D::TEXTURE_CUBE_MAP_NEGATIVE_Z:
+        if (width != height || width > m_maxCubeMapTextureSize) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return false;
         }

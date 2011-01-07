@@ -177,6 +177,14 @@ unsigned long WebGLTexture::getInternalFormat(unsigned long target, int level) c
     return info->internalFormat;
 }
 
+unsigned long WebGLTexture::getType(unsigned long target, int level) const
+{
+    const LevelInfo* info = getLevelInfo(target, level);
+    if (!info)
+        return 0;
+    return info->type;
+}
+
 int WebGLTexture::getWidth(unsigned long target, int level) const
 {
     const LevelInfo* info = getLevelInfo(target, level);

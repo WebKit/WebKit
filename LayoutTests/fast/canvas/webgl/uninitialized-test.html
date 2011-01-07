@@ -152,6 +152,84 @@ gl.deleteTexture(tex);
 gl.finish();
 glErrorShouldBe(gl, gl.NO_ERROR);
 
+debug("");
+debug("Reading an uninitialized portion of a texture (copyTexSubImage2D) should succeed with all bytes set to 0.");
+
+var tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+var data = new Uint8Array(width * height * 4);
+for (var i = 0; i < width * height * 4; ++i)
+    data[i] = 255;
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+glErrorShouldBe(gl, gl.NO_ERROR);
+var fbo = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+var rbo = gl.createRenderbuffer();
+gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+var fboWidth = 16;
+var fboHeight = 16;
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, fboWidth, fboHeight);
+gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo);
+shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+gl.clearColor(1.0, 0.0, 0.0, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+glErrorShouldBe(gl, gl.NO_ERROR);
+gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
+checkNonZeroPixels(tex, width, height, 0, 0, fboWidth, fboHeight, 255, 0, 0, 255);
+gl.deleteTexture(tex);
+gl.finish();
+glErrorShouldBe(gl, gl.NO_ERROR);
+
+debug("");
+debug("Reading an uninitialized portion of a texture (copyTexSubImage2D with negative x and y) should succeed with all bytes set to 0.");
+
+var tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+var data = new Uint8Array(width * height * 4);
+for (var i = 0; i < width * height * 4; ++i)
+    data[i] = 255;
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+glErrorShouldBe(gl, gl.NO_ERROR);
+var fbo = gl.createFramebuffer();
+gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+var rbo = gl.createRenderbuffer();
+gl.bindRenderbuffer(gl.RENDERBUFFER, rbo);
+var fboWidth = 16;
+var fboHeight = 16;
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, fboWidth, fboHeight);
+gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, rbo);
+shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_COMPLETE");
+gl.clearColor(1.0, 0.0, 0.0, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+glErrorShouldBe(gl, gl.NO_ERROR);
+var x = -8;
+var y = -8;
+gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, x, y, width, height);
+checkNonZeroPixels(tex, width, height, -x, -y, fboWidth, fboHeight, 255, 0, 0, 255);
+gl.deleteTexture(tex);
+gl.finish();
+glErrorShouldBe(gl, gl.NO_ERROR);
+
+debug("");
+debug("Reading an uninitialized portion of a texture (copyTexSubImage2D from WebGL internal fbo) should succeed with all bytes set to 0.");
+
+var tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+var data = new Uint8Array(width * height * 4);
+for (var i = 0; i < width * height * 4; ++i)
+    data[i] = 255;
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+glErrorShouldBe(gl, gl.NO_ERROR);
+gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+gl.clearColor(0.0, 1.0, 0.0, 0.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+glErrorShouldBe(gl, gl.NO_ERROR);
+gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, width, height);
+checkNonZeroPixels(tex, width, height, 0, 0, canvas.width, canvas.height, 0, 255, 0, 0);
+gl.deleteTexture(tex);
+gl.finish();
+glErrorShouldBe(gl, gl.NO_ERROR);
+
 //TODO: uninitialized vertex array buffer
 //TODO: uninitialized vertex elements buffer
 //TODO: uninitialized framebuffer? (implementations would need to do a GL clear at first binding?)

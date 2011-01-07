@@ -528,6 +528,10 @@ public:
     // Generates GL error and returns false if parameters are invalid.
     bool validateTexFuncFormatAndType(unsigned long format, unsigned long type);
 
+    // Helper function to check input level for functions {copy}Tex{Sub}Image.
+    // Generates GL error and returns false if level is invalid.
+    bool validateTexFuncLevel(unsigned long target, long level);
+
     // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
     bool validateTexFuncParameters(unsigned long target, long level,

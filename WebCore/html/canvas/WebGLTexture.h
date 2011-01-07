@@ -53,6 +53,7 @@ public:
     void generateMipmapLevelInfo();
 
     unsigned long getInternalFormat(unsigned long target, int level) const;
+    unsigned long getType(unsigned long target, int level) const;
     int getWidth(unsigned long target, int level) const;
     int getHeight(unsigned long target, int level) const;
 
