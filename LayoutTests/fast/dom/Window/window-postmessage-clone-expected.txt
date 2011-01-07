@@ -1,4 +1,5 @@
 Tests that we clone object hierarchies
+
 PASS: 'postMessage(reallyDeepArray)' threw RangeError: Maximum call stack size exceeded.
 PASS: 'postMessage(window)' threw TypeError: Type error
 PASS: eventData is null of type object
