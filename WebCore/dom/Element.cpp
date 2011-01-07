@@ -558,6 +558,13 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
     adjustFloatRectForAbsoluteZoom(result, renderer());
     return ClientRect::create(result);
 }
+    
+IntRect Element::screenRect() const
+{
+    if (!renderer())
+        return IntRect();
+    return renderer()->view()->frameView()->contentsToScreen(renderer()->absoluteBoundingBoxRect());
+}
 
 static inline bool shouldIgnoreAttributeCase(const Element* e)
 {

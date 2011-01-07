@@ -1,3 +1,67 @@
+2010-12-21  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebKit Full Screen support.
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+
+        Support the new fullscreen Chrome client requests.  WebView will pass
+        through these requests to a WebFullscreenController.
+
+        * WebCoreSupport/WebChromeClient.h: Add fullScreenRendererChanged().
+        * WebView/WebView.mm:
+        (-[WebView _supportsFullScreenForElement:WebCore::]): Check to see if the fullscreen pref has been enabled.
+        (-[WebView _enterFullScreenForElement:WebCore::]): Create a WebFullScreenController.
+        (-[WebView _exitFullScreenForElement:WebCore::]): Request that the WebFullScreenController exit fullscreen.
+        (-[WebView _fullScreenRendererChanged:WebCore::]): Notify the WebFullScreenController that its renderer has changed.
+        * WebView/WebViewData.h: Add ivar newFullscreenController.
+
+2010-12-17  Jer Noble  <jer@kokode.apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebKit Full Screen support.
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+        
+        This patch implements the FullScreen APIs using the new RenderFullScreen renderer and the new
+        Document client APIs. The RenderFullScreen renderer's CALayer is hosted in a new, fullscreen
+        window, and a custom CAAnimation animates that layer between the initial screen rect of the
+        full screen element, to its final value. WebFullscreenController will swap the WebView out of
+        its original window, and into the fullscreen window. The controller will replace the WebView
+        with a placeholder view, so that if the placeholder moves or resized while the WebView is
+        absent, the WebView will move back to the correct location when exiting fullscreen.
+
+        * WebView/WebFullscreenController.h: Added.
+        * WebView/WebFullscreenController.mm: Added.
+        (-[WebFullscreenController windowDidExitFullscreen:]):  Close the fullscreen window.
+        (-[WebFullscreenController windowDidEnterFullscreen:]): Swap the webView back into the fullscreen window. 
+        (-[WebFullscreenController animationDidStop:finished:]): Call windowDid{Exit|Enter}FullScreen as appropriate.
+        (-[WebFullscreenController applicationDidResignActive:]):
+        (-[WebFullscreenController applicationDidChangeScreenParameters:]): Resize the fullscreen window to match
+            the new screen parameters.
+        (-[WebFullscreenController enterFullscreen:]):  Set up the animation that will take the fullscreen element
+            from its original screen rect into fullscreen.
+        (-[WebFullscreenController exitFullscreen]): Swap the webView back into its original window.
+            Set up the animation that will take the fullscreen element back into its original screen
+            rect.
+        (-[WebFullscreenController _updatePowerAssertions]): Now checks _isAnyMoviePlaying to determine 
+            whether to disable screensaver and sleep.
+        (-[WebFullscreenController _isAnyMoviePlaying]): Walks through the sub-tree starting at the fullscreen element
+            looking for HTMLVideoElements; returns whether any are found to be playing.
+        (-[WebFullscreenController _animationDuration]): Returns the current animation duration, affected by control
+            and shift keys.
+        (-[WebFullscreenWindow canBecomeKeyWindow]): Allow the window to become key.
+        (-[WebFullscreenWindow keyDown:]): Handle the 'Esc' key.
+        (-[WebFullscreenWindow cancelOperation:]): Request to exit fullscreen.
+        (-[WebFullscreenWindow rendererLayer]): Convenience accessor.
+        (-[WebFullscreenWindow setRendererLayer:]): Ditto.
+        (-[WebFullscreenWindow backgroundLayer]): Ditto.
+        (-[WebFullscreenWindow animationView]): Ditto.
+        (MediaEventListener::MediaEventListener): Implements the EventListener protocol.
+        (MediaEventListener::handleEvent): Tells its delegate to _updatePowerAssertions.
+        
 2011-01-07  James Robinson  <jamesr@chromium.org>
 
         Revert "Implement mozilla's animationTime property"

@@ -203,6 +203,10 @@
 #include "HTMLNoScriptElement.h"
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+#include "RenderFullScreen.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -414,6 +418,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
 #if ENABLE(FULLSCREEN_API)
     , m_isFullScreen(0)
     , m_areKeysEnabledInFullScreen(0)
+    , m_fullScreenRenderer(0)
+    , m_fullScreenChangeDelayTimer(this, &Document::fullScreenChangeDelayTimerFired)
 #endif
     , m_loadEventDelayCount(0)
     , m_loadEventDelayTimer(this, &Document::loadEventDelayTimerFired)
@@ -1816,6 +1822,11 @@ void Document::detach()
 
     // indicate destruction mode,  i.e. attached() but renderer == 0
     setRenderer(0);
+    
+#if ENABLE(FULLSCREEN_API)
+    if (m_fullScreenRenderer)
+        setFullScreenRenderer(0);
+#endif
 
     m_hoverNode = 0;
     m_focusedNode = 0;
@@ -3372,9 +3383,12 @@ void Document::nodeWillBeRemoved(Node* n)
     ASSERT(n);
     if (n->contains(m_fullScreenElement.get())) {
         ASSERT(n != documentElement());
+        setFullScreenRenderer(0);
         m_fullScreenElement = documentElement();
         m_fullScreenElement->setNeedsStyleRecalc();
-        m_fullScreenElement->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+        m_fullScreenElement->detach();
+        updateStyleIfNeeded();
+        m_fullScreenChangeDelayTimer.startOneShot(0);
     }
 #endif
 }
@@ -4822,19 +4836,29 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
 
     m_fullScreenElement = element;
     m_isFullScreen = true;
-    documentElement()->setNeedsStyleRecalc(FullStyleChange);
-    m_fullScreenElement->setNeedsStyleRecalc(FullStyleChange);
-    updateStyleIfNeeded();
     
-    m_fullScreenElement->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+    if (m_fullScreenElement != documentElement())
+        m_fullScreenElement->detach();
+
+    recalcStyle(Force);
+    
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->setAnimating(true);
 }
     
 void Document::webkitDidEnterFullScreenForElement(Element*)
 {
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->setAnimating(false);
+    m_fullScreenChangeDelayTimer.startOneShot(0);
 }
 
 void Document::webkitWillExitFullScreenForElement(Element*)
 {
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->setAnimating(true);
+
+    recalcStyle(Force);
 }
 
 void Document::webkitDidExitFullScreenForElement(Element* element)
@@ -4843,16 +4867,62 @@ void Document::webkitDidExitFullScreenForElement(Element* element)
     m_isFullScreen = false;
     m_areKeysEnabledInFullScreen = false;
 
-    // m_fullScreenElement has already been cleared; recalc the style of 
-    // the passed in element instead.
-    element->setNeedsStyleRecalc(FullStyleChange);
-    if (element != documentElement())
-        documentElement()->setNeedsStyleRecalc(FullStyleChange);
-    updateStyleIfNeeded();
+    if (m_fullScreenRenderer)
+        m_fullScreenRenderer->remove();
+    
+    if (m_fullScreenElement != documentElement())
+        m_fullScreenElement->detach();
+    
+    setFullScreenRenderer(0);
+    recalcStyle(Force);
+    
+    m_fullScreenChangeDelayTimer.startOneShot(0);
+}
+    
+void Document::setFullScreenRenderer(RenderFullScreen* renderer)
+{
+    m_fullScreenRenderer = renderer;
+    
+    // This notification can come in after the page has been destroyed.
+    if (page())
+        page()->chrome()->client()->fullScreenRendererChanged(m_fullScreenRenderer);
+}
+    
+void Document::setFullScreenRendererSize(const IntSize& size)
+{
+    ASSERT(m_fullScreenRenderer);
+    if (!m_fullScreenRenderer)
+        return;
+    
+    if (m_fullScreenRenderer) {
+        RefPtr<RenderStyle> newStyle = RenderStyle::clone(m_fullScreenRenderer->style());
+        newStyle->setWidth(Length(size.width(), WebCore::Fixed));
+        newStyle->setHeight(Length(size.height(), WebCore::Fixed));
+        newStyle->setTop(Length(0, WebCore::Fixed));
+        newStyle->setLeft(Length(0, WebCore::Fixed));
+        m_fullScreenRenderer->setStyle(newStyle);
+    }
+}
+    
+void Document::setFullScreenRendererBackgroundColor(Color backgroundColor)
+{
+    if (!m_fullScreenRenderer)
+        return;
+    
+    RefPtr<RenderStyle> newStyle = RenderStyle::clone(m_fullScreenRenderer->style());
+    newStyle->setBackgroundColor(backgroundColor);
+    m_fullScreenRenderer->setStyle(newStyle);
+}
+    
+void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
+{
+    Element* element = m_fullScreenElement.get();
+    if (!element)
+        element = documentElement();
     
     element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
 }
-    
+
 #endif
 
 void Document::decrementLoadEventDelayCount()

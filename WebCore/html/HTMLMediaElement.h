@@ -140,8 +140,6 @@ public:
     void beginScrubbing();
     void endScrubbing();
 
-    IntRect screenRect();
-
     bool canPlay() const;
 
     float percentLoaded() const;

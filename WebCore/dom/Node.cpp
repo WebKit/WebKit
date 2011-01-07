@@ -69,7 +69,10 @@
 #include "ProcessingInstruction.h"
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
+#include "RenderBlock.h"
 #include "RenderBox.h"
+#include "RenderFullScreen.h"
+#include "RenderView.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
 #include "SelectorNodeList.h"
@@ -1357,6 +1360,21 @@ void Node::createRendererIfNeeded()
     ASSERT(parent);
     
     RenderObject* parentRenderer = parent->renderer();
+    RenderObject* nextRenderer = this->nextRenderer();
+    
+#if ENABLE(FULLSCREEN_API)
+    // If this node is a fullscreen node, create a new anonymous full screen
+    // renderer.
+    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this) {
+        RenderFullScreen* fullscreenRenderer = new (document()->renderArena()) RenderFullScreen(document());
+        fullscreenRenderer->setStyle(RenderFullScreen::createFullScreenStyle());
+        parentRenderer->addChild(fullscreenRenderer, 0);
+        parentRenderer = fullscreenRenderer;
+        nextRenderer = 0;
+        document()->setFullScreenRenderer(fullscreenRenderer);
+    }
+#endif
+    
     if (parentRenderer && parentRenderer->canHaveChildren() && parent->childShouldCreateRenderer(this)) {
         RefPtr<RenderStyle> style = styleForRenderer();
         if (rendererIsNeeded(style.get())) {
@@ -1366,7 +1384,7 @@ void Node::createRendererIfNeeded()
                 else {
                     setRenderer(r);
                     renderer()->setAnimatableStyle(style.release());
-                    parentRenderer->addChild(renderer(), nextRenderer());
+                    parentRenderer->addChild(renderer(), nextRenderer);
                 }
             }
         }

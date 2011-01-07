@@ -603,7 +603,7 @@ static void loadFullDefaultStyle()
 #if ENABLE(FULLSCREEN_API)
 static void loadFullScreenRulesIfNeeded(Document* document)
 {
-    if (!document->webkitFullScreen())
+    if (!document->webkitIsFullScreen())
         return;
     // Full-screen rules.
     String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
@@ -2664,17 +2664,15 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 // element is an element in the document, the 'full-screen' pseudoclass applies to 
                 // that element. Also, an <iframe>, <object> or <embed> element whose child browsing 
                 // context's Document is in the fullscreen state has the 'full-screen' pseudoclass applied.
-                if (!e->document()->webkitFullScreen())
+                if (!e->document()->webkitIsFullScreen())
                     return false;
                 if (e != e->document()->webkitCurrentFullScreenElement())
                     return false;
                 return true;
             case CSSSelector::PseudoFullScreenDocument:
                 // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies 
-                // to the root element of that Document.
-                if (!e->document()->webkitFullScreen())
-                    return false;
-                if (e != e->document()->documentElement())
+                // to all elements of that Document.
+                if (!e->document()->webkitIsFullScreen())
                     return false;
                 return true;
 #endif

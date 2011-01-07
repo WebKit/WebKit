@@ -5338,6 +5338,8 @@
 		C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */; };
 		CA3BF67C10D99BAE00E6CE53 /* ScrollAnimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */; };
 		CA3BF67E10D99BAE00E6CE53 /* ScrollAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */; };
+		CDEA7C841276230400B846DD /* RenderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEA7C821276230400B846DD /* RenderFullScreen.h */; };
+		CDEA7C851276230400B846DD /* RenderFullScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA7C831276230400B846DD /* RenderFullScreen.cpp */; };
 		CE02F0C411E83ADD00C6684A /* ScriptControllerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */; };
 		CE057FA61220731100A476D5 /* DocumentMarkerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CE057FA41220731100A476D5 /* DocumentMarkerController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11644,6 +11646,8 @@
 		CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollAnimator.cpp; sourceTree = "<group>"; };
 		CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimator.h; sourceTree = "<group>"; };
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
+		CDEA7C821276230400B846DD /* RenderFullScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFullScreen.h; sourceTree = "<group>"; };
+		CDEA7C831276230400B846DD /* RenderFullScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFullScreen.cpp; sourceTree = "<group>"; };
 		CE02F0C311E83ADD00C6684A /* ScriptControllerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptControllerBase.h; sourceTree = "<group>"; };
 		CE057FA31220731100A476D5 /* DocumentMarkerController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarkerController.cpp; sourceTree = "<group>"; };
 		CE057FA41220731100A476D5 /* DocumentMarkerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarkerController.h; sourceTree = "<group>"; };
@@ -18550,6 +18554,8 @@
 				0FD3080D117CF7E700A791F7 /* RenderFrameBase.h */,
 				A871DECA0A1530C700B12A68 /* RenderFrameSet.cpp */,
 				A871DEC90A1530C700B12A68 /* RenderFrameSet.h */,
+				CDEA7C831276230400B846DD /* RenderFullScreen.cpp */,
+				CDEA7C821276230400B846DD /* RenderFullScreen.h */,
 				BCEA482A097D93020094C9E4 /* RenderHTMLCanvas.cpp */,
 				BCEA482B097D93020094C9E4 /* RenderHTMLCanvas.h */,
 				0FD308D3117D168400A791F7 /* RenderIFrame.cpp */,
@@ -19296,6 +19302,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CDEA7C841276230400B846DD /* RenderFullScreen.h in Headers */,
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -24968,6 +24975,7 @@
 				7EE6847512D26E7000E79415 /* ResourceLoaderCFNet.cpp in Sources */,
 				93F1D5BA12D532C400832BEC /* WebKitLoseContext.cpp in Sources */,
 				93F1D5C012D5335600832BEC /* JSWebKitLoseContext.cpp in Sources */,
+				CDEA7C851276230400B846DD /* RenderFullScreen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

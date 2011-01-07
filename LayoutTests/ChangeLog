@@ -1,3 +1,19 @@
+2011-01-05  Jer Noble  <jer@kokode.apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebKit Full Screen support.
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+        
+        Update the tests with new API names and spec values.
+
+        * fullscreen/full-screen-api-expected.txt:
+        * fullscreen/full-screen-api.html:
+        * fullscreen/full-screen-css.html:
+        * fullscreen/full-screen-request-expected.txt:
+        * fullscreen/full-screen-request.html:
+
 2011-01-07  James Robinson  <jamesr@chromium.org>
 
         Revert "Implement mozilla's animationTime property"

@@ -2270,13 +2270,6 @@ void HTMLMediaElement::mediaVolumeDidChange()
     updateVolume();
 }
 
-IntRect HTMLMediaElement::screenRect()
-{
-    if (!renderer())
-        return IntRect();
-    return renderer()->view()->frameView()->contentsToScreen(renderer()->absoluteBoundingBoxRect());
-}
-    
 void HTMLMediaElement::defaultEventHandler(Event* event)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

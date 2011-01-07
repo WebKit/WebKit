@@ -238,6 +238,7 @@ private:
     bool requiresCompositingForPlugin(RenderObject*) const;
     bool requiresCompositingForIFrame(RenderObject*) const;
     bool requiresCompositingWhenDescendantsAreCompositing(RenderObject*) const;
+    bool requiresCompositingForFullScreen(RenderObject*) const;
 
     bool requiresScrollLayer(RootLayerAttachment) const;
     

@@ -154,6 +154,22 @@ static bool layerOrAncestorIsTransformed(RenderLayer* layer)
     
     return false;
 }
+    
+#if ENABLE(FULLSCREEN_API)
+static bool layerOrAncestorIsFullScreen(RenderLayer* layer)
+{
+    // Don't traverse through the render layer tree if we do not yet have a full screen renderer.        
+    if (!layer->renderer()->document()->fullScreenRenderer())
+        return false;
+
+    for (RenderLayer* curr = layer; curr; curr = curr->parent()) {
+        if (curr->renderer()->isRenderFullScreen())
+            return true;
+    }
+    
+    return false;
+}
+#endif
 
 void RenderLayerBacking::updateCompositedBounds()
 {
@@ -161,8 +177,14 @@ void RenderLayerBacking::updateCompositedBounds()
 
     // Clip to the size of the document or enclosing overflow-scroll layer.
     // If this or an ancestor is transformed, we can't currently compute the correct rect to intersect with.
-    // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.
-    if (compositor()->compositingConsultsOverlap() && !layerOrAncestorIsTransformed(m_owningLayer)) {
+    // We'd need RenderObject::convertContainerToLocalQuad(), which doesn't yet exist.  If this
+    // is a fullscreen renderer, don't clip to the viewport, as the renderer will be asked to
+    // display outside of the viewport bounds.
+    if (compositor()->compositingConsultsOverlap() && !layerOrAncestorIsTransformed(m_owningLayer) 
+#if ENABLE(FULLSCREEN_API)
+        && !layerOrAncestorIsFullScreen(m_owningLayer)
+#endif
+        ) {
         RenderView* view = m_owningLayer->renderer()->view();
         RenderLayer* rootLayer = view->layer();
 

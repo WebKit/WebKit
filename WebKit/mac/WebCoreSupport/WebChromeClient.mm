@@ -29,6 +29,7 @@
 
 #import "WebChromeClient.h"
 
+#import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
@@ -822,21 +823,41 @@ void WebChromeClient::exitFullscreenForNode(Node*)
 
 bool WebChromeClient::supportsFullScreenForElement(const Element* element)
 {
-    return CallUIDelegateReturningBoolean(false, m_webView, @selector(webView:supportsFullScreenForElement:), kit(const_cast<WebCore::Element*>(element)));
+    SEL selector = @selector(webView:supportsFullScreenForElement:);
+    if ([[m_webView UIDelegate] respondsToSelector:selector])
+        return CallUIDelegateReturningBoolean(false, m_webView, selector, kit(const_cast<WebCore::Element*>(element)));
+    return [m_webView _supportsFullScreenForElement:const_cast<WebCore::Element*>(element)];
 }
 
 void WebChromeClient::enterFullScreenForElement(Element* element)
 {
-    WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
-    CallUIDelegate(m_webView, @selector(webView:enterFullScreenForElement:listener:), kit(element), listener);
-    [listener release];
+    SEL selector = @selector(webView:enterFullScreenForElement:listener:);
+    if ([[m_webView UIDelegate] respondsToSelector:selector]) {
+        WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
+        CallUIDelegate(m_webView, selector, kit(element), listener);
+        [listener release];
+    } else
+        [m_webView _enterFullScreenForElement:element];
 }
 
 void WebChromeClient::exitFullScreenForElement(Element* element)
 {
-    WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
-    CallUIDelegate(m_webView, @selector(webView:exitFullScreenForElement:listener:), kit(element), listener);
-    [listener release];
+    SEL selector = @selector(webView:exitFullScreenForElement:listener:);
+    if ([[m_webView UIDelegate] respondsToSelector:selector]) {
+        WebKitFullScreenListener* listener = [[WebKitFullScreenListener alloc] initWithElement:element];
+        CallUIDelegate(m_webView, selector, kit(element), listener);
+        [listener release];
+    } else
+        [m_webView _exitFullScreenForElement:element];
+}
+
+void WebChromeClient::fullScreenRendererChanged(RenderBox* renderer)
+{
+    SEL selector = @selector(webView:fullScreenRendererChanged:);
+    if ([[m_webView UIDelegate] respondsToSelector:selector])
+        CallUIDelegate(m_webView, selector, (id)renderer);
+    else
+        [m_webView _fullScreenRendererChanged:renderer];
 }
 
 #endif

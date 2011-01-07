@@ -363,6 +363,8 @@
 		C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */; };
 		CD8EAC7311CAC9A300774075 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD8EAC7211CAC9A300774075 /* IOKit.framework */; };
+		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
+		CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */; };
 		DD7CDEE70A23BA9E00069928 /* WebTypesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */; };
 		DD89682009AA87240097E7F0 /* WebElementDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = DD89681E09AA87240097E7F0 /* WebElementDictionary.h */; };
 		DD89682109AA87240097E7F0 /* WebElementDictionary.mm in Sources */ = {isa = PBXBuildFile; fileRef = DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */; };
@@ -685,6 +687,8 @@
 		C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
 		C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebUserContentURLPattern.mm; sourceTree = "<group>"; };
 		CD8EAC7211CAC9A300774075 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenController.h; sourceTree = "<group>"; };
+		CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFullScreenController.mm; sourceTree = "<group>"; };
 		DD7CDEE60A23BA9E00069928 /* WebTypesInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTypesInternal.h; sourceTree = "<group>"; };
 		DD89681E09AA87240097E7F0 /* WebElementDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebElementDictionary.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD89681F09AA87240097E7F0 /* WebElementDictionary.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebElementDictionary.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1187,6 +1191,8 @@
 				51A8B52F04282B5900CA2D3A /* WebFrameView.mm */,
 				51A8B53204282BD200CA2D3A /* WebFrameViewInternal.h */,
 				93C6F14507920B93002449CD /* WebFrameViewPrivate.h */,
+				CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */,
+				CDA62AE1125F87C2007FD118 /* WebFullScreenController.mm */,
 				BC7F889C10C9D30C00D6133D /* WebGeolocationPosition.h */,
 				BC7F889D10C9D30C00D6133D /* WebGeolocationPosition.mm */,
 				BC7F88A410C9D88B00D6133D /* WebGeolocationPositionInternal.h */,
@@ -1625,6 +1631,7 @@
 				598AD92A1201CF3B00ABAE4E /* WebDeviceOrientationProviderMockInternal.h in Headers */,
 				598ADA461202275000ABAE4E /* WebDeviceOrientationProvider.h in Headers */,
 				93E2A1A4123B0B3C009FE12A /* WebDashboardRegion.h in Headers */,
+				CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1993,6 +2000,7 @@
 				598AD9221201CF1000ABAE4E /* WebDeviceOrientation.mm in Sources */,
 				598AD9281201CF3200ABAE4E /* WebDeviceOrientationProviderMock.mm in Sources */,
 				93E2A1A5123B0B3C009FE12A /* WebDashboardRegion.mm in Sources */,
+				CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

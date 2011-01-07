@@ -164,6 +164,7 @@ public:
     virtual bool supportsFullscreenForNode(const WebCore::Node*);
     virtual void enterFullscreenForNode(WebCore::Node*);
     virtual void exitFullscreenForNode(WebCore::Node*);
+    virtual void fullScreenRendererChanged(WebCore::RenderBox*);
 #endif
     
 #if ENABLE(FULLSCREEN_API)

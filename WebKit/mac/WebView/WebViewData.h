@@ -49,6 +49,9 @@ namespace WebCore {
 #if ENABLE(VIDEO)
 @class WebVideoFullscreenController;
 #endif
+#if ENABLE(FULLSCREEN_API)
+@class WebFullScreenController;
+#endif
 
 extern BOOL applicationIsTerminating;
 extern int pluginDatabaseClientCount;
@@ -170,6 +173,10 @@ extern int pluginDatabaseClientCount;
     CFRunLoopTimerRef updateMouseoverTimer;
 #if ENABLE(VIDEO)
     WebVideoFullscreenController *fullscreenController;
+#endif
+    
+#if ENABLE(FULLSCREEN_API)
+    WebFullScreenController *newFullscreenController;
 #endif
 
 #if ENABLE(GLIB_SUPPORT)

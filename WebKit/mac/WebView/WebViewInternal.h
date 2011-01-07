@@ -39,10 +39,12 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+    class Element;
     class Frame;
     class KURL;
     class KeyboardEvent;
     class Page;
+    class RenderBox;
     class Node;
 }
 #endif
@@ -183,6 +185,13 @@ namespace WebCore {
 #if ENABLE(VIDEO) && defined(__cplusplus)
 - (void)_enterFullscreenForNode:(WebCore::Node*)node;
 - (void)_exitFullscreen;
+#endif
+
+#if ENABLE(FULLSCREEN_API) && defined(__cplusplus)
+- (BOOL)_supportsFullScreenForElement:(WebCore::Element*)element;
+- (void)_enterFullScreenForElement:(WebCore::Element*)element;
+- (void)_exitFullScreenForElement:(WebCore::Element*)element;
+- (void)_fullScreenRendererChanged:(WebCore::RenderBox*)renderer;
 #endif
 
 - (JSValueRef)_computedStyleIncludingVisitedInfo:(JSContextRef)context forElement:(JSValueRef)value;

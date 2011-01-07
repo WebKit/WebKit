@@ -49,6 +49,7 @@
 #include "InspectorInstrumentation.h"
 #include "OverflowEvent.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderFullScreen.h"
 #include "RenderLayer.h"
 #include "RenderPart.h"
 #include "RenderScrollbar.h"
@@ -528,6 +529,12 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     }    
 }
 
+#if ENABLE(FULLSCREEN_API)
+static bool isDocumentRunningFullScreenAnimation(Document* document)
+{
+    return document->webkitIsFullScreen() && document->fullScreenRenderer() && document->fullScreenRenderer()->isAnimating();
+}
+#endif
     
 #if USE(ACCELERATED_COMPOSITING)
 void FrameView::updateCompositingLayers()
@@ -539,6 +546,12 @@ void FrameView::updateCompositingLayers()
     // This call will make sure the cached hasAcceleratedCompositing is updated from the pref
     view->compositor()->cacheAcceleratedCompositingFlags();
     view->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange);
+    
+#if ENABLE(FULLSCREEN_API)
+    Document* document = m_frame->document();
+    if (isDocumentRunningFullScreenAnimation(document))
+        view->compositor()->updateCompositingLayers(CompositingUpdateAfterLayoutOrStyleChange, document->fullScreenRenderer()->layer());
+#endif
 }
 
 void FrameView::setNeedsOneShotDrawingSynchronization()
@@ -616,7 +629,7 @@ bool FrameView::isEnclosedInCompositingLayer() const
 #endif
     return false;
 }
-
+    
 bool FrameView::syncCompositingStateRecursive()
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -632,6 +645,18 @@ bool FrameView::syncCompositingStateRecursive()
     
     if (GraphicsLayer* rootLayer = contentRenderer->compositor()->rootPlatformLayer())
         rootLayer->syncCompositingState();
+    
+#if ENABLE(FULLSCREEN_API)
+    // The fullScreenRenderer's graphicsLayer  has been re-parented, and the above recursive syncCompositingState
+    // call will not cause the subtree under it to repaint.  Explicitly call the syncCompositingState on 
+    // the fullScreenRenderer's graphicsLayer here:
+    Document* document = m_frame->document();
+    if (isDocumentRunningFullScreenAnimation(document)) {
+        RenderLayerBacking* backing = document->fullScreenRenderer()->layer()->backing();
+        if (GraphicsLayer* fullScreenLayer = backing->graphicsLayer())
+            fullScreenLayer->syncCompositingState();
+    }
+#endif    
 
     bool allSubframesSynced = true;
     const HashSet<RefPtr<Widget> >* viewChildren = children();
@@ -2132,6 +2157,16 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (!p->paintingDisabled()) {
         if (GraphicsLayer* rootLayer = contentRenderer->compositor()->rootPlatformLayer())
             rootLayer->syncCompositingState();
+#if ENABLE(FULLSCREEN_API)
+        // The fullScreenRenderer's graphicsLayer  has been re-parented, and the above recursive syncCompositingState
+        // call will not cause the subtree under it to repaint.  Explicitly call the syncCompositingState on 
+        // the fullScreenRenderer's graphicsLayer here:
+        if (isDocumentRunningFullScreenAnimation(document)) {
+            RenderLayerBacking* backing = document->fullScreenRenderer()->layer()->backing();
+            if (GraphicsLayer* fullScreenLayer = backing->graphicsLayer())
+                fullScreenLayer->syncCompositingState();
+        }
+#endif
     }
 #endif
 

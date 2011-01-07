@@ -1,3 +1,131 @@
+2010-12-17  Jer Noble  <jer@kokode.apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebKit Full Screen support.
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+
+        Mark for export all those WebCore functions needed by WebFullscreenController.
+
+        * WebCore.exp.in:
+
+2010-12-17  Jer Noble  <jer@kokode.apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebKit Full Screen support.
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+        
+        screenRect is useful for more than just HTMLMediaElements.  Promote it into
+        Element.
+
+        * dom/Element.cpp: Moved into Element from HTMLMediaElement.
+        * dom/Element.h: Ditto.
+        * dom/Node.cpp:
+        * html/HTMLMediaElement.cpp: Moved screenRect into Element.
+        * html/HTMLMediaElement.h: Ditto.
+        * WebCore.exp.in: Modify the exports list to reflect the new symbol name.
+
+2010-12-17  Jer Noble  <jer@kokode.apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebKit Full Screen support.
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+
+        The RenderFullScreen is intended to be used by clients of that API to allow a DOM subtree to
+        be rendered outside its original Frame. Because of this, there are a few areas of the
+        rendering code which need to be special cased: RenderFullScreen layers should not be clipped
+        to the viewport, as they will almost always be rendering outside the viewport area;
+        RenderFullScreen graphics layers should not be reparented by the RenderLayerCompositor, as
+        the client will likely want to reparent the platformLayer into their own fullscreen platform
+        window; the FrameView must update the RenderFullScreen graphics layer tree separately from
+        the root layer, as the two trees are disconnected.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateCompositingLayers):  Special treatment for fullscreen renderer.
+        (WebCore::FrameView::syncCompositingStateRecursive): Ditto.
+        (WebCore::FrameView::paintContents): Ditto.
+        * rendering/RenderLayer.h: Add a new ContentChangeType enum entry for FullScreen.
+        * rendering/RenderLayer.cpp: 
+        (WebCore::RenderLayer::contentChanged): Add support for above.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::layerOrAncestorIsFullScreen): New function.
+        (WebCore::RenderLayerBacking::updateCompositedBounds): Do not clip if the layerOrAncestorIsFullScreen.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Special treatment for fullscreen renderer.
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer): Ditto.
+        (WebCore::RenderLayerCompositor::requiresCompositingForFullScreen): Ditto.
+        * rendering/RenderLayerCompositor.h:
+
+2010-12-17  Jer Noble  <jer@kokode.apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implemented non-accelerated fullscreen support.  The Document will now vend a RenderFullScreen object for clients to
+        use to relocate the fullscreen element subtree.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadFullScreenRulesIfNeeded): Change webkitFullScreen -> webkitIsFullScreen.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_fullScreenRenderer.
+        (WebCore::Document::detach): Call setFullScreenRenderer(0).
+        (WebCore::Document::nodeWillBeRemoved): Replicate the logic in webkitWillEnterFullScreenForElement.
+        (WebCore::Document::webkitWillEnterFullScreenForElement):  Detach the fullscreen element to cause
+            a new RenderFullScreen renderer to be created with the new fullscreen element.
+        (WebCore::Document::webkitDidEnterFullScreenForElement):  Notify clients of a fullscreen change
+            here, rather in "willEnter", to avoid reentrancy problems when clients remove nodes in response
+            to webkitfullscreenchange events.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Recalculate the fullscreen element's style.
+        (WebCore::Document::webkitDidExitFullScreenForElement): Ditto.
+        (WebCore::Document::setFullScreenRenderer): Accessor for m_fullScreenRenderer.
+        (WebCore::Document::setFullScreenRendererSize): Set the style on the m_fullScreenRenderer with a new
+            size; this keeps clients from having to access the renderer's style directly.
+        (WebCore::Document::setFullScreenRendererBackgroundColor): Ditto.
+        * dom/Document.h:
+        (WebCore::Document::webkitIsFullScreen): Change webkitFullScreen -> webkitIsFullScreen.
+        (WebCore::Document::fullScreenRenderer): Accessor.
+        * dom/Document.idl:
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded): If the document is in fullscreen mode, create a RenderFullScreen
+            object to insert between the fullscreen element and its parent.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::fullScreenRendererChanged): Added.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler): Change webkitFullScreen -> webkitIsFullScreen.
+
+2010-12-17  Jer Noble  <jer@kokode.apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebKit Full Screen support.
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+        rdar://problem/8247444
+        
+        This patch introduces a new RenderObject type: RenderFullScreen.  The RenderFullScreen renderer 
+        will be used to implement new FullScreen APIs.  Because the RenderFullScreen object will be the
+        parent of the current fullscreen element, the style rules for fullscreen objects must change to
+        match.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderFullScreen.cpp: Added.
+        (RenderFullScreen::setAnimating): Sets the m_isAnimating flag.
+        (RenderFullScreen::createFullScreenStyle): Returns a new RenderStyle containing the default stye
+            for RenderFullScreen objects.
+        * rendering/RenderFullScreen.h: Added.
+        (WebCore::RenderFullScreen::isRenderFullScreen): Added.  Overrides the RenderObject version.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderFullScreen): Added.  Used for type-checking RenderFullScreen objects.
+        * css/fullscreen.css:  Modified the contained fullscreen styles.
+
+
 2011-01-07  James Robinson  <jamesr@chromium.org>
 
         Revert "Implement mozilla's animationTime property"

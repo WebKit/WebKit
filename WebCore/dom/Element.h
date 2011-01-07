@@ -169,6 +169,9 @@ public:
 
     PassRefPtr<ClientRectList> getClientRects() const;
     PassRefPtr<ClientRect> getBoundingClientRect() const;
+    
+    // Returns the absolute bounding box translated into screen coordinates:
+    IntRect screenRect() const;
 
     void removeAttribute(const String& name, ExceptionCode&);
     void removeAttributeNS(const String& namespaceURI, const String& localName, ExceptionCode&);

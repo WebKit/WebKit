@@ -108,6 +108,7 @@ class Range;
 class RegisteredEventListener;
 class RenderArena;
 class RenderView;
+class RenderFullScreen;
 class ScriptableDocumentParser;
 class ScriptElementData;
 class SecurityOrigin;
@@ -1039,7 +1040,7 @@ public:
     const QualifiedName& idAttributeName() const { return m_idAttributeName; }
     
 #if ENABLE(FULLSCREEN_API)
-    bool webkitFullScreen() const { return m_isFullScreen; }
+    bool webkitIsFullScreen() const { return m_isFullScreen; }
     bool webkitFullScreenKeyboardInputAllowed() const { return m_isFullScreen && m_areKeysEnabledInFullScreen; }
     Element* webkitCurrentFullScreenElement() const { return m_fullScreenElement.get(); }
     void webkitRequestFullScreenForElement(Element*, unsigned short flags);
@@ -1049,6 +1050,14 @@ public:
     void webkitDidEnterFullScreenForElement(Element*);
     void webkitWillExitFullScreenForElement(Element*);
     void webkitDidExitFullScreenForElement(Element*);
+    
+    void setFullScreenRenderer(RenderFullScreen*);
+    RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer; }
+    
+    void setFullScreenRendererSize(const IntSize&);
+    void setFullScreenRendererBackgroundColor(Color);
+    
+    void fullScreenChangeDelayTimerFired(Timer<Document>*);
 #endif
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
@@ -1368,6 +1377,8 @@ private:
     bool m_isFullScreen;
     bool m_areKeysEnabledInFullScreen;
     RefPtr<Element> m_fullScreenElement;
+    RenderFullScreen* m_fullScreenRenderer;
+    Timer<Document> m_fullScreenChangeDelayTimer;
 #endif
 
     int m_loadEventDelayCount;

@@ -44,6 +44,7 @@
 #include "Page.h"
 #include "RenderApplet.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderFullScreen.h"
 #include "RenderIFrame.h"
 #include "RenderLayerBacking.h"
 #include "RenderReplica.h"
@@ -817,6 +818,13 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
         if (!parented)
             layerBacking->parentForSublayers()->setChildren(layerChildren);
 
+#if ENABLE(FULLSCREEN_API)
+        // For the sake of clients of the full screen renderer, don't reparent
+        // the full screen layer out from under them if they're in the middle of
+        // animating.
+        if (layer->renderer()->isRenderFullScreen() && toRenderFullScreen(layer->renderer())->isAnimating())
+            return;
+#endif
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
     }
 }
@@ -1147,7 +1155,8 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
              || requiresCompositingForIFrame(renderer)
              || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
              || clipsCompositingDescendants(layer)
-             || requiresCompositingForAnimation(renderer);
+             || requiresCompositingForAnimation(renderer)
+             || requiresCompositingForFullScreen(renderer);
 }
 
 bool RenderLayerCompositor::canBeComposited(const RenderLayer* layer) const
@@ -1312,6 +1321,11 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderObject* render
 bool RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing(RenderObject* renderer) const
 {
     return renderer->hasTransform() || renderer->isTransparent() || renderer->hasMask() || renderer->hasReflection();
+}
+    
+bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* renderer) const
+{
+    return renderer->isRenderFullScreen() && toRenderFullScreen(renderer)->isAnimating();
 }
 
 // If an element has negative z-index children, those children render in front of the 

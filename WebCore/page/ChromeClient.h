@@ -262,6 +262,7 @@ namespace WebCore {
         virtual bool supportsFullScreenForElement(const Element*) { return false; }
         virtual void enterFullScreenForElement(Element*) { }
         virtual void exitFullScreenForElement(Element*) { }
+        virtual void fullScreenRendererChanged(RenderBox*) { }
 #endif
         
 #if ENABLE(TILED_BACKING_STORE)

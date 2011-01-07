@@ -60,6 +60,7 @@
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameInternal.h"
 #import "WebFrameViewInternal.h"
+#import "WebFullScreenController.h"
 #import "WebGeolocationClient.h"
 #import "WebGeolocationPositionInternal.h"
 #import "WebHTMLRepresentation.h"
@@ -6025,6 +6026,42 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
     _private->fullscreenController = nil;
 }
 
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+- (BOOL)_supportsFullScreenForElement:(const WebCore::Element*)element
+{
+    if (![[WebPreferences standardPreferences] fullScreenEnabled])
+        return NO;
+
+    // FIXME: If the element is in an IFrame, we should ensure it has 
+    // an AllowsFullScreen=YES attribute before allowing fullscreen access.
+    return YES;
+}
+
+- (void)_enterFullScreenForElement:(WebCore::Element*)element
+{
+    if (!_private->newFullscreenController)
+        _private->newFullscreenController = [[WebFullScreenController alloc] init];
+
+    [_private->newFullscreenController setElement:element];
+    [_private->newFullscreenController setWebView:self];
+    [_private->newFullscreenController enterFullscreen:[[self window] screen]];        
+}
+
+- (void)_exitFullScreenForElement:(WebCore::Element*)element
+{
+    if (!_private->newFullscreenController)
+        return;
+    [_private->newFullscreenController exitFullscreen];
+}
+
+- (void)_fullScreenRendererChanged:(WebCore::RenderBox*)renderer
+{
+    if (!_private->newFullscreenController)
+        _private->newFullscreenController = [[WebFullScreenController alloc] init];
+    [_private->newFullscreenController setRenderer:renderer];
+}
 #endif
 
 #if ENABLE(GLIB_SUPPORT)
