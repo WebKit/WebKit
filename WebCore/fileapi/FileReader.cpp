@@ -41,6 +41,7 @@
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

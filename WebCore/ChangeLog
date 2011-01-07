@@ -1,3 +1,14 @@
+2011-01-07  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] QtWebKit does not build in debug, FileReader.cpp does not compile
+        https://bugs.webkit.org/show_bug.cgi?id=51992
+
+        Add the missing header. CString is used in debug by the calls to LOG().
+
+        * fileapi/FileReader.cpp:
+
 2011-01-07  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
