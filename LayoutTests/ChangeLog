@@ -1,3 +1,11 @@
+2011-01-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Add a platform-specific baseline for GTK+ after r75257.
+
+        * platform/gtk/fast/text/emphasis-avoid-ruby-expected.checksum: Added.
+        * platform/gtk/fast/text/emphasis-avoid-ruby-expected.png: Added.
+        * platform/gtk/fast/text/emphasis-avoid-ruby-expected.txt: Added.
+
 2011-01-05  Jer Noble  <jer@kokode.apple.com>
 
         Reviewed by Simon Fraser.
