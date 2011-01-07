@@ -74,7 +74,7 @@ public:
     void bindFramebuffer(unsigned long target, WebGLFramebuffer*, ExceptionCode& ec);
     void bindRenderbuffer(unsigned long target, WebGLRenderbuffer*, ExceptionCode& ec);
     void bindTexture(unsigned long target, WebGLTexture*, ExceptionCode& ec);
-    void blendColor(double red, double green, double blue, double alpha);
+    void blendColor(float red, float green, float blue, float alpha);
     void blendEquation(unsigned long mode);
     void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
     void blendFunc(unsigned long sfactor, unsigned long dfactor);
@@ -88,8 +88,8 @@ public:
 
     unsigned long checkFramebufferStatus(unsigned long target);
     void clear(unsigned long mask);
-    void clearColor(double red, double green, double blue, double alpha);
-    void clearDepth(double);
+    void clearColor(float red, float green, float blue, float alpha);
+    void clearDepth(float);
     void clearStencil(long);
     void colorMask(bool red, bool green, bool blue, bool alpha);
     void compileShader(WebGLShader*, ExceptionCode& ec);
@@ -118,7 +118,7 @@ public:
 
     void depthFunc(unsigned long);
     void depthMask(bool);
-    void depthRange(double zNear, double zFar);
+    void depthRange(float zNear, float zFar);
     void detachShader(WebGLProgram*, WebGLShader*, ExceptionCode&);
     void disable(unsigned long cap);
     void disableVertexAttribArray(unsigned long index, ExceptionCode&);
@@ -189,14 +189,14 @@ public:
     bool isRenderbuffer(WebGLRenderbuffer*);
     bool isShader(WebGLShader*);
     bool isTexture(WebGLTexture*);
-    void lineWidth(double);
+    void lineWidth(float);
     void linkProgram(WebGLProgram*, ExceptionCode&);
     void pixelStorei(unsigned long pname, long param);
-    void polygonOffset(double factor, double units);
+    void polygonOffset(float factor, float units);
     void readPixels(long x, long y, long width, long height, unsigned long format, unsigned long type, ArrayBufferView* pixels, ExceptionCode&);
     void releaseShaderCompiler();
     void renderbufferStorage(unsigned long target, unsigned long internalformat, long width, long height);
-    void sampleCoverage(double value, bool invert);
+    void sampleCoverage(float value, bool invert);
     void scissor(long x, long y, long width, long height);
     void shaderSource(WebGLShader*, const String&, ExceptionCode&);
     void stencilFunc(unsigned long func, long ref, unsigned long mask);

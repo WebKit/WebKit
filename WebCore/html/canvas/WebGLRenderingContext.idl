@@ -461,7 +461,7 @@ module html {
         [StrictTypeChecking] void         bindFramebuffer(in unsigned long target, in WebGLFramebuffer framebuffer) raises(DOMException);
         [StrictTypeChecking] void         bindRenderbuffer(in unsigned long target, in WebGLRenderbuffer renderbuffer) raises(DOMException);
         [StrictTypeChecking] void         bindTexture(in unsigned long target, in WebGLTexture texture) raises(DOMException);
-        [StrictTypeChecking] void         blendColor(in double red, in double green, in double blue, in double alpha);
+        [StrictTypeChecking] void         blendColor(in float red, in float green, in float blue, in float alpha);
         [StrictTypeChecking] void         blendEquation( in unsigned long mode );
         [StrictTypeChecking] void         blendEquationSeparate(in unsigned long modeRGB, in unsigned long modeAlpha);
         [StrictTypeChecking] void         blendFunc(in unsigned long sfactor, in unsigned long dfactor);
@@ -474,8 +474,8 @@ module html {
 
         [StrictTypeChecking] unsigned long checkFramebufferStatus(in unsigned long target);
         [StrictTypeChecking] void         clear(in unsigned long mask);
-        [StrictTypeChecking] void         clearColor(in double red, in double green, in double blue, in double alpha);
-        [StrictTypeChecking] void         clearDepth(in double depth);
+        [StrictTypeChecking] void         clearColor(in float red, in float green, in float blue, in float alpha);
+        [StrictTypeChecking] void         clearDepth(in float depth);
         [StrictTypeChecking] void         clearStencil(in long s);
         [StrictTypeChecking] void         colorMask(in boolean red, in boolean green, in boolean blue, in boolean alpha);
         [StrictTypeChecking] void         compileShader(in WebGLShader shader) raises(DOMException);
@@ -505,7 +505,7 @@ module html {
         [StrictTypeChecking] void         depthFunc(in unsigned long func);
         [StrictTypeChecking] void         depthMask(in boolean flag);
         // FIXME: this differs from the current WebGL spec (depthRangef)
-        [StrictTypeChecking] void         depthRange(in double zNear, in double zFar);
+        [StrictTypeChecking] void         depthRange(in float zNear, in float zFar);
         [StrictTypeChecking] void         detachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
         [StrictTypeChecking] void         disable(in unsigned long cap);
         [StrictTypeChecking] void         disableVertexAttribArray(in unsigned long index) raises(DOMException);
@@ -582,16 +582,16 @@ module html {
         [StrictTypeChecking] boolean      isRenderbuffer(in WebGLRenderbuffer renderbuffer);
         [StrictTypeChecking] boolean      isShader(in WebGLShader shader);
         [StrictTypeChecking] boolean      isTexture(in WebGLTexture texture);
-        [StrictTypeChecking] void         lineWidth(in double width);
+        [StrictTypeChecking] void         lineWidth(in float width);
         [StrictTypeChecking] void         linkProgram(in WebGLProgram program) raises(DOMException);
         [StrictTypeChecking] void         pixelStorei(in unsigned long pname, in long param);
-        [StrictTypeChecking] void         polygonOffset(in double factor, in double units);
+        [StrictTypeChecking] void         polygonOffset(in float factor, in float units);
 
         [StrictTypeChecking] void         readPixels(in long x, in long y, in long width, in long height, in unsigned long format, in unsigned long type, in ArrayBufferView pixels) raises(DOMException);
         
         [StrictTypeChecking] void         releaseShaderCompiler();
         [StrictTypeChecking] void         renderbufferStorage(in unsigned long target, in unsigned long internalformat, in long width, in long height);
-        [StrictTypeChecking] void         sampleCoverage(in double value, in boolean invert);
+        [StrictTypeChecking] void         sampleCoverage(in float value, in boolean invert);
         [StrictTypeChecking] void         scissor(in long x, in long y, in long width, in long height);
         [StrictTypeChecking] void         shaderSource(in WebGLShader shader, in DOMString string) raises(DOMException);
         [StrictTypeChecking] void         stencilFunc(in unsigned long func, in long ref, in unsigned long mask);

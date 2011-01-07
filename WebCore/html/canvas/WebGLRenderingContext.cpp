@@ -438,7 +438,7 @@ void WebGLRenderingContext::bindTexture(unsigned long target, WebGLTexture* text
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::blendColor(double red, double green, double blue, double alpha)
+void WebGLRenderingContext::blendColor(float red, float green, float blue, float alpha)
 {
     if (isContextLost())
         return;
@@ -618,7 +618,7 @@ void WebGLRenderingContext::clear(unsigned long mask)
     cleanupAfterGraphicsCall(true);
 }
 
-void WebGLRenderingContext::clearColor(double r, double g, double b, double a)
+void WebGLRenderingContext::clearColor(float r, float g, float b, float a)
 {
     if (isContextLost())
         return;
@@ -634,7 +634,7 @@ void WebGLRenderingContext::clearColor(double r, double g, double b, double a)
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::clearDepth(double depth)
+void WebGLRenderingContext::clearDepth(float depth)
 {
     if (isContextLost())
         return;
@@ -890,7 +890,7 @@ void WebGLRenderingContext::depthMask(bool flag)
     cleanupAfterGraphicsCall(false);
 }
 
-void WebGLRenderingContext::depthRange(double zNear, double zFar)
+void WebGLRenderingContext::depthRange(float zNear, float zFar)
 {
     if (isContextLost())
         return;
@@ -2264,7 +2264,7 @@ bool WebGLRenderingContext::isTexture(WebGLTexture* texture)
     return m_context->isTexture(texture->object());
 }
 
-void WebGLRenderingContext::lineWidth(double width)
+void WebGLRenderingContext::lineWidth(float width)
 {
     if (isContextLost())
         return;
@@ -2334,7 +2334,7 @@ void WebGLRenderingContext::pixelStorei(unsigned long pname, long param)
     }
 }
 
-void WebGLRenderingContext::polygonOffset(double factor, double units)
+void WebGLRenderingContext::polygonOffset(float factor, float units)
 {
     if (isContextLost())
         return;
@@ -2467,7 +2467,7 @@ void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned l
     }
 }
 
-void WebGLRenderingContext::sampleCoverage(double value, bool invert)
+void WebGLRenderingContext::sampleCoverage(float value, bool invert)
 {
     if (isContextLost())
         return;

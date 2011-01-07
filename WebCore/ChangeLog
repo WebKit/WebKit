@@ -1,3 +1,19 @@
+2011-01-07  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, Mac 32-bit build fix.
+        Use float instead of double in GL function arguments to avoid implicit type down casting.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::blendColor):
+        (WebCore::WebGLRenderingContext::clearColor):
+        (WebCore::WebGLRenderingContext::clearDepth):
+        (WebCore::WebGLRenderingContext::depthRange):
+        (WebCore::WebGLRenderingContext::lineWidth):
+        (WebCore::WebGLRenderingContext::polygonOffset):
+        (WebCore::WebGLRenderingContext::sampleCoverage):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.idl:
+
 2011-01-07  Carlos Garcia Campos  <cgarcia@igalia.com> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
