@@ -291,4 +291,14 @@ void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const CoreIPC::
     [m_wkView _didFinishLoadingDataForCustomRepresentation:dataReference];
 }
 
+double PageClientImpl::customRepresentationZoomFactor()
+{
+    return [m_wkView _customRepresentationZoomFactor];
+}
+
+void PageClientImpl::setCustomRepresentationZoomFactor(double zoomFactor)
+{
+    [m_wkView _setCustomRepresentationZoomFactor:zoomFactor];
+}
+
 } // namespace WebKit

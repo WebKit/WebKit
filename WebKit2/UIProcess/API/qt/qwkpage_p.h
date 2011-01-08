@@ -69,6 +69,8 @@ public:
 
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
+    virtual double customRepresentationZoomFactor() { return 1; }
+    virtual void setCustomRepresentationZoomFactor(double) { }
 
     void paint(QPainter* painter, QRect);
 

@@ -151,6 +151,16 @@ void PDFViewController::setPDFDocumentData(const String& mimeType, const CoreIPC
     [m_pdfView setDocument:pdfDocument.get()];
 }
 
+double PDFViewController::zoomFactor() const
+{
+    return [m_pdfView scaleFactor];
+}
+
+void PDFViewController::setZoomFactor(double zoomFactor)
+{
+    [m_pdfView setScaleFactor:zoomFactor];
+}
+
 Class PDFViewController::pdfDocumentClass()
 {
     static Class pdfDocumentClass = [pdfKitBundle() classNamed:@"PDFDocument"];

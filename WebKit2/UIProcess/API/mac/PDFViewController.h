@@ -51,7 +51,9 @@ public:
     WKView* wkView() const { return m_wkView; }
     void setPDFDocumentData(const String& mimeType, const CoreIPC::DataReference&);
 
-    static Class pdfDocumentClass();
+    double zoomFactor() const;
+    void setZoomFactor(double);
+
     static Class pdfPreviewViewClass();
 
     NSPrintOperation *makePrintOperation(NSPrintInfo *);
@@ -59,6 +61,7 @@ public:
 private:
     explicit PDFViewController(WKView *wkView);
 
+    static Class pdfDocumentClass();
     static NSBundle* pdfKitBundle();
 
     WKView* m_wkView;

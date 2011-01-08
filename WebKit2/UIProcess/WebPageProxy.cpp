@@ -96,7 +96,7 @@ WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_
     , m_pageGroup(pageGroup)
     , m_mainFrame(0)
     , m_userAgent(standardUserAgent())
-    , m_estimatedProgress(0.0)
+    , m_estimatedProgress(0)
     , m_isInWindow(false)
     , m_backForwardList(WebBackForwardList::create(this))
     , m_textZoomFactor(1)
@@ -742,9 +742,24 @@ void WebPageProxy::restoreFromSessionStateData(WebData*)
 }
 #endif
 
+bool WebPageProxy::supportsTextZoom() const
+{
+    if (m_mainFrameHasCustomRepresentation)
+        return false;
+
+    // FIXME: This should also return false for standalone media and plug-in documents.
+    if (!m_mainFrame || m_mainFrame->isDisplayingStandaloneImageDocument())
+        return false;
+
+    return true;
+}
+ 
 void WebPageProxy::setTextZoomFactor(double zoomFactor)
 {
     if (!isValid())
+        return;
+
+    if (m_mainFrameHasCustomRepresentation)
         return;
 
     if (m_textZoomFactor == zoomFactor)
@@ -754,10 +769,20 @@ void WebPageProxy::setTextZoomFactor(double zoomFactor)
     process()->send(Messages::WebPage::SetTextZoomFactor(m_textZoomFactor), m_pageID); 
 }
 
+double WebPageProxy::pageZoomFactor() const
+{
+    return m_mainFrameHasCustomRepresentation ? m_pageClient->customRepresentationZoomFactor() : m_pageZoomFactor;
+}
+
 void WebPageProxy::setPageZoomFactor(double zoomFactor)
 {
     if (!isValid())
         return;
+
+    if (m_mainFrameHasCustomRepresentation) {
+        m_pageClient->setCustomRepresentationZoomFactor(zoomFactor);
+        return;
+    }
 
     if (m_pageZoomFactor == zoomFactor)
         return;
@@ -770,6 +795,11 @@ void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZ
 {
     if (!isValid())
         return;
+
+    if (m_mainFrameHasCustomRepresentation) {
+        m_pageClient->setCustomRepresentationZoomFactor(pageZoomFactor);
+        return;
+    }
 
     if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
         return;

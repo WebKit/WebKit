@@ -101,6 +101,8 @@ public:
     // Custom representations.
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) = 0;
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&) = 0;
+    virtual double customRepresentationZoomFactor() = 0;
+    virtual void setCustomRepresentationZoomFactor(double) = 0;
 };
 
 } // namespace WebKit

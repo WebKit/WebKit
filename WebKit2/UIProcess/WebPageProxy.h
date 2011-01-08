@@ -226,9 +226,10 @@ public:
     PassRefPtr<WebData> sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const;
     void restoreFromSessionStateData(WebData*);
 
-    double textZoomFactor() const { return m_textZoomFactor; }
+    bool supportsTextZoom() const;
+    double textZoomFactor() const { return m_mainFrameHasCustomRepresentation ? 1 : m_textZoomFactor; }
     void setTextZoomFactor(double);
-    double pageZoomFactor() const { return m_pageZoomFactor; }
+    double pageZoomFactor() const;
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 

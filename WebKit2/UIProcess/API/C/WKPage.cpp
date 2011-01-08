@@ -235,6 +235,11 @@ double WKPageGetTextZoomFactor(WKPageRef pageRef)
     return toImpl(pageRef)->textZoomFactor();
 }
 
+bool WKPageSupportsTextZoom(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->supportsTextZoom();
+}
+
 void WKPageSetTextZoomFactor(WKPageRef pageRef, double zoomFactor)
 {
     toImpl(pageRef)->setTextZoomFactor(zoomFactor);

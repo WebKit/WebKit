@@ -1,3 +1,48 @@
+2011-01-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        In WebKit2, page zooming does not work with PDF
+        https://bugs.webkit.org/show_bug.cgi?id=52113
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSupportsTextZoom): Added. Returns whether the page currently supports text-only zoom.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/mac/PDFViewController.h: Made pdfDocumentClass() private and declared new
+        member functions.
+        * UIProcess/API/mac/PDFViewController.mm:
+        (WebKit::PDFViewController::zoomFactor): Added.
+        (WebKit::PDFViewController::setZoomFactor): Added.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::customRepresentationZoomFactor): Added. Calls through to the WKView.
+        (WebKit::PageClientImpl::setCustomRepresentationZoomFactor): Ditto.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _customRepresentationZoomFactor]): Added. Calls through to the PDFViewController.
+        (-[WKView _setCustomRepresentationZoomFactor:]): Ditto.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::customRepresentationZoomFactor): Added.
+        (QWKPagePrivate::setCustomRepresentationZoomFactor): Added.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Coding style fix.
+        (WebKit::WebPageProxy::supportsTextZoom): Added. Returns false if the main frame has a custom
+        representation or is a standalone image, true otherwise.
+        (WebKit::WebPageProxy::setTextZoomFactor): Bail out if the main frame has a custom representation.
+        (WebKit::WebPageProxy::pageZoomFactor): If the main frame has a custom representation, get the
+        zoom factor from the page client.
+        (WebKit::WebPageProxy::setPageZoomFactor): If the main frame has a custom representation, have
+        the client set the zoom factor.
+        (WebKit::WebPageProxy::setPageAndTextZoomFactors): Ditto.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::textZoomFactor): Changed to return 1 if the main frame has a custom
+        representation.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::customRepresentationZoomFactor): Added.
+        (WebKit::WebView::setCustomRepresentationZoomFactor): Added.
+        * UIProcess/win/WebView.h:
+
 2011-01-08  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Jon Honeycutt.

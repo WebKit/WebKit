@@ -57,5 +57,7 @@ namespace WebKit {
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation;
 - (void)_didFinishLoadingDataForCustomRepresentation:(const CoreIPC::DataReference&)dataReference;
+- (double)_customRepresentationZoomFactor;
+- (void)_setCustomRepresentationZoomFactor:(double)zoomFactor;
 
 @end

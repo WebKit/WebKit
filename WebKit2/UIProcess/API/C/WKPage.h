@@ -295,6 +295,7 @@ typedef bool (*WKPageSessionStateFilterCallback)(WKPageRef page, WKStringRef val
 WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page, void* context, WKPageSessionStateFilterCallback urlAllowedCallback);
 WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKDataRef sessionStateData);
 
+WK_EXPORT bool WKPageSupportsTextZoom(WKPageRef page);
 WK_EXPORT double WKPageGetTextZoomFactor(WKPageRef page);
 WK_EXPORT void WKPageSetTextZoomFactor(WKPageRef page, double zoomFactor);
 WK_EXPORT double WKPageGetPageZoomFactor(WKPageRef page);

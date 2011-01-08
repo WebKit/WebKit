@@ -130,6 +130,8 @@ private:
 
     void didCommitLoadForMainFrame(bool useCustomRepresentation);
     void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
+    virtual double customRepresentationZoomFactor();
+    virtual void setCustomRepresentationZoomFactor(double);
 
     virtual HWND nativeWindow();
 

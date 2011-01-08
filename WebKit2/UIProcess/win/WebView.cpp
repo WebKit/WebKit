@@ -981,6 +981,15 @@ void WebView::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataRef
 {
 }
 
+double WebView::customRepresentationZoomFactor()
+{
+    return 1;
+}
+
+void WebView::setCustomRepresentationZoomFactor(double)
+{
+}
+
 void WebView::setIsInWindow(bool isInWindow)
 {
     m_page->setIsInWindow(isInWindow);

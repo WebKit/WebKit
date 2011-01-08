@@ -1536,4 +1536,20 @@ static bool isViewVisible(NSView *view)
     _data->_pdfViewController->setPDFDocumentData(_data->_page->mainFrame()->mimeType(), dataReference);
 }
 
+- (double)_customRepresentationZoomFactor
+{
+    if (!_data->_pdfViewController)
+        return 1;
+
+    return _data->_pdfViewController->zoomFactor();
+}
+
+- (void)_setCustomRepresentationZoomFactor:(double)zoomFactor
+{
+    if (!_data->_pdfViewController)
+        return;
+
+    _data->_pdfViewController->setZoomFactor(zoomFactor);
+}
+
 @end

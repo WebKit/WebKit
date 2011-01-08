@@ -81,6 +81,9 @@ private:
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
 
+    virtual double customRepresentationZoomFactor();
+    virtual void setCustomRepresentationZoomFactor(double);
+
     WKView* m_wkView;
     RetainPtr<WebEditorUndoTargetObjC> m_undoTarget;
 };
