@@ -56,7 +56,7 @@ foreach (@frameworks) {
     $framework = $_;
 
     #FIXME: Workaround until moving all sources to Source directory is finished.
-    if ($framework eq "JavaScriptCore") {
+    if ($framework eq "JavaScriptCore" || $framework eq "WebCore") {
         $sourceDirectoryInPath = "Source";
     } else {
         $sourceDirectoryInPath = "";

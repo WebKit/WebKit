@@ -1,3 +1,9 @@
+2011-01-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed buildfix after r75313.
+
+        * Scripts/generate-forwarding-headers.pl:
+
 2011-01-08  Adam Barth  <abarth@webkit.org>
 
         Moving WebCore changes the layout of the Qt build directory as well,
