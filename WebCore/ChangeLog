@@ -1,5 +1,11 @@
 2011-01-07  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; speculative fix for Windows debug build.
+
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2011-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Ojan Vafai.
 
         Adopting an iframe to a child frame results in stack overflow
