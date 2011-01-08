@@ -32,20 +32,20 @@
 
 namespace WebCore {
 
-    class Color;
-    class FloatRect;
-    class FloatSize;
-    class Node;
-    class RenderBlock;
-    class RenderImage;
-    class RenderObject;
-    class RenderSVGGradientStop;
-    class RenderSVGImage;
-    class RenderSVGPath;
-    class RenderSVGRoot;
-    class RenderText;
-    class AffineTransform;
-    class SVGUnitTypes;
+class Color;
+class FloatRect;
+class FloatSize;
+class Node;
+class RenderBlock;
+class RenderImage;
+class RenderObject;
+class RenderSVGGradientStop;
+class RenderSVGImage;
+class RenderSVGPath;
+class RenderSVGRoot;
+class RenderText;
+class AffineTransform;
+class SVGUnitTypes;
 
 // functions used by the main RenderTreeAsText code
 void write(TextStream&, const RenderSVGPath&, int indent);

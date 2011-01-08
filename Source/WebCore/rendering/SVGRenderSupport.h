@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
- *           (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Google, Inc.  All rights reserved.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #ifndef SVGRenderSupport_h
@@ -59,7 +58,7 @@ public:
     static bool pointInClippingArea(RenderObject*, const FloatPoint&);
 
     static void computeContainerBoundingBoxes(const RenderObject* container, FloatRect& objectBoundingBox, FloatRect& strokeBoundingBox, FloatRect& repaintBoundingBox);
-    static bool paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo& paintInfo);
+    static bool paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo&);
 
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
     static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);
@@ -70,7 +69,7 @@ public:
     static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);
 
     // FIXME: These methods do not belong here.
-    static const RenderSVGRoot* findTreeRootObject(const RenderObject* start);
+    static const RenderSVGRoot* findTreeRootObject(const RenderObject*);
 
 private:
     // This class is not constructable.

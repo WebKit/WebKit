@@ -44,8 +44,9 @@
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
 #include "SVGUnitTypes.h"
-#include <wtf/Vector.h>
+
 #include <wtf/UnusedParam.h>
+#include <wtf/Vector.h>
 
 static const float kMaxFilterSize = 5000.0f;
 

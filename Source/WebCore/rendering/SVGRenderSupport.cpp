@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2007, 2008 Rob Buis <buis@kde.org>
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
- *           (C) 2007 Eric Seidel <eric@webkit.org>
- *           (C) 2009 Google, Inc.  All rights reserved.
- *           (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2009 Google, Inc.  All rights reserved.
+ * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -20,7 +20,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #include "config.h"

@@ -243,15 +243,15 @@ static TextStream& operator<<(TextStream& ts, const DashArray& a)
 static TextStream& operator<<(TextStream& ts, LineCap style)
 {
     switch (style) {
-        case ButtCap:
-            ts << "BUTT";
-            break;
-        case RoundCap:
-            ts << "ROUND";
-            break;
-        case SquareCap:
-            ts << "SQUARE";
-            break;
+    case ButtCap:
+        ts << "BUTT";
+        break;
+    case RoundCap:
+        ts << "ROUND";
+        break;
+    case SquareCap:
+        ts << "SQUARE";
+        break;
     }
     return ts;
 }
@@ -260,15 +260,15 @@ static TextStream& operator<<(TextStream& ts, LineCap style)
 static TextStream& operator<<(TextStream& ts, LineJoin style)
 {
     switch (style) {
-        case MiterJoin:
-            ts << "MITER";
-            break;
-        case RoundJoin:
-            ts << "ROUND";
-            break;
-        case BevelJoin:
-            ts << "BEVEL";
-            break;
+    case MiterJoin:
+        ts << "MITER";
+        break;
+    case RoundJoin:
+        ts << "ROUND";
+        break;
+    case BevelJoin:
+        ts << "BEVEL";
+        break;
     }
     return ts;
 }

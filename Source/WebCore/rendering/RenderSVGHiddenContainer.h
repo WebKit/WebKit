@@ -1,6 +1,4 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -17,7 +15,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #ifndef RenderSVGHiddenContainer_h
@@ -28,30 +25,30 @@
 
 namespace WebCore {
     
-    class SVGStyledElement;
+class SVGStyledElement;
+
+// This class is for containers which are never drawn, but do need to support style
+// <defs>, <linearGradient>, <radialGradient> are all good examples
+class RenderSVGHiddenContainer : public RenderSVGContainer {
+public:
+    explicit RenderSVGHiddenContainer(SVGStyledElement*);
+
+    virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
+
+protected:
+    virtual void layout();
+
+private:
+    virtual bool isSVGHiddenContainer() const { return true; }
+    virtual bool requiresLayer() const { return false; }
+
+    virtual void paint(PaintInfo&, int parentX, int parentY);
     
-    // This class is for containers which are never drawn, but do need to support style
-    // <defs>, <linearGradient>, <radialGradient> are all good examples
-    class RenderSVGHiddenContainer : public RenderSVGContainer {
-    public:
-        explicit RenderSVGHiddenContainer(SVGStyledElement*);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
+    virtual void absoluteQuads(Vector<FloatQuad>&);
 
-        virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
-
-    protected:
-        virtual void layout();
-
-    private:
-        virtual bool isSVGHiddenContainer() const { return true; }
-        virtual bool requiresLayer() const { return false; }
-
-        virtual void paint(PaintInfo&, int parentX, int parentY);
-        
-        virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
-        virtual void absoluteQuads(Vector<FloatQuad>&);
-
-        virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
-    };
+    virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
+};
 }
 
 #endif // ENABLE(SVG)

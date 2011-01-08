@@ -30,8 +30,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 
 #include "RenderSVGHiddenContainer.h"
-#include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGFilter.h"
+#include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
 
@@ -44,7 +44,7 @@ public:
     }
 
     // They depend on the RenderObject argument of RenderSVGResourceFilter::applyResource.
-    static FloatRect determineFilterPrimitiveSubregion(FilterEffect* effect, SVGFilter* filter);
+    static FloatRect determineFilterPrimitiveSubregion(FilterEffect*, SVGFilter*);
 
 private:
     virtual const char* renderName() const { return "RenderSVGResourceFilterPrimitive"; }

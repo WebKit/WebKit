@@ -1,3 +1,87 @@
+2011-01-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        SVG rendering clean up according to the webkit style rules
+        https://bugs.webkit.org/show_bug.cgi?id=52107
+
+        Cleanup of the SVG rendering code according to the webbkit style rules.
+        Changed style of licensing texts to match the style in WebCore/svg, no change
+        of the licensing text itself.
+
+        * rendering/RenderForeignObject.cpp:
+        * rendering/RenderForeignObject.h:
+        * rendering/RenderSVGBlock.cpp:
+        * rendering/RenderSVGBlock.h:
+        * rendering/RenderSVGContainer.cpp:
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGGradientStop.cpp:
+        * rendering/RenderSVGGradientStop.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        * rendering/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::renderName):
+        (WebCore::RenderSVGHiddenContainer::isSVGHiddenContainer):
+        (WebCore::RenderSVGHiddenContainer::requiresLayer):
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint):
+        * rendering/RenderSVGImage.cpp:
+        * rendering/RenderSVGImage.h:
+        * rendering/RenderSVGModelObject.h:
+        * rendering/RenderSVGResource.cpp:
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderSVGResourceClipper.cpp:
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceContainer.cpp:
+        * rendering/RenderSVGResourceContainer.h:
+        * rendering/RenderSVGResourceFilter.cpp:
+        * rendering/RenderSVGResourceFilter.h:
+        * rendering/RenderSVGResourceFilterPrimitive.cpp:
+        * rendering/RenderSVGResourceFilterPrimitive.h:
+        * rendering/RenderSVGResourceGradient.cpp:
+        * rendering/RenderSVGResourceGradient.h:
+        * rendering/RenderSVGResourceLinearGradient.cpp:
+        * rendering/RenderSVGResourceLinearGradient.h:
+        * rendering/RenderSVGResourceMarker.cpp:
+        * rendering/RenderSVGResourceMarker.h:
+        * rendering/RenderSVGResourceMasker.cpp:
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.cpp:
+        * rendering/RenderSVGResourcePattern.h:
+        * rendering/RenderSVGResourceRadialGradient.cpp:
+        * rendering/RenderSVGResourceRadialGradient.h:
+        * rendering/RenderSVGResourceSolidColor.cpp:
+        * rendering/RenderSVGResourceSolidColor.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSVGShadowTreeRootContainer.cpp:
+        * rendering/RenderSVGShadowTreeRootContainer.h:
+        * rendering/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/RenderSVGTransformableContainer.h:
+        (WebCore::RenderSVGTransformableContainer::localToParentTransform):
+        (WebCore::RenderSVGTransformableContainer::setNeedsTransformUpdate):
+        (WebCore::RenderSVGTransformableContainer::localTransform):
+        * rendering/RenderSVGViewportContainer.cpp:
+        * rendering/RenderSVGViewportContainer.h:
+        * rendering/SVGImageBufferTools.cpp:
+        * rendering/SVGImageBufferTools.h:
+        * rendering/SVGMarkerData.h:
+        * rendering/SVGMarkerLayoutInfo.cpp:
+        * rendering/SVGMarkerLayoutInfo.h:
+        * rendering/SVGRenderSupport.cpp:
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<):
+        * rendering/SVGRenderTreeAsText.h:
+        * rendering/SVGResources.cpp:
+        * rendering/SVGResources.h:
+        * rendering/SVGResourcesCache.cpp:
+        * rendering/SVGResourcesCache.h:
+        * rendering/SVGResourcesCycleSolver.cpp:
+        * rendering/SVGResourcesCycleSolver.h:
+        * rendering/SVGShadowTreeElements.cpp:
+        * rendering/SVGShadowTreeElements.h:
+
 2011-01-07  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

@@ -15,7 +15,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #include "config.h"
@@ -39,8 +38,8 @@
 #include "SVGUnitTypes.h"
 
 #include <wtf/ByteArray.h>
-#include <wtf/Vector.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
