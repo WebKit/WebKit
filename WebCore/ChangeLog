@@ -1,3 +1,13 @@
+2011-01-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51851
+        Implement RenderSVGInlineText::localCaretRect()
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect): Implemented.
+
 2011-01-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; Added the missing null pointer check for r75293.

@@ -92,9 +92,25 @@ InlineTextBox* RenderSVGInlineText::createTextBox()
     return box;
 }
 
-IntRect RenderSVGInlineText::localCaretRect(InlineBox*, int, int*)
+IntRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, int*)
 {
-    return IntRect();
+    if (!box->isInlineTextBox())
+        return IntRect();
+
+    InlineTextBox* textBox = static_cast<InlineTextBox*>(box);
+    if (static_cast<unsigned>(caretOffset) < textBox->start() || static_cast<unsigned>(caretOffset) > textBox->start() + textBox->len())
+        return IntRect();
+
+    // Use the edge of the selection rect to determine the caret rect.
+    if (static_cast<unsigned>(caretOffset) < textBox->start() + textBox->len()) {
+        IntRect rect = textBox->selectionRect(0, 0, caretOffset, caretOffset + 1);
+        int x = box->isLeftToRightDirection() ? rect.x() : rect.right();
+        return IntRect(x, rect.y(), caretWidth, rect.height());
+    }
+
+    IntRect rect = textBox->selectionRect(0, 0, caretOffset - 1, caretOffset);
+    int x = box->isLeftToRightDirection() ? rect.right() : rect.x();
+    return IntRect(x, rect.y(), caretWidth, rect.height());
 }
 
 IntRect RenderSVGInlineText::linesBoundingBox() const
