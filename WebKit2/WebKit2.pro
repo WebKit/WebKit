@@ -33,12 +33,11 @@ DESTDIR = $$WEBKIT2_DESTDIR
 # Build both debug and release configurations
 mac: CONFIG += build_all
 
-INCLUDEPATH = \
+WEBKIT2_INCLUDEPATH = \
     $$PWD/.. \ # FIXME: Remove this include once we move all the source to Source.
     $$PWD/../Source \
-    $$INCLUDEPATH
 
-INCLUDEPATH = \
+WEBKIT2_INCLUDEPATH = \
     $$PWD/../Source/JavaScriptCore \
     $$PWD/../Source/JavaScriptCore/assembler \
     $$PWD/../Source/JavaScriptCore/bytecode \
@@ -56,9 +55,9 @@ INCLUDEPATH = \
     $$PWD/../Source/JavaScriptCore/yarr \
     $$PWD/../Source/JavaScriptCore/API \
     $$PWD/../Source/JavaScriptCore/ForwardingHeaders \
-    $$INCLUDEPATH
+    $$WEBKIT2_INCLUDEPATH
 
-INCLUDEPATH = \
+WEBKIT2_INCLUDEPATH = \
     $$PWD/../Source/WebCore \
     $$PWD/../Source/WebCore/accessibility \
     $$PWD/../Source/WebCore/bindings \
@@ -108,9 +107,9 @@ INCLUDEPATH = \
     $$PWD/../Source/WebCore/wml \
     $$PWD/../Source/WebCore/workers \
     $$PWD/../Source/WebCore/xml \
-    $$INCLUDEPATH
+    $$WEBKIT2_INCLUDEPATH
 
-INCLUDEPATH = \
+WEBKIT2_INCLUDEPATH = \
     $$PWD/../Source/WebCore/bridge/qt \
     $$PWD/../Source/WebCore/page/qt \
     $$PWD/../Source/WebCore/platform/graphics/qt \
@@ -118,9 +117,9 @@ INCLUDEPATH = \
     $$PWD/../Source/WebCore/platform/qt \
     $$PWD/../WebKit/qt/Api \
     $$PWD/../WebKit/qt/WebCoreSupport \
-    $$INCLUDEPATH
+    $$WEBKIT2_INCLUDEPATH
 
-INCLUDEPATH = \
+WEBKIT2_INCLUDEPATH = \
     $$PWD \
     Platform \
     Platform/CoreIPC \
@@ -154,13 +153,22 @@ INCLUDEPATH = \
     WebProcess/WebCoreSupport/qt \
     WebProcess/WebPage \
     WebProcess/qt \
-    $$INCLUDEPATH
+    $$WEBKIT2_INCLUDEPATH
 
-INCLUDEPATH += \
+WEBKIT2_INCLUDEPATH += \
     $$OUTPUT_DIR/include \
     $$WC_GENERATED_SOURCES_DIR \
-    $$WEBKIT2_GENERATED_SOURCES_DIR
+    $$WEBKIT2_GENERATED_SOURCES_DIR \
+    $$WEBKIT2_INCLUDEPATH
 
+# On Symbian PREPEND_INCLUDEPATH is the best way to make sure that WebKit headers 
+# are included before platform headers.
+
+symbian {
+    PREPEND_INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$PREPEND_INCLUDEPATH
+} else {
+    INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$INCLUDEPATH
+}
 
 PREFIX_HEADER = $$PWD/../WebKit2/WebKit2Prefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
