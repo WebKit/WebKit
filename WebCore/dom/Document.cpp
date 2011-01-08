@@ -897,8 +897,14 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         break;
     }       
     default:
-        if (source->hasTagName(iframeTag))
-            static_cast<HTMLIFrameElement*>(source.get())->setRemainsAliveOnRemovalFromTree(attached() && source->attached());
+        if (source->hasTagName(iframeTag)) {
+            HTMLIFrameElement* iframe = static_cast<HTMLIFrameElement*>(source.get());
+            if (frame()->tree()->isDescendantOf(iframe->contentFrame())) {
+                ec = HIERARCHY_REQUEST_ERR;
+                return 0;
+            }
+            iframe->setRemainsAliveOnRemovalFromTree(attached() && source->attached());
+        }
 
         if (source->parentNode())
             source->parentNode()->removeChild(source.get(), ec);

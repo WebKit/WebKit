@@ -1,3 +1,18 @@
+2011-01-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Adopting an iframe to a child frame results in stack overflow
+        https://bugs.webkit.org/show_bug.cgi?id=52018
+
+        Throws an exception when a document adopts an iframe that is an ancestor
+        of the document in the frame hierarchy. New behavior matches that of Firefox.
+
+        Test: fast/html/adopt-parent-frame.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+
 2011-01-07  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.
