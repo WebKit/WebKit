@@ -1,3 +1,10 @@
+2011-01-07  Jer Noble  <jer.noble@apple.com>
+
+        GTK Linux build fix: isDocumentRunningFullScreenAnimation should
+        be protected both by ENABLE(FULLSCREEN_API) && USE(ACCELERATED_COMPOSITING)
+
+        * page/FrameView.cpp:
+
 2011-01-07  Rafael Weinstein  <rafaelw@chromium.org>
 
         Reviewed by Eric Seidel.
