@@ -1,3 +1,9 @@
+2011-01-08  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Leopard build.
+
+        * WebView/WebFullScreenController.mm:
+
 2011-01-07  Jer Noble  <jer.noble@apple.com>
 
         Yet another Leopard build fix: NSRect and CGRect are not inter-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #import "WebWindowAnimation.h"
 #import "WebViewInternal.h"
 #import <IOKit/pwr_mgt/IOPMLib.h>
+#import <OSServices/Power.h>
 #import <WebCore/AnimationList.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/Color.h>
