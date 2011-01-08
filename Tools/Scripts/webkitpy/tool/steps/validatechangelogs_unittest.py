@@ -36,20 +36,24 @@ from webkitpy.tool.steps.validatechangelogs import ValidateChangeLogs
 
 class ValidateChangeLogsTest(unittest.TestCase):
 
-    def _assert_start_line_produces_output(self, start_line, should_prompt_user=False):
+    def _assert_start_line_produces_output(self, start_line, should_fail=False, non_interactive=False):
         tool = MockTool()
         tool._checkout.is_path_to_changelog = lambda path: True
-        step = ValidateChangeLogs(tool, MockOptions(git_commit=None))
+        step = ValidateChangeLogs(tool, MockOptions(git_commit=None, non_interactive=non_interactive))
         diff_file = Mock()
         diff_file.filename = "mock/ChangeLog"
         diff_file.lines = [(start_line, start_line, "foo")]
         expected_stdout = expected_stderr = ""
-        if should_prompt_user:
+        if should_fail and not non_interactive:
             expected_stdout = "OK to continue?\n"
             expected_stderr = "The diff to mock/ChangeLog looks wrong.  Are you sure your ChangeLog entry is at the top of the file?\n"
-        OutputCapture().assert_outputs(self, step._check_changelog_diff, [diff_file], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        result = OutputCapture().assert_outputs(self, step._check_changelog_diff, [diff_file], expected_stdout=expected_stdout, expected_stderr=expected_stderr)
+        self.assertEqual(not result, should_fail)
 
     def test_check_changelog_diff(self):
-        self._assert_start_line_produces_output(1, should_prompt_user=False)
-        self._assert_start_line_produces_output(7, should_prompt_user=False)
-        self._assert_start_line_produces_output(8, should_prompt_user=True)
+        self._assert_start_line_produces_output(1)
+        self._assert_start_line_produces_output(7)
+        self._assert_start_line_produces_output(8, should_fail=True)
+
+        self._assert_start_line_produces_output(1, non_interactive=False)
+        self._assert_start_line_produces_output(8, non_interactive=True, should_fail=True)

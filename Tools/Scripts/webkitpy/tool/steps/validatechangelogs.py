@@ -44,6 +44,9 @@ class ValidateChangeLogs(AbstractStep):
         # later than that, assume that the entry is wrong.
         if diff_file.lines[0][0] < 8:
             return True
+        if self._options.non_interactive:
+            return False
+
         log("The diff to %s looks wrong.  Are you sure your ChangeLog entry is at the top of the file?" % (diff_file.filename))
         # FIXME: Do we need to make the file path absolute?
         self._tool.scm().diff_for_file(diff_file.filename)

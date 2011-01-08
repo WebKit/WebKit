@@ -1,3 +1,13 @@
+2011-01-08  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        commit-queue hangs when the ChangeLog diff is bad
+        https://bugs.webkit.org/show_bug.cgi?id=52072
+
+        * Scripts/webkitpy/tool/steps/validatechangelogs.py:
+        * Scripts/webkitpy/tool/steps/validatechangelogs_unittest.py:
+
 2011-01-08  Adam Barth  <abarth@webkit.org>
 
         Teach svn-apply how to re-write WebCore to Source/WebCore.
