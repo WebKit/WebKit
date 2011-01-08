@@ -899,7 +899,7 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
     default:
         if (source->hasTagName(iframeTag)) {
             HTMLIFrameElement* iframe = static_cast<HTMLIFrameElement*>(source.get());
-            if (frame()->tree()->isDescendantOf(iframe->contentFrame())) {
+            if (frame() && frame()->tree()->isDescendantOf(iframe->contentFrame())) {
                 ec = HIERARCHY_REQUEST_ERR;
                 return 0;
             }
