@@ -51,6 +51,8 @@
 
 namespace WebCore {
 
+unsigned NavigationDisablerForBeforeUnload::s_navigationDisableCount = 0;
+
 class ScheduledNavigation : public Noncopyable {
 public:
     ScheduledNavigation(double delay, bool lockHistory, bool lockBackForwardList, bool wasDuringLoad, bool isLocationChange)
@@ -263,9 +265,19 @@ void NavigationScheduler::clear()
     m_redirect.clear();
 }
 
+inline bool NavigationScheduler::shouldScheduleNavigation() const
+{
+    return m_frame->page();
+}
+
+inline bool NavigationScheduler::shouldScheduleNavigation(const String& url) const
+{
+    return shouldScheduleNavigation() && (protocolIsJavaScript(url) || NavigationDisablerForBeforeUnload::isNavigationAllowed());
+}
+
 void NavigationScheduler::scheduleRedirect(double delay, const String& url)
 {
-    if (!m_frame->page())
+    if (!shouldScheduleNavigation(url))
         return;
     if (delay < 0 || delay > INT_MAX / 1000)
         return;
@@ -297,7 +309,7 @@ bool NavigationScheduler::mustLockBackForwardList(Frame* targetFrame)
 
 void NavigationScheduler::scheduleLocationChange(PassRefPtr<SecurityOrigin> securityOrigin, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList)
 {
-    if (!m_frame->page())
+    if (!shouldScheduleNavigation(url))
         return;
     if (url.isEmpty())
         return;
@@ -344,7 +356,7 @@ void NavigationScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> subm
 
 void NavigationScheduler::scheduleRefresh()
 {
-    if (!m_frame->page())
+    if (!shouldScheduleNavigation())
         return;
     const KURL& url = m_frame->loader()->url();
     if (url.isEmpty())
@@ -355,7 +367,7 @@ void NavigationScheduler::scheduleRefresh()
 
 void NavigationScheduler::scheduleHistoryNavigation(int steps)
 {
-    if (!m_frame->page())
+    if (!shouldScheduleNavigation())
         return;
 
     // Invalid history navigations (such as history.forward() during a new load) have the side effect of cancelling any scheduled

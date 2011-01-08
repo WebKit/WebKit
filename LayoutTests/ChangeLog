@@ -1,3 +1,46 @@
+2011-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        onbeforeunload is broken for framesets
+        https://bugs.webkit.org/show_bug.cgi?id=19418
+
+        Added tests to ensure WebKit fires beforeunload events for subframes,
+        and disallows navigation except that of javascript scheme while beforeunload event
+        handlers are being called.
+
+        Also added a test to ensure WebKit fires beforeunload event for subframes exactly
+        once even if a subframe was moved around within a beforeunload event handler.
+
+        A test that ensures beforeunload event is not fired for an iframe if the iframe
+        was added or removed within a beforeunload event handler is also added.
+
+        Furthermore, a test to ensure WebKit does not fire a beforeunload event to an iframe
+        that has been adopted by a document outside of the unloading document is added.
+
+        * fast/events/before-unload-adopt-subframe-to-outside-expected.txt: Added.
+        * fast/events/before-unload-adopt-subframe-to-outside.html: Added.
+        * fast/events/before-unload-adopt-within-subframes-expected.txt: Added.
+        * fast/events/before-unload-adopt-within-subframes.html: Added.
+        * fast/events/before-unload-forbidden-navigation-expected.txt: Added.
+        * fast/events/before-unload-forbidden-navigation.html: Added.
+        * fast/events/before-unload-in-multiple-subframes-expected.txt: Added.
+        * fast/events/before-unload-in-multiple-subframes.html: Added.
+        * fast/events/before-unload-in-subframe-expected.txt: Added.
+        * fast/events/before-unload-in-subframe.html: Added.
+        * fast/events/before-unload-javascript-navigation-expected.txt: Added.
+        * fast/events/before-unload-javascript-navigation.html: Added.
+        * fast/events/before-unload-remove-and-add-subframe-expected.txt: Added.
+        * fast/events/before-unload-remove-and-add-subframe.html: Added.
+        * fact/events/before-unload-remove-itself-expected.txt: Added.
+        * fact/events/before-unload-remove-itself.html: Added.
+        * fast/events/before-unload-with-subframes-expected.txt: Added.
+        * fast/events/before-unload-with-subframes.html: Added.
+        * fast/events/resources/before-unload-in-subframe-child.html: Added.
+        * fast/events/resources/before-unload-in-subframe-destination.html: Added.
+        * fast/events/resources/before-unload-in-subframe-fail.html: Added.
+        * fast/events/resources/before-unload-with-subframes-parent.html: Added.
+
 2011-01-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Mihai Parparita.

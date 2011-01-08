@@ -1,3 +1,56 @@
+2011-01-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        onbeforeunload is broken for framesets
+        https://bugs.webkit.org/show_bug.cgi?id=19418
+
+        Added beforeunload event support for sub frames. WebKit's implementation tries to match
+        that of Internet Explorer as much as possible. beforeunload event is fired for each and
+        every descendent of a frame that is about to navigate.
+
+        When a value other than null is returned by a beforeunload handler, a confirmation dialog
+        is shown for each handler (calls chrome's runBeforeUnloadConfirmPanel) just like it is done
+        for main frames.
+
+        In addition, navigation is forbidden while beforeunload handlers are being called.
+        Setting values to location.href, location.reload, and other means of navigations are thus
+        ignored while beforeunload event handler is being ran, matching Internet Explorer's behavior.
+
+        Because navigation needs to prevented globally, NavigationDisablerForBeforeUnload is added to
+        NavigationScheduler.h, which is instantiated as a RAII object in FrameLoader::shouldClose.
+
+        Tests: fast/events/before-unload-adopt-subframe-to-outside.html
+               fast/events/before-unload-adopt-within-subframes.html
+               fast/events/before-unload-forbidden-navigation.html
+               fast/events/before-unload-in-multiple-subframes.html
+               fast/events/before-unload-in-subframe.html
+               fast/events/before-unload-javascript-navigation.html
+               fast/events/before-unload-remove-and-add-subframe.html
+               fact/events/before-unload-remove-itself.html
+               fast/events/before-unload-with-subframes.html
+
+       * loader/FrameLoader.cpp:
+       (WebCore::FrameLoader::shouldClose): Calls fireBeforeUnloadEvent on m_frame and m_frame's
+       descendents. Returns true only if every call to fireBeforeUnloadEvent returned true.
+       (WebCore::FrameLoader::fireBeforeUnloadEvent): Fires a beforeunload event and calls
+       chrome's runBeforeUnloadConfirmPanel as needed.
+       (WebCore::FrameLoader::continueLoadAfterNavigationPolicy): Calls shouldClose for all frames.
+       * loader/FrameLoader.h:
+       * loader/NavigationScheduler.cpp:
+       (WebCore::NavigationScheduler::shouldScheduleNavigation): Checks the nullity of Page and calls
+       NavigationDisablerForBeforeUnload::isNavigationAllowed when url is not javascript scheme.
+       (WebCore::NavigationScheduler::scheduleRedirect): Calls shouldScheduleNavigation.
+       (WebCore::NavigationScheduler::scheduleLocationChange): Ditto.
+       (WebCore::NavigationScheduler::scheduleRefresh): Ditto.
+       (WebCore::NavigationScheduler::scheduleHistoryNavigation): Ditto.
+       * loader/NavigationScheduler.h:
+       (WebCore::NavigationDisablerForBeforeUnload::NavigationDisablerForBeforeUnload): Disables navigation.
+       (WebCore::NavigationDisablerForBeforeUnload::~NavigationDisablerForBeforeUnload): Enables navigation
+       when called on the last instance of NavigationDisablerForBeforeUnload.
+       (WebCore::NavigationDisablerForBeforeUnload::isNavigationAllowed): Returns true if there are no instance
+       of NavigationDisablerForBeforeUnload left on the stack.
+
 2011-01-07  Martin Robinson  <mrobinson@igalia.com>
 
         Build fix for GTK+.

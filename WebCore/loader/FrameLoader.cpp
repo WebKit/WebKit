@@ -2862,13 +2862,39 @@ bool FrameLoader::shouldClose()
     if (!chrome || !chrome->canRunBeforeUnloadConfirmPanel())
         return true;
 
+    // Store all references to each subframe in advance since beforeunload's event handler may modify frame
+    Vector<RefPtr<Frame> > targetFrames;
+    targetFrames.append(m_frame);
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->traverseNext(m_frame))
+        targetFrames.append(child);
+
+    bool shouldClose = false;
+    {
+        NavigationDisablerForBeforeUnload navigationDisabler;
+        size_t i;
+
+        for (i = 0; i < targetFrames.size(); i++) {
+            if (!targetFrames[i]->tree()->isDescendantOf(m_frame))
+                continue;
+            if (!targetFrames[i]->loader()->fireBeforeUnloadEvent(chrome))
+                break;
+        }
+
+        if (i == targetFrames.size())
+            shouldClose = true;
+    }
+
+    return shouldClose;
+}
+
+bool FrameLoader::fireBeforeUnloadEvent(Chrome* chrome)
+{
     DOMWindow* domWindow = m_frame->existingDOMWindow();
     if (!domWindow)
         return true;
 
     RefPtr<Document> document = m_frame->document();
-    HTMLElement* body = document->body();
-    if (!body)
+    if (!document->body())
         return true;
 
     RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
@@ -2898,8 +2924,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     //    1) Navigation policy delegate said we can't so request is nil. A primary case of this 
     //       is the user responding Cancel to the form repost nag sheet.
     //    2) User responded Cancel to an alert popped up by the before unload event handler.
-    // The "before unload" event handler runs only for the main frame.
-    bool canContinue = shouldContinue && (!isLoadingMainFrame() || shouldClose());
+    bool canContinue = shouldContinue && shouldClose();
 
     if (!canContinue) {
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 

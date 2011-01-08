@@ -34,6 +34,7 @@
 #include "Event.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -48,7 +49,28 @@ class SecurityOrigin;
 
 struct FrameLoadRequest;
 
-class NavigationScheduler : public Noncopyable {
+class NavigationDisablerForBeforeUnload {
+    WTF_MAKE_NONCOPYABLE(NavigationDisablerForBeforeUnload);
+
+public:
+    NavigationDisablerForBeforeUnload()
+    {
+        s_navigationDisableCount++;
+    }
+    ~NavigationDisablerForBeforeUnload()
+    {
+        ASSERT(s_navigationDisableCount);
+        s_navigationDisableCount--;
+    }
+    static bool isNavigationAllowed() { return !s_navigationDisableCount; }
+
+private:
+    static unsigned s_navigationDisableCount;
+};
+
+class NavigationScheduler {
+    WTF_MAKE_NONCOPYABLE(NavigationScheduler);
+
 public:
     NavigationScheduler(Frame*);
     ~NavigationScheduler();
@@ -68,6 +90,9 @@ public:
     void clear();
 
 private:
+    bool shouldScheduleNavigation() const;
+    bool shouldScheduleNavigation(const String& url) const;
+
     void timerFired(Timer<NavigationScheduler>*);
     void schedule(PassOwnPtr<ScheduledNavigation>);
 
