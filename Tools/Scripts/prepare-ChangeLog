@@ -319,7 +319,7 @@ foreach my $prefix (keys %files) {
         $sortKey = "-, just after top level";
     } elsif ($prefixDir eq "WebBrowser") {
         $sortKey = lc "WebKit, WebBrowser after";
-    } elsif ($prefixDir eq "WebCore") {
+    } elsif ($prefixDir eq "Source/WebCore") {
         $sortKey = lc "WebFoundation, WebCore after";
     } elsif ($prefixDir eq "LayoutTests") {
         $sortKey = lc "~, LayoutTests last";

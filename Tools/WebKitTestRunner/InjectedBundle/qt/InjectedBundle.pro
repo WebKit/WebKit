@@ -3,9 +3,9 @@ TEMPLATE = lib
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
 
 CONFIG(standalone_package) {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../../../../WebCore/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../../../../Source/WebCore/generated
 } else {
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../../../WebCore/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../../../Source/WebCore/generated
 }
 
 GENERATED_SOURCES_DIR = ../../generated

@@ -7,7 +7,7 @@ m4_define([webkit_micro_version], [9])
 # This is the version we'll be using as part of our User-Agent string
 # e.g., AppleWebKit/$(webkit_user_agent_version) ...
 #
-# Sourced from WebCore/Configurations/Version.xcconfig
+# Sourced from Source/WebCore/Configurations/Version.xcconfig
 m4_define([webkit_user_agent_major_version], [534])
 m4_define([webkit_user_agent_minor_version], [7])
 
@@ -31,7 +31,7 @@ AC_SUBST(WEBKIT_MICRO_VERSION)
 AC_SUBST(WEBKIT_USER_AGENT_MAJOR_VERSION)
 AC_SUBST(WEBKIT_USER_AGENT_MINOR_VERSION)
 
-AC_CONFIG_SRCDIR([WebCore/config.h])
+AC_CONFIG_SRCDIR([Source/WebCore/config.h])
 
 dnl # Libtool library version, not to confuse with API version
 dnl # see http://www.gnu.org/software/libtool/manual/html_node/Libtool-versioning.html

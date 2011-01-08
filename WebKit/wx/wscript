@@ -31,19 +31,19 @@ webkit_dirs = ['.', 'WebKitSupport']
 include_paths = webkit_dirs + common_includes + ['.', '..',
                 wk_root,
                 os.path.join(wk_root, 'Source', 'JavaScriptCore'),
-                os.path.join(wk_root, 'WebCore'),
-                os.path.join(wk_root, 'WebCore', 'bindings', 'wx'),
-                os.path.join(wk_root, 'WebCore', 'DerivedSources'),
+                os.path.join(wk_root, 'Source', 'WebCore'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'bindings', 'wx'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'DerivedSources'),
                 os.path.join(output_dir),
-                os.path.join(wk_root, 'WebCore', 'page', 'wx'),
-                os.path.join(wk_root, 'WebCore', 'platform', 'network', 'curl'),
-                os.path.join(wk_root, 'WebCore', 'platform', 'wx'),
-                os.path.join(wk_root, 'WebCore', 'platform', 'bridge', 'wx'),
-                os.path.join(wk_root, 'WebCore', 'platform', 'graphics', 'wx'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'page', 'wx'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'network', 'curl'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'wx'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'bridge', 'wx'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'graphics', 'wx'),
 ]
 
 if sys.platform.startswith("win"):
-    include_paths.append(os.path.join(wk_root, 'WebCore','platform','win'))
+    include_paths.append(os.path.join(wk_root, 'Source', 'WebCore','platform','win'))
 
 windows_deps = [
                 'lib/pthreadVC2.dll',
@@ -54,7 +54,7 @@ windows_deps = [
 
 webcore_include_dirs = []
 for dir in webcore_dirs + ['DerivedSources']:
-    include_paths.append(os.path.join(wk_root, 'WebCore', dir)) 
+    include_paths.append(os.path.join(wk_root, 'Source', 'WebCore', dir)) 
 
 js_include_dirs = [os.path.join(wk_root, 'Source', 'JavaScriptCore', 'assembler')]
 for dir in jscore_dirs:
@@ -110,7 +110,7 @@ def build(bld):
     exts = ['.c', '.cpp']
     if sys.platform.startswith('darwin'):
         exts.append('.mm')
-        obj.includes += '../mac/WebCoreSupport ../../WebCore/platform/mac'
+        obj.includes += '../mac/WebCoreSupport ../../Source/WebCore/platform/mac'
         obj.source = "../mac/WebCoreSupport/WebSystemInterface.mm"
     obj.find_sources_in_dirs(webkit_dirs)
 

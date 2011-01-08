@@ -1,3 +1,36 @@
+2011-01-07  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=52050
+
+        Update the tools to understand WebCore's new location.
+
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * DumpRenderTree/wscript:
+        * GNUmakefile.am:
+        * Scripts/build-webkit:
+        * Scripts/do-file-rename:
+        * Scripts/do-webcore-rename:
+        * Scripts/generate-qt-inspector-resource:
+        * Scripts/prepare-ChangeLog:
+        * Scripts/run-bindings-tests:
+        * Scripts/update-iexploder-cssproperties:
+        * Scripts/update-sources-list.py:
+        * Scripts/update-webkit-localizable-strings:
+        * Scripts/webkitdirs.pm:
+        * Scripts/webkitpy/common/config/build.py:
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        * Scripts/webkitpy/layout_tests/deduplicate_tests_unittest.py:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * WebKitTestRunner/DerivedSources.pro:
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro:
+        * iExploder/iexploder-1.7.2/tools/update_html_tags_from_sources.sh:
+        * wx/browser/wscript:
+        * wx/build/settings.py:
+
 2011-01-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

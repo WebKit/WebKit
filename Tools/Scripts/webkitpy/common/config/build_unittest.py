@@ -27,10 +27,10 @@ from webkitpy.common.config import build
 
 class ShouldBuildTest(unittest.TestCase):
     _should_build_tests = [
-        (["Websites/bugs.webkit.org/foo", "WebCore/bar"], ["*"]),
+        (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
         (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-snowleopard"]),
-        (["Source/JavaScriptGlue/foo", "WebCore/bar"], ["*"]),
+        (["Source/JavaScriptGlue/foo", "Source/WebCore/bar"], ["*"]),
         (["Source/JavaScriptGlue/foo"], ["mac-leopard", "mac-snowleopard"]),
         (["LayoutTests/foo"], ["*"]),
         (["LayoutTests/platform/chromium-linux/foo"], ["chromium-linux"]),
@@ -42,13 +42,13 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/win-xp/foo"], ["win"]),
         (["LayoutTests/platform/win-wk2/foo"], ["win"]),
         (["LayoutTests/platform/win/foo"], ["win"]),
-        (["WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-snowleopard"]),
-        (["WebCore/win/foo"], ["chromium-win", "win"]),
-        (["WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-snowleopard"]),
-        (["WebCore/platform/wx/wxcode/win/foo"], []),
-        (["WebCore/rendering/RenderThemeMac.mm", "WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-snowleopard"]),
-        (["WebCore/rendering/RenderThemeChromiumLinux.h"], ["chromium-linux"]),
-        (["WebCore/rendering/RenderThemeWinCE.h"], []),
+        (["Source/WebCore/mac/foo"], ["chromium-mac", "mac-leopard", "mac-snowleopard"]),
+        (["Source/WebCore/win/foo"], ["chromium-win", "win"]),
+        (["Source/WebCore/platform/graphics/gpu/foo"], ["mac-leopard", "mac-snowleopard"]),
+        (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
+        (["Source/WebCore/rendering/RenderThemeMac.mm", "Source/WebCore/rendering/RenderThemeMac.h"], ["mac-leopard", "mac-snowleopard"]),
+        (["Source/WebCore/rendering/RenderThemeChromiumLinux.h"], ["chromium-linux"]),
+        (["Source/WebCore/rendering/RenderThemeWinCE.h"], []),
     ]
 
     def test_should_build(self):

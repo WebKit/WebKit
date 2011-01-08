@@ -51,7 +51,7 @@
     building the module only in release mode for embedded platforms.
     Currently QtWebKit will always be compiled without debugging symbols
     when using gcc. Take a look at the last lines of
-    \c{src/3rdparty/webkit/WebCore/WebCore.pro} if you need to change this.
+    \c{src/3rdparty/webkit/Source/WebCore/WebCore.pro} if you need to change this.
 
     \note Web site icons, also known as "FavIcons", are currently not supported
     on Windows. We plan to address this in a future release.

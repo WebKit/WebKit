@@ -7,7 +7,7 @@ include(WebKit.pri)
 webkit2 {
     SUBDIRS += WebKit2
 }
-SUBDIRS += WebCore
+SUBDIRS += Source/WebCore
 
 # If the source exists, built it
 exists($$PWD/Tools/QtTestBrowser): SUBDIRS += Tools/QtTestBrowser

@@ -131,7 +131,7 @@ _PATH_RULES_SPECIFIER = [
       # values.
       "WebKit/efl/ewk/",
       # There is no clean way to avoid "yy_*" names used by flex.
-      "WebCore/css/CSSParser.cpp",
+      "Source/WebCore/css/CSSParser.cpp",
       # Qt code uses '_' in some places (such as private slots
       # and on test xxx_data methos on tests)
       "Source/JavaScriptCore/qt/",
@@ -143,7 +143,7 @@ _PATH_RULES_SPECIFIER = [
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values.
       # Also, GTK+ allows the use of NULL.
-      "WebCore/bindings/scripts/test/GObject",
+      "Source/WebCore/bindings/scripts/test/GObject",
       "WebKit/gtk/webkit/",
       "Tools/DumpRenderTree/gtk/"],
      ["-readability/naming",
@@ -247,7 +247,7 @@ _SKIPPED_FILES_WITH_WARNING = [
     # Soup API that is still being cooked, will be removed from WebKit
     # in a few months when it is merged into soup proper. The style
     # follows the libsoup style completely.
-    "WebCore/platform/network/soup/cache/",
+    "Source/WebCore/platform/network/soup/cache/",
     ]
 
 

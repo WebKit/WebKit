@@ -32,7 +32,7 @@
   'includes': [
     # FIXME: Sense whether upstream or downstream build, and
     # include the right features.gypi
-    '../../WebKit/chromium/features.gypi',
+    '../../../WebKit/chromium/features.gypi',
     '../WebCore.gypi',
   ],
   # Location of the chromium src directory.
@@ -40,12 +40,12 @@
     ['inside_chromium_build==0', {
       # Webkit is being built outside of the full chromium project.
       'variables': {
-        'chromium_src_dir': '../../WebKit/chromium',
+        'chromium_src_dir': '../../../WebKit/chromium',
         'libjpeg_gyp_path': '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp',
       },
     },{
       # WebKit is checked out in src/chromium/third_party/WebKit
-      'variables': {'chromium_src_dir': '../../../..'},
+      'variables': {'chromium_src_dir': '../../../../..'},
     }],
     ['OS == "mac"', {
       'targets': [
@@ -78,7 +78,7 @@
               'action_name': 'Adjust Visibility',
               'inputs': [
                 'mac/adjust_visibility.sh',
-                '../../WebKitLibraries/libWebKitSystemInterfaceLeopard.a',
+                '../../../WebKitLibraries/libWebKitSystemInterfaceLeopard.a',
               ],
               'outputs': [
                 '<(adjusted_library_path)',
@@ -723,8 +723,8 @@
       'dependencies': [
         'webcore_bindings_sources',
         'inspector_protocol_sources',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -808,7 +808,7 @@
         }],
         ['OS=="mac"', {
           'include_dirs': [
-            '../../WebKitLibraries',
+            '../../../WebKitLibraries',
           ],
         }],
         ['OS=="win"', {
@@ -842,8 +842,8 @@
       'type': 'none',
       'dependencies': [
         'webcore_bindings',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -859,8 +859,8 @@
       ],
       'export_dependent_settings': [
         'webcore_bindings',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/iccjpeg/iccjpeg.gyp:iccjpeg',
@@ -982,7 +982,7 @@
             'WebFontCache=ChromiumWebCoreObjCWebFontCache',
           ],
           'include_dirs': [
-            '../../WebKitLibraries',
+            '../../../WebKitLibraries',
           ],
         }],
         ['OS=="win"', {
@@ -1061,7 +1061,7 @@
         '<@(webcore_files)',
 
         # For WebCoreSystemInterface, Mac-only.
-        '../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
+        '../../../WebKit/mac/WebCoreSupport/WebSystemInterface.mm',
       ],
       'sources/': [
         # Start by excluding everything then include platform files only.
@@ -1112,7 +1112,7 @@
         ['OS=="mac"', {
           # Necessary for Mac .mm stuff.
           'include_dirs': [
-            '../../WebKitLibraries',
+            '../../../WebKitLibraries',
           ],
           'dependencies': [
             'webkit_system_interface',
@@ -1408,14 +1408,14 @@
         'webcore_remaining',
         # Exported.
         'webcore_bindings',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
       ],
       'export_dependent_settings': [
         'webcore_bindings',
-        '../../Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
+        '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
         '<(chromium_src_dir)/skia/skia.gyp:skia',
         '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
@@ -1447,8 +1447,8 @@
         ['OS=="mac"', {
           'direct_dependent_settings': {
             'include_dirs': [
-              '../../WebKitLibraries',
-              '../../WebKit/mac/WebCoreSupport',
+              '../../../WebKitLibraries',
+              '../../../WebKit/mac/WebCoreSupport',
             ],
           },
         }],

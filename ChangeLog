@@ -1,3 +1,26 @@
+2011-01-07  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=52050
+
+        Update build files and metadata to point to WebCore's new location.
+
+        * .gitattributes:
+        * .gitignore:
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * Makefile:
+        * Source/autotools/webkit.m4:
+        * Source/cmake/OptionsEfl.cmake:
+        * WebKit.pri:
+        * WebKit.pro:
+        * configure.ac:
+        * wscript:
+
 2011-01-06  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

@@ -32,23 +32,24 @@ from settings import *
 if build_port == "wx":
     webcore_dirs.extend(['WebKit/wx', 'WebKit/wx/WebKitSupport'])
 
-wk_includes = ['.', 'WebCore', 'WebCore/DerivedSources',
+wk_includes = ['.',
                 os.path.join(wk_root, 'Source', 'JavaScriptCore'),
                 os.path.join(wk_root, 'Source', 'JavaScriptCore', 'wtf', 'text'),
-                os.path.join(wk_root, 'WebCore'),
+                os.path.join(wk_root, 'Source', 'WebCore'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'DerivedSources'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'image-decoders'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'win'),
+                os.path.join(wk_root, 'Source', 'WebCore', 'workers'),
                 os.path.join(output_dir),
-                'WebCore/platform/image-decoders',
-                'WebCore/platform/win',
-                'WebCore/workers',
         ]
 
 if build_port == "wx":
-    wk_includes.append(os.path.join(wk_root, 'WebKit/wx'))
-    wk_includes.append('WebCore/platform/wx/wxcode')
+    wk_includes.append(os.path.join(wk_root, 'WebKit', 'wx'))
+    wk_includes.append(os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'wx', 'wxcode')
 
 if sys.platform.startswith("win"):
-    wk_includes.append(os.path.join(wk_root, 'WebCore','platform','win'))
-    wk_includes.append(os.path.join(wk_root, 'WebCore','platform','graphics','win'))
+    wk_includes.append(os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'win'))
+    wk_includes.append(os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'graphics', 'win'))
 
 windows_deps = [
                 'lib/pthreadVC2.dll',
@@ -60,56 +61,57 @@ windows_deps = [
 webcore_sources = {}
 
 if build_port == "wx":
-    webcore_sources['wx'] = ['WebCore/platform/KillRingNone.cpp', 'WebCore/bindings/cpp/WebDOMEventTarget.cpp']  
+    webcore_sources['wx'] = ['Source/WebCore/platform/KillRingNone.cpp',
+                             'Source/WebCore/bindings/cpp/WebDOMEventTarget.cpp']  
 
     if building_on_win32:
         # make sure platform/wx comes after this so we get the right
         # FontPlatformData.h
-        webcore_dirs.extend(['WebCore/platform/wx/wxcode/win', 'WebCore/plugins/win'])
+        webcore_dirs.extend(['Source/WebCore/platform/wx/wxcode/win', 'Source/WebCore/plugins/win'])
         webcore_sources['wx-win'] = [
-               'WebCore/platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp',
-               'WebCore/platform/graphics/win/TransformationMatrixWin.cpp',
-               'WebCore/platform/ScrollAnimatorWin.cpp',
+               'Source/WebCore/platform/graphics/win/GlyphPageTreeNodeCairoWin.cpp',
+               'Source/WebCore/platform/graphics/win/TransformationMatrixWin.cpp',
+               'Source/WebCore/platform/ScrollAnimatorWin.cpp',
                # wxTimer on Windows has a bug that causes it to eat crashes in callbacks
                # so we need to use the Win port's implementation until the wx bug fix is
                # widely available (it was fixed in 2.8.10).
-               'WebCore/platform/win/SharedTimerWin.cpp',
-               'WebCore/platform/win/WebCoreInstanceHandle.cpp',
+               'Source/WebCore/platform/win/SharedTimerWin.cpp',
+               'Source/WebCore/platform/win/WebCoreInstanceHandle.cpp',
                # Use the Windows plugin architecture
-               #'WebCore/plugins/win/PluginDataWin.cpp',
-               'WebCore/plugins/win/PluginDatabaseWin.cpp',
-               'WebCore/plugins/win/PluginMessageThrottlerWin.cpp',
-               'WebCore/plugins/win/PluginPackageWin.cpp',
-               'WebCore/plugins/win/PluginViewWin.cpp',
+               #'Source/WebCore/plugins/win/PluginDataWin.cpp',
+               'Source/WebCore/plugins/win/PluginDatabaseWin.cpp',
+               'Source/WebCore/plugins/win/PluginMessageThrottlerWin.cpp',
+               'Source/WebCore/plugins/win/PluginPackageWin.cpp',
+               'Source/WebCore/plugins/win/PluginViewWin.cpp',
         ]
     elif sys.platform.startswith('darwin'):
-        webcore_dirs.append('WebCore/plugins/mac')
-        webcore_dirs.append('WebCore/platform/wx/wxcode/mac/carbon')
-        webcore_dirs.append('WebCore/platform/mac')
-        webcore_dirs.append('WebCore/platform/text/mac')
+        webcore_dirs.append('Source/WebCore/plugins/mac')
+        webcore_dirs.append('Source/WebCore/platform/wx/wxcode/mac/carbon')
+        webcore_dirs.append('Source/WebCore/platform/mac')
+        webcore_dirs.append('Source/WebCore/platform/text/mac')
         webcore_sources['wx-mac'] = [
-               'WebCore/platform/mac/PurgeableBufferMac.cpp',
-               'WebCore/platform/mac/WebCoreNSStringExtras.mm',
-               'WebCore/platform/mac/WebCoreSystemInterface.mm',
-               'WebCore/platform/graphics/cg/FloatSizeCG.cpp',
-               'WebCore/platform/graphics/mac/ComplexTextController.cpp',
-               'WebCore/platform/graphics/mac/ComplexTextControllerCoreText.cpp',
-               'WebCore/platform/graphics/mac/ComplexTextControllerATSUI.cpp',
-               'WebCore/platform/graphics/mac/GlyphPageTreeNodeMac.cpp',
-               'WebCore/platform/graphics/mac/SimpleFontDataATSUI.mm',
-               'WebCore/platform/graphics/mac/SimpleFontDataCoreText.cpp',
-               'WebCore/platform/graphics/wx/FontPlatformDataWxMac.mm',
-               'WebCore/platform/text/mac/ShapeArabic.c',
-               'WebCore/platform/wx/wxcode/mac/carbon/fontprops.mm',
-               'WebCore/plugins/mac/PluginPackageMac.cpp',
-               'WebCore/plugins/mac/PluginViewMac.mm'
+               'Source/WebCore/platform/mac/PurgeableBufferMac.cpp',
+               'Source/WebCore/platform/mac/WebCoreNSStringExtras.mm',
+               'Source/WebCore/platform/mac/WebCoreSystemInterface.mm',
+               'Source/WebCore/platform/graphics/cg/FloatSizeCG.cpp',
+               'Source/WebCore/platform/graphics/mac/ComplexTextController.cpp',
+               'Source/WebCore/platform/graphics/mac/ComplexTextControllerCoreText.cpp',
+               'Source/WebCore/platform/graphics/mac/ComplexTextControllerATSUI.cpp',
+               'Source/WebCore/platform/graphics/mac/GlyphPageTreeNodeMac.cpp',
+               'Source/WebCore/platform/graphics/mac/SimpleFontDataATSUI.mm',
+               'Source/WebCore/platform/graphics/mac/SimpleFontDataCoreText.cpp',
+               'Source/WebCore/platform/graphics/wx/FontPlatformDataWxMac.mm',
+               'Source/WebCore/platform/text/mac/ShapeArabic.c',
+               'Source/WebCore/platform/wx/wxcode/mac/carbon/fontprops.mm',
+               'Source/WebCore/plugins/mac/PluginPackageMac.cpp',
+               'Source/WebCore/plugins/mac/PluginViewMac.mm'
         ]
     else:
         webcore_sources['wx-gtk'] = [
-               'WebCore/plugins/PluginViewNone.cpp',
-               'WebCore/plugins/PluginPackageNone.cpp'
+               'Source/WebCore/plugins/PluginViewNone.cpp',
+               'Source/WebCore/plugins/PluginPackageNone.cpp'
         ]
-        webcore_dirs.append('WebCore/platform/wx/wxcode/gtk')
+        webcore_dirs.append('Source/WebCore/platform/wx/wxcode/gtk')
         
 import TaskGen
 from TaskGen import taskgen, feature, after
@@ -166,7 +168,7 @@ def configure(conf):
     generate_jscore_derived_sources()
     generate_webcore_derived_sources()
     if build_port == "wx" and sys.platform.startswith('win'):
-        graphics_dir = os.path.join(wk_root, 'WebCore', 'platform', 'graphics')
+        graphics_dir = os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'graphics')
         # HACK ALERT: MSVC automatically adds the source file's directory as the first entry in the
         # path. Unfortunately, that means when compiling these files we will end up including
         # win/FontPlatformData.h, which breaks wx compilation. So we copy the files to the wx dir.
@@ -176,7 +178,7 @@ def configure(conf):
     webcore_out_dir = os.path.join(output_dir, 'WebCore')
     if not os.path.exists(webcore_out_dir):
         os.makedirs(webcore_out_dir)
-    shutil.copy('WebCore/platform/mac/WebCoreSystemInterface.h', os.path.join(output_dir, 'WebCore', 'WebCoreSystemInterface.h'))
+    shutil.copy('Source/WebCore/platform/mac/WebCoreSystemInterface.h', os.path.join(output_dir, 'WebCore', 'WebCoreSystemInterface.h'))
     jscore_out_dir = os.path.join(output_dir, 'JavaScriptCore')
     if not os.path.exists(jscore_out_dir):
         os.makedirs(jscore_out_dir)

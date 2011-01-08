@@ -45,13 +45,13 @@ QMAKE_EXTRA_TARGETS         += fwheader_generator
 # GENERATOR 1: IDL compiler
 idl.output = $${GENERATED_SOURCES_DIR}/JS${QMAKE_FILE_BASE}.cpp
 idl.input = IDL_BINDINGS
-idl.wkScript = $$PWD/../../WebCore/bindings/scripts/generate-bindings.pl
-idl.commands = perl -I$$PWD/../../WebCore/bindings/scripts -I$$PWD/InjectedBundle/Bindings $$idl.wkScript --defines \"\" --generator TestRunner --include $$PWD/InjectedBundle/Bindings --outputDir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
-idl.depends = $$PWD/../../WebCore/bindings/scripts/CodeGenerator.pm \
+idl.wkScript = $$PWD/../../Source/WebCore/bindings/scripts/generate-bindings.pl
+idl.commands = perl -I$$PWD/../../Source/WebCore/bindings/scripts -I$$PWD/InjectedBundle/Bindings $$idl.wkScript --defines \"\" --generator TestRunner --include $$PWD/InjectedBundle/Bindings --outputDir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.depends = $$PWD/../../Source/WebCore/bindings/scripts/CodeGenerator.pm \
               $$PWD/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
-              $$PWD/../../WebCore/bindings/scripts/IDLParser.pm \
-              $$PWD/../../WebCore/bindings/scripts/IDLStructure.pm \
-              $$PWD/../../WebCore/bindings/scripts/InFilesParser.pm \
-              $$PWD/../../WebCore/bindings/scripts/generate-bindings.pl
+              $$PWD/../../Source/WebCore/bindings/scripts/IDLParser.pm \
+              $$PWD/../../Source/WebCore/bindings/scripts/IDLStructure.pm \
+              $$PWD/../../Source/WebCore/bindings/scripts/InFilesParser.pm \
+              $$PWD/../../Source/WebCore/bindings/scripts/generate-bindings.pl
 addExtraCompiler(idl)
 

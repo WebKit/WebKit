@@ -108,7 +108,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBA
 	$(OLE32_LIBS)
 
 webkitgtk_static_h_api += \
-	$(srcdir)/WebCore/platform/network/soup/cache/webkit/soup-cache.h \
+	$(srcdir)/Source/WebCore/platform/network/soup/cache/webkit/soup-cache.h \
 	$(srcdir)/WebKit/gtk/webkit/webkit.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitdefines.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitdownload.h \
@@ -155,21 +155,21 @@ webkitgtk_built_sources += \
 BUILT_SOURCES += $(webkitgtk_built_sources)
 
 webkitgtk_sources += \
-	WebCore/bindings/gobject/ConvertToUTF8String.cpp \
-	WebCore/bindings/gobject/ConvertToUTF8String.h \
-	WebCore/bindings/gobject/DOMObjectCache.cpp \
-	WebCore/bindings/gobject/DOMObjectCache.h \
-	WebCore/bindings/gobject/GObjectEventListener.cpp \
-	WebCore/bindings/gobject/GObjectEventListener.h \
-	WebCore/bindings/gobject/WebKitDOMBinding.cpp \
-	WebCore/bindings/gobject/WebKitDOMBinding.h \
-	WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
-	WebCore/bindings/gobject/WebKitDOMEventTarget.h \
-	WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
-	WebCore/bindings/gobject/WebKitDOMObject.cpp \
-	WebCore/bindings/gobject/WebKitDOMObject.h \
-	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
-	WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h \
+	Source/WebCore/bindings/gobject/ConvertToUTF8String.cpp \
+	Source/WebCore/bindings/gobject/ConvertToUTF8String.h \
+	Source/WebCore/bindings/gobject/DOMObjectCache.cpp \
+	Source/WebCore/bindings/gobject/DOMObjectCache.h \
+	Source/WebCore/bindings/gobject/GObjectEventListener.cpp \
+	Source/WebCore/bindings/gobject/GObjectEventListener.h \
+	Source/WebCore/bindings/gobject/WebKitDOMBinding.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMBinding.h \
+	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h \
+	Source/WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
+	Source/WebCore/bindings/gobject/WebKitDOMObject.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMObject.h \
+	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
+	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
 	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
@@ -268,7 +268,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --add-include-path=$(WebKit) \
 	     --add-include-path=$(top_builddir) \
 	     -I$(srcdir)/Source \
-	     -I$(top_srcdir)/WebCore/platform/network/soup/cache \
+	     -I$(top_srcdir)/Source/WebCore/platform/network/soup/cache \
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \
 	     -I$(GENSOURCES_WEBKIT) \
@@ -390,8 +390,8 @@ webkit_tests_cflags = \
 	-I$(WebKit) \
 	-I$(GENSOURCES) \
 	-I$(top_builddir)/WebKit/gtk \
-	-I$(top_srcdir)/WebCore/bindings \
-	-I$(top_srcdir)/WebCore/bindings/gobject \
+	-I$(top_srcdir)/Source/WebCore/bindings \
+	-I$(top_srcdir)/Source/WebCore/bindings/gobject \
 	$(global_cppflags) \
 	$(global_cflags) \
 	$(javascriptcore_cppflags) \
@@ -549,10 +549,10 @@ Programs_unittests_testkeyevents_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testkeyevents_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testcopyandpaste_SOURCES = WebKit/gtk/tests/testcopyandpaste.c \
-	WebCore/platform/gtk/GtkVersioning.c
+	Source/WebCore/platform/gtk/GtkVersioning.c
 Programs_unittests_testcopyandpaste_CFLAGS = $(webkit_tests_cflags) \
-	-I$(srcdir)/WebCore/platform/gtk \
-	-I$(srcdir)/WebCore
+	-I$(srcdir)/Source/WebCore/platform/gtk \
+	-I$(srcdir)/Source/WebCore
 Programs_unittests_testcopyandpaste_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testcopyandpaste_LDFLAGS = $(webkit_tests_ldflags)
 

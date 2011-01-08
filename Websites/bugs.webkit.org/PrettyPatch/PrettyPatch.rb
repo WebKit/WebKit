@@ -69,7 +69,6 @@ private
         PerformanceTests
         Source
         Tools
-        WebCore
         WebKit
         WebKit2
         WebKitLibraries

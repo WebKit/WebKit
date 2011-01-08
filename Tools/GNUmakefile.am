@@ -6,7 +6,7 @@ noinst_PROGRAMS += \
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/WebKit/gtk \
-	-I$(srcdir)/WebCore/platform/network/soup/cache/ \
+	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/ \
 	-I$(top_builddir)/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \
@@ -38,8 +38,8 @@ dumprendertree_cppflags := \
 	-I$(srcdir)/Tools/DumpRenderTree/cairo \
 	-I$(srcdir)/Tools/DumpRenderTree/gtk \
 	-I$(srcdir)/WebKit/gtk \
-	-I$(srcdir)/WebCore/platform/gtk \
-	-I$(srcdir)/WebCore/platform/network/soup/cache/ \
+	-I$(srcdir)/Source/WebCore/platform/gtk \
+	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/ \
 	-I$(top_builddir)/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \
@@ -81,7 +81,7 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
 	Tools/DumpRenderTree/gtk/PixelDumpSupportGtk.cpp \
 	Tools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp \
-	WebCore/platform/gtk/GtkVersioning.c
+	Source/WebCore/platform/gtk/GtkVersioning.c
 
 Programs_DumpRenderTree_CXXFLAGS = \
 	$(global_cxxflags) \
@@ -155,9 +155,9 @@ dumprendertree_cppflags += \
 TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	-I$(srcdir)/Tools/DumpRenderTree \
 	-I$(srcdir)/Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders \
-	-I$(srcdir)/WebCore \
-	-I$(srcdir)/WebCore/bridge \
-	-I$(srcdir)/WebCore/plugins \
+	-I$(srcdir)/Source/WebCore \
+	-I$(srcdir)/Source/WebCore/bridge \
+	-I$(srcdir)/Source/WebCore/plugins \
 	-I$(srcdir)/Tools/DumpRenderTree/TestNetscapePlugIn \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)

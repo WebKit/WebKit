@@ -4,7 +4,7 @@
 # either the generated files directory or as part of the Qt package through
 # QTDIR_build
 CONFIG(QTDIR_build): CONFIG += standalone_package
-else:exists($$PWD/WebCore/generated): CONFIG += standalone_package
+else:exists($$PWD/Source/WebCore/generated): CONFIG += standalone_package
 
 CONFIG += depend_includepath
 DEPENDPATH += $$OUT_PWD

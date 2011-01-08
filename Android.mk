@@ -89,45 +89,45 @@ LOCAL_C_INCLUDES := \
 	frameworks/base/core/jni/android/graphics
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/WebCore \
-	$(LOCAL_PATH)/WebCore/accessibility \
-	$(LOCAL_PATH)/WebCore/bindings/generic \
-	$(LOCAL_PATH)/WebCore/css \
-	$(LOCAL_PATH)/WebCore/dom \
-	$(LOCAL_PATH)/WebCore/editing \
-	$(LOCAL_PATH)/WebCore/history \
-	$(LOCAL_PATH)/WebCore/history/android \
-	$(LOCAL_PATH)/WebCore/html \
-	$(LOCAL_PATH)/WebCore/html/canvas \
-	$(LOCAL_PATH)/WebCore/inspector \
-	$(LOCAL_PATH)/WebCore/loader \
-	$(LOCAL_PATH)/WebCore/loader/appcache \
-	$(LOCAL_PATH)/WebCore/loader/icon \
-	$(LOCAL_PATH)/WebCore/notifications \
-	$(LOCAL_PATH)/WebCore/page \
-	$(LOCAL_PATH)/WebCore/page/android \
-	$(LOCAL_PATH)/WebCore/page/animation \
-	$(LOCAL_PATH)/WebCore/platform \
-	$(LOCAL_PATH)/WebCore/platform/android \
-	$(LOCAL_PATH)/WebCore/platform/animation \
-	$(LOCAL_PATH)/WebCore/platform/graphics \
-	$(LOCAL_PATH)/WebCore/platform/graphics/android \
-	$(LOCAL_PATH)/WebCore/platform/graphics/network \
-	$(LOCAL_PATH)/WebCore/platform/graphics/skia \
-	$(LOCAL_PATH)/WebCore/platform/graphics/transforms \
-	$(LOCAL_PATH)/WebCore/platform/image-decoders \
-	$(LOCAL_PATH)/WebCore/platform/mock \
-	$(LOCAL_PATH)/WebCore/platform/network \
-	$(LOCAL_PATH)/WebCore/platform/network/android \
-	$(LOCAL_PATH)/WebCore/platform/sql \
-	$(LOCAL_PATH)/WebCore/platform/text \
-	$(LOCAL_PATH)/WebCore/plugins \
-	$(LOCAL_PATH)/WebCore/plugins/android \
-	$(LOCAL_PATH)/WebCore/rendering \
-	$(LOCAL_PATH)/WebCore/rendering/style \
-	$(LOCAL_PATH)/WebCore/storage \
-	$(LOCAL_PATH)/WebCore/workers \
-	$(LOCAL_PATH)/WebCore/xml
+	$(LOCAL_PATH)/Source/WebCore \
+	$(LOCAL_PATH)/Source/WebCore/accessibility \
+	$(LOCAL_PATH)/Source/WebCore/bindings/generic \
+	$(LOCAL_PATH)/Source/WebCore/css \
+	$(LOCAL_PATH)/Source/WebCore/dom \
+	$(LOCAL_PATH)/Source/WebCore/editing \
+	$(LOCAL_PATH)/Source/WebCore/history \
+	$(LOCAL_PATH)/Source/WebCore/history/android \
+	$(LOCAL_PATH)/Source/WebCore/html \
+	$(LOCAL_PATH)/Source/WebCore/html/canvas \
+	$(LOCAL_PATH)/Source/WebCore/inspector \
+	$(LOCAL_PATH)/Source/WebCore/loader \
+	$(LOCAL_PATH)/Source/WebCore/loader/appcache \
+	$(LOCAL_PATH)/Source/WebCore/loader/icon \
+	$(LOCAL_PATH)/Source/WebCore/notifications \
+	$(LOCAL_PATH)/Source/WebCore/page \
+	$(LOCAL_PATH)/Source/WebCore/page/android \
+	$(LOCAL_PATH)/Source/WebCore/page/animation \
+	$(LOCAL_PATH)/Source/WebCore/platform \
+	$(LOCAL_PATH)/Source/WebCore/platform/android \
+	$(LOCAL_PATH)/Source/WebCore/platform/animation \
+	$(LOCAL_PATH)/Source/WebCore/platform/graphics \
+	$(LOCAL_PATH)/Source/WebCore/platform/graphics/android \
+	$(LOCAL_PATH)/Source/WebCore/platform/graphics/network \
+	$(LOCAL_PATH)/Source/WebCore/platform/graphics/skia \
+	$(LOCAL_PATH)/Source/WebCore/platform/graphics/transforms \
+	$(LOCAL_PATH)/Source/WebCore/platform/image-decoders \
+	$(LOCAL_PATH)/Source/WebCore/platform/mock \
+	$(LOCAL_PATH)/Source/WebCore/platform/network \
+	$(LOCAL_PATH)/Source/WebCore/platform/network/android \
+	$(LOCAL_PATH)/Source/WebCore/platform/sql \
+	$(LOCAL_PATH)/Source/WebCore/platform/text \
+	$(LOCAL_PATH)/Source/WebCore/plugins \
+	$(LOCAL_PATH)/Source/WebCore/plugins/android \
+	$(LOCAL_PATH)/Source/WebCore/rendering \
+	$(LOCAL_PATH)/Source/WebCore/rendering/style \
+	$(LOCAL_PATH)/Source/WebCore/storage \
+	$(LOCAL_PATH)/Source/WebCore/workers \
+	$(LOCAL_PATH)/Source/WebCore/xml
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/WebKit/android \
@@ -144,19 +144,19 @@ LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
 	$(LOCAL_PATH)/Source/JavaScriptCore/wtf/unicode/icu
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(base_intermediates)/WebCore/ \
-	$(base_intermediates)/WebCore/css \
-	$(base_intermediates)/WebCore/html \
-	$(base_intermediates)/WebCore/platform
+	$(base_intermediates)/Source/WebCore/ \
+	$(base_intermediates)/Source/WebCore/css \
+	$(base_intermediates)/Source/WebCore/html \
+	$(base_intermediates)/Source/WebCore/platform
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) \
-	$(LOCAL_PATH)/WebCore/platform/graphics/filters \
-	$(LOCAL_PATH)/WebCore/svg \
-	$(LOCAL_PATH)/WebCore/svg/animation \
-	$(LOCAL_PATH)/WebCore/svg/graphics \
-	$(LOCAL_PATH)/WebCore/svg/graphics/filters \
-	$(base_intermediates)/WebCore/svg
+	$(LOCAL_PATH)/Source/WebCore/platform/graphics/filters \
+	$(LOCAL_PATH)/Source/WebCore/svg \
+	$(LOCAL_PATH)/Source/WebCore/svg/animation \
+	$(LOCAL_PATH)/Source/WebCore/svg/graphics \
+	$(LOCAL_PATH)/Source/WebCore/svg/graphics/filters \
+	$(base_intermediates)/Source/WebCore/svg
 endif
 
 ifeq ($(JAVASCRIPT_ENGINE),v8)

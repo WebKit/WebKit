@@ -196,7 +196,7 @@ class ListDuplicatesTest(unittest.TestCase):
             ('LayoutTests/platform/mac/test.html',
              ('platform/mac/test.html', checkout_root)),
             (None,
-             ('platform/mac/test.html', os.path.join(checkout_root, 'WebCore'))),
+             ('platform/mac/test.html', os.path.join(checkout_root, 'Source', 'WebCore'))),
             ('test.html',
              ('platform/mac/test.html', os.path.join(layout_test_dir, 'platform/mac'))),
             (None,

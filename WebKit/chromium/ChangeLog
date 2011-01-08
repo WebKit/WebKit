@@ -1,3 +1,15 @@
+2011-01-07  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=52050
+
+        Update references to WebCore.
+
+        * WebKit.grd:
+        * WebKit.gyp:
+
 2011-01-07  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.

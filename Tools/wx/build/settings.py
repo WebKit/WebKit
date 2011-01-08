@@ -19,7 +19,7 @@
 # PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
 # OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Common elements of the waf build system shared by all projects.
 
@@ -48,8 +48,8 @@ if sys.platform.startswith('win'):
 else:
     wx_root = commands.getoutput('wx-config --prefix')
 
-jscore_dir = os.path.join(wk_root, 'Source/JavaScriptCore')
-webcore_dir = os.path.join(wk_root, 'WebCore')
+jscore_dir = os.path.join(wk_root, 'Source', 'JavaScriptCore')
+webcore_dir = os.path.join(wk_root, 'Source', 'WebCore')
 wklibs_dir = os.path.join(wk_root, 'WebKitLibraries')
 
 common_defines = []
@@ -62,13 +62,13 @@ common_frameworks = []
 ports = [
     'Brew',
     'Chromium',
-    'Gtk', 
+    'Gtk',
     'Haiku',
-    'Mac', 
+    'Mac',
     'None',
     'Qt',
     'Safari',
-    'Win', 
+    'Win',
     'Wince',
     'wx',
 ]
@@ -97,63 +97,63 @@ jscore_dirs = [
 ]
 
 webcore_dirs = [
-    'WebCore/accessibility',
-    'WebCore/bindings',
-    'WebCore/bindings/cpp',
-    'WebCore/bindings/generic',
-    'WebCore/bindings/js',
-    'WebCore/bindings/js/specialization',
-    'WebCore/bridge', 
-    'WebCore/bridge/c',
-    'WebCore/bridge/jsc',
-    'WebCore/css',
-    'WebCore/DerivedSources',
-    'WebCore/dom',
-    'WebCore/dom/default',
-    'WebCore/editing',
-    'WebCore/fileapi',
-    'WebCore/history',
-    'WebCore/html',
-    'WebCore/html/canvas',
-    'WebCore/html/parser',
-    'WebCore/inspector', 
-    'WebCore/loader', 
-    'WebCore/loader/appcache',
-    'WebCore/loader/archive',
-    'WebCore/loader/cache',
-    'WebCore/loader/icon',
-    'WebCore/notifications',
-    'WebCore/page',
-    'WebCore/page/animation', 
-    'WebCore/platform', 
-    'WebCore/platform/animation', 
-    'WebCore/platform/graphics',
-    'WebCore/platform/graphics/filters',
-    'WebCore/platform/graphics/transforms',
-    'WebCore/platform/image-decoders',
-    'WebCore/platform/image-decoders/bmp', 
-    'WebCore/platform/image-decoders/gif', 
-    'WebCore/platform/image-decoders/ico', 
-    'WebCore/platform/image-decoders/jpeg', 
-    'WebCore/platform/image-decoders/png',
-    'WebCore/platform/image-decoders/webp',
-    'WebCore/platform/mock',
-    'WebCore/platform/network', 
-    'WebCore/platform/sql', 
-    'WebCore/platform/text',
-    'WebCore/platform/text/transcoder',
-    'WebCore/plugins', 
-    'WebCore/rendering', 
-    'WebCore/rendering/style',
-    'WebCore/rendering/svg',
-    'WebCore/storage',
-    'WebCore/svg',
-    'WebCore/svg/animation',
-    'WebCore/svg/graphics',
-    'WebCore/svg/graphics/filters',
-    'WebCore/svg/properties',
-    'WebCore/websockets', 
-    'WebCore/xml'
+    'Source/WebCore/accessibility',
+    'Source/WebCore/bindings',
+    'Source/WebCore/bindings/cpp',
+    'Source/WebCore/bindings/generic',
+    'Source/WebCore/bindings/js',
+    'Source/WebCore/bindings/js/specialization',
+    'Source/WebCore/bridge',
+    'Source/WebCore/bridge/c',
+    'Source/WebCore/bridge/jsc',
+    'Source/WebCore/css',
+    'Source/WebCore/DerivedSources',
+    'Source/WebCore/dom',
+    'Source/WebCore/dom/default',
+    'Source/WebCore/editing',
+    'Source/WebCore/fileapi',
+    'Source/WebCore/history',
+    'Source/WebCore/html',
+    'Source/WebCore/html/canvas',
+    'Source/WebCore/html/parser',
+    'Source/WebCore/inspector',
+    'Source/WebCore/loader',
+    'Source/WebCore/loader/appcache',
+    'Source/WebCore/loader/archive',
+    'Source/WebCore/loader/cache',
+    'Source/WebCore/loader/icon',
+    'Source/WebCore/notifications',
+    'Source/WebCore/page',
+    'Source/WebCore/page/animation',
+    'Source/WebCore/platform',
+    'Source/WebCore/platform/animation',
+    'Source/WebCore/platform/graphics',
+    'Source/WebCore/platform/graphics/filters',
+    'Source/WebCore/platform/graphics/transforms',
+    'Source/WebCore/platform/image-decoders',
+    'Source/WebCore/platform/image-decoders/bmp',
+    'Source/WebCore/platform/image-decoders/gif',
+    'Source/WebCore/platform/image-decoders/ico',
+    'Source/WebCore/platform/image-decoders/jpeg',
+    'Source/WebCore/platform/image-decoders/png',
+    'Source/WebCore/platform/image-decoders/webp',
+    'Source/WebCore/platform/mock',
+    'Source/WebCore/platform/network',
+    'Source/WebCore/platform/sql',
+    'Source/WebCore/platform/text',
+    'Source/WebCore/platform/text/transcoder',
+    'Source/WebCore/plugins',
+    'Source/WebCore/rendering',
+    'Source/WebCore/rendering/style',
+    'Source/WebCore/rendering/svg',
+    'Source/WebCore/storage',
+    'Source/WebCore/svg',
+    'Source/WebCore/svg/animation',
+    'Source/WebCore/svg/graphics',
+    'Source/WebCore/svg/graphics/filters',
+    'Source/WebCore/svg/properties',
+    'Source/WebCore/websockets',
+    'Source/WebCore/xml',
 ]
 
 config = get_config(wk_root)
@@ -171,7 +171,7 @@ def get_config():
         if build_port == 'wx':
             if Options.options.wxpython:
                 isReleaseCRT = True
-        
+
         if isReleaseCRT:
             waf_configname = waf_configname + ' CRT_MULTITHREADED_DLL'
         else:
@@ -206,7 +206,7 @@ def common_set_options(opt):
     opt.tool_options('compiler_cxx')
     opt.tool_options('compiler_cc')
     opt.tool_options('python')
-    
+
     opt.add_option('--wxpython', action='store_true', default=False, help='Create the wxPython bindings.')
     opt.add_option('--wx-compiler-prefix', action='store', default='vc',
                    help='Specify a different compiler prefix (do this if you used COMPILER_PREFIX when building wx itself)')
@@ -217,20 +217,20 @@ def common_configure(conf):
     """
     Configuration used by all targets, called from the target's configure() step.
     """
-    
+
     conf.env['MSVC_TARGETS'] = ['x86']
-    
+
     if Options.options.msvc_version and Options.options.msvc_version != '':
         print "msvc version = %s" % Options.options.msvc_version
         conf.env['MSVC_VERSIONS'] = ['msvc %s.0' % Options.options.msvc_version]
     else:
         print "msvc not set!"
         conf.env['MSVC_VERSIONS'] = ['msvc 9.0', 'msvc 8.0']
-    
+
     if sys.platform.startswith('cygwin'):
         print "ERROR: You must use the Win32 Python from python.org, not Cygwin Python, when building on Windows."
         sys.exit(1)
-    
+
     if sys.platform.startswith('darwin') and build_port == 'wx':
         import platform
         if platform.release().startswith('10'): # Snow Leopard
@@ -245,13 +245,13 @@ def common_configure(conf):
     if Options.options.wxpython:
         conf.check_tool('python')
         conf.check_python_headers()
-    
+
     if sys.platform.startswith('darwin'):
         conf.check_tool('osx')
-    
+
     global msvc_version
     global msvclibs_dir
-    
+
     libprefix = ''
 
     if building_on_win32:
@@ -261,12 +261,12 @@ def common_configure(conf):
         found_versions = []
         for version in found:
             found_versions.append(version[0])
-            
+
         if 'msvc 9.0' in conf.env['MSVC_VERSIONS'] and 'msvc 9.0' in found_versions:
             msvc_version = 'msvc2008'
         elif 'msvc 8.0' in conf.env['MSVC_VERSIONS'] and 'msvc 8.0' in found_versions:
             msvc_version = 'msvc2005'
-        
+
         msvclibs_dir = os.path.join(wklibs_dir, msvc_version, 'win')
 
         # Disable several warnings which occur many times during the build.
@@ -293,7 +293,7 @@ def common_configure(conf):
 
     if build_port == "wx":
         update_wx_deps(conf, wk_root, msvc_version)
-    
+
         conf.env.append_value('CXXDEFINES', ['BUILDING_WX__=1', 'JS_NO_EXPORT'])
 
         if building_on_win32:
@@ -309,23 +309,23 @@ def common_configure(conf):
 
     if sys.platform.startswith('darwin'):
         conf.env['LIB_ICU'] = ['icucore']
-    
+
         conf.env.append_value('CPPPATH', wklibs_dir)
         conf.env.append_value('LIBPATH', wklibs_dir)
-        
+
         min_version = None
-        
+
         mac_target = 'MACOSX_DEPLOYMENT_TARGET'
         if Options.options.macosx_version != '':
             min_version = Options.options.macosx_version
-        
+
         # WebKit only supports 10.4+, but ppc systems often set this to earlier systems
         if not min_version:
             min_version = commands.getoutput('sw_vers -productVersion')[:4]
             if min_version in ['10.1','10.2','10.3']:
                 min_version = '10.4'
 
-        os.environ[mac_target] = conf.env[mac_target] = min_version        
+        os.environ[mac_target] = conf.env[mac_target] = min_version
 
         sdk_version = min_version
         if min_version == "10.4":
@@ -336,20 +336,20 @@ def common_configure(conf):
             # on 10.6, we get a strange missing symbol error, and this library seems to
             # work fine for wx's purposes.
             conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceLeopard'])
-        
+
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
         sdkflags = ['-arch', 'i386', '-isysroot', sdkroot]
-        
+
         conf.env.append_value('CPPFLAGS', sdkflags)
         conf.env.append_value('LINKFLAGS', sdkflags)
-        
+
         conf.env.append_value('CPPPATH_SQLITE3', [os.path.join(wklibs_dir, 'WebCoreSQLite3')])
         conf.env.append_value('LIB_SQLITE3', ['WebCoreSQLite3'])
-    
+
     conf.env.append_value('CXXDEFINES', feature_defines)
     if config == 'Release':
         conf.env.append_value('CPPDEFINES', 'NDEBUG')
-        
+
     if building_on_win32:
         conf.env.append_value('CPPPATH', [
             os.path.join(jscore_dir, 'os-win32'),
@@ -357,45 +357,45 @@ def common_configure(conf):
             os.path.join(msvclibs_dir, 'include', 'pthreads'),
             os.path.join(msvclibs_dir, 'lib'),
             ])
-            
+
         conf.env.append_value('LIB', ['libpng', 'libjpeg', 'pthreadVC2'])
         # common win libs
         conf.env.append_value('LIB', [
             'kernel32', 'user32','gdi32','comdlg32','winspool','winmm',
-            'shell32', 'shlwapi', 'comctl32', 'ole32', 'oleaut32', 'uuid', 'advapi32', 
+            'shell32', 'shlwapi', 'comctl32', 'ole32', 'oleaut32', 'uuid', 'advapi32',
             'wsock32', 'gdiplus', 'usp10','version'])
 
         conf.env['LIB_ICU'] = ['icudt', 'icule', 'iculx', 'icuuc', 'icuin', 'icuio', 'icutu']
-        
+
         #curl
         conf.env['LIB_CURL'] = ['libcurl']
-        
+
         #sqlite3
         conf.env['CPPPATH_SQLITE3'] = [os.path.join(msvclibs_dir, 'include', 'SQLite')]
         conf.env['LIB_SQLITE3'] = ['sqlite3']
-        
+
         #libxml2
         conf.env['LIB_XML'] = ['libxml2']
-        
+
         #libxslt
         conf.env['LIB_XSLT'] = ['libxslt']
-    else:    
+    else:
         if build_port == 'wx':
             port_uses['wx'].append('PTHREADS')
             conf.env.append_value('LIB', ['jpeg', 'png', 'pthread'])
             conf.env.append_value('LIBPATH', os.path.join(wklibs_dir, 'unix', 'lib'))
             conf.env.append_value('CPPPATH', os.path.join(wklibs_dir, 'unix', 'include'))
             conf.env.append_value('CXXFLAGS', ['-fPIC', '-DPIC'])
-            
+
             conf.check_cfg(path=get_path_to_wxconfig(), args='--cxxflags --libs', package='', uselib_store='WX', mandatory=True)
-            
+
         conf.check_cfg(msg='Checking for libxslt', path='xslt-config', args='--cflags --libs', package='', uselib_store='XSLT', mandatory=True)
         conf.check_cfg(path='xml2-config', args='--cflags --libs', package='', uselib_store='XML', mandatory=True)
         if sys.platform.startswith('darwin') and min_version and min_version == '10.4':
             conf.check_cfg(path=os.path.join(wklibs_dir, 'unix', 'bin', 'curl-config'), args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
         else:
             conf.check_cfg(path='curl-config', args='--cflags --libs', package='', uselib_store='CURL', mandatory=True)
-        
+
         if not sys.platform.startswith('darwin'):
             conf.check_cfg(package='cairo', args='--cflags --libs', uselib_store='WX', mandatory=True)
             conf.check_cfg(package='pango', args='--cflags --libs', uselib_store='WX', mandatory=True)

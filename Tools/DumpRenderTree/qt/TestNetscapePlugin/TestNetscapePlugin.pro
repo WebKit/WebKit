@@ -21,8 +21,8 @@ mac {
 INCLUDEPATH += ../../../../Source/JavaScriptCore \
                ../../unix/TestNetscapePlugin/ForwardingHeaders \
                ../../unix/TestNetscapePlugin/ForwardingHeaders/WebKit \
-               ../../../../WebCore \
-               ../../../../WebCore/bridge \
+               ../../../../Source/WebCore \
+               ../../../../Source/WebCore/bridge \
                ../../TestNetscapePlugIn
 
 SOURCES = PluginObject.cpp \

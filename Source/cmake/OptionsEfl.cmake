@@ -5,8 +5,8 @@ SET(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_
 
 # -----------------------------------------------------------------------------
 # We mention Safari version because many sites check for it.
-# Sync with WebCore/Configurations/Version.xcconfig whenever Safari is version 
-# up.
+# Sync with Source/WebCore/Configurations/Version.xcconfig whenever Safari is
+# version up.
 # -----------------------------------------------------------------------------
 SET(USER_AGENT_VERSION_MAJOR 534)
 SET(USER_AGENT_VERSION_MINOR 16)

@@ -1,3 +1,24 @@
+2011-01-07  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebCore to Source
+        https://bugs.webkit.org/show_bug.cgi?id=52050
+
+        Update project files to understand WebCore's new location.  I suspect
+        there will be some follow-up patches after we land this patch.
+
+        * Android.derived.jscbindings.mk:
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreGeneratedCairo.vsprops:
+        * WebCore.vcproj/WebCoreGeneratedCommon.vsprops:
+
 2011-01-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.

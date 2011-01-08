@@ -25,7 +25,7 @@
 ##
 
 # lookup tables for old-style JavaScript bindings
-create_hash_table := $(LOCAL_PATH)/../Source/JavaScriptCore/create_hash_table
+create_hash_table := $(LOCAL_PATH)/Source/JavaScriptCore/create_hash_table
 
 GEN := $(addprefix $(intermediates)/, \
 			bindings/js/JSDOMWindowBase.lut.h \
@@ -526,7 +526,7 @@ GEN := \
     $(intermediates)/svg/JSSVGVKernElement.h \
     $(intermediates)/svg/JSSVGZoomEvent.h
 $(GEN): PRIVATE_PATH := $(LOCAL_PATH)
-$(GEN): PRIVATE_CUSTOM_TOOL = perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include external/webkit/WebCore/dom --include external/webkit/WebCore/html --include external/webkit/WebCore/svg --outputdir $(dir $@) $<
+$(GEN): PRIVATE_CUSTOM_TOOL = perl -I$(PRIVATE_PATH)/bindings/scripts $(PRIVATE_PATH)/bindings/scripts/generate-bindings.pl --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator JS --include external/webkit/Source/WebCore/dom --include external/webkit/Source/WebCore/html --include external/webkit/Source/WebCore/svg --outputdir $(dir $@) $<
 $(GEN): $(intermediates)/svg/JS%.h : $(LOCAL_PATH)/svg/%.idl $(js_binding_scripts)
 	$(transform-generated-source)
 LOCAL_GENERATED_SOURCES += $(GEN) $(GEN:%.h=%.cpp)

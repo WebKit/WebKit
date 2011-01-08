@@ -87,7 +87,7 @@ sub determineSourceDir
 
     # walks up path checking each directory to see if it is the main WebKit project dir, 
     # defined by containing Sources, WebCore, and WebKit
-    until ((-d "$sourceDir/Source" && -d "$sourceDir/WebCore" && -d "$sourceDir/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
+    until ((-d "$sourceDir/Source" && -d "$sourceDir/Source/WebCore" && -d "$sourceDir/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
     {
         if ($sourceDir !~ s|/[^/]+$||) {
             die "Could not find top level webkit directory above source directory using FindBin.\n";
@@ -682,7 +682,7 @@ sub determineQtFeatureDefaults()
     return if %qtFeatureDefaults;
     die "ERROR: qmake missing but required to build WebKit.\n" if not commandExists("qmake");
     my $originalCwd = getcwd();
-    chdir File::Spec->catfile(sourceDir(), "WebCore");
+    chdir File::Spec->catfile(sourceDir(), "Source", "WebCore");
     my $defaults = `qmake CONFIG+=compute_defaults 2>&1`;
     chdir $originalCwd;
 
@@ -1177,7 +1177,7 @@ sub dieIfWindowsPlatformSDKNotInstalled
 sub copyInspectorFrontendFiles
 {
     my $productDir = productDir();
-    my $sourceInspectorPath = sourceDir() . "/WebCore/inspector/front-end/";
+    my $sourceInspectorPath = sourceDir() . "/Source/WebCore/inspector/front-end/";
     my $inspectorResourcesDirPath = $ENV{"WEBKITINSPECTORRESOURCESDIR"};
 
     if (!defined($inspectorResourcesDirPath)) {
@@ -1590,7 +1590,7 @@ sub buildQMakeProject($@)
     my $dsMakefile = "Makefile.DerivedSources";
 
     # Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
-    my @subdirs = ("Source/JavaScriptCore", "WebCore", "WebKit/qt/Api");
+    my @subdirs = ("Source/JavaScriptCore", "Source/WebCore", "WebKit/qt/Api");
     if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
         push @subdirs, "WebKit2";
         push @subdirs, "Tools/WebKitTestRunner";

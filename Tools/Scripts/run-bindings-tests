@@ -39,8 +39,8 @@ from webkitpy.common.checkout import scm
 
 def generate_from_idl(generator, idl_file, output_directory):
     cmd = ['perl', '-w',
-           '-IWebCore/bindings/scripts',
-           'WebCore/bindings/scripts/generate-bindings.pl',
+           '-ISource/WebCore/bindings/scripts',
+           'Source/WebCore/bindings/scripts/generate-bindings.pl',
            # idl include directories (path relative to generate-bindings.pl)
            '--include', '.',
            '--defines', 'TESTING_%s' % generator,
@@ -120,8 +120,8 @@ def main(argv):
     ]
 
     for generator in generators:
-        input_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test')
-        reference_directory = os.path.join('WebCore', 'bindings', 'scripts', 'test', generator)
+        input_directory = os.path.join('Source', 'WebCore', 'bindings', 'scripts', 'test')
+        reference_directory = os.path.join('Source', 'WebCore', 'bindings', 'scripts', 'test', generator)
         if not run_tests(generator, input_directory, reference_directory, reset_results):
             all_tests_passed = False
 

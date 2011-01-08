@@ -45,16 +45,16 @@ BINDING_C_INCLUDES := \
 	$(JAVASCRIPTCORE_PATH)/wrec \
 	$(JAVASCRIPTCORE_PATH)/ForwardingHeaders \
 	\
-	$(base_intermediates)/WebCore/bindings/js \
-	$(base_intermediates)/WebCore/dom \
-	$(base_intermediates)/WebCore/html/canvas \
-	$(base_intermediates)/WebCore/inspector \
-	$(base_intermediates)/WebCore/loader/appcache \
-	$(base_intermediates)/WebCore/page \
-	$(base_intermediates)/WebCore/plugins \
-	$(base_intermediates)/WebCore/storage \
-	$(base_intermediates)/WebCore/workers \
-	$(base_intermediates)/WebCore/xml
+	$(base_intermediates)/Source/WebCore/bindings/js \
+	$(base_intermediates)/Source/WebCore/dom \
+	$(base_intermediates)/Source/WebCore/html/canvas \
+	$(base_intermediates)/Source/WebCore/inspector \
+	$(base_intermediates)/Source/WebCore/loader/appcache \
+	$(base_intermediates)/Source/WebCore/page \
+	$(base_intermediates)/Source/WebCore/plugins \
+	$(base_intermediates)/Source/WebCore/storage \
+	$(base_intermediates)/Source/WebCore/workers \
+	$(base_intermediates)/Source/WebCore/xml
 
 LOCAL_SRC_FILES += \
 	bindings/js/GCController.cpp \

@@ -40,7 +40,7 @@ def getWebCoreFilesDict():
     """
     sources = {}
     sources_prefix = "WEBCORE_"
-    filepath = os.path.join(wkroot, "WebCore/WebCoreSources.bkl")
+    filepath = os.path.join(wkroot, "Source", "WebCore", "WebCoreSources.bkl")
     assert(os.path.exists(filepath))
     
     doc = minidom.parse(filepath)
@@ -82,7 +82,7 @@ def generateWebCoreSourcesGTKAndQT(sources):
     for key in sources.keys():
         makefileString += " \\\n\t\t" + key
     
-    outfile = os.path.join(wkroot, "WebCore/sources.inc")
+    outfile = os.path.join(wkroot, "Source", "WebCore", "sources.inc")
     sourcefile = open(outfile, "w")
     sourcefile.write(makefileString)
     sourcefile.close()

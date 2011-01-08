@@ -110,7 +110,7 @@ sub update($$)
     my ($iexploderPath, $webcorePath) = @_;
 
     $iexploderPath = File::Spec->catfile(sourceDir(), "Tools", "iExploder", "iExploder-1.3.2", "htdocs", split("/", $iexploderPath));
-    $webcorePath = File::Spec->catfile(sourceDir(), "WebCore", split("/", $webcorePath));
+    $webcorePath = File::Spec->catfile(sourceDir(), "Source", "WebCore", split("/", $webcorePath));
 
     my @sections = readiExploderFile($iexploderPath);
     $sections[0] = generateEntityListFromFile($webcorePath);

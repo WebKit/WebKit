@@ -1,4 +1,4 @@
-MODULES = Source/JavaScriptCore Source/JavaScriptGlue Source/ThirdParty/ANGLE WebCore WebKit WebKit2 Tools 
+MODULES = Source/JavaScriptCore Source/JavaScriptGlue Source/ThirdParty/ANGLE Source/WebCore WebKit WebKit2 Tools 
 
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
