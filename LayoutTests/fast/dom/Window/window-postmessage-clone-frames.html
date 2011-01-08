@@ -2,8 +2,8 @@
 <head></head>
 <body>
 <div id="description"></div>
-<div id="console"></div>
 <input type="file" id="fileInput">
+<div id="console"></div>
 <iframe src="resources/window-postmessage-clone-frames-frame.html" onload="startTest()"></iframe>
 <script>
 if (window.layoutTestController) {
@@ -76,11 +76,15 @@ function shouldBe(actual, expected)
 }
 var i = 0;
 window.onmessage = function(evt) {
+    if (safeToString(frames[0].tests[i].eventData) == 'done') {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        return;
+    }
+
     shouldBe("(frames[0].tests["+i+"]).eventData instanceof (frames[0])."+tests[i].constructor, "true");
     shouldBe("(frames[0].tests["+i+"]).event.data instanceof (frames[0])."+tests[i].constructor, "true");
     i++;
-    if (tests.length === i && window.layoutTestController)
-        layoutTestController.notifyDone();
 }
 
 function tryPostMessage(message, constructor) {
@@ -110,6 +114,7 @@ function startTest() {
         tryPostMessage('fileInput.files[0]', "File");
         tryPostMessage('fileInput.files', "FileList");
     }
+    tryPostMessage('"done"');
 }
 </script>
 </body>

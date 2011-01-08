@@ -1,3 +1,19 @@
+2011-01-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Mihai Parparita.
+
+        fast/dom/Window/window-postmessage-clone-frames.html has some timing issues
+        https://bugs.webkit.org/show_bug.cgi?id=52032
+
+        Fix the timing issue in fast/dom/Window/window-postmessage-clone-frames.html
+        and move the output console div beyond the file input control, so that output
+        text does not push it outside the viewport.
+
+        * fast/dom/Window/window-postmessage-clone-frames-expected.txt: Updated results
+        to reflect div movement.
+        * fast/dom/Window/window-postmessage-clone-frames.html: Fix the timing and
+        layout issues with this test.
+
 2011-01-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.
