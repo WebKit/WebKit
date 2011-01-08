@@ -3177,3 +3177,6 @@ BUGWK52061 DEBUG : transitions/suspend-transform-transition.html = IMAGE PASS
 BUGWK52061 DEBUG : transitions/change-values-during-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/interrupted-accelerated-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
+
+// Failing since creation in http://trac.webkit.org/changeset/75308
+BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT

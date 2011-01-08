@@ -1,3 +1,9 @@
+2011-01-07  Adam Barth  <abarth@webkit.org>
+
+        Record expectation for test.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-07  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed, test expectation update.
