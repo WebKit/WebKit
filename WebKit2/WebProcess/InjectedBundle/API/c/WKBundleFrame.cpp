@@ -147,7 +147,7 @@ bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frameRef, WKURLRef urlRef
 
 WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frameRef)
 {
-    WKRect contentBounds = { {0, 0}, {0, 0} };
+    WKRect contentBounds = { { 0, 0 }, { 0, 0 } };
     
     Frame* coreFrame = toImpl(frameRef)->coreFrame();
     if (!coreFrame)
@@ -161,6 +161,26 @@ WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frameRef)
     contentBounds.size.height = view->contentsHeight();
     
     return contentBounds;
+}
+
+WKRect WKBundleFrameGetVisibleContentBounds(WKBundleFrameRef frameRef)
+{
+    WKRect visibleContentBounds = { { 0, 0 }, { 0, 0 } };
+    
+    Frame* coreFrame = toImpl(frameRef)->coreFrame();
+    if (!coreFrame)
+        return visibleContentBounds;
+    
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return visibleContentBounds;
+    
+    FloatRect bounds = view->visibleContentRect(true);
+
+    visibleContentBounds.size.width = bounds.width();
+    visibleContentBounds.size.height = bounds.height();
+    
+    return visibleContentBounds;
 }
 
 WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frameRef)

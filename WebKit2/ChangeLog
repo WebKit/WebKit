@@ -1,3 +1,15 @@
+2011-01-08  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add WKBundleFrameGetVisibleContentBounds().
+        https://bugs.webkit.org/show_bug.cgi?id=52089
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameGetVisibleContentBounds):
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        Added WKBundleFrameGetVisibleContentBounds().
+
 2011-01-08  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -54,6 +54,7 @@ WK_EXPORT WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frame);
 WK_EXPORT bool WKBundleFrameAllowsFollowingLink(WKBundleFrameRef frame, WKURLRef url);
 
 WK_EXPORT WKRect WKBundleFrameGetContentBounds(WKBundleFrameRef frame);
+WK_EXPORT WKRect WKBundleFrameGetVisibleContentBounds(WKBundleFrameRef frame);
 WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frame);
 
 #ifdef __cplusplus
