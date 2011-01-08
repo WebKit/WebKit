@@ -1,5 +1,17 @@
 2011-01-08  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Ojan Vafai.
+
+        test_failures.py should not mention TestShell (long live DumpRenderTree!)
+        https://bugs.webkit.org/show_bug.cgi?id=52067
+
+        I ran test-webkitpy, but didn't bother adding a unit test for this string change.
+        https://bugs.webkit.org/show_bug.cgi?id=51138#c3 is an example of why this is needed.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+
+2011-01-08  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Mihai Parparita.
 
         commit-queue hangs when the ChangeLog diff is bad

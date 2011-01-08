@@ -187,11 +187,11 @@ class FailureTimeout(TestFailure):
 
 
 class FailureCrash(TestFailure):
-    """Test shell crashed."""
+    """DumpRenderTree crashed."""
 
     @staticmethod
     def message():
-        return "Test shell crashed"
+        return "DumpRenderTree crashed"
 
     def result_html_output(self, filename):
         # FIXME: create a link to the minidump file
