@@ -1,3 +1,47 @@
+2011-01-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, test expectation update.
+        
+        Update mac-leopard baselines for tests that currently have up to date
+        Snow Leopard baselines in platform/mac.
+
+        * platform/mac-leopard/fast/css/text-overflow-ellipsis-strict-expected.checksum:
+        * platform/mac-leopard/fast/css/text-overflow-ellipsis-strict-expected.png:
+        * platform/mac-leopard/fast/invalid/residual-style-expected.checksum:
+        * platform/mac-leopard/fast/invalid/residual-style-expected.png:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-child-generated-content-expected.checksum:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-child-property-removal-expected.checksum:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.checksum:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-columns-child-removal-expected.checksum:
+        * platform/mac-leopard/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/mac-leopard/fast/table/027-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/027-vertical-expected.png:
+        * platform/mac-leopard/fast/table/028-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/028-vertical-expected.png:
+        * platform/mac-leopard/fast/table/038-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/038-vertical-expected.png:
+        * platform/mac-leopard/fast/table/040-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/040-vertical-expected.png:
+        * platform/mac-leopard/fast/table/border-collapsing/002-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/border-collapsing/002-vertical-expected.png:
+        * platform/mac-leopard/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/border-collapsing/equal-precedence-resolution-vertical-expected.png:
+        * platform/mac-leopard/fast/table/table-display-types-vertical-expected.checksum:
+        * platform/mac-leopard/fast/table/table-display-types-vertical-expected.png:
+        * platform/mac-leopard/fast/text/backslash-to-yen-sign-euc-expected.checksum:
+        * platform/mac-leopard/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/mac-leopard/fast/text/international/bidi-neutral-run-expected.checksum:
+        * platform/mac-leopard/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/mac-leopard/svg/custom/junk-data-expected.checksum:
+        * platform/mac-leopard/svg/custom/junk-data-expected.png:
+        * platform/mac-leopard/svg/custom/missing-xlink-expected.checksum:
+        * platform/mac-leopard/svg/custom/missing-xlink-expected.png:
+        * platform/mac-leopard/tables/mozilla/other/wa_table_thtd_rowspan-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/other/wa_table_thtd_rowspan-expected.png:
+
 2011-01-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Dan Bernstein.
