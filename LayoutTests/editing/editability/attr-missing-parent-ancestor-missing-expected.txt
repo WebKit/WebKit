@@ -1,0 +1,21 @@
+When contentEditable is missing, it maps to "inherit" state and the element is NOT editable if its parent/ancestor's contentEditable is also missing.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+
+PASS document.getElementById("p").hasAttribute("contentEditable") is false
+FAIL document.getElementById("p").contentEditable should be inherit. Was false.
+FIXME: contentEditable attribute should be inherit if missing. https://bugs.webkit.org/show_bug.cgi?id=52056
+PASS document.getElementById("p").isContentEditable is false
+PASS window.getComputedStyle(p, "").getPropertyValue("-webkit-user-modify") is "read-only"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

@@ -1,0 +1,31 @@
+When contentEditable is set to a new value, the new value can be case-insensitive.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+
+
+
+PASS document.getElementById("div1").getAttribute("contentEditable") is "TRue"
+FAIL document.getElementById("div1").contentEditable should be true. Was false.
+FAIL document.getElementById("div1").isContentEditable should be true. Was false.
+PASS window.getComputedStyle(div1, "").getPropertyValue("-webkit-user-modify") is "read-write"
+PASS document.getElementById("p1").getAttribute("contentEditable") is "faLSE"
+PASS document.getElementById("p1").contentEditable is "false"
+PASS document.getElementById("p1").isContentEditable is false
+PASS window.getComputedStyle(p1, "").getPropertyValue("-webkit-user-modify") is "read-only"
+FAIL document.getElementById("p2").hasAttribute("contentEditable") should be false. Was true.
+FAIL document.getElementById("p2").contentEditable should be inherit. Was false.
+FAIL document.getElementById("p2").isContentEditable should be true. Was false.
+FAIL window.getComputedStyle(p2, "").getPropertyValue("-webkit-user-modify") should be read-write. Was read-only.
+FIXME: setContentEditable should be case insensitive. https://bugs.webkit.org/show_bug.cgi?id=52059
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

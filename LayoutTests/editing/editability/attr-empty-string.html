@@ -1,0 +1,25 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></p>
+<div id="result"></div>
+<div id="div" contentEditable=""></div>
+<script>
+description('When contentEditable attribute is empty string, element.contentEditable returns "true" and the element is editable.')
+
+shouldBe('document.getElementById("div").getAttribute("contentEditable")','""');
+shouldBe('document.getElementById("div").contentEditable', '"true"');
+shouldBe('document.getElementById("div").isContentEditable', 'true');
+shouldBe('window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify")', '"read-write"');
+
+document.getElementById("div").style.display= 'none';
+
+window.successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

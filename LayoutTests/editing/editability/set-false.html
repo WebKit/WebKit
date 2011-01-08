@@ -1,0 +1,37 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></p>
+<div id="result"></div>
+<div id="div1" contenteditable="true"></div>
+<div id="div2" contenteditable="true">
+    <p id="p2"></p>
+</div>
+<script>
+description('When contentEditable is set to "false" string from "true" or inherit, element.contentEditable returns "false" and the element is NOT editable.')
+
+document.getElementById("div1").contentEditable = "false";
+document.getElementById("p2").contentEditable = "false";
+
+shouldBe('document.getElementById("div1").getAttribute("contentEditable")','"false"');
+shouldBe('document.getElementById("div1").contentEditable', '"false"');
+shouldBe('document.getElementById("div1").isContentEditable', 'false');
+debug("FIXME: setContentEditable with true/false/inherit string is not working properly. https://bugs.webkit.org/show_bug.cgi?id=52058");
+shouldBe('window.getComputedStyle(div1, "").getPropertyValue("-webkit-user-modify")', '"read-only"');
+
+shouldBe('document.getElementById("p2").contentEditable', '"false"');
+shouldBe('document.getElementById("p2").isContentEditable', 'false');
+shouldBe('window.getComputedStyle(p2, "").getPropertyValue("-webkit-user-modify")', '"read-only"');
+
+document.getElementById("div1").style.display= 'none';
+document.getElementById("div2").style.display= 'none';
+
+window.successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

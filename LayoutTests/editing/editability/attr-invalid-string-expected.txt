@@ -1,0 +1,21 @@
+When contentEditable attribute is invalid string, element.contentEditable returns "inherit".
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+
+PASS document.getElementById("div").getAttribute("contentEditable") is "abc"
+FAIL document.getElementById("div").contentEditable should be inherit. Was false.
+FIXME: contentEditable attribute fails to take invalid value. https://bugs.webkit.org/show_bug.cgi?id=50636
+PASS document.getElementById("div").isContentEditable is false
+PASS window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify") is "read-only"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+

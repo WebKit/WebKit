@@ -1,3 +1,42 @@
+2011-01-08  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test contents for contentEditable DOM attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=51957
+
+        * editing/editability: Added.
+        * editing/editability/attr-empty-string-expected.txt: Added.
+        * editing/editability/attr-empty-string.html: Added.
+        * editing/editability/attr-false-string-expected.txt: Added.
+        * editing/editability/attr-false-string.html: Added.
+        * editing/editability/attr-invalid-string-expected.txt: Added.
+        * editing/editability/attr-invalid-string.html: Added.
+        * editing/editability/attr-missing-ancestor-false-expected.txt: Added.
+        * editing/editability/attr-missing-ancestor-false.html: Added.
+        * editing/editability/attr-missing-ancestor-true-expected.txt: Added.
+        * editing/editability/attr-missing-ancestor-true.html: Added.
+        * editing/editability/attr-missing-parent-ancestor-missing-expected.txt: Added.
+        * editing/editability/attr-missing-parent-ancestor-missing.html: Added.
+        * editing/editability/attr-missing-parent-false-expected.txt: Added.
+        * editing/editability/attr-missing-parent-false.html: Added.
+        * editing/editability/attr-missing-parent-true-expected.txt: Added.
+        * editing/editability/attr-missing-parent-true.html: Added.
+        * editing/editability/attr-true-string-expected.txt: Added.
+        * editing/editability/attr-true-string.html: Added.
+        * editing/editability/set-false-expected.txt: Added.
+        * editing/editability/set-false.html: Added.
+        * editing/editability/set-inherit-parent-false-expected.txt: Added.
+        * editing/editability/set-inherit-parent-false.html: Added.
+        * editing/editability/set-inherit-parent-true-expected.txt: Added.
+        * editing/editability/set-inherit-parent-true.html: Added.
+        * editing/editability/set-invalid-value-expected.txt: Added.
+        * editing/editability/set-invalid-value.html: Added.
+        * editing/editability/set-true-expected.txt: Added.
+        * editing/editability/set-true.html: Added.
+        * editing/editability/set-value-caseinsensitive-expected.txt: Added.
+        * editing/editability/set-value-caseinsensitive.html: Added.
+
 2011-01-08  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.

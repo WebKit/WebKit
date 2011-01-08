@@ -1,0 +1,36 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></p>
+<div id="result"></div>
+<div id="div" contenteditable="true"></div>
+<script>
+description('When contentEditable is set to invalid string, SYNTAX_ERR exception (code: 12) must be raised.')
+
+exceptionThrown = false;
+
+try {
+    document.getElementById("div").contentEditable = "abc";
+} catch (e) {
+    if (e.code == 12)
+        exceptionThrown = true;
+}
+
+shouldBe('exceptionThrown', 'true');
+debug("FIXME: setContentEditable with invalid string should throw exception. https://bugs.webkit.org/show_bug.cgi?id=52057");
+shouldBe('document.getElementById("div").getAttribute("contentEditable")','"abc"');
+shouldBe('document.getElementById("div").contentEditable', '"true"');
+shouldBe('document.getElementById("div").isContentEditable', 'true');
+shouldBe('window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify")', '"read-write"');
+
+document.getElementById("div").style.display= 'none';
+
+window.successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
