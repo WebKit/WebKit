@@ -1,3 +1,15 @@
+2011-01-08  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        Implement WebKit Full Screen support
+        https://bugs.webkit.org/show_bug.cgi?id=49481
+
+        Check in failing results for these tests to allow the bots to roll green.
+
+        * fullscreen/full-screen-remove-ancestor-expected.txt:
+        * fullscreen/full-screen-remove-expected.txt:
+
 2011-01-08  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed; chromium test expectations update.
