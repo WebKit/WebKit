@@ -1,3 +1,10 @@
+2011-01-08  Adam Barth  <abarth@webkit.org>
+
+        Moving WebCore changes the layout of the Qt build directory as well,
+        which means we need to change where we look for these generated files.
+
+        * DerivedSources.pro:
+
 2011-01-07  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.
