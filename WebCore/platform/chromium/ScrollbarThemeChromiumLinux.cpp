@@ -61,7 +61,7 @@ void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar
     extraParams.scrollbarTrack.trackHeight = alignRect.height();
     ChromiumBridge::paintThemePart(
         gc,
-        scrollbar->orientation() == HorizontalScrollbar ? ChromiumBridge::PartScrollbarHoriztonalTrack : ChromiumBridge::PartScrollbarVerticalTrack,
+        scrollbar->orientation() == HorizontalScrollbar ? ChromiumBridge::PartScrollbarHorizontalTrack : ChromiumBridge::PartScrollbarVerticalTrack,
         state,
         rect,
         &extraParams);

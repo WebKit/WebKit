@@ -1,3 +1,18 @@
+2011-01-07  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Scrollbar code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=52073
+
+        Scrollbar code cleanup:
+        - Fix typo in Linux scrollbar enum name
+
+        * public/linux/WebThemeEngine.h:
+        * src/ChromiumBridge.cpp:
+        (WebCore::WebThemePart):
+        (WebCore::GetWebThemeExtraParams):
+
 2011-01-07  James Robinson  <jamesr@chromium.org>
 
         Revert "Implement mozilla's animationTime property"

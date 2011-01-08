@@ -277,7 +277,7 @@ namespace WebCore {
             PartScrollbarUpArrow,
             PartScrollbarHorizontalThumb,
             PartScrollbarVerticalThumb,
-            PartScrollbarHoriztonalTrack,
+            PartScrollbarHorizontalTrack,
             PartScrollbarVerticalTrack,
         };
 

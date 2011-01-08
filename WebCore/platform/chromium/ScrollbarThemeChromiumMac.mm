@@ -27,13 +27,8 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumMac.h"
 
-// FIXME: Remove this (always use WebThemeEngine) once we rebaseline tests
-#define USE_WEB_THEME_ENGINE_TO_PAINT_THUMB 1
-
-#if USE_WEB_THEME_ENGINE_TO_PAINT_THUMB
 #include "ChromiumBridge.h"
 #include "FrameView.h"
-#endif
 #include "ImageBuffer.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollView.h"
@@ -54,6 +49,7 @@ using namespace WebCore;
 // The only changes from ScrollbarThemeMac should be:
 // - The classname change from ScrollbarThemeMac to ScrollbarThemeChromiumMac.
 // - In paint() the code to paint the track, tickmarks, and thumb separately.
+// - In paint() the thumb is drawn via ChromeBridge/WebThemeEngine.
 //
 // For all other differences, if it was introduced in this file, then the
 // maintainer forgot to include it in the list; otherwise it is an update that
@@ -374,7 +370,6 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
     }
 }
 
-#if USE_WEB_THEME_ENGINE_TO_PAINT_THUMB
 static ChromiumBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar) {
     if (!scrollbar->enabled())
         return ChromiumBridge::StateDisabled;
@@ -385,7 +380,6 @@ static ChromiumBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scr
 
     return ChromiumBridge::StateActive;
 }
-#endif // USE_WEB_THEME_ENGINE_TO_PAINT_THUMB
 
 bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
@@ -469,7 +463,6 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     }
 
     if (hasThumb(scrollbar)) {
-#if USE_WEB_THEME_ENGINE_TO_PAINT_THUMB
         ChromiumBridge::ThemePaintScrollbarInfo scrollbarInfo;
         scrollbarInfo.orientation = scrollbar->orientation() == HorizontalScrollbar ? ChromiumBridge::ScrollbarOrientationHorizontal : ChromiumBridge::ScrollbarOrientationVertical;
         scrollbarInfo.parent = scrollbar->parent() && scrollbar->parent()->isFrameView() && static_cast<FrameView*>(scrollbar->parent())->isScrollViewScrollbar(scrollbar) ? ChromiumBridge::ScrollbarParentScrollView : ChromiumBridge::ScrollbarParentRenderLayer;
@@ -484,10 +477,6 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
             scrollbar->controlSize() == RegularScrollbar ? ChromiumBridge::SizeRegular : ChromiumBridge::SizeSmall,
             scrollbar->frameRect(),
             scrollbarInfo);
-#else
-        trackInfo.attributes |= (kThemeTrackShowThumb | kThemeTrackHideTrack);
-        HIThemeDrawTrack(&trackInfo, 0, drawingContext->platformContext(), kHIThemeOrientationNormal);
-#endif
     }
 
     if (!canDrawDirectly)

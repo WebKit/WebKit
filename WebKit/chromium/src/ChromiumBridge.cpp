@@ -803,7 +803,7 @@ static WebThemeEngine::Part WebThemePart(ChromiumBridge::ThemePart part)
     case ChromiumBridge::PartScrollbarUpArrow: return WebThemeEngine::PartScrollbarUpArrow;
     case ChromiumBridge::PartScrollbarHorizontalThumb: return WebThemeEngine::PartScrollbarHorizontalThumb;
     case ChromiumBridge::PartScrollbarVerticalThumb: return WebThemeEngine::PartScrollbarVerticalThumb;
-    case ChromiumBridge::PartScrollbarHoriztonalTrack: return WebThemeEngine::PartScrollbarHoriztonalTrack;
+    case ChromiumBridge::PartScrollbarHorizontalTrack: return WebThemeEngine::PartScrollbarHorizontalTrack;
     case ChromiumBridge::PartScrollbarVerticalTrack: return WebThemeEngine::PartScrollbarVerticalTrack;
     }
     ASSERT_NOT_REACHED();
@@ -824,7 +824,7 @@ static WebThemeEngine::State WebThemeState(ChromiumBridge::ThemePaintState state
 
 static void GetWebThemeExtraParams(ChromiumBridge::ThemePart part, ChromiumBridge::ThemePaintState state, const ChromiumBridge::ThemePaintExtraParams* extraParams, WebThemeEngine::ExtraParams* webThemeExtraParams)
 {
-    if (part == ChromiumBridge::PartScrollbarHoriztonalTrack || part == ChromiumBridge::PartScrollbarVerticalTrack) {
+    if (part == ChromiumBridge::PartScrollbarHorizontalTrack || part == ChromiumBridge::PartScrollbarVerticalTrack) {
         webThemeExtraParams->scrollbarTrack.trackX = extraParams->scrollbarTrack.trackX;
         webThemeExtraParams->scrollbarTrack.trackY = extraParams->scrollbarTrack.trackY;
         webThemeExtraParams->scrollbarTrack.trackWidth = extraParams->scrollbarTrack.trackWidth;

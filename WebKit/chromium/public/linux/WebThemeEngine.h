@@ -39,6 +39,9 @@ namespace WebKit {
 
 struct WebRect;
 
+// FIXME: Remove once webkit/glue/webthemeengine_impl_linux.c has been updated to use the correct spelling.
+#define PartScrollbarHoriztonalTrack PartScrollbarHorizontalTrack
+
 class WebThemeEngine {
 public:
     // The UI part which is being accessed.
@@ -49,7 +52,7 @@ public:
         PartScrollbarUpArrow,
         PartScrollbarHorizontalThumb,
         PartScrollbarVerticalThumb,
-        PartScrollbarHoriztonalTrack,
+        PartScrollbarHorizontalTrack,
         PartScrollbarVerticalTrack
     };
 
@@ -61,7 +64,7 @@ public:
         StatePressed,
     };
 
-    // Extra parameters for drawing the PartScrollbarHoriztonalTrack and
+    // Extra parameters for drawing the PartScrollbarHorizontalTrack and
     // PartScrollbarVerticalTrack.
     struct ScrollbarTrackExtraParams {
         // The bounds of the entire track, as opposed to the part being painted.

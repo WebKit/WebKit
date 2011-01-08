@@ -3081,8 +3081,6 @@
             'platform/mac/SSLKeyGeneratorMac.mm',
             'platform/mac/SchedulePairMac.mm',
             'platform/mac/ScrollViewMac.mm',
-            'platform/mac/ScrollbarThemeMac.h',
-            'platform/mac/ScrollbarThemeMac.mm',
             'platform/mac/SearchPopupMenuMac.h',
             'platform/mac/SearchPopupMenuMac.mm',
             'platform/mac/SharedBufferMac.mm',
