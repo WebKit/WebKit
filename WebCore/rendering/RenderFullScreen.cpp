@@ -35,8 +35,10 @@ using namespace WebCore;
 void RenderFullScreen::setAnimating(bool animating)
 {
     m_isAnimating = animating;
+#if ENABLE(ACCELERATED_COMPOSITING)
     if (layer())
         layer()->contentChanged(RenderLayer::FullScreenChanged);
+#endif
 }
 
 PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()

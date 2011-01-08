@@ -2750,6 +2750,8 @@ webcore_sources += \
 	WebCore/rendering/RenderFrame.h \
 	WebCore/rendering/RenderFrameSet.cpp \
 	WebCore/rendering/RenderFrameSet.h \
+	WebCore/rendering/RenderFullScreen.cpp \
+	WebCore/rendering/RenderFullScreen.h \
 	WebCore/rendering/RenderHTMLCanvas.cpp \
 	WebCore/rendering/RenderHTMLCanvas.h \
 	WebCore/rendering/RenderIFrame.cpp \
