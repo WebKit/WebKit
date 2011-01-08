@@ -1,3 +1,13 @@
+2011-01-08  Jeff Miller  <jeffm@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Fix QTMovieWin.vcproj to account for moving WebCore to Source\WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=52114
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        Add an extra .. to some InheritedPropertySheets entries since WebCore is now one level deeper.
+
 2011-01-08  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Mihai Parparita.
