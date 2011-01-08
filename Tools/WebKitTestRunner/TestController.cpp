@@ -280,6 +280,9 @@ bool TestController::resetStateToConsistentValues()
 {
     m_state = Resetting;
 
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("Reset"));
+    WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), 0);
+
     // FIXME: This function should also ensure that there is only one page open.
 
     // Reset preferences
@@ -353,6 +356,7 @@ void TestController::run()
                 break;
         }
     }
+
 }
 
 void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)

@@ -1,3 +1,18 @@
+2011-01-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make WebKitTestRunner rest between loads more robust to avoid test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=52086
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::notifyDone):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::run):
+
 2011-01-07  James Robinson  <jamesr@chromium.org>
 
         Revert "Implement mozilla's animationTime property"

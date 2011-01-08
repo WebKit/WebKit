@@ -128,6 +128,9 @@ void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messag
 
         beginTesting();
         return;
+    } else if (WKStringIsEqualToUTF8CString(messageName, "Reset")) {
+        m_state = Idle;
+        return;
     }
 
     WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));

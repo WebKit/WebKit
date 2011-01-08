@@ -129,6 +129,9 @@ void LayoutTestController::waitToDumpWatchdogTimerFired()
 
 void LayoutTestController::notifyDone()
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
     if (m_waitToDump && !InjectedBundle::shared().page()->isLoading())
         InjectedBundle::shared().page()->dump();
     m_waitToDump = false;
