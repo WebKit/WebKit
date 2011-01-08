@@ -2,6 +2,41 @@
 
         Reviewed by Mihai Parparita.
 
+        SVG rendering clean up according to the webkit style rules 2
+        https://bugs.webkit.org/show_bug.cgi?id=52112
+
+        Modified the style of the license of all files in WebCore/rendering/svg to match the style
+        in WebCore/svg. Cleaned up the code according to the webkit style rules.
+
+        No change of functionality. No test added.
+
+        * rendering/svg/RenderSVGInline.cpp:
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        * rendering/svg/RenderSVGPath.h:
+        * rendering/svg/RenderSVGTSpan.cpp:
+        * rendering/svg/RenderSVGTSpan.h:
+        * rendering/svg/RenderSVGText.cpp:
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/RenderSVGTextPath.cpp:
+        * rendering/svg/RenderSVGTextPath.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        * rendering/svg/SVGInlineFlowBox.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRootInlineBox.cpp:
+        * rendering/svg/SVGRootInlineBox.h:
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp: Brace was misplaced accoring to check-webkit-style.
+        (WebCore::SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle):
+        * rendering/svg/SVGTextQuery.cpp:
+        * rendering/svg/SVGTextQuery.h:
+
+2011-01-08  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
         SVG rendering clean up according to the webkit style rules
         https://bugs.webkit.org/show_bug.cgi?id=52107
 

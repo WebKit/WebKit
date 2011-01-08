@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #ifndef SVGInlineTextBox_h

@@ -1,6 +1,4 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
@@ -18,7 +16,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #ifndef RenderSVGTextPath_h

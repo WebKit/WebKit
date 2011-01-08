@@ -1,9 +1,7 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
- *           (C) 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2008 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,7 +17,6 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #ifndef RenderSVGInlineText_h

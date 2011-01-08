@@ -154,8 +154,7 @@ float SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle(bool isVertica
     ASSERT(style);
 
     switch (isVerticalText ? style->glyphOrientationVertical() : style->glyphOrientationHorizontal()) {
-    case GO_AUTO:
-    {
+    case GO_AUTO: {
         // Spec: Fullwidth ideographic and fullwidth Latin text will be set with a glyph-orientation of 0-degrees.
         // Text which is not fullwidth will be set with a glyph-orientation of 90-degrees.
         unsigned int unicodeRange = findCharUnicodeRange(character);
