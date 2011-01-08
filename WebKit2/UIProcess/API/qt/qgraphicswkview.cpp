@@ -222,9 +222,21 @@ QVariant QGraphicsWKView::itemChange(GraphicsItemChange change, const QVariant& 
 */
 bool QGraphicsWKView::event(QEvent* event)
 {
-    if (event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchUpdate) {
+    QEvent::Type eventType = event->type();
+    switch (eventType) {
+    case QEvent::TouchBegin:
+    case QEvent::TouchEnd:
+    case QEvent::TouchUpdate:
         touchEvent(static_cast<QTouchEvent*>(event));
         return true;
+    case QEvent::Show:
+        page()->d->page->drawingArea()->setPageIsVisible(true);
+        break;
+    case QEvent::Hide:
+        page()->d->page->drawingArea()->setPageIsVisible(false);
+        break;
+    default:
+        break;
     }
 
     // Here so that it can be reimplemented without breaking ABI.
