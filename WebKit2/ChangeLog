@@ -1,3 +1,79 @@
+2011-01-07  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/8649617> Migrate memory tracking from Safari to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=50799 Add Memory Sampler to WebKit
+        
+        Add a sampler for printing off process memory statistics.
+        This tool can track:
+                
+                WebCore
+                   - FastMalloc allocations bytes              (in use or committed)
+                JavaScriptCore
+                   - Garbage collector heap bytes              (in use or committed)
+                   - Stack bytes                               (committed only!)
+                   - JIT Code bytes                            (committed only!)
+                Malloc zones
+                   - In use bytes for the following zones:
+                       * Default zone                          (in use or committed)
+                       * DispCon zone                          (in use or committed)
+                       * Purgable zone                         (in use or committed)
+                Task Info
+                   - Resident size memory (RSIZE)
+        
+                Data collected is dumped to a temporary file.
+        
+        Create a sandbox for a temporary file.
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandleForTemporaryFile):
+        
+        Memory Sampler files
+        
+        * Shared/WebMemorySampler.cpp: Added.
+        (WebKit::WebMemorySampler::shared):
+        (WebKit::WebMemorySampler::WebMemorySampler):
+        (WebKit::WebMemorySampler::start):
+        (WebKit::WebMemorySampler::initializeTimers):
+        (WebKit::WebMemorySampler::stop):
+        (WebKit::WebMemorySampler::isRunning):
+        (WebKit::WebMemorySampler::initializeTempLogFile):
+        (WebKit::WebMemorySampler::initializeSandboxedLogFile):
+        (WebKit::WebMemorySampler::writeHeaders):
+        (WebKit::WebMemorySampler::sampleTimerFired):
+        (WebKit::WebMemorySampler::stopTimerFired):
+        (WebKit::WebMemorySampler::appendCurrentMemoryUsageToFile):
+        * Shared/WebMemorySampler.h: Added.
+        * Shared/mac/WebMemorySampler.mac.mm: Added.
+        (WebKit::WebMemorySampler::sampleSystemMalloc):
+        (WebKit::WebMemorySampler::sampleProcessCommittedBytes):
+        (WebKit::WebMemorySampler::processName):
+        (WebKit::WebMemorySampler::sampleWebKit):
+        
+        API to start and stop UIProcess and WebProcess sampling.
+        
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextStartMemorySampler):
+        (WKContextStopMemorySampler):
+        * UIProcess/API/C/WKContext.h:
+        
+        Send messages to WebProcess to start and stop memory sampling.
+        
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::processDidFinishLaunching):
+        (WebKit::WebContext::startMemorySampler):
+        (WebKit::WebContext::stopMemorySampler):
+        * UIProcess/WebContext.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::startMemorySampler):
+        (WebKit::WebProcess::stopMemorySampler):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2011-01-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -29,6 +29,7 @@
 #include "ImmutableArray.h"
 #include "InjectedBundleMessageKinds.h"
 #include "RunLoop.h"
+#include "SandboxExtension.h"
 #include "TextChecker.h"
 #include "WKContextPrivate.h"
 #include "WebContextMessageKinds.h"
@@ -36,12 +37,14 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxy.h"
 #include "WebPageGroup.h"
+#include "WebMemorySampler.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
+#include <wtf/CurrentTime.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -86,6 +89,8 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_cacheModel(CacheModelDocumentViewer)
     , m_clearResourceCachesForNewWebProcess(false)
     , m_clearApplicationCacheForNewWebProcess(false)
+    , m_memorySamplerEnabled(false)
+    , m_memorySamplerInterval(1400.0)
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
@@ -198,6 +203,17 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
     ASSERT_UNUSED(process, process == m_process);
 
     m_visitedLinkProvider.processDidFinishLaunching();
+    
+    // Sometimes the memorySampler gets initialized after process initialization has happened but before the process has finished launching
+    // so check if it needs to be started here
+    if(m_memorySamplerEnabled) {
+        SandboxExtension::Handle sampleLogSandboxHandle;        
+        double now = WTF::currentTime();
+        String sampleLogFilePath = String::format("WebProcess%llu", static_cast<uint64_t>(now));
+        sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::WriteOnly, sampleLogSandboxHandle);
+        
+        m_process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
+    }
 }
 
 void WebContext::processDidClose(WebProcessProxy* process)
@@ -531,6 +547,45 @@ void WebContext::clearApplicationCache()
     }
 
     m_process->send(Messages::WebProcess::ClearApplicationCache(), 0);
+}
+    
+void WebContext::startMemorySampler(const double interval)
+{    
+    // For new WebProcesses we will also want to start the Memory Sampler
+    m_memorySamplerEnabled = true;
+    m_memorySamplerInterval = interval;
+    
+    // For UIProcess
+#if ENABLE(MEMORY_SAMPLER)
+    WebMemorySampler::shared()->start(interval);
+#endif
+    
+    if (!hasValidProcess())
+        return;
+    
+    // For WebProcess
+    SandboxExtension::Handle sampleLogSandboxHandle;    
+    double now = WTF::currentTime();
+    String sampleLogFilePath = String::format("WebProcess%llu", static_cast<uint64_t>(now));
+    sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::WriteOnly, sampleLogSandboxHandle);
+    
+    m_process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, interval), 0);
+}
+
+void WebContext::stopMemorySampler()
+{    
+    // For WebProcess
+    m_memorySamplerEnabled = false;
+    
+    // For UIProcess
+#if ENABLE(MEMORY_SAMPLER)
+    WebMemorySampler::shared()->stop();
+#endif
+    
+    if (!hasValidProcess())
+        return;
+    
+    m_process->send(Messages::WebProcess::StopMemorySampler(), 0);
 }
 
 } // namespace WebKit

@@ -30,6 +30,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 typedef struct __WKSandboxExtension* WKSandboxExtensionRef;
@@ -69,6 +70,7 @@ public:
 
     static PassRefPtr<SandboxExtension> create(const Handle&);
     static void createHandle(const String& path, Type type, Handle&);
+    static String createHandleForTemporaryFile(const String& prefix, Type type, Handle&);
     ~SandboxExtension();
 
     bool invalidate();
@@ -90,6 +92,7 @@ inline void SandboxExtension::Handle::encode(CoreIPC::ArgumentEncoder*) const { 
 inline bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder*, Handle&) { return true; }
 inline PassRefPtr<SandboxExtension> SandboxExtension::create(const Handle&) { return 0; }
 inline void SandboxExtension::createHandle(const String& path, Type type, Handle&) { }
+inline String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type, Handle&) {return String();}
 inline SandboxExtension::~SandboxExtension() { }
 inline bool SandboxExtension::invalidate() { return true; }
 inline bool SandboxExtension::consume() { return true; }

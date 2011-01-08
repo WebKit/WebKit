@@ -46,6 +46,9 @@ messages -> WebProcess {
 
     ClearResourceCaches();
     ClearApplicationCache();
+    
+    void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, WTF::String sampleLogFilePath, double interval);
+    void StopMemorySampler();
 
     # Downloads. This should really be in a Download.messages.in, but it seemed unnecessary to create a new file just for
     # two messages.

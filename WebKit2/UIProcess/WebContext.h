@@ -110,6 +110,9 @@ public:
     CacheModel cacheModel() const { return m_cacheModel; }
     void clearResourceCaches();
     void clearApplicationCache();
+    
+    void startMemorySampler(const double interval);
+    void stopMemorySampler();
 
 #if PLATFORM(WIN)
     void setShouldPaintNativeControls(bool);
@@ -188,6 +191,9 @@ private:
 
     bool m_clearResourceCachesForNewWebProcess;
     bool m_clearApplicationCacheForNewWebProcess;
+    
+    bool m_memorySamplerEnabled;
+    double m_memorySamplerInterval;
 
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
 

@@ -31,10 +31,12 @@
 #include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "RunLoop.h"
+#include "SandboxExtension.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
 #include "WebFrame.h"
+#include "WebMemorySampler.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPlatformStrategies.h"
@@ -626,6 +628,20 @@ void WebProcess::downloadRequest(uint64_t downloadID, uint64_t initiatingPageID,
 void WebProcess::cancelDownload(uint64_t downloadID)
 {
     DownloadManager::shared().cancelDownload(downloadID);
+}
+
+void WebProcess::startMemorySampler(const SandboxExtension::Handle& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
+{
+#if ENABLE(MEMORY_SAMPLER)    
+    WebMemorySampler::shared()->start(sampleLogFileHandle, sampleLogFilePath, interval);
+#endif
+}
+    
+void WebProcess::stopMemorySampler()
+{
+#if ENABLE(MEMORY_SAMPLER)
+    WebMemorySampler::shared()->stop();
+#endif
 }
 
 void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)

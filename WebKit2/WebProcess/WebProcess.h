@@ -29,6 +29,7 @@
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DrawingArea.h"
+#include "SandboxExtension.h"
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
@@ -136,6 +137,9 @@ private:
     void clearResourceCaches();
     void platformClearResourceCaches();
     void clearApplicationCache();
+
+    void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
+    void stopMemorySampler();
 
     void downloadRequest(uint64_t downloadID, uint64_t initiatingPageID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);

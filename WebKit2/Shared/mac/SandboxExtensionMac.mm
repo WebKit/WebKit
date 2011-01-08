@@ -114,6 +114,30 @@ void SandboxExtension::createHandle(const String& path, Type type, Handle& handl
     NSString *standardizedPath = [(NSString *)path stringByStandardizingPath];
     handle.m_sandboxExtension = WKSandboxExtensionCreate([standardizedPath fileSystemRepresentation], wkSandboxExtensionType(type));
 }
+    
+String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type, Handle& handle)
+{
+    ASSERT(!handle.m_sandboxExtension);
+    
+    Vector<char> path(PATH_MAX);
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, path.data(), path.size()))
+        return String();
+    
+    // Shrink the vector.   
+    path.shrink(strlen(path.data()));
+    ASSERT(path.last() == '/');
+    
+    // Append the file name.    
+    path.append(prefix.utf8().data(), prefix.length());
+    path.append('\0');
+    
+    handle.m_sandboxExtension = WKSandboxExtensionCreate(fileSystemRepresentation(path.data()).data(), wkSandboxExtensionType(type));
+
+    if (!handle.m_sandboxExtension) {
+        return String();
+    }
+    return String(path.data());
+}
 
 SandboxExtension::SandboxExtension(const Handle& handle)
     : m_sandboxExtension(handle.m_sandboxExtension)

@@ -66,6 +66,10 @@ static const type& name() \
 
 #define ENABLE_PLUGIN_PROCESS 1
 
+#if PLATFORM(MAC)
+#define ENABLE_MEMORY_SAMPLER 1
+#endif
+
 #import <CoreGraphics/CoreGraphics.h>
 
 #ifdef __OBJC__

@@ -119,6 +119,9 @@ WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 
 WK_EXPORT void WKContextClearResourceCaches(WKContextRef context);
 WK_EXPORT void WKContextClearApplicationCache(WKContextRef context);
+    
+WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef interval);
+WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);
 
 WK_EXPORT WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef context);
 

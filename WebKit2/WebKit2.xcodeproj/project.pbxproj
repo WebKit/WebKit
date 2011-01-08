@@ -269,6 +269,9 @@
 		762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		909854EC12BC4E17000AD080 /* WebMemorySampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905620E812BC248B000799B6 /* WebMemorySampler.cpp */; };
+		909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 905620E912BC248B000799B6 /* WebMemorySampler.h */; };
+		909854EE12BC4E18000AD080 /* WebMemorySampler.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */; };
 		935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		935EEB9E127761AC003322B8 /* WKBundleBackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */; };
 		935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB961277616D003322B8 /* WKBundleBackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -955,6 +958,9 @@
 		762B7484120BBA2D00819339 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebMemorySampler.mac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		905620E812BC248B000799B6 /* WebMemorySampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMemorySampler.cpp; sourceTree = "<group>"; };
+		905620E912BC248B000799B6 /* WebMemorySampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMemorySampler.h; sourceTree = "<group>"; };
 		935EEB8F1277615D003322B8 /* InjectedBundleBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBackForwardList.cpp; sourceTree = "<group>"; };
 		935EEB901277615D003322B8 /* InjectedBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleBackForwardList.h; sourceTree = "<group>"; };
 		935EEB911277615D003322B8 /* InjectedBundleBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBackForwardListItem.cpp; sourceTree = "<group>"; };
@@ -1678,6 +1684,8 @@
 				BCCF6ABA12C91EF9008F9C35 /* WebImage.cpp */,
 				BCCF6ABB12C91EF9008F9C35 /* WebImage.h */,
 				C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */,
+				905620E812BC248B000799B6 /* WebMemorySampler.cpp */,
+				905620E912BC248B000799B6 /* WebMemorySampler.h */,
 				C0337DAF127A28D0008FF4F4 /* WebMouseEvent.cpp */,
 				BCF69F981176CED600471A52 /* WebNavigationDataStore.h */,
 				BC33DD671238464600360F3F /* WebNumber.h */,
@@ -2167,6 +2175,7 @@
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
+				905620E512BC2476000799B6 /* WebMemorySampler.mac.mm */,
 				BCE231C0122C466E00D5C35A /* WebURLRequestMac.mm */,
 				BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */,
 				1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */,
@@ -2844,6 +2853,7 @@
 				1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */,
 				BC858A2012C0357B00EDEB2E /* WebResourceLoadClient.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
+				909854ED12BC4E18000AD080 /* WebMemorySampler.h in Headers */,
 				1AA41AB512C02EC4002BE67B /* SelectionState.h in Headers */,
 				BCCF672D12C7EDF7008F9C35 /* OriginAndDatabases.h in Headers */,
 				BCCF6ABD12C91EF9008F9C35 /* WebImage.h in Headers */,
@@ -3281,6 +3291,8 @@
 				1A4A9C9A12B821CD008FE984 /* NetscapePluginModuleMac.mm in Sources */,
 				BC858A2112C0357B00EDEB2E /* WebResourceLoadClient.cpp in Sources */,
 				1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */,
+				909854EC12BC4E17000AD080 /* WebMemorySampler.cpp in Sources */,
+				909854EE12BC4E18000AD080 /* WebMemorySampler.mac.mm in Sources */,
 				BCCF673312C7F15C008F9C35 /* OriginAndDatabases.cpp in Sources */,
 				BCCF6ABC12C91EF9008F9C35 /* WebImage.cpp in Sources */,
 				BCCF6AC212C91F34008F9C35 /* WKImage.cpp in Sources */,
