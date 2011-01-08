@@ -2,6 +2,16 @@
 
         Unreviewed, test expectations.
 
+        Another baseline.
+        https://bugs.webkit.org/show_bug.cgi?id=52105
+
+        * platform/chromium-linux/fast/gradients/css3-repeating-linear-gradients-expected.checksum:
+        * platform/chromium-linux/fast/gradients/css3-repeating-linear-gradients-expected.png
+
+2011-01-07  Nico Weber  <thakis@chromium.org>
+
+        Unreviewed, test expectations.
+
         Many new baselines due to updated skia.
         https://bugs.webkit.org/show_bug.cgi?id=52105
 
