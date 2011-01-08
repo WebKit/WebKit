@@ -1,3 +1,12 @@
+2011-01-08  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        Remove failing expectations for tests that started to pass after
+        rebaselining in r75309.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-07  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -3081,27 +3081,6 @@ BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 
-// Pass on Snow Leopard but fail on Leopard, most likely due to stale
-// platform/mac baselines.
-BUG_MIHAIP MAC : fast/css/text-overflow-ellipsis-strict.html = IMAGE
-BUG_MIHAIP MAC : fast/invalid/residual-style.html = IMAGE
-BUG_MIHAIP MAC : fast/multicol/span/span-as-immediate-child-generated-content.html = IMAGE
-BUG_MIHAIP MAC : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE
-BUG_MIHAIP MAC : fast/multicol/span/span-as-immediate-columns-child-dynamic.html = IMAGE
-BUG_MIHAIP MAC : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE
-BUG_MIHAIP MAC : fast/table/027-vertical.html = IMAGE
-BUG_MIHAIP MAC : fast/table/028-vertical.html = IMAGE
-BUG_MIHAIP MAC : fast/table/038-vertical.html = IMAGE
-BUG_MIHAIP MAC : fast/table/040-vertical.html = IMAGE
-BUG_MIHAIP MAC : fast/table/border-collapsing/002-vertical.html = IMAGE
-BUG_MIHAIP MAC : fast/table/border-collapsing/equal-precedence-resolution-vertical.html = IMAGE
-BUG_MIHAIP MAC : fast/table/table-display-types-vertical.html = IMAGE
-BUG_MIHAIP MAC : fast/text/backslash-to-yen-sign-euc.html = IMAGE
-BUG_MIHAIP MAC : fast/text/international/bidi-neutral-run.html = IMAGE
-BUG_MIHAIP MAC : svg/custom/junk-data.svg = IMAGE
-BUG_MIHAIP MAC : svg/custom/missing-xlink.svg = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/other/wa_table_thtd_rowspan.html = IMAGE
-
 // Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
 // should now pass with upstream mac baselines).
 BUG_MIHAIP MAC : fast/forms/file-input-direction.html = IMAGE
