@@ -1,3 +1,9 @@
+2011-01-08  Adam Barth  <abarth@webkit.org>
+
+        Update Chromium DEPS to pickup new GYP files.
+
+        * DEPS:
+
 2011-01-07  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.
