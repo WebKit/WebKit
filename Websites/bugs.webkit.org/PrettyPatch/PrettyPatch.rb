@@ -133,10 +133,19 @@ h1 :hover {
     background-color: #eee;
 }
 
+.DiffLinks {
+    float: right;
+}
+
 .DiffSection {
     background-color: white;
     border: solid #ddd;
     border-width: 1px 0px;
+}
+
+.LineSide {
+    display:inline-block;
+    width:50%;
 }
 
 .lineNumber, .expansionLineNumber {
@@ -362,7 +371,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=18"></script>
+<script src="code-review.js?version=19"></script>
 EOF
 
     def self.revisionOrDescription(string)

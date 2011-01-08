@@ -1,5 +1,25 @@
 2011-01-06  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        side-by-side diffs in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52019
+
+        Support for conversion from the formatted diff to a side-by-side diff.
+        Maintains comments and new comments can be added.
+
+        The main architectural change is that Line elements are no longer necessarily
+        siblings. Each physical line is now in a LineContainer and LineContainers are
+        siblings. Each Line corresponds to a Line in the unified diff and has an id (e.g. line12).
+        A Line can be a LineContainer or a child of a LineContainer.
+
+        In this way, converting to side-by-side and, in the future, back to unified is non-lossy.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-06  Ojan Vafai  <ojan@chromium.org>
+
         Fix line context when replying to comments.
 
         * code-review.js:

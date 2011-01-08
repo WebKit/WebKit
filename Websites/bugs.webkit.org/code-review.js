@@ -64,6 +64,10 @@
   var original_file_contents = {};
   var patched_file_contents = {};
   var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
+  // FIXME: Serialize this to the URL fragment for permalinking goodness, e.g.,
+  // so the bug page can link directly to the side-by-side diff.
+  var url_fragment = {};
+  var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
 
   function idForLine(number) {
     return 'line' + number;
@@ -83,6 +87,10 @@
     this.id = nextLineID();
   }
 
+  function containerify() {
+    $(this).addClass('LineContainer');
+  }
+
   function hoverify() {
     $(this).hover(function() {
       $(this).addClass('hot');
@@ -94,6 +102,11 @@
 
   function diffSectionFrom(line) {
     return line.parents('.FileDiff');
+  }
+
+  function activeCommentFor(line) {
+    // Scope to the diffSection as a performance improvement.
+    return $('textarea[data-comment-for~="' + line[0].id + '"]', diffSectionFrom(line));
   }
 
   function previousCommentsFor(line) {
@@ -146,7 +159,8 @@
 
   function addPreviousComment(line, author, comment_text) {
     var line_id = line.attr('id');
-    var comment_block = $('<div data-comment-for="' + line_id + '" class="previousComment"></div>');    var author_block = $('<div class="author"></div>').text(author + ':');
+    var comment_block = $('<div data-comment-for="' + line_id + '" class="previousComment"></div>');
+    var author_block = $('<div class="author"></div>').text(author + ':');
     var text_block = $('<div class="content"></div>').text(comment_text);
     comment_block.append(author_block).append(text_block).each(hoverify).click(addCommentField);
     addDataCommentBaseLine(line, line_id);
@@ -298,7 +312,7 @@
   }
 
   function crawlDiff() {
-    $('.Line').each(idify).each(hoverify);
+    $('.Line').each(idify).each(hoverify).each(containerify);
     $('.FileDiff').each(function() {
       var file_name = $(this).children('h1').text();
       files[file_name] = this;
@@ -314,7 +328,7 @@
 
     // Don't show the links to expand upwards/downwards if the patch starts/ends without context
     // lines, i.e. starts/ends with add/remove lines.
-    var first_line = file_diff.querySelector('.Line');
+    var first_line = file_diff.querySelector('.LineContainer');
 
     // If there is no element with a "Line" class, then this is an image diff.
     if (!first_line)
@@ -328,7 +342,7 @@
 
     $('br').replaceWith(expandBarHtml(file_name));
 
-    var last_line = file_diff.querySelector('.Line:last-of-type');
+    var last_line = file_diff.querySelector('.LineContainer:last-of-type');
     // Some patches for new files somehow end up with an empty context line at the end
     // with a from line number of 0. Don't show expand links in that case either.
     if (!$(last_line).hasClass('add') && !$(last_line).hasClass('remove') && fromLineNumber(last_line) != 0)
@@ -363,25 +377,19 @@
         (amount ? amount + " " : "") + direction + "</a>";
   }
 
-  function handleExpandLinkClick(target) {
-    var expand_bar = $(target).parents('.ExpandBar');
+  function handleExpandLinkClick() {
+    var expand_bar = $(this).parents('.ExpandBar');
     var file_name = expand_bar.parents('.FileDiff').children('h1')[0].textContent;
-    var expand_function = partial(expand, expand_bar[0], file_name, target.getAttribute('data-direction'), Number(target.getAttribute('data-amount')));
+    var expand_function = partial(expand, expand_bar[0], file_name, this.getAttribute('data-direction'), Number(this.getAttribute('data-amount')));
     if (file_name in original_file_contents)
       expand_function();
     else
       getWebKitSourceFile(file_name, expand_function, expand_bar);
-  };
+  }
 
-  $(window).bind('click', function (e) {
-    var target = e.target;
-
-    switch(target.className) {
-    case 'ExpandLink':
-      handleExpandLinkClick(target);
-      break;
-    }
-  });
+  function handleSideBySideLinkClick() {
+    $('.FileDiff').each(sideBySideify);
+  }
 
   function getWebKitSourceFile(file_name, onLoad, expand_bar) {
     function handleLoad(contents) {
@@ -431,7 +439,7 @@
     var above_last_line = above_expansion.querySelector('.ExpansionLine:last-of-type');
     if (!above_last_line) {
       var diff_section = expand_bar.previousElementSibling;
-      above_last_line = diff_section.querySelector('.Line:last-of-type');
+      above_last_line = diff_section.querySelector('.LineContainer:last-of-type');
     }
 
     var above_last_line_num, above_last_from_line_num;
@@ -445,7 +453,7 @@
     if (!below_first_line) {
       var diff_section = expand_bar.nextElementSibling;
       if (diff_section)
-        below_first_line = diff_section.querySelector('.Line');
+        below_first_line = diff_section.querySelector('.LineContainer');
     }
 
     var below_first_line_num, below_first_from_line_num;
@@ -484,17 +492,60 @@
     insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num);
   }
 
+  function unifiedDiffExpansionLine(line_number, contents) {
+    var line = $('<div class="ExpansionLine">' +
+        '<span class="from expansionlineNumber">' + line_number +
+        '</span><span class="to expansionlineNumber">' + line_number +
+        '</span> <span class="text"></span>' +
+        '</div>');
+    // Use text instead of innerHTML to avoid evaluting HTML.
+    $('.text', line).text(contents);
+    return line;
+  }
+
+  function sideBySideDiffExpansionLine(line_number, contents) {
+    var line = $('<div class="ExpansionLine"></div>');
+    line.append(lineSide('from', contents, true, line_number));
+    line.append(lineSide('to', contents, true, line_number));
+    return line;
+  }
+
+  function lineSide(side, contents, is_expansion_line, opt_line_number, opt_attributes, opt_class) {
+    var class_name = '';
+    if (opt_attributes || opt_class) {
+      class_name = 'class="';
+      if (opt_attributes)
+        class_name += is_expansion_line ? 'ExpansionLine' : 'Line';
+      class_name += ' ' + (opt_class || '') + '"';
+    }
+
+    var attributes = opt_attributes || '';
+
+    var line_side = $('<div class="LineSide">' +
+        '<div ' + attributes + ' ' + class_name + '>' +
+          '<span class="' + side + ' ' + (is_expansion_line ? 'expansionLineNumber' : 'lineNumber') + '">' +
+              (opt_line_number || '&nbsp;') +
+          '</span>' +
+          '<span class="text"></span>' +
+        '</div>' +
+        '</div>');
+
+    // Use text instead of innerHTML to avoid evaluting HTML.
+    $('.text', line_side).text(contents);
+    return line_side;
+  }
+
   function insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num) {
     var fragment = document.createDocumentFragment();
+    var file_diff_index = $('.FileDiff').index(files[file_name]);
+    var is_side_by_side = isDiffSideBySide(file_diff_index);
+
     for (var i = 0; i < end_line_num - start_line_num; i++) {
-      var line = document.createElement('div');
-      line.className = 'ExpansionLine';
       // FIXME: from line numbers are wrong
-      line.innerHTML = '<span class="from expansionlineNumber">' + (start_from_line_num + i + 1) +
-          '</span><span class="to expansionlineNumber">' + (start_line_num + i + 1) +
-          '</span> <span class="text"></span>';
-      line.querySelector('.text').textContent = patched_file_contents[file_name][start_line_num + i];
-      fragment.appendChild(line);
+      var line_number = start_from_line_num + i + 1;
+      var contents = patched_file_contents[file_name][start_line_num + i];
+      var line = is_side_by_side ? sideBySideDiffExpansionLine(line_number, contents) : unifiedDiffExpansionLine(line_number, contents);
+      fragment.appendChild(line[0]);
     }
 
     if (direction == BELOW)
@@ -541,7 +592,9 @@
   }
 
   function textContentsFor(line) {
-    return $('.text', line).text();
+    // Just get the first match since a side-by-side diff has two lines with text inside them for
+    // unmodified lines in the diff.
+    return $('.text', line).first().text();
   }
 
   function lineNumberForFirstNonContextLine(patched_file, line, prev_line, context, hunk_num) {
@@ -625,7 +678,14 @@
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
-    $(document.body).prepend('<div id="message"><div class="help">Select line numbers to add a comment.</div><div class="commentStatus"></div></div>');
+    $(document.body).prepend('<div id="message">' +
+        '<div class="help">Select line numbers to add a comment.' +
+          '<div class="DiffLinks">' +
+            '<a href="javascript:" class="side-by-side-link">side-by-side</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="commentStatus"></div>' +
+        '</div>');
     $(document.body).append('<div id="toolbar">' +
         '<div class="overallComments">' +
             '<textarea placeholder="Overall comments"></textarea>' +
@@ -654,6 +714,109 @@
     updateToolbarAnchorState();
   });
 
+  function isDiffSideBySide(file_diff_index) {
+    if (!url_fragment[SIDE_BY_SIDE_DIFFS_KEY])
+      url_fragment[SIDE_BY_SIDE_DIFFS_KEY] = [];
+    return url_fragment[SIDE_BY_SIDE_DIFFS_KEY].indexOf(file_diff_index) != -1;
+  }
+
+  function sideBySideify(file_diff_index) {
+    if (isDiffSideBySide(file_diff_index))
+      return;
+
+    url_fragment[SIDE_BY_SIDE_DIFFS_KEY].push(file_diff_index);
+
+    $('.Line', this).each(sideBySideifyLine);
+    $('.ExpansionLine', this).each(sideBySideifyExpansionLine);
+  }
+
+  // FIXME: Put removed lines to the left of their corresponding added lines.
+  // FIXME: Provide a way to go back to the unified diff.
+  // FIXME: Allow for converting an individual file to side-by-side.
+  function sideBySideifyLine() {
+    var from = fromLineNumber(this);
+    var to = toLineNumber(this);
+    var contents = textContentsFor(this);
+
+    var classParts = this.className.split(' ');
+    var classBuffer = [];
+    for (var i = 0; i < classParts.length; i++) {
+      var part = classParts[i];
+      if (part != 'LineContainer' && part != 'Line')
+        classBuffer.push(part);
+    }
+    var classNames = classBuffer.join(' ');
+
+    var id = this.id;
+    var attributesBuffer = ['id=' + id];
+    // Make sure to keep all data- attributes.
+    $(this.attributes).each(function() {
+      if (this.name.indexOf('data-') == 0)
+        attributesBuffer.push(this.name + '=' + this.value);
+    });
+    var attributes = attributesBuffer.join(' ');
+
+    var from_class = '';
+    var to_class = '';
+    var from_attributes = '';
+    var to_attributes = '';
+    var from_contents = contents;
+    var to_contents = contents;
+
+    if (from && !to) { // This is a remove line.
+      from_class = classNames;
+      from_attributes = attributes;
+      to_contents = '';
+    } else if (to && !from) { // This is an add line.
+      to_class = classNames;
+      to_attributes = attributes;
+      from_contents = '';
+    }
+
+    var container_class = 'LineContainer';
+    var container_attributes = '';
+    if (!to_attributes && !from_attributes) {
+      container_attributes = attributes;
+      container_class += ' Line ' + classNames;
+    }
+
+    var new_line = $('<div ' + container_attributes + ' class="' + container_class + '"></div>');
+    new_line.append(lineSide('from', from_contents, false, from, from_attributes, from_class));
+    new_line.append(lineSide('to', to_contents, false, to, to_attributes, to_class));
+
+    $(this).replaceWith(new_line);
+    tranferCommentsFor($(document.getElementById(id)));
+  }
+
+  function sideBySideifyExpansionLine() {
+    var contents = textContentsFor(this);
+    var line_number = fromLineNumber(this);
+    var new_line = sideBySideDiffExpansionLine(line_number, contents);
+    $(this).replaceWith(new_line);
+  }
+
+  function tranferCommentsFor(line) {
+    var fragment = document.createDocumentFragment();
+
+    previousCommentsFor(line).each(function() {
+      fragment.appendChild(this);
+    });
+
+    var active_comments = activeCommentFor(line);
+    var num_active_comments = active_comments.size();
+    if (num_active_comments > 0) {
+      if (num_active_comments > 1)
+        console.log('ERROR: There is more than one active comment for ' + line.attr('id') + '.');
+
+      var parent = active_comments[0].parentNode;
+      var frozenComment = parent.nextSibling;
+      fragment.appendChild(parent);
+      fragment.appendChild(frozenComment);
+    }
+
+    line.after(fragment);
+  }
+
   function discardComment() {
     var line_id = $(this).parentsUntil('.comment').parent().find('textarea').attr('data-comment-for');
     var line = $('#' + line_id)
@@ -669,7 +832,10 @@
     $(this).remove();
   }
 
+  $('.side-by-side-link').live('click', handleSideBySideLinkClick);
+  $('.ExpandLink').live('click', handleExpandLinkClick);
   $('.comment .discard').live('click', discardComment);
+  $('.frozenComment').live('click', unfreezeComment);
 
   $('.comment .ok').live('click', function() {
     var comment_textarea = $(this).parentsUntil('.comment').parent().find('textarea');
@@ -681,8 +847,6 @@
     var line = $('#' + line_id)
     findCommentBlockFor(line).hide().after($('<div class="frozenComment"></div>').text(comment_textarea.val()));
   });
-
-  $('.frozenComment').live('click', unfreezeComment);
 
   function focusOn(comment) {
     $('.focused').removeClass('focused');
@@ -767,7 +931,7 @@
     event.preventDefault();
   });
 
-  $('.Line').live('mouseenter', function() {
+  $('.LineContainer').live('mouseenter', function() {
     if (!in_drag_select)
       return;
 
