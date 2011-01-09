@@ -57,6 +57,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/plugins \
 	-I$(srcdir)/Source/WebCore/plugins/win \
 	-I$(srcdir)/Source/WebCore/rendering \
+	-I$(srcdir)/Source/WebCore/rendering/mathml \
 	-I$(srcdir)/Source/WebCore/rendering/style \
 	-I$(srcdir)/Source/WebCore/rendering/svg \
 	-I$(srcdir)/Source/WebCore/storage \
@@ -2126,26 +2127,6 @@ webcore_sources += \
 	Source/WebCore/mathml/MathMLMathElement.h \
 	Source/WebCore/mathml/MathMLTextElement.cpp \
 	Source/WebCore/mathml/MathMLTextElement.h \
-	Source/WebCore/mathml/RenderMathMLBlock.cpp \
-	Source/WebCore/mathml/RenderMathMLBlock.h \
-	Source/WebCore/mathml/RenderMathMLFenced.cpp \
-	Source/WebCore/mathml/RenderMathMLFenced.h \
-	Source/WebCore/mathml/RenderMathMLFraction.cpp \
-	Source/WebCore/mathml/RenderMathMLFraction.h \
-	Source/WebCore/mathml/RenderMathMLMath.cpp \
-	Source/WebCore/mathml/RenderMathMLMath.h \
-	Source/WebCore/mathml/RenderMathMLOperator.cpp \
-	Source/WebCore/mathml/RenderMathMLOperator.h \
-	Source/WebCore/mathml/RenderMathMLRoot.cpp \
-	Source/WebCore/mathml/RenderMathMLRoot.h \
-	Source/WebCore/mathml/RenderMathMLRow.cpp \
-	Source/WebCore/mathml/RenderMathMLRow.h \
-	Source/WebCore/mathml/RenderMathMLSquareRoot.cpp \
-	Source/WebCore/mathml/RenderMathMLSquareRoot.h \
-	Source/WebCore/mathml/RenderMathMLSubSup.cpp \
-	Source/WebCore/mathml/RenderMathMLSubSup.h \
-	Source/WebCore/mathml/RenderMathMLUnderOver.cpp \
-	Source/WebCore/mathml/RenderMathMLUnderOver.h \
 	Source/WebCore/notifications/NotificationCenter.cpp \
 	Source/WebCore/notifications/NotificationCenter.h \
 	Source/WebCore/notifications/NotificationContents.h \
@@ -2860,6 +2841,26 @@ webcore_sources += \
 	Source/WebCore/rendering/ShadowElement.cpp \
 	Source/WebCore/rendering/ShadowElement.h \
 	Source/WebCore/rendering/VerticalPositionCache.h \
+	Source/WebCore/rendering/mathml/RenderMathMLBlock.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLBlock.h \
+	Source/WebCore/rendering/mathml/RenderMathMLFenced.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLFenced.h \
+	Source/WebCore/rendering/mathml/RenderMathMLFraction.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLFraction.h \
+	Source/WebCore/rendering/mathml/RenderMathMLMath.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLMath.h \
+	Source/WebCore/rendering/mathml/RenderMathMLOperator.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLOperator.h \
+	Source/WebCore/rendering/mathml/RenderMathMLRoot.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLRoot.h \
+	Source/WebCore/rendering/mathml/RenderMathMLRow.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLRow.h \
+	Source/WebCore/rendering/mathml/RenderMathMLSquareRoot.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLSquareRoot.h \
+	Source/WebCore/rendering/mathml/RenderMathMLSubSup.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLSubSup.h \
+	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.cpp \
+	Source/WebCore/rendering/mathml/RenderMathMLUnderOver.h \
 	Source/WebCore/rendering/style/BorderData.h \
 	Source/WebCore/rendering/style/BorderValue.h \
 	Source/WebCore/rendering/style/CollapsedBorderValue.h \

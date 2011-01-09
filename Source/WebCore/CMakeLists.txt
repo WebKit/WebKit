@@ -49,6 +49,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/text/transcoder"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
+    "${WEBCORE_DIR}/rendering/mathml"
     "${WEBCORE_DIR}/rendering/style"
     "${WEBCORE_DIR}/rendering/svg"
     "${WEBCORE_DIR}/storage"
@@ -1688,16 +1689,16 @@ IF (ENABLE_MATHML)
         mathml/MathMLInlineContainerElement.cpp
         mathml/MathMLMathElement.cpp
         mathml/MathMLTextElement.cpp
-        mathml/RenderMathMLBlock.cpp
-        mathml/RenderMathMLFenced.cpp
-        mathml/RenderMathMLFraction.cpp
-        mathml/RenderMathMLMath.cpp
-        mathml/RenderMathMLOperator.cpp
-        mathml/RenderMathMLRoot.cpp
-        mathml/RenderMathMLRow.cpp
-        mathml/RenderMathMLSquareRoot.cpp
-        mathml/RenderMathMLSubSup.cpp
-        mathml/RenderMathMLUnderOver.cpp
+        rendering/mathml/RenderMathMLBlock.cpp
+        rendering/mathml/RenderMathMLFenced.cpp
+        rendering/mathml/RenderMathMLFraction.cpp
+        rendering/mathml/RenderMathMLMath.cpp
+        rendering/mathml/RenderMathMLOperator.cpp
+        rendering/mathml/RenderMathMLRoot.cpp
+        rendering/mathml/RenderMathMLRow.cpp
+        rendering/mathml/RenderMathMLSquareRoot.cpp
+        rendering/mathml/RenderMathMLSubSup.cpp
+        rendering/mathml/RenderMathMLUnderOver.cpp
     )
 ENDIF ()
 

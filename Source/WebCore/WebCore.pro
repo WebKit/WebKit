@@ -262,6 +262,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/platform/text/transcoder \
     $$PWD/plugins \
     $$PWD/rendering \
+    $$PWD/rendering/mathml \
     $$PWD/rendering/style \
     $$PWD/rendering/svg \
     $$PWD/storage \
@@ -2000,16 +2001,6 @@ HEADERS += \
     mathml/MathMLInlineContainerElement.h \
     mathml/MathMLMathElement.h \
     mathml/MathMLTextElement.h \
-    mathml/RenderMathMLBlock.h \
-    mathml/RenderMathMLFenced.h \
-    mathml/RenderMathMLFraction.h \
-    mathml/RenderMathMLMath.h \
-    mathml/RenderMathMLOperator.h \
-    mathml/RenderMathMLRoot.h \
-    mathml/RenderMathMLRow.h \
-    mathml/RenderMathMLSquareRoot.h \
-    mathml/RenderMathMLSubSup.h \
-    mathml/RenderMathMLUnderOver.h \
     notifications/Notification.h \
     notifications/NotificationCenter.h \
     notifications/NotificationPresenter.h \
@@ -2248,6 +2239,16 @@ HEADERS += \
     rendering/InlineFlowBox.h \
     rendering/InlineTextBox.h \
     rendering/LayoutState.h \
+    rendering/mathml/RenderMathMLBlock.h \
+    rendering/mathml/RenderMathMLFenced.h \
+    rendering/mathml/RenderMathMLFraction.h \
+    rendering/mathml/RenderMathMLMath.h \
+    rendering/mathml/RenderMathMLOperator.h \
+    rendering/mathml/RenderMathMLRoot.h \
+    rendering/mathml/RenderMathMLRow.h \
+    rendering/mathml/RenderMathMLSquareRoot.h \
+    rendering/mathml/RenderMathMLSubSup.h \
+    rendering/mathml/RenderMathMLUnderOver.h \
     rendering/MediaControlElements.h \
     rendering/PaintInfo.h \
     rendering/PaintPhase.h \
@@ -3345,16 +3346,16 @@ contains(DEFINES, ENABLE_MATHML=1) {
         mathml/MathMLInlineContainerElement.cpp \
         mathml/MathMLMathElement.cpp \
         mathml/MathMLTextElement.cpp \
-        mathml/RenderMathMLBlock.cpp \
-        mathml/RenderMathMLFenced.cpp \
-        mathml/RenderMathMLFraction.cpp \
-        mathml/RenderMathMLMath.cpp \
-        mathml/RenderMathMLOperator.cpp \
-        mathml/RenderMathMLRoot.cpp \
-        mathml/RenderMathMLRow.cpp \
-        mathml/RenderMathMLSquareRoot.cpp \
-        mathml/RenderMathMLSubSup.cpp \
-        mathml/RenderMathMLUnderOver.cpp
+        rendering/mathml/RenderMathMLBlock.cpp \
+        rendering/mathml/RenderMathMLFenced.cpp \
+        rendering/mathml/RenderMathMLFraction.cpp \
+        rendering/mathml/RenderMathMLMath.cpp \
+        rendering/mathml/RenderMathMLOperator.cpp \
+        rendering/mathml/RenderMathMLRoot.cpp \
+        rendering/mathml/RenderMathMLRow.cpp \
+        rendering/mathml/RenderMathMLSquareRoot.cpp \
+        rendering/mathml/RenderMathMLSubSup.cpp \
+        rendering/mathml/RenderMathMLUnderOver.cpp
 }
 
 contains(DEFINES, ENABLE_WML=1) {

@@ -1,3 +1,62 @@
+2011-01-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Rob Buis.
+
+        Move MathML renderer to rendering/mathml
+        https://bugs.webkit.org/show_bug.cgi?id=52131
+
+        Move all renderer of MathML to WebCore/rendering/mathml
+
+        No change of functionality, no new tests added.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * mathml/RenderMathMLBlock.cpp: Removed.
+        * mathml/RenderMathMLBlock.h: Removed.
+        * mathml/RenderMathMLFenced.cpp: Removed.
+        * mathml/RenderMathMLFenced.h: Removed.
+        * mathml/RenderMathMLFraction.cpp: Removed.
+        * mathml/RenderMathMLFraction.h: Removed.
+        * mathml/RenderMathMLMath.cpp: Removed.
+        * mathml/RenderMathMLMath.h: Removed.
+        * mathml/RenderMathMLOperator.cpp: Removed.
+        * mathml/RenderMathMLOperator.h: Removed.
+        * mathml/RenderMathMLRoot.cpp: Removed.
+        * mathml/RenderMathMLRoot.h: Removed.
+        * mathml/RenderMathMLRow.cpp: Removed.
+        * mathml/RenderMathMLRow.h: Removed.
+        * mathml/RenderMathMLSquareRoot.cpp: Removed.
+        * mathml/RenderMathMLSquareRoot.h: Removed.
+        * mathml/RenderMathMLSubSup.cpp: Removed.
+        * mathml/RenderMathMLSubSup.h: Removed.
+        * mathml/RenderMathMLUnderOver.cpp: Removed.
+        * mathml/RenderMathMLUnderOver.h: Removed.
+        * rendering/mathml: Added.
+        * rendering/mathml/RenderMathMLBlock.cpp: Copied from Source/WebCore/mathml/RenderMathMLBlock.cpp.
+        * rendering/mathml/RenderMathMLBlock.h: Copied from Source/WebCore/mathml/RenderMathMLBlock.h.
+        * rendering/mathml/RenderMathMLFenced.cpp: Copied from Source/WebCore/mathml/RenderMathMLFenced.cpp.
+        * rendering/mathml/RenderMathMLFenced.h: Copied from Source/WebCore/mathml/RenderMathMLFenced.h.
+        * rendering/mathml/RenderMathMLFraction.cpp: Copied from Source/WebCore/mathml/RenderMathMLFraction.cpp.
+        * rendering/mathml/RenderMathMLFraction.h: Copied from Source/WebCore/mathml/RenderMathMLFraction.h.
+        * rendering/mathml/RenderMathMLMath.cpp: Copied from Source/WebCore/mathml/RenderMathMLMath.cpp.
+        * rendering/mathml/RenderMathMLMath.h: Copied from Source/WebCore/mathml/RenderMathMLMath.h.
+        * rendering/mathml/RenderMathMLOperator.cpp: Copied from Source/WebCore/mathml/RenderMathMLOperator.cpp.
+        * rendering/mathml/RenderMathMLOperator.h: Copied from Source/WebCore/mathml/RenderMathMLOperator.h.
+        * rendering/mathml/RenderMathMLRoot.cpp: Copied from Source/WebCore/mathml/RenderMathMLRoot.cpp.
+        * rendering/mathml/RenderMathMLRoot.h: Copied from Source/WebCore/mathml/RenderMathMLRoot.h.
+        * rendering/mathml/RenderMathMLRow.cpp: Copied from Source/WebCore/mathml/RenderMathMLRow.cpp.
+        * rendering/mathml/RenderMathMLRow.h: Copied from Source/WebCore/mathml/RenderMathMLRow.h.
+        * rendering/mathml/RenderMathMLSquareRoot.cpp: Copied from Source/WebCore/mathml/RenderMathMLSquareRoot.cpp.
+        * rendering/mathml/RenderMathMLSquareRoot.h: Copied from Source/WebCore/mathml/RenderMathMLSquareRoot.h.
+        * rendering/mathml/RenderMathMLSubSup.cpp: Copied from Source/WebCore/mathml/RenderMathMLSubSup.cpp.
+        * rendering/mathml/RenderMathMLSubSup.h: Copied from Source/WebCore/mathml/RenderMathMLSubSup.h.
+        * rendering/mathml/RenderMathMLUnderOver.cpp: Copied from Source/WebCore/mathml/RenderMathMLUnderOver.cpp.
+        * rendering/mathml/RenderMathMLUnderOver.h: Copied from Source/WebCore/mathml/RenderMathMLUnderOver.h.
+
 2011-01-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Alexey Proskuryakov.
