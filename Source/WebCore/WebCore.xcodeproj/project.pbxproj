@@ -63,7 +63,6 @@
 		0804BF6E0EE09C3B0006C000 /* WMLDoElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0804BF6C0EE09C3B0006C000 /* WMLDoElement.cpp */; };
 		0804BF6F0EE09C3B0006C000 /* WMLDoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0804BF6D0EE09C3B0006C000 /* WMLDoElement.h */; };
 		0806E57A12893045007CED32 /* SVGMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0806E57912893045007CED32 /* SVGMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		08082373117987C100241DE8 /* RenderSVGResourceContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 08082372117987C100241DE8 /* RenderSVGResourceContainer.h */; };
 		080AEC810ED8708B00DF4CCE /* WMLIntrinsicEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080AEC7D0ED8708A00DF4CCE /* WMLIntrinsicEvent.cpp */; };
 		080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */; };
 		080AEC830ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */; };
@@ -97,10 +96,6 @@
 		0823D159127AD6AC000EBC95 /* SVGAnimatedInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 0823D158127AD6AC000EBC95 /* SVGAnimatedInteger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08250939128BD4D800E2ED8E /* SVGAnimatedTransformList.h in Headers */ = {isa = PBXBuildFile; fileRef = 08250938128BD4D800E2ED8E /* SVGAnimatedTransformList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		082DE42D1292621600D923DF /* SVGPathSegWithContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 082DE42C1292621600D923DF /* SVGPathSegWithContext.h */; };
-		083192AA112B43050083C3B9 /* RenderSVGResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 083192A7112B43050083C3B9 /* RenderSVGResource.h */; };
-		083192AB112B43050083C3B9 /* RenderSVGResourceMasker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083192A8112B43050083C3B9 /* RenderSVGResourceMasker.cpp */; };
-		083192AC112B43050083C3B9 /* RenderSVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = 083192A9112B43050083C3B9 /* RenderSVGResourceMasker.h */; };
-		08385FF610F0186000BFE07B /* SVGMarkerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 08385FF510F0186000BFE07B /* SVGMarkerData.h */; };
 		0839476C0ECE4BD600027350 /* WMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */; };
 		0839476D0ECE4BD600027350 /* WMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 08FB84B10ECE373300DC064E /* WMLElementFactory.h */; };
 		083DAEA60F01A7FB00342754 /* RenderTextControlMultiLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083DAEA20F01A7FB00342754 /* RenderTextControlMultiLine.cpp */; };
@@ -114,10 +109,6 @@
 		084CE5CC0F27DADC00E6240E /* WMLOptGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084CE5C80F27DADC00E6240E /* WMLOptGroupElement.h */; };
 		084CE5CD0F27DADC00E6240E /* WMLOptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084CE5C90F27DADC00E6240E /* WMLOptionElement.cpp */; };
 		084CE5CE0F27DADC00E6240E /* WMLOptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 084CE5CA0F27DADC00E6240E /* WMLOptionElement.h */; };
-		084D0E3C11F5816100081E1A /* SVGResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084D0E3811F5816100081E1A /* SVGResources.cpp */; };
-		084D0E3D11F5816100081E1A /* SVGResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 084D0E3911F5816100081E1A /* SVGResources.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		084D0E3E11F5816100081E1A /* SVGResourcesCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084D0E3A11F5816100081E1A /* SVGResourcesCache.cpp */; };
-		084D0E3F11F5816100081E1A /* SVGResourcesCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 084D0E3B11F5816100081E1A /* SVGResourcesCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		084DB59B128008CC002A6D64 /* SVGAnimatedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DB59A128008CC002A6D64 /* SVGAnimatedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		084DBAA10ED39D360038C226 /* WMLVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 084DBA9D0ED39D350038C226 /* WMLVariables.cpp */; };
 		084DBAA20ED39D360038C226 /* WMLVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 084DBA9E0ED39D360038C226 /* WMLVariables.h */; };
@@ -140,30 +131,22 @@
 		0854B0231255E4E600B9CDD0 /* SVGRootInlineBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0854B0111255E4E600B9CDD0 /* SVGRootInlineBox.h */; };
 		0854B0241255E4E600B9CDD0 /* SVGTextQuery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0854B0121255E4E600B9CDD0 /* SVGTextQuery.cpp */; };
 		0854B0251255E4E600B9CDD0 /* SVGTextQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0854B0131255E4E600B9CDD0 /* SVGTextQuery.h */; };
-		08563BB4117861780012B578 /* RenderSVGResourcePattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08563BB2117861770012B578 /* RenderSVGResourcePattern.cpp */; };
-		08563BB5117861780012B578 /* RenderSVGResourcePattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 08563BB3117861770012B578 /* RenderSVGResourcePattern.h */; };
-		08563BD0117865F50012B578 /* RenderSVGResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08563BCF117865F50012B578 /* RenderSVGResource.cpp */; };
 		085797091278394C00A8EC5F /* SVGAnimatedBoolean.h in Headers */ = {isa = PBXBuildFile; fileRef = 085797081278394C00A8EC5F /* SVGAnimatedBoolean.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08591AA50F085C4E009BACB1 /* InputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08591AA40F085C4E009BACB1 /* InputElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		085A15931289A8DD002710E3 /* SVGAnimatedTransformListPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 085A15921289A8DD002710E3 /* SVGAnimatedTransformListPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		085AFDC80F2977350061F2B3 /* WMLFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085AFDC60F2977350061F2B3 /* WMLFormControlElement.cpp */; };
 		085AFDC90F2977350061F2B3 /* WMLFormControlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 085AFDC70F2977350061F2B3 /* WMLFormControlElement.h */; settings = {ATTRIBUTES = (); }; };
-		085B05C211FAE16C004D65F6 /* SVGResourcesCycleSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085B05C011FAE16C004D65F6 /* SVGResourcesCycleSolver.cpp */; };
-		085B05C311FAE16C004D65F6 /* SVGResourcesCycleSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 085B05C111FAE16C004D65F6 /* SVGResourcesCycleSolver.h */; };
 		085B92BA0EFDE73D00E6123C /* FormDataBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 085B92B80EFDE73D00E6123C /* FormDataBuilder.cpp */; };
 		085B92BB0EFDE73D00E6123C /* FormDataBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 085B92B90EFDE73D00E6123C /* FormDataBuilder.h */; settings = {ATTRIBUTES = (); }; };
 		08641D4712142F7D008DE9F6 /* RenderImageResourceStyleImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08641D4512142F7D008DE9F6 /* RenderImageResourceStyleImage.cpp */; };
 		08641D4812142F7D008DE9F6 /* RenderImageResourceStyleImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 08641D4612142F7D008DE9F6 /* RenderImageResourceStyleImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0865CCE60EDDF51B00DF9EC3 /* WMLNoopElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0865CCE40EDDF51B00DF9EC3 /* WMLNoopElement.cpp */; };
 		0865CCE70EDDF51B00DF9EC3 /* WMLNoopElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 0865CCE50EDDF51B00DF9EC3 /* WMLNoopElement.h */; };
-		086A400611F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 086A400511F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp */; };
 		08700BE70F086C5300919419 /* InputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08700BE60F086C5300919419 /* InputElement.cpp */; };
 		087281550F26B9B600AFC596 /* OptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087281510F26B9B600AFC596 /* OptionElement.cpp */; };
 		087281560F26B9B600AFC596 /* OptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281520F26B9B600AFC596 /* OptionElement.h */; };
 		087281570F26B9B600AFC596 /* OptionGroupElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 087281530F26B9B600AFC596 /* OptionGroupElement.cpp */; };
 		087281580F26B9B600AFC596 /* OptionGroupElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 087281540F26B9B600AFC596 /* OptionGroupElement.h */; };
-		08735FB810E91232006D6FAD /* SVGMarkerLayoutInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08735FB610E91232006D6FAD /* SVGMarkerLayoutInfo.cpp */; };
-		08735FB910E91232006D6FAD /* SVGMarkerLayoutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 08735FB710E91232006D6FAD /* SVGMarkerLayoutInfo.h */; };
 		08744BAA0EDB7D86004C9E63 /* WMLOnEventElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */; };
 		08744BAE0EDB7D92004C9E63 /* WMLOnEventElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */; };
 		087B84961272CEC800A14417 /* SVGAnimatedAngle.h in Headers */ = {isa = PBXBuildFile; fileRef = 087B84951272CEC700A14417 /* SVGAnimatedAngle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -223,20 +206,10 @@
 		08A48A6E0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */; };
 		08B35B13127B6A7C005314DD /* SVGAnimatedNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B35B12127B6A7C005314DD /* SVGAnimatedNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08B35B17127B6A88005314DD /* SVGAnimatedNumberList.h in Headers */ = {isa = PBXBuildFile; fileRef = 08B35B16127B6A88005314DD /* SVGAnimatedNumberList.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		08C34AF51179C057002D7456 /* RenderSVGResourceGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C34AF11179C056002D7456 /* RenderSVGResourceGradient.cpp */; };
-		08C34AF61179C057002D7456 /* RenderSVGResourceGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C34AF21179C057002D7456 /* RenderSVGResourceGradient.h */; };
-		08C34AF71179C057002D7456 /* RenderSVGResourceLinearGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C34AF31179C057002D7456 /* RenderSVGResourceLinearGradient.cpp */; };
-		08C34AF81179C057002D7456 /* RenderSVGResourceLinearGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C34AF41179C057002D7456 /* RenderSVGResourceLinearGradient.h */; };
-		08C34AFD1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C34AFB1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp */; };
-		08C34AFE1179C072002D7456 /* RenderSVGResourceRadialGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C34AFC1179C072002D7456 /* RenderSVGResourceRadialGradient.h */; };
-		08C46B691212F15E0011AF40 /* SVGImageBufferTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C46B671212F15D0011AF40 /* SVGImageBufferTools.cpp */; };
-		08C46B6A1212F15E0011AF40 /* SVGImageBufferTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C46B681212F15D0011AF40 /* SVGImageBufferTools.h */; };
 		08C4C5180EF19A4000E4840F /* WMLImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */; };
 		08C4C5190EF19A4000E4840F /* WMLImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5150EF19A4000E4840F /* WMLImageElement.h */; };
 		08C4C51A0EF19A4000E4840F /* WMLImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */; };
 		08C4C51B0EF19A4000E4840F /* WMLImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C4C5170EF19A4000E4840F /* WMLImageLoader.h */; };
-		08C6A7AB117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08C6A7A9117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.cpp */; };
-		08C6A7AC117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C6A7AA117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.h */; };
 		08C7136E128956A3001B107E /* SVGTransformListPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C7136D128956A3001B107E /* SVGTransformListPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08C7A2C710DC7462002D368B /* SVGNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 656581E909D1508D000E61D7 /* SVGNames.h */; };
 		08C859C01274575400A5728D /* SVGAnimatedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 08C859BF1274575300A5728D /* SVGAnimatedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -246,10 +219,6 @@
 		08CD61BC0ED3929C002DDF51 /* WMLTaskElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */; };
 		08CD61BD0ED3929C002DDF51 /* WMLTaskElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */; };
 		08D46CE3127AD5FC0089694B /* SVGAnimatedEnumeration.h in Headers */ = {isa = PBXBuildFile; fileRef = 08D46CE2127AD5FC0089694B /* SVGAnimatedEnumeration.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		08DAB9BA1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08DAB9B81103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp */; };
-		08DAB9BB1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DAB9B91103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h */; };
-		08DAB9C21103D9C1003E7ABA /* SVGShadowTreeElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */; };
-		08DAB9C31103D9C1003E7ABA /* SVGShadowTreeElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */; };
 		08E192530EDE0C3A0087B780 /* WMLErrorHandling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E192510EDE0C390087B780 /* WMLErrorHandling.cpp */; };
 		08E192540EDE0C3A0087B780 /* WMLErrorHandling.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E192520EDE0C3A0087B780 /* WMLErrorHandling.h */; };
 		08E4FE460E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */; };
@@ -382,8 +351,6 @@
 		18F831B80FD48C7800D8C56B /* WorkerLoaderProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */; };
 		1921327411C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */; };
 		1921327511C0E6BB00456238 /* SVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */; };
-		19423B501234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19423B4E1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp */; };
-		19423B511234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 19423B4F1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h */; };
 		19BFF64B11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */; };
 		19BFF64C11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */; };
 		19BFF64D11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */; };
@@ -972,6 +939,69 @@
 		41F1D21F0EF35C2A00DA8753 /* ScriptCachedFrameData.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41F1D2200EF35C2A00DA8753 /* ScriptCachedFrameData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */; };
 		41F584C7104652CB009CAA64 /* JSMessagePortCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */; };
+		436708BE12D9CA4B00044234 /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367087F12D9CA4A00044234 /* RenderForeignObject.cpp */; };
+		436708BF12D9CA4B00044234 /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088012D9CA4A00044234 /* RenderForeignObject.h */; };
+		436708C012D9CA4B00044234 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088112D9CA4A00044234 /* RenderSVGBlock.cpp */; };
+		436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088212D9CA4A00044234 /* RenderSVGBlock.h */; };
+		436708C212D9CA4B00044234 /* RenderSVGContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088312D9CA4A00044234 /* RenderSVGContainer.cpp */; };
+		436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088412D9CA4A00044234 /* RenderSVGContainer.h */; };
+		436708C412D9CA4B00044234 /* RenderSVGGradientStop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088512D9CA4A00044234 /* RenderSVGGradientStop.cpp */; };
+		436708C512D9CA4B00044234 /* RenderSVGGradientStop.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088612D9CA4A00044234 /* RenderSVGGradientStop.h */; };
+		436708C612D9CA4B00044234 /* RenderSVGHiddenContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088712D9CA4A00044234 /* RenderSVGHiddenContainer.cpp */; };
+		436708C712D9CA4B00044234 /* RenderSVGHiddenContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088812D9CA4A00044234 /* RenderSVGHiddenContainer.h */; };
+		436708C812D9CA4B00044234 /* RenderSVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088912D9CA4A00044234 /* RenderSVGImage.cpp */; };
+		436708C912D9CA4B00044234 /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088A12D9CA4A00044234 /* RenderSVGImage.h */; };
+		436708CA12D9CA4B00044234 /* RenderSVGModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088B12D9CA4A00044234 /* RenderSVGModelObject.cpp */; };
+		436708CB12D9CA4B00044234 /* RenderSVGModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088C12D9CA4A00044234 /* RenderSVGModelObject.h */; };
+		436708CC12D9CA4B00044234 /* RenderSVGResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088D12D9CA4A00044234 /* RenderSVGResource.cpp */; };
+		436708CD12D9CA4B00044234 /* RenderSVGResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367088E12D9CA4A00044234 /* RenderSVGResource.h */; };
+		436708CE12D9CA4B00044234 /* RenderSVGResourceClipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367088F12D9CA4A00044234 /* RenderSVGResourceClipper.cpp */; };
+		436708CF12D9CA4B00044234 /* RenderSVGResourceClipper.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089012D9CA4A00044234 /* RenderSVGResourceClipper.h */; };
+		436708D012D9CA4B00044234 /* RenderSVGResourceContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089112D9CA4A00044234 /* RenderSVGResourceContainer.cpp */; };
+		436708D112D9CA4B00044234 /* RenderSVGResourceContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089212D9CA4A00044234 /* RenderSVGResourceContainer.h */; };
+		436708D212D9CA4B00044234 /* RenderSVGResourceFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089312D9CA4A00044234 /* RenderSVGResourceFilter.cpp */; };
+		436708D312D9CA4B00044234 /* RenderSVGResourceFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089412D9CA4A00044234 /* RenderSVGResourceFilter.h */; };
+		436708D412D9CA4B00044234 /* RenderSVGResourceFilterPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089512D9CA4A00044234 /* RenderSVGResourceFilterPrimitive.cpp */; };
+		436708D512D9CA4B00044234 /* RenderSVGResourceFilterPrimitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089612D9CA4A00044234 /* RenderSVGResourceFilterPrimitive.h */; };
+		436708D612D9CA4B00044234 /* RenderSVGResourceGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089712D9CA4A00044234 /* RenderSVGResourceGradient.cpp */; };
+		436708D712D9CA4B00044234 /* RenderSVGResourceGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089812D9CA4A00044234 /* RenderSVGResourceGradient.h */; };
+		436708D812D9CA4B00044234 /* RenderSVGResourceLinearGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089912D9CA4B00044234 /* RenderSVGResourceLinearGradient.cpp */; };
+		436708D912D9CA4B00044234 /* RenderSVGResourceLinearGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089A12D9CA4B00044234 /* RenderSVGResourceLinearGradient.h */; };
+		436708DA12D9CA4B00044234 /* RenderSVGResourceMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089B12D9CA4B00044234 /* RenderSVGResourceMarker.cpp */; };
+		436708DB12D9CA4B00044234 /* RenderSVGResourceMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089C12D9CA4B00044234 /* RenderSVGResourceMarker.h */; };
+		436708DC12D9CA4B00044234 /* RenderSVGResourceMasker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089D12D9CA4B00044234 /* RenderSVGResourceMasker.cpp */; };
+		436708DD12D9CA4B00044234 /* RenderSVGResourceMasker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4367089E12D9CA4B00044234 /* RenderSVGResourceMasker.h */; };
+		436708DE12D9CA4B00044234 /* RenderSVGResourcePattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4367089F12D9CA4B00044234 /* RenderSVGResourcePattern.cpp */; };
+		436708DF12D9CA4B00044234 /* RenderSVGResourcePattern.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708A012D9CA4B00044234 /* RenderSVGResourcePattern.h */; };
+		436708E012D9CA4B00044234 /* RenderSVGResourceRadialGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708A112D9CA4B00044234 /* RenderSVGResourceRadialGradient.cpp */; };
+		436708E112D9CA4B00044234 /* RenderSVGResourceRadialGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708A212D9CA4B00044234 /* RenderSVGResourceRadialGradient.h */; };
+		436708E212D9CA4B00044234 /* RenderSVGResourceSolidColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708A312D9CA4B00044234 /* RenderSVGResourceSolidColor.cpp */; };
+		436708E312D9CA4B00044234 /* RenderSVGResourceSolidColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708A412D9CA4B00044234 /* RenderSVGResourceSolidColor.h */; };
+		436708E412D9CA4B00044234 /* RenderSVGRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708A512D9CA4B00044234 /* RenderSVGRoot.cpp */; };
+		436708E512D9CA4B00044234 /* RenderSVGRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708A612D9CA4B00044234 /* RenderSVGRoot.h */; };
+		436708E612D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708A712D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.cpp */; };
+		436708E712D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708A812D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.h */; };
+		436708E812D9CA4B00044234 /* RenderSVGTransformableContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708A912D9CA4B00044234 /* RenderSVGTransformableContainer.cpp */; };
+		436708E912D9CA4B00044234 /* RenderSVGTransformableContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708AA12D9CA4B00044234 /* RenderSVGTransformableContainer.h */; };
+		436708EA12D9CA4B00044234 /* RenderSVGViewportContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708AB12D9CA4B00044234 /* RenderSVGViewportContainer.cpp */; };
+		436708EB12D9CA4B00044234 /* RenderSVGViewportContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708AC12D9CA4B00044234 /* RenderSVGViewportContainer.h */; };
+		436708EC12D9CA4B00044234 /* SVGImageBufferTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708AD12D9CA4B00044234 /* SVGImageBufferTools.cpp */; };
+		436708ED12D9CA4B00044234 /* SVGImageBufferTools.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708AE12D9CA4B00044234 /* SVGImageBufferTools.h */; };
+		436708EE12D9CA4B00044234 /* SVGMarkerData.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708AF12D9CA4B00044234 /* SVGMarkerData.h */; };
+		436708EF12D9CA4B00044234 /* SVGMarkerLayoutInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708B012D9CA4B00044234 /* SVGMarkerLayoutInfo.cpp */; };
+		436708F012D9CA4B00044234 /* SVGMarkerLayoutInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B112D9CA4B00044234 /* SVGMarkerLayoutInfo.h */; };
+		436708F112D9CA4B00044234 /* SVGRenderSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708B212D9CA4B00044234 /* SVGRenderSupport.cpp */; };
+		436708F212D9CA4B00044234 /* SVGRenderSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B312D9CA4B00044234 /* SVGRenderSupport.h */; };
+		436708F312D9CA4B00044234 /* SVGRenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708B412D9CA4B00044234 /* SVGRenderTreeAsText.cpp */; };
+		436708F412D9CA4B00044234 /* SVGRenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B512D9CA4B00044234 /* SVGRenderTreeAsText.h */; };
+		436708F512D9CA4B00044234 /* SVGResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708B612D9CA4B00044234 /* SVGResources.cpp */; };
+		436708F612D9CA4B00044234 /* SVGResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B712D9CA4B00044234 /* SVGResources.h */; };
+		436708F712D9CA4B00044234 /* SVGResourcesCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708B812D9CA4B00044234 /* SVGResourcesCache.cpp */; };
+		436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B912D9CA4B00044234 /* SVGResourcesCache.h */; };
+		436708F912D9CA4B00044234 /* SVGResourcesCycleSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708BA12D9CA4B00044234 /* SVGResourcesCycleSolver.cpp */; };
+		436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708BB12D9CA4B00044234 /* SVGResourcesCycleSolver.h */; };
+		436708FB12D9CA4B00044234 /* SVGShadowTreeElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708BC12D9CA4B00044234 /* SVGShadowTreeElements.cpp */; };
+		436708FC12D9CA4B00044234 /* SVGShadowTreeElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708BD12D9CA4B00044234 /* SVGShadowTreeElements.h */; };
 		4415292E0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4415292F0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */; };
 		441B055C0CD77A2D007C1F18 /* DOMHTMLEmbedElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 4429AAFB0CB84E88007647C5 /* DOMHTMLEmbedElementPrivate.h */; };
@@ -1655,8 +1685,6 @@
 		8419D2AD120D92FC00141F8F /* SVGPathByteStreamSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 8419D2AB120D92FC00141F8F /* SVGPathByteStreamSource.h */; };
 		8419D2B9120E0C7600141F8F /* SVGPathStringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8419D2B7120E0C7600141F8F /* SVGPathStringBuilder.cpp */; };
 		8419D2BA120E0C7600141F8F /* SVGPathStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8419D2B8120E0C7600141F8F /* SVGPathStringBuilder.h */; };
-		841FDC261178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841FDC241178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp */; };
-		841FDC271178C9BE00F8AC9B /* RenderSVGResourceFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 841FDC251178C9BE00F8AC9B /* RenderSVGResourceFilter.h */; };
 		84224183107E77F400766A87 /* JSSVGFEMorphologyElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84224181107E77F400766A87 /* JSSVGFEMorphologyElement.cpp */; };
 		84224184107E77F400766A87 /* JSSVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224182107E77F400766A87 /* JSSVGFEMorphologyElement.h */; };
 		8422418C107E786F00766A87 /* DOMSVGFEMorphologyElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */; };
@@ -1721,8 +1749,6 @@
 		84852286119016A7006EDC7F /* DOMSVGVKernElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84852282119016A7006EDC7F /* DOMSVGVKernElement.mm */; };
 		8485228A1190173C006EDC7F /* SVGVKernElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 848522871190173C006EDC7F /* SVGVKernElement.cpp */; };
 		8485228B1190173C006EDC7F /* SVGVKernElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 848522881190173C006EDC7F /* SVGVKernElement.h */; };
-		8499A514115FB33000F566E3 /* RenderSVGResourceMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */; };
-		8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */; };
 		849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */ = {isa = PBXBuildFile; fileRef = 849F77750EFEC6200090849D /* StrokeStyleApplier.h */; };
 		84A81F3D0FC7DFF000955300 /* SourceAlpha.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */; };
 		84A81F3E0FC7DFF000955300 /* SourceAlpha.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A81F3C0FC7DFF000955300 /* SourceAlpha.h */; };
@@ -1730,8 +1756,6 @@
 		84A81F420FC7E02700955300 /* SourceGraphic.h in Headers */ = {isa = PBXBuildFile; fileRef = 84A81F400FC7E02700955300 /* SourceGraphic.h */; };
 		84B6B977120F13E500B8EFAF /* SVGPathSegListSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84B6B975120F13E500B8EFAF /* SVGPathSegListSource.cpp */; };
 		84B6B978120F13E500B8EFAF /* SVGPathSegListSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B6B976120F13E500B8EFAF /* SVGPathSegListSource.h */; };
-		84BDA16B11358D2A00DBF64C /* RenderSVGResourceClipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84BDA16911358D2A00DBF64C /* RenderSVGResourceClipper.cpp */; };
-		84BDA16C11358D2A00DBF64C /* RenderSVGResourceClipper.h in Headers */ = {isa = PBXBuildFile; fileRef = 84BDA16A11358D2A00DBF64C /* RenderSVGResourceClipper.h */; };
 		84C5B2FA1216DC810088B53A /* SVGPathTraversalStateBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C5B2F81216DC810088B53A /* SVGPathTraversalStateBuilder.cpp */; };
 		84C5B2FB1216DC810088B53A /* SVGPathTraversalStateBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 84C5B2F91216DC810088B53A /* SVGPathTraversalStateBuilder.h */; };
 		84C6784C1214814700A92902 /* SVGPathBlender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84C6784A1214814700A92902 /* SVGPathBlender.cpp */; };
@@ -1985,12 +2009,6 @@
 		853BF4DB0ABB6B55008647BB /* DOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 853BF4D90ABB6B55008647BB /* DOMNode.h */; };
 		853BF4DC0ABB6B55008647BB /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 853BF4DA0ABB6B55008647BB /* DOMNode.mm */; };
 		853BF4EC0ABB6EB9008647BB /* DOMNode.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 853BF4D90ABB6B55008647BB /* DOMNode.h */; };
-		853CA9D60AEEC5E9002372DC /* RenderSVGContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 853CA9CA0AEEC5E9002372DC /* RenderSVGContainer.cpp */; };
-		853CA9D70AEEC5E9002372DC /* RenderSVGContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 853CA9CB0AEEC5E9002372DC /* RenderSVGContainer.h */; };
-		853CA9D80AEEC5E9002372DC /* RenderSVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 853CA9CC0AEEC5E9002372DC /* RenderSVGImage.cpp */; };
-		853CA9D90AEEC5E9002372DC /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 853CA9CD0AEEC5E9002372DC /* RenderSVGImage.h */; };
-		853CA9EC0AEEC63C002372DC /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 853CA9EA0AEEC63C002372DC /* RenderForeignObject.cpp */; };
-		853CA9ED0AEEC63C002372DC /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 853CA9EB0AEEC63C002372DC /* RenderForeignObject.h */; };
 		854074FC0AD6C22E00620C57 /* DOMSVGNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074F90AD6C22E00620C57 /* DOMSVGNumber.h */; };
 		854074FD0AD6C22E00620C57 /* DOMSVGPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */; };
 		854074FE0AD6C22E00620C57 /* DOMSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074FB0AD6C22E00620C57 /* DOMSVGRect.h */; };
@@ -3118,8 +3136,6 @@
 		A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F9122C44A600A785B3 /* GenericBinding.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
-		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
-		A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */; };
 		A75E497610752ACB00C9B896 /* SerializedScriptValue.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E497410752ACB00C9B896 /* SerializedScriptValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A75E497710752ACB00C9B896 /* SerializedScriptValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */; };
 		A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */; };
@@ -3163,10 +3179,6 @@
 		A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */; };
 		A7F338A311C0EFCA00A320A7 /* ShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F338A111C0EFCA00A320A7 /* ShadowElement.cpp */; };
 		A7F338A411C0EFCA00A320A7 /* ShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F338A211C0EFCA00A320A7 /* ShadowElement.h */; };
-		A809F1470B73793A002E4D7F /* RenderSVGGradientStop.h in Headers */ = {isa = PBXBuildFile; fileRef = A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */; };
-		A809F1480B73793B002E4D7F /* RenderSVGGradientStop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */; };
-		A809F1AA0B737FB6002E4D7F /* RenderSVGHiddenContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */; };
-		A809F1AB0B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */; };
 		A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */; };
 		A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */ = {isa = PBXBuildFile; fileRef = A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
@@ -3549,8 +3561,6 @@
 		A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89943270B42338700D7C802 /* BitmapImage.cpp */; };
 		A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89CCC500F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp */; };
 		A89CCC530F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = A89CCC510F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h */; };
-		A8A909AC0CBCD6B50029B807 /* RenderSVGTransformableContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */; };
-		A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */; };
 		A8BC04921214F69600B5F122 /* HTMLEntityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */; };
 		A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C2280D11D4A59700D5A7D3 /* DocumentParser.cpp */; };
 		A8C228A111D5722E00D5A7D3 /* DecodedDataDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C2289F11D5722E00D5A7D3 /* DecodedDataDocumentParser.h */; };
@@ -3956,10 +3966,6 @@
 		A8F46B7C0CB20A9D003A9670 /* DOMSVGLinearGradientElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85C9A2FB0AD7E94200FBFF1E /* DOMSVGLinearGradientElement.h */; };
 		A8F46B7D0CB20A9D003A9670 /* DOMSVGRadialGradientElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 859D62790AD888EE00012995 /* DOMSVGRadialGradientElement.h */; };
 		A8F46B810CB20A9D003A9670 /* DOMSVGStringList.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 85D79AD20ACA17EB00F02FC5 /* DOMSVGStringList.h */; };
-		A8F4FB940C169E7B002AFED5 /* SVGRenderSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = A8F4FB930C169E7B002AFED5 /* SVGRenderSupport.h */; };
-		A8F4FB960C169E85002AFED5 /* SVGRenderSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8F4FB950C169E85002AFED5 /* SVGRenderSupport.cpp */; };
-		A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */; };
-		A8F5C0B90F9285AC0098E06B /* RenderSVGModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */; };
 		A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */; };
 		A9C6E4E30D745E05006442E9 /* DOMMimeType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */; };
@@ -3990,8 +3996,6 @@
 		A9D248090D757E7D00FDF959 /* JSDOMMimeTypeArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A9D248050D757E7D00FDF959 /* JSDOMMimeTypeArray.h */; };
 		AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */; };
 		AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		AA31B5B40C1DFD1000AE7083 /* RenderSVGRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */; };
-		AA31B5B50C1DFD1000AE7083 /* RenderSVGRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
 		AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */; };
@@ -4437,14 +4441,10 @@
 		B2CB92620B5BDA02009BAA78 /* DOMSVGElementInstance.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2CB925E0B5BDA02009BAA78 /* DOMSVGElementInstance.mm */; };
 		B2CB92630B5BDA02009BAA78 /* DOMSVGElementInstanceList.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CB925F0B5BDA02009BAA78 /* DOMSVGElementInstanceList.h */; };
 		B2CB92640B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm in Sources */ = {isa = PBXBuildFile; fileRef = B2CB92600B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm */; };
-		B2CCEC470C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */; };
-		B2CCEC480C6CA9F1006A5424 /* RenderSVGViewportContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */; };
 		B2E27C9F0B0F2B0900F17C7B /* FloatPoint3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */; };
 		B2E27CA00B0F2B0900F17C7B /* FloatPoint3D.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2E4EC970D00C22B00432643 /* SVGZoomEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E4EC940D00C22B00432643 /* SVGZoomEvent.cpp */; };
 		B2E4EC980D00C22B00432643 /* SVGZoomEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */; };
-		B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */; };
-		B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */ = {isa = PBXBuildFile; fileRef = B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */; };
 		B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */; };
 		B2F34FE60E82F81400F627CD /* DNS.h in Headers */ = {isa = PBXBuildFile; fileRef = B2F34FE50E82F81400F627CD /* DNS.h */; };
 		B2F34FE90E82F82700F627CD /* DNSCFNet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F34FE80E82F82700F627CD /* DNSCFNet.cpp */; };
@@ -6347,7 +6347,6 @@
 		0804BF6C0EE09C3B0006C000 /* WMLDoElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLDoElement.cpp; sourceTree = "<group>"; };
 		0804BF6D0EE09C3B0006C000 /* WMLDoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLDoElement.h; sourceTree = "<group>"; };
 		0806E57912893045007CED32 /* SVGMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMatrix.h; sourceTree = "<group>"; };
-		08082372117987C100241DE8 /* RenderSVGResourceContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceContainer.h; sourceTree = "<group>"; };
 		080AEC7D0ED8708A00DF4CCE /* WMLIntrinsicEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLIntrinsicEvent.cpp; sourceTree = "<group>"; };
 		080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLIntrinsicEvent.h; sourceTree = "<group>"; };
 		080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLIntrinsicEventHandler.cpp; sourceTree = "<group>"; };
@@ -6381,10 +6380,6 @@
 		0823D158127AD6AC000EBC95 /* SVGAnimatedInteger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedInteger.h; sourceTree = "<group>"; };
 		08250938128BD4D800E2ED8E /* SVGAnimatedTransformList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedTransformList.h; sourceTree = "<group>"; };
 		082DE42C1292621600D923DF /* SVGPathSegWithContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegWithContext.h; sourceTree = "<group>"; };
-		083192A7112B43050083C3B9 /* RenderSVGResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResource.h; sourceTree = "<group>"; };
-		083192A8112B43050083C3B9 /* RenderSVGResourceMasker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceMasker.cpp; sourceTree = "<group>"; };
-		083192A9112B43050083C3B9 /* RenderSVGResourceMasker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceMasker.h; sourceTree = "<group>"; };
-		08385FF510F0186000BFE07B /* SVGMarkerData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMarkerData.h; sourceTree = "<group>"; };
 		083DAEA20F01A7FB00342754 /* RenderTextControlMultiLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlMultiLine.cpp; sourceTree = "<group>"; };
 		083DAEA30F01A7FB00342754 /* RenderTextControlMultiLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextControlMultiLine.h; sourceTree = "<group>"; };
 		083DAEA40F01A7FB00342754 /* RenderTextControlSingleLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextControlSingleLine.cpp; sourceTree = "<group>"; };
@@ -6396,10 +6391,6 @@
 		084CE5C80F27DADC00E6240E /* WMLOptGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOptGroupElement.h; sourceTree = "<group>"; };
 		084CE5C90F27DADC00E6240E /* WMLOptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOptionElement.cpp; sourceTree = "<group>"; };
 		084CE5CA0F27DADC00E6240E /* WMLOptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOptionElement.h; sourceTree = "<group>"; };
-		084D0E3811F5816100081E1A /* SVGResources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResources.cpp; sourceTree = "<group>"; };
-		084D0E3911F5816100081E1A /* SVGResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResources.h; sourceTree = "<group>"; };
-		084D0E3A11F5816100081E1A /* SVGResourcesCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourcesCache.cpp; sourceTree = "<group>"; };
-		084D0E3B11F5816100081E1A /* SVGResourcesCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResourcesCache.h; sourceTree = "<group>"; };
 		084DB59A128008CC002A6D64 /* SVGAnimatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedString.h; sourceTree = "<group>"; };
 		084DBA9D0ED39D350038C226 /* WMLVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLVariables.cpp; sourceTree = "<group>"; };
 		084DBA9E0ED39D360038C226 /* WMLVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLVariables.h; sourceTree = "<group>"; };
@@ -6422,30 +6413,22 @@
 		0854B0111255E4E600B9CDD0 /* SVGRootInlineBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRootInlineBox.h; sourceTree = "<group>"; };
 		0854B0121255E4E600B9CDD0 /* SVGTextQuery.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextQuery.cpp; sourceTree = "<group>"; };
 		0854B0131255E4E600B9CDD0 /* SVGTextQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextQuery.h; sourceTree = "<group>"; };
-		08563BB2117861770012B578 /* RenderSVGResourcePattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourcePattern.cpp; sourceTree = "<group>"; };
-		08563BB3117861770012B578 /* RenderSVGResourcePattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourcePattern.h; sourceTree = "<group>"; };
-		08563BCF117865F50012B578 /* RenderSVGResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResource.cpp; sourceTree = "<group>"; };
 		085797081278394C00A8EC5F /* SVGAnimatedBoolean.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedBoolean.h; sourceTree = "<group>"; };
 		08591AA40F085C4E009BACB1 /* InputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputElement.h; sourceTree = "<group>"; };
 		085A15921289A8DD002710E3 /* SVGAnimatedTransformListPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedTransformListPropertyTearOff.h; sourceTree = "<group>"; };
 		085AFDC60F2977350061F2B3 /* WMLFormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLFormControlElement.cpp; sourceTree = "<group>"; };
 		085AFDC70F2977350061F2B3 /* WMLFormControlElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLFormControlElement.h; sourceTree = "<group>"; };
-		085B05C011FAE16C004D65F6 /* SVGResourcesCycleSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourcesCycleSolver.cpp; sourceTree = "<group>"; };
-		085B05C111FAE16C004D65F6 /* SVGResourcesCycleSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResourcesCycleSolver.h; sourceTree = "<group>"; };
 		085B92B80EFDE73D00E6123C /* FormDataBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataBuilder.cpp; sourceTree = "<group>"; };
 		085B92B90EFDE73D00E6123C /* FormDataBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataBuilder.h; sourceTree = "<group>"; };
 		08641D4512142F7D008DE9F6 /* RenderImageResourceStyleImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderImageResourceStyleImage.cpp; sourceTree = "<group>"; };
 		08641D4612142F7D008DE9F6 /* RenderImageResourceStyleImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderImageResourceStyleImage.h; sourceTree = "<group>"; };
 		0865CCE40EDDF51B00DF9EC3 /* WMLNoopElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLNoopElement.cpp; sourceTree = "<group>"; };
 		0865CCE50EDDF51B00DF9EC3 /* WMLNoopElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLNoopElement.h; sourceTree = "<group>"; };
-		086A400511F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceContainer.cpp; sourceTree = "<group>"; };
 		08700BE60F086C5300919419 /* InputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InputElement.cpp; sourceTree = "<group>"; };
 		087281510F26B9B600AFC596 /* OptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionElement.cpp; sourceTree = "<group>"; };
 		087281520F26B9B600AFC596 /* OptionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionElement.h; sourceTree = "<group>"; };
 		087281530F26B9B600AFC596 /* OptionGroupElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionGroupElement.cpp; sourceTree = "<group>"; };
 		087281540F26B9B600AFC596 /* OptionGroupElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionGroupElement.h; sourceTree = "<group>"; };
-		08735FB610E91232006D6FAD /* SVGMarkerLayoutInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMarkerLayoutInfo.cpp; sourceTree = "<group>"; };
-		08735FB710E91232006D6FAD /* SVGMarkerLayoutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMarkerLayoutInfo.h; sourceTree = "<group>"; };
 		08744BA90EDB7D86004C9E63 /* WMLOnEventElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLOnEventElement.cpp; sourceTree = "<group>"; };
 		08744BAD0EDB7D92004C9E63 /* WMLOnEventElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLOnEventElement.h; sourceTree = "<group>"; };
 		087B84951272CEC700A14417 /* SVGAnimatedAngle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedAngle.h; sourceTree = "<group>"; };
@@ -6493,20 +6476,10 @@
 		08A48A6D0E86CF6D00E225DD /* JSSVGElementInstanceCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGElementInstanceCustom.cpp; sourceTree = "<group>"; };
 		08B35B12127B6A7C005314DD /* SVGAnimatedNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedNumber.h; sourceTree = "<group>"; };
 		08B35B16127B6A88005314DD /* SVGAnimatedNumberList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedNumberList.h; sourceTree = "<group>"; };
-		08C34AF11179C056002D7456 /* RenderSVGResourceGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceGradient.cpp; sourceTree = "<group>"; };
-		08C34AF21179C057002D7456 /* RenderSVGResourceGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceGradient.h; sourceTree = "<group>"; };
-		08C34AF31179C057002D7456 /* RenderSVGResourceLinearGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceLinearGradient.cpp; sourceTree = "<group>"; };
-		08C34AF41179C057002D7456 /* RenderSVGResourceLinearGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceLinearGradient.h; sourceTree = "<group>"; };
-		08C34AFB1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceRadialGradient.cpp; sourceTree = "<group>"; };
-		08C34AFC1179C072002D7456 /* RenderSVGResourceRadialGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceRadialGradient.h; sourceTree = "<group>"; };
-		08C46B671212F15D0011AF40 /* SVGImageBufferTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageBufferTools.cpp; sourceTree = "<group>"; };
-		08C46B681212F15D0011AF40 /* SVGImageBufferTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageBufferTools.h; sourceTree = "<group>"; };
 		08C4C5140EF19A4000E4840F /* WMLImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageElement.cpp; sourceTree = "<group>"; };
 		08C4C5150EF19A4000E4840F /* WMLImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageElement.h; sourceTree = "<group>"; };
 		08C4C5160EF19A4000E4840F /* WMLImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLImageLoader.cpp; sourceTree = "<group>"; };
 		08C4C5170EF19A4000E4840F /* WMLImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLImageLoader.h; sourceTree = "<group>"; };
-		08C6A7A9117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceSolidColor.cpp; sourceTree = "<group>"; };
-		08C6A7AA117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceSolidColor.h; sourceTree = "<group>"; };
 		08C7136D128956A3001B107E /* SVGTransformListPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTransformListPropertyTearOff.h; sourceTree = "<group>"; };
 		08C859BF1274575300A5728D /* SVGAnimatedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedRect.h; sourceTree = "<group>"; };
 		08C925170FCC7C4A00480DEC /* FilterEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterEffect.cpp; path = filters/FilterEffect.cpp; sourceTree = "<group>"; };
@@ -6515,10 +6488,6 @@
 		08CD61B80ED3929C002DDF51 /* WMLTaskElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTaskElement.cpp; sourceTree = "<group>"; };
 		08CD61B90ED3929C002DDF51 /* WMLTaskElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTaskElement.h; sourceTree = "<group>"; };
 		08D46CE2127AD5FC0089694B /* SVGAnimatedEnumeration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedEnumeration.h; sourceTree = "<group>"; };
-		08DAB9B81103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGShadowTreeRootContainer.cpp; sourceTree = "<group>"; };
-		08DAB9B91103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShadowTreeRootContainer.h; sourceTree = "<group>"; };
-		08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGShadowTreeElements.cpp; sourceTree = "<group>"; };
-		08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGShadowTreeElements.h; sourceTree = "<group>"; };
 		08E192510EDE0C390087B780 /* WMLErrorHandling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLErrorHandling.cpp; sourceTree = "<group>"; };
 		08E192520EDE0C3A0087B780 /* WMLErrorHandling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLErrorHandling.h; sourceTree = "<group>"; };
 		08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLengthCustom.cpp; sourceTree = "<group>"; };
@@ -6668,8 +6637,6 @@
 		1921327111C0E6BB00456238 /* SVGFEConvolveMatrixElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrixElement.cpp; sourceTree = "<group>"; };
 		1921327211C0E6BB00456238 /* SVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		1921327311C0E6BB00456238 /* SVGFEConvolveMatrixElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGFEConvolveMatrixElement.idl; sourceTree = "<group>"; };
-		19423B4E1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceFilterPrimitive.cpp; sourceTree = "<group>"; };
-		19423B4F1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceFilterPrimitive.h; sourceTree = "<group>"; };
 		19BFF64611C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElement.h; sourceTree = "<group>"; };
 		19BFF64711C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGFEConvolveMatrixElement.mm; sourceTree = "<group>"; };
 		19BFF64811C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEConvolveMatrixElementInternal.h; sourceTree = "<group>"; };
@@ -7301,6 +7268,69 @@
 		41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCachedFrameData.h; sourceTree = "<group>"; };
 		41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCachedFrameData.cpp; sourceTree = "<group>"; };
 		41F584C6104652CB009CAA64 /* JSMessagePortCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMessagePortCustom.h; sourceTree = "<group>"; };
+		4367087F12D9CA4A00044234 /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
+		4367088012D9CA4A00044234 /* RenderForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderForeignObject.h; sourceTree = "<group>"; };
+		4367088112D9CA4A00044234 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
+		4367088212D9CA4A00044234 /* RenderSVGBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGBlock.h; sourceTree = "<group>"; };
+		4367088312D9CA4A00044234 /* RenderSVGContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGContainer.cpp; sourceTree = "<group>"; };
+		4367088412D9CA4A00044234 /* RenderSVGContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGContainer.h; sourceTree = "<group>"; };
+		4367088512D9CA4A00044234 /* RenderSVGGradientStop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGGradientStop.cpp; sourceTree = "<group>"; };
+		4367088612D9CA4A00044234 /* RenderSVGGradientStop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGGradientStop.h; sourceTree = "<group>"; };
+		4367088712D9CA4A00044234 /* RenderSVGHiddenContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGHiddenContainer.cpp; sourceTree = "<group>"; };
+		4367088812D9CA4A00044234 /* RenderSVGHiddenContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGHiddenContainer.h; sourceTree = "<group>"; };
+		4367088912D9CA4A00044234 /* RenderSVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGImage.cpp; sourceTree = "<group>"; };
+		4367088A12D9CA4A00044234 /* RenderSVGImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGImage.h; sourceTree = "<group>"; };
+		4367088B12D9CA4A00044234 /* RenderSVGModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGModelObject.cpp; sourceTree = "<group>"; };
+		4367088C12D9CA4A00044234 /* RenderSVGModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGModelObject.h; sourceTree = "<group>"; };
+		4367088D12D9CA4A00044234 /* RenderSVGResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResource.cpp; sourceTree = "<group>"; };
+		4367088E12D9CA4A00044234 /* RenderSVGResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResource.h; sourceTree = "<group>"; };
+		4367088F12D9CA4A00044234 /* RenderSVGResourceClipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceClipper.cpp; sourceTree = "<group>"; };
+		4367089012D9CA4A00044234 /* RenderSVGResourceClipper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceClipper.h; sourceTree = "<group>"; };
+		4367089112D9CA4A00044234 /* RenderSVGResourceContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceContainer.cpp; sourceTree = "<group>"; };
+		4367089212D9CA4A00044234 /* RenderSVGResourceContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceContainer.h; sourceTree = "<group>"; };
+		4367089312D9CA4A00044234 /* RenderSVGResourceFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceFilter.cpp; sourceTree = "<group>"; };
+		4367089412D9CA4A00044234 /* RenderSVGResourceFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceFilter.h; sourceTree = "<group>"; };
+		4367089512D9CA4A00044234 /* RenderSVGResourceFilterPrimitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceFilterPrimitive.cpp; sourceTree = "<group>"; };
+		4367089612D9CA4A00044234 /* RenderSVGResourceFilterPrimitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceFilterPrimitive.h; sourceTree = "<group>"; };
+		4367089712D9CA4A00044234 /* RenderSVGResourceGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceGradient.cpp; sourceTree = "<group>"; };
+		4367089812D9CA4A00044234 /* RenderSVGResourceGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceGradient.h; sourceTree = "<group>"; };
+		4367089912D9CA4B00044234 /* RenderSVGResourceLinearGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceLinearGradient.cpp; sourceTree = "<group>"; };
+		4367089A12D9CA4B00044234 /* RenderSVGResourceLinearGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceLinearGradient.h; sourceTree = "<group>"; };
+		4367089B12D9CA4B00044234 /* RenderSVGResourceMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceMarker.cpp; sourceTree = "<group>"; };
+		4367089C12D9CA4B00044234 /* RenderSVGResourceMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceMarker.h; sourceTree = "<group>"; };
+		4367089D12D9CA4B00044234 /* RenderSVGResourceMasker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceMasker.cpp; sourceTree = "<group>"; };
+		4367089E12D9CA4B00044234 /* RenderSVGResourceMasker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceMasker.h; sourceTree = "<group>"; };
+		4367089F12D9CA4B00044234 /* RenderSVGResourcePattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourcePattern.cpp; sourceTree = "<group>"; };
+		436708A012D9CA4B00044234 /* RenderSVGResourcePattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourcePattern.h; sourceTree = "<group>"; };
+		436708A112D9CA4B00044234 /* RenderSVGResourceRadialGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceRadialGradient.cpp; sourceTree = "<group>"; };
+		436708A212D9CA4B00044234 /* RenderSVGResourceRadialGradient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceRadialGradient.h; sourceTree = "<group>"; };
+		436708A312D9CA4B00044234 /* RenderSVGResourceSolidColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceSolidColor.cpp; sourceTree = "<group>"; };
+		436708A412D9CA4B00044234 /* RenderSVGResourceSolidColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceSolidColor.h; sourceTree = "<group>"; };
+		436708A512D9CA4B00044234 /* RenderSVGRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGRoot.cpp; sourceTree = "<group>"; };
+		436708A612D9CA4B00044234 /* RenderSVGRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGRoot.h; sourceTree = "<group>"; };
+		436708A712D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGShadowTreeRootContainer.cpp; sourceTree = "<group>"; };
+		436708A812D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGShadowTreeRootContainer.h; sourceTree = "<group>"; };
+		436708A912D9CA4B00044234 /* RenderSVGTransformableContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTransformableContainer.cpp; sourceTree = "<group>"; };
+		436708AA12D9CA4B00044234 /* RenderSVGTransformableContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGTransformableContainer.h; sourceTree = "<group>"; };
+		436708AB12D9CA4B00044234 /* RenderSVGViewportContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGViewportContainer.cpp; sourceTree = "<group>"; };
+		436708AC12D9CA4B00044234 /* RenderSVGViewportContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGViewportContainer.h; sourceTree = "<group>"; };
+		436708AD12D9CA4B00044234 /* SVGImageBufferTools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGImageBufferTools.cpp; sourceTree = "<group>"; };
+		436708AE12D9CA4B00044234 /* SVGImageBufferTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGImageBufferTools.h; sourceTree = "<group>"; };
+		436708AF12D9CA4B00044234 /* SVGMarkerData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMarkerData.h; sourceTree = "<group>"; };
+		436708B012D9CA4B00044234 /* SVGMarkerLayoutInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGMarkerLayoutInfo.cpp; sourceTree = "<group>"; };
+		436708B112D9CA4B00044234 /* SVGMarkerLayoutInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGMarkerLayoutInfo.h; sourceTree = "<group>"; };
+		436708B212D9CA4B00044234 /* SVGRenderSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderSupport.cpp; sourceTree = "<group>"; };
+		436708B312D9CA4B00044234 /* SVGRenderSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderSupport.h; sourceTree = "<group>"; };
+		436708B412D9CA4B00044234 /* SVGRenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderTreeAsText.cpp; sourceTree = "<group>"; };
+		436708B512D9CA4B00044234 /* SVGRenderTreeAsText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderTreeAsText.h; sourceTree = "<group>"; };
+		436708B612D9CA4B00044234 /* SVGResources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResources.cpp; sourceTree = "<group>"; };
+		436708B712D9CA4B00044234 /* SVGResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResources.h; sourceTree = "<group>"; };
+		436708B812D9CA4B00044234 /* SVGResourcesCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourcesCache.cpp; sourceTree = "<group>"; };
+		436708B912D9CA4B00044234 /* SVGResourcesCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResourcesCache.h; sourceTree = "<group>"; };
+		436708BA12D9CA4B00044234 /* SVGResourcesCycleSolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourcesCycleSolver.cpp; sourceTree = "<group>"; };
+		436708BB12D9CA4B00044234 /* SVGResourcesCycleSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResourcesCycleSolver.h; sourceTree = "<group>"; };
+		436708BC12D9CA4B00044234 /* SVGShadowTreeElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGShadowTreeElements.cpp; sourceTree = "<group>"; };
+		436708BD12D9CA4B00044234 /* SVGShadowTreeElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGShadowTreeElements.h; sourceTree = "<group>"; };
 		4415292C0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLPlugInImageElement.h; sourceTree = "<group>"; };
 		4415292D0E1AE8A000C4A2D0 /* HTMLPlugInImageElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLPlugInImageElement.cpp; sourceTree = "<group>"; };
 		4429AAFB0CB84E88007647C5 /* DOMHTMLEmbedElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMHTMLEmbedElementPrivate.h; sourceTree = "<group>"; };
@@ -8061,8 +8091,6 @@
 		8419D2AB120D92FC00141F8F /* SVGPathByteStreamSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathByteStreamSource.h; sourceTree = "<group>"; };
 		8419D2B7120E0C7600141F8F /* SVGPathStringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathStringBuilder.cpp; sourceTree = "<group>"; };
 		8419D2B8120E0C7600141F8F /* SVGPathStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathStringBuilder.h; sourceTree = "<group>"; };
-		841FDC241178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceFilter.cpp; sourceTree = "<group>"; };
-		841FDC251178C9BE00F8AC9B /* RenderSVGResourceFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceFilter.h; sourceTree = "<group>"; };
 		84224181107E77F400766A87 /* JSSVGFEMorphologyElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFEMorphologyElement.cpp; sourceTree = "<group>"; };
 		84224182107E77F400766A87 /* JSSVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGFEMorphologyElement.h; sourceTree = "<group>"; };
 		84224189107E786F00766A87 /* DOMSVGFEMorphologyElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMSVGFEMorphologyElement.h; sourceTree = "<group>"; };
@@ -8129,8 +8157,6 @@
 		848522871190173C006EDC7F /* SVGVKernElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGVKernElement.cpp; sourceTree = "<group>"; };
 		848522881190173C006EDC7F /* SVGVKernElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGVKernElement.h; sourceTree = "<group>"; };
 		848522891190173C006EDC7F /* SVGVKernElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGVKernElement.idl; sourceTree = "<group>"; };
-		8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceMarker.cpp; sourceTree = "<group>"; };
-		8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceMarker.h; sourceTree = "<group>"; };
 		849F77750EFEC6200090849D /* StrokeStyleApplier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrokeStyleApplier.h; sourceTree = "<group>"; };
 		84A81F3B0FC7DFF000955300 /* SourceAlpha.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceAlpha.cpp; path = filters/SourceAlpha.cpp; sourceTree = "<group>"; };
 		84A81F3C0FC7DFF000955300 /* SourceAlpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceAlpha.h; path = filters/SourceAlpha.h; sourceTree = "<group>"; };
@@ -8141,8 +8167,6 @@
 		84B2B24F056BF15F00D2B771 /* SSLKeyGeneratorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SSLKeyGeneratorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		84B6B975120F13E500B8EFAF /* SVGPathSegListSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathSegListSource.cpp; sourceTree = "<group>"; };
 		84B6B976120F13E500B8EFAF /* SVGPathSegListSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathSegListSource.h; sourceTree = "<group>"; };
-		84BDA16911358D2A00DBF64C /* RenderSVGResourceClipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGResourceClipper.cpp; sourceTree = "<group>"; };
-		84BDA16A11358D2A00DBF64C /* RenderSVGResourceClipper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGResourceClipper.h; sourceTree = "<group>"; };
 		84C5B2F81216DC810088B53A /* SVGPathTraversalStateBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathTraversalStateBuilder.cpp; sourceTree = "<group>"; };
 		84C5B2F91216DC810088B53A /* SVGPathTraversalStateBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathTraversalStateBuilder.h; sourceTree = "<group>"; };
 		84C6784A1214814700A92902 /* SVGPathBlender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathBlender.cpp; sourceTree = "<group>"; };
@@ -8391,12 +8415,6 @@
 		8538F0840AD72CB6006A81D1 /* DOMRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMRanges.h; sourceTree = "<group>"; };
 		853BF4D90ABB6B55008647BB /* DOMNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMNode.h; sourceTree = "<group>"; };
 		853BF4DA0ABB6B55008647BB /* DOMNode.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNode.mm; sourceTree = "<group>"; };
-		853CA9CA0AEEC5E9002372DC /* RenderSVGContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGContainer.cpp; sourceTree = "<group>"; };
-		853CA9CB0AEEC5E9002372DC /* RenderSVGContainer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGContainer.h; sourceTree = "<group>"; };
-		853CA9CC0AEEC5E9002372DC /* RenderSVGImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGImage.cpp; sourceTree = "<group>"; };
-		853CA9CD0AEEC5E9002372DC /* RenderSVGImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGImage.h; sourceTree = "<group>"; };
-		853CA9EA0AEEC63C002372DC /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
-		853CA9EB0AEEC63C002372DC /* RenderForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderForeignObject.h; sourceTree = "<group>"; };
 		854074F90AD6C22E00620C57 /* DOMSVGNumber.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGNumber.h; sourceTree = "<group>"; };
 		854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGPoint.h; sourceTree = "<group>"; };
 		854074FB0AD6C22E00620C57 /* DOMSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGRect.h; sourceTree = "<group>"; };
@@ -9471,8 +9489,6 @@
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
-		A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
-		A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGBlock.h; sourceTree = "<group>"; };
 		A75E497410752ACB00C9B896 /* SerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedScriptValue.h; sourceTree = "<group>"; };
 		A75E497510752ACB00C9B896 /* SerializedScriptValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedScriptValue.cpp; sourceTree = "<group>"; };
 		A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEBlend.cpp; path = filters/FEBlend.cpp; sourceTree = "<group>"; };
@@ -9518,10 +9534,6 @@
 		A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckingHelper.h; sourceTree = "<group>"; };
 		A7F338A111C0EFCA00A320A7 /* ShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowElement.cpp; sourceTree = "<group>"; };
 		A7F338A211C0EFCA00A320A7 /* ShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowElement.h; sourceTree = "<group>"; };
-		A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGGradientStop.h; sourceTree = "<group>"; };
-		A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGGradientStop.cpp; sourceTree = "<group>"; };
-		A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGHiddenContainer.h; sourceTree = "<group>"; };
-		A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGHiddenContainer.cpp; sourceTree = "<group>"; };
 		A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternCG.cpp; sourceTree = "<group>"; };
 		A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextPlatformPrivateCG.h; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
@@ -9770,8 +9782,6 @@
 		A89943270B42338700D7C802 /* BitmapImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImage.cpp; sourceTree = "<group>"; };
 		A89CCC500F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceNodeWithSpanCommand.cpp; sourceTree = "<group>"; };
 		A89CCC510F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReplaceNodeWithSpanCommand.h; sourceTree = "<group>"; };
-		A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGTransformableContainer.h; sourceTree = "<group>"; };
-		A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGTransformableContainer.cpp; sourceTree = "<group>"; };
 		A8BC04911214F69600B5F122 /* HTMLEntityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLEntityTable.cpp; sourceTree = "<group>"; };
 		A8C2280D11D4A59700D5A7D3 /* DocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentParser.cpp; sourceTree = "<group>"; };
 		A8C2289F11D5722E00D5A7D3 /* DecodedDataDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecodedDataDocumentParser.h; sourceTree = "<group>"; };
@@ -10053,10 +10063,6 @@
 		A8EA80040A19516E00A8EF5F /* StyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleSheet.h; sourceTree = "<group>"; };
 		A8EA80050A19516E00A8EF5F /* StyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSheet.cpp; sourceTree = "<group>"; };
 		A8EA80060A19516E00A8EF5F /* MediaList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaList.h; sourceTree = "<group>"; };
-		A8F4FB930C169E7B002AFED5 /* SVGRenderSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGRenderSupport.h; sourceTree = "<group>"; };
-		A8F4FB950C169E85002AFED5 /* SVGRenderSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderSupport.cpp; sourceTree = "<group>"; };
-		A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGModelObject.h; sourceTree = "<group>"; };
-		A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGModelObject.cpp; sourceTree = "<group>"; };
 		A8FA6E5B0E4CFDED00D5CF49 /* Pattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pattern.h; sourceTree = "<group>"; };
 		A8FA6E5C0E4CFDED00D5CF49 /* Pattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pattern.cpp; sourceTree = "<group>"; };
 		A9C6E4E10D745E05006442E9 /* DOMMimeType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMMimeType.cpp; sourceTree = "<group>"; };
@@ -10092,8 +10098,6 @@
 		A9D248050D757E7D00FDF959 /* JSDOMMimeTypeArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMMimeTypeArray.h; sourceTree = "<group>"; };
 		AA0978ED0ABAA6E100874480 /* CSSCursorImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCursorImageValue.cpp; sourceTree = "<group>"; };
 		AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSCursorImageValue.h; sourceTree = "<group>"; };
-		AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGRoot.cpp; sourceTree = "<group>"; };
-		AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGRoot.h; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
 		AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextControlInnerElements.cpp; sourceTree = "<group>"; };
@@ -10684,15 +10688,11 @@
 		B2CB925E0B5BDA02009BAA78 /* DOMSVGElementInstance.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGElementInstance.mm; sourceTree = "<group>"; };
 		B2CB925F0B5BDA02009BAA78 /* DOMSVGElementInstanceList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGElementInstanceList.h; sourceTree = "<group>"; };
 		B2CB92600B5BDA02009BAA78 /* DOMSVGElementInstanceList.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMSVGElementInstanceList.mm; sourceTree = "<group>"; };
-		B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGViewportContainer.cpp; sourceTree = "<group>"; };
-		B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGViewportContainer.h; sourceTree = "<group>"; };
 		B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPoint3D.cpp; sourceTree = "<group>"; };
 		B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FloatPoint3D.h; sourceTree = "<group>"; };
 		B2E4EC940D00C22B00432643 /* SVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomEvent.cpp; sourceTree = "<group>"; };
 		B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGZoomEvent.h; sourceTree = "<group>"; };
 		B2E4EC960D00C22B00432643 /* SVGZoomEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SVGZoomEvent.idl; sourceTree = "<group>"; };
-		B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGRenderTreeAsText.cpp; sourceTree = "<group>"; };
-		B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGRenderTreeAsText.h; sourceTree = "<group>"; };
 		B2ED97700B1F55CE00257D0F /* GraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCG.cpp; sourceTree = "<group>"; };
 		B2F34FE50E82F81400F627CD /* DNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DNS.h; sourceTree = "<group>"; };
 		B2F34FE80E82F82700F627CD /* DNSCFNet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNSCFNet.cpp; sourceTree = "<group>"; };
@@ -12392,24 +12392,87 @@
 		088C2F7412390080003D65CE /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				4367087F12D9CA4A00044234 /* RenderForeignObject.cpp */,
+				4367088012D9CA4A00044234 /* RenderForeignObject.h */,
+				4367088112D9CA4A00044234 /* RenderSVGBlock.cpp */,
+				4367088212D9CA4A00044234 /* RenderSVGBlock.h */,
+				4367088312D9CA4A00044234 /* RenderSVGContainer.cpp */,
+				4367088412D9CA4A00044234 /* RenderSVGContainer.h */,
+				4367088512D9CA4A00044234 /* RenderSVGGradientStop.cpp */,
+				4367088612D9CA4A00044234 /* RenderSVGGradientStop.h */,
+				4367088712D9CA4A00044234 /* RenderSVGHiddenContainer.cpp */,
+				4367088812D9CA4A00044234 /* RenderSVGHiddenContainer.h */,
+				4367088912D9CA4A00044234 /* RenderSVGImage.cpp */,
+				4367088A12D9CA4A00044234 /* RenderSVGImage.h */,
 				0854B0021255E4E600B9CDD0 /* RenderSVGInline.cpp */,
 				0854B0031255E4E600B9CDD0 /* RenderSVGInline.h */,
 				0854B0041255E4E600B9CDD0 /* RenderSVGInlineText.cpp */,
 				0854B0051255E4E600B9CDD0 /* RenderSVGInlineText.h */,
+				4367088B12D9CA4A00044234 /* RenderSVGModelObject.cpp */,
+				4367088C12D9CA4A00044234 /* RenderSVGModelObject.h */,
 				ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */,
 				ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */,
+				4367088D12D9CA4A00044234 /* RenderSVGResource.cpp */,
+				4367088E12D9CA4A00044234 /* RenderSVGResource.h */,
+				4367088F12D9CA4A00044234 /* RenderSVGResourceClipper.cpp */,
+				4367089012D9CA4A00044234 /* RenderSVGResourceClipper.h */,
+				4367089112D9CA4A00044234 /* RenderSVGResourceContainer.cpp */,
+				4367089212D9CA4A00044234 /* RenderSVGResourceContainer.h */,
+				4367089312D9CA4A00044234 /* RenderSVGResourceFilter.cpp */,
+				4367089412D9CA4A00044234 /* RenderSVGResourceFilter.h */,
+				4367089512D9CA4A00044234 /* RenderSVGResourceFilterPrimitive.cpp */,
+				4367089612D9CA4A00044234 /* RenderSVGResourceFilterPrimitive.h */,
+				4367089712D9CA4A00044234 /* RenderSVGResourceGradient.cpp */,
+				4367089812D9CA4A00044234 /* RenderSVGResourceGradient.h */,
+				4367089912D9CA4B00044234 /* RenderSVGResourceLinearGradient.cpp */,
+				4367089A12D9CA4B00044234 /* RenderSVGResourceLinearGradient.h */,
+				4367089B12D9CA4B00044234 /* RenderSVGResourceMarker.cpp */,
+				4367089C12D9CA4B00044234 /* RenderSVGResourceMarker.h */,
+				4367089D12D9CA4B00044234 /* RenderSVGResourceMasker.cpp */,
+				4367089E12D9CA4B00044234 /* RenderSVGResourceMasker.h */,
+				4367089F12D9CA4B00044234 /* RenderSVGResourcePattern.cpp */,
+				436708A012D9CA4B00044234 /* RenderSVGResourcePattern.h */,
+				436708A112D9CA4B00044234 /* RenderSVGResourceRadialGradient.cpp */,
+				436708A212D9CA4B00044234 /* RenderSVGResourceRadialGradient.h */,
+				436708A312D9CA4B00044234 /* RenderSVGResourceSolidColor.cpp */,
+				436708A412D9CA4B00044234 /* RenderSVGResourceSolidColor.h */,
+				436708A512D9CA4B00044234 /* RenderSVGRoot.cpp */,
+				436708A612D9CA4B00044234 /* RenderSVGRoot.h */,
+				436708A712D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.cpp */,
+				436708A812D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.h */,
 				0854B0061255E4E600B9CDD0 /* RenderSVGText.cpp */,
 				0854B0071255E4E600B9CDD0 /* RenderSVGText.h */,
 				0854B0081255E4E600B9CDD0 /* RenderSVGTextPath.cpp */,
 				0854B0091255E4E600B9CDD0 /* RenderSVGTextPath.h */,
+				436708A912D9CA4B00044234 /* RenderSVGTransformableContainer.cpp */,
+				436708AA12D9CA4B00044234 /* RenderSVGTransformableContainer.h */,
 				0854B00A1255E4E600B9CDD0 /* RenderSVGTSpan.cpp */,
 				0854B00B1255E4E600B9CDD0 /* RenderSVGTSpan.h */,
+				436708AB12D9CA4B00044234 /* RenderSVGViewportContainer.cpp */,
+				436708AC12D9CA4B00044234 /* RenderSVGViewportContainer.h */,
+				436708AD12D9CA4B00044234 /* SVGImageBufferTools.cpp */,
+				436708AE12D9CA4B00044234 /* SVGImageBufferTools.h */,
 				0854B00C1255E4E600B9CDD0 /* SVGInlineFlowBox.cpp */,
 				0854B00D1255E4E600B9CDD0 /* SVGInlineFlowBox.h */,
 				0854B00E1255E4E600B9CDD0 /* SVGInlineTextBox.cpp */,
 				0854B00F1255E4E600B9CDD0 /* SVGInlineTextBox.h */,
+				436708AF12D9CA4B00044234 /* SVGMarkerData.h */,
+				436708B012D9CA4B00044234 /* SVGMarkerLayoutInfo.cpp */,
+				436708B112D9CA4B00044234 /* SVGMarkerLayoutInfo.h */,
+				436708B212D9CA4B00044234 /* SVGRenderSupport.cpp */,
+				436708B312D9CA4B00044234 /* SVGRenderSupport.h */,
+				436708B412D9CA4B00044234 /* SVGRenderTreeAsText.cpp */,
+				436708B512D9CA4B00044234 /* SVGRenderTreeAsText.h */,
+				436708B612D9CA4B00044234 /* SVGResources.cpp */,
+				436708B712D9CA4B00044234 /* SVGResources.h */,
+				436708B812D9CA4B00044234 /* SVGResourcesCache.cpp */,
+				436708B912D9CA4B00044234 /* SVGResourcesCache.h */,
+				436708BA12D9CA4B00044234 /* SVGResourcesCycleSolver.cpp */,
+				436708BB12D9CA4B00044234 /* SVGResourcesCycleSolver.h */,
 				0854B0101255E4E600B9CDD0 /* SVGRootInlineBox.cpp */,
 				0854B0111255E4E600B9CDD0 /* SVGRootInlineBox.h */,
+				436708BC12D9CA4B00044234 /* SVGShadowTreeElements.cpp */,
+				436708BD12D9CA4B00044234 /* SVGShadowTreeElements.h */,
 				08F0BFBD1255C53C00075185 /* SVGTextChunk.cpp */,
 				08F0BFBE1255C53C00075185 /* SVGTextChunk.h */,
 				081668D1125603BF006F25DE /* SVGTextChunkBuilder.cpp */,
@@ -18546,8 +18609,6 @@
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
 				BCEA482E097D93020094C9E4 /* RenderFlexibleBox.cpp */,
 				BCEA482F097D93020094C9E4 /* RenderFlexibleBox.h */,
-				853CA9EA0AEEC63C002372DC /* RenderForeignObject.cpp */,
-				853CA9EB0AEEC63C002372DC /* RenderForeignObject.h */,
 				A871DECC0A1530C700B12A68 /* RenderFrame.cpp */,
 				A871DECB0A1530C700B12A68 /* RenderFrame.h */,
 				0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */,
@@ -18626,50 +18687,6 @@
 				AB247A6B0AFD6383003FA5FD /* RenderSlider.h */,
 				D302754B12A5FEAB004BD828 /* RenderSummary.cpp */,
 				D302754C12A5FEAB004BD828 /* RenderSummary.h */,
-				A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */,
-				A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */,
-				853CA9CA0AEEC5E9002372DC /* RenderSVGContainer.cpp */,
-				853CA9CB0AEEC5E9002372DC /* RenderSVGContainer.h */,
-				A809F1460B73793A002E4D7F /* RenderSVGGradientStop.cpp */,
-				A809F1450B73793A002E4D7F /* RenderSVGGradientStop.h */,
-				A809F1A90B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp */,
-				A809F1A80B737FB6002E4D7F /* RenderSVGHiddenContainer.h */,
-				853CA9CC0AEEC5E9002372DC /* RenderSVGImage.cpp */,
-				853CA9CD0AEEC5E9002372DC /* RenderSVGImage.h */,
-				A8F5C0B70F9285AC0098E06B /* RenderSVGModelObject.cpp */,
-				A8F5C0B60F9285AC0098E06B /* RenderSVGModelObject.h */,
-				08563BCF117865F50012B578 /* RenderSVGResource.cpp */,
-				083192A7112B43050083C3B9 /* RenderSVGResource.h */,
-				84BDA16911358D2A00DBF64C /* RenderSVGResourceClipper.cpp */,
-				84BDA16A11358D2A00DBF64C /* RenderSVGResourceClipper.h */,
-				086A400511F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp */,
-				08082372117987C100241DE8 /* RenderSVGResourceContainer.h */,
-				841FDC241178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp */,
-				841FDC251178C9BE00F8AC9B /* RenderSVGResourceFilter.h */,
-				19423B4E1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp */,
-				19423B4F1234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h */,
-				08C34AF11179C056002D7456 /* RenderSVGResourceGradient.cpp */,
-				08C34AF21179C057002D7456 /* RenderSVGResourceGradient.h */,
-				08C34AF31179C057002D7456 /* RenderSVGResourceLinearGradient.cpp */,
-				08C34AF41179C057002D7456 /* RenderSVGResourceLinearGradient.h */,
-				8499A512115FB33000F566E3 /* RenderSVGResourceMarker.cpp */,
-				8499A513115FB33000F566E3 /* RenderSVGResourceMarker.h */,
-				083192A8112B43050083C3B9 /* RenderSVGResourceMasker.cpp */,
-				083192A9112B43050083C3B9 /* RenderSVGResourceMasker.h */,
-				08563BB2117861770012B578 /* RenderSVGResourcePattern.cpp */,
-				08563BB3117861770012B578 /* RenderSVGResourcePattern.h */,
-				08C34AFB1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp */,
-				08C34AFC1179C072002D7456 /* RenderSVGResourceRadialGradient.h */,
-				08C6A7A9117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.cpp */,
-				08C6A7AA117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.h */,
-				AA31B5B20C1DFD1000AE7083 /* RenderSVGRoot.cpp */,
-				AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */,
-				08DAB9B81103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp */,
-				08DAB9B91103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h */,
-				A8A909AB0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp */,
-				A8A909AA0CBCD6B50029B807 /* RenderSVGTransformableContainer.h */,
-				B2CCEC450C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp */,
-				B2CCEC460C6CA9F1006A5424 /* RenderSVGViewportContainer.h */,
 				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
 				A8DF4AE10980C42C0052981B /* RenderTable.h */,
 				A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */,
@@ -18710,23 +18727,6 @@
 				5D925B660F64D4DD00B847F0 /* ScrollBehavior.h */,
 				A7F338A111C0EFCA00A320A7 /* ShadowElement.cpp */,
 				A7F338A211C0EFCA00A320A7 /* ShadowElement.h */,
-				08C46B671212F15D0011AF40 /* SVGImageBufferTools.cpp */,
-				08C46B681212F15D0011AF40 /* SVGImageBufferTools.h */,
-				08385FF510F0186000BFE07B /* SVGMarkerData.h */,
-				08735FB610E91232006D6FAD /* SVGMarkerLayoutInfo.cpp */,
-				08735FB710E91232006D6FAD /* SVGMarkerLayoutInfo.h */,
-				A8F4FB950C169E85002AFED5 /* SVGRenderSupport.cpp */,
-				A8F4FB930C169E7B002AFED5 /* SVGRenderSupport.h */,
-				B2EBDC9A0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp */,
-				B2EBDC9B0AF77E3400AE4A68 /* SVGRenderTreeAsText.h */,
-				084D0E3811F5816100081E1A /* SVGResources.cpp */,
-				084D0E3911F5816100081E1A /* SVGResources.h */,
-				084D0E3A11F5816100081E1A /* SVGResourcesCache.cpp */,
-				084D0E3B11F5816100081E1A /* SVGResourcesCache.h */,
-				085B05C011FAE16C004D65F6 /* SVGResourcesCycleSolver.cpp */,
-				085B05C111FAE16C004D65F6 /* SVGResourcesCycleSolver.h */,
-				08DAB9C01103D9C1003E7ABA /* SVGShadowTreeElements.cpp */,
-				08DAB9C11103D9C1003E7ABA /* SVGShadowTreeElements.h */,
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */,
 				AB014DE20E689A4300E10445 /* TextControlInnerElements.h */,
@@ -21541,7 +21541,7 @@
 				A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				BCEA486E097D93020094C9E4 /* RenderFlexibleBox.h in Headers */,
-				853CA9ED0AEEC63C002372DC /* RenderForeignObject.h in Headers */,
+				436708BF12D9CA4B00044234 /* RenderForeignObject.h in Headers */,
 				A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */,
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
 				A871DED10A1530C700B12A68 /* RenderFrameSet.h in Headers */,
@@ -21594,34 +21594,34 @@
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				BC5EB6680E81CB7100B25965 /* RenderStyleConstants.h in Headers */,
 				D302754E12A5FEAB004BD828 /* RenderSummary.h in Headers */,
-				A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */,
-				853CA9D70AEEC5E9002372DC /* RenderSVGContainer.h in Headers */,
-				A809F1470B73793A002E4D7F /* RenderSVGGradientStop.h in Headers */,
-				A809F1AA0B737FB6002E4D7F /* RenderSVGHiddenContainer.h in Headers */,
-				853CA9D90AEEC5E9002372DC /* RenderSVGImage.h in Headers */,
+				436708C112D9CA4B00044234 /* RenderSVGBlock.h in Headers */,
+				436708C312D9CA4B00044234 /* RenderSVGContainer.h in Headers */,
+				436708C512D9CA4B00044234 /* RenderSVGGradientStop.h in Headers */,
+				436708C712D9CA4B00044234 /* RenderSVGHiddenContainer.h in Headers */,
+				436708C912D9CA4B00044234 /* RenderSVGImage.h in Headers */,
 				0854B0151255E4E600B9CDD0 /* RenderSVGInline.h in Headers */,
 				0854B0171255E4E600B9CDD0 /* RenderSVGInlineText.h in Headers */,
-				A8F5C0B80F9285AC0098E06B /* RenderSVGModelObject.h in Headers */,
+				436708CB12D9CA4B00044234 /* RenderSVGModelObject.h in Headers */,
 				ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */,
-				083192AA112B43050083C3B9 /* RenderSVGResource.h in Headers */,
-				84BDA16C11358D2A00DBF64C /* RenderSVGResourceClipper.h in Headers */,
-				08082373117987C100241DE8 /* RenderSVGResourceContainer.h in Headers */,
-				841FDC271178C9BE00F8AC9B /* RenderSVGResourceFilter.h in Headers */,
-				19423B511234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.h in Headers */,
-				08C34AF61179C057002D7456 /* RenderSVGResourceGradient.h in Headers */,
-				08C34AF81179C057002D7456 /* RenderSVGResourceLinearGradient.h in Headers */,
-				8499A515115FB33000F566E3 /* RenderSVGResourceMarker.h in Headers */,
-				083192AC112B43050083C3B9 /* RenderSVGResourceMasker.h in Headers */,
-				08563BB5117861780012B578 /* RenderSVGResourcePattern.h in Headers */,
-				08C34AFE1179C072002D7456 /* RenderSVGResourceRadialGradient.h in Headers */,
-				08C6A7AC117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.h in Headers */,
-				AA31B5B50C1DFD1000AE7083 /* RenderSVGRoot.h in Headers */,
-				08DAB9BB1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.h in Headers */,
+				436708CD12D9CA4B00044234 /* RenderSVGResource.h in Headers */,
+				436708CF12D9CA4B00044234 /* RenderSVGResourceClipper.h in Headers */,
+				436708D112D9CA4B00044234 /* RenderSVGResourceContainer.h in Headers */,
+				436708D312D9CA4B00044234 /* RenderSVGResourceFilter.h in Headers */,
+				436708D512D9CA4B00044234 /* RenderSVGResourceFilterPrimitive.h in Headers */,
+				436708D712D9CA4B00044234 /* RenderSVGResourceGradient.h in Headers */,
+				436708D912D9CA4B00044234 /* RenderSVGResourceLinearGradient.h in Headers */,
+				436708DB12D9CA4B00044234 /* RenderSVGResourceMarker.h in Headers */,
+				436708DD12D9CA4B00044234 /* RenderSVGResourceMasker.h in Headers */,
+				436708DF12D9CA4B00044234 /* RenderSVGResourcePattern.h in Headers */,
+				436708E112D9CA4B00044234 /* RenderSVGResourceRadialGradient.h in Headers */,
+				436708E312D9CA4B00044234 /* RenderSVGResourceSolidColor.h in Headers */,
+				436708E512D9CA4B00044234 /* RenderSVGRoot.h in Headers */,
+				436708E712D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.h in Headers */,
 				0854B0191255E4E600B9CDD0 /* RenderSVGText.h in Headers */,
 				0854B01B1255E4E600B9CDD0 /* RenderSVGTextPath.h in Headers */,
-				A8A909AC0CBCD6B50029B807 /* RenderSVGTransformableContainer.h in Headers */,
+				436708E912D9CA4B00044234 /* RenderSVGTransformableContainer.h in Headers */,
 				0854B01D1255E4E600B9CDD0 /* RenderSVGTSpan.h in Headers */,
-				B2CCEC480C6CA9F1006A5424 /* RenderSVGViewportContainer.h in Headers */,
+				436708EB12D9CA4B00044234 /* RenderSVGViewportContainer.h in Headers */,
 				A8DF4AEB0980C42C0052981B /* RenderTable.h in Headers */,
 				A8DF4AE90980C42C0052981B /* RenderTableCell.h in Headers */,
 				A8DF4AF10980C42C0052981B /* RenderTableCol.h in Headers */,
@@ -21931,7 +21931,7 @@
 				B2227A2A0D00BF220071B782 /* SVGGradientElement.h in Headers */,
 				650FBF2B0D9AF047008FC292 /* SVGHKernElement.h in Headers */,
 				B25599A40D00D8BA00BB825C /* SVGImage.h in Headers */,
-				08C46B6A1212F15E0011AF40 /* SVGImageBufferTools.h in Headers */,
+				436708ED12D9CA4B00044234 /* SVGImageBufferTools.h in Headers */,
 				B2227A2D0D00BF220071B782 /* SVGImageElement.h in Headers */,
 				B28C6A2A0D00C44800334AA4 /* SVGImageLoader.h in Headers */,
 				0854B01F1255E4E600B9CDD0 /* SVGInlineFlowBox.h in Headers */,
@@ -21944,9 +21944,9 @@
 				0810764412828556007C63BA /* SVGListProperty.h in Headers */,
 				088A0E09126EF1DB00978F7A /* SVGListPropertyTearOff.h in Headers */,
 				B2227A410D00BF220071B782 /* SVGLocatable.h in Headers */,
-				08385FF610F0186000BFE07B /* SVGMarkerData.h in Headers */,
+				436708EE12D9CA4B00044234 /* SVGMarkerData.h in Headers */,
 				B2227A440D00BF220071B782 /* SVGMarkerElement.h in Headers */,
-				08735FB910E91232006D6FAD /* SVGMarkerLayoutInfo.h in Headers */,
+				436708F012D9CA4B00044234 /* SVGMarkerLayoutInfo.h in Headers */,
 				B2227A470D00BF220071B782 /* SVGMaskElement.h in Headers */,
 				0806E57A12893045007CED32 /* SVGMatrix.h in Headers */,
 				B2227A4B0D00BF220071B782 /* SVGMetadataElement.h in Headers */,
@@ -21999,15 +21999,15 @@
 				B2227AA00D00BF220071B782 /* SVGRenderingIntent.h in Headers */,
 				BC2274790E8366E200E7F975 /* SVGRenderStyle.h in Headers */,
 				BC22747B0E8366E200E7F975 /* SVGRenderStyleDefs.h in Headers */,
-				A8F4FB940C169E7B002AFED5 /* SVGRenderSupport.h in Headers */,
-				B2EBDC9D0AF77E3400AE4A68 /* SVGRenderTreeAsText.h in Headers */,
-				084D0E3D11F5816100081E1A /* SVGResources.h in Headers */,
-				084D0E3F11F5816100081E1A /* SVGResourcesCache.h in Headers */,
-				085B05C311FAE16C004D65F6 /* SVGResourcesCycleSolver.h in Headers */,
+				436708F212D9CA4B00044234 /* SVGRenderSupport.h in Headers */,
+				436708F412D9CA4B00044234 /* SVGRenderTreeAsText.h in Headers */,
+				436708F612D9CA4B00044234 /* SVGResources.h in Headers */,
+				436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */,
+				436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */,
 				0854B0231255E4E600B9CDD0 /* SVGRootInlineBox.h in Headers */,
 				B2227AA30D00BF220071B782 /* SVGScriptElement.h in Headers */,
 				B2227AA60D00BF220071B782 /* SVGSetElement.h in Headers */,
-				08DAB9C31103D9C1003E7ABA /* SVGShadowTreeElements.h in Headers */,
+				436708FC12D9CA4B00044234 /* SVGShadowTreeElements.h in Headers */,
 				E4AFD0100DAF335500F5F55C /* SVGSMILElement.h in Headers */,
 				0880F70E1282B46D00948505 /* SVGStaticListPropertyTearOff.h in Headers */,
 				0813A4EA1284132600992511 /* SVGStaticPropertyTearOff.h in Headers */,
@@ -24330,7 +24330,7 @@
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */,
 				BCEA486D097D93020094C9E4 /* RenderFlexibleBox.cpp in Sources */,
-				853CA9EC0AEEC63C002372DC /* RenderForeignObject.cpp in Sources */,
+				436708BE12D9CA4B00044234 /* RenderForeignObject.cpp in Sources */,
 				A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */,
 				0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */,
 				A871DED20A1530C700B12A68 /* RenderFrameSet.cpp in Sources */,
@@ -24380,34 +24380,34 @@
 				AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */,
 				BC8C8FAD0DDCD31B00B592F4 /* RenderStyle.cpp in Sources */,
 				D302754D12A5FEAB004BD828 /* RenderSummary.cpp in Sources */,
-				A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */,
-				853CA9D60AEEC5E9002372DC /* RenderSVGContainer.cpp in Sources */,
-				A809F1480B73793B002E4D7F /* RenderSVGGradientStop.cpp in Sources */,
-				A809F1AB0B737FB6002E4D7F /* RenderSVGHiddenContainer.cpp in Sources */,
-				853CA9D80AEEC5E9002372DC /* RenderSVGImage.cpp in Sources */,
+				436708C012D9CA4B00044234 /* RenderSVGBlock.cpp in Sources */,
+				436708C212D9CA4B00044234 /* RenderSVGContainer.cpp in Sources */,
+				436708C412D9CA4B00044234 /* RenderSVGGradientStop.cpp in Sources */,
+				436708C612D9CA4B00044234 /* RenderSVGHiddenContainer.cpp in Sources */,
+				436708C812D9CA4B00044234 /* RenderSVGImage.cpp in Sources */,
 				0854B0141255E4E600B9CDD0 /* RenderSVGInline.cpp in Sources */,
 				0854B0161255E4E600B9CDD0 /* RenderSVGInlineText.cpp in Sources */,
-				A8F5C0B90F9285AC0098E06B /* RenderSVGModelObject.cpp in Sources */,
+				436708CA12D9CA4B00044234 /* RenderSVGModelObject.cpp in Sources */,
 				ADDF1AD61257CD9A0003A759 /* RenderSVGPath.cpp in Sources */,
-				08563BD0117865F50012B578 /* RenderSVGResource.cpp in Sources */,
-				84BDA16B11358D2A00DBF64C /* RenderSVGResourceClipper.cpp in Sources */,
-				086A400611F6D6B7002CEC53 /* RenderSVGResourceContainer.cpp in Sources */,
-				841FDC261178C9BE00F8AC9B /* RenderSVGResourceFilter.cpp in Sources */,
-				19423B501234E86B00D1EE9E /* RenderSVGResourceFilterPrimitive.cpp in Sources */,
-				08C34AF51179C057002D7456 /* RenderSVGResourceGradient.cpp in Sources */,
-				08C34AF71179C057002D7456 /* RenderSVGResourceLinearGradient.cpp in Sources */,
-				8499A514115FB33000F566E3 /* RenderSVGResourceMarker.cpp in Sources */,
-				083192AB112B43050083C3B9 /* RenderSVGResourceMasker.cpp in Sources */,
-				08563BB4117861780012B578 /* RenderSVGResourcePattern.cpp in Sources */,
-				08C34AFD1179C072002D7456 /* RenderSVGResourceRadialGradient.cpp in Sources */,
-				08C6A7AB117DFBAB00FEA1A2 /* RenderSVGResourceSolidColor.cpp in Sources */,
-				AA31B5B40C1DFD1000AE7083 /* RenderSVGRoot.cpp in Sources */,
-				08DAB9BA1103D9A5003E7ABA /* RenderSVGShadowTreeRootContainer.cpp in Sources */,
+				436708CC12D9CA4B00044234 /* RenderSVGResource.cpp in Sources */,
+				436708CE12D9CA4B00044234 /* RenderSVGResourceClipper.cpp in Sources */,
+				436708D012D9CA4B00044234 /* RenderSVGResourceContainer.cpp in Sources */,
+				436708D212D9CA4B00044234 /* RenderSVGResourceFilter.cpp in Sources */,
+				436708D412D9CA4B00044234 /* RenderSVGResourceFilterPrimitive.cpp in Sources */,
+				436708D612D9CA4B00044234 /* RenderSVGResourceGradient.cpp in Sources */,
+				436708D812D9CA4B00044234 /* RenderSVGResourceLinearGradient.cpp in Sources */,
+				436708DA12D9CA4B00044234 /* RenderSVGResourceMarker.cpp in Sources */,
+				436708DC12D9CA4B00044234 /* RenderSVGResourceMasker.cpp in Sources */,
+				436708DE12D9CA4B00044234 /* RenderSVGResourcePattern.cpp in Sources */,
+				436708E012D9CA4B00044234 /* RenderSVGResourceRadialGradient.cpp in Sources */,
+				436708E212D9CA4B00044234 /* RenderSVGResourceSolidColor.cpp in Sources */,
+				436708E412D9CA4B00044234 /* RenderSVGRoot.cpp in Sources */,
+				436708E612D9CA4B00044234 /* RenderSVGShadowTreeRootContainer.cpp in Sources */,
 				0854B0181255E4E600B9CDD0 /* RenderSVGText.cpp in Sources */,
 				0854B01A1255E4E600B9CDD0 /* RenderSVGTextPath.cpp in Sources */,
-				A8A909AD0CBCD6B50029B807 /* RenderSVGTransformableContainer.cpp in Sources */,
+				436708E812D9CA4B00044234 /* RenderSVGTransformableContainer.cpp in Sources */,
 				0854B01C1255E4E600B9CDD0 /* RenderSVGTSpan.cpp in Sources */,
-				B2CCEC470C6CA9F1006A5424 /* RenderSVGViewportContainer.cpp in Sources */,
+				436708EA12D9CA4B00044234 /* RenderSVGViewportContainer.cpp in Sources */,
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
 				A8DF4AEA0980C42C0052981B /* RenderTableCell.cpp in Sources */,
 				A8DF4AE80980C42C0052981B /* RenderTableCol.cpp in Sources */,
@@ -24681,7 +24681,7 @@
 				B2227A290D00BF220071B782 /* SVGGradientElement.cpp in Sources */,
 				650FBF2A0D9AF047008FC292 /* SVGHKernElement.cpp in Sources */,
 				B25599A30D00D8BA00BB825C /* SVGImage.cpp in Sources */,
-				08C46B691212F15E0011AF40 /* SVGImageBufferTools.cpp in Sources */,
+				436708EC12D9CA4B00044234 /* SVGImageBufferTools.cpp in Sources */,
 				B2227A2C0D00BF220071B782 /* SVGImageElement.cpp in Sources */,
 				B28C6A290D00C44800334AA4 /* SVGImageLoader.cpp in Sources */,
 				0854B01E1255E4E600B9CDD0 /* SVGInlineFlowBox.cpp in Sources */,
@@ -24693,7 +24693,7 @@
 				B2227A3B0D00BF220071B782 /* SVGLineElement.cpp in Sources */,
 				B2227A400D00BF220071B782 /* SVGLocatable.cpp in Sources */,
 				B2227A430D00BF220071B782 /* SVGMarkerElement.cpp in Sources */,
-				08735FB810E91232006D6FAD /* SVGMarkerLayoutInfo.cpp in Sources */,
+				436708EF12D9CA4B00044234 /* SVGMarkerLayoutInfo.cpp in Sources */,
 				B2227A460D00BF220071B782 /* SVGMaskElement.cpp in Sources */,
 				B2227A4A0D00BF220071B782 /* SVGMetadataElement.cpp in Sources */,
 				B2A1F2B00CEF0ABF00442F6A /* SVGMissingGlyphElement.cpp in Sources */,
@@ -24726,15 +24726,15 @@
 				B2227A9D0D00BF220071B782 /* SVGRectElement.cpp in Sources */,
 				BC2274780E8366E200E7F975 /* SVGRenderStyle.cpp in Sources */,
 				BC22747A0E8366E200E7F975 /* SVGRenderStyleDefs.cpp in Sources */,
-				A8F4FB960C169E85002AFED5 /* SVGRenderSupport.cpp in Sources */,
-				B2EBDC9C0AF77E3400AE4A68 /* SVGRenderTreeAsText.cpp in Sources */,
-				084D0E3C11F5816100081E1A /* SVGResources.cpp in Sources */,
-				084D0E3E11F5816100081E1A /* SVGResourcesCache.cpp in Sources */,
-				085B05C211FAE16C004D65F6 /* SVGResourcesCycleSolver.cpp in Sources */,
+				436708F112D9CA4B00044234 /* SVGRenderSupport.cpp in Sources */,
+				436708F312D9CA4B00044234 /* SVGRenderTreeAsText.cpp in Sources */,
+				436708F512D9CA4B00044234 /* SVGResources.cpp in Sources */,
+				436708F712D9CA4B00044234 /* SVGResourcesCache.cpp in Sources */,
+				436708F912D9CA4B00044234 /* SVGResourcesCycleSolver.cpp in Sources */,
 				0854B0221255E4E600B9CDD0 /* SVGRootInlineBox.cpp in Sources */,
 				B2227AA20D00BF220071B782 /* SVGScriptElement.cpp in Sources */,
 				B2227AA50D00BF220071B782 /* SVGSetElement.cpp in Sources */,
-				08DAB9C21103D9C1003E7ABA /* SVGShadowTreeElements.cpp in Sources */,
+				436708FB12D9CA4B00044234 /* SVGShadowTreeElements.cpp in Sources */,
 				E4AFD00F0DAF335500F5F55C /* SVGSMILElement.cpp in Sources */,
 				B2227AA80D00BF220071B782 /* SVGStopElement.cpp in Sources */,
 				B2227AAB0D00BF220071B782 /* SVGStringList.cpp in Sources */,

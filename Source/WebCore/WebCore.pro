@@ -1358,7 +1358,6 @@ SOURCES += \
     rendering/RenderWidget.cpp \
     rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
-    rendering/SVGRenderTreeAsText.cpp \
     rendering/ScrollBehavior.cpp \
     rendering/ShadowElement.cpp \
     rendering/TextControlInnerElements.cpp \
@@ -2268,7 +2267,6 @@ HEADERS += \
     rendering/RenderFieldset.h \
     rendering/RenderFileUploadControl.h \
     rendering/RenderFlexibleBox.h \
-    rendering/RenderForeignObject.h \
     rendering/RenderFrame.h \
     rendering/RenderFrameBase.h \
     rendering/RenderFrameSet.h \
@@ -2306,28 +2304,6 @@ HEADERS += \
     rendering/RenderScrollbarTheme.h \
     rendering/RenderSlider.h \
     rendering/RenderSummary.h \
-    rendering/RenderSVGBlock.h \
-    rendering/RenderSVGContainer.h \
-    rendering/RenderSVGGradientStop.h \
-    rendering/RenderSVGHiddenContainer.h \
-    rendering/RenderSVGImage.h \
-    rendering/RenderSVGModelObject.h \
-    rendering/RenderSVGResource.h \
-    rendering/RenderSVGResourceClipper.h \
-    rendering/RenderSVGResourceContainer.h \
-    rendering/RenderSVGResourceFilter.h \ 
-    rendering/RenderSVGResourceFilterPrimitive.h \
-    rendering/RenderSVGResourceGradient.h \
-    rendering/RenderSVGResourceLinearGradient.h \
-    rendering/RenderSVGResourceMarker.h \
-    rendering/RenderSVGResourceMasker.h \
-    rendering/RenderSVGResourcePattern.h \
-    rendering/RenderSVGResourceRadialGradient.h \
-    rendering/RenderSVGResourceSolidColor.h \
-    rendering/RenderSVGRoot.h \
-    rendering/RenderSVGShadowTreeRootContainer.h \
-    rendering/RenderSVGTransformableContainer.h \
-    rendering/RenderSVGViewportContainer.h \
     rendering/RenderTableCell.h \
     rendering/RenderTableCol.h \
     rendering/RenderTable.h \
@@ -2372,15 +2348,47 @@ HEADERS += \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
+    rendering/svg/RenderForeignObject.h \
+    rendering/svg/RenderSVGBlock.h \
+    rendering/svg/RenderSVGContainer.h \
+    rendering/svg/RenderSVGGradientStop.h \
+    rendering/svg/RenderSVGHiddenContainer.h \
+    rendering/svg/RenderSVGImage.h \
     rendering/svg/RenderSVGInline.h \
     rendering/svg/RenderSVGInlineText.h \
+    rendering/svg/RenderSVGModelObject.h \
     rendering/svg/RenderSVGPath.h \
+    rendering/svg/RenderSVGResource.h \
+    rendering/svg/RenderSVGResourceClipper.h \
+    rendering/svg/RenderSVGResourceContainer.h \
+    rendering/svg/RenderSVGResourceFilter.h \ 
+    rendering/svg/RenderSVGResourceFilterPrimitive.h \
+    rendering/svg/RenderSVGResourceGradient.h \
+    rendering/svg/RenderSVGResourceLinearGradient.h \
+    rendering/svg/RenderSVGResourceMarker.h \
+    rendering/svg/RenderSVGResourceMasker.h \
+    rendering/svg/RenderSVGResourcePattern.h \
+    rendering/svg/RenderSVGResourceRadialGradient.h \
+    rendering/svg/RenderSVGResourceSolidColor.h \
+    rendering/svg/RenderSVGRoot.h \
+    rendering/svg/RenderSVGShadowTreeRootContainer.h \
     rendering/svg/RenderSVGTSpan.h \
     rendering/svg/RenderSVGText.h \
     rendering/svg/RenderSVGTextPath.h \
+    rendering/svg/RenderSVGTransformableContainer.h \
+    rendering/svg/RenderSVGViewportContainer.h \
+    rendering/svg/SVGImageBufferTools.h \
     rendering/svg/SVGInlineFlowBox.h \
     rendering/svg/SVGInlineTextBox.h \
+    rendering/svg/SVGMarkerData.h \
+    rendering/svg/SVGMarkerLayoutInfo.h \
+    rendering/svg/SVGRenderSupport.h \
+    rendering/svg/SVGRenderTreeAsText.h \
+    rendering/svg/SVGResources.h \
+    rendering/svg/SVGResourcesCache.h \
+    rendering/svg/SVGResourcesCycleSolver.h \
     rendering/svg/SVGRootInlineBox.h \
+    rendering/svg/SVGShadowTreeElements.h \
     rendering/svg/SVGTextChunk.h \
     rendering/svg/SVGTextChunkBuilder.h \
     rendering/svg/SVGTextFragment.h \
@@ -2391,15 +2399,6 @@ HEADERS += \
     rendering/svg/SVGTextLayoutEngineSpacing.h \
     rendering/svg/SVGTextMetrics.h \
     rendering/svg/SVGTextQuery.h \
-    rendering/SVGImageBufferTools.h \
-    rendering/SVGMarkerData.h \
-    rendering/SVGMarkerLayoutInfo.h \
-    rendering/SVGRenderSupport.h \
-    rendering/SVGRenderTreeAsText.h \
-    rendering/SVGResources.h \
-    rendering/SVGResourcesCache.h \
-    rendering/SVGResourcesCycleSolver.h \
-    rendering/SVGShadowTreeElements.h \
     rendering/TextControlInnerElements.h \
     rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
@@ -3470,15 +3469,46 @@ contains(DEFINES, ENABLE_SVG=1) {
         css/SVGCSSStyleSelector.cpp \
         rendering/style/SVGRenderStyle.cpp \
         rendering/style/SVGRenderStyleDefs.cpp \
+        rendering/svg/RenderForeignObject.cpp \
+        rendering/svg/RenderSVGBlock.cpp \
+        rendering/svg/RenderSVGContainer.cpp \
+        rendering/svg/RenderSVGGradientStop.cpp \
+        rendering/svg/RenderSVGHiddenContainer.cpp \
+        rendering/svg/RenderSVGImage.cpp \
         rendering/svg/RenderSVGInline.cpp \
         rendering/svg/RenderSVGInlineText.cpp \
+        rendering/svg/RenderSVGModelObject.cpp \
         rendering/svg/RenderSVGPath.cpp \
+        rendering/svg/RenderSVGResource.cpp \
+        rendering/svg/RenderSVGResourceClipper.cpp \
+        rendering/svg/RenderSVGResourceContainer.cpp \
+        rendering/svg/RenderSVGResourceFilter.cpp \
+        rendering/svg/RenderSVGResourceFilterPrimitive.cpp \
+        rendering/svg/RenderSVGResourceGradient.cpp \
+        rendering/svg/RenderSVGResourceLinearGradient.cpp \
+        rendering/svg/RenderSVGResourceMarker.cpp \
+        rendering/svg/RenderSVGResourceMasker.cpp \
+        rendering/svg/RenderSVGResourcePattern.cpp \
+        rendering/svg/RenderSVGResourceRadialGradient.cpp \
+        rendering/svg/RenderSVGResourceSolidColor.cpp \
+        rendering/svg/RenderSVGRoot.cpp \
+        rendering/svg/RenderSVGShadowTreeRootContainer.cpp \
         rendering/svg/RenderSVGTSpan.cpp \
         rendering/svg/RenderSVGText.cpp \
         rendering/svg/RenderSVGTextPath.cpp \
+        rendering/svg/RenderSVGTransformableContainer.cpp \
+        rendering/svg/RenderSVGViewportContainer.cpp \
+        rendering/svg/SVGImageBufferTools.cpp \
         rendering/svg/SVGInlineFlowBox.cpp \
         rendering/svg/SVGInlineTextBox.cpp \
+        rendering/svg/SVGMarkerLayoutInfo.cpp \
+        rendering/svg/SVGRenderSupport.cpp \
+        rendering/svg/SVGRenderTreeAsText.cpp \
+        rendering/svg/SVGResources.cpp \
+        rendering/svg/SVGResourcesCache.cpp \
+        rendering/svg/SVGResourcesCycleSolver.cpp \
         rendering/svg/SVGRootInlineBox.cpp \
+        rendering/svg/SVGShadowTreeElements.cpp \
         rendering/svg/SVGTextChunk.cpp \
         rendering/svg/SVGTextChunkBuilder.cpp \
         rendering/svg/SVGTextLayoutAttributes.cpp \
@@ -3628,37 +3658,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFilter.cpp \
         svg/graphics/filters/SVGFilterBuilder.cpp \
         svg/graphics/SVGImage.cpp \
-        svg/properties/SVGPathSegListPropertyTearOff.cpp \
-        rendering/RenderForeignObject.cpp \
-        rendering/RenderSVGBlock.cpp \
-        rendering/RenderSVGContainer.cpp \
-        rendering/RenderSVGGradientStop.cpp \
-        rendering/RenderSVGHiddenContainer.cpp \
-        rendering/RenderSVGImage.cpp \
-        rendering/RenderSVGModelObject.cpp \
-        rendering/RenderSVGResource.cpp \
-        rendering/RenderSVGResourceClipper.cpp \
-        rendering/RenderSVGResourceContainer.cpp \
-        rendering/RenderSVGResourceFilter.cpp \
-        rendering/RenderSVGResourceFilterPrimitive.cpp \
-        rendering/RenderSVGResourceGradient.cpp \
-        rendering/RenderSVGResourceLinearGradient.cpp \
-        rendering/RenderSVGResourceMarker.cpp \
-        rendering/RenderSVGResourceMasker.cpp \
-        rendering/RenderSVGResourcePattern.cpp \
-        rendering/RenderSVGResourceRadialGradient.cpp \
-        rendering/RenderSVGResourceSolidColor.cpp \
-        rendering/RenderSVGRoot.cpp \
-        rendering/RenderSVGShadowTreeRootContainer.cpp \
-        rendering/RenderSVGTransformableContainer.cpp \
-        rendering/RenderSVGViewportContainer.cpp \
-        rendering/SVGImageBufferTools.cpp \
-        rendering/SVGMarkerLayoutInfo.cpp \
-        rendering/SVGRenderSupport.cpp \
-        rendering/SVGResources.cpp \
-        rendering/SVGResourcesCache.cpp \
-        rendering/SVGResourcesCycleSolver.cpp \
-        rendering/SVGShadowTreeElements.cpp
+        svg/properties/SVGPathSegListPropertyTearOff.cpp
 }
 
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {

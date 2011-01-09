@@ -1789,48 +1789,48 @@ IF (ENABLE_SVG)
         css/SVGCSSParser.cpp
         css/SVGCSSStyleSelector.cpp
         rendering/PointerEventsHitRules.cpp
-        rendering/RenderForeignObject.cpp
-        rendering/RenderSVGBlock.cpp
-        rendering/RenderSVGContainer.cpp
-        rendering/RenderSVGGradientStop.cpp
-        rendering/RenderSVGHiddenContainer.cpp
-        rendering/RenderSVGImage.cpp
-        rendering/RenderSVGModelObject.cpp
-        rendering/RenderSVGResource.cpp
-        rendering/RenderSVGResourceClipper.cpp
-        rendering/RenderSVGResourceContainer.cpp
-        rendering/RenderSVGResourceFilter.cpp
-        rendering/RenderSVGResourceFilterPrimitive.cpp
-        rendering/RenderSVGResourceGradient.cpp
-        rendering/RenderSVGResourceLinearGradient.cpp
-        rendering/RenderSVGResourceMarker.cpp
-        rendering/RenderSVGResourceMasker.cpp
-        rendering/RenderSVGResourcePattern.cpp
-        rendering/RenderSVGResourceRadialGradient.cpp
-        rendering/RenderSVGResourceSolidColor.cpp
-        rendering/RenderSVGRoot.cpp
-        rendering/RenderSVGShadowTreeRootContainer.cpp
-        rendering/RenderSVGTransformableContainer.cpp
-        rendering/RenderSVGViewportContainer.cpp
-        rendering/SVGImageBufferTools.cpp
-        rendering/SVGMarkerLayoutInfo.cpp
-        rendering/SVGRenderSupport.cpp
-        rendering/SVGRenderTreeAsText.cpp
-        rendering/SVGResources.cpp
-        rendering/SVGResourcesCache.cpp
-        rendering/SVGResourcesCycleSolver.cpp
-        rendering/SVGShadowTreeElements.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp
+        rendering/svg/RenderForeignObject.cpp
+        rendering/svg/RenderSVGBlock.cpp
+        rendering/svg/RenderSVGContainer.cpp
+        rendering/svg/RenderSVGGradientStop.cpp
+        rendering/svg/RenderSVGHiddenContainer.cpp
+        rendering/svg/RenderSVGImage.cpp
         rendering/svg/RenderSVGInline.cpp
         rendering/svg/RenderSVGInlineText.cpp
+        rendering/svg/RenderSVGModelObject.cpp
         rendering/svg/RenderSVGPath.cpp
+        rendering/svg/RenderSVGResource.cpp
+        rendering/svg/RenderSVGResourceClipper.cpp
+        rendering/svg/RenderSVGResourceContainer.cpp
+        rendering/svg/RenderSVGResourceFilter.cpp
+        rendering/svg/RenderSVGResourceFilterPrimitive.cpp
+        rendering/svg/RenderSVGResourceGradient.cpp
+        rendering/svg/RenderSVGResourceLinearGradient.cpp
+        rendering/svg/RenderSVGResourceMarker.cpp
+        rendering/svg/RenderSVGResourceMasker.cpp
+        rendering/svg/RenderSVGResourcePattern.cpp
+        rendering/svg/RenderSVGResourceRadialGradient.cpp
+        rendering/svg/RenderSVGResourceSolidColor.cpp
+        rendering/svg/RenderSVGRoot.cpp
+        rendering/svg/RenderSVGShadowTreeRootContainer.cpp
         rendering/svg/RenderSVGTSpan.cpp
         rendering/svg/RenderSVGText.cpp
         rendering/svg/RenderSVGTextPath.cpp
+        rendering/svg/RenderSVGTransformableContainer.cpp
+        rendering/svg/RenderSVGViewportContainer.cpp
+        rendering/svg/SVGImageBufferTools.cpp
         rendering/svg/SVGInlineFlowBox.cpp
         rendering/svg/SVGInlineTextBox.cpp
+        rendering/svg/SVGMarkerLayoutInfo.cpp
+        rendering/svg/SVGRenderSupport.cpp
+        rendering/svg/SVGRenderTreeAsText.cpp
+        rendering/svg/SVGResources.cpp
+        rendering/svg/SVGResourcesCache.cpp
+        rendering/svg/SVGResourcesCycleSolver.cpp
         rendering/svg/SVGRootInlineBox.cpp
+        rendering/svg/SVGShadowTreeElements.cpp
         rendering/svg/SVGTextChunk.cpp
         rendering/svg/SVGTextChunkBuilder.cpp
         rendering/svg/SVGTextLayoutAttributes.cpp

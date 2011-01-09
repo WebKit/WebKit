@@ -53,7 +53,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual bool isSVGForeignObject() const { return true; }
 
-    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const;
+    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState&) const;
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
  private:

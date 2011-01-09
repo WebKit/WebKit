@@ -2747,8 +2747,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderFileUploadControl.h \
 	Source/WebCore/rendering/RenderFlexibleBox.cpp \
 	Source/WebCore/rendering/RenderFlexibleBox.h \
-	Source/WebCore/rendering/RenderForeignObject.cpp \
-	Source/WebCore/rendering/RenderForeignObject.h \
 	Source/WebCore/rendering/RenderFrameBase.cpp \
 	Source/WebCore/rendering/RenderFrameBase.h \
 	Source/WebCore/rendering/RenderFrame.cpp \
@@ -2822,50 +2820,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderSlider.h \
 	Source/WebCore/rendering/RenderSummary.cpp \
 	Source/WebCore/rendering/RenderSummary.h \
-	Source/WebCore/rendering/RenderSVGBlock.cpp \
-	Source/WebCore/rendering/RenderSVGBlock.h \
-	Source/WebCore/rendering/RenderSVGContainer.cpp \
-	Source/WebCore/rendering/RenderSVGContainer.h \
-	Source/WebCore/rendering/RenderSVGGradientStop.cpp \
-	Source/WebCore/rendering/RenderSVGGradientStop.h \
-	Source/WebCore/rendering/RenderSVGHiddenContainer.cpp \
-	Source/WebCore/rendering/RenderSVGHiddenContainer.h \
-	Source/WebCore/rendering/RenderSVGImage.cpp \
-	Source/WebCore/rendering/RenderSVGImage.h \
-	Source/WebCore/rendering/RenderSVGModelObject.cpp \
-	Source/WebCore/rendering/RenderSVGModelObject.h \
-	Source/WebCore/rendering/RenderSVGResourceClipper.cpp \
-	Source/WebCore/rendering/RenderSVGResourceClipper.h \
-	Source/WebCore/rendering/RenderSVGResourceContainer.cpp \
-	Source/WebCore/rendering/RenderSVGResourceContainer.h \
-	Source/WebCore/rendering/RenderSVGResource.cpp \
-	Source/WebCore/rendering/RenderSVGResourceFilter.cpp \
-	Source/WebCore/rendering/RenderSVGResourceFilter.h \
-	Source/WebCore/rendering/RenderSVGResourceFilterPrimitive.cpp \
-	Source/WebCore/rendering/RenderSVGResourceFilterPrimitive.h \
-	Source/WebCore/rendering/RenderSVGResourceGradient.cpp \
-	Source/WebCore/rendering/RenderSVGResourceGradient.h \
-	Source/WebCore/rendering/RenderSVGResource.h \
-	Source/WebCore/rendering/RenderSVGResourceLinearGradient.cpp \
-	Source/WebCore/rendering/RenderSVGResourceLinearGradient.h \
-	Source/WebCore/rendering/RenderSVGResourceMarker.cpp \
-	Source/WebCore/rendering/RenderSVGResourceMarker.h \
-	Source/WebCore/rendering/RenderSVGResourceMasker.cpp \
-	Source/WebCore/rendering/RenderSVGResourceMasker.h \
-	Source/WebCore/rendering/RenderSVGResourcePattern.cpp \
-	Source/WebCore/rendering/RenderSVGResourcePattern.h \
-	Source/WebCore/rendering/RenderSVGResourceRadialGradient.cpp \
-	Source/WebCore/rendering/RenderSVGResourceRadialGradient.h \
-	Source/WebCore/rendering/RenderSVGResourceSolidColor.cpp \
-	Source/WebCore/rendering/RenderSVGResourceSolidColor.h \
-	Source/WebCore/rendering/RenderSVGRoot.cpp \
-	Source/WebCore/rendering/RenderSVGRoot.h \
-	Source/WebCore/rendering/RenderSVGShadowTreeRootContainer.cpp \
-	Source/WebCore/rendering/RenderSVGShadowTreeRootContainer.h \
-	Source/WebCore/rendering/RenderSVGTransformableContainer.cpp \
-	Source/WebCore/rendering/RenderSVGTransformableContainer.h \
-	Source/WebCore/rendering/RenderSVGViewportContainer.cpp \
-	Source/WebCore/rendering/RenderSVGViewportContainer.h \
 	Source/WebCore/rendering/RenderTableCell.cpp \
 	Source/WebCore/rendering/RenderTableCell.h \
 	Source/WebCore/rendering/RenderTableCol.cpp \
@@ -2964,41 +2918,87 @@ webcore_sources += \
 	Source/WebCore/rendering/style/SVGRenderStyleDefs.cpp \
 	Source/WebCore/rendering/style/SVGRenderStyleDefs.h \
 	Source/WebCore/rendering/style/SVGRenderStyle.h \
-	Source/WebCore/rendering/SVGImageBufferTools.cpp \
-	Source/WebCore/rendering/SVGImageBufferTools.h \
-	Source/WebCore/rendering/SVGMarkerData.h \
-	Source/WebCore/rendering/SVGMarkerLayoutInfo.cpp \
-	Source/WebCore/rendering/SVGMarkerLayoutInfo.h \
-	Source/WebCore/rendering/SVGRenderSupport.cpp \
-	Source/WebCore/rendering/SVGRenderSupport.h \
-	Source/WebCore/rendering/SVGRenderTreeAsText.cpp \
-	Source/WebCore/rendering/SVGRenderTreeAsText.h \
-	Source/WebCore/rendering/SVGResourcesCache.cpp \
-	Source/WebCore/rendering/SVGResourcesCache.h \
-	Source/WebCore/rendering/SVGResources.cpp \
-	Source/WebCore/rendering/SVGResourcesCycleSolver.cpp \
-	Source/WebCore/rendering/SVGResourcesCycleSolver.h \
-	Source/WebCore/rendering/SVGResources.h \
-	Source/WebCore/rendering/SVGShadowTreeElements.cpp \
-	Source/WebCore/rendering/SVGShadowTreeElements.h \
+	Source/WebCore/rendering/svg/RenderForeignObject.cpp \
+	Source/WebCore/rendering/svg/RenderForeignObject.h \
+	Source/WebCore/rendering/svg/RenderSVGBlock.cpp \
+	Source/WebCore/rendering/svg/RenderSVGBlock.h \
+	Source/WebCore/rendering/svg/RenderSVGContainer.cpp \
+	Source/WebCore/rendering/svg/RenderSVGContainer.h \
+	Source/WebCore/rendering/svg/RenderSVGGradientStop.cpp \
+	Source/WebCore/rendering/svg/RenderSVGGradientStop.h \
+	Source/WebCore/rendering/svg/RenderSVGHiddenContainer.cpp \
+	Source/WebCore/rendering/svg/RenderSVGHiddenContainer.h \
+	Source/WebCore/rendering/svg/RenderSVGImage.cpp \
+	Source/WebCore/rendering/svg/RenderSVGImage.h \
 	Source/WebCore/rendering/svg/RenderSVGInline.cpp \
 	Source/WebCore/rendering/svg/RenderSVGInline.h \
 	Source/WebCore/rendering/svg/RenderSVGInlineText.cpp \
 	Source/WebCore/rendering/svg/RenderSVGInlineText.h \
+	Source/WebCore/rendering/svg/RenderSVGModelObject.cpp \
+	Source/WebCore/rendering/svg/RenderSVGModelObject.h \
 	Source/WebCore/rendering/svg/RenderSVGPath.cpp \
 	Source/WebCore/rendering/svg/RenderSVGPath.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceClipper.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceClipper.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceContainer.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceContainer.h \
+	Source/WebCore/rendering/svg/RenderSVGResource.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceFilter.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceFilter.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceFilterPrimitive.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceFilterPrimitive.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceGradient.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceGradient.h \
+	Source/WebCore/rendering/svg/RenderSVGResource.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceLinearGradient.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceLinearGradient.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceMarker.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceMarker.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceMasker.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceMasker.h \
+	Source/WebCore/rendering/svg/RenderSVGResourcePattern.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourcePattern.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceRadialGradient.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceRadialGradient.h \
+	Source/WebCore/rendering/svg/RenderSVGResourceSolidColor.cpp \
+	Source/WebCore/rendering/svg/RenderSVGResourceSolidColor.h \
+	Source/WebCore/rendering/svg/RenderSVGRoot.cpp \
+	Source/WebCore/rendering/svg/RenderSVGRoot.h \
+	Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.cpp \
+	Source/WebCore/rendering/svg/RenderSVGShadowTreeRootContainer.h \
 	Source/WebCore/rendering/svg/RenderSVGTSpan.cpp \
 	Source/WebCore/rendering/svg/RenderSVGTSpan.h \
 	Source/WebCore/rendering/svg/RenderSVGText.cpp \
 	Source/WebCore/rendering/svg/RenderSVGText.h \
 	Source/WebCore/rendering/svg/RenderSVGTextPath.cpp \
 	Source/WebCore/rendering/svg/RenderSVGTextPath.h \
+	Source/WebCore/rendering/svg/RenderSVGTransformableContainer.cpp \
+	Source/WebCore/rendering/svg/RenderSVGTransformableContainer.h \
+	Source/WebCore/rendering/svg/RenderSVGViewportContainer.cpp \
+	Source/WebCore/rendering/svg/RenderSVGViewportContainer.h \
+	Source/WebCore/rendering/svg/SVGImageBufferTools.cpp \
+	Source/WebCore/rendering/svg/SVGImageBufferTools.h \
 	Source/WebCore/rendering/svg/SVGInlineFlowBox.cpp \
 	Source/WebCore/rendering/svg/SVGInlineFlowBox.h \
 	Source/WebCore/rendering/svg/SVGInlineTextBox.cpp \
 	Source/WebCore/rendering/svg/SVGInlineTextBox.h \
+	Source/WebCore/rendering/svg/SVGMarkerData.h \
+	Source/WebCore/rendering/svg/SVGMarkerLayoutInfo.cpp \
+	Source/WebCore/rendering/svg/SVGMarkerLayoutInfo.h \
+	Source/WebCore/rendering/svg/SVGRenderSupport.cpp \
+	Source/WebCore/rendering/svg/SVGRenderSupport.h \
+	Source/WebCore/rendering/svg/SVGRenderTreeAsText.cpp \
+	Source/WebCore/rendering/svg/SVGRenderTreeAsText.h \
+	Source/WebCore/rendering/svg/SVGResourcesCache.cpp \
+	Source/WebCore/rendering/svg/SVGResourcesCache.h \
+	Source/WebCore/rendering/svg/SVGResources.cpp \
+	Source/WebCore/rendering/svg/SVGResourcesCycleSolver.cpp \
+	Source/WebCore/rendering/svg/SVGResourcesCycleSolver.h \
+	Source/WebCore/rendering/svg/SVGResources.h \
 	Source/WebCore/rendering/svg/SVGRootInlineBox.cpp \
 	Source/WebCore/rendering/svg/SVGRootInlineBox.h \
+	Source/WebCore/rendering/svg/SVGShadowTreeElements.cpp \
+	Source/WebCore/rendering/svg/SVGShadowTreeElements.h \
 	Source/WebCore/rendering/svg/SVGTextChunk.cpp \
 	Source/WebCore/rendering/svg/SVGTextChunk.h \
 	Source/WebCore/rendering/svg/SVGTextChunkBuilder.cpp \

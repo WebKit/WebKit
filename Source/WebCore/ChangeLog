@@ -1,3 +1,148 @@
+2011-01-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Move all SVG renderer to WebCore/rendering/svg
+        https://bugs.webkit.org/show_bug.cgi?id=52087
+
+        No change of functionality. Just moved all SVG renderer to WebCore/rendering/svg.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vjproj/project.vjproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderForeignObject.cpp: Removed.
+        * rendering/RenderForeignObject.h: Removed.
+        * rendering/RenderSVGAllInOne.cpp: Removed.
+        * rendering/RenderSVGBlock.cpp: Removed.
+        * rendering/RenderSVGBlock.h: Removed.
+        * rendering/RenderSVGContainer.cpp: Removed.
+        * rendering/RenderSVGContainer.h: Removed.
+        * rendering/RenderSVGGradientStop.cpp: Removed.
+        * rendering/RenderSVGGradientStop.h: Removed.
+        * rendering/RenderSVGHiddenContainer.cpp: Removed.
+        * rendering/RenderSVGHiddenContainer.h: Removed.
+        * rendering/RenderSVGImage.cpp: Removed.
+        * rendering/RenderSVGImage.h: Removed.
+        * rendering/RenderSVGModelObject.cpp: Removed.
+        * rendering/RenderSVGModelObject.h: Removed.
+        * rendering/RenderSVGResource.cpp: Removed.
+        * rendering/RenderSVGResource.h: Removed.
+        * rendering/RenderSVGResourceClipper.cpp: Removed.
+        * rendering/RenderSVGResourceClipper.h: Removed.
+        * rendering/RenderSVGResourceContainer.cpp: Removed.
+        * rendering/RenderSVGResourceContainer.h: Removed.
+        * rendering/RenderSVGResourceFilter.cpp: Removed.
+        * rendering/RenderSVGResourceFilter.h: Removed.
+        * rendering/RenderSVGResourceFilterPrimitive.cpp: Removed.
+        * rendering/RenderSVGResourceFilterPrimitive.h: Removed.
+        * rendering/RenderSVGResourceGradient.cpp: Removed.
+        * rendering/RenderSVGResourceGradient.h: Removed.
+        * rendering/RenderSVGResourceLinearGradient.cpp: Removed.
+        * rendering/RenderSVGResourceLinearGradient.h: Removed.
+        * rendering/RenderSVGResourceMarker.cpp: Removed.
+        * rendering/RenderSVGResourceMarker.h: Removed.
+        * rendering/RenderSVGResourceMasker.cpp: Removed.
+        * rendering/RenderSVGResourceMasker.h: Removed.
+        * rendering/RenderSVGResourcePattern.cpp: Removed.
+        * rendering/RenderSVGResourcePattern.h: Removed.
+        * rendering/RenderSVGResourceRadialGradient.cpp: Removed.
+        * rendering/RenderSVGResourceRadialGradient.h: Removed.
+        * rendering/RenderSVGResourceSolidColor.cpp: Removed.
+        * rendering/RenderSVGResourceSolidColor.h: Removed.
+        * rendering/RenderSVGRoot.cpp: Removed.
+        * rendering/RenderSVGRoot.h: Removed.
+        * rendering/RenderSVGShadowTreeRootContainer.cpp: Removed.
+        * rendering/RenderSVGShadowTreeRootContainer.h: Removed.
+        * rendering/RenderSVGTransformableContainer.cpp: Removed.
+        * rendering/RenderSVGTransformableContainer.h: Removed.
+        * rendering/RenderSVGViewportContainer.cpp: Removed.
+        * rendering/RenderSVGViewportContainer.h: Removed.
+        * rendering/SVGImageBufferTools.cpp: Removed.
+        * rendering/SVGImageBufferTools.h: Removed.
+        * rendering/SVGMarkerData.h: Removed.
+        * rendering/SVGMarkerLayoutInfo.cpp: Removed.
+        * rendering/SVGMarkerLayoutInfo.h: Removed.
+        * rendering/SVGRenderSupport.cpp: Removed.
+        * rendering/SVGRenderSupport.h: Removed.
+        * rendering/SVGRenderTreeAsText.cpp: Removed.
+        * rendering/SVGRenderTreeAsText.h: Removed.
+        * rendering/SVGResources.cpp: Removed.
+        * rendering/SVGResources.h: Removed.
+        * rendering/SVGResourcesCache.cpp: Removed.
+        * rendering/SVGResourcesCache.h: Removed.
+        * rendering/SVGResourcesCycleSolver.cpp: Removed.
+        * rendering/SVGResourcesCycleSolver.h: Removed.
+        * rendering/SVGShadowTreeElements.cpp: Removed.
+        * rendering/SVGShadowTreeElements.h: Removed.
+        * rendering/svg/RenderForeignObject.cpp: Copied from Source/WebCore/rendering/RenderForeignObject.cpp.
+        * rendering/svg/RenderForeignObject.h: Copied from Source/WebCore/rendering/RenderForeignObject.h.
+        * rendering/svg/RenderSVGAllInOne.cpp: Copied from Source/WebCore/rendering/RenderSVGAllInOne.cpp.
+        * rendering/svg/RenderSVGBlock.cpp: Copied from Source/WebCore/rendering/RenderSVGBlock.cpp.
+        * rendering/svg/RenderSVGBlock.h: Copied from Source/WebCore/rendering/RenderSVGBlock.h.
+        * rendering/svg/RenderSVGContainer.cpp: Copied from Source/WebCore/rendering/RenderSVGContainer.cpp.
+        * rendering/svg/RenderSVGContainer.h: Copied from Source/WebCore/rendering/RenderSVGContainer.h.
+        * rendering/svg/RenderSVGGradientStop.cpp: Copied from Source/WebCore/rendering/RenderSVGGradientStop.cpp.
+        * rendering/svg/RenderSVGGradientStop.h: Copied from Source/WebCore/rendering/RenderSVGGradientStop.h.
+        * rendering/svg/RenderSVGHiddenContainer.cpp: Copied from Source/WebCore/rendering/RenderSVGHiddenContainer.cpp.
+        * rendering/svg/RenderSVGHiddenContainer.h: Copied from Source/WebCore/rendering/RenderSVGHiddenContainer.h.
+        * rendering/svg/RenderSVGImage.cpp: Copied from Source/WebCore/rendering/RenderSVGImage.cpp.
+        * rendering/svg/RenderSVGImage.h: Copied from Source/WebCore/rendering/RenderSVGImage.h.
+        * rendering/svg/RenderSVGModelObject.cpp: Copied from Source/WebCore/rendering/RenderSVGModelObject.cpp.
+        * rendering/svg/RenderSVGModelObject.h: Copied from Source/WebCore/rendering/RenderSVGModelObject.h.
+        * rendering/svg/RenderSVGResource.cpp: Copied from Source/WebCore/rendering/RenderSVGResource.cpp.
+        * rendering/svg/RenderSVGResource.h: Copied from Source/WebCore/rendering/RenderSVGResource.h.
+        * rendering/svg/RenderSVGResourceClipper.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceClipper.cpp.
+        * rendering/svg/RenderSVGResourceClipper.h: Copied from Source/WebCore/rendering/RenderSVGResourceClipper.h.
+        * rendering/svg/RenderSVGResourceContainer.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceContainer.cpp.
+        * rendering/svg/RenderSVGResourceContainer.h: Copied from Source/WebCore/rendering/RenderSVGResourceContainer.h.
+        * rendering/svg/RenderSVGResourceFilter.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceFilter.cpp.
+        * rendering/svg/RenderSVGResourceFilter.h: Copied from Source/WebCore/rendering/RenderSVGResourceFilter.h.
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceFilterPrimitive.cpp.
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h: Copied from Source/WebCore/rendering/RenderSVGResourceFilterPrimitive.h.
+        * rendering/svg/RenderSVGResourceGradient.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceGradient.cpp.
+        * rendering/svg/RenderSVGResourceGradient.h: Copied from Source/WebCore/rendering/RenderSVGResourceGradient.h.
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceLinearGradient.cpp.
+        * rendering/svg/RenderSVGResourceLinearGradient.h: Copied from Source/WebCore/rendering/RenderSVGResourceLinearGradient.h.
+        * rendering/svg/RenderSVGResourceMarker.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceMarker.cpp.
+        * rendering/svg/RenderSVGResourceMarker.h: Copied from Source/WebCore/rendering/RenderSVGResourceMarker.h.
+        * rendering/svg/RenderSVGResourceMasker.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceMasker.cpp.
+        * rendering/svg/RenderSVGResourceMasker.h: Copied from Source/WebCore/rendering/RenderSVGResourceMasker.h.
+        * rendering/svg/RenderSVGResourcePattern.cpp: Copied from Source/WebCore/rendering/RenderSVGResourcePattern.cpp.
+        * rendering/svg/RenderSVGResourcePattern.h: Copied from Source/WebCore/rendering/RenderSVGResourcePattern.h.
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceRadialGradient.cpp.
+        * rendering/svg/RenderSVGResourceRadialGradient.h: Copied from Source/WebCore/rendering/RenderSVGResourceRadialGradient.h.
+        * rendering/svg/RenderSVGResourceSolidColor.cpp: Copied from Source/WebCore/rendering/RenderSVGResourceSolidColor.cpp.
+        * rendering/svg/RenderSVGResourceSolidColor.h: Copied from Source/WebCore/rendering/RenderSVGResourceSolidColor.h.
+        * rendering/svg/RenderSVGRoot.cpp: Copied from Source/WebCore/rendering/RenderSVGRoot.cpp.
+        * rendering/svg/RenderSVGRoot.h: Copied from Source/WebCore/rendering/RenderSVGRoot.h.
+        * rendering/svg/RenderSVGShadowTreeRootContainer.cpp: Copied from Source/WebCore/rendering/RenderSVGShadowTreeRootContainer.cpp.
+        * rendering/svg/RenderSVGShadowTreeRootContainer.h: Copied from Source/WebCore/rendering/RenderSVGShadowTreeRootContainer.h.
+        * rendering/svg/RenderSVGTransformableContainer.cpp: Copied from Source/WebCore/rendering/RenderSVGTransformableContainer.cpp.
+        * rendering/svg/RenderSVGTransformableContainer.h: Copied from Source/WebCore/rendering/RenderSVGTransformableContainer.h.
+        * rendering/svg/RenderSVGViewportContainer.cpp: Copied from Source/WebCore/rendering/RenderSVGViewportContainer.cpp.
+        * rendering/svg/RenderSVGViewportContainer.h: Copied from Source/WebCore/rendering/RenderSVGViewportContainer.h.
+        * rendering/svg/SVGImageBufferTools.cpp: Copied from Source/WebCore/rendering/SVGImageBufferTools.cpp.
+        * rendering/svg/SVGImageBufferTools.h: Copied from Source/WebCore/rendering/SVGImageBufferTools.h.
+        * rendering/svg/SVGMarkerData.h: Copied from Source/WebCore/rendering/SVGMarkerData.h.
+        * rendering/svg/SVGMarkerLayoutInfo.cpp: Copied from Source/WebCore/rendering/SVGMarkerLayoutInfo.cpp.
+        * rendering/svg/SVGMarkerLayoutInfo.h: Copied from Source/WebCore/rendering/SVGMarkerLayoutInfo.h.
+        * rendering/svg/SVGRenderSupport.cpp: Copied from Source/WebCore/rendering/SVGRenderSupport.cpp.
+        * rendering/svg/SVGRenderSupport.h: Copied from Source/WebCore/rendering/SVGRenderSupport.h.
+        * rendering/svg/SVGRenderTreeAsText.cpp: Copied from Source/WebCore/rendering/SVGRenderTreeAsText.cpp.
+        * rendering/svg/SVGRenderTreeAsText.h: Copied from Source/WebCore/rendering/SVGRenderTreeAsText.h.
+        * rendering/svg/SVGResources.cpp: Copied from Source/WebCore/rendering/SVGResources.cpp.
+        * rendering/svg/SVGResources.h: Copied from Source/WebCore/rendering/SVGResources.h.
+        * rendering/svg/SVGResourcesCache.cpp: Copied from Source/WebCore/rendering/SVGResourcesCache.cpp.
+        * rendering/svg/SVGResourcesCache.h: Copied from Source/WebCore/rendering/SVGResourcesCache.h.
+        * rendering/svg/SVGResourcesCycleSolver.cpp: Copied from Source/WebCore/rendering/SVGResourcesCycleSolver.cpp.
+        * rendering/svg/SVGResourcesCycleSolver.h: Copied from Source/WebCore/rendering/SVGResourcesCycleSolver.h.
+        * rendering/svg/SVGShadowTreeElements.cpp: Copied from Source/WebCore/rendering/SVGShadowTreeElements.cpp.
+        * rendering/svg/SVGShadowTreeElements.h: Copied from Source/WebCore/rendering/SVGShadowTreeElements.h.
+
 2011-01-09  Xianzhu Wang  <phnixwxz@gmail.com>
 
         Reviewed by Darin Fisher.
