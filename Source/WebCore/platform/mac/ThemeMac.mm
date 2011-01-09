@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,16 @@ using namespace std;
 - (NSText *)currentEditor
 {
     return nil;
+}
+
+- (NSRect)_focusRingVisibleRect
+{
+    return [self visibleRect];
+}
+
+- (NSView *)_focusRingClipAncestor
+{
+    return self;
 }
 
 @end

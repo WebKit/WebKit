@@ -1,3 +1,15 @@
+2011-01-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8765555> WebKit2: Search field focus ring is missing
+
+        Provide a focus ring visible rect to AppKit.
+
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreFlippedView _focusRingVisibleRect]):
+        (-[WebCoreFlippedView _focusRingClipAncestor]):
+
 2011-01-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Rob Buis.
