@@ -1,3 +1,19 @@
+2011-01-08  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 Conformance Test failure: approved/xhtml5/html_style_in_comment.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=48593
+
+        XHTML <style> blocks, unlike HTML <style> blocks, should respect HTML
+        comments.
+
+        Test: fast/parser/xhtml-html-comment-in-style-block.xhtml
+
+        * dom/StyleElement.cpp:
+        (WebCore::isValidStyleChild): Remove the COMMENT_NODE check as the HTML parser doesn't add COMMENT_NODEs as children of style blocks.
+        (WebCore::StyleElement::process): Factored out a condition that must remain in sync.
+
 2011-01-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

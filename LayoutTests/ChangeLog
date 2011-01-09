@@ -1,3 +1,15 @@
+2011-01-08  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        HTML5 Conformance Test failure: approved/xhtml5/html_style_in_comment.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=48593
+
+        * fast/parser/html-html-comment-in-style-block-expected.txt: Added.
+        * fast/parser/html-html-comment-in-style-block.html: Added.
+        * fast/parser/xhtml-html-comment-in-style-block-expected.txt: Added.
+        * fast/parser/xhtml-html-comment-in-style-block.xhtml: Added.
+
 2011-01-08  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Mihai Parparita.

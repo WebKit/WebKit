@@ -30,6 +30,13 @@
 
 namespace WebCore {
 
+static bool isValidStyleChild(Node* node)
+{
+    ASSERT(node);
+    Node::NodeType nodeType = node->nodeType();
+    return nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE;
+}
+    
 StyleElement::StyleElement(Document* document, bool createdByParser)
     : m_createdByParser(createdByParser)
     , m_loading(false)
@@ -94,8 +101,7 @@ void StyleElement::process(Element* e)
 
     unsigned resultLength = 0;
     for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
-        Node::NodeType nodeType = c->nodeType();
-        if (nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE || nodeType == Node::COMMENT_NODE)
+        if (isValidStyleChild(c))
             resultLength += c->nodeValue().length();
     }
     UChar* text;
@@ -103,8 +109,7 @@ void StyleElement::process(Element* e)
 
     UChar* p = text;
     for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
-        Node::NodeType nodeType = c->nodeType();
-        if (nodeType == Node::TEXT_NODE || nodeType == Node::CDATA_SECTION_NODE || nodeType == Node::COMMENT_NODE) {
+        if (isValidStyleChild(c)) {
             String nodeValue = c->nodeValue();
             unsigned nodeLength = nodeValue.length();
             memcpy(p, nodeValue.characters(), nodeLength * sizeof(UChar));
