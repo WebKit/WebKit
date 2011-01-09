@@ -197,6 +197,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitdownloadprivate.h \
 	WebKit/gtk/webkit/webkiterror.cpp \
 	WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
+	WebKit/gtk/webkit/webkitgeolocationpolicydecisionprivate.h \
 	WebKit/gtk/webkit/webkitglobals.cpp \
 	WebKit/gtk/webkit/webkitglobals.h \
 	WebKit/gtk/webkit/webkitglobalsprivate.h \
@@ -216,6 +217,7 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebbackforwardlistprivate.h \
 	WebKit/gtk/webkit/webkitwebdatabase.cpp \
 	WebKit/gtk/webkit/webkitwebdatasource.cpp \
+	WebKit/gtk/webkit/webkitwebdatasourceprivate.h \
 	WebKit/gtk/webkit/webkitwebframe.cpp \
 	WebKit/gtk/webkit/webkitwebframeprivate.h \
 	WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
@@ -236,7 +238,8 @@ webkitgtk_sources += \
 	WebKit/gtk/webkit/webkitwebsettingsprivate.h \
 	WebKit/gtk/webkit/webkitwebview.cpp \
 	WebKit/gtk/webkit/webkitwebviewprivate.h \
-	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp
+	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp \
+	WebKit/gtk/webkit/webkitwebwindowfeaturesprivate.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc

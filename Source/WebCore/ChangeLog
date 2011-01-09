@@ -1,3 +1,11 @@
+2011-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        GTK+ Build fix. Add missing headers to the source list, fixing make dist.
+
+        No new tests. This is only a build change.
+
+        * GNUmakefile.am: Add missing headers to the source list.
+
 2011-01-08 Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Reviewed by Martin Robinson.

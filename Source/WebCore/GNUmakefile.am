@@ -1297,6 +1297,7 @@ webcore_sources += \
 	Source/WebCore/dom/TextEvent.cpp \
 	Source/WebCore/dom/TextEvent.h \
 	Source/WebCore/dom/Text.h \
+	Source/WebCore/dom/TouchList.h \
 	Source/WebCore/dom/TransformSource.h \
 	Source/WebCore/dom/TransformSourceLibxslt.cpp \
 	Source/WebCore/dom/Traversal.cpp \
@@ -1440,6 +1441,7 @@ webcore_sources += \
 	Source/WebCore/editing/visible_units.h \
 	Source/WebCore/editing/WrapContentsInDummySpanCommand.cpp \
 	Source/WebCore/editing/WrapContentsInDummySpanCommand.h \
+	Source/WebCore/editing/WritingDirection.h \
 	Source/WebCore/fileapi/AsyncFileWriter.h \
 	Source/WebCore/fileapi/AsyncFileWriterClient.h \
 	Source/WebCore/fileapi/BlobBuilder.cpp \
@@ -1561,6 +1563,7 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CanvasRenderingContext.h \
 	Source/WebCore/html/canvas/CanvasStyle.cpp \
 	Source/WebCore/html/canvas/CanvasStyle.h \
+	Source/WebCore/html/canvas/CheckedInt.h \
 	Source/WebCore/html/canvas/DataView.cpp \
 	Source/WebCore/html/canvas/DataView.h \
 	Source/WebCore/html/canvas/Float32Array.cpp \
@@ -1571,8 +1574,10 @@ webcore_sources += \
 	Source/WebCore/html/canvas/Int32Array.h \
 	Source/WebCore/html/canvas/Int8Array.cpp \
 	Source/WebCore/html/canvas/Int8Array.h \
+	Source/WebCore/html/canvas/IntegralTypedArrayBase.h \
 	Source/WebCore/html/canvas/OESTextureFloat.cpp \
 	Source/WebCore/html/canvas/OESTextureFloat.h \
+	Source/WebCore/html/canvas/TypedArrayBase.h \
 	Source/WebCore/html/canvas/WebKitLoseContext.cpp \
 	Source/WebCore/html/canvas/WebKitLoseContext.h \
 	Source/WebCore/html/canvas/Uint16Array.cpp \
@@ -2094,7 +2099,6 @@ webcore_sources += \
 	Source/WebCore/loader/ResourceLoader.h \
 	Source/WebCore/loader/ResourceLoadNotifier.cpp \
 	Source/WebCore/loader/ResourceLoadNotifier.h \
-	Source/WebCore/loader/ResourceLoadPriority.h \
 	Source/WebCore/loader/ResourceLoadScheduler.cpp \
 	Source/WebCore/loader/ResourceLoadScheduler.h \
 	Source/WebCore/loader/SinkDocument.cpp \
@@ -2540,6 +2544,7 @@ webcore_sources += \
 	Source/WebCore/platform/network/ResourceHandle.h \
 	Source/WebCore/platform/network/ResourceHandleInternal.h \
 	Source/WebCore/platform/network/ResourceLoadInfo.h \
+	Source/WebCore/platform/network/ResourceLoadPriority.h \
 	Source/WebCore/platform/network/ResourceLoadTiming.h \
 	Source/WebCore/platform/network/ResourceRequestBase.cpp \
 	Source/WebCore/platform/network/ResourceRequestBase.h \

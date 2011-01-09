@@ -1,3 +1,9 @@
+2011-01-08  Martin Robinson  <mrobinson@igalia.com>
+
+        GTK+ build fix. Adding missing headers to the source list, fixing make dist.
+
+        * GNUmakefile.am: Fix make dist.
+
 2011-01-07  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.
