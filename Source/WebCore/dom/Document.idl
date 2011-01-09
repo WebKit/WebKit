@@ -333,7 +333,7 @@ module core {
                                                          in long ScreenX,
                                                          in long screenY)
             raises (DOMException);
-        [ReturnsNew, EnabledAtRuntime] TouchList createTouchList()
+        [ReturnsNew, EnabledAtRuntime, Custom] TouchList createTouchList()
             raises (DOMException);
 #endif
 

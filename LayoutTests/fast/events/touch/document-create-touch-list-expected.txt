@@ -8,6 +8,11 @@ PASS touchList is non-null.
 PASS touchList.length is 0
 PASS touchList.item(0) is null
 PASS touchList.item(1) is null
+PASS ts.touches.length is 2
+PASS ts.touches[0].identifier is 12341
+PASS ts.touches[0].clientX is 60
+PASS ts.touches[1].screenY is 120
+PASS ts.ctrlKey is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

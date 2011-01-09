@@ -31,8 +31,11 @@
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
+#include "JSTouch.h"
+#include "JSTouchList.h"
 #include "Location.h"
 #include "ScriptController.h"
+#include "TouchList.h"
 
 #if ENABLE(SVG)
 #include "JSSVGDocument.h"
@@ -123,5 +126,17 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* documen
 
     return wrapper;
 }
+
+#if ENABLE(TOUCH_EVENTS)
+JSValue JSDocument::createTouchList(ExecState* exec)
+{
+    RefPtr<TouchList> touchList = TouchList::create();
+
+    for (int i = 0; i < exec->argumentCount(); i++)
+        touchList->append(toTouch(exec->argument(i)));
+
+    return toJS(exec, touchList.release());
+}
+#endif
 
 } // namespace WebCore

@@ -61,6 +61,9 @@ void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
 
     initUIEvent(type, true, true, view, 0);
 
+    m_touches = touches;
+    m_targetTouches = targetTouches;
+    m_changedTouches = changedTouches;
     m_screenX = screenX;
     m_screenY = screenY;
     m_ctrlKey = ctrlKey;

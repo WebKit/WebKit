@@ -1,5 +1,17 @@
 2011-01-08  Chang Shu  <chang.shu@nokia.com>
 
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support createTouchList with Touch list for test automation.
+        https://bugs.webkit.org/show_bug.cgi?id=51196
+
+        Added test cases that take Touch objects when creating TouchList.
+
+        * fast/events/touch/document-create-touch-list-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch-list.js:
+
+2011-01-08  Chang Shu  <chang.shu@nokia.com>
+
         Reviewed by Ryosuke Niwa.
 
         Added test contents for contentEditable DOM attribute.

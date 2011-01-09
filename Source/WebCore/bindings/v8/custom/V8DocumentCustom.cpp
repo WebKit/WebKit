@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Node.h"
+#include "TouchList.h"
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
 
@@ -46,6 +47,8 @@
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
+#include "V8Touch.h"
+#include "V8TouchList.h"
 #if ENABLE(3D_CANVAS)
 #include "V8WebGLRenderingContext.h"
 #endif
@@ -162,5 +165,20 @@ v8::Handle<v8::Value> toV8(Document* impl, bool forceNewObject)
     }
     return wrapper;
 }
+
+#if ENABLE(TOUCH_EVENTS)
+v8::Handle<v8::Value> V8Document::createTouchListCallback(const v8::Arguments& args)
+{
+    RefPtr<TouchList> touchList = TouchList::create();
+
+    for (int i = 0; i < args.Length(); i++) {
+        if (!args[i]->IsObject())
+            return v8::Undefined();
+        touchList->append(V8Touch::toNative(args[i]->ToObject()));
+    }
+
+    return toV8(touchList.release());
+}
+#endif
 
 } // namespace WebCore

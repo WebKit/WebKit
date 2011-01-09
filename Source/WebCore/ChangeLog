@@ -1,3 +1,19 @@
+2011-01-08  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support createTouchList with Touch list for test automation.
+        Implemented JS/V8 custom functions for createTouchList.
+        https://bugs.webkit.org/show_bug.cgi?id=51196
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::createTouchList):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::createTouchListCallback):
+        * dom/Document.idl:
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::initTouchEvent):
+
 2011-01-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
