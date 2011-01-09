@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-// WebString - An string array type suitable for vending to an API.
+// WebString - A string type suitable for vending to an API.
 
 class WebString : public APIObject {
 public:

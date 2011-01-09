@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-// WebURL - An string array type suitable for vending to an API.
+// WebURL - A URL type suitable for vending to an API.
 
 class WebURL : public APIObject {
 public:
