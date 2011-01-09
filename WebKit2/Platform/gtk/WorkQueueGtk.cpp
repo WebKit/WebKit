@@ -26,6 +26,7 @@
 
 #include "WorkQueue.h"
 
+#include "NotImplemented.h"
 #include "WKBase.h"
 #include <glib.h>
 
@@ -193,4 +194,9 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
         MutexLocker locker(m_eventLoopLock);
         g_source_attach(dispatchSource, m_eventContext);
     }
+}
+
+void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double)
+{
+    notImplemented();
 }

@@ -26,6 +26,7 @@
 #define AuthenticationChallenge_h
 
 #include "AuthenticationChallengeBase.h"
+#include "AuthenticationClient.h"
 
 namespace WebCore {
 
@@ -39,6 +40,10 @@ public:
         : AuthenticationChallengeBase(protectionSpace, proposedCredential, previousFailureCount, response, error)
     {
     }
+
+    AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
+
+    RefPtr<AuthenticationClient> m_authenticationClient;
 };
 
 }

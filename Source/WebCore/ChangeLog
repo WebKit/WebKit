@@ -1,3 +1,21 @@
+2011-01-08 Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] WebKit2 GNUmakefile is out of date from trunk
+        https://bugs.webkit.org/show_bug.cgi?id=51883
+
+        Added stubs for WebKit2 compilation.
+
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::contextMenuItemVector):
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::checked):
+        (WebCore::ContextMenuItem::enabled):
+        * platform/network/soup/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::authenticationClient):
+
 2011-01-08  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.

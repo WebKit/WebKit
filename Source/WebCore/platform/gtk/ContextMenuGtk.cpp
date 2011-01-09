@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2007 Holger Hans Peter Freyther
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +20,7 @@
 #include "config.h"
 #include "ContextMenu.h"
 
+#include "NotImplemented.h"
 #include <gtk/gtk.h>
 
 namespace WebCore {
@@ -67,6 +69,14 @@ PlatformMenuDescription ContextMenu::releasePlatformDescription()
     m_platformDescription = 0;
 
     return description;
+}
+
+Vector<ContextMenuItem> contextMenuItemVector(const PlatformMenuDescription)
+{
+    notImplemented();
+
+    Vector<ContextMenuItem> menuItemVector;
+    return menuItemVector;
 }
 
 }

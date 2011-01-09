@@ -107,18 +107,16 @@ gboolean RunLoop::TimerBase::repeatingTimerFired(RunLoop::TimerBase* timer)
     return TRUE;
 }
 
-void RunLoop::TimerBase::start(double nextFireInterval, double repeatInterval)
+void RunLoop::TimerBase::start(double fireInterval, bool repeat)
 {
     if (m_timerSource)
         stop();
 
-    if (repeatInterval) {
-        m_timerSource = g_timeout_source_new(static_cast<guint>(repeatInterval));
+    m_timerSource = g_timeout_source_new(static_cast<guint>(fireInterval));
+    if (repeat)
         g_source_set_callback(m_timerSource, reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::repeatingTimerFired), this, 0);
-    } else {
-        m_timerSource = g_timeout_source_new(static_cast<guint>(nextFireInterval));
+    else
         g_source_set_callback(m_timerSource, reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::oneShotTimerFired), this, 0);
-    }
     g_source_attach(m_timerSource, m_runLoop->m_runLoopContext);
 }
 

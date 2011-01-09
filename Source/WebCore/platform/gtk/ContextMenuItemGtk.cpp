@@ -1,6 +1,7 @@
 /*
  *  Copyright (C) 2007 Holger Hans Peter Freyther
  *  Copyright (C) 2010 Igalia S.L
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -150,6 +151,18 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
         setSubMenu(subMenu);
 }
 
+ContextMenuItem::ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool, bool)
+{
+    // FIXME: Implement with WebKit2 ContextMenu changes.
+    notImplemented();
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenuAction, const String&, bool, bool, Vector<ContextMenuItem>&)
+{
+    // FIXME: Implement with WebKit2 ContextMenu changes.
+    notImplemented();
+}
+
 ContextMenuItem::~ContextMenuItem()
 {
 }
@@ -215,6 +228,20 @@ void ContextMenuItem::setChecked(bool shouldCheck)
     GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription.get()));
     if (action && GTK_IS_TOGGLE_ACTION(action))
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), shouldCheck);
+}
+
+bool ContextMenuItem::checked() const
+{
+    // FIXME: Implement with WebKit2 ContextMenu changes.
+    notImplemented();
+    return false;
+}
+
+bool ContextMenuItem::enabled() const
+{
+    // FIXME: Implement with WebKit2 ContextMenu changes.
+    notImplemented();
+    return false;
 }
 
 void ContextMenuItem::setEnabled(bool shouldEnable)
