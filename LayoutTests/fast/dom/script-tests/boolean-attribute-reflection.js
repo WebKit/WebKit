@@ -23,7 +23,6 @@ var attributes = [
     [ "pre", "wrap" ],
     [ "script", "defer" ],
     [ "select", "multiple" ],
-    [ "style", "disabled" ],
     [ "td", "noWrap" ],
     [ "ul", "compact" ],
     [ "video", "autoplay" ],

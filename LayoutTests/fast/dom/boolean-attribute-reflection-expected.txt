@@ -91,10 +91,6 @@ PASS e = make('select'); e.removeAttribute('multiple'); e.multiple is false
 PASS e = make('select'); e.setAttribute('multiple', ''); e.multiple is true
 PASS e = make('select'); e.setAttribute('multiple', 'x'); e.multiple = false; e.getAttribute('multiple') is null
 PASS e = make('select'); e.setAttribute('multiple', 'x'); e.multiple = true; e.getAttribute('multiple') is ''
-PASS e = make('style'); e.removeAttribute('disabled'); e.disabled is false
-PASS e = make('style'); e.setAttribute('disabled', ''); e.disabled is true
-PASS e = make('style'); e.setAttribute('disabled', 'x'); e.disabled = false; e.getAttribute('disabled') is null
-PASS e = make('style'); e.setAttribute('disabled', 'x'); e.disabled = true; e.getAttribute('disabled') is ''
 PASS e = make('td'); e.removeAttribute('nowrap'); e.noWrap is false
 PASS e = make('td'); e.setAttribute('nowrap', ''); e.noWrap is true
 PASS e = make('td'); e.setAttribute('nowrap', 'x'); e.noWrap = false; e.getAttribute('nowrap') is null

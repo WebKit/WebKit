@@ -1,3 +1,13 @@
+2011-01-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix test after r75352.
+        
+        Per HTML5, the disabled IDL attribute for style elements is not reflected
+        in the content attribute.
+
+        * fast/dom/boolean-attribute-reflection-expected.txt:
+        * fast/dom/script-tests/boolean-attribute-reflection.js:
+
 2011-01-08  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Alexey Proskuryakov.
