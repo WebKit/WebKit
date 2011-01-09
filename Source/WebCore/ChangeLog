@@ -1,3 +1,28 @@
+2011-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        HTMLStyleElement.disabled doesn't work (affects jQuery)
+        https://bugs.webkit.org/show_bug.cgi?id=25287
+        
+        Fix the disabled property of a HTMLStyleElement to reflect,
+        and set the disabled state of its style sheet, as required
+        by DOM1 etc.
+
+        Based on initial patch by Tarun Nainani.
+
+        Test: fast/html/disable-style-element.html
+
+        * dom/StyleElement.h:
+        (WebCore::StyleElement::sheet): Make const.
+        
+        * html/HTMLStyleElement.h:
+        * html/HTMLStyleElement.idl:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::disabled): 
+        (WebCore::HTMLStyleElement::setDisabled): Getter and setter for disabled
+        call through to the sheet (if any).
+
 2011-01-09  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

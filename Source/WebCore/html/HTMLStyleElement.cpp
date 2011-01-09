@@ -27,8 +27,9 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "HTMLNames.h"
-#include "ScriptableDocumentParser.h"
 #include "ScriptEventListener.h"
+#include "ScriptableDocumentParser.h"
+
 
 namespace WebCore {
 
@@ -102,6 +103,21 @@ void HTMLStyleElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 
     if (StyleSheet* styleSheet = const_cast<HTMLStyleElement*>(this)->sheet())
         styleSheet->addSubresourceStyleURLs(urls);
+}
+
+bool HTMLStyleElement::disabled() const
+{
+    StyleSheet* styleSheet = sheet();
+    if (!styleSheet)
+        return false;
+
+    return styleSheet->disabled();
+}
+
+void HTMLStyleElement::setDisabled(bool setDisabled)
+{
+    if (StyleSheet* styleSheet = sheet())
+        styleSheet->setDisabled(setDisabled);
 }
 
 }

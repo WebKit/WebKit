@@ -39,6 +39,9 @@ public:
 
     using StyleElement::sheet;
 
+    bool disabled() const;
+    void setDisabled(bool);
+
 private:
     HTMLStyleElement(const QualifiedName&, Document*, bool createdByParser);
 
