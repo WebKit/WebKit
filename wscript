@@ -45,7 +45,7 @@ wk_includes = ['.',
 
 if build_port == "wx":
     wk_includes.append(os.path.join(wk_root, 'WebKit', 'wx'))
-    wk_includes.append(os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'wx', 'wxcode')
+    wk_includes.append(os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'wx', 'wxcode'))
 
 if sys.platform.startswith("win"):
     wk_includes.append(os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'win'))
