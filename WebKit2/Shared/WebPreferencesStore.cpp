@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,12 +55,12 @@ WebPreferencesStore::WebPreferencesStore()
 
 void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(m_stringValues, m_boolValues, m_uint32Values));
+    encoder->encode(CoreIPC::In(m_stringValues, m_boolValues, m_uint32Values, m_doubleValues));
 }
 
 bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& s)
 {
-    if (!decoder->decode(CoreIPC::Out(s.m_stringValues, s.m_boolValues, s.m_uint32Values)))
+    if (!decoder->decode(CoreIPC::Out(s.m_stringValues, s.m_boolValues, s.m_uint32Values, s.m_doubleValues)))
         return false;
 
     if (hasXSSAuditorEnabledTestRunnerOverride)
@@ -90,7 +90,7 @@ String defaultValueForKey(const String& key)
     static HashMap<String, String>& defaults = *new HashMap<String, String>;
     if (defaults.isEmpty()) {
 #define DEFINE_STRING_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
-    FOR_EACH_WEBKIT_STRING_PREFERENCE(DEFINE_STRING_DEFAULTS)
+        FOR_EACH_WEBKIT_STRING_PREFERENCE(DEFINE_STRING_DEFAULTS)
 #undef DEFINE_STRING_DEFAULTS
     }
 
@@ -103,7 +103,7 @@ bool defaultValueForKey(const String& key)
     static HashMap<String, bool>& defaults = *new HashMap<String, bool>;
     if (defaults.isEmpty()) {
 #define DEFINE_BOOL_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
-    FOR_EACH_WEBKIT_BOOL_PREFERENCE(DEFINE_BOOL_DEFAULTS)
+        FOR_EACH_WEBKIT_BOOL_PREFERENCE(DEFINE_BOOL_DEFAULTS)
 #undef DEFINE_BOOL_DEFAULTS
     }
 
@@ -116,8 +116,21 @@ uint32_t defaultValueForKey(const String& key)
     static HashMap<String, uint32_t>& defaults = *new HashMap<String, uint32_t>;
     if (defaults.isEmpty()) {
 #define DEFINE_UINT32_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
-    FOR_EACH_WEBKIT_UINT32_PREFERENCE(DEFINE_UINT32_DEFAULTS)
+        FOR_EACH_WEBKIT_UINT32_PREFERENCE(DEFINE_UINT32_DEFAULTS)
 #undef DEFINE_UINT32_DEFAULTS
+    }
+
+    return defaults.get(key);
+}
+
+template<>
+double defaultValueForKey(const String& key)
+{
+    static HashMap<String, double>& defaults = *new HashMap<String, double>;
+    if (defaults.isEmpty()) {
+#define DEFINE_DOUBLE_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
+        FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(DEFINE_DOUBLE_DEFAULTS)
+#undef DEFINE_DOUBLE_DEFAULTS
     }
 
     return defaults.get(key);
@@ -172,6 +185,16 @@ bool WebPreferencesStore::setUInt32ValueForKey(const String& key, uint32_t value
 uint32_t WebPreferencesStore::getUInt32ValueForKey(const String& key) const
 {
     return valueForKey(m_uint32Values, key);
+}
+
+bool WebPreferencesStore::setDoubleValueForKey(const String& key, double value) 
+{
+    return setValueForKey(m_doubleValues, key, value);
+}
+
+double WebPreferencesStore::getDoubleValueForKey(const String& key) const
+{
+    return valueForKey(m_doubleValues, key);
 }
 
 } // namespace WebKit

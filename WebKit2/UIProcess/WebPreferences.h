@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,9 +82,11 @@ private:
     void updateStringValueForKey(const String& key, const String& value);
     void updateBoolValueForKey(const String& key, bool value);
     void updateUInt32ValueForKey(const String& key, uint32_t value);
+    void updateDoubleValueForKey(const String& key, double value);
     void platformUpdateStringValueForKey(const String& key, const String& value);
     void platformUpdateBoolValueForKey(const String& key, bool value);
     void platformUpdateUInt32ValueForKey(const String& key, uint32_t value);
+    void platformUpdateDoubleValueForKey(const String& key, double value);
 
     HashSet<WebPageGroup*> m_pageGroups;
     WebPreferencesStore m_store;

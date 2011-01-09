@@ -50,4 +50,9 @@ void WebPreferences::platformUpdateUInt32ValueForKey(const String&, uint32_t)
     notImplemented();
 }
 
+void WebPreferences::platformUpdateDoubleValueForKey(const String&, double)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

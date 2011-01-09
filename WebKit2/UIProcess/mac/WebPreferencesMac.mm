@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,6 +68,17 @@ static void setUInt32ValueIfInUserDefaults(const String& identifier, const Strin
     store.setUInt32ValueForKey(key, [object intValue]);
 }
 
+static void setDoubleValueIfInUserDefaults(const String& identifier, const String& key, WebPreferencesStore& store)
+{
+    id object = [[NSUserDefaults standardUserDefaults] objectForKey:makeKey(identifier, key)];
+    if (!object)
+        return;
+    if (![object respondsToSelector:@selector(doubleValue)])
+        return;
+
+    store.setDoubleValueForKey(key, [object doubleValue]);
+}
+
 void WebPreferences::platformInitializeStore()
 {
     if (!m_identifier)
@@ -105,5 +116,12 @@ void WebPreferences::platformUpdateUInt32ValueForKey(const String& key, uint32_t
     [[NSUserDefaults standardUserDefaults] setInteger:value forKey:makeKey(m_identifier, key)];
 }
 
-} // namespace WebKit
+void WebPreferences::platformUpdateDoubleValueForKey(const String& key, double value)
+{
+    if (!m_identifier)
+        return;
 
+    [[NSUserDefaults standardUserDefaults] setDouble:value forKey:makeKey(m_identifier, key)];
+}
+
+} // namespace WebKit

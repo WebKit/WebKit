@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +75,12 @@ void WebPreferences::updateBoolValueForKey(const String& key, bool value)
 void WebPreferences::updateUInt32ValueForKey(const String& key, uint32_t value)
 {
     platformUpdateUInt32ValueForKey(key, value);
+    update(); // FIXME: Only send over the changed key and value.
+}
+
+void WebPreferences::updateDoubleValueForKey(const String& key, double value)
+{
+    platformUpdateDoubleValueForKey(key, value);
     update(); // FIXME: Only send over the changed key and value.
 }
 

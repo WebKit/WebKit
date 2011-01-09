@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,12 +66,17 @@ namespace WebKit {
     macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false) \
     \
 
+#define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
+    macro(PDFScaleFactor, pdfScaleFactor, Double, double, 0) \
+    \
+
 #define FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     macro(FontSmoothingLevel, fontSmoothingLevel, UInt32, uint32_t, FontSmoothingLevelMedium) \
     macro(MinimumFontSize, minimumFontSize, UInt32, uint32_t, 0) \
     macro(MinimumLogicalFontSize, minimumLogicalFontSize, UInt32, uint32_t, 9) \
     macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \
     macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
+    macro(PDFDisplayMode, pdfDisplayMode, UInt32, uint32_t, 1) \
     \
 
 #if PLATFORM(WIN)
@@ -107,6 +112,7 @@ namespace WebKit {
 
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
     \
@@ -138,12 +144,16 @@ struct WebPreferencesStore {
     bool setUInt32ValueForKey(const String& key, uint32_t value);
     uint32_t getUInt32ValueForKey(const String& key) const;
 
+    bool setDoubleValueForKey(const String& key, double value);
+    double getDoubleValueForKey(const String& key) const;
+
     static void overrideXSSAuditorEnabledForTestRunner(bool);
     static void removeTestRunnerOverrides();
 
     HashMap<String, String> m_stringValues;
     HashMap<String, bool> m_boolValues;
     HashMap<String, uint32_t> m_uint32Values;
+    HashMap<String, double> m_doubleValues;
 };
 
 } // namespace WebKit

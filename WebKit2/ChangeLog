@@ -1,5 +1,44 @@
 2011-01-08  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8812759> In WebKit2, PDF view settings (mode and scale) do not stick
+        https://bugs.webkit.org/show_bug.cgi?id=52118
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::encode): Encode the double values map.
+        (WebKit::WebPreferencesStore::decode): Decode the double values map.
+        (WebKit::defaultValueForKey): Added double instance.
+        (WebKit::WebPreferencesStore::setDoubleValueForKey): Added.
+        (WebKit::WebPreferencesStore::getDoubleValueForKey): Added.
+        * Shared/WebPreferencesStore.h: Added PDFScaleFactor and PDFDisplayMode preferences.
+        * UIProcess/API/mac/PDFViewController.mm:
+        (-[WKPDFView initWithFrame:PDFViewController:WebKit::]): Initialize the _pdfViewController ivar.
+        (-[WKPDFView invalidate]): Changed 'nil' to '0' in assignment to a non-Objective-C pointer.
+        (-[WKPDFView setDocument:]): Added.
+        (-[WKPDFView _applyPDFPreferences]): Added.
+        (-[WKPDFView _updatePreferences:]): Added.
+        (-[WKPDFView _updatePreferencesSoon]): Added.
+        (-[WKPDFView _scaleOrDisplayModeOrPageChanged:]): Added.
+        (-[WKPDFView viewDidMoveToWindow]): Added. Starts observing the PDF view for changes to scale
+        and display mode.
+        (-[WKPDFView viewWillMoveToWindow:]): Added. Stops observing for changes.
+        (WebKit::PDFViewController::setPDFDocumentData): Changed to call throguh -[WKPDFView setDocument:].
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::updateDoubleValueForKey): Added.
+        * UIProcess/WebPreferences.h:
+        * UIProcess/cf/WebPreferencesCF.cpp:
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey): Added empty implementation.
+        * UIProcess/gtk/WebPreferencesGtk.cpp:
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey): Added stub.
+        * UIProcess/mac/WebPreferencesMac.mm:
+        (WebKit::setDoubleValueIfInUserDefaults): Added.
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey): Added.
+        * UIProcess/qt/WebPreferencesQt.cpp:
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey): Added.
+
+2011-01-08  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         In WebKit2, page zooming does not work with PDF

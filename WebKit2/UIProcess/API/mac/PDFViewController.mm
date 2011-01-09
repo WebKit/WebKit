@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,20 @@
 #import "PDFViewController.h"
 
 #import "DataReference.h"
+#import "WKAPICast.h"
+#import "WKView.h"
+#import "WebPageGroup.h"
+#import "WebPageProxy.h"
+#import "WebPreferences.h"
 #import <PDFKit/PDFKit.h>
 #import <wtf/text/WTFString.h>
+
+// Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.
+#define _webkit_PDFViewDisplayModeChangedNotification @"PDFViewDisplayModeChanged"
+#define _webkit_PDFViewScaleChangedNotification @"PDFViewScaleChanged"
+#define _webkit_PDFViewPageChangedNotification @"PDFViewChangedPage"
+
+using namespace WebKit;
 
 @class PDFDocument;
 @class PDFView;
@@ -40,28 +52,35 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
     
 @interface WKPDFView : NSView
 {
-    WebKit::PDFViewController* _pdfViewController;
+    PDFViewController* _pdfViewController;
 
     RetainPtr<NSView> _pdfPreviewView;
     PDFView *_pdfView;
+    BOOL _ignoreScaleAndDisplayModeAndPageNotifications;
+    BOOL _willUpdatePreferencesSoon;
 }
 
-- (id)initWithFrame:(NSRect)frame PDFViewController:(WebKit::PDFViewController*)pdfViewController;
+- (id)initWithFrame:(NSRect)frame PDFViewController:(PDFViewController*)pdfViewController;
 - (void)invalidate;
 - (PDFView *)pdfView;
+- (void)setDocument:(PDFDocument *)pdfDocument;
+
+- (void)_applyPDFPreferences;
 
 @end
 
 @implementation WKPDFView
 
-- (id)initWithFrame:(NSRect)frame PDFViewController:(WebKit::PDFViewController*)pdfViewController
+- (id)initWithFrame:(NSRect)frame PDFViewController:(PDFViewController*)pdfViewController
 {
     if ((self = [super initWithFrame:frame])) {
+        _pdfViewController = pdfViewController;
+
         [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    
-        Class previewViewClass = WebKit::PDFViewController::pdfPreviewViewClass();
+
+        Class previewViewClass = PDFViewController::pdfPreviewViewClass();
         ASSERT(previewViewClass);
-        
+
         _pdfPreviewView.adoptNS([[previewViewClass alloc] initWithFrame:frame]);
         [_pdfPreviewView.get() setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
         [self addSubview:_pdfPreviewView.get()];
@@ -74,12 +93,89 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 
 - (void)invalidate
 {
-    _pdfViewController = nil;
+    _pdfViewController = 0;
 }
 
 - (PDFView *)pdfView
 {
     return _pdfView;
+}
+
+- (void)setDocument:(PDFDocument *)pdfDocument
+{
+    _ignoreScaleAndDisplayModeAndPageNotifications = YES;
+    [_pdfView setDocument:pdfDocument];
+    [self _applyPDFPreferences];
+    _ignoreScaleAndDisplayModeAndPageNotifications = NO;
+}
+
+- (void)_applyPDFPreferences
+{
+    if (!_pdfViewController)
+        return;
+
+    WebPreferences *preferences = toImpl([_pdfViewController->wkView() pageRef])->pageGroup()->preferences();
+
+    CGFloat scaleFactor = preferences->pdfScaleFactor();
+    if (!scaleFactor)
+        [_pdfView setAutoScales:YES];
+    else {
+        [_pdfView setAutoScales:NO];
+        [_pdfView setScaleFactor:scaleFactor];
+    }
+    [_pdfView setDisplayMode:preferences->pdfDisplayMode()];
+}
+
+- (void)_updatePreferences:(id)ignored
+{
+    _willUpdatePreferencesSoon = NO;
+
+    if (!_pdfViewController)
+        return;
+
+    WebPreferences* preferences = toImpl([_pdfViewController->wkView() pageRef])->pageGroup()->preferences();
+
+    CGFloat scaleFactor = [_pdfView autoScales] ? 0 : [_pdfView scaleFactor];
+    preferences->setPDFScaleFactor(scaleFactor);
+    preferences->setPDFDisplayMode([_pdfView displayMode]);
+}
+
+- (void)_updatePreferencesSoon
+{   
+    if (_willUpdatePreferencesSoon)
+        return;
+
+    [self performSelector:@selector(_updatePreferences:) withObject:nil afterDelay:0];
+    _willUpdatePreferencesSoon = YES;
+}
+
+- (void)_scaleOrDisplayModeOrPageChanged:(NSNotification *)notification
+{
+    ASSERT_ARG(notification, [notification object] == _pdfView);
+    if (!_ignoreScaleAndDisplayModeAndPageNotifications)
+        [self _updatePreferencesSoon];
+}
+
+- (void)viewDidMoveToWindow
+{
+    if (![self window])
+        return;
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter addObserver:self selector:@selector(_scaleOrDisplayModeOrPageChanged:) name:_webkit_PDFViewScaleChangedNotification object:_pdfView];
+    [notificationCenter addObserver:self selector:@selector(_scaleOrDisplayModeOrPageChanged:) name:_webkit_PDFViewDisplayModeChangedNotification object:_pdfView];
+    [notificationCenter addObserver:self selector:@selector(_scaleOrDisplayModeOrPageChanged:) name:_webkit_PDFViewPageChangedNotification object:_pdfView];
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+    if (![self window])
+        return;
+
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self name:_webkit_PDFViewScaleChangedNotification object:_pdfView];
+    [notificationCenter removeObserver:self name:_webkit_PDFViewDisplayModeChangedNotification object:_pdfView];
+    [notificationCenter removeObserver:self name:_webkit_PDFViewPageChangedNotification object:_pdfView];
 }
 
 @end
@@ -148,7 +244,7 @@ void PDFViewController::setPDFDocumentData(const String& mimeType, const CoreIPC
     }
 
     RetainPtr<PDFDocument> pdfDocument(AdoptNS, [[pdfDocumentClass() alloc] initWithData:(NSData *)data.get()]);
-    [m_pdfView setDocument:pdfDocument.get()];
+    [m_wkPDFView.get() setDocument:pdfDocument.get()];
 }
 
 double PDFViewController::zoomFactor() const
