@@ -32,13 +32,12 @@
 #include "Editor.h"
 #include "Frame.h"
 #include "Image.h"
-#include "markup.h"
 #include "RenderImage.h"
-
-#include <qdebug.h>
-#include <qclipboard.h>
-#include <qmimedata.h>
+#include "markup.h"
 #include <qapplication.h>
+#include <qclipboard.h>
+#include <qdebug.h>
+#include <qmimedata.h>
 #include <qurl.h>
 
 #define methodDebug() qDebug() << "PasteboardQt: " << __FUNCTION__;
@@ -75,8 +74,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
 #endif
 
 #ifndef QT_NO_CLIPBOARD
-    QApplication::clipboard()->setMimeData(md, m_selectionMode ?
-            QClipboard::Selection : QClipboard::Clipboard);
+    QApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
     if (canSmartCopyOrDelete)
         md->setData("application/vnd.qtwebkit.smartpaste", QByteArray());
@@ -94,8 +92,7 @@ bool Pasteboard::canSmartReplace()
 String Pasteboard::plainText(Frame*)
 {
 #ifndef QT_NO_CLIPBOARD
-    return QApplication::clipboard()->text(m_selectionMode ?
-            QClipboard::Selection : QClipboard::Clipboard);
+    return QApplication::clipboard()->text(m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #else
     return String();
 #endif
@@ -136,22 +133,20 @@ void Pasteboard::writePlainText(const String& text)
     QString qtext = text;
     qtext.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(qtext);
-    QApplication::clipboard()->setMimeData(md, m_selectionMode ?
-            QClipboard::Selection : QClipboard::Clipboard);
+    QApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }
 
-void Pasteboard::writeURL(const KURL& _url, const String&, Frame*)
+void Pasteboard::writeURL(const KURL& url, const String&, Frame*)
 {
-    ASSERT(!_url.isEmpty());
+    ASSERT(!url.isEmpty());
 
 #ifndef QT_NO_CLIPBOARD
     QMimeData* md = new QMimeData;
-    QString url = _url.string();
-    md->setText(url);
-    md->setUrls(QList<QUrl>() << QUrl(url));
-    QApplication::clipboard()->setMimeData(md, m_selectionMode ?
-            QClipboard::Selection : QClipboard::Clipboard);
+    QString urlString = url.string();
+    md->setText(urlString);
+    md->setUrls(QList<QUrl>() << url);
+    QApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
 }
 
