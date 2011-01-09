@@ -2,6 +2,7 @@
  * Copyright (C) 2007, 2009 Holger Hans Peter Freyther
  * Copyright (C) 2008 Collabora, Ltd.
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -181,6 +182,29 @@ String pathGetFileName(const String& pathName)
     g_free(baseName);
 
     return fileName;
+}
+
+CString applicationDirectoryPath()
+{
+#if OS(LINUX)
+    // Handle the /proc filesystem case.
+    char pathFromProc[PATH_MAX] = {0};
+    if (readlink("/proc/self/exe", pathFromProc, sizeof(pathFromProc) - 1) == -1)
+        return CString();
+
+    GOwnPtr<char> dirname(g_path_get_dirname(pathFromProc));
+    return dirname.get();
+#elif OS(UNIX)
+    // If the above fails, check the PATH env variable.
+    GOwnPtr<char> currentExePath(g_find_program_in_path(g_get_prgname()));
+    if (!currentExePath.get())
+        return CString();
+
+    GOwnPtr<char> dirname(g_path_get_dirname(currentExePath.get()));
+    return dirname.get();
+#else
+    return CString();
+#endif
 }
 
 String directoryName(const String& path)

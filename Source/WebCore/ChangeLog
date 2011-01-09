@@ -1,3 +1,14 @@
+2011-01-09  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Reviewed by Martin Robinson.
+
+        Changes to add Process Launcher and Thread Launcher implementation to the WebKit2 GTK port.
+        https://bugs.webkit.org/show_bug.cgi?id=48511
+
+        * platform/FileSystem.h: 
+        * platform/gtk/FileSystemGtk.cpp: Implement function to get a binary's path
+        (WebCore::applicationDirectoryPath):
+
 2011-01-08  Martin Robinson  <mrobinson@igalia.com>
 
         GTK+ Build fix. Add missing headers to the source list, fixing make dist.

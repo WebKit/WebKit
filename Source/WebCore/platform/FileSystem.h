@@ -195,6 +195,7 @@ bool safeCreateFile(const String&, CFDataRef);
 #if PLATFORM(GTK)
 String filenameToString(const char*);
 String filenameForDisplay(const String&);
+CString applicationDirectoryPath();
 #endif
 
 #if PLATFORM(CHROMIUM)
