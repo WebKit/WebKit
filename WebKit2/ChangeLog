@@ -2,7 +2,7 @@
 
         Reviewed by Simon Fraser.
 
-        Assertion failure in KURL::KURL when calling WKURLRequestCreateWithWKURL with a non-parsed URL
+        <rdar://problem/8839498> Assertion failure in KURL::KURL when calling WKURLRequestCreateWithWKURL with a non-parsed URL
         https://bugs.webkit.org/show_bug.cgi?id=52132
 
         * Shared/API/c/WKURLRequest.cpp:
