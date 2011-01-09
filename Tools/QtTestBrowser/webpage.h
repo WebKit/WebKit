@@ -70,13 +70,14 @@ private:
     void applyProxy();
     QString m_userAgent;
     bool m_interruptingJavaScriptEnabled;
-    QScopedPointer<QtNAMThread> m_qnamThread;
+    QtNAMThread* m_qnamThread;
 };
 
 
 class QtNAMThread : public QThread {
 public:
-    QtNAMThread()
+    QtNAMThread(QObject *parent = 0)
+        : QThread(parent)
     {
         m_qnamFuture.reportStarted();
     }

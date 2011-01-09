@@ -45,6 +45,7 @@ WebPage::WebPage(QObject* parent)
     : QWebPage(parent)
     , m_userAgent()
     , m_interruptingJavaScriptEnabled(false)
+    , m_qnamThread(0)
 {
     applyProxy();
 
@@ -126,12 +127,14 @@ void WebPage::setQnamThreaded(bool threaded)
         return;
 
     if (threaded) {
-        m_qnamThread.reset(new QtNAMThread);
+        if (!m_qnamThread)
+            m_qnamThread = new QtNAMThread(this);
         m_qnamThread->start();
         setNetworkAccessManager(m_qnamThread->networkAccessManager());
     } else {
         setNetworkAccessManager(0);
-        m_qnamThread.reset();
+        delete m_qnamThread;
+        m_qnamThread = 0;
     }
 
     Qt::ConnectionType connectionType = threaded ? Qt::BlockingQueuedConnection : Qt::DirectConnection;
