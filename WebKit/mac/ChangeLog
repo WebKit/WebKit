@@ -1,3 +1,13 @@
+2011-01-09  Xianzhu Wang <phnixwxz@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41441
+        createWindow method should only do window-creating without URL navigation
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::createWindow):
+
 2011-01-08  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Leopard build.

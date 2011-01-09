@@ -141,11 +141,10 @@ void ChromeClientWx::focusedFrameChanged(Frame*)
 {
 }
 
-Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
+Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction&)
 {
     Page* myPage = 0;
     wxWebViewNewWindowEvent wkEvent(m_webView);
-    wkEvent.SetURL(request.resourceRequest().url().string());
     
     wxWebKitWindowFeatures wkFeatures = wkFeaturesforWindowFeatures(features);
     wkEvent.SetWindowFeatures(wkFeatures);

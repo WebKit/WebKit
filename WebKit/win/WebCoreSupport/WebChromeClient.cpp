@@ -196,13 +196,14 @@ static COMPtr<IPropertyBag> createWindowFeaturesPropertyBag(const WindowFeatures
     return COMPtr<IPropertyBag>(AdoptCOM, COMPropertyBag<COMVariant>::adopt(map));
 }
 
-Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest& frameLoadRequest, const WindowFeatures& features, const NavigationAction&)
+Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction&)
 {
     COMPtr<IWebUIDelegate> delegate = uiDelegate();
     if (!delegate)
         return 0;
 
-    COMPtr<IWebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance(frameLoadRequest.resourceRequest()));
+    // Just create a blank request because createWindow() is only required to create window but not to load URL.
+    COMPtr<IWebMutableURLRequest> request(AdoptCOM, WebMutableURLRequest::createInstance());
 
     COMPtr<IWebUIDelegatePrivate2> delegatePrivate(Query, delegate);
     if (delegatePrivate) {

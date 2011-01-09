@@ -2262,9 +2262,11 @@ static void openNewWindow(const QUrl& url, WebCore::Frame* frame)
     if (Page* oldPage = frame->page()) {
         WindowFeatures features;
         NavigationAction action;
-        if (Page* newPage = oldPage->chrome()->createWindow(frame,
-                frameLoadRequest(url, frame), features, action))
+        FrameLoadRequest request = frameLoadRequest(url, frame);
+        if (Page* newPage = oldPage->chrome()->createWindow(frame, request, features, action)) {
+            newPage->mainFrame()->loader()->loadFrameRequest(request, false, false, 0, 0, SendReferrer);
             newPage->chrome()->show();
+        }
     }
 }
 

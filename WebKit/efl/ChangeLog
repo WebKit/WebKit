@@ -1,3 +1,13 @@
+2011-01-09  Xianzhu Wang <phnixwxz@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41441
+        createWindow method should only do window-creating without URL navigation
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow):
+
 2010-12-27  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.

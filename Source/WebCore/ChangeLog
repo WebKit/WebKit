@@ -1,3 +1,18 @@
+2011-01-09  Xianzhu Wang  <phnixwxz@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41441
+        createWindow method should only do window-creating without URL navigation.
+        Let client APIs know which URL a new window will start with
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
 2011-01-09  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed sort of Xcode project file.

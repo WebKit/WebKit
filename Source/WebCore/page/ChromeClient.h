@@ -100,6 +100,8 @@ namespace WebCore {
         // Frame wants to create the new Page.  Also, the newly created window
         // should not be shown to the user until the ChromeClient of the newly
         // created Page has its show method called.
+        // The FrameLoadRequest parameter is only for ChromeClient to check if the
+        // request could be fulfilled.  The ChromeClient should not load the request.
         virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) = 0;
         virtual void show() = 0;
 

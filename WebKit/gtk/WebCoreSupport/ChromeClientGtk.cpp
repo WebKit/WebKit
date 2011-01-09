@@ -160,9 +160,6 @@ Page* ChromeClient::createWindow(Frame* frame, const FrameLoadRequest& frameLoad
     GRefPtr<WebKitWebWindowFeatures> webWindowFeatures(adoptGRef(kitNew(coreFeatures)));
     g_object_set(webView, "window-features", webWindowFeatures.get(), NULL);
 
-    if (!frameLoadRequest.isEmpty())
-        webkit_web_view_open(webView, frameLoadRequest.resourceRequest().url().string().utf8().data());
-
     return core(webView);
 }
 

@@ -1696,17 +1696,11 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
 {
     Frame* activeFrame = activeWindow->frame();
 
-    // FIXME: It's much better for client API if a new window starts with a URL, here where we
-    // know what URL we are going to open. Unfortunately, this code passes the empty string
-    // for the URL, but there's a reason for that. Before loading we have to set up the opener,
-    // openedByDOM, and dialogArguments values. Also, to decide whether to use the URL we currently
-    // do an isInsecureScriptAccess call using the window we create, which can't be done before
-    // creating it. We'd have to resolve all those issues to pass the URL instead of an empty string.
-
     // For whatever reason, Firefox uses the first frame to determine the outgoingReferrer. We replicate that behavior here.
     String referrer = firstFrame->loader()->outgoingReferrer();
 
-    ResourceRequest request(KURL(), referrer);
+    KURL completedURL = urlString.isEmpty() ? KURL(ParsedURLString, "") : firstFrame->document()->completeURL(urlString);
+    ResourceRequest request(completedURL, referrer);
     FrameLoader::addHTTPOriginIfNeeded(request, firstFrame->loader()->outgoingOrigin());
     FrameLoadRequest frameRequest(activeWindow->securityOrigin(), request, frameName);
 
@@ -1725,8 +1719,6 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
 
     if (function)
         function(newFrame->domWindow(), functionContext);
-
-    KURL completedURL = urlString.isEmpty() ? KURL(ParsedURLString, "") : firstFrame->document()->completeURL(urlString);
 
     if (created)
         newFrame->loader()->changeLocation(activeWindow->securityOrigin(), completedURL, referrer, false, false);

@@ -64,6 +64,7 @@ class WebSpeechInputController;
 class WebSpeechInputListener;
 class WebStorageNamespace;
 class WebURL;
+class WebURLRequest;
 class WebView;
 class WebWidget;
 struct WebConsoleMessage;
@@ -82,9 +83,27 @@ public:
     // Create a new related WebView.  This method must clone its session storage
     // so any subsequent calls to createSessionStorageNamespace conform to the
     // WebStorage specification.
+    // FIXME: This method is DEPRECATED and should be removed once the new
+    // createView() (the next method) is implemented at Chromium side.
     virtual WebView* createView(WebFrame* creator,
                                 const WebWindowFeatures& features,
                                 const WebString& name) { return 0; }
+
+    // Create a new related WebView.  This method must clone its session storage
+    // so any subsequent calls to createSessionStorageNamespace conform to the
+    // WebStorage specification.
+    // The request parameter is only for the client to check if the request
+    // could be fulfilled.  The client should not load the request.
+    virtual WebView* createView(WebFrame* creator,
+                                const WebURLRequest& request,
+                                const WebWindowFeatures& features,
+                                const WebString& name) {
+        // FIXME: This is a temporary default implementation which calls the old
+        // version of createView(). Should change to 'return 0' when the old one
+        // is removed.
+        (void)request;
+        return createView(creator, features, name); 
+    }
 
     // Create a new WebPopupMenu.  In the second form, the client is
     // responsible for rendering the contents of the popup menu.

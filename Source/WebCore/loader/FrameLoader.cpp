@@ -3474,8 +3474,6 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     if (!request.frameName().isEmpty() && request.frameName() != "_blank") {
         Frame* frame = lookupFrame->tree()->find(request.frameName());
         if (frame && openerFrame->loader()->shouldAllowNavigation(frame)) {
-            if (!request.resourceRequest().url().isEmpty())
-                frame->loader()->loadFrameRequest(request, false, false, 0, 0, SendReferrer);
             if (Page* page = frame->page())
                 page->chrome()->focus();
             created = false;

@@ -197,12 +197,8 @@ void WebChromeClient::focusedFrameChanged(Frame*)
 {
 }
 
-Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
+Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest&, const WindowFeatures& features, const NavigationAction&)
 {
-    NSURLRequest *URLRequest = nil;
-    if (!request.isEmpty())
-        URLRequest = request.resourceRequest().nsURLRequest();
-    
     id delegate = [m_webView UIDelegate];
     WebView *newWebView;
     
@@ -238,7 +234,7 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
         if (height)
             [dictFeatures setObject:height forKey:@"height"];
         
-        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), URLRequest, dictFeatures);
+        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:windowFeatures:), nil, dictFeatures);
         
         [dictFeatures release];
         [x release];
@@ -253,9 +249,9 @@ Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& reques
         [fullscreen release];
         [dialog release];
     } else if (features.dialog && [delegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)]) {
-        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewModalDialogWithRequest:), URLRequest);
+        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewModalDialogWithRequest:), nil);
     } else {
-        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), URLRequest);
+        newWebView = CallUIDelegate(m_webView, @selector(webView:createWebViewWithRequest:), nil);
     }
 
 #if USE(PLUGIN_HOST_PROCESS) && ENABLE(NETSCAPE_PLUGIN_API)

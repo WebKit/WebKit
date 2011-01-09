@@ -154,9 +154,6 @@ Page* ChromeClientEfl::createWindow(Frame*, const FrameLoadRequest& frameLoadReq
     if (!newView)
         return 0;
 
-    if (!frameLoadRequest.isEmpty())
-        ewk_view_uri_set(newView, frameLoadRequest.resourceRequest().url().string().utf8().data());
-
     return ewk_view_core_page_get(newView);
 }
 

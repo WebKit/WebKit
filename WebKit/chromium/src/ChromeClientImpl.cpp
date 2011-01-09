@@ -263,17 +263,13 @@ Page* ChromeClientImpl::createWindow(
     if (!m_webView->client())
         return 0;
 
+    WrappedResourceRequest request;
+    if (!r.resourceRequest().isEmpty())
+        request.bind(r.resourceRequest());
     WebViewImpl* newView = static_cast<WebViewImpl*>(
-        m_webView->client()->createView(WebFrameImpl::fromFrame(frame), features, r.frameName()));
+        m_webView->client()->createView(WebFrameImpl::fromFrame(frame), request, features, r.frameName()));
     if (!newView)
         return 0;
-
-    // The request is empty when we are just being asked to open a blank window.
-    // This corresponds to window.open(""), for example.
-    if (!r.resourceRequest().isEmpty()) {
-        WrappedResourceRequest request(r.resourceRequest());
-        newView->mainFrame()->loadRequest(request);
-    }
 
     return newView->page();
 }

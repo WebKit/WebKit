@@ -1,3 +1,16 @@
+2011-01-09  Xianzhu Wang  <phnixwxz@gmail.com>
+
+        Reviewed by Darin Fisher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41441
+        createWindow method should only do window-creating without URL navigation.
+        Pass URL request to createView.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createView):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createWindow):
+
 2011-01-08  Adam Barth  <abarth@webkit.org>
 
         Update Chromium DEPS to pickup new GYP files.
