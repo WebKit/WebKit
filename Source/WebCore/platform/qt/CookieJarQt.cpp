@@ -30,14 +30,13 @@
 
 #include "Cookie.h"
 #include "Document.h"
+#include "FrameLoaderClientQt.h"
 #include "KURL.h"
-#include "QtNAMThreadSafeProxy.h"
 #include "NetworkingContext.h"
 #include "PlatformString.h"
-
-#include "qwebpage.h"
+#include "QtNAMThreadSafeProxy.h"
 #include "qwebframe.h"
-#include "FrameLoaderClientQt.h"
+#include "qwebpage.h"
 #include <QNetworkAccessManager>
 #include <QNetworkCookie>
 #include <QStringList>
@@ -49,10 +48,10 @@ static QNetworkAccessManager *networkAccessManager(const Document *document)
 {
     if (!document)
         return 0;
-    Frame *frame = document->frame();
+    Frame* frame = document->frame();
     if (!frame)
         return 0;
-    FrameLoader *loader = frame->loader();
+    FrameLoader* loader = frame->loader();
     if (!loader)
         return 0;
     return loader->networkingContext()->networkAccessManager();
@@ -115,7 +114,7 @@ String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 
 bool cookiesEnabled(const Document* document)
 {
-    return networkAccessManager(document);
+    return !!networkAccessManager(document);
 }
 
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
