@@ -1,3 +1,18 @@
+2011-01-08  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Canceled frame loads can corrupt back forward list
+        https://bugs.webkit.org/show_bug.cgi?id=50254
+
+        Avoids changing m_currentItem until the navigation commits.
+        Also resets top-level history items if a subframe navigation is canceled.
+
+        * WebCore/loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        * WebCore/loader/HistoryController.cpp:
+        * WebCore/loader/HistoryController.h:
+
 2011-01-08  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -235,6 +235,13 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     page->backForward()->setCurrentItem(targetItem);
     Settings* settings = m_frame->settings();
     page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : targetItem);
+
+    // First set the provisional item of any frames that are not actually navigating.
+    // This must be done before trying to navigate the desired frame, because some
+    // navigations can commit immediately (such as about:blank).  We must be sure that
+    // all frames have provisional items set before the commit.
+    recursiveSetProvisionalItem(targetItem, currentItem, type);
+    // Now that all other frames have provisional items, do the actual navigation.
     recursiveGoToItem(targetItem, currentItem, type);
 }
 
@@ -399,7 +406,48 @@ void HistoryController::updateForCommit()
         ASSERT(m_provisionalItem);
         m_currentItem = m_provisionalItem;
         m_provisionalItem = 0;
+
+        // Tell all other frames in the tree to commit their provisional items and
+        // restore their scroll position.  We'll avoid this frame (which has already
+        // committed) and its children (which will be replaced).
+        Page* page = m_frame->page();
+        ASSERT(page);
+        page->mainFrame()->loader()->history()->recursiveUpdateForCommit();
     }
+}
+
+void HistoryController::recursiveUpdateForCommit()
+{
+    // The frame that navigated will now have a null provisional item.
+    // Ignore it and its children.
+    if (!m_provisionalItem)
+        return;
+
+    // For each frame that already had the content the item requested (based on
+    // (a matching URL and frame tree snapshot), just restore the scroll position.
+    // Save form state (works from currentItem, since m_frameLoadComplete is true)
+    ASSERT(m_frameLoadComplete);
+    saveDocumentState();
+    saveScrollPositionAndViewStateToItem(m_currentItem.get());
+
+    if (FrameView* view = m_frame->view())
+        view->setWasScrolledByUser(false);
+
+    // Now commit the provisional item
+    m_frameLoadComplete = false;
+    m_previousItem = m_currentItem;
+    m_currentItem = m_provisionalItem;
+    m_provisionalItem = 0;
+
+    // Restore form state (works from currentItem)
+    restoreDocumentState();
+
+    // Restore the scroll position (we choose to do this rather than going back to the anchor point)
+    restoreScrollPositionAndViewState();
+
+    // Iterate over the rest of the tree
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->loader()->history()->recursiveUpdateForCommit();
 }
 
 void HistoryController::updateForSameDocumentNavigation()
@@ -551,44 +599,42 @@ PassRefPtr<HistoryItem> HistoryController::createItemTree(Frame* targetFrame, bo
 
 // The general idea here is to traverse the frame tree and the item tree in parallel,
 // tracking whether each frame already has the content the item requests.  If there is
-// a match (by URL), we just restore scroll position and recurse.  Otherwise we must
-// reload that frame, and all its kids.
+// a match, we set the provisional item and recurse.  Otherwise we will reload that
+// frame and all its kids in recursiveGoToItem.
+void HistoryController::recursiveSetProvisionalItem(HistoryItem* item, HistoryItem* fromItem, FrameLoadType type)
+{
+    ASSERT(item);
+    ASSERT(fromItem);
+
+    if (itemsAreClones(item, fromItem)) {
+        // Set provisional item, which will be committed in recursiveUpdateForCommit.
+        m_provisionalItem = item;
+
+        const HistoryItemVector& childItems = item->children();
+
+        int size = childItems.size();
+        for (int i = 0; i < size; ++i) {
+            String childFrameName = childItems[i]->target();
+            HistoryItem* fromChildItem = fromItem->childItemWithTarget(childFrameName);
+            ASSERT(fromChildItem);
+            Frame* childFrame = m_frame->tree()->child(childFrameName);
+            ASSERT(childFrame);
+            childFrame->loader()->history()->recursiveSetProvisionalItem(childItems[i].get(), fromChildItem, type);
+        }
+    }
+}
+
+// We now traverse the frame tree and item tree a second time, loading frames that
+// do have the content the item requests.
 void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromItem, FrameLoadType type)
 {
     ASSERT(item);
     ASSERT(fromItem);
 
-    // If the item we're going to is a clone of the item we're at, then do
-    // not load it again, and continue history traversal to its children.
-    // The current frame tree and the frame tree snapshot in the item have
-    // to match.
-    // Note: If item and fromItem are the same, then we need to create a new
-    // document.
-    if (item != fromItem 
-        && item->itemSequenceNumber() == fromItem->itemSequenceNumber()
-        && currentFramesMatchItem(item)
-        && fromItem->hasSameFrames(item))
-    {
-        // This content is good, so leave it alone and look for children that need reloading
-        // Save form state (works from currentItem, since m_frameLoadComplete is true)
-        ASSERT(m_frameLoadComplete);
-        saveDocumentState();
-        saveScrollPositionAndViewStateToItem(m_currentItem.get());
-
-        if (FrameView* view = m_frame->view())
-            view->setWasScrolledByUser(false);
-
-        m_previousItem = m_currentItem;
-        m_currentItem = item;
-                
-        // Restore form state (works from currentItem)
-        restoreDocumentState();
-        
-        // Restore the scroll position (we choose to do this rather than going back to the anchor point)
-        restoreScrollPositionAndViewState();
-        
+    if (itemsAreClones(item, fromItem)) {
+        // Just iterate over the rest, looking for frames to navigate.
         const HistoryItemVector& childItems = item->children();
-        
+
         int size = childItems.size();
         for (int i = 0; i < size; ++i) {
             String childFrameName = childItems[i]->target();
@@ -601,6 +647,21 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
     } else {
         m_frame->loader()->loadItem(item, type);
     }
+}
+
+bool HistoryController::itemsAreClones(HistoryItem* item1, HistoryItem* item2) const
+{
+    // If the item we're going to is a clone of the item we're at, then we do
+    // not need to load it again.  The current frame tree and the frame tree
+    // snapshot in the item have to match.
+    // Note: Some clients treat a navigation to the current history item as
+    // a reload.  Thus, if item1 and item2 are the same, we need to create a
+    // new document and should not consider them clones.
+    // (See http://webkit.org/b/35532 for details.)
+    return item1 != item2
+        && item1->itemSequenceNumber() == item2->itemSequenceNumber()
+        && currentFramesMatchItem(item1)
+        && item2->hasSameFrames(item1);
 }
 
 // Helper method that determines whether the current frame tree matches given history item's.

@@ -2333,8 +2333,9 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             // Check all children first.
             RefPtr<HistoryItem> item;
             if (Page* page = m_frame->page())
-                if (isBackForwardLoadType(loadType()) && m_frame == page->mainFrame())
-                    item = history()->currentItem();
+                if (isBackForwardLoadType(loadType()))
+                    // Reset the back forward list to the last committed history item at the top level.
+                    item = page->mainFrame()->loader()->history()->currentItem();
                 
             bool shouldReset = true;
             if (!(pdl->isLoadingInAPISense() && !pdl->isStopping())) {

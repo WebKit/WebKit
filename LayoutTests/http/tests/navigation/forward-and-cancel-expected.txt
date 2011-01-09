@@ -1,0 +1,15 @@
+This test checks that the backForward list is not corrupted when a frame load is canceled.
+
+If testing manually, click here.
+
+============== Back Forward List ==============
+curr->  http://127.0.0.1:8000/navigation/forward-and-cancel.html  **nav target**
+        http://127.0.0.1:8000/navigation/resources/forward-and-cancel-frames-container.html  **nav target**
+            http://127.0.0.1:8000/navigation/resources/forward-and-cancel-frames.html (in frame "<!--framePath //<!--frame0-->-->")
+                about:blank (in frame "frame1")
+            http://127.0.0.1:8000/navigation/resources/otherpage.html (in frame "<!--framePath //<!--frame1-->-->")
+        http://127.0.0.1:8000/navigation/resources/forward-and-cancel-frames-container.html
+            http://127.0.0.1:8000/navigation/resources/forward-and-cancel-frames.html (in frame "<!--framePath //<!--frame0-->-->")
+                http://127.0.0.1:8000/navigation/resources/slow-resource-1-sec.pl (in frame "frame1")  **nav target**
+            http://127.0.0.1:8000/navigation/resources/otherpage.html (in frame "<!--framePath //<!--frame1-->-->")
+===============================================

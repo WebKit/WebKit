@@ -87,7 +87,10 @@ private:
     PassRefPtr<HistoryItem> createItem(bool useOriginal);
     PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);
 
+    void recursiveSetProvisionalItem(HistoryItem*, HistoryItem*, FrameLoadType);
     void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
+    void recursiveUpdateForCommit();
+    bool itemsAreClones(HistoryItem*, HistoryItem*) const;
     bool currentFramesMatchItem(HistoryItem*) const;
     void updateBackForwardListClippedAtTarget(bool doClip);
 

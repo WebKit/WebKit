@@ -1,3 +1,18 @@
+2011-01-08  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Canceled frame loads can corrupt back forward list
+        https://bugs.webkit.org/show_bug.cgi?id=50254
+
+        http/tests/navigation/forward-and-cancel.html aborts a slowly loading
+        subframe in a frame tree and ensures the history items are updated properly.
+
+        * LayoutTests/http/tests/navigation/forward-and-cancel-expected.txt: Added.
+        * LayoutTests/http/tests/navigation/forward-and-cancel.html: Added.
+        * LayoutTests/http/tests/navigation/resources/forward-and-cancel-frames.html: Added.
+        * LayoutTests/http/tests/navigation/resources/forward-and-cancel-frames-container.html: Added.
+
 2011-01-08  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
