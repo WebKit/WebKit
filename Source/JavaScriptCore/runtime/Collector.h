@@ -24,6 +24,7 @@
 
 #include "GCHandle.h"
 #include "JSValue.h"
+#include "MachineStackMarker.h"
 #include <stddef.h>
 #include <string.h>
 #include <wtf/Bitmap.h>
@@ -36,11 +37,6 @@
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Threading.h>
-
-#if ENABLE(JSC_MULTIPLE_THREADS)
-#include <pthread.h>
-#endif
 
 #define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= CELL_SIZE, class_fits_in_cell)
 
@@ -87,8 +83,6 @@ namespace JSC {
 
     class Heap : public Noncopyable {
     public:
-        class Thread;
-
         void destroy();
 
         void* allocateNumber(size_t);
@@ -127,8 +121,6 @@ namespace JSC {
         HashCountedSet<const char*>* protectedObjectTypeCounts();
         HashCountedSet<const char*>* objectTypeCounts();
 
-        void registerThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
-
         static bool isCellMarked(const JSCell*);
         static bool checkMarkCell(const JSCell*);
         static void markCell(JSCell*);
@@ -147,6 +139,8 @@ namespace JSC {
         
         LiveObjectIterator primaryHeapBegin();
         LiveObjectIterator primaryHeapEnd();
+
+        MachineStackMarker& machineStackMarker() { return m_machineStackMarker; }
 
     private:
         void reset();
@@ -175,10 +169,6 @@ namespace JSC {
         void markRoots();
         void markProtectedObjects(MarkStack&);
         void markTempSortVectors(MarkStack&);
-        void markCurrentThreadConservatively(MarkStack&);
-        void markCurrentThreadConservativelyInternal(MarkStack&);
-        void markOtherThreadConservatively(MarkStack&, Thread*);
-        void markStackObjectsConservatively(MarkStack&);
 
         void updateWeakGCHandles();
         WeakGCHandlePool* weakGCHandlePool(size_t index);
@@ -195,18 +185,9 @@ namespace JSC {
 
         OwnPtr<GCActivityCallback> m_activityCallback;
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
-        void makeUsableFromMultipleThreads();
-
-        static void unregisterThread(void*);
-        void unregisterThread();
-
-        Mutex m_registeredThreadsMutex;
-        Thread* m_registeredThreads;
-        pthread_key_t m_currentThreadRegistrar;
-#endif
-
         JSGlobalData* m_globalData;
+        
+        MachineStackMarker m_machineStackMarker;
     };
 
     // tunable parameters

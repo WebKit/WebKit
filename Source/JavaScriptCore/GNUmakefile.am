@@ -336,6 +336,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/LiteralParser.h \
 	Source/JavaScriptCore/runtime/Lookup.cpp \
 	Source/JavaScriptCore/runtime/Lookup.h \
+	Source/JavaScriptCore/runtime/MachineStackMarker.cpp \
+	Source/JavaScriptCore/runtime/MachineStackMarker.h \
 	Source/JavaScriptCore/runtime/MarkStack.cpp \
 	Source/JavaScriptCore/runtime/MarkStack.h \
 	Source/JavaScriptCore/runtime/MathObject.cpp \

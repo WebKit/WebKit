@@ -986,6 +986,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\MachineStackMarker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\MachineStackMarker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\MarkStack.cpp"
 				>
 			</File>

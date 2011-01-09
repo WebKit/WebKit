@@ -174,6 +174,7 @@ SOURCES += \
     runtime/JSWrapperObject.cpp \
     runtime/LiteralParser.cpp \
     runtime/Lookup.cpp \
+    runtime/MachineStackMarker.cpp \
     runtime/MarkStackPosix.cpp \
     runtime/MarkStackSymbian.cpp \
     runtime/MarkStackWin.cpp \

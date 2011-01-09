@@ -276,6 +276,8 @@
             'runtime/LiteralParser.h',
             'runtime/Lookup.cpp',
             'runtime/Lookup.h',
+            'runtime/MachineStackMarker.cpp',
+            'runtime/MachineStackMarker.h',
             'runtime/MarkStack.cpp',
             'runtime/MarkStack.h',
             'runtime/MarkStackWin.cpp',

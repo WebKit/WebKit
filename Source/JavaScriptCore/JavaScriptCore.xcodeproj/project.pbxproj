@@ -163,6 +163,8 @@
 		14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */; };
 		14B3EF0512BC24DD00D29EFF /* PageBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 14B3EF0312BC24DD00D29EFF /* PageBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14B3EF0612BC24DD00D29EFF /* PageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14B3EF0412BC24DD00D29EFF /* PageBlock.cpp */; };
+		14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */; };
+		14B723B812D7DA6F003BD5ED /* MachineStackMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14B8EC720A5652090062BE54 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
@@ -725,6 +727,8 @@
 		14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackObject.cpp; sourceTree = "<group>"; };
 		14B3EF0312BC24DD00D29EFF /* PageBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageBlock.h; sourceTree = "<group>"; };
 		14B3EF0412BC24DD00D29EFF /* PageBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageBlock.cpp; sourceTree = "<group>"; };
+		14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachineStackMarker.cpp; sourceTree = "<group>"; };
+		14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachineStackMarker.h; sourceTree = "<group>"; };
 		14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		14BD59BF0A3E8F9000BAF59C /* testapi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testapi; sourceTree = BUILT_PRODUCTS_DIR; };
 		14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSContextRef.cpp; sourceTree = "<group>"; };
@@ -1667,8 +1671,6 @@
 		7EF6E0BB0EB7A1EC0079AFAF /* runtime */ = {
 			isa = PBXGroup;
 			children = (
-				DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */,
-				DDF7ABD311F60ED200108E36 /* GCActivityCallbackCF.cpp */,
 				BCF605110E203EF800B9A64D /* ArgList.cpp */,
 				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
@@ -1722,6 +1724,8 @@
 				BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */,
 				F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */,
 				F692A85D0255597D01FF60F7 /* FunctionPrototype.h */,
+				DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */,
+				DDF7ABD311F60ED200108E36 /* GCActivityCallbackCF.cpp */,
 				DDE82AD11209D955005C1756 /* GCHandle.cpp */,
 				DDE82AD21209D955005C1756 /* GCHandle.h */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
@@ -1785,6 +1789,8 @@
 				A7E2EA690FB460CF00601F06 /* LiteralParser.h */,
 				F692A8680255597D01FF60F7 /* Lookup.cpp */,
 				F692A8690255597D01FF60F7 /* Lookup.h */,
+				14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */,
+				14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */,
 				A74B3498102A5F8E0032AB98 /* MarkStack.cpp */,
 				A779558F101A74D500114E55 /* MarkStack.h */,
 				A7C530E3102A3813005BC741 /* MarkStackPosix.cpp */,
@@ -1840,6 +1846,8 @@
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
+				A730B6111250068F009D25B1 /* StrictEvalActivation.cpp */,
+				A730B6101250068F009D25B1 /* StrictEvalActivation.h */,
 				BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */,
 				BC18C3C10E16EE3300B34460 /* StringConstructor.h */,
 				BC18C3C20E16EE3300B34460 /* StringObject.cpp */,
@@ -1865,8 +1873,6 @@
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
-				A730B6101250068F009D25B1 /* StrictEvalActivation.h */,
-				A730B6111250068F009D25B1 /* StrictEvalActivation.cpp */,
 			);
 			path = runtime;
 			sourceTree = "<group>";
@@ -2214,6 +2220,7 @@
 				A7E2EA6B0FB460CF00601F06 /* LiteralParser.h in Headers */,
 				BC18C4360E16F5CD00B34460 /* Locker.h in Headers */,
 				BC18C4370E16F5CD00B34460 /* Lookup.h in Headers */,
+				14B723B812D7DA6F003BD5ED /* MachineStackMarker.h in Headers */,
 				86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */,
 				86D3B2C610156BDE002865E7 /* MacroAssemblerARM.h in Headers */,
 				86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */,
@@ -2765,6 +2772,7 @@
 				148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */,
 				A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */,
 				14469DDE107EC7E700650446 /* Lookup.cpp in Sources */,
+				14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */,
 				86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */,
 				06D358B30DAADAA4003B174E /* MainThread.cpp in Sources */,
 				06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */,
@@ -2777,6 +2785,7 @@
 				14469DE1107EC7E700650446 /* NativeErrorPrototype.cpp in Sources */,
 				148F21B7107EC5470042EC2C /* Nodes.cpp in Sources */,
 				655EB29B10CE2581001A990E /* NodesCodegen.cpp in Sources */,
+				93854A9A12C93D3B00DAAF77 /* NullPtr.cpp in Sources */,
 				14469DE2107EC7E700650446 /* NumberConstructor.cpp in Sources */,
 				14469DE3107EC7E700650446 /* NumberObject.cpp in Sources */,
 				14469DE4107EC7E700650446 /* NumberPrototype.cpp in Sources */,
@@ -2810,10 +2819,10 @@
 				86EAC4970F93E8D1008EC948 /* RegexInterpreter.cpp in Sources */,
 				86EAC4990F93E8D1008EC948 /* RegexJIT.cpp in Sources */,
 				14280841107EC0930013E7B2 /* RegExp.cpp in Sources */,
+				868D81A212C428CE0093DC84 /* RegexPattern.cpp in Sources */,
 				A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */,
 				14280842107EC0930013E7B2 /* RegExpConstructor.cpp in Sources */,
 				14280843107EC0930013E7B2 /* RegExpObject.cpp in Sources */,
-				868D81A212C428CE0093DC84 /* RegexPattern.cpp in Sources */,
 				14280844107EC0930013E7B2 /* RegExpPrototype.cpp in Sources */,
 				1428083A107EC0750013E7B2 /* RegisterFile.cpp in Sources */,
 				86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */,
@@ -2821,9 +2830,9 @@
 				14469DEA107EC7E700650446 /* ScopeChain.cpp in Sources */,
 				0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
+				86D87DAE12BCA7D1008E73A1 /* StackBounds.cpp in Sources */,
 				A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */,
 				86438FC41265503E00E0DFCA /* StringBuilder.cpp in Sources */,
-				86D87DAE12BCA7D1008E73A1 /* StackBounds.cpp in Sources */,
 				14469DEB107EC7E700650446 /* StringConstructor.cpp in Sources */,
 				868BFA0E117CEFD100B908B1 /* StringImpl.cpp in Sources */,
 				14469DEC107EC7E700650446 /* StringObject.cpp in Sources */,
@@ -2844,7 +2853,6 @@
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */,
 				86D08D5311793613006E5ED0 /* WTFThreadData.cpp in Sources */,
-				93854A9A12C93D3B00DAAF77 /* NullPtr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

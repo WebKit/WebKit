@@ -125,6 +125,7 @@ LOCAL_SRC_FILES := \
 	runtime/JSWrapperObject.cpp \
 	runtime/LiteralParser.cpp \
 	runtime/Lookup.cpp \
+	runtime/MachineStackMarker.cpp \
 	runtime/MarkStack.cpp \
 	runtime/MarkStackPosix.cpp \
 	runtime/MathObject.cpp \

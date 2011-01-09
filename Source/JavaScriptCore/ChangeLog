@@ -1,3 +1,46 @@
+2011-01-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Split machine stack marking functions into their own class (MachineStackMarker)
+        https://bugs.webkit.org/show_bug.cgi?id=52088
+
+        * API/APIShims.h:
+        (JSC::APIEntryShimWithoutLock::APIEntryShimWithoutLock): Moved registerThread()
+        call behind an #ifdef because we shouldn't be registering threads at all
+        if we don't support usage on multiple threads.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Updated projects.
+
+        * runtime/Collector.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::markRoots):
+        * runtime/Collector.h:
+        (JSC::Heap::machineStackMarker): Moved code to machineStackMarker.
+
+        * runtime/JSGlobalData.h:
+        (JSC::JSGlobalData::makeUsableFromMultipleThreads): Removed an unnecessary
+        level of indirection, to make Heap less of a God class.
+
+        * runtime/MachineStackMarker.h: Copied from Source/JavaScriptCore/runtime/Collector.h.
+        * runtime/MachineStackMarker.cpp: Copied from Source/JavaScriptCore/runtime/Collector.cpp.
+        (JSC::MachineStackMarker::MachineStackMarker):
+        (JSC::MachineStackMarker::~MachineStackMarker):
+        (JSC::MachineStackMarker::makeUsableFromMultipleThreads):
+        (JSC::MachineStackMarker::registerThread):
+        (JSC::MachineStackMarker::unregisterThread):
+        (JSC::MachineStackMarker::markCurrentThreadConservativelyInternal):
+        (JSC::MachineStackMarker::markCurrentThreadConservatively):
+        (JSC::MachineStackMarker::markOtherThreadConservatively):
+        (JSC::MachineStackMarker::markMachineStackConservatively): Moved code from Heap.
+
 2011-01-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

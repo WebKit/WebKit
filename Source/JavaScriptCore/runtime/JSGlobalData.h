@@ -128,7 +128,7 @@ namespace JSC {
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
         // Will start tracking threads that use the heap, which is resource-heavy.
-        void makeUsableFromMultipleThreads() { heap.makeUsableFromMultipleThreads(); }
+        void makeUsableFromMultipleThreads() { heap.machineStackMarker().makeUsableFromMultipleThreads(); }
 #endif
 
         GlobalDataType globalDataType;

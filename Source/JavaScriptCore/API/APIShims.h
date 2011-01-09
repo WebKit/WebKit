@@ -39,8 +39,11 @@ protected:
         : m_globalData(globalData)
         , m_entryIdentifierTable(wtfThreadData().setCurrentIdentifierTable(globalData->identifierTable))
     {
+        UNUSED_PARAM(registerThread);
+#if ENABLE(JSC_MULTIPLE_THREADS)
         if (registerThread)
-            globalData->heap.registerThread();
+            globalData->heap.machineStackMarker().registerThread();
+#endif
         m_globalData->heap.activityCallback()->synchronize();
         m_globalData->timeoutChecker.start();
     }
