@@ -1,3 +1,9 @@
+2011-01-09  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed sort of Xcode project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-01-09  Amruth Raj  <amruthraj@motorola.com> and Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Reviewed by Martin Robinson.
