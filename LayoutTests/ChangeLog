@@ -1,3 +1,21 @@
+2011-01-08  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Simon Fraser.
+
+        Shadow is not drawn when filling a path with a gradient
+        https://bugs.webkit.org/show_bug.cgi?id=51982
+
+        This happens in CG and is related to bug 51869, this time to be fixed
+        in GraphicsContext::fillPath(const Path& path). We need to draw the
+        gradient clipped to the path on a CGLayer first, and then draw the
+        layer on the GraphicsContext.
+
+        * fast/canvas/canvas-fillPath-gradient-shadow-expected.txt: Added.
+        * fast/canvas/canvas-fillPath-gradient-shadow.html: Added.
+        * fast/canvas/script-tests/canvas-fillPath-gradient-shadow.js: Added.
+        * platform/chromium/test_expectations.txt: Skipping new test since it fails.
+        * platform/qt/Skipped: Ditto.
+
 2011-01-08  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Eric Seidel.
