@@ -74,6 +74,16 @@ static inline HashSet<StringImpl*>& stringTable()
     return table->table();
 }
 
+template<typename T, typename HashTranslator>
+static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
+{
+    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<T, HashTranslator>(value);
+
+    // If the string is newly-translated, then we need to adopt it.
+    // The boolean in the pair tells us if that is so.
+    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+}
+
 struct CStringTranslator {
     static unsigned hash(const char* c)
     {
@@ -115,11 +125,9 @@ PassRefPtr<StringImpl> AtomicString::add(const char* c)
     if (!c)
         return 0;
     if (!*c)
-        return StringImpl::empty();    
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<const char*, CStringTranslator>(c);
-    if (!addResult.second)
-        return *addResult.first;
-    return adoptRef(*addResult.first);
+        return StringImpl::empty();
+
+    return addToStringTable<const char*, CStringTranslator>(c);
 }
 
 struct UCharBuffer {
@@ -265,12 +273,8 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length)
     if (!length)
         return StringImpl::empty();
     
-    UCharBuffer buf = { s, length }; 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<UCharBuffer, UCharBufferTranslator>(buf);
-
-    // If the string is newly-translated, then we need to adopt it.
-    // The boolean in the pair tells us if that is so.
-    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    UCharBuffer buffer = { s, length };
+    return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
 PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length, unsigned existingHash)
@@ -280,12 +284,9 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s, unsigned length, unsign
 
     if (!length)
         return StringImpl::empty();
-    
-    HashAndCharacters buffer = { existingHash, s, length }; 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<HashAndCharacters, HashAndCharactersTranslator>(buffer);
-    if (!addResult.second)
-        return *addResult.first;
-    return adoptRef(*addResult.first);
+
+    HashAndCharacters buffer = { existingHash, s, length };
+    return addToStringTable<HashAndCharacters, HashAndCharactersTranslator>(buffer);
 }
 
 PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
@@ -300,12 +301,8 @@ PassRefPtr<StringImpl> AtomicString::add(const UChar* s)
     if (!length)
         return StringImpl::empty();
 
-    UCharBuffer buf = {s, length}; 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<UCharBuffer, UCharBufferTranslator>(buf);
-
-    // If the string is newly-translated, then we need to adopt it.
-    // The boolean in the pair tells us if that is so.
-    return addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    UCharBuffer buffer = { s, length };
+    return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
 }
 
 PassRefPtr<StringImpl> AtomicString::addSlowCase(StringImpl* r)
@@ -370,12 +367,8 @@ AtomicString AtomicString::fromUTF8(const char* characters, size_t length)
     if (!buffer.hash)
         return AtomicString();
 
-    pair<HashSet<StringImpl*>::iterator, bool> addResult = stringTable().add<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
-
-    // If the string is newly-translated, then we need to adopt it.
-    // The boolean in the pair tells us if that is so.
     AtomicString atomicString;
-    atomicString.m_string = addResult.second ? adoptRef(*addResult.first) : *addResult.first;
+    atomicString.m_string = addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
     return atomicString;
 }
 
