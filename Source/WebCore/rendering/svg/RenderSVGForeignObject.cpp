@@ -22,7 +22,7 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
-#include "RenderForeignObject.h"
+#include "RenderSVGForeignObject.h"
 
 #include "GraphicsContext.h"
 #include "RenderSVGResource.h"
@@ -34,17 +34,17 @@
 
 namespace WebCore {
 
-RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node) 
+RenderSVGForeignObject::RenderSVGForeignObject(SVGForeignObjectElement* node) 
     : RenderSVGBlock(node)
     , m_needsTransformUpdate(true)
 {
 }
 
-RenderForeignObject::~RenderForeignObject()
+RenderSVGForeignObject::~RenderSVGForeignObject()
 {
 }
 
-void RenderForeignObject::paint(PaintInfo& paintInfo, int, int)
+void RenderSVGForeignObject::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled())
         return;
@@ -68,36 +68,36 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int, int)
     childPaintInfo.context->restore();
 }
 
-IntRect RenderForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderSVGForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+void RenderSVGForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
-const AffineTransform& RenderForeignObject::localToParentTransform() const
+const AffineTransform& RenderSVGForeignObject::localToParentTransform() const
 {
     m_localToParentTransform = localTransform();
     m_localToParentTransform.translate(m_viewport.x(), m_viewport.y());
     return m_localToParentTransform;
 }
 
-void RenderForeignObject::computeLogicalWidth()
+void RenderSVGForeignObject::computeLogicalWidth()
 {
     // FIXME: Investigate in size rounding issues
     setWidth(static_cast<int>(roundf(m_viewport.width())));
 }
 
-void RenderForeignObject::computeLogicalHeight()
+void RenderSVGForeignObject::computeLogicalHeight()
 {
     // FIXME: Investigate in size rounding issues
     setHeight(static_cast<int>(roundf(m_viewport.height())));
 }
 
-void RenderForeignObject::layout()
+void RenderSVGForeignObject::layout()
 {
     ASSERT(needsLayout());
     ASSERT(!view()->layoutStateEnabled()); // RenderSVGRoot disables layoutState for the SVG rendering tree.
@@ -124,7 +124,7 @@ void RenderForeignObject::layout()
     // positions. A regular RenderBoxModelObject would pull this information from RenderStyle - in SVG those
     // properties are ignored for non <svg> elements, so we mimic what happens when specifying them through CSS.
 
-    // FIXME: Investigate in location rounding issues - only affects RenderForeignObject & RenderSVGText
+    // FIXME: Investigate in location rounding issues - only affects RenderSVGForeignObject & RenderSVGText
     setLocation(roundedIntPoint(viewportLocation));
 
     bool layoutChanged = m_everHadLayout && selfNeedsLayout();
@@ -142,7 +142,7 @@ void RenderForeignObject::layout()
     repainter.repaintAfterLayout();
 }
 
-bool RenderForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
+bool RenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
 {
     FloatPoint localPoint = localTransform().inverse().mapPoint(pointInParent);
 
@@ -154,13 +154,13 @@ bool RenderForeignObject::nodeAtFloatPoint(const HitTestRequest& request, HitTes
     return RenderBlock::nodeAtPoint(request, result, roundedLocalPoint.x(), roundedLocalPoint.y(), 0, 0, hitTestAction);
 }
 
-bool RenderForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
+bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
 {
     ASSERT_NOT_REACHED();
     return false;
 }
 
-void RenderForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
+void RenderSVGForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
     // When crawling up the hierachy starting from foreignObject child content, useTransforms may not be set to true.
     if (!useTransforms)

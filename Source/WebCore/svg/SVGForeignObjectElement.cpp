@@ -25,7 +25,7 @@
 
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
-#include "RenderForeignObject.h"
+#include "RenderSVGForeignObject.h"
 #include "RenderSVGResource.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -139,7 +139,7 @@ void SVGForeignObjectElement::synchronizeProperty(const QualifiedName& attrName)
 
 RenderObject* SVGForeignObjectElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    return new (arena) RenderForeignObject(this);
+    return new (arena) RenderSVGForeignObject(this);
 }
 
 bool SVGForeignObjectElement::childShouldCreateRenderer(Node* child) const

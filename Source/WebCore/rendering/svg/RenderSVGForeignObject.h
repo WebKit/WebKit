@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef RenderForeignObject_h
-#define RenderForeignObject_h
+#ifndef RenderSVGForeignObject_h
+#define RenderSVGForeignObject_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
 #include "AffineTransform.h"
@@ -30,12 +30,12 @@ namespace WebCore {
 
 class SVGForeignObjectElement;
 
-class RenderForeignObject : public RenderSVGBlock {
+class RenderSVGForeignObject : public RenderSVGBlock {
 public:
-    explicit RenderForeignObject(SVGForeignObjectElement*);
-    virtual ~RenderForeignObject();
+    explicit RenderSVGForeignObject(SVGForeignObjectElement*);
+    virtual ~RenderSVGForeignObject();
 
-    virtual const char* renderName() const { return "RenderForeignObject"; }
+    virtual const char* renderName() const { return "RenderSVGForeignObject"; }
 
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
@@ -56,7 +56,7 @@ public:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState&) const;
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
- private:
+private:
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
 

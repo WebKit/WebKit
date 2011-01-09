@@ -2,7 +2,7 @@ layer at (0,0) size 1130x842
   RenderView at (0,0) size 785x585
 layer at (0,0) size 1130x842
   RenderSVGRoot {svg} at (12,12) size 1118x830
-    RenderForeignObject {foreignObject} at (10,10) size 580x380
+    RenderSVGForeignObject {foreignObject} at (10,10) size 580x380
       RenderBlock {xhtml:div} at (0,0) size 580x20
         RenderText {#text} at (0,0) size 74x19
           text run at (0,0) width 74: "This is a test"

@@ -1,3 +1,105 @@
+2011-01-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Rename RenderForeignObject to RenderSVGForeignObject
+        https://bugs.webkit.org/show_bug.cgi?id=52129
+
+        Renamed RenderForeignObject to RenderSVGForeignObject
+
+        * platform/chromium-linux/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/chromium-win/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/chromium-win/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/chromium-win/svg/custom/dynamic-svg-document-creation-expected.txt:
+        * platform/chromium-win/svg/custom/foreign-object-skew-expected.txt:
+        * platform/chromium-win/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-1-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-2-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-4-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-non-svg-namespaced-element-expected.txt:
+        * platform/chromium-win/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt:
+        * platform/chromium-win/svg/foreignObject/svg-document-as-direct-child-expected.txt:
+        * platform/chromium-win/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/chromium-win/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/006-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/007-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/008-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/009-expected.txt:
+        * platform/chromium-win/svg/hixie/mixed/011-expected.txt:
+        * platform/chromium-win/svg/text/foreignObject-repaint-expected.txt:
+        * platform/chromium-win/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-hixie-mixed-008-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+        * platform/gtk/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt:
+        * platform/gtk/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt:
+        * platform/gtk/svg/foreignObject/svg-document-as-direct-child-expected.txt:
+        * platform/gtk/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/gtk/svg/overflow/overflow-on-foreignObject-expected.txt:
+        * platform/gtk/svg/text/foreignObject-repaint-expected.txt:
+        * platform/gtk/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-hixie-mixed-008-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+        * platform/gtk/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/gtk/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/mac-leopard/svg/zoom/page/zoom-hixie-mixed-008-expected.txt:
+        * platform/mac-leopard/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/mac/svg/custom/dynamic-svg-document-creation-expected.txt:
+        * platform/mac/svg/custom/fill-SVGPaint-interface-expected.txt:
+        * platform/mac/svg/custom/foreign-object-skew-expected.txt:
+        * platform/mac/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/mac/svg/custom/getPresentationAttribute-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-1-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-2-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-4-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/mac/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/mac/svg/custom/use-on-g-containing-foreignObject-and-image-expected.txt:
+        * platform/mac/svg/custom/use-on-non-svg-namespaced-element-expected.txt:
+        * platform/mac/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt:
+        * platform/mac/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt:
+        * platform/mac/svg/foreignObject/svg-document-as-direct-child-expected.txt:
+        * platform/mac/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/mac/svg/hixie/mixed/006-expected.txt:
+        * platform/mac/svg/hixie/mixed/007-expected.txt:
+        * platform/mac/svg/hixie/mixed/008-expected.txt:
+        * platform/mac/svg/hixie/mixed/009-expected.txt:
+        * platform/mac/svg/hixie/mixed/011-expected.txt:
+        * platform/mac/svg/overflow/overflow-on-foreignObject-expected.txt:
+        * platform/mac/svg/text/foreignObject-repaint-expected.txt:
+        * platform/mac/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-hixie-mixed-008-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+        * platform/mac/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/mac/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/mac/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+        * platform/qt/svg/foreignObject/disallowed-svg-nodes-as-direct-children-expected.txt:
+        * platform/qt/svg/foreignObject/no-crash-with-svg-content-in-html-document-expected.txt:
+        * platform/qt/svg/foreignObject/svg-document-as-direct-child-expected.txt:
+        * platform/qt/svg/foreignObject/svg-document-in-html-document-expected.txt:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/qt/svg/overflow/overflow-on-foreignObject-expected.txt:
+        * platform/qt/svg/text/foreignObject-text-clipping-bug-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-008-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-hixie-mixed-009-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-foreignObject-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-008-expected.txt:
+        * platform/qt/svg/zoom/text/zoom-hixie-mixed-009-expected.txt:
+
 2011-01-08  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.

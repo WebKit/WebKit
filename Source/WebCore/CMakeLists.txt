@@ -1791,10 +1791,10 @@ IF (ENABLE_SVG)
         rendering/PointerEventsHitRules.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp
-        rendering/svg/RenderForeignObject.cpp
         rendering/svg/RenderSVGBlock.cpp
         rendering/svg/RenderSVGContainer.cpp
         rendering/svg/RenderSVGGradientStop.cpp
+        rendering/svg/RenderSVGForeignObject.cpp
         rendering/svg/RenderSVGHiddenContainer.cpp
         rendering/svg/RenderSVGImage.cpp
         rendering/svg/RenderSVGInline.cpp

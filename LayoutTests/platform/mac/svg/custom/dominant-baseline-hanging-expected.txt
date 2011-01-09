@@ -21,7 +21,7 @@ layer at (0,0) size 400x400
       RenderSVGText {text} at (2,-4) size 323x24 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 323x24
           chunk 1 text run 1 at (2.00,14.40) startOffset 0 endOffset 40 width 323.00: "This is hanging from the top-left corner"
-    RenderForeignObject {foreignObject} at (10,45) size 380x150
+    RenderSVGForeignObject {foreignObject} at (10,45) size 380x150
       RenderBlock {html} at (0,0) size 380x124
         RenderBody {body} at (8,0) size 364x124
           RenderBlock {p} at (0,0) size 364x90

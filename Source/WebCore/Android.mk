@@ -695,9 +695,9 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
-	rendering/svg/RenderForeignObject.cpp \
 	rendering/svg/RenderSVGBlock.cpp \
 	rendering/svg/RenderSVGContainer.cpp \
+	rendering/svg/RenderSVGForeignObject.cpp \
 	rendering/svg/RenderSVGGradientStop.cpp \
 	rendering/svg/RenderSVGHiddenContainer.cpp \
 	rendering/svg/RenderSVGImage.cpp \

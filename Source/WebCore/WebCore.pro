@@ -2348,9 +2348,9 @@ HEADERS += \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
-    rendering/svg/RenderForeignObject.h \
     rendering/svg/RenderSVGBlock.h \
     rendering/svg/RenderSVGContainer.h \
+    rendering/svg/RenderSVGForeignObject.h \
     rendering/svg/RenderSVGGradientStop.h \
     rendering/svg/RenderSVGHiddenContainer.h \
     rendering/svg/RenderSVGImage.h \
@@ -3469,9 +3469,9 @@ contains(DEFINES, ENABLE_SVG=1) {
         css/SVGCSSStyleSelector.cpp \
         rendering/style/SVGRenderStyle.cpp \
         rendering/style/SVGRenderStyleDefs.cpp \
-        rendering/svg/RenderForeignObject.cpp \
         rendering/svg/RenderSVGBlock.cpp \
         rendering/svg/RenderSVGContainer.cpp \
+        rendering/svg/RenderSVGForeignObject.cpp \
         rendering/svg/RenderSVGGradientStop.cpp \
         rendering/svg/RenderSVGHiddenContainer.cpp \
         rendering/svg/RenderSVGImage.cpp \

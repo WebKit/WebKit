@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         RenderSVGInline {tref} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderForeignObject {foreignObject} at (0,0) size 0x0
+        RenderSVGForeignObject {foreignObject} at (0,0) size 0x0
           RenderSVGRoot {svg} at (0,0) size 0x0
             RenderSVGText {text} at (0,-17) size 41x21 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 41x21

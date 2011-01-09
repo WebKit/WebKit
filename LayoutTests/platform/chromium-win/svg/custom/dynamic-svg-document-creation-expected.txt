@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
-    RenderForeignObject {foreignObject} at (0,0) size 800x600
+    RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
       RenderBlock {html} at (0,0) size 800x200
         RenderBlock {div} at (0,0) size 800x200
           RenderBlock (anonymous) at (0,0) size 800x20

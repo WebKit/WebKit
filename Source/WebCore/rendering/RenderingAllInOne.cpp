@@ -53,7 +53,6 @@
 #include "RenderFieldset.cpp"
 #include "RenderFileUploadControl.cpp"
 #include "RenderFlexibleBox.cpp"
-#include "RenderForeignObject.cpp"
 #include "RenderFrame.cpp"
 #include "RenderFrameBase.cpp"
 #include "RenderFrameSet.cpp"

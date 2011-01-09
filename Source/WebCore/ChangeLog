@@ -2,6 +2,47 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        Rename RenderForeignObject to RenderSVGForeignObject
+        https://bugs.webkit.org/show_bug.cgi?id=52129
+
+        Rename RenderForeignObject to RenderSVGForeignObject to match the naming schema in render/svg.
+
+        No change of functionality, no new tests.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/svg/RenderForeignObject.cpp: Removed.
+        * rendering/svg/RenderForeignObject.h: Removed.
+        * rendering/svg/RenderSVGAllInOne.cpp:
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::updateBoxModelInfoFromStyle):
+        * rendering/svg/RenderSVGForeignObject.cpp: Copied from Source/WebCore/rendering/svg/RenderForeignObject.cpp.
+        (WebCore::RenderSVGForeignObject::RenderSVGForeignObject):
+        (WebCore::RenderSVGForeignObject::~RenderSVGForeignObject):
+        (WebCore::RenderSVGForeignObject::paint):
+        (WebCore::RenderSVGForeignObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGForeignObject::computeRectForRepaint):
+        (WebCore::RenderSVGForeignObject::localToParentTransform):
+        (WebCore::RenderSVGForeignObject::computeLogicalWidth):
+        (WebCore::RenderSVGForeignObject::computeLogicalHeight):
+        (WebCore::RenderSVGForeignObject::layout):
+        (WebCore::RenderSVGForeignObject::nodeAtFloatPoint):
+        (WebCore::RenderSVGForeignObject::nodeAtPoint):
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h: Copied from Source/WebCore/rendering/svg/RenderForeignObject.h.
+        (WebCore::RenderSVGForeignObject::renderName):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::createRenderer):
+
+2011-01-09  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
         Move all SVG renderer to WebCore/rendering/svg
         https://bugs.webkit.org/show_bug.cgi?id=52087
 
