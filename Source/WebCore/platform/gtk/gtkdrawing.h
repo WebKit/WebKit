@@ -81,9 +81,7 @@ typedef struct {
 } MozGtkScrollbarMetrics;
 
 typedef struct _GtkThemeParts {
-#ifdef GTK_API_VERSION_2
     GdkColormap* colormap;
-#endif // GTK_API_VERSION_2
     GtkWidget* protoWindow;
     GtkWidget* protoLayout;
     GtkWidget* buttonWidget;
@@ -205,18 +203,11 @@ void moz_gtk_destroy_theme_parts_widgets(GtkThemeParts* parts);
  * flags:     widget-dependant flags; see the GtkThemeWidgetType definition.
  * direction: the text direction, to draw the widget correctly LTR and RTL.
  */
-#ifdef GTK_API_VERSION_2
 gint
 moz_gtk_widget_paint(GtkThemeWidgetType widget, GdkDrawable* drawable,
                      GdkRectangle* rect, GdkRectangle* cliprect,
                      GtkWidgetState* state, gint flags,
                      GtkTextDirection direction);
-#else
-gint
-moz_gtk_widget_paint(GtkThemeWidgetType widget, cairo_t* cr,
-                     GdkRectangle* rect, GtkWidgetState* state,
-                     gint flags, GtkTextDirection direction);
-#endif
 
 /*** Widget metrics ***/
 /**

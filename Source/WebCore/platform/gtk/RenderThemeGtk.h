@@ -29,8 +29,13 @@
 #define RenderThemeGtk_h
 
 #include "GRefPtr.h"
-#include "gtkdrawing.h"
 #include "RenderTheme.h"
+
+#ifdef GTK_API_VERSION_2
+#include "gtkdrawing.h"
+#endif
+
+typedef gulong GType;
 
 namespace WebCore {
 
@@ -86,10 +91,9 @@ public:
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
 #endif
 
-    void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing) const;
-
 #ifdef GTK_API_VERSION_2
     GtkWidget* gtkScrollbar();
+    static void getIndicatorMetrics(ControlPart, int& indicatorSize, int& indicatorSpacing);
 #else
     GtkStyleContext* gtkScrollbarStyle();
 #endif
@@ -163,23 +167,31 @@ protected:
 #endif
 
 private:
+    void platformInit();
+#if ENABLE(VIDEO)
+    bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
+#endif
+    static void setTextInputBorders(RenderStyle*);
+    GRefPtr<GdkPixbuf> getStockIcon(GType, const char* iconName, gint direction, gint state, gint iconSize);
+
+    mutable Color m_panelColor;
+    mutable Color m_sliderColor;
+    mutable Color m_sliderThumbColor;
+    const int m_mediaIconSize;
+    const int m_mediaSliderHeight;
+    const int m_mediaSliderThumbWidth;
+    const int m_mediaSliderThumbHeight;
+
+#ifdef GTK_API_VERSION_2
+    void setupWidgetAndAddToContainer(GtkWidget*, GtkWidget*) const;
+    bool paintRenderObject(GtkThemeWidgetType, RenderObject*, GraphicsContext*, const IntRect&, int flags = 0);
+    GtkThemeParts m_themeParts;
     GtkWidget* gtkButton() const;
     GtkWidget* gtkEntry() const;
     GtkWidget* gtkTreeView() const;
     GtkWidget* gtkVScale() const;
     GtkWidget* gtkHScale() const;
     GtkWidget* gtkContainer() const;
-
-    void setupWidgetAndAddToContainer(GtkWidget*, GtkWidget*) const;
-    GtkStateType getGtkStateType(RenderObject* object);
-    bool paintRenderObject(GtkThemeWidgetType, RenderObject*, GraphicsContext*, const IntRect& rect, int flags = 0);
-#if ENABLE(VIDEO)
-    bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
-#endif
-    GtkStateType gtkIconState(RenderObject*);
-    static void setTextInputBorders(RenderStyle*);
-    GRefPtr<GdkPixbuf> getStockIcon(GType, const char* iconName, gint direction, gint state, gint iconSize);
-
     mutable GtkWidget* m_gtkWindow;
     mutable GtkWidget* m_gtkContainer;
     mutable GtkWidget* m_gtkButton;
@@ -187,21 +199,9 @@ private:
     mutable GtkWidget* m_gtkTreeView;
     mutable GtkWidget* m_gtkVScale;
     mutable GtkWidget* m_gtkHScale;
-
-    mutable Color m_panelColor;
-    mutable Color m_sliderColor;
-    mutable Color m_sliderThumbColor;
-
-    const int m_mediaIconSize;
-    const int m_mediaSliderHeight;
-    const int m_mediaSliderThumbWidth;
-    const int m_mediaSliderThumbHeight;
-
-    GtkThemeParts m_themeParts;
-#ifdef GTK_API_VERSION_2
     bool m_themePartsHaveRGBAColormap;
-#endif
     friend class WidgetRenderingContext;
+#endif
 };
 
 }

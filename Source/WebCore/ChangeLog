@@ -1,3 +1,48 @@
+2011-01-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove unecessary RenderThemeGtk and WidgetRenderingContext code
+        https://bugs.webkit.org/show_bug.cgi?id=52170
+
+        Remove unnecessary code from RenderThemeGtk3 and RenderThemeGtk now that the
+        GtkStyleContext port is complete. Also remove WidgetRenderingContextGtk3 and
+        move WidgetRenderingRenderingContextGtk2 to WidgetRenderingContext and make it
+        GTK+ 2.x only. Some methods have been moved to RenderThemeGtk2 since they are
+        GTK+ 2.x only now.
+
+        No new tests. This should not change functionality.
+
+        * GNUmakefile.am: Remove WidgetRenderingContextGtk3 and gtk3drawing.c
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        (WebCore::gtkIconState): Made this method static. It isn't used outside RenderThemeGtk.
+        (WebCore::RenderThemeGtk::paintSearchFieldResultsDecoration): Updated to refelct gtkIconState change.
+        (WebCore::RenderThemeGtk::paintSearchFieldCancelButton): Ditto.
+        (WebCore::RenderThemeGtk::paintMediaButton): Ditto
+        * platform/gtk/RenderThemeGtk.h: Move a few methods which are now GTK+ 2.x only.
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::platformInit): Added this platform initialization method
+        that is only used for GTK+ 2.x at the moment.
+        (WebCore::RenderThemeGtk::~RenderThemeGtk): Added.
+        (WebCore::getGtkStateType): Made this method static.
+        (WebCore::RenderThemeGtk::getIndicatorMetrics): Moved this here from RenderThemeGtk.
+        (WebCore::setToggleSize): Updated to reflect changes to getGtkStateType.
+        (WebCore::RenderThemeGtk::paintButton): Ditto.
+        (WebCore::RenderThemeGtk::paintSliderTrack): Ditto.
+        (WebCore::RenderThemeGtk::paintSliderThumb): Ditto.
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::gtkScrollbarStyle): Moved to the top of the file.
+        (WebCore::RenderThemeGtk::platformInit): Added.
+        (WebCore::RenderThemeGtk::~RenderThemeGtk): Added.
+        (WebCore::RenderThemeGtk::initMediaColors): Changed to use the GtkStyleContext API to
+        fetch these colors. This was the last dependency on the old API.
+        * platform/gtk/WidgetRenderingContext.cpp: Renamed from Source/WebCore/platform/gtk/WidgetRenderingContextGtk2.cpp.
+        * platform/gtk/WidgetRenderingContext.h: Made GTK+ 2.x only.
+        * platform/gtk/WidgetRenderingContextGtk3.cpp: Removed.
+        * platform/gtk/gtk3drawing.c: Removed.
+        * platform/gtk/gtkdrawing.h: Made GTK+ 2.x only.
+
 2011-01-10  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

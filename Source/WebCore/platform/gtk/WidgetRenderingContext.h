@@ -22,6 +22,8 @@
 #ifndef WidgetRenderingContext_h
 #define WidgetRenderingContext_h
 
+#ifdef GTK_API_VERSION_2
+
 #include "IntRect.h"
 #include "gtkdrawing.h"
 
@@ -46,15 +48,11 @@ private:
     GdkRectangle m_paintRect;
     IntSize m_extraSpace;
     bool m_hadError;
-
-#ifdef GTK_API_VERSION_2
     GdkDrawable* m_target;
-#else
-    cairo_t* m_target;
-#endif
 
 };
 
 }
 
-#endif
+#endif // GTK_API_VERSION_2
+#endif // WidgetRenderingContext_h

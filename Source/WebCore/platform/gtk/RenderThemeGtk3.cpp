@@ -36,8 +36,6 @@
 #include "RenderObject.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
-#include "WidgetRenderingContext.h"
-#include "gtkdrawing.h"
 #include <cmath>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -94,15 +92,33 @@ static GtkStyleContext* getStyleContext(GType widgetType)
     return context.get();
 }
 
+GtkStyleContext* RenderThemeGtk::gtkScrollbarStyle()
+{
+    return getStyleContext(GTK_TYPE_SCROLLBAR);
+}
+
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
 extern GtkTextDirection gtkTextDirection(TextDirection);
 
+void RenderThemeGtk::platformInit()
+{
+}
+
+RenderThemeGtk::~RenderThemeGtk()
+{
+}
+
 void RenderThemeGtk::initMediaColors()
 {
-    GtkStyle* style = gtk_widget_get_style(GTK_WIDGET(gtkContainer()));
-    m_panelColor = style->bg[GTK_STATE_NORMAL];
-    m_sliderColor = style->bg[GTK_STATE_ACTIVE];
-    m_sliderThumbColor = style->bg[GTK_STATE_SELECTED];
+    GdkRGBA color;
+    GtkStyleContext* containerContext = getStyleContext(GTK_TYPE_CONTAINER);
+
+    gtk_style_context_get_background_color(containerContext, GTK_STATE_FLAG_NORMAL, &color);
+    m_panelColor = color;
+    gtk_style_context_get_background_color(containerContext, GTK_STATE_FLAG_ACTIVE, &color);
+    m_sliderColor = color;
+    gtk_style_context_get_background_color(containerContext, GTK_STATE_FLAG_SELECTED, &color);
+    m_sliderThumbColor = color;
 }
 
 static void adjustRectForFocus(GtkStyleContext* context, IntRect& rect)
@@ -156,45 +172,6 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
             return;
     }
     adjustRectForFocus(context, rect);
-}
-
-GtkStateType RenderThemeGtk::getGtkStateType(RenderObject* object)
-{
-    if (!isEnabled(object) || isReadOnlyControl(object))
-        return GTK_STATE_INSENSITIVE;
-    if (isPressed(object))
-        return GTK_STATE_ACTIVE;
-    if (isHovered(object))
-        return GTK_STATE_PRELIGHT;
-    return GTK_STATE_NORMAL;
-}
-
-bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, int flags)
-{
-    // Painting is disabled so just claim to have succeeded
-    if (context->paintingDisabled())
-        return false;
-
-    GtkWidgetState widgetState;
-    widgetState.active = isPressed(renderObject);
-    widgetState.focused = isFocused(renderObject);
-
-    // https://bugs.webkit.org/show_bug.cgi?id=18364
-    // The Mozilla theme drawing code, only paints a button as pressed when it's pressed 
-    // while hovered. Until we move away from the Mozila code, work-around the issue by
-    // forcing a pressed button into the hovered state. This ensures that buttons activated
-    // via the keyboard have the proper rendering.
-    widgetState.inHover = isHovered(renderObject) || (type == MOZ_GTK_BUTTON && isPressed(renderObject));
-
-    // FIXME: Disabled does not always give the correct appearance for ReadOnly
-    widgetState.disabled = !isEnabled(renderObject) || isReadOnlyControl(renderObject);
-    widgetState.isDefault = false;
-    widgetState.canDefault = false;
-    widgetState.depressed = false;
-
-    WidgetRenderingContext widgetContext(context, rect);
-    return !widgetContext.paintMozillaWidget(type, &widgetState, flags,
-                                             gtkTextDirection(renderObject->style()->direction()));
 }
 
 static void setToggleSize(GtkStyleContext* context, RenderStyle* style)
@@ -870,86 +847,6 @@ Color RenderThemeGtk::systemColor(int cssValueId) const
     default:
         return RenderTheme::systemColor(cssValueId);
     }
-}
-
-static void gtkStyleSetCallback(GtkWidget* widget, GtkStyle* previous, RenderTheme* renderTheme)
-{
-    // FIXME: Make sure this function doesn't get called many times for a single GTK+ style change signal.
-    renderTheme->platformColorsDidChange();
-}
-
-void RenderThemeGtk::setupWidgetAndAddToContainer(GtkWidget* widget, GtkWidget* window) const
-{
-    gtk_container_add(GTK_CONTAINER(window), widget);
-    gtk_widget_realize(widget);
-    g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
-
-    // FIXME: Perhaps this should only be called for the containing window or parent container.
-    g_signal_connect(widget, "style-set", G_CALLBACK(gtkStyleSetCallback), const_cast<RenderThemeGtk*>(this));
-}
-
-GtkWidget* RenderThemeGtk::gtkContainer() const
-{
-    if (m_gtkContainer)
-        return m_gtkContainer;
-
-    m_gtkWindow = gtk_window_new(GTK_WINDOW_POPUP);
-    gtk_widget_realize(m_gtkWindow);
-    gtk_widget_set_name(m_gtkWindow, "MozillaGtkWidget");
-
-    m_gtkContainer = gtk_fixed_new();
-    setupWidgetAndAddToContainer(m_gtkContainer, m_gtkWindow);
-    return m_gtkContainer;
-}
-
-GtkWidget* RenderThemeGtk::gtkButton() const
-{
-    if (m_gtkButton)
-        return m_gtkButton;
-    m_gtkButton = gtk_button_new();
-    setupWidgetAndAddToContainer(m_gtkButton, gtkContainer());
-    return m_gtkButton;
-}
-
-GtkWidget* RenderThemeGtk::gtkEntry() const
-{
-    if (m_gtkEntry)
-        return m_gtkEntry;
-    m_gtkEntry = gtk_entry_new();
-    setupWidgetAndAddToContainer(m_gtkEntry, gtkContainer());
-    return m_gtkEntry;
-}
-
-GtkWidget* RenderThemeGtk::gtkTreeView() const
-{
-    if (m_gtkTreeView)
-        return m_gtkTreeView;
-    m_gtkTreeView = gtk_tree_view_new();
-    setupWidgetAndAddToContainer(m_gtkTreeView, gtkContainer());
-    return m_gtkTreeView;
-}
-
-GtkWidget* RenderThemeGtk::gtkVScale() const
-{
-    if (m_gtkVScale)
-        return m_gtkVScale;
-    m_gtkVScale = gtk_vscale_new(0);
-    setupWidgetAndAddToContainer(m_gtkVScale, gtkContainer());
-    return m_gtkVScale;
-}
-
-GtkWidget* RenderThemeGtk::gtkHScale() const
-{
-    if (m_gtkHScale)
-        return m_gtkHScale;
-    m_gtkHScale = gtk_hscale_new(0);
-    setupWidgetAndAddToContainer(m_gtkHScale, gtkContainer());
-    return m_gtkHScale;
-}
-
-GtkStyleContext* RenderThemeGtk::gtkScrollbarStyle()
-{
-    return getStyleContext(GTK_TYPE_SCROLLBAR);
 }
 
 } // namespace WebCore

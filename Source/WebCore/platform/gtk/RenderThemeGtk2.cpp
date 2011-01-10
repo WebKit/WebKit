@@ -49,6 +49,45 @@ namespace WebCore {
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
 extern GtkTextDirection gtkTextDirection(TextDirection);
 
+static int mozGtkRefCount = 0;
+void RenderThemeGtk::platformInit()
+{
+    m_themePartsHaveRGBAColormap = true;
+    m_gtkWindow = 0;
+    m_gtkContainer = 0;
+    m_gtkButton = 0;
+    m_gtkEntry = 0;
+    m_gtkTreeView = 0;
+    m_gtkVScale = 0;
+    m_gtkHScale = 0;
+
+    memset(&m_themeParts, 0, sizeof(GtkThemeParts));
+    GdkColormap* colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
+    if (!colormap) {
+        m_themePartsHaveRGBAColormap = false;
+        colormap = gdk_screen_get_default_colormap(gdk_screen_get_default());
+    }
+    m_themeParts.colormap = colormap;
+
+    // Initialize the Mozilla theme drawing code.
+    if (!mozGtkRefCount) {
+        moz_gtk_init();
+        moz_gtk_use_theme_parts(&m_themeParts);
+    }
+    ++mozGtkRefCount;
+}
+
+RenderThemeGtk::~RenderThemeGtk()
+{
+    --mozGtkRefCount;
+
+    if (!mozGtkRefCount)
+        moz_gtk_shutdown();
+
+    if (m_gtkWindow)
+        gtk_widget_destroy(m_gtkWindow);
+}
+
 #if ENABLE(VIDEO)
 void RenderThemeGtk::initMediaColors()
 {
@@ -63,13 +102,13 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject*, IntRect&)
 {
 }
 
-GtkStateType RenderThemeGtk::getGtkStateType(RenderObject* object)
+static GtkStateType getGtkStateType(RenderThemeGtk* theme, RenderObject* object)
 {
-    if (!isEnabled(object) || isReadOnlyControl(object))
+    if (!theme->isEnabled(object) || theme->isReadOnlyControl(object))
         return GTK_STATE_INSENSITIVE;
-    if (isPressed(object))
+    if (theme->isPressed(object))
         return GTK_STATE_ACTIVE;
-    if (isHovered(object))
+    if (theme->isHovered(object))
         return GTK_STATE_PRELIGHT;
     return GTK_STATE_NORMAL;
 }
@@ -102,6 +141,18 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
                                              gtkTextDirection(renderObject->style()->direction()));
 }
 
+void RenderThemeGtk::getIndicatorMetrics(ControlPart part, int& indicatorSize, int& indicatorSpacing)
+{
+    ASSERT(part == CheckboxPart || part == RadioPart);
+    if (part == CheckboxPart) {
+        moz_gtk_checkbox_get_metrics(&indicatorSize, &indicatorSpacing);
+        return;
+    }
+
+    // RadioPart
+    moz_gtk_radio_get_metrics(&indicatorSize, &indicatorSpacing);
+}
+
 static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, ControlPart appearance)
 {
     // The width and height are both specified, so we shouldn't change them.
@@ -110,7 +161,7 @@ static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, Contr
 
     // FIXME: This is probably not correct use of indicatorSize and indicatorSpacing.
     gint indicatorSize, indicatorSpacing;
-    theme->getIndicatorMetrics(appearance, indicatorSize, indicatorSpacing);
+    RenderThemeGtk::getIndicatorMetrics(appearance, indicatorSize, indicatorSpacing);
 
     // Other ports hard-code this to 13, but GTK+ users tend to demand the native look.
     // It could be made a configuration option values other than 13 actually break site compatibility.
@@ -151,7 +202,7 @@ bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, co
     IntRect buttonRect(IntPoint(), rect.size());
     IntRect focusRect(buttonRect);
 
-    GtkStateType state = getGtkStateType(object);
+    GtkStateType state = getGtkStateType(this, object);
     gtk_widget_set_state(widget, state);
     gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
 
@@ -265,7 +316,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& inf
     WidgetRenderingContext widgetContext(info.context, rect);
     widgetContext.gtkPaintBox(troughRect, widget, GTK_STATE_ACTIVE, GTK_SHADOW_OUT, "trough");
     if (isFocused(object))
-        widgetContext.gtkPaintFocus(IntRect(IntPoint(), rect.size()), widget, getGtkStateType(object), "trough");
+        widgetContext.gtkPaintFocus(IntRect(IntPoint(), rect.size()), widget, getGtkStateType(this, object), "trough");
 
     return false;
 }
@@ -298,7 +349,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
     // on them. 
     IntRect thumbRect(IntPoint(), rect.size());
     WidgetRenderingContext widgetContext(info.context, rect);
-    widgetContext.gtkPaintSlider(thumbRect, widget, getGtkStateType(object), GTK_SHADOW_OUT, detail, orientation);
+    widgetContext.gtkPaintSlider(thumbRect, widget, getGtkStateType(this, object), GTK_SHADOW_OUT, detail, orientation);
     return false;
 }
 

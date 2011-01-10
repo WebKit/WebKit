@@ -3700,7 +3700,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GRefPtrGtk.cpp \
 	Source/WebCore/platform/gtk/GRefPtrGtk.h \
 	Source/WebCore/platform/gtk/gtk2drawing.c \
-	Source/WebCore/platform/gtk/gtk3drawing.c \
 	Source/WebCore/platform/gtk/gtkdrawing.h \
 	Source/WebCore/platform/gtk/GtkPluginWidget.cpp \
 	Source/WebCore/platform/gtk/GtkPluginWidget.h \
@@ -3738,8 +3737,7 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	Source/WebCore/platform/gtk/WheelEventGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetGtk.cpp \
-	Source/WebCore/platform/gtk/WidgetRenderingContextGtk2.cpp \
-	Source/WebCore/platform/gtk/WidgetRenderingContextGtk3.cpp \
+	Source/WebCore/platform/gtk/WidgetRenderingContext.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.h \
 	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
 	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
