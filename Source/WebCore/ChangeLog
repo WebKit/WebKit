@@ -1,3 +1,18 @@
+2011-01-10  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] Remove non-client-based Geolocation code
+        https://bugs.webkit.org/show_bug.cgi?id=50921
+
+        Code clean up, covered by existing tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/ChromiumBridge.h:
+        * platform/chromium/GeolocationServiceChromium.cpp: Removed.
+        * platform/chromium/GeolocationServiceChromium.h: Removed.
+
 2011-01-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

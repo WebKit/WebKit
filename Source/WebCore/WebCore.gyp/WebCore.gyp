@@ -1236,11 +1236,6 @@
             ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$']
           ],
         }],
-        ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
-          'sources/': [
-            ['exclude', '/GeolocationService.*$'],
-          ],
-        }],
         ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
           'sources/': [
             ['include', 'platform/audio/mkl/FFTFrameMKL\\.cpp$'],

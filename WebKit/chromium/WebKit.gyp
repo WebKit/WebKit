@@ -183,9 +183,6 @@
                 'public/WebGeolocationPermissionRequest.h',
                 'public/WebGeolocationPermissionRequestManager.h',
                 'public/WebGeolocationPosition.h',
-                'public/WebGeolocationService.h',
-                'public/WebGeolocationServiceBridge.h',
-                'public/WebGeolocationServiceMock.h',
                 'public/WebGlyphCache.h',
                 'public/WebGraphicsContext3D.h',
                 'public/WebHistoryItem.h',
@@ -462,9 +459,6 @@
                 'src/WebGeolocationPermissionRequest.cpp',
                 'src/WebGeolocationPermissionRequestManager.cpp',
                 'src/WebGeolocationPosition.cpp',
-                'src/WebGeolocationServiceBridgeImpl.cpp',
-                'src/WebGeolocationServiceBridgeImpl.h',
-                'src/WebGeolocationServiceMock.cpp',
                 'src/WebGlyphCache.cpp',
                 'src/WebGraphicsContext3D.cpp',
                 'src/WebGraphicsContext3DDefaultImpl.cpp',
@@ -680,20 +674,6 @@
                         }],
                     ],
                 }],
-                ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
-                    'sources/': [
-                        ['exclude', 'WebGeolocationService.*$'],
-                    ],
-                }, {
-                   'sources/': [
-                        ['exclude', 'GeolocationClientProxy.*'],
-                        ['exclude', 'WebGeolocationClient.*'],
-                        ['exclude', 'WebGeolocationController.*'],
-                        ['exclude', 'WebGeolocationError.*'],
-                        ['exclude', 'WebGeolocationPermissionRequest.*'],
-                        ['exclude', 'WebGeolocationPosition.*'],
-                   ],
-                }]
             ],
         },
 
@@ -872,11 +852,6 @@
                         },
                     },
                 }],
-                ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
-                    'sources/': [
-                        ['exclude', 'WebGeolocationService.*$'],
-                    ],
-                }]
             ],
         },
         {

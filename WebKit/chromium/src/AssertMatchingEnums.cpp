@@ -394,10 +394,8 @@ COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorQuotaExceeded, FileError::QUOTA_EXCEEDE
 COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorTypeMismatch, FileError::TYPE_MISMATCH_ERR);
 COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorPathExists, FileError::PATH_EXISTS_ERR);
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPermissionDenied, GeolocationError::PermissionDenied);
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPositionUnavailable, GeolocationError::PositionUnavailable);
-#endif
 
 #if OS(DARWIN)
 COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateDisabled, ChromiumBridge::StateDisabled);

@@ -43,11 +43,7 @@
 #include "WebDragData.h"
 #include "WebElement.h"
 #include "WebFrame.h"
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include "WebGeolocationClientMock.h"
-#else
-#include "WebGeolocationServiceMock.h"
-#endif
 #include "WebHistoryItem.h"
 #include "WebNode.h"
 #include "WebRange.h"
@@ -571,7 +567,6 @@ WebNotificationPresenter* WebViewHost::notificationPresenter()
     return m_shell->notificationPresenter();
 }
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 WebKit::WebGeolocationClient* WebViewHost::geolocationClient()
 {
     return geolocationClientMock();
@@ -583,14 +578,6 @@ WebKit::WebGeolocationClientMock* WebViewHost::geolocationClientMock()
         m_geolocationClientMock.set(WebGeolocationClientMock::create());
     return m_geolocationClientMock.get();
 }
-#else
-WebKit::WebGeolocationService* WebViewHost::geolocationService()
-{
-    if (!m_geolocationServiceMock)
-        m_geolocationServiceMock.set(WebGeolocationServiceMock::createWebGeolocationServiceMock());
-    return m_geolocationServiceMock.get();
-}
-#endif
 
 WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechInputListener* listener)
 {
@@ -1177,12 +1164,8 @@ void WebViewHost::reset()
     m_editCommandName.clear();
     m_editCommandValue.clear();
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     if (m_geolocationClientMock.get())
         m_geolocationClientMock->resetMock();
-#else
-    m_geolocationServiceMock.clear();
-#endif
 
     if (m_speechInputControllerMock.get())
         m_speechInputControllerMock->clearResults();

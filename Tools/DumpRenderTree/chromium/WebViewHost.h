@@ -139,11 +139,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual int historyForwardListCount();
     virtual void postAccessibilityNotification(const WebKit::WebAccessibilityObject&, WebKit::WebAccessibilityNotification);
     virtual WebKit::WebNotificationPresenter* notificationPresenter();
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     virtual WebKit::WebGeolocationClient* geolocationClient();
-#else
-    virtual WebKit::WebGeolocationService* geolocationService();
-#endif
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
     virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient();
 
@@ -210,10 +206,8 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
     MockSpellCheck* mockSpellCheck();
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     // Geolocation client mocks for LayoutTestController
     WebKit::WebGeolocationClientMock* geolocationClientMock();
-#endif
 
 private:
     LayoutTestController* layoutTestController() const;
@@ -317,11 +311,7 @@ private:
     OwnPtr<WebKit::WebContextMenuData> m_lastContextMenuData;
 
     // Geolocation
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     OwnPtr<WebKit::WebGeolocationClientMock> m_geolocationClientMock;
-#else
-    OwnPtr<WebKit::WebGeolocationServiceMock> m_geolocationServiceMock;
-#endif
 
     OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;

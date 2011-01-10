@@ -47,7 +47,6 @@
 #include "FrameView.h"
 #include "Geolocation.h"
 #include "GeolocationService.h"
-#include "GeolocationServiceChromium.h"
 #include "GraphicsLayer.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
@@ -71,7 +70,6 @@
 #include "WebFileChooserCompletionImpl.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
-#include "WebGeolocationService.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
 #include "WebNode.h"
@@ -778,19 +776,12 @@ NotificationPresenter* ChromeClientImpl::notificationPresenter() const
 // (see https://bugs.webkit.org/show_bug.cgi?id=50061 ).
 void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
-    geolocationService->geolocationServiceBridge()->attachBridgeIfNeeded();
-    m_webView->client()->geolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
-#endif
+    ASSERT_NOT_REACHED();
 }
 
 void ChromeClientImpl::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocation* geolocation)
 {
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
-    m_webView->client()->geolocationService()->cancelPermissionRequestForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
-#endif
+    ASSERT_NOT_REACHED();
 }
 
 #if USE(ACCELERATED_COMPOSITING)

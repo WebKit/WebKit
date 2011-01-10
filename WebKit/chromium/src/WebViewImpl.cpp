@@ -311,9 +311,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_speechInputClient(SpeechInputClientImpl::create(client))
 #endif
     , m_deviceOrientationClientProxy(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0))
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     , m_geolocationClientProxy(new GeolocationClientProxy(client ? client->geolocationClient() : 0))
-#endif
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -337,15 +335,11 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     pageClients.speechInputClient = m_speechInputClient.get();
 #endif
     pageClients.deviceOrientationClient = m_deviceOrientationClientProxy.get();
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = m_geolocationClientProxy.get();
-#endif
 
     m_page.set(new Page(pageClients));
 
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     m_geolocationClientProxy->setController(m_page->geolocationController());
-#endif
 
     static_cast<BackForwardListImpl*>(m_page->backForwardList())->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);

@@ -543,10 +543,7 @@ private:
     // early. This member holds on to the GC3D in this case.
     RefPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
-
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     OwnPtr<GeolocationClientProxy> m_geolocationClientProxy;
-#endif
 };
 
 } // namespace WebKit

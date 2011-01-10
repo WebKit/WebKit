@@ -43,11 +43,7 @@
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrame.h"
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include "WebGeolocationClientMock.h"
-#else
-#include "WebGeolocationServiceMock.h"
-#endif
 #include "WebInputElement.h"
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
@@ -1524,11 +1520,7 @@ void LayoutTestController::setGeolocationPermission(const CppArgumentList& argum
     result->setNull();
     if (arguments.size() < 1 || !arguments[0].isBool())
         return;
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     m_shell->webViewHost()->geolocationClientMock()->setPermission(arguments[0].toBoolean());
-#else
-    WebGeolocationServiceMock::setMockGeolocationPermission(arguments[0].toBoolean());
-#endif
 }
 
 void LayoutTestController::setMockGeolocationPosition(const CppArgumentList& arguments, CppVariant* result)
@@ -1536,11 +1528,7 @@ void LayoutTestController::setMockGeolocationPosition(const CppArgumentList& arg
     result->setNull();
     if (arguments.size() < 3 || !arguments[0].isNumber() || !arguments[1].isNumber() || !arguments[2].isNumber())
         return;
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     m_shell->webViewHost()->geolocationClientMock()->setPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
-#else
-    WebGeolocationServiceMock::setMockGeolocationPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
-#endif
 }
 
 void LayoutTestController::setMockGeolocationError(const CppArgumentList& arguments, CppVariant* result)
@@ -1548,11 +1536,7 @@ void LayoutTestController::setMockGeolocationError(const CppArgumentList& argume
     result->setNull();
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
         return;
-#if ENABLE(CLIENT_BASED_GEOLOCATION)
     m_shell->webViewHost()->geolocationClientMock()->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
-#else
-    WebGeolocationServiceMock::setMockGeolocationError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
-#endif
 }
 
 void LayoutTestController::abortModal(const CppArgumentList& arguments, CppVariant* result)
