@@ -113,6 +113,7 @@ static void adjustRectForFocus(GtkStyleContext* context, IntRect& rect)
 void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect& rect)
 {
     GtkStyleContext* context = 0;
+    bool checkInteriorFocus = false;
     ControlPart part = renderObject->style()->appearance();
     switch (part) {
     case SliderVerticalPart:
@@ -121,18 +122,24 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
         break;
     case ButtonPart:
         context = getStyleContext(GTK_TYPE_BUTTON);
-
-        gboolean interiorFocus;
-        gtk_style_context_get_style(context, "interior-focus", &interiorFocus, NULL);
-        if (interiorFocus)
-            return;
-
+        checkInteriorFocus = true;
+        break;
+    case TextFieldPart:
+    case TextAreaPart:
+        context = getStyleContext(GTK_TYPE_ENTRY);
+        checkInteriorFocus = true;
         break;
     default:
         return;
     }
 
     ASSERT(context);
+    if (checkInteriorFocus) {
+        gboolean interiorFocus;
+        gtk_style_context_get_style(context, "interior-focus", &interiorFocus, NULL);
+        if (interiorFocus)
+            return;
+    }
     adjustRectForFocus(context, rect);
 }
 
@@ -335,9 +342,43 @@ bool RenderThemeGtk::paintMenuList(RenderObject* object, const PaintInfo& info, 
     return paintRenderObject(MOZ_GTK_DROPDOWN, object, info.context, rect);
 }
 
-bool RenderThemeGtk::paintTextField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_ENTRY, object, info.context, rect);
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_ENTRY);
+    gtk_style_context_save(context);
+
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_ENTRY);
+
+    guint flags = 0;
+    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    else if (isFocused(renderObject))
+        flags |= GTK_STATE_FLAG_FOCUSED;
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
+
+    gtk_render_background(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+
+    if (isFocused(renderObject) && isEnabled(renderObject)) {
+        gboolean interiorFocus;
+        gint focusWidth, focusPad;
+        gtk_style_context_get_style(context,
+                                    "interior-focus", &interiorFocus,
+                                    "focus-line-width", &focusWidth,
+                                    "focus-padding", &focusPad,
+                                    NULL);
+        if (!interiorFocus) {
+            IntRect focusRect(rect);
+            focusRect.inflate(focusWidth + focusPad);
+            gtk_render_focus(context, paintInfo.context->platformContext(),
+                             focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
+        }
+    }
+
+    gtk_style_context_restore(context);
+
+    return false;
 }
 
 bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)

@@ -1,3 +1,19 @@
+2011-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Port text input control painting to GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=51870
+
+        Use GtkStyleContext API to paint text input controls when building
+        with GTK+ 3.x.
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::adjustRepaintRect):
+        (WebCore::RenderThemeGtk::paintTextField):
+
 2011-01-09  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
