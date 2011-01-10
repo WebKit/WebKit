@@ -1,3 +1,11 @@
+2011-01-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        Bump the WebKitGTK+ versions in preparation for development release.
+
+        * configure.ac: Bump the library, libtool and user agent version.
+
 2011-01-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
