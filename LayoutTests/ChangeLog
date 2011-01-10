@@ -1,3 +1,32 @@
+2011-01-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+
+        Rebaseline six tests in fast/repaint for chromium-mac. Even after the 
+        scrollbar switch they need Chromium-specific results since repaint
+        regions are different from the mac port's.
+
+        Adds both Leopard (chromium-mac-leopard) and Snow Leopard (chromium-mac)
+        baselines.
+
+        * platform/chromium-mac-leopard/fast/repaint/fixed-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/repaint/fixed-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/repaint/fixed-move-after-keyboard-scroll-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-expected.checksum:
+        * platform/chromium-mac/fast/repaint/fixed-expected.png:
+        * platform/chromium-mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.checksum:
+        * platform/chromium-mac/fast/repaint/fixed-move-after-keyboard-scroll-expected.png:
+        * platform/chromium-mac/fast/repaint/fixed-tranformed-expected.checksum:
+        * platform/chromium-mac/fast/repaint/fixed-tranformed-expected.png:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-container-expected.checksum:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-path-expected.checksum:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-mac/fast/repaint/repaint-during-scroll-expected.checksum:
+        * platform/chromium-mac/fast/repaint/repaint-during-scroll-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -3081,12 +3081,6 @@ BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 // Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
 // should now pass with upstream mac baselines).
 BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
-BUG_MIHAIP MAC : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE
-BUG_MIHAIP MAC : fast/repaint/fixed-tranformed.html = IMAGE
-BUG_MIHAIP MAC : fast/repaint/fixed.html = IMAGE
-BUG_MIHAIP MAC : fast/repaint/moving-shadow-on-container.html = IMAGE
-BUG_MIHAIP MAC : fast/repaint/moving-shadow-on-path.html = IMAGE
-BUG_MIHAIP MAC : fast/repaint/repaint-during-scroll.html = IMAGE
 BUG_MIHAIP MAC : fast/selectors/166.html = IMAGE
 BUG_MIHAIP MAC : fast/table/border-collapsing/004-vertical.html = IMAGE
 BUG_MIHAIP MAC : fast/table/height-percent-test-vertical.html = IMAGE
