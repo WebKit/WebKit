@@ -50,6 +50,7 @@
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebFrame.h"
+#include "WebGeolocationClient.h"
 #include "WebImage.h"
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
@@ -148,10 +149,13 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.contextMenuClient = new WebContextMenuClient(this);
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
+    pageClients.backForwardClient = WebBackForwardListProxy::create(this);
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    pageClients.geolocationClient = \new WebGeolocationClient(this);
+#endif
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);
 #endif
-    pageClients.backForwardClient = WebBackForwardListProxy::create(this);
     m_page = adoptPtr(new Page(pageClients));
 
     // Qt does not yet call setIsInWindow. Until it does, just leave

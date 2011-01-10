@@ -36,6 +36,7 @@
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManagerProxy.h"
+#include "WebGeolocationManagerProxy.h"
 #include "WebPageGroup.h"
 #include "WebMemorySampler.h"
 #include "WebProcessCreationParameters.h"
@@ -92,6 +93,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_databaseManagerProxy(WebDatabaseManagerProxy::create(this))
+    , m_geolocationManagerProxy(WebGeolocationManagerProxy::create(this))
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
 #endif
@@ -108,6 +110,9 @@ WebContext::~WebContext()
     removeLanguageChangeObserver(this);
 
     WebProcessManager::shared().contextWasDestroyed(this);
+
+    m_geolocationManagerProxy->invalidate();
+    m_geolocationManagerProxy->clearContext();
 
 #ifndef NDEBUG
     webContextCounter.decrement();
@@ -232,6 +237,7 @@ void WebContext::processDidClose(WebProcessProxy* process)
     m_downloads.clear();
 
     m_databaseManagerProxy->invalidate();
+    m_geolocationManagerProxy->invalidate();
 
     m_process = 0;
 }
@@ -468,6 +474,11 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()) {
         m_databaseManagerProxy->didReceiveWebDatabaseManagerProxyMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()) {
+        m_geolocationManagerProxy->didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

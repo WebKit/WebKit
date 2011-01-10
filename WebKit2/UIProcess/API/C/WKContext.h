@@ -124,6 +124,7 @@ WK_EXPORT void WKContextStartMemorySampler(WKContextRef context, WKDoubleRef int
 WK_EXPORT void WKContextStopMemorySampler(WKContextRef context);
 
 WK_EXPORT WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef context);
+WK_EXPORT WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef context);
 
 #ifdef __cplusplus
 }

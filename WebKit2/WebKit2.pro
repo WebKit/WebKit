@@ -144,6 +144,7 @@ WEBKIT2_INCLUDEPATH = \
     WebProcess/Authentication \
     WebProcess/Downloads \
     WebProcess/Downloads/qt \
+    WebProcess/Geolocation \
     WebProcess/InjectedBundle \
     WebProcess/InjectedBundle/DOM \
     WebProcess/InjectedBundle/API/c \
@@ -183,6 +184,8 @@ WEBKIT2_GENERATED_HEADERS = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessages.h \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessages.h \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessages.h \
@@ -201,6 +204,8 @@ WEBKIT2_GENERATED_SOURCES = \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebContextMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebDatabaseManagerProxyMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerMessageReceiver.cpp \
+    $$WEBKIT2_GENERATED_SOURCES_DIR/WebGeolocationManagerProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebInspectorProxyMessageReceiver.cpp \
     $$WEBKIT2_GENERATED_SOURCES_DIR/WebPageMessageReceiver.cpp \
@@ -274,6 +279,7 @@ HEADERS += \
     Shared/WebEvent.h \
     Shared/WebEventConversion.h \
     Shared/WebFindOptions.h \
+    Shared/WebGeolocationPosition.h \
     Shared/WebImage.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
@@ -304,6 +310,8 @@ HEADERS += \
     UIProcess/API/C/WKDownload.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
+    UIProcess/API/C/WKGeolocationManager.h \
+    UIProcess/API/C/WKGeolocationPosition.h \
     UIProcess/API/C/WKInspector.h \
     UIProcess/API/C/WKOpenPanelParameters.h \
     UIProcess/API/C/WKOpenPanelResultListener.h \
@@ -361,6 +369,8 @@ HEADERS += \
     UIProcess/WebFrameListenerProxy.h \
     UIProcess/WebFramePolicyListenerProxy.h \
     UIProcess/WebFrameProxy.h \
+    UIProcess/WebGeolocationManagerProxy.h \
+    UIProcess/WebGeolocationProvider.h \
     UIProcess/WebHistoryClient.h \
     UIProcess/WebInspectorProxy.h \
     UIProcess/WebLoaderClient.h \
@@ -380,6 +390,7 @@ HEADERS += \
     WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
+    WebProcess/Geolocation/WebGeolocationManager.h \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
@@ -416,6 +427,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebEditorClient.h \
     WebProcess/WebCoreSupport/WebErrors.h \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.h \
+    WebProcess/WebCoreSupport/WebGeolocationClient.h \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
@@ -484,6 +496,7 @@ SOURCES += \
     Shared/WebError.cpp \
     Shared/WebEvent.cpp \
     Shared/WebEventConversion.cpp \
+    Shared/WebGeolocationPosition.cpp \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebImage.cpp \
     Shared/WebMouseEvent.cpp \
@@ -516,6 +529,8 @@ SOURCES += \
     UIProcess/API/C/WKDownload.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
+    UIProcess/API/C/WKGeolocationManager.cpp \
+    UIProcess/API/C/WKGeolocationPosition.cpp \
     UIProcess/API/C/WKInspector.cpp \
     UIProcess/API/C/WKOpenPanelParameters.cpp \
     UIProcess/API/C/WKOpenPanelResultListener.cpp \
@@ -563,6 +578,8 @@ SOURCES += \
     UIProcess/WebFrameListenerProxy.cpp \
     UIProcess/WebFramePolicyListenerProxy.cpp \
     UIProcess/WebFrameProxy.cpp \
+    UIProcess/WebGeolocationManagerProxy.cpp \
+    UIProcess/WebGeolocationProvider.cpp \
     UIProcess/WebHistoryClient.cpp \
     UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebLoaderClient.cpp \
@@ -590,6 +607,7 @@ SOURCES += \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
+    WebProcess/Geolocation/WebGeolocationManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \
     WebProcess/InjectedBundle/API/c/WKBundle.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
@@ -632,6 +650,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebDragClient.cpp \
     WebProcess/WebCoreSupport/WebEditorClient.cpp \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
+    WebProcess/WebCoreSupport/WebGeolocationClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \

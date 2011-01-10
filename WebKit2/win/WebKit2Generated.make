@@ -48,6 +48,8 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKFormSubmissionListener.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKFrame.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKFramePolicyListener.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKGeolocationManager.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\WKGeolocationPosition.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\c\WKInspector.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKNativeEvent.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKNavigationData.h" "$(CONFIGURATIONBUILDDIR)\include\WebKit2"

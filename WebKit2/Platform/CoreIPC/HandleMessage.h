@@ -1,6 +1,8 @@
 #ifndef HandleMessage_h
 #define HandleMessage_h
 
+#include "Arguments.h"
+
 namespace CoreIPC {
 
 // Dispatch functions with no reply arguments.

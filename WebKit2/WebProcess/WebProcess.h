@@ -33,6 +33,7 @@
 #include "SharedMemory.h"
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
+#include "WebGeolocationManager.h"
 #include "WebPageGroupProxy.h"
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
@@ -107,7 +108,11 @@ public:
 
     bool shouldUseCustomRepresentationForMIMEType(const String& mimeType) const { return m_mimeTypesWithCustomRepresentations.contains(mimeType); }
 
+    // Text Checking
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
+
+    // Geolocation
+    WebGeolocationManager& geolocationManager() { return m_geolocationManager; }
 
 private:
     WebProcess();
@@ -186,6 +191,7 @@ private:
     HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomRepresentations;
 
     TextCheckerState m_textCheckerState;
+    WebGeolocationManager m_geolocationManager;
 };
 
 } // namespace WebKit

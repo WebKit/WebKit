@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#ifndef WebGeolocationManager_h
+#define WebGeolocationManager_h
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "MessageID.h"
+#include "WebGeolocationPosition.h"
+#include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKGeolocationManager.h>
-#include <WebKit2/WKGeolocationPosition.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
+namespace CoreIPC {
+class ArgumentDecoder;
+class Connection;
+}
 
-#if !(defined(__APPLE__) && __APPLE__) || (defined(__OBJC__) && __OBJC__)
-#include <WebKit2/WKView.h>
-#endif
+namespace WebKit {
 
-#endif /* WebKit2_h */
+class WebProcess;
+class WebPage;
+
+class WebGeolocationManager {
+    WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
+public:
+    explicit WebGeolocationManager(WebProcess*);
+    ~WebGeolocationManager();
+
+    void registerWebPage(WebPage*);
+    void unregisterWebPage(WebPage*);
+
+    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+private:
+    // Implemented in generated WebGeolocationManagerMessageReceiver.cpp
+    void didReceiveWebGeolocationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    void didChangePosition(const WebGeolocationPosition::Data&);
+    void didFailToDeterminePosition();
+
+    WebProcess* m_process;
+    HashSet<WebPage*> m_pageSet;
+};
+
+} // namespace WebKit
+
+#endif // WebGeolocationManager_h

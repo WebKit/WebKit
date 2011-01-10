@@ -1,3 +1,106 @@
+2011-01-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make Geolocation features work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=52078
+
+        Step 1 - Add enough support to get position data from a provider.
+        This does not include permission support.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        Add #include of Arguments.h for CoreIPC::In and Out definitions.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add new message types.
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        Add new API types.
+
+        * Shared/WebGeolocationPosition.cpp: Added.
+        * Shared/WebGeolocationPosition.h: Added.
+        Internal position representation.
+
+        * UIProcess/API/C/WKAPICast.h:
+        Add casts for new API types.
+
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/API/C/WKGeolocationManager.cpp: Added.
+        * UIProcess/API/C/WKGeolocationManager.h: Added.
+        * UIProcess/API/C/WKGeolocationPosition.cpp: Added.
+        * UIProcess/API/C/WKGeolocationPosition.h: Added.
+        * UIProcess/API/C/WebKit2.h:
+        Add API to provide and control geolocation data.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        (WebKit::WebContext::processDidClose):
+        (WebKit::WebContext::didReceiveMessage):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::geolocationManagerProxy):
+        * UIProcess/WebGeolocationManagerProxy.cpp: Added.
+        (WebKit::WebGeolocationManagerProxy::create):
+        (WebKit::WebGeolocationManagerProxy::WebGeolocationManagerProxy):
+        (WebKit::WebGeolocationManagerProxy::~WebGeolocationManagerProxy):
+        (WebKit::WebGeolocationManagerProxy::invalidate):
+        (WebKit::WebGeolocationManagerProxy::initializeProvider):
+        (WebKit::WebGeolocationManagerProxy::providerDidChangePosition):
+        (WebKit::WebGeolocationManagerProxy::providerDidFailToDeterminePosition):
+        (WebKit::WebGeolocationManagerProxy::didReceiveMessage):
+        (WebKit::WebGeolocationManagerProxy::startUpdating):
+        (WebKit::WebGeolocationManagerProxy::stopUpdating):
+        * UIProcess/WebGeolocationManagerProxy.h: Added.
+        (WebKit::WebGeolocationManagerProxy::clearContext):
+        (WebKit::WebGeolocationManagerProxy::type):
+        * UIProcess/WebGeolocationManagerProxy.messages.in: Added.
+        * UIProcess/WebGeolocationProvider.cpp: Added.
+        (WebKit::WebGeolocationProvider::startUpdating):
+        (WebKit::WebGeolocationProvider::stopUpdating):
+        * UIProcess/WebGeolocationProvider.h: Added.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        * WebProcess/Geolocation: Added.
+        * WebProcess/Geolocation/WebGeolocationManager.cpp: Added.
+        (WebKit::WebGeolocationManager::WebGeolocationManager):
+        (WebKit::WebGeolocationManager::~WebGeolocationManager):
+        (WebKit::WebGeolocationManager::didReceiveMessage):
+        (WebKit::WebGeolocationManager::registerWebPage):
+        (WebKit::WebGeolocationManager::unregisterWebPage):
+        (WebKit::WebGeolocationManager::didChangePosition):
+        (WebKit::WebGeolocationManager::didFailToDeterminePosition):
+        * WebProcess/Geolocation/WebGeolocationManager.h: Added.
+        * WebProcess/Geolocation/WebGeolocationManager.messages.in: Added.
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp: Added.
+        (WebKit::WebGeolocationClient::geolocationDestroyed):
+        (WebKit::WebGeolocationClient::startUpdating):
+        (WebKit::WebGeolocationClient::stopUpdating):
+        (WebKit::WebGeolocationClient::setEnableHighAccuracy):
+        (WebKit::WebGeolocationClient::lastPosition):
+        (WebKit::WebGeolocationClient::requestPermission):
+        (WebKit::WebGeolocationClient::cancelPermissionRequest):
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h: Added.
+        (WebKit::WebGeolocationClient::WebGeolocationClient):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::geolocationManager):
+        Pipe geolocation positions/errors from the UIProcess to the WebProcess.
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+         * win/WebKit2Generated.make:
+        Add new files.
+
 2011-01-10  Martin Robinson  <mrobinson@igalia.com>
 
         GTK+ build fix. Continue to fix 'make dist.'

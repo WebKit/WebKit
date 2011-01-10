@@ -591,6 +591,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebGeolocationPosition.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebGeolocationPosition.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebImage.cpp"
 				>
 			</File>
@@ -1247,6 +1255,22 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="Geolocation"
+				>
+				<File
+					RelativePath="..\WebProcess\Geolocation\WebGeolocationManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Geolocation\WebGeolocationManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Geolocation\WebGeolocationManager.messages.in"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="WebCoreSupport"
 				>
 				<File
@@ -1303,6 +1327,14 @@
 				</File>
 				<File
 					RelativePath="..\WebProcess\WebCoreSupport\WebFrameLoaderClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebGeolocationClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebCoreSupport\WebGeolocationClient.h"
 					>
 				</File>
 				<File
@@ -2159,6 +2191,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebGeolocationManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebGeolocationManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebGeolocationManagerProxy.messages.in"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebGeolocationProvider.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebGeolocationProvider.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebHistoryClient.cpp"
 				>
 			</File>
@@ -2281,10 +2333,6 @@
 			<Filter
 				Name="API"
 				>
-				<File
-					RelativePath="..\UIProcess\API\C\WKDatabaseManager.cpp"
-					>
-				</File>
 				<Filter
 					Name="C"
 					>
@@ -2361,6 +2409,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\UIProcess\API\C\WKDatabaseManager.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\UIProcess\API\C\WKDatabaseManager.h"
 						>
 					</File>
@@ -2394,6 +2446,22 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKFramePolicyListener.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKGeolocationManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKGeolocationManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKGeolocationPosition.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKGeolocationPosition.h"
 						>
 					</File>
 					<File
@@ -2996,6 +3064,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebDatabaseManagerProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebGeolocationManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebGeolocationManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebGeolocationManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebGeolocationManagerProxyMessages.h"
 				>
 			</File>
 			<File

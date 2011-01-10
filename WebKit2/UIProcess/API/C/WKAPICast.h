@@ -51,6 +51,8 @@ class WebDatabaseManagerProxy;
 class WebFormSubmissionListenerProxy;
 class WebFramePolicyListenerProxy;
 class WebFrameProxy;
+class WebGeolocationManagerProxy;
+class WebGeolocationPosition;
 class WebInspectorProxy;
 class WebNavigationData;
 class WebOpenPanelParameters;
@@ -71,6 +73,8 @@ WK_ADD_API_MAPPING(WKDownloadRef, DownloadProxy)
 WK_ADD_API_MAPPING(WKFormSubmissionListenerRef, WebFormSubmissionListenerProxy)
 WK_ADD_API_MAPPING(WKFramePolicyListenerRef, WebFramePolicyListenerProxy)
 WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
+WK_ADD_API_MAPPING(WKGeolocationManagerRef, WebGeolocationManagerProxy)
+WK_ADD_API_MAPPING(WKGeolocationPositionRef, WebGeolocationPosition)
 WK_ADD_API_MAPPING(WKNavigationDataRef, WebNavigationData)
 WK_ADD_API_MAPPING(WKOpenPanelParametersRef, WebOpenPanelParameters)
 WK_ADD_API_MAPPING(WKOpenPanelResultListenerRef, WebOpenPanelResultListenerProxy)

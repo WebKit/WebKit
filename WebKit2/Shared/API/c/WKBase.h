@@ -72,6 +72,8 @@ typedef const struct OpaqueWKDownload* WKDownloadRef;
 typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef;
 typedef const struct OpaqueWKFrame* WKFrameRef;
 typedef const struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
+typedef const struct OpaqueWKGeolocationManager* WKGeolocationManagerRef;
+typedef const struct OpaqueWKGeolocationPosition* WKGeolocationPositionRef;
 typedef const struct OpaqueWKInspector* WKInspectorRef;
 typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;
 typedef const struct OpaqueWKOpenPanelParameters* WKOpenPanelParametersRef;

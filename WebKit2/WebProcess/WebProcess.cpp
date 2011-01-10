@@ -36,6 +36,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
 #include "WebFrame.h"
+#include "WebGeolocationManagerMessages.h"
 #include "WebMemorySampler.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -112,6 +113,7 @@ WebProcess::WebProcess()
     , m_networkAccessManager(0)
 #endif
     , m_textCheckerState()
+    , m_geolocationManager(this)
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -507,6 +509,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebDatabaseManager>()) {
         WebDatabaseManager::shared().didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebGeolocationManager>()) {
+        m_geolocationManager.didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

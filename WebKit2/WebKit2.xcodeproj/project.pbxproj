@@ -311,6 +311,16 @@
 		BC032DD110F4389F0058C15A /* WebPageProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCB10F4389F0058C15A /* WebPageProxy.h */; };
 		BC032DD310F4389F0058C15A /* WebProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCD10F4389F0058C15A /* WebProcessManager.h */; };
 		BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCF10F4389F0058C15A /* WebProcessProxy.h */; };
+		BC0E5FE512D697160012A72A /* WebGeolocationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E5FE312D697160012A72A /* WebGeolocationManager.h */; };
+		BC0E5FE612D697160012A72A /* WebGeolocationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E5FE412D697160012A72A /* WebGeolocationManager.cpp */; };
+		BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E605F12D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp */; };
+		BC0E606212D6BA910012A72A /* WebGeolocationManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E606012D6BA910012A72A /* WebGeolocationManagerMessages.h */; };
+		BC0E607312D6BC200012A72A /* WebGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E607112D6BC200012A72A /* WebGeolocationPosition.h */; };
+		BC0E607412D6BC200012A72A /* WebGeolocationPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E607212D6BC200012A72A /* WebGeolocationPosition.cpp */; };
+		BC0E618212D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E618012D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp */; };
+		BC0E618312D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E618112D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h */; };
+		BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E619612D6CD120012A72A /* WKGeolocationPosition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC0E619912D6CD120012A72A /* WKGeolocationPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E619712D6CD120012A72A /* WKGeolocationPosition.cpp */; };
 		BC111A5A112F4FBB00337BAB /* WebChromeClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111A53112F4FBB00337BAB /* WebChromeClient.cpp */; };
 		BC111A5B112F4FBB00337BAB /* WebContextMenuClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111A54112F4FBB00337BAB /* WebContextMenuClient.cpp */; };
 		BC111A5D112F4FBB00337BAB /* WebDragClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC111A56112F4FBB00337BAB /* WebDragClient.cpp */; };
@@ -341,6 +351,10 @@
 		BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BC17753E118BABF0007D9E9A /* GenericCallback.h */; };
 		BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */; };
 		BC1B419811D41D570011E8DD /* WKBundlePagePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1B419711D41D570011E8DD /* WKBundlePagePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1BE1DE12D54A410004A228 /* WebGeolocationClient.h */; };
+		BC1BE1E112D54A410004A228 /* WebGeolocationClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1BE1DF12D54A410004A228 /* WebGeolocationClient.cpp */; };
+		BC1BE1F212D54DBD0004A228 /* WebGeolocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1BE1F012D54DBD0004A228 /* WebGeolocationProvider.h */; };
+		BC1BE1F312D54DBD0004A228 /* WebGeolocationProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1BE1F112D54DBD0004A228 /* WebGeolocationProvider.cpp */; };
 		BC1DD7B2114DC396005ADAF3 /* WebCoreArgumentCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */; };
 		BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DFE8D12B31CA8005DF730 /* WKOpenPanelResultListener.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC1DFEA412B31F87005DF730 /* WebOpenPanelResultListenerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1DFEA212B31F87005DF730 /* WebOpenPanelResultListenerProxy.h */; };
@@ -422,6 +436,10 @@
 		BC4BEEAC120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */; };
 		BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC4BEFE2120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEFE0120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp */; };
+		BC54CACB12D64291005C67B0 /* WebGeolocationManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC54CAC912D64291005C67B0 /* WebGeolocationManagerProxy.h */; };
+		BC54CACC12D64291005C67B0 /* WebGeolocationManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC54CACA12D64291005C67B0 /* WebGeolocationManagerProxy.cpp */; };
+		BC54CC1212D674EE005C67B0 /* WKGeolocationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC54CC1012D674EE005C67B0 /* WKGeolocationManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BC54CC1312D674EE005C67B0 /* WKGeolocationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC54CC1112D674EE005C67B0 /* WKGeolocationManager.cpp */; };
 		BC5744EF12638FB3006F0F12 /* WebPopupItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5744ED12638FB3006F0F12 /* WebPopupItem.cpp */; };
 		BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5744EE12638FB3006F0F12 /* WebPopupItem.h */; };
 		BC57450C1263B155006F0F12 /* WKBundleNodeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC57450B1263B155006F0F12 /* WKBundleNodeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1001,6 +1019,18 @@
 		BC032DCB10F4389F0058C15A /* WebPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxy.h; sourceTree = "<group>"; };
 		BC032DCD10F4389F0058C15A /* WebProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessManager.h; sourceTree = "<group>"; };
 		BC032DCF10F4389F0058C15A /* WebProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessProxy.h; sourceTree = "<group>"; };
+		BC0E5FE312D697160012A72A /* WebGeolocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationManager.h; sourceTree = "<group>"; };
+		BC0E5FE412D697160012A72A /* WebGeolocationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManager.cpp; sourceTree = "<group>"; };
+		BC0E604812D6B6370012A72A /* WebGeolocationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGeolocationManager.messages.in; sourceTree = "<group>"; };
+		BC0E605F12D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		BC0E606012D6BA910012A72A /* WebGeolocationManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationManagerMessages.h; sourceTree = "<group>"; };
+		BC0E607112D6BC200012A72A /* WebGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationPosition.h; sourceTree = "<group>"; };
+		BC0E607212D6BC200012A72A /* WebGeolocationPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationPosition.cpp; sourceTree = "<group>"; };
+		BC0E615212D6CAC80012A72A /* WebGeolocationManagerProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGeolocationManagerProxy.messages.in; sourceTree = "<group>"; };
+		BC0E618012D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		BC0E618112D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationManagerProxyMessages.h; sourceTree = "<group>"; };
+		BC0E619612D6CD120012A72A /* WKGeolocationPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeolocationPosition.h; sourceTree = "<group>"; };
+		BC0E619712D6CD120012A72A /* WKGeolocationPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeolocationPosition.cpp; sourceTree = "<group>"; };
 		BC111A53112F4FBB00337BAB /* WebChromeClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebChromeClient.cpp; sourceTree = "<group>"; };
 		BC111A54112F4FBB00337BAB /* WebContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenuClient.cpp; sourceTree = "<group>"; };
 		BC111A56112F4FBB00337BAB /* WebDragClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDragClient.cpp; sourceTree = "<group>"; };
@@ -1031,6 +1061,10 @@
 		BC17753E118BABF0007D9E9A /* GenericCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericCallback.h; sourceTree = "<group>"; };
 		BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessLauncher.h; sourceTree = "<group>"; };
 		BC1B419711D41D570011E8DD /* WKBundlePagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePagePrivate.h; sourceTree = "<group>"; };
+		BC1BE1DE12D54A410004A228 /* WebGeolocationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationClient.h; sourceTree = "<group>"; };
+		BC1BE1DF12D54A410004A228 /* WebGeolocationClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationClient.cpp; sourceTree = "<group>"; };
+		BC1BE1F012D54DBD0004A228 /* WebGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationProvider.h; sourceTree = "<group>"; };
+		BC1BE1F112D54DBD0004A228 /* WebGeolocationProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationProvider.cpp; sourceTree = "<group>"; };
 		BC1DD7B1114DC396005ADAF3 /* WebCoreArgumentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreArgumentCoders.h; sourceTree = "<group>"; };
 		BC1DFE8D12B31CA8005DF730 /* WKOpenPanelResultListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelResultListener.h; sourceTree = "<group>"; };
 		BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKOpenPanelResultListener.cpp; sourceTree = "<group>"; };
@@ -1115,6 +1149,10 @@
 		BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleNodeHandle.cpp; sourceTree = "<group>"; };
 		BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleNodeHandle.h; sourceTree = "<group>"; };
 		BC4BEFE0120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleNodeHandle.cpp; sourceTree = "<group>"; };
+		BC54CAC912D64291005C67B0 /* WebGeolocationManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationManagerProxy.h; sourceTree = "<group>"; };
+		BC54CACA12D64291005C67B0 /* WebGeolocationManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManagerProxy.cpp; sourceTree = "<group>"; };
+		BC54CC1012D674EE005C67B0 /* WKGeolocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeolocationManager.h; sourceTree = "<group>"; };
+		BC54CC1112D674EE005C67B0 /* WKGeolocationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeolocationManager.cpp; sourceTree = "<group>"; };
 		BC5744ED12638FB3006F0F12 /* WebPopupItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupItem.cpp; sourceTree = "<group>"; };
 		BC5744EE12638FB3006F0F12 /* WebPopupItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupItem.h; sourceTree = "<group>"; };
 		BC57450B1263B155006F0F12 /* WKBundleNodeHandlePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleNodeHandlePrivate.h; sourceTree = "<group>"; };
@@ -1640,6 +1678,8 @@
 				1A2C306F12D555450063DAA2 /* ContextMenuState.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
+				BC0E607212D6BC200012A72A /* WebGeolocationPosition.cpp */,
+				BC0E607112D6BC200012A72A /* WebGeolocationPosition.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
@@ -1862,6 +1902,7 @@
 			children = (
 				512F588612A8834700629530 /* Authentication */,
 				1A61614C127798B5003ACD86 /* Downloads */,
+				BC0E5FCB12D696DD0012A72A /* Geolocation */,
 				BC204EDF11C83E72008F3375 /* InjectedBundle */,
 				1A6FA01C11E1526300DB1371 /* mac */,
 				1A6FB7AA11E64B4900DB1371 /* Plugins */,
@@ -1870,8 +1911,8 @@
 				1A6FA31511E3923600DB1371 /* WebKitMain.cpp */,
 				BC111AE3112F5C2600337BAB /* WebProcess.cpp */,
 				BC032D9110F437AF0058C15A /* WebProcess.h */,
-				1A6FA01F11E1528700DB1371 /* WebProcessMain.h */,
 				BC3066B9125A436300E71278 /* WebProcess.messages.in */,
+				1A6FA01F11E1528700DB1371 /* WebProcessMain.h */,
 			);
 			path = WebProcess;
 			sourceTree = "<group>";
@@ -1896,6 +1937,8 @@
 				1A433F0C113C53DD00FACDE9 /* WebErrors.h */,
 				BC111A58112F4FBB00337BAB /* WebFrameLoaderClient.cpp */,
 				BC032D6A10F4378D0058C15A /* WebFrameLoaderClient.h */,
+				BC1BE1DF12D54A410004A228 /* WebGeolocationClient.cpp */,
+				BC1BE1DE12D54A410004A228 /* WebGeolocationClient.h */,
 				BC111A59112F4FBB00337BAB /* WebInspectorClient.cpp */,
 				BC032D6D10F4378D0058C15A /* WebInspectorClient.h */,
 				1C8E256B1270DE3800BC7BD0 /* WebInspectorFrontendClient.cpp */,
@@ -2007,6 +2050,11 @@
 				BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */,
 				BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */,
 				BC9B389F10F538BE00443A15 /* WebFrameProxy.h */,
+				BC54CACA12D64291005C67B0 /* WebGeolocationManagerProxy.cpp */,
+				BC54CAC912D64291005C67B0 /* WebGeolocationManagerProxy.h */,
+				BC0E615212D6CAC80012A72A /* WebGeolocationManagerProxy.messages.in */,
+				BC1BE1F112D54DBD0004A228 /* WebGeolocationProvider.cpp */,
+				BC1BE1F012D54DBD0004A228 /* WebGeolocationProvider.h */,
 				BCF69F841176CD6F00471A52 /* WebHistoryClient.cpp */,
 				BCF69F851176CD6F00471A52 /* WebHistoryClient.h */,
 				1C8E28331275D73800BC7BD0 /* WebInspectorProxy.cpp */,
@@ -2080,19 +2128,23 @@
 				1AB7D78B1288CD9A00CFD08C /* WKDownload.h */,
 				BCE469571214EDF4000B98EB /* WKFormSubmissionListener.cpp */,
 				BCE469581214EDF4000B98EB /* WKFormSubmissionListener.h */,
-				BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */,
-				BC1DFE8D12B31CA8005DF730 /* WKOpenPanelResultListener.h */,
-				BC857FE512B843D800EDEB2E /* WKOpenPanelParameters.cpp */,
-				BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */,
 				BCD01398110FA420003B8A67 /* WKFrame.cpp */,
 				BCD01397110FA420003B8A67 /* WKFrame.h */,
 				BCB9F6A41123DD0D00A137E0 /* WKFramePolicyListener.cpp */,
 				BCB9F6A31123DD0D00A137E0 /* WKFramePolicyListener.h */,
+				BC54CC1112D674EE005C67B0 /* WKGeolocationManager.cpp */,
+				BC54CC1012D674EE005C67B0 /* WKGeolocationManager.h */,
+				BC0E619712D6CD120012A72A /* WKGeolocationPosition.cpp */,
+				BC0E619612D6CD120012A72A /* WKGeolocationPosition.h */,
 				1C8E293812761E5B00BC7BD0 /* WKInspector.cpp */,
 				1C8E293712761E5B00BC7BD0 /* WKInspector.h */,
 				C09AE5E8125257C20025825D /* WKNativeEvent.h */,
 				BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */,
 				BCF69FA71176D1CB00471A52 /* WKNavigationData.h */,
+				BC857FE512B843D800EDEB2E /* WKOpenPanelParameters.cpp */,
+				BC857FE412B843D800EDEB2E /* WKOpenPanelParameters.h */,
+				BC1DFE8E12B31CA8005DF730 /* WKOpenPanelResultListener.cpp */,
+				BC1DFE8D12B31CA8005DF730 /* WKOpenPanelResultListener.h */,
 				BCD597D4112B56DC00EC8C23 /* WKPage.cpp */,
 				BCD597D5112B56DC00EC8C23 /* WKPage.h */,
 				BC7B633612A45ABA00D174A4 /* WKPageGroup.cpp */,
@@ -2106,6 +2158,16 @@
 				518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */,
 			);
 			path = C;
+			sourceTree = "<group>";
+		};
+		BC0E5FCB12D696DD0012A72A /* Geolocation */ = {
+			isa = PBXGroup;
+			children = (
+				BC0E5FE412D697160012A72A /* WebGeolocationManager.cpp */,
+				BC0E5FE312D697160012A72A /* WebGeolocationManager.h */,
+				BC0E604812D6B6370012A72A /* WebGeolocationManager.messages.in */,
+			);
+			path = Geolocation;
 			sourceTree = "<group>";
 		};
 		BC111ADE112F5B9A00337BAB /* mac */ = {
@@ -2504,6 +2566,10 @@
 				F62A76B312B1B25F0005F1B6 /* WebDatabaseManagerMessages.h */,
 				F62A76B412B1B25F0005F1B6 /* WebDatabaseManagerProxyMessageReceiver.cpp */,
 				F62A76B512B1B25F0005F1B6 /* WebDatabaseManagerProxyMessages.h */,
+				BC0E605F12D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp */,
+				BC0E606012D6BA910012A72A /* WebGeolocationManagerMessages.h */,
+				BC0E618012D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp */,
+				BC0E618112D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h */,
 				1C8E2A311277852400BC7BD0 /* WebInspectorMessageReceiver.cpp */,
 				1C8E2A321277852400BC7BD0 /* WebInspectorMessages.h */,
 				1CA8B943127C882A00576C2B /* WebInspectorProxyMessageReceiver.cpp */,
@@ -2865,8 +2931,17 @@
 				93FC67C012D3CCF200A60610 /* EncoderAdapter.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
 				518D2CAE12D5153B003BB93B /* WebBackForwardListItem.h in Headers */,
+				BC1BE1E012D54A410004A228 /* WebGeolocationClient.h in Headers */,
+				BC1BE1F212D54DBD0004A228 /* WebGeolocationProvider.h in Headers */,
 				1A2C307112D555450063DAA2 /* ContextMenuState.h in Headers */,
 				518D2CCB12D51DFB003BB93B /* SessionState.h in Headers */,
+				BC54CACB12D64291005C67B0 /* WebGeolocationManagerProxy.h in Headers */,
+				BC54CC1212D674EE005C67B0 /* WKGeolocationManager.h in Headers */,
+				BC0E5FE512D697160012A72A /* WebGeolocationManager.h in Headers */,
+				BC0E606212D6BA910012A72A /* WebGeolocationManagerMessages.h in Headers */,
+				BC0E607312D6BC200012A72A /* WebGeolocationPosition.h in Headers */,
+				BC0E618312D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h in Headers */,
+				BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3301,7 +3376,16 @@
 				93FC67BD12D3CCF200A60610 /* DecoderAdapter.cpp in Sources */,
 				93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */,
 				518D2CAD12D5153B003BB93B /* WebBackForwardListItem.cpp in Sources */,
+				BC1BE1E112D54A410004A228 /* WebGeolocationClient.cpp in Sources */,
+				BC1BE1F312D54DBD0004A228 /* WebGeolocationProvider.cpp in Sources */,
 				518D2CCA12D51DFB003BB93B /* SessionState.cpp in Sources */,
+				BC54CACC12D64291005C67B0 /* WebGeolocationManagerProxy.cpp in Sources */,
+				BC54CC1312D674EE005C67B0 /* WKGeolocationManager.cpp in Sources */,
+				BC0E5FE612D697160012A72A /* WebGeolocationManager.cpp in Sources */,
+				BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */,
+				BC0E607412D6BC200012A72A /* WebGeolocationPosition.cpp in Sources */,
+				BC0E618212D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp in Sources */,
+				BC0E619912D6CD120012A72A /* WKGeolocationPosition.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

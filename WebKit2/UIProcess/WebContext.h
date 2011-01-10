@@ -46,6 +46,7 @@ namespace WebKit {
 
 class DownloadProxy;
 class WebDatabaseManagerProxy;
+class WebGeolocationManagerProxy;
 class WebPageGroup;
 class WebPageProxy;
 struct WebProcessCreationParameters;
@@ -126,6 +127,7 @@ public:
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
+    WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
 
     struct Statistics {
         unsigned wkViewCount;
@@ -196,6 +198,7 @@ private:
     double m_memorySamplerInterval;
 
     RefPtr<WebDatabaseManagerProxy> m_databaseManagerProxy;
+    RefPtr<WebGeolocationManagerProxy> m_geolocationManagerProxy;
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;

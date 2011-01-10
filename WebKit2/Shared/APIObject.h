@@ -68,6 +68,8 @@ public:
         TypeFormSubmissionListener,
         TypeFrame,
         TypeFramePolicyListener,
+        TypeGeolocationPosition,
+        TypeGeolocationManager,
         TypeInspector,
         TypeNavigationData,
         TypeOpenPanelParameters,

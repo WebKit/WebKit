@@ -162,6 +162,11 @@ WKDatabaseManagerRef WKContextGetDatabaseManager(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->databaseManagerProxy());
 }
 
+WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->geolocationManagerProxy());
+}
+
 void WKContextStartMemorySampler(WKContextRef contextRef, WKDoubleRef interval)
 {
     toImpl(contextRef)->startMemorySampler(toImpl(interval)->value());

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKit2_h
-#define WebKit2_h
+#include "WKGeolocationManager.h"
 
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKType.h>
+#include "WKAPICast.h"
+#include "WebGeolocationManagerProxy.h"
 
-#include <WebKit2/WKArray.h>
-#include <WebKit2/WKBackForwardList.h>
-#include <WebKit2/WKBackForwardListItem.h>
-#include <WebKit2/WKContext.h>
-#include <WebKit2/WKData.h>
-#include <WebKit2/WKDictionary.h>
-#include <WebKit2/WKError.h>
-#include <WebKit2/WKFormSubmissionListener.h>
-#include <WebKit2/WKFrame.h>
-#include <WebKit2/WKFramePolicyListener.h>
-#include <WebKit2/WKGeolocationManager.h>
-#include <WebKit2/WKGeolocationPosition.h>
-#include <WebKit2/WKMutableArray.h>
-#include <WebKit2/WKMutableDictionary.h>
-#include <WebKit2/WKNavigationData.h>
-#include <WebKit2/WKNumber.h>
-#include <WebKit2/WKOpenPanelParameters.h>
-#include <WebKit2/WKOpenPanelResultListener.h>
-#include <WebKit2/WKPage.h>
-#include <WebKit2/WKPageGroup.h>
-#include <WebKit2/WKPreferences.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLRequest.h>
-#include <WebKit2/WKURLResponse.h>
+using namespace WebKit;
 
-#if !(defined(__APPLE__) && __APPLE__) || (defined(__OBJC__) && __OBJC__)
-#include <WebKit2/WKView.h>
-#endif
+WKTypeID WKGeolocationManagerGetTypeID()
+{
+    return toAPI(WebGeolocationManagerProxy::APIType);
+}
 
-#endif /* WebKit2_h */
+void WKGeolocationManagerSetProvider(WKGeolocationManagerRef geolocationManagerRef, const WKGeolocationProvider* wkProvider)
+{
+    if (wkProvider && wkProvider->version)
+        return;
+    toImpl(geolocationManagerRef)->initializeProvider(wkProvider);
+}
+
+void WKGeolocationManagerProviderDidChangePosition(WKGeolocationManagerRef geolocationManagerRef, WKGeolocationPositionRef positionRef)
+{
+    toImpl(geolocationManagerRef)->providerDidChangePosition(toImpl(positionRef));
+}
+
+void WKGeolocationManagerProviderDidFailToDeterminePosition(WKGeolocationManagerRef geolocationManagerRef)
+{
+    toImpl(geolocationManagerRef)->providerDidFailToDeterminePosition();
+}
