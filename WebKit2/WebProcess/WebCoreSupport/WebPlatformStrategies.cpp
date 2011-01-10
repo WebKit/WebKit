@@ -52,7 +52,9 @@ namespace WebKit {
 // We can't use String::format for two reasons:
 //  1) It doesn't handle non-ASCII characters in the format string.
 //  2) It doesn't handle the %2$d syntax.
-static String formatLocalizedString(const String& format, ...)
+// Note that because |format| is used as the second paramter to va_start, it cannot be a reference
+// type according to section 18.7/3 of the C++ N1905 standard.
+static String formatLocalizedString(String format, ...)
 {
 #if PLATFORM(CF)
     va_list arguments;

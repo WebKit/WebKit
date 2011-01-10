@@ -1,3 +1,28 @@
+2011-01-10  Adam Roben  <aroben@apple.com>
+
+        Don't pass a reference type to va_start
+
+        C++ says this results in undefined behavior:
+
+            The restrictions that ISO C places on the second parameter to the
+            va_start() macro in header <stdarg.h> are different in this
+            International Standard. The parameter parmN is the identifier of
+            the rightmost parameter in the variable parameter list of the
+            function definition (the one just before the ...).221) If the
+            parameter parmN is declared with a function, array, or reference
+            type, or with a type that is not compatible with the type that
+            results when passing an argument for which there is no parameter,
+            the behavior is undefined.
+
+        Fixes <http://webkit.org/b/52168> Title of standalone image document
+        includes bogus image dimensions
+
+        Rubber-stamped by Eric Seidel.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::formatLocalizedString): Don't use a reference type for
+        |format|.
+
 2011-01-10  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Eric Seidel.
