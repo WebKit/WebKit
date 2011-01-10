@@ -1,3 +1,13 @@
+2011-01-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Create intermediate libWebCore library
+        https://bugs.webkit.org/show_bug.cgi?id=52116
+
+        * GNUmakefile.am: add XP_UNIX to the global CPP flags, since it's
+        used by both libWebCore and libwebkitgtk now.
+
 2011-01-08  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed wx build fix for r75313.

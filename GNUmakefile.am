@@ -165,6 +165,12 @@ global_cppflags += \
 	-DBUILDING_GTK__=1 \
 	-DWTF_CHANGES
 
+# For the Gtk port we want to use XP_UNIX both in X11 and Mac
+if !TARGET_WIN32
+global_cppflags += \
+	-DXP_UNIX
+endif
+
 if USE_ICU_UNICODE
 global_cppflags += \
 	-DWTF_USE_ICU_UNICODE=1
