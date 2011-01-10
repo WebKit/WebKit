@@ -1,3 +1,13 @@
+2011-01-10  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [chromium] Layout test fast/frames/iframe-reparenting-plugins.html is failing on windows
+        https://bugs.webkit.org/show_bug.cgi?id=52062
+
+        * platform/chromium/test_expectations.txt:
+        Skip the failing test. Same reason other tests using WebKit Test PlugIn fails.
+
 2011-01-10  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline some test results after r75389.

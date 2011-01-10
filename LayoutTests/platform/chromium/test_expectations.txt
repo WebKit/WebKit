@@ -758,6 +758,9 @@ BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
 // TestNetscapePlugin.  Once the internal plugin is removed, we'll be able to
 // fix the plugin names.
 BUG_TONY : plugins/plugin-javascript-access.html = TEXT PASS
+// New test introduced at r75217 is failing on Win - for same reason as the 
+// test above. (BUG_TONY)
+BUGWK52062 WIN : fast/frames/iframe-reparenting-plugins.html = TEXT
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release
@@ -3133,9 +3136,6 @@ BUGWK52064 WIN DEBUG : fast/events/overflow-events.html = PASS TEXT
 BUGWK52063 WIN DEBUG : http/tests/media/text-served-as-text.html = PASS TEXT TIMEOUT
 BUGWK52063 WIN : http/tests/navigation/ping-cross-origin.html = PASS TEXT TIMEOUT
 BUGWK52063 MAC SLOW : http/tests/navigation/ping-cross-origin.html = PASS
-
-// New test introduced at r75217 is failing on Win.
-BUGWK52062 WIN : fast/frames/iframe-reparenting-plugins.html = TEXT
 
 // These were flaky, now failing more consistently after r75169.
 BUGWK52061 DEBUG : transitions/suspend-transform-transition.html = IMAGE PASS
