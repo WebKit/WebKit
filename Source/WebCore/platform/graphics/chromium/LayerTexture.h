@@ -48,6 +48,11 @@ public:
     bool isValid(const IntSize&, unsigned format);
     bool reserve(const IntSize&, unsigned format);
     void unreserve();
+    bool isReserved()
+    {
+        ASSERT(m_textureManager);
+        return m_textureManager->isProtected(m_token);
+    }
 
     void bindTexture();
     void framebufferTexture2D();

@@ -124,6 +124,9 @@ bool RenderSurfaceChromium::prepareContentsTexture()
     if (!m_contentsTexture)
         m_contentsTexture = LayerTexture::create(layerRenderer()->context(), textureManager);
 
+    if (m_contentsTexture->isReserved())
+        return true;
+
     if (!m_contentsTexture->reserve(requiredSize, GraphicsContext3D::RGBA)) {
         m_skipsDraw = true;
         return false;

@@ -1,3 +1,24 @@
+2011-01-10  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Enable reuse of RenderSurface for drawing.
+        https://bugs.webkit.org/show_bug.cgi?id=51928
+
+        Modifies RenderSurfaceChromium::prepareContentsTexture to avoid trying to 'reserve' a texture
+        that is already reserved, should an attempt be made to re-select a previously drawn render surface
+        in order to continue drawing to it. This use case appears when compositing into an offscreen texture.
+
+        Covered by existing test (compositing/geometry/fixed-position.html) when offscreen compositing enabled.
+
+        * platform/graphics/chromium/LayerTexture.h:
+        (WebCore::LayerTexture::isReserved):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::prepareContentsTexture):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::isProtected):
+        * platform/graphics/chromium/TextureManager.h:
+
 2011-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.

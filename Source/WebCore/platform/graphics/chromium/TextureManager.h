@@ -51,6 +51,7 @@ public:
 
     void protectTexture(TextureToken);
     void unprotectTexture(TextureToken);
+    bool isProtected(TextureToken);
 
 private:
     TextureManager(GraphicsContext3D*, size_t memoryLimitBytes, int maxTextureSize);

@@ -70,6 +70,11 @@ bool TextureManager::hasTexture(TextureToken token)
     return false;
 }
 
+bool TextureManager::isProtected(TextureToken token)
+{
+    return token && hasTexture(token) && m_textures.get(token).isProtected;
+}
+
 void TextureManager::protectTexture(TextureToken token)
 {
     ASSERT(hasTexture(token));
