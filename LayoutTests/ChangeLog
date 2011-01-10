@@ -1,3 +1,12 @@
+2011-01-10  Adam Roben  <aroben@apple.com>
+
+        Add some new tests to the Windows Skipped file
+
+        The tests are failing due to unimplemented DRT features which are
+        already covered by bugs.
+
+        * platform/win/Skipped:
+
 2011-01-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

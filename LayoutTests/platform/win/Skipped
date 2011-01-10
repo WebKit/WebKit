@@ -200,6 +200,7 @@ fast/forms/input-file-re-render.html
 http/tests/security/clipboard/clipboard-file-access.html
 fast/events/drag-file-crash.html
 fast/dom/Window/window-postmessage-clone.html
+fast/dom/Window/window-postmessage-clone-frames.html
 
 # File API is not supported yet
 fast/files
@@ -944,6 +945,7 @@ editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 fast/text/international/thai-cursor-position.html
 fast/dom/tab-in-right-alignment.html
+svg/text/caret-in-svg-text.xhtml
 
 # textInputController.hasSpellingMarkers() is not implemented.
 editing/spelling/spelling-backspace-between-lines.html
