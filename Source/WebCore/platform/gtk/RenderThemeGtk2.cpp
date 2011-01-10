@@ -330,6 +330,20 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
 }
 
 #if ENABLE(PROGRESS_TAG)
+double RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress*) const
+{
+    // FIXME: It doesn't look like there is a good way yet to support animated
+    // progress bars with the Mozilla theme drawing code.
+    return 0;
+}
+
+double RenderThemeGtk::animationDurationForProgressBar(RenderProgress*) const
+{
+    // FIXME: It doesn't look like there is a good way yet to support animated
+    // progress bars with the Mozilla theme drawing code.
+    return 0;
+}
+
 bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!renderObject->isProgress())

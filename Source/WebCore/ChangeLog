@@ -1,3 +1,24 @@
+2011-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Port progressbar painting to GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=52054
+
+        Use GtkStyleContext API to paint progressbars when building with
+        GTK+ 3.x. Also add support for indeterminate progressbars.
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeGtk::animationDurationForProgressBar):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::animationRepeatIntervalForProgressBar):
+        (WebCore::RenderThemeGtk::animationDurationForProgressBar):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+
 2011-01-10  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Darin Adler.

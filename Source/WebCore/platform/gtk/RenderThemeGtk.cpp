@@ -575,20 +575,6 @@ bool RenderThemeGtk::paintMediaCurrentTime(RenderObject* renderObject, const Pai
 #endif
 
 #if ENABLE(PROGRESS_TAG)
-double RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress*) const
-{
-    // FIXME: It doesn't look like there is a good way yet to support animated
-    // progress bars with the Mozilla theme drawing code.
-    return 0;
-}
-
-double RenderThemeGtk::animationDurationForProgressBar(RenderProgress*) const
-{
-    // FIXME: It doesn't look like there is a good way yet to support animated
-    // progress bars with the Mozilla theme drawing code.
-    return 0;
-}
-
 void RenderThemeGtk::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(0);

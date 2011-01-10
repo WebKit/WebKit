@@ -436,31 +436,67 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* renderObject) const
 }
 
 #if ENABLE(PROGRESS_TAG)
+// These values have been copied from RenderThemeChromiumSkia.cpp
+static const int progressActivityBlocks = 5;
+static const int progressAnimationFrames = 10;
+static const double progressAnimationInterval = 0.125;
+double RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress*) const
+{
+    return progressAnimationInterval;
+}
+
+double RenderThemeGtk::animationDurationForProgressBar(RenderProgress*) const
+{
+    return progressAnimationInterval * progressAnimationFrames * 2; // "2" for back and forth;
+}
+
 bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!renderObject->isProgress())
         return true;
 
-    GtkWidget* progressBarWidget = moz_gtk_get_progress_widget();
-    if (!progressBarWidget)
-        return true;
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_PROGRESS_BAR);
+    gtk_style_context_save(context);
 
-    if (paintRenderObject(MOZ_GTK_PROGRESSBAR, renderObject, paintInfo.context, rect))
-        return true;
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
 
-    IntRect chunkRect(rect);
+    gtk_render_background(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+
+    gtk_style_context_restore(context);
+
+    gtk_style_context_save(context);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_PROGRESSBAR);
+
     RenderProgress* renderProgress = toRenderProgress(renderObject);
 
-    GtkStyle* style = gtk_widget_get_style(progressBarWidget);
-    chunkRect.setHeight(chunkRect.height() - (2 * style->ythickness));
-    chunkRect.setY(chunkRect.y() + style->ythickness);
-    chunkRect.setWidth((chunkRect.width() - (2 * style->xthickness)) * renderProgress->position());
-    if (renderObject->style()->direction() == RTL)
-        chunkRect.setX(rect.x() + rect.width() - chunkRect.width() - style->xthickness);
-    else
-        chunkRect.setX(chunkRect.x() + style->xthickness);
+    GtkBorder padding;
+    gtk_style_context_get_padding(context, static_cast<GtkStateFlags>(0), &padding);
+    IntRect progressRect(rect.x() + padding.left, rect.y() + padding.top,
+                         rect.width() - (padding.left + padding.right),
+                         rect.height() - (padding.top + padding.bottom));
 
-    return paintRenderObject(MOZ_GTK_PROGRESS_CHUNK, renderObject, paintInfo.context, chunkRect);
+    if (renderProgress->isDeterminate()) {
+        progressRect.setWidth(progressRect.width() * renderProgress->position());
+        if (renderObject->style()->direction() == RTL)
+            progressRect.setX(rect.x() + rect.width() - progressRect.width() - padding.right);
+    } else {
+        double animationProgress = renderProgress->animationProgress();
+
+        progressRect.setWidth(max(2, progressRect.width() / progressActivityBlocks));
+        int movableWidth = rect.width() - progressRect.width();
+        if (animationProgress < 0.5)
+            progressRect.setX(progressRect.x() + (animationProgress * 2 * movableWidth));
+        else
+            progressRect.setX(progressRect.x() + ((1.0 - animationProgress) * 2 * movableWidth));
+    }
+
+    if (!progressRect.isEmpty())
+        gtk_render_activity(context, paintInfo.context->platformContext(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
+
+    gtk_style_context_restore(context);
+
+    return false;
 }
 #endif
 
