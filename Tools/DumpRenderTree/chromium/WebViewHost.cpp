@@ -656,6 +656,8 @@ void WebViewHost::show(WebNavigationPolicy)
     updatePaintRect(WebRect(0, 0, size.width, size.height));
 }
 
+
+
 void WebViewHost::closeWidget()
 {
     m_hasWindow = false;
@@ -1405,13 +1407,6 @@ void WebViewHost::setAddressBarURL(const WebURL&)
 
 // Painting functions ---------------------------------------------------------
 
-class WebViewHostPaintTask : public MethodTask<WebViewHost> {
-public:
-    WebViewHostPaintTask(WebViewHost* object)
-        : MethodTask<WebViewHost>(object) {}
-    virtual void runIfValid() { m_object->paintInvalidatedRegion(); }
-};
-
 void WebViewHost::updatePaintRect(const WebRect& rect)
 {
     // m_paintRect = m_paintRect U rect
@@ -1426,8 +1421,6 @@ void WebViewHost::updatePaintRect(const WebRect& rect)
     int right = max(m_paintRect.x + m_paintRect.width, rect.x + rect.width);
     int bottom = max(m_paintRect.y + m_paintRect.height, rect.y + rect.height);
     m_paintRect = WebRect(left, top, right - left, bottom - top);
-
-    postDelayedTask(new WebViewHostPaintTask(this), 0);
 }
 
 void WebViewHost::paintRect(const WebRect& rect)
