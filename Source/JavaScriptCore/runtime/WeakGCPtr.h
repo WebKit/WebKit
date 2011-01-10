@@ -26,7 +26,7 @@
 #ifndef WeakGCPtr_h
 #define WeakGCPtr_h
 
-#include "Collector.h"
+#include "Heap.h"
 #include "GCHandle.h"
 #include <wtf/Noncopyable.h>
 

@@ -30,7 +30,7 @@
 #include "GCActivityCallback.h"
 
 #include "APIShims.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "JSGlobalData.h"
 #include "JSLock.h"
 #include <wtf/RetainPtr.h>

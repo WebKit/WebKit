@@ -26,7 +26,7 @@
 #include "CallFrame.h"
 #include "JSCell.h"
 #include "JSImmediate.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "UString.h"
 #include <stddef.h> // for size_t
 

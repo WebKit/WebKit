@@ -35,7 +35,7 @@
 #include "CallFrame.h"
 #include "CallFrameClosure.h"
 #include "CodeBlock.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "Debugger.h"
 #include "DebuggerCallFrame.h"
 #include "ErrorInstance.h"

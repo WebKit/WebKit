@@ -21,7 +21,7 @@
 #include "config.h"
 #include "MachineStackMarker.h"
 
-#include "Collector.h"
+#include "Heap.h"
 #include "JSArray.h"
 #include "JSGlobalData.h"
 #include <setjmp.h>

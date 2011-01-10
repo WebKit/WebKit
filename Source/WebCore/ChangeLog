@@ -1,3 +1,15 @@
+2011-01-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Moved Collector.* => Heap.*, since the file contains a class named "Heap".
+
+        * ForwardingHeaders/runtime/Collector.h: Removed.
+        * ForwardingHeaders/runtime/Heap.h: Copied from WebCore/ForwardingHeaders/runtime/Collector.h.
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/GCController.cpp:
+        * bindings/js/ScriptGCEvent.cpp:
+
 2011-01-10  Leonid Ebril  <leonid.ebril@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

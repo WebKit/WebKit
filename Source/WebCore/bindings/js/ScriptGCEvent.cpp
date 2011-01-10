@@ -34,7 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "JSDOMWindow.h"
-#include <runtime/Collector.h>
+#include <runtime/Heap.h>
 #include <runtime/JSGlobalData.h>
 #include <wtf/CurrentTime.h>
 

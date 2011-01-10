@@ -586,11 +586,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Collector.cpp"
+				RelativePath="..\..\runtime\Heap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Collector.h"
+				RelativePath="..\..\runtime\Heap.h"
 				>
 			</File>
 			<File

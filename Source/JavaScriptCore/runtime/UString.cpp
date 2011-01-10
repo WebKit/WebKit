@@ -25,7 +25,7 @@
 #include "UString.h"
 
 #include "JSGlobalObjectFunctions.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "Identifier.h"
 #include "Operations.h"
 #include <ctype.h>

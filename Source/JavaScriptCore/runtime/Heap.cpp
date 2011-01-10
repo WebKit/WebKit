@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "Collector.h"
+#include "Heap.h"
 
 #include "ArgList.h"
 #include "CallFrame.h"

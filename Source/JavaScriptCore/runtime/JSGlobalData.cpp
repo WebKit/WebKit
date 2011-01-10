@@ -30,7 +30,7 @@
 #include "JSGlobalData.h"
 
 #include "ArgList.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "CollectorHeapIterator.h"
 #include "CommonIdentifiers.h"
 #include "FunctionConstructor.h"

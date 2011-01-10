@@ -30,7 +30,7 @@
 #define JSGlobalData_h
 
 #include "CachedTranscendentalFunction.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
 #include "JITStubs.h"

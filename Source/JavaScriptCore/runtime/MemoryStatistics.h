@@ -26,7 +26,7 @@
 #ifndef MemoryStatistics_h
 #define MemoryStatistics_h
 
-#include "Collector.h"
+#include "Heap.h"
 
 class JSGlobalData;
 

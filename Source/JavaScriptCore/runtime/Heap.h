@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef Collector_h
-#define Collector_h
+#ifndef Heap_h
+#define Heap_h
 
 #include "GCHandle.h"
 #include "JSValue.h"
@@ -314,4 +314,4 @@ namespace JSC {
     }
 } // namespace JSC
 
-#endif /* Collector_h */
+#endif /* Heap_h */

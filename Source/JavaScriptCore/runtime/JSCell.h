@@ -25,7 +25,7 @@
 
 #include "CallData.h"
 #include "ConstructData.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "JSImmediate.h"
 #include "JSValue.h"
 #include "MarkStack.h"

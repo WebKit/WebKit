@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "Collector.h"
+#include "Heap.h"
 
 #ifndef CollectorHeapIterator_h
 #define CollectorHeapIterator_h

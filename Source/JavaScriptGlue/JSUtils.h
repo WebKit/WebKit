@@ -31,7 +31,7 @@
 
 #include "JavaScriptGlue.h"
 
-#include <JavaScriptCore/Collector.h>
+#include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/JSValue.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/Identifier.h>

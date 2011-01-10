@@ -80,7 +80,7 @@ LOCAL_SRC_FILES := \
 	runtime/BooleanObject.cpp \
 	runtime/BooleanPrototype.cpp \
 	runtime/CallData.cpp \
-	runtime/Collector.cpp \
+	runtime/Heap.cpp \
 	runtime/CommonIdentifiers.cpp \
 	runtime/Completion.cpp \
 	runtime/ConstructData.cpp \

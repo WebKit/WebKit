@@ -29,7 +29,7 @@
 #include "config.h"
 #include "InitializeThreading.h"
 
-#include "Collector.h"
+#include "Heap.h"
 #include "dtoa.h"
 #include "Identifier.h"
 #include "JSGlobalObject.h"

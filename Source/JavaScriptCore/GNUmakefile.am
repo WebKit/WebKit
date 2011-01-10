@@ -236,8 +236,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/CallData.cpp \
 	Source/JavaScriptCore/runtime/CallData.h \
 	Source/JavaScriptCore/runtime/ClassInfo.h \
-	Source/JavaScriptCore/runtime/Collector.cpp \
-	Source/JavaScriptCore/runtime/Collector.h \
+	Source/JavaScriptCore/runtime/Heap.cpp \
+	Source/JavaScriptCore/runtime/Heap.h \
 	Source/JavaScriptCore/runtime/CollectorHeapIterator.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \

@@ -29,7 +29,7 @@
 #ifndef RegisterFile_h
 #define RegisterFile_h
 
-#include "Collector.h"
+#include "Heap.h"
 #include "ExecutableAllocator.h"
 #include "Register.h"
 #include "WeakGCPtr.h"

@@ -36,7 +36,7 @@
 #include "Arguments.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
-#include "Collector.h"
+#include "Heap.h"
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"

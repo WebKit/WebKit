@@ -1,3 +1,39 @@
+2011-01-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Moved Collector.* => Heap.*, since the file contains a class named "Heap".
+
+        * API/JSCallbackObject.cpp:
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * interpreter/Interpreter.cpp:
+        * interpreter/RegisterFile.h:
+        * jit/JITStubs.cpp:
+        * runtime/Collector.cpp: Removed.
+        * runtime/Collector.h: Removed.
+        * runtime/CollectorHeapIterator.h:
+        * runtime/GCActivityCallbackCF.cpp:
+        * runtime/Heap.cpp: Copied from JavaScriptCore/runtime/Collector.cpp.
+        * runtime/Heap.h: Copied from JavaScriptCore/runtime/Collector.h.
+        * runtime/InitializeThreading.cpp:
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.cpp:
+        * runtime/JSGlobalData.h:
+        * runtime/JSLock.cpp:
+        * runtime/JSNumberCell.h:
+        * runtime/MachineStackMarker.cpp:
+        * runtime/MemoryStatistics.h:
+        * runtime/Protect.h:
+        * runtime/UString.cpp:
+        * runtime/WeakGCMap.h:
+        * runtime/WeakGCPtr.h:
+
 2011-01-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gavin Barraclough.
