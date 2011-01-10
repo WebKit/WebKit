@@ -114,7 +114,10 @@ String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 
 bool cookiesEnabled(const Document* document)
 {
-    return !!networkAccessManager(document);
+    if (QNetworkAccessManager* manager = networkAccessManager(document))
+        return !!manager->cookieJar();
+
+    return false;
 }
 
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
