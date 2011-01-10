@@ -151,7 +151,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.dragClient = new WebDragClient(this);
     pageClients.backForwardClient = WebBackForwardListProxy::create(this);
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
-    pageClients.geolocationClient = \new WebGeolocationClient(this);
+    pageClients.geolocationClient = new WebGeolocationClient(this);
 #endif
 #if ENABLE(INSPECTOR)
     pageClients.inspectorClient = new WebInspectorClient(this);

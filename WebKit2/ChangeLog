@@ -1,5 +1,12 @@
 2011-01-10  Sam Weinig  <sam@webkit.org>
 
+        Fix the build.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
+2011-01-10  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Make Geolocation features work in WebKit2
