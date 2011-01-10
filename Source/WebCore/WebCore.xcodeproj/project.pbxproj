@@ -989,7 +989,7 @@
 		436708F512D9CA4B00044234 /* SVGResources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708B612D9CA4B00044234 /* SVGResources.cpp */; };
 		436708F612D9CA4B00044234 /* SVGResources.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B712D9CA4B00044234 /* SVGResources.h */; };
 		436708F712D9CA4B00044234 /* SVGResourcesCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708B812D9CA4B00044234 /* SVGResourcesCache.cpp */; };
-		436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B912D9CA4B00044234 /* SVGResourcesCache.h */; };
+		436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B912D9CA4B00044234 /* SVGResourcesCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		436708F912D9CA4B00044234 /* SVGResourcesCycleSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708BA12D9CA4B00044234 /* SVGResourcesCycleSolver.cpp */; };
 		436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708BB12D9CA4B00044234 /* SVGResourcesCycleSolver.h */; };
 		436708FB12D9CA4B00044234 /* SVGShadowTreeElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 436708BC12D9CA4B00044234 /* SVGShadowTreeElements.cpp */; };
