@@ -1,3 +1,18 @@
+2011-01-10  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] simplify complex glyph positioning code
+        https://bugs.webkit.org/show_bug.cgi?id=52159
+
+        Before, we had roughly same code duplicated for RTL and LTR.
+        Now, use the same code for both directions by being careful about
+        flipping signs where appropriate.
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::shapeGlyphs):
+        (WebCore::ComplexTextController::setGlyphXPositions):
+
 2011-01-10  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Xan Lopez.

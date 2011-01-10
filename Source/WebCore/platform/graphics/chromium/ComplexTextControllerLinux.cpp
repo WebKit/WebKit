@@ -273,7 +273,7 @@ void ComplexTextController::shapeGlyphs()
 {
     // HB_ShapeItem() resets m_item.num_glyphs. If the previous call to
     // HB_ShapeItem() used less space than was available, the capacity of
-    // the array may be larger than the current value of m_item.num_glyphs. 
+    // the array may be larger than the current value of m_item.num_glyphs.
     // So, we need to reset the num_glyphs to the capacity of the array.
     m_item.num_glyphs = m_glyphsArrayCapacity;
     resetGlyphArrays();
@@ -291,62 +291,49 @@ void ComplexTextController::shapeGlyphs()
 
 void ComplexTextController::setGlyphXPositions(bool isRTL)
 {
+    const double rtlFlip = isRTL ? -1 : 1;
     double position = 0;
-    // logClustersIndex indexes logClusters for the first (or last when
-    // RTL) codepoint of the current glyph.  Each time we advance a glyph,
-    // we skip over all the codepoints that contributed to the current
-    // glyph.
+
+    // logClustersIndex indexes logClusters for the first codepoint of the current glyph.
+    // Each time we advance a glyph, we skip over all the codepoints that contributed to the current glyph.
     int logClustersIndex = 0;
 
-    if (isRTL) {
-        logClustersIndex = m_item.num_glyphs - 1;
+    // Iterate through the glyphs in logical order, flipping for RTL where necessary.
+    // In RTL mode all variables are positive except m_xPositions, which starts from m_offsetX and runs negative.
+    // It is fixed up in a second pass below.
+    for (size_t i = 0; i < m_item.num_glyphs; ++i) {
+        while (static_cast<unsigned>(logClustersIndex) < m_item.item.length && logClusters()[logClustersIndex] < i)
+            logClustersIndex++;
 
-        // Glyphs are stored in logical order, but for layout purposes we
-        // always go left to right.
-        for (int i = m_item.num_glyphs - 1; i >= 0; --i) {
-            if (!m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i])) {
-                // Whitespace must be laid out in logical order, so when inserting
-                // spaces in RTL (but iterating in LTR order) we must insert spaces
-                // _before_ the next glyph.
-                if (static_cast<unsigned>(i + 1) >= m_item.num_glyphs || m_item.attributes[i + 1].clusterStart)
-                    position += m_letterSpacing;
+        // If the current glyph is just after a space, add in the word spacing.
+        position += determineWordBreakSpacing(logClustersIndex);
 
-                position += determineWordBreakSpacing(logClustersIndex);
-            }
+        m_glyphs16[i] = m_item.glyphs[i];
+        double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
+        double advance = truncateFixedPointToInteger(m_item.advances[i]);
+        if (isRTL)
+            offsetX -= advance;
 
-            m_glyphs16[i] = m_item.glyphs[i];
-            double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
-            m_xPositions[i] = m_offsetX + position + offsetX;
+        m_xPositions[i] = m_offsetX + (position * rtlFlip) + offsetX;
 
-            while (logClustersIndex > 0 && logClusters()[logClustersIndex] == i)
-                logClustersIndex--;
+        if (m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i]))
+            continue;
 
-            if (!m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i]))
-                position += truncateFixedPointToInteger(m_item.advances[i]);
-        }
-    } else {
-        for (size_t i = 0; i < m_item.num_glyphs; ++i) {
-            m_glyphs16[i] = m_item.glyphs[i];
-            double offsetX = truncateFixedPointToInteger(m_item.offsets[i].x);
-            m_xPositions[i] = m_offsetX + position + offsetX;
+        // At the end of each cluster, add in the letter spacing.
+        if (i + 1 == m_item.num_glyphs || m_item.attributes[i + 1].clusterStart)
+            position += m_letterSpacing;
 
-            if (m_currentFontData->isZeroWidthSpaceGlyph(m_glyphs16[i]))
-                continue;
-
-            double advance = truncateFixedPointToInteger(m_item.advances[i]);
-
-            advance += determineWordBreakSpacing(logClustersIndex);
-
-            if (m_item.attributes[i].clusterStart)
-                advance += m_letterSpacing;
-
-            while (static_cast<unsigned>(logClustersIndex) < m_item.item.length && logClusters()[logClustersIndex] == i)
-                logClustersIndex++;
-
-            position += advance;
-        }
+        position += advance;
     }
-    m_pixelWidth = std::max(position, 0.0);
+    const double width = position;
+
+    // Now that we've computed the total width, do another pass to fix positioning for RTL.
+    if (isRTL) {
+        for (size_t i = 0; i < m_item.num_glyphs; ++i)
+            m_xPositions[i] += width;
+    }
+
+    m_pixelWidth = std::max(width, 0.0);
     m_offsetX += m_pixelWidth;
 }
 
