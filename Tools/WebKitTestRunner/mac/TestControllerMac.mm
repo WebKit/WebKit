@@ -52,8 +52,10 @@ void TestController::initializeTestPluginDirectory()
 void TestController::platformRunUntil(bool& done, double timeout)
 {
     CFAbsoluteTime end = CFAbsoluteTimeGetCurrent() + timeout;
+    CFDateRef endDate = CFDateCreate(0, end);
     while (!done && CFAbsoluteTimeGetCurrent() < end)
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:(NSDate *)endDate];
+    CFRelease(endDate);
 }
 
 void TestController::platformInitializeContext()
