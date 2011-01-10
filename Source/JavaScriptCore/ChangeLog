@@ -1,3 +1,16 @@
+2011-01-10  Dave Tapuska  <dtapuska@rim.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Add CTI ASM versions for RVCT ARM THUMB2 mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52154
+
+        * jit/JITStubs.cpp:
+        (JSC::ctiTrampoline):
+        (JSC::ctiVMThrowTrampoline):
+        (JSC::ctiOpThrowNotCaught):
+
 2011-01-10  Gavin Barraclough  <barraclough@apple.com>
 
         Qt build fix.

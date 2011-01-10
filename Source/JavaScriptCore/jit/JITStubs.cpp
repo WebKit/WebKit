@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010, 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -736,6 +736,54 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "add sp, sp, #12" "\n"
     "mov pc, lr" "\n"
 );
+
+#elif COMPILER(RVCT) && CPU(ARM_THUMB2)
+
+__asm EncodedJSValue ctiTrampoline(void*, RegisterFile*, CallFrame*, JSValue*, Profiler**, JSGlobalData*)
+{
+    PRESERVE8
+    sub sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    str lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
+    str r4, [sp, # PRESERVED_R4_OFFSET ]
+    str r5, [sp, # PRESERVED_R5_OFFSET ]
+    str r6, [sp, # PRESERVED_R6_OFFSET ]
+    str r1, [sp, # REGISTER_FILE_OFFSET ]
+    str r2, [sp, # CALLFRAME_OFFSET ]
+    str r3, [sp, # EXCEPTION_OFFSET ]
+    cpy r5, r2
+    mov r6, #512
+    blx r0
+    ldr r6, [sp, # PRESERVED_R6_OFFSET ]
+    ldr r5, [sp, # PRESERVED_R5_OFFSET ]
+    ldr r4, [sp, # PRESERVED_R4_OFFSET ]
+    ldr lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
+    add sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    bx lr
+}
+
+__asm void ctiVMThrowTrampoline()
+{
+    PRESERVE8
+    cpy r0, sp
+    bl cti_vm_throw
+    ldr r6, [sp, # PRESERVED_R6_OFFSET ]
+    ldr r5, [sp, # PRESERVED_R5_OFFSET ]
+    ldr r4, [sp, # PRESERVED_R4_OFFSET ]
+    ldr lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
+    add sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    bx lr
+}
+
+__asm void ctiOpThrowNotCaught()
+{
+    PRESERVE8
+    ldr r6, [sp, # PRESERVED_R6_OFFSET ]
+    ldr r5, [sp, # PRESERVED_R5_OFFSET ]
+    ldr r4, [sp, # PRESERVED_R4_OFFSET ]
+    ldr lr, [sp, # PRESERVED_RETURN_ADDRESS_OFFSET ]
+    add sp, sp, # ENABLE_PROFILER_REFERENCE_OFFSET
+    bx lr
+}
 
 #elif COMPILER(RVCT) && CPU(ARM_TRADITIONAL)
 
