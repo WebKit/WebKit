@@ -1,3 +1,13 @@
+2011-01-10  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        Specificity of negated selectors apparently miscalculated
+        https://bugs.webkit.org/show_bug.cgi?id=41206
+
+        * fast/css/pseudo-not-expected.txt: Added.
+        * fast/css/pseudo-not.html: Added.
+
 2011-01-09  Justin Garcia  <justin.garcia@apple.com>
 
         Unreviewed.  Adding svg/text/caret-in-svg-text.xhtml to Skipped list for gtk, where there 

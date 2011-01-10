@@ -99,7 +99,10 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case Contain:
     case Begin:
     case End:
-        s += 0x100;
+        if (pseudoType() == PseudoNot && simpleSelector())
+            s += simpleSelector()->specificityForOneSelector();
+        else
+            s += 0x100;
     case None:
         break;
     }
