@@ -61,6 +61,8 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/forms/select-live-pseudo-selectors.html
+editing/selection/caret-bidi-first-and-last-letters.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -974,8 +976,11 @@ java
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
-# Get accelerated compositing working with webkit2
-# <https://bugs.webkit.org/show_bug.cgi?id=41084>
+http/tests/navigation/ping-cookie.html
+plugins/application-plugin-plugins-disabled.html
+fast/canvas/webgl/context-lost-restored.html
+fast/canvas/webgl/context-lost.html
+fast/canvas/webgl/uninitialized-test.html
 compositing/webgl/webgl-background-color.html
 compositing/webgl/webgl-reflection.html
 fast/canvas/webgl/array-buffer-crash.html
@@ -1293,6 +1298,7 @@ fast/profiler
 
 # WebKitTestRunner needs to support layoutTestController.pageNumberForElementById
 # <https://bugs.webkit.org/show_bug.cgi?id=42329>
+printing/page-count-percentage-height.html
 printing/allowed-page-breaks.html
 printing/css2.1/page-break-after-000.html
 printing/css2.1/page-break-after-001.html
@@ -1416,6 +1422,7 @@ http/tests/loading/state-object-security-exception.html
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
+svg/text/caret-in-svg-text.xhtml
 editing/input/ime-composition-clearpreedit.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/selection/5825350-1.html
@@ -1613,6 +1620,9 @@ fast/frames/frame-display-none-focus.html
 
 # WebKitTestRunner needs layoutTestController.queueLoad
 # <https://bugs.webkit.org/show_bug.cgi?id=42674>
+http/tests/xmlhttprequest/basic-auth-nopassword.html
+/http/tests/xmlhttprequest/basic-auth-nouser.html
+http/tests/navigation/forward-and-cancel.html
 fast/frames/frame-navigation.html
 fast/history/go-back-to-changed-name.html
 http/tests/navigation/anchor-basic.html
@@ -1678,6 +1688,7 @@ http/tests/security/local-user-CSS-from-remote.html
 
 # WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42679> 
+fast/loader/user-stylesheet-fast-path.html
 
 # WebKitTestRunner needs layoutTestController.setPOSIXLocale
 # <https://bugs.webkit.org/show_bug.cgi?id=42682>
@@ -1716,6 +1727,7 @@ editing/selection/5195166-1.html
 editing/selection/context-menu-text-selection.html
 editing/execCommand/query-command-state.html
 editing/execCommand/query-text-alignment.html
+editing/execCommand/toggle-compound-styles.html
 
 # WebKitTestRunner needs layoutTestController.setWillSendRequestReturnsNull
 # <https://bugs.webkit.org/show_bug.cgi?id=42690>
@@ -1763,6 +1775,7 @@ security/set-form-autocomplete-attribute.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42697>
 storage/domstorage/localstorage/private-browsing-affects-storage.html
 storage/domstorage/sessionstorage/private-browsing-affects-storage.html
+storage/private-browsing-noread-nowrite.html
 
 # WebKitTestRunner needs layoutTestController.setAppCacheMaximumSize
 # <https://bugs.webkit.org/show_bug.cgi?id=42698>
@@ -1868,6 +1881,7 @@ fast/events/onbeforeunload-focused-iframe.html
 platform/mac/plugins/disable-plugins.html
 
 # WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
+http/tests/misc/authentication-sent-to-redirect.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/security/401-logout/401-logout.php
@@ -1930,6 +1944,9 @@ printing/page-format-data-display-none.html
 # WebKitTestRunner needs layoutTestController.dumpUserGestureInFrameLoadCallbacks
 fast/frames/location-redirect-user-gesture.html
 fast/frames/meta-refresh-user-gesture.html
+
+# WebKitTestRunner needs layoutTestController.setUseDashboardCompatibilityMode
+platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html
 
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-resize-and-move-arguments.html
