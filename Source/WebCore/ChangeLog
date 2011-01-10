@@ -1,3 +1,24 @@
+2011-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Port check and radio button painting to GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=51815
+
+        Use GtkStyleContext API to paint check and radio buttons when
+        building with GTK+ 3.x.
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::adjustRepaintRect):
+        (WebCore::setToggleSize):
+        (WebCore::paintToggle):
+        (WebCore::RenderThemeGtk::setCheckboxSize):
+        (WebCore::RenderThemeGtk::paintCheckbox):
+        (WebCore::RenderThemeGtk::setRadioSize):
+        (WebCore::RenderThemeGtk::paintRadio):
+
 2011-01-10  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

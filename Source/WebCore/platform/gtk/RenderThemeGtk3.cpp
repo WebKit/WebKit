@@ -116,6 +116,15 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
     bool checkInteriorFocus = false;
     ControlPart part = renderObject->style()->appearance();
     switch (part) {
+    case CheckboxPart:
+    case RadioPart:
+        context = getStyleContext(part == CheckboxPart ? GTK_TYPE_CHECK_BUTTON : GTK_TYPE_RADIO_BUTTON);
+
+        gint indicatorSpacing;
+        gtk_style_context_get_style(context, "indicator-spacing", &indicatorSpacing, NULL);
+        rect.inflate(indicatorSpacing);
+
+        return;
     case SliderVerticalPart:
     case SliderHorizontalPart:
         context = getStyleContext(part == SliderThumbHorizontalPart ?  GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
@@ -182,44 +191,87 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
                                              gtkTextDirection(renderObject->style()->direction()));
 }
 
-static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, ControlPart appearance)
+static void setToggleSize(GtkStyleContext* context, RenderStyle* style)
 {
     // The width and height are both specified, so we shouldn't change them.
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
         return;
 
-    // FIXME: This is probably not correct use of indicatorSize and indicatorSpacing.
-    gint indicatorSize, indicatorSpacing;
-    theme->getIndicatorMetrics(appearance, indicatorSize, indicatorSpacing);
-
-    // Other ports hard-code this to 13, but GTK+ users tend to demand the native look.
+    // Other ports hard-code this to 13 which is also the default value defined by GTK+.
+    // GTK+ users tend to demand the native look.
     // It could be made a configuration option values other than 13 actually break site compatibility.
-    int length = indicatorSize + indicatorSpacing;
+    gint indicatorSize;
+    gtk_style_context_get_style(context, "indicator-size", &indicatorSize, NULL);
+
     if (style->width().isIntrinsicOrAuto())
-        style->setWidth(Length(length, Fixed));
+        style->setWidth(Length(indicatorSize, Fixed));
 
     if (style->height().isAuto())
-        style->setHeight(Length(length, Fixed));
+        style->setHeight(Length(indicatorSize, Fixed));
+}
+
+static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    GtkStyleContext* context = getStyleContext(widgetType);
+    gtk_style_context_save(context);
+
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
+    gtk_style_context_add_class(context, widgetType == GTK_TYPE_CHECK_BUTTON ? GTK_STYLE_CLASS_CHECK : GTK_STYLE_CLASS_RADIO);
+
+    gint indicatorSize, indicatorSpacing;
+    gtk_style_context_get_style(context,
+                                "indicator-size", &indicatorSize,
+                                "indicator-spacing", &indicatorSpacing,
+                                NULL);
+
+    guint flags = 0;
+    if (!theme->isEnabled(renderObject) || theme->isReadOnlyControl(renderObject))
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    else if (theme->isHovered(renderObject))
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    if (theme->isChecked(renderObject))
+        flags |= GTK_STATE_FLAG_ACTIVE;
+    if (theme->isPressed(renderObject))
+        flags |= GTK_STATE_FLAG_SELECTED;
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
+
+    IntRect indicatorRect(rect);
+
+    if (widgetType == GTK_TYPE_CHECK_BUTTON)
+        gtk_render_check(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+    else
+        gtk_render_option(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+
+    if (theme->isFocused(renderObject)) {
+        IntRect indicatorRect(rect);
+        indicatorRect.inflate(indicatorSpacing);
+        gtk_render_focus(context, paintInfo.context->platformContext(), indicatorRect.x(), indicatorRect.y(),
+                         indicatorRect.width(), indicatorRect.height());
+    }
+
+    gtk_style_context_restore(context);
 }
 
 void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
 {
-    setToggleSize(this, style, RadioPart);
+    setToggleSize(getStyleContext(GTK_TYPE_CHECK_BUTTON), style);
 }
 
-bool RenderThemeGtk::paintCheckbox(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintCheckbox(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_CHECKBUTTON, object, info.context, rect, isChecked(object));
+    paintToggle(this, GTK_TYPE_CHECK_BUTTON, renderObject, paintInfo, rect);
+    return false;
 }
 
 void RenderThemeGtk::setRadioSize(RenderStyle* style) const
 {
-    setToggleSize(this, style, RadioPart);
+    setToggleSize(getStyleContext(GTK_TYPE_RADIO_BUTTON), style);
 }
 
-bool RenderThemeGtk::paintRadio(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintRadio(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_RADIOBUTTON, object, info.context, rect, isChecked(object));
+    paintToggle(this, GTK_TYPE_RADIO_BUTTON, renderObject, paintInfo, rect);
+    return false;
 }
 
 bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
