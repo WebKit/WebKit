@@ -5,6 +5,7 @@
                   2005, 2007 Apple Inc. All Rights reserved.
                   2007 Alp Toker <alp@atoker.com>
                   2008 Dirk Schulze <krit@webkit.org>
+                  2011 Igalia S.L.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -143,18 +144,30 @@ void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& c
                    controlPoint3.x(), controlPoint3.y());
 }
 
-void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlockwise)
+void Path::addArc(const FloatPoint& p, float r, float startAngle, float endAngle, bool anticlockwise)
 {
     // http://bugs.webkit.org/show_bug.cgi?id=16449
     // cairo_arc() functions hang or crash when passed inf as radius or start/end angle
-    if (!isfinite(r) || !isfinite(sa) || !isfinite(ea))
+    if (!isfinite(r) || !isfinite(startAngle) || !isfinite(endAngle))
         return;
 
     cairo_t* cr = platformPath()->context();
-    if (anticlockwise)
-        cairo_arc_negative(cr, p.x(), p.y(), r, sa, ea);
-    else
-        cairo_arc(cr, p.x(), p.y(), r, sa, ea);
+    float sweep = endAngle - startAngle;
+    const float twoPI = 2 * M_PI;
+    if ((sweep <= -twoPI || sweep >= twoPI)
+        && ((anticlockwise && (endAngle < startAngle)) || (!anticlockwise && (startAngle < endAngle)))) {
+        if (anticlockwise)
+            cairo_arc_negative(cr, p.x(), p.y(), r, startAngle, startAngle - twoPI);
+        else
+            cairo_arc(cr, p.x(), p.y(), r, startAngle, startAngle + twoPI);
+        cairo_new_sub_path(cr);
+        cairo_arc(cr, p.x(), p.y(), r, endAngle, endAngle);
+    } else {
+        if (anticlockwise)
+            cairo_arc_negative(cr, p.x(), p.y(), r, startAngle, endAngle);
+        else
+            cairo_arc(cr, p.x(), p.y(), r, startAngle, endAngle);
+    }
 }
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
