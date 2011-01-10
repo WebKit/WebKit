@@ -1,3 +1,11 @@
+2011-01-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Unreviewed.  Adding svg/text/caret-in-svg-text.xhtml to Skipped list for gtk, where there 
+        is no TextInputController, and qt, where firstRectForCharacterRange is unimplemented.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-01-09  Simon Fraser  <simon.fraser@apple.com>
 
         Fix test after r75352.
