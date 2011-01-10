@@ -19,13 +19,11 @@
      var use1 = document.getElementById("use1");
      var use2 = document.getElementById("use2");
 
-     if (!use1 || !use2)
-         return;
-
-     use1.href.baseVal = "#rect";
-
-     use2.x.baseVal.value = 200;
-     use2.y.baseVal.value = -50;
+     if (use1 && use2) {
+         use1.href.baseVal = "#rect";
+         use2.x.baseVal.value = 200;
+         use2.y.baseVal.value = -50;
+     }
     ]]>
   </script>
 </svg>

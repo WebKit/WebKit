@@ -1,6 +1,7 @@
+CONSOLE MESSAGE: line 87: SyntaxError: Parse error
 S12.8_A8_T2
 
-PASS SyntaxError: Invalid break statement.
+PASS Expected parsing failure
 
 TEST COMPLETE
 

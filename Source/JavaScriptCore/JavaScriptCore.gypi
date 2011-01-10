@@ -501,6 +501,8 @@
             'yarr/RegexParser.h',
             'yarr/RegexPattern.cpp',
             'yarr/RegexPattern.h',
+            'yarr/YarrSyntaxChecker.cpp',
+            'yarr/YarrSyntaxChecker.h',
         ]
     }
 }

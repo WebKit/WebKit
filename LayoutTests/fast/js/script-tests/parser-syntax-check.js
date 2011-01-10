@@ -195,7 +195,7 @@ invalid("do g; while ((4)");
 valid  ("{ { do do do ; while(0) while(0) while(0) } }");
 valid  ("do while (0) if (a) {} else y; while(0)");
 valid  ("if (a) while (b) if (c) with(d) {} else e; else f");
-valid  ("break ; break your_limits ; continue ; continue living ; debugger");
+invalid("break ; break your_limits ; continue ; continue living ; debugger");
 invalid("debugger X");
 invalid("break 0.2");
 invalid("continue a++");
@@ -296,7 +296,7 @@ valid  ("for (var a = 7, b = c < d >= d ; f()[6]++ ; --i()[1]++ ) {}");
 
 debug  ("try statement");
 
-valid  ("try { break } catch(e) {}");
+invalid("try { break } catch(e) {}");
 valid  ("try {} finally { c++ }");
 valid  ("try { with (x) { } } catch(e) {} finally { if (a) ; }");
 invalid("try {}");

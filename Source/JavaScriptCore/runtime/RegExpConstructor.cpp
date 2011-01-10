@@ -307,7 +307,7 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
 
     RefPtr<RegExp> regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
     if (!regExp->isValid())
-        return throwError(exec, createSyntaxError(exec, makeUString("Invalid regular expression: ", regExp->errorMessage())));
+        return throwError(exec, createSyntaxError(exec, regExp->errorMessage()));
     return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
 }
 

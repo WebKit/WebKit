@@ -1197,11 +1197,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] throw_reference_error\t %s\n", location, constantName(exec, k0, getConstant(k0)).data());
             break;
         }
-        case op_throw_syntax_error: {
-            int k0 = (++it)->u.operand;
-            printf("[%4d] throw_syntax_error\t %s\n", location, constantName(exec, k0, getConstant(k0)).data());
-            break;
-        }
         case op_jsr: {
             int retAddrDst = (++it)->u.operand;
             int offset = (++it)->u.operand;

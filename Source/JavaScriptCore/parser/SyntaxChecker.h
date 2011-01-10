@@ -26,6 +26,8 @@
 #ifndef SyntaxChecker_h
 #define SyntaxChecker_h
 
+#include "YarrSyntaxChecker.h"
+
 namespace JSC {
 class SyntaxChecker {
 public:
@@ -107,7 +109,7 @@ public:
     ExpressionType createNull() { return NullExpr; }
     ExpressionType createBracketAccess(ExpressionType, ExpressionType, bool, int, int, int) { return BracketExpr; }
     ExpressionType createDotAccess(ExpressionType, const Identifier&, int, int, int) { return DotExpr; }
-    ExpressionType createRegex(const Identifier&, const Identifier&, int) { return RegExpExpr; }
+    ExpressionType createRegExp(const Identifier& pattern, const Identifier&, int) { return Yarr::checkSyntax(pattern.ustring()) ? 0 : RegExpExpr; }
     ExpressionType createNewExpr(ExpressionType, int, int, int, int) { return NewExpr; }
     ExpressionType createNewExpr(ExpressionType, int, int) { return NewExpr; }
     ExpressionType createConditionalExpr(ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }

@@ -318,7 +318,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_tear_off_arguments)
         DEFINE_OP(op_throw)
         DEFINE_OP(op_throw_reference_error)
-        DEFINE_OP(op_throw_syntax_error)
         DEFINE_OP(op_to_jsnumber)
         DEFINE_OP(op_to_primitive)
 

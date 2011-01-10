@@ -1494,15 +1494,6 @@ void JIT::emit_op_throw_reference_error(Instruction* currentInstruction)
     stubCall.call();
 }
 
-void JIT::emit_op_throw_syntax_error(Instruction* currentInstruction)
-{
-    unsigned message = currentInstruction[1].u.operand;
-
-    JITStubCall stubCall(this, cti_op_throw_syntax_error);
-    stubCall.addArgument(m_codeBlock->getConstant(message));
-    stubCall.call();
-}
-
 void JIT::emit_op_debug(Instruction* currentInstruction)
 {
 #if ENABLE(DEBUG_WITH_BREAKPOINT)

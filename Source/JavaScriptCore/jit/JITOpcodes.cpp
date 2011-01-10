@@ -1147,13 +1147,6 @@ void JIT::emit_op_throw_reference_error(Instruction* currentInstruction)
     stubCall.call();
 }
 
-void JIT::emit_op_throw_syntax_error(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_throw_syntax_error);
-    stubCall.addArgument(ImmPtr(JSValue::encode(m_codeBlock->getConstant(currentInstruction[1].u.operand))));
-    stubCall.call();
-}
-
 void JIT::emit_op_debug(Instruction* currentInstruction)
 {
 #if ENABLE(DEBUG_WITH_BREAKPOINT)

@@ -10,14 +10,14 @@ html,body,h1{font-size:100%;font-style:inherit;font-weight:inherit;margin:0;padd
 <body>
 <h1 id="test">The Longest German Word?</h1>
 <script type="text/javascript" language="javascript">
-    if (!window.layoutTestController)
-        return;
-    layoutTestController.dumpAsText();
-    var element = document.getElementById("test");
-    var selection = window.getSelection();
-    selection.setPosition(element.firstChild, 2);
-    extendSelectionForwardByCharacterCommand();
-    copyCommand();
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        var element = document.getElementById("test");
+        var selection = window.getSelection();
+        selection.setPosition(element.firstChild, 2);
+        extendSelectionForwardByCharacterCommand();
+        copyCommand();
+    }
 </script>
 </body>
 </html>

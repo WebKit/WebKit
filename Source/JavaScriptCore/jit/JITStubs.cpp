@@ -3567,16 +3567,6 @@ DEFINE_STUB_FUNCTION(void, op_throw_reference_error)
     VM_THROW_EXCEPTION_AT_END();
 }
 
-DEFINE_STUB_FUNCTION(void, op_throw_syntax_error)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    CallFrame* callFrame = stackFrame.callFrame;
-    UString message = stackFrame.args[0].jsValue().toString(callFrame);
-    stackFrame.globalData->exception = createSyntaxError(callFrame, message);
-    VM_THROW_EXCEPTION_AT_END();
-}
-
 DEFINE_STUB_FUNCTION(void, op_debug)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

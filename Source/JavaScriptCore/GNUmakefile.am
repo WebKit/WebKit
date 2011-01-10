@@ -558,7 +558,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/yarr/RegexJIT.h \
 	Source/JavaScriptCore/yarr/RegexParser.h \
 	Source/JavaScriptCore/yarr/RegexPattern.cpp \
-	Source/JavaScriptCore/yarr/RegexPattern.h
+	Source/JavaScriptCore/yarr/RegexPattern.h \
+	Source/JavaScriptCore/yarr/YarrSyntaxChecker.cpp \
+	Source/JavaScriptCore/yarr/YarrSyntaxChecker.h
 
 if TARGET_WIN32
 javascriptcore_sources += \

@@ -1,20 +1,19 @@
-function test() { return;}
-function test() { while(0) break; }
-function test() { while(0) continue; }
+// Check parsing of nested scopes; a couple of the break/continue to label cases are invalid.
+shouldBe("function test() { return;}; lab: 1", "1");
+shouldBe("function test() { while(0) break; } lab: 1", "1");
+shouldBe("function test() { while(0) continue; } lab: 1", "1");
 
-function test() { return lab;}
-function test() { while(0) break lab; }
-function test() { while(0) continue lab; }
+shouldBe("function test() { return lab;} lab: 1", "1");
+shouldThrow("function test() { while(0) break lab; } lab: 1");
+shouldThrow("function test() { while(0) continue lab; } lab: 1");
 
-function test() { return }
-function test() { while(0) break }
-function test() { while(0) continue }
+shouldBe("function test() { return } lab: 1", "1");
+shouldBe("function test() { while(0) break } lab: 1", "1");
+shouldBe("function test() { while(0) continue } lab: 1", "1");
 
-function test() { return 0 }
-function test() { while(0) break lab }
-function test() { while(0) continue lab }
-
-lab:
+shouldBe("function test() { return 0 } lab: 1", "1");
+shouldThrow("function test() { while(0) break lab } lab: 1");
+shouldThrow("function test() { while(0) continue lab } lab: 1");
 
 a = 1
 b = 123 // comment

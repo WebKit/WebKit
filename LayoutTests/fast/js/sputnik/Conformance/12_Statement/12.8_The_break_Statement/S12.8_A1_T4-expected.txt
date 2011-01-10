@@ -1,6 +1,7 @@
+CONSOLE MESSAGE: line 82: SyntaxError: Parse error
 S12.8_A1_T4
 
-PASS SyntaxError: Undefined label: 'LABEL'.
+PASS Expected parsing failure
 
 TEST COMPLETE
 

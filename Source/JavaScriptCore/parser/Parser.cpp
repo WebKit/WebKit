@@ -48,14 +48,14 @@ void Parser::parse(JSGlobalData* globalData, FunctionParameters* parameters, JSP
     Lexer& lexer = *globalData->lexer;
     lexer.setCode(*m_source, m_arena);
 
-    int parseError = jsParse(globalData, parameters, strictness, mode, m_source);
+    const char* parseError = jsParse(globalData, parameters, strictness, mode, m_source);
     int lineNumber = lexer.lineNumber();
     bool lexError = lexer.sawError();
     lexer.clear();
 
     if (parseError || lexError) {
         *errLine = lineNumber;
-        *errMsg = "Parse error";
+        *errMsg = parseError ? parseError : "Parse error";
         m_sourceElements = 0;
     }
 }

@@ -137,7 +137,7 @@ bool BytecodeGenerator::dumpsGeneratedCode()
 #endif
 }
 
-void BytecodeGenerator::generate()
+JSObject* BytecodeGenerator::generate()
 {
     m_codeBlock->setThisRegister(m_thisRegister.index());
 
@@ -154,6 +154,10 @@ void BytecodeGenerator::generate()
         symbolTable().clear();
 
     m_codeBlock->shrinkToFit();
+
+    if (m_expressionTooDeep)
+        return createOutOfMemoryError(m_scopeChain->globalObject());
+    return 0;
 }
 
 bool BytecodeGenerator::addVar(const Identifier& ident, bool isConstant, RegisterID*& r0)
@@ -222,6 +226,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, const ScopeChain&
     , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
+    , m_expressionTooDeep(false)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -316,6 +321,7 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Scope
     , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
+    , m_expressionTooDeep(false)
 {
     if (m_shouldEmitDebugHooks)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -481,6 +487,7 @@ BytecodeGenerator::BytecodeGenerator(EvalNode* evalNode, const ScopeChain& scope
     , m_usesExceptions(false)
     , m_regeneratingForExceptionInfo(false)
     , m_codeBlockBeingRegeneratedFrom(0)
+    , m_expressionTooDeep(false)
 {
     if (m_shouldEmitDebugHooks || m_baseScopeDepth)
         m_codeBlock->setNeedsFullScopeChain(true);
@@ -2053,12 +2060,6 @@ void BytecodeGenerator::emitThrowReferenceError(const UString& message)
     instructions().append(addConstantValue(jsString(globalData(), message))->index());
 }
 
-void BytecodeGenerator::emitThrowSyntaxError(const UString& message)
-{
-    emitOpcode(op_throw_syntax_error);
-    instructions().append(addConstantValue(jsString(globalData(), message))->index());
-}
-
 PassRefPtr<Label> BytecodeGenerator::emitJumpSubroutine(RegisterID* retAddrDst, Label* finally)
 {
     size_t begin = instructions().size();
@@ -2210,8 +2211,7 @@ RegisterID* BytecodeGenerator::emitThrowExpressionTooDeepException()
     // And we could make the caller pass the node pointer in, if there was some way of getting
     // that from an arbitrary node. However, calling emitExpressionInfo without any useful data
     // is still good enough to get us an accurate line number.
-    emitExpressionInfo(0, 0, 0);
-    emitThrowSyntaxError("Expression too deep");
+    m_expressionTooDeep = true;
     return newTemporary();
 }
 

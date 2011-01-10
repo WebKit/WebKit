@@ -192,7 +192,8 @@ LOCAL_SRC_FILES := \
 	\
 	yarr/RegexPattern.cpp \
 	yarr/RegexInterpreter.cpp \
-	yarr/RegexJIT.cpp
+	yarr/RegexJIT.cpp \
+    yarr/YarrSyntaxChecker.cpp
 
 # generated headers
 JSC_OBJECTS := $(addprefix $(intermediates)/runtime/, \

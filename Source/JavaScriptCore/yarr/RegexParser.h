@@ -34,6 +34,7 @@
 namespace JSC { namespace Yarr {
 
 static const unsigned quantifyInfinite = UINT_MAX;
+#define REGEXP_ERROR_PREFIX "Invalid regular expression: "
 
 enum BuiltInCharacterClassID {
     DigitClassID,
@@ -673,31 +674,24 @@ private:
      */
     const char* parse()
     {
-        m_delegate.regexBegin();
-
         if (m_size > MAX_PATTERN_SIZE)
             m_err = PatternTooLarge;
         else
             parseTokens();
         ASSERT(atEndOfPattern() || m_err);
 
-        if (m_err)
-            m_delegate.regexError();
-        else
-            m_delegate.regexEnd();
-
         // The order of this array must match the ErrorCode enum.
         static const char* errorMessages[NumberOfErrorCodes] = {
             0, // NoError
-            "regular expression too large",
-            "numbers out of order in {} quantifier",
-            "nothing to repeat",
-            "missing )",
-            "unmatched parentheses",
-            "unrecognized character after (?",
-            "missing terminating ] for character class",
-            "range out of order in character class",
-            "\\ at end of pattern"
+            REGEXP_ERROR_PREFIX "regular expression too large",
+            REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",
+            REGEXP_ERROR_PREFIX "nothing to repeat",
+            REGEXP_ERROR_PREFIX "missing )",
+            REGEXP_ERROR_PREFIX "unmatched parentheses",
+            REGEXP_ERROR_PREFIX "unrecognized character after (?",
+            REGEXP_ERROR_PREFIX "missing terminating ] for character class",
+            REGEXP_ERROR_PREFIX "range out of order in character class",
+            REGEXP_ERROR_PREFIX "\\ at end of pattern"
         };
 
         return errorMessages[m_err];
@@ -838,14 +832,6 @@ private:
  *    void quantifyAtom(unsigned min, unsigned max, bool greedy);
  *
  *    void disjunction();
- *
- *    void regexBegin();
- *    void regexEnd();
- *    void regexError();
- *
- * Before any call recording tokens are made, regexBegin() will be called on the
- * delegate once.  Once parsing is complete either regexEnd() or regexError() will
- * be called, as appropriate.
  *
  * The regular expression is described by a sequence of assertion*() and atom*()
  * callbacks to the delegate, describing the terms in the regular expression.

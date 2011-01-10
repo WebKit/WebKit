@@ -273,7 +273,6 @@ namespace JSC {
 
     protected:
         RegisterID* emitThrowReferenceError(BytecodeGenerator&, const UString& message);
-        RegisterID* emitThrowSyntaxError(BytecodeGenerator&, const UString& message);
 
     private:
         uint32_t m_divot;

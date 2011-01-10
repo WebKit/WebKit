@@ -1,3 +1,69 @@
+2011-01-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 52079 - Syntax errors should be early errors.
+
+        Fix syntax errors in layout tests, and update expected results.
+
+        * editing/selection/select-crash-001.html:
+        * editing/selection/select-crash-002.html:
+        * fast/canvas/webgl/renderbuffer-initialization.html:
+        * fast/forms/25153.html:
+        * fast/forms/textfield-drag-into-disabled.html:
+        * fast/js/exception-codegen-crash-expected.txt:
+        * fast/js/exception-codegen-crash.html:
+        * fast/js/kde/parse-expected.txt:
+        * fast/js/kde/script-tests/parse.js:
+        * fast/js/large-expressions-expected.txt:
+        * fast/js/named-function-expression-expected.txt:
+        * fast/js/parser-syntax-check-expected.txt:
+        * fast/js/script-tests/large-expressions.js:
+        * fast/js/script-tests/named-function-expression.js:
+        * fast/js/script-tests/parser-syntax-check.js:
+        * fast/js/sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.3_The_for_Statement/S12.6.3_A11.1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.3_The_for_Statement/S12.6.3_A11_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.3_The_for_Statement/S12.6.3_A12.1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.3_The_for_Statement/S12.6.3_A12_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A1_T1-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A1_T2-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A1_T4-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A5_T1-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A5_T2-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A5_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A6-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A8_T1-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.7_The_continue_Statement/S12.7_A8_T2-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A1_T1-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A1_T2-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A1_T4-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A5_T1-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A5_T2-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A5_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A6-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A8_T1-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.8_The_break_Statement/S12.8_A8_T2-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T1-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T10-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T2-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T3-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T4-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T5-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T6-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T7-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T8-expected.txt:
+        * fast/js/sputnik/Conformance/12_Statement/12.9_The_return_Statement/S12.9_A1_T9-expected.txt:
+        * http/tests/security/isolatedWorld/events.html:
+        * http/tests/security/isolatedWorld/userGestureEvents.html:
+        * svg/custom/resources/use-instanceRoot-event-listeners.js:
+        * svg/custom/rgbcolor-syntax.svg:
+        * svg/custom/use-instanceRoot-modifications.svg:
+        * svg/custom/use-property-changes-through-svg-dom.svg:
+        * webarchive/adopt-attribute-styled-body-webarchive-expected.webarchive:
+        * webarchive/resources/adopt-attribute-styled-body-iframe.html:
+
 2011-01-10  Tony Chang  <tony@chromium.org>
 
         Unreviewed, remove duplicate test expectation for gif-loop-count.

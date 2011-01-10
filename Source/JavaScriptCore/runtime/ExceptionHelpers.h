@@ -47,6 +47,7 @@ namespace JSC {
     JSObject* createTerminatedExecutionException(JSGlobalData*);
     JSObject* createStackOverflowError(ExecState*);
     JSObject* createStackOverflowError(JSGlobalObject*);
+    JSObject* createOutOfMemoryError(JSGlobalObject*);
     JSObject* createUndefinedVariableError(ExecState*, const Identifier&);
     JSObject* createNotAnObjectError(ExecState*, JSValue);
     JSObject* createInvalidParamError(ExecState*, const char* op, JSValue);

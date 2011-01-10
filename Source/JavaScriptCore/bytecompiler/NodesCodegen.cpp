@@ -83,13 +83,6 @@ RegisterID* ThrowableExpressionData::emitThrowReferenceError(BytecodeGenerator& 
     return generator.newTemporary();
 }
 
-RegisterID* ThrowableExpressionData::emitThrowSyntaxError(BytecodeGenerator& generator, const UString& message)
-{
-    generator.emitExpressionInfo(divot(), startOffset(), endOffset());
-    generator.emitThrowSyntaxError(message);
-    return generator.newTemporary();
-}
-
 // ------------------------------ NullNode -------------------------------------
 
 RegisterID* NullNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -130,11 +123,10 @@ RegisterID* StringNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegExp> regExp = generator.globalData()->regExpCache()->lookupOrCreate(m_pattern.ustring(), m_flags.ustring());
-    if (!regExp->isValid())
-        return emitThrowSyntaxError(generator, makeUString("Invalid regular expression: ", regExp->errorMessage()));
     if (dst == generator.ignoredResult())
         return 0;
+    RefPtr<RegExp> regExp = generator.globalData()->regExpCache()->lookupOrCreate(m_pattern.ustring(), m_flags.ustring());
+    ASSERT(regExp->isValid());
     return generator.emitNewRegExp(generator.finalDestination(dst), regExp.get());
 }
 
@@ -1641,12 +1633,7 @@ RegisterID* ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
     
     LabelScope* scope = generator.continueTarget(m_ident);
-
-    if (!scope) {
-        if (m_ident.isEmpty())
-            return emitThrowSyntaxError(generator, "Invalid continue statement.");
-        return emitThrowSyntaxError(generator, makeUString("Undefined label: '", m_ident.ustring(), "'."));
-    }
+    ASSERT(scope);
 
     generator.emitJumpScopes(scope->continueTarget(), scope->scopeDepth());
     return dst;
@@ -1660,12 +1647,7 @@ RegisterID* BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
     
     LabelScope* scope = generator.breakTarget(m_ident);
-    
-    if (!scope) {
-        if (m_ident.isEmpty())
-            return emitThrowSyntaxError(generator, "Invalid break statement.");
-        return emitThrowSyntaxError(generator, makeUString("Undefined label: '", m_ident.ustring(), "'."));
-    }
+    ASSERT(scope);
 
     generator.emitJumpScopes(scope->breakTarget(), scope->scopeDepth());
     return dst;
@@ -1676,8 +1658,7 @@ RegisterID* BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 RegisterID* ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
-    if (generator.codeType() != FunctionCode)
-        return emitThrowSyntaxError(generator, "Invalid return statement.");
+    ASSERT(generator.codeType() == FunctionCode);
 
     if (dst == generator.ignoredResult())
         dst = 0;
@@ -1882,8 +1863,7 @@ RegisterID* LabelNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine());
 
-    if (generator.breakTarget(m_name))
-        return emitThrowSyntaxError(generator, makeUString("Duplicate label: ", m_name.ustring(), "."));
+    ASSERT(!generator.breakTarget(m_name));
 
     RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::NamedLabel, &m_name);
     RegisterID* r0 = generator.emitNode(dst, m_statement);

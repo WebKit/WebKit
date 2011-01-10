@@ -66,24 +66,22 @@ description('Verify renderbuffers are initialized to 0 before being read in WebG
 
 var canvas = document.getElementById("testbed");
 var gl = canvas.getContext("experimental-webgl");
-if (!gl) {
+if (gl) {
+    runTest(gl, canvas.width, canvas.height);
+
+    // Testing that canvas resizing will clear the buffers with 0 instead of the current clear values.
+    gl.clearColor(1, 0, 0, 1);
+    canvas.width += 1;
+    canvas.height += 1;
+    runTest(gl, canvas.width, canvas.height);
+
+    // Testing buffer clearing won't change the clear values.
+    var clearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
+    shouldBe("clearColor", "[1, 0, 0, 1]");
+
+    successfullyParsed = true;
+} else
     testFailed('canvas.getContext() failed');
-    return false;
-}
-
-runTest(gl, canvas.width, canvas.height);
-
-// Testing that canvas resizing will clear the buffers with 0 instead of the current clear values.
-gl.clearColor(1, 0, 0, 1);
-canvas.width += 1;
-canvas.height += 1;
-runTest(gl, canvas.width, canvas.height);
-
-// Testing buffer clearing won't change the clear values.
-var clearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
-shouldBe("clearColor", "[1, 0, 0, 1]");
-
-successfullyParsed = true;
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>

@@ -17,21 +17,20 @@ var fieldY = field.offsetTop + field.offsetHeight / 2;
 
 window.getSelection().setBaseAndExtent(text, 0, text, 1);
 
-if (!window.layoutTestController)
-    return;
+if (window.layoutTestController) {
+    eventSender.mouseMoveTo(textX, textY);
+    eventSender.mouseDown();
+    // leap forward so mouseDown will kick off a drag instead of starting a new selection.
+    eventSender.leapForward(1000);
 
-eventSender.mouseMoveTo(textX, textY);
-eventSender.mouseDown();
-// leap forward so mouseDown will kick off a drag instead of starting a new selection.
-eventSender.leapForward(1000);
+    eventSender.mouseMoveTo(fieldX, fieldY);
+    eventSender.mouseUp();
 
-eventSender.mouseMoveTo(fieldX, fieldY);
-eventSender.mouseUp();
-
-layoutTestController.dumpAsText();
-var resultText = "FAIL"
-if (!field.value)
-    resultText = "PASS -- http://bugs.webkit.org/show_bug.cgi?id=10177";
-document.body.innerText = resultText;
+    layoutTestController.dumpAsText();
+    var resultText = "FAIL"
+    if (!field.value)
+        resultText = "PASS -- http://bugs.webkit.org/show_bug.cgi?id=10177";
+    document.body.innerText = resultText;
+}
 </script>
 </body>

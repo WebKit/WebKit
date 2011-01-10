@@ -14,27 +14,30 @@
 <text id="text" x="70" y="70">Test failed.</text>
 
 <script>
-var useElement = document.getElementsByTagName("use")[1];
-if (useElement != useElement.instanceRoot.correspondingUseElement)
-    return;
+function runInstanceRootTest() {
+    var useElement = document.getElementsByTagName("use")[1];
+    if (useElement != useElement.instanceRoot.correspondingUseElement)
+        return;
 
-var element = useElement.instanceRoot.correspondingElement;
-if (element != document.getElementById("g"))
-    return;
+    var element = useElement.instanceRoot.correspondingElement;
+    if (element != document.getElementById("g"))
+        return;
 
-// element.firstChild is a #text node! the next sibling gives the rect
-var rect = element.firstChild.nextSibling;
-if (rect != document.getElementById("rect"))
-    return;
+    // element.firstChild is a #text node! the next sibling gives the rect
+    var rect = element.firstChild.nextSibling;
+    if (rect != document.getElementById("rect"))
+        return;
 
-// rect.nextSibling is a #text node! the next sibling gives the circle
-var circle = rect.nextSibling.nextSibling;
-if (circle != document.getElementById("circle"))
-    return;
+    // rect.nextSibling is a #text node! the next sibling gives the circle
+    var circle = rect.nextSibling.nextSibling;
+    if (circle != document.getElementById("circle"))
+        return;
 
-rect.setAttribute("fill", "green");
-circle.setAttribute("opacity", "0.8");
+    rect.setAttribute("fill", "green");
+    circle.setAttribute("opacity", "0.8");
 
-document.getElementById("text").firstChild.nodeValue = "Test passed.";
+    document.getElementById("text").firstChild.nodeValue = "Test passed.";
+}
+runInstanceRootTest();
 </script>
 </svg>

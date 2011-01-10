@@ -68,7 +68,7 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 class JSParser {
 public:
     JSParser(Lexer*, JSGlobalData*, FunctionParameters*, bool isStrictContext, bool isFunction, SourceProvider*);
-    bool parseProgram();
+    const char* parseProgram();
 private:
     struct AllowInOverride {
         AllowInOverride(JSParser* parser)
@@ -130,10 +130,28 @@ private:
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode() { return currentScope()->isValidStrictMode(); }
     bool declareParameter(const Identifier* ident) { return currentScope()->declareParameter(ident); }
-    bool breakIsValid() { return currentScope()->breakIsValid(); }
+    bool breakIsValid()
+    {
+        ScopeRef current = currentScope();
+        while (!current->breakIsValid()) {
+            if (!current.hasContainingScope())
+                return false;
+            current = current.containingScope();
+        }
+        return true;
+    }
     void pushLabel(const Identifier* label) { currentScope()->pushLabel(label); }
     void popLabel() { currentScope()->popLabel(); }
-    bool hasLabel(const Identifier* label) { return currentScope()->hasLabel(label); }
+    bool hasLabel(const Identifier* label)
+    {
+        ScopeRef current = currentScope();
+        while (!current->hasLabel(label)) {
+            if (!current.hasContainingScope())
+                return false;
+            current = current.containingScope();
+        }
+        return true;
+    }
 
     enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
     template <SourceElementsMode mode, class TreeBuilder> TreeSourceElements parseSourceElements(TreeBuilder&);
@@ -202,6 +220,7 @@ private:
     Lexer* m_lexer;
     StackBounds m_stack;
     bool m_error;
+    const char* m_errorMessage;
     JSGlobalData* m_globalData;
     JSToken m_token;
     bool m_allowsIn;
@@ -241,6 +260,7 @@ private:
             , m_allowsNewDecls(true)
             , m_strictMode(strictMode)
             , m_isFunction(isFunction)
+            , m_isFunctionBoundary(false)
             , m_isValidStrictMode(true)
             , m_loopDepth(0)
             , m_switchDepth(0)
@@ -280,8 +300,13 @@ private:
             return false;
         }
 
-        void setIsFunction() { m_isFunction = true; }
+        void setIsFunction()
+        {
+            m_isFunction = true;
+            m_isFunctionBoundary = true;
+        }
         bool isFunction() { return m_isFunction; }
+        bool isFunctionBoundary() { return m_isFunctionBoundary; }
         
         bool declareVariable(const Identifier* ident)
         {
@@ -376,6 +401,7 @@ private:
         bool m_allowsNewDecls : 1;
         bool m_strictMode : 1;
         bool m_isFunction : 1;
+        bool m_isFunctionBoundary : 1;
         bool m_isValidStrictMode : 1;
         int m_loopDepth;
         int m_switchDepth;
@@ -397,11 +423,45 @@ private:
         }
         Scope* operator->() { return &m_scopeStack->at(m_index); }
         unsigned index() const { return m_index; }
+
+        bool hasContainingScope()
+        {
+            return m_index && !m_scopeStack->at(m_index).isFunctionBoundary();
+        }
+
+        ScopeRef containingScope()
+        {
+            ASSERT(hasContainingScope());
+            return ScopeRef(m_scopeStack, m_index - 1);
+        }
+
     private:
         ScopeStack* m_scopeStack;
         unsigned m_index;
     };
-    
+
+    struct AutoPopScopeRef : public ScopeRef {
+        AutoPopScopeRef(JSParser* parser, ScopeRef scope)
+            : ScopeRef(scope)
+            , m_parser(parser)
+        {
+        }
+
+        ~AutoPopScopeRef()
+        {
+            if (m_parser)
+                m_parser->popScope(*this, false);
+        }
+
+        void setPopped()
+        {
+            m_parser = 0;
+        }
+
+    private:
+        JSParser* m_parser;
+    };
+
     ScopeRef currentScope()
     {
         return ScopeRef(&m_scopeStack, m_scopeStack.size() - 1);
@@ -419,7 +479,7 @@ private:
         return currentScope();
     }
 
-    bool popScope(ScopeRef scope, bool shouldTrackClosedVariables)
+    bool popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
     {
         ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
         ASSERT(m_scopeStack.size() > 1);
@@ -427,7 +487,18 @@ private:
         m_scopeStack.removeLast();
         return result;
     }
-    
+
+    bool popScope(ScopeRef& scope, bool shouldTrackClosedVariables)
+    {
+        return popScopeInternal(scope, shouldTrackClosedVariables);
+    }
+
+    bool popScope(AutoPopScopeRef& scope, bool shouldTrackClosedVariables)
+    {
+        scope.setPopped();
+        return popScopeInternal(scope, shouldTrackClosedVariables);
+    }
+
     bool declareVariable(const Identifier* ident)
     {
         unsigned i = m_scopeStack.size() - 1;
@@ -448,7 +519,7 @@ private:
     ScopeStack m_scopeStack;
 };
 
-int jsParse(JSGlobalData* globalData, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, const SourceCode* source)
+const char* jsParse(JSGlobalData* globalData, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, const SourceCode* source)
 {
     JSParser parser(globalData->lexer, globalData, parameters, strictness == JSParseStrict, parserMode == JSParseFunctionCode, source->provider());
     return parser.parseProgram();
@@ -458,6 +529,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     : m_lexer(lexer)
     , m_stack(globalData->stack())
     , m_error(false)
+    , m_errorMessage("Parse error")
     , m_globalData(globalData)
     , m_allowsIn(true)
     , m_tokenCount(0)
@@ -483,7 +555,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     m_lexer->setLastLineNumber(tokenLine());
 }
 
-bool JSParser::parseProgram()
+const char* JSParser::parseProgram()
 {
     ASTBuilder context(m_globalData, m_lexer);
     if (m_lexer->isReparsing())
@@ -491,7 +563,7 @@ bool JSParser::parseProgram()
     ScopeRef scope = currentScope();
     SourceElements* sourceElements = parseSourceElements<CheckForStrictMode>(context);
     if (!sourceElements || !consume(EOFTOK))
-        return true;
+        return m_errorMessage;
     IdentifierSet capturedVariables;
     scope->getCapturedVariables(capturedVariables);
     CodeFeatures features = context.features();
@@ -502,7 +574,7 @@ bool JSParser::parseProgram()
 
     m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
                                            m_lastLine, context.numConstants(), capturedVariables);
-    return false;
+    return 0;
 }
 
 bool JSParser::allowAutomaticSemicolon()
@@ -785,12 +857,12 @@ template <class TreeBuilder> TreeStatement JSParser::parseBreakStatement(TreeBui
     next();
 
     if (autoSemiColon()) {
-        failIfFalseIfStrict(breakIsValid());
+        failIfFalse(breakIsValid());
         return context.createBreakStatement(startCol, endCol, startLine, endLine);
     }
     matchOrFail(IDENT);
     const Identifier* ident = m_token.m_data.ident;
-    failIfFalseIfStrict(hasLabel(ident));
+    failIfFalse(hasLabel(ident));
     endCol = tokenEnd();
     endLine = tokenLine();
     next();
@@ -808,12 +880,12 @@ template <class TreeBuilder> TreeStatement JSParser::parseContinueStatement(Tree
     next();
 
     if (autoSemiColon()) {
-        failIfFalseIfStrict(breakIsValid());
+        failIfFalse(breakIsValid());
         return context.createContinueStatement(startCol, endCol, startLine, endLine);
     }
     matchOrFail(IDENT);
     const Identifier* ident = m_token.m_data.ident;
-    failIfFalseIfStrict(hasLabel(ident));
+    failIfFalse(hasLabel(ident));
     endCol = tokenEnd();
     endLine = tokenLine();
     next();
@@ -824,7 +896,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseContinueStatement(Tree
 template <class TreeBuilder> TreeStatement JSParser::parseReturnStatement(TreeBuilder& context)
 {
     ASSERT(match(RETURN));
-    failIfFalseIfStrict(currentScope()->isFunction());
+    failIfFalse(currentScope()->isFunction());
     int startLine = tokenLine();
     int endLine = startLine;
     int start = tokenStart();
@@ -974,7 +1046,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseTryStatement(TreeBuild
         matchOrFail(IDENT);
         ident = m_token.m_data.ident;
         next();
-        ScopeRef catchScope = pushScope();
+        AutoPopScopeRef catchScope(this, pushScope());
         failIfFalseIfStrict(catchScope->declareVariable(ident));
         catchScope->preventNewDecls();
         consumeOrFail(CLOSEPAREN);
@@ -1118,7 +1190,7 @@ template <class TreeBuilder> TreeFunctionBody JSParser::parseFunctionBody(TreeBu
 
 template <JSParser::FunctionRequirements requirements, bool nameIsInContainingScope, class TreeBuilder> bool JSParser::parseFunctionInfo(TreeBuilder& context, const Identifier*& name, TreeFormalParameterList& parameters, TreeFunctionBody& body, int& openBracePos, int& closeBracePos, int& bodyStartLine)
 {
-    ScopeRef functionScope = pushScope();
+    AutoPopScopeRef functionScope(this, pushScope());
     functionScope->setIsFunction();
     if (match(IDENT)) {
         name = m_token.m_data.ident;
@@ -1188,10 +1260,12 @@ template <class TreeBuilder> TreeStatement JSParser::parseExpressionOrLabelState
     int end = tokenEnd();
     consumeOrFail(COLON);
     const Identifier* unused = 0;
-    if (strictMode() && !m_syntaxAlreadyValidated)
+    if (!m_syntaxAlreadyValidated) {
+        failIfTrue(hasLabel(ident));
         pushLabel(ident);
+    }
     TreeStatement statement = parseStatement(context, unused);
-    if (strictMode() && !m_syntaxAlreadyValidated)
+    if (!m_syntaxAlreadyValidated)
         popLabel();
     failIfFalse(statement);
     return context.createLabelStatement(ident, statement, start, end);
@@ -1679,7 +1753,13 @@ template <class TreeBuilder> TreeExpression JSParser::parsePrimaryExpression(Tre
 
         int start = tokenStart();
         next();
-        return context.createRegex(*pattern, *flags, start);
+        TreeExpression re = context.createRegExp(*pattern, *flags, start);
+        if (!re) {
+            m_errorMessage = Yarr::checkSyntax(pattern->ustring());
+            ASSERT(m_errorMessage);
+            fail();
+        }
+        return re;
     }
     default:
         fail();

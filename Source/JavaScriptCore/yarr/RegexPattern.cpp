@@ -611,12 +611,6 @@ public:
         m_alternative = m_pattern.m_body->addNewAlternative();
         m_pattern.m_disjunctions.append(m_pattern.m_body);
     }
-    void regexEnd()
-    {
-    }
-    void regexError()
-    {
-    }
 
     unsigned setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition)
     {
@@ -940,6 +934,7 @@ static const char* compileRegex(const UString& patternString, RegexPattern& patt
 {
     RegexPatternConstructor constructor(pattern);
 
+    constructor.regexBegin();
     if (const char* error = parse(constructor, patternString))
         return error;
     
@@ -951,6 +946,7 @@ static const char* compileRegex(const UString& patternString, RegexPattern& patt
         unsigned numSubpatterns = pattern.m_numSubpatterns;
 
         constructor.reset();
+        constructor.regexBegin();
 #if !ASSERT_DISABLED
         const char* error =
 #endif

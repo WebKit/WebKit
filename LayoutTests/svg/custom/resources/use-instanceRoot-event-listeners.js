@@ -169,11 +169,9 @@ function driveTests()
     }
 }
 
-if (!window.eventSender) {
-    alert("This test must be run via DRT!");
-    return;
-}
-
 // Start tests
-eventSender.mouseMoveTo(115, 55);
-driveTests();
+if (window.eventSender) {
+    eventSender.mouseMoveTo(115, 55);
+    driveTests();
+} else
+    alert("This test must be run via DRT!");

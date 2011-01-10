@@ -23,6 +23,6 @@ debug("recursion is possible, though");
 shouldBe("var ctr = 3; var x = (function Named(a,b){ if(--ctr) return 2 * Named(a,b); else return a + b; }); x(5,6)", "44");
 
 debug("regression test where kjs regarded an anonymous function declaration (which is illegal) as a FunctionExpr");
-shouldBe('try { eval("function(){ return 2; };"); return 0; } catch(e) { 1; }', "1");
+shouldBe('var hadError = 0; try { eval("function(){ return 2; };"); } catch(e) { hadError = 1; }; hadError;', "1");
 
 var successfullyParsed = true;

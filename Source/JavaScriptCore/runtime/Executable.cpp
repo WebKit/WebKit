@@ -109,8 +109,12 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     ASSERT(!m_evalCodeBlock);
     m_evalCodeBlock = adoptPtr(new EvalCodeBlock(this, globalObject, source().provider(), scopeChain.localDepth()));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(evalNode.get(), scopeChain, m_evalCodeBlock->symbolTable(), m_evalCodeBlock.get())));
-    generator->generate();
-    
+    if ((exception = generator->generate())) {
+        m_evalCodeBlock.clear();
+        evalNode->destroyData();
+        return exception;
+    }
+
     evalNode->destroyData();
 
 #if ENABLE(JIT)
@@ -157,7 +161,11 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     
     m_programCodeBlock = adoptPtr(new ProgramCodeBlock(this, GlobalCode, globalObject, source().provider()));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(programNode.get(), scopeChain, &globalObject->symbolTable(), m_programCodeBlock.get())));
-    generator->generate();
+    if ((exception = generator->generate())) {
+        m_programCodeBlock.clear();
+        programNode->destroyData();
+        return exception;
+    }
 
     programNode->destroyData();
 
@@ -194,7 +202,12 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
     ASSERT(!m_codeBlockForCall);
     m_codeBlockForCall = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), false));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChain, m_codeBlockForCall->symbolTable(), m_codeBlockForCall.get())));
-    generator->generate();
+    if ((exception = generator->generate())) {
+        m_codeBlockForCall.clear();
+        body->destroyData();
+        return exception;
+    }
+
     m_numParametersForCall = m_codeBlockForCall->m_numParameters;
     ASSERT(m_numParametersForCall);
     m_numCapturedVariables = m_codeBlockForCall->m_numCapturedVars;
@@ -235,7 +248,12 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
     ASSERT(!m_codeBlockForConstruct);
     m_codeBlockForConstruct = adoptPtr(new FunctionCodeBlock(this, FunctionCode, globalObject, source().provider(), source().startOffset(), true));
     OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(body.get(), scopeChain, m_codeBlockForConstruct->symbolTable(), m_codeBlockForConstruct.get())));
-    generator->generate();
+    if ((exception = generator->generate())) {
+        m_codeBlockForConstruct.clear();
+        body->destroyData();
+        return exception;
+    }
+
     m_numParametersForConstruct = m_codeBlockForConstruct->m_numParameters;
     ASSERT(m_numParametersForConstruct);
     m_numCapturedVariables = m_codeBlockForConstruct->m_numCapturedVars;

@@ -1,3 +1,131 @@
+2011-01-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 52079 - Syntax errors should be early errors.
+
+        From chapter 16 the spec:
+            An implementation must report most errors at the time the relevant ECMAScript language construct is
+            evaluated. An early error is an error that can be detected and reported prior to the evaluation of
+            any construct in the Program containing the error. An implementation must report early errors in a
+            Program prior to the first evaluation of that Program. Early errors in eval code are reported at
+            the time eval is called but prior to evaluation of any construct within the eval code. All errors
+            that are not early errors are runtime errors.
+
+            An implementation must treat any instance of the following kinds of errors as an early error:
+                * Any syntax error."
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            Added new files.
+        * bytecode/CodeBlock.cpp:
+            Removed op_throw_syntax_error.
+        * bytecode/Opcode.h:
+            Removed op_throw_syntax_error.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+            If m_expressionTooDeep then throw a runtime error.
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+            Initialize m_expressionTooDeep.
+        (JSC::BytecodeGenerator::emitThrowExpressionTooDeepException):
+            Sets m_expressionTooDeep.
+        * bytecompiler/BytecodeGenerator.h:
+            Added m_expressionTooDeep, removed emitThrowSyntaxError.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+            Conditions that threw syntax error are now handled during parsing;
+            during bytecompilation these are now just ASSERTs.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+            Removed op_throw_syntax_error.
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createRegExp):
+            Renamed; added syntax check.
+        * parser/JSParser.cpp:
+        (JSC::JSParser::breakIsValid):
+        (JSC::JSParser::hasLabel):
+        (JSC::JSParser::Scope::Scope):
+        (JSC::JSParser::Scope::setIsFunction):
+        (JSC::JSParser::Scope::isFunctionBoundary):
+        (JSC::JSParser::ScopeRef::hasContainingScope):
+        (JSC::JSParser::ScopeRef::containingScope):
+        (JSC::JSParser::AutoPopScopeRef::AutoPopScopeRef):
+        (JSC::JSParser::AutoPopScopeRef::~AutoPopScopeRef):
+        (JSC::JSParser::AutoPopScopeRef::setPopped):
+        (JSC::JSParser::popScopeInternal):
+        (JSC::JSParser::popScope):
+        (JSC::jsParse):
+        (JSC::JSParser::JSParser):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::parseBreakStatement):
+        (JSC::JSParser::parseContinueStatement):
+        (JSC::JSParser::parseReturnStatement):
+        (JSC::JSParser::parseTryStatement):
+        (JSC::JSParser::parseFunctionInfo):
+        (JSC::JSParser::parseExpressionOrLabelStatement):
+        (JSC::JSParser::parsePrimaryExpression):
+        * parser/JSParser.h:
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createRegExp):
+            Renamed; added syntax check.
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createOutOfMemoryError):
+        (JSC::throwOutOfMemoryError):
+        * runtime/ExceptionHelpers.h:
+            Broke out createOutOfMemoryError.
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+            Add check for exception after bytecode generation.
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+            RegExp error prefixes not included in error string.
+        * yarr/RegexParser.h:
+        (JSC::Yarr::Parser::parse):
+            Removed regexBegin/regexEnd/regexError.
+        * yarr/RegexPattern.cpp:
+        (JSC::Yarr::RegexPatternConstructor::regexBegin):
+            Removed regexEnd/regexError.
+        (JSC::Yarr::compileRegex):
+            Add call to regexBegin (no longer called from the parser).
+        * yarr/YarrSyntaxChecker.cpp: Added.
+        (JSC::Yarr::SyntaxChecker::assertionBOL):
+        (JSC::Yarr::SyntaxChecker::assertionEOL):
+        (JSC::Yarr::SyntaxChecker::assertionWordBoundary):
+        (JSC::Yarr::SyntaxChecker::atomPatternCharacter):
+        (JSC::Yarr::SyntaxChecker::atomBuiltInCharacterClass):
+        (JSC::Yarr::SyntaxChecker::atomCharacterClassBegin):
+        (JSC::Yarr::SyntaxChecker::atomCharacterClassAtom):
+        (JSC::Yarr::SyntaxChecker::atomCharacterClassRange):
+        (JSC::Yarr::SyntaxChecker::atomCharacterClassBuiltIn):
+        (JSC::Yarr::SyntaxChecker::atomCharacterClassEnd):
+        (JSC::Yarr::SyntaxChecker::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::SyntaxChecker::atomParentheticalAssertionBegin):
+        (JSC::Yarr::SyntaxChecker::atomParenthesesEnd):
+        (JSC::Yarr::SyntaxChecker::atomBackReference):
+        (JSC::Yarr::SyntaxChecker::quantifyAtom):
+        (JSC::Yarr::SyntaxChecker::disjunction):
+        (JSC::Yarr::checkSyntax):
+        * yarr/YarrSyntaxChecker.h: Added.
+            Check RegExp syntax.
+
 2011-01-10  Adam Roben  <aroben@apple.com>
 
         Roll out r75289

@@ -14,5 +14,8 @@ var scripts = [
     "(1 = 1).x;"
 ];
 
-eval(scripts.join("\n"));
+try {
+    eval(scripts.join("\n"));
+} catch (e) {
+}
 </script>

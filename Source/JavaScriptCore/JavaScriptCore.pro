@@ -210,7 +210,8 @@ SOURCES += \
     runtime/UString.cpp \
     yarr/RegexPattern.cpp \
     yarr/RegexInterpreter.cpp \
-    yarr/RegexJIT.cpp
+    yarr/RegexJIT.cpp \
+    yarr/ YarrSyntaxChecker.cpp
 
 # Generated files, simply list them for JavaScriptCore
 

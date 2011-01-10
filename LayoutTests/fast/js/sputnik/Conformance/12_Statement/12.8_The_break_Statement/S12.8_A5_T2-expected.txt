@@ -1,6 +1,7 @@
+CONSOLE MESSAGE: line 82: SyntaxError: Parse error
 S12.8_A5_T2
 
-PASS SyntaxError: Undefined label: 'IN_DO_FUNC'.
+PASS Expected parsing failure
 
 TEST COMPLETE
 

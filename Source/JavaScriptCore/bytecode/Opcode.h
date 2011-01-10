@@ -185,7 +185,6 @@ namespace JSC {
         macro(op_catch, 2) \
         macro(op_throw, 2) \
         macro(op_throw_reference_error, 2) \
-        macro(op_throw_syntax_error, 2) \
         \
         macro(op_jsr, 3) \
         macro(op_sret, 2) \

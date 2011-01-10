@@ -102,7 +102,7 @@ namespace JSC {
 
         bool isConstructor() { return m_codeBlock->m_isConstructor; }
 
-        void generate();
+        JSObject* generate();
 
         // Returns the register corresponding to a local variable, or 0 if no
         // such register exists. Registers returned by registerFor do not
@@ -364,7 +364,6 @@ namespace JSC {
         }
 
         void emitThrowReferenceError(const UString& message);
-        void emitThrowSyntaxError(const UString& message);
 
         void emitPushNewScope(RegisterID* dst, const Identifier& property, RegisterID* value);
 
@@ -581,6 +580,7 @@ namespace JSC {
         bool m_usesExceptions;
         bool m_regeneratingForExceptionInfo;
         CodeBlock* m_codeBlockBeingRegeneratedFrom;
+        bool m_expressionTooDeep;
     };
 
 }

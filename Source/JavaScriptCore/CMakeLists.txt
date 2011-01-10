@@ -170,6 +170,7 @@ SET(JavaScriptCore_SOURCES
     yarr/RegexPattern.cpp
     yarr/RegexInterpreter.cpp
     yarr/RegexJIT.cpp
+    yarr/YarrSyntaxChecker.cpp
 
     wtf/DateMath.cpp
     wtf/PageAllocationAligned.cpp

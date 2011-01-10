@@ -394,7 +394,6 @@ extern "C" {
     void JIT_STUB cti_op_tear_off_activation(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_tear_off_arguments(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_throw_reference_error(STUB_ARGS_DECLARATION);
-    void JIT_STUB cti_op_throw_syntax_error(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_call_arityCheck(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_construct_arityCheck(STUB_ARGS_DECLARATION);
     void* JIT_STUB cti_op_call_jitCompile(STUB_ARGS_DECLARATION);

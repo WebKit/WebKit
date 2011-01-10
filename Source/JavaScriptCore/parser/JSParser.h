@@ -159,6 +159,6 @@ struct JSToken {
 enum JSParserStrictness { JSParseNormal, JSParseStrict };
 enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
 
-int jsParse(JSGlobalData*, FunctionParameters*, JSParserStrictness, JSParserMode, const SourceCode*);
+const char* jsParse(JSGlobalData*, FunctionParameters*, JSParserStrictness, JSParserMode, const SourceCode*);
 }
 #endif // JSParser_h

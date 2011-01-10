@@ -1685,6 +1685,14 @@
 				RelativePath="..\..\yarr\RegexPattern.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\yarr\YarrSyntaxChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\yarr\YarrSyntaxChecker.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="jit"

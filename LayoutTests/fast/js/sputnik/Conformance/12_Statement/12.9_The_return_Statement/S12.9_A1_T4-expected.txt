@@ -1,6 +1,7 @@
+CONSOLE MESSAGE: line 78: SyntaxError: Parse error
 S12.9_A1_T4
 
-PASS SyntaxError: Invalid return statement.
+PASS Expected parsing failure
 
 TEST COMPLETE
 
