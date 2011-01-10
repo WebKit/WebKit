@@ -152,17 +152,17 @@ void InspectorDebuggerAgent::resume()
     ScriptDebugServer::shared().continueProgram();
 }
 
-void InspectorDebuggerAgent::stepOverStatement()
+void InspectorDebuggerAgent::stepOver()
 {
     ScriptDebugServer::shared().stepOverStatement();
 }
 
-void InspectorDebuggerAgent::stepIntoStatement()
+void InspectorDebuggerAgent::stepInto()
 {
     ScriptDebugServer::shared().stepIntoStatement();
 }
 
-void InspectorDebuggerAgent::stepOutOfFunction()
+void InspectorDebuggerAgent::stepOut()
 {
     ScriptDebugServer::shared().stepOutOfFunction();
 }

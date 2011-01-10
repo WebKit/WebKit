@@ -249,9 +249,9 @@ module core {
         [domain=Inspector] void setXHRBreakpoint(in String url); // FIXME: Move to newly introduced BrowserDebugger.
         [domain=Inspector] void removeXHRBreakpoint(in String url); // FIXME: Move to newly introduced BrowserDebugger.
 
-        [domain=Debugger] void stepOverStatement(); // FIXME: rename to stepOver
-        [domain=Debugger] void stepIntoStatement(); // FIXME: rename to stepInto
-        [domain=Debugger] void stepOutOfFunction(); // FIXME: rename to stepOut
+        [domain=Debugger] void stepOver();
+        [domain=Debugger] void stepInto();
+        [domain=Debugger] void stepOut();
         [domain=Debugger] void pause();
         [notify, domain=Debugger] void pausedScript(out Object details);
         [domain=Debugger] void resume();

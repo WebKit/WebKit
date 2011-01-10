@@ -892,7 +892,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorBackend.stepOverStatement();
+        InspectorBackend.stepOver();
     },
 
     _stepIntoClicked: function()
@@ -902,7 +902,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorBackend.stepIntoStatement();
+        InspectorBackend.stepInto();
     },
 
     _stepOutClicked: function()
@@ -912,7 +912,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._clearInterface();
 
-        InspectorBackend.stepOutOfFunction();
+        InspectorBackend.stepOut();
     },
 
     toggleBreakpointsClicked: function()

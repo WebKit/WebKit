@@ -73,9 +73,9 @@ public:
     void breakProgram(DebuggerEventType type, PassRefPtr<InspectorValue> data);
     void pause();
     void resume();
-    void stepOverStatement();
-    void stepIntoStatement();
-    void stepOutOfFunction();
+    void stepOver();
+    void stepInto();
+    void stepOut();
 
     void setPauseOnExceptionsState(long pauseState, long* newState);
     long pauseOnExceptionsState();
