@@ -13,6 +13,8 @@ PASS inner.BeforeLoadEvent.isInner is true
 PASS inner.BeforeLoadEvent.constructor.isInner is true
 PASS inner.Blob.isInner is true
 PASS inner.Blob.constructor.isInner is true
+PASS inner.BlobBuilder.isInner is true
+PASS inner.BlobBuilder.constructor.isInner is true
 PASS inner.Boolean.isInner is true
 PASS inner.Boolean.constructor.isInner is true
 PASS inner.CDATASection.isInner is true
