@@ -34,7 +34,6 @@
 #include <qgraphicsscene.h>
 #include <qgraphicsview.h>
 #include <qgraphicswebview.h>
-#include <qnetworkcookiejar.h>
 #include <qnetworkrequest.h>
 #include <qwebdatabase.h>
 #include <qwebelement.h>
@@ -132,7 +131,6 @@ private slots:
     void supportedContentType();
     void infiniteLoopJS();
     void networkAccessManagerOnDifferentThread();
-    void navigatorCookieEnabled();
 
 #ifdef Q_OS_MAC
     void macCopyUnicodeToClipboard();
@@ -2710,17 +2708,6 @@ void tst_QWebPage::networkAccessManagerOnDifferentThread()
     m_page->mainFrame()->load(url);
     QTRY_COMPARE(loadSpy.count(), 1);
     QCOMPARE(m_page->mainFrame()->childFrames()[0]->url(), QUrl("qrc:///resources/frame_a.html"));
-}
-
-void tst_QWebPage::navigatorCookieEnabled()
-{
-    m_page->networkAccessManager()->setCookieJar(0);
-    QVERIFY(!m_page->networkAccessManager()->cookieJar());
-    QVERIFY(!m_page->mainFrame()->evaluateJavaScript("navigator.cookieEnabled").toBool());
-
-    m_page->networkAccessManager()->setCookieJar(new QNetworkCookieJar());
-    QVERIFY(m_page->networkAccessManager()->cookieJar());
-    QVERIFY(m_page->mainFrame()->evaluateJavaScript("navigator.cookieEnabled").toBool());
 }
 
 #ifdef Q_OS_MAC

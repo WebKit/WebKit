@@ -114,7 +114,7 @@ String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 
 bool cookiesEnabled(const Document* document)
 {
-    return !!networkAccessManager(document)->cookieJar();
+    return !!networkAccessManager(document);
 }
 
 bool getRawCookies(const Document*, const KURL&, Vector<Cookie>& rawCookies)
