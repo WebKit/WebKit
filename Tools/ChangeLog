@@ -1,3 +1,13 @@
+2011-01-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] build-webkit disable Blob support via arguments passed to automake
+        https://bugs.webkit.org/show_bug.cgi?id=52097
+
+        * Scripts/build-webkit: Enable Blob support when building WebKitGTK+ via
+        build-webkit.
+
 2011-01-10  Adam Roben  <aroben@apple.com>
 
         Use the same name and description for TestNetscapePlugin on Windows and

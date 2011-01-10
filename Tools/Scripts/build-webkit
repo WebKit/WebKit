@@ -126,7 +126,7 @@ my @features = (
       define => "ENABLE_ACCELERATED_2D_CANVAS", default => 0, value => \$accelerated2dCanvasSupport },
 
     { option => "blob", desc => "Toggle Blob support",
-      define => "ENABLE_BLOB", default => (isAppleMacWebKit()), value => \$blobSupport },
+      define => "ENABLE_BLOB", default => (isAppleMacWebKit() || isGtk()), value => \$blobSupport },
 
     { option => "channel-messaging", desc => "Toggle MessageChannel and MessagePort support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
