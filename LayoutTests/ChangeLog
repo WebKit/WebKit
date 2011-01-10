@@ -1,3 +1,30 @@
+2011-01-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+
+        More scrollbar change rebaselines.
+
+        * platform/chromium-mac/fast/selectors/166-expected.checksum: Removed.
+        * platform/chromium-mac/fast/selectors/166-expected.png: Removed.
+        * platform/chromium-mac/fast/table/border-collapsing/004-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/table/border-collapsing/004-vertical-expected.png: Removed.
+        * platform/chromium-mac/fast/table/height-percent-test-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/table/height-percent-test-vertical-expected.png: Removed.
+        * platform/chromium-mac/svg/css/composite-shadow-example-expected.checksum:
+        * platform/chromium-mac/svg/css/composite-shadow-example-expected.png:
+        * platform/chromium-mac/svg/css/composite-shadow-with-opacity-expected.checksum:
+        * platform/chromium-mac/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/chromium-mac/svg/css/stars-with-shadow-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum:
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/table/border-collapsing/004-vertical-expected.checksum: Added.
+        * platform/mac-leopard/fast/table/border-collapsing/004-vertical-expected.png: Added.
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.checksum:
+        * platform/mac/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/mac/fast/table/height-percent-test-vertical-expected.checksum:
+        * platform/mac/fast/table/height-percent-test-vertical-expected.png:
+
 2011-01-10  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r75398, r75407,
