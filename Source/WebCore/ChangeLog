@@ -1,3 +1,13 @@
+2011-01-10  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: make properties on Array's prototype non-enumerable.
+        https://bugs.webkit.org/show_bug.cgi?id=51776
+
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-01-10  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Fraser.

@@ -715,7 +715,7 @@ HTMLTextAreaElement.prototype.moveCursorToEnd = function()
     this.setSelectionRange(length, length);
 }
 
-Array.prototype.remove = function(value, onlyFirst)
+Object.defineProperty(Array.prototype, "remove", { value: function(value, onlyFirst)
 {
     if (onlyFirst) {
         var index = this.indexOf(value);
@@ -729,15 +729,15 @@ Array.prototype.remove = function(value, onlyFirst)
         if (this[i] === value)
             this.splice(i, 1);
     }
-}
+}});
 
-Array.prototype.keySet = function()
+Object.defineProperty(Array.prototype, "keySet", { value: function()
 {
     var keys = {};
     for (var i = 0; i < this.length; ++i)
         keys[this[i]] = true;
     return keys;
-}
+}});
 
 Array.diff = function(left, right)
 {
