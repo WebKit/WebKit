@@ -65,7 +65,7 @@ INCLUDEPATH += \
     $$WC_GENERATED_SOURCES_DIR
 
 PREFIX_HEADER = $$PWD/../../WebKitTestRunnerPrefix.h
-QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
+*-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
 unix:!mac:!symbian {
     CONFIG += link_pkgconfig

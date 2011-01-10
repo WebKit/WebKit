@@ -52,7 +52,7 @@ SOURCES = \
     $$BASEDIR/TestInvocation.cpp \
 
 PREFIX_HEADER = $$BASEDIR/WebKitTestRunnerPrefix.h
-QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
+*-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
 linux-* {
     # From Creator's src/rpath.pri:
