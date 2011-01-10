@@ -38,6 +38,7 @@ template <> void derefGPtr(GtkTargetList* ptr)
         gtk_target_list_unref(ptr);
 }
 
+#ifdef GTK_API_VERSION_2
 template <> GdkCursor* refGPtr(GdkCursor* ptr)
 {
     if (ptr)
@@ -50,5 +51,6 @@ template <> void derefGPtr(GdkCursor* ptr)
     if (ptr)
         gdk_cursor_unref(ptr);
 }
+#endif
 
 }

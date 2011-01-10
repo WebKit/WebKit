@@ -1,3 +1,16 @@
+2011-01-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove use of deprecated GTK+ methods before the 1.3.10 release
+        https://bugs.webkit.org/show_bug.cgi?id=52173
+
+        No new tests. This is only a build fix.
+
+        * platform/gtk/GRefPtrGtk.cpp: Guard the GdkCursor specialization against GTK+ 3.x.
+        In GTK+ 3.x, GdkCursor is just a GObject.
+        * platform/gtk/GRefPtrGtk.h: Ditto.
+
 2011-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

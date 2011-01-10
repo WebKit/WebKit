@@ -271,9 +271,13 @@ void FullscreenVideoController::enterFullscreen()
         createHud();
 
     // Ensure black background.
-    GdkColor color;
-    gdk_color_parse("black", &color);
+#ifdef GTK_API_VERSION_2
+    GdkColor color = { 1, 0, 0, 0 };
     gtk_widget_modify_bg(m_window, GTK_STATE_NORMAL, &color);
+#else
+    GdkRGBA color = { 0, 0, 0, 1};
+    gtk_widget_override_background_color(m_window, GTK_STATE_FLAG_NORMAL, &color);
+#endif
     gtk_widget_set_double_buffered(m_window, FALSE);
 
     g_signal_connect(m_window, "key-press-event", G_CALLBACK(onFullscreenGtkKeyPressEvent), this);
@@ -283,9 +287,8 @@ void FullscreenVideoController::enterFullscreen()
     gtk_widget_show_all(m_window);
 
     GdkWindow* window = gtk_widget_get_window(m_window);
-    GdkCursor* cursor = blankCursor();
-    gdk_window_set_cursor(window, cursor);
-    gdk_cursor_unref(cursor);
+    GRefPtr<GdkCursor> cursor(adoptGRef(blankCursor()));
+    gdk_window_set_cursor(window, cursor.get());
 
     g_signal_connect(m_window, "motion-notify-event", G_CALLBACK(onFullscreenGtkMotionNotifyEvent), this);
     g_signal_connect(m_window, "configure-event", G_CALLBACK(onFullscreenGtkConfigureEvent), this);

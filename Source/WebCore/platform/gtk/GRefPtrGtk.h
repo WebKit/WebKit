@@ -28,8 +28,10 @@ namespace WTF {
 template <> GtkTargetList* refGPtr(GtkTargetList* ptr);
 template <> void derefGPtr(GtkTargetList* ptr);
 
+#ifdef GTK_API_VERSION_2
 template <> GdkCursor* refGPtr(GdkCursor* ptr);
 template <> void derefGPtr(GdkCursor* ptr);
+#endif
 
 }
 

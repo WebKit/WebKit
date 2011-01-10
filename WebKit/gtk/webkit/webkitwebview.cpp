@@ -1091,12 +1091,16 @@ static void webkit_web_view_realize(GtkWidget* widget)
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
 
+#ifdef GTK_API_VERSION_2
 #if GTK_CHECK_VERSION(2, 20, 0)
     gtk_widget_style_attach(widget);
 #else
     widget->style = gtk_style_attach(gtk_widget_get_style(widget), window);
 #endif
     gtk_style_set_background(gtk_widget_get_style(widget), window, GTK_STATE_NORMAL);
+#else
+    gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
+#endif
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
     WebKitWebViewPrivate* priv = webView->priv;
@@ -1544,17 +1548,21 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
     if (!frame)
         return;
 
-    GdkEvent* event = gdk_event_new(GDK_BUTTON_RELEASE);
+    GOwnPtr<GdkEvent> event(gdk_event_new(GDK_BUTTON_RELEASE));
     int x, y, xRoot, yRoot;
-    GdkModifierType modifiers;
+    GdkModifierType modifiers = static_cast<GdkModifierType>(0);
+#ifdef GTK_API_VERSION_2
     GdkDisplay* display = gdk_display_get_default();
     gdk_display_get_pointer(display, 0, &xRoot, &yRoot, &modifiers);
+    event->button.window = gdk_display_get_window_at_pointer(display, &x, &y);
+#else
+    GdkDevice* device = gdk_drag_context_get_device(context);
+    event->button.window = gdk_device_get_window_at_position(device, &x, &y);
+    gdk_device_get_position(device, 0, &xRoot, &yRoot);
+#endif
 
-    GdkWindow* window = gdk_display_get_window_at_pointer(display, &x, &y);
-    if (window) {
-        g_object_ref(window);
-        event->button.window = window;
-    }
+    if (event->button.window)
+        g_object_ref(event->button.window);
     event->button.x = x;
     event->button.y = y;
     event->button.x_root = xRoot;
@@ -1563,8 +1571,6 @@ static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 
     PlatformMouseEvent platformEvent(&event->button);
     frame->eventHandler()->dragSourceEndedAt(platformEvent, gdkDragActionToDragOperation(gdk_drag_context_get_selected_action(context)));
-
-    gdk_event_free(event);
 }
 
 static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint)
