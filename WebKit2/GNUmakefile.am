@@ -84,7 +84,6 @@ libWebKit2_la_SOURCES = \
 	WebKit2/Platform/CoreIPC/HandleMessage.h \
 	WebKit2/Platform/CoreIPC/MessageID.h \
 	WebKit2/Platform/CoreIPC/MessageSender.h \
-	WebKit2/Platform/gtk/ModuleGtk.cpp \
 	WebKit2/Platform/gtk/RunLoopGtk.cpp \
 	WebKit2/Platform/gtk/SharedMemoryGtk.cpp \
 	WebKit2/Platform/gtk/WorkQueueGtk.cpp \
@@ -168,13 +167,8 @@ libWebKit2_la_SOURCES = \
 	WebKit2/Shared/DrawingAreaInfo.h \
 	WebKit2/Shared/FontSmoothingLevel.h \
 	WebKit2/Shared/gtk/BackingStoreGtk.cpp \
-	WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
 	WebKit2/Shared/gtk/PlatformCertificateInfo.h \
-	WebKit2/Shared/gtk/UpdateChunk.cpp \
-	WebKit2/Shared/gtk/UpdateChunk.h \
 	WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
-	WebKit2/Shared/gtk/WebEventFactory.cpp \
-	WebKit2/Shared/gtk/WebEventFactory.h \
 	WebKit2/Shared/ImageOptions.h \
 	WebKit2/Shared/ImmutableArray.cpp \
 	WebKit2/Shared/ImmutableArray.h \
@@ -326,7 +320,6 @@ libWebKit2_la_SOURCES = \
 	WebKit2/UIProcess/FindIndicator.cpp \
 	WebKit2/UIProcess/FindIndicator.h \
 	WebKit2/UIProcess/GenericCallback.h \
-	WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
 	WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
 	WebKit2/UIProcess/gtk/WebPageProxyGtk.cpp \
