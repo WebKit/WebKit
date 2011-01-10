@@ -198,7 +198,7 @@ my @features = (
       define => "ENABLE_METER_TAG", default => !isGtk() && !isAppleWinWebKit(), value => \$meterTagSupport },
 
     { option => "netscape-plugin", desc => "Netscape Plugin support",
-      define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isWinCE(), value => \$netscapePluginSupport },
+      define => "ENABLE_NETSCAPE_PLUGIN_API", default => !isEfl(), value => \$netscapePluginSupport },
 
     { option => "notifications", desc => "Toggle Desktop Notifications Support",
       define => "ENABLE_NOTIFICATIONS", default => 0, value => \$notificationsSupport },

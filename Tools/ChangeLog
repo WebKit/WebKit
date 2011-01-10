@@ -1,3 +1,15 @@
+2011-01-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [WINCE] Reenable NPAPI after r75203
+        https://bugs.webkit.org/show_bug.cgi?id=52109
+
+        Remove the !isWinCE() check for ENABLE_NETSCAPE_PLUGIN_API and replace
+        it with !isEfl(), because EFL port does not support NPAPI (yet).
+
+        * Scripts/build-webkit:
+
 2011-01-10  Adam Roben  <aroben@apple.com>
 
         Skip some asserting JS tests
