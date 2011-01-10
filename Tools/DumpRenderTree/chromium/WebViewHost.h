@@ -32,6 +32,7 @@
 #define WebViewHost_h
 
 #include "MockSpellCheck.h"
+#include "Task.h"
 #include "TestNavigationController.h"
 #include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
@@ -99,6 +100,9 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void clearContextMenuData();
 
     WebKit::WebSpeechInputControllerMock* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
+
+    // Needed by the MethodTask template.
+    TaskList* taskList() { return &m_taskList; }
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
@@ -307,6 +311,8 @@ private:
     OwnPtr<skia::PlatformCanvas> m_canvas;
     WebKit::WebRect m_paintRect;
     bool m_isPainting;
+
+    TaskList m_taskList;
 
     OwnPtr<WebKit::WebContextMenuData> m_lastContextMenuData;
 

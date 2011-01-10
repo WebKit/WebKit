@@ -2851,9 +2851,9 @@ BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = TEXT PASS
 // Regressions caused by switching to DRT.
 ///////////////////////////////////////////////////////////////////////////
 
-// DRT needs to schedule paints on invalidations like Chrome does.
-BUGCR62433 MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
-BUGCR62433 MAC LINUX : fast/images/gif-loop-count.html = IMAGE
+// These need to be rebaselined on Windows.
+BUGCR62433 WIN : fast/backgrounds/animated-gif-as-background.html = IMAGE
+BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
 
 // input-speech related failures
 BUG_DRT WIN MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE
