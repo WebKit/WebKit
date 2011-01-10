@@ -101,9 +101,9 @@ typedef const struct OpaqueWKBundleScriptWorld* WKBundleScriptWorldRef;
 #undef WK_EXPORT
 #if defined(WK_NO_EXPORT)
 #define WK_EXPORT
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !defined(__ARMCC__)
 #define WK_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32)
+#elif defined(WIN32) || defined(_WIN32) || defined(__ARMCC__)
 #if BUILDING_WEBKIT
 #define WK_EXPORT __declspec(dllexport)
 #else
