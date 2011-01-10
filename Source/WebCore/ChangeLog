@@ -1,3 +1,19 @@
+2011-01-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52044
+        REGRESSION(r74807): No-store is ignored within a document
+        
+        Don't use cached resources with Cache-control: no-store (unless cache policy is CachePolicyHistoryBuffer).
+        This matches a behavior that got lost in r74807.
+
+        Test: http/tests/misc/script-no-store.html
+        (by Alexey Proskuryakov)
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+
 2011-01-10  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Laszlo Gombos.

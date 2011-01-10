@@ -402,6 +402,16 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (existingResource->isPreloaded())
         return Use;
     
+    // CachePolicyHistoryBuffer uses the cache no matter what.
+    if (cachePolicy() == CachePolicyHistoryBuffer)
+        return Use;
+
+    // Don't reuse resources with Cache-control: no-store.
+    if (existingResource->response().cacheControlContainsNoStore()) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to Cache-control: no-store.");
+        return Reload;
+    }
+
     // Avoid loading the same resource multiple times for a single document, even if the cache policies would tell us to.
     if (m_validatedURLs.contains(existingResource->url()))
         return Use;
@@ -411,10 +421,6 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to CachePolicyReload.");
         return Reload;
     }
-    
-    // CachePolicyHistoryBuffer uses the cache no matter what.
-    if (cachePolicy() == CachePolicyHistoryBuffer)
-        return Use;
     
     // We'll try to reload the resource if it failed last time.
     if (existingResource->errorOccurred()) {

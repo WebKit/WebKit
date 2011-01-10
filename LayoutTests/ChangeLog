@@ -1,3 +1,14 @@
+2011-01-10  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52044
+        REGRESSION(r74807): No-store is ignored within a document
+
+        * http/tests/misc/script-no-store-expected.txt: Added.
+        * http/tests/misc/script-no-store.html: Added.
+        * http/tests/misc/resources/random-no-store.php: Added.
+
 2011-01-10  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
