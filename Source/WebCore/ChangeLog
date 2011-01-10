@@ -1,3 +1,10 @@
+2011-01-10  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r75313
+
+        * WebCore.vcproj/build-generated-files.sh: Updated for the change in
+        this script's path.
+
 2011-01-10  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
