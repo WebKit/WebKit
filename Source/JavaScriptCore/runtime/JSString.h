@@ -624,8 +624,7 @@ namespace JSC {
 
     inline UString JSValue::toPrimitiveString(ExecState* exec) const
     {
-        if (isString())
-            return static_cast<JSString*>(asCell())->value(exec);
+        ASSERT(!isString());
         if (isInt32())
             return exec->globalData().numericStrings.add(asInt32());
         if (isDouble())

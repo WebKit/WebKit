@@ -1,3 +1,17 @@
+2011-01-10  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove unused isString() case in JSString::toPrimitiveString()
+        https://bugs.webkit.org/show_bug.cgi?id=52167
+
+        We never call toPrimitiveString() with strings, so remove the
+        check and add an ASSERT ensuring this never happens. 0.7% overall
+        progression in sunspider, since one of the call sites is very hot.
+
+        * runtime/JSString.h:
+        (JSC::JSValue::toPrimitiveString):
+
 2011-01-10  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
