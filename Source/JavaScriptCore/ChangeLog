@@ -1,5 +1,11 @@
 2011-01-10  Gavin Barraclough  <barraclough@apple.com>
 
+        Qt build fix.
+
+        * JavaScriptCore.pro:
+
+2011-01-10  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 52079 - Syntax errors should be early errors.

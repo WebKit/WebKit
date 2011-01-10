@@ -211,7 +211,7 @@ SOURCES += \
     yarr/RegexPattern.cpp \
     yarr/RegexInterpreter.cpp \
     yarr/RegexJIT.cpp \
-    yarr/ YarrSyntaxChecker.cpp
+    yarr/YarrSyntaxChecker.cpp
 
 # Generated files, simply list them for JavaScriptCore
 
