@@ -1,3 +1,9 @@
+2011-01-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * parser/SyntaxChecker.h:
+
 2011-01-10  Dave Tapuska  <dtapuska@rim.com>
 
         Reviewed by Gavin Barraclough.

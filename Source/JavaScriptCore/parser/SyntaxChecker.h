@@ -26,7 +26,7 @@
 #ifndef SyntaxChecker_h
 #define SyntaxChecker_h
 
-#include "YarrSyntaxChecker.h"
+#include <yarr/YarrSyntaxChecker.h>
 
 namespace JSC {
 class SyntaxChecker {
