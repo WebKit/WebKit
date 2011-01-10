@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FETurbulence.h"
 #include "SVGAnimatedEnumeration.h"
+#include "SVGAnimatedInteger.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

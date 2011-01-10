@@ -24,9 +24,11 @@
 
 #include "Attr.h"
 #include "FEDiffuseLighting.h"
+#include "FilterEffect.h"
 #include "RenderStyle.h"
 #include "SVGColor.h"
 #include "SVGFELightElement.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 

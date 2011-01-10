@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "Frame.h"
 #include "RenderObject.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGTextQuery.h"
 #include "SelectionController.h"

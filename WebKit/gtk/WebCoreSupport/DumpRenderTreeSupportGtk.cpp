@@ -55,6 +55,7 @@
 #include <JavaScriptCore/APICast.h>
 
 #if ENABLE(SVG)
+#include "SVGDocumentExtensions.h"
 #include "SVGSMILElement.h"
 #endif
 

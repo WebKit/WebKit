@@ -22,17 +22,19 @@
 #define SVGFilterPrimitiveStandardAttributes_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "FilterEffect.h"
 #include "RenderSVGResource.h"
 #include "SVGAnimatedLength.h"
-#include "SVGFilterBuilder.h"
-#include "SVGFilterElement.h"
+#include "SVGAnimatedString.h"
 #include "SVGStyledElement.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class Filter;
+class FilterEffect;
+class SVGFilterBuilder;
 
 class SVGFilterPrimitiveStandardAttributes : public SVGStyledElement {
 public:

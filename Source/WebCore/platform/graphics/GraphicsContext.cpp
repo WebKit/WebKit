@@ -30,6 +30,7 @@
 #include "Font.h"
 #include "Generator.h"
 #include "ImageBuffer.h"
+#include "IntRect.h"
 
 using namespace std;
 

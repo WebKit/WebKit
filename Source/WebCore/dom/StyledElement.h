@@ -25,7 +25,6 @@
 #ifndef StyledElement_h
 #define StyledElement_h
 
-#include "CSSMutableStyleDeclaration.h"
 #include "Element.h"
 #include "MappedAttributeEntry.h"
 
@@ -33,6 +32,7 @@ namespace WebCore {
 
 class Attribute;
 class CSSMappedAttributeDeclaration;
+class CSSMutableStyleDeclaration;
 
 class StyledElement : public Element {
 public:

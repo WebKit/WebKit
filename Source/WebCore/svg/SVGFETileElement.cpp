@@ -24,6 +24,8 @@
 #include "SVGFETileElement.h"
 
 #include "Attribute.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 

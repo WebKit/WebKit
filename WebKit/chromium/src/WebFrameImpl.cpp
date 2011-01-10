@@ -112,6 +112,7 @@
 #include "ReplaceSelectionCommand.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGSMILElement.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"

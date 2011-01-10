@@ -23,7 +23,6 @@
 #define SVGElement_h
 
 #if ENABLE(SVG)
-#include "SVGDocumentExtensions.h"
 #include "SVGLocatable.h"
 #include "StyledElement.h"
 
@@ -32,6 +31,7 @@ namespace WebCore {
 class CSSCursorImageValue;
 class Document;
 class SVGCursorElement;
+class SVGDocumentExtensions;
 class SVGElementInstance;
 class SVGElementRareData;
 class SVGSVGElement;

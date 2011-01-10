@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class Image;
+
 class FEImage : public FilterEffect {
 public:
     static PassRefPtr<FEImage> create(Filter*, RefPtr<Image>, const SVGPreserveAspectRatio&);

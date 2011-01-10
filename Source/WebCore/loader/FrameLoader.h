@@ -36,15 +36,13 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "HistoryController.h"
-#include "NavigationScheduler.h"
-#include "PolicyCallback.h"
 #include "PolicyChecker.h"
 #include "ResourceLoadNotifier.h"
-#include "ResourceRequest.h"
 #include "SubframeLoader.h"
 #include "ThreadableLoader.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -73,6 +71,7 @@ class Page;
 class ProtectionSpace;
 class ResourceError;
 class ResourceLoader;
+class ResourceRequest;
 class ResourceResponse;
 class ScriptSourceCode;
 class ScriptValue;

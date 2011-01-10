@@ -23,9 +23,11 @@
 #include "SVGFEConvolveMatrixElement.h"
 
 #include "Attr.h"
+#include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"
 #include "IntSize.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 

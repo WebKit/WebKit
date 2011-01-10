@@ -22,9 +22,11 @@
 #if ENABLE(FILTERS)
 #include "SourceGraphic.h"
 
+#include "Filter.h"
 #include "GraphicsContext.h"
 #include "PlatformString.h"
-#include "Filter.h"
+#include "RenderTreeAsText.h"
+#include "TextStream.h"
 
 #include <wtf/StdLibExtras.h>
 

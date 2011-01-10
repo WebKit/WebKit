@@ -23,19 +23,21 @@
 #define FilterEffect_h
 
 #if ENABLE(FILTERS)
-#include "Filter.h"
 #include "FloatRect.h"
-#include "GraphicsContext.h"
-#include "ImageBuffer.h"
-#include "RenderTreeAsText.h"
-#include "TextStream.h"
+#include "IntRect.h"
 
+#include <wtf/ByteArray.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class Filter;
+class FilterEffect;
+class ImageBuffer;
+class TextStream;
 
 typedef Vector<RefPtr<FilterEffect> > FilterEffectVector;
 

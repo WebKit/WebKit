@@ -23,7 +23,9 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFEMergeElement.h"
 
+#include "FilterEffect.h"
 #include "SVGFEMergeNodeElement.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 
 namespace WebCore {

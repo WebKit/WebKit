@@ -27,7 +27,9 @@
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "Pattern.h"
+#include "RenderTreeAsText.h"
 #include "SVGImageBufferTools.h"
+#include "TextStream.h"
 
 namespace WebCore {
 

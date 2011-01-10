@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "FilterEffect.h"
 #include "RenderSVGResourceFilterPrimitive.h"
+#include "SVGFilterBuilder.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"

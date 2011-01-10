@@ -25,13 +25,13 @@
 #define Event_h
 
 #include "DOMTimeStamp.h"
-#include "EventTarget.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
     class Clipboard;
+    class EventTarget;
 
     class Event : public RefCounted<Event> {
     public:

@@ -29,6 +29,8 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "RenderTreeAsText.h"
+#include "TextStream.h"
 
 #include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>

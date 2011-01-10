@@ -93,6 +93,7 @@
 #include <WebCore/RenderView.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/Settings.h>
+#include <WebCore/SVGDocumentExtensions.h>
 #include <WebCore/SVGSMILElement.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/JSDOMBinding.h>

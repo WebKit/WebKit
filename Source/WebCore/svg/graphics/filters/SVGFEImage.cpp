@@ -28,7 +28,9 @@
 #include "AffineTransform.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
+#include "RenderTreeAsText.h"
 #include "SVGPreserveAspectRatio.h"
+#include "TextStream.h"
 
 namespace WebCore {
 

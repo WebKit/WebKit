@@ -38,6 +38,7 @@
 #include "RegisteredEventListener.h"
 #include "RenderObject.h"
 #include "SVGCursorElement.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
 #include "SVGElementRareData.h"
 #include "SVGNames.h"

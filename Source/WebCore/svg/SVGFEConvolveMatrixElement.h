@@ -22,7 +22,9 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FEConvolveMatrix.h"
+#include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedEnumeration.h"
+#include "SVGAnimatedInteger.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGAnimatedNumberList.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"

@@ -21,8 +21,6 @@
 #ifndef CSSValue_h
 #define CSSValue_h
 
-#include "StyleBase.h"
-
 #include "CSSParserValues.h"
 #include "KURLHash.h"
 #include <wtf/ListHashSet.h>

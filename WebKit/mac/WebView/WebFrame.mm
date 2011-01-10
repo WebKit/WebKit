@@ -83,6 +83,7 @@
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SmartReplace.h>
+#import <WebCore/SVGDocumentExtensions.h>
 #import <WebCore/SVGSMILElement.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>

@@ -27,6 +27,8 @@
 #include "FEMorphology.h"
 
 #include "Filter.h"
+#include "RenderTreeAsText.h"
+#include "TextStream.h"
 
 #include <wtf/ByteArray.h>
 #include <wtf/Vector.h>

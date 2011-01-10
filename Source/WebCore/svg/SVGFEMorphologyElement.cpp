@@ -23,6 +23,8 @@
 #include "SVGFEMorphologyElement.h"
 
 #include "Attribute.h"
+#include "FilterEffect.h"
+#include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 

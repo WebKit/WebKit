@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "Event.h"
+#include "EventTarget.h"
 
 #include "UserGestureIndicator.h"
 #include <wtf/CurrentTime.h>

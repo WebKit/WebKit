@@ -63,6 +63,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #if ENABLE(SVG)
+#include "SVGDocumentExtensions.h"
 #include "SVGSMILElement.h"
 #endif
 #include "TextIterator.h"

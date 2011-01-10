@@ -25,10 +25,11 @@
 #include "StyledElement.h"
 
 #include "Attribute.h"
-#include "ClassList.h"
+#include "CSSMutableStyleDeclaration.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
+#include "ClassList.h"
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "HTMLNames.h"

@@ -32,10 +32,8 @@
 #include "FloatRect.h"
 #include "Gradient.h"
 #include "Image.h"
-#include "IntRect.h"
 #include "Path.h"
 #include "Pattern.h"
-#include "TextDirection.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -121,6 +119,7 @@ namespace WebCore {
     class Generator;
     class GraphicsContextPlatformPrivate;
     class ImageBuffer;
+    class IntRect;
     class KURL;
     class SharedGraphicsContext3D;
     class TextRun;
