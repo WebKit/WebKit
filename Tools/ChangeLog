@@ -1,3 +1,16 @@
+2011-01-10  Adam Roben  <aroben@apple.com>
+
+        Use the same name and description for TestNetscapePlugin on Windows and
+        Mac
+
+        Fixes <http://webkit.org/b/52151>
+        fast/frames/iframe-reparenting-plugins.html fails on Windows
+
+        Reviewed by Steve Falkenburg.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc: Copied
+        the name and description from Mac's Info.plist.
+
 2011-01-10  Siddharth Mathur <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.
