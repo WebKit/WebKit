@@ -1,3 +1,17 @@
+2011-01-10  Leonid Ebril  <leonid.ebril@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51879
+
+        Set the PluginQuirkDontSetNullWindowHandleOnDestroy for Adobe Lite  
+        plugin if Flash 10 or newer (for Symbian platform), setting a nulled 
+        window handler on destroy crashes WebKit.
+
+        * plugins/symbian/PluginPackageSymbian.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        (WebCore::PluginPackage::determineQuirks):
+
 2011-01-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

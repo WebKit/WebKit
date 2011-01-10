@@ -55,12 +55,24 @@ bool PluginPackage::fetchInfo()
                 mime[1].split(UChar(','), false, exts); // <ext1,ext2,ext3,...>
             
             m_mimeToExtensions.add(mime[0], exts); // <MIME>,<ext1,ext2,ext3>
+            determineQuirks(mime[0]);
             if (mime.size() > 2)
                 m_mimeToDescriptions.add(mime[0], mime[2]); // <MIME>,<Description>
         }
     }
     unload();
     return true;
+}
+
+void PluginPackage::determineQuirks(const String& mimeType)
+{
+    if (mimeType == "application/x-shockwave-flash") {
+        PlatformModuleVersion flashTenVersion(0x000a0000);
+        if (compareFileVersion(flashTenVersion) >= 0) {
+            // Flash 10 doesn't like having a 0 window handle.
+            m_quirks.add(PluginQuirkDontSetNullWindowHandleOnDestroy);
+        }
+    }
 }
 
 bool PluginPackage::load()
