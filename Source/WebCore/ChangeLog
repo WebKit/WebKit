@@ -1,3 +1,17 @@
+2011-01-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix gtk2 compilation for master
+        https://bugs.webkit.org/show_bug.cgi?id=51885
+
+        * platform/gtk/GtkVersioning.h: Replaced the 2.24.0 check with
+        2.23.0 to avoid using the old symbols in the 2.23 releases. Added
+        support for gdk_pixmap_get_size before the 2.23.4.
+        * platform/gtk/WidgetRenderingContextGtk2.cpp:
+        (WebCore::WidgetRenderingContext::WidgetRenderingContext):
+        Replaced the old gdk_drawable_get_size with gdk_pixmap_get_size.
+
 2011-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; build fix for r75385.

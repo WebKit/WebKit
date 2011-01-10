@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "DumpRenderTree.h"
+#include "GtkVersioning.h"
 #include "PixelDumpSupportCairo.h"
 #include <webkit/webkit.h>
 
@@ -39,7 +40,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool)
     gint width, height;
 #ifdef GTK_API_VERSION_2
     GdkPixmap* pixmap = gtk_widget_get_snapshot(GTK_WIDGET(view), 0);
-    gdk_drawable_get_size(GDK_DRAWABLE(pixmap), &width, &height);
+    gdk_pixmap_get_size(pixmap, &width, &height);
 #else
     width = gtk_widget_get_allocated_width(GTK_WIDGET(view));
     height = gtk_widget_get_allocated_height(GTK_WIDGET(view));

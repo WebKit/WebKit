@@ -1,3 +1,14 @@
+2011-01-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix gtk2 compilation for master
+        https://bugs.webkit.org/show_bug.cgi?id=51885
+
+        * webkit/webkitsoupauthdialog.c:
+        (show_auth_dialog): Removed the call to
+        gtk_dialog_set_has_separator API to remove a warning.
+
 2011-01-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -32,6 +32,7 @@
 #include "WidgetRenderingContext.h"
 
 #include "GraphicsContext.h"
+#include "GtkVersioning.h"
 #include "RefPtrCairo.h"
 #include "RenderThemeGtk.h"
 #include "Timer.h"
@@ -107,7 +108,7 @@ WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* graphicsContext,
     int scratchWidth = 0;
     int scratchHeight = 0;
     if (gScratchBuffer)
-        gdk_drawable_get_size(gScratchBuffer, &scratchWidth, &scratchHeight);
+        gdk_pixmap_get_size(gScratchBuffer, &scratchWidth, &scratchHeight);
 
     // We do not need to recreate the buffer if the current buffer is large enough.
     if (!gScratchBuffer || scratchWidth < width || scratchHeight < height) {

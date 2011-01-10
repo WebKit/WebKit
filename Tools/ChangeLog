@@ -1,3 +1,14 @@
+2011-01-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix gtk2 compilation for master
+        https://bugs.webkit.org/show_bug.cgi?id=51885
+
+        * DumpRenderTree/gtk/PixelDumpSupportGtk.cpp:
+        (createBitmapContextFromWebView): Replaced the old
+        gdk_drawable_get_size with gdk_pixmap_get_size.
+
 2011-01-10  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Laszlo Gombos.
