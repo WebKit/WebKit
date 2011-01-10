@@ -1,3 +1,9 @@
+2011-01-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed. Add Qt specific expected file.
+
+        * platform/qt/http/tests/navigation/forward-and-cancel-expected.txt: Copied from LayoutTests/http/tests/navigation/forward-and-cancel-expected.txt.
+
 2011-01-10  François Sausset  <sausset@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
