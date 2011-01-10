@@ -5376,3 +5376,7 @@ fast/events/before-unload-javascript-navigation.html
 fast/events/before-unload-remove-and-add-subframe.html
 fast/events/before-unload-remove-itself.html
 fast/events/before-unload-with-subframes.html
+
+# [Qt] fast/text/emphasis-avoid-ruby.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=52155
+fast/text/emphasis-avoid-ruby.html
