@@ -37,6 +37,14 @@ from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.test import cat, echo
 
 
+class ScriptErrorTest(unittest.TestCase):
+    def test_string_from_args(self):
+        error = ScriptError()
+        self.assertEquals(error._string_from_args(None), 'None')
+        self.assertEquals(error._string_from_args([]), '[]')
+        self.assertEquals(error._string_from_args(map(str, range(30))), "['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'...")
+
+
 def never_ending_command():
     """Arguments for a command that will never end (useful for testing process
     killing). It should be a process that is unlikely to already be running

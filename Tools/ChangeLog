@@ -1,3 +1,16 @@
+2011-01-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        style-queue messages are way too long for big patches
+        https://bugs.webkit.org/show_bug.cgi?id=52161
+
+        We definitely could build much fancier list-to-string-with-limit functions
+        but this should be sufficient for our needs at the moment.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+
 2011-01-10  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r75398.
