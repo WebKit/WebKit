@@ -1,3 +1,10 @@
+2011-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; build fix for r75385.
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+
 2011-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r75341.
