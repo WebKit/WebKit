@@ -28,20 +28,20 @@
 
 #include "BrowserWindow.h"
 
-static QWKPage* newPageFunction(QWKPage*)
+static QWKPage* newPageFunction(QWKPage* page)
 {
-    BrowserWindow* window = new BrowserWindow();
+    BrowserWindow* window = new BrowserWindow(page->context());
     return window->page();
 }
 
 QGraphicsWKView::BackingStoreType BrowserWindow::backingStoreTypeForNewWindow = QGraphicsWKView::Simple;
 
-BrowserWindow::BrowserWindow()
+BrowserWindow::BrowserWindow(QWKContext* context)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
     m_menu = new QMenuBar();
-    m_browser = new BrowserView(backingStoreTypeForNewWindow);
+    m_browser = new BrowserView(backingStoreTypeForNewWindow, context);
     m_addressBar = new QLineEdit();
 
     m_menu->addAction("New Window", this, SLOT(newWindow()));

@@ -1,3 +1,13 @@
+2011-01-10  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] [WK2] MiniBrowser does not load pages opened in new windows
+        https://bugs.webkit.org/show_bug.cgi?id=52111
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::context): Implement this method.
+
 2011-01-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

@@ -488,6 +488,11 @@ WKPageRef QWKPage::pageRef() const
     return toAPI(d->page.get());
 }
 
+QWKContext* QWKPage::context() const
+{
+    return d->context;
+}
+
 QWKPreferences* QWKPage::preferences() const
 {
     if (!d->preferences) {

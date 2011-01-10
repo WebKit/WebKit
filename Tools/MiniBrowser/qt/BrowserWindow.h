@@ -38,7 +38,7 @@ class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    BrowserWindow();
+    BrowserWindow(QWKContext* = 0);
     ~BrowserWindow();
     void load(const QString& url);
 

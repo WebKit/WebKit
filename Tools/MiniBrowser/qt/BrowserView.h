@@ -37,7 +37,7 @@ class BrowserView : public QGraphicsView {
     Q_OBJECT
 
 public:
-    BrowserView(QGraphicsWKView::BackingStoreType, QWidget* parent = 0);
+    BrowserView(QGraphicsWKView::BackingStoreType, QWKContext*, QWidget* parent = 0);
     virtual ~BrowserView() { delete m_item; }
 
     void load(const QString&);
