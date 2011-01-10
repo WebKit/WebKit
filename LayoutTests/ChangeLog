@@ -1,3 +1,14 @@
+2011-01-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] DRT sideeffect revealed by r63657
+        https://bugs.webkit.org/show_bug.cgi?id=42578
+
+        Add new tests introduced in r75305 to the skipped list temporarily to make buildbot happy.
+
+        * platform/qt/Skipped:
+
 2011-01-10  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Simon Fraser.
