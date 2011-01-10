@@ -1,3 +1,15 @@
+2011-01-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Enable JIT for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=52140
+
+        Enable JIT option for WebKit EFL. Enabled JIT's JS performance is 
+        3 ~ 6 times faster than before.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2011-01-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha.
