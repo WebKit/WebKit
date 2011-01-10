@@ -892,9 +892,6 @@ BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
 
 BUGCR20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
-// test_shell, DRT do not correctly schedule paints when invalidating.
-BUGCR62433 WIN : fast/images/gif-loop-count.html = IMAGE
-
 // -----------------------------------------------------------------
 // SVG TESTS
 // -----------------------------------------------------------------
