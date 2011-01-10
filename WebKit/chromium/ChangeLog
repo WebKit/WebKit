@@ -1,3 +1,13 @@
+2011-01-09  Johnny Ding  <jnd@chromium.org>
+
+        Unreviewed, fix Chromium windows compilation error according to James Robinson's report.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41441
+        Fix Chromium window compilation error.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createView):
+
 2011-01-09  Xianzhu Wang  <phnixwxz@gmail.com>
 
         Reviewed by Darin Fisher.

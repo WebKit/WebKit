@@ -101,7 +101,6 @@ public:
         // FIXME: This is a temporary default implementation which calls the old
         // version of createView(). Should change to 'return 0' when the old one
         // is removed.
-        (void)request;
         return createView(creator, features, name); 
     }
 
