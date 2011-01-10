@@ -60,12 +60,12 @@ namespace WTF {
 // Bug 26276 - Need a mechanism to determine stack extent
 //
 // These platforms should now be working correctly:
-//     DARWIN, WINDOWS-CPU(X86), QNX, UNIX, WINCE
+//     DARWIN, QNX, UNIX
 // These platforms are not:
-//     WINDOWS-CPU(X86_64), SOLARIS, OPENBSD, SYMBIAN, HAIKU
+//     WINDOWS, SOLARIS, OPENBSD, SYMBIAN, HAIKU, WINCE
 //
 // FIXME: remove this! - this code unsafely guesses at stack sizes!
-#if (OS(WINDOWS) && CPU(X86_64)) || OS(SOLARIS) || OS(OPENBSD) || OS(SYMBIAN) || OS(HAIKU)
+#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD) || OS(SYMBIAN) || OS(HAIKU)
 // Based on the current limit used by the JSC parser, guess the stack size.
 static const ptrdiff_t estimatedStackSize = 128 * sizeof(void*) * 1024;
 // This method assumes the stack is growing downwards.
@@ -247,37 +247,39 @@ void StackBounds::initialize()
     m_bound = isGrowingDownward ? lowerStackBound : upperStackBound;
 }
 
-#elif OS(WINDOWS) && (CPU(X86) || CPU(X86_64))
+#elif OS(WINDOWS)
 
 void StackBounds::initialize()
 {
-#if CPU(X86)
-    // Offset 0x18 from the FS segment register gives a pointer to
-    // the thread information block for the current thread.
+#if CPU(X86) && COMPILER(MSVC)
+    // offset 0x18 from the FS segment register gives a pointer to
+    // the thread information block for the current thread
     NT_TIB* pTib;
-#if COMPILER(MSVC)
     __asm {
         MOV EAX, FS:[18h]
         MOV pTib, EAX
     }
-#else
+    m_origin = static_cast<void*>(pTib->StackBase);
+#elif CPU(X86) && COMPILER(GCC)
+    // offset 0x18 from the FS segment register gives a pointer to
+    // the thread information block for the current thread
+    NT_TIB* pTib;
     asm ( "movl %%fs:0x18, %0\n"
           : "=r" (pTib)
         );
-#endif
-    // See http://en.wikipedia.org/wiki/Win32_Thread_Information_Block for more information!
-    void* pDeallocationStack = reinterpret_cast<char*>(pTib) + 0xE0C;
     m_origin = static_cast<void*>(pTib->StackBase);
-    m_bound = *static_cast<void**>(pDeallocationStack);
 #elif CPU(X86_64)
     PNT_TIB64 pTib = reinterpret_cast<PNT_TIB64>(NtCurrentTeb());
     m_origin = reinterpret_cast<void*>(pTib->StackBase);
-    m_bound = estimateStackBound(m_origin);
+#else
+#error Need a way to get the stack bounds on this platform (Windows)
 #endif
+    // Looks like we should be able to get pTib->StackLimit
+    m_bound = estimateStackBound(m_origin);
 }
 
 #else
-#error Need a way to get the stack bounds on this platform.
+#error Need a way to get the stack bounds on this platform
 #endif
 
 } // namespace WTF
