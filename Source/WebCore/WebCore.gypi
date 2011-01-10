@@ -2936,8 +2936,6 @@
             'platform/graphics/PathTraversalState.h',
             'platform/graphics/Pattern.cpp',
             'platform/graphics/Pattern.h',
-            'platform/graphics/Pen.cpp',
-            'platform/graphics/Pen.h',
             'platform/graphics/SegmentedFontData.cpp',
             'platform/graphics/SegmentedFontData.h',
             'platform/graphics/SimpleFontData.cpp',

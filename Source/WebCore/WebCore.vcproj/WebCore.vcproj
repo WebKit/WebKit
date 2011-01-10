@@ -26633,14 +26633,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\Pen.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\Pen.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\SegmentedFontData.cpp"
 					>
 				</File>

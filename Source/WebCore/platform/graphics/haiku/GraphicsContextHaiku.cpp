@@ -34,7 +34,6 @@
 #include "FontData.h"
 #include "NotImplemented.h"
 #include "Path.h"
-#include "Pen.h"
 #include <wtf/text/CString.h>
 #include <GraphicsDefs.h>
 #include <Region.h>

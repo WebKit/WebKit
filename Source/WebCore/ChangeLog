@@ -1,3 +1,23 @@
+2011-01-10  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unused class "Pen" in WebCore/platform/graphics
+        https://bugs.webkit.org/show_bug.cgi?id=49955
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Pen.cpp: Removed.
+        * platform/graphics/Pen.h: Removed.
+        * platform/graphics/haiku/GraphicsContextHaiku.cpp:
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        * platform/graphics/wx/PenWx.cpp: Removed.
+
 2011-01-10  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

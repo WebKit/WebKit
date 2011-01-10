@@ -31,7 +31,6 @@
 #include "Font.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
-#include "Pen.h"
 #include <wtf/MathExtras.h>
 
 #include <math.h>
