@@ -1,3 +1,16 @@
+2011-01-10  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Remove webkit2 files that are still not added to the
+        repository from the makefile
+        https://bugs.webkit.org/show_bug.cgi?id=52145
+
+        This change is required for the release, we can add the lines
+        again to the makefiles with the patches adding the files.
+
+        * GNUmakefile.am:
+
 2011-01-10  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Simon Hausmann.

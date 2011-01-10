@@ -4,7 +4,6 @@ noinst_LTLIBRARIES += \
 
 libWebKit2_ladir = $(prefix)/include/webkit2-@WEBKITGTK_API_VERSION@/WebKit2
 libWebKit2_la_HEADERS = \
-	$(WebKit2)/Shared/API/c/gtk/WKBaseGtk.h \
 	$(WebKit2)/Shared/API/c/WKArray.h \
 	$(WebKit2)/Shared/API/c/WKBase.h \
 	$(WebKit2)/Shared/API/c/WKCertificateInfo.h \
@@ -32,8 +31,6 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/Shared/API/c/WKURLRequest.h \
 	$(WebKit2)/Shared/API/c/WKURLResponse.h \
 	$(WebKit2)/Shared/API/c/WKUserContentURLPattern.h \
-	$(WebKit2)/UIProcess/API/C/gtk/WKAPICastGtk.h \
-	$(WebKit2)/UIProcess/API/C/gtk/WKView.h \
 	$(WebKit2)/UIProcess/API/cpp/WKRetainPtr.h \
 	$(WebKit2)/UIProcess/API/C/WebKit2.h \
 	$(WebKit2)/UIProcess/API/C/WKAPICast.h \
@@ -110,7 +107,6 @@ libWebKit2_la_SOURCES = \
 	WebKit2/PluginProcess/WebProcessConnection.cpp \
 	WebKit2/PluginProcess/WebProcessConnection.h \
 	WebKit2/Shared/APIClient.h \
-	WebKit2/Shared/API/c/gtk/WKBaseGtk.h \
 	WebKit2/Shared/API/c/WKArray.cpp \
 	WebKit2/Shared/API/c/WKArray.h \
 	WebKit2/Shared/API/c/WKBase.h \
@@ -266,9 +262,6 @@ libWebKit2_la_SOURCES = \
 	WebKit2/Shared/WebURLResponse.h \
 	WebKit2/Shared/WebUserContentURLPattern.h \
 	WebKit2/Shared/WebWheelEvent.cpp \
-	WebKit2/UIProcess/API/C/gtk/WKAPICastGtk.h \
-	WebKit2/UIProcess/API/C/gtk/WKView.cpp \
-	WebKit2/UIProcess/API/C/gtk/WKView.h \
 	WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	WebKit2/UIProcess/API/C/WebKit2.h \
 	WebKit2/UIProcess/API/C/WKAPICast.h \
@@ -335,14 +328,9 @@ libWebKit2_la_SOURCES = \
 	WebKit2/UIProcess/GenericCallback.h \
 	WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
-	WebKit2/UIProcess/gtk/WebContextGtk.cpp \
 	WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
 	WebKit2/UIProcess/gtk/WebPageProxyGtk.cpp \
 	WebKit2/UIProcess/gtk/WebPreferencesGtk.cpp \
-	WebKit2/UIProcess/gtk/WebView.cpp \
-	WebKit2/UIProcess/gtk/WebView.h \
-	WebKit2/UIProcess/gtk/WebViewInternal.cpp \
-	WebKit2/UIProcess/gtk/WebViewInternal.h \
 	WebKit2/UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp \
 	WebKit2/UIProcess/Launcher/gtk/ThreadLauncherGtk.cpp \
 	WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \
@@ -522,7 +510,6 @@ libWebKit2_la_SOURCES = \
 	WebKit2/WebProcess/Plugins/PluginView.h \
 	WebKit2/WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp \
 	WebKit2/WebProcess/WebCoreSupport/gtk/WebDatabaseManagerGtk.cpp \
-	WebKit2/WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp \
 	WebKit2/WebProcess/WebCoreSupport/gtk/WebFrameNetworkingContext.h \
 	WebKit2/WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp \
 	WebKit2/WebProcess/WebCoreSupport/WebChromeClient.cpp \
@@ -559,9 +546,7 @@ libWebKit2_la_SOURCES = \
 	WebKit2/WebProcess/WebPage/EncoderAdapter.h \
 	WebKit2/WebProcess/WebPage/FindController.cpp \
 	WebKit2/WebProcess/WebPage/FindController.h \
-	WebKit2/WebProcess/WebPage/gtk/ChunkedUpdateDrawingAreaGtk.cpp \
 	WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
-	WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
 	WebKit2/WebProcess/WebPage/LayerBackedDrawingArea.cpp \
 	WebKit2/WebProcess/WebPage/LayerBackedDrawingArea.h \
 	WebKit2/WebProcess/WebPage/PageOverlay.cpp \
