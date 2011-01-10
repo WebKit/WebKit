@@ -68,3 +68,13 @@ Feeding commit-queue items [106, 197]
         queue = CommitQueueFeeder(MockTool())
         attachments.sort(queue._patch_cmp)
         self.assertEqual(attachments, expected_sort)
+
+    def test_patches_with_acceptable_review_flag(self):
+        class MockPatch(object):
+            def __init__(self, patch_id, review):
+                self.id = patch_id
+                self.review = lambda: review
+
+        feeder = CommitQueueFeeder(MockTool())
+        patches = [MockPatch(1, None), MockPatch(2, '-'), MockPatch(3, "+")]
+        self.assertEquals([patch.id for patch in feeder._patches_with_acceptable_review_flag(patches)], [1, 3])

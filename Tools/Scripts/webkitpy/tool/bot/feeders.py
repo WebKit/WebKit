@@ -54,12 +54,17 @@ class CommitQueueFeeder(AbstractFeeder):
 
     def feed(self):
         patches = self._validate_patches()
+        patches = self._patches_with_acceptable_review_flag(patches)
         patches = sorted(patches, self._patch_cmp)
         patch_ids = [patch.id() for patch in patches]
         self._update_work_items(patch_ids)
 
     def _patches_for_bug(self, bug_id):
         return self._tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True)
+
+    # Filters out patches with r? or r-, only r+ or no review are OK to land.
+    def _patches_with_acceptable_review_flag(self, patches):
+        return [patch for patch in patches if patch.review() in [None, '+']]
 
     def _validate_patches(self):
         # Not using BugzillaQueries.fetch_patches_from_commit_queue() so we can reject patches with invalid committers/reviewers.

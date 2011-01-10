@@ -29,6 +29,7 @@
 from datetime import datetime
 import unittest
 
+from webkitpy.common.net import bugzilla
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.layout_package import test_results
@@ -320,3 +321,24 @@ command_failed: failure_message='Unable to land patch' script_error='MOCK land f
 """
         # FIXME: This should really be expect_retry=True for a better user experiance.
         self._run_through_task(commit_queue, expected_stderr, ScriptError)
+
+    def _expect_validate(self, patch, is_valid):
+        class MockDelegate(object):
+            def refetch_patch(self, patch):
+                return patch
+
+        task = CommitQueueTask(MockDelegate(), patch)
+        self.assertEquals(task._validate(), is_valid)
+
+    def _mock_patch(self, attachment_dict={}, bug_dict={'bug_status': 'NEW'}, committer="fake"):
+        bug = bugzilla.Bug(bug_dict, None)
+        patch = bugzilla.Attachment(attachment_dict, bug)
+        patch._committer = committer
+        return patch
+
+    def test_validate(self):
+        self._expect_validate(self._mock_patch(), True)
+        self._expect_validate(self._mock_patch({'is_obsolete': True}), False)
+        self._expect_validate(self._mock_patch(bug_dict={'bug_status': 'CLOSED'}), False)
+        self._expect_validate(self._mock_patch(committer=None), False)
+        self._expect_validate(self._mock_patch({'review': '-'}), False)

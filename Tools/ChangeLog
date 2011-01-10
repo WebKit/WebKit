@@ -1,3 +1,26 @@
+2011-01-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Commit bot tried to land r? cq+ patch
+        https://bugs.webkit.org/show_bug.cgi?id=36638
+
+        It should now be possible to post a patch with r? and cq+ and the
+        commit-queue will correctly wait for the r+ before attempting to land the patch.
+        (This was a feature requested by several users.)
+
+        One caveat: We don't actually reject r-, cq+ patches from the queue
+        (we just ignore them), but I think that's OK for now.
+
+        I also noticed that setting r- once a commit-queue node had grabbed
+        a patch would not properly cancel the landing.  That's fixed and
+        tested in this patch.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+
 2011-01-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
