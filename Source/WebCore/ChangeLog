@@ -1,3 +1,28 @@
+2011-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Port combo box painting to GtkStyleContext
+        https://bugs.webkit.org/show_bug.cgi?id=51828
+
+        Use GtkStyleContext API to paint combo boxes when building with
+        GTK+ 3.x. Method paintButton() has been factored out and the new
+        static method renderButton() is used by both paintButton() and
+        paintMenuList().
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::adjustRepaintRect):
+        (WebCore::renderButton):
+        (WebCore::RenderThemeGtk::paintButton):
+        (WebCore::getComboBoxMetrics):
+        (WebCore::RenderThemeGtk::popupInternalPaddingLeft):
+        (WebCore::RenderThemeGtk::popupInternalPaddingRight):
+        (WebCore::RenderThemeGtk::popupInternalPaddingTop):
+        (WebCore::RenderThemeGtk::popupInternalPaddingBottom):
+        (WebCore::RenderThemeGtk::paintMenuList):
+
 2011-01-10  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

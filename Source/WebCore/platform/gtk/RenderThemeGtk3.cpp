@@ -38,6 +38,7 @@
 #include "UserAgentStyleSheets.h"
 #include "WidgetRenderingContext.h"
 #include "gtkdrawing.h"
+#include <cmath>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
@@ -46,6 +47,9 @@
 #endif
 
 namespace WebCore {
+
+// This is the default value defined by GTK+, where it was defined as MIN_ARROW_SIZE in gtkarrow.c.
+static const int minArrowSize = 15;
 
 typedef HashMap<GType, GRefPtr<GtkStyleContext> > StyleContextMap;
 static StyleContextMap& styleContextMap();
@@ -130,6 +134,8 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
         context = getStyleContext(part == SliderThumbHorizontalPart ?  GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
         break;
     case ButtonPart:
+    case MenulistButtonPart:
+    case MenulistPart:
         context = getStyleContext(GTK_TYPE_BUTTON);
         checkInteriorFocus = true;
         break;
@@ -274,17 +280,20 @@ bool RenderThemeGtk::paintRadio(RenderObject* renderObject, const PaintInfo& pai
     return false;
 }
 
-bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+static void renderButton(RenderTheme* theme, GtkStyleContext* context, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    GtkStyleContext* context = getStyleContext(GTK_TYPE_BUTTON);
-    gtk_style_context_save(context);
-
-    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
-    gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
-
     IntRect buttonRect(rect);
 
-    if (isDefault(renderObject)) {
+    guint flags = 0;
+    if (!theme->isEnabled(renderObject) || theme->isReadOnlyControl(renderObject))
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    else if (theme->isHovered(renderObject))
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    if (theme->isPressed(renderObject))
+        flags |= GTK_STATE_FLAG_ACTIVE;
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
+
+    if (theme->isDefault(renderObject)) {
         GtkBorder* borderPtr = 0;
         GtkBorder border = { 1, 1, 1, 1 };
 
@@ -301,19 +310,10 @@ bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& pa
         gtk_style_context_add_class(context, GTK_STYLE_CLASS_DEFAULT);
     }
 
-    guint flags = 0;
-    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
-        flags |= GTK_STATE_FLAG_INSENSITIVE;
-    else if (isHovered(renderObject))
-        flags |= GTK_STATE_FLAG_PRELIGHT;
-    if (isPressed(renderObject))
-        flags |= GTK_STATE_FLAG_ACTIVE;
-    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
-
     gtk_render_background(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
     gtk_render_frame(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
 
-    if (isFocused(renderObject)) {
+    if (theme->isFocused(renderObject)) {
         gint focusWidth, focusPad;
         gboolean displaceFocus, interiorFocus;
         gtk_style_context_get_style(context,
@@ -333,7 +333,7 @@ bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& pa
         } else
             buttonRect.inflate(focusWidth + focusPad);
 
-        if (displaceFocus && isPressed(renderObject)) {
+        if (displaceFocus && theme->isPressed(renderObject)) {
             gint childDisplacementX;
             gint childDisplacementY;
             gtk_style_context_get_style(context,
@@ -345,53 +345,238 @@ bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& pa
 
         gtk_render_focus(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
     }
+}
+bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_BUTTON);
+    gtk_style_context_save(context);
+
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
+
+    renderButton(this, context, renderObject, paintInfo, rect);
 
     gtk_style_context_restore(context);
 
     return false;
 }
 
-static void getComboBoxPadding(RenderStyle* style, int& left, int& top, int& right, int& bottom)
+static void getComboBoxMetrics(RenderStyle* style, GtkBorder& border, int& focus, int& separator)
 {
     // If this menu list button isn't drawn using the native theme, we
     // don't add any extra padding beyond what WebCore already uses.
     if (style->appearance() == NoControlPart)
         return;
-    moz_gtk_get_widget_border(MOZ_GTK_DROPDOWN, &left, &top, &right, &bottom,
-                              gtkTextDirection(style->direction()), TRUE);
+
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_BUTTON);
+    gtk_style_context_save(context);
+
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(style->direction())));
+
+    gtk_style_context_get_border(context, static_cast<GtkStateFlags>(0), &border);
+
+    gboolean interiorFocus;
+    gint focusWidth, focusPad;
+    gtk_style_context_get_style(context,
+                                "interior-focus", &interiorFocus,
+                                "focus-line-width", &focusWidth,
+                                "focus-padding", &focusPad, NULL);
+    focus = interiorFocus ? focusWidth + focusPad : 0;
+
+    gtk_style_context_restore(context);
+
+    context = getStyleContext(GTK_TYPE_SEPARATOR);
+    gtk_style_context_save(context);
+
+    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(style->direction()));
+    gtk_style_context_set_direction(context, direction);
+    gtk_style_context_add_class(context, "separator");
+
+    gboolean wideSeparators;
+    gint separatorWidth;
+    gtk_style_context_get_style(context,
+                                "wide-separators", &wideSeparators,
+                                "separator-width", &separatorWidth,
+                                NULL);
+
+    // GTK+ always uses border.left, regardless of text direction. See gtkseperator.c.
+    if (!wideSeparators)
+        separatorWidth = border.left;
+
+    separator = separatorWidth;
+
+    gtk_style_context_restore(context);
 }
 
 int RenderThemeGtk::popupInternalPaddingLeft(RenderStyle* style) const
 {
-    int left = 0, top = 0, right = 0, bottom = 0;
-    getComboBoxPadding(style, left, top, right, bottom);
+    GtkBorder borderWidth = { 0, 0, 0, 0 };
+    int focusWidth = 0, separatorWidth = 0;
+    getComboBoxMetrics(style, borderWidth, focusWidth, separatorWidth);
+    int left = borderWidth.left + focusWidth;
+    if (style->direction() == RTL)
+        left += separatorWidth + minArrowSize;
     return left;
 }
 
 int RenderThemeGtk::popupInternalPaddingRight(RenderStyle* style) const
 {
-    int left = 0, top = 0, right = 0, bottom = 0;
-    getComboBoxPadding(style, left, top, right, bottom);
+    GtkBorder borderWidth = { 0, 0, 0, 0 };
+    int focusWidth = 0, separatorWidth = 0;
+    getComboBoxMetrics(style, borderWidth, focusWidth, separatorWidth);
+    int right = borderWidth.right + focusWidth;
+    if (style->direction() == LTR)
+        right += separatorWidth + minArrowSize;
     return right;
 }
 
 int RenderThemeGtk::popupInternalPaddingTop(RenderStyle* style) const
 {
-    int left = 0, top = 0, right = 0, bottom = 0;
-    getComboBoxPadding(style, left, top, right, bottom);
-    return top;
+    GtkBorder borderWidth = { 0, 0, 0, 0 };
+    int focusWidth = 0, separatorWidth = 0;
+    getComboBoxMetrics(style, borderWidth, focusWidth, separatorWidth);
+    return borderWidth.top + focusWidth;
 }
 
 int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
 {
-    int left = 0, top = 0, right = 0, bottom = 0;
-    getComboBoxPadding(style, left, top, right, bottom);
-    return bottom;
+    GtkBorder borderWidth = { 0, 0, 0, 0 };
+    int focusWidth = 0, separatorWidth = 0;
+    getComboBoxMetrics(style, borderWidth, focusWidth, separatorWidth);
+    return borderWidth.bottom + focusWidth;
 }
 
-bool RenderThemeGtk::paintMenuList(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_DROPDOWN, object, info.context, rect);
+    cairo_t* cairoContext = paintInfo.context->platformContext();
+    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction()));
+
+    // Paint the button.
+    GtkStyleContext* buttonStyleContext = getStyleContext(GTK_TYPE_BUTTON);
+    gtk_style_context_save(buttonStyleContext);
+    gtk_style_context_set_direction(buttonStyleContext, direction);
+    gtk_style_context_add_class(buttonStyleContext, GTK_STYLE_CLASS_BUTTON);
+    renderButton(this, buttonStyleContext, renderObject, paintInfo, rect);
+
+    // Get the inner rectangle.
+    gint focusWidth, focusPad;
+    GtkBorder* innerBorderPtr = 0;
+    GtkBorder innerBorder = { 1, 1, 1, 1 };
+    gtk_style_context_get_style(buttonStyleContext,
+                                "inner-border", &innerBorderPtr,
+                                "focus-line-width", &focusWidth,
+                                "focus-padding", &focusPad,
+                                NULL);
+    if (innerBorderPtr) {
+        innerBorder = *innerBorderPtr;
+        gtk_border_free(innerBorderPtr);
+    }
+
+    GtkBorder borderWidth;
+    GtkStateFlags state = gtk_style_context_get_state(buttonStyleContext);
+    gtk_style_context_get_border(buttonStyleContext, state, &borderWidth);
+
+    focusWidth += focusPad;
+    IntRect innerRect(rect.x() + innerBorder.left + borderWidth.left + focusWidth,
+                      rect.y() + innerBorder.top + borderWidth.top + focusWidth,
+                      rect.width() - borderWidth.left - borderWidth.right - innerBorder.left - innerBorder.right - (2 * focusWidth),
+                      rect.height() - borderWidth.top - borderWidth.bottom - innerBorder.top - innerBorder.bottom - (2 * focusWidth));
+
+    if (isPressed(renderObject)) {
+        gint childDisplacementX;
+        gint childDisplacementY;
+        gtk_style_context_get_style(buttonStyleContext,
+                                    "child-displacement-x", &childDisplacementX,
+                                    "child-displacement-y", &childDisplacementY,
+                                    NULL);
+        innerRect.move(childDisplacementX, childDisplacementY);
+    }
+    innerRect.setWidth(max(1, innerRect.width()));
+    innerRect.setHeight(max(1, innerRect.height()));
+
+    gtk_style_context_restore(buttonStyleContext);
+
+    // Paint the arrow.
+    GtkStyleContext* arrowStyleContext = getStyleContext(GTK_TYPE_ARROW);
+    gtk_style_context_save(arrowStyleContext);
+
+    gtk_style_context_set_direction(arrowStyleContext, direction);
+    gtk_style_context_add_class(arrowStyleContext, "arrow");
+    gtk_style_context_add_class(arrowStyleContext, GTK_STYLE_CLASS_BUTTON);
+
+    gfloat arrowScaling;
+    gtk_style_context_get_style(arrowStyleContext, "arrow-scaling", &arrowScaling, NULL);
+
+    IntSize arrowSize(minArrowSize, innerRect.height());
+    IntPoint arrowPosition = innerRect.location();
+    if (direction == GTK_TEXT_DIR_LTR)
+        arrowPosition.move(innerRect.width() - arrowSize.width(), 0);
+
+    // GTK+ actually fetches the xalign and valign values from the widget, but since we
+    // don't have a widget here, we are just using the default xalign and valign values of 0.5.
+    gint extent = std::min(arrowSize.width(), arrowSize.height()) * arrowScaling;
+    arrowPosition.move(std::floor((arrowSize.width() - extent) / 2), std::floor((arrowSize.height() - extent) / 2));
+
+    gtk_style_context_set_state(arrowStyleContext, state);
+    gtk_render_arrow(arrowStyleContext, cairoContext, G_PI, arrowPosition.x(), arrowPosition.y(), extent);
+
+    gtk_style_context_restore(arrowStyleContext);
+
+    // Paint the separator if needed.
+    GtkStyleContext* separatorStyleContext = getStyleContext(GTK_TYPE_SEPARATOR);
+    gtk_style_context_save(separatorStyleContext);
+
+    gtk_style_context_set_direction(separatorStyleContext, direction);
+    gtk_style_context_add_class(separatorStyleContext, "separator");
+    gtk_style_context_add_class(separatorStyleContext, GTK_STYLE_CLASS_BUTTON);
+
+    gboolean wideSeparators;
+    gint separatorWidth;
+    gtk_style_context_get_style(separatorStyleContext,
+                                "wide-separators", &wideSeparators,
+                                "separator-width", &separatorWidth,
+                                NULL);
+    if (wideSeparators && !separatorWidth) {
+        gtk_style_context_restore(separatorStyleContext);
+        return false;
+    }
+
+    gtk_style_context_set_state(separatorStyleContext, state);
+    IntPoint separatorPosition(arrowPosition.x(), innerRect.y());
+    if (wideSeparators) {
+        if (direction == GTK_TEXT_DIR_LTR)
+            separatorPosition.move(-separatorWidth, 0);
+        else
+            separatorPosition.move(arrowSize.width(), 0);
+
+        gtk_render_frame(separatorStyleContext, cairoContext,
+                         separatorPosition.x(), separatorPosition.y(),
+                         separatorWidth, innerRect.height());
+    } else {
+        GtkBorder padding;
+        gtk_style_context_get_padding(separatorStyleContext, state, &padding);
+        GtkBorder border;
+        gtk_style_context_get_border(separatorStyleContext, state, &border);
+
+        if (direction == GTK_TEXT_DIR_LTR)
+            separatorPosition.move(-(padding.left + border.left), 0);
+        else
+            separatorPosition.move(arrowSize.width(), 0);
+
+        cairo_save(cairoContext);
+
+        // An extra clip prevents the separator bleeding outside of the specified rectangle because of subpixel positioning.
+        cairo_rectangle(cairoContext, separatorPosition.x(), separatorPosition.y(), border.left, innerRect.height());
+        cairo_clip(cairoContext);
+        gtk_render_line(separatorStyleContext, cairoContext,
+                        separatorPosition.x(), separatorPosition.y(),
+                        separatorPosition.x(), innerRect.bottom());
+        cairo_restore(cairoContext);
+    }
+
+    gtk_style_context_restore(separatorStyleContext);
+    return false;
 }
 
 bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
