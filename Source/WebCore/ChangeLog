@@ -1,3 +1,17 @@
+2011-01-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [WIN] Add ProxyServerWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=52031
+
+        Add stub implementation to fix ENABLE_NETSCAPE_PLUGIN_API on WinCE.
+
+        * CMakeLists.txt:
+        * CMakeListsWinCE.txt:
+        * platform/network/win/ProxyServerWin.cpp: Added.
+        (WebCore::proxyServersForURL):
+
 2011-01-10  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

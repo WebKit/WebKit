@@ -74,6 +74,7 @@ LIST(APPEND WebCore_SOURCES
 
     platform/network/win/CookieJarWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
+    platform/network/win/ProxyServerWin.cpp
     platform/network/win/ResourceHandleWin.cpp
     platform/network/win/SocketStreamHandleWin.cpp
 
