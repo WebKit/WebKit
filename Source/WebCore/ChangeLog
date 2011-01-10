@@ -1,3 +1,15 @@
+2011-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r75341.
+        http://trac.webkit.org/changeset/75341
+        https://bugs.webkit.org/show_bug.cgi?id=52157
+
+        Regressions on several pixel tests (Requested by jorlow on
+        #webkit).
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillPath):
+
 2011-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
