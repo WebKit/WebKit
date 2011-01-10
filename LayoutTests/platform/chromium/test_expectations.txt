@@ -3084,8 +3084,6 @@ BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 
 // Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
 // should now pass with upstream mac baselines).
-BUG_MIHAIP MAC : fast/forms/file-input-direction.html = IMAGE
-BUG_MIHAIP MAC : fast/forms/search-transformed.html = IMAGE
 BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
 BUG_MIHAIP MAC : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE
 BUG_MIHAIP MAC : fast/repaint/fixed-tranformed.html = IMAGE

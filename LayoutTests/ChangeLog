@@ -1,3 +1,24 @@
+2011-01-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+        
+        Rebaseline two tests in fast/forms for chromium-mac. Even after the 
+        scrollbar switch they need Chromium-specific results since search and
+        file upload control rendering is different from the mac port's.
+        
+        Adds both Leopard (chromium-mac-leopard) and Snow Leopard (chromium-mac)
+        baselines.
+
+        * platform/chromium-mac-leopard/fast/forms/file-input-direction-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/forms/file-input-direction-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/file-input-direction-expected.png.
+        * platform/chromium-mac-leopard/fast/forms/search-transformed-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/forms/search-transformed-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/search-transformed-expected.png.
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.checksum:
+        * platform/chromium-mac/fast/forms/file-input-direction-expected.png:
+        * platform/chromium-mac/fast/forms/search-transformed-expected.checksum:
+        * platform/chromium-mac/fast/forms/search-transformed-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed. Add Qt specific expected file.
