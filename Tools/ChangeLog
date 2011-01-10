@@ -1,3 +1,11 @@
+2011-01-10  Adam Roben  <aroben@apple.com>
+
+        Roll out r75392
+
+        It isn't needed now that r75289 has been rolled out.
+
+        * Scripts/run-javascriptcore-tests:
+
 2011-01-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.
