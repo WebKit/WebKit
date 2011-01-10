@@ -1,3 +1,11 @@
+2011-01-10  Adam Roben  <aroben@apple.com>
+
+        Skip some asserting JS tests
+
+        See <http://webkit.org/b/52156>.
+
+        * Scripts/run-javascriptcore-tests:
+
 2011-01-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

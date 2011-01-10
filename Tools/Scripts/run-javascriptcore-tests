@@ -51,6 +51,10 @@ my @testsToSkip = (
     "ecma/Date/15.9.2.2-6.js",
     # ecma_3/Date/15.9.5.7.js fails on Mac (but not Windows) https://bugs.webkit.org/show_bug.cgi?id=25161
     "ecma_3/Date/15.9.5.7.js",
+    # These tests assert on Windows http://webkit.org/b/52156
+    "js1_5/Regress/regress-152646.js",
+    "js1_5/Regress/regress-192414.js",
+    "js1_5/Regress/regress-96526-002.js",
 );
 
 my $jsDriverArgs = "-L " . join(" ", @testsToSkip);
