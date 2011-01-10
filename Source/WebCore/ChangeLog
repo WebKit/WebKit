@@ -1,3 +1,24 @@
+2011-01-10  François Sausset  <sausset@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        MathML: vertical alignment & bar thickness adjustments of fractions.
+        https://bugs.webkit.org/show_bug.cgi?id=50018
+
+        The fraction bar thickness default value should follow the w3c MathML 3 recommendation:
+        http://www.w3.org/TR/MathML3/chapter3.html#presm.mfrac
+        The vertical alignment of the fraction bar should be more accurate, specially with operators (+,=,...).
+
+        Test: mathml/presentation/fractions.xhtml
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::RenderMathMLFraction):
+        (WebCore::RenderMathMLFraction::updateFromElement):
+        (WebCore::RenderMathMLFraction::layout):
+        (WebCore::RenderMathMLFraction::paint):
+        (WebCore::RenderMathMLFraction::baselinePosition):
+        * rendering/mathml/RenderMathMLFraction.h:
+
 2011-01-10  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alexey Proskuryakov.

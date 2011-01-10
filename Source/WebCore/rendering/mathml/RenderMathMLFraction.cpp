@@ -39,16 +39,15 @@ namespace WebCore {
 using namespace MathMLNames;
 
 static const double gHorizontalPad = 0.2;
-static const int gLineThin = 1;
-static const int gLineMedium = 3;
-static const int gLineThick = 5;
-static const double gFractionAlignment = 0.25;
+static const double gLineThin = 0.33;
+static const double gLineMedium = 1.;
+static const double gLineThick = 3.;
 static const double gFractionBarWidth = 0.05;
 static const double gDenominatorPad = 0.1;
 
 RenderMathMLFraction::RenderMathMLFraction(Element* fraction) 
     : RenderMathMLBlock(fraction)
-    , m_lineThickness(gLineThin)
+    , m_lineThickness(gLineMedium)
 {
     setChildrenInline(false);
 }
@@ -84,7 +83,7 @@ void RenderMathMLFraction::updateFromElement()
     
     // FIXME: parse units
     String thickness = fraction->getAttribute(MathMLNames::linethicknessAttr);
-    m_lineThickness = gLineThin;
+    m_lineThickness = gLineMedium;
     if (equalIgnoringCase(thickness, "thin"))
         m_lineThickness = gLineThin;
     else if (equalIgnoringCase(thickness, "medium"))
@@ -125,7 +124,7 @@ void RenderMathMLFraction::layout()
 
     // Adjust the fraction line thickness for the zoom
     if (lastChild() && lastChild()->isRenderBlock())
-        m_lineThickness = static_cast<int>(m_lineThickness * ceil(gFractionBarWidth * style()->fontSize()));
+        m_lineThickness *= ceil(gFractionBarWidth * style()->fontSize());
 
     RenderBlock::layout();
 
@@ -143,8 +142,8 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     int verticalOffset = 0;
     // The children are always RenderMathMLBlock instances
     if (firstChild()->isRenderMathMLBlock()) {
-        int adjustForThickness = m_lineThickness > 1 ? m_lineThickness / 2 : 1;
-        if (m_lineThickness % 2 == 1)
+        int adjustForThickness = m_lineThickness > 1 ? int(m_lineThickness / 2) : 1;
+        if (int(m_lineThickness) % 2 == 1)
             adjustForThickness++;
         RenderMathMLBlock* numerator = toRenderMathMLBlock(firstChild());
         if (numerator->isRenderMathMLRow())
@@ -158,7 +157,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     
     info.context->save();
     
-    info.context->setStrokeThickness(static_cast<float>(m_lineThickness));
+    info.context->setStrokeThickness(m_lineThickness);
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
     
@@ -171,11 +170,13 @@ int RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, LineDir
 {
     if (firstChild() && firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* numerator = toRenderMathMLBlock(firstChild());
-        // FIXME: the baseline should adjust so the fraction line aligns
-        // relative certain operators (e.g. aligns with the horizontal
-        // stroke of the plus).  1/3 of the current font size is just
-        // a good guess.
-        return numerator->offsetHeight() + style()->fontSize() / 3;
+        RenderStyle* refStyle = style();
+        if (previousSibling())
+            refStyle = previousSibling()->style();
+        else if (nextSibling())
+            refStyle = nextSibling()->style();
+        int shift = int(ceil((refStyle->font().xHeight() + 1) / 2));
+        return numerator->offsetHeight() + shift;
     }
     return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
 }

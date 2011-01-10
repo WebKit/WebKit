@@ -43,7 +43,7 @@ public:
 protected:
     virtual void layout();
 private:
-    int m_lineThickness;
+    double m_lineThickness;
 };
 
 }
