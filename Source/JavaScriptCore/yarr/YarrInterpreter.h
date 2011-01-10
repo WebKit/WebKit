@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RegexInterpreter_h
-#define RegexInterpreter_h
+#ifndef YarrInterpreter_h
+#define YarrInterpreter_h
 
-#include "RegexParser.h"
-#include "RegexPattern.h"
+#include "YarrParser.h"
+#include "YarrPattern.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -329,7 +329,7 @@ public:
 };
 
 struct BytecodePattern : FastAllocBase {
-    BytecodePattern(PassOwnPtr<ByteDisjunction> body, Vector<ByteDisjunction*> allParenthesesInfo, RegexPattern& pattern, BumpPointerAllocator* allocator)
+    BytecodePattern(PassOwnPtr<ByteDisjunction> body, Vector<ByteDisjunction*> allParenthesesInfo, YarrPattern& pattern, BumpPointerAllocator* allocator)
         : m_body(body)
         , m_ignoreCase(pattern.m_ignoreCase)
         , m_multiline(pattern.m_multiline)
@@ -341,7 +341,7 @@ struct BytecodePattern : FastAllocBase {
 
         m_allParenthesesInfo.append(allParenthesesInfo);
         m_userCharacterClasses.append(pattern.m_userCharacterClasses);
-        // 'Steal' the RegexPattern's CharacterClasses!  We clear its
+        // 'Steal' the YarrPattern's CharacterClasses!  We clear its
         // array, so that it won't delete them on destruction.  We'll
         // take responsibility for that.
         pattern.m_userCharacterClasses.clear();
@@ -360,7 +360,7 @@ struct BytecodePattern : FastAllocBase {
     bool m_multiline;
     bool m_containsBeginChars;
     // Each BytecodePattern is associated with a RegExp, each RegExp is associated
-    // with a JSGlobalData.  Cache a pointer to out JSGlobalData's m_regexAllocator.
+    // with a JSGlobalData.  Cache a pointer to out JSGlobalData's m_regExpAllocator.
     BumpPointerAllocator* m_allocator;
 
     CharacterClass* newlineCharacterClass;
@@ -373,9 +373,9 @@ private:
     Vector<CharacterClass*> m_userCharacterClasses;
 };
 
-PassOwnPtr<BytecodePattern> byteCompileRegex(RegexPattern& pattern, BumpPointerAllocator*);
-int interpretRegex(BytecodePattern* v_regex, const UChar* input, unsigned start, unsigned length, int* output);
+PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
+int interpret(BytecodePattern*, const UChar* input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr
 
-#endif // RegexInterpreter_h
+#endif // YarrInterpreter_h

@@ -208,9 +208,9 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/TimeoutChecker.cpp \
     runtime/UString.cpp \
-    yarr/RegexPattern.cpp \
-    yarr/RegexInterpreter.cpp \
-    yarr/RegexJIT.cpp \
+    yarr/YarrPattern.cpp \
+    yarr/YarrInterpreter.cpp \
+    yarr/YarrJIT.cpp \
     yarr/YarrSyntaxChecker.cpp
 
 # Generated files, simply list them for JavaScriptCore

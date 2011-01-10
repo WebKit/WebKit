@@ -229,8 +229,7 @@ namespace JSC {
         int maxReentryDepth;
 
         RegExpCache* m_regExpCache;
-
-        BumpPointerAllocator m_regexAllocator;
+        BumpPointerAllocator m_regExpAllocator;
 
 #if ENABLE(REGEXP_TRACING)
         typedef ListHashSet<RefPtr<RegExp> > RTTraceList;

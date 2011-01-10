@@ -23,13 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RegexJIT_h
-#define RegexJIT_h
+#ifndef YarrJIT_h
+#define YarrJIT_h
 
 #if ENABLE(YARR_JIT)
 
 #include "MacroAssembler.h"
-#include "RegexPattern.h"
+#include "YarrPattern.h"
 #include "UString.h"
 
 #if CPU(X86) && !COMPILER(MSVC)
@@ -45,16 +45,16 @@ class ExecutablePool;
 
 namespace Yarr {
 
-class RegexCodeBlock {
-    typedef int (*RegexJITCode)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
+class YarrCodeBlock {
+    typedef int (*YarrJITCode)(const UChar* input, unsigned start, unsigned length, int* output) YARR_CALL;
 
 public:
-    RegexCodeBlock()
+    YarrCodeBlock()
         : m_needFallBack(false)
     {
     }
 
-    ~RegexCodeBlock()
+    ~YarrCodeBlock()
     {
     }
 
@@ -64,7 +64,7 @@ public:
 
     int execute(const UChar* input, unsigned start, unsigned length, int* output)
     {
-        return reinterpret_cast<RegexJITCode>(m_ref.m_code.executableAddress())(input, start, length, output);
+        return reinterpret_cast<YarrJITCode>(m_ref.m_code.executableAddress())(input, start, length, output);
     }
 
 #if ENABLE(REGEXP_TRACING)
@@ -76,9 +76,9 @@ private:
     bool m_needFallBack;
 };
 
-void jitCompileRegex(RegexPattern& pattern, JSGlobalData* globalData, RegexCodeBlock& jitObject);
+void jitCompile(YarrPattern&, JSGlobalData*, YarrCodeBlock& jitObject);
 
-inline int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
+inline int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
 {
     return jitObject.execute(input, start, length, output);
 }
@@ -87,4 +87,4 @@ inline int executeRegex(RegexCodeBlock& jitObject, const UChar* input, unsigned 
 
 #endif
 
-#endif // RegexJIT_h
+#endif // YarrJIT_h

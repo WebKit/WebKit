@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
+#include "YarrPattern.h"
 
-#include "RegexInterpreter.h"
-#include "RegexPattern.h"
+#include "YarrInterpreter.h"
 #include <wtf/Vector.h>
 
 using namespace WTF;
@@ -338,17 +338,20 @@ private:
     bool m_isCaseInsensitive;
 };
 
-class RegexPatternConstructor {
+class YarrPatternConstructor {
 public:
-    RegexPatternConstructor(RegexPattern& pattern)
+    YarrPatternConstructor(YarrPattern& pattern)
         : m_pattern(pattern)
         , m_characterClassConstructor(pattern.m_ignoreCase)
         , m_beginCharHelper(&pattern.m_beginChars, pattern.m_ignoreCase)
         , m_invertParentheticalAssertion(false)
     {
+        m_pattern.m_body = new PatternDisjunction();
+        m_alternative = m_pattern.m_body->addNewAlternative();
+        m_pattern.m_disjunctions.append(m_pattern.m_body);
     }
 
-    ~RegexPatternConstructor()
+    ~YarrPatternConstructor()
     {
     }
 
@@ -356,6 +359,10 @@ public:
     {
         m_pattern.reset();
         m_characterClassConstructor.reset();
+
+        m_pattern.m_body = new PatternDisjunction();
+        m_alternative = m_pattern.m_body->addNewAlternative();
+        m_pattern.m_disjunctions.append(m_pattern.m_body);
     }
     
     void assertionBOL()
@@ -605,13 +612,6 @@ public:
         m_alternative = m_alternative->m_parent->addNewAlternative();
     }
 
-    void regexBegin()
-    {
-        m_pattern.m_body = new PatternDisjunction();
-        m_alternative = m_pattern.m_body->addNewAlternative();
-        m_pattern.m_disjunctions.append(m_pattern.m_body);
-    }
-
     unsigned setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition)
     {
         alternative->m_hasFixedSize = true;
@@ -630,7 +630,7 @@ public:
             case PatternTerm::TypeBackReference:
                 term.inputPosition = currentInputPosition;
                 term.frameLocation = currentCallFrameSize;
-                currentCallFrameSize += RegexStackSpaceForBackTrackInfoBackReference;
+                currentCallFrameSize += YarrStackSpaceForBackTrackInfoBackReference;
                 alternative->m_hasFixedSize = false;
                 break;
 
@@ -641,7 +641,7 @@ public:
                 term.inputPosition = currentInputPosition;
                 if (term.quantityType != QuantifierFixedCount) {
                     term.frameLocation = currentCallFrameSize;
-                    currentCallFrameSize += RegexStackSpaceForBackTrackInfoPatternCharacter;
+                    currentCallFrameSize += YarrStackSpaceForBackTrackInfoPatternCharacter;
                     alternative->m_hasFixedSize = false;
                 } else
                     currentInputPosition += term.quantityCount;
@@ -651,7 +651,7 @@ public:
                 term.inputPosition = currentInputPosition;
                 if (term.quantityType != QuantifierFixedCount) {
                     term.frameLocation = currentCallFrameSize;
-                    currentCallFrameSize += RegexStackSpaceForBackTrackInfoCharacterClass;
+                    currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
                     alternative->m_hasFixedSize = false;
                 } else
                     currentInputPosition += term.quantityCount;
@@ -662,20 +662,20 @@ public:
                 term.frameLocation = currentCallFrameSize;
                 if (term.quantityCount == 1 && !term.parentheses.isCopy) {
                     if (term.quantityType != QuantifierFixedCount)
-                        currentCallFrameSize += RegexStackSpaceForBackTrackInfoParenthesesOnce;
+                        currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesOnce;
                     currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition);
                     // If quantity is fixed, then pre-check its minimum size.
                     if (term.quantityType == QuantifierFixedCount)
                         currentInputPosition += term.parentheses.disjunction->m_minimumSize;
                     term.inputPosition = currentInputPosition;
                 } else if (term.parentheses.isTerminal) {
-                    currentCallFrameSize += RegexStackSpaceForBackTrackInfoParenthesesTerminal;
+                    currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesTerminal;
                     currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition);
                     term.inputPosition = currentInputPosition;
                 } else {
                     term.inputPosition = currentInputPosition;
                     setupDisjunctionOffsets(term.parentheses.disjunction, 0, currentInputPosition);
-                    currentCallFrameSize += RegexStackSpaceForBackTrackInfoParentheses;
+                    currentCallFrameSize += YarrStackSpaceForBackTrackInfoParentheses;
                 }
                 // Fixed count of 1 could be accepted, if they have a fixed size *AND* if all alternatives are of the same length.
                 alternative->m_hasFixedSize = false;
@@ -684,7 +684,7 @@ public:
             case PatternTerm::TypeParentheticalAssertion:
                 term.inputPosition = currentInputPosition;
                 term.frameLocation = currentCallFrameSize;
-                currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + RegexStackSpaceForBackTrackInfoParentheticalAssertion, currentInputPosition);
+                currentCallFrameSize = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + YarrStackSpaceForBackTrackInfoParentheticalAssertion, currentInputPosition);
                 break;
             }
         }
@@ -696,7 +696,7 @@ public:
     unsigned setupDisjunctionOffsets(PatternDisjunction* disjunction, unsigned initialCallFrameSize, unsigned initialInputPosition)
     {
         if ((disjunction != m_pattern.m_body) && (disjunction->m_alternatives.size() > 1))
-            initialCallFrameSize += RegexStackSpaceForBackTrackInfoAlternative;
+            initialCallFrameSize += YarrStackSpaceForBackTrackInfoAlternative;
 
         unsigned minimumInputSize = UINT_MAX;
         unsigned maximumCallFrameSize = 0;
@@ -921,7 +921,7 @@ public:
     }
 
 private:
-    RegexPattern& m_pattern;
+    YarrPattern& m_pattern;
     PatternAlternative* m_alternative;
     CharacterClassConstructor m_characterClassConstructor;
     BeginCharHelper m_beginCharHelper;
@@ -930,11 +930,10 @@ private:
 };
 
 
-static const char* compileRegex(const UString& patternString, RegexPattern& pattern)
+static const char* compile(const UString& patternString, YarrPattern& pattern)
 {
-    RegexPatternConstructor constructor(pattern);
+    YarrPatternConstructor constructor(pattern);
 
-    constructor.regexBegin();
     if (const char* error = parse(constructor, patternString))
         return error;
     
@@ -946,7 +945,6 @@ static const char* compileRegex(const UString& patternString, RegexPattern& patt
         unsigned numSubpatterns = pattern.m_numSubpatterns;
 
         constructor.reset();
-        constructor.regexBegin();
 #if !ASSERT_DISABLED
         const char* error =
 #endif
@@ -965,7 +963,7 @@ static const char* compileRegex(const UString& patternString, RegexPattern& patt
     return 0;
 };
 
-RegexPattern::RegexPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error)
+YarrPattern::YarrPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error)
     : m_ignoreCase(ignoreCase)
     , m_multiline(multiline)
     , m_containsBackreferences(false)
@@ -981,7 +979,7 @@ RegexPattern::RegexPattern(const UString& pattern, bool ignoreCase, bool multili
     , nonspacesCached(0)
     , nonwordcharCached(0)
 {
-    *error = compileRegex(pattern, *this);
+    *error = compile(pattern, *this);
 }
 
 } }

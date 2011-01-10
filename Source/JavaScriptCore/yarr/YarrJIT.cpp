@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "RegexJIT.h"
+#include "YarrJIT.h"
 
 #include "ASCIICType.h"
 #include "JSGlobalData.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
-#include "RegexParser.h"
+#include "YarrParser.h"
 
 #if ENABLE(YARR_JIT)
 
@@ -38,8 +38,8 @@ using namespace WTF;
 
 namespace JSC { namespace Yarr {
 
-class RegexGenerator : private MacroAssembler {
-    friend void jitCompileRegex(JSGlobalData* globalData, RegexCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
+class YarrGenerator : private MacroAssembler {
+    friend void jitCompile(JSGlobalData*, YarrCodeBlock& jitObject, const UString& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
 #if CPU(ARM)
     static const RegisterID input = ARMRegisters::r0;
@@ -383,7 +383,7 @@ class RegexGenerator : private MacroAssembler {
             return parenthesesTail;
         }
 
-        void emitParenthesesTail(RegexGenerator* generator)
+        void emitParenthesesTail(YarrGenerator* generator)
         {
             unsigned vectorSize = m_parenTails.size();
             bool priorBacktrackFallThrough = false;
@@ -430,7 +430,7 @@ class RegexGenerator : private MacroAssembler {
             m_parenTailsForIteration.clear();
         }
 
-        void linkToNextIteration(RegexGenerator* generator)
+        void linkToNextIteration(YarrGenerator* generator)
         {
             m_jumpsToNextInteration.linkTo(m_nextIteration, generator);
         }
@@ -652,7 +652,7 @@ class RegexGenerator : private MacroAssembler {
                 m_backTrackJumps.append(masm->jump());
         }
 
-        void jumpToBacktrack(RegexGenerator* generator, Jump jump)
+        void jumpToBacktrack(YarrGenerator* generator, Jump jump)
         {
             if (isJumpList()) {
                 if (m_backtrackSourceLabel && (m_backtrackSourceLabel->isSet()))
@@ -667,7 +667,7 @@ class RegexGenerator : private MacroAssembler {
                 m_backTrackJumps.append(jump);
         }
 
-        void jumpToBacktrack(RegexGenerator* generator, JumpList& jumps)
+        void jumpToBacktrack(YarrGenerator* generator, JumpList& jumps)
         {
             if (isJumpList()) {
                 if (m_backtrackSourceLabel && (m_backtrackSourceLabel->isSet()))
@@ -682,7 +682,7 @@ class RegexGenerator : private MacroAssembler {
                 m_backTrackJumps.append(jumps);
         }
 
-        bool linkDataLabelToHereIfExists(RegexGenerator* generator)
+        bool linkDataLabelToHereIfExists(YarrGenerator* generator)
         {
             if (hasDataLabel()) {
                 generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(getDataLabel(), generator->label()));
@@ -693,7 +693,7 @@ class RegexGenerator : private MacroAssembler {
             return false;
         }
 
-        bool plantJumpToBacktrackIfExists(RegexGenerator* generator)
+        bool plantJumpToBacktrackIfExists(YarrGenerator* generator)
         {
             if (isJumpList()) {
                 if (m_backtrackSourceLabel && (m_backtrackSourceLabel->isSet()))
@@ -721,7 +721,7 @@ class RegexGenerator : private MacroAssembler {
             return false;
         }
 
-        void linkAlternativeBacktracks(RegexGenerator* generator, bool nextIteration = false)
+        void linkAlternativeBacktracks(YarrGenerator* generator, bool nextIteration = false)
         {
             Label hereLabel = generator->label();
 
@@ -743,7 +743,7 @@ class RegexGenerator : private MacroAssembler {
             clear();
         }
 
-        void linkAlternativeBacktracksTo(RegexGenerator* generator, Label label, bool nextIteration = false)
+        void linkAlternativeBacktracksTo(YarrGenerator* generator, Label label, bool nextIteration = false)
         {
             m_backTrackJumps.linkTo(label, generator);
 
@@ -877,22 +877,22 @@ class RegexGenerator : private MacroAssembler {
             m_backtrack.jumpToBacktrack(masm);
         }
 
-        void jumpToBacktrack(RegexGenerator* generator, Jump jump)
+        void jumpToBacktrack(YarrGenerator* generator, Jump jump)
         {
             m_backtrack.jumpToBacktrack(generator, jump);
         }
 
-        void jumpToBacktrack(RegexGenerator* generator, JumpList& jumps)
+        void jumpToBacktrack(YarrGenerator* generator, JumpList& jumps)
         {
             m_backtrack.jumpToBacktrack(generator, jumps);
         }
 
-        bool plantJumpToBacktrackIfExists(RegexGenerator* generator)
+        bool plantJumpToBacktrackIfExists(YarrGenerator* generator)
         {
             return m_backtrack.plantJumpToBacktrackIfExists(generator);
         }
 
-        bool linkDataLabelToBacktrackIfExists(RegexGenerator* generator)
+        bool linkDataLabelToBacktrackIfExists(YarrGenerator* generator)
         {
             if ((m_backtrack.isLabel()) && (m_backtrack.hasDataLabel())) {
                 generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(m_backtrack.getDataLabel(), m_backtrack.getLabel()));
@@ -923,13 +923,13 @@ class RegexGenerator : private MacroAssembler {
             m_backtrack.setLabel(label);
         }
 
-        void linkAlternativeBacktracks(RegexGenerator* generator, bool nextIteration = false)
+        void linkAlternativeBacktracks(YarrGenerator* generator, bool nextIteration = false)
         {
             m_backtrack.linkAlternativeBacktracks(generator, nextIteration);
             m_linkedBacktrack = 0;
         }
 
-        void linkAlternativeBacktracksTo(RegexGenerator* generator, Label label, bool nextIteration = false)
+        void linkAlternativeBacktracksTo(YarrGenerator* generator, Label label, bool nextIteration = false)
         {
             m_backtrack.linkAlternativeBacktracksTo(generator, label, nextIteration);
         }
@@ -956,7 +956,7 @@ class RegexGenerator : private MacroAssembler {
             return m_backtrack;
         }
 
-        void propagateBacktrackingFrom(RegexGenerator* generator, BacktrackDestination& backtrack, bool doJump = true)
+        void propagateBacktrackingFrom(YarrGenerator* generator, BacktrackDestination& backtrack, bool doJump = true)
         {
             if (doJump)
                 m_backtrack.jumpToBacktrack(generator, backtrack.getBacktrackJumps());
@@ -989,7 +989,7 @@ class RegexGenerator : private MacroAssembler {
         {
         }
 
-        void processBacktracks(RegexGenerator* generator, TermGenerationState& state, TermGenerationState& parenthesesState, Label nonGreedyTryParentheses, Label fallThrough)
+        void processBacktracks(YarrGenerator* generator, TermGenerationState& state, TermGenerationState& parenthesesState, Label nonGreedyTryParentheses, Label fallThrough)
         {
             m_nonGreedyTryParentheses = nonGreedyTryParentheses;
             m_fallThrough = fallThrough;
@@ -1029,7 +1029,7 @@ class RegexGenerator : private MacroAssembler {
             m_pattBacktrackJumps.append(jump);
         }
 
-        bool generateCode(RegexGenerator* generator, JumpList& jumpsToNext, bool priorBackTrackFallThrough, bool nextBacktrackFallThrough)
+        bool generateCode(YarrGenerator* generator, JumpList& jumpsToNext, bool priorBackTrackFallThrough, bool nextBacktrackFallThrough)
         {
             const RegisterID indexTemporary = regT0;
             unsigned parenthesesFrameLocation = m_term.frameLocation;
@@ -1605,7 +1605,7 @@ class RegexGenerator : private MacroAssembler {
         unsigned parenthesesFrameLocation = term.frameLocation;
         unsigned alternativeFrameLocation = parenthesesFrameLocation;
         if (term.quantityType != QuantifierFixedCount)
-            alternativeFrameLocation += RegexStackSpaceForBackTrackInfoParenthesesOnce;
+            alternativeFrameLocation += YarrStackSpaceForBackTrackInfoParenthesesOnce;
 
         // optimized case - no capture & no quantifier can be handled in a light-weight manner.
         if (!term.capture() && (term.quantityType == QuantifierFixedCount)) {
@@ -1738,7 +1738,7 @@ class RegexGenerator : private MacroAssembler {
         ASSERT(term.quantityType == QuantifierFixedCount);
 
         unsigned parenthesesFrameLocation = term.frameLocation;
-        unsigned alternativeFrameLocation = parenthesesFrameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertion;
+        unsigned alternativeFrameLocation = parenthesesFrameLocation + YarrStackSpaceForBackTrackInfoParentheticalAssertion;
 
         int countCheckedAfterAssertion = state.checkedTotal - term.inputPosition;
 
@@ -2163,7 +2163,7 @@ class RegexGenerator : private MacroAssembler {
     }
 
 public:
-    RegexGenerator(RegexPattern& pattern)
+    YarrGenerator(YarrPattern& pattern)
         : m_pattern(pattern)
         , m_shouldFallBack(false)
     {
@@ -2182,7 +2182,7 @@ public:
         generateDisjunction(m_pattern.m_body);
     }
 
-    void compile(JSGlobalData* globalData, RegexCodeBlock& jitObject)
+    void compile(JSGlobalData* globalData, YarrCodeBlock& jitObject)
     {
         generate();
 
@@ -2196,14 +2196,14 @@ public:
     }
 
 private:
-    RegexPattern& m_pattern;
+    YarrPattern& m_pattern;
     bool m_shouldFallBack;
     GenerationState m_expressionState;
 };
 
-void jitCompileRegex(RegexPattern& pattern, JSGlobalData* globalData, RegexCodeBlock& jitObject)
+void jitCompile(YarrPattern& pattern, JSGlobalData* globalData, YarrCodeBlock& jitObject)
 {
-    RegexGenerator generator(pattern);
+    YarrGenerator generator(pattern);
     generator.compile(globalData, jitObject);
 }
 

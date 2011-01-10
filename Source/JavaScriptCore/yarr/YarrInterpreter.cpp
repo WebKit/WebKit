@@ -25,9 +25,9 @@
  */
 
 #include "config.h"
-#include "RegexInterpreter.h"
+#include "YarrInterpreter.h"
 
-#include "RegexPattern.h"
+#include "YarrPattern.h"
 #include <wtf/BumpPointerAllocator.h>
 
 #ifndef NDEBUG
@@ -1433,7 +1433,7 @@ class ByteCompiler {
     };
 
 public:
-    ByteCompiler(RegexPattern& pattern)
+    ByteCompiler(YarrPattern& pattern)
         : m_pattern(pattern)
     {
         m_currentAlternativeIndex = 0;
@@ -1825,14 +1825,14 @@ public:
                         if (term.quantityType == QuantifierFixedCount)
                             disjunctionAlreadyCheckedCount = term.parentheses.disjunction->m_minimumSize;
                         else
-                            alternativeFrameLocation += RegexStackSpaceForBackTrackInfoParenthesesOnce;
+                            alternativeFrameLocation += YarrStackSpaceForBackTrackInfoParenthesesOnce;
                         unsigned delegateEndInputOffset = term.inputPosition - currentCountAlreadyChecked;
                         atomParenthesesOnceBegin(term.parentheses.subpatternId, term.capture(), delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, alternativeFrameLocation);
                         emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount);
                         atomParenthesesOnceEnd(delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType);
                     } else if (term.parentheses.isTerminal) {
                         unsigned delegateEndInputOffset = term.inputPosition - currentCountAlreadyChecked;
-                        atomParenthesesTerminalBegin(term.parentheses.subpatternId, term.capture(), delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, term.frameLocation + RegexStackSpaceForBackTrackInfoParenthesesOnce);
+                        atomParenthesesTerminalBegin(term.parentheses.subpatternId, term.capture(), delegateEndInputOffset - disjunctionAlreadyCheckedCount, term.frameLocation, term.frameLocation + YarrStackSpaceForBackTrackInfoParenthesesOnce);
                         emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount);
                         atomParenthesesTerminalEnd(delegateEndInputOffset, term.frameLocation, term.quantityCount, term.quantityType);
                     } else {
@@ -1845,7 +1845,7 @@ public:
                 }
 
                 case PatternTerm::TypeParentheticalAssertion: {
-                    unsigned alternativeFrameLocation = term.frameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertion;
+                    unsigned alternativeFrameLocation = term.frameLocation + YarrStackSpaceForBackTrackInfoParentheticalAssertion;
 
                     ASSERT(currentCountAlreadyChecked >= (unsigned)term.inputPosition);
                     int positiveInputOffset = currentCountAlreadyChecked - term.inputPosition;
@@ -1861,31 +1861,31 @@ public:
     }
 
 private:
-    RegexPattern& m_pattern;
+    YarrPattern& m_pattern;
     OwnPtr<ByteDisjunction> m_bodyDisjunction;
     unsigned m_currentAlternativeIndex;
     Vector<ParenthesesStackEntry> m_parenthesesStack;
     Vector<ByteDisjunction*> m_allParenthesesInfo;
 };
 
-PassOwnPtr<BytecodePattern> byteCompileRegex(RegexPattern& pattern, BumpPointerAllocator* allocator)
+PassOwnPtr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator)
 {
     return ByteCompiler(pattern).compile(allocator);
 }
 
-int interpretRegex(BytecodePattern* regex, const UChar* input, unsigned start, unsigned length, int* output)
+int interpret(BytecodePattern* bytecode, const UChar* input, unsigned start, unsigned length, int* output)
 {
-    return Interpreter(regex, output, input, start, length).interpret();
+    return Interpreter(bytecode, output, input, start, length).interpret();
 }
 
 
-COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoPatternCharacter) == (RegexStackSpaceForBackTrackInfoPatternCharacter * sizeof(uintptr_t)), CheckRegexStackSpaceForBackTrackInfoPatternCharacter);
-COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoCharacterClass) == (RegexStackSpaceForBackTrackInfoCharacterClass * sizeof(uintptr_t)), CheckRegexStackSpaceForBackTrackInfoCharacterClass);
-COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoBackReference) == (RegexStackSpaceForBackTrackInfoBackReference * sizeof(uintptr_t)), CheckRegexStackSpaceForBackTrackInfoBackReference);
-COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoAlternative) == (RegexStackSpaceForBackTrackInfoAlternative * sizeof(uintptr_t)), CheckRegexStackSpaceForBackTrackInfoAlternative);
-COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoParentheticalAssertion) == (RegexStackSpaceForBackTrackInfoParentheticalAssertion * sizeof(uintptr_t)), CheckRegexStackSpaceForBackTrackInfoParentheticalAssertion);
-COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoParenthesesOnce) == (RegexStackSpaceForBackTrackInfoParenthesesOnce * sizeof(uintptr_t)), CheckRegexStackSpaceForBackTrackInfoParenthesesOnce);
-COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoParentheses) == (RegexStackSpaceForBackTrackInfoParentheses * sizeof(uintptr_t)), CheckRegexStackSpaceForBackTrackInfoParentheses);
+COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoPatternCharacter) == (YarrStackSpaceForBackTrackInfoPatternCharacter * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoPatternCharacter);
+COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoCharacterClass) == (YarrStackSpaceForBackTrackInfoCharacterClass * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoCharacterClass);
+COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoBackReference) == (YarrStackSpaceForBackTrackInfoBackReference * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoBackReference);
+COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoAlternative) == (YarrStackSpaceForBackTrackInfoAlternative * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoAlternative);
+COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoParentheticalAssertion) == (YarrStackSpaceForBackTrackInfoParentheticalAssertion * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoParentheticalAssertion);
+COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoParenthesesOnce) == (YarrStackSpaceForBackTrackInfoParenthesesOnce * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoParenthesesOnce);
+COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoParentheses) == (YarrStackSpaceForBackTrackInfoParentheses * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoParentheses);
 
 
 } }

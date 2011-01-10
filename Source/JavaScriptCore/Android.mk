@@ -190,9 +190,9 @@ LOCAL_SRC_FILES := \
 	\
 	wtf/unicode/icu/CollatorICU.cpp \
 	\
-	yarr/RegexPattern.cpp \
-	yarr/RegexInterpreter.cpp \
-	yarr/RegexJIT.cpp \
+	yarr/YarrPattern.cpp \
+	yarr/YarrInterpreter.cpp \
+	yarr/YarrJIT.cpp \
     yarr/YarrSyntaxChecker.cpp
 
 # generated headers

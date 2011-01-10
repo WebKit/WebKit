@@ -552,13 +552,13 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/VMTags.h \
 	Source/JavaScriptCore/wtf/WTFThreadData.cpp \
 	Source/JavaScriptCore/wtf/WTFThreadData.h \
-	Source/JavaScriptCore/yarr/RegexInterpreter.cpp \
-	Source/JavaScriptCore/yarr/RegexInterpreter.h \
-	Source/JavaScriptCore/yarr/RegexJIT.cpp \
-	Source/JavaScriptCore/yarr/RegexJIT.h \
-	Source/JavaScriptCore/yarr/RegexParser.h \
-	Source/JavaScriptCore/yarr/RegexPattern.cpp \
-	Source/JavaScriptCore/yarr/RegexPattern.h \
+	Source/JavaScriptCore/yarr/YarrInterpreter.cpp \
+	Source/JavaScriptCore/yarr/YarrInterpreter.h \
+	Source/JavaScriptCore/yarr/YarrJIT.cpp \
+	Source/JavaScriptCore/yarr/YarrJIT.h \
+	Source/JavaScriptCore/yarr/YarrParser.h \
+	Source/JavaScriptCore/yarr/YarrPattern.cpp \
+	Source/JavaScriptCore/yarr/YarrPattern.h \
 	Source/JavaScriptCore/yarr/YarrSyntaxChecker.cpp \
 	Source/JavaScriptCore/yarr/YarrSyntaxChecker.h
 

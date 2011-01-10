@@ -1658,31 +1658,31 @@
 			Name="yarr"
 			>
 			<File
-				RelativePath="..\..\yarr\RegexInterpreter.cpp"
+				RelativePath="..\..\yarr\YarrInterpreter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\yarr\RegexInterpreter.h"
+				RelativePath="..\..\yarr\YarrInterpreter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\yarr\RegexJIT.cpp"
+				RelativePath="..\..\yarr\YarrJIT.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\yarr\RegexJIT.h"
+				RelativePath="..\..\yarr\YarrJIT.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\yarr\RegexParser.h"
+				RelativePath="..\..\yarr\YarrParser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\yarr\RegexPattern.cpp"
+				RelativePath="..\..\yarr\YarrPattern.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\yarr\RegexPattern.h"
+				RelativePath="..\..\yarr\YarrPattern.h"
 				>
 			</File>
 			<File

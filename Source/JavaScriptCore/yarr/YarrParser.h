@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RegexParser_h
-#define RegexParser_h
+#ifndef YarrParser_h
+#define YarrParser_h
 
 #include "UString.h"
 #include <limits.h>
@@ -668,8 +668,7 @@ private:
     /*
      * parse():
      *
-     * This method calls regexBegin(), calls parseTokens() to parse over the input
-     * patterns, calls regexEnd() or regexError() as appropriate, and converts any
+     * This method calls parseTokens() to parse over the input and converts any
      * error code to a const char* for a result.
      */
     const char* parse()
@@ -870,4 +869,4 @@ const char* parse(Delegate& delegate, const UString& pattern, unsigned backRefer
 
 } } // namespace JSC::Yarr
 
-#endif // RegexParser_h
+#endif // YarrParser_h

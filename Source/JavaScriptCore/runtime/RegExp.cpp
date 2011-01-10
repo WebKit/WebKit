@@ -22,22 +22,23 @@
 
 #include "config.h"
 #include "RegExp.h"
+
 #include "Lexer.h"
+#include "yarr/YarrInterpreter.h"
+#include "yarr/YarrJIT.h"
+#include "yarr/YarrPattern.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 
-#include "yarr/RegexJIT.h"
-#include "yarr/RegexInterpreter.h"
-#include "yarr/RegexPattern.h"
 
 namespace JSC {
 
 struct RegExpRepresentation {
 #if ENABLE(YARR_JIT)
-    Yarr::RegexCodeBlock m_regExpJITCode;
+    Yarr::YarrCodeBlock m_regExpJITCode;
 #endif
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
 };
@@ -82,7 +83,7 @@ PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patte
 
 RegExp::RegExpState RegExp::compile(JSGlobalData* globalData)
 {
-    Yarr::RegexPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
+    Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
     if (m_constructionError)
         return ParseError;
 
@@ -92,7 +93,7 @@ RegExp::RegExpState RegExp::compile(JSGlobalData* globalData)
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && globalData->canUseJIT()) {
-        Yarr::jitCompileRegex(pattern, globalData, m_representation->m_regExpJITCode);
+        Yarr::jitCompile(pattern, globalData, m_representation->m_regExpJITCode);
 #if ENABLE(YARR_JIT_DEBUG)
         if (!m_representation->m_regExpJITCode.isFallBack())
             res = JITCode;
@@ -105,7 +106,7 @@ RegExp::RegExpState RegExp::compile(JSGlobalData* globalData)
     }
 #endif
 
-    m_representation->m_regExpBytecode = Yarr::byteCompileRegex(pattern, &globalData->m_regexAllocator);
+    m_representation->m_regExpBytecode = Yarr::byteCompile(pattern, &globalData->m_regExpAllocator);
 
     return res;
 }
@@ -144,13 +145,13 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
         int result;
 #if ENABLE(YARR_JIT)
         if (m_state == JITCode) {
-            result = Yarr::executeRegex(m_representation->m_regExpJITCode, s.characters(), startOffset, s.length(), offsetVector);
+            result = Yarr::execute(m_representation->m_regExpJITCode, s.characters(), startOffset, s.length(), offsetVector);
 #if ENABLE(YARR_JIT_DEBUG)
             matchCompareWithInterpreter(s, startOffset, offsetVector, result);
 #endif
         } else
 #endif
-            result = Yarr::interpretRegex(m_representation->m_regExpBytecode.get(), s.characters(), startOffset, s.length(), offsetVector);
+            result = Yarr::interpret(m_representation->m_regExpBytecode.get(), s.characters(), startOffset, s.length(), offsetVector);
         ASSERT(result >= -1);
 
 #if ENABLE(REGEXP_TRACING)
@@ -181,7 +182,7 @@ void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int*
     for (unsigned j = 0, i = 0; i < m_numSubpatterns + 1; j += 2, i++)
         interpreterOffsetVector[j] = -1;
 
-    interpreterResult = Yarr::interpretRegex(m_representation->m_regExpBytecode.get(), s.characters(), startOffset, s.length(), interpreterOffsetVector);
+    interpreterResult = Yarr::interpret(m_representation->m_regExpBytecode.get(), s.characters(), startOffset, s.length(), interpreterOffsetVector);
 
     if (jitResult != interpreterResult)
         differences++;
@@ -230,7 +231,7 @@ void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int*
         snprintf(formattedPattern, 41, (pattLen <= 38) ? "/%.38s/" : "/%.36s...", rawPattern);
 
 #if ENABLE(YARR_JIT)
-        Yarr::RegexCodeBlock& codeBlock = m_representation->m_regExpJITCode;
+        Yarr::YarrCodeBlock& codeBlock = m_representation->m_regExpJITCode;
 
         char jitAddr[20];
         if (m_state == JITCode)

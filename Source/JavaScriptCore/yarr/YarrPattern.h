@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RegexPattern_h
-#define RegexPattern_h
+#ifndef YarrPattern_h
+#define YarrPattern_h
 
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
@@ -34,14 +34,14 @@
 
 namespace JSC { namespace Yarr {
 
-#define RegexStackSpaceForBackTrackInfoPatternCharacter 1 // Only for !fixed quantifiers.
-#define RegexStackSpaceForBackTrackInfoCharacterClass 1 // Only for !fixed quantifiers.
-#define RegexStackSpaceForBackTrackInfoBackReference 2
-#define RegexStackSpaceForBackTrackInfoAlternative 1 // One per alternative.
-#define RegexStackSpaceForBackTrackInfoParentheticalAssertion 1
-#define RegexStackSpaceForBackTrackInfoParenthesesOnce 1 // Only for !fixed quantifiers.
-#define RegexStackSpaceForBackTrackInfoParenthesesTerminal 1
-#define RegexStackSpaceForBackTrackInfoParentheses 2
+#define YarrStackSpaceForBackTrackInfoPatternCharacter 1 // Only for !fixed quantifiers.
+#define YarrStackSpaceForBackTrackInfoCharacterClass 1 // Only for !fixed quantifiers.
+#define YarrStackSpaceForBackTrackInfoBackReference 2
+#define YarrStackSpaceForBackTrackInfoAlternative 1 // One per alternative.
+#define YarrStackSpaceForBackTrackInfoParentheticalAssertion 1
+#define YarrStackSpaceForBackTrackInfoParenthesesOnce 1 // Only for !fixed quantifiers.
+#define YarrStackSpaceForBackTrackInfoParenthesesTerminal 1
+#define YarrStackSpaceForBackTrackInfoParentheses 2
 
 struct PatternDisjunction;
 
@@ -282,7 +282,7 @@ struct PatternDisjunction : FastAllocBase {
 
 // You probably don't want to be calling these functions directly
 // (please to be calling newlineCharacterClass() et al on your
-// friendly neighborhood RegexPattern instance to get nicely
+// friendly neighborhood YarrPattern instance to get nicely
 // cached copies).
 CharacterClass* newlineCreate();
 CharacterClass* digitsCreate();
@@ -316,10 +316,10 @@ struct BeginChar {
     unsigned mask;
 };
 
-struct RegexPattern {
-    RegexPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error);
+struct YarrPattern {
+    YarrPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error);
 
-    ~RegexPattern()
+    ~YarrPattern()
     {
         deleteAllValues(m_disjunctions);
         deleteAllValues(m_userCharacterClasses);
@@ -421,4 +421,4 @@ private:
 
 } } // namespace JSC::Yarr
 
-#endif // RegexPattern_h
+#endif // YarrPattern_h
