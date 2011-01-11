@@ -1,3 +1,29 @@
+2011-01-11  Noel Gordon  <noel.gordon@gmail.com>
+
+         Reviewed by James Robinson.
+
+         [chromium] canvas.toDataURL("image/jpeg") should composite onto black.
+         https://bugs.webkit.org/show_bug.cgi?id=51237
+
+         The Canvas specification requires that the canvas image is composited using
+         the Porter-Duff operator source-over onto a black background; the resultant
+         image should be JPEG encoded and returned as a dataURL.  To composite image
+         A and background B, for any Porter-Duff operator, produce pixels I with
+
+            I = c(A)F(A) + c(B)F(B)
+
+         where, F(X) is the fraction [0.0-1.0] contributed to the composite by image
+         X, and c(X) are the premultiplied RGB color components of image X.  Note by
+         definition, c(B) = 0 since the background is black, so I = c(A)F(A).  Since
+         F(A) = 1 in Porter-Duff operator source-over, the composited pixels satisfy
+         I = c(A).  Hence, to conform to the Canvas spec, pass the premultiplied RGB
+         color components of the canvas image to the JPEG encoder.
+
+         Covered by canvas/philip/tests/toDataURL.jpeg.alpha.html
+
+         * platform/image-encoders/skia/JPEGImageEncoder.cpp:
+         (WebCore::preMultipliedBGRAtoRGB): Use Porter-Duff source-over black.
+
 2011-01-11  François Sausset  <sausset@gmail.com>
 
         Reviewed by Eric Seidel.

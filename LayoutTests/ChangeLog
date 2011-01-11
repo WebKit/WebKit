@@ -1,3 +1,15 @@
+2011-01-11  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] canvas.toDataURL("image/jpeg") should composite onto black.
+        https://bugs.webkit.org/show_bug.cgi?id=51237
+
+        canvas/philip/tests/toDataURL.jpeg.alpha.html only fails on chromium-mac
+        now, tracked by bug http://webkit.org/b/40147.
+
+        * platform/chromium/test_expectations.txt: win & linux pass.
+
 2011-01-11  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed Chromium test expectations update.

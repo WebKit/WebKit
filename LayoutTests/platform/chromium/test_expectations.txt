@@ -2054,7 +2054,7 @@ BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK48579 : canvas/philip/tests/type.prototype.html = TEXT
 BUGWK50797 : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-BUGWK40147 : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
+BUGWK40147 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
 // Update canvas/philip in WK r71481
