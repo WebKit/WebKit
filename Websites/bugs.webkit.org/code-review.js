@@ -396,12 +396,12 @@
 
   function convertDiff(difftype, convert_link) {
     var file_diffs = $(convert_link).parents('.FileDiff');
-    if (!file_diffs.size())
+    if (!file_diffs.size()) {
+      localStorage.setItem('code-review-diffstate', difftype);
       file_diffs = $('.FileDiff');
+    }
 
-    file_diffs.each(function() {
-      convertFileDiff(difftype, this);
-    });
+    convertAllFileDiffs(difftype, file_diffs);
   }
 
   function getWebKitSourceFile(file_name, onLoad, expand_bar) {
@@ -741,7 +741,16 @@
     $(resize_iframe[0].contentWindow).bind('resize', onBodyResize);
 
     updateToolbarAnchorState();
+    loadDiffState();
   });
+
+  function loadDiffState() {
+    var diffstate = localStorage.getItem('code-review-diffstate');
+    if (diffstate != 'sidebyside' && diffstate != 'unified')
+      return;
+
+    convertAllFileDiffs(diffstate, $('.FileDiff'));
+  }
 
   function isDiffSideBySide(file_diff) {
     return diffState(file_diff) == 'sidebyside';
@@ -771,6 +780,12 @@
       $('.side-by-side-link', file_diff).hide();
       $('.unify-link', file_diff).show();
     }
+  }
+
+  function convertAllFileDiffs(diff_type, file_diffs) {
+    file_diffs.each(function() {
+      convertFileDiff(diff_type, this);
+    });
   }
 
   function convertFileDiff(diff_type, file_diff) {
