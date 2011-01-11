@@ -1,3 +1,22 @@
+2011-01-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+        
+        Remove entries for tests that now pass.
+
+        A bunch of tests with scrollbars started to pass after unncessary
+        Chromium baselines with removed with r75463, r75446 and 
+        r75440.
+
+        ietestcenter/Javascript/15.4.4.14-9-b-i-6.html and ietestcenter/
+        Javascript/15.4.4.15-8-b-i-6.html started to pass after
+        http://crrev.com/70894, which rolled V8 to 3.0.7, which fixed
+        http://code.google.com/p/v8/issues/detail?id=1015.
+        
+        fast/text/font-size-zero.html appears to always pass.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-10  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium-gpu test_expectations updates.

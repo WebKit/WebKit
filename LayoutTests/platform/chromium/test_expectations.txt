@@ -2298,8 +2298,6 @@ BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/11.4.1-4.a-7.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-178.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-179.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.2.3.3-4-180.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.14-9-b-i-6.html = TEXT
-BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.4.4.15-8-b-i-6.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-10.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-18.html = TEXT
 BUGCR48737 WIN LINUX MAC : ietestcenter/Javascript/15.5.4.20-4-34.html = TEXT
@@ -2844,9 +2842,6 @@ BUG_YUTAK MAC : fast/images/imagemap-circle-focus-ring.html = IMAGE
 BUG_YUTAK WIN LINUX : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 BUG_YUTAK MAC : fast/images/imagemap-polygon-focus-ring.html = IMAGE
 
-// Not sure when this test started failing.
-BUG_YUTAK MAC DEBUG : fast/text/font-size-zero.html = TEXT
-
 // Started to produce text difference occasionally since r68528.
 BUGCR65279 LINUX DEBUG : fast/css/visited-link-hang.html = TEXT PASS
 
@@ -3064,13 +3059,6 @@ BUGCR68599 LINUX WIN : http/tests/security/mixedContent/insecure-css-in-main-fra
 
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
-BUG_MIHAIP MAC : css1/box_properties/clear_float.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/clear.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/float_elements_in_series.html = IMAGE
-BUG_MIHAIP MAC : css1/box_properties/float_on_text_elements.html = IMAGE
-BUG_MIHAIP MAC : css1/text_properties/text_transform.html = IMAGE
-BUG_MIHAIP MAC : css1/text_properties/vertical_align.html = IMAGE
-BUG_MIHAIP MAC : css2.1/t0905-c5525-fltwidth-00-c-g.html = IMAGE
 BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-001.html = IMAGE
 BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-002.html = IMAGE
 BUG_MIHAIP MAC : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
@@ -3087,21 +3075,12 @@ BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 // Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
 // should now pass with upstream mac baselines).
 BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
-BUG_MIHAIP MAC : fast/selectors/166.html = IMAGE
-BUG_MIHAIP MAC : svg/dom/SVGLengthList-basics.xhtml = IMAGE
-BUG_MIHAIP MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-in-attr.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop.html = IMAGE
-BUG_MIHAIP MAC : svg/hixie/links/003-broken.xml = IMAGE
-BUG_MIHAIP MAC : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE
-BUG_MIHAIP MAC : svg/zoom/page/zoom-foreignObject.svg = IMAGE
-BUG_MIHAIP MAC : svg/zoom/page/zoom-hixie-mixed-008.xml = IMAGE
 BUG_MIHAIP MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // Platforms that use Skia don't support elliptical gradients.
