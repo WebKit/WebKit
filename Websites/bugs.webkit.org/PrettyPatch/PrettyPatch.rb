@@ -136,6 +136,23 @@ h1 :hover {
     float: right;
 }
 
+.DiffLinks a {
+    border: 0;
+    font-family: sans-serif;
+    font-size: small;
+    font-style: normal;
+}
+
+.FileDiff .DiffLinks {
+    float: none;
+    width: 100%;
+    height: 0;
+}
+
+.FileDiffLinkContainer {
+    text-align: center;
+}
+
 .DiffSection {
     background-color: white;
     border: solid #ddd;
@@ -305,7 +322,6 @@ body {
 
 .LinkContainer a {
   border: 0;
-  font-style: normal;
 }
 
 .LinkContainer a:after {
@@ -372,7 +388,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=20"></script>
+<script src="code-review.js?version=21"></script>
 EOF
 
     def self.revisionOrDescription(string)

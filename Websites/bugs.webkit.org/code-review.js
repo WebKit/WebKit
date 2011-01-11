@@ -314,6 +314,8 @@
       var file_name = $(this).children('h1').text();
       files[file_name] = this;
       addExpandLinks(file_name);
+      $('h1', this).before('<div class="FileDiffLinkContainer">' + diffLinksHtml() + '</div>');
+      updateDiffLinkVisibility(this);
     });
   }
 
@@ -385,14 +387,20 @@
   }
 
   function handleSideBySideLinkClick() {
-    $('.FileDiff').each(function() {
-      convertFileDiff('sidebyside', this);
-    });
+    convertDiff('sidebyside', this);
   }
 
   function handleUnifyLinkClick() {
-    $('.FileDiff').each(function() {
-      convertFileDiff('unified', this);
+    convertDiff('unified', this);
+  }
+
+  function convertDiff(difftype, convert_link) {
+    var file_diffs = $(convert_link).parents('.FileDiff');
+    if (!file_diffs.size())
+      file_diffs = $('.FileDiff');
+
+    file_diffs.each(function() {
+      convertFileDiff(difftype, this);
     });
   }
 
@@ -690,15 +698,20 @@
     $('#toolbar').toggleClass('anchored', has_scrollbar);
   }
 
+  function diffLinksHtml(opt_containerClassName) {
+    var containerClassName = opt_containerClassName || '';
+    return '<div class="DiffLinks ' + containerClassName + '">' +
+      '<a href="javascript:" class="unify-link">unified</a>' +
+      '<a href="javascript:" class="side-by-side-link">side-by-side</a>' +
+    '</div>';
+  }
+
   $(document).ready(function() {
     crawlDiff();
     fetchHistory();
     $(document.body).prepend('<div id="message">' +
         '<div class="help">Select line numbers to add a comment.' +
-          '<div class="DiffLinks LinkContainer">' +
-            '<a href="javascript:" class="unify-link">unified</a>' +
-            '<a href="javascript:" class="side-by-side-link">side-by-side</a>' +
-          '</div>' +
+          diffLinksHtml('LinkContainer') +
         '</div>' +
         '<div class="commentStatus"></div>' +
         '</div>');
@@ -750,11 +763,22 @@
     old_line.replaceWith(new_line);
   }
 
+  function updateDiffLinkVisibility(file_diff) {
+    if (diffState(file_diff) == 'unified') {
+      $('.side-by-side-link', file_diff).show();
+      $('.unify-link', file_diff).hide();
+    } else {
+      $('.side-by-side-link', file_diff).hide();
+      $('.unify-link', file_diff).show();
+    }
+  }
+
   function convertFileDiff(diff_type, file_diff) {
     if (diffState(file_diff) == diff_type)
       return;
 
     $(file_diff).attr('data-diffstate', diff_type);
+    updateDiffLinkVisibility(file_diff);
 
     $('.Line', file_diff).each(function() {
       convertLine(diff_type, this);
@@ -798,7 +822,6 @@
   }
 
   // FIXME: Put removed lines to the left of their corresponding added lines.
-  // FIXME: Allow for converting an individual file to side-by-side.
   function sideBySideifyLine(line, from, to, contents, classNames, attributes, id) {
     var from_class = '';
     var to_class = '';

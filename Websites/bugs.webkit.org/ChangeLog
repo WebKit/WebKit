@@ -1,5 +1,14 @@
 2011-01-11  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        allow sidebysideifying individual files in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52226
+
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Mihai Parparita.
 
         fix exception when adding a comment to a side-by-side diff
