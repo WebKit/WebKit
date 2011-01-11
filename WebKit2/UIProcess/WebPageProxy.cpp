@@ -212,7 +212,7 @@ void WebPageProxy::relaunch()
     m_pageClient->didRelaunchProcess();
 }
 
-void WebPageProxy::initializeWebPage()
+void WebPageProxy::initializeWebPage(const IntSize& size)
 {
     if (!isValid()) {
         relaunch();

@@ -1,5 +1,13 @@
 2011-01-10  Anders Carlsson  <andersca@apple.com>
 
+        Didn't mean to land this.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebPageProxy.h:
+
+2011-01-10  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         WebPageProxy::creationParameters no longer needs to take a size

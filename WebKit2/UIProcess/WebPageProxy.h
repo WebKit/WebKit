@@ -134,7 +134,7 @@ public:
     void initializeUIClient(const WKPageUIClient*);
     void relaunch();
 
-    void initializeWebPage();
+    void initializeWebPage(const WebCore::IntSize&);
     void reinitializeWebPage(const WebCore::IntSize&);
 
     void close();
