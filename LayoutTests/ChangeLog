@@ -1,3 +1,12 @@
+2011-01-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Remove some GTK+-specific baselines. GTK+ now enough feature parity with the Mac
+        port to make these platform-specific results unnecessary.
+
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt: Removed.
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt: Removed.
+        * platform/gtk/fast/js/global-constructors-expected.txt: Removed.
+
 2011-01-11  Nico Weber  <thakis@chromium.org>
 
         Unreviewed, test expectations.
