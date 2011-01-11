@@ -61,7 +61,7 @@ public:
     unsigned long long domainLookupEnd() const;
     unsigned long long connectStart() const;
     unsigned long long connectEnd() const;
-    unsigned long long sslHandshakeStart() const;
+    unsigned long long secureConnectionStart() const;
     unsigned long long requestStart() const;
     unsigned long long responseStart() const;
     unsigned long long responseEnd() const;

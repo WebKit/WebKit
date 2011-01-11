@@ -12,7 +12,7 @@ PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.responseStart is >= timing.requestStart
 PASS timing.domLoading is >= timing.fetchStart
@@ -31,7 +31,7 @@ PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.responseStart is >= timing.requestStart
 PASS timing.domLoading is >= timing.fetchStart
@@ -50,7 +50,7 @@ PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.responseStart is >= timing.requestStart
 PASS timing.domLoading is >= timing.fetchStart
@@ -69,7 +69,7 @@ PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.responseStart is >= timing.requestStart
 PASS timing.domLoading is >= timing.fetchStart
@@ -88,7 +88,7 @@ PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.responseStart is >= timing.requestStart
 PASS timing.responseEnd is >= timing.responseStart
@@ -108,7 +108,7 @@ PASS timing.domainLookupStart is >= timing.fetchStart
 PASS timing.domainLookupEnd is >= timing.domainLookupStart
 PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.responseStart is >= timing.requestStart
 PASS timing.responseEnd is >= timing.responseStart

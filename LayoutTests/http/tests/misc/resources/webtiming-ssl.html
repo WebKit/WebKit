@@ -10,15 +10,15 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-description("This test checks that Web Timing reports sslHandshakeStart correctly and has reasonable values for connectStart and connectEnd. Note that DumpRenderTree doesn't set sslHandshakeStart.");
+description("This test checks that Web Timing reports secureConnectionStart correctly and has reasonable values for connectStart and connectEnd. Note that DumpRenderTree doesn't set secureConnectionStart.");
 
 var performance = window.performance || {};
 var navigation = performance.navigation || {};
 var timing = performance.timing || {};
 
 shouldBeGreaterThanOrEqual("timing.connectStart", "timing.navigationStart");
-shouldBeGreaterThanOrEqual("timing.sslHandshakeStart", "timing.connectStart");
-shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.sslHandshakeStart");
+shouldBeGreaterThanOrEqual("timing.secureConnectionStart", "timing.connectStart");
+shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.secureConnectionStart");
 
 var successfullyParsed = true;
 </script>

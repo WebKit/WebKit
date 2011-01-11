@@ -26,7 +26,7 @@ PASS timing.redirectStart is 0
 PASS timing.requestStart is non-zero.
 PASS timing.responseEnd is non-zero.
 PASS timing.responseStart is non-zero.
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.unloadEventEnd is 0
 PASS timing.unloadEventStart is 0
 PASS navigation.redirectCount is 0
@@ -61,7 +61,7 @@ PASS timing.redirectStart is 0
 PASS timing.requestStart is non-zero.
 PASS timing.responseEnd is non-zero.
 PASS timing.responseStart is non-zero.
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.unloadEventEnd is 0
 PASS timing.unloadEventStart is 0
 PASS navigation.redirectCount is 0
@@ -96,7 +96,7 @@ PASS timing.redirectStart is 0
 PASS timing.requestStart is non-zero.
 PASS timing.responseEnd is non-zero.
 PASS timing.responseStart is non-zero.
-PASS timing.sslHandshakeStart is 0
+PASS timing.secureConnectionStart is 0
 PASS timing.unloadEventEnd is non-zero.
 PASS timing.unloadEventStart is non-zero.
 PASS navigation.redirectCount is 0

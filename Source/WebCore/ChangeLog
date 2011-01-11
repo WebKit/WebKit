@@ -1,3 +1,15 @@
+2011-01-11  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Web Timing] Rename sslHandshakeStart to secureConnectionStart
+        https://bugs.webkit.org/show_bug.cgi?id=52239
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::secureConnectionStart):
+        * page/PerformanceTiming.h:
+        * page/PerformanceTiming.idl:
+
 2011-01-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

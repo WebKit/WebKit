@@ -21,7 +21,7 @@ PASS timing.redirectStart is originalTiming.redirectStart
 PASS timing.requestStart is originalTiming.requestStart
 PASS timing.responseEnd is originalTiming.responseEnd
 PASS timing.responseStart is originalTiming.responseStart
-PASS timing.sslHandshakeStart is originalTiming.sslHandshakeStart
+PASS timing.secureConnectionStart is originalTiming.secureConnectionStart
 PASS timing.unloadEventEnd is originalTiming.unloadEventEnd
 PASS timing.unloadEventStart is originalTiming.unloadEventStart
 PASS successfullyParsed is true

@@ -31,7 +31,7 @@ function checkTimingBeforeLoad()
     shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
     shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBe("timing.sslHandshakeStart", "0");
+    shouldBe("timing.secureConnectionStart", "0");
 
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
 
@@ -63,7 +63,7 @@ function checkTimingWhileDeferred()
     shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
     shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBe("timing.sslHandshakeStart", "0");
+    shouldBe("timing.secureConnectionStart", "0");
 
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
 
@@ -96,7 +96,7 @@ function checkWebTimingOnDOMContentLoaded() {
     shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
     shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBe("timing.sslHandshakeStart", "0");
+    shouldBe("timing.secureConnectionStart", "0");
 
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
 
@@ -135,7 +135,7 @@ function checkWebTimingWhileAsync()
     shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
     shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBe("timing.sslHandshakeStart", "0");
+    shouldBe("timing.secureConnectionStart", "0");
 
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
 
@@ -169,7 +169,7 @@ function checkWebTimingOnLoad()
     shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
     shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBe("timing.sslHandshakeStart", "0");
+    shouldBe("timing.secureConnectionStart", "0");
 
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
 
@@ -204,7 +204,7 @@ function checkWebTimingAfterLoad()
     shouldBeGreaterThanOrEqual("timing.connectStart", "timing.domainLookupEnd");
     shouldBeGreaterThanOrEqual("timing.connectEnd", "timing.connectStart");
 
-    shouldBe("timing.sslHandshakeStart", "0");
+    shouldBe("timing.secureConnectionStart", "0");
 
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
 

@@ -16,7 +16,7 @@ var timing = performance.timing || {};
 
 function performTest() {
     // FIXME: Need a way to synchronize the test so that loadEventEnd is non-zero.
-    var shouldBeZeroList = ["loadEventEnd", "redirectStart", "redirectEnd", "sslHandshakeStart", "unloadEventStart", "unloadEventEnd"];
+    var shouldBeZeroList = ["loadEventEnd", "redirectStart", "redirectEnd", "secureConnectionStart", "unloadEventStart", "unloadEventEnd"];
 
     var timingProperties = new Array;
     for (var property in timing) {

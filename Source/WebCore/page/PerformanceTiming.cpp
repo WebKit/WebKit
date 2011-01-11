@@ -227,7 +227,7 @@ unsigned long long PerformanceTiming::connectEnd() const
     return resourceLoadTimeRelativeToAbsolute(connectEnd);
 }
 
-unsigned long long PerformanceTiming::sslHandshakeStart() const
+unsigned long long PerformanceTiming::secureConnectionStart() const
 {
     DocumentLoader* loader = documentLoader();
     if (!loader)

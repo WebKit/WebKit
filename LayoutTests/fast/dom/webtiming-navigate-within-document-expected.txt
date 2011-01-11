@@ -21,7 +21,7 @@ PASS redirectStart is unchanged.
 PASS requestStart is unchanged.
 PASS responseEnd is unchanged.
 PASS responseStart is unchanged.
-PASS sslHandshakeStart is unchanged.
+PASS secureConnectionStart is unchanged.
 PASS unloadEventEnd is unchanged.
 PASS unloadEventStart is unchanged.
 PASS successfullyParsed is true

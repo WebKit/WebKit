@@ -1,3 +1,28 @@
+2011-01-11  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [Web Timing] Rename sslHandshakeStart to secureConnectionStart
+        https://bugs.webkit.org/show_bug.cgi?id=52239
+
+        * fast/dom/Window/window-properties-performance-expected.txt:
+        * fast/dom/script-tests/webtiming.js:
+        (checkTimingBeforeLoad):
+        (checkTimingWhileDeferred):
+        (checkWebTimingOnDOMContentLoaded):
+        (checkWebTimingWhileAsync):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-document-open-expected.txt:
+        * fast/dom/webtiming-expected.txt:
+        * fast/dom/webtiming-navigate-within-document-expected.txt:
+        * http/tests/misc/resources/webtiming-cross-origin-and-back2.html:
+        * http/tests/misc/resources/webtiming-cross-origin-redirect.html:
+        * http/tests/misc/resources/webtiming-no-origin.html:
+        * http/tests/misc/resources/webtiming-ssl.html:
+        * http/tests/misc/webtiming-origins-expected.txt:
+        * http/tests/misc/webtiming-ssl-expected.txt:
+
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.
