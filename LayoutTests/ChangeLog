@@ -1,3 +1,11 @@
+2011-01-11  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium-gpu test expectations update.
+
+        Remove now-passing tests from text_expectations.txt.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed; new and updated mac-leopard baselines.
