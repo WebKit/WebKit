@@ -79,10 +79,6 @@ public:
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
     virtual ~WebGraphicsContext3D() {}
 
-    // Creates a "default" implementation of WebGraphicsContext3D which calls
-    // OpenGL directly.
-    WEBKIT_API static WebGraphicsContext3D* createDefault();
-
     // Initializes the graphics context; should be the first operation performed
     // on newly-constructed instances. Returns true on success.
     virtual bool initialize(Attributes, WebView*, bool renderDirectlyToWebView) = 0;

@@ -1,3 +1,26 @@
+2011-01-11  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Move WebGraphicsContext3DDefaultImpl to Chromium repository
+        https://bugs.webkit.org/show_bug.cgi?id=52235
+
+        Deleted WebGraphicsContext3DDefaultImpl, which has been moved to
+        the Chromium repository under WebGraphicsContext3DInProcessImpl.
+        Removed WebGraphicsContext3D::createDefault(). Rolled forward
+        Chromium version to pick up needed changes.
+
+        Tested with build-webkit --chromium --debug and a run of the WebGL
+        layout tests in DRT.
+
+        * DEPS:
+        * WebKit.gyp:
+        * public/WebGraphicsContext3D.h:
+        * src/GraphicsContext3DChromium.cpp:
+        * src/WebGraphicsContext3D.cpp: Removed.
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Removed.
+        * src/WebGraphicsContext3DDefaultImpl.h: Removed.
+
 2011-01-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -46,7 +46,6 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "WebGraphicsContext3D.h"
-#include "WebGraphicsContext3DDefaultImpl.h"
 #include "WebKit.h"
 #include "WebKitClient.h"
 #include "WebViewImpl.h"
@@ -74,8 +73,6 @@
 //   2. GraphicsContext3DInternal delegates to an implementation of
 //      WebGraphicsContext3D. This is done so we have a place to inject an
 //      implementation which remotes the OpenGL calls across processes.
-//
-// The legacy, in-process, implementation uses WebGraphicsContext3DDefaultImpl.
 
 namespace WebCore {
 
