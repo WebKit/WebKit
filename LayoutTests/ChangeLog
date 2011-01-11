@@ -1,3 +1,16 @@
+2011-01-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        [Chromium] Fix bad baselines
+        https://bugs.webkit.org/show_bug.cgi?id=52207
+
+        It looks like https://bugs.webkit.org/show_bug.cgi?id=51865 didn't quite
+        get the baselines right. Ran the rebaseline tool to get these.
+
+        * platform/chromium-linux/svg/custom/fill-SVGPaint-interface-expected.txt: Removed.
+        * platform/chromium-linux/svg/custom/getPresentationAttribute-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/fill-SVGPaint-interface-expected.txt:
+        * platform/chromium-win/svg/custom/getPresentationAttribute-expected.txt:
+
 2011-01-11  Adam Roben  <aroben@apple.com>
 
         Update test results after r75408

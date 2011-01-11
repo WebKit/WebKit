@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {a} at (0,0) size 0x0
-    RenderForeignObject {foreignObject} at (0,0) size 800x600
+    RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
       RenderBlock {html} at (0,0) size 800x40
         RenderBlock {div} at (0,0) size 800x40
           RenderText {#text} at (0,0) size 789x39
