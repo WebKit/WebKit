@@ -97,6 +97,7 @@
 #include "UserGestureIndicator.h"
 #include "Vector.h"
 #include "WebAccessibilityObject.h"
+#include "WebAutoFillClient.h"
 #include "WebDevToolsAgentPrivate.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebDragData.h"
@@ -212,13 +213,13 @@ static bool shouldUseExternalPopupMenus = false;
 
 // WebView ----------------------------------------------------------------
 
-WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
+WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient, WebAutoFillClient* autoFillClient)
 {
     // Keep runtime flag for device motion turned off until it's implemented.
     WebRuntimeFeatures::enableDeviceMotion(false);
 
     // Pass the WebViewImpl's self-reference to the caller.
-    return adoptRef(new WebViewImpl(client, devToolsClient)).leakRef();
+    return adoptRef(new WebViewImpl(client, devToolsClient, autoFillClient)).leakRef();
 }
 
 void WebView::setUseExternalPopupMenus(bool useExternalPopupMenus)
@@ -270,8 +271,9 @@ void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)
     SecurityOrigin::setLocalLoadPolicy(SecurityOrigin::AllowLocalLoadsForLocalOnly);
 }
 
-WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
+WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devToolsClient, WebAutoFillClient* autoFillClient)
     : m_client(client)
+    , m_autoFillClient(autoFillClient)
     , m_backForwardListClientImpl(this)
     , m_chromeClientImpl(this)
     , m_contextMenuClientImpl(this)
@@ -664,7 +666,7 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
 
         WebString name = WebInputElement(static_cast<HTMLInputElement*>(element)).nameForAutofill();
         WebString value = m_autoFillPopupClient->itemText(selectedIndex);
-        m_client->removeAutofillSuggestions(name, value);
+        m_autoFillClient->removeAutocompleteSuggestion(name, value);
         // Update the entries in the currently showing popup to reflect the
         // deletion.
         m_autoFillPopupClient->removeSuggestionAtIndex(selectedIndex);

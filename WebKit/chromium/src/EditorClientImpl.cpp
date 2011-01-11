@@ -42,6 +42,7 @@
 #include "RenderObject.h"
 
 #include "DOMUtilitiesPrivate.h"
+#include "WebAutoFillClient.h"
 #include "WebEditingAction.h"
 #include "WebElement.h"
 #include "WebFrameImpl.h"
@@ -649,15 +650,15 @@ void EditorClientImpl::handleInputMethodKeydown(KeyboardEvent* keyEvent)
 void EditorClientImpl::textFieldDidBeginEditing(Element* element)
 {
     HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (m_webView->client() && inputElement)
-        m_webView->client()->textFieldDidBeginEditing(WebInputElement(inputElement));
+    if (m_webView->autoFillClient() && inputElement)
+        m_webView->autoFillClient()->textFieldDidBeginEditing(WebInputElement(inputElement));
 }
 
 void EditorClientImpl::textFieldDidEndEditing(Element* element)
 {
     HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (m_webView->client() && inputElement)
-        m_webView->client()->textFieldDidEndEditing(WebInputElement(inputElement));
+    if (m_webView->autoFillClient() && inputElement)
+        m_webView->autoFillClient()->textFieldDidEndEditing(WebInputElement(inputElement));
 
     // Notification that focus was lost.  Be careful with this, it's also sent
     // when the page is being closed.
@@ -691,8 +692,8 @@ void EditorClientImpl::textDidChangeInTextField(Element* element)
 {
     ASSERT(element->hasLocalName(HTMLNames::inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
-    if (m_webView->client())
-        m_webView->client()->textFieldDidChange(WebInputElement(inputElement));
+    if (m_webView->autoFillClient())
+        m_webView->autoFillClient()->textFieldDidChange(WebInputElement(inputElement));
 
     // Note that we only show the autofill popup in this case if the caret is at
     // the end.  This matches FireFox and Safari but not IE.
@@ -785,14 +786,6 @@ void EditorClientImpl::doAutofill(Timer<EditorClientImpl>* timer)
                                             true);
         return;
     }
-
-    // Then trigger form autofill.
-    WebString name = WebInputElement(inputElement).nameForAutofill();
-    ASSERT(static_cast<int>(name.length()) > 0);
-
-    if (m_webView->client())
-        m_webView->client()->queryAutofillSuggestions(WebNode(inputElement),
-                                                      name, WebString(value));
 }
 
 void EditorClientImpl::cancelPendingAutofill()
@@ -803,8 +796,8 @@ void EditorClientImpl::cancelPendingAutofill()
 
 void EditorClientImpl::onAutocompleteSuggestionAccepted(HTMLInputElement* textField)
 {
-    if (m_webView->client())
-        m_webView->client()->didAcceptAutocompleteSuggestion(WebInputElement(textField));
+    if (m_webView->autoFillClient())
+        m_webView->autoFillClient()->didAcceptAutocompleteSuggestion(WebInputElement(textField));
 
     WebFrameImpl* webframe = WebFrameImpl::fromFrame(textField->document()->frame());
     if (!webframe)
@@ -817,9 +810,9 @@ bool EditorClientImpl::doTextFieldCommandFromEvent(Element* element,
                                                    KeyboardEvent* event)
 {
     HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (m_webView->client() && inputElement) {
-        m_webView->client()->textFieldDidReceiveKeyDown(WebInputElement(inputElement),
-                                                        WebKeyboardEventBuilder(*event));
+    if (m_webView->autoFillClient() && inputElement) {
+        m_webView->autoFillClient()->textFieldDidReceiveKeyDown(WebInputElement(inputElement),
+                                                                WebKeyboardEventBuilder(*event));
     }
 
     // Remember if backspace was pressed for the autofill.  It is not clear how to

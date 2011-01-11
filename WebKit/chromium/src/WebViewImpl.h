@@ -220,6 +220,11 @@ public:
         return m_client;
     }
 
+    WebAutoFillClient* autoFillClient()
+    {
+        return m_autoFillClient;
+    }
+
     // Returns the page object associated with this view. This may be null when
     // the page is shutting down, but will be valid at all other times.
     WebCore::Page* page() const
@@ -362,7 +367,7 @@ private:
       DragOver
     };
 
-    WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devToolsClient);
+    WebViewImpl(WebViewClient*, WebDevToolsAgentClient*, WebAutoFillClient*);
     ~WebViewImpl();
 
     // Returns true if the event was actually processed.
@@ -403,6 +408,7 @@ private:
 #endif
 
     WebViewClient* m_client;
+    WebAutoFillClient* m_autoFillClient;
 
     BackForwardListClientImpl m_backForwardListClientImpl;
     ChromeClientImpl m_chromeClientImpl;

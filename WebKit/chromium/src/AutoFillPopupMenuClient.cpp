@@ -37,6 +37,7 @@
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "RenderTheme.h"
+#include "WebAutoFillClient.h"
 #include "WebNode.h"
 #include "WebString.h"
 #include "WebVector.h"
@@ -131,11 +132,11 @@ void AutoFillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
 
     ASSERT(listIndex < m_names.size());
 
-    webView->client()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
-                                                   m_names[listIndex],
-                                                   m_labels[listIndex],
-                                                   m_uniqueIDs[listIndex],
-                                                   listIndex);
+    webView->autoFillClient()->didAcceptAutoFillSuggestion(WebNode(getTextField()),
+                                                           m_names[listIndex],
+                                                           m_labels[listIndex],
+                                                           m_uniqueIDs[listIndex],
+                                                           listIndex);
 }
 
 void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEvents)
@@ -149,17 +150,17 @@ void AutoFillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEven
 
     ASSERT(listIndex < m_names.size());
 
-    webView->client()->didSelectAutoFillSuggestion(WebNode(getTextField()),
-                                                   m_names[listIndex],
-                                                   m_labels[listIndex],
-                                                   m_uniqueIDs[listIndex]);
+    webView->autoFillClient()->didSelectAutoFillSuggestion(WebNode(getTextField()),
+                                                           m_names[listIndex],
+                                                           m_labels[listIndex],
+                                                           m_uniqueIDs[listIndex]);
 }
 
 void AutoFillPopupMenuClient::selectionCleared()
 {
     WebViewImpl* webView = getWebView();
     if (webView)
-        webView->client()->didClearAutoFillSelection(WebNode(getTextField()));
+        webView->autoFillClient()->didClearAutoFillSelection(WebNode(getTextField()));
 }
 
 String AutoFillPopupMenuClient::itemText(unsigned listIndex) const
@@ -219,7 +220,7 @@ void AutoFillPopupMenuClient::popupDidHide()
         return;
 
     webView->autoFillPopupDidHide();
-    webView->client()->didClearAutoFillSelection(WebNode(getTextField()));
+    webView->autoFillClient()->didClearAutoFillSelection(WebNode(getTextField()));
 }
 
 bool AutoFillPopupMenuClient::itemIsSeparator(unsigned listIndex) const

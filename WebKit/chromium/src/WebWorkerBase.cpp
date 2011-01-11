@@ -170,7 +170,7 @@ void WebWorkerBase::initializeLoader(const WebURL& url)
     // loading requests from the worker context to the rest of WebKit and Chromium
     // infrastructure.
     ASSERT(!m_webView);
-    m_webView = WebView::create(0, 0);
+    m_webView = WebView::create(0, 0, 0);
     m_webView->settings()->setOfflineWebApplicationCacheEnabled(WebRuntimeFeatures::isApplicationCacheEnabled());
     m_webView->initializeMainFrame(this);
 

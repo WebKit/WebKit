@@ -166,12 +166,6 @@ public:
     virtual void didExecuteCommand(const WebString& commandName) { }
     virtual void didEndEditing() { }
 
-    // These methods are called when the users edits a text-field.
-    virtual void textFieldDidBeginEditing(const WebInputElement&) { }
-    virtual void textFieldDidEndEditing(const WebInputElement&) { }
-    virtual void textFieldDidChange(const WebInputElement&) { }
-    virtual void textFieldDidReceiveKeyDown(const WebInputElement&, const WebKeyboardEvent&) { }
-
     // This method is called in response to WebView's handleInputEvent()
     // when the default action for the current keyboard event is not
     // suppressed by the page, to give the embedder a chance to handle
@@ -310,52 +304,6 @@ public:
     virtual void didUpdateInspectorSettings() { }
 
     virtual void didUpdateInspectorSetting(const WebString& key, const WebString& value) { }
-
-
-    // AutoFill ------------------------------------------------------------
-
-    // Queries the browser for suggestions to be shown for the form text
-    // field named |name|.  |value| is the text entered by the user so
-    // far and the WebNode corresponds to the input field.
-    virtual void queryAutofillSuggestions(const WebNode&,
-                                          const WebString& name,
-                                          const WebString& value) { }
-
-    // Instructs the browser to remove the Autocomplete entry specified from
-    // its DB.
-    // FIXME: This method should be named removeAutocompleteSugestion.
-    virtual void removeAutofillSuggestions(const WebString& name,
-                                           const WebString& value) { }
-
-    // Informs the browser that the user has accepted an AutoFill suggestion for
-    // a WebNode.  |uniqueID| is used as a key into the set of AutoFill profiles,
-    // and should never be negative.  If it is 0, then the suggestion is an
-    // Autocomplete suggestion; and |value| stores the suggested text.  |index|
-    // is an index of the selected suggestion in the list of suggestions provided
-    // by the client.
-    virtual void didAcceptAutoFillSuggestion(const WebNode&,
-                                             const WebString& value,
-                                             const WebString& label,
-                                             int uniqueID,
-                                             unsigned index) { }
-
-    // Informs the browser that the user has selected an AutoFill suggestion for
-    // a WebNode.  This happens when the user hovers over a suggestion or uses
-    // the arrow keys to navigate to a suggestion.
-    virtual void didSelectAutoFillSuggestion(const WebNode&,
-                                             const WebString& name,
-                                             const WebString& label,
-                                             int uniqueID) { }
-
-    // Informs the browser that the user has cleared the selection from the
-    // AutoFill suggestions popup.  This happens when a user uses the arrow
-    // keys to navigate outside the range of possible selections.
-    virtual void didClearAutoFillSelection(const WebNode&) { }
-
-    // Informs the browser that the user has selected an autocomplete (password
-    // or field) suggestion from the drop-down.  The input element text has
-    // already been set to the selected suggestion.
-    virtual void didAcceptAutocompleteSuggestion(const WebInputElement&) { }
 
     // Geolocation ---------------------------------------------------------
 

@@ -85,7 +85,7 @@ TEST_F(WebFrameTest, ContentText)
 
     // Create and initialize the WebView.    
     TestWebFrameClient webFrameClient;
-    WebView* webView = WebView::create(0, 0);
+    WebView* webView = WebView::create(0, 0, 0);
     webView->initializeMainFrame(&webFrameClient);
 
     // Load the main frame URL.

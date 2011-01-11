@@ -36,9 +36,13 @@
 #include "WebVector.h"
 #include "WebWidget.h"
 
+// FIXME(jam): take out once Chromium rolls past this revision
+#define WEBKIT_HAS_WEB_AUTO_FILL_CLIENT
+
 namespace WebKit {
 
 class WebAccessibilityObject;
+class WebAutoFillClient;
 class WebDevToolsAgent;
 class WebDevToolsAgentClient;
 class WebDragData;
@@ -81,8 +85,10 @@ public:
 
     // Creates a WebView that is NOT yet initialized.  You will need to
     // call initializeMainFrame to finish the initialization.  It is valid
-    // to pass null WebViewClient and WebDevToolsAgentClient pointers.
-    WEBKIT_API static WebView* create(WebViewClient*, WebDevToolsAgentClient*);
+    // to pass null client pointers.
+    WEBKIT_API static WebView* create(WebViewClient*,
+                                      WebDevToolsAgentClient*,
+                                      WebAutoFillClient*);
 
     // After creating a WebView, you should immediately call this method.
     // You can optionally modify the settings before calling this method.
