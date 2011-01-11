@@ -3116,3 +3116,6 @@ BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
 BUGCR69181 : fast/js/exception-codegen-crash.html = FAIL
 BUGCR69181 : fast/js/kde/parse.html = FAIL
 BUGCR69181 : fast/js/large-expressions.html = FAIL
+
+// Flaky on Linux since r75250
+BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS

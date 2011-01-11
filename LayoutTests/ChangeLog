@@ -1,3 +1,11 @@
+2011-01-11  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed, test expectations update.
+
+        Flaky expectations for textOnPath.svg.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-11  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Eric Seidel.
