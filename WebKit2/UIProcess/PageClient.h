@@ -37,7 +37,6 @@ namespace WebCore {
 
 namespace WebKit {
 
-class DrawingAreaProxy;
 class FindIndicator;
 class NativeWebKeyboardEvent;
 class NativeWebKeyboardEvent;
@@ -48,12 +47,6 @@ class WebPopupMenuProxy;
 class PageClient {
 public:
     virtual ~PageClient() { }
-
-    // Create a new drawing area proxy for the given page.
-    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy() = 0;
-
-    // Tell the view to invalidate the given rect. The rect is in view coordinates.
-    virtual void setViewNeedsDisplay(const WebCore::IntRect&) = 0;
 
     // Return the size of the view the page is associated with.
     virtual WebCore::IntSize viewSize() = 0;

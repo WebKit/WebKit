@@ -1,3 +1,25 @@
+2011-01-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r75459
+        http://trac.webkit.org/changeset/75459
+
+        Work towards having the WebPageProxy decide when to create the DrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=52184
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        * UIProcess/win/WebView.h:
+
 2011-01-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

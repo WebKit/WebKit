@@ -120,16 +120,6 @@ void QWKPagePrivate::takeFocus(bool direction)
     emit q->focusNextPrevChild(direction);
 }
 
-PassOwnPtr<DrawingAreaProxy> QWKPagePrivate::createDrawingAreaProxy()
-{
-    // FIXME: Implement. See https://bugs.webkit.org/show_bug.cgi?id=52183.
-}
-
-void QWKPagePrivate::setViewNeedsDisplay(const WebCore::IntRect& rect)
-{
-    // FIXME: Implement. See https://bugs.webkit.org/show_bug.cgi?id=52183.
-}
-
 WebCore::IntSize QWKPagePrivate::viewSize()
 {
     // FIXME: Implement.
