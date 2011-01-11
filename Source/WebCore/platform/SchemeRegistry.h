@@ -41,7 +41,6 @@ public:
     static const URLSchemesMap& localSchemes();
 
     static bool shouldTreatURLSchemeAsLocal(const String&);
-    static bool deprecatedShouldTreatURLAsLocal(const String&);
 
     // Secure schemes do not trigger mixed content warnings. For example,
     // https and data are secure schemes because they cannot be corrupted by

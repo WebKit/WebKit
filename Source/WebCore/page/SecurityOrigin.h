@@ -193,9 +193,11 @@ private:
     SecurityOrigin(const KURL&, SandboxFlags);
     explicit SecurityOrigin(const SecurityOrigin*);
 
-    bool passesFileCheck(const SecurityOrigin* other) const;
+    // FIXME: Rename this function to something more semantic.
+    bool passesFileCheck(const SecurityOrigin*) const;
 
-    bool isAccessWhiteListed(const SecurityOrigin* targetOrigin) const;
+    bool isAccessWhiteListed(const SecurityOrigin*) const;
+    bool isAccessToURLWhiteListed(const KURL&) const;
 
     SandboxFlags m_sandboxFlags;
     String m_protocol;

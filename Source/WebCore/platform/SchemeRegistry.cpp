@@ -107,26 +107,6 @@ const URLSchemesMap& SchemeRegistry::localSchemes()
     return localURLSchemes();
 }
 
-bool SchemeRegistry::deprecatedShouldTreatURLAsLocal(const String& url)
-{
-    // This avoids an allocation of another String and the HashSet contains()
-    // call for the file: and http: schemes.
-    if (url.length() >= 5) {
-        const UChar* s = url.characters();
-        if (s[0] == 'h' && s[1] == 't' && s[2] == 't' && s[3] == 'p' && s[4] == ':')
-            return false;
-        if (s[0] == 'f' && s[1] == 'i' && s[2] == 'l' && s[3] == 'e' && s[4] == ':')
-            return true;
-    }
-
-    size_t loc = url.find(':');
-    if (loc == notFound)
-        return false;
-
-    String scheme = url.left(loc);
-    return localURLSchemes().contains(scheme);
-}
-
 bool SchemeRegistry::shouldTreatURLSchemeAsLocal(const String& scheme)
 {
     // This avoids an allocation of another String and the HashSet contains()

@@ -1,3 +1,23 @@
+2011-01-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduce the notion of a "display-isolated" URL scheme for use by
+        Chrome-internal URLs
+        https://bugs.webkit.org/show_bug.cgi?id=50182
+
+        This patch actually makes the display-isolated schemes display
+        isolated.  The behavior should be the same as the previous iteration of
+        this patch, but re-organized a bit because reading the access white
+        list is expensive.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::isAccessToURLWhiteListed):
+        (WebCore::SecurityOrigin::canDisplay):
+        * page/SecurityOrigin.h:
+        * platform/SchemeRegistry.cpp:
+        * platform/SchemeRegistry.h:
+
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.
