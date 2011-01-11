@@ -128,6 +128,9 @@
 		1A64218712DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64218512DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp */; };
 		1A6421F612DCFBAB00CAAE2C /* DrawingAreaImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */; };
 		1A6421F712DCFBAB00CAAE2C /* DrawingAreaImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6421F512DCFBAB00CAAE2C /* DrawingAreaImpl.cpp */; };
+		1A64228B12DD024700CAAE2C /* DrawingArea.messages.in in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */; };
+		1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */; };
+		1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
 		1A6FA01E11E1526300DB1371 /* WebProcessMainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */; };
@@ -713,6 +716,7 @@
 			dstSubfolderSpec = 1;
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
+				1A64228B12DD024700CAAE2C /* DrawingArea.messages.in in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -835,6 +839,9 @@
 		1A64218512DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxyImpl.cpp; sourceTree = "<group>"; };
 		1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaImpl.h; sourceTree = "<group>"; };
 		1A6421F512DCFBAB00CAAE2C /* DrawingAreaImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaImpl.cpp; sourceTree = "<group>"; };
+		1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DrawingArea.messages.in; sourceTree = "<group>"; };
+		1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaMessages.h; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
 		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
 		1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessMainMac.mm; sourceTree = "<group>"; };
@@ -1987,6 +1994,7 @@
 				93FC679E12D3CC7400A60610 /* DecoderAdapter.h */,
 				BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */,
 				BC8452A61162C80900CAB9B5 /* DrawingArea.h */,
+				1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */,
 				1A6421F512DCFBAB00CAAE2C /* DrawingAreaImpl.cpp */,
 				1A6421F412DCFBAB00CAAE2C /* DrawingAreaImpl.h */,
 				93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */,
@@ -2586,6 +2594,8 @@
 				512F58A112A883AD00629530 /* AuthenticationManagerMessages.h */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
+				1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */,
+				1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */,
 				1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */,
 				1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */,
 				1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */,
@@ -2984,6 +2994,7 @@
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
 				1A64218612DCF49200CAAE2C /* DrawingAreaProxyImpl.h in Headers */,
 				1A6421F612DCFBAB00CAAE2C /* DrawingAreaImpl.h in Headers */,
+				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3434,6 +3445,7 @@
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,
 				1A64218712DCF49200CAAE2C /* DrawingAreaProxyImpl.cpp in Sources */,
 				1A6421F712DCFBAB00CAAE2C /* DrawingAreaImpl.cpp in Sources */,
+				1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

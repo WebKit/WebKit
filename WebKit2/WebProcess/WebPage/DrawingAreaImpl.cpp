@@ -47,7 +47,7 @@ DrawingAreaImpl::DrawingAreaImpl(DrawingAreaInfo::Identifier identifier, WebPage
 {
 }
 
-void DrawingAreaImpl::setNeedsDisplay(const IntRect&)
+void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 {
 }
 
@@ -78,5 +78,9 @@ void DrawingAreaImpl::syncCompositingLayers()
 void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
 {
 }
-    
+
+void DrawingAreaImpl::setSize(const IntSize& size)
+{
+}
+
 } // namespace WebKit

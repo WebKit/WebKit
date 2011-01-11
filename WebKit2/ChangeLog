@@ -2,6 +2,46 @@
 
         Reviewed by Sam Weinig.
 
+        Add SetSize message
+        https://bugs.webkit.org/show_bug.cgi?id=52247
+
+        * DerivedSources.make:
+        Add DrawingArea.messages.in
+
+        * Platform/CoreIPC/MessageID.h:
+        Add DrawingArea message class.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::sizeDidChange):
+        Call sendSetSize.
+
+        (WebKit::DrawingAreaProxyImpl::sendSetSize):
+        Send a SetSize message.
+
+        * UIProcess/DrawingAreaProxyImpl.h:
+        Add setSize override.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setSize):
+        Add setSize member function.
+
+        * WebProcess/WebPage/DrawingArea.messages.in: Added.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Add setSize.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage):
+        Handle drawing area messages.
+
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Replace ASSERTs with FIXMEs.
 
         * UIProcess/DrawingAreaProxyImpl.cpp:

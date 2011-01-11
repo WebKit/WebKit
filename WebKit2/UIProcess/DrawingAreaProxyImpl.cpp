@@ -25,6 +25,10 @@
 
 #include "DrawingAreaProxyImpl.h"
 
+#include "DrawingAreaMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+
 #ifndef __APPLE__
 #error "This drawing area is not ready for use by other ports yet."
 #endif
@@ -63,7 +67,7 @@ bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext
 
 void DrawingAreaProxyImpl::sizeDidChange()
 {
-    // FIXME: Implement.
+    sendSetSize();
 }
 
 void DrawingAreaProxyImpl::setPageIsVisible(bool pageIsVisible)
@@ -79,6 +83,14 @@ void DrawingAreaProxyImpl::attachCompositingContext(uint32_t contextID)
 void DrawingAreaProxyImpl::detachCompositingContext()
 {
     ASSERT_NOT_REACHED();
+}
+
+void DrawingAreaProxyImpl::sendSetSize()
+{
+    if (!m_webPageProxy->isValid())
+        return;
+
+    m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(m_size), m_webPageProxy->pageID());
 }
 
 } // namespace WebKit

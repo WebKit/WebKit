@@ -46,6 +46,8 @@ private:
     virtual void setPageIsVisible(bool);
     virtual void attachCompositingContext(uint32_t contextID);
     virtual void detachCompositingContext();
+
+    void sendSetSize();
 };
 
 } // namespace WebKit

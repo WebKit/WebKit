@@ -1429,6 +1429,14 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         return;
     }
 
+#ifdef __APPLE__
+    if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
+        if (m_drawingArea)
+            m_drawingArea->didReceiveDrawingAreaMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
+    
 #if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspector>()) {
         if (WebInspector* inspector = this->inspector())

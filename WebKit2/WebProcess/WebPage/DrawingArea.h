@@ -47,6 +47,10 @@ public:
     static PassRefPtr<DrawingArea> create(DrawingAreaInfo::Type, DrawingAreaInfo::Identifier, WebPage*);
     virtual ~DrawingArea();
     
+#ifdef __APPLE__
+    void didReceiveDrawingAreaMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+#endif
+
     virtual void setNeedsDisplay(const WebCore::IntRect&) = 0;
     virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect) = 0;
 
@@ -71,6 +75,11 @@ protected:
 
     DrawingAreaInfo m_info;
     WebPage* m_webPage;
+
+private:
+    // CoreIPC message handlers.
+    // FIXME: These should be pure virtual.
+    virtual void setSize(const WebCore::IntSize&) { }
 };
 
 } // namespace WebKit

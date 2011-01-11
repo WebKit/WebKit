@@ -47,6 +47,10 @@ private:
     virtual void scheduleCompositingLayerSync();
     virtual void syncCompositingLayers();
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    // CoreIPC message handlers.
+    virtual void setSize(const WebCore::IntSize&);
+
 };
 
 } // namespace WebKit
