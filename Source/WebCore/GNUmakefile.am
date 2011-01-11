@@ -3892,10 +3892,10 @@ FEATURE_DEFINES += ENABLE_DATAGRID=0
 webcore_cppflags += -DENABLE_DATAGRID=0
 
 # ----
-# HTML Meter Element - disable for now.
+# HTML Meter Element
 # ----
-FEATURE_DEFINES += ENABLE_METER_TAG=0
-webcore_cppflags += -DENABLE_METER_TAG=0
+FEATURE_DEFINES += ENABLE_METER_TAG=1
+webcore_cppflags += -DENABLE_METER_TAG=1
 
 # ----
 # HTML Progress Element

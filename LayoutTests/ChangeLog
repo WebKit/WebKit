@@ -1,3 +1,33 @@
+2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add support for <meter> element
+        https://bugs.webkit.org/show_bug.cgi?id=48713
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.checksum: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.checksum: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.checksum: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.checksum: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.checksum: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.checksum: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+
 2011-01-11  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; yet another gpu test_expectations update.

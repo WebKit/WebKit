@@ -4890,11 +4890,6 @@ fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 
-# meter element is not supported
-# http://bugs.webkit.org/show_bug.cgi?id=48713
-fast/dom/HTMLMeterElement
-fast/forms/form-attribute.html
-
 # Needs mock support, and build slave Geolocation service
 # See https://bugs.webkit.org/show_bug.cgi?id=36053
 fast/dom/Geolocation/callback-exception.html

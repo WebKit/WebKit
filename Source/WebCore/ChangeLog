@@ -1,3 +1,12 @@
+2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add support for <meter> element
+        https://bugs.webkit.org/show_bug.cgi?id=48713
+
+        * GNUmakefile.am: Enable meter element.
+
 2011-01-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix.
