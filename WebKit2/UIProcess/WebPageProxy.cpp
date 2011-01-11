@@ -476,6 +476,11 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
     }
 }
 
+IntSize WebPageProxy::viewSize() const
+{
+    return m_pageClient->viewSize();
+}
+
 void WebPageProxy::setInitialFocus(bool forward)
 {
     if (!isValid())

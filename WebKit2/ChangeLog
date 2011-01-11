@@ -1,3 +1,16 @@
+2011-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pass the view size to the DrawingAreaProxy constructor
+        https://bugs.webkit.org/show_bug.cgi?id=52189
+
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::DrawingAreaProxy):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewSize):
+        * UIProcess/WebPageProxy.h:
+
 2011-01-11  Sam Weinig  <sam@webkit.org>
 
         Roll r75460 back in with build fix.

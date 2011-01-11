@@ -178,6 +178,8 @@ public:
     typedef unsigned ViewStateFlags;
     void viewStateDidChange(ViewStateFlags flags);
 
+    WebCore::IntSize viewSize() const;
+
     void executeEditCommand(const String& commandName);
     void validateMenuItem(const String& commandName);
 
