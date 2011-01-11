@@ -30,6 +30,7 @@
 #include "CSSStyleSelector.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
 #include "RenderStyle.h"
 #include <wtf/MathExtras.h>
@@ -57,9 +58,14 @@ void WebKitCSSMatrix::setMatrixValue(const String& string, ExceptionCode& ec)
     if (p.parseValue(styleDeclaration.get(), CSSPropertyWebkitTransform, string, true)) {
         // Convert to TransformOperations. This can fail if a property 
         // requires style (i.e., param uses 'ems' or 'exs')
-        PassRefPtr<CSSValue> val =  styleDeclaration->getPropertyCSSValue(CSSPropertyWebkitTransform);
+        RefPtr<CSSValue> value = styleDeclaration->getPropertyCSSValue(CSSPropertyWebkitTransform);
+
+        // Check for a "none" or empty transform. In these cases we can use the default identity matrix.
+        if (!value || (value->isPrimitiveValue() && (static_cast<CSSPrimitiveValue*>(value.get()))->getIdent() == CSSValueNone))
+            return;
+
         TransformOperations operations;
-        if (!CSSStyleSelector::createTransformOperations(val.get(), 0, 0, operations)) {
+        if (!CSSStyleSelector::createTransformOperations(value.get(), 0, 0, operations)) {
             ec = SYNTAX_ERR;
             return;
         }

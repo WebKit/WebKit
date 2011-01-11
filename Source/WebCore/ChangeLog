@@ -1,3 +1,15 @@
+2011-01-11  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52233
+
+        WebKitCSSMatrix constructor should accept 'none'
+        as a valid string parameter.
+
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+
 2011-01-11  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,15 @@
+2011-01-11  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52233
+
+        Update WebKitCSSMatrix test to cover a constructor
+        that accepts 'none' as input.
+
+        * transforms/cssmatrix-2d-interface-expected.txt:
+        * transforms/cssmatrix-2d-interface.xhtml:
+
 2011-01-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

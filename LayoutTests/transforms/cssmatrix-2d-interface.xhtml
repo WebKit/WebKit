@@ -14,24 +14,15 @@ description("This test exercises the CSSMatrix interface");
 debug("");
 debug("CSSMatrix constructors");
 
-var m = null;
-m = new WebKitCSSMatrix();
-if (m)
-  testPassed("default constructor");
-else
-  testFailed("default constructor");
 
-var m2 = new WebKitCSSMatrix(m);
-if (m2)
-  testPassed("object constructor");
-else
-  testFailed("object constructor");
-
-m = new WebKitCSSMatrix("matrix(1, 0, 0, 1, 0, 0)");
-if (m)
-  testPassed("string constructor");
-else
-  testFailed("string constructor");
+var m = new WebKitCSSMatrix();
+shouldBeNonNull('m');
+shouldBeNonNull('new WebKitCSSMatrix()');
+shouldBeNonNull('new WebKitCSSMatrix(m)');
+shouldBeNonNull('new WebKitCSSMatrix("matrix(1, 0, 0, 1, 0, 0)")');
+shouldBeNonNull('new WebKitCSSMatrix("")');
+shouldBeNonNull('new WebKitCSSMatrix("none")');
+shouldBeNonNull('new WebKitCSSMatrix("   none   ")');
 
 debug("");
 debug("Test toString");

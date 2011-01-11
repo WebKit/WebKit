@@ -4,9 +4,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 CSSMatrix constructors
-PASS default constructor
-PASS object constructor
-PASS string constructor
+PASS m is non-null.
+PASS new WebKitCSSMatrix() is non-null.
+PASS new WebKitCSSMatrix(m) is non-null.
+PASS new WebKitCSSMatrix("matrix(1, 0, 0, 1, 0, 0)") is non-null.
+PASS new WebKitCSSMatrix("") is non-null.
+PASS new WebKitCSSMatrix("none") is non-null.
+PASS new WebKitCSSMatrix("   none   ") is non-null.
 
 Test toString
 PASS a[0] is "matrix"
