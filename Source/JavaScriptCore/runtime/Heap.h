@@ -65,8 +65,6 @@ namespace JSC {
         size_t nextCell;
         PageAllocationAligned* blocks;
         
-        void* nextNumber;
-
         size_t numBlocks;
         size_t usedBlocks;
 
@@ -85,7 +83,6 @@ namespace JSC {
     public:
         void destroy();
 
-        void* allocateNumber(size_t);
         void* allocate(size_t);
 
         bool isBusy(); // true if an allocation or collection is in progress
@@ -295,19 +292,6 @@ namespace JSC {
             recordExtraCost(cost);
     }
     
-    inline void* Heap::allocateNumber(size_t s)
-    {
-        if (void* result = m_heap.nextNumber) {
-            m_heap.nextNumber = 0;
-            return result;
-        }
-
-        void* result = allocate(s);
-        m_heap.nextNumber = static_cast<char*>(result) + (CELL_SIZE / 2);
-        return result;
-    }
-
-
     inline WeakGCHandlePool* Heap::weakGCHandlePool(size_t index)
     {
         return static_cast<WeakGCHandlePool*>(m_weakGCHandlePools[index].base());
