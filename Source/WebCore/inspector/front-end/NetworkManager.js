@@ -206,6 +206,11 @@ WebInspector.NetworkManager.prototype = {
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
     },
 
+    frameDetachedFromParent: function(frameId)
+    {
+        this._resourceTreeModel.frameDetachedFromParent(frameId);
+    },
+
     setInitialContent: function(identifier, sourceString, type)
     {
         var resource = WebInspector.panels.network.resources[identifier];

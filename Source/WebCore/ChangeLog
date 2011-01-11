@@ -1,3 +1,13 @@
+2011-01-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: frameDetachedFromParent notification handler is missing in NetworkManager.
+        https://bugs.webkit.org/show_bug.cgi?id=52205
+
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.frameDetachedFromParent):
+
 2011-01-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
