@@ -268,6 +268,15 @@ void InspectorDOMAgent::releaseDanglingNodes()
     m_danglingNodeToIdMaps.clear();
 }
 
+void InspectorDOMAgent::startListeningFrameDocument(Node* frameOwnerNode)
+{
+    ASSERT(frameOwnerNode->isFrameOwnerElement());
+    HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(frameOwnerNode);
+    Document* doc = frameOwner->contentDocument();
+    if (doc)
+        startListening(doc);
+}
+
 void InspectorDOMAgent::startListening(Document* doc)
 {
     if (m_documents.contains(doc))
@@ -947,20 +956,24 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForElementAttributes(Ele
 PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap)
 {
     RefPtr<InspectorArray> children = InspectorArray::create();
+    Node* child = innerFirstChild(container);
+
     if (depth == 0) {
         // Special case the_only text child.
-        if (innerChildNodeCount(container) == 1) {
-            Node *child = innerFirstChild(container);
-            if (child->nodeType() == Node::TEXT_NODE)
-                children->pushObject(buildObjectForNode(child, 0, nodesMap));
-        }
+        if (child && child->nodeType() == Node::TEXT_NODE && !innerNextSibling(child))
+            children->pushObject(buildObjectForNode(child, 0, nodesMap));
         return children.release();
     } else if (depth > 0) {
         depth--;
     }
 
-    for (Node *child = innerFirstChild(container); child; child = innerNextSibling(child))
+    if (container->isFrameOwnerElement())
+        startListeningFrameDocument(container);
+
+    while (child) {
         children->pushObject(buildObjectForNode(child, depth, nodesMap));
+        child = innerNextSibling(child);
+    }
     return children.release();
 }
 
@@ -987,10 +1000,8 @@ Node* InspectorDOMAgent::innerFirstChild(Node* node)
     if (node->isFrameOwnerElement()) {
         HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
         Document* doc = frameOwner->contentDocument();
-        if (doc) {
-            startListening(doc);
+        if (doc)
             return doc->firstChild();
-        }
     }
     node = node->firstChild();
     while (isWhitespace(node))

@@ -148,6 +148,7 @@ namespace WebCore {
         void removeDOMBreakpoint(long nodeId, long type);
 
     private:
+        void startListeningFrameDocument(Node* frameOwnerNode);
         void startListening(Document* document);
         void stopListening(Document* document);
 

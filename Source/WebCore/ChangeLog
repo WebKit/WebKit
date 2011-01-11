@@ -1,3 +1,23 @@
+2011-01-11  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: innerFirstChild has a side effect which should be called explicitly.
+
+        If a node is a frame's owner then innerFirstChild method
+        subscribes DOMAgent instance to the frame's doc's events.
+        I think this should be done explicitly when we meet with
+        the node for the first time. As I understand it happens
+        in buildArrayForContainerChildren method.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52204
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::startListeningFrameDoc):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::innerFirstChild):
+        * inspector/InspectorDOMAgent.h:
+
 2011-01-11  Adam Roben  <aroben@apple.com>
 
         Delete WKCACFLayer.{cpp,h}
