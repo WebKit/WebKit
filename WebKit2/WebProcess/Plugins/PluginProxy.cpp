@@ -175,7 +175,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
     if (didUpdateBackingStore) {
         // Create a new plug-in backing store.
-        m_pluginBackingStore = ShareableBitmap::createSharable(frameRect.size());
+        m_pluginBackingStore = ShareableBitmap::createShareable(frameRect.size());
         if (!m_pluginBackingStore)
             return;
 

@@ -43,7 +43,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size
     return adoptRef(new ShareableBitmap(size, data));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::createSharable(const IntSize& size)
+PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size)
 {
     size_t numBytes = numBytesForSize(size);
     

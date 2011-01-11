@@ -2,6 +2,25 @@
 
         Reviewed by Sam Weinig.
 
+        Rename ShareableBitmap::createSharable to createShareable
+        https://bugs.webkit.org/show_bug.cgi?id=52234
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::createShareable):
+        * Shared/ShareableBitmap.h:
+        * Shared/WebImage.cpp:
+        (WebKit::WebImage::create):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Rename BackingStore to ShareableBitmap
         https://bugs.webkit.org/show_bug.cgi?id=52228
 
