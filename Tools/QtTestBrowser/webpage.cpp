@@ -107,10 +107,12 @@ bool WebPage::acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& r
 
 void WebPage::openUrlInDefaultBrowser(const QUrl& url)
 {
+#ifndef QT_NO_DESKTOPSERVICES
     if (QAction* action = qobject_cast<QAction*>(sender()))
         QDesktopServices::openUrl(action->data().toUrl());
     else
         QDesktopServices::openUrl(url);
+#endif
 }
 
 QString WebPage::userAgentForUrl(const QUrl& url) const
@@ -165,6 +167,7 @@ void WebPage::authenticationRequired(QNetworkReply* reply, QAuthenticator* authe
     messageLabel->setText(messageStr.arg(reply->url().toString()));
     layout->addWidget(messageLabel, 0, 1);
 
+#ifndef QT_NO_LINEEDIT
     QLabel* userLabel = new QLabel("Username:", dialog);
     layout->addWidget(userLabel, 1, 0);
     QLineEdit* userInput = new QLineEdit(dialog);
@@ -175,6 +178,7 @@ void WebPage::authenticationRequired(QNetworkReply* reply, QAuthenticator* authe
     QLineEdit* passInput = new QLineEdit(dialog);
     passInput->setEchoMode(QLineEdit::Password);
     layout->addWidget(passInput, 2, 1);
+#endif
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
             | QDialogButtonBox::Cancel, Qt::Horizontal, dialog);
@@ -183,8 +187,10 @@ void WebPage::authenticationRequired(QNetworkReply* reply, QAuthenticator* authe
     layout->addWidget(buttonBox, 3, 1);
 
     if (dialog->exec() == QDialog::Accepted) {
+#ifndef QT_NO_LINEEDIT
         authenticator->setUser(userInput->text());
         authenticator->setPassword(passInput->text());
+#endif
     }
 
     delete dialog;

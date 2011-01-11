@@ -1,3 +1,19 @@
+2011-01-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Baseline qt_minimal configuration
+        https://bugs.webkit.org/show_bug.cgi?id=51313
+
+        No new tests as there is no new functionality.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp: Fix the location of the
+        QT_NO_ANIMATION guard.
+
+        * platform/qt/WheelEventQt.cpp:
+        (WebCore::PlatformWheelEvent::applyDelta): Fix the location of the
+        QT_NO_WHEELEVENT guard.
+
 2011-01-10  Joe Mason  <jmason@rim.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -540,7 +540,9 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
     closeRemainingWindows();
 
     m_page->resetSettings();
+#ifndef QT_NO_UNDOSTACK
     m_page->undoStack()->clear();
+#endif
     m_page->mainFrame()->setZoomFactor(1.0);
     clearHistory(m_page);
     DumpRenderTreeSupportQt::clearFrameName(m_page->mainFrame());

@@ -589,8 +589,10 @@ protected:
         QObject *result = 0;
         if (classid == "pushbutton")
             result = new QPushButton();
+#ifndef QT_NO_INPUTDIALOG
         else if (classid == "lineedit")
             result = new QLineEdit();
+#endif
         else if (classid == "graphicswidget")
             result = new QGraphicsWidget();
         if (result)

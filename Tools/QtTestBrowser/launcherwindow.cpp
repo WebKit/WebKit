@@ -163,6 +163,7 @@ void LauncherWindow::applyPrefs()
 
 void LauncherWindow::createChrome()
 {
+#ifndef QT_NO_SHORTCUT
     QMenu* fileMenu = menuBar()->addMenu("&File");
     fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
     fileMenu->addAction(tr("Open File..."), this, SLOT(openFile()), QKeySequence::Open);
@@ -170,7 +171,9 @@ void LauncherWindow::createChrome()
     fileMenu->addAction("Close Window", this, SLOT(close()), QKeySequence::Close);
     fileMenu->addSeparator();
     fileMenu->addAction("Take Screen Shot...", this, SLOT(screenshot()));
+#ifndef QT_NO_PRINTER
     fileMenu->addAction(tr("Print..."), this, SLOT(print()), QKeySequence::Print);
+#endif
     fileMenu->addSeparator();
     fileMenu->addAction("Quit", QApplication::instance(), SLOT(closeAllWindows()), QKeySequence(Qt::CTRL | Qt::Key_Q));
 
@@ -368,6 +371,7 @@ void LauncherWindow::createChrome()
     showFPS->setEnabled(isGraphicsBased());
     showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
     showFPS->setChecked(m_windowOptions.showFrameRate);
+#endif
 }
 
 bool LauncherWindow::isGraphicsBased() const
@@ -547,6 +551,7 @@ void LauncherWindow::zoomAnimationFinished()
 
 void LauncherWindow::applyZoom()
 {
+#ifndef QT_NO_ANIMATION
     if (isGraphicsBased() && page()->settings()->testAttribute(QWebSettings::TiledBackingStoreEnabled)) {
         QGraphicsWebView* view = static_cast<WebViewGraphicsBased*>(m_view)->graphicsWebView();
         view->setTiledBackingStoreFrozen(true);
@@ -564,6 +569,7 @@ void LauncherWindow::applyZoom()
         m_zoomAnimation->start();
         return;
     }
+#endif
     page()->mainFrame()->setZoomFactor(qreal(m_currentZoom) / 100.0);
 }
 
@@ -620,12 +626,14 @@ void LauncherWindow::screenshot()
     label->show();
 #endif
 
+#ifndef QT_NO_FILEDIALOG
     QString fileName = QFileDialog::getSaveFileName(label, "Screenshot");
     if (!fileName.isEmpty()) {
         pixmap.save(fileName, "png");
         if (label)
             label->setWindowTitle(QString("Screenshot - Saved at %1").arg(fileName));
     }
+#endif
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     toggleQGLWidgetViewport(m_windowOptions.useQGLWidgetViewport);
@@ -657,6 +665,7 @@ void LauncherWindow::dumpHtml()
 
 void LauncherWindow::selectElements()
 {
+#ifndef QT_NO_INPUTDIALOG
     bool ok;
     QString str = QInputDialog::getText(this, "Select elements", "Choose elements",
                                         QLineEdit::Normal, "a", &ok);
@@ -669,6 +678,7 @@ void LauncherWindow::selectElements()
         statusBar()->showMessage(QString("%1 element(s) selected").arg(result.count()), 5000);
 #endif
     }
+#endif
 }
 
 void LauncherWindow::setTouchMocking(bool on)
@@ -821,6 +831,7 @@ void LauncherWindow::showUserAgentDialog()
     QVBoxLayout* layout = new QVBoxLayout(dialog);
     dialog->setLayout(layout);
 
+#ifndef QT_NO_COMBOBOX
     QComboBox* combo = new QComboBox(dialog);
     combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLength);
     combo->setEditable(true);
@@ -829,6 +840,7 @@ void LauncherWindow::showUserAgentDialog()
 
     int index = combo->findText(page()->userAgentForUrl(QUrl()));
     combo->setCurrentIndex(index);
+#endif
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
             | QDialogButtonBox::Cancel, Qt::Horizontal, dialog);
@@ -836,11 +848,13 @@ void LauncherWindow::showUserAgentDialog()
     connect(buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
     layout->addWidget(buttonBox);
 
+#ifndef QT_NO_COMBOBOX
     if (dialog->exec() && !combo->currentText().isEmpty()) {
         page()->setUserAgent(combo->currentText());
         if (!items.contains(combo->currentText()))
             settings.setValue("CustomUserAgent", combo->currentText());
     }
+#endif
 
     delete dialog;
 }

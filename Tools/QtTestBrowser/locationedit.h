@@ -28,6 +28,7 @@
 #ifndef locationedit_h
 #define locationedit_h
 
+#ifndef QT_NO_INPUTDIALOG
 #include <QtGui>
 
 class LocationEdit : public QLineEdit {
@@ -51,4 +52,5 @@ private:
     QTimer m_clearTimer;
 };
 
+#endif
 #endif

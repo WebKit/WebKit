@@ -91,6 +91,6 @@ void NetworkStateNotifier::setNetworkAccessAllowed(bool isAllowed)
 
 } // namespace WebCore
 
-#endif
-
 #include "moc_NetworkStateNotifierPrivate.cpp"
+
+#endif

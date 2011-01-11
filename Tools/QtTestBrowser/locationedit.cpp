@@ -27,6 +27,8 @@
 
 #include "locationedit.h"
 
+#ifndef QT_NO_INPUTDIALOG
+
 LocationEdit::LocationEdit(QWidget* parent)
     : QLineEdit(parent)
     , m_progress(0)
@@ -78,3 +80,5 @@ void LocationEdit::focusInEvent(QFocusEvent* ev)
     QTimer::singleShot(0, this, SLOT(selectAll()));
 #endif
 }
+
+#endif

@@ -48,10 +48,10 @@ void PlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
     m_wheelTicksX = m_deltaX;
     m_wheelTicksY = m_deltaY;
 
+#ifndef QT_NO_WHEELEVENT
     // Use the same single scroll step as QTextEdit
     // (in QTextEditPrivate::init [h,v]bar->setSingleStep)
     static const float cDefaultQtScrollStep = 20.f;
-#ifndef QT_NO_WHEELEVENT
     m_deltaX *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
     m_deltaY *= (fullTick) ? QApplication::wheelScrollLines() * cDefaultQtScrollStep : 1;
 #endif

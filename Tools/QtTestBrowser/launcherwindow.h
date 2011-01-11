@@ -75,6 +75,8 @@
 #undef KeyPress
 #endif
 
+class QPropertyAnimation;
+
 class WindowOptions {
 public:
     WindowOptions()

@@ -1,3 +1,20 @@
+2011-01-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Baseline qt_minimal configuration
+        https://bugs.webkit.org/show_bug.cgi?id=51313
+
+        * WebCoreSupport/PopupMenuQt.cpp:
+        (WebCore::PopupMenuQt::show): Add QT_NO_COMBOBOX guard.
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::populate): Add QT_NO_TOOLTIP guard.
+
+        * tests/qwebframe/tst_qwebframe.cpp: Add QT_NO_COMBOBOX guard.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (PluginPage::createPlugin): Add QT_NO_INPUTDIALOG guard.
+
 2011-01-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

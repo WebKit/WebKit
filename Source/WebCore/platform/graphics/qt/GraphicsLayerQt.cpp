@@ -1375,6 +1375,7 @@ static inline qreal applyTimingFunction(const TimingFunction* timingFunction, qr
 
 // Helper functions to safely get a value out of WebCore's AnimationValue*.
 
+#ifndef QT_NO_ANIMATION
 static void webkitAnimationToQtAnimationValue(const AnimationValue* animationValue, TransformOperations& transformOperations)
 {
     transformOperations = TransformOperations();
@@ -1390,7 +1391,6 @@ static void webkitAnimationToQtAnimationValue(const AnimationValue* animationVal
     realValue = animationValue ? static_cast<const FloatAnimationValue*>(animationValue)->value() : 0;
 }
 
-#ifndef QT_NO_ANIMATION
 // We put a bit of the functionality in a base class to allow casting and to save some code size.
 
 class AnimationQtBase : public QAbstractAnimation {

@@ -97,6 +97,7 @@ void PopupMenuQt::disconnectClient()
 
 void PopupMenuQt::show(const IntRect& rect, FrameView* view, int index)
 {
+#ifndef QT_NO_COMBOBOX
     if (!m_popupClient)
         return;
 
@@ -117,6 +118,7 @@ void PopupMenuQt::show(const IntRect& rect, FrameView* view, int index)
         delete m_selectData;
     m_selectData = new SelectData(m_popupClient);
     m_popup->show(*m_selectData);
+#endif
 }
 
 void PopupMenuQt::didHide()

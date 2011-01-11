@@ -66,6 +66,7 @@ void MainWindow::buildUI()
     m_toolBar->addAction(reloadAction);
     m_toolBar->addAction(page()->action(QWebPage::Stop));
 
+#ifndef QT_NO_INPUTDIALOG
     urlEdit = new LocationEdit(m_toolBar);
     urlEdit->setSizePolicy(QSizePolicy::Expanding, urlEdit->sizePolicy().verticalPolicy());
     connect(urlEdit, SIGNAL(returnPressed()), SLOT(changeLocation()));
@@ -79,19 +80,24 @@ void MainWindow::buildUI()
     m_toolBar->addWidget(urlEdit);
 #endif
 
-    connect(page()->mainFrame(), SIGNAL(titleChanged(const QString&)),
-            this, SLOT(setWindowTitle(const QString&)));
     connect(page()->mainFrame(), SIGNAL(urlChanged(QUrl)), this, SLOT(setAddressUrl(QUrl)));
     connect(page(), SIGNAL(loadProgress(int)), urlEdit, SLOT(setProgress(int)));
+#endif
+
+    connect(page()->mainFrame(), SIGNAL(titleChanged(const QString&)),
+                this, SLOT(setWindowTitle(const QString&)));
     connect(page(), SIGNAL(windowCloseRequested()), this, SLOT(close()));
 
+#ifndef QT_NO_SHORTCUT
     // short-cuts
     page()->action(QWebPage::Back)->setShortcut(QKeySequence::Back);
     page()->action(QWebPage::Stop)->setShortcut(Qt::Key_Escape);
     page()->action(QWebPage::Forward)->setShortcut(QKeySequence::Forward);
     page()->action(QWebPage::Reload)->setShortcut(QKeySequence::Refresh);
+#ifndef QT_NO_UNDOSTACK
     page()->action(QWebPage::Undo)->setShortcut(QKeySequence::Undo);
     page()->action(QWebPage::Redo)->setShortcut(QKeySequence::Redo);
+#endif
     page()->action(QWebPage::Cut)->setShortcut(QKeySequence::Cut);
     page()->action(QWebPage::Copy)->setShortcut(QKeySequence::Copy);
     page()->action(QWebPage::Paste)->setShortcut(QKeySequence::Paste);
@@ -100,6 +106,7 @@ void MainWindow::buildUI()
     page()->action(QWebPage::ToggleBold)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_B));
     page()->action(QWebPage::ToggleItalic)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     page()->action(QWebPage::ToggleUnderline)->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
+#endif
 }
 
 void MainWindow::setPage(WebPage* page)
@@ -125,8 +132,10 @@ void MainWindow::setAddressUrl(const QUrl& url)
 
 void MainWindow::setAddressUrl(const QString& url)
 {
+#ifndef QT_NO_INPUTDIALOG
     if (!url.contains("about:"))
         urlEdit->setText(url);
+#endif
 }
 
 void MainWindow::addCompleterEntry(const QUrl& url)
@@ -164,6 +173,7 @@ void MainWindow::load(const QUrl& url)
 
 void MainWindow::changeLocation()
 {
+#ifndef QT_NO_INPUTDIALOG
     QString string = urlEdit->text();
     QUrl mainFrameURL = page()->mainFrame()->url();
 
@@ -173,10 +183,12 @@ void MainWindow::changeLocation()
     }
 
     load(string);
+#endif
 }
 
 void MainWindow::openFile()
 {
+#ifndef QT_NO_FILEDIALOG
     static const QString filter("HTML Files (*.htm *.html);;Text Files (*.txt);;Image Files (*.gif *.jpg *.png);;All Files (*)");
 
     QFileDialog fileDialog(this, tr("Open"), QString(), filter);
@@ -189,10 +201,13 @@ void MainWindow::openFile()
         if (!selectedFile.isEmpty())
             load(QUrl::fromLocalFile(selectedFile));
     }
+#endif
 }
 
 void MainWindow::openLocation()
 {
+#ifndef QT_NO_INPUTDIALOG
     urlEdit->selectAll();
     urlEdit->setFocus();
+#endif
 }
