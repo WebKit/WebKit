@@ -63,7 +63,7 @@ bool DragData::containsPlainText() const
     return false;
 }
 
-String DragData::asPlainText() const
+String DragData::asPlainText(Frame*) const
 {
     notImplemented();
     return String();
@@ -80,19 +80,19 @@ bool DragData::containsCompatibleContent() const
     return containsColor() || containsURL() || containsPlainText();
 }
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
 {
     notImplemented();
     return false;
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     notImplemented();
     return String();
 }
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Document*) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame*, PassRefPtr<Range>, bool, bool&) const
 {
     notImplemented();
     return 0;

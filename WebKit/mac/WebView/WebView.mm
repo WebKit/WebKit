@@ -90,7 +90,6 @@
 #import "WebNodeHighlight.h"
 #import "WebPDFView.h"
 #import "WebPanelAuthenticationHandler.h"
-#import "WebPasteboardHelper.h"
 #import "WebPlatformStrategies.h"
 #import "WebPluginDatabase.h"
 #import "WebPluginHalterClient.h"
@@ -3713,11 +3712,9 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
-    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
-    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
     return core(self)->dragController()->dragEntered(&dragData);
 }
 
@@ -3727,11 +3724,9 @@ static bool needsWebViewInitThreadWorkaround()
     if (!page)
         return NSDragOperationNone;
 
-    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
-    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
     return page->dragController()->dragUpdated(&dragData);
 }
 
@@ -3741,11 +3736,9 @@ static bool needsWebViewInitThreadWorkaround()
     if (!page)
         return;
 
-    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
-    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]] ? (WebHTMLView*)view : nil);
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
     page->dragController()->dragExited(&dragData);
 }
 
@@ -3756,11 +3749,9 @@ static bool needsWebViewInitThreadWorkaround()
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
-    NSView <WebDocumentView>* view = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
-    WebPasteboardHelper helper([view isKindOfClass:[WebHTMLView class]]? (WebHTMLView*)view : nil);
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask], &helper);
+    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
     return core(self)->dragController()->performDrag(&dragData);
 }
 

@@ -99,7 +99,7 @@ DragController::~DragController()
     m_client->dragControllerDestroyed();
 }
 
-static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragData, RefPtr<Range> context,
+static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragData, Frame* frame, RefPtr<Range> context,
                                           bool allowPlainText, bool& chosePlainText)
 {
     ASSERT(dragData);
@@ -108,19 +108,19 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     Document* document = context->ownerDocument();
     ASSERT(document);
     if (document && dragData->containsCompatibleContent()) {
-        if (PassRefPtr<DocumentFragment> fragment = dragData->asFragment(document))
+        if (PassRefPtr<DocumentFragment> fragment = dragData->asFragment(frame, context, allowPlainText, chosePlainText))
             return fragment;
 
-        if (dragData->containsURL(DragData::DoNotConvertFilenames)) {
+        if (dragData->containsURL(frame, DragData::DoNotConvertFilenames)) {
             String title;
-            String url = dragData->asURL(DragData::DoNotConvertFilenames, &title);
+            String url = dragData->asURL(frame, DragData::DoNotConvertFilenames, &title);
             if (!url.isEmpty()) {
                 RefPtr<HTMLAnchorElement> anchor = HTMLAnchorElement::create(document);
                 anchor->setHref(url);
                 if (title.isEmpty()) {
                     // Try the plain text first because the url might be normalized or escaped.
                     if (dragData->containsPlainText())
-                        title = dragData->asPlainText();
+                        title = dragData->asPlainText(frame);
                     if (title.isEmpty())
                         title = url;
                 }
@@ -135,7 +135,7 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     }
     if (allowPlainText && dragData->containsPlainText()) {
         chosePlainText = true;
-        return createFragmentFromText(context.get(), dragData->asPlainText()).get();
+        return createFragmentFromText(context.get(), dragData->asPlainText(frame)).get();
     }
 
     return 0;
@@ -214,7 +214,7 @@ bool DragController::performDrag(DragData* dragData)
         return false;
 
     m_client->willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
-    m_page->mainFrame()->loader()->load(ResourceRequest(dragData->asURL()), false);
+    m_page->mainFrame()->loader()->load(ResourceRequest(dragData->asURL(m_page->mainFrame())), false);
     return true;
 }
 
@@ -372,7 +372,7 @@ static bool setSelectionToDragCaret(Frame* frame, VisibleSelection& dragCaret, R
 bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* dragData)
 {
     VisibleSelection dragCaret(m_page->dragCaretController()->selection());
-    String text = dragCaret.isContentRichlyEditable() ? "" : dragData->asPlainText();
+    String text = dragCaret.isContentRichlyEditable() ? "" : dragData->asPlainText(innerFrame);
     Node* target = innerFrame->editor()->findEventTargetFrom(dragCaret);
     ExceptionCode ec = 0;
     return target->dispatchEvent(TextEvent::createForDrop(innerFrame->domWindow(), text), ec);
@@ -451,7 +451,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
     cachedResourceLoader->setAllowStaleResources(true);
     if (dragIsMove(innerFrame->selection()) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
-        RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, range, true, chosePlainText);
+        RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, innerFrame, range, true, chosePlainText);
         if (!fragment || !innerFrame->editor()->shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
             cachedResourceLoader->setAllowStaleResources(false);
             return false;
@@ -469,7 +469,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
                 applyCommand(ReplaceSelectionCommand::create(m_documentUnderMouse.get(), fragment, true, dragData->canSmartReplace(), chosePlainText));
         }
     } else {
-        String text = dragData->asPlainText();
+        String text = dragData->asPlainText(innerFrame);
         if (text.isEmpty() || !innerFrame->editor()->shouldInsertText(text, range.get(), EditorInsertActionDropped)) {
             cachedResourceLoader->setAllowStaleResources(false);
             return false;

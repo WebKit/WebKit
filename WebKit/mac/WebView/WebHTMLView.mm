@@ -1717,7 +1717,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     }
 }
 
-// keep in sync with WebPasteboardHelper::insertablePasteboardTypes
 + (NSArray *)_insertablePasteboardTypes
 {
     static NSArray *types = nil;

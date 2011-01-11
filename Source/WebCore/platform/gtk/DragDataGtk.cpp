@@ -21,6 +21,7 @@
 #include "ClipboardGtk.h"
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Frame.h"
 #include "markup.h"
 
 namespace WebCore {
@@ -50,7 +51,7 @@ bool DragData::containsPlainText() const
     return m_platformDragData->hasText();
 }
 
-String DragData::asPlainText() const
+String DragData::asPlainText(Frame*) const
 {
     return m_platformDragData->text();
 }
@@ -62,15 +63,15 @@ Color DragData::asColor() const
 
 bool DragData::containsCompatibleContent() const
 {
-    return containsPlainText() || containsURL() || m_platformDragData->hasMarkup() || containsColor() || containsFiles();
+    return containsPlainText() || containsURL(0) || m_platformDragData->hasMarkup() || containsColor() || containsFiles();
 }
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
 {
     return m_platformDragData->hasURL();
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     String url(m_platformDragData->url());
     if (title)
@@ -79,12 +80,12 @@ String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) c
 }
 
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Document* document) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range>, bool, bool&) const
 {
     if (!m_platformDragData->hasMarkup())
         return 0;
 
-    return createFragmentFromMarkup(document, m_platformDragData->markup(), "");
+    return createFragmentFromMarkup(frame->document(), m_platformDragData->markup(), "");
 }
 
 }

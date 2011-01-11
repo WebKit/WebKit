@@ -436,7 +436,50 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
     return URL;
 }
+
+NSURL *Pasteboard::getBestURL(Frame* frame)
+{
+    NSArray *types = [m_pasteboard.get() types];
+
+    // FIXME: using the editorClient to call into webkit, for now, since 
+    // calling webkit_canonicalize from WebCore involves migrating a sizable amount of 
+    // helper code that should either be done in a separate patch or figured out in another way.
     
+    if ([types containsObject:NSURLPboardType]) {
+        NSURL *URLFromPasteboard = [NSURL URLFromPasteboard:m_pasteboard.get()];
+        NSString *scheme = [URLFromPasteboard scheme];
+        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
+            return frame->editor()->client()->canonicalizeURL(URLFromPasteboard);
+        }
+    }
+    
+    if ([types containsObject:NSStringPboardType]) {
+        NSString *URLString = [m_pasteboard.get() stringForType:NSStringPboardType];
+        NSURL *URL = frame->editor()->client()->canonicalizeURLString(URLString);
+        if (URL)
+            return URL;
+    }
+    
+    if ([types containsObject:NSFilenamesPboardType]) {
+        NSArray *files = [m_pasteboard.get() propertyListForType:NSFilenamesPboardType];
+        // FIXME: Maybe it makes more sense to allow multiple files and only use the first one?
+        if ([files count] == 1) {
+            NSString *file = [files objectAtIndex:0];
+            BOOL isDirectory;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && isDirectory)
+                return nil;
+            return frame->editor()->client()->canonicalizeURL([NSURL fileURLWithPath:file]);
+        }
+    }
+    
+    return nil;    
+}
+
+String Pasteboard::asURL(Frame* frame)
+{
+    return [getBestURL(frame) absoluteString];
+}
+
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
 {
     NSArray *types = [m_pasteboard.get() types];

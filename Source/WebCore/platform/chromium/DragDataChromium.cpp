@@ -35,6 +35,7 @@
 #include "ClipboardMimeTypes.h"
 #include "DocumentFragment.h"
 #include "FileSystem.h"
+#include "Frame.h"
 #include "KURL.h"
 #include "markup.h"
 #include "NotImplemented.h"
@@ -47,13 +48,13 @@ static bool containsHTML(const ChromiumDataObject* dropData)
     return dropData->types().contains(mimeTypeTextHTML);
 }
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
 {
     return m_platformDragData->types().contains(mimeTypeURL)
         || (filenamePolicy == ConvertFilenames && m_platformDragData->containsFilenames());
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     String url;
     if (m_platformDragData->types().contains(mimeTypeURL)) {
@@ -84,7 +85,7 @@ bool DragData::containsPlainText() const
     return m_platformDragData->types().contains(mimeTypeTextPlain);
 }
 
-String DragData::asPlainText() const
+String DragData::asPlainText(Frame*) const
 {
     bool ignoredSuccess;
     return m_platformDragData->getData(mimeTypeTextPlain, ignoredSuccess);
@@ -109,13 +110,13 @@ bool DragData::canSmartReplace() const
 bool DragData::containsCompatibleContent() const
 {
     return containsPlainText()
-        || containsURL()
+        || containsURL(0)
         || containsHTML(m_platformDragData)
         || containsColor()
         || containsFiles();
 }
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range>, bool, bool&) const
 {     
     /*
      * Order is richest format first. On OSX this is:
@@ -137,7 +138,7 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
 
     if (m_platformDragData->types().contains(mimeTypeTextHTML)) {
         bool ignoredSuccess;
-        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(doc,
+        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(),
             m_platformDragData->getData(mimeTypeTextHTML, ignoredSuccess), m_platformDragData->htmlBaseUrl(), FragmentScriptingNotAllowed);
         return fragment.release();
     }

@@ -1,3 +1,18 @@
+2011-01-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Paste and drag and drop use different code paths to interact with the pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=52093
+        The change consists in a refactoring of the code to have only one class that
+        deals with the pasteboard on Mac.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm: Added two methods to provide to WebCore functionality
+        exposed by NSURLExtras.
+        (WebKit::WebEditorClient::canonicalizeURL):
+        (WebKit::WebEditorClient::canonicalizeURLString):
+
 2011-01-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson and Sam Weinig.

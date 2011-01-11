@@ -354,6 +354,19 @@ NSString *WebEditorClient::userVisibleString(NSURL *URL)
     return [URL _web_userVisibleString];
 }
 
+NSURL *WebEditorClient::canonicalizeURL(NSURL *URL)
+{
+    return [URL _webkit_canonicalize];
+}
+
+NSURL *WebEditorClient::canonicalizeURLString(NSString *URLString)
+{
+    NSURL *URL = nil;
+    if ([URLString _webkit_looksLikeAbsoluteURL])
+        URL = [[NSURL _web_URLWithUserTypedString:URLString] _webkit_canonicalize];
+    return URL;
+}
+
 static NSArray *createExcludedElementsForAttributedStringConversion()
 {
     NSArray *elements = [[NSArray alloc] initWithObjects: 

@@ -27,6 +27,7 @@
 #include "DragData.h"
 
 #include "ClipboardUtilitiesWin.h"
+#include "Frame.h"
 #include "DocumentFragment.h"
 #include "PlatformString.h"
 #include "Markup.h"
@@ -37,7 +38,7 @@
 
 namespace WebCore {
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
 {
     return SUCCEEDED(m_platformDragData->QueryGetData(urlWFormat())) 
         || SUCCEEDED(m_platformDragData->QueryGetData(urlFormat()))
@@ -46,7 +47,7 @@ bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
                 || SUCCEEDED(m_platformDragData->QueryGetData(filenameFormat()))));
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     bool success;
     return getURL(m_platformDragData, filenamePolicy, success, title);
@@ -89,7 +90,7 @@ bool DragData::containsPlainText() const
         || SUCCEEDED(m_platformDragData->QueryGetData(plainTextFormat()));
 }
 
-String DragData::asPlainText() const
+String DragData::asPlainText(Frame*) const
 {
     bool success;
     return getPlainText(m_platformDragData, success);
@@ -107,13 +108,13 @@ bool DragData::canSmartReplace() const
 
 bool DragData::containsCompatibleContent() const
 {
-    return containsPlainText() || containsURL() 
+    return containsPlainText() || containsURL(0) 
         || containsHTML(m_platformDragData) 
         || containsFilenames(m_platformDragData) 
         || containsColor();
 }
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range>, bool, bool&) const
 {     
     /*
      * Order is richest format first. On OSX this is:
@@ -126,11 +127,11 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
      */
         
      if (containsFilenames(m_platformDragData))
-         if (PassRefPtr<DocumentFragment> fragment = fragmentFromFilenames(doc, m_platformDragData))
+         if (PassRefPtr<DocumentFragment> fragment = fragmentFromFilenames(frame->document(), m_platformDragData))
              return fragment;
 
      if (containsHTML(m_platformDragData))
-         if (PassRefPtr<DocumentFragment> fragment = fragmentFromHTML(doc, m_platformDragData))
+         if (PassRefPtr<DocumentFragment> fragment = fragmentFromHTML(frame->document(), m_platformDragData))
              return fragment;
 
      return 0;

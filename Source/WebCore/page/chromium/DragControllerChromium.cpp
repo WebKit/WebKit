@@ -51,7 +51,7 @@ DragOperation DragController::dragOperation(DragData* dragData)
     // attached sheet If this can be determined from within WebCore
     // operationForDrag can be pulled into WebCore itself
     ASSERT(dragData);
-    return dragData->containsURL() && !m_didInitiateDrag ? DragOperationCopy : DragOperationNone;
+    return dragData->containsURL(0) && !m_didInitiateDrag ? DragOperationCopy : DragOperationNone;
 }
 
 bool DragController::isCopyKeyDown()

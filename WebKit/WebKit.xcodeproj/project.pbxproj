@@ -333,8 +333,6 @@
 		A5DEFC1411D5344B00885273 /* WebApplicationCacheQuotaManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */; };
 		A70936AF0B5608DC00CDB48E /* WebDragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A70936AD0B5608DC00CDB48E /* WebDragClient.h */; };
 		A70936B00B5608DC00CDB48E /* WebDragClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = A70936AE0B5608DC00CDB48E /* WebDragClient.mm */; };
-		A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */; };
-		A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */; };
 		A864B3F6123ED9FA00C2A612 /* MailQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = A864B3E5123ED83D00C2A612 /* MailQuirksUserScript.js */; };
 		AB9FBBBB0F8582B0006ADC43 /* WebDOMOperationsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */; };
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
@@ -645,8 +643,6 @@
 		A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCacheQuotaManager.mm; sourceTree = "<group>"; };
 		A70936AD0B5608DC00CDB48E /* WebDragClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDragClient.h; sourceTree = "<group>"; };
 		A70936AE0B5608DC00CDB48E /* WebDragClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClient.mm; sourceTree = "<group>"; };
-		A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPasteboardHelper.h; sourceTree = "<group>"; };
-		A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPasteboardHelper.mm; sourceTree = "<group>"; };
 		A864B3E5123ED83D00C2A612 /* MailQuirksUserScript.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = MailQuirksUserScript.js; sourceTree = "<group>"; };
 		AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsInternal.h; sourceTree = "<group>"; };
 		ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDownloadInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1314,8 +1310,6 @@
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
 				84723BE3056D719E0044BFEA /* WebKeyGenerator.h */,
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.m */,
-				A7D3C5BA0B5773C5002CA450 /* WebPasteboardHelper.h */,
-				A7D3C5BB0B5773C5002CA450 /* WebPasteboardHelper.mm */,
 				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
 				1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */,
 				0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */,
@@ -1562,7 +1556,6 @@
 				939810240824BF01008DF038 /* WebNSViewExtras.h in Headers */,
 				939810250824BF01008DF038 /* WebNSWindowExtras.h in Headers */,
 				9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */,
-				A7D3C5BC0B5773C5002CA450 /* WebPasteboardHelper.h in Headers */,
 				37B6FB4E1063530C000FDB3B /* WebPDFDocumentExtras.h in Headers */,
 				939810A50824BF01008DF038 /* WebPDFRepresentation.h in Headers */,
 				939810A40824BF01008DF038 /* WebPDFView.h in Headers */,
@@ -1955,7 +1948,6 @@
 				939810C90824BF01008DF038 /* WebNSViewExtras.m in Sources */,
 				939810CA0824BF01008DF038 /* WebNSWindowExtras.m in Sources */,
 				939810D00824BF01008DF038 /* WebPanelAuthenticationHandler.m in Sources */,
-				A7D3C5BD0B5773C5002CA450 /* WebPasteboardHelper.mm in Sources */,
 				37B6FB4F1063530C000FDB3B /* WebPDFDocumentExtras.mm in Sources */,
 				9398111F0824BF01008DF038 /* WebPDFRepresentation.mm in Sources */,
 				9398111E0824BF01008DF038 /* WebPDFView.mm in Sources */,

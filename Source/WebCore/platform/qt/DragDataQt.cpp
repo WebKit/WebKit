@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "Frame.h"
 #include "markup.h"
 
 #include <QColor>
@@ -80,7 +81,7 @@ bool DragData::containsPlainText() const
     return m_platformDragData->hasText() || m_platformDragData->hasUrls();
 }
 
-String DragData::asPlainText() const
+String DragData::asPlainText(Frame* frame) const
 {
     if (!m_platformDragData)
         return String();
@@ -89,7 +90,7 @@ String DragData::asPlainText() const
         return text;
 
     // FIXME: Should handle rich text here
-    return asURL(DoNotConvertFilenames, 0);
+    return asURL(frame, DoNotConvertFilenames, 0);
 }
 
 Color DragData::asColor() const
@@ -103,10 +104,10 @@ bool DragData::containsCompatibleContent() const
 {
     if (!m_platformDragData)
         return false;
-    return containsColor() || containsURL() || m_platformDragData->hasHtml() || m_platformDragData->hasText();
+    return containsColor() || containsURL(0) || m_platformDragData->hasHtml() || m_platformDragData->hasText();
 }
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
 {
     // FIXME: Use filenamePolicy.
     if (!m_platformDragData)
@@ -114,7 +115,7 @@ bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
     return m_platformDragData->hasUrls();
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String*) const
+String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String*) const
 {
     // FIXME: Use filenamePolicy.
     if (!m_platformDragData)
@@ -127,10 +128,10 @@ String DragData::asURL(FilenameConversionPolicy filenamePolicy, String*) const
     return encodeWithURLEscapeSequences(urls.first().toString());
 }
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range>, bool, bool&) const
 {
     if (m_platformDragData && m_platformDragData->hasHtml())
-        return createFragmentFromMarkup(doc, m_platformDragData->html(), "", FragmentScriptingNotAllowed);
+        return createFragmentFromMarkup(frame->document(), m_platformDragData->html(), "", FragmentScriptingNotAllowed);
 
     return 0;
 }

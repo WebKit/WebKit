@@ -94,6 +94,8 @@ private:
     virtual NSString *userVisibleString(NSURL *);
     virtual WebCore::DocumentFragment* documentFragmentFromAttributedString(NSAttributedString *, Vector< RefPtr<WebCore::ArchiveResource> >&);
     virtual void setInsertionPasteboard(NSPasteboard *);
+    virtual NSURL* canonicalizeURL(NSURL*);
+    virtual NSURL* canonicalizeURLString(NSString*);
 #ifdef BUILDING_ON_TIGER
     virtual NSArray *pasteboardTypesForSelection(WebCore::Frame*);
 #endif

@@ -1,3 +1,16 @@
+2011-01-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Paste and drag and drop use different code paths to interact with the pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=52093
+
+        New test results added to match the correct behavior.
+        
+        * platform/mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.checksum:
+        * platform/mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.png:
+        * platform/mac/editing/pasteboard/drag-image-to-contenteditable-in-iframe-expected.txt:
+
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed; chromium test expectations update.

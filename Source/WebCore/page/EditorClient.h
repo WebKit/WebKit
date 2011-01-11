@@ -157,6 +157,8 @@ public:
     virtual NSString* userVisibleString(NSURL*) = 0;
     virtual DocumentFragment* documentFragmentFromAttributedString(NSAttributedString*, Vector< RefPtr<ArchiveResource> >&) = 0;
     virtual void setInsertionPasteboard(NSPasteboard*) = 0;
+    virtual NSURL* canonicalizeURL(NSURL*) = 0;
+    virtual NSURL* canonicalizeURLString(NSString*) = 0;
 #ifdef BUILDING_ON_TIGER
     virtual NSArray* pasteboardTypesForSelection(Frame*) = 0;
 #endif

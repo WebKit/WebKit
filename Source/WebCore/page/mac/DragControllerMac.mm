@@ -50,7 +50,7 @@ bool DragController::isCopyKeyDown()
 DragOperation DragController::dragOperation(DragData* dragData)
 {
     ASSERT(dragData);
-    if ([NSApp modalWindow] || !dragData->containsURL())
+    if ([NSApp modalWindow] || !dragData->containsURL(m_page->mainFrame()))
         return DragOperationNone;
 
     if (!m_documentUnderMouse || (![[m_page->mainFrame()->view()->getOuterView() window] attachedSheet] 

@@ -26,12 +26,12 @@
 
 namespace WebCore {
 
-bool DragData::containsURL(FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
 {
     return false;
 }
 
-String DragData::asURL(FilenameConversionPolicy filenamePolicy, String* title) const
+String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
     return String();
 }
@@ -50,7 +50,7 @@ bool DragData::containsPlainText() const
     return false;
 }
 
-String DragData::asPlainText() const
+String DragData::asPlainText(Frame*) const
 {
     return String();
 }
@@ -70,7 +70,7 @@ bool DragData::containsCompatibleContent() const
     return false;
 }
 
-PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
+PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range>, bool, bool&) const
 {
      return 0;
 }

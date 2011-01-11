@@ -1,3 +1,99 @@
+2011-01-10  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Paste and drag and drop use different code paths to interact with the pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=52093
+        The change consists in a refactoring of the code to have only one class that
+        deals with the pasteboard on Mac.
+
+        No new tests. A test is already available for this
+        (editing/pasteboard/drag-image-to-contenteditable-in-iframe.html) but had incorrect results.
+
+        * WebCore.exp.in:
+        * loader/EmptyClients.h: Added two Mac only methods to call into WebKit to use functionality
+        that is in NSURLExtras.
+        (WebCore::EmptyEditorClient::canonicalizeURL):
+        (WebCore::EmptyEditorClient::canonicalizeURLString):
+        * page/DragController.cpp:
+        The following methods have been changed to pass a pointer to the Frame object
+        to the DragData class.
+        (WebCore::documentFragmentFromDragData):
+        (WebCore::DragController::performDrag):
+        (WebCore::DragController::dispatchTextInputEventFor):
+        (WebCore::DragController::concludeEditDrag):
+        * page/EditorClient.h: Added two Mac only methods to call into WebKit to use functionality
+        that is in NSURLExtras.
+        The following files have been modified to pass the Frame object to the DragData method calls.
+        * page/chromium/DragControllerChromium.cpp:
+        (WebCore::DragController::dragOperation):
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::dragOperation):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::dragOperation):
+        * page/qt/DragControllerQt.cpp:
+        (WebCore::DragController::dragOperation):
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::dragOperation):
+        * platform/DragData.h: Removed Mac specific constructor and reference to PasteboardHelper class.
+        * platform/Pasteboard.h: Added public constructor to create a Pasteboard object from an NSPasteboard.
+        The following files were all modified to match the new parameters of the methods listed.
+        * platform/android/DragDataAndroid.cpp:
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::asFragment):
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/haiku/DragDataHaiku.cpp:
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::DragData):
+        (WebCore::DragData::asPlainText):
+        (WebCore::insertablePasteboardTypes):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::getBestURL):
+        (WebCore::Pasteboard::asURL):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::asFragment):
+        * platform/wince/DragDataWinCE.cpp:
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::asFragment):
+        * platform/wx/DragDataWx.cpp:
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsURL):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+
 2011-01-11  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.

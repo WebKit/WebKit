@@ -88,6 +88,8 @@ public:
     static void writeSelection(NSPasteboard* pasteboard, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame);
     static void writeURL(NSPasteboard* pasteboard, NSArray* types, const KURL& url, const String& titleStr, Frame* frame);
     static void writePlainText(NSPasteboard* pasteboard, const String& text);
+
+    Pasteboard(NSPasteboard *);
 #endif
     
     static Pasteboard* generalPasteboard();
@@ -97,11 +99,13 @@ public:
     void writeImage(Node*, const KURL&, const String& title);
 #if PLATFORM(MAC)
     void writeFileWrapperAsRTFDAttachment(NSFileWrapper*);
+    String asURL(Frame*);
 #endif
     void clear();
     bool canSmartReplace();
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
+    
 #if PLATFORM(QT) || PLATFORM(CHROMIUM)
     bool isSelectionMode() const;
     void setSelectionMode(bool selectionMode);
@@ -110,17 +114,17 @@ public:
 #if PLATFORM(GTK)
     void setHelper(PasteboardHelper*);
     PasteboardHelper* helper();
+    ~Pasteboard();
 #endif
 
 private:
     Pasteboard();
-    ~Pasteboard();
 
 #if PLATFORM(MAC)
-    Pasteboard(NSPasteboard *);
     RetainPtr<NSPasteboard> m_pasteboard;
     PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* frame, PassRefPtr<ArchiveResource> resource);
     PassRefPtr<DocumentFragment> documentFragmentWithRtf(Frame* frame, NSString* pboardType);
+    NSURL *getBestURL(Frame *);
 #endif
 
 #if PLATFORM(WIN)

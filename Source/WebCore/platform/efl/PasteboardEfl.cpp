@@ -46,11 +46,6 @@ Pasteboard::Pasteboard()
     notImplemented();
 }
 
-Pasteboard::~Pasteboard()
-{
-    notImplemented();
-}
-
 void Pasteboard::writePlainText(const String&)
 {
     notImplemented();
