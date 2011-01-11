@@ -1,3 +1,14 @@
+2011-01-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that we do not crash when we remove scrollable iframe when executing
+        inside its scroll event.
+        https://bugs.webkit.org/show_bug.cgi?id=52238
+
+        * scrollbars/scrollable-iframe-remove-crash-expected.txt: Added.
+        * scrollbars/scrollable-iframe-remove-crash.html: Added.
+
 2011-01-11  Martin Robinson  <mrobinson@igalia.com>
 
         Remove some GTK+-specific baselines. GTK+ now enough feature parity with the Mac
