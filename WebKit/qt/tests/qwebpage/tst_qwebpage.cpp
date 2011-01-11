@@ -259,6 +259,12 @@ void tst_QWebPage::infiniteLoopJS()
 void tst_QWebPage::geolocationRequestJS()
 {
     JSTestPage* newPage = new JSTestPage(m_view);
+
+    if (newPage->mainFrame()->evaluateJavaScript(QLatin1String("!navigator.geolocation")).toBool()) {
+        delete newPage;
+        QSKIP("Geolocation is not supported.", SkipSingle);
+    }
+
     connect(newPage, SIGNAL(featurePermissionRequested(QWebFrame*, QWebPage::Feature)),
             newPage, SLOT(requestPermission(QWebFrame*, QWebPage::Feature)));
 
