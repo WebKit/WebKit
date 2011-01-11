@@ -25,10 +25,6 @@
 #include <QNetworkCookieJar>
 #include <QStringList>
 
-// Use unused variables to be able to call qRegisterMetaType statically.
-static int dummyStaticVar1 = qRegisterMetaType<QFutureInterface<bool> >("QFutureInterface<bool>");
-static int dummyStaticVar2 = qRegisterMetaType<QFutureInterface<QList<QNetworkCookie> > >("QFutureInterface<QList<QNetworkCookie> >");
-
 namespace WebCore {
 
 QtNAMThreadSafeProxy::QtNAMThreadSafeProxy(QNetworkAccessManager *manager)
@@ -37,8 +33,8 @@ QtNAMThreadSafeProxy::QtNAMThreadSafeProxy(QNetworkAccessManager *manager)
     moveToThread(manager->thread());
 
     connect(this, SIGNAL(localSetCookiesRequested(const QUrl&, const QString&)), SLOT(localSetCookies(const QUrl&, const QString&)));
-    connect(this, SIGNAL(localCookiesForUrlRequested(QFutureInterface<QList<QNetworkCookie> >, const QUrl&)), SLOT(localCookiesForUrl(QFutureInterface<QList<QNetworkCookie> >, const QUrl&)));
-    connect(this, SIGNAL(localWillLoadFromCacheRequested(QFutureInterface<bool>, const QUrl&)), SLOT(localWillLoadFromCache(QFutureInterface<bool>, const QUrl&)));
+    connect(this, SIGNAL(localCookiesForUrlRequested(const QUrl&, bool*, QList<QNetworkCookie>*)), SLOT(localCookiesForUrl(const QUrl&, bool*, QList<QNetworkCookie>*)));
+    connect(this, SIGNAL(localWillLoadFromCacheRequested(const QUrl&, bool*, bool*)), SLOT(localWillLoadFromCache(const QUrl&, bool*, bool*)));
 }
 
 void QtNAMThreadSafeProxy::localSetCookies(const QUrl& url, const QString& cookies)
@@ -54,19 +50,23 @@ void QtNAMThreadSafeProxy::localSetCookies(const QUrl& url, const QString& cooki
     m_manager->cookieJar()->setCookiesFromUrl(cookieList, url);
 }
 
-void QtNAMThreadSafeProxy::localCookiesForUrl(QFutureInterface<QList<QNetworkCookie> > fi, const QUrl& url)
+void QtNAMThreadSafeProxy::localCookiesForUrl(const QUrl& url, bool* done, QList<QNetworkCookie>* result)
 {
-    fi.reportResult(m_manager->cookieJar()->cookiesForUrl(url));
-    fi.reportFinished();
+    QMutexLocker lock(&m_resultMutex);
+    *result = m_manager->cookieJar()->cookiesForUrl(url);
+    *done = true;
+    m_resultWaitCondition.wakeAll();
 }
 
-void QtNAMThreadSafeProxy::localWillLoadFromCache(QFutureInterface<bool> fi, const QUrl& url)
+void QtNAMThreadSafeProxy::localWillLoadFromCache(const QUrl& url, bool* done, bool* result)
 {
-    bool retVal = false;
+    QMutexLocker lock(&m_resultMutex);
     if (m_manager->cache())
-        retVal = m_manager->cache()->metaData(url).isValid();
-
-    fi.reportFinished(&retVal);
+        *result = m_manager->cache()->metaData(url).isValid();
+    else
+        *result = false;
+    *done = true;
+    m_resultWaitCondition.wakeAll();
 }
 
 QtNetworkReplyThreadSafeProxy::QtNetworkReplyThreadSafeProxy(QNetworkAccessManager *manager)

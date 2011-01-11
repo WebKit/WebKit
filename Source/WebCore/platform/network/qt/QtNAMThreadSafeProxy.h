@@ -19,11 +19,11 @@
 #ifndef QtNAMThreadSafeProxy_h
 #define QtNAMThreadSafeProxy_h
 
-#include <QFuture>
 #include <QMutex>
 #include <QNetworkCookie>
 #include <QNetworkReply>
 #include <QObject>
+#include <QWaitCondition>
 
 QT_BEGIN_NAMESPACE
 class QNetworkAccessManager;
@@ -43,34 +43,44 @@ public:
         emit localSetCookiesRequested(url, cookies);
     }
 
-    QFuture<QList<QNetworkCookie> > cookiesForUrl(const QUrl& url)
+    QList<QNetworkCookie> cookiesForUrl(const QUrl& url)
     {
-        QFutureInterface<QList<QNetworkCookie> > fi;
-        fi.reportStarted();
-        emit localCookiesForUrlRequested(fi, url);
-        return fi.future();
+        bool done = false;
+        QList<QNetworkCookie> result;
+        emit localCookiesForUrlRequested(url, &done, &result);
+
+        QMutexLocker lock(&m_resultMutex);
+        while (!done)
+            m_resultWaitCondition.wait(&m_resultMutex);
+        return result;
     }
 
-    QFuture<bool> willLoadFromCache(const QUrl& url)
+    bool willLoadFromCache(const QUrl& url)
     {
-        QFutureInterface<bool> fi;
-        fi.reportStarted();
-        emit localWillLoadFromCacheRequested(fi, url);
-        return fi.future();
+        bool done = false;
+        bool result;
+        emit localWillLoadFromCacheRequested(url, &done, &result);
+
+        QMutexLocker lock(&m_resultMutex);
+        while (!done)
+            m_resultWaitCondition.wait(&m_resultMutex);
+        return result;
     }
 
 signals:
-    void localSetCookiesRequested(const QUrl& url, const QString& cookies);
-    void localCookiesForUrlRequested(QFutureInterface<QList<QNetworkCookie> > fi, const QUrl& url);
-    void localWillLoadFromCacheRequested(QFutureInterface<bool> fi, const QUrl& url);
+    void localSetCookiesRequested(const QUrl&, const QString& cookies);
+    void localCookiesForUrlRequested(const QUrl&, bool* done, QList<QNetworkCookie>* result);
+    void localWillLoadFromCacheRequested(const QUrl&, bool* done, bool* result);
 
 private slots:
-    void localSetCookies(const QUrl& url, const QString& cookies);
-    void localCookiesForUrl(QFutureInterface<QList<QNetworkCookie> > fi, const QUrl& url);
-    void localWillLoadFromCache(QFutureInterface<bool> fi, const QUrl& url);
+    void localSetCookies(const QUrl&, const QString& cookies);
+    void localCookiesForUrl(const QUrl&, bool* done, QList<QNetworkCookie>* result);
+    void localWillLoadFromCache(const QUrl&, bool* done, bool* result);
 
 private:
     QNetworkAccessManager* m_manager;
+    QMutex m_resultMutex;
+    QWaitCondition m_resultWaitCondition;
 };
 
 

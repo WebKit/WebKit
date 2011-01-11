@@ -33,9 +33,10 @@
 #ifndef webpage_h
 #define webpage_h
 
-#include <QFuture>
+#include <QMutex>
 #include <QScopedPointer>
 #include <QThread>
+#include <QWaitCondition>
 #include <qwebframe.h>
 #include <qwebpage.h>
 
@@ -78,8 +79,8 @@ class QtNAMThread : public QThread {
 public:
     QtNAMThread(QObject *parent = 0)
         : QThread(parent)
+        , m_qnam(0)
     {
-        m_qnamFuture.reportStarted();
     }
     ~QtNAMThread()
     {
@@ -87,20 +88,29 @@ public:
         wait();
     }
 
-    QFuture<QNetworkAccessManager*> networkAccessManager()
+    QNetworkAccessManager* networkAccessManager()
     {
-        return m_qnamFuture.future();
+        QMutexLocker lock(&m_mutex);
+        while (!m_qnam)
+            m_waitCondition.wait(&m_mutex);
+        return m_qnam;
     }
 protected:
     void run()
     {
-        QNetworkAccessManager qnam;
-        m_qnamFuture.reportResult(&qnam);
-        m_qnamFuture.reportFinished();
+        Q_ASSERT(!m_qnam);
+        {
+            QMutexLocker lock(&m_mutex);
+            m_qnam = new QNetworkAccessManager;
+            m_waitCondition.wakeAll();
+        }
         exec();
+        delete m_qnam;
     }
 private:
-    QFutureInterface<QNetworkAccessManager*> m_qnamFuture;
+    QNetworkAccessManager* m_qnam;
+    QMutex m_mutex;
+    QWaitCondition m_waitCondition;
 };
 
 #endif
