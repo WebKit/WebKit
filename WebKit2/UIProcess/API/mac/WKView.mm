@@ -166,7 +166,7 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
     _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
-    _data->_page->initializeWebPage(IntSize(frame.size));
+    _data->_page->initializeWebPage();
 
     WebContext::statistics().wkViewCount++;
 

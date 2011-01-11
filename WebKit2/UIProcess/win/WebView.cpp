@@ -241,7 +241,7 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
         rect.top, rect.left, rect.right - rect.left, rect.bottom - rect.top, parentWindow ? parentWindow : HWND_MESSAGE, 0, instanceHandle(), this);
     ASSERT(::IsWindow(m_window));
 
-    m_page->initializeWebPage(IntRect(rect).size());
+    m_page->initializeWebPage();
 
     ::ShowWindow(m_window, SW_SHOW);
 
