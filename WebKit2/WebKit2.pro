@@ -311,6 +311,7 @@ HEADERS += \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
     UIProcess/API/C/WKGeolocationManager.h \
+    UIProcess/API/C/WKGeolocationPermissionRequest.h \
     UIProcess/API/C/WKGeolocationPosition.h \
     UIProcess/API/C/WKInspector.h \
     UIProcess/API/C/WKOpenPanelParameters.h \
@@ -346,6 +347,8 @@ HEADERS += \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/FindIndicator.h \
     UIProcess/GenericCallback.h \
+    UIProcess/GeolocationPermissionRequestManagerProxy.h \
+    UIProcess/GeolocationPermissionRequestProxy.h \
     UIProcess/Launcher/ProcessLauncher.h \
     UIProcess/Launcher/ThreadLauncher.h \
     UIProcess/PageClient.h \
@@ -390,6 +393,7 @@ HEADERS += \
     WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
+    WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
     WebProcess/Geolocation/WebGeolocationManager.h \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
@@ -530,6 +534,7 @@ SOURCES += \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
     UIProcess/API/C/WKGeolocationManager.cpp \
+    UIProcess/API/C/WKGeolocationPermissionRequest.cpp \
     UIProcess/API/C/WKGeolocationPosition.cpp \
     UIProcess/API/C/WKInspector.cpp \
     UIProcess/API/C/WKOpenPanelParameters.cpp \
@@ -555,6 +560,8 @@ SOURCES += \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/FindIndicator.cpp \
+    UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
+    UIProcess/GeolocationPermissionRequestProxy.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
     UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
@@ -607,6 +614,7 @@ SOURCES += \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
+    WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp \
     WebProcess/Geolocation/WebGeolocationManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \
     WebProcess/InjectedBundle/API/c/WKBundle.cpp \

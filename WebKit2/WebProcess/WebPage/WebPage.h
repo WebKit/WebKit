@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "DrawingArea.h"
 #include "FindController.h"
+#include "GeolocationPermissionRequestManager.h"
 #include "ImageOptions.h"
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageEditorClient.h"
@@ -225,6 +226,7 @@ public:
     static const WebEvent* currentEvent();
 
     FindController& findController() { return m_findController; }
+    GeolocationPermissionRequestManager& geolocationPermissionRequestManager() { return m_geolocationPermissionRequestManager; }
 
     void pageDidScroll();
 #if ENABLE(TILED_BACKING_STORE)
@@ -384,6 +386,8 @@ private:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
+    void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);
+
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
     void unmarkAllMisspellings();
@@ -467,6 +471,7 @@ private:
     RefPtr<WebPopupMenu> m_activePopupMenu;
     RefPtr<WebContextMenu> m_contextMenu;
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
+    GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
 
     SandboxExtensionTracker m_sandboxExtensionTracker;
     uint64_t m_pageID;

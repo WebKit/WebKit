@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "ContextMenuState.h"
 #include "DrawingAreaProxy.h"
+#include "GeolocationPermissionRequestManagerProxy.h"
 #include "SelectionState.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
@@ -398,11 +399,13 @@ private:
     void didChangeViewportData(const WebCore::ViewportArguments&);
     void pageDidScroll();
     void runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::Data&);
+    void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage, uint64_t& newQuota);
+    void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
 
 #if ENABLE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntSize&);
 #endif
-    void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage, uint64_t& newQuota);
+
 #if PLATFORM(QT)
     void didChangeContentsSize(const WebCore::IntSize&);
     void didFindZoomableArea(const WebCore::IntRect&);
@@ -518,6 +521,7 @@ private:
     RefPtr<WebContextMenuProxy> m_activeContextMenu;
     ContextMenuState m_activeContextMenuState;
     RefPtr<WebOpenPanelResultListenerProxy> m_openPanelResultListener;
+    GeolocationPermissionRequestManagerProxy m_geolocationPermissionRequestManager;
 
     double m_estimatedProgress;
 

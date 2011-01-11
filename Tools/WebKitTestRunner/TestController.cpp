@@ -138,7 +138,8 @@ static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModi
         0, // didDraw
         0, // pageDidScroll
         0, // exceededDatabaseQuota
-        0  // runOpenPanel
+        0, // runOpenPanel
+        0, // decidePolicyForGeolocationPermissionRequest
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -242,7 +243,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didDraw
         0, // pageDidScroll
         0, // exceededDatabaseQuota
-        0  // runOpenPanel
+        0, // runOpenPanel
+        0, // decidePolicyForGeolocationPermissionRequest
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

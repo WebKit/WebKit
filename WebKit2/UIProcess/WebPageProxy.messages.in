@@ -165,6 +165,9 @@ messages -> WebPageProxy {
     # Database messages.
     ExceededDatabaseQuota(uint64_t frameID, WTF::String originIdentifier, WTF::String databaseName, WTF::String databaseDisplayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage) -> (uint64_t newQuota)
 
+    # Geolocation messages.
+    RequestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, WTF::String originIdentifier)
+
     # Plug-in complex text input support messages.
 #if PLATFORM(MAC)
     SetComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
