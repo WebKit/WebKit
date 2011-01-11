@@ -123,8 +123,6 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
     if (m_innerBlock) // RenderBlock handled updating the anonymous block's style.
         adjustInnerStyle();
 
-    setReplaced(isInline());
-
     bool fontChanged = !oldStyle || oldStyle->font() != style()->font();
     if (fontChanged)
         updateOptionsWidth();

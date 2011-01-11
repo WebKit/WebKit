@@ -92,7 +92,6 @@ void RenderButton::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         m_buttonText->setStyle(style());
     if (m_inner) // RenderBlock handled updating the anonymous block's style.
         setupInnerStyle(m_inner->style());
-    setReplaced(isInline());
 
     if (!m_default && theme()->isDefault(this)) {
         if (!m_timer)

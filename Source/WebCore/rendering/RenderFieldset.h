@@ -44,8 +44,6 @@ private:
     virtual bool avoidsFloats() const { return true; }
     virtual bool stretchesToMinIntrinsicLogicalWidth() const { return true; }
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     virtual void paintMask(PaintInfo&, int tx, int ty);
 };

@@ -87,12 +87,6 @@ RenderListBox::~RenderListBox()
     setHasVerticalScrollbar(false);
 }
 
-void RenderListBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlock::styleDidChange(diff, oldStyle);
-    setReplaced(isInline());
-}
-
 void RenderListBox::updateFromElement()
 {
     if (m_optionsChanged) {

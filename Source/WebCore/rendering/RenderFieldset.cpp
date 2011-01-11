@@ -208,16 +208,4 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
     paintMaskImages(paintInfo, tx, ty, w, h);
 }
 
-void RenderFieldset::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlock::styleDidChange(diff, oldStyle);
-
-    // WinIE renders fieldsets with display:inline like they're inline-blocks.  For us,
-    // an inline-block is just a block element with replaced set to true and inline set
-    // to true.  Ensure that if we ended up being inline that we set our replaced flag
-    // so that we're treated like an inline-block.
-    if (isInline())
-        setReplaced(true);
-}    
-
 } // namespace WebCore

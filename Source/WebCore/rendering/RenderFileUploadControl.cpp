@@ -74,8 +74,6 @@ void RenderFileUploadControl::styleDidChange(StyleDifference diff, const RenderS
     RenderBlock::styleDidChange(diff, oldStyle);
     if (m_button)
         m_button->renderer()->setStyle(createButtonStyle(style()));
-
-    setReplaced(isInline());
 }
 
 void RenderFileUploadControl::valueChanged()

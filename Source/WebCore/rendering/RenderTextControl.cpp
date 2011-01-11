@@ -97,8 +97,6 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         textBlockRenderer->style()->setWidth(Length());
         setInnerTextStyle(textBlockStyle);
     }
-
-    setReplaced(isInline());
 }
 
 void RenderTextControl::setInnerTextStyle(PassRefPtr<RenderStyle> style)

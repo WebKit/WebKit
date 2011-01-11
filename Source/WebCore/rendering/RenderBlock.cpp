@@ -188,7 +188,7 @@ void RenderBlock::destroy()
 
 void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
 {
-    setReplaced(newStyle->isDisplayReplacedType());
+    setReplaced(newStyle->isDisplayInlineType());
     
     if (style() && parent() && diff == StyleDifferenceLayout && style()->position() != newStyle->position()) {
         if (newStyle->position() == StaticPosition)

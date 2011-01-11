@@ -1,3 +1,37 @@
+2011-01-11  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Set all RenderBlocks as replaced when an inline display type is specified
+        https://bugs.webkit.org/show_bug.cgi?id=50858
+
+        When a RenderBlock is created for an element with a specified display:inline style,
+        it should always be treated as inline-block.  This situations often comes up for form
+        controls.  Previously, RenderBlock::styleWillChange set the replaced flag for display
+        values of inline-block, inline-table, and inline-table and a number of subclasses of
+        RenderBlock set the replaced flag in styleDidChange for a display:inline.  However
+        sometimes new subclasses would miss this step leading to bugs (such as with RenderDetails).
+        This patch sets the replaced flag for all inline display types in RenderBlock::styleWillChange.
+
+        Code cleanup only, no change in behavior so no new tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::styleDidChange):
+        * rendering/RenderFieldset.cpp:
+        * rendering/RenderFieldset.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::styleDidChange):
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::styleDidChange):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::styleDidChange):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+
 2011-01-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

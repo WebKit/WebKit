@@ -94,8 +94,6 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
     // ScrollbarClient interface.
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual void setScrollOffsetFromAnimation(const IntPoint&);

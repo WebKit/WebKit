@@ -106,8 +106,6 @@ void RenderSlider::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
     if (m_thumb)
         m_thumb->renderer()->setStyle(createThumbStyle(style()));
-
-    setReplaced(isInline());
 }
 
 PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parentStyle)
