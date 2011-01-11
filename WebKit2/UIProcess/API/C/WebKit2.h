@@ -40,7 +40,6 @@
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKFramePolicyListener.h>
 #include <WebKit2/WKGeolocationManager.h>
-#include <WebKit2/WKGeolocationPermissionRequest.h>
 #include <WebKit2/WKGeolocationPosition.h>
 #include <WebKit2/WKMutableArray.h>
 #include <WebKit2/WKMutableDictionary.h>

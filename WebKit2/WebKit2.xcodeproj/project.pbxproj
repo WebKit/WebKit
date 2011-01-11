@@ -311,14 +311,6 @@
 		BC032DD110F4389F0058C15A /* WebPageProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCB10F4389F0058C15A /* WebPageProxy.h */; };
 		BC032DD310F4389F0058C15A /* WebProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCD10F4389F0058C15A /* WebProcessManager.h */; };
 		BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCF10F4389F0058C15A /* WebProcessProxy.h */; };
-		BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F42D12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h */; };
-		BC06F43012DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F42E12DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp */; };
-		BC06F43A12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */; };
-		BC06F43B12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */; };
-		BC06F44A12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */; };
-		BC06F44B12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F44912DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp */; };
-		BC06F44E12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F44C12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BC06F44F12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F44D12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp */; };
 		BC0E5FE512D697160012A72A /* WebGeolocationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E5FE312D697160012A72A /* WebGeolocationManager.h */; };
 		BC0E5FE612D697160012A72A /* WebGeolocationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E5FE412D697160012A72A /* WebGeolocationManager.cpp */; };
 		BC0E606112D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E605F12D6BA910012A72A /* WebGeolocationManagerMessageReceiver.cpp */; };
@@ -1027,14 +1019,6 @@
 		BC032DCB10F4389F0058C15A /* WebPageProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxy.h; sourceTree = "<group>"; };
 		BC032DCD10F4389F0058C15A /* WebProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessManager.h; sourceTree = "<group>"; };
 		BC032DCF10F4389F0058C15A /* WebProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessProxy.h; sourceTree = "<group>"; };
-		BC06F42D12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationPermissionRequestManager.h; sourceTree = "<group>"; };
-		BC06F42E12DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationPermissionRequestManager.cpp; sourceTree = "<group>"; };
-		BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationPermissionRequestProxy.h; sourceTree = "<group>"; };
-		BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationPermissionRequestProxy.cpp; sourceTree = "<group>"; };
-		BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationPermissionRequestManagerProxy.h; sourceTree = "<group>"; };
-		BC06F44912DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationPermissionRequestManagerProxy.cpp; sourceTree = "<group>"; };
-		BC06F44C12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKGeolocationPermissionRequest.h; sourceTree = "<group>"; };
-		BC06F44D12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKGeolocationPermissionRequest.cpp; sourceTree = "<group>"; };
 		BC0E5FE312D697160012A72A /* WebGeolocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGeolocationManager.h; sourceTree = "<group>"; };
 		BC0E5FE412D697160012A72A /* WebGeolocationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManager.cpp; sourceTree = "<group>"; };
 		BC0E604812D6B6370012A72A /* WebGeolocationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebGeolocationManager.messages.in; sourceTree = "<group>"; };
@@ -2026,10 +2010,6 @@
 				1A910070126675C4001842F5 /* FindIndicator.cpp */,
 				1A91006F126675C3001842F5 /* FindIndicator.h */,
 				BC17753E118BABF0007D9E9A /* GenericCallback.h */,
-				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
-				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
-				BC06F44912DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp */,
-				BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */,
 				0F5265B711DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp */,
 				0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
@@ -2154,8 +2134,6 @@
 				BCB9F6A31123DD0D00A137E0 /* WKFramePolicyListener.h */,
 				BC54CC1112D674EE005C67B0 /* WKGeolocationManager.cpp */,
 				BC54CC1012D674EE005C67B0 /* WKGeolocationManager.h */,
-				BC06F44D12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp */,
-				BC06F44C12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h */,
 				BC0E619712D6CD120012A72A /* WKGeolocationPosition.cpp */,
 				BC0E619612D6CD120012A72A /* WKGeolocationPosition.h */,
 				1C8E293812761E5B00BC7BD0 /* WKInspector.cpp */,
@@ -2185,8 +2163,6 @@
 		BC0E5FCB12D696DD0012A72A /* Geolocation */ = {
 			isa = PBXGroup;
 			children = (
-				BC06F42E12DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp */,
-				BC06F42D12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h */,
 				BC0E5FE412D697160012A72A /* WebGeolocationManager.cpp */,
 				BC0E5FE312D697160012A72A /* WebGeolocationManager.h */,
 				BC0E604812D6B6370012A72A /* WebGeolocationManager.messages.in */,
@@ -2966,10 +2942,6 @@
 				BC0E607312D6BC200012A72A /* WebGeolocationPosition.h in Headers */,
 				BC0E618312D6CB1D0012A72A /* WebGeolocationManagerProxyMessages.h in Headers */,
 				BC0E619812D6CD120012A72A /* WKGeolocationPosition.h in Headers */,
-				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
-				BC06F43A12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h in Headers */,
-				BC06F44A12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h in Headers */,
-				BC06F44E12DBDF3F002D78DE /* WKGeolocationPermissionRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3414,10 +3386,6 @@
 				BC0E607412D6BC200012A72A /* WebGeolocationPosition.cpp in Sources */,
 				BC0E618212D6CB1D0012A72A /* WebGeolocationManagerProxyMessageReceiver.cpp in Sources */,
 				BC0E619912D6CD120012A72A /* WKGeolocationPosition.cpp in Sources */,
-				BC06F43012DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp in Sources */,
-				BC06F43B12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp in Sources */,
-				BC06F44B12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp in Sources */,
-				BC06F44F12DBDF3F002D78DE /* WKGeolocationPermissionRequest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

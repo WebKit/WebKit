@@ -29,16 +29,11 @@
 #include "MessageID.h"
 #include "WebGeolocationPosition.h"
 #include <wtf/HashSet.h>
-#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
 class Connection;
-}
-
-namespace WebCore {
-class Geolocation;
 }
 
 namespace WebKit {
@@ -55,8 +50,6 @@ public:
     void registerWebPage(WebPage*);
     void unregisterWebPage(WebPage*);
 
-    void requestPermission(WebCore::Geolocation*);
-
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 private:
@@ -68,8 +61,6 @@ private:
 
     WebProcess* m_process;
     HashSet<WebPage*> m_pageSet;
-
-    HashMap<uint64_t, RefPtr<WebCore::Geolocation> > m_geolocationPermissionRequests;
 };
 
 } // namespace WebKit

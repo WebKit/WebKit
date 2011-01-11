@@ -1,3 +1,49 @@
+2011-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r75460.
+        http://trac.webkit.org/changeset/75460
+        https://bugs.webkit.org/show_bug.cgi?id=52191
+
+        It broke Qt-WK2 build (Requested by Ossy on #webkit).
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKGeolocationPermissionRequest.cpp: Removed.
+        * UIProcess/API/C/WKGeolocationPermissionRequest.h: Removed.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp: Removed.
+        * UIProcess/GeolocationPermissionRequestManagerProxy.h: Removed.
+        * UIProcess/GeolocationPermissionRequestProxy.cpp: Removed.
+        * UIProcess/GeolocationPermissionRequestProxy.h: Removed.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        * UIProcess/WebUIClient.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp: Removed.
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.h: Removed.
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        (WebKit::WebGeolocationClient::requestPermission):
+        (WebKit::WebGeolocationClient::cancelPermissionRequest):
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2011-01-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r75459

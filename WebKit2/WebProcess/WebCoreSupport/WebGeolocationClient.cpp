@@ -28,18 +28,12 @@
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 
 #include "WebGeolocationManager.h"
-#include "WebPage.h"
 #include "WebProcess.h"
-#include <WebCore/Geolocation.h>
 #include <WebCore/GeolocationPosition.h>
 
 using namespace WebCore;
 
 namespace WebKit {
-
-WebGeolocationClient::~WebGeolocationClient()
-{
-}
 
 void WebGeolocationClient::geolocationDestroyed()
 {
@@ -67,14 +61,14 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     return 0;
 }
 
-void WebGeolocationClient::requestPermission(Geolocation* geolocation)
+void WebGeolocationClient::requestPermission(Geolocation*)
 {
-    m_page->geolocationPermissionRequestManager().startRequestForGeolocation(geolocation);
+    // FIXME: Implement this.
 }
 
-void WebGeolocationClient::cancelPermissionRequest(Geolocation* geolocation)
+void WebGeolocationClient::cancelPermissionRequest(Geolocation*)
 {
-    m_page->geolocationPermissionRequestManager().cancelRequestForGeolocation(geolocation);
+    // FIXME: Implement this.
 }
 
 } // namespace WebKit

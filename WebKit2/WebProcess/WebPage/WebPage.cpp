@@ -140,7 +140,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_nativeWindow(parameters.nativeWindow)
 #endif
     , m_findController(this)
-    , m_geolocationPermissionRequestManager(this)
     , m_pageID(pageID)
 {
     ASSERT(m_pageID);
@@ -1301,11 +1300,6 @@ void WebPage::didChooseFilesForOpenPanel(const Vector<String>& files)
 void WebPage::didCancelForOpenPanel()
 {
     m_activeOpenPanelResultListener = 0;
-}
-
-void WebPage::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
-{
-    m_geolocationPermissionRequestManager.didReceiveGeolocationPermissionDecision(geolocationID, allowed);
 }
 
 void WebPage::advanceToNextMisspelling(bool startBeforeSelection)

@@ -73,7 +73,6 @@ typedef const struct OpaqueWKFormSubmissionListener* WKFormSubmissionListenerRef
 typedef const struct OpaqueWKFrame* WKFrameRef;
 typedef const struct OpaqueWKFramePolicyListener* WKFramePolicyListenerRef;
 typedef const struct OpaqueWKGeolocationManager* WKGeolocationManagerRef;
-typedef const struct OpaqueWKGeolocationPermissionRequest* WKGeolocationPermissionRequestRef;
 typedef const struct OpaqueWKGeolocationPosition* WKGeolocationPositionRef;
 typedef const struct OpaqueWKInspector* WKInspectorRef;
 typedef const struct OpaqueWKNavigationData* WKNavigationDataRef;

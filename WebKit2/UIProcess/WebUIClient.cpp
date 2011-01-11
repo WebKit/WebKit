@@ -264,13 +264,4 @@ bool WebUIClient::runOpenPanel(WebPageProxy* page, WebFrameProxy* frame, const W
     return true;
 }
 
-bool WebUIClient::decidePolicyForGeolocationPermissionRequest(WebPageProxy* page, WebFrameProxy* frame, WebSecurityOrigin* origin, GeolocationPermissionRequestProxy* permissionRequest)
-{
-    if (!m_client.decidePolicyForGeolocationPermissionRequest)
-        return false;
-
-    m_client.decidePolicyForGeolocationPermissionRequest(toAPI(page), toAPI(frame), toAPI(origin), toAPI(permissionRequest), m_client.clientInfo);
-    return true;
-}
-
 } // namespace WebKit
