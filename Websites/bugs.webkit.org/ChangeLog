@@ -1,3 +1,15 @@
+2011-01-10  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        convert back to unified from sidebyside diff
+        https://bugs.webkit.org/show_bug.cgi?id=52180
+
+        Remove url fragment stuff. Having it be per-filediff is too complicated.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2011-01-07  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

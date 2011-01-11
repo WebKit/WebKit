@@ -64,9 +64,6 @@
   var original_file_contents = {};
   var patched_file_contents = {};
   var WEBKIT_BASE_DIR = "http://svn.webkit.org/repository/webkit/trunk/";
-  // FIXME: Serialize this to the URL fragment for permalinking goodness, e.g.,
-  // so the bug page can link directly to the side-by-side diff.
-  var url_fragment = {};
   var SIDE_BY_SIDE_DIFFS_KEY = 'sidebysidediffs';
 
   function idForLine(number) {
@@ -352,7 +349,7 @@
   function expandBarHtml(file_name, opt_direction) {
     var html = '<div class="ExpandBar">' +
         '<pre class="ExpandArea Expand' + ABOVE + '"></pre>' +
-        '<div class="ExpandLinkContainer"><span class="ExpandText">expand: </span>';
+        '<div class="ExpandLinkContainer LinkContainer"><span class="ExpandText">expand: </span>';
 
     // FIXME: If there are <100 line to expand, don't show the expand-100 link.
     // If there are <20 lines to expand, don't show the expand-20 link.
@@ -388,7 +385,15 @@
   }
 
   function handleSideBySideLinkClick() {
-    $('.FileDiff').each(sideBySideify);
+    $('.FileDiff').each(function() {
+      convertFileDiff('sidebyside', this);
+    });
+  }
+
+  function handleUnifyLinkClick() {
+    $('.FileDiff').each(function() {
+      convertFileDiff('unified', this);
+    });
   }
 
   function getWebKitSourceFile(file_name, onLoad, expand_bar) {
@@ -492,10 +497,16 @@
     insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num);
   }
 
-  function unifiedDiffExpansionLine(line_number, contents) {
-    var line = $('<div class="ExpansionLine">' +
-        '<span class="from expansionlineNumber">' + line_number +
-        '</span><span class="to expansionlineNumber">' + line_number +
+  function unifiedLine(from, to, contents, is_expansion_line, opt_className, opt_attributes) {
+    var className = is_expansion_line ? 'ExpansionLine' : 'LineContainer Line';
+    if (opt_className)
+      className += ' ' + opt_className;
+
+    var lineNumberClassName = is_expansion_line ? 'expansionLineNumber' : 'lineNumber';
+
+    var line = $('<div class="' + className + '" ' + (opt_attributes || '') + '>' +
+        '<span class="from ' + lineNumberClassName + '">' + (from || '&nbsp;') +
+        '</span><span class="to ' + lineNumberClassName + '">' + (to || '&nbsp;') +
         '</span> <span class="text"></span>' +
         '</div>');
     // Use text instead of innerHTML to avoid evaluting HTML.
@@ -503,7 +514,11 @@
     return line;
   }
 
-  function sideBySideDiffExpansionLine(line_number, contents) {
+  function unifiedExpansionLine(line_number, contents) {
+    return unifiedLine(line_number, line_number, contents, true);
+  }
+
+  function sideBySideExpansionLine(line_number, contents) {
     var line = $('<div class="ExpansionLine"></div>');
     line.append(lineSide('from', contents, true, line_number));
     line.append(lineSide('to', contents, true, line_number));
@@ -537,14 +552,13 @@
 
   function insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num) {
     var fragment = document.createDocumentFragment();
-    var file_diff_index = $('.FileDiff').index(files[file_name]);
-    var is_side_by_side = isDiffSideBySide(file_diff_index);
+    var is_side_by_side = isDiffSideBySide(files[file_name]);
 
     for (var i = 0; i < end_line_num - start_line_num; i++) {
       // FIXME: from line numbers are wrong
       var line_number = start_from_line_num + i + 1;
       var contents = patched_file_contents[file_name][start_line_num + i];
-      var line = is_side_by_side ? sideBySideDiffExpansionLine(line_number, contents) : unifiedDiffExpansionLine(line_number, contents);
+      var line = is_side_by_side ? sideBySideExpansionLine(line_number, contents) : unifiedExpansionLine(line_number, contents);
       fragment.appendChild(line[0]);
     }
 
@@ -584,11 +598,13 @@
   }
 
   function fromLineNumber(line) {
-    return Number(line.querySelector('.from').textContent);
+    var node = line.querySelector('.from');
+    return node ? Number(node.textContent) : 0;
   }
 
   function toLineNumber(line) {
-    return Number(line.querySelector('.to').textContent);
+    var node = line.querySelector('.to');
+    return node ? Number(node.textContent) : 0;
   }
 
   function textContentsFor(line) {
@@ -680,7 +696,8 @@
     fetchHistory();
     $(document.body).prepend('<div id="message">' +
         '<div class="help">Select line numbers to add a comment.' +
-          '<div class="DiffLinks">' +
+          '<div class="DiffLinks LinkContainer">' +
+            '<a href="javascript:" class="unify-link">unified</a>' +
             '<a href="javascript:" class="side-by-side-link">side-by-side</a>' +
           '</div>' +
         '</div>' +
@@ -714,48 +731,76 @@
     updateToolbarAnchorState();
   });
 
-  function isDiffSideBySide(file_diff_index) {
-    if (!url_fragment[SIDE_BY_SIDE_DIFFS_KEY])
-      url_fragment[SIDE_BY_SIDE_DIFFS_KEY] = [];
-    return url_fragment[SIDE_BY_SIDE_DIFFS_KEY].indexOf(file_diff_index) != -1;
+  function isDiffSideBySide(file_diff) {
+    return diffState(file_diff) == 'sidebyside';
   }
 
-  function sideBySideify(file_diff_index) {
-    if (isDiffSideBySide(file_diff_index))
+  function diffState(file_diff) {
+    var diff_state = $(file_diff).attr('data-diffstate');
+    return diff_state || 'unified';
+  }
+
+  function unifyLine(line, from, to, contents, classNames, attributes, id) {
+    var new_line = unifiedLine(from, to, contents, false, classNames, attributes);
+    var old_line = $(line);
+    if (!old_line.hasClass('LineContainer'))
+      old_line = old_line.parents('.LineContainer');
+
+    var comments = commentsToTransferFor($(document.getElementById(id)));
+    old_line.after(comments);
+    old_line.replaceWith(new_line);
+  }
+
+  function convertFileDiff(diff_type, file_diff) {
+    if (diffState(file_diff) == diff_type)
       return;
 
-    url_fragment[SIDE_BY_SIDE_DIFFS_KEY].push(file_diff_index);
+    $(file_diff).attr('data-diffstate', diff_type);
 
-    $('.Line', this).each(sideBySideifyLine);
-    $('.ExpansionLine', this).each(sideBySideifyExpansionLine);
+    $('.Line', file_diff).each(function() {
+      convertLine(diff_type, this);
+    });
+
+    $('.ExpansionLine', file_diff).each(function() {
+      convertExpansionLine(diff_type, this);
+    });
   }
 
-  // FIXME: Put removed lines to the left of their corresponding added lines.
-  // FIXME: Provide a way to go back to the unified diff.
-  // FIXME: Allow for converting an individual file to side-by-side.
-  function sideBySideifyLine() {
-    var from = fromLineNumber(this);
-    var to = toLineNumber(this);
-    var contents = textContentsFor(this);
+  function convertLine(diff_type, line) {
+    var convert_function = diff_type == 'sidebyside' ? sideBySideifyLine : unifyLine;
+    var from = fromLineNumber(line);
+    var to = toLineNumber(line);
+    var contents = textContentsFor(line);
+    var classNames = classNamesForMovingLine(line);
+    var attributes = attributesForMovingLine(line);
+    var id = line.id;
+    convert_function(line, from, to, contents, classNames, attributes, id)
+  }
 
-    var classParts = this.className.split(' ');
+  function classNamesForMovingLine(line) {
+    var classParts = line.className.split(' ');
     var classBuffer = [];
     for (var i = 0; i < classParts.length; i++) {
       var part = classParts[i];
       if (part != 'LineContainer' && part != 'Line')
         classBuffer.push(part);
     }
-    var classNames = classBuffer.join(' ');
+    return classBuffer.join(' ');
+  }
 
-    var id = this.id;
-    var attributesBuffer = ['id=' + id];
+  function attributesForMovingLine(line) {
+    var attributesBuffer = ['id=' + line.id];
     // Make sure to keep all data- attributes.
-    $(this.attributes).each(function() {
+    $(line.attributes).each(function() {
       if (this.name.indexOf('data-') == 0)
         attributesBuffer.push(this.name + '=' + this.value);
     });
-    var attributes = attributesBuffer.join(' ');
+    return attributesBuffer.join(' ');
+  }
 
+  // FIXME: Put removed lines to the left of their corresponding added lines.
+  // FIXME: Allow for converting an individual file to side-by-side.
+  function sideBySideifyLine(line, from, to, contents, classNames, attributes, id) {
     var from_class = '';
     var to_class = '';
     var from_attributes = '';
@@ -784,18 +829,21 @@
     new_line.append(lineSide('from', from_contents, false, from, from_attributes, from_class));
     new_line.append(lineSide('to', to_contents, false, to, to_attributes, to_class));
 
-    $(this).replaceWith(new_line);
-    tranferCommentsFor($(document.getElementById(id)));
+    $(line).replaceWith(new_line);
+
+    var line = $(document.getElementById(id));
+    line.after(commentsToTransferFor(line));
   }
 
-  function sideBySideifyExpansionLine() {
-    var contents = textContentsFor(this);
-    var line_number = fromLineNumber(this);
-    var new_line = sideBySideDiffExpansionLine(line_number, contents);
-    $(this).replaceWith(new_line);
+  function convertExpansionLine(diff_type, line) {
+    var convert_function = diff_type == 'sidebyside' ? sideBySideExpansionLine : unifiedExpansionLine;
+    var contents = textContentsFor(line);
+    var line_number = fromLineNumber(line);
+    var new_line = convert_function(line_number, contents);
+    $(line).replaceWith(new_line);
   }
 
-  function tranferCommentsFor(line) {
+  function commentsToTransferFor(line) {
     var fragment = document.createDocumentFragment();
 
     previousCommentsFor(line).each(function() {
@@ -814,7 +862,7 @@
       fragment.appendChild(frozenComment);
     }
 
-    line.after(fragment);
+    return fragment;
   }
 
   function discardComment() {
@@ -833,6 +881,7 @@
   }
 
   $('.side-by-side-link').live('click', handleSideBySideLinkClick);
+  $('.unify-link').live('click', handleUnifyLinkClick);
   $('.ExpandLink').live('click', handleExpandLinkClick);
   $('.comment .discard').live('click', discardComment);
   $('.frozenComment').live('click', unfreezeComment);

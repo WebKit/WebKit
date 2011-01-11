@@ -302,16 +302,17 @@ body {
   margin-left: 0.67em;
 }
 
-.ExpandLinkContainer a {
+.LinkContainer a {
   border: 0;
+  font-style: normal;
 }
 
-.ExpandLinkContainer a:after {
+.LinkContainer a:after {
   content: " | ";
   color: black;
 }
 
-.ExpandLinkContainer a:last-of-type:after {
+.LinkContainer a:last-of-type:after {
   content: "";
 }
 
@@ -370,7 +371,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=19"></script>
+<script src="code-review.js?version=20"></script>
 EOF
 
     def self.revisionOrDescription(string)
