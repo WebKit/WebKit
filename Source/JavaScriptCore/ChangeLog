@@ -1,3 +1,21 @@
+2011-01-10  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Remove extraneous COMPILER(GCC) condition when checking GCC_VERSION_AT_LEAST()
+        https://bugs.webkit.org/show_bug.cgi?id=52178
+
+        It is sufficient to test GCC_VERSION_AT_LEAST() instead of both COMPILER(GCC) and
+        GCC_VERSION_AT_LEAST(). Notice GCC_VERSION_AT_LEAST() is defined to be 0 when we
+        are not compiling with GCC.
+
+        Fixes style issues at the callsites (i.e. replace comma with comma-space in
+        macro function argument list). Also, makes a spelling correction in a comment.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+        * wtf/Platform.h:
+
 2011-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: removed some uses of nextNumber that I missed last time.
@@ -5,15 +23,6 @@
         * runtime/Heap.cpp:
         (JSC::Heap::reset):
         (JSC::Heap::collectAllGarbage):
-
-2011-01-10  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by Oliver Hunt.
-
-        Removed dead number allocation code.
-        https://bugs.webkit.org/show_bug.cgi?id=52177
-
-        * runtime/Heap.h:
 
 2011-01-10  Daniel Bates  <dbates@rim.com>
 
