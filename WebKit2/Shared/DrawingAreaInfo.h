@@ -39,6 +39,7 @@ namespace WebKit {
 struct DrawingAreaInfo {
     enum Type {
         None,
+        Impl,
         ChunkedUpdate,
 #if USE(ACCELERATED_COMPOSITING)
         LayerBacked,

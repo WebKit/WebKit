@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingArea.h"
+#ifndef DrawingAreaProxyImpl_h
+#define DrawingAreaProxyImpl_h
 
-// Subclasses
-#include "ChunkedUpdateDrawingArea.h"
-#if USE(ACCELERATED_COMPOSITING)
-#include "LayerBackedDrawingArea.h"
-#endif
-
-#if ENABLE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
-#endif
+#include "DrawingAreaProxy.h"
 
 namespace WebKit {
 
-PassRefPtr<DrawingArea> DrawingArea::create(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-{
-    switch (type) {
-        case DrawingAreaInfo::None:
-            ASSERT_NOT_REACHED();
-            break;
+class DrawingAreaProxyImpl : public DrawingAreaProxy {
+public:
+    static PassOwnPtr<DrawingAreaProxyImpl> create(WebPageProxy*);
+    virtual ~DrawingAreaProxyImpl();
 
-        case DrawingAreaInfo::Impl:
-            return 0;
+private:
+    explicit DrawingAreaProxyImpl(WebPageProxy*);
 
-        case DrawingAreaInfo::ChunkedUpdate:
-            return adoptRef(new ChunkedUpdateDrawingArea(identifier, webPage));
-
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-        case DrawingAreaInfo::LayerBacked:
-            return adoptRef(new LayerBackedDrawingArea(identifier, webPage));
-#endif
-#if ENABLE(TILED_BACKING_STORE)
-        case DrawingAreaInfo::Tiled:
-            return adoptRef(new TiledDrawingArea(identifier, webPage));
-#endif
-    }
-
-    return 0;
-}
-
-DrawingArea::DrawingArea(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-    : m_info(type, identifier)
-    , m_webPage(webPage)
-{
-}
-
-DrawingArea::~DrawingArea()
-{
-}
+    // DrawingAreaProxy
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+    virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
+    virtual void sizeDidChange();
+    virtual void setPageIsVisible(bool);
+    virtual void attachCompositingContext(uint32_t contextID);
+    virtual void detachCompositingContext();
+};
 
 } // namespace WebKit
+
+#endif // DrawingAreaProxyImpl_h

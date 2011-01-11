@@ -27,6 +27,7 @@
 
 #import "ChunkedUpdateDrawingAreaProxy.h"
 #import "DataReference.h"
+#import "DrawingAreaProxyImpl.h"
 #import "FindIndicator.h"
 #import "FindIndicatorWindow.h"
 #import "LayerBackedDrawingAreaProxy.h"
@@ -1460,6 +1461,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     OwnPtr<DrawingAreaProxy> newDrawingArea;
     switch (type) {
+        case DrawingAreaInfo::Impl:
         case DrawingAreaInfo::None:
             break;
         case DrawingAreaInfo::ChunkedUpdate: {

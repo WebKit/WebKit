@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingArea.h"
+#include "DrawingAreaProxyImpl.h"
 
-// Subclasses
-#include "ChunkedUpdateDrawingArea.h"
-#if USE(ACCELERATED_COMPOSITING)
-#include "LayerBackedDrawingArea.h"
-#endif
-
-#if ENABLE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
+#ifndef __APPLE__
+#error "This drawing area is not ready for use by other ports yet."
 #endif
 
 namespace WebKit {
 
-PassRefPtr<DrawingArea> DrawingArea::create(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
+PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webPageProxy)
 {
-    switch (type) {
-        case DrawingAreaInfo::None:
-            ASSERT_NOT_REACHED();
-            break;
-
-        case DrawingAreaInfo::Impl:
-            return 0;
-
-        case DrawingAreaInfo::ChunkedUpdate:
-            return adoptRef(new ChunkedUpdateDrawingArea(identifier, webPage));
-
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-        case DrawingAreaInfo::LayerBacked:
-            return adoptRef(new LayerBackedDrawingArea(identifier, webPage));
-#endif
-#if ENABLE(TILED_BACKING_STORE)
-        case DrawingAreaInfo::Tiled:
-            return adoptRef(new TiledDrawingArea(identifier, webPage));
-#endif
-    }
-
-    return 0;
+    return adoptPtr(new DrawingAreaProxyImpl(webPageProxy));
 }
 
-DrawingArea::DrawingArea(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-    : m_info(type, identifier)
-    , m_webPage(webPage)
+DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
+    : DrawingAreaProxy(DrawingAreaInfo::Impl, webPageProxy)
 {
 }
 
-DrawingArea::~DrawingArea()
+DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
 {
+}
+
+void DrawingAreaProxyImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void DrawingAreaProxyImpl::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext)
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void DrawingAreaProxyImpl::sizeDidChange()
+{
+    ASSERT_NOT_REACHED();
+}
+
+void DrawingAreaProxyImpl::setPageIsVisible(bool pageIsVisible)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void DrawingAreaProxyImpl::attachCompositingContext(uint32_t contextID)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void DrawingAreaProxyImpl::detachCompositingContext()
+{
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit
