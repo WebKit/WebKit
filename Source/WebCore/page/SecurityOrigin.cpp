@@ -303,6 +303,7 @@ bool SecurityOrigin::isAccessWhiteListed(const SecurityOrigin* targetOrigin) con
 bool SecurityOrigin::canDisplay(const KURL& url) const
 {
 #if ENABLE(BLOB)
+    // FIXME: We should generalize this check.
     if (url.protocolIs(BlobURL::blobProtocol()))
         return canRequest(url);
 #endif
@@ -310,7 +311,9 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
     if (!restrictAccessToLocal())
         return true;
 
-    if (!SchemeRegistry::shouldTreatURLAsLocal(url.string()))
+    // FIXME: I suspect this check is incorrect because url has not necessarily
+    //        been canonicalized.
+    if (!SchemeRegistry::deprecatedShouldTreatURLAsLocal(url.string()))
         return true;
 
     RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);

@@ -1,3 +1,29 @@
+2011-01-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Introduce the notion of a "display-isolated" URL scheme for use by
+        Chrome-internal URLs
+        https://bugs.webkit.org/show_bug.cgi?id=50182
+
+        This patch adds the basic plumbing for display-isolated URL schemes.
+        Originally, this patch also had the functional change, but I've split
+        that off into a separate patch because the original patch caused a
+        performance regression.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canDisplay):
+        * platform/SchemeRegistry.cpp:
+        (WebCore::displayIsolatedURLSchemes):
+        (WebCore::SchemeRegistry::registerURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsLocal):
+        (WebCore::SchemeRegistry::localSchemes):
+        (WebCore::SchemeRegistry::deprecatedShouldTreatURLAsLocal):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal):
+        (WebCore::SchemeRegistry::registerURLSchemeAsDisplayIsolated):
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated):
+        * platform/SchemeRegistry.h:
+
 2011-01-10  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,16 @@
+2011-01-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Introduce the notion of a "display-isolated" URL scheme for use by
+        Chrome-internal URLs
+        https://bugs.webkit.org/show_bug.cgi?id=50182
+
+        Update to new function name.
+
+        * Api/qwebsecurityorigin.cpp:
+        (QWebSecurityOrigin::localSchemes):
+
 2011-01-10  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
