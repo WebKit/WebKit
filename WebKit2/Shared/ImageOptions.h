@@ -29,7 +29,7 @@
 namespace WebKit {
 
 enum ImageOptions {
-    ImageOptionsSharable = 1 << 0,
+    ImageOptionsShareable = 1 << 0,
 };
 
 } // namespace WebKit

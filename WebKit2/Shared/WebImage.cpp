@@ -33,7 +33,7 @@ namespace WebKit {
 
 PassRefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options)
 {
-    if (options & ImageOptionsSharable)
+    if (options & ImageOptionsShareable)
         return WebImage::create(ShareableBitmap::createShareable(size));
     return WebImage::create(ShareableBitmap::create(size));
 }

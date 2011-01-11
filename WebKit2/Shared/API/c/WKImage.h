@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 enum {
-    kWKImageOptionsSharable = 1 << 0,
+    kWKImageOptionsShareable = 1 << 0,
 };
 typedef uint32_t WKImageOptions;
 

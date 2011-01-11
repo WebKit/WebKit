@@ -724,8 +724,8 @@ inline ImageOptions toImageOptions(WKImageOptions wkImageOptions)
 {
     unsigned imageOptions = 0;
 
-    if (wkImageOptions & kWKImageOptionsSharable)
-        imageOptions |= ImageOptionsSharable;
+    if (wkImageOptions & kWKImageOptionsShareable)
+        imageOptions |= ImageOptionsShareable;
 
     return static_cast<ImageOptions>(imageOptions);
 }

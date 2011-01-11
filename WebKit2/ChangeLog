@@ -1,3 +1,16 @@
+2011-01-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix spelling mistake. Sharable -> Shareable.
+
+        * Shared/API/c/WKImage.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toImageOptions):
+        * Shared/ImageOptions.h:
+        * Shared/WebImage.cpp:
+        (WebKit::WebImage::create):
+
 2011-01-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
