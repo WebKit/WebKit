@@ -1,5 +1,11 @@
 2011-01-11  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add a Region class which represents a graphical region

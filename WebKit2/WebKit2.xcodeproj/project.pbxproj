@@ -847,8 +847,8 @@
 		1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaMessages.h; sourceTree = "<group>"; };
 		1A6422FC12DD08FE00CAAE2C /* DrawingAreaProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DrawingAreaProxy.messages.in; sourceTree = "<group>"; };
-		1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DrawingAreaProxyMessageReceiver.cpp; path = /Users/andersca/Build/Debug/DerivedSources/WebKit2/DrawingAreaProxyMessageReceiver.cpp; sourceTree = "<absolute>"; };
-		1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawingAreaProxyMessages.h; path = /Users/andersca/Build/Debug/DerivedSources/WebKit2/DrawingAreaProxyMessages.h; sourceTree = "<absolute>"; };
+		1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		1A64235012DD187C00CAAE2C /* Region.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Region.cpp; sourceTree = "<group>"; };
 		1A64235112DD187C00CAAE2C /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
