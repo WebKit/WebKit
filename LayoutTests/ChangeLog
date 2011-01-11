@@ -1,3 +1,10 @@
+2011-01-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskipping fast/multicol/span/double-merge-anonymous-block-crash.html. We
+        have been unsuccessful reproducing the crash locally or on the bots.
+
+        * platform/gtk/Skipped: Unskipping test.
+
 2011-01-11  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
