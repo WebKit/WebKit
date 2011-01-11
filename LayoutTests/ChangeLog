@@ -1,3 +1,10 @@
+2011-01-11  Adam Roben  <aroben@apple.com>
+
+        Update test results after r75408
+
+        * platform/mac-leopard/fast/js/large-expressions-expected.txt:
+        * platform/win/fast/js/large-expressions-expected.txt:
+
 2011-01-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
