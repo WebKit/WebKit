@@ -53,24 +53,6 @@ WebInspector.AuditLauncherView = function(runnerCallback)
 }
 
 WebInspector.AuditLauncherView.prototype = {
-    updateResourceTrackingState: function(isTracking)
-    {
-        if (!this._auditPresentStateLabelElement)
-            return;
-
-        if (isTracking) {
-            this._auditPresentStateLabelElement.nodeValue = WebInspector.UIString("Audit Present State");
-            this._auditPresentStateElement.disabled = false;
-            this._auditPresentStateElement.parentElement.removeStyleClass("disabled");
-        } else {
-            this._resetResourceCount();
-            this._auditPresentStateLabelElement.nodeValue = WebInspector.UIString("Audit Present State (Resource Tracking must be enabled)");
-            this._auditPresentStateElement.disabled = true;
-            this._auditPresentStateElement.parentElement.addStyleClass("disabled");
-            this.auditReloadedStateElement.checked = true;
-        }
-    },
-
     get totalResources()
     {
         return this._totalResources;
@@ -237,7 +219,7 @@ WebInspector.AuditLauncherView.prototype = {
         this._auditPresentStateElement.name = "audit-mode";
         this._auditPresentStateElement.type = "radio";
         this._auditPresentStateElement.checked = true;
-        this._auditPresentStateLabelElement = document.createTextNode("");
+        this._auditPresentStateLabelElement = document.createTextNode(WebInspector.UIString("Audit Present State"));
         labelElement.appendChild(this._auditPresentStateElement);
         labelElement.appendChild(this._auditPresentStateLabelElement);
         this._buttonContainerElement.appendChild(labelElement);
@@ -267,7 +249,6 @@ WebInspector.AuditLauncherView.prototype = {
         this._contentElement.appendChild(this._buttonContainerElement);
 
         this._selectAllClicked(this._selectAllCheckboxElement.checked);
-        this.updateResourceTrackingState();
         this._updateButton();
         this._updateResourceProgress();
     },

@@ -248,12 +248,6 @@ WebInspector.AuditsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
-    show: function()
-    {
-        WebInspector.Panel.prototype.show.call(this);
-        this._updateLauncherViewControls(!WebInspector.panels.resources || WebInspector.panels.resources.resourceTrackingEnabled);
-    },
-
     reset: function()
     {
         this._launcherView.reset();
@@ -269,12 +263,6 @@ WebInspector.AuditsPanel.prototype = {
     updateMainViewWidth: function(width)
     {
         this.viewsContainerElement.style.left = width + "px";
-    },
-
-    _updateLauncherViewControls: function(isTracking)
-    {
-        if (this._launcherView)
-            this._launcherView.updateResourceTrackingState(isTracking);
     },
 
     _clearButtonClicked: function()

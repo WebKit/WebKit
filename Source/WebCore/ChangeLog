@@ -1,3 +1,17 @@
+2011-01-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: "Audit present state" always disabled
+        https://bugs.webkit.org/show_bug.cgi?id=52199
+
+        Removed all traces of resource tracking checks, as we have it no more.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/AuditLauncherView.js:
+        (WebInspector.AuditLauncherView.prototype._createLauncherUI):
+        * inspector/front-end/AuditsPanel.js:
+
 2011-01-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
