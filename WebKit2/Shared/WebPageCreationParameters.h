@@ -44,6 +44,12 @@ struct WebPageCreationParameters {
     static bool decode(CoreIPC::ArgumentDecoder*, WebPageCreationParameters&);
 
     WebCore::IntSize viewSize;
+
+    bool isActive;
+    bool isFocused;
+    bool isVisible;
+    bool isInWindow;
+    
     WebPreferencesStore store;
     DrawingAreaInfo drawingAreaInfo;
     WebPageGroupData pageGroupData;

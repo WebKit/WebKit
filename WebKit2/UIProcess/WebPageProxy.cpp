@@ -2137,7 +2137,13 @@ void WebPageProxy::processDidCrash()
 WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) const
 {
     WebPageCreationParameters parameters;
+
     parameters.viewSize = size;
+    parameters.isActive = m_pageClient->isViewWindowActive();
+    parameters.isFocused = m_pageClient->isViewFocused();
+    parameters.isVisible = m_pageClient->isViewVisible();
+    parameters.isInWindow = m_pageClient->isViewInWindow();
+
     parameters.drawingAreaInfo = m_drawingArea->info();
     parameters.store = m_pageGroup->preferences()->store();
     parameters.pageGroupData = m_pageGroup->data();

@@ -32,6 +32,11 @@ namespace WebKit {
 void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(viewSize);
+    encoder->encode(isActive);
+    encoder->encode(isFocused);
+    encoder->encode(isVisible);
+    encoder->encode(isInWindow);
+
     encoder->encode(store);
     encoder->encode(drawingAreaInfo);
     encoder->encode(pageGroupData);
@@ -51,6 +56,14 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
 bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPageCreationParameters& parameters)
 {
     if (!decoder->decode(parameters.viewSize))
+        return false;
+    if (!decoder->decode(parameters.isActive))
+        return false;
+    if (!decoder->decode(parameters.isFocused))
+        return false;
+    if (!decoder->decode(parameters.isVisible))
+        return false;
+    if (!decoder->decode(parameters.isInWindow))
         return false;
     if (!decoder->decode(parameters.store))
         return false;
