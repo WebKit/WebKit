@@ -37,6 +37,7 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "SessionState.h"
+#include "ShareableBitmap.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
@@ -623,7 +624,7 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
     frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
 
     RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
-    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->backingStore()->createGraphicsContext();
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
 
     graphicsContext->save();
     graphicsContext->translate(-rect.x(), -rect.y());
@@ -647,7 +648,7 @@ PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect,
     frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
 
     RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
-    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->backingStore()->createGraphicsContext();
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
 
     graphicsContext->save();
     graphicsContext->translate(-rect.x(), -rect.y());

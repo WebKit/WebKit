@@ -46,7 +46,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-class BackingStore;
+class ShareableBitmap;
 class NPVariantData;
 class PluginProcessConnection;
 
@@ -132,11 +132,11 @@ private:
     WebCore::IntRect m_frameRect;
 
     // This is the backing store that we paint when we're told to paint.
-    RefPtr<BackingStore> m_backingStore;
+    RefPtr<ShareableBitmap> m_backingStore;
 
     // This is the shared memory backing store that the plug-in paints into. When the plug-in tells us
     // that it's painted something in it, we'll blit from it to our own backing store.
-    RefPtr<BackingStore> m_pluginBackingStore;
+    RefPtr<ShareableBitmap> m_pluginBackingStore;
     
     // Whether all of the plug-in backing store contains valid data.
     bool m_pluginBackingStoreContainsValidData;

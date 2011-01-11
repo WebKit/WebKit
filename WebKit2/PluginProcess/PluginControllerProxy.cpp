@@ -27,7 +27,6 @@
 
 #include "PluginControllerProxy.h"
 
-#include "BackingStore.h"
 #include "DataReference.h"
 #include "NPObjectProxy.h"
 #include "NPRemoteObjectMap.h"
@@ -36,6 +35,7 @@
 #include "NetscapePlugin.h"
 #include "PluginProcess.h"
 #include "PluginProxyMessages.h"
+#include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessConnection.h"
 #include <WebCore/GraphicsContext.h>
@@ -298,7 +298,7 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
 
     if (!backingStoreHandle.isNull()) {
         // Create a new backing store.
-        m_backingStore = BackingStore::create(frameRect.size(), backingStoreHandle);
+        m_backingStore = ShareableBitmap::create(frameRect.size(), backingStoreHandle);
     }
 
     m_plugin->geometryDidChange(frameRect, clipRect);

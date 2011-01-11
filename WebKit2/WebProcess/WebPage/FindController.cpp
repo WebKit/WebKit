@@ -25,7 +25,7 @@
 
 #include "FindController.h"
 
-#include "BackingStore.h"
+#include "ShareableBitmap.h"
 #include "WKPage.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
@@ -158,7 +158,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
 
     // Create a backing store and paint the find indicator text into it.
-    RefPtr<BackingStore> findIndicatorTextBackingStore = BackingStore::createSharable(selectionRectInWindowCoordinates.size());
+    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createSharable(selectionRectInWindowCoordinates.size());
     OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
 
     graphicsContext->translate(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());

@@ -252,7 +252,7 @@ HEADERS += \
     Shared/API/c/WKURLRequest.h \
     Shared/API/c/WKURLResponse.h \
     Shared/API/c/WKUserContentURLPattern.h \
-    Shared/BackingStore.h \
+    Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
@@ -484,7 +484,7 @@ SOURCES += \
     Shared/API/c/WKUserContentURLPattern.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
-    Shared/BackingStore.cpp \
+    Shared/ShareableBitmap.cpp \
     Shared/ChildProcess.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
@@ -515,7 +515,7 @@ SOURCES += \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
-    Shared/qt/BackingStoreQt.cpp \
+    Shared/qt/ShareableBitmapQt.cpp \
     Shared/qt/CleanupHandler.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \

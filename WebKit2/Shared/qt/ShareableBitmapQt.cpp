@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,24 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BackingStore.h"
+#include "ShareableBitmap.h"
 
-#include "NotImplemented.h"
+#include <QImage>
+#include <QPainter>
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
+static inline QImage createQImage(void* data, int width, int height)
 {
-    notImplemented();
-    return 0;
+    return QImage(reinterpret_cast<uchar*>(data), width, height, width * 4, QImage::Format_RGB32);
 }
 
-void BackingStore::paint(WebCore::GraphicsContext&, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect)
+PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
-    notImplemented();
+    QImage* image = new QImage(createQImage(data(), m_size.width(), m_size.height()));
+    GraphicsContext* context = new GraphicsContext(new QPainter(image));
+    context->takeOwnershipOfPlatformContext();
+    return context;
 }
-        
+
+void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
+{
+    QImage image = createQImage(data(), m_size.width(), m_size.height());
+    QPainter* painter = context.platformContext();
+    painter->translate(-srcRect.x(), -srcRect.y());
+    painter->drawImage(dstPoint, image, QRect(srcRect));
+    painter->translate(srcRect.x(), srcRect.y());
+}
+
 } // namespace WebKit

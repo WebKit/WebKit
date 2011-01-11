@@ -26,7 +26,7 @@
 #ifndef PlatformPopupMenuData_h
 #define PlatformPopupMenuData_h
 
-#include "BackingStore.h"
+#include "ShareableBitmap.h"
 #include <wtf/text/WTFString.h>
 
 namespace CoreIPC {
@@ -50,8 +50,8 @@ struct PlatformPopupMenuData {
     int m_popupWidth;
     int m_itemHeight;
     WebCore::IntSize m_backingStoreSize;
-    RefPtr<BackingStore> m_notSelectedBackingStore;
-    RefPtr<BackingStore> m_selectedBackingStore;
+    RefPtr<ShareableBitmap> m_notSelectedBackingStore;
+    RefPtr<ShareableBitmap> m_selectedBackingStore;
 #endif
 };
 

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BackingStore.h"
+#include "ShareableBitmap.h"
 
 #include <WebCore/GraphicsContext.h>
 #include <wtf/RetainPtr.h>
@@ -32,7 +32,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
+PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
     RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(data(), m_size.width(), m_size.height(), 8,  m_size.width() * 4, colorSpace.get(), 
@@ -45,7 +45,7 @@ PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
     return adoptPtr(new GraphicsContext(bitmapContext.get()));
 }
 
-void BackingStore::paint(WebCore::GraphicsContext& context, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect)
+void ShareableBitmap::paint(WebCore::GraphicsContext& context, const WebCore::IntPoint& dstPoint, const WebCore::IntRect& srcRect)
 {
     OwnPtr<GraphicsContext> sourceContext(createGraphicsContext());
 

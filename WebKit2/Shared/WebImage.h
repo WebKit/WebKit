@@ -27,11 +27,16 @@
 #define WebImage_h
 
 #include "APIObject.h"
-#include "BackingStore.h"
 #include "ImageOptions.h"
-#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
+
+namespace WebCore {
+    class IntSize;
+}
 
 namespace WebKit {
+
+class ShareableBitmap;
 
 // WebImage - An image type suitable for vending to an API.
 
@@ -40,22 +45,19 @@ public:
     static const Type APIType = TypeImage;
 
     static PassRefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions);
-    static PassRefPtr<WebImage> create(PassRefPtr<BackingStore>);
-
+    static PassRefPtr<WebImage> create(PassRefPtr<ShareableBitmap>);
+    ~WebImage();
+    
     const WebCore::IntSize& size() const;
 
-    BackingStore* backingStore() const { return m_backingStore.get(); }
+    ShareableBitmap* bitmap() const { return m_bitmap.get(); }
 
 private:
-    WebImage(PassRefPtr<BackingStore> backingStore)
-        : m_backingStore(backingStore)
-    {
-        ASSERT(m_backingStore);
-    }
+    WebImage(PassRefPtr<ShareableBitmap>);
 
     virtual Type type() const { return APIType; }
 
-    RefPtr<BackingStore> m_backingStore;
+    RefPtr<ShareableBitmap> m_bitmap;
 };
 
 } // namespace WebKit

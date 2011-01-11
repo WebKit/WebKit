@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BackingStore.h"
+#include "ShareableBitmap.h"
 
 #include "NotImplemented.h"
 #include <WebCore/GraphicsContext.h>
@@ -32,13 +32,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<GraphicsContext> BackingStore::createGraphicsContext()
+PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     notImplemented();
     return 0;
 }
 
-void BackingStore::paint(GraphicsContext&, const IntPoint&, const IntRect&)
+void ShareableBitmap::paint(GraphicsContext&, const IntPoint&, const IntRect&)
 {
     notImplemented();
 }

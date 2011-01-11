@@ -47,7 +47,7 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-class BackingStore;
+class ShareableBitmap;
 class WebProcessConnection;
 
 class PluginControllerProxy : PluginController {
@@ -168,7 +168,7 @@ private:
 #endif
     
     // The backing store that this plug-in draws into.
-    RefPtr<BackingStore> m_backingStore;
+    RefPtr<ShareableBitmap> m_backingStore;
 };
 
 } // namespace WebKit

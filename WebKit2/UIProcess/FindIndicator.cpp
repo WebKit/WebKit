@@ -25,7 +25,7 @@
 
 #include "FindIndicator.h"
 
-#include "BackingStore.h"
+#include "ShareableBitmap.h"
 #include <WebCore/Gradient.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
@@ -78,14 +78,14 @@ namespace WebKit {
 
 PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRect, const Vector<FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle)
 {
-    RefPtr<BackingStore> contentImage = BackingStore::create(enclosingIntRect(selectionRect).size(), contentImageHandle);
+    RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(enclosingIntRect(selectionRect).size(), contentImageHandle);
     if (!contentImage)
         return 0;
 
     return adoptRef(new FindIndicator(selectionRect, textRects, contentImage.release()));
 }
 
-FindIndicator::FindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, PassRefPtr<BackingStore> contentImage)
+FindIndicator::FindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, PassRefPtr<ShareableBitmap> contentImage)
     : m_selectionRect(selectionRect)
     , m_textRects(textRects)
     , m_contentImage(contentImage)

@@ -25,6 +25,7 @@
 
 #include "WKImageCG.h"
 
+#include "ShareableBitmap.h"
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
 #include <WebCore/GraphicsContext.h>
@@ -34,6 +35,6 @@ using namespace WebCore;
 
 CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
 {
-    OwnPtr<GraphicsContext> sourceContext = toImpl(imageRef)->backingStore()->createGraphicsContext();
+    OwnPtr<GraphicsContext> sourceContext = toImpl(imageRef)->bitmap()->createGraphicsContext();
     return CGBitmapContextCreateImage(sourceContext->platformContext());
 }

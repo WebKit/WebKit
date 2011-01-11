@@ -38,7 +38,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-class BackingStore;
+class ShareableBitmap;
 
 class FindIndicator : public RefCounted<FindIndicator> {
 public:
@@ -49,16 +49,16 @@ public:
 
     const Vector<WebCore::FloatRect>& textRects() const { return m_textRects; }
 
-    BackingStore* contentImage() const { return m_contentImage.get(); }
+    ShareableBitmap* contentImage() const { return m_contentImage.get(); }
 
     void draw(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
 
 private:
-    FindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, PassRefPtr<BackingStore> contentImage);
+    FindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, PassRefPtr<ShareableBitmap> contentImage);
 
     WebCore::FloatRect m_selectionRect;
     Vector<WebCore::FloatRect> m_textRects;
-    RefPtr<BackingStore> m_contentImage;
+    RefPtr<ShareableBitmap> m_contentImage;
 };
 
 } // namespace WebKit

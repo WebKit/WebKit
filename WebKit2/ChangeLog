@@ -1,3 +1,72 @@
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename BackingStore to ShareableBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=52228
+
+        * GNUmakefile.am:
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::geometryDidChange):
+        * PluginProcess/PluginControllerProxy.h:
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateCGImage):
+        * Shared/BackingStore.cpp: Removed.
+        * Shared/BackingStore.h: Removed.
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h:
+        * Shared/ShareableBitmap.cpp: Copied from WebKit2/Shared/BackingStore.cpp.
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createSharable):
+        (WebKit::ShareableBitmap::createHandle):
+        (WebKit::ShareableBitmap::ShareableBitmap):
+        (WebKit::ShareableBitmap::~ShareableBitmap):
+        (WebKit::ShareableBitmap::resize):
+        (WebKit::ShareableBitmap::data):
+        * Shared/ShareableBitmap.h: Copied from WebKit2/Shared/BackingStore.h.
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebImage.cpp:
+        (WebKit::WebImage::create):
+        (WebKit::WebImage::WebImage):
+        (WebKit::WebImage::~WebImage):
+        (WebKit::WebImage::size):
+        * Shared/WebImage.h:
+        (WebKit::WebImage::bitmap):
+        * Shared/cairo/BackingStoreCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::paint):
+        * Shared/cg/BackingStoreCG.cpp: Removed.
+        * Shared/cg/ShareableBitmapCG.cpp: Copied from WebKit2/Shared/cg/BackingStoreCG.cpp.
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::paint):
+        * Shared/gtk/BackingStoreGtk.cpp: Removed.
+        * Shared/gtk/ShareableBitmapGtk.cpp: Copied from WebKit2/Shared/gtk/BackingStoreGtk.cpp.
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::paint):
+        * Shared/qt/BackingStoreQt.cpp: Removed.
+        * Shared/qt/ShareableBitmapQt.cpp: Copied from WebKit2/Shared/qt/BackingStoreQt.cpp.
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::paint):
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::create):
+        (WebKit::FindIndicator::FindIndicator):
+        * UIProcess/FindIndicator.h:
+        (WebKit::FindIndicator::contentImage):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotInViewCoordinates):
+        (WebKit::WebPage::snapshotInDocumentCoordinates):
+        * win/WebKit2.vcproj:
+
 2011-01-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders Carlsson.

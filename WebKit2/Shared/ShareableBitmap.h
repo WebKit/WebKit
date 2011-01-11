@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackingStore_h
-#define BackingStore_h
+#ifndef ShareableBitmap_h
+#define ShareableBitmap_h
 
 #include "SharedMemory.h"
 #include <WebCore/IntRect.h>
@@ -39,21 +39,21 @@ namespace WebCore {
 
 namespace WebKit {
     
-class BackingStore : public RefCounted<BackingStore> {
+class ShareableBitmap : public RefCounted<ShareableBitmap> {
 public:
-    // Create a backing store that uses malloced memory.
-    static PassRefPtr<BackingStore> create(const WebCore::IntSize&);
+    // Create a shareable bitmap that uses malloced memory.
+    static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&);
 
-    // Create a backing store whose backing memory can be shared with another process.
-    static PassRefPtr<BackingStore> createSharable(const WebCore::IntSize&);
+    // Create a shareable bitmap whose backing memory can be shared with another process.
+    static PassRefPtr<ShareableBitmap> createSharable(const WebCore::IntSize&);
 
-    // Create a backing store from a shared memory handle.
-    static PassRefPtr<BackingStore> create(const WebCore::IntSize&, const SharedMemory::Handle&);
+    // Create a shareable bitmap from a shared memory handle.
+    static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&, const SharedMemory::Handle&);
 
     // Create a shared memory handle.
     bool createHandle(SharedMemory::Handle&);
 
-    ~BackingStore();
+    ~ShareableBitmap();
 
     const WebCore::IntSize& size() const { return m_size; }
     WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
@@ -69,8 +69,8 @@ public:
     bool isBackedBySharedMemory() const { return m_sharedMemory; }
 
 private:
-    BackingStore(const WebCore::IntSize&, void*);
-    BackingStore(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
+    ShareableBitmap(const WebCore::IntSize&, void*);
+    ShareableBitmap(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
 
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
 
@@ -79,13 +79,13 @@ private:
 
     WebCore::IntSize m_size;
 
-    // If the backing store is backed by shared memory, this points to the shared memory object.
+    // If the shareable bitmap is backed by shared memory, this points to the shared memory object.
     RefPtr<SharedMemory> m_sharedMemory;
 
-    // If the backing store is backed by fastMalloced memory, this points to the data.
+    // If the shareable bitmap is backed by fastMalloced memory, this points to the data.
     void* m_data;
 };
 
 } // namespace WebKit
 
-#endif // BackingStore_h
+#endif // ShareableBitmap_h

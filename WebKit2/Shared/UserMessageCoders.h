@@ -27,6 +27,7 @@
 #include "ArgumentEncoder.h"
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
+#include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebImage.h"
 #include "WebNumber.h"
@@ -119,13 +120,13 @@ public:
         }
         case APIObject::TypeImage: {
             WebImage* image = static_cast<WebImage*>(m_root);
-            if (!image->backingStore()->isBackedBySharedMemory()) {
+            if (!image->bitmap()->isBackedBySharedMemory()) {
                 encoder->encode(false);
                 return true;
             }
 
             SharedMemory::Handle handle;
-            if (!image->backingStore()->createHandle(handle))
+            if (!image->bitmap()->createHandle(handle))
                 return false;
 
             encoder->encode(true);
@@ -281,7 +282,7 @@ public:
             if (!decoder->decode(handle))
                 return false;
 
-            coder.m_root = WebImage::create(BackingStore::create(size, handle));
+            coder.m_root = WebImage::create(ShareableBitmap::create(size, handle));
             return true;
         }
         default:

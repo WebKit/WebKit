@@ -399,11 +399,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\BackingStore.cpp"
+				RelativePath="..\Shared\ShareableBitmap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\BackingStore.h"
+				RelativePath="..\Shared\ShareableBitmap.h"
 				>
 			</File>
 			<File
@@ -1130,7 +1130,7 @@
 				Name="cg"
 				>
 				<File
-					RelativePath="..\Shared\cg\BackingStoreCG.cpp"
+					RelativePath="..\Shared\cg\ShareableBitmapCG.cpp"
 					>
 					<FileConfiguration
 						Name="Debug_Cairo_CFLite|Win32"
@@ -1154,7 +1154,7 @@
 				Name="cairo"
 				>
 				<File
-					RelativePath="..\Shared\cairo\BackingStoreCairo.cpp"
+					RelativePath="..\Shared\cairo\ShareableBitmapCairo.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

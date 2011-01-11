@@ -84,12 +84,12 @@ bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPo
     SharedMemory::Handle notSelectedBackingStoreHandle;
     if (!decoder->decode(notSelectedBackingStoreHandle))
         return false;
-    d.m_notSelectedBackingStore = BackingStore::create(d.m_backingStoreSize, notSelectedBackingStoreHandle);
+    d.m_notSelectedBackingStore = ShareableBitmap::create(d.m_backingStoreSize, notSelectedBackingStoreHandle);
 
     SharedMemory::Handle selectedBackingStoreHandle;
     if (!decoder->decode(selectedBackingStoreHandle))
         return false;
-    d.m_selectedBackingStore = BackingStore::create(d.m_backingStoreSize, selectedBackingStoreHandle);
+    d.m_selectedBackingStore = ShareableBitmap::create(d.m_backingStoreSize, selectedBackingStoreHandle);
 
     data = d;
 #endif

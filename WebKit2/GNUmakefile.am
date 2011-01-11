@@ -152,8 +152,8 @@ libWebKit2_la_SOURCES = \
 	WebKit2/Shared/API/c/WKUserContentURLPattern.cpp \
 	WebKit2/Shared/API/c/WKUserContentURLPattern.h \
 	WebKit2/Shared/APIObject.h \
-	WebKit2/Shared/BackingStore.cpp \
-	WebKit2/Shared/BackingStore.h \
+	WebKit2/Shared/ShareableBitmap.cpp \
+	WebKit2/Shared/ShareableBitmap.h \
 	WebKit2/Shared/CacheModel.h \
 	WebKit2/Shared/ChildProcess.cpp \
 	WebKit2/Shared/ChildProcess.h \
@@ -166,7 +166,7 @@ libWebKit2_la_SOURCES = \
 	WebKit2/Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h \
 	WebKit2/Shared/DrawingAreaInfo.h \
 	WebKit2/Shared/FontSmoothingLevel.h \
-	WebKit2/Shared/gtk/BackingStoreGtk.cpp \
+	WebKit2/Shared/gtk/ShareableBitmapGtk.cpp \
 	WebKit2/Shared/gtk/PlatformCertificateInfo.h \
 	WebKit2/Shared/gtk/WebCoreArgumentCodersGtk.cpp \
 	WebKit2/Shared/ImageOptions.h \

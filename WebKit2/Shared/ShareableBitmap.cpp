@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BackingStore.h"
+#include "ShareableBitmap.h"
 
 #include "SharedMemory.h"
 #include <WebCore/GraphicsContext.h>
@@ -32,7 +32,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<BackingStore> BackingStore::create(const WebCore::IntSize& size)
+PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size)
 {
     size_t numBytes = numBytesForSize(size);
     
@@ -40,10 +40,10 @@ PassRefPtr<BackingStore> BackingStore::create(const WebCore::IntSize& size)
     if (!tryFastMalloc(numBytes).getValue(data))
         return 0;
 
-    return adoptRef(new BackingStore(size, data));
+    return adoptRef(new ShareableBitmap(size, data));
 }
 
-PassRefPtr<BackingStore> BackingStore::createSharable(const IntSize& size)
+PassRefPtr<ShareableBitmap> ShareableBitmap::createSharable(const IntSize& size)
 {
     size_t numBytes = numBytesForSize(size);
     
@@ -51,10 +51,10 @@ PassRefPtr<BackingStore> BackingStore::createSharable(const IntSize& size)
     if (!sharedMemory)
         return 0;
     
-    return adoptRef(new BackingStore(size, sharedMemory));
+    return adoptRef(new ShareableBitmap(size, sharedMemory));
 }
 
-PassRefPtr<BackingStore> BackingStore::create(const WebCore::IntSize& size, const SharedMemory::Handle& handle)
+PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size, const SharedMemory::Handle& handle)
 {
     // Create the shared memory.
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadWrite);
@@ -64,36 +64,36 @@ PassRefPtr<BackingStore> BackingStore::create(const WebCore::IntSize& size, cons
     size_t numBytes = numBytesForSize(size);
     ASSERT_UNUSED(numBytes, sharedMemory->size() >= numBytes);
 
-    return adoptRef(new BackingStore(size, sharedMemory));
+    return adoptRef(new ShareableBitmap(size, sharedMemory));
 }
 
-bool BackingStore::createHandle(SharedMemory::Handle& handle)
+bool ShareableBitmap::createHandle(SharedMemory::Handle& handle)
 {
     ASSERT(isBackedBySharedMemory());
 
     return m_sharedMemory->createHandle(handle, SharedMemory::ReadWrite);
 }
 
-BackingStore::BackingStore(const IntSize& size, void* data)
+ShareableBitmap::ShareableBitmap(const IntSize& size, void* data)
     : m_size(size)
     , m_data(data)
 {
 }
 
-BackingStore::BackingStore(const IntSize& size, PassRefPtr<SharedMemory> sharedMemory)
+ShareableBitmap::ShareableBitmap(const IntSize& size, PassRefPtr<SharedMemory> sharedMemory)
     : m_size(size)
     , m_sharedMemory(sharedMemory)
     , m_data(0)
 {
 }
 
-BackingStore::~BackingStore()
+ShareableBitmap::~ShareableBitmap()
 {
     if (!isBackedBySharedMemory())
         fastFree(m_data);
 }
 
-bool BackingStore::resize(const IntSize& size)
+bool ShareableBitmap::resize(const IntSize& size)
 {
     // We can't resize backing stores that are backed by shared memory.
     ASSERT(!isBackedBySharedMemory());
@@ -116,7 +116,7 @@ bool BackingStore::resize(const IntSize& size)
     return true;
 }
 
-void* BackingStore::data() const
+void* ShareableBitmap::data() const
 {
     if (isBackedBySharedMemory())
         return m_sharedMemory->data();

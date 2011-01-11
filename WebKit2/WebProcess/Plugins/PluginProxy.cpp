@@ -27,7 +27,6 @@
 
 #include "PluginProxy.h"
 
-#include "BackingStore.h"
 #include "DataReference.h"
 #include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
@@ -36,6 +35,7 @@
 #include "PluginControllerProxyMessages.h"
 #include "PluginProcessConnection.h"
 #include "PluginProcessConnectionManager.h"
+#include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebProcessConnectionMessages.h"
@@ -161,7 +161,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
     bool didUpdateBackingStore = false;
     if (!m_backingStore) {
-        m_backingStore = BackingStore::create(frameRect.size());
+        m_backingStore = ShareableBitmap::create(frameRect.size());
         didUpdateBackingStore = true;
     } else if (frameRect.size() != m_backingStore->size()) {
         // The backing store already exists, just resize it.
@@ -175,7 +175,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
     if (didUpdateBackingStore) {
         // Create a new plug-in backing store.
-        m_pluginBackingStore = BackingStore::createSharable(frameRect.size());
+        m_pluginBackingStore = ShareableBitmap::createSharable(frameRect.size());
         if (!m_pluginBackingStore)
             return;
 

@@ -25,6 +25,8 @@
 
 #include "WebImage.h"
 
+#include "ShareableBitmap.h"
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -32,18 +34,28 @@ namespace WebKit {
 PassRefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options)
 {
     if (options & ImageOptionsSharable)
-        return WebImage::create(BackingStore::createSharable(size));
-    return WebImage::create(BackingStore::create(size));
+        return WebImage::create(ShareableBitmap::createSharable(size));
+    return WebImage::create(ShareableBitmap::create(size));
 }
 
-PassRefPtr<WebImage> WebImage::create(PassRefPtr<BackingStore> backingStore)
+PassRefPtr<WebImage> WebImage::create(PassRefPtr<ShareableBitmap> bitmap)
 {
-    return adoptRef(new WebImage(backingStore));
+    return adoptRef(new WebImage(bitmap));
+}
+
+WebImage::WebImage(PassRefPtr<ShareableBitmap> bitmap)
+    : m_bitmap(bitmap)
+{
+    ASSERT(m_bitmap);
+}
+
+WebImage::~WebImage()
+{
 }
 
 const IntSize& WebImage::size() const
 {
-    return m_backingStore->size();
+    return m_bitmap->size();
 }
 
 } // namespace WebKit
