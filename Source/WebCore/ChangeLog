@@ -1,3 +1,20 @@
+2011-01-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move delayed search implementation to SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=51753
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        (WebInspector.SourceFrame.prototype.findSearchMatches):
+        (WebInspector.SourceFrame.prototype.cancelFindSearchMatches):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.hide):
+        (WebInspector.SourceView.prototype.searchCanceled):
+        (WebInspector.SourceView.prototype.performSearch.didFindSearchMatches):
+        (WebInspector.SourceView.prototype.performSearch):
+
 2011-01-11  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -59,8 +59,7 @@ WebInspector.SourceView.prototype = {
     hide: function()
     {
         this.sourceFrame.visible = false;
-        if (!this._frameNeedsSetup)
-            this.sourceFrame.clearLineHighlight();
+        this.sourceFrame.clearLineHighlight();
         WebInspector.View.prototype.hide.call(this);
         this._currentSearchResultIndex = -1;
     },
@@ -125,7 +124,7 @@ WebInspector.SourceView.prototype = {
         this._currentSearchResultIndex = -1;
         this._searchResults = [];
         this.sourceFrame.clearMarkedRange();
-        delete this._delayedFindSearchMatches;
+        this.sourceFrame.cancelFindSearchMatches();
     },
 
     performSearch: function(query, finishedCallback)
@@ -133,23 +132,14 @@ WebInspector.SourceView.prototype = {
         // Call searchCanceled since it will reset everything we need before doing a new search.
         this.searchCanceled();
 
-        this._searchFinishedCallback = finishedCallback;
-
-        function findSearchMatches(query, finishedCallback)
+        function didFindSearchMatches(searchResults)
         {
-            this._searchResults = this.sourceFrame.findSearchMatches(query);
+            this._searchResults = searchResults;
             if (this._searchResults)
                 finishedCallback(this, this._searchResults.length);
         }
 
-        if (!this._sourceFrameSetup) {
-            // The search is performed in _sourceFrameSetupFinished by calling _delayedFindSearchMatches.
-            this._delayedFindSearchMatches = findSearchMatches.bind(this, query, finishedCallback);
-            this.setupSourceFrameIfNeeded();
-            return;
-        }
-
-        findSearchMatches.call(this, query, finishedCallback);
+        this.sourceFrame.findSearchMatches(query, didFindSearchMatches.bind(this));
     },
 
     jumpToFirstSearchResult: function()

@@ -222,6 +222,11 @@ WebInspector.SourceFrame.prototype = {
             delete this._lineToHighlight;
         }
 
+        if (this._delayedFindSearchMatches) {
+            this._delayedFindSearchMatches();
+            delete this._delayedFindSearchMatches;
+        }
+
         var breakpoints = this._breakpoints();
         for (var i = 0; i < breakpoints.length; ++i)
             this._addBreakpoint(breakpoints[i]);
@@ -233,22 +238,35 @@ WebInspector.SourceFrame.prototype = {
             this._textViewer.editCallback = this._editLine.bind(this);
     },
 
-    findSearchMatches: function(query)
+    findSearchMatches: function(query, finishedCallback)
     {
-        var ranges = [];
+        function doFindSearchMatches()
+        {
+            var ranges = [];
 
-        // First do case-insensitive search.
-        var regexObject = createSearchRegex(query);
-        this._collectRegexMatches(regexObject, ranges);
+            // First do case-insensitive search.
+            var regexObject = createSearchRegex(query);
+            this._collectRegexMatches(regexObject, ranges);
 
-        // Then try regex search if user knows the / / hint.
-        try {
-            if (/^\/.*\/$/.test(query))
-                this._collectRegexMatches(new RegExp(query.substring(1, query.length - 1)), ranges);
-        } catch (e) {
-            // Silent catch.
+            // Then try regex search if user knows the / / hint.
+            try {
+                if (/^\/.*\/$/.test(query))
+                    this._collectRegexMatches(new RegExp(query.substring(1, query.length - 1)), ranges);
+            } catch (e) {
+                // Silent catch.
+            }
+            finishedCallback(ranges);
         }
-        return ranges;
+
+        if (this._textViewer)
+            doFindSearchMatches.call(this);
+        else
+            this._delayedFindSearchMatches = doFindSearchMatches.bind(this);
+    },
+
+    cancelFindSearchMatches: function()
+    {
+        delete this._delayedFindSearchMatches;
     },
 
     _collectRegexMatches: function(regexObject, ranges)
