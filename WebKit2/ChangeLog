@@ -2,6 +2,34 @@
 
         Reviewed by Sam Weinig.
 
+        Add DrawingAreaImpl skeleton class
+        https://bugs.webkit.org/show_bug.cgi?id=52246
+
+        * UIProcess/API/mac/WKView.mm:
+        (useNewDrawingArea):
+        New function which controls which drawing area to use, through an environment variable.
+
+        (-[WKView drawRect:]):
+        Bail if we're using the new drawing area (for now).
+
+        (-[WKView WebKit::]):
+        Create a DrawingAreaProxyImpl when asked to.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        Create a DrawingAreaImpl when asked to.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp: Added.
+        * WebProcess/WebPage/DrawingAreaImpl.h: Added.
+        Add DrawingAreaImpl class.
+
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add Mac-only DrawingAreaProxyImpl class skeleton
         https://bugs.webkit.org/show_bug.cgi?id=52243
 

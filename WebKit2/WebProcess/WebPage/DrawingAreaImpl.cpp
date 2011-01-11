@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,62 +23,60 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DrawingArea.h"
-
-// Subclasses
-#include "ChunkedUpdateDrawingArea.h"
-
-#ifdef __APPLE__
 #include "DrawingAreaImpl.h"
+
+#ifndef __APPLE__
+#error "This drawing area is not ready for use by other ports yet."
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-#include "LayerBackedDrawingArea.h"
-#endif
-
-#if ENABLE(TILED_BACKING_STORE)
-#include "TiledDrawingArea.h"
-#endif
+using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<DrawingArea> DrawingArea::create(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
+PassRefPtr<DrawingAreaImpl> DrawingAreaImpl::create(DrawingAreaInfo::Identifier identifier, WebPage* webPage)
 {
-    switch (type) {
-        case DrawingAreaInfo::None:
-            ASSERT_NOT_REACHED();
-            break;
-
-        case DrawingAreaInfo::Impl:
-#ifdef __APPLE__
-            return DrawingAreaImpl::create(identifier, webPage);
-#else
-            return 0;
-#endif
-        case DrawingAreaInfo::ChunkedUpdate:
-            return adoptRef(new ChunkedUpdateDrawingArea(identifier, webPage));
-
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-        case DrawingAreaInfo::LayerBacked:
-            return adoptRef(new LayerBackedDrawingArea(identifier, webPage));
-#endif
-#if ENABLE(TILED_BACKING_STORE)
-        case DrawingAreaInfo::Tiled:
-            return adoptRef(new TiledDrawingArea(identifier, webPage));
-#endif
-    }
-
-    return 0;
+    return adoptRef(new DrawingAreaImpl(identifier, webPage));
 }
 
-DrawingArea::DrawingArea(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-    : m_info(type, identifier)
-    , m_webPage(webPage)
+DrawingAreaImpl::~DrawingAreaImpl()
 {
 }
 
-DrawingArea::~DrawingArea()
+DrawingAreaImpl::DrawingAreaImpl(DrawingAreaInfo::Identifier identifier, WebPage* webPage)
+    : DrawingArea(DrawingAreaInfo::Impl, identifier, webPage)
 {
 }
 
+void DrawingAreaImpl::setNeedsDisplay(const IntRect&)
+{
+}
+
+void DrawingAreaImpl::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+{
+}
+
+void DrawingAreaImpl::attachCompositingContext()
+{
+}
+
+void DrawingAreaImpl::detachCompositingContext()
+{
+}
+
+void DrawingAreaImpl::setRootCompositingLayer(WebCore::GraphicsLayer*)
+{
+}
+
+void DrawingAreaImpl::scheduleCompositingLayerSync()
+{
+}
+
+void DrawingAreaImpl::syncCompositingLayers()
+{
+}
+
+void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
+{
+}
+    
 } // namespace WebKit

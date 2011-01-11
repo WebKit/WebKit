@@ -137,6 +137,13 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 @implementation WKView
 
+static bool useNewDrawingArea()
+{
+    static bool useNewDrawingArea = getenv("USE_NEW_DRAWING_AREA");
+
+    return useNewDrawingArea;
+}
+
 - (id)initWithFrame:(NSRect)frame
 {
     return [self initWithFrame:frame contextRef:toAPI(WebContext::sharedProcessContext())];
@@ -1105,6 +1112,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)drawRect:(NSRect)rect
 {
+    if (useNewDrawingArea()) {
+        // FIXME: Implement.
+        return;
+    }
+
     if (_data->_page->isValid() && _data->_page->drawingArea()) {
         CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
         _data->_page->drawingArea()->paint(IntRect(rect), context);
@@ -1204,6 +1216,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
 {
+    if (useNewDrawingArea())
+        return DrawingAreaProxyImpl::create(_data->_page.get());
+
     return ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get());
 }
 
