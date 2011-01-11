@@ -673,7 +673,6 @@ void Heap::reset()
 
     m_heap.nextCell = 0;
     m_heap.nextBlock = 0;
-    m_heap.nextNumber = 0;
     m_heap.extraCost = 0;
 #if ENABLE(JSC_ZOMBIES)
     sweep();
@@ -702,7 +701,6 @@ void Heap::collectAllGarbage()
 
     m_heap.nextCell = 0;
     m_heap.nextBlock = 0;
-    m_heap.nextNumber = 0;
     m_heap.extraCost = 0;
     sweep();
     resizeBlocks();
