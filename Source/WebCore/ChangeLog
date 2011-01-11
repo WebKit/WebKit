@@ -1,3 +1,13 @@
+2011-01-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: redirects are lost from the network panel upon navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=52210
+
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.didCommitLoadForFrame):
+
 2011-01-11  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

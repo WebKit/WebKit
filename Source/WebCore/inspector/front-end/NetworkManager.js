@@ -231,6 +231,7 @@ WebInspector.NetworkManager.prototype = {
             if (mainResource) {
                 WebInspector.mainResource = mainResource;
                 mainResource.isMainResource = true;
+                WebInspector.panels.network.refreshResource(mainResource);
             }
         }
     },
