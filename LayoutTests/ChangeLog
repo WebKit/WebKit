@@ -1,3 +1,46 @@
+2011-01-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+        
+        Remove chromium-mac baselines for svg/ tests that had them because of
+        scrollbars.
+        
+        Also updates Snow Leopard (mac) baselines for svg/dom/
+        SVGLengthList-basics.xhtml after r72518.
+
+        * platform/chromium-mac/svg/dom/SVGLengthList-basics-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dom/SVGLengthList-basics-expected.png: Removed.
+        * platform/chromium-mac/svg/dom/SVGTransformList-basics-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dom/SVGTransformList-basics-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.checksum: Removed.
+        * platform/chromium-mac/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png: Removed.
+        * platform/chromium-mac/svg/hixie/links/003-broken-expected.checksum: Removed.
+        * platform/chromium-mac/svg/hixie/links/003-broken-expected.png: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-coords-viewattr-01-b-expected.checksum: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-foreignObject-expected.checksum: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-foreignObject-expected.png: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-hixie-mixed-008-expected.checksum: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-hixie-mixed-008-expected.png: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.png: Removed.
+        * platform/mac/svg/dom/SVGLengthList-basics-expected.checksum:
+        * platform/mac/svg/dom/SVGLengthList-basics-expected.png:
+
 2011-01-10  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.
