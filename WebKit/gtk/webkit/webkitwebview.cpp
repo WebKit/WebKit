@@ -1398,6 +1398,11 @@ static void webkit_web_view_dispose(GObject* object)
         priv->webSettings.clear();
     }
 
+    if (priv->currentMenu) {
+        gtk_widget_destroy(GTK_WIDGET(priv->currentMenu));
+        priv->currentMenu = 0;
+    }
+
     priv->webInspector.clear();
     priv->viewportAttributes.clear();
     priv->webWindowFeatures.clear();

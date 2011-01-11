@@ -59,7 +59,7 @@ namespace WebKit {
     private:
         WebKitWebView* m_webView;
         WebCore::IntPoint m_startPos;
-        GRefPtr<GtkWidget> m_dragIconWindow;
+        GtkWidget* m_dragIconWindow;
         RefPtr<cairo_surface_t> m_dragImage;
     };
 }

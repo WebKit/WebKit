@@ -42,7 +42,6 @@ class NSMenuItem;
 #elif PLATFORM(WIN)
 typedef struct tagMENUITEMINFOW MENUITEMINFO;
 #elif PLATFORM(GTK)
-#include <GRefPtr.h>
 typedef struct _GtkMenuItem GtkMenuItem;
 #elif PLATFORM(QT)
 #include <QAction>
@@ -288,8 +287,6 @@ namespace WebCore {
 #else
 #if PLATFORM(MAC)
         RetainPtr<NSMenuItem> m_platformDescription;
-#elif PLATFORM(GTK)
-        GRefPtr<GtkMenuItem> m_platformDescription;
 #else
         PlatformMenuItemDescription m_platformDescription;
 #endif

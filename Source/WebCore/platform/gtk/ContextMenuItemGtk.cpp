@@ -145,7 +145,7 @@ ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction act
     m_platformDescription = GTK_MENU_ITEM(gtk_action_create_menu_item(platformAction));
     g_object_unref(platformAction);
 
-    g_object_set_data(G_OBJECT(m_platformDescription.get()), WEBKIT_CONTEXT_MENU_ACTION, GINT_TO_POINTER(action));
+    g_object_set_data(G_OBJECT(m_platformDescription), WEBKIT_CONTEXT_MENU_ACTION, GINT_TO_POINTER(action));
 
     if (subMenu)
         setSubMenu(subMenu);
@@ -169,16 +169,18 @@ ContextMenuItem::~ContextMenuItem()
 
 PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
 {
-    return m_platformDescription.leakRef();
+    PlatformMenuItemDescription platformDescription = m_platformDescription;
+    m_platformDescription = 0;
+    return platformDescription;
 }
 
 ContextMenuItemType ContextMenuItem::type() const
 {
-    if (GTK_IS_SEPARATOR_MENU_ITEM(m_platformDescription.get()))
+    if (GTK_IS_SEPARATOR_MENU_ITEM(m_platformDescription))
         return SeparatorType;
-    if (GTK_IS_CHECK_MENU_ITEM(m_platformDescription.get()))
+    if (GTK_IS_CHECK_MENU_ITEM(m_platformDescription))
         return CheckableActionType;
-    if (gtk_menu_item_get_submenu(m_platformDescription.get()))
+    if (gtk_menu_item_get_submenu(m_platformDescription))
         return SubmenuType;
     return ActionType;
 }
@@ -191,41 +193,41 @@ void ContextMenuItem::setType(ContextMenuItemType type)
 
 ContextMenuAction ContextMenuItem::action() const
 {
-    return static_cast<ContextMenuAction>(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(m_platformDescription.get()), WEBKIT_CONTEXT_MENU_ACTION)));
+    return static_cast<ContextMenuAction>(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(m_platformDescription), WEBKIT_CONTEXT_MENU_ACTION)));
 }
 
 void ContextMenuItem::setAction(ContextMenuAction action)
 {
-    g_object_set_data(G_OBJECT(m_platformDescription.get()), WEBKIT_CONTEXT_MENU_ACTION, GINT_TO_POINTER(action));
+    g_object_set_data(G_OBJECT(m_platformDescription), WEBKIT_CONTEXT_MENU_ACTION, GINT_TO_POINTER(action));
 }
 
 String ContextMenuItem::title() const
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription.get()));
+    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
     return action ? String(gtk_action_get_label(action)) : String();
 }
 
 void ContextMenuItem::setTitle(const String& title)
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription.get()));
+    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
     if (action)
         gtk_action_set_label(action, title.utf8().data());
 }
 
 PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 {
-    GtkWidget* subMenu = gtk_menu_item_get_submenu(m_platformDescription.get());
+    GtkWidget* subMenu = gtk_menu_item_get_submenu(m_platformDescription);
     return subMenu ? GTK_MENU(subMenu) : 0;
 }
 
 void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
-    gtk_menu_item_set_submenu(m_platformDescription.get(), GTK_WIDGET(menu->platformDescription()));
+    gtk_menu_item_set_submenu(m_platformDescription, GTK_WIDGET(menu->platformDescription()));
 }
 
 void ContextMenuItem::setChecked(bool shouldCheck)
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription.get()));
+    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
     if (action && GTK_IS_TOGGLE_ACTION(action))
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), shouldCheck);
 }
@@ -246,7 +248,7 @@ bool ContextMenuItem::enabled() const
 
 void ContextMenuItem::setEnabled(bool shouldEnable)
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription.get()));
+    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
     if (action)
         gtk_action_set_sensitive(action, shouldEnable);
 }

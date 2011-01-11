@@ -60,7 +60,7 @@ struct _WebKitWebViewPrivate {
     WebKitWebFrame* mainFrame;
     GRefPtr<WebKitWebBackForwardList> backForwardList;
 
-    GRefPtr<GtkMenu> currentMenu;
+    GtkMenu* currentMenu;
     gint lastPopupXPosition;
     gint lastPopupYPosition;
 

@@ -1300,9 +1300,8 @@ static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, boo
     g_object_notify(G_OBJECT(containingWindow->priv->viewportAttributes.get()), "valid");
 
     if (priv->currentMenu) {
-        GRefPtr<GtkMenu> menu(priv->currentMenu);
-        priv->currentMenu.clear();
-        gtk_menu_popdown(menu.get());
+        gtk_widget_destroy(GTK_WIDGET(priv->currentMenu));
+        priv->currentMenu = 0;
     }
 
     // Do not allow click counting between main frame loads.

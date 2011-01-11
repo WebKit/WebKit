@@ -1,3 +1,37 @@
+2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] GRefPtr should not be used with Gtk widgets
+        https://bugs.webkit.org/show_bug.cgi?id=51241
+
+        GRefPtr breaks the widget life-cycle, the main problem is
+        that GRefPtr calls g_object_unref() when it's destroyed,
+        which is undesirable for widgets. In gtk+ widgets are created with
+        a floating reference and when added to a container, the container
+        takes the ownership of the widget consuming the floating
+        reference. So you don't usually need to call g_object_ref/unref on
+        widgets (only for some operations like reparent a widget) and
+        toplevel widgets are destroyed with gtk_widget_destroy().
+
+        * platform/ContextMenuItem.h:
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::ContextMenu):
+        (WebCore::ContextMenu::~ContextMenu):
+        (WebCore::ContextMenu::setPlatformDescription):
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::ContextMenuItem::ContextMenuItem):
+        (WebCore::ContextMenuItem::releasePlatformDescription):
+        (WebCore::ContextMenuItem::type):
+        (WebCore::ContextMenuItem::action):
+        (WebCore::ContextMenuItem::setAction):
+        (WebCore::ContextMenuItem::title):
+        (WebCore::ContextMenuItem::setTitle):
+        (WebCore::ContextMenuItem::platformSubMenu):
+        (WebCore::ContextMenuItem::setSubMenu):
+        (WebCore::ContextMenuItem::setChecked):
+        (WebCore::ContextMenuItem::setEnabled):
+
 2010-10-10  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

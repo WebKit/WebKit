@@ -65,15 +65,15 @@ DragClient::DragClient(WebKitWebView* webView)
     , m_dragIconWindow(gtk_window_new(GTK_WINDOW_POPUP))
 {
 #ifdef GTK_API_VERSION_2
-    g_signal_connect(m_dragIconWindow.get(), "expose-event", G_CALLBACK(dragIconWindowDrawEventCallback), this);
+    g_signal_connect(m_dragIconWindow, "expose-event", G_CALLBACK(dragIconWindowDrawEventCallback), this);
 #else
-    g_signal_connect(m_dragIconWindow.get(), "draw", G_CALLBACK(dragIconWindowDrawEventCallback), this);
+    g_signal_connect(m_dragIconWindow, "draw", G_CALLBACK(dragIconWindowDrawEventCallback), this);
 #endif
 }
 
 DragClient::~DragClient()
 {
-    g_signal_handlers_disconnect_by_func(m_dragIconWindow.get(), (gpointer) dragIconWindowDrawEventCallback, this);
+    gtk_widget_destroy(m_dragIconWindow);
 }
 
 void DragClient::willPerformDragDestinationAction(DragDestinationAction, DragData*)
@@ -118,24 +118,24 @@ void DragClient::startDrag(DragImageRef image, const IntPoint& dragImageOrigin, 
     if (image) {
         m_dragImage = image;
         IntSize imageSize(cairo_image_surface_get_width(image), cairo_image_surface_get_height(image));
-        gtk_window_resize(GTK_WINDOW(m_dragIconWindow.get()), imageSize.width(), imageSize.height());
+        gtk_window_resize(GTK_WINDOW(m_dragIconWindow), imageSize.width(), imageSize.height());
 
-        if (!gtk_widget_get_realized(m_dragIconWindow.get())) {
-            GdkScreen* screen = gtk_widget_get_screen(m_dragIconWindow.get());
+        if (!gtk_widget_get_realized(m_dragIconWindow)) {
+            GdkScreen* screen = gtk_widget_get_screen(m_dragIconWindow);
 #ifdef GTK_API_VERSION_2
             GdkColormap* rgba = gdk_screen_get_rgba_colormap(screen);
             if (rgba)
-                gtk_widget_set_colormap(m_dragIconWindow.get(), rgba);
+                gtk_widget_set_colormap(m_dragIconWindow, rgba);
 #else
             GdkVisual* visual = gdk_screen_get_rgba_visual(screen);
             if (!visual)
                 visual = gdk_screen_get_system_visual(screen);
-            gtk_widget_set_visual(m_dragIconWindow.get(), visual);
+            gtk_widget_set_visual(m_dragIconWindow, visual);
 #endif // GTK_API_VERSION_2
         }
 
         IntSize origin = eventPos - dragImageOrigin;
-        gtk_drag_set_icon_widget(context, m_dragIconWindow.get(),
+        gtk_drag_set_icon_widget(context, m_dragIconWindow,
                                  origin.width(), origin.height());
     } else
         gtk_drag_set_icon_default(context);

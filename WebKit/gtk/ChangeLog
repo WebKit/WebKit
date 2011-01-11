@@ -1,3 +1,30 @@
+2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] GRefPtr should not be used with Gtk widgets
+        https://bugs.webkit.org/show_bug.cgi?id=51241
+
+        GRefPtr breaks the widget life-cycle, the main problem is
+        that GRefPtr calls g_object_unref() when it's destroyed,
+        which is undesirable for widgets. In gtk+ widgets are created with
+        a floating reference and when added to a container, the container
+        takes the ownership of the widget consuming the floating
+        reference. So you don't usually need to call g_object_ref/unref on
+        widgets (only for some operations like reparent a widget) and
+        toplevel widgets are destroyed with gtk_widget_destroy().
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::DragClient):
+        (WebKit::DragClient::~DragClient):
+        (WebKit::DragClient::startDrag):
+        * WebCoreSupport/DragClientGtk.h:
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::postCommitFrameViewSetup):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_dispose):
+        * webkit/webkitwebviewprivate.h:
+
 2011-01-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

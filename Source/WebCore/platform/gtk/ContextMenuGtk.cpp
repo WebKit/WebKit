@@ -28,14 +28,12 @@ namespace WebCore {
 ContextMenu::ContextMenu()
 {
     m_platformDescription = GTK_MENU(gtk_menu_new());
-
-    g_object_ref_sink(G_OBJECT(m_platformDescription));
 }
 
 ContextMenu::~ContextMenu()
 {
     if (m_platformDescription)
-        g_object_unref(m_platformDescription);
+        gtk_widget_destroy(GTK_WIDGET(m_platformDescription));
 }
 
 void ContextMenu::appendItem(ContextMenuItem& item)
@@ -52,10 +50,9 @@ void ContextMenu::setPlatformDescription(PlatformMenuDescription menu)
 {
     ASSERT(menu);
     if (m_platformDescription)
-        g_object_unref(m_platformDescription);
+        gtk_widget_destroy(GTK_WIDGET(m_platformDescription));
 
     m_platformDescription = menu;
-    g_object_ref(m_platformDescription);
 }
 
 PlatformMenuDescription ContextMenu::platformDescription() const
