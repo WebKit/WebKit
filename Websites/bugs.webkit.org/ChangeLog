@@ -1,5 +1,17 @@
 2011-01-11  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        maintain word diffs when converting to side-by-side and back
+        https://bugs.webkit.org/show_bug.cgi?id=52244
+
+        Using textContent would lose the spans use to make the word-diff highlighting.
+        Just move the span element itself.
+
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         fix layout error with comments in code review tool

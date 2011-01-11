@@ -509,8 +509,8 @@
         '</span><span class="to ' + lineNumberClassName + '">' + (to || '&nbsp;') +
         '</span> <span class="text"></span>' +
         '</div>');
-    // Use text instead of innerHTML to avoid evaluting HTML.
-    $('.text', line).text(contents);
+
+    $('.text', line).replaceWith(contents);
     return line;
   }
 
@@ -545,8 +545,7 @@
         '</div>' +
         '</div>');
 
-    // Use text instead of innerHTML to avoid evaluting HTML.
-    $('.text', line_side).text(contents);
+    $('.text', line_side).replaceWith(contents);
     return line_side;
   }
 
@@ -770,7 +769,7 @@
     var convert_function = diff_type == 'sidebyside' ? sideBySideifyLine : unifyLine;
     var from = fromLineNumber(line);
     var to = toLineNumber(line);
-    var contents = textContentsFor(line);
+    var contents = $('.text', line);
     var classNames = classNamesForMovingLine(line);
     var attributes = attributesForMovingLine(line);
     var id = line.id;
