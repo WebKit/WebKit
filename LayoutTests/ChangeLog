@@ -1,3 +1,26 @@
+2011-01-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed; new and updated mac-leopard baselines.
+
+        Update stale or missing Leopard baselines (tests currently pass on Snow
+        Leopard).
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/editing/deleting/delete-line-end-ws-001-expected.checksum:
+        * platform/mac-leopard/editing/deleting/delete-line-end-ws-001-expected.png:
+        * platform/mac-leopard/editing/deleting/delete-line-end-ws-002-expected.checksum:
+        * platform/mac-leopard/editing/deleting/delete-line-end-ws-002-expected.png:
+        * platform/mac-leopard/fast/block/basic/016-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/basic/016-expected.png: Added.
+        * platform/mac-leopard/fast/block/basic/truncation-rtl-expected.checksum: Added.
+        * platform/mac-leopard/fast/block/basic/truncation-rtl-expected.png: Added.
+        * platform/mac-leopard/fast/blockflow/fieldsets-expected.checksum: Added.
+        * platform/mac-leopard/fast/blockflow/fieldsets-expected.png: Added.
+        * platform/mac-leopard/fast/borders/border-image-scale-transform-expected.checksum:
+        * platform/mac-leopard/fast/borders/border-image-scale-transform-expected.png:
+        * platform/mac-leopard/tables/mozilla_expected_failures/bugs/bug2479-5-expected.checksum:
+        * platform/mac-leopard/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+
 2011-01-11  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.

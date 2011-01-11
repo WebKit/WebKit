@@ -3029,16 +3029,9 @@ BUGCR68599 LINUX WIN : http/tests/security/mixedContent/insecure-css-in-main-fra
 
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
-BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-001.html = IMAGE
-BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-002.html = IMAGE
 BUG_MIHAIP MAC : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUG_MIHAIP MAC : fast/block/basic/016.html = IMAGE
-BUG_MIHAIP MAC : fast/block/basic/truncation-rtl.html = IMAGE
-BUG_MIHAIP MAC : fast/blockflow/fieldsets.html = IMAGE
 BUG_MIHAIP MAC : fast/borders/border-image-rotate-transform.html = IMAGE
-BUG_MIHAIP MAC : fast/borders/border-image-scale-transform.html = IMAGE
 BUG_MIHAIP MAC : fast/events/pointer-events-2.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
@@ -3066,6 +3059,16 @@ BUG_MIHAIP MAC : fast/overflow/006.html = IMAGE
 BUG_MIHAIP MAC : fast/overflow/overflow-x-y.html = IMAGE
 BUG_MIHAIP MAC : fast/replaced/width100percent-image.html = IMAGE
 BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
+
+// Should start passing with updated mac-leopard baselines.
+// FIXME: remove these lines.
+BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-001.html = IMAGE
+BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-002.html = IMAGE
+BUG_MIHAIP MAC : fast/block/basic/016.html = IMAGE
+BUG_MIHAIP MAC : fast/block/basic/truncation-rtl.html = IMAGE
+BUG_MIHAIP MAC : fast/blockflow/fieldsets.html = IMAGE
+BUG_MIHAIP MAC : fast/borders/border-image-scale-transform.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 
 // Platforms that use Skia don't support elliptical gradients.
 BUGWK51841 : fast/gradients/css3-color-stop-units.html = IMAGE
