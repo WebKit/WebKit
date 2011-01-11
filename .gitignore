@@ -38,28 +38,29 @@ WebKit/chromium/.gclient
 WebKit/chromium/.gclient_entries
 
 # Ignore Chromium dependencies
+WebKit/chromium/.gclient
+WebKit/chromium/.gclient_entries
+WebKit/chromium/app/
 WebKit/chromium/base/
+WebKit/chromium/chromium_deps/
+WebKit/chromium/depot_tools/
 WebKit/chromium/gfx/
 WebKit/chromium/googleurl/
+WebKit/chromium/gpu/
 WebKit/chromium/ipc/
+WebKit/chromium/media/
 WebKit/chromium/net/
 WebKit/chromium/ppapi/
+WebKit/chromium/printing/
 WebKit/chromium/sdch/
 WebKit/chromium/skia/
 WebKit/chromium/testing/
 WebKit/chromium/third_party/
 WebKit/chromium/tools/
+WebKit/chromium/ui/
 WebKit/chromium/v8/
-WebKit/chromium/xcodebuild/
-WebKit/chromium/.gclient
-WebKit/chromium/.gclient_entries
-WebKit/chromium/app/
-WebKit/chromium/chromium_deps/
-WebKit/chromium/gpu/
-WebKit/chromium/media/
 WebKit/chromium/webkit/
-WebKit/chromium/printing/
-WebKit/chromium/depot_tools/
+WebKit/chromium/xcodebuild/
 
 # Ignore files that Chromium port generates
 /Makefile.chromium
