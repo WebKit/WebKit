@@ -1,3 +1,12 @@
+2011-01-11  Adam Roben  <aroben@apple.com>
+
+        Delete WKCACFLayer.{cpp,h}
+
+        These have been unused since r75262
+
+        * platform/graphics/win/WKCACFLayer.cpp: Removed.
+        * platform/graphics/win/WKCACFLayer.h: Removed.
+
 2011-01-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
