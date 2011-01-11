@@ -1,3 +1,11 @@
+2011-01-11  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; yet another gpu test_expectations update.
+
+        All glory to the hypnotoad.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-11  Jeremy Orlow  <jorlow@chromium.org>
 
         [Chromium] Fix bad baselines

@@ -102,7 +102,7 @@ BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWK48579 : canvas/philip/tests/type.prototype.html = TEXT
 BUGWK50797 : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
-BUGWK40147 : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
+BUGWK40147 MAC : canvas/philip/tests/toDataURL.jpeg.alpha.html = TEXT
 BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 // Update canvas/philip in WK r71481
 BUGCR62301 : canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html = TEXT
@@ -336,10 +336,6 @@ BUGWK48016 LINUX : compositing/geometry/vertical-scroll-composited.html = FAIL
 // This test causes an assertion failure in DRT, but apparently not
 // when DRT is run manually.
 BUGWK48018 LINUX DEBUG : compositing/geometry/outline-change.html = FAIL PASS
-
-// Linux result contains extra output which looks like debugging
-// output from somewhere.
-BUGWK48020 LINUX DEBUG : compositing/geometry/object-clip-rects-assertion.html = FAIL
 
 // The following tests are failing on Mac.
 //BUGWK48029 MAC : compositing/plugins/small-to-large-composited-plugin.html = TEXT
