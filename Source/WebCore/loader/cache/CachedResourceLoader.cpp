@@ -45,6 +45,7 @@
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
 #define PRELOAD_DEBUG 0

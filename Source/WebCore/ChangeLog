@@ -1,3 +1,11 @@
+2011-01-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix.
+
+        [Qt][V8] Add missing include for debug build.
+
+        * loader/cache/CachedResourceLoader.cpp:
+
 2011-01-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
