@@ -292,7 +292,7 @@ WebInspector.ScriptsPanel.prototype = {
         return Preferences.canEditScriptSource;
     },
 
-    editScriptSource: function(editData, commitEditingCallback, cancelEditingCallback)
+    editScriptSource: function(editData, revertEditingCallback, cancelEditingCallback)
     {
         if (!this.canEditScripts())
             return;
@@ -305,7 +305,16 @@ WebInspector.ScriptsPanel.prototype = {
         function mycallback(success, newBodyOrErrorMessage, callFrames)
         {
             if (success) {
-                commitEditingCallback(newBodyOrErrorMessage);
+                var script = WebInspector.debuggerModel.scriptForSourceID(editData.sourceID);
+                script.source = newBodyOrErrorMessage;
+                var oldView = script._scriptView
+                if (oldView) {
+                    script._scriptView = new WebInspector.ScriptView(script);
+                    this.viewRecreated(oldView, script._scriptView);
+                }
+                if (script.resource)
+                    script.resource.setContent(newBodyOrErrorMessage, revertEditingCallback);
+
                 if (callFrames && callFrames.length)
                     this._debuggerPaused({ data: { callFrames: callFrames } });
             } else {
@@ -460,8 +469,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     viewRecreated: function(oldView, newView)
     {
-        if (this._visibleView === oldView)
-            this._visibleView = newView;
+        if (this.visibleView === oldView)
+            this.visibleView = newView;
     },
 
     canShowSourceLine: function(url, line)

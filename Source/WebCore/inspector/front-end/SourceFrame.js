@@ -148,11 +148,6 @@ WebInspector.SourceFrame.prototype = {
         this._createViewerIfNeeded();
     },
 
-    updateContent: function(content)
-    {
-        this._textModel.setText(null, content);
-    },
-
     get textModel()
     {
         return this._textModel;
@@ -835,16 +830,7 @@ WebInspector.SourceFrame.prototype = {
     _doEditLine: function(editData, cancelEditingCallback)
     {
         var revertEditingCallback = this._revertEditLine.bind(this, editData);
-        var commitEditingCallback = this._commitEditLine.bind(this, editData, revertEditingCallback);
-        WebInspector.panels.scripts.editScriptSource(editData, commitEditingCallback, cancelEditingCallback);
-    },
-
-    _commitEditLine: function(editData, revertEditLineCallback, newContent)
-    {
-        var script = this._scripts[editData.sourceID];
-        script.source = newContent;
-        if (script.resource)
-            script.resource.setContent(newContent, revertEditLineCallback);
+        WebInspector.panels.scripts.editScriptSource(editData, revertEditingCallback, cancelEditingCallback);
     },
 
     _setBreakpoint: function(lineNumber, enabled, condition)

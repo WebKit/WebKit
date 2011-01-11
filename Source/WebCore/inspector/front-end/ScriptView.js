@@ -30,7 +30,6 @@ WebInspector.ScriptView = function(script)
     this.element.addStyleClass("script-view");
 
     this.script = script;
-    this.script.addEventListener(WebInspector.Script.Events.SourceChanged, this._scriptSourceChanged, this);
 
     this._frameNeedsSetup = true;
     this._sourceFrameSetup = false;
@@ -83,11 +82,6 @@ WebInspector.ScriptView.prototype = {
     {
         if (!this.element.parentNode)
             document.getElementById("script-resource-views").appendChild(this.element);
-    },
-
-    _scriptSourceChanged: function(event)
-    {
-        this.sourceFrame.updateContent(this._prependWhitespace(this.script.source));
     },
 
     // The following methods are pulled from SourceView, since they are

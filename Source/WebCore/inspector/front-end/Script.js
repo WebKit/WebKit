@@ -57,10 +57,6 @@ WebInspector.Script.WorldType = {
     EXTENSIONS_WORLD: 1
 }
 
-WebInspector.Script.Events = {
-    SourceChanged: "source-changed"
-}
-
 WebInspector.Script.prototype = {
     get linesCount()
     {
@@ -85,8 +81,5 @@ WebInspector.Script.prototype = {
     set source(source)
     {
         this._source = source;
-        this.dispatchEventToListeners(WebInspector.Script.Events.SourceChanged);
     }
 }
-
-WebInspector.Script.prototype.__proto__ = WebInspector.Object.prototype;

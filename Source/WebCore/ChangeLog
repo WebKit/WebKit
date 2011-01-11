@@ -2,6 +2,24 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: recreate script view after live edit.
+        https://bugs.webkit.org/show_bug.cgi?id=51751
+
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.set source):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.editScriptSource.mycallback):
+        (WebInspector.ScriptsPanel.prototype.editScriptSource):
+        (WebInspector.ScriptsPanel.prototype.viewRecreated):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._doEditLine):
+
+2011-01-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: frameDetachedFromParent notification handler is missing in NetworkManager.
         https://bugs.webkit.org/show_bug.cgi?id=52205
 
