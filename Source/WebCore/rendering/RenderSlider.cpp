@@ -22,6 +22,7 @@
 #include "RenderSlider.h"
 
 #include "CSSPropertyNames.h"
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -110,29 +111,18 @@ void RenderSlider::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
 PassRefPtr<RenderStyle> RenderSlider::createThumbStyle(const RenderStyle* parentStyle)
 {
-    RefPtr<RenderStyle> style;
-    RenderStyle* pseudoStyle = getCachedPseudoStyle(SLIDER_THUMB);
-    if (pseudoStyle)
-        // We may be sharing style with another slider, but we must not share the thumb style.
-        style = RenderStyle::clone(pseudoStyle);
-    else
-        style = RenderStyle::create();
-
-    if (parentStyle)
-        style->inheritFrom(parentStyle);
-
-    style->setDisplay(BLOCK);
+    RefPtr<RenderStyle> thumbStyle = document()->styleSelector()->styleForElement(m_thumb.get(), style(), false);
 
     if (parentStyle->appearance() == SliderVerticalPart)
-        style->setAppearance(SliderThumbVerticalPart);
+        thumbStyle->setAppearance(SliderThumbVerticalPart);
     else if (parentStyle->appearance() == SliderHorizontalPart)
-        style->setAppearance(SliderThumbHorizontalPart);
+        thumbStyle->setAppearance(SliderThumbHorizontalPart);
     else if (parentStyle->appearance() == MediaSliderPart)
-        style->setAppearance(MediaSliderThumbPart);
+        thumbStyle->setAppearance(MediaSliderThumbPart);
     else if (parentStyle->appearance() == MediaVolumeSliderPart)
-        style->setAppearance(MediaVolumeSliderThumbPart);
+        thumbStyle->setAppearance(MediaVolumeSliderThumbPart);
 
-    return style.release();
+    return thumbStyle.release();
 }
 
 IntRect RenderSlider::thumbRect()

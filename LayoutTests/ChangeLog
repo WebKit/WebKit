@@ -1,3 +1,15 @@
+2011-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Make pseudo-style resolution less hard-coded when used to select a shadow node
+        https://bugs.webkit.org/show_bug.cgi?id=46595
+
+        New test that comprehensively travels the code paths affected by the change.
+
+        * fast/css/unknown-pseudo-element-matching-expected.txt: Added.
+        * fast/css/unknown-pseudo-element-matching.html: Added.
+
 2011-01-11  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

@@ -33,6 +33,7 @@
 #define SliderThumbElement_h
 
 #include "FloatPoint.h"
+#include "RenderStyleConstants.h"
 #include "ShadowElement.h"
 #include <wtf/Forward.h>
 
@@ -50,6 +51,7 @@ public:
 
     virtual void defaultEventHandler(Event*);
     virtual void detach();
+    virtual AtomicString shadowPseudoId() const;
 
 private:        
     SliderThumbElement(HTMLElement* shadowParent);
@@ -67,6 +69,12 @@ inline SliderThumbElement::SliderThumbElement(HTMLElement* shadowParent)
 inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(HTMLElement* shadowParent)
 {
     return adoptRef(new SliderThumbElement(shadowParent));
+}
+
+inline AtomicString SliderThumbElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-thumb"));
+    return sliderThumb;
 }
 
 }

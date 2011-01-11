@@ -1,3 +1,62 @@
+2011-01-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Make pseudo-style resolution less hard-coded when used to select a shadow node
+        https://bugs.webkit.org/show_bug.cgi?id=46595
+
+        Essentially implements the plumbing for the XBL2 pseudo attribute:
+        http://dev.w3.org/2006/xbl2/#the-pseudo-attribute
+
+        Test: fast/css/unknown-pseudo-element-matching.html
+
+        * css/CSSGrammar.y: Changed to handle specifier_list structure with the
+            CSSParser::updateSpecifierWithElementName helper, added logic to
+            keep unknown pseudo-element selectors at the top of the selector chain,
+            so that we can easily check for them and grab them, and also because
+            they would either not match anything or act as a descendant selector
+            (descendant into a shadow DOM subtree that is), not a specifier.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::updateSpecifiersWithElementName): Generalized/combined
+            the logic adding element name to selectors and added the special case
+            to handle unknown pseudo-element selectors.
+        * css/CSSParser.h: Added def.
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId): Removed any mention of PseudoSliderThumb/SLIDER_THUMB.
+        (WebCore::nameToPseudoTypeMap): Ditto.
+        (WebCore::CSSSelector::extractPseudoType): Ditto.
+        * css/CSSSelector.h: Added a new ShadowDescendant relation type,
+            removed PseudoSliderThumb def.
+        (WebCore::CSSSelector::isUnknownPseudoElement): Added a helper method.
+        * css/CSSSelectorList.cpp:
+        (WebCore::SelectorHasUnknownPseudoElementFunctor::operator()): Added a functor
+            to check for an unknown pseudo-element in the list.
+        (WebCore::CSSSelectorList::hasUnknownPseudoElements): Added.
+        * css/CSSSelectorList.h: Added a def.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::getPseudoRules): Added accessor to pseudo-element hash.
+        (WebCore::CSSStyleSelector::matchRules): Added matching pseudo elements.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector): Added handling
+            of ShadowDescendant relation.
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Enabled handling
+            of unknown pseudo-element selectors.
+        (WebCore::CSSRuleSet::addRule): Added populating unknown pseudo-element hash.
+        * css/html.css:
+        (input[type="range"]::-webkit-slider-thumb): Added previously-hard-coded
+            display:block.
+        * dom/Element.h:
+        (WebCore::Element::shadowPseudoId): Added new virtual method to allow
+            elements to provide the value of pseudo-element selector they would match.
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector): Added checking for unknown pseudo-element selectors,
+            so that we can throw a SYNTAX_ERR if found.
+        (WebCore::Node::querySelectorAll): Ditto.
+        * html/shadow/SliderThumbElement.h:
+        (WebCore::SliderThumbElement::shadowPseudoId): Added to return "-webkit-slider-thumb";
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::createThumbStyle): Changed to use the new styleForElement logic.
+        * rendering/style/RenderStyleConstants.h: Removed SLIDER_THUMB.
+
 2011-01-11  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

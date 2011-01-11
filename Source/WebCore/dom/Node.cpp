@@ -1612,7 +1612,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     CSSSelectorList querySelectorList;
     p.parseSelector(selectors, document(), querySelectorList);
 
-    if (!querySelectorList.first()) {
+    if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
         ec = SYNTAX_ERR;
         return 0;
     }
@@ -1659,7 +1659,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
     CSSSelectorList querySelectorList;
     p.parseSelector(selectors, document(), querySelectorList);
 
-    if (!querySelectorList.first()) {
+    if (!querySelectorList.first() || querySelectorList.hasUnknownPseudoElements()) {
         ec = SYNTAX_ERR;
         return 0;
     }

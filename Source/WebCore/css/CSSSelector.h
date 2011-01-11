@@ -109,7 +109,8 @@ namespace WebCore {
             Child,
             DirectAdjacent,
             IndirectAdjacent,
-            SubSelector
+            SubSelector,
+            ShadowDescendant
         };
 
         enum PseudoType {
@@ -177,7 +178,6 @@ namespace WebCore {
             PseudoNoButton,
             PseudoSelection,
             PseudoFileUploadButton,
-            PseudoSliderThumb,
             PseudoSearchCancelButton,
             PseudoSearchDecoration,
             PseudoSearchResultsDecoration,
@@ -277,6 +277,7 @@ namespace WebCore {
                 extractPseudoType();
             return m_match == PseudoElement;
         }
+        bool isUnknownPseudoElement() const;
 
         Relation relation() const { return static_cast<Relation>(m_relation); }
 
@@ -343,6 +344,11 @@ namespace WebCore {
         mutable AtomicString m_value;
         QualifiedName m_tag;
     };
+
+inline bool CSSSelector::isUnknownPseudoElement() const
+{
+    return m_match == PseudoElement && m_pseudoType == PseudoUnknown;
+}
 
 } // namespace WebCore
 

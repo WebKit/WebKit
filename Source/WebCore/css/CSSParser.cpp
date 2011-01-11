@@ -5933,6 +5933,35 @@ void CSSParser::addNamespace(const AtomicString& prefix, const AtomicString& uri
     m_styleSheet->addNamespace(this, prefix, uri);
 }
 
+void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSSelector* specifiers)
+{
+    AtomicString determinedNamespace = namespacePrefix != nullAtom && m_styleSheet ? m_styleSheet->determineNamespace(namespacePrefix) : m_defaultNamespace;
+    QualifiedName tag = QualifiedName(namespacePrefix, elementName, determinedNamespace);
+    if (!specifiers->isUnknownPseudoElement()) {
+        specifiers->m_tag = tag;
+        return;
+    }
+
+    if (Document* doc = document())
+        doc->setUsesDescendantRules(true);
+
+    specifiers->m_relation = CSSSelector::ShadowDescendant;
+    if (CSSSelector* history = specifiers->tagHistory()) {
+        history->m_tag = tag;
+        return;
+    }
+
+    // No need to create an extra element name selector if we are matching any element
+    // in any namespace.
+    if (elementName == starAtom && m_defaultNamespace == starAtom)
+        return;
+
+    CSSSelector* elementNameSelector = fastNew<CSSSelector>();
+    elementNameSelector->m_tag = tag;
+    specifiers->setTagHistory(elementNameSelector);
+}
+
+
 CSSRule* CSSParser::createPageRule(CSSSelector* pageSelector)
 {
     // FIXME: Margin at-rules are ignored.

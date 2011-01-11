@@ -44,6 +44,7 @@ public:
     bool hasOneSelector() const { return m_selectorArray ? m_selectorArray->isLastInSelectorList() : false; }
 
     bool selectorsNeedNamespaceResolution();
+    bool hasUnknownPseudoElements() const;
 
 private:
     void deleteSelectors();

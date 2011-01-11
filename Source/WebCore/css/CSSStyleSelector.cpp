@@ -424,6 +424,7 @@ public:
     CSSRuleDataList* getIDRules(AtomicStringImpl* key) { return m_idRules.get(key); }
     CSSRuleDataList* getClassRules(AtomicStringImpl* key) { return m_classRules.get(key); }
     CSSRuleDataList* getTagRules(AtomicStringImpl* key) { return m_tagRules.get(key); }
+    CSSRuleDataList* getPseudoRules(AtomicStringImpl* key) { return m_pseudoRules.get(key); }
     CSSRuleDataList* getUniversalRules() { return m_universalRules.get(); }
     CSSRuleDataList* getPageRules() { return m_pageRules.get(); }
     
@@ -431,6 +432,7 @@ public:
     AtomRuleMap m_idRules;
     AtomRuleMap m_classRules;
     AtomRuleMap m_tagRules;
+    AtomRuleMap m_pseudoRules;
     OwnPtr<CSSRuleDataList> m_universalRules;
     OwnPtr<CSSRuleDataList> m_pageRules;
     unsigned m_ruleCount;
@@ -657,6 +659,10 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
         size_t size = classNames.size();
         for (size_t i = 0; i < size; ++i)
             matchRulesForList(rules->getClassRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+    }
+    if (!m_element->shadowPseudoId().isEmpty()) {
+        ASSERT(m_styledElement);
+        matchRulesForList(rules->getPseudoRules(m_element->shadowPseudoId().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     }
     matchRulesForList(rules->getTagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);
@@ -2051,6 +2057,14 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
                 !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && sel->m_match == CSSSelector::PseudoClass))
                 return SelectorFailsCompletely;
             return checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle);
+        case CSSSelector::ShadowDescendant:
+        {
+            Node* shadowHostNode = e->shadowAncestorNode();
+            if (shadowHostNode == e || !shadowHostNode->isElementNode())
+                return SelectorFailsCompletely;
+            e = static_cast<Element*>(shadowHostNode);
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
+        }
     }
 
     return SelectorFailsCompletely;
@@ -2703,12 +2717,8 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             if (Document* document = e->document())
                 document->setUsesFirstLetterRules(true);
         }
-        if (pseudoId != NOPSEUDO) {
+        if (pseudoId != NOPSEUDO)
             dynamicPseudo = pseudoId;
-            return true;
-        }
-        ASSERT_NOT_REACHED();
-        return false;
     }
     // ### add the rest of the checks...
     return true;
@@ -2829,12 +2839,17 @@ void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
         return;
     }
      
+    if (sel->isUnknownPseudoElement()) {
+        addToRuleSet(sel->m_value.impl(), m_pseudoRules, rule, sel);
+        return;
+    }
+
     const AtomicString& localName = sel->m_tag.localName();
     if (localName != starAtom) {
         addToRuleSet(localName.impl(), m_tagRules, rule, sel);
         return;
     }
-    
+
     // Just put it in the universal rule set.
     if (!m_universalRules)
         m_universalRules = adoptPtr(new CSSRuleDataList(m_ruleCount++, rule, sel));

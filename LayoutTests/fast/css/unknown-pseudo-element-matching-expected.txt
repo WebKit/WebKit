@@ -1,0 +1,26 @@
+Tests various selector combinations, containing unknown pseudo element selectors.
+
+::-webkit-slider-thumb should match: PASS
+::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
+*|::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+html|::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+#foo::-webkit-slider-thumb should match: PASS
+.bar::-webkit-slider-thumb should match: PASS
+#foo::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
+.bar::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
+html|#foo::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+html|.bar::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+*|#foo::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+input::-webkit-slider-thumb should match: PASS
+input#foo::-webkit-slider-thumb should match: PASS
+input.bar::-webkit-slider-thumb should match: PASS
+input::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
+input#foo::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
+input.bar::-webkit-slider-thumb, where HTML is not default namespace should not match: PASS
+html|input::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+html|input#foo::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+html|input.bar::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+*|input#foo::-webkit-slider-thumb, where HTML is not default namespace should match: PASS
+input[type=range]::-webkit-slider-thumb should match: PASS
+input#foo[type=range]::-webkit-slider-thumb should match: PASS
+input.bar[type=range]::-webkit-slider-thumb should match: PASS

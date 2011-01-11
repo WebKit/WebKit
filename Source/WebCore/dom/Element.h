@@ -230,6 +230,7 @@ public:
 
     Node* shadowRoot();
     void setShadowRoot(PassRefPtr<Node>);
+    virtual AtomicString shadowPseudoId() const;
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
@@ -505,6 +506,11 @@ inline const AtomicString& Element::getIdAttribute() const
 inline void Element::setIdAttribute(const AtomicString& value)
 {
     setAttribute(document()->idAttributeName(), value);
+}
+
+inline AtomicString Element::shadowPseudoId() const
+{
+    return AtomicString();
 }
 
 } // namespace

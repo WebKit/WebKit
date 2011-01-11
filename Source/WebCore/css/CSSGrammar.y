@@ -901,16 +901,13 @@ simple_selector:
     }
     | element_name specifier_list {
         $$ = $2;
-        if ($$) {
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
-        }
+        if ($$)
+            static_cast<CSSParser*>(parser)->updateSpecifiersWithElementName(nullAtom, $1, $$);
     }
     | specifier_list {
         $$ = $1;
-        CSSParser* p = static_cast<CSSParser*>(parser);
-        if ($$ && p->m_defaultNamespace != starAtom)
-            $$->m_tag = QualifiedName(nullAtom, starAtom, p->m_defaultNamespace);
+        if ($$)
+            static_cast<CSSParser*>(parser)->updateSpecifiersWithElementName(nullAtom, starAtom, $$);
     }
     | namespace_selector element_name {
         AtomicString namespacePrefix = $1;
@@ -924,25 +921,13 @@ simple_selector:
     }
     | namespace_selector element_name specifier_list {
         $$ = $3;
-        if ($$) {
-            AtomicString namespacePrefix = $1;
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            if (p->m_styleSheet)
-                $$->m_tag = QualifiedName(namespacePrefix, $2,
-                                          p->m_styleSheet->determineNamespace(namespacePrefix));
-            else // FIXME: Shouldn't this case be an error?
-                $$->m_tag = QualifiedName(nullAtom, $2, p->m_defaultNamespace);
-        }
+        if ($$)
+            static_cast<CSSParser*>(parser)->updateSpecifiersWithElementName($1, $2, $$);
     }
     | namespace_selector specifier_list {
         $$ = $2;
-        if ($$) {
-            AtomicString namespacePrefix = $1;
-            CSSParser* p = static_cast<CSSParser*>(parser);
-            if (p->m_styleSheet)
-                $$->m_tag = QualifiedName(namespacePrefix, starAtom,
-                                          p->m_styleSheet->determineNamespace(namespacePrefix));
-        }
+        if ($$)
+            static_cast<CSSParser*>(parser)->updateSpecifiersWithElementName($1, starAtom, $$);
     }
   ;
 
@@ -970,13 +955,22 @@ specifier_list:
         if (!$2)
             $$ = 0;
         else if ($1) {
-            $$ = $1;
             CSSParser* p = static_cast<CSSParser*>(parser);
-            CSSSelector* end = $1;
-            while (end->tagHistory())
+            CSSSelector* end;
+            CSSSelector* history;
+            // Ensure that unknown pseudo element always stays at the top of selector chain.
+            if ($2->isUnknownPseudoElement()) {
+                end = $2;
+                history = $1;
+            } else {
+                end = $1;
+                history = $2;
+            }
+            $$ = end;
+            while(end->tagHistory())
                 end = end->tagHistory();
             end->m_relation = CSSSelector::SubSelector;
-            end->setTagHistory(p->sinkFloatingSelector($2));
+            end->setTagHistory(p->sinkFloatingSelector(history));
         }
     }
     | specifier_list error {
@@ -1141,9 +1135,7 @@ pseudo:
         $3.lower();
         $$->m_value = $3;
         CSSSelector::PseudoType type = $$->pseudoType();
-        if (type == CSSSelector::PseudoUnknown)
-            $$ = 0;
-        else if (type == CSSSelector::PseudoFirstLine) {
+        if (type == CSSSelector::PseudoFirstLine) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             if (Document* doc = p->document())
                 doc->setUsesFirstLineRules(true);

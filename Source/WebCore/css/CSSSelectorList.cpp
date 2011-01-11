@@ -136,4 +136,20 @@ bool CSSSelectorList::selectorsNeedNamespaceResolution()
     return forEachSelector(functor, this);
 }
 
+class SelectorHasUnknownPseudoElementFunctor {
+public:
+    bool operator()(CSSSelector* selector)
+    {
+        return selector->isUnknownPseudoElement();
+    }
+};
+
+bool CSSSelectorList::hasUnknownPseudoElements() const
+{
+    SelectorHasUnknownPseudoElementFunctor functor;
+    return forEachSelector(functor, this);
+}
+
+
+
 } // namespace WebCore
