@@ -830,11 +830,9 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
     if (!enabled())
         return;
 
-    request.setReportLoadTiming(true);
-
     if (m_frontend) {
-        // Only enable raw headers if front-end is attached, as otherwise we may lack
-        // permissions to fetch the headers.
+        // Only enable load timing and raw headers if front-end is attached, as otherwise we may produce overhead.
+        request.setReportLoadTiming(true);
         request.setReportRawHeaders(true);
 
         if (m_extraHeaders) {

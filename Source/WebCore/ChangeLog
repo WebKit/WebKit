@@ -1,3 +1,16 @@
+2011-01-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [REGRESSION] Load timing is requested
+        for all resources (not only for the main one).
+        https://bugs.webkit.org/show_bug.cgi?id=51749
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::willSendRequest):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+
 2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

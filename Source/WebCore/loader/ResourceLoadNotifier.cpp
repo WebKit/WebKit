@@ -128,6 +128,10 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (Page* page = m_frame->page())
         page->inspectorController()->willSendRequest(identifier, request, redirectResponse);
 #endif
+
+    // Report WebTiming for all frames.
+    if (loader && !request.isNull() && request.url() == loader->requestURL())
+        request.setReportLoadTiming(true);
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
