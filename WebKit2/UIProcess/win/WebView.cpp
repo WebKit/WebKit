@@ -420,7 +420,8 @@ LRESULT WebView::onSizeEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
     int width = LOWORD(lParam);
     int height = HIWORD(lParam);
 
-    m_page->drawingArea()->setSize(IntSize(width, height));
+    if (m_page->drawingArea())
+        m_page->drawingArea()->setSize(IntSize(width, height));
 
     handled = true;
     return 0;

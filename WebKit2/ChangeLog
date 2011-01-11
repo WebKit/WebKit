@@ -1,3 +1,14 @@
+2011-01-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson and Sam Weinig.
+
+        Fix crash on launch on Windows.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onSizeEvent):
+        The drawing area is no longer initialized before the WebView is created and the first
+        onSize is receieved.
+
 2011-01-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
