@@ -1,3 +1,13 @@
+2011-01-11  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] copy test netscape plugin into TestNetscapePlugin
+        https://bugs.webkit.org/show_bug.cgi?id=52232
+
+        * WebKit.gyp: Make a copy of the TestNetscapePlugIn in
+            TestNetscapePlugIn and WebKitTestNetscapePlugIn
+
 2011-01-11  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
