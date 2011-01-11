@@ -28,10 +28,12 @@
 #import <WebCore/KeyboardEvent.h>
 
 namespace WebKit {
+    class DrawingAreaProxy;
     class FindIndicator;
 }
 
 @interface WKView (Internal)
+- (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
 - (BOOL)_isFocused;
 - (void)_processDidCrash;
 - (void)_didRelaunchProcess;

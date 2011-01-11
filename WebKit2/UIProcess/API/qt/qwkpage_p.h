@@ -31,6 +31,7 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 
+class QGraphicsWKView;
 class QWKPreferences;
 
 class QWKPagePrivate : WebKit::PageClient {
@@ -40,9 +41,12 @@ public:
 
     static QWKPagePrivate* get(QWKPage* page) { return page->d; }
 
-    void init(const QSize& viewportSize, WTF::PassOwnPtr<WebKit::DrawingAreaProxy>);
+    void init(QGraphicsItem*, const QSize& viewportSize, WTF::PassOwnPtr<WebKit::DrawingAreaProxy>);
 
     // PageClient
+    virtual PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
+    virtual void setViewNeedsDisplay(const WebCore::IntRect&);
+
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();
     virtual bool isViewFocused();
@@ -99,6 +103,7 @@ public:
 
     QWKPage* q;
 
+    QGraphicsItem* view;
     QWKContext* context;
     QWKHistory* history;
 

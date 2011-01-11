@@ -236,7 +236,6 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     registerWebViewWindowClass();
 
     m_page = context->createWebPage(this, pageGroup);
-    m_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(this, m_page.get()));
 
     m_window = ::CreateWindowEx(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
         rect.top, rect.left, rect.right - rect.left, rect.bottom - rect.top, parentWindow ? parentWindow : HWND_MESSAGE, 0, instanceHandle(), this);
@@ -574,6 +573,17 @@ void WebView::close()
 }
 
 // PageClient
+
+PassOwnPtr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
+{
+    return ChunkedUpdateDrawingAreaProxy::create(this, m_page.get());
+}
+
+void WebView::setViewNeedsDisplay(const WebCore::IntRect& rect)
+{
+    RECT r = rect;
+    ::InvalidateRect(m_window, &r, false);
+}
 
 WebCore::IntSize WebView::viewSize()
 {

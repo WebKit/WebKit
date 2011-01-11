@@ -12,6 +12,7 @@
 #include <WebKit2/WKPage.h>
 
 class QCursor;
+class QGraphicsItem;
 class QWKContext;
 class QWKGraphicsWidget;
 class QWKPreferences;

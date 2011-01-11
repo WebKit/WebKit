@@ -48,6 +48,9 @@ public:
 private:
     PageClientImpl(WKView*);
 
+    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    virtual void setViewNeedsDisplay(const WebCore::IntRect&);
+    
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();
     virtual bool isViewFocused();

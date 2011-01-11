@@ -166,7 +166,6 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
     _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
-    _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get()));
     _data->_page->initializeWebPage();
 
     WebContext::statistics().wkViewCount++;
@@ -1198,6 +1197,11 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 @end
 
 @implementation WKView (Internal)
+
+- (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
+{
+    return ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get());
+}
 
 - (BOOL)_isFocused
 {

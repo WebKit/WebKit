@@ -104,6 +104,8 @@ private:
     void updateNativeCursor();
 
     // PageClient
+    virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
+    virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();
     virtual bool isViewFocused();

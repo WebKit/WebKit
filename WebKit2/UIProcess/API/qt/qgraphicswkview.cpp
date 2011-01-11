@@ -83,7 +83,7 @@ QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingSt
         break;
     }
 
-    d->page->d->init(size().toSize(), drawingAreaProxy);
+    d->page->d->init(this, size().toSize(), drawingAreaProxy);
     connect(d->page, SIGNAL(titleChanged(QString)), this, SIGNAL(titleChanged(QString)));
     connect(d->page, SIGNAL(loadStarted()), this, SIGNAL(loadStarted()));
     connect(d->page, SIGNAL(loadFinished(bool)), this, SIGNAL(loadFinished(bool)));

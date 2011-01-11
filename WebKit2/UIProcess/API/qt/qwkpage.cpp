@@ -23,7 +23,9 @@
 
 #include "qwkpreferences_p.h"
 
+#include "ChunkedUpdateDrawingAreaProxy.h"
 #include "ClientImpl.h"
+#include "qgraphicswkview.h"
 #include "qwkcontext.h"
 #include "qwkcontext_p.h"
 #include "qwkhistory.h"
@@ -31,6 +33,7 @@
 #include "FindIndicator.h"
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
+#include "TiledDrawingAreaProxy.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
 #include "WebEventFactoryQt.h"
@@ -81,6 +84,7 @@ static WebCore::ContextMenuAction contextMenuActionForWebAction(QWKPage::WebActi
 
 QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     : q(qq)
+    , view(0)
     , context(c)
     , preferences(0)
     , createNewPageFn(0)
@@ -96,8 +100,9 @@ QWKPagePrivate::~QWKPagePrivate()
     delete history;
 }
 
-void QWKPagePrivate::init(const QSize& viewportSize, PassOwnPtr<DrawingAreaProxy> proxy)
+void QWKPagePrivate::init(QGraphicsItem* view, const QSize& viewportSize, PassOwnPtr<DrawingAreaProxy> proxy)
 {
+    this->view = view;
     page->setDrawingArea(proxy);
     page->initializeWebPage();
 }
@@ -118,6 +123,23 @@ void QWKPagePrivate::setViewportArguments(const ViewportArguments& args)
 void QWKPagePrivate::takeFocus(bool direction)
 {
     emit q->focusNextPrevChild(direction);
+}
+
+PassOwnPtr<DrawingAreaProxy> QWKPagePrivate::createDrawingAreaProxy()
+{
+    // FIXME: We should avoid this cast by decoupling the view from the page.
+    QGraphicsWKView* wkView = static_cast<QGraphicsWKView*>(view);
+
+#if ENABLE(TILED_BACKING_STORE)
+    if (page->drawingArea()->info().type == DrawingAreaInfo::Tiled)
+        return TiledDrawingAreaProxy::create(wkView, page.get());
+#endif
+    return ChunkedUpdateDrawingAreaProxy::create(wkView, page.get());
+}
+
+void QWKPagePrivate::setViewNeedsDisplay(const WebCore::IntRect& rect)
+{
+    view->update(QRect(rect));
 }
 
 WebCore::IntSize QWKPagePrivate::viewSize()
