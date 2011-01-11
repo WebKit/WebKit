@@ -48,6 +48,21 @@ class PageClient {
 public:
     virtual ~PageClient() { }
 
+    // Return the size of the view the page is associated with.
+    virtual WebCore::IntSize viewSize() = 0;
+
+    // Return whether the view's containing window is active.
+    virtual bool isViewWindowActive() = 0;
+
+    // Return whether the view is focused.
+    virtual bool isViewFocused() = 0;
+
+    // Return whether the view is visible.
+    virtual bool isViewVisible() = 0;
+
+    // Return whether the view is in a window.
+    virtual bool isViewInWindow() = 0;
+    
     virtual void processDidCrash() = 0;
     virtual void didRelaunchProcess() = 0;
 

@@ -32,6 +32,7 @@ namespace WebKit {
 }
 
 @interface WKView (Internal)
+- (BOOL)_isFocused;
 - (void)_processDidCrash;
 - (void)_didRelaunchProcess;
 - (void)_takeFocus:(BOOL)direction;

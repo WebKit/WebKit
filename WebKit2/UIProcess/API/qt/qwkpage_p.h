@@ -43,6 +43,12 @@ public:
     void init(const QSize& viewportSize, WTF::PassOwnPtr<WebKit::DrawingAreaProxy>);
 
     // PageClient
+    virtual WebCore::IntSize viewSize();
+    virtual bool isViewWindowActive();
+    virtual bool isViewFocused();
+    virtual bool isViewVisible();
+    virtual bool isViewInWindow();
+
 #if USE(ACCELERATED_COMPOSITING)
     void pageDidEnterAcceleratedCompositing() { }
     void pageDidLeaveAcceleratedCompositing() { }

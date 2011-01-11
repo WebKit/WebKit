@@ -328,14 +328,12 @@ void QGraphicsWKView::touchEvent(QTouchEvent* ev)
 
 void QGraphicsWKView::focusInEvent(QFocusEvent*)
 {
-    page()->d->page->setActive(true);
-    page()->d->page->setFocused(true);
+    page()->d->page->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
 }
 
 void QGraphicsWKView::focusOutEvent(QFocusEvent*)
 {
-    page()->d->page->setFocused(false);
-    page()->d->page->setActive(false);
+    page()->d->page->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
 }
 
 void QGraphicsWKView::showContextMenu(QMenu* menu)

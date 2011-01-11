@@ -242,14 +242,14 @@ void WebContext::processDidClose(WebProcessProxy* process)
     m_process = 0;
 }
 
-WebPageProxy* WebContext::createWebPage(WebPageGroup* pageGroup)
+WebPageProxy* WebContext::createWebPage(PageClient* pageClient, WebPageGroup* pageGroup)
 {
     ensureWebProcess();
 
     if (!pageGroup)
         pageGroup = m_defaultPageGroup.get();
 
-    return m_process->createWebPage(this, pageGroup);
+    return m_process->createWebPage(pageClient, this, pageGroup);
 }
 
 void WebContext::relaunchProcessIfNecessary()

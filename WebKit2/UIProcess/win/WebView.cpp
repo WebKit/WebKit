@@ -227,14 +227,15 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_webCoreCursor(0)
     , m_overrideCursor(0)
     , m_trackingMouseLeave(false)
+    , m_isInWindow(false)
+    , m_isVisible(false)
     , m_wasActivatedByMouseEvent(false)
     , m_isBeingDestroyed(false)
     , m_inIMEComposition(0)
 {
     registerWebViewWindowClass();
 
-    m_page = context->createWebPage(pageGroup);
-    m_page->setPageClient(this);
+    m_page = context->createWebPage(this, pageGroup);
     m_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(this, m_page.get()));
 
     m_window = ::CreateWindowEx(0, kWebKit2WebViewWindowClassName, 0, WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
@@ -437,16 +438,14 @@ LRESULT WebView::onWindowPositionChangedEvent(HWND, UINT, WPARAM, LPARAM lParam,
 
 LRESULT WebView::onSetFocusEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
 {
-    m_page->setFocused(true);
-
+    m_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
     handled = true;
     return 0;
 }
 
 LRESULT WebView::onKillFocusEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
 {
-    m_page->setFocused(false);
-
+    m_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
     handled = true;
     return 0;
 }
@@ -469,10 +468,8 @@ LRESULT WebView::onShowWindowEvent(HWND hWnd, UINT message, WPARAM wParam, LPARA
     // lParam is 0 when the message is sent because of a ShowWindow call.
     // FIXME: Is WM_SHOWWINDOW sent when ShowWindow is called on an ancestor of our window?
     if (!lParam) {
-        bool isVisible = wParam;
-
-        // Notify the drawing area that the visibility changed.
-        m_page->drawingArea()->setPageIsVisible(isVisible);
+        m_isVisible = wParam;
+        m_page->viewStateDidChange(WebPageProxy::IsViewVisible);
 
         handled = true;
     }
@@ -491,15 +488,9 @@ LRESULT WebView::onSetCursor(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
     return 0;
 }
 
-bool WebView::isActive()
-{
-    HWND activeWindow = ::GetActiveWindow();
-    return (activeWindow && m_topLevelParentWindow == findTopLevelParentWindow(activeWindow));
-}
-
 void WebView::updateActiveState()
 {
-    m_page->setActive(isActive());
+    m_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 }
 
 void WebView::updateActiveStateSoon()
@@ -584,6 +575,35 @@ void WebView::close()
 
 // PageClient
 
+WebCore::IntSize WebView::viewSize()
+{
+    RECT clientRect;
+    GetClientRect(m_window, &clientRect);
+
+    return IntRect(clientRect).size();
+}
+
+bool WebView::ViewWindowIsActive()
+{    
+    HWND activeWindow = ::GetActiveWindow();
+    return (activeWindow && m_topLevelParentWindow == findTopLevelParentWindow(activeWindow));
+}
+
+bool WebView::isViewFocused()
+{
+    return ::GetFocus() == m_window;
+}
+
+bool WebView::isViewVisible()
+{
+    return m_isVisible;
+}
+
+bool WebView::isViewInWindow()
+{
+    return m_isInWindow;
+}
+
 void WebView::processDidCrash()
 {
     updateNativeCursor();
@@ -597,8 +617,6 @@ void WebView::didRelaunchProcess()
         return;
 
     m_page->reinitializeWebPage(IntRect(clientRect).size());
-    updateActiveState();
-    m_page->setFocused(::GetFocus() == m_window);
     updateNativeCursor();
 
     ::InvalidateRect(m_window, 0, TRUE);
@@ -992,7 +1010,8 @@ void WebView::setCustomRepresentationZoomFactor(double)
 
 void WebView::setIsInWindow(bool isInWindow)
 {
-    m_page->setIsInWindow(isInWindow);
+    m_isInWindow = isInWindow;
+    m_page->viewStateDidChange(WebPageProxy::ViewIsInWindow);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

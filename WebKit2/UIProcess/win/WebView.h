@@ -90,7 +90,6 @@ private:
     LRESULT onIMERequestCharPosition(IMECHARPOSITION*);
     LRESULT onIMERequestReconvertString(RECONVERTSTRING*);
 
-    bool isActive();
     void updateActiveState();
     void updateActiveStateSoon();
 
@@ -105,6 +104,11 @@ private:
     void updateNativeCursor();
 
     // PageClient
+    virtual WebCore::IntSize viewSize();
+    virtual bool isViewWindowActive();
+    virtual bool isViewFocused();
+    virtual bool isViewVisible();
+    virtual bool isViewInWindow();
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
     virtual void takeFocus(bool direction);
@@ -146,6 +150,8 @@ private:
     HCURSOR m_webCoreCursor;
     HCURSOR m_overrideCursor;
 
+    bool m_isInWindow;
+    bool m_isVisible;
     bool m_wasActivatedByMouseEvent;
     bool m_trackingMouseLeave;
     bool m_isBeingDestroyed;

@@ -106,8 +106,7 @@ class WebPageProxy : public APIObject, public WebPopupMenuProxy::Client {
 public:
     static const Type APIType = TypePage;
 
-    static PassRefPtr<WebPageProxy> create(WebContext*, WebPageGroup*, uint64_t pageID);
-
+    static PassRefPtr<WebPageProxy> create(PageClient*, WebContext*, WebPageGroup*, uint64_t pageID);
     virtual ~WebPageProxy();
 
     uint64_t pageID() const { return m_pageID; }
@@ -125,7 +124,6 @@ public:
     WebInspectorProxy* inspector();
 #endif
 
-    void setPageClient(PageClient*);
     void initializeContextMenuClient(const WKPageContextMenuClient*);
     void initializeFindClient(const WKPageFindClient*);
     void initializeFormClient(const WKPageFormClient*);
@@ -167,11 +165,17 @@ public:
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
     void setDrawsTransparentBackground(bool);
 
-    void setFocused(bool);
     void setInitialFocus(bool);
-    void setActive(bool);
-    void setIsInWindow(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
+
+    enum {
+        ViewWindowIsActive = 1 << 0,
+        ViewIsFocused = 1 << 1,
+        ViewIsVisible = 1 << 2,
+        ViewIsInWindow = 1 << 3
+    };
+    typedef unsigned ViewStateFlags;
+    void viewStateDidChange(ViewStateFlags flags);
 
     void executeEditCommand(const String& commandName);
     void validateMenuItem(const String& commandName);
@@ -318,7 +322,7 @@ public:
 #endif
 
 private:
-    WebPageProxy(WebContext*, WebPageGroup*, uint64_t pageID);
+    WebPageProxy(PageClient*, WebContext*, WebPageGroup*, uint64_t pageID);
 
     virtual Type type() const { return APIType; }
 
@@ -519,6 +523,9 @@ private:
 
     // Whether the web page is contained in a top-level window.
     bool m_isInWindow;
+
+    // Whether the page is visible; if the backing view is visible and inserted into a window.
+    bool m_isVisible;
 
     bool m_canGoBack;
     bool m_canGoForward;

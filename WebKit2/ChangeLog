@@ -1,3 +1,71 @@
+2011-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use a pull model for view state changes
+        https://bugs.webkit.org/show_bug.cgi?id=52175
+
+        Instead of having the WKView call setFocused, setActive etc on the WebPageProxy, the
+        WKView now simply informs the WebPageProxy what has changed, using the WebPageProxy::viewStateDidChange
+        function. The WebPageProxy can then fetch the relevant information using newly added PageClient functions.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView becomeFirstResponder]):
+        (-[WKView resignFirstResponder]):
+        (-[WKView viewDidMoveToWindow]):
+        (-[WKView _windowDidBecomeKey:]):
+        (-[WKView _windowDidResignKey:]):
+        (-[WKView viewDidHide]):
+        (-[WKView viewDidUnhide]):
+        (-[WKView _isFocused]):
+        (-[WKView _didRelaunchProcess]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::focusInEvent):
+        (QGraphicsWKView::focusOutEvent):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPagePrivate::viewSize):
+        (QWKPagePrivate::isViewWindowActive):
+        (QWKPagePrivate::isViewFocused):
+        (QWKPagePrivate::isViewVisible):
+        (QWKPagePrivate::isViewInWindow):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createWebPage):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::viewStateDidChange):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::onSetFocusEvent):
+        (WebKit::WebView::onKillFocusEvent):
+        (WebKit::WebView::onShowWindowEvent):
+        (WebKit::WebView::updateActiveState):
+        (WebKit::WebView::viewSize):
+        (WebKit::WebView::isViewWindowActive):
+        (WebKit::WebView::isViewFocused):
+        (WebKit::WebView::isViewVisible):
+        (WebKit::WebView::isViewInWindow):
+        (WebKit::WebView::didRelaunchProcess):
+        (WebKit::WebView::setIsInWindow):
+        * UIProcess/win/WebView.h:
+
 2011-01-10  Adam Roben  <aroben@apple.com>
 
         Don't pass a reference type to va_start

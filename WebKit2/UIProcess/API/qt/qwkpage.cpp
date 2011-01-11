@@ -86,8 +86,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     , createNewPageFn(0)
 {
     memset(actions, 0, sizeof(actions));
-    page = context->d->context->createWebPage(0);
-    page->setPageClient(this);
+    page = context->d->context->createWebPage(this, 0);
     history = QWKHistoryPrivate::createHistory(page->backForwardList());
 }
 
@@ -119,6 +118,36 @@ void QWKPagePrivate::setViewportArguments(const ViewportArguments& args)
 void QWKPagePrivate::takeFocus(bool direction)
 {
     emit q->focusNextPrevChild(direction);
+}
+
+WebCore::IntSize QWKPagePrivate::viewSize()
+{
+    // FIXME: Implement.
+    return WebCore::IntSize();
+}
+
+bool QWKPagePrivate::isViewWindowActive()
+{
+    // FIXME: Implement.
+    return true;
+}
+
+bool QWKPagePrivate::isViewFocused()
+{
+    // FIXME: Implement.
+    return true;
+}
+
+bool QWKPagePrivate::isViewVisible()
+{
+    // FIXME: Implement.
+    return true;
+}
+
+bool QWKPagePrivate::isViewInWindow()
+{
+    // FIXME: Implement.
+    return true;
 }
 
 void QWKPagePrivate::pageDidRequestScroll(const IntSize& delta)

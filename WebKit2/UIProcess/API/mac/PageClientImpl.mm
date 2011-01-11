@@ -118,6 +118,37 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
+IntSize PageClientImpl::viewSize()
+{
+    return IntSize([m_wkView bounds].size);
+}
+
+bool PageClientImpl::isViewWindowActive()
+{
+    return [[m_wkView window] isKeyWindow];
+}
+
+bool PageClientImpl::isViewFocused()
+{
+    return [m_wkView _isFocused];
+}
+
+bool PageClientImpl::isViewVisible()
+{
+    if (![m_wkView window])
+        return false;
+
+    if ([m_wkView isHiddenOrHasHiddenAncestor])
+        return false;
+
+    return true;
+}
+
+bool PageClientImpl::isViewInWindow()
+{
+    return [m_wkView window];
+}
+
 void PageClientImpl::processDidCrash()
 {
     [m_wkView _processDidCrash];

@@ -85,19 +85,20 @@ namespace WebKit {
 static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
 {
-    return adoptRef(new WebPageProxy(context, pageGroup, pageID));
+    return adoptRef(new WebPageProxy(pageClient, context, pageGroup, pageID));
 }
 
-WebPageProxy::WebPageProxy(WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
-    : m_pageClient(0)
+WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
+    : m_pageClient(pageClient)
     , m_context(context)
     , m_pageGroup(pageGroup)
     , m_mainFrame(0)
     , m_userAgent(standardUserAgent())
     , m_estimatedProgress(0)
-    , m_isInWindow(false)
+    , m_isInWindow(m_pageClient->isViewInWindow())
+    , m_isVisible(m_pageClient->isViewVisible())
     , m_backForwardList(WebBackForwardList::create(this))
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
@@ -156,11 +157,6 @@ bool WebPageProxy::isValid()
         return false;
 
     return m_isValid;
-}
-
-void WebPageProxy::setPageClient(PageClient* pageClient)
-{
-    m_pageClient = pageClient;
 }
 
 void WebPageProxy::setDrawingArea(PassOwnPtr<DrawingAreaProxy> drawingArea)
@@ -445,11 +441,32 @@ void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground
         process()->send(Messages::WebPage::SetDrawsTransparentBackground(drawsTransparentBackground), m_pageID);
 }
 
-void WebPageProxy::setFocused(bool isFocused)
+void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
 {
     if (!isValid())
         return;
-    process()->send(Messages::WebPage::SetFocused(isFocused), m_pageID);
+
+    if (flags & ViewIsFocused)
+        process()->send(Messages::WebPage::SetFocused(m_pageClient->isViewFocused()), m_pageID);
+
+    if (flags & ViewWindowIsActive)
+        process()->send(Messages::WebPage::SetActive(m_pageClient->isViewWindowActive()), m_pageID);
+
+    if (flags & ViewIsVisible) {
+        bool isVisible = m_pageClient->isViewVisible();
+        if (isVisible != m_isVisible) {
+            m_isVisible = isVisible;
+            m_drawingArea->setPageIsVisible(isVisible);
+        }
+    }
+
+    if (flags & ViewIsInWindow) {
+        bool isInWindow = m_pageClient->isViewInWindow();
+        if (m_isInWindow != isInWindow) {
+            m_isInWindow = isInWindow;
+            process()->send(Messages::WebPage::SetIsInWindow(isInWindow), m_pageID);
+        }
+    }
 }
 
 void WebPageProxy::setInitialFocus(bool forward)
@@ -457,13 +474,6 @@ void WebPageProxy::setInitialFocus(bool forward)
     if (!isValid())
         return;
     process()->send(Messages::WebPage::SetInitialFocus(forward), m_pageID);
-}
-
-void WebPageProxy::setActive(bool active)
-{
-    if (!isValid())
-        return;
-    process()->send(Messages::WebPage::SetActive(active), m_pageID);
 }
 
 void WebPageProxy::setWindowResizerSize(const IntSize& windowResizerSize)
@@ -488,17 +498,6 @@ void WebPageProxy::executeEditCommand(const String& commandName)
     process()->send(Messages::WebPage::ExecuteEditCommand(commandName), m_pageID);
 }
     
-void WebPageProxy::setIsInWindow(bool isInWindow)
-{
-    if (m_isInWindow == isInWindow)
-        return;
-    
-    m_isInWindow = isInWindow;
-    if (!isValid())
-        return;
-    process()->send(Messages::WebPage::SetIsInWindow(isInWindow), m_pageID);
-}
-
 #if PLATFORM(MAC)
 void WebPageProxy::updateWindowIsVisible(bool windowIsVisible)
 {

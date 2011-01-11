@@ -120,6 +120,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     Vector<CompositionUnderline> _underlines;
     unsigned _selectionStart;
     unsigned _selectionEnd;
+
+    bool _inBecomeFirstResponder;
+    bool _inResignFirstResponder;
 }
 @end
 
@@ -162,11 +165,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     _data = [[WKViewData alloc] init];
 
     _data->_pageClient = PageClientImpl::create(self);
-    _data->_page = toImpl(contextRef)->createWebPage(toImpl(pageGroupRef));
-    _data->_page->setPageClient(_data->_pageClient.get());
+    _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self, _data->_page.get()));
     _data->_page->initializeWebPage(IntSize(frame.size));
-    _data->_page->setIsInWindow([self window]);
 
     WebContext::statistics().wkViewCount++;
 
@@ -224,7 +225,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 {
     NSSelectionDirection direction = [[self window] keyViewSelectionDirection];
 
-    _data->_page->setFocused(true);
+    _data->_inBecomeFirstResponder = true;
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
+    _data->_inBecomeFirstResponder = false;
 
     if (direction != NSDirectSelection)
         _data->_page->setInitialFocus(direction == NSSelectingNext);
@@ -234,7 +237,10 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 - (BOOL)resignFirstResponder
 {
-    _data->_page->setFocused(false);
+    _data->_inResignFirstResponder = true;
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsFocused);
+    _data->_inResignFirstResponder = false;
+
     return YES;
 }
 
@@ -961,11 +967,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return resultRect;
 }
 
-- (void)_updateActiveState
-{
-    _data->_page->setActive([[self window] isKeyWindow]);
-}
-
 - (void)_updateWindowVisibility
 {
     _data->_page->updateWindowIsVisible(![[self window] isMiniaturized]);
@@ -1045,24 +1046,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:window];
 }
 
-static bool isViewVisible(NSView *view)
-{
-    if (![view window])
-        return false;
-    
-    if ([view isHiddenOrHasHiddenAncestor])
-        return false;
-    
-    return true;
-}
-
-- (void)_updateVisibility
-{
-    _data->_page->setIsInWindow([self window]);
-    if (DrawingAreaProxy* area = _data->_page->drawingArea())
-        area->setPageIsVisible(isViewVisible(self));
-}
-
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     if (window != [self window]) {
@@ -1077,13 +1060,13 @@ static bool isViewVisible(NSView *view)
     // update the active state first and then make it visible. If the view is about to be hidden, we hide it first and then
     // update the active state.
     if ([self window]) {
-        [self _updateActiveState];
-        [self _updateVisibility];
+        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+        _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
         [self _updateWindowVisibility];
         [self _updateWindowAndViewFrames];
     } else {
-        [self _updateVisibility];
-        [self _updateActiveState];
+        _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
     }
 
 }
@@ -1092,14 +1075,14 @@ static bool isViewVisible(NSView *view)
 {
     NSWindow *keyWindow = [notification object];
     if (keyWindow == [self window] || keyWindow == [[self window] attachedSheet])
-        [self _updateActiveState];
+        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidResignKey:(NSNotification *)notification
 {
     NSWindow *formerKeyWindow = [notification object];
     if (formerKeyWindow == [self window] || formerKeyWindow == [[self window] attachedSheet])
-        [self _updateActiveState];
+        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
 }
 
 - (void)_windowDidMiniaturize:(NSNotification *)notification
@@ -1136,12 +1119,12 @@ static bool isViewVisible(NSView *view)
 
 - (void)viewDidHide
 {
-    [self _updateVisibility];
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 - (void)viewDidUnhide
 {
-    [self _updateVisibility];
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 - (void)_setAccessibilityChildToken:(NSData *)data
@@ -1216,6 +1199,15 @@ static bool isViewVisible(NSView *view)
 
 @implementation WKView (Internal)
 
+- (BOOL)_isFocused
+{
+    if (_data->_inBecomeFirstResponder)
+        return YES;
+    if (_data->_inResignFirstResponder)
+        return NO;
+    return [[self window] firstResponder] == self;
+}
+
 - (void)_processDidCrash
 {
     [self setNeedsDisplay:YES];
@@ -1224,9 +1216,6 @@ static bool isViewVisible(NSView *view)
 - (void)_didRelaunchProcess
 {
     _data->_page->reinitializeWebPage(IntSize([self bounds].size));
-
-    _data->_page->setActive([[self window] isKeyWindow]);
-    _data->_page->setFocused([[self window] firstResponder] == self);
     
     [self setNeedsDisplay:YES];
 }

@@ -71,7 +71,7 @@ public:
     void processDidFinishLaunching(WebProcessProxy*);
     void processDidClose(WebProcessProxy*);
 
-    WebPageProxy* createWebPage(WebPageGroup* = 0);
+    WebPageProxy* createWebPage(PageClient*, WebPageGroup*);
 
     void relaunchProcessIfNecessary();
 

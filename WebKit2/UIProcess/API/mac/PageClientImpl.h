@@ -48,6 +48,12 @@ public:
 private:
     PageClientImpl(WKView*);
 
+    virtual WebCore::IntSize viewSize();
+    virtual bool isViewWindowActive();
+    virtual bool isViewFocused();
+    virtual bool isViewVisible();
+    virtual bool isViewInWindow();
+    
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
     virtual void takeFocus(bool direction);
