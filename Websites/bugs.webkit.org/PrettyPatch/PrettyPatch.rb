@@ -145,6 +145,7 @@ h1 :hover {
 .LineSide {
     display:inline-block;
     width:50%;
+    vertical-align: top;
 }
 
 .lineNumber, .expansionLineNumber {
