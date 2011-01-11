@@ -25,6 +25,9 @@
 
 #include "DrawingAreaImpl.h"
 
+#include "DrawingAreaProxyMessages.h"
+#include "WebPage.h"
+
 #ifndef __APPLE__
 #error "This drawing area is not ready for use by other ports yet."
 #endif
@@ -81,6 +84,9 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 
 void DrawingAreaImpl::setSize(const IntSize& size)
 {
+    // FIXME: Actually do something.
+
+    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize());
 }
 
 } // namespace WebKit

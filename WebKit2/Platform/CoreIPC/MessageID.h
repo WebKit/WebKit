@@ -47,6 +47,7 @@ enum MessageClass {
 
     // Messages sent by the web process to the UI process.
     MessageClassDownloadProxy,
+    MessageClassDrawingAreaProxy,
     MessageClassDrawingAreaProxyLegacy,
     MessageClassWebContext,
     MessageClassWebContextLegacy,

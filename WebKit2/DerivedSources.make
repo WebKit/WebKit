@@ -37,6 +37,7 @@ VPATH = \
 MESSAGE_RECEIVERS = \
     AuthenticationManager \
     DrawingArea \
+    DrawingAreaProxy \
     DownloadProxy \
     NPObjectMessageReceiver \
     PluginControllerProxy \

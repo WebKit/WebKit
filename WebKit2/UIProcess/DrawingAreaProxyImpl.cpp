@@ -85,6 +85,10 @@ void DrawingAreaProxyImpl::detachCompositingContext()
     ASSERT_NOT_REACHED();
 }
 
+void DrawingAreaProxyImpl::didSetSize()
+{
+}
+
 void DrawingAreaProxyImpl::sendSetSize()
 {
     if (!m_webPageProxy->isValid())

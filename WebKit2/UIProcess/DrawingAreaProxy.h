@@ -53,6 +53,10 @@ public:
 
     virtual ~DrawingAreaProxy();
 
+#ifdef __APPLE__
+    void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+#endif
+
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*) { ASSERT_NOT_REACHED(); }
 
@@ -79,6 +83,11 @@ protected:
     WebPageProxy* m_webPageProxy;
 
     WebCore::IntSize m_size;
+
+private:
+    // CoreIPC message handlers.
+    // FIXME: These should be pure virtual.
+    virtual void didSetSize() { }
 };
 
 } // namespace WebKit

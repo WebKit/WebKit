@@ -912,6 +912,13 @@ void WebPageProxy::setResizesToContentsUsingLayoutSize(const WebCore::IntSize& t
 
 void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
+#ifdef __APPLE__
+    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxy>()) {
+        m_drawingArea->didReceiveDrawingAreaProxyMessage(connection, messageID, arguments);
+        return;
+    }
+#endif
+
     if (messageID.is<CoreIPC::MessageClassDrawingAreaProxyLegacy>()) {
         m_drawingArea->didReceiveMessage(connection, messageID, arguments);
         return;

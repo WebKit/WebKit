@@ -47,6 +47,9 @@ private:
     virtual void attachCompositingContext(uint32_t contextID);
     virtual void detachCompositingContext();
 
+    // CoreIPC message handlers
+    virtual void didSetSize();
+    
     void sendSetSize();
 };
 
