@@ -1431,7 +1431,7 @@ DEFINE_STUB_FUNCTION(void*, register_file_check)
         // Rewind to the previous call frame because op_call already optimistically
         // moved the call frame forward.
         CallFrame* oldCallFrame = callFrame->callerFrame();
-        ExceptionHandler handler = jitThrow(stackFrame.globalData, oldCallFrame, createStackOverflowError(oldCallFrame), ReturnAddressPtr(oldCallFrame->returnPC()));
+        ExceptionHandler handler = jitThrow(stackFrame.globalData, oldCallFrame, createStackOverflowError(oldCallFrame), ReturnAddressPtr(callFrame->returnPC()));
         STUB_SET_RETURN_ADDRESS(handler.catchRoutine);
         callFrame = handler.callFrame;
     }

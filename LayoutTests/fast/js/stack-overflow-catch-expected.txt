@@ -1,0 +1,11 @@
+Test that when the stack overflows, the exception goes to the last frame before the overflow
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gotWrongCatch is false
+PASS (stackLevel) is (level - 1)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

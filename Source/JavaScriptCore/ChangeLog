@@ -1,3 +1,22 @@
+2011-01-10  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        ASSERTION Failure in JSC::binaryChop
+        https://bugs.webkit.org/show_bug.cgi?id=25614
+
+        Changed JITStubs::cti_register_file_check() to use the current stack's
+        return PC to find the bytecode for handling the exception in the prior
+        frame.  Also added the appropriate arrity check routine call to the
+        JIT to bytecode vector (m_callReturnIndexVector) in the CodeBlock.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile): Changed the arrity check call location
+        so that it gets added to the m_calls list so that it's included in
+        CodeBlock::m_callReturnIndexVector.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION): Use the current call frame's return PC.
+
 2011-01-10  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Martin Robinson.

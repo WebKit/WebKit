@@ -489,7 +489,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     privateCompileSlowCases();
 
     Label arityCheck;
-    Call callArityCheck;
     if (m_codeBlock->codeType() == FunctionCode) {
         registerFileCheck.link(this);
         m_bytecodeOffset = 0;
@@ -504,8 +503,9 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
         branch32(Equal, regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
         restoreArgumentReference();
-        callArityCheck = call();
-        move(regT0, callFrameRegister);
+
+        JITStubCall(this, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck).call(callFrameRegister);
+
         jump(beginLabel);
     }
 
@@ -585,10 +585,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
 
-    if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck) {
-        patchBuffer.link(callArityCheck, FunctionPtr(m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck));
+    if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
-    }
 
     return patchBuffer.finalizeCode();
 }
