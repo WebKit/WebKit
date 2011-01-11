@@ -469,7 +469,7 @@ LRESULT WebView::onShowWindowEvent(HWND hWnd, UINT message, WPARAM wParam, LPARA
     // FIXME: Is WM_SHOWWINDOW sent when ShowWindow is called on an ancestor of our window?
     if (!lParam) {
         m_isVisible = wParam;
-        m_page->viewStateDidChange(WebPageProxy::IsViewVisible);
+        m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 
         handled = true;
     }
