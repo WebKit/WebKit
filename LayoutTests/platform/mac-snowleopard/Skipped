@@ -113,6 +113,9 @@ fast/canvas/webgl/framebuffer-object-attachment.html
 # https://bugs.webkit.org/show_bug.cgi?id=44459
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=52237
+fast/canvas/webgl/read-pixels-test.html
+
 # This test asserts: https://bugs.webkit.org/show_bug.cgi?id=37932
 transitions/transition-end-event-destroy-iframe.html
 
