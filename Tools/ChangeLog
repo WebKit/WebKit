@@ -1,3 +1,15 @@
+2011-01-10  Sam Weinig  <sam@webkit.org>
+
+        Fix build.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+
 2011-01-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ojan Vafai.
