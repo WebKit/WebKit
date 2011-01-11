@@ -1,3 +1,19 @@
+2011-01-10  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52095
+        REGRESSION (r75277): 2 test cases (<1%) had incorrect layout
+        
+        Fixes tests:
+            fullscreen/full-screen-remove-ancestor.html
+            fullscreen/full-screen-remove.html
+            
+        Revert change made in r75326, now that the underlying issue has been fixed.
+
+        * fullscreen/full-screen-remove-ancestor-expected.txt:
+        * fullscreen/full-screen-remove-expected.txt:
+
 2011-01-10  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed Chromium test expectations update.

@@ -3389,11 +3389,13 @@ void Document::nodeWillBeRemoved(Node* n)
     ASSERT(n);
     if (n->contains(m_fullScreenElement.get())) {
         ASSERT(n != documentElement());
+        
+        if (m_fullScreenRenderer)
+            m_fullScreenRenderer->remove();
+
         setFullScreenRenderer(0);
         m_fullScreenElement = documentElement();
-        m_fullScreenElement->setNeedsStyleRecalc();
-        m_fullScreenElement->detach();
-        updateStyleIfNeeded();
+        recalcStyle(Force);
         m_fullScreenChangeDelayTimer.startOneShot(0);
     }
 #endif

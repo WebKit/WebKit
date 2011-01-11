@@ -1,3 +1,29 @@
+2011-01-10  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52095
+        REGRESSION (r75277): 2 test cases (<1%) had incorrect layout
+        
+        Fixes tests:
+            fullscreen/full-screen-remove-ancestor.html
+            fullscreen/full-screen-remove.html
+            
+        Previously, the above tests were failing because DRT dumped the contents of their
+        <script> tags, though all the explicit tests were passing.  This was caused by
+        the document's render tree being left in an inconsistent state when a full screen
+        element's ancestor was removed from the DOM.
+        
+        In nodeWillBeRemoved(), match the code in webkitDidExitFullScreen().
+        Don't detach the documentElement, but rather simply call recalcStyle(Force).
+
+        * dom/Document.cpp:
+        (WebCore::Document::nodeWillBeRemoved):
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::setAnimating): #if ENABLED -> # if USE
+        * rendering/RenderFullScreen.h:
+        (WebCore::RenderFullScreen::RenderFullScreen): RenderFullScreen should be an anonymous renderer.
+
 2011-01-10  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
