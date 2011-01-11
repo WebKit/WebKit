@@ -1,3 +1,24 @@
+2011-01-11  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new chromium GPU test baselines.
+
+        These tests required rebaselining after the skia roll in
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=70835.
+
+        * platform/chromium-gpu-linux/fast/canvas/canvas-text-alignment-expected.checksum:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/fillrect_gradient-expected.checksum:
+        * platform/chromium-gpu-linux/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.checksum:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.txt:
+        * platform/chromium-gpu-win/fast/canvas/fillrect_gradient-expected.checksum:
+        * platform/chromium-gpu-win/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/fillrect_gradient-expected.txt:
+        * platform/chromium-gpu-win/fast/canvas/gradient-add-second-start-end-stop-expected.checksum:
+        * platform/chromium-gpu-win/fast/canvas/gradient-add-second-start-end-stop-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/gradient-add-second-start-end-stop-expected.txt:
+
 2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
