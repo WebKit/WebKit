@@ -1,3 +1,9 @@
+2011-01-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r75523.
+
+        * platform/wince/DragDataWinCE.cpp: Added missing include.
+
 2011-01-11  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.
