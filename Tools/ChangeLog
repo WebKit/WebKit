@@ -1,3 +1,11 @@
+2011-01-11  Peter Varga  <pvarga@webkit.org>
+
+        Unreviewed.
+
+        Add myself to committers' list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-01-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
