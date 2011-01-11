@@ -2,6 +2,14 @@
 
         Reviewed by Xan Lopez.
 
+        Update the NEWS file in preparation for the 1.3.10 release.
+
+        * NEWS: Update the NEWS.
+
+2011-01-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] Remove use of deprecated GTK+ methods before the 1.3.10 release
         https://bugs.webkit.org/show_bug.cgi?id=52173
 
