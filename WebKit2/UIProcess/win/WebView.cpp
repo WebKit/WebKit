@@ -622,13 +622,7 @@ void WebView::processDidCrash()
 
 void WebView::didRelaunchProcess()
 {
-    RECT clientRect;
-    if (!::GetClientRect(m_window, &clientRect))
-        return;
-
-    m_page->reinitializeWebPage(IntRect(clientRect).size());
     updateNativeCursor();
-
     ::InvalidateRect(m_window, 0, TRUE);
 }
 

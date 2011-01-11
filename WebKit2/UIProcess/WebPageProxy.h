@@ -135,7 +135,6 @@ public:
     void relaunch();
 
     void initializeWebPage();
-    void reinitializeWebPage(const WebCore::IntSize&);
 
     void close();
     bool tryClose();

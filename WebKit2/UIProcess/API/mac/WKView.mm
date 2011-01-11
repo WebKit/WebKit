@@ -1219,8 +1219,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)_didRelaunchProcess
 {
-    _data->_page->reinitializeWebPage(IntSize([self bounds].size));
-    
     [self setNeedsDisplay:YES];
 }
 
