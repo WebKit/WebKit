@@ -1,3 +1,18 @@
+2011-01-11  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Missing call to popTempSortVector() for exception case in JSArray::sort.
+        https://bugs.webkit.org/show_bug.cgi?id=50718
+
+        Fix to patch of 50718 that added pushTempSortVector() and 
+        popTempSortVector() to JSArray::sort() to mark elements during sort.
+        Need to add popTempSortVector() for the return case if toString()
+        had an exception.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort): Added popTempSortVector()
+
 2011-01-11  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Darin Adler.

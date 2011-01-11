@@ -1,3 +1,21 @@
+2011-01-11  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Missing call to popTempSortVector() for exception case in JSArray::sort.
+        https://bugs.webkit.org/show_bug.cgi?id=50718
+
+        New test to validate balanced calls to pushTempSortVector() and
+        popTempSortVector().
+
+        * fast/js/array-sort-exception-expected.txt: Added.
+        * fast/js/array-sort-exception.html: Added.
+        * fast/js/script-tests/array-sort-exception.js: Added.
+        (do_gc):
+        (Item):
+        (toString_throw):
+        (test):
+
 2011-01-11  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update.

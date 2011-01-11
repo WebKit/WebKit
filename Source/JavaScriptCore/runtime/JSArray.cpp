@@ -952,8 +952,10 @@ void JSArray::sort(ExecState* exec)
     for (size_t i = 0; i < lengthNotIncludingUndefined; i++)
         values[i].second = values[i].first.toString(exec);
 
-    if (exec->hadException())
+    if (exec->hadException()) {
+        Heap::heap(this)->popTempSortVector(&values);
         return;
+    }
 
     // FIXME: Since we sort by string value, a fast algorithm might be to use a radix sort. That would be O(N) rather
     // than O(N log N).
