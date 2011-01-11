@@ -1,3 +1,17 @@
+2011-01-11  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        commit-queue should know how to upload archived results (for test flakes or general failures)
+        https://bugs.webkit.org/show_bug.cgi?id=52048
+
+        I changed the API for archive_last_layout_test_results w/o updating the implementation.  Oops.
+        This fixes an exception seen on the commit-queue when attempting to report flaky tests.
+
+        * Scripts/webkitpy/common/system/workspace.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2011-01-11  Sam Weinig  <sam@webkit.org>
 
         Roll r75474 back in.

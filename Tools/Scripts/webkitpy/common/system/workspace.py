@@ -29,6 +29,7 @@
 # A home for file logic which should sit above FileSystem, but
 # below more complicated objects.
 
+import zipfile
 
 class Workspace(object):
     def __init__(self, filesystem, executive):
@@ -47,7 +48,7 @@ class Workspace(object):
         # If we can't find an unused name in search_limit tries, just give up.
         return None
 
-    def create_zip(self, zip_path, source_path):
+    def create_zip(self, zip_path, source_path, zip_class=zipfile.ZipFile):
         # It's possible to create zips with Python:
         # zip_file = ZipFile(zip_path, 'w')
         # for root, dirs, files in os.walk(source_path):
@@ -57,3 +58,4 @@ class Workspace(object):
         # However, getting the paths, encoding and compression correct could be non-trivial.
         # So, for now we depend on the environment having "zip" installed (likely fails on Win32)
         self._executive.run_command(['zip', zip_path, source_path])
+        return zip_class(zip_path)
