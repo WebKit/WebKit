@@ -1,3 +1,23 @@
+2011-01-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r71934) Can't type in search edit field on skin-one.com
+        https://bugs.webkit.org/show_bug.cgi?id=52195
+
+        Restored original (pre-71934) check in the test to ensure that
+        selectstart does not propagate outside of the shadow DOM.
+
+        Consolidated shadow-boundary-crossing-2.html into shadow-boundary-crossing.html.
+
+        * fast/events/shadow-boundary-crossing-2-expected.txt: Renamed to
+            shadow-boundary-crossing-expected.txt.
+        * fast/events/shadow-boundary-crossing-2.html: Renamed to
+            shadow-boundary-crossing.html.
+        * fast/events/shadow-boundary-crossing-expected.txt: Removed.
+        * fast/events/shadow-boundary-crossing.html: Removed after folding the
+            test into the new shadow-boundary-crossing.html.
+
 2011-01-11  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectation update.

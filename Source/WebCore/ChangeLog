@@ -1,3 +1,19 @@
+2011-01-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r71934) Can't type in search edit field on skin-one.com
+        https://bugs.webkit.org/show_bug.cgi?id=52195
+
+        Restored the original behavior, where the selectstart event is not
+        dispatched when selection changes inside of the shadow DOM.
+
+        * dom/Node.cpp:
+        (WebCore::determineDispatchBehavior): Moved EventDispatchBehavior-determining
+            logic into a helper function, also added a check to keep selectstart
+                events inside of the shadow DOM.
+        (WebCore::Node::dispatchGenericEvent): Changed to use the helper function.
+
 2011-01-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Eric Seidel.

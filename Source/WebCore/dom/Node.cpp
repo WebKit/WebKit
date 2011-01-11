@@ -2611,6 +2611,22 @@ static const EventContext* topEventContext(const Vector<EventContext>& ancestors
     return ancestors.isEmpty() ? 0 : &ancestors.last();
 }
 
+static EventDispatchBehavior determineDispatchBehavior(Event* event)
+{
+    // Per XBL 2.0 spec, mutation events should never cross shadow DOM boundary:
+    // http://dev.w3.org/2006/xbl2/#event-flow-and-targeting-across-shadow-s
+    if (event->isMutationEvent())
+        return StayInsideShadowDOM;
+
+    // WebKit never allowed selectstart event to cross the the shadow DOM boundary.
+    // Changing this breaks existing sites.
+    // See https://bugs.webkit.org/show_bug.cgi?id=52195 for details.
+    if (event->type() == eventNames().selectstartEvent)
+        return StayInsideShadowDOM;
+
+    return RetargetEvent;
+}
+
 bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<Event> event(prpEvent);
@@ -2625,7 +2641,7 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     RefPtr<Node> thisNode(this);
     RefPtr<EventTarget> originalTarget = event->target();
     Vector<EventContext> ancestors;
-    getEventAncestors(ancestors, originalTarget.get(), event->isMutationEvent() ? StayInsideShadowDOM : RetargetEvent);
+    getEventAncestors(ancestors, originalTarget.get(), determineDispatchBehavior(event.get()));
 
     WindowEventContext windowContext(event.get(), this, topEventContext(ancestors));
 
