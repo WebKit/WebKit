@@ -36,7 +36,7 @@
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "EventHandler.h"
-#include "EventNames.h"
+#include "EventQueue.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -539,7 +539,7 @@ void RenderListBox::valueChanged(Scrollbar*)
     if (newOffset != m_indexOffset) {
         m_indexOffset = newOffset;
         repaint();
-        node()->dispatchEvent(Event::create(eventNames().scrollEvent, false, false));
+        node()->document()->eventQueue()->enqueueScrollEvent(node(), EventQueue::ScrollEventElementTarget);
     }
 }
 

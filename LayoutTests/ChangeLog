@@ -1,5 +1,35 @@
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
+        Reviewed by Darin Fisher.
+
+        Scroll event should be fired asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=45631
+        
+        Update existing tests that assumed that scroll events fired
+        synchronously.
+
+        * editing/input/page-up-down-scrolls-expected.txt:
+        * editing/input/page-up-down-scrolls.html:
+        * fast/events/fire-scroll-event-element-expected.txt: Copied from LayoutTests/fast/events/fire-scroll-event-expected.txt.
+        * fast/events/fire-scroll-event-element.html: Added. Does the same
+            tests as fire-scroll-event.html, but on an individual element instead
+            of the whole document.
+        * fast/events/fire-scroll-event-expected.txt:
+        * fast/events/fire-scroll-event.html: Now explicitly tests for
+            synchronous behavior when scrolling the document, and that we don't
+            fire the event more than once.
+        * fast/events/remove-child-onscroll.html:
+        * fast/events/scroll-during-zoom-change.html:
+        * fast/events/scroll-event-does-not-bubble.html:
+        * fast/events/scroll-event-phase-expected.txt: Added.
+        * fast/events/scroll-event-phase.html: Added. Checks that we can listen
+            for scroll events in both the capture and bubble phase.
+        * fast/layers/removed-by-scroll-handler.html:
+        * fast/overflow/onscroll-layer-self-destruct.html:
+        * fast/repaint/repaint-during-scroll.html:
+
+2011-01-11  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed; new and updated mac-leopard baselines.
 
         Update stale or missing Leopard baselines (tests currently pass on Snow

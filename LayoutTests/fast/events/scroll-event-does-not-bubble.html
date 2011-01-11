@@ -1,11 +1,22 @@
 <html>
 <script>
+var windowWasScrolled = false;
+var doneTimeout;
+
 function windowScrolled() {
+    windowWasScrolled = true;
     document.getElementById('result').innerHTML = 'FAILURE: window.onscroll was called.'; 
+    clearTimeout(doneTimeout);    
 }
 
 function divScrolled() {
-    document.getElementById('result').innerHTML = 'SUCCESS: div.onscroll was called, but window.onscroll was not.'; 
+    if (!windowWasScrolled)
+        document.getElementById('result').innerHTML = 'SUCCESS: div.onscroll was called, but window.onscroll was not.'; 
+    // Don't call notifyDone straight away, in case there's another scroll event coming/bubbling.
+    doneTimeout = setTimeout(function() {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        }, 100);    
 }
 
 function runTest() {
@@ -24,10 +35,6 @@ function runTest() {
     
     // Don't pollute the test result with nonsense.
     div.innerHTML = '';
-    
-    if (window.layoutTestController) 
-        layoutTestController.notifyDone();
-    
 }
 
 </script>

@@ -1,59 +1,11 @@
-PASSED
+Checks that the scroll event fires on the document asychronously and only once.
 
-If the word 'PASSED' does not appear above, then the test has failed. If the test fails, it means that a scroll event did not fire.
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
+
+Scroll event bubbles: true
+PASS Scroll position: (200, 200)
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

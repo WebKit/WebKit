@@ -11,29 +11,33 @@
 <p>
     Result: <span id="result">test did not complete.</span>
 </p>
-<div id="t" style="overflow: auto; width: 200px; height: 100px;" onscroll="if (overflowRemove) this.parentNode.removeChild(this);">
+<div id="t" style="overflow: auto; width: 200px; height: 100px;" onscroll="this.parentNode.removeChild(this);handleScroll(0);">
     <div style="height: 200px;"></div>
 </div>
 
-<div style="overflow: auto; width: 200px; height: 100px;" onscroll="if (secondOverflowRemove) this.parentNode.removeChild(this);">
+<div style="overflow: auto; width: 200px; height: 100px;" onscroll="this.parentNode.removeChild(this);handleScroll(1);">
     <div style="height: 200px;"></div>
     <div id="d"></div>
 </div>
 
 <script>
-    var overflowRemove = false;
-    var secondOverflowRemove = false;
+    var scrolledFirstContainer = false;
+    var scrolledSecondContainer = false;
 
     document.body.offsetTop; t.scrollTop = 20;
 
-    overflowRemove = true;
-    document.getElementById('t').innerHTML = '';
-
-    secondOverflowRemove = true;
     document.getElementById('d').scrollIntoView();
     
-    document.getElementById('result').innerText = "SUCCESS";
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    function handleScroll(index)
+    {
+        if (index == 0) scrolledFirstContainer = true;
+        else if (index == 1) scrolledSecondContainer = true;
+        
+        if (scrolledFirstContainer && scrolledSecondContainer) {
+            document.getElementById('result').innerText = "SUCCESS";
+        
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }
+    }
 </script>

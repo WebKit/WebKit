@@ -36,6 +36,7 @@
 #include "DragController.h"
 #include "Editor.h"
 #include "EventNames.h"
+#include "EventQueue.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FocusController.h"
@@ -2798,7 +2799,7 @@ void EventHandler::sendScrollEvent()
 {
     setFrameWasScrolledByUser();
     if (m_frame->view() && m_frame->document())
-        m_frame->document()->dispatchEvent(Event::create(eventNames().scrollEvent, true, false));
+        m_frame->document()->eventQueue()->enqueueScrollEvent(m_frame->document(), EventQueue::ScrollEventDocumentTarget);
 }
 
 void EventHandler::setFrameWasScrolledByUser()

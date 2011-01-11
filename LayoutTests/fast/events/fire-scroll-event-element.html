@@ -1,22 +1,26 @@
 <html>
 <link rel="stylesheet" href="../js/resources/js-test-style.css">
 <script src="../js/resources/js-test-pre.js"></script>
-<body style="min-width: 5000px; min-height: 5000px">
+<body>
 <p id="description"></p>
 <div id="console"></div>
+<div id="container" style="overflow: auto; width: 500px; height: 500px">
+  <div style="height: 5000px; width: 5000px;"></div>
+</div>
 <script>
-description('Checks that the scroll event fires on the document asychronously and only once.');
+description('Checks that the scroll event fires on elements asychronously and only once.');
 
 var eventCount = 0;
 var doneTimeout;
 
-onscroll = function(event)
+function scrollHandler(event)
 {
     eventCount++;
     if (eventCount == 1) {
         debug('Scroll event bubbles: ' + event.bubbles);
-        var scrollX = document.body.scrollLeft;
-        var scrollY = document.body.scrollTop;
+        var container = document.getElementById('container');
+        var scrollX = container.scrollLeft;
+        var scrollY = container.scrollTop;
         testPassed('Scroll position: (' + scrollX + ', ' + scrollY + ')');
         // Don't call notifyDone straight away, in case there's another scroll event coming.
         doneTimeout = setTimeout(finishJSTest, 100);
@@ -29,12 +33,14 @@ onscroll = function(event)
 
 onload = function()
 {
-    window.scrollTo(100, 100);
+    var container = document.getElementById('container');
+    container.addEventListener('scroll', scrollHandler, false);
+    container.scrollTop = 100;
     if (eventCount > 0) {
-        testFailed('Scroll event fired synchronously');
-        finishJSTest();
+      testFailed('Scroll event fired synchronously');
+      finishJSTest();
     }
-    window.scrollTo(200, 200);
+    container.scrollTop = 200;
 }
 
 var successfullyParsed = true;

@@ -1,3 +1,32 @@
+2011-01-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Scroll event should be fired asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=45631
+
+        Tests: fast/events/fire-scroll-event.html
+               fast/events/fire-scroll-event-element.html
+               fast/events/scroll-event-phase.html
+
+        Makes scroll events fire asynchronously to be in compliance with the
+        CSSOM View Module and consistent with Gecko, Opera and (to some degree)
+        IE.
+        
+        Implemented via the EventQueue class added by r74062 (EventQueue now
+        has a convenience enqueueScrollEvent method).
+
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueue::enqueueScrollEvent):
+        (WebCore::EventQueue::pendingEventTimerFired):
+        * dom/EventQueue.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendScrollEvent):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::valueChanged):
+
 2011-01-11  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r75523.

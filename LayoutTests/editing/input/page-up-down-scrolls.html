@@ -2,38 +2,41 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 
-function scr()
-{
+var step = 0;
+
+onscroll = function() {
     document.getElementById('log').innerText += 'x';
+
+    switch (step) {
+    case 0:
+        if (window.eventSender)
+            eventSender.keyDown('pageUp');
+            break;
+    case 1:
+        document.getElementById('results').innerText = 'PASS';
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+        break;
+    }
+    
+    step++;
 }
 
 function runTest()
 {
-    if (!window.eventSender)
-        return;
-
-    window.addEventListener('scroll', scr, false);
-
-    eventSender.keyDown("pageDown");
-    var text = document.getElementById('log').innerText;
-    if (text != "x")
-        throw "log should contain x, not " + text;
-
-    eventSender.keyDown("pageUp");
-    var text = document.getElementById('log').innerText;
-    if (text != "xx")
-        throw "log should contain xx, not " + text;
-
-    document.getElementById("results").innerText = "PASS";
+    if (window.eventSender)
+        eventSender.keyDown('pageDown');
 }
 </script>
 </head>
 <body onload="runTest()"> 
 <span id="log" style="position:fixed"></span> 
-<div>This test simulates hitting page up and page down once each. Both keypresses should generate exactly one scroll event. This test requires DRT to pass.</div>
+<div>This test simulates hitting page up and page down once each. Both keypresses should generate exactly one scroll event. If running manually, press the keys now.</div>
 <div id="results">FAIL</div>
 <div style="height:50000px">(just here to force scrollbars)</div> 
 <script> 

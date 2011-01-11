@@ -48,12 +48,26 @@ void EventQueue::enqueueEvent(PassRefPtr<Event> event)
         m_pendingEventTimer.startOneShot(0);
 }
 
+void EventQueue::enqueueScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)
+{
+    if (!m_nodesWithQueuedScrollEvents.add(target.get()).second)
+        return;
+
+    // Per the W3C CSSOM View Module, scroll events fired at the document should bubble, others should not.
+    bool canBubble = targetType == ScrollEventDocumentTarget;
+    RefPtr<Event> scrollEvent = Event::create(eventNames().scrollEvent, canBubble, false /* non cancelleable */);
+    scrollEvent->setTarget(target);
+    enqueueEvent(scrollEvent.release());
+}
+
 void EventQueue::pendingEventTimerFired(Timer<EventQueue>*)
 {
     ASSERT(!m_pendingEventTimer.isActive());
 
     Vector<RefPtr<Event> > queuedEvents;
     queuedEvents.swap(m_queuedEvents);
+    
+    m_nodesWithQueuedScrollEvents.clear();
 
     for (size_t i = 0; i < queuedEvents.size(); i++)
         dispatchEvent(queuedEvents[i].release());

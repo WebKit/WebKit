@@ -1,0 +1,45 @@
+<html>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<body style="min-height: 2000px"> 
+<p id="description"></p>
+<div id="console"></div>
+
+<script type="text/javascript">
+description('Tests that we can listen for scroll events on the document in both the capture and bubble phases.');
+
+var triggeredCaptureListener = false;
+var triggeredBubbleListener = false;
+
+window.addEventListener(
+    'scroll',
+    function() {
+        triggeredCaptureListener = true;
+        checkComplete();
+    },
+    true);
+
+window.addEventListener(
+    'scroll',
+    function(event) {
+        triggeredBubbleListener = true;
+        checkComplete();
+    },
+    false);
+
+function checkComplete()
+{
+    if (triggeredCaptureListener && triggeredBubbleListener) {
+        debug('Both capture and bubble phase listeners were invoked.');
+        finishJSTest();
+    }
+}
+
+window.scrollTo(200, 200);
+
+var successfullyParsed = true;
+var jsTestIsAsync = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

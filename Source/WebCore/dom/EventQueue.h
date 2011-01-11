@@ -28,6 +28,7 @@
 #define EventQueue_h
 
 #include "Timer.h"
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -41,9 +42,15 @@ class EventQueue {
     WTF_MAKE_NONCOPYABLE(EventQueue);
 
 public:
+    enum ScrollEventTargetType {
+        ScrollEventDocumentTarget,
+        ScrollEventElementTarget
+    };
+
     EventQueue();
 
     void enqueueEvent(PassRefPtr<Event>);
+    void enqueueScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
 
 private:
     void pendingEventTimerFired(Timer<EventQueue>*);
@@ -51,6 +58,7 @@ private:
 
     Timer<EventQueue> m_pendingEventTimer;
     Vector<RefPtr<Event> > m_queuedEvents;
+    HashSet<Node*> m_nodesWithQueuedScrollEvents;
 };
 
 }
