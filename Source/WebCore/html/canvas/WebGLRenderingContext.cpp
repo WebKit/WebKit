@@ -708,7 +708,7 @@ void WebGLRenderingContext::copyTexImage2D(unsigned long target, long level, uns
         long clippedX, clippedY, clippedWidth, clippedHeight;
         if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
             m_context->texImage2DResourceSafe(target, level, internalformat, width, height, border,
-                                              internalformat, GraphicsContext3D::UNSIGNED_BYTE);
+                                              internalformat, GraphicsContext3D::UNSIGNED_BYTE, m_unpackAlignment);
             if (clippedWidth > 0 && clippedHeight > 0) {
                 m_context->copyTexSubImage2D(target, level, clippedX - x, clippedY - y,
                                              clippedX, clippedY, clippedWidth, clippedHeight);
@@ -751,16 +751,14 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
         if (clip2D(x, y, width, height, getBoundFramebufferWidth(), getBoundFramebufferHeight(), &clippedX, &clippedY, &clippedWidth, &clippedHeight)) {
             unsigned long format = tex->getInternalFormat(target, level);
             unsigned long type = tex->getType(target, level);
-            unsigned int componentsPerPixel = 0;
-            unsigned int bytesPerComponent = 0;
-            bool valid = m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent);
-            if (!valid) {
-                m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-                return;
-            }
             OwnArrayPtr<unsigned char> zero;
             if (width && height) {
-                unsigned long size = componentsPerPixel * bytesPerComponent * width * height;
+                unsigned int size;
+                GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &size, 0);
+                if (error != GraphicsContext3D::NO_ERROR) {
+                    m_context->synthesizeGLError(error);
+                    return;
+                }
                 zero = adoptArrayPtr(new unsigned char[size]);
                 if (!zero) {
                     m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
@@ -768,11 +766,7 @@ void WebGLRenderingContext::copyTexSubImage2D(unsigned long target, long level, 
                 }
                 memset(zero.get(), 0, size);
             }
-            if (zero)
-                m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
             m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, zero.get());
-            if (zero)
-                m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
             if (clippedWidth > 0 && clippedHeight > 0) {
                 m_context->copyTexSubImage2D(target, level, xoffset + clippedX - x, yoffset + clippedY - y,
                                              clippedX, clippedY, clippedWidth, clippedHeight);
@@ -2412,30 +2406,35 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
         return;
     }
     // Validate input parameters.
-    unsigned int componentsPerPixel, bytesPerComponent;
-    if (!m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent)) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
-        return;
-    }
     if (!pixels) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    if (width < 0 || height < 0) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
-        return;
-    }
-    if (format != GraphicsContext3D::RGBA && type != GraphicsContext3D::UNSIGNED_BYTE) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-        return;
-    }
-    if (format != GraphicsContext3D::RGBA || type != GraphicsContext3D::UNSIGNED_BYTE) {
+    switch (format) {
+    case GraphicsContext3D::ALPHA:
+    case GraphicsContext3D::RGB:
+    case GraphicsContext3D::RGBA:
+        break;
+    default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }
+    switch (type) {
+    case GraphicsContext3D::UNSIGNED_BYTE:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
+    case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
+    case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
+        break;
+    default:
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return;
+    }
+    if (format != GraphicsContext3D::RGBA || type != GraphicsContext3D::UNSIGNED_BYTE) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
     // Validate array type against pixel type.
-    if ((type == GraphicsContext3D::UNSIGNED_BYTE && !pixels->isUnsignedByteArray())
-        || (type != GraphicsContext3D::UNSIGNED_BYTE && !pixels->isUnsignedShortArray())) {
+    if (!pixels->isUnsignedByteArray()) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
@@ -2444,37 +2443,31 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
         return;
     }
     // Calculate array size, taking into consideration of PACK_ALIGNMENT.
-    unsigned long bytesPerRow = componentsPerPixel * bytesPerComponent * width;
-    unsigned long padding = 0;
-    unsigned long residualBytes = bytesPerRow % m_packAlignment;
-    if (residualBytes) {
-        padding = m_packAlignment - residualBytes;
-        bytesPerRow += padding;
+    unsigned int totalBytesRequired;
+    unsigned int padding;
+    GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_packAlignment, &totalBytesRequired, &padding);
+    if (error != GraphicsContext3D::NO_ERROR) {
+        m_context->synthesizeGLError(error);
+        return;
     }
-    // The last row needs no padding.
-    unsigned long totalBytes = bytesPerRow * height - padding;
-    unsigned long num = totalBytes / bytesPerComponent;
-    if (pixels->byteLength() / bytesPerComponent < num) {
+    if (pixels->byteLength() < totalBytesRequired) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
     void* data = pixels->baseAddress();
     m_context->readPixels(x, y, width, height, format, type, data);
-#if PLATFORM(CG)
+#if OS(DARWIN)
     // FIXME: remove this section when GL driver bug on Mac is fixed, i.e.,
     // when alpha is off, readPixels should set alpha to 255 instead of 0.
-    if ((format == GraphicsContext3D::ALPHA || format == GraphicsContext3D::RGBA) && !m_context->getContextAttributes().alpha) {
-        if (type == GraphicsContext3D::UNSIGNED_BYTE) {
-            unsigned char* pixels = reinterpret_cast<unsigned char*>(data);
-            for (long iy = 0; iy < height; ++iy) {
-                for (long ix = 0; ix < width; ++ix) {
-                    pixels[componentsPerPixel - 1] = 255;
-                    pixels += componentsPerPixel;
-                }
-                pixels += padding;
+    if (!m_context->getContextAttributes().alpha) {
+        unsigned char* pixels = reinterpret_cast<unsigned char*>(data);
+        for (long iy = 0; iy < height; ++iy) {
+            for (long ix = 0; ix < width; ++ix) {
+                pixels[3] = 255;
+                pixels += 4;
             }
+            pixels += padding;
         }
-        // FIXME: check whether we need to do the same with UNSIGNED_SHORT.
     }
 #endif
     cleanupAfterGraphicsCall(false);
@@ -2668,7 +2661,7 @@ void WebGLRenderingContext::texImage2DBase(unsigned target, unsigned level, unsi
     }
     if (!pixels && !isResourceSafe()) {
         bool succeed = m_context->texImage2DResourceSafe(target, level, internalformat, width, height,
-                                                         border, format, type);
+                                                         border, format, type, m_unpackAlignment);
         if (!succeed)
             return;
     } else {
@@ -4001,20 +3994,12 @@ bool WebGLRenderingContext::validateTexFuncData(long width, long height,
         ASSERT_NOT_REACHED();
     }
 
-    unsigned int componentsPerPixel, bytesPerComponent;
-    if (!m_context->computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent)) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+    unsigned int totalBytesRequired;
+    GC3Denum error = m_context->computeImageSizeInBytes(format, type, width, height, m_unpackAlignment, &totalBytesRequired, 0);
+    if (error != GraphicsContext3D::NO_ERROR) {
+        m_context->synthesizeGLError(error);
         return false;
     }
-
-    if (!width || !height)
-        return true;
-    unsigned int validRowBytes = width * componentsPerPixel * bytesPerComponent;
-    unsigned int totalRowBytes = validRowBytes;
-    unsigned int remainder = validRowBytes % m_unpackAlignment;
-    if (remainder)
-        totalRowBytes += (m_unpackAlignment - remainder);
-    unsigned int totalBytesRequired = (height - 1) * totalRowBytes + validRowBytes;
     if (pixels->byteLength() < totalBytesRequired) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return false;

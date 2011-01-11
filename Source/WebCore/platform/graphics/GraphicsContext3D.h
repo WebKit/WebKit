@@ -47,6 +47,8 @@
 typedef unsigned int GC3Denum;
 typedef unsigned char GC3Dboolean;
 typedef unsigned int GC3Dbitfield;
+typedef unsigned char GC3Dubyte;
+typedef unsigned short GC3Dushort;
 typedef int GC3Dint;
 typedef int GC3Dsizei;
 typedef unsigned int GC3Duint;
@@ -491,7 +493,8 @@ public:
 
     // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
     // Return true if no GL error is synthesized.
-    bool texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type);
+    // By default, alignment is 4, the OpenGL default setting.
+    bool texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint alignment = 4);
 
     bool isGLES2Compliant() const;
 
@@ -506,6 +509,19 @@ public:
                                         GC3Denum type,
                                         unsigned int* componentsPerPixel,
                                         unsigned int* bytesPerComponent);
+
+    // Computes the image size in bytes. If paddingInBytes is not null, padding
+    // is also calculated in return. Returns NO_ERROR if succeed, otherwise
+    // return the suggested GL error indicating the cause of the failure:
+    //   INVALID_VALUE if width/height is negative or overflow happens.
+    //   INVALID_ENUM if format/type is illegal.
+    GC3Denum computeImageSizeInBytes(GC3Denum format,
+                                     GC3Denum type,
+                                     GC3Dsizei width,
+                                     GC3Dsizei height,
+                                     GC3Dint alignment,
+                                     unsigned int* imageSizeInBytes,
+                                     unsigned int* paddingInBytes);
 
     // Extracts the contents of the given Image into the passed Vector,
     // packing the pixel data according to the given format and type,

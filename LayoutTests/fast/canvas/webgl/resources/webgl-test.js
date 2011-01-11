@@ -27,6 +27,18 @@ function nonKhronosFrameworkNotifyDone() {
   }
 }
 
+function finishTest() {
+  successfullyParsed = true;
+  var epilogue = document.createElement("script")
+  epilogue.onload = function() {
+    if (window.nonKhronosFrameworkNotifyDone) {
+      window.nonKhronosFrameworkNotifyDone();
+    }
+  };
+  epilogue.src = "../../js/resources/js-test-post.js";
+  document.body.appendChild(epilogue);
+}
+
 //
 //----------------------------------------------------------------------
 

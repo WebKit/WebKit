@@ -33,6 +33,7 @@
 #include "ArrayBufferView.h"
 #include "CheckedInt.h"
 #include "DrawingBuffer.h"
+#include "Extensions3D.h"
 #include "Image.h"
 #include "ImageData.h"
 
@@ -42,62 +43,6 @@
 namespace WebCore {
 
 namespace {
-
-    unsigned int bytesPerComponent(GC3Denum type)
-    {
-        switch (type) {
-        case GraphicsContext3D::UNSIGNED_BYTE:
-            return 1;
-        case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
-        case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
-        case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
-            return 2;
-        case GraphicsContext3D::FLOAT:
-            return 4;
-        default:
-            return 1;
-        }
-    }
-
-    unsigned int componentsPerPixel(GC3Denum format, GC3Denum type)
-    {
-        switch (type) {
-        case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
-        case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
-        case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
-        case GraphicsContext3D::FLOAT:
-            return 1;
-        default:
-            break;
-        }
-        switch (format) {
-        case GraphicsContext3D::ALPHA:
-        case GraphicsContext3D::LUMINANCE:
-            return 1;
-        case GraphicsContext3D::LUMINANCE_ALPHA:
-            return 2;
-        case GraphicsContext3D::RGB:
-            return 3;
-        case GraphicsContext3D::RGBA:
-            return 4;
-        default:
-            return 4;
-        }
-    }
-
-    // This function should only be called if width and height is non-zero and
-    // format/type are valid.  Return 0 if overflow happens.
-    unsigned int imageSizeInBytes(GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type)
-    {
-        ASSERT(width > 0 && height > 0);
-        CheckedInt<uint32_t> checkedWidth(width);
-        CheckedInt<uint32_t> checkedHeight(height);
-        CheckedInt<uint32_t> checkedBytesPerPixel(bytesPerComponent(type) * componentsPerPixel(format, type));
-        CheckedInt<uint32_t> checkedSize = checkedWidth * checkedHeight * checkedBytesPerPixel;
-        if (checkedSize.valid())
-            return checkedSize.value();
-        return 0;
-    }
 
     uint8_t convertColor16LittleTo8(uint16_t value)
     {
@@ -117,17 +62,19 @@ PassRefPtr<DrawingBuffer> GraphicsContext3D::createDrawingBuffer(const IntSize& 
     return DrawingBuffer::create(this, size);
 }
 
-bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type)
+bool GraphicsContext3D::texImage2DResourceSafe(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint unpackAlignment)
 {
+    ASSERT(unpackAlignment == 1 || unpackAlignment == 2 || unpackAlignment == 4 || unpackAlignment == 8);
     OwnArrayPtr<unsigned char> zero;
     if (width > 0 && height > 0) {
-        unsigned int size = imageSizeInBytes(width, height, format, type);
-        if (!size) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        unsigned int size;
+        GC3Denum error = computeImageSizeInBytes(format, type, width, height, unpackAlignment, &size, 0);
+        if (error != GraphicsContext3D::NO_ERROR) {
+            synthesizeGLError(error);
             return false;
         }
         zero = adoptArrayPtr(new unsigned char[size]);
-        if (!zero.get()) {
+        if (!zero) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
             return false;
         }
@@ -155,6 +102,7 @@ bool GraphicsContext3D::computeFormatAndTypeParameters(GC3Denum format,
         *componentsPerPixel = 3;
         break;
     case GraphicsContext3D::RGBA:
+    case Extensions3D::BGRA_EXT: // GL_EXT_texture_format_BGRA8888
         *componentsPerPixel = 4;
         break;
     default:
@@ -162,21 +110,59 @@ bool GraphicsContext3D::computeFormatAndTypeParameters(GC3Denum format,
     }
     switch (type) {
     case GraphicsContext3D::UNSIGNED_BYTE:
-        *bytesPerComponent = sizeof(unsigned char);
+        *bytesPerComponent = sizeof(GC3Dubyte);
         break;
     case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
     case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
     case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
         *componentsPerPixel = 1;
-        *bytesPerComponent = sizeof(unsigned short);
+        *bytesPerComponent = sizeof(GC3Dushort);
         break;
     case GraphicsContext3D::FLOAT: // OES_texture_float
-        *bytesPerComponent = sizeof(float);
+        *bytesPerComponent = sizeof(GC3Dfloat);
         break;
     default:
         return false;
     }
     return true;
+}
+
+GC3Denum GraphicsContext3D::computeImageSizeInBytes(GC3Denum format, GC3Denum type, GC3Dsizei width, GC3Dsizei height, GC3Dint alignment,
+                                                    unsigned int* imageSizeInBytes, unsigned int* paddingInBytes)
+{
+    ASSERT(imageSizeInBytes);
+    ASSERT(alignment == 1 || alignment == 2 || alignment == 4 || alignment == 8);
+    if (width < 0 || height < 0)
+        return GraphicsContext3D::INVALID_VALUE;
+    unsigned int bytesPerComponent, componentsPerPixel;
+    if (!computeFormatAndTypeParameters(format, type, &bytesPerComponent, &componentsPerPixel))
+        return GraphicsContext3D::INVALID_ENUM;
+    if (!width || !height) {
+        *imageSizeInBytes = 0;
+        if (paddingInBytes)
+            *paddingInBytes = 0;
+        return GraphicsContext3D::NO_ERROR;
+    }
+    CheckedInt<uint32_t> checkedValue(bytesPerComponent * componentsPerPixel);
+    checkedValue *=  width;
+    if (!checkedValue.valid())
+        return GraphicsContext3D::INVALID_VALUE;
+    unsigned int validRowSize = checkedValue.value();
+    unsigned int padding = 0;
+    unsigned int residual = validRowSize % alignment;
+    if (residual) {
+        padding = alignment - residual;
+        checkedValue += padding;
+    }
+    // Last row needs no padding.
+    checkedValue *= (height - 1);
+    checkedValue += validRowSize;
+    if (!checkedValue.valid())
+        return GraphicsContext3D::INVALID_VALUE;
+    *imageSizeInBytes = checkedValue.value();
+    if (paddingInBytes)
+        *paddingInBytes = padding;
+    return GraphicsContext3D::NO_ERROR;
 }
 
 bool GraphicsContext3D::extractImageData(Image* image,

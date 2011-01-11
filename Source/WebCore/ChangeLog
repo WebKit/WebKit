@@ -1,3 +1,22 @@
+2011-01-10  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Need to consider UNPACK_ALIGNMENT in GraphicsContext3D::texImage2DResourceSafe
+        https://bugs.webkit.org/show_bug.cgi?id=52068
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::copyTexImage2D): Use computeImageSizeInBytes.
+        (WebCore::WebGLRenderingContext::copyTexSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::readPixels): Ditto, and fix a bug on generating the wrong error.
+        (WebCore::WebGLRenderingContext::texImage2DBase): Ditto.
+        (WebCore::WebGLRenderingContext::validateTexFuncData): Use computeImageSizeInBytes.
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2DResourceSafe): Add a new parameter alignment.
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters): Add more supported format/type.
+        (WebCore::GraphicsContext3D::computeImageSizeInBytes): Added.
+        * platform/graphics/GraphicsContext3D.h:
+
 2011-01-10  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

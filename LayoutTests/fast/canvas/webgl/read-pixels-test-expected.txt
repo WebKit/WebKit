@@ -131,13 +131,19 @@ PASS color pixel at 1, 1 should be about 0
 PASS getError was expected value: NO_ERROR : there should be no GL errors
 
 check disallowed formats
-PASS getError was expected value: INVALID_ENUM : Should not be able to read as RGB / UNSIGNED_BYTE
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGB / UNSIGNED_BYTE
 PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGB / UNSIGNED_SHORT_5_6_5
-PASS getError was expected value: INVALID_ENUM : Should not be able to read as RGBA / UNSIGNED_SHORT_5_5_5_1
-PASS getError was expected value: INVALID_ENUM : Should not be able to read as RGBA / UNSIGNED_SHORT_4_4_4_4
-PASS getError was expected value: INVALID_ENUM : Should not be able to read as ALPHA / UNSIGNED_BYTE
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGBA / UNSIGNED_SHORT_5_5_5_1
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as RGBA / UNSIGNED_SHORT_4_4_4_4
+PASS getError was expected value: INVALID_OPERATION : Should not be able to read as ALPHA / UNSIGNED_BYTE
 PASS getError was expected value: INVALID_ENUM : Should not be able to read as LUMINANCE / UNSIGNED_BYTE
 PASS getError was expected value: INVALID_ENUM : Should not be able to read as LUMINANCE_ALPHA / UNSIGNED_BYTE
+
+check reading with lots of drawing
+PASS actual is expected
+PASS actual is expected
+PASS actual is expected
+PASS getError was expected value: NO_ERROR : there should be no GL errors
 
 PASS successfullyParsed is true
 

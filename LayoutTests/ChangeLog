@@ -1,3 +1,14 @@
+2011-01-10  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Need to consider UNPACK_ALIGNMENT in GraphicsContext3D::texImage2DResourceSafe
+        https://bugs.webkit.org/show_bug.cgi?id=52068
+
+        * fast/canvas/webgl/read-pixels-test-expected.txt:
+        * fast/canvas/webgl/read-pixels-test.html: Sync with khronos.
+        * fast/canvas/webgl/resources/webgl-test.js: Add finishTest().
+
 2011-01-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.
