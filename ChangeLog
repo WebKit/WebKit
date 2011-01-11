@@ -1,3 +1,15 @@
+2011-01-11  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Add QT_NO_CONCURRENT to the qt_minimal configuration
+        https://bugs.webkit.org/show_bug.cgi?id=52223
+
+        Add QT_NO_CONCURRENT to the qt_minimal configuration to make sure
+        that QtWebKit builds with QT_NO_CONCURRENT defined.
+
+        * WebKit.pri:
+
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed. Update .gitignore with new Chromium dependency.
