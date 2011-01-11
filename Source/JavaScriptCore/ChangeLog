@@ -1,3 +1,18 @@
+2011-01-10  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Use __builtin_expect when compiling using RVCT in GNU mode
+        https://bugs.webkit.org/show_bug.cgi?id=51866
+
+        We should only use __builtin_expect if we are compiling with GCC or RVCT 3 or higher in GNU mode
+        as pointed out by Siddharth Mathur per <http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0202h/Cjabddedbde.html>.
+
+        * wtf/AlwaysInline.h:
+        * wtf/Platform.h: Removed define WTF_COMPILER_RVCT4_OR_GREATER. Instead added macro
+        function RVCT_VERSION_AT_LEAST so that we can test for an arbitrary minimum RVCT
+        version.
+
 2011-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -74,9 +74,10 @@
 /* COMPILER(RVCT4_OR_GREATER) - ARM RealView Compilation Tools 4.0 or greater */
 #if defined(__CC_ARM) || defined(__ARMCC__)
 #define WTF_COMPILER_RVCT 1
-#if __ARMCC_VERSION >= 400000
-#define WTF_COMPILER_RVCT4_OR_GREATER 1
-#endif
+#define RVCT_VERSION_AT_LEAST(major, minor, patch, build) (__ARMCC_VERSION >= (major * 100000 + minor * 10000 + patch * 1000 + build))
+#else
+/* Define this for !RVCT compilers, just so we can write things like RVCT_VERSION_AT_LEAST(3, 0, 0, 0). */
+#define RVCT_VERSION_AT_LEAST(major, minor, patch, build) 0
 #endif
 
 /* COMPILER(GCC) - GNU Compiler Collection */
@@ -1012,7 +1013,7 @@
 #endif
 
 /* Configure the interpreter */
-#if COMPILER(GCC) || (COMPILER(RVCT4_OR_GREATER) && defined(__GNUC__))
+#if COMPILER(GCC) || (RVCT_VERSION_AT_LEAST(4, 0, 0, 0) && defined(__GNUC__))
 #define HAVE_COMPUTED_GOTO 1
 #endif
 #if HAVE(COMPUTED_GOTO) && ENABLE(INTERPRETER)
