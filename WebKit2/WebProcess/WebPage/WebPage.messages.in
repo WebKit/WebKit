@@ -117,6 +117,9 @@ messages -> WebPage {
     SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled);
 #endif
 
+    # Geolocation
+    DidReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
+
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require

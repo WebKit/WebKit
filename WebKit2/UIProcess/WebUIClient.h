@@ -42,6 +42,7 @@ namespace WebCore {
 namespace WebKit {
 
 class APIObject;
+class GeolocationPermissionRequestProxy;
 class NativeWebKeyboardEvent;
 class WebFrameProxy;
 class WebPageProxy;
@@ -84,6 +85,7 @@ public:
     unsigned long long exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, const String& databaseName, const String& databaseDisplayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage);
 
     bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebOpenPanelParameters::Data&, WebOpenPanelResultListenerProxy*);
+    bool decidePolicyForGeolocationPermissionRequest(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, GeolocationPermissionRequestProxy*);
 };
 
 } // namespace WebKit

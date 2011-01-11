@@ -23,55 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationManager_h
-#define WebGeolocationManager_h
+#include "GeolocationPermissionRequestManagerProxy.h"
 
-#include "MessageID.h"
-#include "WebGeolocationPosition.h"
-#include <wtf/HashSet.h>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
-
-namespace CoreIPC {
-class ArgumentDecoder;
-class Connection;
-}
-
-namespace WebCore {
-class Geolocation;
-}
+#include "WebPageMessages.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 namespace WebKit {
 
-class WebProcess;
-class WebPage;
+GeolocationPermissionRequestManagerProxy::GeolocationPermissionRequestManagerProxy(WebPageProxy* page)
+    : m_page(page)
+{
+}
 
-class WebGeolocationManager {
-    WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
-public:
-    explicit WebGeolocationManager(WebProcess*);
-    ~WebGeolocationManager();
+void GeolocationPermissionRequestManagerProxy::invalidateRequests()
+{
+    PendingRequestMap::const_iterator end = m_pendingRequests.end();
+    for (PendingRequestMap::const_iterator it = m_pendingRequests.begin(); it != end; ++it)
+        it->second->invalidate();
 
-    void registerWebPage(WebPage*);
-    void unregisterWebPage(WebPage*);
+    m_pendingRequests.clear();
+}
 
-    void requestPermission(WebCore::Geolocation*);
+PassRefPtr<GeolocationPermissionRequestProxy> GeolocationPermissionRequestManagerProxy::createRequest(uint64_t geolocationID)
+{
+    RefPtr<GeolocationPermissionRequestProxy> request = GeolocationPermissionRequestProxy::create(this, geolocationID);
+    m_pendingRequests.add(geolocationID, request.get());
+    return request.release();
+}
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+void GeolocationPermissionRequestManagerProxy::didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed)
+{
+    if (!m_page->isValid())
+        return;
 
-private:
-    // Implemented in generated WebGeolocationManagerMessageReceiver.cpp
-    void didReceiveWebGeolocationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    PendingRequestMap::iterator it = m_pendingRequests.find(geolocationID);
+    if (it == m_pendingRequests.end())
+        return;
 
-    void didChangePosition(const WebGeolocationPosition::Data&);
-    void didFailToDeterminePosition();
-
-    WebProcess* m_process;
-    HashSet<WebPage*> m_pageSet;
-
-    HashMap<uint64_t, RefPtr<WebCore::Geolocation> > m_geolocationPermissionRequests;
-};
+    m_page->process()->send(Messages::WebPage::DidReceiveGeolocationPermissionDecision(geolocationID, allowed), m_page->pageID());
+    m_pendingRequests.remove(it);
+}
 
 } // namespace WebKit
-
-#endif // WebGeolocationManager_h

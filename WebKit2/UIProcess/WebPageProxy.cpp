@@ -96,6 +96,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_pageGroup(pageGroup)
     , m_mainFrame(0)
     , m_userAgent(standardUserAgent())
+    , m_geolocationPermissionRequestManager(this)
     , m_estimatedProgress(0)
     , m_isInWindow(m_pageClient->isViewInWindow())
     , m_isVisible(m_pageClient->isViewVisible())
@@ -258,6 +259,8 @@ void WebPageProxy::close()
         m_openPanelResultListener->invalidate();
         m_openPanelResultListener = 0;
     }
+
+    m_geolocationPermissionRequestManager.invalidateRequests();
 
     m_toolTip = String();
 
@@ -2107,6 +2110,8 @@ void WebPageProxy::processDidCrash()
         m_openPanelResultListener = 0;
     }
 
+    m_geolocationPermissionRequestManager.invalidateRequests();
+
     m_toolTip = String();
 
     invalidateCallbackMap(m_dataCallbacks);
@@ -2198,6 +2203,18 @@ void WebPageProxy::exceededDatabaseQuota(uint64_t frameID, const String& originI
     RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
 
     newQuota = m_uiClient.exceededDatabaseQuota(this, frame, origin.get(), databaseName, displayName, currentQuota, currentUsage, expectedUsage);
+}
+
+void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    RefPtr<WebSecurityOrigin> origin = WebSecurityOrigin::create(originIdentifier);
+    RefPtr<GeolocationPermissionRequestProxy> request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
+
+    if (!m_uiClient.decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
+        request->deny();
 }
 
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)

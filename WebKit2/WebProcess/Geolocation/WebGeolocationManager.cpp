@@ -30,6 +30,7 @@
 #include "WebProcess.h"
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
+#include <WebCore/Geolocation.h>
 #include <WebCore/GeolocationController.h>
 #include <WebCore/GeolocationError.h>
 #include <WebCore/GeolocationPosition.h>

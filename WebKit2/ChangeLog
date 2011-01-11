@@ -1,3 +1,55 @@
+2011-01-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make Geolocation features work in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=52078
+
+        Step 2 - Add support for requesting and granting permission for geolocation.
+
+        * Shared/API/c/WKBase.h:
+        * Shared/APIObject.h:
+        * UIProcess/API/C/WebKit2.h:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKGeolocationPermissionRequest.cpp: Added.
+        * UIProcess/API/C/WKGeolocationPermissionRequest.h: Added.
+        Add new API type, WKGeolocationPermissionRequestRef.
+
+        * UIProcess/API/C/WKPage.h:
+        Add new UIClient function for requesting permission.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage): 
+        Stub out the UIClient.
+
+        * UIProcess/GeolocationPermissionRequestManagerProxy.cpp: Added.
+        * UIProcess/GeolocationPermissionRequestManagerProxy.h: Added.
+        * UIProcess/GeolocationPermissionRequestProxy.cpp: Added.
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        * UIProcess/WebUIClient.h:
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp: Added.
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.h: Added.
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        * WebProcess/Geolocation/WebGeolocationManager.h:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.cpp:
+        * WebProcess/WebCoreSupport/WebGeolocationClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::didReceiveGeolocationPermissionDecision):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::geolocationPermissionRequestManager):
+        * WebProcess/WebPage/WebPage.messages.in:
+        Track the permission request through both sides of the process divide.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Add new files.
+
 2011-01-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

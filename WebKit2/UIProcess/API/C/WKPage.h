@@ -176,6 +176,7 @@ typedef void (*WKPageDidDrawCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDidScrollCallback)(WKPageRef page, const void *clientInfo);
 typedef unsigned long long (*WKPageExceededDatabaseQuotaCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage, const void *clientInfo);
 typedef void (*WKPageRunOpenPanelCallback)(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void *clientInfo);
+typedef void (*WKPageDecidePolicyForGeolocationPermissionRequestCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -205,6 +206,7 @@ struct WKPageUIClient {
     WKPageDidScrollCallback                                             pageDidScroll;
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
     WKPageRunOpenPanelCallback                                          runOpenPanel;
+    WKPageDecidePolicyForGeolocationPermissionRequestCallback           decidePolicyForGeolocationPermissionRequest;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

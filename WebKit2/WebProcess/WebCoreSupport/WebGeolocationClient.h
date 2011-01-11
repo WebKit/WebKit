@@ -41,6 +41,8 @@ public:
     {
     }
 
+    virtual ~WebGeolocationClient();
+
 private:
     virtual void geolocationDestroyed();
 
@@ -52,6 +54,7 @@ private:
 
     virtual void requestPermission(WebCore::Geolocation*);
     virtual void cancelPermissionRequest(WebCore::Geolocation*);
+
 
     WebPage* m_page;
 };
