@@ -477,7 +477,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
     // Is previous node a text node? If so, merge into it.
     Node* prev = t->previousSibling();
     if (prev && prev->isTextNode()) {
-        Text* textPrev = static_cast<Text*>(prev);
+        RefPtr<Text> textPrev = static_cast<Text*>(prev);
         textPrev->appendData(t->data(), ec);
         if (ec)
             return;
@@ -490,7 +490,7 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
     // Is next node a text node? If so, merge it in.
     Node* next = t->nextSibling();
     if (next && next->isTextNode()) {
-        Text* textNext = static_cast<Text*>(next);
+        RefPtr<Text> textNext = static_cast<Text*>(next);
         t->appendData(textNext->data(), ec);
         if (ec)
             return;

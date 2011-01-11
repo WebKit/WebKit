@@ -1,3 +1,17 @@
+2011-01-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        RefPtr text node in setOuterText since calling appendData
+        on a text node can fire away dom event listener which might
+        remove the text node from underneath.
+        https://bugs.webkit.org/show_bug.cgi?id=52163
+
+        Test: fast/dom/text-node-append-data-remove-crash.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::setOuterText):
+
 2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
