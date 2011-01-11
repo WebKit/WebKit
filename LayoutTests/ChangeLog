@@ -1,3 +1,12 @@
+2011-01-11  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+
+        Remove now unnecessary Chromium overrides.
+
+        * platform/chromium-mac/fast/regex/malformed-escapes-expected.txt: Removed.
+        * platform/chromium-win/fast/regex/malformed-escapes-expected.txt: Removed.
+
 2011-01-11  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by Eric Seidel.
