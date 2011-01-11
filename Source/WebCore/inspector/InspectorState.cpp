@@ -50,6 +50,7 @@ InspectorState::InspectorState(InspectorClient* client)
     registerBoolean(consoleMessagesEnabled, false, "consoleMessagesEnabled", String());
     registerBoolean(userInitiatedProfiling, false, "userInitiatedProfiling", String());
     registerObject(stickyBreakpoints, String(), String());
+    registerString(injectedScriptSource, String(), String(), String());
 }
 
 void InspectorState::restoreFromInspectorCookie(const String& json)

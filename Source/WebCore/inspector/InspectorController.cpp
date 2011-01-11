@@ -230,12 +230,23 @@ void InspectorController::getInspectorState(RefPtr<InspectorObject>* state)
 void InspectorController::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
 {
     m_state->restoreFromInspectorCookie(inspectorStateCookie);
+
+    String injectedScriptSource = m_state->getString(InspectorState::injectedScriptSource);
+    if (!injectedScriptSource.isEmpty())
+        injectedScriptHost()->setInjectedScriptSource(injectedScriptSource);
+
+    if (!m_frontend)
+        connectFrontend();
+
     if (m_state->getBoolean(InspectorState::timelineProfilerEnabled))
         startTimelineProfiler();
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+    restoreDebugger();
+    restoreProfiler(ProfilerRestoreResetAgent);
     if (m_state->getBoolean(InspectorState::userInitiatedProfiling))
         startUserInitiatedProfiling();
-#endif    
+#endif
 }
 
 void InspectorController::inspect(Node* node)
@@ -498,13 +509,6 @@ void InspectorController::connectFrontend()
     if (!InspectorInstrumentation::hasFrontends())
         ScriptController::setCaptureCallStackForUncaughtExceptions(true);
     InspectorInstrumentation::frontendCreated();
-}
-
-void InspectorController::reuseFrontend()
-{
-    connectFrontend();
-    restoreDebugger();
-    restoreProfiler(ProfilerRestoreResetAgent);
 }
 
 void InspectorController::show()
@@ -1428,6 +1432,7 @@ bool InspectorController::hasXHRBreakpoint(const String& url, String* breakpoint
 void InspectorController::setInjectedScriptSource(const String& source)
 {
      injectedScriptHost()->setInjectedScriptSource(source);
+     m_state->setString(InspectorState::injectedScriptSource, source);
 }
 
 void InspectorController::dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException)

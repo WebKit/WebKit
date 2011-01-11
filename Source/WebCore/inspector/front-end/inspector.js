@@ -493,6 +493,7 @@ WebInspector.loaded = function()
 WebInspector.doLoadedDone = function()
 {
     InspectorBackend.setInjectedScriptSource("(" + injectedScriptConstructor + ");");
+    InspectorFrontendHost.loaded();
 
     var platform = WebInspector.platform;
     document.body.addStyleClass("platform-" + platform);
@@ -502,7 +503,6 @@ WebInspector.doLoadedDone = function()
     var port = WebInspector.port;
     document.body.addStyleClass("port-" + port);
 
-    InspectorFrontendHost.loaded();
     WebInspector.settings = new WebInspector.Settings();
 
     this._registerShortcuts();

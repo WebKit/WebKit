@@ -100,16 +100,12 @@ public:
     int hostId() { return m_hostId; }
 
 private:
-    void setApuAgentEnabled(bool enabled);
-    void connectFrontend(bool afterNavigation);
-
     WebCore::InspectorController* inspectorController();
 
     int m_hostId;
     WebDevToolsAgentClient* m_client;
     WebViewImpl* m_webViewImpl;
     OwnPtr<DebuggerAgentImpl> m_debuggerAgentImpl;
-    bool m_apuAgentEnabled;
     bool m_attached;
 };
 

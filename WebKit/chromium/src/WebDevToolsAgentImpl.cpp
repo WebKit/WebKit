@@ -83,7 +83,6 @@ namespace WebKit {
 
 namespace {
 
-static const char kApuAgentFeatureName[] = "apu-agent";
 static const char kFrontendConnectedFeatureName[] = "frontend-connected";
 static const char kInspectorStateFeatureName[] = "inspector-state";
 
@@ -179,7 +178,6 @@ WebDevToolsAgentImpl::WebDevToolsAgentImpl(
     : m_hostId(client->hostIdentifier())
     , m_client(client)
     , m_webViewImpl(webViewImpl)
-    , m_apuAgentEnabled(false)
     , m_attached(false)
 {
     DebuggerAgentManager::setExposeV8DebuggerProtocol(
@@ -217,12 +215,11 @@ void WebDevToolsAgentImpl::detach()
     ic->close();
     m_debuggerAgentImpl.set(0);
     m_attached = false;
-    m_apuAgentEnabled = false;
 }
 
 void WebDevToolsAgentImpl::frontendLoaded()
 {
-    connectFrontend(false);
+    inspectorController()->connectFrontend();
 }
 
 void WebDevToolsAgentImpl::didNavigate()
@@ -256,43 +253,10 @@ void WebDevToolsAgentImpl::inspectNode(v8::Handle<v8::Value> node)
 
 void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebString& value)
 {
-    if (name == kApuAgentFeatureName)
-        setApuAgentEnabled(value == "true");
-    else if (name == kInspectorStateFeatureName) {
+    if (name == kInspectorStateFeatureName) {
         InspectorController* ic = inspectorController();
         ic->restoreInspectorStateFromCookie(value);
-    } else if (name == kFrontendConnectedFeatureName && !inspectorController()->hasFrontend()) {
-        inspectorController()->injectedScriptHost()->setInjectedScriptSource(value);
-        connectFrontend(true);
     }
-}
-
-void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
-{
-    m_apuAgentEnabled = enabled;
-    InspectorController* ic = inspectorController();
-    if (enabled) {
-        if (!ic->hasFrontend())
-            connectFrontend(true);
-
-        ic->startTimelineProfiler();
-        m_debuggerAgentImpl->setAutoContinueOnException(true);
-    } else
-      ic->stopTimelineProfiler();
-
-    m_client->runtimePropertyChanged(
-        kApuAgentFeatureName,
-        enabled ? String("true") : String("false"));
-}
-
-void WebDevToolsAgentImpl::connectFrontend(bool afterNavigation)
-{
-    if (afterNavigation)
-        inspectorController()->reuseFrontend();
-    else
-        inspectorController()->connectFrontend();
-    // We know that by this time injected script has already been pushed to the backend.
-    m_client->runtimePropertyChanged(kFrontendConnectedFeatureName, inspectorController()->injectedScriptHost()->injectedScriptSource());
 }
 
 WebCore::InspectorController* WebDevToolsAgentImpl::inspectorController()
@@ -397,11 +361,6 @@ bool WebDevToolsAgentImpl::sendMessageToFrontend(const WTF::String& message)
     WebDevToolsAgentImpl* devToolsAgent = static_cast<WebDevToolsAgentImpl*>(m_webViewImpl->devToolsAgent());
     if (!devToolsAgent)
         return false;
-
-    if (devToolsAgent->m_apuAgentEnabled) {
-        m_client->sendDispatchToAPU(message);
-        return true;
-    }
 
     m_client->sendMessageToInspectorFrontend(message);
     return true;
