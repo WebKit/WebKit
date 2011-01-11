@@ -1223,32 +1223,6 @@ BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 
 // Broken pixel tests
 
-// Rebaselining needed because of scrollbars
-BUGCR23498 MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
-BUGCR23498 MAC : fast/block/margin-collapse/103.html = IMAGE
-BUGCR23498 MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
-BUGCR23498 MAC : fast/body-propagation/overflow/001.html = IMAGE
-BUGCR23498 MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
-BUGCR23498 MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
-BUGCR23498 MAC : fast/body-propagation/overflow/005.html = IMAGE
-BUGCR23498 MAC : fast/dom/focus-contenteditable.html = IMAGE
-BUGCR23498 MAC : fast/forms/fieldset-align.html = IMAGE
-BUGCR23498 MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
-BUGCR23498 MAC : fast/overflow/006.html = IMAGE
-BUGCR23498 MAC : fast/overflow/overflow-x-y.html = IMAGE
-BUGCR23498 MAC : fast/replaced/width100percent-image.html = IMAGE
-BUGCR23498 MAC : fast/text/capitalize-boundaries.html = IMAGE
-BUGCR23498 MAC : fast/text/international/thai-line-breaks.html = IMAGE
-BUGCR23498 MAC : fast/text/softHyphen.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/bugs/bug101674.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/bugs/bug29314.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/bugs/bug5797.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/bugs/bug625.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/core/bloomberg.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/core/row_span.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/other/cell_widths.html = IMAGE
-BUGCR23498 MAC : tables/mozilla/other/wa_table_tr_align.html = IMAGE
-
 // Widget location is just slightly off
 BUGCR23496 MAC : css1/box_properties/acid_test.html = IMAGE
 BUGCR23496 MAC : css2.1/t09-c5526c-display-00-e.html = IMAGE
@@ -3071,9 +3045,6 @@ BUG_MIHAIP MAC : fast/events/pointer-events-2.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
-
-// Need rebaselining after r74892 (ideally removal of chromium-mac baselines,
-// should now pass with upstream mac baselines).
 BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-in-attr.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr.html = IMAGE
@@ -3082,6 +3053,34 @@ BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMA
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
 BUG_MIHAIP MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
+
+// Had been marked as failing due to scrollbar differences, and in the meantime
+// the platform/mac and platform/mac-leopard baselines became stale since no
+// other port used them.
+BUG_MIHAIP MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
+BUG_MIHAIP MAC : fast/block/margin-collapse/103.html = IMAGE
+BUG_MIHAIP MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
+BUG_MIHAIP MAC : fast/body-propagation/overflow/001.html = IMAGE
+BUG_MIHAIP MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
+BUG_MIHAIP MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
+BUG_MIHAIP MAC : fast/body-propagation/overflow/005.html = IMAGE
+BUG_MIHAIP MAC : fast/dom/focus-contenteditable.html = IMAGE
+BUG_MIHAIP MAC : fast/forms/fieldset-align.html = IMAGE
+BUG_MIHAIP MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
+BUG_MIHAIP MAC : fast/overflow/006.html = IMAGE
+BUG_MIHAIP MAC : fast/overflow/overflow-x-y.html = IMAGE
+BUG_MIHAIP MAC : fast/replaced/width100percent-image.html = IMAGE
+BUG_MIHAIP MAC : fast/text/capitalize-boundaries.html = IMAGE
+BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
+BUG_MIHAIP MAC : fast/text/softHyphen.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/bugs/bug101674.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/bugs/bug29314.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/bugs/bug5797.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/bugs/bug625.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/core/bloomberg.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/core/row_span.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/other/cell_widths.html = IMAGE
+BUG_MIHAIP MAC : tables/mozilla/other/wa_table_tr_align.html = IMAGE
 
 // Platforms that use Skia don't support elliptical gradients.
 BUGWK51841 : fast/gradients/css3-color-stop-units.html = IMAGE

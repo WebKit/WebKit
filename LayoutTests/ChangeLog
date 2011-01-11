@@ -2,6 +2,14 @@
 
         Unreviewed Chromium test expectations update.
         
+        Reorganized scrollbar-related failures.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-10  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+        
         Remove entries for tests that now pass.
 
         A bunch of tests with scrollbars started to pass after unncessary
