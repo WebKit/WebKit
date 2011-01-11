@@ -2546,6 +2546,7 @@ BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
 BUGWEBGL WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 BUGWEBGL WIN DEBUG : fast/canvas/webgl/texture-complete.html = PASS TEXT
+BUGWEBGL : fast/canvas/webgl/read-pixels-test.html = TIMEOUT
 
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
