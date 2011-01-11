@@ -131,13 +131,10 @@ If you would like to track this test fix with another bug, please close this bug
         flake_message = "The %s just saw %s flake (%s) while processing attachment %s on bug %s." % (self._bot_name, flaky_result.filename, ", ".join(failure_messages), patch.id(), patch.bug_id())
         return "%s\n%s" % (flake_message, self._bot_information())
 
-    def _results_diff_path_for_test(self, flaky_test):
+    def _results_diff_path_for_test(self, test_path):
         # FIXME: This is a big hack.  We should get this path from results.json
         # except that old-run-webkit-tests doesn't produce a results.json
         # so we just guess at the file path.
-        results_path = self._tool.port().layout_tests_results_path()
-        results_directory = os.path.dirname(results_path)
-        test_path = os.path.join(results_directory, flaky_test)
         (test_path_root, _) = os.path.splitext(test_path)
         return "%s-diffs.txt" % test_path_root
 
@@ -153,7 +150,23 @@ If you would like to track this test fix with another bug, please close this bug
         else:
             self._tool.bugs.post_comment_to_bug(bug.id(), latest_flake_message)
 
-    def report_flaky_tests(self, flaky_test_results, patch):
+    def _attach_failure_diff(self, flake_bug_id, flaky_test, results_archive):
+        results_diff_path = self._results_diff_path_for_test(flaky_test)
+        # Check to make sure that the path makes sense.
+        # Since we're not actually getting this path from the results.html
+        # there is a chance it's wrong.
+        bot_id = self._tool.status_server.bot_id or "bot"
+        if results_diff_path in results_archive.namelist():
+            results_diff = results_archive.read(results_diff_path)
+            description = "Failure diff from %s" % bot_id
+            self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_diff, description, filename="failure.diff")
+        else:
+            _log.warn("%s does not exist in results archive, uploading entire archive." % results_diff_path)
+            description = "Archive of layout-test-results from %s" % bot_id
+            # results_archive is a ZipFile object, grab the File object (.fp) to pass to Mechanize for uploading.
+            self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_archive.fp, description, filename="layout-test-results.zip")
+
+    def report_flaky_tests(self, patch, flaky_test_results, results_archive):
         message = "The %s encountered the following flaky tests while processing attachment %s:\n\n" % (self._bot_name, patch.id())
         for flaky_result in flaky_test_results:
             flaky_test = flaky_result.filename
@@ -165,20 +178,12 @@ If you would like to track this test fix with another bug, please close this bug
                 flake_bug_id = self._create_bug_for_flaky_test(flaky_test, author_emails, latest_flake_message)
             else:
                 bug = self._follow_duplicate_chain(bug)
+                # FIXME: Ideally we'd only make one comment per flake, not two.  But that's not possible
+                # in all cases (e.g. when reopening), so for now file attachment and comment are separate.
                 self._update_bug_for_flaky_test(bug, latest_flake_message)
                 flake_bug_id = bug.id()
-            # FIXME: Ideally we'd only make one comment per flake, not two.  But that's not possible
-            # in all cases (e.g. when reopening), so for now we do the attachment in a second step.
-            results_diff_path = self._results_diff_path_for_test(flaky_test)
-            # Check to make sure that the path makes sense.
-            # Since we're not actually getting this path from the results.html
-            # there is a high probaility it's totally wrong.
-            if self._tool.filesystem.exists(results_diff_path):
-                results_diff = self._tool.filesystem.read_binary_file(results_diff_path)
-                bot_id = self._tool.status_server.bot_id or "bot"
-                self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_diff, "Failure diff from %s" % bot_id, filename="failure.diff")
-            else:
-                _log.error("%s does not exist as expected, not uploading." % results_diff_path)
+
+            self._attach_failure_diff(flake_bug_id, flaky_test, results_archive)
             message += "%s bug %s%s\n" % (flaky_test, flake_bug_id, self._optional_author_string(author_emails))
 
         message += "The %s is continuing to process your patch." % self._bot_name

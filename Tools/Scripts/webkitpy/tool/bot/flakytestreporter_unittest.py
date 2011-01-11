@@ -33,6 +33,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_failures
+from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.mocktool import MockTool, MockStatusServer
 
@@ -140,7 +141,15 @@ The dummy-queue is continuing to process your patch.
 
 """
         test_results = [self._mock_test_result('foo/bar.html')]
-        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [test_results, patch], expected_stderr=expected_stderr)
+
+        class MockZipFile(object):
+            def read(self, path):
+                return ""
+
+            def namelist(self):
+                return ['foo/bar-diffs.txt']
+
+        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [patch, test_results, MockZipFile()], expected_stderr=expected_stderr)
 
     def test_optional_author_string(self):
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
@@ -150,6 +159,6 @@ The dummy-queue is continuing to process your patch.
 
     def test_results_diff_path_for_test(self):
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
-        self.assertEqual(reporter._results_diff_path_for_test("test.html"), "/mock/test-diffs.txt")
+        self.assertEqual(reporter._results_diff_path_for_test("test.html"), "test-diffs.txt")
 
     # report_flaky_tests is also tested by queues_unittest

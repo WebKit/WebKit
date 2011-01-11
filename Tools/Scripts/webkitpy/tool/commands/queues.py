@@ -309,12 +309,29 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
             return None
         return LayoutTestResults.results_from_string(results_html)
 
+    def _results_directory(self):
+        results_path = self._tool.port().layout_tests_results_path()
+        # FIXME: This is wrong in two ways:
+        # 1. It assumes that results.html is at the top level of the results tree.
+        # 2. This uses the "old" ports.py infrastructure instead of the new layout_tests/port
+        # which will not support Chromium.  However the new arch doesn't work with old-run-webkit-tests
+        # so we have to use this for now.
+        return os.path.dirname(results_path)
+
+    def archive_last_layout_test_results(self, patch):
+        results_directory = self._results_directory()
+        results_name, _ = os.path.splitext(os.path.basename(results_directory))
+        # Note: We name the zip with the bug_id instead of patch_id to match work_item_log_path().
+        zip_path = self._tool.workspace.find_unused_filename(self._log_directory(), "%s-%s" % (patch.bug_id(), results_name), "zip")
+        self._tool.workspace.create_zip(zip_path, results_directory)
+        return zip_path
+
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
 
-    def report_flaky_tests(self, patch, flaky_test_results):
+    def report_flaky_tests(self, patch, flaky_test_results, results_archive=None):
         reporter = FlakyTestReporter(self._tool, self.name)
-        reporter.report_flaky_tests(flaky_test_results, patch)
+        reporter.report_flaky_tests(patch, flaky_test_results, results_archive)
 
     # StepSequenceErrorHandler methods
 

@@ -46,7 +46,11 @@ class CommitQueueTaskDelegate(object):
     def layout_test_results(self):
         raise NotImplementedError("subclasses must implement")
 
-    def report_flaky_tests(self, patch, flaky_tests):
+    def archive_last_layout_test_results(self, patch):
+        raise NotImplementedError("subclasses must implement")
+
+    # We could make results_archive optional, but for now it's required.
+    def report_flaky_tests(self, patch, flaky_tests, results_archive):
         raise NotImplementedError("subclasses must implement")
 
 
@@ -170,8 +174,8 @@ class CommitQueueTask(object):
         "Landed patch",
         "Unable to land patch")
 
-    def _report_flaky_tests(self, flaky_test_results):
-        self._delegate.report_flaky_tests(self._patch, flaky_test_results)
+    def _report_flaky_tests(self, flaky_test_results, results_archive):
+        self._delegate.report_flaky_tests(self._patch, flaky_test_results, results_archive)
 
     def _test_patch(self):
         if self._patch.is_rollout():
@@ -179,14 +183,15 @@ class CommitQueueTask(object):
         if self._test():
             return True
 
-        first_failing_results = self._failing_results_from_last_run()
-        first_failing_tests = [result.filename for result in first_failing_results]
+        first_results = self._failing_results_from_last_run()
+        first_failing_tests = [result.filename for result in first_results]
+        first_results_archive = self._delegate.archive_last_layout_test_results(self._patch)
         if self._test():
-            self._report_flaky_tests(first_failing_results)
+            self._report_flaky_tests(first_results, first_results_archive)
             return True
 
-        second_failing_results = self._failing_results_from_last_run()
-        second_failing_tests = [result.filename for result in second_failing_results]
+        second_results = self._failing_results_from_last_run()
+        second_failing_tests = [result.filename for result in second_results]
         if first_failing_tests != second_failing_tests:
             # We could report flaky tests here, but since run-webkit-tests
             # is run with --exit-after-N-failures=1, we would need to

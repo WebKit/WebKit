@@ -65,9 +65,15 @@ class MockCommitQueue(CommitQueueTaskDelegate):
     def layout_test_results(self):
         return None
 
-    def report_flaky_tests(self, patch, flaky_results):
+    def report_flaky_tests(self, patch, flaky_results, results_archive):
         flaky_tests = [result.filename for result in flaky_results]
-        log("report_flaky_tests: patch='%s' flaky_tests='%s'" % (patch.id(), flaky_tests))
+        log("report_flaky_tests: patch='%s' flaky_tests='%s' archive='%s'" % (patch.id(), flaky_tests, results_archive.filename))
+
+    def archive_last_layout_test_results(self, patch):
+        log("archive_last_layout_test_results: patch='%s'" % patch.id())
+        archive = Mock()
+        archive.filename = "mock-archive-%s.zip" % patch.id()
+        return archive
 
 
 class CommitQueueTaskTest(unittest.TestCase):
@@ -194,9 +200,10 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK tests failure' patch='197'
+archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
-report_flaky_tests: patch='197' flaky_tests='[]'
+report_flaky_tests: patch='197' flaky_tests='[]' archive='mock-archive-197.zip'
 run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
 command_passed: success_message='Landed patch' patch='197'
 """
@@ -226,6 +233,7 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='197'
+archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='197'
 """
@@ -263,6 +271,7 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='197'
+archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
@@ -290,6 +299,7 @@ run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='197'
+archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']

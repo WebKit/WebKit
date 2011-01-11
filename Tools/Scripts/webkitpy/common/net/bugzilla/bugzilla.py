@@ -30,6 +30,7 @@
 #
 # WebKit's Python module for interacting with Bugzilla
 
+import mimetypes
 import os.path
 import re
 import StringIO
@@ -441,7 +442,11 @@ class Bugzilla(object):
         self.browser['flag_type-3'] = (self._commit_queue_flag(mark_for_landing, mark_for_commit_queue),)
 
         filename = filename or "%s.patch" % timestamp()
-        mimetype = mimetype or "text/plain"
+        if not mimetype:
+            mimetypes.add_type('text/plain', '.patch')  # Make sure mimetypes knows about .patch
+            mimetype, _ = mimetypes.guess_type(filename)
+        if not mimetype:
+            mimetype = "text/plain"  # Bugzilla might auto-guess for us and we might not need this?
         self.browser.add_file(file_object, mimetype, filename, 'data')
 
     def _file_object_for_upload(self, file_or_string):

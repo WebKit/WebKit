@@ -1,3 +1,34 @@
+2011-01-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should know how to upload archived results (for test flakes or general failures)
+        https://bugs.webkit.org/show_bug.cgi?id=52048
+
+        Now the queue will always upload results.  Either the entire zip, or just
+        the diffs.txt in the case of text failures.
+
+        This should make understanding flakes much easier, and paves the way
+        for having the EWS run layout tests (and upload failures).
+
+        In order to upload .zip files I had to teach bugzilla.py to autodetect
+        mime types from the filename.  Since mimetypes.py doesn't include a mapping
+        for .patch files, I have it add one before calling guess_type.
+
+        We may find that always uploading the whole zip instead of just the -diffs.txt
+        file is preferable, but for now I'm keeping the old behavior because it makes
+        quickly understanding text failures easy.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/system/workspace.py: Added.
+        * Scripts/webkitpy/common/system/workspace_unittest.py: Added.
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2011-01-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r75464.

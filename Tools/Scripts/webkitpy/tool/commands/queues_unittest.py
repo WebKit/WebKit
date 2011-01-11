@@ -27,9 +27,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import StringIO
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.net.bugzilla import Attachment
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_failures
@@ -342,12 +344,14 @@ The commit-queue just saw foo/bar.html flake (Text diff mismatch) while processi
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
+MOCK add_attachment_to_bug: bug_id=76, description=Failure diff from bot filename=failure.diff
 MOCK bug comment: bug_id=76, cc=None
 --- Begin comment ---
 The commit-queue just saw bar/baz.html flake (Text diff mismatch) while processing attachment 197 on bug 42.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
+MOCK add_attachment_to_bug: bug_id=76, description=Archive of layout-test-results from bot filename=layout-test-results.zip
 MOCK bug comment: bug_id=42, cc=None
 --- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 197:
@@ -360,7 +364,19 @@ The commit-queue is continuing to process your patch.
 """
         test_names = ["foo/bar.html", "bar/baz.html"]
         test_results = [self._mock_test_result(name) for name in test_names]
-        OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, test_results], expected_stderr=expected_stderr)
+
+        class MockZipFile(object):
+            def __init__(self):
+                self.fp = StringIO()
+
+            def read(self, path):
+                return ""
+
+            def namelist(self):
+                # This is intentionally missing one diffs.txt to exercise the "upload the whole zip" codepath.
+                return ['foo/bar-diffs.txt']
+
+        OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, test_results, MockZipFile()], expected_stderr=expected_stderr)
 
     def test_layout_test_results(self):
         queue = CommitQueue()
@@ -369,6 +385,12 @@ The commit-queue is continuing to process your patch.
         self.assertEquals(queue.layout_test_results(), None)
         queue._read_file_contents = lambda path: ""
         self.assertEquals(queue.layout_test_results(), None)
+
+    def test_archive_last_layout_test_results(self):
+        queue = CommitQueue()
+        queue.bind_to_tool(MockTool())
+        patch = queue._tool.bugs.fetch_attachment(128)
+        queue.archive_last_layout_test_results(patch)
 
 
 class StyleQueueTest(QueuesTest):

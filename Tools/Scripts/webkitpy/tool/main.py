@@ -40,10 +40,7 @@ from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.irc.ircproxy import IRCProxy
 from webkitpy.common.net.statusserver import StatusServer
-from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.platforminfo import PlatformInfo
-from webkitpy.common.system.user import User
+from webkitpy.common.system import executive, filesystem, platforminfo, user, workspace
 from webkitpy.layout_tests import port
 from webkitpy.tool.multicommandtool import MultiCommandTool
 import webkitpy.tool.commands as commands
@@ -70,16 +67,17 @@ class WebKitPatch(MultiCommandTool):
         # manual getter functions (e.g. scm()).
         self.bugs = Bugzilla()
         self.buildbot = BuildBot()
-        self.executive = Executive()
+        self.executive = executive.Executive()
         self._irc = None
-        self.filesystem = FileSystem()
+        self.filesystem = filesystem.FileSystem()
+        self.workspace = workspace.Workspace(self.filesystem, self.executive)
         self._port = None
-        self.user = User()
+        self.user = user.User()
         self._scm = None
         self._checkout = None
         self.status_server = StatusServer()
         self.port_factory = port.factory
-        self.platform = PlatformInfo()
+        self.platform = platforminfo.PlatformInfo()
 
     def scm(self):
         # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
