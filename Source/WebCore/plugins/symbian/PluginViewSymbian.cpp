@@ -278,8 +278,8 @@ void PluginView::setNPWindowIfNeeded()
     
     } else {
         // always call this method before painting.
-        m_npWindow.x = 0;
-        m_npWindow.y = 0;
+        m_npWindow.x = m_windowRect.x();
+        m_npWindow.y = m_windowRect.y();
     
         m_npWindow.clipRect.left = 0;
         m_npWindow.clipRect.top = 0;
