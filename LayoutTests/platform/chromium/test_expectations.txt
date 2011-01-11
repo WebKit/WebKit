@@ -123,11 +123,6 @@ WONTFIX SKIP WIN LINUX : fast/encoding/char-encoding-mac.html = FAIL
 // ever expect to pass this.  Now also timing out.
 BUGCR24189 WONTFIX SKIP : fast/dom/open-and-close-by-DOM.html = FAIL
 
-// Skip because of WebKit bug 18512. These bugs "poison" future tests, causing
-// all SVG objects with fill="red" to be rendered in green.
-WONTFIX SKIP : svg/custom/fill-SVGPaint-interface.svg = PASS
-WONTFIX SKIP : svg/custom/getPresentationAttribute.svg = PASS
-
 // WML is still an inprogress feature upstream. Chromium does not build
 // with WML support, so skip its tests.
 WONTFIX SKIP : wml = FAIL
