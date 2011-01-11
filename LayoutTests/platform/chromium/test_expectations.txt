@@ -3066,17 +3066,6 @@ BUG_MIHAIP MAC : fast/overflow/overflow-x-y.html = IMAGE
 BUG_MIHAIP MAC : fast/replaced/width100percent-image.html = IMAGE
 BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
 
-// Had been marked as failing due to scrollbar differences, and in the meantime
-// the platform/mac and platform/mac-leopard baselines became stale since no
-// other port used them.
-BUG_MIHAIP MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
-BUG_MIHAIP MAC : fast/dom/focus-contenteditable.html = IMAGE
-BUG_MIHAIP MAC : fast/forms/fieldset-align.html = IMAGE
-BUG_MIHAIP MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
-BUG_MIHAIP MAC : fast/text/capitalize-boundaries.html = IMAGE
-BUG_MIHAIP MAC : fast/text/softHyphen.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/other/wa_table_tr_align.html = IMAGE
-
 // Platforms that use Skia don't support elliptical gradients.
 BUGWK51841 : fast/gradients/css3-color-stop-units.html = IMAGE
 BUGWK51841 : fast/gradients/css3-color-stops.html = IMAGE
