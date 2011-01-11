@@ -2,6 +2,18 @@
 
         Reviewed by Mihai Parparita.
 
+        fix exception when adding a comment to a side-by-side diff
+        https://bugs.webkit.org/show_bug.cgi?id=52240
+
+        prev() and next() won't get the previous and next lines in
+        side-by-side mode. Instead do a query to find them.
+
+        * code-review.js:
+
+2011-01-11  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
         maintain word diffs when converting to side-by-side and back
         https://bugs.webkit.org/show_bug.cgi?id=52244
 

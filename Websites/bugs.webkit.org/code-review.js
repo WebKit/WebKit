@@ -969,10 +969,25 @@
     in_drag_select = false;
   }
 
+  function lineOffsetFrom(line, offset) {
+    var file_diff = line.parents('.FileDiff');
+    var all_lines = $('.Line', file_diff);
+    var index = all_lines.index(line);
+    return $(all_lines[index + offset]);
+  }
+
+  function previousLineFor(line) {
+    return lineOffsetFrom(line, -1);
+  }
+
+  function nextLineFor(line) {
+    return lineOffsetFrom(line, 1);
+  }
+
   $('.lineNumber').live('click', function() {
     var line = $(this).parent();
     if (line.hasClass('commentContext'))
-      trimCommentContextToBefore(line.prev());
+      trimCommentContextToBefore(previousLineFor(line));
   }).live('mousedown', function() {
     in_drag_select = true;
     $(lineFromLineDescendant(this)).addClass('selected');
@@ -989,7 +1004,7 @@
     if (!in_drag_select)
       return;
     var selected = $('.selected');
-    var should_add_comment = !selected.last().next().hasClass('commentContext');
+    var should_add_comment = !nextLineFor(selected.last()).hasClass('commentContext');
     selected.addClass('commentContext');
 
     var id;
@@ -998,7 +1013,7 @@
       addCommentFor($(last));
       id = last.id;
     } else {
-      id = selected.last().next()[0].getAttribute('data-comment-base-line');
+      id = nextLineFor(selected.last())[0].getAttribute('data-comment-base-line');
     }
 
     selected.each(function() {
