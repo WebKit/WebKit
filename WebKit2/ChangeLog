@@ -1,5 +1,12 @@
 2011-01-11  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Rename ShareableBitmap::createSharable to createShareable
