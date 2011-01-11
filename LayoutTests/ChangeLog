@@ -2,6 +2,14 @@
 
         Unreviewed Chromium test expectations update.
 
+        Fix path for: fast/js/kde/parse.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-10  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed Chromium test expectations update.
+
         Mark 3 tests as failing on chromium after r75408.
 
         * platform/chromium/test_expectations.txt:

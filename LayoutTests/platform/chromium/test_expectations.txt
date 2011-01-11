@@ -3148,5 +3148,5 @@ BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
 
 // V8 test failures introduced by r75408
 BUGCR69181 : fast/js/exception-codegen-crash.html = FAIL
-BUGCR69181 : fast/js/parse.html = FAIL
+BUGCR69181 : fast/js/kde/parse.html = FAIL
 BUGCR69181 : fast/js/large-expressions.html = FAIL
