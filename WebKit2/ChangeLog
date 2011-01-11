@@ -1,5 +1,47 @@
 2011-01-11  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add a Region class which represents a graphical region
+        https://bugs.webkit.org/show_bug.cgi?id=52255
+
+        * Platform/Region.cpp: Added.
+        (WebKit::Region::Region):
+        (WebKit::Region::rects):
+        (WebKit::Region::Shape::Shape):
+        (WebKit::Region::Shape::appendSpan):
+        (WebKit::Region::Shape::canCoalesce):
+        (WebKit::Region::Shape::appendSpans):
+        (WebKit::Region::Shape::appendSegment):
+        (WebKit::Region::Shape::spans_begin):
+        (WebKit::Region::Shape::spans_end):
+        (WebKit::Region::Shape::segments_begin):
+        (WebKit::Region::Shape::segments_end):
+        (WebKit::Region::Shape::dump):
+        (WebKit::Region::Shape::bounds):
+        (WebKit::Region::Shape::move):
+        (WebKit::Region::Shape::swap):
+        (WebKit::Region::Shape::shapeOperation):
+        (WebKit::Region::Shape::UnionOperation::trySimpleOperation):
+        (WebKit::Region::Shape::unionShapes):
+        (WebKit::Region::Shape::IntersectOperation::trySimpleOperation):
+        (WebKit::Region::Shape::intersectShapes):
+        (WebKit::Region::Shape::SubtractOperation::trySimpleOperation):
+        (WebKit::Region::Shape::subtractShapes):
+        (WebKit::Region::dump):
+        (WebKit::Region::intersect):
+        (WebKit::Region::unite):
+        (WebKit::Region::subtract):
+        (WebKit::Region::move):
+        * Platform/Region.h: Added.
+        (WebKit::Region::bounds):
+        (WebKit::Region::isEmpty):
+        (WebKit::Region::Span::Span):
+        (WebKit::Region::Shape::isEmpty):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Add DidSetSize message
