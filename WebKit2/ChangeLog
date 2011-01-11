@@ -1,5 +1,12 @@
 2011-01-10  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build again.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::isViewWindowActive):
+
+2011-01-10  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * UIProcess/win/WebView.cpp:

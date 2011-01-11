@@ -583,7 +583,7 @@ WebCore::IntSize WebView::viewSize()
     return IntRect(clientRect).size();
 }
 
-bool WebView::ViewWindowIsActive()
+bool WebView::isViewWindowActive()
 {    
     HWND activeWindow = ::GetActiveWindow();
     return (activeWindow && m_topLevelParentWindow == findTopLevelParentWindow(activeWindow));
