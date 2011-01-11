@@ -1,3 +1,20 @@
+2011-01-11  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Microoptimization in ~JSString
+        https://bugs.webkit.org/show_bug.cgi?id=52222
+
+        The case where m_fibers is 0 seems to be the most common one
+        (almost 1/2 of the time, followed at some distance by m_fibers = 1
+        in 1/4 of the cases in a typical SunSpider execution). We can save
+        one comparison in this common case by doing a bit of refactoring
+        in the JSString destructor; overall a 0.3% progression, but only
+        the string tests show improvement.
+
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::~JSString):
+
 2011-01-10  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
