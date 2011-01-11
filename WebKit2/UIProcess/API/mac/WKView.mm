@@ -252,6 +252,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 {
     [super setFrameSize:size];
 
+    if (!_data->_page->drawingArea())
+        return;
+    
     _data->_page->drawingArea()->setSize(IntSize(size));
 }
 

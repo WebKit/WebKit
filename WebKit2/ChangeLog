@@ -1,3 +1,15 @@
+2011-01-11  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        [WKView setFrameSize:] derefs _page->drawingArea() without null check
+        <https://bugs.webkit.org/show_bug.cgi?id=52231>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView setFrameSize:]):
+        Null check drawingArea(). This is OK because if it doesn't exist then it will be
+        created later with the correct initial size.
+
 2011-01-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.
