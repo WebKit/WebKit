@@ -34,19 +34,6 @@
          * platform/image-encoders/skia/JPEGImageEncoder.cpp:
          (WebCore::preMultipliedBGRAtoRGB): Use Porter-Duff source-over black.
 
-2011-01-11  François Sausset  <sausset@gmail.com>
-
-        Reviewed by Eric Seidel.
-
-        Code cleaning in rendering/mathml/RenderMathMLFraction.cpp
-        https://bugs.webkit.org/show_bug.cgi?id=52201
-
-        Replace unneeded doubles by floats and remove unneeded casts.
-
-        * rendering/mathml/RenderMathMLFraction.cpp:
-        (WebCore::RenderMathMLFraction::paint):
-        * rendering/mathml/RenderMathMLFraction.h:
-
 2011-01-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
