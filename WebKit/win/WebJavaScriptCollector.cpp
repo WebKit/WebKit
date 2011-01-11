@@ -28,8 +28,8 @@
 #include "WebJavaScriptCollector.h"
 
 #pragma warning(push, 0)
+#include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/JSGlobalData.h>
-#include <JavaScriptCore/collector.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
 #include <runtime/JSLock.h>

@@ -1,3 +1,10 @@
+2011-01-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix Windows build.
+
+        * WebJavaScriptCollector.cpp: Updated for rename to Heap.*. (Didn't catch
+        this one before because it was miscapitalized.)
+
 2011-01-09  Xianzhu Wang <phnixwxz@gmail.com>
 
         Reviewed by Darin Fisher.
