@@ -3048,26 +3048,12 @@ BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMA
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
 BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
 BUG_MIHAIP MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
-
-// Had been marked as failing due to scrollbar differences, and in the meantime
-// the platform/mac and platform/mac-leopard baselines became stale since no
-// other port used them.
-BUG_MIHAIP MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
 BUG_MIHAIP MAC : fast/block/margin-collapse/103.html = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/001.html = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/005.html = IMAGE
-BUG_MIHAIP MAC : fast/dom/focus-contenteditable.html = IMAGE
-BUG_MIHAIP MAC : fast/forms/fieldset-align.html = IMAGE
-BUG_MIHAIP MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
-BUG_MIHAIP MAC : fast/overflow/006.html = IMAGE
-BUG_MIHAIP MAC : fast/overflow/overflow-x-y.html = IMAGE
-BUG_MIHAIP MAC : fast/replaced/width100percent-image.html = IMAGE
-BUG_MIHAIP MAC : fast/text/capitalize-boundaries.html = IMAGE
-BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
-BUG_MIHAIP MAC : fast/text/softHyphen.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/bugs/bug101674.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/bugs/bug29314.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/bugs/bug5797.html = IMAGE
@@ -3075,6 +3061,20 @@ BUG_MIHAIP MAC : tables/mozilla/bugs/bug625.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/core/bloomberg.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/core/row_span.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/other/cell_widths.html = IMAGE
+BUG_MIHAIP MAC : fast/overflow/006.html = IMAGE
+BUG_MIHAIP MAC : fast/overflow/overflow-x-y.html = IMAGE
+BUG_MIHAIP MAC : fast/replaced/width100percent-image.html = IMAGE
+BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
+
+// Had been marked as failing due to scrollbar differences, and in the meantime
+// the platform/mac and platform/mac-leopard baselines became stale since no
+// other port used them.
+BUG_MIHAIP MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
+BUG_MIHAIP MAC : fast/dom/focus-contenteditable.html = IMAGE
+BUG_MIHAIP MAC : fast/forms/fieldset-align.html = IMAGE
+BUG_MIHAIP MAC : fast/multicol/columns-shorthand-parsing.html = IMAGE
+BUG_MIHAIP MAC : fast/text/capitalize-boundaries.html = IMAGE
+BUG_MIHAIP MAC : fast/text/softHyphen.html = IMAGE
 BUG_MIHAIP MAC : tables/mozilla/other/wa_table_tr_align.html = IMAGE
 
 // Platforms that use Skia don't support elliptical gradients.

@@ -1,3 +1,26 @@
+2011-01-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed; new and updated mac-leopard baselines.
+        
+        Update stale or missing Leopard baselines (tests currently pass on Snow
+        Leopard).
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/block/basic/fieldset-stretch-to-legend-expected.checksum:
+        * platform/mac-leopard/fast/block/basic/fieldset-stretch-to-legend-expected.png:
+        * platform/mac-leopard/fast/dom/focus-contenteditable-expected.checksum: Added.
+        * platform/mac-leopard/fast/dom/focus-contenteditable-expected.png: Added.
+        * platform/mac-leopard/fast/forms/fieldset-align-expected.checksum: Added.
+        * platform/mac-leopard/fast/forms/fieldset-align-expected.png: Added.
+        * platform/mac-leopard/fast/multicol/columns-shorthand-parsing-expected.checksum: Added.
+        * platform/mac-leopard/fast/multicol/columns-shorthand-parsing-expected.png: Added.
+        * platform/mac-leopard/fast/text/capitalize-boundaries-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/capitalize-boundaries-expected.png: Added.
+        * platform/mac-leopard/fast/text/softHyphen-expected.checksum: Added.
+        * platform/mac-leopard/fast/text/softHyphen-expected.png: Added.
+        * platform/mac-leopard/tables/mozilla/other/wa_table_tr_align-expected.checksum:
+        * platform/mac-leopard/tables/mozilla/other/wa_table_tr_align-expected.png:
+
 2011-01-11  Martin Robinson  <mrobinson@igalia.com>
 
         Unskipping fast/multicol/span/double-merge-anonymous-block-crash.html. We
