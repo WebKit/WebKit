@@ -114,11 +114,12 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
         if (context->platformContext()->canAccelerate()) {
             DrawingBuffer* sourceDrawingBuffer = m_data.m_platformContext.gpuCanvas()->drawingBuffer();
             unsigned sourceTexture = static_cast<unsigned>(sourceDrawingBuffer->platformColorBuffer());
-            FloatRect destRectFlipped(destRect);
-            destRectFlipped.setY(destRect.y() + destRect.height());
-            destRectFlipped.setHeight(-destRect.height());
+            FloatRect destRectNormalized(normalizeRect(destRect));
+            FloatRect srcRectFlipped(normalizeRect(srcRect));
+            srcRectFlipped.setY(m_size.height() - srcRect.y());
+            srcRectFlipped.setHeight(-srcRect.height());
             context->platformContext()->prepareForHardwareDraw();
-            context->platformContext()->gpuCanvas()->drawTexturedRect(sourceTexture, m_size, srcRect, destRectFlipped, styleColorSpace, op);
+            context->platformContext()->gpuCanvas()->drawTexturedRect(sourceTexture, m_size, srcRectFlipped, destRectNormalized, styleColorSpace, op);
             return;
         }
         m_data.m_platformContext.syncSoftwareCanvas();

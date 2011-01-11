@@ -82,6 +82,8 @@ private:
     explicit BitmapImageSingleFrameSkia(const SkBitmap&);
 };
 
+FloatRect normalizeRect(const FloatRect&);
+
 } // namespace WebCore
 
 #endif  // BitmapImageSingleFrameSkia_h

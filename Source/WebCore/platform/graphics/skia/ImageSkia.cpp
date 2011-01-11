@@ -298,7 +298,7 @@ static void TransformDimensions(const SkMatrix& matrix, float srcWidth, float sr
 }
 
 // A helper method for translating negative width and height values.
-static FloatRect normalizeRect(const FloatRect& rect)
+FloatRect normalizeRect(const FloatRect& rect)
 {
     FloatRect norm = rect;
     if (norm.width() < 0) {
