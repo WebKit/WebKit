@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Replace ASSERTs with FIXMEs.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::sizeDidChange):
+        (WebKit::DrawingAreaProxyImpl::setPageIsVisible):
+
+2011-01-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add DrawingAreaImpl skeleton class
         https://bugs.webkit.org/show_bug.cgi?id=52246
 

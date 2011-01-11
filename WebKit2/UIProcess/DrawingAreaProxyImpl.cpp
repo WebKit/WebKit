@@ -63,12 +63,12 @@ bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext
 
 void DrawingAreaProxyImpl::sizeDidChange()
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement.
 }
 
 void DrawingAreaProxyImpl::setPageIsVisible(bool pageIsVisible)
 {
-    ASSERT_NOT_REACHED();
+    // FIXME: Implement.
 }
 
 void DrawingAreaProxyImpl::attachCompositingContext(uint32_t contextID)
