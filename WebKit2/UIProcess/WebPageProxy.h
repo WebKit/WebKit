@@ -134,7 +134,7 @@ public:
     void initializeUIClient(const WKPageUIClient*);
     void relaunch();
 
-    void initializeWebPage(const WebCore::IntSize&);
+    void initializeWebPage();
     void reinitializeWebPage(const WebCore::IntSize&);
 
     void close();
@@ -303,7 +303,7 @@ public:
     void didChooseFilesForOpenPanel(const Vector<String>&);
     void didCancelForOpenPanel();
 
-    WebPageCreationParameters creationParameters(const WebCore::IntSize&) const;
+    WebPageCreationParameters creationParameters() const;
 
 #if PLATFORM(QT)
     void findZoomableAreaForPoint(const WebCore::IntPoint&);

@@ -212,7 +212,7 @@ void WebPageProxy::relaunch()
     m_pageClient->didRelaunchProcess();
 }
 
-void WebPageProxy::initializeWebPage(const IntSize& size)
+void WebPageProxy::initializeWebPage()
 {
     if (!isValid()) {
         relaunch();
@@ -222,7 +222,7 @@ void WebPageProxy::initializeWebPage(const IntSize& size)
     m_drawingArea = m_pageClient->createDrawingAreaProxy();
     ASSERT(m_drawingArea);
 
-    process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(size)), 0);
+    process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
 }
 
 void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
@@ -233,7 +233,7 @@ void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
     m_drawingArea = m_pageClient->createDrawingAreaProxy();
     ASSERT(m_drawingArea);
 
-    process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(size)), 0);
+    process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
 }
 
 void WebPageProxy::close()
@@ -1395,7 +1395,7 @@ void WebPageProxy::createNewPage(const WindowFeatures& windowFeatures, uint32_t 
     RefPtr<WebPageProxy> newPage = m_uiClient.createNewPage(this, windowFeatures, static_cast<WebEvent::Modifiers>(opaqueModifiers), static_cast<WebMouseEvent::Button>(opaqueMouseButton));
     if (newPage) {
         newPageID = newPage->pageID();
-        newPageParameters = newPage->creationParameters(newPage->drawingArea()->size());
+        newPageParameters = newPage->creationParameters();
     } else
         newPageID = 0;
 }
@@ -2134,11 +2134,11 @@ void WebPageProxy::processDidCrash()
     m_loaderClient.processDidCrash(this);
 }
 
-WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) const
+WebPageCreationParameters WebPageProxy::creationParameters() const
 {
     WebPageCreationParameters parameters;
 
-    parameters.viewSize = size;
+    parameters.viewSize = m_pageClient->viewSize();
     parameters.isActive = m_pageClient->isViewWindowActive();
     parameters.isFocused = m_pageClient->isViewFocused();
     parameters.isVisible = m_pageClient->isViewVisible();

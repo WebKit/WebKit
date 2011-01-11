@@ -170,7 +170,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         return;
 
     inspectorPageID = inspectorPage->pageID();
-    inspectorPageParameters = inspectorPage->creationParameters(IntSize(0, 0));
+    inspectorPageParameters = inspectorPage->creationParameters();
 
     inspectorPage->loadURL(inspectorPageURL());
 }

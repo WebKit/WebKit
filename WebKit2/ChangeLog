@@ -2,6 +2,24 @@
 
         Reviewed by Sam Weinig.
 
+        WebPageProxy::creationParameters no longer needs to take a size
+        https://bugs.webkit.org/show_bug.cgi?id=52187
+
+        WebPageProxy::creationParameters can just ask the page client for the view size now.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+
+2011-01-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Pass information about the view in the WebPageCreationParameters
         https://bugs.webkit.org/show_bug.cgi?id=52186
 
