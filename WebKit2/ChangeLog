@@ -1,5 +1,50 @@
 2011-01-10  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Work towards having the WebPageProxy decide when to create the DrawingAreaProxy
+        https://bugs.webkit.org/show_bug.cgi?id=52184
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        Call -[WKView _createDrawingAreaProxy].
+
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        Call setNeedsDisplayInRect on the WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        No need to set the drawing area proxy anymore.
+
+        (-[WKView _createDrawingAreaProxy]):
+        Create a chunked update drawing area proxy for now.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createDrawingAreaProxy):
+        (QWKPagePrivate::setViewNeedsDisplay):
+        Add stubs.
+    
+        * UIProcess/PageClient.h:
+        Add new pure virtual member functions.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        Set the new drawing area proxy.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        No need to set the drawing area proxy anymore.
+
+        (WebKit::WebView::createDrawingAreaProxy):
+        Create a chunked update drawing area proxy for now.
+
+        (WebKit::WebView::setViewNeedsDisplay):
+        Invalidate the window.
+
+2011-01-10  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build again.
 
         * UIProcess/win/WebView.cpp:

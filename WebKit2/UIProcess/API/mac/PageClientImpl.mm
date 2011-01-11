@@ -118,6 +118,16 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
+PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
+{
+    return [m_wkView _createDrawingAreaProxy];
+}
+
+void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
+{
+    [m_wkView setNeedsDisplayInRect:rect];
+}
+
 IntSize PageClientImpl::viewSize()
 {
     return IntSize([m_wkView bounds].size);

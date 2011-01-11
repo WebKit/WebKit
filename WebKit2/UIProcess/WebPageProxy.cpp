@@ -218,7 +218,9 @@ void WebPageProxy::initializeWebPage(const IntSize& size)
         return;
     }
 
+    m_drawingArea = m_pageClient->createDrawingAreaProxy();
     ASSERT(m_drawingArea);
+
     process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(size)), 0);
 }
 
@@ -227,7 +229,9 @@ void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
     if (!isValid())
         return;
 
+    m_drawingArea = m_pageClient->createDrawingAreaProxy();
     ASSERT(m_drawingArea);
+
     process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(size)), 0);
 }
 
