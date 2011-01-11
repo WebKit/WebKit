@@ -1,3 +1,11 @@
+2011-01-10  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium-gpu test_expectations updates.
+
+        Mark 3 tests as failing after skia roll (chromium r75408).
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-10  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

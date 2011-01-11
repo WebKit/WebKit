@@ -358,7 +358,6 @@ BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
 BUGWK49629 SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 
 BUGCR57431 WIN LINUX : fast/canvas/canvas-strokeRect.html = TEXT
-BUGCR57432 WIN LINUX : fast/canvas/drawImage-with-negative-source-destination.html = TEXT
 BUGCR58534 WIN LINUX : canvas/philip/tests/2d.composite.globalAlpha.fill.html = TEXT
 BUGCR58536 WIN LINUX : canvas/philip/tests/2d.imageData.put.alpha.html = TEXT
 BUGCR60965 WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
@@ -386,3 +385,8 @@ BUGWEBGL WIN DEBUG : fast/canvas/webgl/context-attributes-alpha-depth-stencil-an
 
 // This was introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
+
+// These were affected by chromium r70835; probably just need a rebaseline.
+BUG_SENORBLANCO WIN LINUX : fast/canvas/canvas-text-alignment.html = IMAGE
+BUG_SENORBLANCO WIN LINUX : fast/canvas/fillrect_gradient.html = IMAGE
+BUG_SENORBLANCO WIN LINUX : fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
