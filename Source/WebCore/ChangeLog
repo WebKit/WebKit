@@ -1,3 +1,19 @@
+2011-01-10  Joe Mason  <jmason@rim.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebSockets: unbounded buffer growth when server sends bad data
+        https://bugs.webkit.org/show_bug.cgi?id=51253
+
+        Fail a websocket handshake after 1024 bytes without a newline, or if it
+        contains a null byte before the first newline.
+
+        Tests: http/tests/websocket/tests/handshake-fail-by-maxlength.html
+               http/tests/websocket/tests/handshake-fail-by-prepended-null.html
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readStatusLine):
+
 2011-01-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -427,6 +428,10 @@ KURL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 // statusCode and statusText will be set to -1 and a null string, respectively.
 int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, int& statusCode, String& statusText)
 {
+    // Arbitrary size limit to prevent the server from sending an unbounded
+    // amount of data with no newlines and forcing us to buffer it all.
+    static const int maximumLength = 1024;
+
     statusCode = -1;
     statusText = String();
 
@@ -441,6 +446,12 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
                 space1 = p;
             else if (!space2)
                 space2 = p;
+        } else if (*p == '\0') {
+            // The caller isn't prepared to deal with null bytes in status
+            // line. WebSockets specification doesn't prohibit this, but HTTP
+            // does, so we'll just treat this as an error. 
+            m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line contains embedded null", 0, clientOrigin());
+            return p + 1 - header;
         } else if (*p == '\n')
             break;
     }
@@ -448,9 +459,9 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
         return -1; // We have not received '\n' yet.
 
     const char* end = p + 1;
-    if (end - header > INT_MAX) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line is too long: " + trimConsoleMessage(header, maxConsoleMessageSize + 1), 0, clientOrigin());
-        return INT_MAX;
+    if (end - header > maximumLength) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line is too long", 0, clientOrigin());
+        return maximumLength;
     }
     int lineLength = end - header;
 
