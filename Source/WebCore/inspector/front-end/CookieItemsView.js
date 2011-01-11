@@ -104,6 +104,7 @@ WebInspector.CookieItemsView.prototype = {
                 Number.bytesToString(this._totalSize, WebInspector.UIString));
             this._deleteButton.visible = true;
         }
+        this._cookiesTable.updateWidths();
     },
 
     _filterCookiesForDomain: function(allCookies)

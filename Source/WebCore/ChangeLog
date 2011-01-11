@@ -1,3 +1,13 @@
+2011-01-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [regression] Cookies view does not allow columns resize.
+        https://bugs.webkit.org/show_bug.cgi?id=51877
+
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+
 2011-01-11  Noel Gordon  <noel.gordon@gmail.com>
 
          Reviewed by James Robinson.
