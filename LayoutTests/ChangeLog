@@ -1,3 +1,12 @@
+2011-01-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=51119
+
+        * fast/transforms/transform-hit-test-flipped-expected.txt: Added.
+        * fast/transforms/transform-hit-test-flipped.html: Added.
+
 2011-01-10  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed Chromium test expectations update.

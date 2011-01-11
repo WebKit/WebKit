@@ -2679,7 +2679,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, HitTestResult& result)
 {
     renderer()->document()->updateLayout();
     
-    IntRect hitTestArea = result.rectForPoint(result.point());
+    IntRect hitTestArea = renderer()->view()->documentRect();
     if (!request.ignoreClipping())
         hitTestArea.intersect(frameVisibleRect(renderer()));
 

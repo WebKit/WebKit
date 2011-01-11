@@ -1,3 +1,17 @@
+2010-10-10  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51119, transformed 
+        elements not responding properly to :hover after r73385.  
+        Just use the entire document area as the hit test area, 
+        since there appears to be a rounding bug/issues with relying 
+        on float math when mapping the hit test area into
+        transformed coordinates.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
 2011-01-10  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.
