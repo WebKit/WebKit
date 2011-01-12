@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x42
+  RenderBlock {HTML} at (0,0) size 800x42
+    RenderBody {BODY} at (8,8) size 784x26
+      RenderTextControl {INPUT} at (2,2) size 150x22 [bgcolor=#FFFFFF] [border: (1px solid #BDC7D8)]
+        RenderBlock {DIV} at (18,4) size 128x14
+          RenderBlock {DIV} at (0,11) size 0x0
+          RenderBlock {DIV} at (120,3) size 8x8
+      RenderText {#text} at (0,0) size 0x0
+layer at (28,14) size 120x14
+  RenderBlock {DIV} at (0,0) size 120x14
