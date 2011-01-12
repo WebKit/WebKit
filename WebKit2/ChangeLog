@@ -1,3 +1,35 @@
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Begin stubbing out some more BackingStore member functions
+        https://bugs.webkit.org/show_bug.cgi?id=52323
+
+        * UIProcess/BackingStore.cpp:
+        (WebKit::BackingStore::~BackingStore):
+        This was accidentally made into a constructor; it should be a destructor.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::paint):
+        Call the backing store.
+
+        (WebKit::DrawingAreaProxyImpl::update):
+        Incorporate the update.
+
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        Create the backing store if needed and incorporate the update.
+
+        * UIProcess/mac/BackingStoreMac.mm: Added.
+        (WebKit::BackingStore::platformInitialize):
+        Create a bitmap context.
+
+        (WebKit::BackingStore::paint):
+        (WebKit::BackingStore::incorporateUpdate):
+        Add stubs.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add BackingStoreMac.mm
+
 2011-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.

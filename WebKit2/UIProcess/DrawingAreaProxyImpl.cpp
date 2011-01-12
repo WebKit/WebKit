@@ -26,12 +26,15 @@
 #include "DrawingAreaProxyImpl.h"
 
 #include "DrawingAreaMessages.h"
+#include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
 #ifndef __APPLE__
 #error "This drawing area is not ready for use by other ports yet."
 #endif
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -47,6 +50,14 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
 
 DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
 {
+}
+
+void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect)
+{
+    if (!m_backingStore)
+        return;
+
+    m_backingStore->paint(context, rect);
 }
 
 void DrawingAreaProxyImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
@@ -85,15 +96,26 @@ void DrawingAreaProxyImpl::detachCompositingContext()
     ASSERT_NOT_REACHED();
 }
 
-void DrawingAreaProxyImpl::update(const UpdateInfo&)
+void DrawingAreaProxyImpl::update(const UpdateInfo& updateInfo)
 {
-    // FIXME: Incorporate the update.
+    // FIXME: Handle the case where the view is hidden.
 
+    incorporateUpdate(updateInfo);
     m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
 void DrawingAreaProxyImpl::didSetSize()
 {
+}
+
+void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
+{
+    // FIXME: Check for the update bounds being empty here.
+
+    if (!m_backingStore)
+        m_backingStore = BackingStore::create(m_webPageProxy, updateInfo.viewSize);
+
+    m_backingStore->incorporateUpdate(updateInfo);
 }
 
 void DrawingAreaProxyImpl::sendSetSize()

@@ -23,43 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DrawingAreaProxyImpl_h
-#define DrawingAreaProxyImpl_h
-
 #include "BackingStore.h"
-#include "DrawingAreaProxy.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class DrawingAreaProxyImpl : public DrawingAreaProxy {
-public:
-    static PassOwnPtr<DrawingAreaProxyImpl> create(WebPageProxy*);
-    virtual ~DrawingAreaProxyImpl();
+void BackingStore::platformInitialize()
+{
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
 
-    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&);
+    m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+}
 
-private:
-    explicit DrawingAreaProxyImpl(WebPageProxy*);
+void BackingStore::paint(PlatformGraphicsContext, const IntRect&)
+{
+    // FIXME: Implement.
+}
 
-    // DrawingAreaProxy
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
-    virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
-    virtual void sizeDidChange();
-    virtual void setPageIsVisible(bool);
-    virtual void attachCompositingContext(uint32_t contextID);
-    virtual void detachCompositingContext();
-
-    // CoreIPC message handlers
-    virtual void update(const UpdateInfo&);
-    virtual void didSetSize();
-    
-    void incorporateUpdate(const UpdateInfo&);
-    void sendSetSize();
-
-    OwnPtr<BackingStore> m_backingStore;
-};
+void BackingStore::incorporateUpdate(const UpdateInfo&)
+{
+    // FIXME: Implement.
+}
 
 } // namespace WebKit
-
-#endif // DrawingAreaProxyImpl_h

@@ -30,22 +30,43 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
+
+namespace WebCore {
+    class IntRect;
+}
+
 namespace WebKit {
 
+class UpdateInfo;
 class WebPageProxy;
 
 class BackingStore {
     WTF_MAKE_NONCOPYABLE(BackingStore);
 
 public:
-    static PassOwnPtr<BackingStore> create(WebPageProxy*, const WebCore::IntSize&);
-    BackingStore();
+    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&);
+    ~BackingStore();
+
+#if PLATFORM(MAC)
+    typedef CGContextRef PlatformGraphicsContext;
+#endif
+
+    void paint(PlatformGraphicsContext, const WebCore::IntRect&);
+    void incorporateUpdate(const UpdateInfo&);
 
 private:
-    BackingStore(WebPageProxy*, const WebCore::IntSize&);
+    explicit BackingStore(const WebCore::IntSize&);
 
-    WebPageProxy* m_webPageProxy;
+    void platformInitialize();
+
     WebCore::IntSize m_size;
+
+#if PLATFORM(MAC)
+    RetainPtr<CGContextRef> m_bitmapContext;
+#endif
 };
 
 } // namespace WebKit
