@@ -1,3 +1,14 @@
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
+        Another build fix
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::clampedContentsScaleForScale):
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        (PlatformCALayer::setContentsScale):
+
 2011-01-11  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

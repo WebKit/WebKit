@@ -1915,7 +1915,7 @@ float GraphicsLayerCA::clampedContentsScaleForScale(float scale) const
     const float minScale = 0.01f;
     
     // Avoid very slight scale changes that would be doing extra work for no benefit
-    const float maxAllowableDelta = 0.05;
+    const float maxAllowableDelta = 0.05f;
 
     // Clamp
     float result = max(minScale, min(scale, maxScale));

@@ -738,6 +738,8 @@ void PlatformCALayer::setContentsScale(float value)
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer.get() setContentsScale:value];
     END_BLOCK_OBJC_EXCEPTIONS
+#else
+    UNUSED_PARAM(value);
 #endif
 }
 
