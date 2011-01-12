@@ -32,6 +32,8 @@
 
 namespace WebKit {
 
+struct UpdateInfo;
+
 class DrawingAreaImpl : public DrawingArea {
 public:
     static PassRefPtr<DrawingAreaImpl> create(DrawingAreaInfo::Identifier, WebPage*);
@@ -55,6 +57,7 @@ private:
 
     void scheduleDisplay();
     void display();
+    void display(UpdateInfo&);
 
     Region m_dirtyRegion;
 

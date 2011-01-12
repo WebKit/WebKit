@@ -40,7 +40,7 @@ namespace WebKit {
 void ChunkedUpdateDrawingArea::paintIntoUpdateChunk(UpdateChunk* updateChunk)
 {
     // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
-    if (static_cast<WebFrameLoaderClient*>(m_webPage->mainFrame()->coreFrame()->loader()->client())->frameHasCustomRepresentation())
+    if (m_webPage->mainFrameHasCustomRepresentation())
         return;
 
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());

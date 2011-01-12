@@ -33,6 +33,8 @@ void UpdateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(viewSize);
     encoder->encode(updateRectBounds);
+    encoder->encode(updateRects);
+    encoder->encode(bitmapHandle);
 }
 
 bool UpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, UpdateInfo& result)
@@ -40,6 +42,10 @@ bool UpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, UpdateInfo& result)
     if (!decoder->decode(result.viewSize))
         return false;
     if (!decoder->decode(result.updateRectBounds))
+        return false;
+    if (!decoder->decode(result.updateRects))
+        return false;
+    if (!decoder->decode(result.bitmapHandle))
         return false;
 
     return true;

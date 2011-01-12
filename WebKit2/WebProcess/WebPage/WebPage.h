@@ -296,6 +296,8 @@ public:
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
 
+    bool mainFrameHasCustomRepresentation() const;
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

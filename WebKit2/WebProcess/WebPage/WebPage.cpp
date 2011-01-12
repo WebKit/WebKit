@@ -1378,6 +1378,11 @@ void WebPage::replaceSelectionWithText(Frame* frame, const String& text)
     frame->selection()->revealSelection(ScrollAlignment::alignToEdgeIfNeeded);
 }
 
+bool WebPage::mainFrameHasCustomRepresentation() const
+{
+    return static_cast<WebFrameLoaderClient*>(mainFrame()->coreFrame()->loader()->client())->frameHasCustomRepresentation();
+}
+
 #if PLATFORM(MAC)
 
 void WebPage::addPluginView(PluginView* pluginView)

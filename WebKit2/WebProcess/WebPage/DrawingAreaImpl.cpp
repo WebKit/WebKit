@@ -26,8 +26,11 @@
 #include "DrawingAreaImpl.h"
 
 #include "DrawingAreaProxyMessages.h"
+#include "ShareableBitmap.h"
+#include "UpdateInfo.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/GraphicsContext.h>
 
 #ifndef __APPLE__
 #error "This drawing area is not ready for use by other ports yet."
@@ -122,7 +125,43 @@ void DrawingAreaImpl::display()
     if (m_dirtyRegion.isEmpty())
         return;
 
-    // FIXME: Actually paint.
+    UpdateInfo updateInfo;
+    display(updateInfo);
+
+    // FIXME: Send over the updateInfo struct.
 }
+
+void DrawingAreaImpl::display(UpdateInfo& updateInfo)
+{
+    // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
+    if (m_webPage->mainFrameHasCustomRepresentation())
+        return;
+
+    IntRect bounds = m_dirtyRegion.bounds();
+    Vector<IntRect> rects = m_dirtyRegion.rects();
+
+    m_dirtyRegion = Region();
+
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
+
+    OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+
+    m_webPage->layoutIfNeeded();
+    
+    updateInfo.viewSize = m_webPage->size();
+    updateInfo.updateRectBounds = bounds;
+
+    graphicsContext->translate(-bounds.x(), -bounds.y());
+
+    for (size_t i = 0; i < rects.size(); ++i) {
+        m_webPage->drawRect(*graphicsContext, rects[i]);
+        updateInfo.updateRects.append(rects[i]);
+    }
+        
+    // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
+    // until the UI process has painted the update, so we stop the timer here.
+    m_displayTimer.stop();
+}
+
 
 } // namespace WebKit

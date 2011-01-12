@@ -2,6 +2,34 @@
 
         Reviewed by Sam Weinig.
 
+        Make the new drawing area actually draw something
+        https://bugs.webkit.org/show_bug.cgi?id=52314
+
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::encode):
+        (WebKit::UpdateInfo::decode):
+        Encode and decode newly added fields.
+
+        * Shared/UpdateInfo.h:
+        Add a vector of update rects and a handle for the sharable bitmap.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        Get the individual rects from the region and paint them into the shareable bitmap.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mainFrameHasCustomRepresentation):
+        * WebProcess/WebPage/WebPage.h:
+        Add helper function.
+
+        * WebProcess/WebPage/mac/ChunkedUpdateDrawingAreaMac.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::paintIntoUpdateChunk):
+        Use helper function.
+
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add UpdateInfo class
         https://bugs.webkit.org/show_bug.cgi?id=52306
 
