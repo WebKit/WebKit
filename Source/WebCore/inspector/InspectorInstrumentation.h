@@ -117,9 +117,7 @@ public:
     static void didCloseWebSocket(ScriptExecutionContext*, unsigned long identifier);
 #endif
     static void networkStateChanged(Page*);
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     static void updateApplicationCacheStatus(Frame*);
-#endif
 #if ENABLE(INSPECTOR)
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }
@@ -626,13 +624,13 @@ inline void InspectorInstrumentation::networkStateChanged(Page* page)
 #endif
 }
 
-#if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
 inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 {
+#if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         updateApplicationCacheStatusImpl(inspectorController, frame);
-}
 #endif
+}
 
 #if ENABLE(INSPECTOR)
 inline InspectorController* InspectorInstrumentation::inspectorControllerForContext(ScriptExecutionContext* context)

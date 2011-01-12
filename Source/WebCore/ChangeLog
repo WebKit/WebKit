@@ -1,3 +1,26 @@
+2011-01-12  Daniel Bates  <dbates@rim.com>
+            And Benjamin C Meyer  <bmeyer@rim.com>
+
+        Build fix when building with Inspector disabled
+        https://bugs.webkit.org/show_bug.cgi?id=52313
+
+        After changeset 75604 <http://trac.webkit.org/changeset/75604> it's not
+        possible to build when the Inspector is disabled.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatus): Fix build breakage when building
+        with Inspector disabled and Offline Web Applications enabled by moving macro guard condition
+        ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS) into function body. This makes us also
+        consistent with the form we use for InspectorInstrumentation::networkStateChanged() and other
+        InspectorInstrumentation functions.
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveData): Fix build breakage when building with Inspector
+        disabled by adding ENABLE(INSPECTOR) guard around code that references the instance variable
+        ApplicationCacheGroup::m_currentResourceIdentifier as this variable only exists when building
+        with the Inspector.
+        (WebCore::ApplicationCacheGroup::didFinishLoading): Ditto.
+        (WebCore::ApplicationCacheGroup::didFail): Ditto.
+
 2011-01-12  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.

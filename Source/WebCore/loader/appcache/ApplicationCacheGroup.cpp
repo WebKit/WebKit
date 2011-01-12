@@ -555,7 +555,9 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
 
 void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* data, int length, int lengthReceived)
 {
+#if ENABLE(INSPECTOR)
     InspectorInstrumentation::didReceiveContentLength(m_frame, m_currentResourceIdentifier, lengthReceived);
+#endif
 
     if (handle == m_manifestHandle) {
         didReceiveManifestData(data, length);
@@ -572,7 +574,9 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
 
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
+#if ENABLE(INSPECTOR)
     InspectorInstrumentation::didFinishLoading(m_frame, m_currentResourceIdentifier, finishTime);
+#endif
 
     if (handle == m_manifestHandle) {
         didFinishLoadingManifest();
@@ -611,7 +615,9 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
 
 void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError& error)
 {
+#if ENABLE(INSPECTOR)
     InspectorInstrumentation::didFailLoading(m_frame, m_currentResourceIdentifier, error);
+#endif
 
     if (handle == m_manifestHandle) {
         cacheUpdateFailed();
