@@ -1,3 +1,13 @@
+2011-01-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Close additional pages opened during a test once the test completes.
+        https://bugs.webkit.org/show_bug.cgi?id=52276
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::done):
+
 2011-01-11  David Levin  <levin@chromium.org>
 
         Reviewed by Eric Seidel.

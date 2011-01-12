@@ -167,6 +167,8 @@ void InjectedBundle::done()
 
     WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 
+    closeOtherPages();
+    
     m_state = Idle;
 }
 
