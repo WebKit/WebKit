@@ -1,3 +1,17 @@
+2011-01-11  David Levin  <levin@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Errors should be separated from the command line in bot messages.
+        https://bugs.webkit.org/show_bug.cgi?id=52275
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (ScriptError.message_with_output): Added a newline to separate the command
+        line from the errors.
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ScriptErrorTest.test_message_with_output): Added tests for the various code
+        paths in message_with_output.
+
 2011-01-11  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.

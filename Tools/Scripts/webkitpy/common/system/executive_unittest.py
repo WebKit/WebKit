@@ -44,6 +44,15 @@ class ScriptErrorTest(unittest.TestCase):
         self.assertEquals(error._string_from_args([]), '[]')
         self.assertEquals(error._string_from_args(map(str, range(30))), "['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17'...")
 
+    def test_message_with_output(self):
+        error = ScriptError('My custom message!', '', -1)
+        self.assertEquals(error.message_with_output(), 'My custom message!')
+        error = ScriptError('My custom message!', '', -1, 'My output.')
+        self.assertEquals(error.message_with_output(), 'My custom message!\n\nMy output.')
+        error = ScriptError('', 'my_command!', -1, 'My output.', '/Users/username/blah')
+        self.assertEquals(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1 cwd: /Users/username/blah\n\nMy output.')
+        error = ScriptError('', 'my_command!', -1, 'ab' + '1' * 499)
+        self.assertEquals(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1\n\nLast 500 characters of output:\nb' + '1' * 499)
 
 def never_ending_command():
     """Arguments for a command that will never end (useful for testing process
