@@ -1,5 +1,15 @@
 2011-01-12  Chris Marrin  <cmarrin@apple.com>
 
+        Unreviewed.
+
+        Fix a build issue from http://trac.webkit.org/changeset/75639.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::contentsScale):
+        (WebCore::GraphicsLayer::setContentsScale):
+
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Kevin Decker.
 
         Pages with accelerated layers lose subpixel-AA and become blurry when a scale factor is applied

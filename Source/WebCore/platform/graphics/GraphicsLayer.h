@@ -318,8 +318,8 @@ public:
     
     // Change the scale at which the contents are rendered. Note that contentsScale may not return
     // the same value passed to setContentsScale(), because of clamping and hysteresis.
-    virtual float contentsScale() const = 0;
-    virtual void setContentsScale(float) = 0;
+    virtual float contentsScale() const { return 1; }
+    virtual void setContentsScale(float) { }
 
     void dumpLayer(TextStream&, int indent = 0, LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 
