@@ -1,3 +1,14 @@
+2011-01-11  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by John Sullivan.
+
+        WebKit2: "Webpages not responding" dialog appears when <select> popup menu is showing
+        https://bugs.webkit.org/show_bug.cgi?id=52242
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showPopupMenu):
+        On Windows, stop the responsiveness timer before calling showPopupMenu().
+
 2011-01-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

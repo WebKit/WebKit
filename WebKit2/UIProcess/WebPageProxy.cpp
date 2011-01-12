@@ -1708,6 +1708,11 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>
     else
         m_activePopupMenu = m_pageClient->createPopupMenuProxy(this);
 
+#if PLATFORM(WIN)
+    // On Windows, we're about to run our own message pump in showPopupMenu(), so turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
+#endif
+
     m_activePopupMenu->showPopupMenu(rect, items, data, selectedIndex);
     m_activePopupMenu = 0;
 }
