@@ -1,3 +1,16 @@
+2011-01-12  Adam Roben  <aroben@apple.com>
+
+        Advertise the .testnetscape file extension on Windows
+
+        Fixes <http://webkit.org/b/52298>
+        plugins/no-mime-with-valid-extension.html fails on Windows
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc: Added a
+        FileExtents field to map the .testnetscape file extension to the
+        application/x-webkit-test-netscape MIME type, just as we do on Mac.
+
 2011-01-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
