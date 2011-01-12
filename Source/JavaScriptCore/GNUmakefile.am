@@ -555,6 +555,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/VMTags.h \
 	Source/JavaScriptCore/wtf/WTFThreadData.cpp \
 	Source/JavaScriptCore/wtf/WTFThreadData.h \
+	Source/JavaScriptCore/yarr/Yarr.h \
 	Source/JavaScriptCore/yarr/YarrInterpreter.cpp \
 	Source/JavaScriptCore/yarr/YarrInterpreter.h \
 	Source/JavaScriptCore/yarr/YarrJIT.cpp \
