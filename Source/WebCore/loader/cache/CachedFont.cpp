@@ -137,18 +137,13 @@ bool CachedFont::ensureSVGFontData()
     ASSERT(m_isSVGFont);
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
         m_externalSVGDocument = SVGDocument::create(0, KURL());
-        m_externalSVGDocument->open();
 
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
-        m_externalSVGDocument->write(decoder->decode(m_data->data(), m_data->size()));
-        m_externalSVGDocument->write(decoder->flush());
-        if (decoder->sawError()) {
-            m_externalSVGDocument.clear();
-            return 0;
-        }
 
-        m_externalSVGDocument->finishParsing();
-        m_externalSVGDocument->close();
+        m_externalSVGDocument->setContent(decoder->decode(m_data->data(), m_data->size()) + decoder->flush());
+        
+        if (decoder->sawError())
+            m_externalSVGDocument = 0;
     }
 
     return m_externalSVGDocument;

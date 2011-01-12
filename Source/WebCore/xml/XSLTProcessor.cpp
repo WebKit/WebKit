@@ -88,14 +88,11 @@ PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourc
         frame->setDocument(result);
     }
 
-    result->open();
-
     RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create(sourceMIMEType);
     decoder->setEncoding(sourceEncoding.isEmpty() ? UTF8Encoding() : TextEncoding(sourceEncoding), TextResourceDecoder::EncodingFromXMLHeader);
     result->setDecoder(decoder.release());
 
-    result->write(documentSource);
-    result->close();
+    result->setContent(documentSource);
 
     return result.release();
 }

@@ -245,12 +245,8 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
             m_responseXML = 0;
         } else {
             m_responseXML = Document::create(0, m_url);
-            m_responseXML->open();
             // FIXME: Set Last-Modified.
-            m_responseXML->write(m_responseBuilder.toStringPreserveCapacity());
-            m_responseXML->finishParsing();
-            m_responseXML->close();
-
+            m_responseXML->setContent(m_responseBuilder.toStringPreserveCapacity());
             if (!m_responseXML->wellFormed())
                 m_responseXML = 0;
         }

@@ -1,3 +1,28 @@
+2011-01-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add Document::setContent()
+        https://bugs.webkit.org/show_bug.cgi?id=52085
+
+        Add a method to Document to set the whole content at once.
+        This removes the hack of the insert method in the xml parser
+        and is a predecessor to feed the xml parser with raw data.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setContent):
+        * dom/Document.h:
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::insert): Added ASSERT_NOT_REACHED().
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::ensureSVGFontData): Use setContent.
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString): Ditto.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML): Ditto.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource): Ditto.
+
 2011-01-11  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.

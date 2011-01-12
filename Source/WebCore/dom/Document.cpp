@@ -1167,6 +1167,16 @@ KURL Document::baseURI() const
     return m_baseURL;
 }
 
+void Document::setContent(const String& content)
+{
+    removeAllChildren();
+
+    open();
+    m_parser->append(content);
+    m_parser->finish();
+    close();
+}
+
 // FIXME: We need to discuss the DOM API here at some point. Ideas:
 // * making it receive a rect as parameter, i.e. nodesFromRect(x, y, w, h);
 // * making it receive the expading size of each direction separately,

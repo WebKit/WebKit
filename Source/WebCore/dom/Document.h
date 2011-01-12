@@ -349,6 +349,8 @@ public:
 
     void setCharset(const String&);
 
+    void setContent(const String&);
+
     String contentLanguage() const { return m_contentLanguage; }
     void setContentLanguage(const String& lang) { m_contentLanguage = lang; }
 
