@@ -170,6 +170,7 @@ my $useValgrind = 0;
 my $verbose = 0;
 my $shouldWaitForHTTPD = 0;
 my $useWebKitTestRunner = 0;
+my $noBuildDumpTool = 0;
 
 my @leaksFilenames;
 
@@ -329,6 +330,7 @@ my $getOptionsResult = GetOptions(
     'leaks|l' => \$shouldCheckLeaks,
     'merge-leak-depth|m:5' => \$mergeDepth,
     'new-test-results!' => \$generateNewResults,
+    'no-build' => \$noBuildDumpTool,
     'nthly=i' => \$testsPerDumpTool,
     'pixel-tests|p' => \$pixelTests,
     'platform=s' => \$platform,
@@ -405,7 +407,7 @@ $productDir .= "/Programs" if isGtk();
 
 chdirWebKit();
 
-if (!defined($root)) {
+if (!defined($root) && !$noBuildDumpTool) {
     # FIXME: We build both DumpRenderTree and WebKitTestRunner for
     # WebKitTestRunner runs becuase DumpRenderTree still includes
     # the DumpRenderTreeSupport module and the TestNetscapePlugin.
