@@ -5395,3 +5395,7 @@ fast/workers/storage/change-version-sync.html
 fast/workers/storage/interrupt-database.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
+
+# [Qt] plugins/no-mime-with-valid-extension.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=52288
+plugins/no-mime-with-valid-extension.html
