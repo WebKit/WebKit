@@ -1,3 +1,9 @@
+2011-01-11  James Robinson  <jamesr@chromium.org>
+
+        Update test to use layoutTestController.waitUntilDone()/notifyDone() since it relies on the scroll event which is now async.
+
+        * fast/repaint/resources/fixed-move-after-keyboard-scroll-iframe.html:
+
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed; chromium test expectations update.

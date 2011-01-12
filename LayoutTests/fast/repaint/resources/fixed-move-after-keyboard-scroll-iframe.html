@@ -16,7 +16,11 @@
       {
           document.getElementById('toMove').style.left = "150px";
           document.getElementById('toMove').style.backgroundColor = "green";
+          if (window.layoutTestController)
+              window.layoutTestController.notifyDone();
       }
+      if (window.layoutTestController)
+          window.layoutTestController.waitUntilDone();
       document.addEventListener("scroll", scrollAndRepaint, false);
   </script>
 </head>
