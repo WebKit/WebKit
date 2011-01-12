@@ -97,18 +97,18 @@
     });
   }
 
-  function diffSectionFrom(line) {
+  function fileDiffFor(line) {
     return line.parents('.FileDiff');
   }
 
   function activeCommentFor(line) {
     // Scope to the diffSection as a performance improvement.
-    return $('textarea[data-comment-for~="' + line[0].id + '"]', diffSectionFrom(line));
+    return $('textarea[data-comment-for~="' + line[0].id + '"]', fileDiffFor(line));
   }
 
   function previousCommentsFor(line) {
     // Scope to the diffSection as a performance improvement.
-    return $('div[data-comment-for~="' + line[0].id + '"].previousComment', diffSectionFrom(line));
+    return $('div[data-comment-for~="' + line[0].id + '"].previousComment', fileDiffFor(line));
   }
 
   function findCommentPositionFor(line) {
@@ -189,12 +189,17 @@
         addPreviousComment(line, author, comment_text);
       });
     }
-    if (comments.length == 0)
+
+    var help_text = 'Scroll though diffs with the "j" and "k" keys.';
+    if (comments.length == 0) {
+      $('#message .commentStatus').text(help_text);
       return;
+    }
+
     descriptor = comments.length + ' comment';
     if (comments.length > 1)
       descriptor += 's';
-    $('#message .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys.');
+    $('#message .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys. ' + help_text);
   }
 
   function scanForComments(author, text) {
@@ -934,48 +939,105 @@
     findCommentBlockFor(line).hide().after($('<div class="frozenComment"></div>').text(comment_textarea.val()));
   });
 
-  function focusOn(comment) {
+  function focusOn(node) {
     $('.focused').removeClass('focused');
-    if (comment.length == 0)
+    if (node.length == 0)
       return;
-    $(document).scrollTop(comment.addClass('focused').position().top - window.innerHeight/2);
+    $(document).scrollTop(node.addClass('focused').position().top - window.innerHeight / 2);
   }
 
-  function focusNextComment() {
-    var comments = $('.previousComment');
-    if (comments.length == 0)
-      return;
-    var index = comments.index($('.focused'));
-    // Notice that -1 gets mapped to 0.
-    focusOn($(comments.get(index + 1)));
-  }
+  function diffBlockEndPoint(focusable_nodes, line, line_offset, is_backward) {
+    if (!line_offset && is_backward)
+      return line;
 
-  function focusPreviousComment() {
-    var comments = $('.previousComment');
-    if (comments.length == 0)
-      return;
-    var index = comments.index($('.focused'));
-    if (index == -1)
-      index = comments.length;
-    if (index == 0) {
-      focusOn([]);
-      return;
+    var offset = is_backward ? -1 : 1;
+
+    // If we're at a comment, get a Line in the diff block that contains the comment.
+    if (line.hasClass('previousComment')) {
+      var line_for_comment = $('#' + line.attr('data-comment-for'));
+      line_offset = focusable_nodes.index(line_for_comment);
+
+      // If the comment is not inside a diff block, return the comment node.
+      if (line_offset == -1)
+        return line;
+
+      line = line_for_comment;
     }
-    focusOn($(comments.get(index - 1)));
+
+    // Find the Line at the beginning/end of this contiguous block of lines.
+    // Contiguous blocks of lines have contiguous IDs and are contained in the same FileDiff.
+    // Skip over comment nodes.
+    var id = numberFrom(line.attr('id'));
+    var next_node = $(focusable_nodes[line_offset + offset]);
+    while (next_node.size()
+           && (!next_node.hasClass('Line') || next_node.attr('id') == 'line' + (id + offset))
+           && fileDiffFor(line)[0] == fileDiffFor(next_node)[0]) {
+      if (next_node.hasClass('Line')) {
+        line = next_node;
+        id += offset;
+      }
+
+      line_offset += offset;
+      next_node = $(focusable_nodes[line_offset + offset]);
+    }
+    return line;
+  }
+
+  function focusNext(className, is_backward) {
+    var focusable_nodes = $('.previousComment,.Line.add,.Line.remove');
+    var focused_node = $('.focused');
+    var index = focusable_nodes.index(focused_node);
+    if (is_backward && (!index || index == -1))
+      return;
+
+    if (focused_node.size() && className == 'Line') {
+      focused_node = diffBlockEndPoint(focusable_nodes, focused_node, index, is_backward);
+      index = focusable_nodes.index(focused_node);
+    }
+
+    var end = is_backward ? 0 : focusable_nodes.size();
+    var offset = is_backward ? -1 : 1;
+    for (var i = index + offset; i != end; i = i + offset) {
+      var node = $(focusable_nodes[i]);
+      if (node.hasClass(className)) {
+        if (className == 'Line') {
+          // Pass in true for is_backward because we always want to focus the start of the diff block.
+          node = diffBlockEndPoint(focusable_nodes, node, i, true);
+        }
+        focusOn(node);
+        return;
+      }
+    }
   }
 
   var kCharCodeForN = 'n'.charCodeAt(0);
   var kCharCodeForP = 'p'.charCodeAt(0);
+  var kCharCodeForJ = 'j'.charCodeAt(0);
+  var kCharCodeForK = 'k'.charCodeAt(0);
 
   $('body').live('keypress', function() {
     // FIXME: There's got to be a better way to avoid seeing these keypress
     // events.
     if (event.target.nodeName == 'TEXTAREA')
       return;
-    if (event.charCode == kCharCodeForN)
-      focusNextComment();
-    else if (event.charCode == kCharCodeForP)
-      focusPreviousComment();
+
+    switch (event.charCode) {
+    case kCharCodeForN:
+      focusNext('previousComment', false);
+      break;
+
+    case kCharCodeForP:
+      focusNext('previousComment', true);
+      break;
+
+    case kCharCodeForJ:
+      focusNext('Line', false);
+      break;
+
+    case kCharCodeForK:
+      focusNext('Line', true);
+      break;
+    }
   });
 
   function contextLinesFor(line_id) {
@@ -1117,7 +1179,7 @@
   }
 
   function fileNameFor(line) {
-    return line.parentsUntil('.FileDiff').parent().find('h1').text();
+    return fileDiffFor(line).find('h1').text();
   }
 
   function indentFor(depth) {

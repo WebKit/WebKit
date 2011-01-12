@@ -2,6 +2,20 @@
 
         Reviewed by Adam Barth.
 
+        Bugzilla: Add keyboard shortcuts to jump to next change
+        https://bugs.webkit.org/show_bug.cgi?id=52305
+
+        Comments and diff blocks go in the same queue. If you have a 
+        comment focused, then j/k will focus the next/prev diff block
+        with respect to that comment.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2011-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         show shared lines on both sides in code review tool
         https://bugs.webkit.org/show_bug.cgi?id=52308
 

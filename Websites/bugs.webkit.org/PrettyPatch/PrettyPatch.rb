@@ -374,7 +374,8 @@ body {
 }
 
 .focused {
-  border: 1px solid blue;
+  outline: 1px solid blue;
+  outline-offset: -1px;
 }
 
 .statusBubble {
