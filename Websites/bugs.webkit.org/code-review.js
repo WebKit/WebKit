@@ -842,8 +842,12 @@
     var to_class = '';
     var from_attributes = '';
     var to_attributes = '';
-    var from_contents = contents;
+    // Clone the contents so we have two copies we can put back in the DOM.
+    var from_contents = contents.clone(true);
     var to_contents = contents;
+
+    var container_class = 'LineContainer';
+    var container_attributes = '';
 
     if (from && !to) { // This is a remove line.
       from_class = classNames;
@@ -853,11 +857,7 @@
       to_class = classNames;
       to_attributes = attributes;
       from_contents = '';
-    }
-
-    var container_class = 'LineContainer';
-    var container_attributes = '';
-    if (!to_attributes && !from_attributes) {
+    } else {
       container_attributes = attributes;
       container_class += ' Line ' + classNames;
     }
