@@ -172,7 +172,7 @@ trans = event.result
 PASS trans !== null is true
 Deleted all object stores.
 db.createObjectStore('storeName', null)
-db.transaction()
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 PASS store.name is "storeName"
 Abort event fired:

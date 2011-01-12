@@ -74,7 +74,7 @@ function commitAndContinue()
 
 function checkQuotaEnforcing()
 {
-    var trans = evalAndLog("trans = db.transaction()");
+    var trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     trans.onabort = testComplete;
     trans.oncomplete = unexpectedCompleteCallback;
     debug("Creating 'data' which contains 64K of data");

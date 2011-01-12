@@ -59,7 +59,7 @@ function createAndPopulateObjectStore()
 function openCursor()
 {
     debug("openCursor1");
-    evalAndLog("trans = db.transaction('test', webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction({objectStoreNames: 'test', mode: webkitIDBTransaction.READ_WRITE})");
     keyRange = webkitIDBKeyRange.lowerBound("myKey1");
     result = evalAndLog("trans.objectStore('test').openCursor({range: keyRange})");
     verifyResult(result);
@@ -86,13 +86,13 @@ function cursorSuccess()
 function cursorEmpty()
 {
     verifySuccessEvent(event);
-    shouldBeNull(event.result);
+    shouldBeNull("event.result");
     trans.oncomplete = addObject;
 }
 
 function addObject()
 {
-    evalAndLog("trans = db.transaction('test', webkitIDBTransaction.READ_WRITE)");
+    evalAndLog("trans = db.transaction({objectStoreNames: 'test', mode: webkitIDBTransaction.READ_WRITE})");
     objectStore = evalAndLog("objectStore = trans.objectStore('test')");
     result = evalAndLog("objectStore.add('myValue1', 'myKey1')");
     verifyResult(result);

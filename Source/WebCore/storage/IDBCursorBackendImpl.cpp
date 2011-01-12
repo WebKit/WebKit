@@ -166,12 +166,6 @@ void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks,
         return;
     }
 
-    // FIXME: Check that the transaction is READ_WRITE
-    // if (m_transaction->mode() == IDBTransaction::READ_ONLY) {
-        // FIXME: We must return READ_ONLY_ERR here. Fix this when we update IDBDatabaseException to match the spec.
-        // ec = IDBDatabaseException::NOT_ALLOWED_ERR;
-        // return;
-    // }
     RefPtr<IDBKey> key = m_currentIDBKeyValue ? m_currentIDBKeyValue : m_currentKey;
     m_objectStore->deleteFunction(key.release(), prpCallbacks, m_transaction.get(), ec);
 }

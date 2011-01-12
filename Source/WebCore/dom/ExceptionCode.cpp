@@ -222,7 +222,8 @@ static const char* const idbDatabaseExceptionNames[] = {
     "RECOVERABLE_ERR",
     "TRANSIENT_ERR",
     "TIMEOUT_ERR",
-    "DEADLOCK_ERR"
+    "DEADLOCK_ERR",
+    "READ_ONLY_ERR"
 };
 
 static const char* const idbDatabaseExceptionDescriptions[] = {
@@ -236,7 +237,8 @@ static const char* const idbDatabaseExceptionDescriptions[] = {
     "RECOVERABLE_ERR", // FIXME: This isn't even used.
     "TRANSIENT_ERR", // FIXME: This isn't even used.
     "TIMEOUT_ERR", // This can't be thrown.
-    "DEADLOCK_ERR" // This can't be thrown.
+    "DEADLOCK_ERR", // This can't be thrown.
+    "Write operations cannot be preformed on a read-only transaction."
 };
 #endif
 

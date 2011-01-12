@@ -50,6 +50,7 @@ module storage {
         const unsigned short TRANSIENT_ERR = 9;
         const unsigned short TIMEOUT_ERR = 10;
         const unsigned short DEADLOCK_ERR = 11;
+        const unsigned short READ_ONLY_ERR = 12;
     };
 
 }

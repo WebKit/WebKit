@@ -64,7 +64,7 @@ PASS db.objectStoreNames.length is 1
 PASS db.objectStoreNames.contains('') is false
 PASS db.objectStoreNames.contains('test456') is false
 PASS db.objectStoreNames.contains('test123') is true
-trans = db.transaction()
+trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 Creating 'data' which contains 64K of data
 PASS data.length is 65536
 store = trans.objectStore('test123')

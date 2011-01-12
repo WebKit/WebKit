@@ -59,7 +59,7 @@ function getValue()
 {
     verifySuccessEvent(event);
 
-    transaction = evalAndLog("db.transaction()");
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -99,7 +99,7 @@ function createObjectStoreAgain()
 
 function getValueAgain()
 {
-    transaction = evalAndLog("db.transaction()");
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 

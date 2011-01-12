@@ -95,7 +95,7 @@ PASS store.indexNames[1] is null
 PASS store.indexNames[100] is null
 PASS store.indexNames.item(1) is null
 PASS store.indexNames.item(100) is null
-transaction = db.transaction()
+transaction = db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 Try to insert data with a Date key:
 store.add({x: 'foo'}, testDate)
@@ -137,7 +137,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.UNKNOWN_ERR
-db.transaction()
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 store.add({x: 'othervalue'}, null)
 PASS 'onsuccess' in result is true
@@ -158,7 +158,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.DATA_ERR
-db.transaction()
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 store.add({x: null}, 'validkey')
 PASS 'onsuccess' in result is true
@@ -179,7 +179,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is webkitIDBDatabaseException.DATA_ERR
-db.transaction()
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS 'onsuccess' in result is true

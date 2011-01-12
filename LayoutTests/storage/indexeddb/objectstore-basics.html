@@ -141,7 +141,7 @@ var testDateB = new Date("Wed Jan 05 2011 15:54:49");
 
 function addData()
 {
-    var transaction = evalAndLog("transaction = db.transaction()");
+    var transaction = evalAndLog("transaction = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     transaction.onabort = unexpectedAbortCallback;
     window.store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -189,7 +189,7 @@ function addAgainFailure()
     // FIXME: This error code needs to be specced.
     shouldBe("event.code", "webkitIDBDatabaseException.UNKNOWN_ERR");
 
-    transaction = evalAndLog("db.transaction()");
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -205,7 +205,7 @@ function addWithNullKeyFailure()
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
 
-    transaction = evalAndLog("db.transaction()");
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 
@@ -221,7 +221,7 @@ function addWithNullIndexFailure()
     verifyErrorEvent(event);
     shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
 
-    transaction = evalAndLog("db.transaction()");
+    transaction = evalAndLog("db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");
 

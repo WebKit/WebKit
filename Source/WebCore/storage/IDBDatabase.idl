@@ -38,7 +38,7 @@ module storage {
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest setVersion(in DOMString version)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction (in [Optional] OptionsObject optionsObject)
+        [CallWith=ScriptExecutionContext] IDBTransaction transaction(in [Optional] OptionsObject optionsObject)
             raises (IDBDatabaseException);
         // FIXME: Implement.
         //void close();

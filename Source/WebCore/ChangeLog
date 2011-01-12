@@ -1,3 +1,28 @@
+2011-01-11  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Enforce READ_ONLY transactions in IndexedDB
+        https://bugs.webkit.org/show_bug.cgi?id=52229
+
+        Add READ_ONLY_ERR and return it whenever delete or put
+        are called.  Note that IDBCursor's delete and update
+        are simply aliases for delete/put, which is why no
+        extra code is required to handle those cases.
+
+        Test: storage/indexeddb/transaction-read-only.html
+
+        * dom/ExceptionCode.cpp:
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::deleteFunction):
+        * storage/IDBDatabase.idl:
+        * storage/IDBDatabaseException.h:
+        * storage/IDBDatabaseException.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::deleteFunction):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+
 2011-01-11  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Eric Seidel.

@@ -30,7 +30,7 @@ function openSuccess()
     debug("openSuccess():");
     verifySuccessEvent(event);
     db = evalAndLog("db = event.result");
-    evalAndLog("db.transaction([])");
+    evalAndLog("db.transaction()");
     evalAndLog("window.gc()");
     done();
 }

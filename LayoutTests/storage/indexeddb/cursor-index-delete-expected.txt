@@ -49,7 +49,7 @@ objectStore.add({x: 2}, 'myKey2')
 objectStore.add({x: 3}, 'myKey3')
 objectStore.add({x: 4}, 'myKey4')
 openCursor1
-trans = db.transaction('test', webkitIDBTransaction.READ_WRITE)
+trans = db.transaction({objectStoreNames: 'test', mode: webkitIDBTransaction.READ_WRITE})
 trans.objectStore('test').index('testIndex').openCursor({range: keyRange})
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -87,7 +87,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result is null
-trans = db.transaction('test', webkitIDBTransaction.READ_WRITE)
+trans = db.transaction({objectStoreNames: 'test', mode: webkitIDBTransaction.READ_WRITE})
 objectStore = trans.objectStore('test')
 objectStore.add({x: 1}, 'myKey1')
 PASS 'onsuccess' in result is true

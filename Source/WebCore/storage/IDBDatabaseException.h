@@ -53,7 +53,8 @@ public:
         RECOVERABLE_ERR = IDBDatabaseExceptionOffset + 8,
         TRANSIENT_ERR = IDBDatabaseExceptionOffset + 9,
         TIMEOUT_ERR = IDBDatabaseExceptionOffset + 10,
-        DEADLOCK_ERR = IDBDatabaseExceptionOffset + 11
+        DEADLOCK_ERR = IDBDatabaseExceptionOffset + 11,
+        READ_ONLY_ERR = IDBDatabaseExceptionOffset + 12
     };
 
     static int ErrorCodeToExceptionCode(int errorCode)

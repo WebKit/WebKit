@@ -61,7 +61,7 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-db.transaction()
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS 'onsuccess' in result is true
@@ -102,7 +102,7 @@ trans = event.result
 PASS trans !== null is true
 db.deleteObjectStore('storeName')
 db.createObjectStore('storeName', null)
-db.transaction()
+db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 store = transaction.objectStore('storeName')
 store.get('key')
 PASS 'onsuccess' in result is true

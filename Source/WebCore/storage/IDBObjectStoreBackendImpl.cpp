@@ -179,6 +179,11 @@ static bool putIndexData(SQLiteDatabase& db, IDBKey* key, int64_t indexId, int64
 
 void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
+    if (transactionPtr->mode() == IDBTransaction::READ_ONLY) {
+        ec = IDBDatabaseException::READ_ONLY_ERR;
+        return;
+    }
+
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
@@ -277,9 +282,15 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
 void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
+    if (transaction->mode() == IDBTransaction::READ_ONLY) {
+        ec = IDBDatabaseException::READ_ONLY_ERR;
+        return;
+    }
+
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
+
     if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::deleteInternal, objectStore, key, callbacks)))
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
@@ -386,6 +397,11 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
 
 void IDBObjectStoreBackendImpl::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
+    if (transaction->mode() != IDBTransaction::VERSION_CHANGE) {
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
+        return;
+    }
+
     RefPtr<IDBIndexBackendImpl> index = m_indexes.get(name);
     if (!index) {
         ec = IDBDatabaseException::NOT_FOUND_ERR;
