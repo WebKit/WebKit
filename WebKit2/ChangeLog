@@ -1,5 +1,12 @@
 2011-01-12  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Begin stubbing out some more BackingStore member functions
