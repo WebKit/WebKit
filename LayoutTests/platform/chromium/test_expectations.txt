@@ -721,7 +721,7 @@ BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
 BUGCR61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
 BUGCR37962 MAC : plugins/iframe-shims.html = TEXT PASS
 BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
-BUGWK48164 MAC LINUX : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
+BUGWK48164 MAC LINUX WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 // Need to implement NPP_HandleEvent in the layout_test_plugin
 // WIN started failing during webkit roll 62670 -> 62844.
 BUGCR38353 : plugins/keyboard-events.html = TEXT

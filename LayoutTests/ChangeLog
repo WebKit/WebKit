@@ -1,3 +1,11 @@
+2011-01-12  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        Added chromium win to exclusion for bug 48164.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.
