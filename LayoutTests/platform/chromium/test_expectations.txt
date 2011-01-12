@@ -3040,13 +3040,6 @@ BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
 // Should start passing with updated mac-leopard baselines.
 // FIXME: remove these lines.
 BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
-BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-001.html = IMAGE
-BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-002.html = IMAGE
-BUG_MIHAIP MAC : fast/block/basic/016.html = IMAGE
-BUG_MIHAIP MAC : fast/block/basic/truncation-rtl.html = IMAGE
-BUG_MIHAIP MAC : fast/blockflow/fieldsets.html = IMAGE
-BUG_MIHAIP MAC : fast/borders/border-image-scale-transform.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug2479-5.html = IMAGE
 
 // Platforms that use Skia don't support elliptical gradients.
 BUGWK51841 : fast/gradients/css3-color-stop-units.html = IMAGE
