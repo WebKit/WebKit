@@ -101,11 +101,11 @@ def run(port, options, args, regular_output=sys.stderr,
                 return -1
             raise
 
+        printer.print_update("Parsing expectations ...")
         if options.lint_test_files:
             return runner.lint()
-
-        printer.print_update("Parsing expectations ...")
-        runner.parse_expectations()
+        runner.parse_expectations(port.test_platform_name(),
+                                  options.configuration == 'Debug')
 
         printer.print_update("Checking build ...")
         if not port.check_build(runner.needs_http()):

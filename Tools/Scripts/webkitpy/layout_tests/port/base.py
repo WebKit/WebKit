@@ -121,7 +121,6 @@ class Port(object):
         self.set_option_default('configuration', None)
         if self._options.configuration is None:
             self._options.configuration = self.default_configuration()
-        self._test_configuration = None
 
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
@@ -575,19 +574,6 @@ class Port(object):
         if self._http_lock:
             self._http_lock.cleanup_http_lock()
 
-    #
-    # TEST EXPECTATION-RELATED METHODS
-    #
-
-    def test_configuration(self):
-        """Returns the current TestConfiguration for the port."""
-        if not self._test_configuration:
-            self._test_configuration = TestConfiguration(self)
-        return self._test_configuration
-
-    def all_test_configurations(self):
-        return self.test_configuration().all_test_configurations()
-
     def test_expectations(self):
         """Returns the test expectations for this port.
 
@@ -874,68 +860,3 @@ class Driver:
 
     def stop(self):
         raise NotImplementedError('Driver.stop')
-
-
-class TestConfiguration(object):
-    def __init__(self, port=None, os=None, version=None, architecture=None,
-                 build_type=None, graphics_type=None):
-
-        # FIXME: We can get the O/S and version from test_platform_name()
-        # and version() for now, but those should go away and be cleaned up
-        # with more generic methods like operation_system() and os_version()
-        # or something. Note that we need to strip the leading '-' off the
-        # version string if it is present.
-        if port:
-            port_version = port.version()
-        self.os = os or port.test_platform_name().replace(port_version, '')
-        self.version = version or port_version[1:]
-        self.architecture = architecture or 'x86'
-        self.build_type = build_type or port._options.configuration.lower()
-        self.graphics_type = graphics_type or 'cpu'
-
-    def items(self):
-        return self.__dict__.items()
-
-    def keys(self):
-        return self.__dict__.keys()
-
-    def __str__(self):
-        return ("<%(version)s, %(build_type)s, %(graphics_type)s>" %
-                self.__dict__)
-
-    def __repr__(self):
-        return "TestConfig(os='%(os)s', version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s', graphics_type='%(graphics_type)s')" % self.__dict__
-
-    def values(self):
-        """Returns the configuration values of this instance as a tuple."""
-        return self.__dict__.values()
-
-    def all_test_configurations(self):
-        """Returns a sequence of the TestConfigurations the port supports."""
-        # By default, we assume we want to test every graphics type in
-        # every configuration on every system.
-        test_configurations = []
-        for system in self.all_systems():
-            for build_type in self.all_build_types():
-                for graphics_type in self.all_graphics_types():
-                    test_configurations.append(TestConfiguration(
-                        os=system[0],
-                        version=system[1],
-                        architecture=system[2],
-                        build_type=build_type,
-                        graphics_type=graphics_type))
-        return test_configurations
-
-    def all_systems(self):
-        return (('mac', 'leopard', 'x86'),
-                ('mac', 'snowleopard', 'x86'),
-                ('win', 'xp', 'x86'),
-                ('win', 'vista', 'x86'),
-                ('win', 'win7', 'x86'),
-                ('linux', 'hardy', 'x86'))
-
-    def all_build_types(self):
-        return ('debug', 'release')
-
-    def all_graphics_types(self):
-        return ('cpu', 'gpu')

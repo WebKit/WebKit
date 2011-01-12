@@ -84,6 +84,15 @@ class TestExpectationsTestCase(unittest.TestCase):
 
     def test_valid_expectations(self):
         self.assert_lines_lint(
+            ["passes/text.html = PASS"],
+            "")
+        self.assert_lines_lint(
+            ["passes/text.html = FAIL PASS"],
+            "")
+        self.assert_lines_lint(
+            ["passes/text.html = CRASH TIMEOUT FAIL PASS"],
+            "")
+        self.assert_lines_lint(
             ["BUGCR1234 MAC : passes/text.html = PASS FAIL"],
             "")
         self.assert_lines_lint(
@@ -111,12 +120,12 @@ class TestExpectationsTestCase(unittest.TestCase):
     def test_modifier_errors(self):
         self.assert_lines_lint(
             ["BUG1234 : passes/text.html = FAIL"],
-            "BUG\\d+ is not allowed, must be one of BUGCR\\d+, BUGWK\\d+, BUGV8_\\d+, or a non-numeric bug identifier. passes/text.html  [test/expectations] [5]")
+            'Bug must be either BUGCR, BUGWK, or BUGV8_ for test: bug1234 passes/text.html  [test/expectations] [5]')
 
     def test_valid_modifiers(self):
         self.assert_lines_lint(
             ["INVALID-MODIFIER : passes/text.html = PASS"],
-            "Unrecognized option 'invalid-modifier' "
+            "Invalid modifier for test: invalid-modifier "
             "passes/text.html  [test/expectations] [5]")
         self.assert_lines_lint(
             ["SKIP : passes/text.html = PASS"],
@@ -126,38 +135,38 @@ class TestExpectationsTestCase(unittest.TestCase):
     def test_expectation_errors(self):
         self.assert_lines_lint(
             ["missing expectations"],
-            "Missing a ':' missing expectations  [test/expectations] [5]")
+            "Missing expectations. ['missing expectations']  [test/expectations] [5]")
         self.assert_lines_lint(
             ["SLOW : passes/text.html = TIMEOUT"],
             "A test can not be both slow and timeout. "
             "If it times out indefinitely, then it should be just timeout. "
             "passes/text.html  [test/expectations] [5]")
         self.assert_lines_lint(
-            ["BUGWK1 : does/not/exist.html = FAIL"],
+            ["does/not/exist.html = FAIL"],
             "Path does not exist. does/not/exist.html  [test/expectations] [2]")
 
     def test_parse_expectations(self):
         self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = PASS"],
+            ["passes/text.html = PASS"],
             "")
         self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = UNSUPPORTED"],
+            ["passes/text.html = UNSUPPORTED"],
             "Unsupported expectation: unsupported "
             "passes/text.html  [test/expectations] [5]")
         self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = PASS UNSUPPORTED"],
+            ["passes/text.html = PASS UNSUPPORTED"],
             "Unsupported expectation: unsupported "
             "passes/text.html  [test/expectations] [5]")
 
     def test_already_seen_test(self):
         self.assert_lines_lint(
-            ["BUGWK1 : passes/text.html = PASS",
-             "BUGWK1 : passes/text.html = TIMEOUT"],
-            "Duplicate or ambiguous expectation. %s  [test/expectations] [5]" % self._test_file)
+            ["passes/text.html = PASS",
+             "passes/text.html = TIMEOUT"],
+            "Duplicate expectation. %s  [test/expectations] [5]" % self._test_file)
 
     def test_tab(self):
         self.assert_lines_lint(
-            ["\tBUGWK1 : passes/text.html = PASS"],
+            ["\tpasses/text.html = PASS"],
             "Line contains tab character.  [whitespace/tab] [5]")
 
 if __name__ == '__main__':
