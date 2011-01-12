@@ -27,13 +27,12 @@
 #define YarrParser_h
 
 #include "UString.h"
-#include <limits.h>
+#include "Yarr.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace JSC { namespace Yarr {
 
-static const unsigned quantifyInfinite = UINT_MAX;
 #define REGEXP_ERROR_PREFIX "Invalid regular expression: "
 
 enum BuiltInCharacterClassID {
