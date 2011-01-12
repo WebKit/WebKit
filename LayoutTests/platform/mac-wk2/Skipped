@@ -1621,7 +1621,7 @@ fast/frames/frame-display-none-focus.html
 # WebKitTestRunner needs layoutTestController.queueLoad
 # <https://bugs.webkit.org/show_bug.cgi?id=42674>
 http/tests/xmlhttprequest/basic-auth-nopassword.html
-/http/tests/xmlhttprequest/basic-auth-nouser.html
+http/tests/xmlhttprequest/basic-auth-nouser.html
 http/tests/navigation/forward-and-cancel.html
 fast/frames/frame-navigation.html
 fast/history/go-back-to-changed-name.html
