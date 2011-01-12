@@ -396,7 +396,7 @@ sub prettyPatch
     $ENV{'PATH'} = "/opt/local/bin:" . $ENV{'PATH'};
     open2(\*OUT, \*IN, "/usr/bin/ruby", "-I", "PrettyPatch", "PrettyPatch/prettify.rb", "--html-exceptions");
     $ENV{'PATH'} = $orig_path;
-    print IN $attachment->data . "\n";
+    print IN $attachment->data;
     close(IN);
     while (<OUT>) {
         print;
