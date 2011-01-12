@@ -1,5 +1,13 @@
 2011-01-12  Justin Schuh  <jschuh@chromium.org>
 
+        Unreviewed expectatinos update.
+
+        Excluding SVG test for sporadic image failure.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-12  Justin Schuh  <jschuh@chromium.org>
+
         Unreviewed chromium expectations update.
 
         Added chromium win to exclusion for bug 48164.

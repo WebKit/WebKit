@@ -3092,3 +3092,6 @@ BUGWK52266 WIN : plugins/no-mime-with-valid-extension.html = TEXT
 
 // Test added in r75064
 BUGCR69395 WIN : inspector/timeline-network-resource.html = TEXT
+
+// Flaky since r75548; transformed character is occasionally corrupt
+BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
