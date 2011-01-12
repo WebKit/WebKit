@@ -1,3 +1,11 @@
+2011-01-11  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, test expectations update.
+
+        Revert expect change for Snow Leopard in r75570.
+
+        * platform/mac-snowleopard/Skipped:
+
 2011-01-11  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed; chromium test expectations update.
