@@ -1,3 +1,17 @@
+2011-01-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        [CSS Gradients] One color stop should not paint anything for linear-gradient
+        https://bugs.webkit.org/show_bug.cgi?id=52259
+        
+        Update test results given that single-stop gradients are invalid.
+
+        * fast/gradients/css3-gradient-parsing-expected.txt:
+        * fast/gradients/css3-gradient-parsing.html:
+        * platform/mac/fast/gradients/css3-color-stops-expected.checksum:
+        * platform/mac/fast/gradients/css3-color-stops-expected.png:
+
 2011-01-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

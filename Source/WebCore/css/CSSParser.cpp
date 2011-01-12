@@ -4911,7 +4911,6 @@ bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient, CSSGradientRepea
         a = args->next();
         expectComma = true;
     } else {
-    
         // Look one or two optional keywords that indicate a side or corner.
         RefPtr<CSSPrimitiveValue> startX, startY;
         
@@ -4950,35 +4949,8 @@ bool CSSParser::parseLinearGradient(RefPtr<CSSValue>& gradient, CSSGradientRepea
         result->setFirstY(startY.release());
     }
 
-    // Now look for 0 or more color stops.
-    while (a) {
-        // Look for the comma before the next stop.
-        if (expectComma) {
-            if (a->unit != CSSParserValue::Operator || a->iValue != ',')
-                return false;
-
-            a = args->next();
-            if (!a)
-                return false;
-        }
-
-        // <color-stop> = <color> [ <percentage> | <length> ]?
-        CSSGradientColorStop stop;
-        stop.m_color = parseGradientColorOrKeyword(this, a);
-        if (!stop.m_color)
-            return false;
-
-        a = args->next();
-        if (a) {
-            if (validUnit(a, FLength | FPercent, m_strict)) {
-                stop.m_position = CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes)a->unit);
-                a = args->next();
-            }
-        }
-        
-        result->addStop(stop);
-        expectComma = true;
-    }
+    if (!parseGradientColorStops(args, result.get(), expectComma))
+        return false;
 
     Vector<CSSGradientColorStop>& stops = result->stops();
     if (stops.isEmpty())
@@ -5098,14 +5070,25 @@ bool CSSParser::parseRadialGradient(RefPtr<CSSValue>& gradient, CSSGradientRepea
     result->setEndHorizontalSize(horizontalSize);
     result->setEndVerticalSize(verticalSize);
 
-    // Now look for 0 or more color stops.
+    if (!parseGradientColorStops(args, result.get(), expectComma))
+        return false;
+
+    gradient = result.release();
+    return true;
+}
+
+bool CSSParser::parseGradientColorStops(CSSParserValueList* valueList, CSSGradientValue* gradient, bool expectComma)
+{
+    CSSParserValue* a = valueList->current();
+
+    // Now look for color stops.
     while (a) {
         // Look for the comma before the next stop.
         if (expectComma) {
             if (a->unit != CSSParserValue::Operator || a->iValue != ',')
                 return false;
 
-            a = args->next();
+            a = valueList->next();
             if (!a)
                 return false;
         }
@@ -5116,24 +5099,20 @@ bool CSSParser::parseRadialGradient(RefPtr<CSSValue>& gradient, CSSGradientRepea
         if (!stop.m_color)
             return false;
 
-        a = args->next();
+        a = valueList->next();
         if (a) {
             if (validUnit(a, FLength | FPercent, m_strict)) {
                 stop.m_position = CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes)a->unit);
-                a = args->next();
+                a = valueList->next();
             }
         }
         
-        result->addStop(stop);
+        gradient->addStop(stop);
         expectComma = true;
     }
 
-    Vector<CSSGradientColorStop>& stops = result->stops();
-    if (stops.isEmpty())
-        return false;
-
-    gradient = result.release();
-    return true;
+    // Must have 2 or more stops to be valid.
+    return gradient->stops().size() > 1;
 }
 
 bool CSSParser::isGeneratedImageValue(CSSParserValue* val) const

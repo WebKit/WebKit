@@ -9,14 +9,16 @@ PASS testGradient("background-image: -webkit-linear-gradient(10px 20%, black 0%)
 PASS testGradient("background-image: -webkit-linear-gradient(left left)", "background-image") is "none"
 PASS testGradient("background-image: -webkit-linear-gradient(left center)", "background-image") is "none"
 PASS testGradient("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image") is "none"
-PASS testGradient("background-image: -webkit-linear-gradient(black 0)", "background-image") is "-webkit-linear-gradient(top, black 0px)"
-PASS testGradient("background-image: -webkit-linear-gradient(black 0%)", "background-image") is "-webkit-linear-gradient(top, black 0%)"
-PASS testGradient("background-image: -webkit-linear-gradient(black 0%)", "background-image") is "-webkit-linear-gradient(top, black 0%)"
+PASS testGradient("background-image: -webkit-linear-gradient(black)", "background-image") is "none"
+PASS testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image") is "-webkit-linear-gradient(top, black, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black 0, white)", "background-image") is "-webkit-linear-gradient(top, black 0px, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image") is "-webkit-linear-gradient(top, black 0%, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image") is "-webkit-linear-gradient(top, black 0%, white)"
 PASS testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image") is "-webkit-linear-gradient(top, black, white)"
 PASS testGradient("background-image: -webkit-linear-gradient(black 10px, white 20px)", "background-image") is "-webkit-linear-gradient(top, black 10px, white 20px)"
-PASS testGradient("background-image: -webkit-linear-gradient(top left, black 0%)", "background-image") is "-webkit-linear-gradient(left top, black 0%)"
-PASS testGradient("background-image: -webkit-linear-gradient(top, black 0%)", "background-image") is "-webkit-linear-gradient(top, black 0%)"
-PASS testGradient("background-image: -webkit-linear-gradient(10deg, black 0%)", "background-image") is "-webkit-linear-gradient(10deg, black 0%)"
+PASS testGradient("background-image: -webkit-linear-gradient(top left, black 0%, white)", "background-image") is "-webkit-linear-gradient(left top, black 0%, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(top, black 0%, white)", "background-image") is "-webkit-linear-gradient(top, black 0%, white)"
+PASS testGradient("background-image: -webkit-linear-gradient(10deg, black 0%, white)", "background-image") is "-webkit-linear-gradient(10deg, black 0%, white)"
 -webkit-repeating-linear-gradient
 
 

@@ -1,3 +1,19 @@
+2011-01-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        [CSS Gradients] One color stop should not paint anything for linear-gradient
+        https://bugs.webkit.org/show_bug.cgi?id=52259
+        
+        Share color stop parsing code between linear and radial gradients.
+        Consider the gradient invalid if it has less than two color stops.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseLinearGradient):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parseGradientColorStops):
+        * css/CSSParser.h:
+
 2011-01-12  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

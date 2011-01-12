@@ -39,14 +39,16 @@ shouldBe('testGradient("background-image: -webkit-linear-gradient(10px 20%, blac
 shouldBe('testGradient("background-image: -webkit-linear-gradient(left left)", "background-image")', '"none"');
 shouldBe('testGradient("background-image: -webkit-linear-gradient(left center)", "background-image")', '"none"');
 shouldBe('testGradient("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image")', '"none"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0)", "background-image")', '"-webkit-linear-gradient(top, black 0px)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%)", "background-image")', '"-webkit-linear-gradient(top, black 0%)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%)", "background-image")', '"-webkit-linear-gradient(top, black 0%)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black)", "background-image")', '"none"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0, white)", "background-image")', '"-webkit-linear-gradient(top, black 0px, white)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
 shouldBe('testGradient("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
 shouldBe('testGradient("background-image: -webkit-linear-gradient(black 10px, white 20px)", "background-image")', '"-webkit-linear-gradient(top, black 10px, white 20px)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(top left, black 0%)", "background-image")', '"-webkit-linear-gradient(left top, black 0%)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(top, black 0%)", "background-image")', '"-webkit-linear-gradient(top, black 0%)"');
-shouldBe('testGradient("background-image: -webkit-linear-gradient(10deg, black 0%)", "background-image")', '"-webkit-linear-gradient(10deg, black 0%)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(top left, black 0%, white)", "background-image")', '"-webkit-linear-gradient(left top, black 0%, white)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(top, black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
+shouldBe('testGradient("background-image: -webkit-linear-gradient(10deg, black 0%, white)", "background-image")', '"-webkit-linear-gradient(10deg, black 0%, white)"');
 
 debug('<p>-webkit-repeating-linear-gradient</p>');
 shouldBe('testGradient("background-image: -webkit-repeating-linear-gradient(black, white)", "background-image")', '"-webkit-repeating-linear-gradient(top, black, white)"');
