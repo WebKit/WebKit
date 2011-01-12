@@ -36,7 +36,8 @@ class QPainter;
 namespace WebKit {
 
 class WebPageProxy;
-
+struct UpdateInfo;
+    
 #if PLATFORM(MAC)
 typedef CGContextRef PlatformDrawingContext;
 #elif PLATFORM(WIN)
@@ -87,6 +88,7 @@ protected:
 private:
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
+    virtual void update(const UpdateInfo&) { }
     virtual void didSetSize() { }
 };
 

@@ -54,6 +54,7 @@ private:
 
     // CoreIPC message handlers.
     virtual void setSize(const WebCore::IntSize&);
+    virtual void didUpdate();
 
     void scheduleDisplay();
     void display();

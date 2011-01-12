@@ -106,6 +106,14 @@ void DrawingAreaImpl::setSize(const IntSize& size)
     m_webPage->send(Messages::DrawingAreaProxy::DidSetSize());
 }
 
+void DrawingAreaImpl::didUpdate()
+{
+    m_isWaitingForDidUpdate = false;
+
+    // Display if needed.
+    display();
+}
+
 void DrawingAreaImpl::scheduleDisplay()
 {
     if (m_isWaitingForDidUpdate)
@@ -128,7 +136,8 @@ void DrawingAreaImpl::display()
     UpdateInfo updateInfo;
     display(updateInfo);
 
-    // FIXME: Send over the updateInfo struct.
+    m_webPage->send(Messages::DrawingAreaProxy::Update(updateInfo));
+    m_isWaitingForDidUpdate = true;
 }
 
 void DrawingAreaImpl::display(UpdateInfo& updateInfo)

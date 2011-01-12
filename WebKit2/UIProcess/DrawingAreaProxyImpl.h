@@ -48,6 +48,7 @@ private:
     virtual void detachCompositingContext();
 
     // CoreIPC message handlers
+    virtual void update(const UpdateInfo&);
     virtual void didSetSize();
     
     void sendSetSize();

@@ -85,6 +85,13 @@ void DrawingAreaProxyImpl::detachCompositingContext()
     ASSERT_NOT_REACHED();
 }
 
+void DrawingAreaProxyImpl::update(const UpdateInfo&)
+{
+    // FIXME: Incorporate the update.
+
+    m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
+}
+
 void DrawingAreaProxyImpl::didSetSize()
 {
 }

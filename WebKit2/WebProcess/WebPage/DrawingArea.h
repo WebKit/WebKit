@@ -80,6 +80,7 @@ private:
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
     virtual void setSize(const WebCore::IntSize&) { }
+    virtual void didUpdate() { }
 };
 
 } // namespace WebKit
