@@ -1,3 +1,9 @@
+2011-01-11  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, fix typo in expectations file.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-11  Nico Weber  <thakis@chromium.org>
 
         Unreviewed, test expectations.

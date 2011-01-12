@@ -49,8 +49,7 @@ WONTFIX SKIP : wml = PASS FAIL
 //
 // FIXME: remove the FAIL from the following line.
 BUGNONE : compositing = PASS FAIL
-
-platform/chromium/compositing = PASS
+BUGNONE : platform/chromium/compositing = PASS
 
 // Unskip the canvas tests on Win and Linux only (since Mac does not support
 // accelerated 2D canvas yet).
