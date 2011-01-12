@@ -1,3 +1,11 @@
+2011-01-11  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        Windows exclusion for no-mime-with-valid-extension.html (from r75567)
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-11  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, fix typo in expectations file.

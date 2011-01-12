@@ -3086,3 +3086,6 @@ BUGCR69181 : fast/js/large-expressions.html = FAIL
 
 // Flaky on Linux since r75250
 BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS
+
+// Test added in r75567
+BUGWK52266 WIN : plugins/no-mime-with-valid-extension.html = TEXT
