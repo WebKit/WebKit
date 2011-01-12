@@ -2,6 +2,20 @@
 
         Reviewed by Sam Weinig.
 
+        Add UpdateInfo class
+        https://bugs.webkit.org/show_bug.cgi?id=52306
+
+        * Shared/UpdateInfo.cpp: Added.
+        (WebKit::UpdateInfo::encode):
+        (WebKit::UpdateInfo::decode):
+        * Shared/UpdateInfo.h: Added.
+        (WebKit::UpdateInfo::UpdateInfo):
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         More work on the new drawing area implementation
         https://bugs.webkit.org/show_bug.cgi?id=52302
 
