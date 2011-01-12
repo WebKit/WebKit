@@ -41,12 +41,15 @@ class CharacterData;
 class Document;
 class Element;
 class EventContext;
+class DocumentLoader;
 class InspectorController;
+class InspectorResourceAgent;
 class InspectorTimelineAgent;
 class KURL;
 class Node;
 class ResourceRequest;
 class ResourceResponse;
+class ScriptExecutionContext;
 class XMLHttpRequest;
 
 #if ENABLE(WEB_SOCKETS)
@@ -90,10 +93,20 @@ public:
     static void didPaint(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
+
+    static void identifierForInitialRequest(Frame*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
+    static void willSendRequest(Frame*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    static void markResourceAsCached(Page*, unsigned long identifier);
+    static void didLoadResourceFromMemoryCache(Page*, DocumentLoader*, const CachedResource*);
     static InspectorInstrumentationCookie willReceiveResourceData(Frame*, unsigned long identifier);
     static void didReceiveResourceData(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*, unsigned long identifier, const ResourceResponse& response);
-    static void didReceiveResourceResponse(const InspectorInstrumentationCookie&);
+    static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*, unsigned long identifier, const ResourceResponse&);
+    static void didReceiveResourceResponse(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
+    static void didReceiveContentLength(Frame*, unsigned long identifier, int lengthReceived);
+    static void didFinishLoading(Frame*, unsigned long identifier, double finishTime);
+    static void didFailLoading(Frame*, unsigned long identifier, const ResourceError&);
+    static void resourceRetrievedByXMLHttpRequest(ScriptExecutionContext*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
+    static void scriptImported(ScriptExecutionContext*, unsigned long identifier, const String& sourceString);
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
     static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned int endLine);
 
@@ -103,7 +116,10 @@ public:
     static void didReceiveWebSocketHandshakeResponse(ScriptExecutionContext*, unsigned long identifier, const WebSocketHandshakeResponse&);
     static void didCloseWebSocket(ScriptExecutionContext*, unsigned long identifier);
 #endif
-
+    static void networkStateChanged(Page*);
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    static void updateApplicationCacheStatus(Frame*);
+#endif
 #if ENABLE(INSPECTOR)
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }
@@ -147,10 +163,19 @@ private:
     static void didPaintImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InspectorController*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
+    static void identifierForInitialRequestImpl(InspectorController*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
+    static void willSendRequestImpl(InspectorController*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    static void markResourceAsCachedImpl(InspectorController*, unsigned long identifier);
+    static void didLoadResourceFromMemoryCacheImpl(InspectorController*, DocumentLoader*, const CachedResource*);
     static InspectorInstrumentationCookie willReceiveResourceDataImpl(InspectorController*, unsigned long identifier);
     static void didReceiveResourceDataImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InspectorController*, unsigned long identifier, const ResourceResponse& response);
-    static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&);
+    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InspectorController*, unsigned long identifier, const ResourceResponse&);
+    static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
+    static void didReceiveContentLengthImpl(InspectorController*, unsigned long identifier, int lengthReceived);
+    static void didFinishLoadingImpl(InspectorController*, unsigned long identifier, double finishTime);
+    static void didFailLoadingImpl(InspectorController*, unsigned long identifier, const ResourceError&);
+    static void resourceRetrievedByXMLHttpRequestImpl(InspectorController*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
+    static void scriptImportedImpl(InspectorController*, unsigned long identifier, const String& sourceString);
     static InspectorInstrumentationCookie willWriteHTMLImpl(InspectorController*, unsigned int length, unsigned int startLine);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
 
@@ -159,6 +184,11 @@ private:
     static void willSendWebSocketHandshakeRequestImpl(InspectorController*, unsigned long identifier, const WebSocketHandshakeRequest&);
     static void didReceiveWebSocketHandshakeResponseImpl(InspectorController*, unsigned long identifier, const WebSocketHandshakeResponse&);
     static void didCloseWebSocketImpl(InspectorController*, unsigned long identifier);
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    static void networkStateChangedImpl(InspectorController*);
+    static void updateApplicationCacheStatusImpl(InspectorController*, Frame*);
 #endif
 
     static InspectorController* inspectorControllerForContext(ScriptExecutionContext*);
@@ -171,6 +201,7 @@ private:
     static void cancelPauseOnNativeEvent(InspectorController*);
     static InspectorTimelineAgent* retrieveTimelineAgent(InspectorController*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
+    static InspectorResourceAgent* retrieveResourceAgent(InspectorController*);
 
     static int s_frontendCounter;
 #endif
@@ -429,6 +460,39 @@ inline void InspectorInstrumentation::didRecalculateStyle(const InspectorInstrum
 #endif
 }
 
+inline void InspectorInstrumentation::identifierForInitialRequest(Frame* frame, unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
+{
+#if ENABLE(INSPECTOR)
+    // This notification should be procecessed even in cases there is no frontend.
+    if (!frame)
+        return;
+    if (InspectorController* ic = frame->page()->inspectorController())
+        identifierForInitialRequestImpl(ic, identifier, loader, request);
+#endif
+}
+
+inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* ic = inspectorControllerForFrame(frame))
+        willSendRequestImpl(ic, identifier, request, redirectResponse);
+#endif
+}
+
+inline void InspectorInstrumentation::markResourceAsCached(Page* page, unsigned long identifier)
+{
+#if ENABLE(INSPECTOR)
+    markResourceAsCachedImpl(page->inspectorController(), identifier); 
+#endif
+}
+
+inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page* page, DocumentLoader* loader, const CachedResource* resource)
+{
+#if ENABLE(INSPECTOR)
+    didLoadResourceFromMemoryCacheImpl(page->inspectorController(), loader, resource);
+#endif
+}
+
 inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceData(Frame* frame, unsigned long identifier)
 {
 #if ENABLE(INSPECTOR)
@@ -455,11 +519,51 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResou
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didReceiveResourceResponse(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didReceiveResourceResponse(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
 {
 #if ENABLE(INSPECTOR)
     if (hasFrontends() && cookie.first)
-        didReceiveResourceResponseImpl(cookie);
+        didReceiveResourceResponseImpl(cookie, identifier, loader, response);
+#endif
+}
+
+inline void InspectorInstrumentation::didReceiveContentLength(Frame* frame, unsigned long identifier, int lengthReceived)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
+        didReceiveContentLengthImpl(inspectorController, identifier, lengthReceived);
+#endif
+}
+
+inline void InspectorInstrumentation::didFinishLoading(Frame* frame, unsigned long identifier, double finishTime)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
+        didFinishLoadingImpl(inspectorController, identifier, finishTime);
+#endif
+}
+
+inline void InspectorInstrumentation::didFailLoading(Frame* frame, unsigned long identifier, const ResourceError& error)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
+        didFailLoadingImpl(inspectorController, identifier, error);
+#endif
+}
+
+inline void InspectorInstrumentation::resourceRetrievedByXMLHttpRequest(ScriptExecutionContext* context, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = context->inspectorController())
+        resourceRetrievedByXMLHttpRequestImpl(inspectorController, identifier, sourceString, url, sendURL, sendLineNumber);
+#endif
+}
+
+inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext* context, unsigned long identifier, const String& sourceString)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = context->inspectorController())
+        scriptImportedImpl(inspectorController, identifier, sourceString);
 #endif
 }
 
@@ -511,6 +615,22 @@ inline void InspectorInstrumentation::didCloseWebSocket(ScriptExecutionContext* 
     if (InspectorController* inspectorController = inspectorControllerForContext(context))
         didCloseWebSocketImpl(inspectorController, identifier);
 #endif
+}
+#endif
+
+inline void InspectorInstrumentation::networkStateChanged(Page* page)
+{
+#if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
+    if (InspectorController* inspectorController = inspectorControllerForPage(page))
+        networkStateChangedImpl(inspectorController);
+#endif
+}
+
+#if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
+inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
+{
+    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
+        updateApplicationCacheStatusImpl(inspectorController, frame);
 }
 #endif
 

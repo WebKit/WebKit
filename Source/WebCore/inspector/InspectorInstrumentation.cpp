@@ -34,11 +34,14 @@
 #if ENABLE(INSPECTOR)
 
 #include "DOMWindow.h"
+#include "DocumentLoader.h"
 #include "Event.h"
 #include "EventContext.h"
+#include "InspectorApplicationCacheAgent.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorResourceAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "XMLHttpRequest.h"
 #include <wtf/text/CString.h>
@@ -372,6 +375,40 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
         timelineAgent->didRecalculateStyle();
 }
 
+void InspectorInstrumentation::identifierForInitialRequestImpl(InspectorController* ic, unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
+{
+    if (!ic->enabled())
+        return;
+    ic->ensureSettingsLoaded();
+
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->identifierForInitialRequest(identifier, request.url(), loader, ic->isMainResourceLoader(loader, request.url()));
+}
+
+void InspectorInstrumentation::willSendRequestImpl(InspectorController* ic, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+{
+    ic->willSendRequest(request);
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
+        timelineAgent->willSendResourceRequest(identifier, request);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->willSendRequest(identifier, request, redirectResponse);
+}
+
+void InspectorInstrumentation::markResourceAsCachedImpl(InspectorController* ic, unsigned long identifier)
+{
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->markResourceAsCached(identifier);
+}
+
+void InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl(InspectorController* ic, DocumentLoader* loader, const CachedResource* cachedResource)
+{
+    if (!ic->enabled())
+        return;
+    ic->ensureSettingsLoaded();
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->didLoadResourceFromMemoryCache(loader, cachedResource);
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceDataImpl(InspectorController* inspectorController, unsigned long identifier)
 {
     int timelineAgentId = 0;
@@ -400,10 +437,52 @@ InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResp
     return InspectorInstrumentationCookie(inspectorController, timelineAgentId);
 }
 
-void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorInstrumentationCookie& cookie)
+void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorInstrumentationCookie& cookie, unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
 {
+    InspectorController* ic = cookie.first;
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->didReceiveResponse(identifier, loader, response);
+    // FIXME(52282): move this to console agent.
+    ic->didReceiveResponse(identifier, response);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didReceiveResourceResponse();
+}
+
+void InspectorInstrumentation::didReceiveContentLengthImpl(InspectorController* ic, unsigned long identifier, int lengthReceived)
+{
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->didReceiveContentLength(identifier, lengthReceived);
+}
+
+void InspectorInstrumentation::didFinishLoadingImpl(InspectorController* ic, unsigned long identifier, double finishTime)
+{
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
+        timelineAgent->didFinishLoadingResource(identifier, false, finishTime);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->didFinishLoading(identifier, finishTime);
+}
+
+void InspectorInstrumentation::didFailLoadingImpl(InspectorController* ic, unsigned long identifier, const ResourceError& error)
+{
+    // FIXME(52282): move this to console agent.
+    ic->didFailLoading(identifier, error);
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
+        timelineAgent->didFinishLoadingResource(identifier, true, 0);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->didFailLoading(identifier, error);
+}
+
+void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorController* ic, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+{
+    ic->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->setInitialContent(identifier, sourceString, "XHR");
+}
+
+void InspectorInstrumentation::scriptImportedImpl(InspectorController* ic, unsigned long identifier, const String& sourceString)
+{
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
+        resourceAgent->setInitialContent(identifier, sourceString, "Script");
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTMLImpl(InspectorController* inspectorController, unsigned int length, unsigned int startLine)
@@ -442,6 +521,20 @@ void InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl(Inspecto
 void InspectorInstrumentation::didCloseWebSocketImpl(InspectorController* inspectorController, unsigned long identifier)
 {
     inspectorController->didCloseWebSocket(identifier);
+}
+#endif
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void InspectorInstrumentation::networkStateChangedImpl(InspectorController* ic)
+{
+    if (InspectorApplicationCacheAgent* applicationCacheAgent = ic->applicationCacheAgent())
+        applicationCacheAgent->networkStateChanged();
+}
+
+void InspectorInstrumentation::updateApplicationCacheStatusImpl(InspectorController* ic, Frame* frame)
+{
+    if (InspectorApplicationCacheAgent* applicationCacheAgent = ic->applicationCacheAgent())
+        applicationCacheAgent->updateApplicationCacheStatus(frame);
 }
 #endif
 
@@ -488,6 +581,11 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
     if (timelineAgent && timelineAgent->id() == cookie.second)
         return timelineAgent;
     return 0;
+}
+
+InspectorResourceAgent* InspectorInstrumentation::retrieveResourceAgent(InspectorController* ic)
+{
+    return ic->m_resourceAgent.get();
 }
 
 } // namespace WebCore

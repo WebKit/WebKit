@@ -1,3 +1,93 @@
+2010-12-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        inspector/timeline-network-resource.html fails when run twice
+        https://bugs.webkit.org/show_bug.cgi?id=37394
+
+        Send didReceiveResponse notification to the timeline agent from ResourceLoadNotifier
+        instead of ResourceLoader::didReceiveResponse to cover the cases when resources
+        are loaded from memory cache.
+
+        Network notifications are now sent to InspectorInstrumentation which dispatches
+        them to interested agents and InspectorController.
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::didReceiveManifestResponse):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::willSendRequest):
+        (WebCore::InspectorController::didReceiveResponse):
+        (WebCore::InspectorController::didFailLoading):
+        (WebCore::InspectorController::resourceRetrievedByXMLHttpRequest):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::identifierForInitialRequestImpl):
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        (WebCore::InspectorInstrumentation::markResourceAsCachedImpl):
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveContentLengthImpl):
+        (WebCore::InspectorInstrumentation::didFinishLoadingImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::scriptImportedImpl):
+        (WebCore::InspectorInstrumentation::retrieveResourceAgent):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::identifierForInitialRequest):
+        (WebCore::InspectorInstrumentation::willSendRequest):
+        (WebCore::InspectorInstrumentation::markResourceAsCached):
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::didReceiveContentLength):
+        (WebCore::InspectorInstrumentation::didFinishLoading):
+        (WebCore::InspectorInstrumentation::didFailLoading):
+        (WebCore::InspectorInstrumentation::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorInstrumentation::scriptImported):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::identifierForInitialRequest):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.identifierForInitialRequest):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.addRecordToTimeline):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveResponse):
+        (WebCore::ResourceLoadNotifier::didFailToLoad):
+        (WebCore::ResourceLoadNotifier::assignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveContentLength):
+        (WebCore::ResourceLoadNotifier::dispatchDidFinishLoading):
+        (WebCore::ResourceLoadNotifier::sendRemainingDelegateMessages):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponse):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didReceiveData):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::notifyFinished):
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2011-01-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

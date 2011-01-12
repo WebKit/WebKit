@@ -86,9 +86,13 @@ WebInspector.NetworkManager.updateResourceWithCachedResource = function(resource
 }
 
 WebInspector.NetworkManager.prototype = {
-    identifierForInitialRequest: function(identifier, url, loader, callStack)
+    identifierForInitialRequest: function(identifier, url, loader, isMainResource, callStack)
     {
         var resource = this._createResource(identifier, url, loader, callStack);
+        if (isMainResource) {
+            WebInspector.mainResource = resource;
+            resource.isMainResource = true;
+        }
 
         // It is important to bind resource url early (before scripts compile).
         this._resourceTreeModel.bindResourceURL(resource);
@@ -226,14 +230,7 @@ WebInspector.NetworkManager.prototype = {
     didCommitLoadForFrame: function(frame, loader)
     {
         this._resourceTreeModel.didCommitLoadForFrame(frame, loader);
-        if (!frame.parentId) {
-            var mainResource = this._resourceTreeModel.resourceForURL(frame.url);
-            if (mainResource) {
-                WebInspector.mainResource = mainResource;
-                mainResource.isMainResource = true;
-                WebInspector.panels.network.refreshResource(mainResource);
-            }
-        }
+        WebInspector.panels.network.refreshResource(WebInspector.mainResource);
     },
 
     didCreateWebSocket: function(identifier, requestURL)
@@ -299,6 +296,11 @@ WebInspector.NetworkManager.prototype = {
         newResource.redirects = originalResource.redirects || [];
         delete originalResource.redirects;
         newResource.redirects.push(originalResource);
+        if (originalResource.isMainResource) {
+            delete originalResource.isMainResource;
+            newResource.isMainResource = true;
+            WebInspector.mainResource = newResource;
+        }
         return newResource;
     }
 }

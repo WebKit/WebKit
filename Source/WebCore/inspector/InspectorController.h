@@ -158,21 +158,8 @@ public:
 
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
-    void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
-
-    void identifierForInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-    void willSendRequest(unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
-    void markResourceAsCached(unsigned long identifier);
-    void didReceiveResponse(unsigned long identifier, DocumentLoader*, const ResourceResponse&);
-    void didReceiveContentLength(unsigned long identifier, int lengthReceived);
-    void didFinishLoading(unsigned long identifier, double finishTime);
-    void didFailLoading(unsigned long identifier, const ResourceError&);
-    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
-    void scriptImported(unsigned long identifier, const String& sourceString);
 
     void setExtraHeaders(PassRefPtr<InspectorObject>);
-
-    void ensureSettingsLoaded();
 
     void startTimelineProfiler();
     void stopTimelineProfiler();
@@ -277,21 +264,27 @@ public:
     static const unsigned defaultAttachedHeight;
 
 private:
-    void getInspectorState(RefPtr<InspectorObject>* state);
-    void setConsoleMessagesEnabled(bool enabled);
-
     friend class InspectorBackend;
     friend class InspectorBackendDispatcher;
     friend class InspectorInstrumentation;
     friend class InjectedScriptHost;
 
+    void willSendRequest(ResourceRequest&);
+    void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
+    void didFailLoading(unsigned long identifier, const ResourceError&);
+    void resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber);
+
+    void ensureSettingsLoaded();
+
+    void getInspectorState(RefPtr<InspectorObject>* state);
+    void setConsoleMessagesEnabled(bool);
+
+    void populateScriptObjects();
+    void restoreDebugger();
     enum ProfilerRestoreAction {
         ProfilerRestoreNoAction = 0,
         ProfilerRestoreResetAgent = 1
     };
-    
-    void populateScriptObjects();
-    void restoreDebugger();
     void restoreProfiler(ProfilerRestoreAction action);
     void unbindAllResources();
     void setSearchingForNode(bool enabled);
@@ -349,7 +342,6 @@ private:
 
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
-    unsigned long m_mainResourceIdentifier;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
     unsigned m_expiredConsoleMessageCount;
     HashMap<String, double> m_times;

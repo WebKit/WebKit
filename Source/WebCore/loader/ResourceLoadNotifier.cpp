@@ -35,7 +35,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceLoader.h"
@@ -97,20 +97,14 @@ void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceE
     if (!error.isNull())
         m_frame->loader()->client()->dispatchDidFailLoading(loader->documentLoader(), loader->identifier(), error);
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didFailLoading(loader->identifier(), error);
-#endif
+    InspectorInstrumentation::didFailLoading(m_frame, loader->identifier(), error);
 }
 
 void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     m_frame->loader()->client()->assignIdentifierToInitialRequest(identifier, loader, request);
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->identifierForInitialRequest(identifier, loader, request);
-#endif
+    InspectorInstrumentation::identifierForInitialRequest(m_frame, identifier, loader, request);
 }
 
 void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -124,10 +118,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (!request.isNull() && oldRequestURL != request.url().string().impl())
         m_frame->loader()->documentLoader()->didTellClientAboutLoad(request.url());
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->willSendRequest(identifier, request, redirectResponse);
-#endif
+    InspectorInstrumentation::willSendRequest(m_frame, identifier, request, redirectResponse);
 
     // Report WebTiming for all frames.
     if (loader && !request.isNull() && request.url() == loader->requestURL())
@@ -136,32 +127,23 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
 
 void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
 {
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame, identifier, r);
     m_frame->loader()->client()->dispatchDidReceiveResponse(loader, identifier, r);
-
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didReceiveResponse(identifier, loader, r);
-#endif
+    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r);
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveContentLength(DocumentLoader* loader, unsigned long identifier, int length)
 {
     m_frame->loader()->client()->dispatchDidReceiveContentLength(loader, identifier, length);
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didReceiveContentLength(identifier, length);
-#endif
+    InspectorInstrumentation::didReceiveContentLength(m_frame, identifier, length);
 }
 
 void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsigned long identifier, double finishTime)
 {
     m_frame->loader()->client()->dispatchDidFinishLoading(loader, identifier);
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didFinishLoading(identifier, finishTime);
-#endif
+    InspectorInstrumentation::didFinishLoading(m_frame, identifier, finishTime);
 }
 
 void ResourceLoadNotifier::dispatchTransferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request, Page* oldPage)

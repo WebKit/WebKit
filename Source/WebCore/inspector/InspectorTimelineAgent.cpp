@@ -209,12 +209,11 @@ void InspectorTimelineAgent::didScheduleResourceRequest(const String& url)
     addRecordToTimeline(record.release(), ScheduleResourceRequestTimelineRecordType);
 }
 
-void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, bool isMainResource,
-    const ResourceRequest& request)
+void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request)
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS());
-    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(identifier, isMainResource, request));
+    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(identifier, request));
     record->setNumber("type", ResourceSendRequestTimelineRecordType);
     setHeapSizeStatistic(record.get());
     m_frontend->addRecordToTimeline(record.release());

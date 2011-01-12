@@ -119,7 +119,7 @@ public:
     void didMarkLoadEvent();
 
     void didScheduleResourceRequest(const String& url);
-    void willSendResourceRequest(unsigned long, bool isMainResource, const ResourceRequest&);
+    void willSendResourceRequest(unsigned long, const ResourceRequest&);
     void willReceiveResourceResponse(unsigned long, const ResourceResponse&);
     void didReceiveResourceResponse();
     void didFinishLoadingResource(unsigned long, bool didFail, double finishTime);

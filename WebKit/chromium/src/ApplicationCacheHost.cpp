@@ -38,7 +38,7 @@
 #include "DOMApplicationCache.h"
 #include "Frame.h"
 #include "InspectorApplicationCacheAgent.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ProgressEvent.h"
 #include "Settings.h"
@@ -208,12 +208,8 @@ void ApplicationCacheHost::setDOMApplicationCache(DOMApplicationCache* domApplic
 void ApplicationCacheHost::notifyDOMApplicationCache(EventID id, int total, int done)
 {
 #if ENABLE(INSPECTOR)
-    // If host's frame is main frame and inspector frontend is connected, update appcache status.
-    if (id != PROGRESS_EVENT && m_documentLoader->frame()) {
-        Page* page = m_documentLoader->frame()->page();
-        if (page && page->inspectorController()->applicationCacheAgent() && page->mainFrame() == m_documentLoader->frame())
-            page->inspectorController()->applicationCacheAgent()->updateApplicationCacheStatus(status());
-    }
+    if (id != PROGRESS_EVENT)
+        InspectorInstrumentation::updateApplicationCacheStatus(m_documentLoader->frame());
 #endif
 
     if (m_defersEvents) {

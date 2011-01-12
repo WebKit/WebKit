@@ -64,8 +64,7 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createMarkTimelineData(const String&);
 
-        static PassRefPtr<InspectorObject> createResourceSendRequestData(unsigned long identifier,
-            bool isMainResource, const ResourceRequest&);
+        static PassRefPtr<InspectorObject> createResourceSendRequestData(unsigned long identifier, const ResourceRequest&);
 
         static PassRefPtr<InspectorObject> createScheduleResourceRequestData(const String&);
 

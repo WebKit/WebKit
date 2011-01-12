@@ -6,16 +6,16 @@
 
 var scriptUrl = "timeline-network-resource.js";
 
-function runAfterScriptIsEvaluated(continuation)
+function runAfterScriptIsEvaluated()
 {
-    function step()
-    {
-        if (!window.scriptEvaluated)
-            setTimeout(step, 100);
-        else
-            continuation();
-    }
-    setTimeout(step, 100);
+    printTimelineRecords(null, null, function(record) {
+        if (record.type === timelineAgentRecordType["ResourceSendRequest"])
+            printSend(record);
+        else if (record.type === timelineAgentRecordType["ResourceReceiveResponse"])
+            printReceive(record);
+        else if (record.type === timelineAgentRecordType["ResourceFinish"])
+            printFinish(record);
+    });
 }
 
 function printRecord(record)
@@ -60,17 +60,6 @@ function doit()
     var script = document.createElement("script");
     script.src = scriptUrl;
     document.body.appendChild(script);
-    runAfterScriptIsEvaluated(function() {
-        printTimelineRecords(null, null, function(record) {
-            if (record.type === timelineAgentRecordType["ResourceSendRequest"])
-                printSend(record);
-     
-            else if (record.type === timelineAgentRecordType["ResourceReceiveResponse"])
-                printReceive(record);
-            else if (record.type === timelineAgentRecordType["ResourceFinish"])
-                printFinish(record);
-        });
-    });
 }
 
 </script>

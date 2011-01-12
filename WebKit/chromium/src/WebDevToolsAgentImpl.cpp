@@ -37,6 +37,7 @@
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -69,6 +70,8 @@ using WebCore::InjectedScriptHost;
 using WebCore::InspectorArray;
 using WebCore::InspectorBackendDispatcher;
 using WebCore::InspectorController;
+using WebCore::InspectorInstrumentation;
+using WebCore::InspectorInstrumentationCookie;
 using WebCore::Node;
 using WebCore::Page;
 using WebCore::ResourceError;
@@ -266,25 +269,30 @@ WebCore::InspectorController* WebDevToolsAgentImpl::inspectorController()
     return 0;
 }
 
+WebCore::Frame* WebDevToolsAgentImpl::mainFrame()
+{
+    if (Page* page = m_webViewImpl->page())
+        return page->mainFrame();
+    return 0;
+}
+
 
 //------- plugin resource load notifications ---------------
 void WebDevToolsAgentImpl::identifierForInitialRequest(
     unsigned long resourceId,
-    WebFrame* frame,
+    WebFrame* webFrame,
     const WebURLRequest& request)
 {
-    if (InspectorController* ic = inspectorController()) {
-        WebFrameImpl* webFrameImpl = static_cast<WebFrameImpl*>(frame);
-        FrameLoader* frameLoader = webFrameImpl->frame()->loader();
-        DocumentLoader* loader = frameLoader->activeDocumentLoader();
-        ic->identifierForInitialRequest(resourceId, loader, request.toResourceRequest());
-    }
+    WebFrameImpl* webFrameImpl = static_cast<WebFrameImpl*>(webFrame);
+    WebCore::Frame* frame = webFrameImpl->frame();
+    DocumentLoader* loader = frame->loader()->activeDocumentLoader();
+    InspectorInstrumentation::identifierForInitialRequest(frame, resourceId, loader, request.toResourceRequest());
 }
 
 void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebURLRequest& request)
 {
     if (InspectorController* ic = inspectorController()) {
-        ic->willSendRequest(resourceId, request.toMutableResourceRequest(), ResourceResponse());
+        InspectorInstrumentation::willSendRequest(mainFrame(), resourceId, request.toMutableResourceRequest(), ResourceResponse());
         if (ic->hasFrontend() && request.reportLoadTiming())
             request.setReportRawHeaders(true);
     }
@@ -292,27 +300,23 @@ void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebURLReque
 
 void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length)
 {
-    if (InspectorController* ic = inspectorController())
-        ic->didReceiveContentLength(resourceId, length);
+    InspectorInstrumentation::didReceiveContentLength(mainFrame(), resourceId, length);
 }
 
 void WebDevToolsAgentImpl::didReceiveResponse(unsigned long resourceId, const WebURLResponse& response)
 {
-    if (InspectorController* ic = inspectorController())
-        ic->didReceiveResponse(resourceId, 0, response.toResourceResponse());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(mainFrame(), resourceId, response.toResourceResponse());
+    InspectorInstrumentation::didReceiveResourceResponse(cookie, resourceId, 0, response.toResourceResponse());
 }
 
 void WebDevToolsAgentImpl::didFinishLoading(unsigned long resourceId)
 {
-    if (InspectorController* ic = inspectorController())
-        ic->didFinishLoading(resourceId, 0);
+    InspectorInstrumentation::didFinishLoading(mainFrame(), resourceId, 0);
 }
 
 void WebDevToolsAgentImpl::didFailLoading(unsigned long resourceId, const WebURLError& error)
 {
-    ResourceError resourceError;
-    if (InspectorController* ic = inspectorController())
-        ic->didFailLoading(resourceId, resourceError);
+    InspectorInstrumentation::didFailLoading(mainFrame(), resourceId, error);
 }
 
 void WebDevToolsAgentImpl::inspectorDestroyed()

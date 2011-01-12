@@ -129,13 +129,12 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createScheduleResourceRequest
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(unsigned long identifier, bool isMainResource, const ResourceRequest& request)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(unsigned long identifier, const ResourceRequest& request)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setNumber("identifier", identifier);
     data->setString("url", request.url().string());
     data->setString("requestMethod", request.httpMethod());
-    data->setBoolean("isMainResource", isMainResource);
     return data.release();
 }
 

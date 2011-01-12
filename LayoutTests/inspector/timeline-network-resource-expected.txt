@@ -8,7 +8,6 @@ ResourceSendRequest Properties:
         identifier : <number>
         url : <string>
         requestMethod : "GET"
-        isMainResource : false
     }
     type : 12
     usedHeapSize : <number>
@@ -22,7 +21,7 @@ ResourceReceiveResponse Properties:
         identifier : <number>
         statusCode : 0
         mimeType : <string>
-        expectedContentLength : 210
+        expectedContentLength : 208
         url : <string>
     }
     children : <object>

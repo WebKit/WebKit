@@ -297,8 +297,9 @@ WebInspector.TimelinePanel.prototype = {
 
     addRecordToTimeline: function(record)
     {
-        if (record.type == WebInspector.TimelineAgent.RecordType.ResourceSendRequest && record.data.isMainResource) {
-            if (this._mainResourceIdentifier != record.data.identifier) {
+        if (record.type == WebInspector.TimelineAgent.RecordType.ResourceSendRequest) {
+            var isMainResource = (record.data.identifier === WebInspector.mainResource.identifier);
+            if (isMainResource && this._mainResourceIdentifier !== record.data.identifier) {
                 // We are loading new main resource -> clear the panel. Check above is necessary since
                 // there may be several resource loads with main resource marker upon redirects, redirects are reported with
                 // the original identifier.

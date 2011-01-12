@@ -140,7 +140,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_client(client)
     , m_openingFrontend(false)
     , m_cssAgent(new InspectorCSSAgent())
-    , m_mainResourceIdentifier(0)
     , m_expiredConsoleMessageCount(0)
     , m_previousMessage(0)
     , m_settingsLoaded(false)
@@ -759,7 +758,6 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 #endif
 
         if (m_frontend) {
-            m_mainResourceIdentifier = 0;
             m_frontend->didCommitLoad();
             m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
         }
@@ -773,33 +771,6 @@ void InspectorController::frameDetachedFromParent(Frame* rootFrame)
 
     if (m_resourceAgent)
         m_resourceAgent->frameDetachedFromParent(rootFrame);
-}
-
-void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader, const CachedResource* cachedResource)
-{
-    if (!enabled())
-        return;
-
-    ensureSettingsLoaded();
-
-    if (m_resourceAgent)
-        m_resourceAgent->didLoadResourceFromMemoryCache(loader, cachedResource);
-}
-
-void InspectorController::identifierForInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
-{
-    if (!enabled())
-        return;
-    ASSERT(m_inspectedPage);
-
-    bool isMainResource = isMainResourceLoader(loader, request.url());
-    if (isMainResource)
-        m_mainResourceIdentifier = identifier;
-
-    ensureSettingsLoaded();
-
-    if (m_resourceAgent)
-        m_resourceAgent->identifierForInitialRequest(identifier, request.url(), loader);
 }
 
 void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loader, const KURL& url)
@@ -829,7 +800,7 @@ bool InspectorController::isMainResourceLoader(DocumentLoader* loader, const KUR
     return loader->frame() == m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
 }
 
-void InspectorController::willSendRequest(unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorController::willSendRequest(ResourceRequest& request)
 {
     if (!enabled())
         return;
@@ -845,31 +816,12 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
                 request.setHTTPHeaderField(it->first, it->second);
         }
     }
-
-    bool isMainResource = m_mainResourceIdentifier == identifier;
-    if (m_timelineAgent)
-        m_timelineAgent->willSendResourceRequest(identifier, isMainResource, request);
-
-    if (m_resourceAgent)
-        m_resourceAgent->willSendRequest(identifier, request, redirectResponse);
 }
 
-void InspectorController::markResourceAsCached(unsigned long identifier)
+void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     if (!enabled())
         return;
-
-    if (m_resourceAgent)
-        m_resourceAgent->markResourceAsCached(identifier);
-}
-
-void InspectorController::didReceiveResponse(unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
-{
-    if (!enabled())
-        return;
-
-    if (m_resourceAgent)
-        m_resourceAgent->didReceiveResponse(identifier, loader, response);
 
     if (response.httpStatusCode() >= 400) {
         String message = makeString("Failed to load resource: the server responded with a status of ", String::number(response.httpStatusCode()), " (", response.httpStatusText(), ')');
@@ -877,63 +829,24 @@ void InspectorController::didReceiveResponse(unsigned long identifier, DocumentL
     }
 }
 
-void InspectorController::didReceiveContentLength(unsigned long identifier, int lengthReceived)
-{
-    if (!enabled())
-        return;
-
-    if (m_resourceAgent)
-        m_resourceAgent->didReceiveContentLength(identifier, lengthReceived);
-}
-
-void InspectorController::didFinishLoading(unsigned long identifier, double finishTime)
-{
-    if (!enabled())
-        return;
-
-    if (m_timelineAgent)
-        m_timelineAgent->didFinishLoadingResource(identifier, false, finishTime);
-
-    if (m_resourceAgent)
-        m_resourceAgent->didFinishLoading(identifier, finishTime);
-}
-
 void InspectorController::didFailLoading(unsigned long identifier, const ResourceError& error)
 {
     if (!enabled())
         return;
 
-    if (m_timelineAgent)
-        m_timelineAgent->didFinishLoadingResource(identifier, true, 0);
-
     String message = "Failed to load resource";
-        if (!error.localizedDescription().isEmpty())
-            message += ": " + error.localizedDescription();
-        addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
-
-    if (m_resourceAgent)
-        m_resourceAgent->didFailLoading(identifier, error);
+    if (!error.localizedDescription().isEmpty())
+        message += ": " + error.localizedDescription();
+    addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
 }
 
-void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+void InspectorController::resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber)
 {
     if (!enabled())
         return;
 
     if (m_state->getBoolean(InspectorState::monitoringXHR))
         addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
-
-    if (m_resourceAgent)
-        m_resourceAgent->setInitialContent(identifier, sourceString, "XHR");
-}
-
-void InspectorController::scriptImported(unsigned long identifier, const String& sourceString)
-{
-    if (!enabled())
-        return;
-
-    if (m_resourceAgent)
-        m_resourceAgent->setInitialContent(identifier, sourceString, "Script");
 }
 
 void InspectorController::ensureSettingsLoaded()

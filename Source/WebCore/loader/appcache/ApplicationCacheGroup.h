@@ -110,9 +110,6 @@ private:
     // the existing client callback cannot be used, so assume that any client that enables application cache also wants it to use credential storage.
     virtual bool shouldUseCredentialStorage(ResourceHandle*) { return true; }
 
-#if ENABLE(INSPECTOR)
-    virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
-#endif
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
     virtual void didReceiveData(ResourceHandle*, const char*, int length, int lengthReceived);
     virtual void didFinishLoading(ResourceHandle*, double finishTime);

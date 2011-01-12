@@ -91,7 +91,7 @@ module core {
         [domain=Network] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
         [notify, domain=Network] void frameDetachedFromParent(out unsigned long frameId);
 
-        [notify, domain=Network] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
+        [notify, domain=Network] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out boolean isMainResourceLoader, out Value callStack);
         [notify, domain=Network] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
         [notify, domain=Network] void markResourceAsCached(out long identifier);
         [notify, domain=Network] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+class Frame;
 class InspectorArray;
 class InspectorController;
 class InspectorFrontend;
@@ -46,9 +47,8 @@ public:
     ~InspectorApplicationCacheAgent() { }
 
     // Backend to Frontend
-    void didReceiveManifestResponse(unsigned long identifier, const ResourceResponse&);
-    void updateApplicationCacheStatus(ApplicationCacheHost::Status);
-    void updateNetworkState(bool isNowOnline);
+    void updateApplicationCacheStatus(Frame*);
+    void networkStateChanged();
 
     // From Frontend
     void getApplicationCaches(RefPtr<InspectorValue>* applicationCaches);

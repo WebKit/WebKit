@@ -36,7 +36,7 @@
 
 #include "Event.h"
 #include "EventNames.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "MessagePortChannel.h"
 #include "PlatformMessagePortChannel.h"
 #include "ScriptExecutionContext.h"
@@ -162,10 +162,7 @@ void SharedWorkerScriptLoader::notifyFinished()
         m_worker->dispatchEvent(Event::create(eventNames().errorEvent, false, true));
         delete this;
     } else {
-#if ENABLE(INSPECTOR)
-        if (InspectorController* inspector = m_worker->scriptExecutionContext()->inspectorController())
-            inspector->scriptImported(m_scriptLoader.identifier(), m_scriptLoader.script());
-#endif
+        InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader.identifier(), m_scriptLoader.script());
         // Pass the script off to the worker, then send a connect event.
         m_webWorker->startWorkerContext(m_url, m_name, m_worker->scriptExecutionContext()->userAgent(m_url), m_scriptLoader.script(), m_responseAppCacheID);
         sendConnect();

@@ -420,9 +420,7 @@ void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse&
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(this, response))
         return;
 #endif
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame.get(), identifier(), response);
     didReceiveResponse(response);
-    InspectorInstrumentation::didReceiveResourceResponse(cookie);
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)

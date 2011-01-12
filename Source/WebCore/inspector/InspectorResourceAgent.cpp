@@ -283,7 +283,7 @@ InspectorResourceAgent::~InspectorResourceAgent()
 {
 }
 
-void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifier, const KURL& url, DocumentLoader* loader)
+void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifier, const KURL& url, DocumentLoader* loader, bool isMainResource)
 {
     RefPtr<InspectorObject> loaderObject = buildObjectForDocumentLoader(loader);
     RefPtr<ScriptCallStack> callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
@@ -292,7 +292,7 @@ void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifie
         callStackValue = callStack->buildInspectorObject();
     else
         callStackValue = InspectorValue::null();
-    m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject, callStackValue);
+    m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject, isMainResource, callStackValue);
 }
 
 void InspectorResourceAgent::willSendRequest(unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)

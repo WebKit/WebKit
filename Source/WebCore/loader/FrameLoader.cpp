@@ -70,6 +70,7 @@
 #include "IconDatabase.h"
 #include "IconLoader.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MainResourceLoader.h"
@@ -3048,9 +3049,7 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
         return;
 
     if (!page->areMemoryCacheClientCallsEnabled()) {
-#if ENABLE(INSPECTOR)
-        page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), resource);
-#endif
+        InspectorInstrumentation::didLoadResourceFromMemoryCache(page, m_documentLoader.get(), resource);
         m_documentLoader->recordMemoryCacheLoadForFutureClientNotification(resource->url());
         m_documentLoader->didTellClientAboutLoad(resource->url());
         return;
@@ -3058,9 +3057,7 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
 
     ResourceRequest request(resource->url());
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, resource->response(), resource->encodedSize())) {
-#if ENABLE(INSPECTOR)
-        page->inspectorController()->didLoadResourceFromMemoryCache(m_documentLoader.get(), resource);
-#endif
+        InspectorInstrumentation::didLoadResourceFromMemoryCache(page, m_documentLoader.get(), resource);
         m_documentLoader->didTellClientAboutLoad(resource->url());
         return;
     }
@@ -3068,9 +3065,7 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
     unsigned long identifier;
     ResourceError error;
     requestFromDelegate(request, identifier, error);
-#if ENABLE(INSPECTOR)
-    page->inspectorController()->markResourceAsCached(identifier);
-#endif
+    InspectorInstrumentation::markResourceAsCached(page, identifier);
     notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, resource->response(), resource->encodedSize(), error);
 }
 

@@ -42,7 +42,7 @@
 #include "ErrorEvent.h"
 #include "Event.h"
 #include "EventException.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
@@ -245,10 +245,7 @@ void WorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
             return;
         }
 
-#if ENABLE(INSPECTOR)
-        if (InspectorController* inspector = scriptExecutionContext()->inspectorController())
-            inspector->scriptImported(scriptLoader.identifier(), scriptLoader.script());
-#endif
+       InspectorInstrumentation::scriptImported(scriptExecutionContext(), scriptLoader.identifier(), scriptLoader.script());
 
         ScriptValue exception;
         m_script->evaluate(ScriptSourceCode(scriptLoader.script(), *it), &exception);

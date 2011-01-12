@@ -1,3 +1,22 @@
+2010-12-29  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        inspector/timeline-network-resource.html fails when run twice
+        https://bugs.webkit.org/show_bug.cgi?id=37394
+
+        Send didReceiveResponse notification to the timeline agent from ResourceLoadNotifier
+        instead of ResourceLoader::didReceiveResponse to cover the cases when resources
+        are loaded from memory cache.
+
+        Network notifications are now send to InspectorInstrumentation which dispatches
+        them to interested agents and InspectorController.
+        fix
+
+        * inspector/timeline-network-resource-expected.txt:
+        * inspector/timeline-network-resource.html:
+        * inspector/timeline-network-resource.js:
+
 2011-01-12  Jeremy Orlow  <jorlow@chromium.org>
 
         Add forgotten file.

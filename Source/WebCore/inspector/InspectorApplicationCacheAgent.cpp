@@ -35,6 +35,7 @@
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
+#include "NetworkStateNotifier.h"
 #include "Page.h"
 #include "ResourceResponse.h"
 
@@ -46,18 +47,15 @@ InspectorApplicationCacheAgent::InspectorApplicationCacheAgent(InspectorControll
 {
 }
 
-void InspectorApplicationCacheAgent::didReceiveManifestResponse(unsigned long identifier, const ResourceResponse& response)
+void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
 {
-    m_inspectorController->didReceiveResponse(identifier, 0, response);
-}
-
-void InspectorApplicationCacheAgent::updateApplicationCacheStatus(ApplicationCacheHost::Status status)
-{
+    ApplicationCacheHost::Status status = frame->loader()->documentLoader()->applicationCacheHost()->status();
     m_frontend->updateApplicationCacheStatus(status);
 }
 
-void InspectorApplicationCacheAgent::updateNetworkState(bool isNowOnline)
+void InspectorApplicationCacheAgent::networkStateChanged()
 {
+    bool isNowOnline = networkStateNotifier().onLine();
     m_frontend->updateNetworkState(isNowOnline);
 }
 

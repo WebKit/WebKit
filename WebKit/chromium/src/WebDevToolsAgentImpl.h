@@ -101,6 +101,7 @@ public:
 
 private:
     WebCore::InspectorController* inspectorController();
+    WebCore::Frame* mainFrame();
 
     int m_hostId;
     WebDevToolsAgentClient* m_client;
