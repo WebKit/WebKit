@@ -319,6 +319,7 @@ body {
 
 .ExpandArea {
   margin: 0;
+  white-space: pre-wrap;
 }
 
 .ExpandText {

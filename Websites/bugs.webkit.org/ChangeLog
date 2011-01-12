@@ -1,3 +1,13 @@
+2011-01-12  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix wrapping bug in expansion lines in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52270
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2011-01-11  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

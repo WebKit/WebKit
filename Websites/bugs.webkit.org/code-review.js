@@ -350,7 +350,7 @@
 
   function expandBarHtml(file_name, opt_direction) {
     var html = '<div class="ExpandBar">' +
-        '<pre class="ExpandArea Expand' + ABOVE + '"></pre>' +
+        '<div class="ExpandArea Expand' + ABOVE + '"></div>' +
         '<div class="ExpandLinkContainer LinkContainer"><span class="ExpandText">expand: </span>';
 
     // FIXME: If there are <100 line to expand, don't show the expand-100 link.
@@ -367,7 +367,7 @@
         expandLinkHtml(BELOW, 100);
     }
 
-    html += '</div><pre class="ExpandArea Expand' + BELOW + '"></pre></div>';
+    html += '</div><div class="ExpandArea Expand' + BELOW + '"></div></div>';
     return html;
   }
 
