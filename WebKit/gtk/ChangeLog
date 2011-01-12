@@ -1,3 +1,10 @@
+2011-01-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed build fix for 32-bits Release. Include GRefPtrGtk.h so
+        the GdkCursor templates are found and used at runtime.
+
+        * WebCoreSupport/FullscreenVideoController.cpp:
+
 2011-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
