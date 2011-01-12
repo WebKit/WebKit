@@ -137,6 +137,8 @@
 		1A64235312DD187C00CAAE2C /* Region.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64235112DD187C00CAAE2C /* Region.h */; };
 		1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64245C12DE29A100CAAE2C /* UpdateInfo.h */; };
 		1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */; };
+		1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64256612DE42EC00CAAE2C /* BackingStore.h */; };
+		1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64256712DE42EC00CAAE2C /* BackingStore.cpp */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
 		1A6FA01E11E1526300DB1371 /* WebProcessMainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */; };
@@ -855,6 +857,8 @@
 		1A64235112DD187C00CAAE2C /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
 		1A64245C12DE29A100CAAE2C /* UpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateInfo.h; sourceTree = "<group>"; };
 		1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateInfo.cpp; sourceTree = "<group>"; };
+		1A64256612DE42EC00CAAE2C /* BackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackingStore.h; sourceTree = "<group>"; };
+		1A64256712DE42EC00CAAE2C /* BackingStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackingStore.cpp; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
 		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
 		1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessMainMac.mm; sourceTree = "<group>"; };
@@ -2052,6 +2056,8 @@
 				BC111B18112F5FB400337BAB /* Launcher */,
 				BCCF085C113F3B7500C650C5 /* mac */,
 				1AEFCC0511D01F34008219D3 /* Plugins */,
+				1A64256712DE42EC00CAAE2C /* BackingStore.cpp */,
+				1A64256612DE42EC00CAAE2C /* BackingStore.h */,
 				BC2652141182608100243E12 /* ChunkedUpdateDrawingAreaProxy.cpp */,
 				BC2652151182608100243E12 /* ChunkedUpdateDrawingAreaProxy.h */,
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
@@ -2062,10 +2068,10 @@
 				1A910070126675C4001842F5 /* FindIndicator.cpp */,
 				1A91006F126675C3001842F5 /* FindIndicator.h */,
 				BC17753E118BABF0007D9E9A /* GenericCallback.h */,
-				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
-				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
 				BC06F44912DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.cpp */,
 				BC06F44812DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h */,
+				BC06F43912DBCCFB002D78DE /* GeolocationPermissionRequestProxy.cpp */,
+				BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */,
 				0F5265B711DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp */,
 				0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */,
 				BC6EDAA5111271C600E7678B /* PageClient.h */,
@@ -2080,16 +2086,16 @@
 				BCB9E2421120DACA00A137E0 /* WebContext.cpp */,
 				BCB9E2411120DACA00A137E0 /* WebContext.h */,
 				BCEE7D0912846AED009827DA /* WebContext.messages.in */,
-				51A84CE2127F386B00CA6EA4 /* WebContextMenuProxy.cpp */,
-				51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */,
 				BCDE059A11CDA8AE00E41AF1 /* WebContextInjectedBundleClient.cpp */,
 				BCDE059911CDA8AE00E41AF1 /* WebContextInjectedBundleClient.h */,
+				51A84CE2127F386B00CA6EA4 /* WebContextMenuProxy.cpp */,
+				51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */,
 				BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */,
-				BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */,
-				BCAC111D12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h */,
 				F62A765912B1ABC30005F1B6 /* WebDatabaseManagerProxy.cpp */,
 				F62A765A12B1ABC30005F1B6 /* WebDatabaseManagerProxy.h */,
 				F62A765B12B1ABC30005F1B6 /* WebDatabaseManagerProxy.messages.in */,
+				BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */,
+				BCAC111D12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h */,
 				1AB7D72B1288CAAD00CFD08C /* WebDownloadClient.cpp */,
 				1AB7D72A1288CAAD00CFD08C /* WebDownloadClient.h */,
 				BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */,
@@ -2100,10 +2106,10 @@
 				BCE469501214E6CB000B98EB /* WebFormClient.h */,
 				BCE469511214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp */,
 				BCE469521214E6CB000B98EB /* WebFormSubmissionListenerProxy.h */,
-				BCB9F69F1123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp */,
-				BCB9F69E1123A84B00A137E0 /* WebFramePolicyListenerProxy.h */,
 				BCE469781214F2B4000B98EB /* WebFrameListenerProxy.cpp */,
 				BCE469761214F27B000B98EB /* WebFrameListenerProxy.h */,
+				BCB9F69F1123A84B00A137E0 /* WebFramePolicyListenerProxy.cpp */,
+				BCB9F69E1123A84B00A137E0 /* WebFramePolicyListenerProxy.h */,
 				BC111B0A112F5E4F00337BAB /* WebFrameProxy.cpp */,
 				BC9B389F10F538BE00443A15 /* WebFrameProxy.h */,
 				BC54CACA12D64291005C67B0 /* WebGeolocationManagerProxy.cpp */,
@@ -3018,6 +3024,7 @@
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
 				1A64235312DD187C00CAAE2C /* Region.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
+				1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3472,6 +3479,7 @@
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
 				1A64235212DD187C00CAAE2C /* Region.cpp in Sources */,
 				1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */,
+				1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

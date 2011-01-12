@@ -1,3 +1,16 @@
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Add BackingStore class
+        https://bugs.webkit.org/show_bug.cgi?id=52318
+
+        * UIProcess/BackingStore.cpp: Added.
+        (WebKit::BackingStore::create):
+        (WebKit::BackingStore::BackingStore):
+        * UIProcess/BackingStore.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-01-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
