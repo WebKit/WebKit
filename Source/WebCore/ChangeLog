@@ -1,3 +1,23 @@
+2011-01-11  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
+
+        Reviewed by Adam Barth.
+
+        Use plug-in DB for extensions to MIME type convertion
+
+        Plugins extension to MIME type conversion was not used in the
+        frameLoader. This was causing some fallback to be use which as the side
+        effect of loosing all the <OBJECT> parameters or <EMBED> attributes.
+        This patch ensure that we try to convert the extension to MIME type
+        using the plugin database beofre using this fallback.
+
+        Attribute lost with Flash plugin without mime type set
+        https://bugs.webkit.org/show_bug.cgi?id=50657
+
+        Test: plugins/no-mime-with-valid-extension.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType): Use PluginDatabase for MIME
+
 2011-01-11  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Eric Seidel.

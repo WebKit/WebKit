@@ -960,9 +960,16 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
 ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const String& mimeTypeIn)
 {
     String mimeType = mimeTypeIn;
+    String extension = url.path().substring(url.path().reverseFind('.') + 1);
+
     // We don't use MIMETypeRegistry::getMIMETypeForPath() because it returns "application/octet-stream" upon failure
     if (mimeType.isEmpty())
-        mimeType = MIMETypeRegistry::getMIMETypeForExtension(url.path().substring(url.path().reverseFind('.') + 1));
+        mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+
+#if !PLATFORM(MAC) && !PLATFORM(CHROMIUM) && !PLATFORM(EFL) // Mac has no PluginDatabase, nor does Chromium or EFL
+    if (mimeType.isEmpty())
+        mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(extension);
+#endif
 
     if (mimeType.isEmpty())
         return ObjectContentFrame; // Go ahead and hope that we can display the content.
