@@ -1,3 +1,13 @@
+2011-01-12  Nico Weber  <thakis@chromium.org>
+
+        Unreviewed, test expectations.
+
+        Remove now-unnecessary vista-specific baseline.
+        https://bugs.webkit.org/show_bug.cgi?id=52105
+
+        * platform/chromium-win-vista/svg/custom/js-late-gradient-and-object-creation-expected.checksum: Removed.
+        * platform/chromium-win-vista/svg/custom/js-late-gradient-and-object-creation-expected.png: Removed.
+
 2011-01-12  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed expectatinos update.
