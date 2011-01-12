@@ -1,3 +1,32 @@
+2011-01-12  Peter Varga  <pvarga@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Add Yarr.h to YARR
+        https://bugs.webkit.org/show_bug.cgi?id=51021
+
+        Move other common constants and functions from YARR's different files
+        to Yarr.h.
+        Use Yarr.h header instead of including other YARR headers where it
+        is possible.
+
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/RegExp.cpp:
+        * yarr/Yarr.h: Added.
+        * yarr/YarrInterpreter.cpp:
+        * yarr/YarrInterpreter.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::jitCompile):
+        (JSC::Yarr::execute):
+        * yarr/YarrJIT.h:
+        * yarr/YarrParser.h:
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        * yarr/YarrPattern.h:
+
 2011-01-11  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.

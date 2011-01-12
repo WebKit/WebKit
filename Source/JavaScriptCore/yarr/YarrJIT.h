@@ -29,7 +29,6 @@
 #if ENABLE(YARR_JIT)
 
 #include "MacroAssembler.h"
-#include "YarrPattern.h"
 #include "UString.h"
 
 #if CPU(X86) && !COMPILER(MSVC)
@@ -75,13 +74,6 @@ private:
     MacroAssembler::CodeRef m_ref;
     bool m_needFallBack;
 };
-
-void jitCompile(YarrPattern&, JSGlobalData*, YarrCodeBlock& jitObject);
-
-inline int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
-{
-    return jitObject.execute(input, start, length, output);
-}
 
 } } // namespace JSC::Yarr
 

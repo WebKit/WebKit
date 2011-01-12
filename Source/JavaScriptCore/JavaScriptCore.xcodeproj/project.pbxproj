@@ -189,6 +189,7 @@
 		41359CF70FDD89CB00206180 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 41359CF50FDD89CB00206180 /* DateMath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4409D8470FAF80A200523B87 /* OwnPtrCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44DD48530FAEA85000D6B4EB /* PassOwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		451539B912DC994500EF7AC4 /* Yarr.h in Headers */ = {isa = PBXBuildFile; fileRef = 451539B812DC994500EF7AC4 /* Yarr.h */; };
 		511FC4C9117EE28700425272 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 511FC4C7117EE23D00425272 /* MD5.cpp */; };
 		511FC4CB117EE2A800425272 /* MD5.h in Headers */ = {isa = PBXBuildFile; fileRef = 511FC4CA117EE2A800425272 /* MD5.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5135FAF212D26ACE003C083B /* Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5135FAD512D26856003C083B /* Decoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -764,6 +765,7 @@
 		440B7AED0FAF7FCB0073323E /* OwnPtrCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtrCommon.h; sourceTree = "<group>"; };
 		449097EE0F8F81B50076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PassOwnPtr.h; sourceTree = "<group>"; };
+		451539B812DC994500EF7AC4 /* Yarr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Yarr.h; path = yarr/Yarr.h; sourceTree = "<group>"; };
 		45E12D8806A49B0F00E9DF84 /* jsc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsc.cpp; sourceTree = "<group>"; tabWidth = 4; };
 		511FC4C7117EE23D00425272 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
 		511FC4CA117EE2A800425272 /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
@@ -1909,6 +1911,7 @@
 		86EAC48C0F93E8B9008EC948 /* yarr */ = {
 			isa = PBXGroup;
 			children = (
+				451539B812DC994500EF7AC4 /* Yarr.h */,
 				86704B7D12DBA33700A9FE7B /* YarrInterpreter.cpp */,
 				86704B7E12DBA33700A9FE7B /* YarrInterpreter.h */,
 				86704B7F12DBA33700A9FE7B /* YarrJIT.cpp */,
@@ -2397,6 +2400,7 @@
 				86704B8712DBA33700A9FE7B /* YarrJIT.h in Headers */,
 				86704B8812DBA33700A9FE7B /* YarrParser.h in Headers */,
 				86704B8A12DBA33700A9FE7B /* YarrPattern.h in Headers */,
+				451539B912DC994500EF7AC4 /* Yarr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
