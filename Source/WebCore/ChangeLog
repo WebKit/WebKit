@@ -1,3 +1,22 @@
+2011-01-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Webkit crashes when a gradient is applied using the first-line pseudo element
+        https://bugs.webkit.org/show_bug.cgi?id=52225
+        
+        When a pseudostyle references images, we fail to register/unregister
+        the relevant RenderObjects as clients of the image in the style.
+        For gradients, this caused a crash.
+        
+        This patch fixes the crash by returning a null gradient image in this
+        situation.
+
+        Test: fast/gradients/gradient-on-pseudoelement-crash.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+
 2011-01-11  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

@@ -43,7 +43,8 @@ namespace WebCore {
 
 Image* CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
 {
-    ASSERT(m_clients.contains(renderer));
+    if (!m_clients.contains(renderer))
+        return 0;
 
     // Need to look up our size.  Create a string of width*height to use as a hash key.
     // FIXME: hashing based only on size is not sufficient. Color stops may use context-sensitive units (like em)
