@@ -3029,39 +3029,18 @@ BUGCR68599 LINUX WIN : http/tests/security/mixedContent/insecure-css-in-main-fra
 
 // Needs investigation after r74892 (simple removal of chromium-mac baselines
 // is not enough)
-BUG_MIHAIP MAC : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUG_MIHAIP MAC : fast/borders/border-image-rotate-transform.html = IMAGE
-BUG_MIHAIP MAC : fast/events/pointer-events-2.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
-BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-in-attr.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html = IMAGE
-BUG_MIHAIP MAC : svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html = IMAGE
-BUG_MIHAIP MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
-BUG_MIHAIP MAC : fast/block/margin-collapse/103.html = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/001.html = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
 BUG_MIHAIP MAC : fast/body-propagation/overflow/005.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/bugs/bug101674.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/bugs/bug29314.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/bugs/bug5797.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/bugs/bug625.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/core/bloomberg.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/core/row_span.html = IMAGE
-BUG_MIHAIP MAC : tables/mozilla/other/cell_widths.html = IMAGE
 BUG_MIHAIP MAC : fast/overflow/006.html = IMAGE
 BUG_MIHAIP MAC : fast/overflow/overflow-x-y.html = IMAGE
-BUG_MIHAIP MAC : fast/replaced/width100percent-image.html = IMAGE
 BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
 
 // Should start passing with updated mac-leopard baselines.
 // FIXME: remove these lines.
+BUG_MIHAIP MAC : fast/images/gif-large-checkerboard.html = IMAGE
 BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-001.html = IMAGE
 BUG_MIHAIP MAC : editing/deleting/delete-line-end-ws-002.html = IMAGE
 BUG_MIHAIP MAC : fast/block/basic/016.html = IMAGE

@@ -1,3 +1,57 @@
+2011-01-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed, new chromium-mac baselines.
+        
+        Rebaseline after the scrollbar change (these tests still need 
+        chromium-mac baselines since they have controls or images that render
+        slightly differently from the Mac port).
+
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.checksum:
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.checksum: Added.
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-image-rotate-transform-expected.checksum:
+        * platform/chromium-mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-mac/fast/events/pointer-events-2-expected.checksum:
+        * platform/chromium-mac/fast/events/pointer-events-2-expected.png:
+        * platform/chromium-mac/fast/images/gif-large-checkerboard-expected.checksum: Removed.
+        * platform/chromium-mac/fast/images/gif-large-checkerboard-expected.png: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-image-expected.checksum: Added.
+        * platform/chromium-mac/fast/replaced/width100percent-image-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug101674-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug29314-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug29314-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug5797-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug625-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug625-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/core/bloomberg-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/core/bloomberg-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/core/row_span-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/core/row_span-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/other/cell_widths-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/other/cell_widths-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/other/test4-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/other/test4-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-11  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
 
         Reviewed by Adam Barth.
