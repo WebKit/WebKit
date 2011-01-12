@@ -64,24 +64,24 @@ WebInspector.Resource.Type = {
     {
         switch (type) {
             case this.Document:
-                return "document";
+                return /*@LS*/"document";
             case this.Stylesheet:
-                return "stylesheet";
+                return /*@LS*/"stylesheet";
             case this.Image:
-                return "image";
+                return /*@LS*/"image";
             case this.Font:
-                return "font";
+                return /*@LS*/"font";
             case this.Script:
-                return "script";
+                return /*@LS*/"script";
             case this.XHR:
-                return "xhr";
+                return /*@LS*/"xhr";
             case this.Media:
-                return "media";
+                return /*@LS*/"media";
             case this.WebSocket:
-                return "websocket";
+                return /*@LS*/"websocket";
             case this.Other:
             default:
-                return "other";
+                return /*@LS*/"other";
         }
     }
 }

@@ -1,3 +1,23 @@
+2011-01-12  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Fix inconsistencies in Inspector strings found by the new check-inspector-strings script.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52295
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.setRecordingProfile):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.Type.toString):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourceRevisionTreeElement):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-01-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix WML compilation on Mac.

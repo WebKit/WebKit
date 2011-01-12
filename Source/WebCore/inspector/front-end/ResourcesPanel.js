@@ -1227,7 +1227,7 @@ WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.Base
 
 WebInspector.ResourceRevisionTreeElement = function(storagePanel, revision)
 {
-    var title = revision.timestamp ? revision.timestamp.toLocaleTimeString() : "(original)";
+    var title = revision.timestamp ? revision.timestamp.toLocaleTimeString() : WebInspector.UIString("(original)");
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, "resource-sidebar-tree-item resources-category-" + revision.category.name);
     if (revision.timestamp)
         this.tooltip = revision.timestamp.toLocaleString();

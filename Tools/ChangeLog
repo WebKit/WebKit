@@ -1,3 +1,13 @@
+2011-01-12  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Add check-inspector-strings script.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52295
+
+        * Scripts/check-inspector-strings: Added.
+
 2011-01-12  Adam Roben  <aroben@apple.com>
 
         Advertise the .testnetscape file extension on Windows

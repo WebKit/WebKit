@@ -658,23 +658,23 @@ Number.secondsToString = function(seconds, formatterFunction, higherResolution)
 
     var ms = seconds * 1000;
     if (higherResolution && ms < 1000)
-        return formatterFunction("%.3fms", ms);
+        return formatterFunction(/*@LS*/"%.3fms", ms);
     else if (ms < 1000)
-        return formatterFunction("%.0fms", ms);
+        return formatterFunction(/*@LS*/"%.0fms", ms);
 
     if (seconds < 60)
-        return formatterFunction("%.2fs", seconds);
+        return formatterFunction(/*@LS*/"%.2fs", seconds);
 
     var minutes = seconds / 60;
     if (minutes < 60)
-        return formatterFunction("%.1fmin", minutes);
+        return formatterFunction(/*@LS*/"%.1fmin", minutes);
 
     var hours = minutes / 60;
     if (hours < 24)
-        return formatterFunction("%.1fhrs", hours);
+        return formatterFunction(/*@LS*/"%.1fhrs", hours);
 
     var days = hours / 24;
-    return formatterFunction("%.1f days", days);
+    return formatterFunction(/*@LS*/"%.1f days", days);
 }
 
 Number.bytesToString = function(bytes, formatterFunction, higherResolution)
@@ -685,19 +685,19 @@ Number.bytesToString = function(bytes, formatterFunction, higherResolution)
         higherResolution = true;
 
     if (bytes < 1024)
-        return formatterFunction("%.0fB", bytes);
+        return formatterFunction(/*@LS*/"%.0fB", bytes);
 
     var kilobytes = bytes / 1024;
     if (higherResolution && kilobytes < 1024)
-        return formatterFunction("%.2fKB", kilobytes);
+        return formatterFunction(/*@LS*/"%.2fKB", kilobytes);
     else if (kilobytes < 1024)
-        return formatterFunction("%.0fKB", kilobytes);
+        return formatterFunction(/*@LS*/"%.0fKB", kilobytes);
 
     var megabytes = kilobytes / 1024;
     if (higherResolution)
-        return formatterFunction("%.2fMB", megabytes);
+        return formatterFunction(/*@LS*/"%.2fMB", megabytes);
     else
-        return formatterFunction("%.0fMB", megabytes);
+        return formatterFunction(/*@LS*/"%.0fMB", megabytes);
 }
 
 Number.constrain = function(num, min, max)

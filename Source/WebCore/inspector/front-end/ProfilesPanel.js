@@ -623,7 +623,7 @@ WebInspector.ProfilesPanel.prototype = {
             if (!this._temporaryRecordingProfile) {
                 this._temporaryRecordingProfile = {
                     typeId: WebInspector.CPUProfileType.TypeId,
-                    title: WebInspector.UIString("Recording"),
+                    title: WebInspector.UIString("Recording…"),
                     uid: -1,
                     isTemporary: true
                 };
