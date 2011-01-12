@@ -1,3 +1,9 @@
+2011-01-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing test on GTK.
+
+        * platform/gtk/Skipped: Skip editing/input/page-up-down-scrolls.html
+
 2010-12-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
