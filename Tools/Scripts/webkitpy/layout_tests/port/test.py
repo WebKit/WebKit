@@ -151,6 +151,9 @@ class TestPort(base.Port):
     def check_build(self, needs_http):
         return True
 
+    def default_configuration(self):
+        return 'Release'
+
     def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None):
         diffed = actual_contents != expected_contents
@@ -306,7 +309,7 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
         return test_platform_name
 
     def version(self):
-        return ''
+        return '-leopard'
 
 
 class TestDriver(base.Driver):

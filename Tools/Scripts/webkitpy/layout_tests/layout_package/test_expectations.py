@@ -31,6 +31,7 @@
 for layout tests.
 """
 
+import itertools
 import logging
 import os
 import re
@@ -86,18 +87,16 @@ def remove_pixel_failures(expected_results):
 class TestExpectations:
     TEST_LIST = "test_expectations.txt"
 
-    def __init__(self, port, tests, expectations, test_platform_name,
-                 is_debug_mode, is_lint_mode, overrides=None):
+    def __init__(self, port, tests, expectations, test_config,
+                 is_lint_mode, overrides=None):
         """Loads and parses the test expectations given in the string.
         Args:
             port: handle to object containing platform-specific functionality
             test: list of all of the test files
             expectations: test expectations as a string
-            test_platform_name: name of the platform to match expectations
-                against. Note that this may be different than
-                port.test_platform_name() when is_lint_mode is True.
-            is_debug_mode: whether to use the DEBUG or RELEASE modifiers
-                in the expectations
+            test_config: specific values to check against when
+                parsing the file (usually port.test_config(),
+                but may be different when linting or doing other things).
             is_lint_mode: If True, just parse the expectations string
                 looking for errors.
             overrides: test expectations that are allowed to override any
@@ -106,7 +105,7 @@ class TestExpectations:
                 and downstream expectations).
         """
         self._expected_failures = TestExpectationsFile(port, expectations,
-            tests, test_platform_name, is_debug_mode, is_lint_mode,
+            tests, test_config, is_lint_mode,
             overrides=overrides)
 
     # TODO(ojan): Allow for removing skipped tests when getting the list of
@@ -199,7 +198,7 @@ class ParseError(Exception):
         return '\n'.join(map(str, self.errors))
 
     def __repr__(self):
-        return 'ParseError(fatal=%s, errors=%s)' % (fatal, errors)
+        return 'ParseError(fatal=%s, errors=%s)' % (self.fatal, self.errors)
 
 
 class ModifiersAndExpectations:
@@ -304,28 +303,14 @@ class TestExpectationsFile:
                     'fail': FAIL,
                     'flaky': FLAKY}
 
-    def __init__(self, port, expectations, full_test_list, test_platform_name,
-        is_debug_mode, is_lint_mode, overrides=None):
-        """
-        expectations: Contents of the expectations file
-        full_test_list: The list of all tests to be run pending processing of
-            the expections for those tests.
-        test_platform_name: name of the platform to match expectations
-            against. Note that this may be different than
-            port.test_platform_name() when is_lint_mode is True.
-        is_debug_mode: Whether we testing a test_shell built debug mode.
-        is_lint_mode: Whether this is just linting test_expecatations.txt.
-        overrides: test expectations that are allowed to override any
-            entries in |expectations|. This is used by callers
-            that need to manage two sets of expectations (e.g., upstream
-            and downstream expectations).
-        """
+    def __init__(self, port, expectations, full_test_list,
+                 test_config, is_lint_mode, overrides=None):
+        # See argument documentation in TestExpectation(), above.
 
         self._port = port
         self._expectations = expectations
         self._full_test_list = full_test_list
-        self._test_platform_name = test_platform_name
-        self._is_debug_mode = is_debug_mode
+        self._test_config = test_config
         self._is_lint_mode = is_lint_mode
         self._overrides = overrides
         self._errors = []
@@ -333,7 +318,9 @@ class TestExpectationsFile:
 
         # Maps relative test paths as listed in the expectations file to a
         # list of maps containing modifiers and expectations for each time
-        # the test is listed in the expectations file.
+        # the test is listed in the expectations file. We use this to
+        # keep a representation of the entire list of expectations, even
+        # invalid ones.
         self._all_expectations = {}
 
         # Maps a test to its list of expectations.
@@ -346,7 +333,8 @@ class TestExpectationsFile:
         # the options minus any bug or platform strings
         self._test_to_modifiers = {}
 
-        # Maps a test to the base path that it was listed with in the list.
+        # Maps a test to the base path that it was listed with in the list and
+        # the number of matches that base path had.
         self._test_list_paths = {}
 
         self._modifier_to_tests = self._dict_of_sets(self.MODIFIERS)
@@ -373,13 +361,7 @@ class TestExpectationsFile:
 
     def _handle_any_read_errors(self):
         if len(self._errors) or len(self._non_fatal_errors):
-            if self._is_debug_mode:
-                build_type = 'DEBUG'
-            else:
-                build_type = 'RELEASE'
-            _log.error('')
-            _log.error("FAILURES FOR PLATFORM: %s, BUILD_TYPE: %s" %
-                       (self._test_platform_name.upper(), build_type))
+            _log.error("FAILURES FOR %s" % str(self._test_config))
 
             for error in self._errors:
                 _log.error(error)
@@ -395,11 +377,12 @@ class TestExpectationsFile:
         expectations = set([PASS])
         options = []
         modifiers = []
+        num_matches = 0
         if self._full_test_list:
             for test in self._full_test_list:
                 if not test in self._test_list_paths:
-                    self._add_test(test, modifiers, expectations, options,
-                        overrides_allowed=False)
+                    self._add_test(test, modifiers, num_matches, expectations,
+                                   options, overrides_allowed=False)
 
     def _dict_of_sets(self, strings_to_constants):
         """Takes a dict of strings->constants and returns a dict mapping
@@ -538,12 +521,15 @@ class TestExpectationsFile:
 
         options = []
         if line.find(":") is -1:
-            test_and_expectation = line.split("=")
-        else:
-            parts = line.split(":")
-            options = self._get_options_list(parts[0])
-            test_and_expectation = parts[1].split('=')
+            self._add_error(lineno, "Missing a ':'", line)
+            return (None, None, None)
 
+        parts = line.split(':')
+
+        # FIXME: verify that there is exactly one colon in the line.
+
+        options = self._get_options_list(parts[0])
+        test_and_expectation = parts[1].split('=')
         test = test_and_expectation[0].strip()
         if (len(test_and_expectation) is not 2):
             self._add_error(lineno, "Missing expectations.",
@@ -589,69 +575,6 @@ class TestExpectationsFile:
 
         return REMOVE_TEST
 
-    def _has_valid_modifiers_for_current_platform(self, options, lineno,
-        test_and_expectations, modifiers):
-        """Returns true if the current platform is in the options list or if
-        no platforms are listed and if there are no fatal errors in the
-        options list.
-
-        Args:
-          options: List of lowercase options.
-          lineno: The line in the file where the test is listed.
-          test_and_expectations: The path and expectations for the test.
-          modifiers: The set to populate with modifiers.
-        """
-        has_any_platform = False
-        has_bug_id = False
-        for option in options:
-            if option in self.MODIFIERS:
-                modifiers.add(option)
-            elif option in self._port.test_platform_names():
-                has_any_platform = True
-            elif re.match(r'bug\d', option) != None:
-                self._add_error(lineno, 'Bug must be either BUGCR, BUGWK, or BUGV8_ for test: %s' %
-                                option, test_and_expectations)
-            elif option.startswith('bug'):
-                has_bug_id = True
-            elif option not in self.BUILD_TYPES:
-                self._add_error(lineno, 'Invalid modifier for test: %s' %
-                                option, test_and_expectations)
-
-        if has_any_platform and not self._match_platform(options):
-            return False
-
-        if not has_bug_id and 'wontfix' not in options:
-            # TODO(ojan): Turn this into an AddError call once all the
-            # tests have BUG identifiers.
-            self._log_non_fatal_error(lineno, 'Test lacks BUG modifier.',
-                test_and_expectations)
-
-        if 'release' in options or 'debug' in options:
-            if self._is_debug_mode and 'debug' not in options:
-                return False
-            if not self._is_debug_mode and 'release' not in options:
-                return False
-
-        if self._is_lint_mode and 'rebaseline' in options:
-            self._add_error(lineno,
-                'REBASELINE should only be used for running rebaseline.py. '
-                'Cannot be checked in.', test_and_expectations)
-
-        return True
-
-    def _match_platform(self, options):
-        """Match the list of options against our specified platform. If any
-        of the options prefix-match self._platform, return True. This handles
-        the case where a test is marked WIN and the platform is WIN-VISTA.
-
-        Args:
-          options: list of options
-        """
-        for opt in options:
-            if self._test_platform_name.startswith(opt):
-                return True
-        return False
-
     def _add_to_all_expectations(self, test, options, expectations):
         # Make all paths unix-style so the dashboard doesn't need to.
         test = test.replace('\\', '/')
@@ -664,54 +587,43 @@ class TestExpectationsFile:
         """For each test in an expectations iterable, generate the
         expectations for it."""
         lineno = 0
+        matcher = ModifierMatcher(self._test_config)
         for line in expectations:
             lineno += 1
+            self._process_line(line, lineno, matcher, overrides_allowed)
 
-            test_list_path, options, expectations = \
-                self.parse_expectations_line(line, lineno)
-            if not expectations:
-                continue
+    def _process_line(self, line, lineno, matcher, overrides_allowed):
+        test_list_path, options, expectations = \
+            self.parse_expectations_line(line, lineno)
+        if not expectations:
+            return
 
-            self._add_to_all_expectations(test_list_path,
-                                          " ".join(options).upper(),
-                                          " ".join(expectations).upper())
+        self._add_to_all_expectations(test_list_path,
+                                        " ".join(options).upper(),
+                                        " ".join(expectations).upper())
 
-            modifiers = set()
-            if options and not self._has_valid_modifiers_for_current_platform(
-                options, lineno, test_list_path, modifiers):
-                continue
+        num_matches = self._check_options(matcher, options, lineno,
+                                          test_list_path)
+        if num_matches == ModifierMatcher.NO_MATCH:
+            return
 
-            expectations = self._parse_expectations(expectations, lineno,
-                test_list_path)
+        expectations = self._parse_expectations(expectations, lineno,
+            test_list_path)
 
-            if 'slow' in options and TIMEOUT in expectations:
-                self._add_error(lineno,
-                    'A test can not be both slow and timeout. If it times out '
-                    'indefinitely, then it should be just timeout.',
-                    test_list_path)
+        self._check_options_against_expectations(options, expectations,
+            lineno, test_list_path)
 
-            full_path = os.path.join(self._port.layout_tests_dir(),
-                                     test_list_path)
-            full_path = os.path.normpath(full_path)
-            # WebKit's way of skipping tests is to add a -disabled suffix.
-            # So we should consider the path existing if the path or the
-            # -disabled version exists.
-            if (not self._port.path_exists(full_path)
-                and not self._port.path_exists(full_path + '-disabled')):
-                # Log a non fatal error here since you hit this case any
-                # time you update test_expectations.txt without syncing
-                # the LayoutTests directory
-                self._log_non_fatal_error(lineno, 'Path does not exist.',
-                                       test_list_path)
-                continue
+        if self._check_path_does_not_exist(lineno, test_list_path):
+            return
 
-            if not self._full_test_list:
-                tests = [test_list_path]
-            else:
-                tests = self._expand_tests(test_list_path)
+        if not self._full_test_list:
+            tests = [test_list_path]
+        else:
+            tests = self._expand_tests(test_list_path)
 
-            self._add_tests(tests, expectations, test_list_path, lineno,
-                           modifiers, options, overrides_allowed)
+        modifiers = [o for o in options if o in self.MODIFIERS]
+        self._add_tests(tests, expectations, test_list_path, lineno,
+                        modifiers, num_matches, options, overrides_allowed)
 
     def _get_options_list(self, listString):
         return [part.strip().lower() for part in listString.strip().split(' ')]
@@ -726,6 +638,66 @@ class TestExpectationsFile:
             expectation = self.EXPECTATIONS[part]
             result.add(expectation)
         return result
+
+    def _check_options(self, matcher, options, lineno, test_list_path):
+        match_result = self._check_syntax(matcher, options, lineno,
+                                          test_list_path)
+        self._check_semantics(options, lineno, test_list_path)
+        return match_result.num_matches
+
+    def _check_syntax(self, matcher, options, lineno, test_list_path):
+        match_result = matcher.match(options)
+        for error in match_result.errors:
+            self._add_error(lineno, error, test_list_path)
+        for warning in match_result.warnings:
+            self._log_non_fatal_error(lineno, warning, test_list_path)
+        return match_result
+
+    def _check_semantics(self, options, lineno, test_list_path):
+        has_wontfix = 'wontfix' in options
+        has_bug = False
+        for opt in options:
+            if opt.startswith('bug'):
+                has_bug = True
+                if re.match('bug\d+', opt):
+                    self._add_error(lineno,
+                        'BUG\d+ is not allowed, must be one of '
+                        'BUGCR\d+, BUGWK\d+, BUGV8_\d+, '
+                        'or a non-numeric bug identifier.', test_list_path)
+
+        if not has_bug and not has_wontfix:
+            self._log_non_fatal_error(lineno, 'Test lacks BUG modifier.',
+            test_list_path)
+
+        if self._is_lint_mode and 'rebaseline' in options:
+            self._add_error(lineno,
+            'REBASELINE should only be used for running rebaseline.py. '
+            'Cannot be checked in.', test_list_path)
+
+    def _check_options_against_expectations(self, options, expectations,
+                                            lineno, test_list_path):
+        if 'slow' in options and TIMEOUT in expectations:
+            self._add_error(lineno,
+                'A test can not be both slow and timeout. If it times out '
+                'indefinitely, then it should be just timeout.',
+                test_list_path)
+
+    def _check_path_does_not_exist(self, lineno, test_list_path):
+        full_path = os.path.join(self._port.layout_tests_dir(),
+                                    test_list_path)
+        full_path = os.path.normpath(full_path)
+        # WebKit's way of skipping tests is to add a -disabled suffix.
+            # So we should consider the path existing if the path or the
+        # -disabled version exists.
+        if (not self._port.path_exists(full_path)
+            and not self._port.path_exists(full_path + '-disabled')):
+            # Log a non fatal error here since you hit this case any
+            # time you update test_expectations.txt without syncing
+            # the LayoutTests directory
+            self._log_non_fatal_error(lineno, 'Path does not exist.',
+                                    test_list_path)
+            return True
+        return False
 
     def _expand_tests(self, test_list_path):
         """Convert the test specification to an absolute, normalized
@@ -752,17 +724,19 @@ class TestExpectationsFile:
         return result
 
     def _add_tests(self, tests, expectations, test_list_path, lineno,
-                   modifiers, options, overrides_allowed):
+                   modifiers, num_matches, options, overrides_allowed):
         for test in tests:
-            if self._already_seen_test(test, test_list_path, lineno,
-                                       overrides_allowed):
+            if self._already_seen_better_match(test, test_list_path,
+                num_matches, lineno, overrides_allowed):
                 continue
 
             self._clear_expectations_for_test(test, test_list_path)
-            self._add_test(test, modifiers, expectations, options,
+            self._test_list_paths[test] = (os.path.normpath(test_list_path),
+                num_matches, lineno)
+            self._add_test(test, modifiers, num_matches, expectations, options,
                            overrides_allowed)
 
-    def _add_test(self, test, modifiers, expectations, options,
+    def _add_test(self, test, modifiers, num_matches, expectations, options,
                   overrides_allowed):
         """Sets the expected state for a given test.
 
@@ -773,6 +747,7 @@ class TestExpectationsFile:
         Args:
           test: test to add
           modifiers: sequence of modifier keywords ('wontfix', 'slow', etc.)
+          num_matches: number of modifiers that matched the configuration
           expectations: sequence of expectations (PASS, IMAGE, etc.)
           options: sequence of keywords and bug identifiers.
           overrides_allowed: whether we're parsing the regular expectations
@@ -811,13 +786,13 @@ class TestExpectationsFile:
         than a previous listing.
         """
         if test in self._test_list_paths:
-            self._test_to_expectations.pop(test, '')
-            self._remove_from_sets(test, self._expectation_to_tests)
-            self._remove_from_sets(test, self._modifier_to_tests)
-            self._remove_from_sets(test, self._timeline_to_tests)
-            self._remove_from_sets(test, self._result_type_to_tests)
+            base_path = self._test_list_paths[test][0]
+            self._test_to_expectations.pop(base_path, '')
+            self._remove_from_sets(base_path, self._expectation_to_tests)
+            self._remove_from_sets(base_path, self._modifier_to_tests)
+            self._remove_from_sets(base_path, self._timeline_to_tests)
+            self._remove_from_sets(base_path, self._result_type_to_tests)
 
-        self._test_list_paths[test] = os.path.normpath(test_list_path)
 
     def _remove_from_sets(self, test, dict):
         """Removes the given test from the sets in the dictionary.
@@ -829,32 +804,70 @@ class TestExpectationsFile:
             if test in set_of_tests:
                 set_of_tests.remove(test)
 
-    def _already_seen_test(self, test, test_list_path, lineno,
-                           allow_overrides):
-        """Returns true if we've already seen a more precise path for this test
-        than the test_list_path.
+    def _already_seen_better_match(self, test, test_list_path, num_matches,
+                                   lineno, overrides_allowed):
+        """Returns whether we've seen a better match already in the file.
+
+        Returns True if we've already seen a test_list_path that matches more of the test
+            than this path does
         """
+        # FIXME: See comment below about matching test configs and num_matches.
+
         if not test in self._test_list_paths:
+            # We've never seen this test before.
             return False
 
-        prev_base_path = self._test_list_paths[test]
-        if (prev_base_path == os.path.normpath(test_list_path)):
-            if (not allow_overrides or test in self._overridding_tests):
-                if allow_overrides:
-                    expectation_source = "override"
-                else:
-                    expectation_source = "expectation"
-                self._add_error(lineno, 'Duplicate %s.' % expectation_source,
-                                   test)
-                return True
-            else:
-                # We have seen this path, but that's okay because its
-                # in the overrides and the earlier path was in the
-                # expectations.
-                return False
+        prev_base_path, prev_num_matches, prev_lineno = self._test_list_paths[test]
+        base_path = os.path.normpath(test_list_path)
 
-        # Check if we've already seen a more precise path.
-        return prev_base_path.startswith(os.path.normpath(test_list_path))
+        if len(prev_base_path) > len(base_path):
+            # The previous path matched more of the test.
+            return True
+
+        if len(prev_base_path) < len(base_path):
+            # This path matches more of the test.
+            return False
+
+        if overrides_allowed and test not in self._overridding_tests:
+            # We have seen this path, but that's okay because it is
+            # in the overrides and the earlier path was in the
+            # expectations (not the overrides).
+            return False
+
+        # At this point we know we have seen a previous exact match on this
+        # base path, so we need to check the two sets of modifiers.
+
+        if overrides_allowed:
+            expectation_source = "override"
+        else:
+            expectation_source = "expectation"
+
+        # FIXME: This code was originally designed to allow lines that matched
+        # more modifiers to override lines that matched fewer modifiers.
+        # However, we currently view these as errors. If we decide to make
+        # this policy permanent, we can probably simplify this code
+        # and the ModifierMatcher code a fair amount.
+        #
+        # To use the "more modifiers wins" policy, change the "_add_error" lines for overrides
+        # to _log_non_fatal_error() and change the commented-out "return False".
+
+        if prev_num_matches == num_matches:
+            self._add_error(lineno,
+                'Duplicate or ambiguous %s.' % expectation_source,
+                test)
+            return True
+
+        if prev_num_matches < num_matches:
+            self._add_error(lineno,
+                'More specific entry on line %d overrides line %d' %
+                (lineno, prev_lineno), test_list_path)
+            # FIXME: return False if we want more specific to win.
+            return True
+
+        self._add_error(lineno,
+            'More specific entry on line %d overrides line %d' %
+            (prev_lineno, lineno), test_list_path)
+        return True
 
     def _add_error(self, lineno, msg, path):
         """Reports an error that will prevent running the tests. Does not
@@ -866,3 +879,188 @@ class TestExpectationsFile:
         """Reports an error that will not prevent running the tests. These are
         still errors, but not bad enough to warrant breaking test running."""
         self._non_fatal_errors.append('Line:%s %s %s' % (lineno, msg, path))
+
+
+class ModifierMatchResult(object):
+    def __init__(self, options):
+        self.num_matches = ModifierMatcher.NO_MATCH
+        self.options = options
+        self.errors = []
+        self.warnings = []
+        self.modifiers = []
+        self._matched_regexes = set()
+        self._matched_macros = set()
+
+
+class ModifierMatcher(object):
+
+    """
+    This class manages the interpretation of the "modifiers" for a given
+    line in the expectations file. Modifiers are the tokens that appear to the
+    left of the colon on a line. For example, "BUG1234", "DEBUG", and "WIN" are
+    all modifiers. This class gets what the valid modifiers are, and which
+    modifiers are allowed to exist together on a line, from the
+    TestConfiguration object that is passed in to the call.
+
+    This class detects *intra*-line errors like unknown modifiers, but
+    does not detect *inter*-line modifiers like duplicate expectations.
+
+    More importantly, this class is also used to determine if a given line
+    matches the port in question. Matches are ranked according to the number
+    of modifiers that match on a line. A line with no modifiers matches
+    everything and has a score of zero. A line with one modifier matches only
+    ports that have that modifier and gets a score of 1, and so one. Ports
+    that don't match at all get a score of -1.
+
+    Given two lines in a file that apply to the same test, if both expectations
+    match the current config, then the expectation is considered ambiguous,
+    even if one expectation matches more of the config than the other. For
+    example, in:
+
+    BUG1 RELEASE : foo.html = FAIL
+    BUG1 WIN RELEASE : foo.html = PASS
+    BUG2 WIN : bar.html = FAIL
+    BUG2 DEBUG : bar.html = PASS
+
+    lines 1 and 2 would produce an error on a Win XP Release bot (the scores
+    would be 1 and 2, respectively), and lines three and four would produce
+    a duplicate expectation on a Win Debug bot since both the 'win' and the
+    'debug' expectations would apply (both had scores of 1).
+
+    In addition to the definitions of all of the modifiers, the class
+    supports "macros" that are expanded prior to interpretation, and "ignore
+    regexes" that can be used to skip over modifiers like the BUG* modifiers.
+    """
+    MACROS = {
+        'mac-snowleopard': ['mac', 'snowleopard'],
+        'mac-leopard': ['mac', 'leopard'],
+        'win-xp': ['win', 'xp'],
+        'win-vista': ['win', 'vista'],
+        'win-7': ['win', 'win7'],
+    }
+
+    # We don't include the "none" modifier because it isn't actually legal.
+    REGEXES_TO_IGNORE = (['bug\w+'] +
+                         TestExpectationsFile.MODIFIERS.keys()[:-1])
+    DUPLICATE_REGEXES_ALLOWED = ['bug\w+']
+
+    # Magic value returned when the options don't match.
+    NO_MATCH = -1
+
+    # FIXME: The code currently doesn't detect combinations of modifiers
+    # that are syntactically valid but semantically invalid, like
+    # 'MAC XP'. See ModifierMatchTest.test_invalid_combinations() in the
+    # _unittest.py file.
+
+    def __init__(self, test_config):
+        """Initialize a ModifierMatcher argument with the TestConfiguration it
+        should be matched against."""
+        self.test_config = test_config
+        self.allowed_configurations = test_config.all_test_configurations()
+        self.macros = self.MACROS
+
+        self.regexes_to_ignore = {}
+        for regex_str in self.REGEXES_TO_IGNORE:
+            self.regexes_to_ignore[regex_str] = re.compile(regex_str)
+
+        # Keep a set of all of the legal modifiers for quick checking.
+        self._all_modifiers = set()
+
+        # Keep a dict mapping values back to their categories.
+        self._categories_for_modifiers = {}
+        for config in self.allowed_configurations:
+            for category, modifier in config.items():
+                self._categories_for_modifiers[modifier] = category
+                self._all_modifiers.add(modifier)
+
+    def match(self, options):
+        """Checks a list of options against the config set in the constructor.
+        Options may be either actual modifier strings, "macro" strings
+        that get expanded to a list of modifiers, or strings that are allowed
+        to be ignored. All of the options must be passed in in lower case.
+
+        Returns the number of matching categories, or NO_MATCH (-1) if it
+        doesn't match or there were errors found. Matches are prioritized
+        by the number of matching categories, because the more specific
+        the options list, the more categories will match.
+
+        The results of the most recent match are available in the 'options',
+        'modifiers', 'num_matches', 'errors', and 'warnings' properties.
+        """
+        result = ModifierMatchResult(options)
+        self._parse(result)
+        if result.errors:
+            return result
+        self._count_matches(result)
+        return result
+
+    def _parse(self, result):
+        # FIXME: Should we warn about lines having every value in a category?
+        for option in result.options:
+            self._parse_one(option, result)
+
+    def _parse_one(self, option, result):
+        if option in self._all_modifiers:
+            self._add_modifier(option, result)
+        elif option in self.macros:
+            self._expand_macro(option, result)
+        elif not self._matches_any_regex(option, result):
+            result.errors.append("Unrecognized option '%s'" % option)
+
+    def _add_modifier(self, option, result):
+        if option in result.modifiers:
+            result.errors.append("More than one '%s'" % option)
+        else:
+            result.modifiers.append(option)
+
+    def _expand_macro(self, macro, result):
+        if macro in result._matched_macros:
+            result.errors.append("More than one '%s'" % macro)
+            return
+
+        mods = []
+        for modifier in self.macros[macro]:
+            if modifier in result.options:
+                result.errors.append("Can't specify both modifier '%s' and "
+                                     "macro '%s'" % (modifier, macro))
+            else:
+                mods.append(modifier)
+        result._matched_macros.add(macro)
+        result.modifiers.extend(mods)
+
+    def _matches_any_regex(self, option, result):
+        for regex_str, pattern in self.regexes_to_ignore.iteritems():
+            if pattern.match(option):
+                self._handle_regex_match(regex_str, result)
+                return True
+        return False
+
+    def _handle_regex_match(self, regex_str, result):
+        if (regex_str in result._matched_regexes and
+            regex_str not in self.DUPLICATE_REGEXES_ALLOWED):
+            result.errors.append("More than one option matching '%s'" %
+                                 regex_str)
+        else:
+            result._matched_regexes.add(regex_str)
+
+    def _count_matches(self, result):
+        """Returns the number of modifiers that match the test config."""
+        categorized_modifiers = self._group_by_category(result.modifiers)
+        result.num_matches = 0
+        for category, modifier in self.test_config.items():
+            if category in categorized_modifiers:
+                if modifier in categorized_modifiers[category]:
+                    result.num_matches += 1
+                else:
+                    result.num_matches = self.NO_MATCH
+                    return
+
+    def _group_by_category(self, modifiers):
+        # Returns a dict of category name -> list of modifiers.
+        modifiers_by_category = {}
+        for m in modifiers:
+            modifiers_by_category.setdefault(self._category(m), []).append(m)
+        return modifiers_by_category
+
+    def _category(self, modifier):
+        return self._categories_for_modifiers[modifier]

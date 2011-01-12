@@ -183,8 +183,7 @@ class Rebaseliner(object):
             test_expectations.TestExpectations(self._rebaseline_port,
                                                None,
                                                expectations_str,
-                                               self._platform,
-                                               False,
+                                               self._target_port.test_configuration(),
                                                False)
         self._scm = scm.default_scm()
 
