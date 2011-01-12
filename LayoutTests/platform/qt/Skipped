@@ -487,7 +487,6 @@ fast/dom/open-and-close-by-DOM.html
 fast/dom/Window/new-window-opener.html
 fast/forms/001.html
 fast/forms/focus2.html
-fast/forms/search-cancel-button-mouseup.html
 fast/frames/001.html
 fast/text/monospace-width-cache.html
 
@@ -2322,7 +2321,6 @@ fast/forms/listbox-onchange.html
 fast/forms/listbox-selection-2.html
 fast/forms/listbox-selection.html
 fast/forms/onselect-textarea.html
-fast/forms/search-rtl.html
 fast/forms/select-writing-direction-natural.html
 fast/forms/tabbing-input-iframe.html
 fast/forms/textAreaLineHeight.html
@@ -2382,7 +2380,6 @@ fast/encoding/hebrew/8859-8-i.html
 fast/encoding/hebrew/logical.html
 fast/events/crash-on-mutate-during-drop.html
 fast/forms/option-mouseevents.html
-fast/forms/search-abs-pos-cancel-button.html
 fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-metrics.html
 fast/history/window-open.html
@@ -2440,9 +2437,6 @@ fast/forms/listbox-deselect-scroll.html
 fast/forms/listbox-hit-test-zoomed.html
 fast/forms/negativeLineHeight.html
 fast/forms/placeholder-pseudo-style.html
-fast/forms/search-styled.html
-fast/forms/search-transformed.html
-fast/forms/search-zoomed.html
 fast/forms/textarea-align.html
 fast/forms/textarea-setinnerhtml.html
 fast/forms/textarea-width.html
@@ -3216,9 +3210,6 @@ fast/forms/radio-nested-labels.html
 fast/forms/radio_checked.html
 fast/forms/radio_checked_dynamic.html
 fast/forms/range-thumb-height-percentage.html
-fast/forms/search-cancel-button-style-sharing.html
-fast/forms/search-display-none-cancel-button.html
-fast/forms/search-placeholder-value-changed.html
 fast/forms/searchfield-heights.html
 fast/forms/select-accesskey.html
 fast/forms/select-align.html
@@ -3553,7 +3544,6 @@ fast/repaint/reflection-redraw.html
 fast/repaint/reflection-repaint-test.html
 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
 fast/repaint/repaint-resized-overflow.html
-fast/repaint/search-field-cancel.html
 fast/repaint/selected-replaced.html
 fast/repaint/selection-clear.html
 fast/repaint/static-to-positioned.html
@@ -5215,10 +5205,6 @@ animations/play-state.html
 animations/suspend-resume-animation.html
 animations/suspend-resume-animation-events.html
 animations/stop-animation-on-suspend.html
-
-# [Qt] Search input field doesn't have cancel button
-# https://bugs.webkit.org/show_bug.cgi?id=42887
-fast/forms/search-cancel-button-events.html
 
 # [Qt] DRT sideeffect revealed by r63657
 # https://bugs.webkit.org/show_bug.cgi?id=42578

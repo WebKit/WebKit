@@ -81,8 +81,8 @@ public:
 
     virtual double caretBlinkInterval() const;
 
-#if USE(QT_MOBILE_THEME)
     virtual bool isControlStyled(const RenderStyle*, const BorderData&, const FillLayer&, const Color& backgroundColor) const;
+#if USE(QT_MOBILE_THEME)
     virtual int popupInternalPaddingBottom(RenderStyle*) const;
 #endif
 
@@ -179,6 +179,8 @@ private:
     int findFrameLineWidth(QStyle* style) const;
 
     QStyle* fallbackStyle() const;
+
+    IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const;
 
     Page* m_page;
 

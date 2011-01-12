@@ -48,6 +48,7 @@
 #include <QSharedData>
 #include <QUrl>
 #include <QFileInfo>
+#include <QStyle>
 
 #include "NetworkStateNotifier.h"
 
@@ -101,6 +102,8 @@ static WebGraphicHash* graphics()
         hash->insert(QWebSettings::TextAreaSizeGripCornerGraphic, QPixmap(QLatin1String(":webkit/resources/textAreaResizeCorner.png")));
         hash->insert(QWebSettings::DeleteButtonGraphic, QPixmap(QLatin1String(":webkit/resources/deleteButton.png")));
         hash->insert(QWebSettings::InputSpeechButtonGraphic, QPixmap(QLatin1String(":webkit/resources/inputSpeech.png")));
+        hash->insert(QWebSettings::SearchCancelButtonGraphic, QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
+        hash->insert(QWebSettings::SearchCancelButtonPressedGraphic, QApplication::style()->standardPixmap(QStyle::SP_DialogCloseButton));
     }
 
     return hash;
@@ -372,6 +375,9 @@ QWebSettings* QWebSettings::globalSettings()
     \value DefaultFrameIconGraphic The default icon for QWebFrame::icon().
     \value TextAreaSizeGripCornerGraphic The graphic shown for the size grip of text areas.
     \value DeleteButtonGraphic The graphic shown for the WebKit-Editing-Delete-Button in Deletion UI.
+    \value InputSpeechButtonGraphic The graphic shown in input fields that support speech recognition.
+    \value SearchCancelButtonGraphic The graphic shown for clearing the text in a search field.
+    \value SearchCancelButtonPressedGraphic The graphic shown when SearchCancelButtonGraphic is pressed.
 */
 
 /*!

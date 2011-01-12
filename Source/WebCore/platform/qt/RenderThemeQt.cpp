@@ -50,6 +50,7 @@
 #include "Page.h"
 #include "QWebPageClient.h"
 #include "QtStyleOptionWebComboBox.h"
+#include "qwebsettings.h"
 #include "RenderBox.h"
 #if ENABLE(PROGRESS_TAG)
 #include "RenderProgress.h"
@@ -92,6 +93,15 @@ inline static void initStyleOption(QWidget *widget, QStyleOption& option)
         option.state = QStyle::State_Active | QStyle::State_Enabled;
     }
 }
+// These values all match Safari/Win/Chromium
+static const float defaultControlFontPixelSize = 13;
+static const float defaultCancelButtonSize = 9;
+static const float minCancelButtonSize = 5;
+static const float maxCancelButtonSize = 21;
+static const float defaultSearchFieldResultsDecorationSize = 13;
+static const float minSearchFieldResultsDecorationSize = 9;
+static const float maxSearchFieldResultsDecorationSize = 30;
+static const float defaultSearchFieldResultsButtonWidth = 18;
 
 
 StylePainter::StylePainter(RenderThemeQt* theme, const PaintInfo& paintInfo)
@@ -186,6 +196,7 @@ bool RenderThemeQt::isControlStyled(const RenderStyle* style, const BorderData& 
     case PushButtonPart:
     case ButtonPart:
     case MenulistPart:
+    // FIXME: Need to add SearchFieldPart if it should be style-able.
     case TextFieldPart:
     case TextAreaPart:
         return true;
@@ -200,6 +211,20 @@ bool RenderThemeQt::isControlStyled(const RenderStyle* style, const BorderData& 
 int RenderThemeQt::popupInternalPaddingBottom(RenderStyle* style) const
 {
     return 1;
+}
+#else
+// Remove this when SearchFieldPart is style-able in RenderTheme::isControlStyled()
+bool RenderThemeQt::isControlStyled(const RenderStyle* style, const BorderData& border, const FillLayer& fill, const Color& backgroundColor) const
+{
+    switch (style->appearance()) {
+    case SearchFieldPart:
+        // Test the style to see if the UA border and background match.
+        return (style->border() != border
+                || *style->backgroundLayers() != fill
+                || style->visitedDependentColor(CSSPropertyBackgroundColor) != backgroundColor);
+    default:
+        return RenderTheme::isControlStyled(style, border, fill, backgroundColor);
+    }
 }
 #endif
 
@@ -413,6 +438,7 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
 
     switch (renderStyle->appearance()) {
     case TextAreaPart:
+    case SearchFieldPart:
     case TextFieldPart: {
         int padding = findFrameLineWidth(style);
 
@@ -611,6 +637,11 @@ bool RenderThemeQt::paintButton(RenderObject* o, const PaintInfo& i, const IntRe
 
 void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
+    // Resetting the style like this leads to differences like:
+    // - RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] border: (2px inset #000000)]
+    // + RenderTextControl {INPUT} at (2,2) size 166x26
+    // in layout tests when a CSS style is applied that doesn't affect background color, border or
+    // padding. Just worth keeping in mind!
     style->setBackgroundColor(Color::transparent);
     style->resetBorder();
     style->resetPadding();
@@ -886,28 +917,73 @@ void RenderThemeQt::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style
 bool RenderThemeQt::paintSearchField(RenderObject* o, const PaintInfo& pi,
                                      const IntRect& r)
 {
-    return true;
+    return paintTextField(o, pi, r);
 }
 
 void RenderThemeQt::adjustSearchFieldStyle(CSSStyleSelector* selector, RenderStyle* style,
                                            Element* e) const
 {
-    notImplemented();
-    RenderTheme::adjustSearchFieldStyle(selector, style, e);
+    // Resetting the style like this leads to differences like:
+    // - RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF] border: (2px inset #000000)]
+    // + RenderTextControl {INPUT} at (2,2) size 166x26
+    // in layout tests when a CSS style is applied that doesn't affect background color, border or
+    // padding. Just worth keeping in mind!
+    style->setBackgroundColor(Color::transparent);
+    style->resetBorder();
+    style->resetPadding();
+    computeSizeBasedOnStyle(style);
 }
 
 void RenderThemeQt::adjustSearchFieldCancelButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
                                                        Element* e) const
 {
-    notImplemented();
-    RenderTheme::adjustSearchFieldCancelButtonStyle(selector, style, e);
+    // Logic taken from RenderThemeChromium.cpp.
+    // Scale the button size based on the font size.
+    float fontScale = style->fontSize() / defaultControlFontPixelSize;
+    int cancelButtonSize = lroundf(qMin(qMax(minCancelButtonSize, defaultCancelButtonSize * fontScale), maxCancelButtonSize));
+    style->setWidth(Length(cancelButtonSize, Fixed));
+    style->setHeight(Length(cancelButtonSize, Fixed));
+}
+
+// Function taken from RenderThemeChromium.cpp
+IntRect RenderThemeQt::convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, IntRect partRect, const IntRect& localOffset) const
+{
+    // Compute an offset between the part renderer and the input renderer.
+    IntSize offsetFromInputRenderer = -(partRenderer->offsetFromAncestorContainer(inputRenderer));
+    // Move the rect into partRenderer's coords.
+    partRect.move(offsetFromInputRenderer);
+    // Account for the local drawing offset.
+    partRect.move(localOffset.x(), localOffset.y());
+
+    return partRect;
 }
 
 bool RenderThemeQt::paintSearchFieldCancelButton(RenderObject* o, const PaintInfo& pi,
                                                  const IntRect& r)
 {
-    notImplemented();
-    return RenderTheme::paintSearchFieldCancelButton(o, pi, r);
+    // Logic copied from RenderThemeChromium.cpp.
+
+    // Get the renderer of <input> element.
+    Node* input = o->node()->shadowAncestorNode();
+    if (!input->renderer()->isBox())
+        return false;
+    RenderBox* inputRenderBox = toRenderBox(input->renderer());
+    IntRect inputContentBox = inputRenderBox->contentBoxRect();
+
+    // Make sure the scaled button stays square and will fit in its parent's box.
+    int cancelButtonSize = qMin(inputContentBox.width(), qMin(inputContentBox.height(), r.height()));
+    // Calculate cancel button's coordinates relative to the input element.
+    // Center the button vertically.  Round up though, so if it has to be one pixel off-center, it will
+    // be one pixel closer to the bottom of the field.  This tends to look better with the text.
+    IntRect cancelButtonRect(o->offsetFromAncestorContainer(inputRenderBox).width(),
+                             inputContentBox.y() + (inputContentBox.height() - cancelButtonSize + 1) / 2,
+                             cancelButtonSize, cancelButtonSize);
+    IntRect paintingRect = convertToPaintingRect(inputRenderBox, o, cancelButtonRect, r);
+    static Image* cancelImage = Image::loadPlatformResource("searchCancelButton").releaseRef();
+    static Image* cancelPressedImage = Image::loadPlatformResource("searchCancelButtonPressed").releaseRef();
+    pi.context->drawImage(isPressed(o) ? cancelPressedImage : cancelImage,
+                                 o->style()->colorSpace(), paintingRect);
+    return false;
 }
 
 void RenderThemeQt::adjustSearchFieldDecorationStyle(CSSStyleSelector* selector, RenderStyle* style,
