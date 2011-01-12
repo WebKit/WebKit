@@ -1,3 +1,15 @@
+2011-01-12  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed build fix for debug strict compiles.
+
+        Use fprintf for debug statements instead of fwrite, which caused compile failures
+        in debug strict mode because of failure to check the fwrite return value.
+
+        No behavior changed.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::showTreeAndMark):
+
 2010-12-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
