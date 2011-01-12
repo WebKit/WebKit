@@ -997,6 +997,10 @@ void WebPageProxy::didSaveFrameToPageCache(uint64_t frameID)
 
     WebFrameProxy* subframe = process()->webFrame(frameID);
     MESSAGE_CHECK(subframe);
+
+    if (!subframe->parentFrame())
+        return;
+
     MESSAGE_CHECK(subframe->isDescendantOf(m_mainFrame.get()));
 
     subframe->didRemoveFromHierarchy();
