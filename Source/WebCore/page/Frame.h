@@ -208,6 +208,8 @@ namespace WebCore {
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
         void lifeSupportTimerFired(Timer<Frame>*);
 
+        void updateContentsScale(float);
+
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 
         Page* m_page;

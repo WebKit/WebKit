@@ -1897,6 +1897,43 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty
     return (property == AnimatedPropertyBackgroundColor) ? m_contentsLayerClones.get() : primaryLayerClones();
 }
 
+void GraphicsLayerCA::setContentsScale(float scale)
+{
+    float newScale = clampedContentsScaleForScale(scale);
+    if (newScale == m_contentsScale)
+        return;
+
+    m_contentsScale = newScale;
+    noteLayerPropertyChanged(ContentsScaleChanged);
+}
+
+float GraphicsLayerCA::clampedContentsScaleForScale(float scale) const
+{
+    // Define some limits as a sanity check for the incoming scale value
+    // those too small to see.
+    const float maxScale = 5.0f;
+    const float minScale = 0.01f;
+    
+    // Avoid very slight scale changes that would be doing extra work for no benefit
+    const float maxAllowableDelta = 0.05;
+
+    // Clamp
+    float result = max(minScale, min(scale, maxScale));
+
+    // If it hasn't changed much, don't do any work
+    return ((fabs(result - m_contentsScale) / m_contentsScale) < maxAllowableDelta) ? m_contentsScale : result;
+}
+
+void GraphicsLayerCA::updateContentsScale()
+{
+    bool needTiledLayer = requiresTiledLayer(m_size);
+    if (needTiledLayer != m_usingTiledLayer)
+        swapFromOrToTiledLayer(needTiledLayer);
+
+    m_layer->setContentsScale(m_contentsScale);
+    m_layer->setNeedsDisplay();
+}
+
 void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
 {    
     if (color.isValid())
@@ -1950,9 +1987,7 @@ bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 {
-    if (useTiledLayer == m_usingTiledLayer)
-        return;
-
+    ASSERT(useTiledLayer != m_usingTiledLayer);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);

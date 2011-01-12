@@ -56,6 +56,9 @@ public:
     virtual PlatformLayer* platformLayer() const;
     virtual PlatformCALayer* platformCALayer() const { return primaryLayer(); }
 
+    virtual float contentsScale() const { return m_contentsScale; }
+    virtual void setContentsScale(float);
+
     virtual bool setChildren(const Vector<GraphicsLayer*>&);
     virtual void addChild(GraphicsLayer*);
     virtual void addChildAtIndex(GraphicsLayer*, int index);
@@ -278,6 +281,7 @@ private:
     void updateLayerAnimations();
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
+    void updateContentsScale();
     
     enum StructuralLayerPurpose {
         NoStructuralLayer = 0,
@@ -320,7 +324,8 @@ private:
         MaskLayerChanged = 1 << 21,
         ReplicatedLayerChanged = 1 << 22,
         ContentsNeedsDisplay = 1 << 23,
-        AcceleratesDrawingChanged = 1 << 24
+        AcceleratesDrawingChanged = 1 << 24,
+        ContentsScaleChanged = 1 << 25
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);
@@ -391,6 +396,9 @@ private:
     Vector<FloatRect> m_dirtyRects;
     
     LayerChangeFlags m_uncommittedChanges;
+
+    float clampedContentsScaleForScale(float) const;
+    float m_contentsScale;
 };
 
 } // namespace WebCore

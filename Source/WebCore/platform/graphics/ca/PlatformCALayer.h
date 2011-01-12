@@ -182,6 +182,9 @@ public:
 
     CFTimeInterval timeOffset() const;
     void setTimeOffset(CFTimeInterval);
+    
+    float contentsScale() const;
+    void setContentsScale(float);
 
 #if PLATFORM(WIN) && !defined(NDEBUG)
     void printTree() const;

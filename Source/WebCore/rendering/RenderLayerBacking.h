@@ -139,6 +139,8 @@ public:
     // For informative purposes only.
     CompositingLayerType compositingLayerType() const;
     
+    void updateContentsScale(float);
+
 private:
     void createGraphicsLayer();
     void destroyGraphicsLayer();

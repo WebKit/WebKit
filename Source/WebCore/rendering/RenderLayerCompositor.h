@@ -174,6 +174,8 @@ public:
     bool compositorShowDebugBorders() const { return m_showDebugBorders; }
     bool compositorShowRepaintCounter() const { return m_showRepaintCounter; }
 
+    void updateContentsScale(float, RenderLayer* = 0);
+
 private:
     // GraphicsLayerClient Implementation
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) { }

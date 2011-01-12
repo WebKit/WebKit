@@ -1,3 +1,47 @@
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+        
+        Pages with accelerated layers lose subpixel-AA and become blurry when a scale factor is applied
+        rdar://problem/8824974
+
+        When scaled, WebKit renders the page content at the scaled up size, so there are no
+        scaling artifacts. But content drawn into a layer's backing store does not scale up.
+        This is made worse by the fact that the root page contents become layered when there
+        are other accelerated compositing layers present (video, plugins, etc.).
+        
+        Plumb scaling factor from Frame::scalePage() down into all layers with content. It
+        eventually calls CALayer::setContentsScale which renders to a backing store whose dimensions
+        are scaled, causing them to render larger and appear pixel perfect at the scaled
+        page size.
+ 
+         * page/Frame.cpp:
+         (WebCore::Frame::updateContentsScale):
+         (WebCore::Frame::scalePage):
+         * page/Frame.h:
+         * platform/graphics/GraphicsLayer.h:
+         * platform/graphics/ca/GraphicsLayerCA.cpp:
+         (WebCore::GraphicsLayerCA::setContentsScale):
+         (WebCore::GraphicsLayerCA::clampedContentsScaleForScale):
+         * platform/graphics/ca/GraphicsLayerCA.h:
+         (WebCore::GraphicsLayerCA::contentsScale):
+         * platform/graphics/ca/PlatformCALayer.h:
+         * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+         (PlatformCALayer::contentsScale):
+         (PlatformCALayer::setContentsScale):
+         * rendering/RenderLayer.cpp:
+         (WebCore::RenderLayer::updateContentsScale):
+         * rendering/RenderLayer.h:
+         * rendering/RenderLayerBacking.cpp:
+         (WebCore::RenderLayerBacking::createGraphicsLayer):
+         (WebCore::RenderLayerBacking::updateForegroundLayer):
+         (WebCore::RenderLayerBacking::updateMaskLayer):
+         (WebCore::RenderLayerBacking::updateContentsScale):
+         * rendering/RenderLayerBacking.h:
+         * rendering/RenderLayerCompositor.cpp:
+         (WebCore::RenderLayerCompositor::updateContentsScale):
+         * rendering/RenderLayerCompositor.h:
+ 
 2011-01-12  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.

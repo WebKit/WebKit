@@ -975,6 +975,16 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     }
 }
 
+void Frame::updateContentsScale(float scale)
+{
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->updateContentsScale(scale);
+
+    RenderView* root = contentRenderer();
+    if (root && root->compositor())
+        root->compositor()->updateContentsScale(scale);
+}
+
 void Frame::scalePage(float scale, const IntPoint& origin)
 {
     Document* document = this->document();
@@ -987,6 +997,8 @@ void Frame::scalePage(float scale, const IntPoint& origin)
         document->renderer()->setNeedsLayout(true);
 
     document->recalcStyle(Node::Force);
+
+    updateContentsScale(scale);
 
     if (FrameView* view = this->view()) {
         if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())

@@ -1574,6 +1574,34 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
     return false;
 }
 
+void RenderLayerCompositor::updateContentsScale(float scale, RenderLayer* layer)
+{
+    if (!layer)
+        layer = rootRenderLayer();
+
+    layer->updateContentsScale(scale);
+
+    if (layer->isStackingContext()) {
+        if (Vector<RenderLayer*>* negZOrderList = layer->negZOrderList()) {
+            size_t listSize = negZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i)
+                updateContentsScale(scale, negZOrderList->at(i));
+        }
+
+        if (Vector<RenderLayer*>* posZOrderList = layer->posZOrderList()) {
+            size_t listSize = posZOrderList->size();
+            for (size_t i = 0; i < listSize; ++i)
+                updateContentsScale(scale, posZOrderList->at(i));
+        }
+    }
+
+    if (Vector<RenderLayer*>* normalFlowList = layer->normalFlowList()) {
+        size_t listSize = normalFlowList->size();
+        for (size_t i = 0; i < listSize; ++i)
+            updateContentsScale(scale, normalFlowList->at(i));
+    }
+}
+
 } // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING)
