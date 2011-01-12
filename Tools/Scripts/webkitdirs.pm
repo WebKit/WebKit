@@ -603,10 +603,11 @@ sub builtDylibPathForName
     }
     if (isGtk()) {
         my $libraryDir = "$configurationProductDir/.libs/";
-        if (-e $libraryDir . "libwebkitgtk-3.0.so") {
-            return $libraryDir . "libwebkitgtk-3.0.so";
+        my $extension = isDarwin() ? "dylib" : "so";
+        if (-e $libraryDir . "libwebkitgtk-3.0.$extension") {
+            return $libraryDir . "libwebkitgtk-3.0.$extension";
         }
-        return $libraryDir . "libwebkitgtk-1.0.so";
+        return $libraryDir . "libwebkitgtk-1.0.$extension";
     }
     if (isEfl()) {
         return "$configurationProductDir/$libraryName/../.libs/libewebkit.so";

@@ -162,6 +162,11 @@ TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
+# For the Gtk port we want to use XP_UNIX both on X11 and Mac
+if !TARGET_WIN32
+TestNetscapePlugin_libtestnetscapeplugin_la_CPPFLAGS += -DXP_UNIX
+endif
+
 TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h \
 	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h \

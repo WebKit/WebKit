@@ -1,3 +1,18 @@
+2011-01-12  Koan-Sin Tan  <koansin.tan@gmail.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] WebKitGtk+ doesn't build on Mac OS X 10.6
+        https://bugs.webkit.org/show_bug.cgi?id=50867
+
+        * config.h: Don't disallow ctype for (OS(DARWIN) && PLATFORM(GTK))
+        Many GTK+ related files include <libintl.h> or <glib/gi18n-lib.h>.
+        On Mac, <libintl.h> includes <xlocale.h>. <xclocale.h> includes 
+        <xlocale/_ctype.h>, which uses isacii().
+        * platform/UUID.cpp:
+        (WebCore::createCanonicalUUIDString): For OS(DARWIN) && !PLATFORM(CF)
+        use the Chromium Linux UUID generation.
+
 2011-01-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel.

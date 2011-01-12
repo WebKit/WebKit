@@ -39,11 +39,11 @@
 
 #if OS(WINDOWS)
 #include <objbase.h>
-#elif OS(DARWIN)
+#elif OS(DARWIN) && PLATFORM(CF)
 #include <CoreFoundation/CoreFoundation.h>
 #elif OS(LINUX) && !PLATFORM(CHROMIUM)
 #include <stdio.h>
-#elif OS(LINUX) && PLATFORM(CHROMIUM)
+#elif (OS(LINUX) && PLATFORM(CHROMIUM)) || (OS(DARWIN) && !PLATFORM(CF))
 #include <wtf/RandomNumber.h>
 #include <wtf/text/StringBuilder.h>
 #endif
@@ -71,7 +71,7 @@ String createCanonicalUUIDString()
     String canonicalUuidStr = String(uuidStr + 1, num - 3).lower(); // remove opening and closing bracket and make it lower.
     ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
     return canonicalUuidStr;
-#elif OS(DARWIN)
+#elif OS(DARWIN) && PLATFORM(CF)
     CFUUIDRef uuid = CFUUIDCreate(0);
     CFStringRef uuidStrRef = CFUUIDCreateString(0, uuid);
     String uuidStr(uuidStrRef);
@@ -93,7 +93,7 @@ String createCanonicalUUIDString()
     String canonicalUuidStr = String(uuidStr).lower(); // make it lower.
     ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
     return canonicalUuidStr;
-#elif OS(LINUX) && PLATFORM(CHROMIUM)
+#elif (OS(LINUX) && PLATFORM(CHROMIUM)) || (OS(DARWIN) && !PLATFORM(CF))
     unsigned randomData[4];
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(randomData); ++i)
         randomData[i] = static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
