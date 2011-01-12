@@ -119,6 +119,11 @@ Markup.notifyDone = function()
         layoutTestController.notifyDone();
 }
 
+Markup.useHTML5libOutputFormat = function()
+{
+    Markup._useHTML5libOutputFormat = true;
+}
+
 Markup.get = function(node)
 {
     if (!node.firstChild)
@@ -139,7 +144,7 @@ Markup._get = function(node, depth)
     var str = Markup._indent(depth);
 
     switch (node.nodeType) {
-    case 10:
+    case Node.DOCUMENT_TYPE_NODE:
         str += '<!DOCTYPE ' + node.nodeName;
         if (node.publicId || node.systemId) {
             str += ' "' + node.publicId + '"';
@@ -148,7 +153,7 @@ Markup._get = function(node, depth)
         str += '>';
         break;
 
-    case 8:
+    case Node.COMMENT_NODE:
         try {
             str += '<!-- ' + node.nodeValue + ' -->';
         } catch (e) {
@@ -156,19 +161,19 @@ Markup._get = function(node, depth)
         }
         break;
 
-    case 7:
+    case Node.PROCESSING_INSTRUCTION_NODE:
         str += '<?' + node.nodeName + node.nodeValue + '>';
         break;
 
-    case 4:
+    case Node.CDATA_SECTION_NODE:
         str += '<![CDATA[ ' + node.nodeValue + ' ]]>';
         break;
 
-    case 3:
+    case Node.TEXT_NODE:
         str += '"' + Markup._getMarkupForTextNode(node) + '"';
         break;
 
-    case 1:
+    case Node.ELEMENT_NODE:
         str += "<";
         str += Markup._namespace(node)
 
@@ -198,6 +203,11 @@ Markup._get = function(node, depth)
               }
             }
         }
+
+        if (!Markup._useHTML5libOutputFormat)
+            if (node.nodeName == "INPUT" || node.nodeName == "TEXTAREA")
+                str += Markup._indent(depth + 1) + 'this.value="' + node.value + '"';
+
         break;
     }
 

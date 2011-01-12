@@ -12,6 +12,7 @@
 "
 |       <textarea>
 |         name="editor1"
+|         this.value=""
 |       "
 "
 |     "

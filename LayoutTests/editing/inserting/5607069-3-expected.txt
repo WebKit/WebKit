@@ -3,8 +3,10 @@ This tests for a bug in InsertParagraph where it would split and clone a <form> 
 |   style="border: 1px solid blue;"
 |   <input>
 |     type="text"
+|     this.value=""
 |   "x"
 |   <br>
 |   "<#selection-caret>x"
 |   <input>
 |     type="text"
+|     this.value=""

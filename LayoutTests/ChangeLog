@@ -1,3 +1,22 @@
+2011-01-12  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        output the value of input and textarea nodes when using dump-as-markup
+        https://bugs.webkit.org/show_bug.cgi?id=52319
+
+        * editing/inserting/5607069-2-expected.txt:
+        * editing/inserting/5607069-3-expected.txt:
+        * editing/selection/dump-as-markup-expected.txt:
+        * editing/selection/dump-as-markup-form-text-expected.txt: Added.
+        * editing/selection/dump-as-markup-form-text.html: Added.
+        * fast/parser/object-with-textarea-fallback-expected.txt:
+        * html5lib/runner.html:
+        * html5lib/webkit-resumer.html:
+        * resources/dump-as-markup.js:
+        (Markup.useHTML5libOutputFormat): Add a flag for html5lib compatibility
+        (Markup._get):
+
 2011-01-12  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, add expected results.
