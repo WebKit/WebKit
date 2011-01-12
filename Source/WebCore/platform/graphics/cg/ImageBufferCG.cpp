@@ -54,6 +54,8 @@ using namespace std;
 namespace WebCore {
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
+static const int maxIOSurfaceDimension = 4096;
+
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 {
     unsigned pixelFormat = 'BGRA';
@@ -110,12 +112,15 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     , m_size(size)
     , m_accelerateRendering(renderingMode == Accelerated)
 {
-#if !USE(IOSURFACE_CANVAS_BACKING_STORE)
-    ASSERT(renderingMode == Unaccelerated);
-#endif
     success = false;  // Make early return mean failure.
     if (size.width() < 0 || size.height() < 0)
         return;
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    if (size.width() >= maxIOSurfaceDimension || size.height() >= maxIOSurfaceDimension)
+        m_accelerateRendering = false;
+#else
+    ASSERT(renderingMode == Unaccelerated);
+#endif
 
     unsigned bytesPerRow = size.width();
     if (bytesPerRow > 0x3FFFFFFF) // Protect against overflow

@@ -1,3 +1,15 @@
+2011-01-11  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Max area bound needed in creation of IOSurface in ImageBufferCG.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=52172
+
+        Tests: fast/canvas/canvas-large-dimensions.html
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2011-01-12  Daniel Bates  <dbates@rim.com>
             And Benjamin C Meyer  <bmeyer@rim.com>
 
