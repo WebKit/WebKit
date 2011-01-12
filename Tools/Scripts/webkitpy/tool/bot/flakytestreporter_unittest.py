@@ -161,4 +161,13 @@ The dummy-queue is continuing to process your patch.
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
         self.assertEqual(reporter._results_diff_path_for_test("test.html"), "test-diffs.txt")
 
-    # report_flaky_tests is also tested by queues_unittest
+    def test_find_in_archive(self):
+        reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
+
+        class MockZipFile(object):
+            def namelist(self):
+                return ["tmp/layout-test-results/foo/bar-diffs.txt"]
+
+        reporter._find_in_archive("foo/bar-diffs.txt", MockZipFile())
+        # This is not ideal, but its
+        reporter._find_in_archive("txt", MockZipFile())

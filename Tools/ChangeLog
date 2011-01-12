@@ -1,3 +1,19 @@
+2011-01-11  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        commit-queue should know how to upload archived results (for test flakes or general failures)
+        https://bugs.webkit.org/show_bug.cgi?id=52048
+
+        The zips are mostly empty due to forgetting -r.
+        Expected diffs were not being pulled from the archive due
+        to the archive having longer paths than I realized.
+
+        * Scripts/webkitpy/common/system/workspace.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+
 2011-01-11  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

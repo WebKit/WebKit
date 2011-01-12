@@ -57,5 +57,5 @@ class Workspace(object):
         #         zip_file.write(os.path.relpath(path, source_path))
         # However, getting the paths, encoding and compression correct could be non-trivial.
         # So, for now we depend on the environment having "zip" installed (likely fails on Win32)
-        self._executive.run_command(['zip', zip_path, source_path])
+        self._executive.run_command(['zip', '-r', zip_path, source_path])
         return zip_class(zip_path)

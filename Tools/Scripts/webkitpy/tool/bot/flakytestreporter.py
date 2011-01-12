@@ -150,14 +150,23 @@ If you would like to track this test fix with another bug, please close this bug
         else:
             self._tool.bugs.post_comment_to_bug(bug.id(), latest_flake_message)
 
+    # This method is needed because our archive paths include a leading tmp/layout-test-results
+    def _find_in_archive(self, path, archive):
+        for archived_path in archive.namelist():
+            # Archives are currently created with full paths.
+            if archived_path.endswith(path):
+                return archived_path
+        return None
+
     def _attach_failure_diff(self, flake_bug_id, flaky_test, results_archive):
         results_diff_path = self._results_diff_path_for_test(flaky_test)
         # Check to make sure that the path makes sense.
         # Since we're not actually getting this path from the results.html
         # there is a chance it's wrong.
         bot_id = self._tool.status_server.bot_id or "bot"
-        if results_diff_path in results_archive.namelist():
-            results_diff = results_archive.read(results_diff_path)
+        archive_path = self._find_in_archive(results_diff_path, results_archive)
+        if archive_path:
+            results_diff = results_archive.read(archive_path)
             description = "Failure diff from %s" % bot_id
             self._tool.bugs.add_attachment_to_bug(flake_bug_id, results_diff, description, filename="failure.diff")
         else:
