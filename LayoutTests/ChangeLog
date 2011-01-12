@@ -1,3 +1,11 @@
+2011-01-11  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        Remove failing expectations for tests that pass after r75569.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-11  James Robinson  <jamesr@chromium.org>
 
         Update test to use layoutTestController.waitUntilDone()/notifyDone() since it relies on the scroll event which is now async.
