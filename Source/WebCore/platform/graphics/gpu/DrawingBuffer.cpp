@@ -40,14 +40,16 @@ namespace WebCore {
 
 PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size)
 {
-    RefPtr<DrawingBuffer> drawingBuffer = adoptRef(new DrawingBuffer(context, size));
     Extensions3D* extensions = context->getExtensions();
     bool multisampleSupported = extensions->supports("GL_ANGLE_framebuffer_blit") && extensions->supports("GL_ANGLE_framebuffer_multisample");
     if (multisampleSupported) {
         extensions->ensureEnabled("GL_ANGLE_framebuffer_blit");
         extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
     }
-    drawingBuffer->m_multisampleExtensionSupported = multisampleSupported;
+    bool packedDepthStencilSupported = extensions->supports("GL_OES_packed_depth_stencil");
+    if (packedDepthStencilSupported)
+        extensions->ensureEnabled("GL_OES_packed_depth_stencil");
+    RefPtr<DrawingBuffer> drawingBuffer = adoptRef(new DrawingBuffer(context, size, multisampleSupported, packedDepthStencilSupported));
     return (drawingBuffer->m_context) ? drawingBuffer.release() : 0;
 }
 
@@ -88,6 +90,24 @@ void DrawingBuffer::clear()
     m_context.clear();
 }
 
+void DrawingBuffer::createSecondaryBuffers()
+{
+    const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
+
+    // Create the stencil and depth buffer if needed
+    if (!multisample() && (attributes.stencil || attributes.depth))
+        m_depthStencilBuffer = m_context->createRenderbuffer();
+
+    // create a multisample FBO
+    if (multisample()) {
+        m_multisampleFBO = m_context->createFramebuffer();
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
+        m_multisampleColorBuffer = m_context->createRenderbuffer();
+        if (attributes.stencil || attributes.depth)
+            m_multisampleDepthStencilBuffer = m_context->createRenderbuffer();
+    }
+}
+
 void DrawingBuffer::reset(const IntSize& newSize)
 {
     if (m_size == newSize)
@@ -111,10 +131,13 @@ void DrawingBuffer::reset(const IntSize& newSize)
     if (attributes.stencil || attributes.depth) {
         // We don't allow the logic where stencil is required and depth is not.
         // See GraphicsContext3D constructor.
-        if (attributes.stencil && attributes.depth)
-            internalDepthStencilFormat = GraphicsContext3D::DEPTH_STENCIL;
+
+        // FIXME:  If packed depth/stencil is not supported, we should
+        // create separate renderbuffers for depth and stencil.
+        if (attributes.stencil && attributes.depth && m_packedDepthStencilExtensionSupported)
+            internalDepthStencilFormat = Extensions3D::DEPTH24_STENCIL8;
         else
-            internalDepthStencilFormat = GraphicsContext3D::DEPTH_COMPONENT;
+            internalDepthStencilFormat = GraphicsContext3D::DEPTH_COMPONENT16;
     }
 
     // resize multisample FBO
@@ -150,7 +173,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
 
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
     m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE);
-    m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE, m_colorBuffer, 0);
+    m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
     if (!multisample() && (attributes.stencil || attributes.depth)) {
         m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);

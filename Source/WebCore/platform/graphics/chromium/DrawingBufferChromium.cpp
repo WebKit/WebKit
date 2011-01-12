@@ -67,9 +67,14 @@ static unsigned generateColorTexture(GraphicsContext3D* context, const IntSize& 
 }
 
 
-DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
+DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
+                             const IntSize& size,
+                             bool multisampleExtensionSupported,
+                             bool packedDepthStencilExtensionSupported)
     : m_context(context)
     , m_size(size)
+    , m_multisampleExtensionSupported(multisampleExtensionSupported)
+    , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
     , m_fbo(0)
     , m_colorBuffer(0)
     , m_depthStencilBuffer(0)
@@ -85,6 +90,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
     m_fbo = context->createFramebuffer();
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_colorBuffer = generateColorTexture(context, size);
+    createSecondaryBuffers();
 }
 
 DrawingBuffer::~DrawingBuffer()

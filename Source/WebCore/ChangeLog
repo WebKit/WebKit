@@ -1,3 +1,43 @@
+2011-01-12  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Fix DrawingBuffer issues for depth/stencil, extensions, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=52310
+
+        1)  GL_TEXTURE is not a valid argument to glFramebufferTexture2D()
+        (should be GL_TEXTURE_2D).
+        2)  Support for the multisampling extension was being checked after
+        the DrawingBuffer constructor was called, which calls multisample()
+        to check for the extension.
+        3)  If depth or stencil is set, the corresponding framebuffers must
+        be created in the DrawingBuffer constructor.
+        4)  GL_DEPTH_STENCIL is not a valid framebuffer internal type in
+        GLES2.  Must use GL_OES_DEPTH24_STENCIL8, and check for the
+        OES_packed_depth_stencil extension.
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        Record the extension support in the constructor.  Create all the
+        secondary drawing buffers (for multisampling, depth/stencil).
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::create):
+        Check for the extensions before calling the DrawingBuffer constructor.
+        (WebCore::DrawingBuffer::createSecondaryBuffers):
+        Refactor creation of the secondary buffers from DrawingBufferMac.mm to
+        here.
+        (WebCore::DrawingBuffer::reset):
+        Use DEPTH24_STENCIL8 format, not DEPTH_STENCIL.  Use
+        DEPTH_COMPONENT16, not DEPTH_COMPONENT.
+        Use GL_TEXTURE_2D, not GL_TEXTURE (for glFramebufferTexture2D).
+        * platform/graphics/gpu/DrawingBuffer.h:
+        Refactor createSecondaryBuffers().  Add extension support arguments to
+        constructor.  Add support for packed_depth_stencil extension.
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        Record extension support in constructor.  Refactor out creation of
+        secondary buffers.
+
 2011-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.

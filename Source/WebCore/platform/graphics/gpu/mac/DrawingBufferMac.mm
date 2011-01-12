@@ -36,9 +36,14 @@
 
 namespace WebCore {
 
-DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
+DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
+                             const IntSize& size,
+                             bool multisampleExtensionSupported,
+                             bool packedDepthStencilExtensionSupported)
     : m_context(context)
     , m_size(size)
+    , m_multisampleExtensionSupported(multisampleExtensionSupported)
+    , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
     , m_fbo(context->createFramebuffer())
     , m_colorBuffer(0)
     , m_depthStencilBuffer(0)
@@ -77,21 +82,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
         return;
     }
         
-    const GraphicsContext3D::Attributes& attributes = context->getContextAttributes();
-    
-    // Create the stencil and depth buffer if needed
-    if (!multisample() && (attributes.stencil || attributes.depth))
-        m_depthStencilBuffer = context->createRenderbuffer();
-
-    // create a multisample FBO
-    if (multisample()) {
-        m_multisampleFBO = context->createFramebuffer();
-        context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
-        m_multisampleColorBuffer = context->createRenderbuffer();
-        if (attributes.stencil || attributes.depth)
-            m_multisampleDepthStencilBuffer = context->createRenderbuffer();
-    }
-    
+    createSecondaryBuffers();
     reset(size);
 }
 

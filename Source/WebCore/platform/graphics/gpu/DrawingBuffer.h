@@ -63,6 +63,9 @@ public:
     // Clear all resources from this object, as well as context. Called when context is destroyed
     // to prevent invalid accesses to the resources.
     void clear();
+
+    // Create the depth/stencil and multisample buffers, if needed.
+    void createSecondaryBuffers();
     
     // Copies the multisample color buffer to the normal color buffer and leaves m_fbo bound
     void commit(long x = 0, long y = 0, long width = -1, long height = -1);
@@ -92,7 +95,7 @@ public:
 private:
     static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&);
     
-    DrawingBuffer(GraphicsContext3D*, const IntSize&);
+    DrawingBuffer(GraphicsContext3D*, const IntSize&, bool multisampleExtensionSupported, bool packedDepthStencilExtensionSupported);
     
     // Platform specific function called after reset() so each platform can do extra work if needed
     void didReset();
@@ -100,6 +103,7 @@ private:
     RefPtr<GraphicsContext3D> m_context;
     IntSize m_size;
     bool m_multisampleExtensionSupported;
+    bool m_packedDepthStencilExtensionSupported;
     Platform3DObject m_fbo;
     Platform3DObject m_colorBuffer;
     Platform3DObject m_depthStencilBuffer;
