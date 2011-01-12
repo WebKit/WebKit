@@ -586,6 +586,15 @@ void PlatformCALayer::setTimeOffset(CFTimeInterval value)
     setNeedsCommit();
 }
 
+float contentsScale() const
+{
+    return 1;
+}
+
+void setContentsScale(float)
+{
+}
+
 #ifndef NDEBUG
 static void printIndent(int indent)
 {

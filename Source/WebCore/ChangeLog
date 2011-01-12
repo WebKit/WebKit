@@ -1,5 +1,15 @@
 2011-01-12  Chris Marrin  <cmarrin@apple.com>
 
+        UNreviewed.
+
+        Fix for the Windows build
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (contentsScale):
+        (setContentsScale):
+
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
         Unreviewed.
 
         Another build fix
