@@ -25,25 +25,49 @@
 
 #include "BackingStore.h"
 
+#include "ShareableBitmap.h"
+#include "UpdateInfo.h"
+#include <WebCore/GraphicsContext.h>
+
 using namespace WebCore;
 
 namespace WebKit {
-
-void BackingStore::platformInitialize()
-{
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-
-    m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-}
 
 void BackingStore::paint(PlatformGraphicsContext, const IntRect&)
 {
     // FIXME: Implement.
 }
 
-void BackingStore::incorporateUpdate(const UpdateInfo&)
+void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
 {
-    // FIXME: Implement.
+    ASSERT(m_size == updateInfo.viewSize);
+
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.updateRectBounds.size(), updateInfo.bitmapHandle);
+    if (!bitmap)
+        return;
+
+    if (!m_bitmapContext) {
+        RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+        
+        m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+        
+        // We want the origin to be in the top left corner so flip the backing store context.
+        CGContextTranslateCTM(m_bitmapContext.get(), 0, m_size.height());
+        CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
+    }
+
+    IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
+
+    GraphicsContext graphicsContext(m_bitmapContext.get());
+
+    // Paint all update rects.
+    for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
+        IntRect updateRect = updateInfo.updateRects[i];
+        IntRect srcRect = updateRect;
+        srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
+
+        bitmap->paint(graphicsContext, updateRect.location(), srcRect);
+    }
 }
 
 } // namespace WebKit

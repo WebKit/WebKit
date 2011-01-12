@@ -60,8 +60,6 @@ public:
 private:
     explicit BackingStore(const WebCore::IntSize&);
 
-    void platformInitialize();
-
     WebCore::IntSize m_size;
 
 #if PLATFORM(MAC)

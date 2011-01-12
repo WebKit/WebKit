@@ -1113,7 +1113,15 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (void)drawRect:(NSRect)rect
 {
     if (useNewDrawingArea()) {
-        // FIXME: Implement.
+        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
+            CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+            drawingArea->paint(context, enclosingIntRect(rect));
+        } else if (_data->_page->drawsBackground()) {
+            [_data->_page->drawsTransparentBackground() ? [NSColor clearColor] : [NSColor whiteColor] set];
+            NSRectFill(rect);
+        }
+
+        _data->_page->didDraw();
         return;
     }
 

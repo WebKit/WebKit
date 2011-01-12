@@ -152,6 +152,8 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_dirtyRegion = Region();
 
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
+    if (!bitmap->createHandle(updateInfo.bitmapHandle))
+        return;
 
     OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
 

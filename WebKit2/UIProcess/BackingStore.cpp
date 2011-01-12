@@ -41,6 +41,7 @@ PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size)
 BackingStore::BackingStore(const IntSize& size)
     : m_size(size)
 {
+    ASSERT(!m_size.isEmpty());
 }
 
 BackingStore::~BackingStore()
