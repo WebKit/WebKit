@@ -1,3 +1,14 @@
+2011-01-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: do not replace all tabs with spaces when editing script source
+        https://bugs.webkit.org/show_bug.cgi?id=52291
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.setContent):
+        (WebInspector.SourceFrame.prototype._editLine):
+
 2011-01-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

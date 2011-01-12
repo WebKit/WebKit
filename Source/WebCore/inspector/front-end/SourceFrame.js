@@ -144,6 +144,7 @@ WebInspector.SourceFrame.prototype = {
         this._loaded = true;
         this._textModel.setText(null, content);
         this._mimeType = mimeType;
+        this._content = content;
         this._url = url;
         this._createViewerIfNeeded();
     },
@@ -802,11 +803,12 @@ WebInspector.SourceFrame.prototype = {
         lineNumber += 1;
 
         var lines = [];
-        for (var i = 0; i < this._textModel.linesCount; ++i) {
+        var oldLines = this._content.split('\n');
+        for (var i = 0; i < oldLines.length; ++i) {
             if (i === lineNumber - 1)
                 lines.push(newContent);
             else
-                lines.push(this._textModel.line(i));
+                lines.push(oldLines[i]);
         }
 
         var editData = {};
