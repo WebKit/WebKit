@@ -121,6 +121,9 @@ h1 {
     font-family: sans-serif;
     font-size: 1em;
     margin-left: 0.5em;
+    display: table-cell;
+    width: 100%;
+    padding: 0.5em;
 }
 
 h1 :link, h1 :visited {
@@ -150,7 +153,9 @@ h1 :hover {
 }
 
 .FileDiffLinkContainer {
-    text-align: center;
+    display: table-cell;
+    padding-right: 0.5em;
+    white-space: nowrap;
 }
 
 .DiffSection {

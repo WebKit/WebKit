@@ -314,7 +314,7 @@
       var file_name = $(this).children('h1').text();
       files[file_name] = this;
       addExpandLinks(file_name);
-      $('h1', this).before('<div class="FileDiffLinkContainer">' + diffLinksHtml() + '</div>');
+      $('h1', this).after('<div class="FileDiffLinkContainer">' + diffLinksHtml() + '</div>');
       updateDiffLinkVisibility(this);
     });
   }
