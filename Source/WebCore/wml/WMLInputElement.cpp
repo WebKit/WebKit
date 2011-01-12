@@ -142,7 +142,7 @@ String WMLInputElement::value() const
     return value;
 }
 
-void WMLInputElement::setValue(const String& value, bool sendChangeEvent)
+void WMLInputElement::setValue(const String& value, bool)
 {
     setFormControlValueMatchesRenderer(false);
     m_data.setValue(constrainValue(value));
@@ -161,7 +161,7 @@ void WMLInputElement::setValue(const String& value, bool sendChangeEvent)
     InputElement::notifyFormStateChanged(this);
 }
 
-void WMLInputElement::setValueForUser(const String& value)
+void WMLInputElement::setValueForUser(const String&)
 {
     /* InputElement class defines pure virtual function 'setValueForUser', which 
        will be useful only in HTMLInputElement. Do nothing in 'WMLInputElement'.
@@ -374,7 +374,7 @@ void WMLInputElement::initialize()
     if (!hasAttribute(WMLNames::emptyokAttr)) {
         if (m_formatMask.isEmpty() || 
             // check if the format codes is just "*f"
-           (m_formatMask.length() == 2 && m_formatMask[0] == '*' && formatCodes().find(m_formatMask[1]) != -1))
+           (m_formatMask.length() == 2 && m_formatMask[0] == '*' && formatCodes().find(m_formatMask[1]) != notFound))
             m_isEmptyOk = true;
     }
 }
@@ -389,11 +389,11 @@ String WMLInputElement::validateInputMask(const String& inputMask)
  
     for (unsigned i = 0; i < maskLength; ++i) {
         formatCode = inputMask[i];
-        if (formatCodes().find(formatCode) == -1) {
+        if (formatCodes().find(formatCode) == notFound) {
             if (formatCode == '*' || (WTF::isASCIIDigit(formatCode) && formatCode != '0')) {
                 // validate codes which ends with '*f' or 'nf'
                 formatCode = inputMask[++i];
-                if ((i + 1 != maskLength) || formatCodes().find(formatCode) == -1) {
+                if ((i + 1 != maskLength) || formatCodes().find(formatCode) == notFound) {
                     isValid = false;
                     break;
                 }

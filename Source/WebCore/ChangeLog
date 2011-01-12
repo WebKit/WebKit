@@ -1,3 +1,15 @@
+2011-01-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix WML compilation on Mac.
+
+        * wml/WMLInputElement.cpp:
+        (WebCore::WMLInputElement::setValue):
+        (WebCore::WMLInputElement::setValueForUser):
+        (WebCore::WMLInputElement::initialize):
+        (WebCore::WMLInputElement::validateInputMask):
+        * wml/WMLSelectElement.cpp:
+        (WebCore::WMLSelectElement::listBoxSelectItem):
+
 2011-01-12  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed build fix for debug strict compiles.
