@@ -78,12 +78,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/AbstractMacroAssembler.h \
 	Source/JavaScriptCore/assembler/ARMAssembler.cpp \
 	Source/JavaScriptCore/assembler/ARMAssembler.h \
+	Source/JavaScriptCore/assembler/ARMv7Assembler.cpp \
+	Source/JavaScriptCore/assembler/ARMv7Assembler.h \
 	Source/JavaScriptCore/assembler/AssemblerBuffer.h \
 	Source/JavaScriptCore/assembler/AssemblerBufferWithConstantPool.h \
 	Source/JavaScriptCore/assembler/CodeLocation.h \
 	Source/JavaScriptCore/assembler/LinkBuffer.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerARM.cpp \
 	Source/JavaScriptCore/assembler/MacroAssemblerARM.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerARMv7.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerCodeRef.h \
 	Source/JavaScriptCore/assembler/MacroAssembler.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86_64.h \

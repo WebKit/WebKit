@@ -1,3 +1,11 @@
+2011-01-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Missing Source/JavaScriptCore/assembler/MacroAssemblerARMv7.h in WebKitGtk tarball
+        https://bugs.webkit.org/show_bug.cgi?id=52299
+
+        * GNUmakefile.am: Fix the GTK+ build on ARMv7 by including missing source
+        files in the source list.
+
 2011-01-12  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Gavin Barraclough.
