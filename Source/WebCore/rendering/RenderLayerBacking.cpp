@@ -943,7 +943,7 @@ FloatPoint RenderLayerBacking::contentsToGraphicsLayerCoordinates(const Graphics
 bool RenderLayerBacking::paintingGoesToWindow() const
 {
     if (m_owningLayer->isRootLayer())
-        return !m_owningLayer->hasTransform() && (compositor()->rootLayerAttachment() != RenderLayerCompositor::RootLayerAttachedViaEnclosingIframe);
+        return compositor()->rootLayerAttachment() != RenderLayerCompositor::RootLayerAttachedViaEnclosingIframe;
     
     return false;
 }

@@ -3480,6 +3480,17 @@ bool RenderLayer::hasCompositedMask() const
 }
 #endif
 
+bool RenderLayer::paintsWithTransform(PaintBehavior paintBehavior) const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    assert(backing());
+    bool paintsToWindow = !isComposited() || backing()->paintingGoesToWindow();
+#else
+    bool paintsToWindow = true;
+#endif    
+    return transform() && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || paintsToWindow);
+}
+
 void RenderLayer::setParent(RenderLayer* parent)
 {
     if (parent == m_parent)

@@ -1,5 +1,23 @@
 2011-01-12  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        Pages with accelerated layers lose subpixel-AA and become blurry when a scale factor is applied
+        rdar://problem/8824974
+
+        This prevents the rootLayer (with the WebKit rendered content) from going becoming
+        a tiled layer when zoomed, and when there is other layered content on the page.
+        This speeds up zooming a lot and avoids some buggy behavior in CA with a very large
+        number of layers.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintsWithTransform):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintingGoesToWindow):
+
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Simon Fraser.
         
         Pages with accelerated layers lose subpixel-AA and become blurry when a scale factor is applied

@@ -441,10 +441,7 @@ public:
         return isTransparent() && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
     }
 
-    bool paintsWithTransform(PaintBehavior paintBehavior) const
-    {
-        return transform() && ((paintBehavior & PaintBehaviorFlattenCompositingLayers) || !isComposited());
-    }
+    bool paintsWithTransform(PaintBehavior) const;
 
 private:
     // The normal operator new is disallowed on all render objects.
