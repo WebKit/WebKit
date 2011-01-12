@@ -342,6 +342,14 @@ class CppStyleTestBase(unittest.TestCase):
                 'Blank line at the end of a code block.  Is this needed?'
                 '  [whitespace/blank_line] [3]'))
 
+    def assert_positions_equal(self, position, tuple_position):
+        """Checks if the two positions are equal.
+
+        position: a cpp_style.Position object.
+        tuple_position: a tuple (row, column) to compare against."""
+        self.assertEquals(position, cpp_style.Position(tuple_position[0], tuple_position[1]),
+                          'position %s, tuple_position %s' % (position, tuple_position))
+
 
 class FunctionDetectionTest(CppStyleTestBase):
     def perform_function_detection(self, lines, function_information):
@@ -522,6 +530,24 @@ class CppStyleTest(CppStyleTestBase):
         lines = ['a', '  /* comment ', ' * still comment', ' comment */   ', 'b']
         cpp_style.remove_multi_line_comments_from_range(lines, 1, 4)
         self.assertEquals(['a', '// dummy', '// dummy', '// dummy', 'b'], lines)
+
+    def test_position(self):
+        position = cpp_style.Position(3, 4)
+        self.assert_positions_equal(position, (3, 4))
+        self.assertEquals(position.row, 3)
+        self.assertTrue(position > cpp_style.Position(position.row - 1, position.column + 1))
+        self.assertTrue(position > cpp_style.Position(position.row, position.column - 1))
+        self.assertTrue(position < cpp_style.Position(position.row, position.column + 1))
+        self.assertTrue(position < cpp_style.Position(position.row + 1, position.column - 1))
+        self.assertEquals(position.__str__(), '(3, 4)')
+
+    def test_close_expression(self):
+        self.assertEquals(cpp_style.Position(1, -1), cpp_style.close_expression([')('], cpp_style.Position(0, 1)))
+        self.assertEquals(cpp_style.Position(1, -1), cpp_style.close_expression([') ()'], cpp_style.Position(0, 1)))
+        self.assertEquals(cpp_style.Position(0, 4), cpp_style.close_expression([')[)]'], cpp_style.Position(0, 1)))
+        self.assertEquals(cpp_style.Position(0, 5), cpp_style.close_expression(['}{}{}'], cpp_style.Position(0, 3)))
+        self.assertEquals(cpp_style.Position(1, 1), cpp_style.close_expression(['}{}{', '}'], cpp_style.Position(0, 3)))
+        self.assertEquals(cpp_style.Position(2, -1), cpp_style.close_expression(['][][', ' '], cpp_style.Position(0, 3)))
 
     def test_spaces_at_end_of_line(self):
         self.assert_lint(

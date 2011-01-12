@@ -1,3 +1,28 @@
+2011-01-12  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style -- close_expression function doesn't work correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=52272
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (Position.__str__): Added a way to convert it to a string which is useful in tests.
+        (Position.__cmp__): Added a way to compare Position which is useful in tests and
+        generally useful (for upcoming code changes).
+        (close_expression): Changed to use Position for input and output.
+        Also, fixed many bugs such as only working correctly for parenthesis,
+        not working correctly if given an offset in a line and not finding
+        the real closing element if there were multiple closing elements in
+        the same line.
+        (detect_functions): Adjusted due to the change in arguments for
+        close_expression.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTestBase.assert_positions_equal): Added a way to verify that
+        two positions are the same.
+        (CppStyleTest.test_position): Added tests for the __str_ and __cmp__ methods.
+        (CppStyleTest.test_close_expression): Added tests to catch the issues
+        that were fixed.
+
 2011-01-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r75576.

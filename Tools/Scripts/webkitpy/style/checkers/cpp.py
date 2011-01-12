@@ -344,6 +344,12 @@ class Position(object):
         self.row = row
         self.column = column
 
+    def __str__(self):
+        return '(%s, %s)' % (self.row, self.column)
+
+    def __cmp__(self, other):
+        return self.row.__cmp__(other.row) or self.column.__cmp__(other.column)
+
 
 class Parameter(object):
     """Information about one function parameter."""
@@ -791,49 +797,58 @@ class CleansedLines(object):
         return elided
 
 
-def close_expression(clean_lines, line_number, pos):
+def close_expression(elided, position):
     """If input points to ( or { or [, finds the position that closes it.
 
-    If clean_lines.elided[line_number][pos] points to a '(' or '{' or '[', finds
-    the line_number/pos that correspond to the closing of the expression.
+    If elided[position.row][position.column] points to a '(' or '{' or '[',
+    finds the line_number/pos that correspond to the closing of the expression.
 
-    Args:
-      clean_lines: A CleansedLines instance containing the file.
-      line_number: The number of the line to check.
-      pos: A position on the line.
+     Args:
+       elided: A CleansedLines.elided instance containing the file.
+       position: The position of the opening item.
 
-    Returns:
-      A tuple (line, line_number, pos) pointer *past* the closing brace, or
-      ('', len(clean_lines.elided), -1) if we never find a close.  Note we
-      ignore strings and comments when matching; and the line we return is the
-      'cleansed' line at line_number.
+     Returns:
+      The Position *past* the closing brace, or Position(len(elided), -1)
+      if we never find a close. Note we ignore strings and comments when matching.
     """
-
-    line = clean_lines.elided[line_number]
-    start_character = line[pos]
-    if start_character not in '({[':
-        return (line, clean_lines.num_lines(), -1)
+    line = elided[position.row]
+    start_character = line[position.column]
     if start_character == '(':
-        end_character = ')'
-    if start_character == '[':
-        end_character = ']'
-    if start_character == '{':
-        end_character = '}'
+        enclosing_character_regex = r'[\(\)]'
+    elif start_character == '[':
+        enclosing_character_regex = r'[\[\]]'
+    elif start_character == '{':
+        enclosing_character_regex = r'[\{\}]'
+    else:
+        return Position(len(elided), -1)
 
-    num_open = line.count(start_character) - line.count(end_character)
-    while num_open > 0:
+    current_column = position.column + 1
+    line_number = position.row
+    net_open = 1
+    for line in elided[position.row:]:
+        line = line[current_column:]
+
+        # Search the current line for opening and closing characters.
+        while True:
+            next_enclosing_character = search(enclosing_character_regex, line)
+            # No more on this line.
+            if not next_enclosing_character:
+                break
+            current_column += next_enclosing_character.end(0)
+            line = line[next_enclosing_character.end(0):]
+            if next_enclosing_character.group(0) == start_character:
+                net_open += 1
+            else:
+                net_open -= 1
+                if not net_open:
+                    return Position(line_number, current_column)
+
+        # Proceed to the next line.
         line_number += 1
-        if line_number >= clean_lines.num_lines():
-            return ('', len(clean_lines.elided), -1)
-        line = clean_lines.elided[line_number]
-        num_open += line.count(start_character) - line.count(end_character)
-    # OK, now find the end_character that actually got us back to even
-    endpos = len(line)
-    while num_open >= 0:
-        endpos = line.rfind(')', 0, endpos)
-        num_open -= 1                 # chopped off another )
-    return (line, line_number, endpos + 1)
+        current_column = 0
 
+    # The given item was not closed.
+    return Position(len(elided), -1)
 
 def check_for_copyright(lines, error):
     """Logs an error if no Copyright message appears at the top of the file."""
@@ -1429,18 +1444,17 @@ def detect_functions(clean_lines, line_number, function_state, error):
                 function += '()'
 
             parameter_start_position = Position(line_number, match_function.end(1))
-            close_result = close_expression(clean_lines, line_number, parameter_start_position.column)
-            if close_result[1] == len(clean_lines.elided):
+            parameter_end_position = close_expression(clean_lines.elided, parameter_start_position)
+            if parameter_end_position.row == len(clean_lines.elided):
                 # No end was found.
                 return
-            parameter_end_position = Position(close_result[1], close_result[2])
 
             is_declaration = bool(search(r'^[^{]*;', start_line))
             if is_declaration:
                 ending_line_number = start_line_number
             else:
                 open_brace_index = start_line.find('{')
-                ending_line_number = close_expression(clean_lines, start_line_number, open_brace_index)[1]
+                ending_line_number = close_expression(clean_lines.elided, Position(start_line_number, open_brace_index)).row
             function_state.begin(function, start_line_number, ending_line_number, is_declaration,
                                  parameter_start_position, parameter_end_position, clean_lines)
             return
