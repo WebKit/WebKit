@@ -25,6 +25,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
+
 typedef struct _GstMessage GstMessage;
 
 namespace WebCore {
@@ -38,13 +42,22 @@ class PlatformVideoWindow : public RefCounted<PlatformVideoWindow> {
 
 
         void prepareForOverlay(GstMessage*);
+#if !PLATFORM(MAC)
         PlatformWidget window() const { return m_window; }
+#else
+        PlatformWidget window() const { return m_window.get(); }
+#endif
         unsigned long videoWindowId() const { return m_videoWindowId; }
 
     private:
         unsigned long m_videoWindowId;
         PlatformWidget m_videoWindow;
+#if !PLATFORM(MAC)
         PlatformWidget m_window;
+#else
+        RetainPtr<NSView> m_window;
+#endif
+
     };
 }
 

@@ -1,3 +1,22 @@
+2011-01-11  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Eric Carlson.
+
+        [GStreamer] PlatformVideoWindowMac implementation
+        https://bugs.webkit.org/show_bug.cgi?id=50770
+
+        This new implementation will be used on Mac OS to display the
+        fullscreen video window with the GStreamer-based media player.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::gstGWorldSyncMessageCallback):
+        * platform/graphics/gstreamer/PlatformVideoWindow.h:
+        (WebCore::PlatformVideoWindow::window):
+        * platform/graphics/gstreamer/PlatformVideoWindowMac.mm:
+        (PlatformVideoWindow::PlatformVideoWindow):
+        (PlatformVideoWindow::~PlatformVideoWindow):
+        (PlatformVideoWindow::prepareForOverlay):
+
 2011-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

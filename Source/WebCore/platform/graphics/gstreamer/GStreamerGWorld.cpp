@@ -43,7 +43,8 @@ gboolean gstGWorldSyncMessageCallback(GstBus* bus, GstMessage* message, gpointer
 
     GStreamerGWorld* gstGWorld = static_cast<GStreamerGWorld*>(data);
 
-    if (gst_structure_has_name(message->structure, "prepare-xwindow-id"))
+    if (gst_structure_has_name(message->structure, "prepare-xwindow-id")
+        || gst_structure_has_name(message->structure, "have-ns-view"))
         gstGWorld->setWindowOverlay(message);
     return TRUE;
 }
