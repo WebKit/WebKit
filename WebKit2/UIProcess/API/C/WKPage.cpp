@@ -265,6 +265,16 @@ void WKPageScaleWebView(WKPageRef pageRef, double scale, WKPoint origin)
     toImpl(pageRef)->scaleWebView(scale, toIntPoint(origin));
 }
 
+void WKPageSetUseFixedLayout(WKPageRef pageRef, bool fixed)
+{
+    toImpl(pageRef)->setUseFixedLayout(fixed);
+}
+
+void WKPageSetFixedLayoutSize(WKPageRef pageRef, WKSize size)
+{
+    toImpl(pageRef)->setFixedLayoutSize(toIntSize(size));
+}
+
 double WKPageGetViewScaleFactor(WKPageRef pageRef)
 {
     return toImpl(pageRef)->viewScaleFactor();

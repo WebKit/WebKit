@@ -58,6 +58,9 @@ struct WebPageCreationParameters {
     bool drawsBackground;
     bool drawsTransparentBackground;
 
+    bool useFixedLayout;
+    WebCore::IntSize fixedLayoutSize;
+
     String userAgent;
 
     SessionState sessionState;

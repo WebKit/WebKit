@@ -1,3 +1,17 @@
+2011-01-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=52309 Expose
+        fixed layout through WebKit SPI
+        -and corresponding-
+        <rdar://problem/8844464>
+
+        * WebView/WebView.mm:
+        (-[WebView _setUseFixedLayout:]):
+        (-[WebView _setFixedLayoutSize:]):
+        * WebView/WebViewPrivate.h:
+
 2011-01-07  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

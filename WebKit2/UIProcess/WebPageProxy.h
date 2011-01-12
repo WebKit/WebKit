@@ -240,6 +240,9 @@ public:
 
     void scaleWebView(double scale, const WebCore::IntPoint& origin);
     double viewScaleFactor() const { return m_viewScaleFactor; }
+
+    void setUseFixedLayout(bool);
+    void setFixedLayoutSize(const WebCore::IntSize&);
 #if PLATFORM(MAC)
     void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
 #endif
@@ -551,6 +554,9 @@ private:
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;
+
+    bool m_useFixedLayout;
+    WebCore::IntSize m_fixedLayoutSize;
 
     // If the process backing the web page is alive and kicking.
     bool m_isValid;

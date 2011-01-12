@@ -2653,6 +2653,35 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     return coreFrame->pageScaleFactor();
 }
 
+- (void)_setUseFixedLayout:(BOOL)fixed
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (!coreFrame)
+        return;
+
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return;
+
+    view->setUseFixedLayout(fixed);
+    if (!fixed)
+        view->setFixedLayoutSize(IntSize());
+}
+
+- (void)_setFixedLayoutSize:(NSSize)size
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (!coreFrame)
+        return;
+    
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return;
+    
+    view->setFixedLayoutSize(IntSize(size));
+    view->forceLayout();
+}
+
 - (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit
 {
     return [self countMatchesForText:string options:(caseFlag ? 0 : WebFindOptionsCaseInsensitive) highlight:highlight limit:limit markMatches:YES];

@@ -307,6 +307,9 @@ WK_EXPORT void WKPageSetPageAndTextZoomFactors(WKPageRef page, double pageZoomFa
 WK_EXPORT void WKPageScaleWebView(WKPageRef page, double scale, WKPoint origin);
 WK_EXPORT double WKPageGetViewScaleFactor(WKPageRef page);
 
+WK_EXPORT void WKPageSetUseFixedLayout(WKPageRef page, bool fixed);
+WK_EXPORT void WKPageSetFixedLayoutSize(WKPageRef page, WKSize size);
+
 WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);
 WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);

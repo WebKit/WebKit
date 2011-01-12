@@ -597,6 +597,35 @@ double WebPage::viewScaleFactor() const
     return frame->pageScaleFactor();
 }
 
+void WebPage::setUseFixedLayout(bool fixed)
+{
+    Frame* frame = m_mainFrame->coreFrame();
+    if (!frame)
+        return;
+
+    FrameView* view = frame->view();
+    if (!view)
+        return;
+
+    view->setUseFixedLayout(fixed);
+    if (!fixed)
+        view->setFixedLayoutSize(IntSize());
+}
+
+void WebPage::setFixedLayoutSize(const IntSize& size)
+{
+    Frame* frame = m_mainFrame->coreFrame();
+    if (!frame)
+        return;
+    
+    FrameView* view = frame->view();
+    if (!view)
+        return;
+
+    view->setFixedLayoutSize(size);
+    view->forceLayout();
+}
+
 void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
 {
     if (m_pageOverlay)

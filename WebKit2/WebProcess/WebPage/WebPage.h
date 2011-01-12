@@ -192,6 +192,9 @@ public:
     void scaleWebView(double scale, const WebCore::IntPoint& origin);
     double viewScaleFactor() const;
 
+    void setUseFixedLayout(bool);
+    void setFixedLayoutSize(const WebCore::IntSize&);
+
     bool drawsBackground() const { return m_drawsBackground; }
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
 

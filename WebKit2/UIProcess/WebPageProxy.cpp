@@ -107,6 +107,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_viewScaleFactor(1)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
+    , m_useFixedLayout(false)
     , m_isValid(true)
     , m_isClosed(false)
     , m_inDecidePolicyForMIMEType(false)
@@ -842,6 +843,32 @@ void WebPageProxy::scaleWebView(double scale, const IntPoint& origin)
 
     m_viewScaleFactor = scale;
     process()->send(Messages::WebPage::ScaleWebView(scale, origin), m_pageID);
+}
+
+void WebPageProxy::setUseFixedLayout(bool fixed)
+{
+    if (!isValid())
+        return;
+
+    if (fixed == m_useFixedLayout)
+        return;
+
+    m_useFixedLayout = fixed;
+    if (!fixed)
+        m_fixedLayoutSize = IntSize();
+    process()->send(Messages::WebPage::SetUseFixedLayout(fixed), m_pageID);
+}
+
+void WebPageProxy::setFixedLayoutSize(const IntSize& size)
+{
+    if (!isValid())
+        return;
+
+    if (size == m_fixedLayoutSize)
+        return;
+
+    m_fixedLayoutSize = size;
+    process()->send(Messages::WebPage::SetFixedLayoutSize(size), m_pageID);
 }
 
 void WebPageProxy::findString(const String& string, FindOptions options, unsigned maxMatchCount)
@@ -2182,6 +2209,8 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
+    parameters.useFixedLayout = m_useFixedLayout;
+    parameters.fixedLayoutSize = m_fixedLayoutSize;
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
