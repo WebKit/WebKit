@@ -1,3 +1,15 @@
+2011-01-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make webkit-patch support subdirectories for SVN checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=52261
+
+        os.relpath does not exist on Python 2.5, so we need to call our version
+        of the API.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2011-01-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric Seidel.

@@ -36,6 +36,7 @@ import shutil
 
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
+import webkitpy.common.system.ospath as ospath
 from webkitpy.common.memoized import memoized
 
 
@@ -328,7 +329,7 @@ class SVN(SCM):
         if patch_directories == []:
             raise ScriptError(script_args=svn_info_args, message='Empty list of patch directories passed to SCM.__init__')
         elif patch_directories == None:
-            self._patch_directories = [os.path.relpath(cwd, self.checkout_root)]
+            self._patch_directories = [ospath.relpath(cwd, self.checkout_root)]
         else:
             self._patch_directories = patch_directories
 
