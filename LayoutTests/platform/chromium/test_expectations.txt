@@ -3089,3 +3089,6 @@ BUGCR69300 LINUX : svg/batik/text/textOnPath.svg = IMAGE PASS
 
 // Test added in r75567
 BUGWK52266 WIN : plugins/no-mime-with-valid-extension.html = TEXT
+
+// Test added in r75064
+BUGCR69395 WIN : inspector/timeline-network-resource.html = TEXT
