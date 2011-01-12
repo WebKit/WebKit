@@ -43,6 +43,7 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "PingLoader.h"
+#include "ResourceLoadScheduler.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/text/CString.h>
@@ -522,6 +523,7 @@ void CachedResourceLoader::loadDone(CachedResourceRequest* request)
     if (frame())
         frame()->loader()->loadDone();
     checkForPendingPreloads();
+    resourceLoadScheduler()->servePendingRequests();
 }
 
 void CachedResourceLoader::cancelRequests()
