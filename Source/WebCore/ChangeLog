@@ -1,5 +1,15 @@
 2011-01-11  Philippe Normand  <pnormand@igalia.com>
 
+        Reviewed by Eric Seidel.
+
+        [GTK] minimal build breaks in RenderThemeGtk3
+        https://bugs.webkit.org/show_bug.cgi?id=52202
+
+        * platform/gtk/RenderThemeGtk3.cpp: Added VIDEO guards around
+        initMediaColors().
+
+2011-01-11  Philippe Normand  <pnormand@igalia.com>
+
         Reviewed by Eric Carlson.
 
         [GStreamer] PlatformVideoWindowMac implementation

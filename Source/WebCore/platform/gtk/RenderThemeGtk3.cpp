@@ -108,6 +108,7 @@ RenderThemeGtk::~RenderThemeGtk()
 {
 }
 
+#if ENABLE(VIDEO)
 void RenderThemeGtk::initMediaColors()
 {
     GdkRGBA color;
@@ -120,6 +121,7 @@ void RenderThemeGtk::initMediaColors()
     gtk_style_context_get_background_color(containerContext, GTK_STATE_FLAG_SELECTED, &color);
     m_sliderThumbColor = color;
 }
+#endif
 
 static void adjustRectForFocus(GtkStyleContext* context, IntRect& rect)
 {
