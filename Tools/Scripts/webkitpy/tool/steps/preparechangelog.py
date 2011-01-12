@@ -70,6 +70,8 @@ class PrepareChangeLog(AbstractStep):
         if self._tool.scm().supports_local_commits():
             args.append("--merge-base=%s" % self._tool.scm().merge_base(self._options.git_commit))
 
+        args.extend(self._changed_files(state))
+
         try:
             self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
         except ScriptError, e:

@@ -1,3 +1,15 @@
+2011-01-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Make webkit-patch support subdirectories for SVN checkouts
+        https://bugs.webkit.org/show_bug.cgi?id=52261
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/style_references.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+
 2011-01-11  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.
