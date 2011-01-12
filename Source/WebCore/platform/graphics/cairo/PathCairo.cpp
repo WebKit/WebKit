@@ -153,7 +153,7 @@ void Path::addArc(const FloatPoint& p, float r, float startAngle, float endAngle
 
     cairo_t* cr = platformPath()->context();
     float sweep = endAngle - startAngle;
-    const float twoPI = 2 * M_PI;
+    const float twoPI = 2 * piFloat;
     if ((sweep <= -twoPI || sweep >= twoPI)
         && ((anticlockwise && (endAngle < startAngle)) || (!anticlockwise && (startAngle < endAngle)))) {
         if (anticlockwise)

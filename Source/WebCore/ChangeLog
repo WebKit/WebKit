@@ -1,3 +1,11 @@
+2011-01-11  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::addArc): Switch to MathExtra's piFloat define,
+        rather than M_PI which is not always available.
+
 2011-01-11  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
 
         Reviewed by Adam Barth.
