@@ -27,7 +27,7 @@
 #include "config.h"
 #include "YarrInterpreter.h"
 
-#include "Yarr.h"
+#include "YarrPattern.h"
 #include <wtf/BumpPointerAllocator.h>
 
 #ifndef NDEBUG
@@ -1877,6 +1877,7 @@ int interpret(BytecodePattern* bytecode, const UChar* input, unsigned start, uns
 {
     return Interpreter(bytecode, output, input, start, length).interpret();
 }
+
 
 COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoPatternCharacter) == (YarrStackSpaceForBackTrackInfoPatternCharacter * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoPatternCharacter);
 COMPILE_ASSERT(sizeof(Interpreter::BackTrackInfoCharacterClass) == (YarrStackSpaceForBackTrackInfoCharacterClass * sizeof(uintptr_t)), CheckYarrStackSpaceForBackTrackInfoCharacterClass);

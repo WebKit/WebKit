@@ -27,8 +27,7 @@
 #include "config.h"
 #include "YarrPattern.h"
 
-#include "Yarr.h"
-#include "YarrParser.h"
+#include "YarrInterpreter.h"
 #include <wtf/Vector.h>
 
 using namespace WTF;
@@ -930,9 +929,10 @@ private:
     bool m_invertParentheticalAssertion;
 };
 
-const char* YarrPattern::compile(const UString& patternString)
+
+static const char* compile(const UString& patternString, YarrPattern& pattern)
 {
-    YarrPatternConstructor constructor(*this);
+    YarrPatternConstructor constructor(pattern);
 
     if (const char* error = parse(constructor, patternString))
         return error;
@@ -941,14 +941,17 @@ const char* YarrPattern::compile(const UString& patternString)
     // Quoting Netscape's "What's new in JavaScript 1.2",
     //      "Note: if the number of left parentheses is less than the number specified
     //       in \#, the \# is taken as an octal escape as described in the next row."
-    if (containsIllegalBackReference()) {
+    if (pattern.containsIllegalBackReference()) {
+        unsigned numSubpatterns = pattern.m_numSubpatterns;
+
         constructor.reset();
 #if !ASSERT_DISABLED
         const char* error =
 #endif
-            parse(constructor, patternString, m_numSubpatterns);
+            parse(constructor, patternString, numSubpatterns);
 
         ASSERT(!error);
+        ASSERT(numSubpatterns == pattern.m_numSubpatterns);
     }
 
     constructor.checkForTerminalParentheses();
@@ -958,7 +961,7 @@ const char* YarrPattern::compile(const UString& patternString)
     constructor.setupBeginChars();
 
     return 0;
-}
+};
 
 YarrPattern::YarrPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error)
     : m_ignoreCase(ignoreCase)
@@ -976,7 +979,7 @@ YarrPattern::YarrPattern(const UString& pattern, bool ignoreCase, bool multiline
     , nonspacesCached(0)
     , nonwordcharCached(0)
 {
-    *error = compile(pattern);
+    *error = compile(pattern, *this);
 }
 
 } }

@@ -26,6 +26,7 @@
 #ifndef YarrInterpreter_h
 #define YarrInterpreter_h
 
+#include "YarrParser.h"
 #include "YarrPattern.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/Unicode.h>
@@ -36,6 +37,21 @@ class BumpPointerAllocator;
 using WTF::BumpPointerAllocator;
 
 namespace JSC { namespace Yarr {
+
+// TODO move the matchLimit constant and the JSRegExpResult enum to the JSRegExp.h when pcre is removed.
+
+// The below limit restricts the number of "recursive" match calls in order to
+// avoid spending exponential time on complex regular expressions.
+static const unsigned matchLimit = 1000000;
+
+enum JSRegExpResult {
+    JSRegExpMatch = 1,
+    JSRegExpNoMatch = 0,
+    JSRegExpErrorNoMatch = -1,
+    JSRegExpErrorHitLimit = -2,
+    JSRegExpErrorNoMemory = -3,
+    JSRegExpErrorInternal = -4
+};
 
 class ByteDisjunction;
 
@@ -356,6 +372,9 @@ private:
     Vector<ByteDisjunction*> m_allParenthesesInfo;
     Vector<CharacterClass*> m_userCharacterClasses;
 };
+
+PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);
+int interpret(BytecodePattern*, const UChar* input, unsigned start, unsigned length, int* output);
 
 } } // namespace JSC::Yarr
 

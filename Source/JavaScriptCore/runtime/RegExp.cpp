@@ -24,12 +24,15 @@
 #include "RegExp.h"
 
 #include "Lexer.h"
-#include "yarr/Yarr.h"
+#include "yarr/YarrInterpreter.h"
+#include "yarr/YarrJIT.h"
+#include "yarr/YarrPattern.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
+
 
 namespace JSC {
 

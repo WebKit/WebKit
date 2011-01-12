@@ -1658,10 +1658,6 @@
 			Name="yarr"
 			>
 			<File
-				RelativePath="..\..\yarr\Yarr.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\yarr\YarrInterpreter.cpp"
 				>
 			</File>

@@ -34,6 +34,15 @@
 
 namespace JSC { namespace Yarr {
 
+#define YarrStackSpaceForBackTrackInfoPatternCharacter 1 // Only for !fixed quantifiers.
+#define YarrStackSpaceForBackTrackInfoCharacterClass 1 // Only for !fixed quantifiers.
+#define YarrStackSpaceForBackTrackInfoBackReference 2
+#define YarrStackSpaceForBackTrackInfoAlternative 1 // One per alternative.
+#define YarrStackSpaceForBackTrackInfoParentheticalAssertion 1
+#define YarrStackSpaceForBackTrackInfoParenthesesOnce 1 // Only for !fixed quantifiers.
+#define YarrStackSpaceForBackTrackInfoParenthesesTerminal 1
+#define YarrStackSpaceForBackTrackInfoParentheses 2
+
 struct PatternDisjunction;
 
 struct CharacterRange {
@@ -401,8 +410,6 @@ struct YarrPattern {
     Vector<BeginChar> m_beginChars;
 
 private:
-    const char* compile(const UString& patternString);
-
     CharacterClass* newlineCached;
     CharacterClass* digitsCached;
     CharacterClass* spacesCached;

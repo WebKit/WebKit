@@ -30,7 +30,7 @@
 #include "JSGlobalData.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
-#include "Yarr.h"
+#include "YarrParser.h"
 
 #if ENABLE(YARR_JIT)
 
@@ -2203,13 +2203,10 @@ private:
 
 void jitCompile(YarrPattern& pattern, JSGlobalData* globalData, YarrCodeBlock& jitObject)
 {
-    YarrGenerator(pattern).compile(globalData, jitObject);
+    YarrGenerator generator(pattern);
+    generator.compile(globalData, jitObject);
 }
 
-int execute(YarrCodeBlock& jitObject, const UChar* input, unsigned start, unsigned length, int* output)
-{
-    return jitObject.execute(input, start, length, output);
-}
 
 }}
 
