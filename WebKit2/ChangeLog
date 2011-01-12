@@ -1,3 +1,60 @@
+2011-01-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8837307>, <rdar://problem/8637038>, and https://bugs.webkit.org/show_bug.cgi?id=52248
+        Back/forward list recovery after a WebProcess crash is crashy itself.
+
+        Add an isEmpty() accessor so the WebProcess knows if it is actually restoring a session:
+        * Shared/SessionState.cpp:
+        (WebKit::SessionState::isEmpty):
+        * Shared/SessionState.h:
+
+        Keep track of the highest used itemID so a relaunched WebProcess can later be informed:
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::WebBackForwardListItem):
+        (WebKit::WebBackForwardListItem::highedUsedItemID):
+        * Shared/WebBackForwardListItem.h:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::generateHistoryItemID):
+        (WebKit::WebBackForwardListProxy::setHighestItemIDFromUIProcess):
+        (WebKit::WebBackForwardListProxy::addItemFromUIProcess): Remove a now-invalid ASSERT, as the UIProcess
+          now tells the WebProcess that a previous WebProcess created.
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
+        Encode/decode data relevant to restoring a session on WebPage creation:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+        If the WebProcess has crashed since the last load, change reload and the various back/forward APIs to 
+        update the current back/forward item (if necessary) then relaunch the process:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem):
+        (WebKit::WebPageProxy::reattachToWebProcess): Renamed from "relaunch()" and made private.
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::loadURLRequest):
+        (WebKit::WebPageProxy::reload):
+        (WebKit::WebPageProxy::goForward):
+        (WebKit::WebPageProxy::goBack):
+        (WebKit::WebPageProxy::goToBackForwardItem):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+
+        Rename "RestoreSession" to "RestoreSessionAndNavigateToCurrentItem"
+        * WebProcess/WebPage/WebPage.messages.in:
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::restoreFromSessionStateData):
+
+        Restore a session on page creation if the parameters include it:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Call restoreSession if session state exists.
+        (WebKit::WebPage::restoreSessionAndNavigateToCurrentItem):
+        (WebKit::WebPage::restoreSession):
+        * WebProcess/WebPage/WebPage.h:
+
 2011-01-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

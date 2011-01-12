@@ -132,7 +132,7 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
     for (size_t i = 0; i < size; ++i)
         process()->registerNewWebBackForwardListItem(entries[i].get());
 
-    process()->send(Messages::WebPage::RestoreSession(SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex())), m_pageID);
+    process()->send(Messages::WebPage::RestoreSessionAndNavigateToCurrentItem(SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex())), m_pageID);
 }
 
 } // namespace WebKit

@@ -27,6 +27,7 @@
 #define WebPageCreationParameters_h
 
 #include "DrawingAreaInfo.h"
+#include "SessionState.h"
 #include "WebPageGroupData.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/IntSize.h>
@@ -58,6 +59,9 @@ struct WebPageCreationParameters {
     bool drawsTransparentBackground;
 
     String userAgent;
+
+    SessionState sessionState;
+    uint64_t highestUsedBackForwardItemID;
 
 #if PLATFORM(MAC)
     bool isSmartInsertDeleteEnabled;

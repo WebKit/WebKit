@@ -60,14 +60,26 @@ static HistoryItemToIDMap& historyItemToIDMap()
     return map;
 } 
 
+static uint64_t uniqueHistoryItemID = 1;
+
 static uint64_t generateHistoryItemID()
 {
     // These IDs exist in the WebProcess for items created by the WebProcess.
     // The IDs generated here need to never collide with the IDs created in WebBackForwardList in the UIProcess.
     // We accomplish this by starting from 3, and only ever using odd ids.
-    static uint64_t uniqueHistoryItemID = 1;
     uniqueHistoryItemID += 2;
     return uniqueHistoryItemID;
+}
+
+void WebBackForwardListProxy::setHighestItemIDFromUIProcess(uint64_t itemID)
+{
+    if (itemID <= uniqueHistoryItemID)
+        return;
+    
+     if (itemID % 2)
+         uniqueHistoryItemID = itemID;
+     else
+         uniqueHistoryItemID = itemID + 1;
 }
 
 static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
@@ -82,9 +94,6 @@ static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
 void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem)
 {
     RefPtr<HistoryItem> item = prpItem;
-
-    // UIProcess itemIDs should be even.
-    ASSERT(!(itemID % 2));
     
     // This item/itemID pair should not already exist in our maps.
     ASSERT(!historyItemToIDMap().contains(item.get()));

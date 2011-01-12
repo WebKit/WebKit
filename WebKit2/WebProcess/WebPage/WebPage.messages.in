@@ -47,7 +47,7 @@ messages -> WebPage {
     Reload(bool reloadFromOrigin)
     StopLoading()
     
-    RestoreSession(WebKit::SessionState state)
+    RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state)
 
     DidRemoveBackForwardItem(uint64_t backForwardItemID)
 

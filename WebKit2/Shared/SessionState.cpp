@@ -55,6 +55,13 @@ SessionState::SessionState(const BackForwardListItemVector& list, uint32_t curre
     , m_currentIndex(currentIndex)
 {
 }
+
+bool SessionState::isEmpty() const
+{
+    // Because this might change later, callers should use this instead of
+    // calling list().isEmpty() directly themselves.
+    return m_list.isEmpty();
+}
     
 void SessionState::encode(CoreIPC::ArgumentEncoder* encoder) const
 {

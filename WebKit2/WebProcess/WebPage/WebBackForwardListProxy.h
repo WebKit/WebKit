@@ -41,6 +41,7 @@ public:
     static void removeItem(uint64_t itemID);
 
     static void addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem>);
+    static void setHighestItemIDFromUIProcess(uint64_t itemID);
     
     void clear();
 

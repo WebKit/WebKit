@@ -43,6 +43,8 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(drawsBackground);
     encoder->encode(drawsTransparentBackground);
     encoder->encode(userAgent);
+    encoder->encode(sessionState);
+    encoder->encode(highestUsedBackForwardItemID);
 
 #if PLATFORM(MAC)
     encoder->encode(isSmartInsertDeleteEnabled);
@@ -77,6 +79,11 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
         return false;
     if (!decoder->decode(parameters.userAgent))
         return false;
+    if (!decoder->decode(parameters.sessionState))
+        return false;
+    if (!decoder->decode(parameters.highestUsedBackForwardItemID))
+        return false;
+
 #if PLATFORM(MAC)
     if (!decoder->decode(parameters.isSmartInsertDeleteEnabled))
         return false;

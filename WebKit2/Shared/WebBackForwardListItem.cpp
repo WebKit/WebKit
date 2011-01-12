@@ -30,17 +30,27 @@
 
 namespace WebKit {
 
+static uint64_t highestUsedItemID = 0;
+
 WebBackForwardListItem::WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     : m_originalURL(originalURL)
     , m_url(url)
     , m_title(title)
     , m_itemID(itemID)
 {
+    if (m_itemID > highestUsedItemID)
+        highestUsedItemID = m_itemID;
+
     setBackForwardData(backForwardData, backForwardDataSize);
 }
 
 WebBackForwardListItem::~WebBackForwardListItem()
 {
+}
+
+uint64_t WebBackForwardListItem::highedUsedItemID()
+{
+    return highestUsedItemID;
 }
 
 void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size)

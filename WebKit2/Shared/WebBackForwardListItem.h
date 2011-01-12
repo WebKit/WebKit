@@ -65,6 +65,8 @@ public:
     void encode(CoreIPC::ArgumentEncoder&) const;
     static PassRefPtr<WebBackForwardListItem> decode(CoreIPC::ArgumentDecoder&);
 
+    static uint64_t highedUsedItemID();
+
 private:
     WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
 

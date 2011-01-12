@@ -43,6 +43,8 @@ public:
     const BackForwardListItemVector& list() const { return m_list; }
     uint32_t currentIndex() const { return m_currentIndex; }
 
+    bool isEmpty() const;
+
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, SessionState&);
 

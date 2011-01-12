@@ -33,6 +33,7 @@
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
 #include "PageClient.h"
+#include "SessionState.h"
 #include "StringPairVector.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
@@ -203,7 +204,7 @@ void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClient* cl
     m_contextMenuClient.initialize(client);
 }
 
-void WebPageProxy::relaunch()
+void WebPageProxy::reattachToWebProcess()
 {
     m_isValid = true;
 
@@ -215,9 +216,22 @@ void WebPageProxy::relaunch()
     m_pageClient->didRelaunchProcess();
 }
 
+void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
+{
+    if (item && item != m_backForwardList->currentItem())
+        m_backForwardList->goToItem(item);
+    
+    reattachToWebProcess();
+    process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
+}
+
 void WebPageProxy::initializeWebPage()
 {
     ASSERT(isValid());
+
+    BackForwardListItemVector items = m_backForwardList->entries();
+    for (size_t i = 0; i < items.size(); ++i)
+        process()->registerNewWebBackForwardListItem(items[i].get());
 
     m_drawingArea = m_pageClient->createDrawingAreaProxy();
     ASSERT(m_drawingArea);
@@ -296,7 +310,7 @@ static void initializeSandboxExtensionHandle(const KURL& url, SandboxExtension::
 void WebPageProxy::loadURL(const String& url)
 {
     if (!isValid())
-        relaunch();
+        reattachToWebProcess();
 
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(KURL(KURL(), url), sandboxExtensionHandle);
@@ -306,7 +320,7 @@ void WebPageProxy::loadURL(const String& url)
 void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
 {
     if (!isValid())
-        relaunch();
+        reattachToWebProcess();
 
     SandboxExtension::Handle sandboxExtensionHandle;
     initializeSandboxExtensionHandle(urlRequest->resourceRequest().url(), sandboxExtensionHandle);
@@ -348,15 +362,20 @@ void WebPageProxy::stopLoading()
 
 void WebPageProxy::reload(bool reloadFromOrigin)
 {
-    if (!isValid())
+    if (!isValid()) {
+        reattachToWebProcessWithItem(m_backForwardList->currentItem());
         return;
+    }
+
     process()->send(Messages::WebPage::Reload(reloadFromOrigin), m_pageID);
 }
 
 void WebPageProxy::goForward()
 {
-    if (!isValid())
+    if (!isValid()) {
+        reattachToWebProcessWithItem(m_backForwardList->forwardItem());
         return;
+    }
 
     if (!canGoForward())
         return;
@@ -371,8 +390,10 @@ bool WebPageProxy::canGoForward() const
 
 void WebPageProxy::goBack()
 {
-    if (!isValid())
+    if (!isValid()) {
+        reattachToWebProcessWithItem(m_backForwardList->backItem());
         return;
+    }
 
     if (!canGoBack())
         return;
@@ -387,8 +408,10 @@ bool WebPageProxy::canGoBack() const
 
 void WebPageProxy::goToBackForwardItem(WebBackForwardListItem* item)
 {
-    if (!isValid())
+    if (!isValid()) {
+        reattachToWebProcessWithItem(item);
         return;
+    }
 
     process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
 }
@@ -2160,6 +2183,8 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
     parameters.userAgent = userAgent();
+    parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
+    parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
 
 #if PLATFORM(MAC)
     parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;

@@ -188,6 +188,11 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     m_userAgent = parameters.userAgent;
 
+    WebBackForwardListProxy::setHighestItemIDFromUIProcess(parameters.highestUsedBackForwardItemID);
+    
+    if (!parameters.sessionState.isEmpty())
+        restoreSession(parameters.sessionState);
+
 #ifndef NDEBUG
     webPageCounter.increment();
 #endif
@@ -866,11 +871,11 @@ void WebPage::executeEditCommand(const String& commandName)
     executeEditingCommand(commandName, String());
 }
 
-void WebPage::restoreSession(const SessionState& sessionState)
+uint64_t WebPage::restoreSession(const SessionState& sessionState)
 {
     const BackForwardListItemVector& list = sessionState.list();
     size_t size = list.size();
-    RefPtr<HistoryItem> currentItem;
+    uint64_t currentItemID = 0;
     for (size_t i = 0; i < size; ++i) {
         WebBackForwardListItem* webItem = list[i].get();
         DecoderAdapter decoder(webItem->backForwardData().data(), webItem->backForwardData().size());
@@ -878,17 +883,22 @@ void WebPage::restoreSession(const SessionState& sessionState)
         RefPtr<HistoryItem> item = HistoryItem::decodeBackForwardTree(webItem->url(), webItem->title(), webItem->originalURL(), decoder);
         if (!item) {
             LOG_ERROR("Failed to decode a HistoryItem from session state data.");
-            return;
+            return 0;
         }
         
         if (i == sessionState.currentIndex())
-            currentItem = item;
+            currentItemID = webItem->itemID();
         
         WebBackForwardListProxy::addItemFromUIProcess(list[i]->itemID(), item.release());
     }    
-    ASSERT(currentItem);
+    ASSERT(currentItemID);
+    return currentItemID;
+}
 
-    m_page->goToItem(currentItem.get(), FrameLoadTypeIndexedBackForward);
+void WebPage::restoreSessionAndNavigateToCurrentItem(const SessionState& sessionState)
+{
+    if (uint64_t currentItemID = restoreSession(sessionState))
+        goToBackForwardItem(currentItemID);
 }
 
 #if ENABLE(TOUCH_EVENTS)

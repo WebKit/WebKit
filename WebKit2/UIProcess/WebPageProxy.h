@@ -132,7 +132,6 @@ public:
     void initializePolicyClient(const WKPagePolicyClient*);
     void initializeResourceLoadClient(const WKPageResourceLoadClient*);
     void initializeUIClient(const WKPageUIClient*);
-    void relaunch();
 
     void initializeWebPage();
 
@@ -402,6 +401,9 @@ private:
     void runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::Data&);
     void exceededDatabaseQuota(uint64_t frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage, uint64_t& newQuota);
     void requestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, String originIdentifier);
+
+    void reattachToWebProcess();
+    void reattachToWebProcessWithItem(WebBackForwardListItem*);
 
 #if ENABLE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntSize&);

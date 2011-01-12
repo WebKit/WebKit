@@ -342,7 +342,8 @@ private:
     void touchEvent(const WebTouchEvent&);
 #endif
 
-    void restoreSession(const SessionState&);
+    uint64_t restoreSession(const SessionState&);
+    void restoreSessionAndNavigateToCurrentItem(const SessionState&);
 
     void didRemoveBackForwardItem(uint64_t);
 
