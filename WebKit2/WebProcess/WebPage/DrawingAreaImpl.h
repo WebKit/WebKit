@@ -27,6 +27,8 @@
 #define DrawingAreaImpl_h
 
 #include "DrawingArea.h"
+#include "Region.h"
+#include "RunLoop.h"
 
 namespace WebKit {
 
@@ -51,6 +53,16 @@ private:
     // CoreIPC message handlers.
     virtual void setSize(const WebCore::IntSize&);
 
+    void scheduleDisplay();
+    void display();
+
+    Region m_dirtyRegion;
+
+    // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
+    // web process won't paint more frequent than the UI process can handle.
+    bool m_isWaitingForDidUpdate;
+    
+    RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
 };
 
 } // namespace WebKit

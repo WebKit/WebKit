@@ -27,6 +27,7 @@
 
 #include "DrawingAreaProxyMessages.h"
 #include "WebPage.h"
+#include "WebProcess.h"
 
 #ifndef __APPLE__
 #error "This drawing area is not ready for use by other ports yet."
@@ -47,11 +48,18 @@ DrawingAreaImpl::~DrawingAreaImpl()
 
 DrawingAreaImpl::DrawingAreaImpl(DrawingAreaInfo::Identifier identifier, WebPage* webPage)
     : DrawingArea(DrawingAreaInfo::Impl, identifier, webPage)
+    , m_isWaitingForDidUpdate(false)
+    , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
 {
 }
 
 void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 {
+    if (rect.isEmpty())
+        return;
+
+    m_dirtyRegion.unite(rect);
+    scheduleDisplay();
 }
 
 void DrawingAreaImpl::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
@@ -84,9 +92,37 @@ void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID
 
 void DrawingAreaImpl::setSize(const IntSize& size)
 {
-    // FIXME: Actually do something.
+    // Set this to false since we're about to call display().
+    m_isWaitingForDidUpdate = false;
+
+    m_webPage->setSize(size);
+    m_webPage->layoutIfNeeded();
+
+    // FIXME: Repaint.
 
     m_webPage->send(Messages::DrawingAreaProxy::DidSetSize());
+}
+
+void DrawingAreaImpl::scheduleDisplay()
+{
+    if (m_isWaitingForDidUpdate)
+        return;
+
+    if (m_dirtyRegion.isEmpty())
+        return;
+
+    if (m_displayTimer.isActive())
+        return;
+
+    m_displayTimer.startOneShot(0);
+}
+
+void DrawingAreaImpl::display()
+{
+    if (m_dirtyRegion.isEmpty())
+        return;
+
+    // FIXME: Actually paint.
 }
 
 } // namespace WebKit

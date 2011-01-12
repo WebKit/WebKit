@@ -153,7 +153,10 @@ Region::Shape::SegmentIterator Region::Shape::segments_end(SpanIterator it) cons
         return 0;
 
     ASSERT(it + 1 < m_spans.data() + m_spans.size());
-    return &m_segments[(it + 1)->segmentIndex];
+    size_t segmentIndex = (it + 1)->segmentIndex;
+
+    ASSERT(segmentIndex <= m_segments.size());
+    return m_segments.data() + segmentIndex;
 }
 
 #ifndef NDEBUG
