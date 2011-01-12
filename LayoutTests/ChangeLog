@@ -1,3 +1,9 @@
+2011-01-12  Jeremy Orlow  <jorlow@chromium.org>
+
+        Add forgotten file.
+
+        * storage/indexeddb/transaction-read-only-expected.txt: Added.
+
 2011-01-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
