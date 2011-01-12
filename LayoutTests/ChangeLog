@@ -1,3 +1,13 @@
+2011-01-11  Nico Weber  <thakis@chromium.org>
+
+        Unreviewed, test expectations.
+
+        Remove now-unnecessary xp-specific baseline.
+        https://bugs.webkit.org/show_bug.cgi?id=52105
+
+        * platform/chromium-win-xp/fast/gradients/radial-centered-expected.checksum: Removed.
+        * platform/chromium-win-xp/fast/gradients/radial-centered-expected.png: Removed.
+
 2011-01-11  Adrienne Walker  <enne@google.com>
 
         Unreviewed, test expectations update.
