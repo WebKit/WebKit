@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -56,10 +56,12 @@ WebInspector.ResourceCookiesView.prototype = {
         if (this._emptyMsgElement)
             this._emptyMsgElement.parentElement.removeChild(this._emptyMsgElement);
 
-        this._cookiesTable = new WebInspector.CookiesTable(null, true, true);
-        this._cookiesTable.addCookiesFolder(WebInspector.UIString("Request Cookies"), this._resource.requestCookies);
-        this._cookiesTable.addCookiesFolder(WebInspector.UIString("Response Cookies"), this._resource.responseCookies);
-        this.element.appendChild(this._cookiesTable.element);
+        if (!this._cookiesTable) {
+            this._cookiesTable = new WebInspector.CookiesTable(null, true, true);
+            this._cookiesTable.addCookiesFolder(WebInspector.UIString("Request Cookies"), this._resource.requestCookies);
+            this._cookiesTable.addCookiesFolder(WebInspector.UIString("Response Cookies"), this._resource.responseCookies);
+            this.element.appendChild(this._cookiesTable.element);
+        }
 
         WebInspector.View.prototype.show.call(this, parentElement);
         this._cookiesTable.updateWidths();
