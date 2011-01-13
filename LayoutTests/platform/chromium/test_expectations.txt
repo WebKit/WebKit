@@ -748,14 +748,12 @@ BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = CRASH PASS
 BUG_TONY WIN : plugins/mouse-events.html = TEXT
 BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
-// This test is failing because the plugin is currently named
-// WebKitTestNetscapePlugin because the fork in the Chromium repo is named
-// TestNetscapePlugin.  Once the internal plugin is removed, we'll be able to
-// fix the plugin names.
-BUG_TONY : plugins/plugin-javascript-access.html = TEXT PASS
+// This test is failing because the plugin has changed names on Windows to
+// match the name of the plugin upstream.
+BUG_TONY WIN : plugins/plugin-javascript-access.html = TEXT PASS
 // New test introduced at r75217 is failing on Win - for same reason as the 
-// test above. (BUG_TONY)
-BUGWK52062 WIN : fast/frames/iframe-reparenting-plugins.html = TEXT
+// test above.
+BUG_TONY BUGWK52062 WIN : fast/frames/iframe-reparenting-plugins.html = TEXT
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release

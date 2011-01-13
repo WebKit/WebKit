@@ -1,3 +1,15 @@
+2011-01-13  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] fix plugins/plugin-javascript-access.html on Linux and Mac
+        https://bugs.webkit.org/show_bug.cgi?id=52332
+
+        Fix Linux baseline. Mac should now match Safari Mac.
+
+        * platform/chromium-linux/plugins/plugin-javascript-access-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: inspector extensions tests should not use sources as test data. Commenting one out temporarily, filing a bug.
