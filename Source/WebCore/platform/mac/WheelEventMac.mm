@@ -29,6 +29,7 @@
 #import "PlatformMouseEvent.h"
 #import "Scrollbar.h"
 #import "WebCoreSystemInterface.h"
+#import <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -48,7 +49,7 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
         phase |= PlatformWheelEventPhaseCancelled;
     return static_cast<PlatformWheelEventPhase>(phase);
 #else
-    (void)event;
+    UNUSED_PARAM(event);
     return PlatformWheelEventPhaseNone;
 #endif
 }
