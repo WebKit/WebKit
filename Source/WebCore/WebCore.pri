@@ -60,6 +60,7 @@ STYLESHEETS_EMBED = \
     $$PWD/css/wml.css \
     $$PWD/css/mediaControls.css \
     $$PWD/css/mediaControlsQt.css \
+    $$PWD/css/mediaControlsQtFullscreen.css \
     $$PWD/css/themeQtNoListboxes.css \
     $$PWD/css/themeQtMobile.css
 

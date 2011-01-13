@@ -1113,7 +1113,12 @@ ControlPart RenderThemeQt::initializeCommonQStyleOptions(QStyleOption& option, R
 
 String RenderThemeQt::extraMediaControlsStyleSheet()
 {
-    return String(mediaControlsQtUserAgentStyleSheet, sizeof(mediaControlsQtUserAgentStyleSheet));
+    String result = String(mediaControlsQtUserAgentStyleSheet, sizeof(mediaControlsQtUserAgentStyleSheet));
+
+    if (m_page && m_page->chrome()->requiresFullscreenForVideoPlayback())
+        result += String(mediaControlsQtFullscreenUserAgentStyleSheet, sizeof(mediaControlsQtFullscreenUserAgentStyleSheet));
+
+    return result;
 }
 
 // Helper class to transform the painter's world matrix to the object's content area, scaled to 0,0,100,100
