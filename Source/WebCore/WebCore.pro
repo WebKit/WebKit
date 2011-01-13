@@ -1932,7 +1932,6 @@ HEADERS += \
     inspector/ConsoleMessage.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
-    inspector/InjectedScriptSource.h \
     inspector/InspectorApplicationCacheAgent.h \
     inspector/InspectorController.h \
     inspector/InspectorCSSAgent.h \

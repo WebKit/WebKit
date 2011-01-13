@@ -1,3 +1,10 @@
+2011-01-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r75715.
+
+        * WebCore.pri:
+        * WebCore.pro:
+
 2011-01-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: Qt build fix.

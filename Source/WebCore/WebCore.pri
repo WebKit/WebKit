@@ -538,6 +538,7 @@ IDL_BINDINGS += \
 
 INSPECTOR_INTERFACES = inspector/Inspector.idl
 INSPECTOR_BACKEND_STUB_QRC = inspector/front-end/InspectorBackendStub.qrc
+INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
 v8: wrapperFactoryArg = --wrapperFactoryV8
 else: wrapperFactoryArg = --wrapperFactory
@@ -653,7 +654,7 @@ addExtraCompiler(inspectorBackendStub)
 
 # GENERATOR 2-a: inspector injected script source compiler
 injectedScriptSource.output = $${WC_GENERATED_SOURCES_DIR}/InjectedScriptSource.h
-injectedScriptSource.input = $$PWD/inspector/InjectedScriptSource.js
+injectedScriptSource.input = INJECTED_SCRIPT_SOURCE
 injectedScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptSource_js $$PWD/inspector/InjectedScriptSource.js  $${WC_GENERATED_SOURCES_DIR}/InjectedScriptSource.h
 addExtraCompiler(injectedScriptSource)
 
