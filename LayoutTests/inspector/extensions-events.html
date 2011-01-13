@@ -4,7 +4,8 @@
 <script src="../http/tests/inspector/extensions-test.js"></script>
 <script type="text/javascript">
 
-
+/*
+FIXME: test should not depend on the sources (use them as testing data).
 function extension_testOnSelectionChanged(nextTest)
 {
     function onSelectionChanged()
@@ -16,6 +17,7 @@ function extension_testOnSelectionChanged(nextTest)
     webInspector.panels.elements.onSelectionChanged.addListener(onSelectionChanged);
     webInspector.inspectedWindow.eval("inspect(document.body.children[0])");
 }
+*/
 
 function extension_testOnResourceFinished(nextTest)
 {

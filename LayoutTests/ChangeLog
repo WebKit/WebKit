@@ -1,3 +1,10 @@
+2011-01-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: inspector extensions tests should not use sources as test data. Commenting one out temporarily, filing a bug.
+
+        * inspector/extensions-events-expected.txt:
+        * inspector/extensions-events.html:
+
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -1,12 +1,9 @@
-CONSOLE MESSAGE: line 658: [object HTMLParagraphElement]
 Tests WebInspector extension API
 
 Started extension.
 Running tests...
 RUNNING TEST: extension_testOnResourceFinished
 onFinished fired
-RUNNING TEST: extension_testOnSelectionChanged
-onSelectionChanged fired
 RUNNING TEST: extension_testPageLoadEvents
 onDOMContentLoaded fired: number
 onLoaded fired: number
