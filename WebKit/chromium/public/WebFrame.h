@@ -32,6 +32,7 @@
 #define WebFrame_h
 
 #include "WebCanvas.h"
+#include "WebNode.h"
 #include "WebURL.h"
 
 struct NPObject;
@@ -70,6 +71,9 @@ struct WebRect;
 struct WebScriptSource;
 struct WebSize;
 template <typename T> class WebVector;
+
+// FIXME(jam): take this out once Chromium has this
+#define WEBFRAME_PRINTBEGIN_TAKES_NODE
 
 class WebFrame {
 public:
@@ -397,12 +401,16 @@ public:
     // Printing ------------------------------------------------------------
 
     // Reformats the WebFrame for printing. pageSize is the page size in
-    // points (a point in 1/72 of an inch). printerDPI is the user selected,
-    // DPI for the printer. Returns the number of pages that
-    // can be printed at the given page size. The out param useBrowserOverlays
+    // points (a point in 1/72 of an inch). If |constrainToNode| node is
+    // specified, then only the given node is printed (for now only plugins are
+    // supported), instead of the entire frame.  printerDPI is the user
+    // selected, DPI for the printer. Returns the number of pages that can be
+    // printed at the given page size. The out param useBrowserOverlays
     // specifies whether the browser process should use its overlays (header,
     // footer, margins etc) or whether the renderer controls this.
-    virtual int printBegin(const WebSize& pageSize, int printerDPI = 72,
+    virtual int printBegin(const WebSize& pageSize,
+                           const WebNode& constrainToNode = WebNode(),
+                           int printerDPI = 72,
                            bool* useBrowserOverlays = 0) = 0;
 
     // Returns the page shrinking factor calculated by webkit (usually

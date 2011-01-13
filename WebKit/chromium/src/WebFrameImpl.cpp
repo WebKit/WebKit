@@ -106,6 +106,7 @@
 #include "PluginDocument.h"
 #include "PrintContext.h"
 #include "RenderFrame.h"
+#include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -134,6 +135,7 @@
 #include "WebFrameClient.h"
 #include "WebHistoryItem.h"
 #include "WebInputElement.h"
+#include "WebNode.h"
 #include "WebPasswordAutocompleteListener.h"
 #include "WebPerformance.h"
 #include "WebPlugin.h"
@@ -355,11 +357,9 @@ private:
 // want to delegate all printing related calls to the plugin.
 class ChromePluginPrintContext : public ChromePrintContext {
 public:
-    ChromePluginPrintContext(Frame* frame, int printerDPI)
-        : ChromePrintContext(frame), m_pageCount(0), m_printerDPI(printerDPI)
+    ChromePluginPrintContext(Frame* frame, WebPluginContainerImpl* plugin, int printerDPI)
+        : ChromePrintContext(frame), m_plugin(plugin), m_pageCount(0), m_printerDPI(printerDPI)
     {
-        // This HAS to be a frame hosting a full-mode plugin
-        ASSERT(frame->document()->isPluginDocument());
     }
 
     virtual void begin(float width)
@@ -368,11 +368,7 @@ public:
 
     virtual void end()
     {
-        WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(m_frame);
-        if (pluginContainer && pluginContainer->supportsPaginatedPrint())
-            pluginContainer->printEnd();
-        else
-            ASSERT_NOT_REACHED();
+        m_plugin->printEnd();
     }
 
     virtual float getPageShrink(int pageNumber) const
@@ -383,11 +379,7 @@ public:
 
     virtual void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight)
     {
-        WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(m_frame);
-        if (pluginContainer && pluginContainer->supportsPaginatedPrint())
-            m_pageCount = pluginContainer->printBegin(IntRect(printRect), m_printerDPI);
-        else
-            ASSERT_NOT_REACHED();
+        m_pageCount = m_plugin->printBegin(IntRect(printRect), m_printerDPI);
     }
 
     virtual int pageCount() const
@@ -400,11 +392,7 @@ public:
     // instead.  Returns the scale to be applied.
     virtual float spoolPage(GraphicsContext& ctx, int pageNumber)
     {
-        WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(m_frame);
-        if (pluginContainer && pluginContainer->supportsPaginatedPrint())
-            pluginContainer->printPage(pageNumber, &ctx);
-        else
-            ASSERT_NOT_REACHED();
+        m_plugin->printPage(pageNumber, &ctx);
         return 1.0;
     }
 
@@ -415,6 +403,7 @@ public:
 
 private:
     // Set when printing.
+    WebPluginContainerImpl* m_plugin;
     int m_pageCount;
     int m_printerDPI;
 };
@@ -1284,14 +1273,32 @@ bool WebFrameImpl::selectWordAroundCaret()
     return true;
 }
 
-int WebFrameImpl::printBegin(const WebSize& pageSize, int printerDPI, bool *useBrowserOverlays)
+int WebFrameImpl::printBegin(const WebSize& pageSize,
+                             const WebNode& constrainToNode,
+                             int printerDPI,
+                             bool* useBrowserOverlays)
 {
     ASSERT(!frame()->document()->isFrameSet());
-    // If this is a plugin document, check if the plugin supports its own
-    // printing. If it does, we will delegate all printing to that.
-    WebPluginContainerImpl* pluginContainer = pluginContainerFromFrame(frame());
+    WebPluginContainerImpl* pluginContainer = 0;
+    if (constrainToNode.isNull()) {
+        // If this is a plugin document, check if the plugin supports its own
+        // printing. If it does, we will delegate all printing to that.
+        pluginContainer = pluginContainerFromFrame(frame());
+    } else {
+        // We only support printing plugin nodes for now.
+        const Node* coreNode = constrainToNode.constUnwrap<Node>();
+        if (coreNode->hasTagName(HTMLNames::objectTag) && coreNode->hasTagName(HTMLNames::embedTag)) {
+            RenderObject* object = coreNode->renderer();
+            if (object && object->isWidget()) {
+                Widget* widget = toRenderWidget(object)->widget();
+                if (widget && widget->isPluginContainer())
+                    pluginContainer =  static_cast<WebPluginContainerImpl*>(widget);
+            }
+        }
+    }
+
     if (pluginContainer && pluginContainer->supportsPaginatedPrint())
-        m_printContext.set(new ChromePluginPrintContext(frame(), printerDPI));
+        m_printContext.set(new ChromePluginPrintContext(frame(), pluginContainer, printerDPI));
     else
         m_printContext.set(new ChromePrintContext(frame()));
 

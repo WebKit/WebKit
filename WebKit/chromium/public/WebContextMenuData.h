@@ -32,6 +32,7 @@
 #define WebContextMenuData_h
 
 #include "WebMenuItemInfo.h"
+#include "WebNode.h"
 #include "WebPoint.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -50,6 +51,8 @@ struct WebContextMenuData {
         MediaTypeVideo,
         // An audio node is selected.
         MediaTypeAudio,
+        // A plugin node is selected.
+        MediaTypePlugin,
     };
     // The type of media the context menu is being invoked on.
     MediaType mediaType;
@@ -85,6 +88,7 @@ struct WebContextMenuData {
         MediaHasAudio = 0x20,
         MediaHasVideo = 0x40,
         MediaControls = 0x80,
+        MediaCanPrint = 0x100,
     };
 
     // Extra attributes describing media elements.
@@ -135,6 +139,9 @@ struct WebContextMenuData {
 
     // Custom context menu items provided by the WebCore internals.
     WebVector<WebMenuItemInfo> customItems;
+
+    // The node that was clicked.
+    WebNode node;
 
     WebContextMenuData()
         : mediaType(MediaTypeNone)

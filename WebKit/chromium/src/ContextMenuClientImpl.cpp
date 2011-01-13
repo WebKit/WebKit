@@ -44,6 +44,7 @@
 #include "HitTestResult.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "HTMLPlugInImageElement.h"
 #include "KURL.h"
 #include "MediaError.h"
 #include "Page.h"
@@ -211,6 +212,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         if (object && object->isWidget()) {
             Widget* widget = toRenderWidget(object)->widget();
             if (widget && widget->isPluginContainer()) {
+                data.mediaType = WebContextMenuData::MediaTypePlugin;
                 WebPluginContainerImpl* plugin = static_cast<WebPluginContainerImpl*>(widget);
                 WebString text = plugin->plugin()->selectionAsText();
                 if (!text.isEmpty()) {
@@ -219,6 +221,12 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                 }
                 data.editFlags &= ~WebContextMenuData::CanTranslate;
                 data.linkURL = plugin->plugin()->linkAtPosition(data.mousePosition);
+                if (plugin->plugin()->supportsPaginatedPrint())
+                    data.mediaFlags |= WebContextMenuData::MediaCanPrint;
+
+                HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(r.innerNonSharedNode());
+                data.srcURL = pluginElement->document()->completeURL(pluginElement->url());
+                data.mediaFlags |= WebContextMenuData::MediaCanSave;
             }
         }
     }
@@ -267,6 +275,8 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
 
     // Filter out custom menu elements and add them into the data.
     populateCustomMenuItems(defaultMenu, &data);
+
+    data.node = r.innerNonSharedNode();
 
     WebFrame* selected_web_frame = WebFrameImpl::fromFrame(selectedFrame);
     if (m_webView->client())

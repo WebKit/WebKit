@@ -1,3 +1,21 @@
+2011-01-11  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add support to allow printing just a plugin in a frame
+        https://bugs.webkit.org/show_bug.cgi?id=52134
+
+        * public/WebContextMenuData.h:
+        * public/WebFrame.h:
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePluginPrintContext::ChromePluginPrintContext):
+        (WebKit::ChromePluginPrintContext::end):
+        (WebKit::ChromePluginPrintContext::computePageRects):
+        (WebKit::ChromePluginPrintContext::spoolPage):
+        (WebKit::WebFrameImpl::printBegin):
+
 2011-01-13  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
