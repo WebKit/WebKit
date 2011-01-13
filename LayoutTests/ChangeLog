@@ -1,5 +1,13 @@
 2011-01-13  Adam Roben  <aroben@apple.com>
 
+        Check in Windows-XP-specific results for fast/canvas/set-colors.html
+
+        See <http://webkit.org/b/52374>.
+
+        * platform/win-xp/fast/canvas/set-colors-expected.txt: Added.
+
+2011-01-13  Adam Roben  <aroben@apple.com>
+
         Disable fast/profiler/throw-exception-from-eval.html
 
         This test fails non-deterministically. See <http://webkit.org/b/49801>.
