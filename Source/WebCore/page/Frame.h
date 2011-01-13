@@ -208,7 +208,9 @@ namespace WebCore {
         void injectUserScriptsForWorld(DOMWrapperWorld*, const UserScriptVector&, UserScriptInjectionTime);
         void lifeSupportTimerFired(Timer<Frame>*);
 
+#if USE(ACCELERATED_COMPOSITING)
         void updateContentsScale(float);
+#endif
 
         HashSet<FrameDestructionObserver*> m_destructionObservers;
 

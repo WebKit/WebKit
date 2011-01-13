@@ -586,12 +586,12 @@ void PlatformCALayer::setTimeOffset(CFTimeInterval value)
     setNeedsCommit();
 }
 
-float contentsScale() const
+float PlatformCALayer::contentsScale() const
 {
     return 1;
 }
 
-void setContentsScale(float)
+void PlatformCALayer::setContentsScale(float)
 {
 }
 

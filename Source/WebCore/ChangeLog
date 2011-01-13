@@ -1,5 +1,18 @@
 2011-01-12  Chris Marrin  <cmarrin@apple.com>
 
+        Unreviewed.
+
+        Fix for Gtk and Windows builds
+
+        * page/Frame.cpp:
+        (WebCore::Frame::scalePage):
+        * page/Frame.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::contentsScale):
+        (PlatformCALayer::setContentsScale):
+
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
         UNreviewed.
 
         Fix for the Windows build
