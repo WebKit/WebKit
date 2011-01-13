@@ -1,3 +1,9 @@
+2011-01-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip editing/input/page-up-down-scrolls.html as it's passing locally.
+
+        * platform/gtk/Skipped: Unskip test.
+
 2011-01-13  Jian Li  <jianli@chromium.org>
 
         Reviewed by Darin Fisher.
