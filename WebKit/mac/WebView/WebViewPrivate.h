@@ -550,6 +550,9 @@ Could be worth adding to the API.
 - (void)_setUseFixedLayout:(BOOL)fixed;
 - (void)_setFixedLayoutSize:(NSSize)size;
 
+- (BOOL)_useFixedLayout;
+- (NSSize)_fixedLayoutSize;
+
 // Deprecated. Use the methods in pending public above instead.
 - (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;
 - (WebNSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;

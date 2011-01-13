@@ -2,6 +2,21 @@
 
         Reviewed by Anders Carlsson.
 
+        Add-on for https://bugs.webkit.org/show_bug.cgi?id=52309 
+        Expose fixed layout through WebKit SPI
+        -and corresponding-
+        <rdar://problem/8844464>
+
+        And now with getters!
+        * WebView/WebView.mm:
+        (-[WebView _useFixedLayout]):
+        (-[WebView _fixedLayoutSize]):
+        * WebView/WebViewPrivate.h:
+
+2011-01-12  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Fix for https://bugs.webkit.org/show_bug.cgi?id=52309 Expose
         fixed layout through WebKit SPI
         -and corresponding-

@@ -245,6 +245,9 @@ public:
 
     void setUseFixedLayout(bool);
     void setFixedLayoutSize(const WebCore::IntSize&);
+    bool useFixedLayout() const { return m_useFixedLayout; };
+    const WebCore::IntSize& fixedLayoutSize() const { return m_fixedLayoutSize; };
+
 #if PLATFORM(MAC)
     void sendAccessibilityPresenterToken(const CoreIPC::DataReference&);
 #endif

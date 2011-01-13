@@ -275,6 +275,16 @@ void WKPageSetFixedLayoutSize(WKPageRef pageRef, WKSize size)
     toImpl(pageRef)->setFixedLayoutSize(toIntSize(size));
 }
 
+bool WKPageUseFixedLayout(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->useFixedLayout();
+}
+
+WKSize WKPageFixedLayoutSize(WKPageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->fixedLayoutSize());
+}
+
 double WKPageGetViewScaleFactor(WKPageRef pageRef)
 {
     return toImpl(pageRef)->viewScaleFactor();

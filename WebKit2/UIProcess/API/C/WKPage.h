@@ -309,6 +309,8 @@ WK_EXPORT double WKPageGetViewScaleFactor(WKPageRef page);
 
 WK_EXPORT void WKPageSetUseFixedLayout(WKPageRef page, bool fixed);
 WK_EXPORT void WKPageSetFixedLayoutSize(WKPageRef page, WKSize size);
+WK_EXPORT bool WKPageUseFixedLayout(WKPageRef pageRef);
+WK_EXPORT WKSize WKPageFixedLayoutSize(WKPageRef pageRef);
 
 WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);
