@@ -41,23 +41,23 @@ public:
 
     static PassRefPtr<WebGLBuffer> create(WebGLRenderingContext*);
 
-    bool associateBufferData(int size);
+    bool associateBufferData(GC3Dsizeiptr size);
     bool associateBufferData(ArrayBuffer* array);
     bool associateBufferData(ArrayBufferView* array);
-    bool associateBufferSubData(long offset, ArrayBuffer* array);
-    bool associateBufferSubData(long offset, ArrayBufferView* array);
+    bool associateBufferSubData(GC3Dintptr offset, ArrayBuffer* array);
+    bool associateBufferSubData(GC3Dintptr offset, ArrayBufferView* array);
 
-    unsigned byteLength() const;
+    GC3Dsizeiptr byteLength() const;
     const ArrayBuffer* elementArrayBuffer() const { return m_elementArrayBuffer.get(); }
 
     // Gets the cached max index for the given type. Returns -1 if
     // none has been set.
-    long getCachedMaxIndex(unsigned long type);
+    int getCachedMaxIndex(GC3Denum type);
     // Sets the cached max index for the given type.
-    void setCachedMaxIndex(unsigned long type, long value);
+    void setCachedMaxIndex(GC3Denum type, int value);
 
-    unsigned long getTarget() const { return m_target; }
-    void setTarget(unsigned long);
+    GC3Denum getTarget() const { return m_target; }
+    void setTarget(GC3Denum);
 
     bool hasEverBeenBound() const { return object() && m_target; }
 
@@ -69,10 +69,10 @@ protected:
 private:
     virtual bool isBuffer() const { return true; }
 
-    unsigned long m_target;
+    GC3Denum m_target;
 
     RefPtr<ArrayBuffer> m_elementArrayBuffer;
-    unsigned m_byteLength;
+    GC3Dsizeiptr m_byteLength;
 
     // Optimization for index validation. For each type of index
     // (i.e., UNSIGNED_SHORT), cache the maximum index in the
@@ -82,22 +82,22 @@ private:
     // draw call as long as all bound array buffers are at least
     // that size.
     struct MaxIndexCacheEntry {
-        unsigned long type;
-        long maxIndex;
+        GC3Denum type;
+        int maxIndex;
     };
     // OpenGL ES 2.0 only has two valid index types (UNSIGNED_BYTE
     // and UNSIGNED_SHORT), but might as well leave open the
     // possibility of adding others.
     MaxIndexCacheEntry m_maxIndexCache[4];
-    unsigned m_nextAvailableCacheEntry;
+    unsigned int m_nextAvailableCacheEntry;
 
     // Clears all of the cached max indices.
     void clearCachedMaxIndices();
 
     // Helper function called by the three associateBufferData().
-    bool associateBufferDataImpl(ArrayBuffer* array, unsigned byteOffset, unsigned byteLength);
+    bool associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOffset, GC3Dsizeiptr byteLength);
     // Helper function called by the two associateBufferSubData().
-    bool associateBufferSubDataImpl(long offset, ArrayBuffer* array, unsigned arrayByteOffset, unsigned byteLength);
+    bool associateBufferSubDataImpl(GC3Dintptr offset, ArrayBuffer* array, GC3Dintptr arrayByteOffset, GC3Dsizeiptr byteLength);
 };
 
 } // namespace WebCore

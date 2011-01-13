@@ -55,13 +55,16 @@ void WebGLBuffer::deleteObjectImpl(Platform3DObject object)
     context()->graphicsContext3D()->deleteBuffer(object);
 }
 
-bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, unsigned byteOffset, unsigned byteLength)
+bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, GC3Dintptr byteOffset, GC3Dsizeiptr byteLength)
 {
+    if (byteLength < 0 || byteOffset < 0)
+        return false;
+
     if (array && byteLength) {
-        CheckedInt<uint32_t> checkedOffset(byteOffset);
-        CheckedInt<uint32_t> checkedLength(byteLength);
-        CheckedInt<uint32_t> checkedMax = checkedOffset + checkedLength;
-        if (!checkedMax.valid() || checkedMax.value() > array->byteLength())
+        CheckedInt<int32_t> checkedOffset(byteOffset);
+        CheckedInt<int32_t> checkedLength(byteLength);
+        CheckedInt<int32_t> checkedMax = checkedOffset + checkedLength;
+        if (!checkedMax.valid() || checkedMax.value() > static_cast<int32_t>(array->byteLength()))
             return false;
     }
 
@@ -94,11 +97,11 @@ bool WebGLBuffer::associateBufferDataImpl(ArrayBuffer* array, unsigned byteOffse
     }
 }
 
-bool WebGLBuffer::associateBufferData(int size)
+bool WebGLBuffer::associateBufferData(GC3Dsizeiptr size)
 {
     if (size < 0)
         return false;
-    return associateBufferDataImpl(0, 0, static_cast<unsigned>(size));
+    return associateBufferDataImpl(0, 0, size);
 }
 
 bool WebGLBuffer::associateBufferData(ArrayBuffer* array)
@@ -115,18 +118,18 @@ bool WebGLBuffer::associateBufferData(ArrayBufferView* array)
     return associateBufferDataImpl(array->buffer().get(), array->byteOffset(), array->byteLength());
 }
 
-bool WebGLBuffer::associateBufferSubDataImpl(long offset, ArrayBuffer* array, unsigned arrayByteOffset, unsigned byteLength)
+bool WebGLBuffer::associateBufferSubDataImpl(GC3Dintptr offset, ArrayBuffer* array, GC3Dintptr arrayByteOffset, GC3Dsizeiptr byteLength)
 {
-    if (!array || offset < 0)
+    if (!array || offset < 0 || arrayByteOffset < 0 || byteLength < 0)
         return false;
 
     if (byteLength) {
-        CheckedInt<uint32_t> checkedBufferOffset(offset);
-        CheckedInt<uint32_t> checkedArrayOffset(arrayByteOffset);
-        CheckedInt<uint32_t> checkedLength(byteLength);
-        CheckedInt<uint32_t> checkedArrayMax = checkedArrayOffset + checkedLength;
-        CheckedInt<uint32_t> checkedBufferMax = checkedBufferOffset + checkedLength;
-        if (!checkedArrayMax.valid() || checkedArrayMax.value() > array->byteLength() || !checkedBufferMax.valid() || checkedBufferMax.value() > m_byteLength)
+        CheckedInt<int32_t> checkedBufferOffset(offset);
+        CheckedInt<int32_t> checkedArrayOffset(arrayByteOffset);
+        CheckedInt<int32_t> checkedLength(byteLength);
+        CheckedInt<int32_t> checkedArrayMax = checkedArrayOffset + checkedLength;
+        CheckedInt<int32_t> checkedBufferMax = checkedBufferOffset + checkedLength;
+        if (!checkedArrayMax.valid() || checkedArrayMax.value() > static_cast<int32_t>(array->byteLength()) || !checkedBufferMax.valid() || checkedBufferMax.value() > m_byteLength)
             return false;
     }
 
@@ -148,26 +151,26 @@ bool WebGLBuffer::associateBufferSubDataImpl(long offset, ArrayBuffer* array, un
     }
 }
 
-bool WebGLBuffer::associateBufferSubData(long offset, ArrayBuffer* array)
+bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBuffer* array)
 {
     if (!array)
         return false;
     return associateBufferSubDataImpl(offset, array, 0, array->byteLength());
 }
 
-bool WebGLBuffer::associateBufferSubData(long offset, ArrayBufferView* array)
+bool WebGLBuffer::associateBufferSubData(GC3Dintptr offset, ArrayBufferView* array)
 {
     if (!array)
         return false;
     return associateBufferSubDataImpl(offset, array->buffer().get(), array->byteOffset(), array->byteLength());
 }
 
-unsigned WebGLBuffer::byteLength() const
+GC3Dsizeiptr WebGLBuffer::byteLength() const
 {
     return m_byteLength;
 }
 
-long WebGLBuffer::getCachedMaxIndex(unsigned long type)
+int WebGLBuffer::getCachedMaxIndex(GC3Denum type)
 {
     for (size_t i = 0; i < WTF_ARRAY_LENGTH(m_maxIndexCache); ++i)
         if (m_maxIndexCache[i].type == type)
@@ -175,7 +178,7 @@ long WebGLBuffer::getCachedMaxIndex(unsigned long type)
     return -1;
 }
 
-void WebGLBuffer::setCachedMaxIndex(unsigned long type, long value)
+void WebGLBuffer::setCachedMaxIndex(GC3Denum type, int value)
 {
     size_t numEntries = WTF_ARRAY_LENGTH(m_maxIndexCache);
     for (size_t i = 0; i < numEntries; ++i)
@@ -188,7 +191,7 @@ void WebGLBuffer::setCachedMaxIndex(unsigned long type, long value)
     m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % numEntries;
 }
 
-void WebGLBuffer::setTarget(unsigned long target)
+void WebGLBuffer::setTarget(GC3Denum target)
 {
     // In WebGL, a buffer is bound to one target in its lifetime
     if (m_target)

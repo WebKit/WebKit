@@ -37,7 +37,7 @@ namespace {
 
     // This function is only for depth/stencil/depth_stencil attachment.
     // Currently we assume these attachments are all renderbuffers.
-    unsigned long getInternalFormat(WebGLObject* buffer)
+    GC3Denum getInternalFormat(WebGLObject* buffer)
     {
         ASSERT(buffer && buffer->isRenderbuffer());
         return (reinterpret_cast<WebGLRenderbuffer*>(buffer))->getInternalFormat();
@@ -82,7 +82,7 @@ WebGLFramebuffer::WebGLFramebuffer(WebGLRenderingContext* ctx)
     setObject(context()->graphicsContext3D()->createFramebuffer());
 }
 
-void WebGLFramebuffer::setAttachment(unsigned long attachment, unsigned long texTarget, WebGLTexture* texture, int level)
+void WebGLFramebuffer::setAttachment(GC3Denum attachment, GC3Denum texTarget, WebGLTexture* texture, GC3Dint level)
 {
     if (!object())
         return;
@@ -110,7 +110,7 @@ void WebGLFramebuffer::setAttachment(unsigned long attachment, unsigned long tex
     }
 }
 
-void WebGLFramebuffer::setAttachment(unsigned long attachment, WebGLRenderbuffer* renderbuffer)
+void WebGLFramebuffer::setAttachment(GC3Denum attachment, WebGLRenderbuffer* renderbuffer)
 {
     if (!object())
         return;
@@ -134,7 +134,7 @@ void WebGLFramebuffer::setAttachment(unsigned long attachment, WebGLRenderbuffer
     }
 }
 
-WebGLObject* WebGLFramebuffer::getAttachment(unsigned long attachment) const
+WebGLObject* WebGLFramebuffer::getAttachment(GC3Denum attachment) const
 {
     if (!object())
         return 0;
@@ -168,7 +168,7 @@ void WebGLFramebuffer::removeAttachment(WebGLObject* attachment)
         return;
 }
 
-int WebGLFramebuffer::getWidth() const
+GC3Dsizei WebGLFramebuffer::getWidth() const
 {
     if (!object() || !isColorAttached())
         return 0;
@@ -180,7 +180,7 @@ int WebGLFramebuffer::getWidth() const
     return 0;
 }
 
-int WebGLFramebuffer::getHeight() const
+GC3Dsizei WebGLFramebuffer::getHeight() const
 {
     if (!object() || !isColorAttached())
         return 0;
@@ -192,7 +192,7 @@ int WebGLFramebuffer::getHeight() const
     return 0;
 }
 
-unsigned long WebGLFramebuffer::getColorBufferFormat() const
+GC3Denum WebGLFramebuffer::getColorBufferFormat() const
 {
     if (!object() || !isColorAttached())
         return 0;
@@ -260,7 +260,7 @@ bool WebGLFramebuffer::initializeRenderbuffers()
 {
     ASSERT(object());
     bool initColor = false, initDepth = false, initStencil = false;
-    unsigned long mask = 0;
+    GC3Dbitfield mask = 0;
     if (isUninitialized(m_colorAttachment.get())) {
         initColor = true;
         mask |= GraphicsContext3D::COLOR_BUFFER_BIT;
@@ -287,12 +287,12 @@ bool WebGLFramebuffer::initializeRenderbuffers()
     if (g3d->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
         return false;
 
-    float colorClearValue[] = {0, 0, 0, 0}, depthClearValue = 0;
-    int stencilClearValue = 0;
-    unsigned char colorMask[] = {0, 0, 0, 0}, depthMask = 0;
-    unsigned int stencilMask = 0xffffffff;
-    bool isScissorEnabled = false;
-    bool isDitherEnabled = false;
+    GC3Dfloat colorClearValue[] = {0, 0, 0, 0}, depthClearValue = 0;
+    GC3Dint stencilClearValue = 0;
+    GC3Dboolean colorMask[] = {0, 0, 0, 0}, depthMask = 0;
+    GC3Duint stencilMask = 0xffffffff;
+    GC3Dboolean isScissorEnabled = 0;
+    GC3Dboolean isDitherEnabled = 0;
     if (initColor) {
         g3d->getFloatv(GraphicsContext3D::COLOR_CLEAR_VALUE, colorClearValue);
         g3d->getBooleanv(GraphicsContext3D::COLOR_WRITEMASK, colorMask);
@@ -307,7 +307,7 @@ bool WebGLFramebuffer::initializeRenderbuffers()
     }
     if (initStencil) {
         g3d->getIntegerv(GraphicsContext3D::STENCIL_CLEAR_VALUE, &stencilClearValue);
-        g3d->getIntegerv(GraphicsContext3D::STENCIL_WRITEMASK, reinterpret_cast<int*>(&stencilMask));
+        g3d->getIntegerv(GraphicsContext3D::STENCIL_WRITEMASK, reinterpret_cast<GC3Dint*>(&stencilMask));
         g3d->clearStencil(0);
         g3d->stencilMask(0xffffffff);
     }

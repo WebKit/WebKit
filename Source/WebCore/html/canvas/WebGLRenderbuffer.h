@@ -39,20 +39,20 @@ public:
 
     static PassRefPtr<WebGLRenderbuffer> create(WebGLRenderingContext*);
 
-    void setInternalFormat(unsigned long internalformat)
+    void setInternalFormat(GC3Denum internalformat)
     {
         m_internalFormat = internalformat;
         m_initialized = false;
     }
-    unsigned long getInternalFormat() const { return m_internalFormat; }
+    GC3Denum getInternalFormat() const { return m_internalFormat; }
 
-    void setSize(unsigned long width, unsigned long height)
+    void setSize(GC3Dsizei width, GC3Dsizei height)
     {
         m_width = width;
         m_height = height;
     }
-    unsigned long getWidth() const { return m_width; }
-    unsigned long getHeight() const { return m_height; }
+    GC3Dsizei getWidth() const { return m_width; }
+    GC3Dsizei getHeight() const { return m_height; }
 
     void setIsValid(bool isValid) { m_isValid = isValid; }
     bool isValid() const { return m_isValid; }
@@ -72,9 +72,9 @@ protected:
 private:
     virtual bool isRenderbuffer() const { return true; }
 
-    unsigned long m_internalFormat;
+    GC3Denum m_internalFormat;
     bool m_initialized;
-    unsigned long m_width, m_height;
+    GC3Dsizei m_width, m_height;
     bool m_isValid; // This is only false if internalFormat is DEPTH_STENCIL and packed_depth_stencil is not supported.
 
     bool m_hasEverBeenBound;

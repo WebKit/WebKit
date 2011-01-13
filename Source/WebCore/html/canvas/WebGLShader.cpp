@@ -33,12 +33,12 @@
 
 namespace WebCore {
     
-PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GraphicsContext3D::WebGLEnumType type)
+PassRefPtr<WebGLShader> WebGLShader::create(WebGLRenderingContext* ctx, GC3Denum type)
 {
     return adoptRef(new WebGLShader(ctx, type));
 }
 
-WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GraphicsContext3D::WebGLEnumType type)
+WebGLShader::WebGLShader(WebGLRenderingContext* ctx, GC3Denum type)
     : WebGLObject(ctx)
     , m_type(type)
 {

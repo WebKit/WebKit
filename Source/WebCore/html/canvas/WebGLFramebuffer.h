@@ -42,15 +42,15 @@ public:
 
     static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContext*);
 
-    void setAttachment(unsigned long attachment, unsigned long texTarget, WebGLTexture*, int level);
-    void setAttachment(unsigned long attachment, WebGLRenderbuffer*);
+    void setAttachment(GC3Denum attachment, GC3Denum texTarget, WebGLTexture*, GC3Dint level);
+    void setAttachment(GC3Denum attachment, WebGLRenderbuffer*);
     // If an object is attached to the framebuffer, remove it.
     void removeAttachment(WebGLObject*);
-    WebGLObject* getAttachment(unsigned long) const;
+    WebGLObject* getAttachment(GC3Denum) const;
 
-    unsigned long getColorBufferFormat() const;
-    int getWidth() const;
-    int getHeight() const;
+    GC3Denum getColorBufferFormat() const;
+    GC3Dsizei getWidth() const;
+    GC3Dsizei getHeight() const;
 
     // This should always be called before drawArray, drawElements, clear,
     // readPixels, copyTexImage2D, copyTexSubImage2D if this framebuffer is
@@ -90,8 +90,8 @@ private:
 
     bool m_hasEverBeenBound;
 
-    unsigned long m_texTarget;
-    int m_texLevel;
+    GC3Denum m_texTarget;
+    GC3Dint m_texLevel;
 };
 
 } // namespace WebCore

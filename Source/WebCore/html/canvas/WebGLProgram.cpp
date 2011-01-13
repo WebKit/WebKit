@@ -70,7 +70,7 @@ bool WebGLProgram::cacheActiveAttribLocations()
     if (!m_linkStatus)
         return false;
 
-    int numAttribs = 0;
+    GC3Dint numAttribs = 0;
     context3d->getProgramiv(object(), GraphicsContext3D::ACTIVE_ATTRIBUTES, &numAttribs);
     m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
     for (int i = 0; i < numAttribs; ++i) {
@@ -82,21 +82,21 @@ bool WebGLProgram::cacheActiveAttribLocations()
     return true;
 }
 
-int WebGLProgram::numActiveAttribLocations() const
+unsigned WebGLProgram::numActiveAttribLocations() const
 {
-    return static_cast<int>(m_activeAttribLocations.size());
+    return m_activeAttribLocations.size();
 }
 
-int WebGLProgram::getActiveAttribLocation(int index) const
+GC3Dint WebGLProgram::getActiveAttribLocation(GC3Duint index) const
 {
-    if (index < 0 || index >= numActiveAttribLocations())
+    if (index >= numActiveAttribLocations())
         return -1;
-    return m_activeAttribLocations[static_cast<size_t>(index)];
+    return m_activeAttribLocations[index];
 }
 
 bool WebGLProgram::isUsingVertexAttrib0() const
 {
-    for (int ii = 0; ii < numActiveAttribLocations(); ++ii) {
+    for (unsigned ii = 0; ii < numActiveAttribLocations(); ++ii) {
         if (!getActiveAttribLocation(ii))
             return true;
     }

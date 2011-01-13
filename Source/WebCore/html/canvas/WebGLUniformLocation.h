@@ -39,19 +39,19 @@ class WebGLUniformLocation : public RefCounted<WebGLUniformLocation> {
 public:
     virtual ~WebGLUniformLocation() { }
 
-    static PassRefPtr<WebGLUniformLocation> create(WebGLProgram* program, long location);
+    static PassRefPtr<WebGLUniformLocation> create(WebGLProgram* program, GC3Dint location);
 
     WebGLProgram* program() const;
 
-    long location() const;
+    GC3Dint location() const;
 
 protected:
-    WebGLUniformLocation(WebGLProgram* program, long location);
+    WebGLUniformLocation(WebGLProgram* program, GC3Dint location);
 
 private:
     RefPtr<WebGLProgram> m_program;
-    long m_location;
-    unsigned long m_linkCount;
+    GC3Dint m_location;
+    unsigned m_linkCount;
 };
 
 } // namespace WebCore

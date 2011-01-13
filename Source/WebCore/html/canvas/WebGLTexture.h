@@ -40,25 +40,25 @@ public:
 
     static PassRefPtr<WebGLTexture> create(WebGLRenderingContext*);
 
-    void setTarget(unsigned long target, int maxLevel);
-    void setParameteri(unsigned long pname, int param);
-    void setParameterf(unsigned long pname, float param);
+    void setTarget(GC3Denum target, GC3Dint maxLevel);
+    void setParameteri(GC3Denum pname, GC3Dint param);
+    void setParameterf(GC3Denum pname, GC3Dfloat param);
 
     int getMinFilter() const { return m_minFilter; }
 
-    void setLevelInfo(unsigned long target, int level, unsigned long internalFormat, int width, int height, unsigned long type);
+    void setLevelInfo(GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum type);
 
     bool canGenerateMipmaps();
     // Generate all level information.
     void generateMipmapLevelInfo();
 
-    unsigned long getInternalFormat(unsigned long target, int level) const;
-    unsigned long getType(unsigned long target, int level) const;
-    int getWidth(unsigned long target, int level) const;
-    int getHeight(unsigned long target, int level) const;
+    GC3Denum getInternalFormat(GC3Denum target, GC3Dint level) const;
+    GC3Denum getType(GC3Denum target, GC3Dint level) const;
+    GC3Dsizei getWidth(GC3Denum target, GC3Dint level) const;
+    GC3Dsizei getHeight(GC3Denum target, GC3Dint level) const;
 
     // Whether width/height is NotPowerOfTwo.
-    static bool isNPOT(unsigned, unsigned);
+    static bool isNPOT(GC3Dsizei, GC3Dsizei);
 
     bool isNPOT() const;
     // Determine if texture sampling should always return [0, 0, 0, 1] (OpenGL ES 2.0 Sec 3.8.2).
@@ -66,7 +66,7 @@ public:
 
     bool hasEverBeenBound() const { return object() && m_target; }
 
-    static int computeLevelCount(int width, int height);
+    static GC3Dint computeLevelCount(GC3Dsizei width, GC3Dsizei height);
 
 protected:
     WebGLTexture(WebGLRenderingContext*);
@@ -85,7 +85,7 @@ private:
         {
         }
 
-        void setInfo(unsigned long internalFmt, int w, int h, unsigned long tp)
+        void setInfo(GC3Denum internalFmt, GC3Dsizei w, GC3Dsizei h, GC3Denum tp)
         {
             valid = true;
             internalFormat = internalFmt;
@@ -95,26 +95,26 @@ private:
         }
 
         bool valid;
-        unsigned long internalFormat;
-        int width;
-        int height;
-        unsigned long type;
+        GC3Denum internalFormat;
+        GC3Dsizei width;
+        GC3Dsizei height;
+        GC3Denum type;
     };
 
     virtual bool isTexture() const { return true; }
 
     void update();
 
-    int mapTargetToIndex(unsigned long) const;
+    int mapTargetToIndex(GC3Denum) const;
 
-    const LevelInfo* getLevelInfo(unsigned long target, int level) const;
+    const LevelInfo* getLevelInfo(GC3Denum target, GC3Dint level) const;
 
-    unsigned long m_target;
+    GC3Denum m_target;
 
-    int m_minFilter;
-    int m_magFilter;
-    int m_wrapS;
-    int m_wrapT;
+    GC3Denum m_minFilter;
+    GC3Denum m_magFilter;
+    GC3Denum m_wrapS;
+    GC3Denum m_wrapT;
 
     Vector<Vector<LevelInfo> > m_info;
 

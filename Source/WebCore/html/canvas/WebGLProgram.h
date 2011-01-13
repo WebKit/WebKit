@@ -45,15 +45,15 @@ public:
     // cacheActiveAttribLocation() is only called once after linkProgram()
     // succeeds.
     bool cacheActiveAttribLocations();
-    int numActiveAttribLocations() const;
-    int getActiveAttribLocation(int index) const;
+    unsigned numActiveAttribLocations() const;
+    GC3Dint getActiveAttribLocation(GC3Duint index) const;
 
     bool isUsingVertexAttrib0() const;
 
     bool getLinkStatus() const { return m_linkStatus; }
     void setLinkStatus(bool status) { m_linkStatus = status; }
 
-    unsigned long getLinkCount() const { return m_linkCount; }
+    unsigned getLinkCount() const { return m_linkCount; }
 
     // This is to be called everytime after the program is successfully linked.
     // We don't deal with integer overflow here, assuming in reality a program
@@ -72,13 +72,13 @@ protected:
 private:
     virtual bool isProgram() const { return true; }
 
-    Vector<int> m_activeAttribLocations;
+    Vector<GC3Dint> m_activeAttribLocations;
 
-    bool m_linkStatus;
+    GC3Dint m_linkStatus;
 
     // This is used to track whether a WebGLUniformLocation belongs to this
     // program or not.
-    unsigned long m_linkCount;
+    unsigned m_linkCount;
 
     RefPtr<WebGLShader> m_vertexShader;
     RefPtr<WebGLShader> m_fragmentShader;

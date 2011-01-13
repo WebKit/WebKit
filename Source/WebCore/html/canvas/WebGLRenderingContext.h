@@ -68,47 +68,47 @@ public:
     virtual bool isAccelerated() const { return true; }
     virtual bool paintsIntoCanvasBuffer() const;
 
-    void activeTexture(unsigned long texture, ExceptionCode& ec);
+    void activeTexture(GC3Denum texture, ExceptionCode& ec);
     void attachShader(WebGLProgram*, WebGLShader*, ExceptionCode& ec);
-    void bindAttribLocation(WebGLProgram*, unsigned long index, const String& name, ExceptionCode& ec);
-    void bindBuffer(unsigned long target, WebGLBuffer*, ExceptionCode& ec);
-    void bindFramebuffer(unsigned long target, WebGLFramebuffer*, ExceptionCode& ec);
-    void bindRenderbuffer(unsigned long target, WebGLRenderbuffer*, ExceptionCode& ec);
-    void bindTexture(unsigned long target, WebGLTexture*, ExceptionCode& ec);
-    void blendColor(float red, float green, float blue, float alpha);
-    void blendEquation(unsigned long mode);
-    void blendEquationSeparate(unsigned long modeRGB, unsigned long modeAlpha);
-    void blendFunc(unsigned long sfactor, unsigned long dfactor);
-    void blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha);
+    void bindAttribLocation(WebGLProgram*, GC3Duint index, const String& name, ExceptionCode& ec);
+    void bindBuffer(GC3Denum target, WebGLBuffer*, ExceptionCode& ec);
+    void bindFramebuffer(GC3Denum target, WebGLFramebuffer*, ExceptionCode& ec);
+    void bindRenderbuffer(GC3Denum target, WebGLRenderbuffer*, ExceptionCode& ec);
+    void bindTexture(GC3Denum target, WebGLTexture*, ExceptionCode& ec);
+    void blendColor(GC3Dfloat red, GC3Dfloat green, GC3Dfloat blue, GC3Dfloat alpha);
+    void blendEquation(GC3Denum mode);
+    void blendEquationSeparate(GC3Denum modeRGB, GC3Denum modeAlpha);
+    void blendFunc(GC3Denum sfactor, GC3Denum dfactor);
+    void blendFuncSeparate(GC3Denum srcRGB, GC3Denum dstRGB, GC3Denum srcAlpha, GC3Denum dstAlpha);
 
-    void bufferData(unsigned long target, int size, unsigned long usage, ExceptionCode&);
-    void bufferData(unsigned long target, ArrayBuffer* data, unsigned long usage, ExceptionCode&);
-    void bufferData(unsigned long target, ArrayBufferView* data, unsigned long usage, ExceptionCode&);
-    void bufferSubData(unsigned long target, long offset, ArrayBuffer* data, ExceptionCode&);
-    void bufferSubData(unsigned long target, long offset, ArrayBufferView* data, ExceptionCode&);
+    void bufferData(GC3Denum target, GC3Dsizeiptr size, GC3Denum usage, ExceptionCode&);
+    void bufferData(GC3Denum target, ArrayBuffer* data, GC3Denum usage, ExceptionCode&);
+    void bufferData(GC3Denum target, ArrayBufferView* data, GC3Denum usage, ExceptionCode&);
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, ArrayBuffer* data, ExceptionCode&);
+    void bufferSubData(GC3Denum target, GC3Dintptr offset, ArrayBufferView* data, ExceptionCode&);
 
-    unsigned long checkFramebufferStatus(unsigned long target);
-    void clear(unsigned long mask);
-    void clearColor(float red, float green, float blue, float alpha);
-    void clearDepth(float);
-    void clearStencil(long);
-    void colorMask(bool red, bool green, bool blue, bool alpha);
+    GC3Denum checkFramebufferStatus(GC3Denum target);
+    void clear(GC3Dbitfield mask);
+    void clearColor(GC3Dfloat red, GC3Dfloat green, GC3Dfloat blue, GC3Dfloat alpha);
+    void clearDepth(GC3Dfloat);
+    void clearStencil(GC3Dint);
+    void colorMask(GC3Dboolean red, GC3Dboolean green, GC3Dboolean blue, GC3Dboolean alpha);
     void compileShader(WebGLShader*, ExceptionCode& ec);
 
-    // void compressedTexImage2D(unsigned long target, long level, unsigned long internalformat, unsigned long width, unsigned long height, long border, unsigned long imageSize, const void* data);
-    // void compressedTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, unsigned long width, unsigned long height, unsigned long format, unsigned long imageSize, const void* data);
+    // void compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Dsizei imageSize, const void* data);
+    // void compressedTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei GC3Dsizei height, GC3Denum format, GC3Dsizei imageSize, const void* data);
 
-    void copyTexImage2D(unsigned long target, long level, unsigned long internalformat, long x, long y, long width, long height, long border);
-    void copyTexSubImage2D(unsigned long target, long level, long xoffset, long yoffset, long x, long y, long width, long height);
+    void copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Dint border);
+    void copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
 
     PassRefPtr<WebGLBuffer> createBuffer();
     PassRefPtr<WebGLFramebuffer> createFramebuffer();
     PassRefPtr<WebGLProgram> createProgram();
     PassRefPtr<WebGLRenderbuffer> createRenderbuffer();
-    PassRefPtr<WebGLShader> createShader(unsigned long type, ExceptionCode&);
+    PassRefPtr<WebGLShader> createShader(GC3Denum type, ExceptionCode&);
     PassRefPtr<WebGLTexture> createTexture();
 
-    void cullFace(unsigned long mode);
+    void cullFace(GC3Denum mode);
 
     void deleteBuffer(WebGLBuffer*);
     void deleteFramebuffer(WebGLFramebuffer*);
@@ -117,173 +117,155 @@ public:
     void deleteShader(WebGLShader*);
     void deleteTexture(WebGLTexture*);
 
-    void depthFunc(unsigned long);
-    void depthMask(bool);
-    void depthRange(float zNear, float zFar);
+    void depthFunc(GC3Denum);
+    void depthMask(GC3Dboolean);
+    void depthRange(GC3Dfloat zNear, GC3Dfloat zFar);
     void detachShader(WebGLProgram*, WebGLShader*, ExceptionCode&);
-    void disable(unsigned long cap);
-    void disableVertexAttribArray(unsigned long index, ExceptionCode&);
-    void drawArrays(unsigned long mode, long first, long count, ExceptionCode&);
-    void drawElements(unsigned long mode, long count, unsigned long type, long offset, ExceptionCode&);
+    void disable(GC3Denum cap);
+    void disableVertexAttribArray(GC3Duint index, ExceptionCode&);
+    void drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei count, ExceptionCode&);
+    void drawElements(GC3Denum mode, GC3Dsizei count, GC3Denum type, GC3Dintptr offset, ExceptionCode&);
 
-    void enable(unsigned long cap);
-    void enableVertexAttribArray(unsigned long index, ExceptionCode&);
+    void enable(GC3Denum cap);
+    void enableVertexAttribArray(GC3Duint index, ExceptionCode&);
     void finish();
     void flush();
-    void framebufferRenderbuffer(unsigned long target, unsigned long attachment, unsigned long renderbuffertarget, WebGLRenderbuffer*, ExceptionCode& ec);
-    void framebufferTexture2D(unsigned long target, unsigned long attachment, unsigned long textarget, WebGLTexture*, long level, ExceptionCode& ec);
-    void frontFace(unsigned long mode);
-    void generateMipmap(unsigned long target);
+    void framebufferRenderbuffer(GC3Denum target, GC3Denum attachment, GC3Denum renderbuffertarget, WebGLRenderbuffer*, ExceptionCode& ec);
+    void framebufferTexture2D(GC3Denum target, GC3Denum attachment, GC3Denum textarget, WebGLTexture*, GC3Dint level, ExceptionCode& ec);
+    void frontFace(GC3Denum mode);
+    void generateMipmap(GC3Denum target);
 
-    PassRefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, unsigned long index, ExceptionCode&);
-    PassRefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, unsigned long index, ExceptionCode&);
-
+    PassRefPtr<WebGLActiveInfo> getActiveAttrib(WebGLProgram*, GC3Duint index, ExceptionCode&);
+    PassRefPtr<WebGLActiveInfo> getActiveUniform(WebGLProgram*, GC3Duint index, ExceptionCode&);
     bool getAttachedShaders(WebGLProgram*, Vector<WebGLShader*>&, ExceptionCode&);
-
-    int getAttribLocation(WebGLProgram*, const String& name);
-
-    WebGLGetInfo getBufferParameter(unsigned long target, unsigned long pname, ExceptionCode&);
-
+    GC3Dint getAttribLocation(WebGLProgram*, const String& name);
+    WebGLGetInfo getBufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     PassRefPtr<WebGLContextAttributes> getContextAttributes();
-
-    unsigned long getError();
-
+    GC3Denum getError();
     WebGLExtension* getExtension(const String& name);
-
-    WebGLGetInfo getFramebufferAttachmentParameter(unsigned long target, unsigned long attachment, unsigned long pname, ExceptionCode&);
-
-    WebGLGetInfo getParameter(unsigned long pname, ExceptionCode&);
-
-    WebGLGetInfo getProgramParameter(WebGLProgram*, unsigned long pname, ExceptionCode&);
-
+    WebGLGetInfo getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname, ExceptionCode&);
+    WebGLGetInfo getParameter(GC3Denum pname, ExceptionCode&);
+    WebGLGetInfo getProgramParameter(WebGLProgram*, GC3Denum pname, ExceptionCode&);
     String getProgramInfoLog(WebGLProgram*, ExceptionCode& ec);
-
-    WebGLGetInfo getRenderbufferParameter(unsigned long target, unsigned long pname, ExceptionCode&);
-
-    WebGLGetInfo getShaderParameter(WebGLShader*, unsigned long pname, ExceptionCode& ec);
-
+    WebGLGetInfo getRenderbufferParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
+    WebGLGetInfo getShaderParameter(WebGLShader*, GC3Denum pname, ExceptionCode& ec);
     String getShaderInfoLog(WebGLShader*, ExceptionCode& ec);
 
     // TBD
-    // void glGetShaderPrecisionFormat (GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision);
+    // void glGetShaderPrecisionFormat (GC3Denum shadertype, GC3Denum precisiontype, GC3Dint* range, GC3Dint* precision);
 
     String getShaderSource(WebGLShader*, ExceptionCode&);
-
     Vector<String> getSupportedExtensions();
-
-    WebGLGetInfo getTexParameter(unsigned long target, unsigned long pname, ExceptionCode&);
-
+    WebGLGetInfo getTexParameter(GC3Denum target, GC3Denum pname, ExceptionCode&);
     WebGLGetInfo getUniform(WebGLProgram*, const WebGLUniformLocation*, ExceptionCode&);
-
     PassRefPtr<WebGLUniformLocation> getUniformLocation(WebGLProgram*, const String&, ExceptionCode&);
+    WebGLGetInfo getVertexAttrib(GC3Duint index, GC3Denum pname, ExceptionCode&);
+    GC3Dsizeiptr getVertexAttribOffset(GC3Duint index, GC3Denum pname);
 
-    WebGLGetInfo getVertexAttrib(unsigned long index, unsigned long pname, ExceptionCode&);
-
-    long getVertexAttribOffset(unsigned long index, unsigned long pname);
-
-    void hint(unsigned long target, unsigned long mode);
-    bool isBuffer(WebGLBuffer*);
+    void hint(GC3Denum target, GC3Denum mode);
+    GC3Dboolean isBuffer(WebGLBuffer*);
     bool isContextLost();
-    bool isEnabled(unsigned long cap);
-    bool isFramebuffer(WebGLFramebuffer*);
-    bool isProgram(WebGLProgram*);
-    bool isRenderbuffer(WebGLRenderbuffer*);
-    bool isShader(WebGLShader*);
-    bool isTexture(WebGLTexture*);
-    void lineWidth(float);
+    GC3Dboolean isEnabled(GC3Denum cap);
+    GC3Dboolean isFramebuffer(WebGLFramebuffer*);
+    GC3Dboolean isProgram(WebGLProgram*);
+    GC3Dboolean isRenderbuffer(WebGLRenderbuffer*);
+    GC3Dboolean isShader(WebGLShader*);
+    GC3Dboolean isTexture(WebGLTexture*);
+
+    void lineWidth(GC3Dfloat);
     void linkProgram(WebGLProgram*, ExceptionCode&);
-    void pixelStorei(unsigned long pname, long param);
-    void polygonOffset(float factor, float units);
-    void readPixels(long x, long y, long width, long height, unsigned long format, unsigned long type, ArrayBufferView* pixels, ExceptionCode&);
+    void pixelStorei(GC3Denum pname, GC3Dint param);
+    void polygonOffset(GC3Dfloat factor, GC3Dfloat units);
+    void readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode&);
     void releaseShaderCompiler();
-    void renderbufferStorage(unsigned long target, unsigned long internalformat, long width, long height);
-    void sampleCoverage(float value, bool invert);
-    void scissor(long x, long y, long width, long height);
+    void renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
+    void sampleCoverage(GC3Dfloat value, GC3Dboolean invert);
+    void scissor(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
     void shaderSource(WebGLShader*, const String&, ExceptionCode&);
-    void stencilFunc(unsigned long func, long ref, unsigned long mask);
-    void stencilFuncSeparate(unsigned long face, unsigned long func, long ref, unsigned long mask);
-    void stencilMask(unsigned long);
-    void stencilMaskSeparate(unsigned long face, unsigned long mask);
-    void stencilOp(unsigned long fail, unsigned long zfail, unsigned long zpass);
-    void stencilOpSeparate(unsigned long face, unsigned long fail, unsigned long zfail, unsigned long zpass);
+    void stencilFunc(GC3Denum func, GC3Dint ref, GC3Duint mask);
+    void stencilFuncSeparate(GC3Denum face, GC3Denum func, GC3Dint ref, GC3Duint mask);
+    void stencilMask(GC3Duint);
+    void stencilMaskSeparate(GC3Denum face, GC3Duint mask);
+    void stencilOp(GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
+    void stencilOpSeparate(GC3Denum face, GC3Denum fail, GC3Denum zfail, GC3Denum zpass);
 
-    void texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                    int width, int height, unsigned border,
-                    unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                    unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                    unsigned format, unsigned type, HTMLImageElement* image, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                    unsigned format, unsigned type, HTMLCanvasElement* canvas, ExceptionCode&);
-    void texImage2D(unsigned target, unsigned level, unsigned internalformat,
-                    unsigned format, unsigned type, HTMLVideoElement* video, ExceptionCode&);
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
+                    GC3Dsizei width, GC3Dsizei height, GC3Dint border,
+                    GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode&);
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
+                    GC3Denum format, GC3Denum type, ImageData* pixels, ExceptionCode&);
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
+                    GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode&);
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
+                    GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas, ExceptionCode&);
+    void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
+                    GC3Denum format, GC3Denum type, HTMLVideoElement* video, ExceptionCode&);
 
-    void texParameterf(unsigned target, unsigned pname, float param);
-    void texParameteri(unsigned target, unsigned pname, int param);
+    void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
+    void texParameteri(GC3Denum target, GC3Denum pname, GC3Dint param);
 
-    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
-                       int width, int height,
-                       unsigned format, unsigned type, ArrayBufferView* pixels, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
-                       unsigned format, unsigned type, ImageData* pixels, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
-                       unsigned format, unsigned type, HTMLImageElement* image, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
-                       unsigned format, unsigned type, HTMLCanvasElement* canvas, ExceptionCode&);
-    void texSubImage2D(unsigned target, unsigned level, int xoffset, int yoffset,
-                       unsigned format, unsigned type, HTMLVideoElement* video, ExceptionCode&);
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                       GC3Dsizei width, GC3Dsizei height,
+                       GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode&);
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                       GC3Denum format, GC3Denum type, ImageData* pixels, ExceptionCode&);
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                       GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode&);
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                       GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas, ExceptionCode&);
+    void texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                       GC3Denum format, GC3Denum type, HTMLVideoElement* video, ExceptionCode&);
 
-    void uniform1f(const WebGLUniformLocation* location, float x, ExceptionCode&);
+    void uniform1f(const WebGLUniformLocation* location, GC3Dfloat x, ExceptionCode&);
     void uniform1fv(const WebGLUniformLocation* location, Float32Array* v, ExceptionCode&);
-    void uniform1fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
-    void uniform1i(const WebGLUniformLocation* location, int x, ExceptionCode&);
+    void uniform1fv(const WebGLUniformLocation* location, GC3Dfloat* v, GC3Dsizei size, ExceptionCode&);
+    void uniform1i(const WebGLUniformLocation* location, GC3Dint x, ExceptionCode&);
     void uniform1iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
-    void uniform1iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
-    void uniform2f(const WebGLUniformLocation* location, float x, float y, ExceptionCode&);
+    void uniform1iv(const WebGLUniformLocation* location, GC3Dint* v, GC3Dsizei size, ExceptionCode&);
+    void uniform2f(const WebGLUniformLocation* location, GC3Dfloat x, GC3Dfloat y, ExceptionCode&);
     void uniform2fv(const WebGLUniformLocation* location, Float32Array* v, ExceptionCode&);
-    void uniform2fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
-    void uniform2i(const WebGLUniformLocation* location, int x, int y, ExceptionCode&);
+    void uniform2fv(const WebGLUniformLocation* location, GC3Dfloat* v, GC3Dsizei size, ExceptionCode&);
+    void uniform2i(const WebGLUniformLocation* location, GC3Dint x, GC3Dint y, ExceptionCode&);
     void uniform2iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
-    void uniform2iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
-    void uniform3f(const WebGLUniformLocation* location, float x, float y, float z, ExceptionCode&);
+    void uniform2iv(const WebGLUniformLocation* location, GC3Dint* v, GC3Dsizei size, ExceptionCode&);
+    void uniform3f(const WebGLUniformLocation* location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, ExceptionCode&);
     void uniform3fv(const WebGLUniformLocation* location, Float32Array* v, ExceptionCode&);
-    void uniform3fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
-    void uniform3i(const WebGLUniformLocation* location, int x, int y, int z, ExceptionCode&);
+    void uniform3fv(const WebGLUniformLocation* location, GC3Dfloat* v, GC3Dsizei size, ExceptionCode&);
+    void uniform3i(const WebGLUniformLocation* location, GC3Dint x, GC3Dint y, GC3Dint z, ExceptionCode&);
     void uniform3iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
-    void uniform3iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
-    void uniform4f(const WebGLUniformLocation* location, float x, float y, float z, float w, ExceptionCode&);
+    void uniform3iv(const WebGLUniformLocation* location, GC3Dint* v, GC3Dsizei size, ExceptionCode&);
+    void uniform4f(const WebGLUniformLocation* location, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w, ExceptionCode&);
     void uniform4fv(const WebGLUniformLocation* location, Float32Array* v, ExceptionCode&);
-    void uniform4fv(const WebGLUniformLocation* location, float* v, int size, ExceptionCode&);
-    void uniform4i(const WebGLUniformLocation* location, int x, int y, int z, int w, ExceptionCode&);
+    void uniform4fv(const WebGLUniformLocation* location, GC3Dfloat* v, GC3Dsizei size, ExceptionCode&);
+    void uniform4i(const WebGLUniformLocation* location, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w, ExceptionCode&);
     void uniform4iv(const WebGLUniformLocation* location, Int32Array* v, ExceptionCode&);
-    void uniform4iv(const WebGLUniformLocation* location, int* v, int size, ExceptionCode&);
-    void uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, Float32Array* value, ExceptionCode&);
-    void uniformMatrix2fv(const WebGLUniformLocation* location, bool transpose, float* value, int size, ExceptionCode&);
-    void uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, Float32Array* value, ExceptionCode&);
-    void uniformMatrix3fv(const WebGLUniformLocation* location, bool transpose, float* value, int size, ExceptionCode&);
-    void uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, Float32Array* value, ExceptionCode&);
-    void uniformMatrix4fv(const WebGLUniformLocation* location, bool transpose, float* value, int size, ExceptionCode&);
+    void uniform4iv(const WebGLUniformLocation* location, GC3Dint* v, GC3Dsizei size, ExceptionCode&);
+    void uniformMatrix2fv(const WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value, ExceptionCode&);
+    void uniformMatrix2fv(const WebGLUniformLocation* location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size, ExceptionCode&);
+    void uniformMatrix3fv(const WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value, ExceptionCode&);
+    void uniformMatrix3fv(const WebGLUniformLocation* location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size, ExceptionCode&);
+    void uniformMatrix4fv(const WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* value, ExceptionCode&);
+    void uniformMatrix4fv(const WebGLUniformLocation* location, GC3Dboolean transpose, GC3Dfloat* value, GC3Dsizei size, ExceptionCode&);
 
     void useProgram(WebGLProgram*, ExceptionCode&);
     void validateProgram(WebGLProgram*, ExceptionCode&);
 
-    void vertexAttrib1f(unsigned long index, float x);
-    void vertexAttrib1fv(unsigned long index, Float32Array* values);
-    void vertexAttrib1fv(unsigned long index, float* values, int size);
-    void vertexAttrib2f(unsigned long index, float x, float y);
-    void vertexAttrib2fv(unsigned long index, Float32Array* values);
-    void vertexAttrib2fv(unsigned long index, float* values, int size);
-    void vertexAttrib3f(unsigned long index, float x, float y, float z);
-    void vertexAttrib3fv(unsigned long index, Float32Array* values);
-    void vertexAttrib3fv(unsigned long index, float* values, int size);
-    void vertexAttrib4f(unsigned long index, float x, float y, float z, float w);
-    void vertexAttrib4fv(unsigned long index, Float32Array* values);
-    void vertexAttrib4fv(unsigned long index, float* values, int size);
-    void vertexAttribPointer(unsigned long index, long size, unsigned long type, bool normalized,
-                             long stride, long offset, ExceptionCode&);
+    void vertexAttrib1f(GC3Duint index, GC3Dfloat x);
+    void vertexAttrib1fv(GC3Duint index, Float32Array* values);
+    void vertexAttrib1fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
+    void vertexAttrib2f(GC3Duint index, GC3Dfloat x, GC3Dfloat y);
+    void vertexAttrib2fv(GC3Duint index, Float32Array* values);
+    void vertexAttrib2fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
+    void vertexAttrib3f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z);
+    void vertexAttrib3fv(GC3Duint index, Float32Array* values);
+    void vertexAttrib3fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
+    void vertexAttrib4f(GC3Duint index, GC3Dfloat x, GC3Dfloat y, GC3Dfloat z, GC3Dfloat w);
+    void vertexAttrib4fv(GC3Duint index, Float32Array* values);
+    void vertexAttrib4fv(GC3Duint index, GC3Dfloat* values, GC3Dsizei size);
+    void vertexAttribPointer(GC3Duint index, GC3Dint size, GC3Denum type, GC3Dboolean normalized,
+                             GC3Dsizei stride, GC3Dintptr offset, ExceptionCode&);
 
-    void viewport(long x, long y, long width, long height);
+    void viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);
 
     void forceLostContext();
     void onLostContext();
@@ -338,18 +320,18 @@ public:
 
     // Helper to return the size in bytes of OpenGL data types
     // like GL_FLOAT, GL_INT, etc.
-    int sizeInBytes(int type);
+    unsigned int sizeInBytes(GC3Denum type);
 
     // Basic validation of count and offset against number of elements in element array buffer
-    bool validateElementArraySize(unsigned long count, unsigned long type, long offset);
+    bool validateElementArraySize(GC3Dsizei count, GC3Denum type, GC3Dintptr offset);
 
     // Conservative but quick index validation
-    bool validateIndexArrayConservative(unsigned long type, long& numElementsRequired);
+    bool validateIndexArrayConservative(GC3Denum type, int& numElementsRequired);
 
     // Precise but slow index validation -- only done if conservative checks fail
-    bool validateIndexArrayPrecise(unsigned long count, unsigned long type, long offset, long& numElementsRequired);
+    bool validateIndexArrayPrecise(GC3Dsizei count, GC3Denum type, GC3Dintptr offset, int& numElementsRequired);
     // If numElements <= 0, we only check if each enabled vertex attribute is bound to a buffer.
-    bool validateRenderingState(long numElements);
+    bool validateRenderingState(int numElements);
 
     bool validateWebGLObject(WebGLObject* object);
 
@@ -401,21 +383,21 @@ public:
 
         bool enabled;
         RefPtr<WebGLBuffer> bufferBinding;
-        long bytesPerElement;
-        long size;
-        unsigned long type;
+        GC3Dsizei bytesPerElement;
+        GC3Dint size;
+        GC3Denum type;
         bool normalized;
-        long stride;
-        long originalStride;
-        long offset;
-        float value[4];
+        GC3Dsizei stride;
+        GC3Dsizei originalStride;
+        GC3Dintptr offset;
+        GC3Dfloat value[4];
     };
 
     Vector<VertexAttribState> m_vertexAttribState;
     unsigned m_maxVertexAttribs;
     RefPtr<WebGLBuffer> m_vertexAttrib0Buffer;
     long m_vertexAttrib0BufferSize;
-    float m_vertexAttrib0BufferValue[4];
+    GC3Dfloat m_vertexAttrib0BufferValue[4];
 
     RefPtr<WebGLProgram> m_currentProgram;
     RefPtr<WebGLFramebuffer> m_framebufferBinding;
@@ -444,23 +426,23 @@ public:
     };
     LRUImageBufferCache m_videoCache;
 
-    int m_maxTextureSize;
-    int m_maxCubeMapTextureSize;
-    int m_maxTextureLevel;
-    int m_maxCubeMapTextureLevel;
+    GC3Dint m_maxTextureSize;
+    GC3Dint m_maxCubeMapTextureSize;
+    GC3Dint m_maxTextureLevel;
+    GC3Dint m_maxCubeMapTextureLevel;
 
-    int m_packAlignment;
-    int m_unpackAlignment;
+    GC3Dint m_packAlignment;
+    GC3Dint m_unpackAlignment;
     bool m_unpackFlipY;
     bool m_unpackPremultiplyAlpha;
-    unsigned long m_unpackColorspaceConversion;
+    GC3Denum m_unpackColorspaceConversion;
     bool m_contextLost;
     GraphicsContext3D::Attributes m_attributes;
 
     long m_stencilBits;
-    unsigned long m_stencilMask, m_stencilMaskBack;
-    long m_stencilFuncRef, m_stencilFuncRefBack; // Note that these are the user specified values, not the internal clamped value.
-    unsigned long m_stencilFuncMask, m_stencilFuncMaskBack;
+    GC3Duint m_stencilMask, m_stencilMaskBack;
+    GC3Dint m_stencilFuncRef, m_stencilFuncRefBack; // Note that these are the user specified values, not the internal clamped value.
+    GC3Duint m_stencilFuncMask, m_stencilFuncMaskBack;
 
     bool m_isGLES2Compliant;
     bool m_isGLES2NPOTStrict;
@@ -473,26 +455,26 @@ public:
     RefPtr<WebKitLoseContext> m_webkitLoseContext;
 
     // Helpers for getParameter and others
-    WebGLGetInfo getBooleanParameter(unsigned long pname);
-    WebGLGetInfo getBooleanArrayParameter(unsigned long pname);
-    WebGLGetInfo getFloatParameter(unsigned long pname);
-    WebGLGetInfo getIntParameter(unsigned long pname);
-    WebGLGetInfo getLongParameter(unsigned long pname);
-    WebGLGetInfo getUnsignedLongParameter(unsigned long pname);
-    WebGLGetInfo getWebGLFloatArrayParameter(unsigned long pname);
-    WebGLGetInfo getWebGLIntArrayParameter(unsigned long pname);
+    WebGLGetInfo getBooleanParameter(GC3Denum pname);
+    WebGLGetInfo getBooleanArrayParameter(GC3Denum pname);
+    WebGLGetInfo getFloatParameter(GC3Denum pname);
+    WebGLGetInfo getIntParameter(GC3Denum pname);
+    WebGLGetInfo getLongParameter(GC3Denum pname);
+    WebGLGetInfo getUnsignedLongParameter(GC3Denum pname);
+    WebGLGetInfo getWebGLFloatArrayParameter(GC3Denum pname);
+    WebGLGetInfo getWebGLIntArrayParameter(GC3Denum pname);
 
-    void texImage2DBase(unsigned target, unsigned level, unsigned internalformat,
-                        int width, int height, unsigned border,
-                        unsigned format, unsigned type, void* pixels, ExceptionCode&);
-    void texImage2DImpl(unsigned target, unsigned level, unsigned internalformat,
-                        unsigned format, unsigned type, Image* image,
+    void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat,
+                        GC3Dsizei width, GC3Dsizei height, GC3Dint border,
+                        GC3Denum format, GC3Denum type, void* pixels, ExceptionCode&);
+    void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat,
+                        GC3Denum format, GC3Denum type, Image* image,
                         bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texSubImage2DBase(unsigned target, unsigned level, int xoffset, int yoffset,
-                           int width, int height,
-                           unsigned format, unsigned type, void* pixels, ExceptionCode&);
-    void texSubImage2DImpl(unsigned target, unsigned level, int xoffset, int yoffset,
-                           unsigned format, unsigned type,
+    void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                           GC3Dsizei width, GC3Dsizei height,
+                           GC3Denum format, GC3Denum type, void* pixels, ExceptionCode&);
+    void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
+                           GC3Denum format, GC3Denum type,
                            Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
 
     void handleNPOTTextures(bool prepareToDraw);
@@ -502,11 +484,11 @@ public:
     // Helper function for copyTex{Sub}Image, check whether the internalformat
     // and the color buffer format of the current bound framebuffer combination
     // is valid.
-    bool isTexInternalFormatColorBufferCombinationValid(unsigned long texInternalFormat,
-                                                        unsigned long colorBufferFormat);
+    bool isTexInternalFormatColorBufferCombinationValid(GC3Denum texInternalFormat,
+                                                        GC3Denum colorBufferFormat);
 
     // Helper function to get the bound framebuffer's color buffer format.
-    unsigned long getBoundFramebufferColorFormat();
+    GC3Denum getBoundFramebufferColorFormat();
 
     // Helper function to get the bound framebuffer's width.
     int getBoundFramebufferWidth();
@@ -516,7 +498,7 @@ public:
 
     // Helper function to check if size is non-negative.
     // Generate GL error and return false for negative inputs; otherwise, return true.
-    bool validateSize(long x, long y);
+    bool validateSize(GC3Dint x, GC3Dint y);
 
     // Helper function to check if all characters in the string belong to the
     // ASCII subset as defined in GLSL ES 1.0 spec section 3.1.
@@ -525,41 +507,41 @@ public:
     // Helper function to check target and texture bound to the target.
     // Generate GL errors and return 0 if target is invalid or texture bound is
     // null.  Otherwise, return the texture bound to the target.
-    WebGLTexture* validateTextureBinding(unsigned long target, bool useSixEnumsForCubeMap);
+    WebGLTexture* validateTextureBinding(GC3Denum target, bool useSixEnumsForCubeMap);
 
     // Helper function to check input format/type for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncFormatAndType(unsigned long format, unsigned long type);
+    bool validateTexFuncFormatAndType(GC3Denum format, GC3Denum type);
 
     // Helper function to check input level for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if level is invalid.
-    bool validateTexFuncLevel(unsigned long target, long level);
+    bool validateTexFuncLevel(GC3Denum target, GC3Dint level);
 
     // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncParameters(unsigned long target, long level,
-                                   unsigned long internalformat,
-                                   long width, long height, long border,
-                                   unsigned long format, unsigned long type);
+    bool validateTexFuncParameters(GC3Denum target, GC3Dint level,
+                                   GC3Denum internalformat,
+                                   GC3Dsizei width, GC3Dsizei height, GC3Dint border,
+                                   GC3Denum format, GC3Denum type);
 
     // Helper function to validate that the given ArrayBufferView
     // is of the correct type and contains enough data for the texImage call.
     // Generates GL error and returns false if parameters are invalid.
-    bool validateTexFuncData(long width, long height,
-                             unsigned long format, unsigned long type,
+    bool validateTexFuncData(GC3Dsizei width, GC3Dsizei height,
+                             GC3Denum format, GC3Denum type,
                              ArrayBufferView* pixels);
 
     // Helper function to validate mode for draw{Arrays/Elements}.
-    bool validateDrawMode(unsigned long);
+    bool validateDrawMode(GC3Denum);
 
     // Helper function to validate if front/back stencilMask and stencilFunc settings are the same.
     bool validateStencilSettings();
 
     // Helper function to validate stencil func.
-    bool validateStencilFunc(unsigned long);
+    bool validateStencilFunc(GC3Denum);
 
     // Helper function for texParameterf and texParameteri.
-    void texParameter(unsigned long target, unsigned long pname, float parami, int paramf, bool isFloat);
+    void texParameter(GC3Denum target, GC3Denum pname, GC3Dfloat parami, GC3Dint paramf, bool isFloat);
 
     // Helper function to print warnings to console. Currently
     // used only to warn about use of obsolete functions.
@@ -567,36 +549,36 @@ public:
 
     // Helper function to validate input parameters for framebuffer functions.
     // Generate GL error if parameters are illegal.
-    bool validateFramebufferFuncParameters(unsigned long target, unsigned long attachment);
+    bool validateFramebufferFuncParameters(GC3Denum target, GC3Denum attachment);
 
     // Helper function to validate blend equation mode.
-    bool validateBlendEquation(unsigned long);
+    bool validateBlendEquation(GC3Denum);
 
     // Helper function to validate blend func factors.
-    bool validateBlendFuncFactors(unsigned long src, unsigned long dst);
+    bool validateBlendFuncFactors(GC3Denum src, GC3Denum dst);
 
     // Helper function to validate a GL capability.
-    bool validateCapability(unsigned long);
+    bool validateCapability(GC3Denum);
 
     // Helper function to validate input parameters for uniform functions.
-    bool validateUniformParameters(const WebGLUniformLocation* location, Float32Array* v, int mod);
-    bool validateUniformParameters(const WebGLUniformLocation* location, Int32Array* v, int mod);
-    bool validateUniformParameters(const WebGLUniformLocation* location, void* v, int size, int mod);
-    bool validateUniformMatrixParameters(const WebGLUniformLocation* location, bool transpose, Float32Array* v, int mod);
-    bool validateUniformMatrixParameters(const WebGLUniformLocation* location, bool transpose, void* v, int size, int mod);
+    bool validateUniformParameters(const WebGLUniformLocation* location, Float32Array* v, GC3Dsizei mod);
+    bool validateUniformParameters(const WebGLUniformLocation* location, Int32Array* v, GC3Dsizei mod);
+    bool validateUniformParameters(const WebGLUniformLocation* location, void* v, GC3Dsizei size, GC3Dsizei mod);
+    bool validateUniformMatrixParameters(const WebGLUniformLocation* location, GC3Dboolean transpose, Float32Array* v, GC3Dsizei mod);
+    bool validateUniformMatrixParameters(const WebGLUniformLocation* location, GC3Dboolean transpose, void* v, GC3Dsizei size, GC3Dsizei mod);
 
     // Helper function to validate parameters for bufferData.
     // Return the current bound buffer to target, or 0 if parameters are invalid.
-    WebGLBuffer* validateBufferDataParameters(unsigned long target, unsigned long usage);
+    WebGLBuffer* validateBufferDataParameters(GC3Denum target, GC3Denum usage);
 
     // Helper functions for vertexAttribNf{v}.
-    void vertexAttribfImpl(unsigned long index, int expectedSize, float v0, float v1, float v2, float v3);
-    void vertexAttribfvImpl(unsigned long index, Float32Array* v, int expectedSize);
-    void vertexAttribfvImpl(unsigned long index, float* v, int size, int expectedSize);
+    void vertexAttribfImpl(GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat v0, GC3Dfloat v1, GC3Dfloat v2, GC3Dfloat v3);
+    void vertexAttribfvImpl(GC3Duint index, Float32Array* v, GC3Dsizei expectedSize);
+    void vertexAttribfvImpl(GC3Duint index, GC3Dfloat* v, GC3Dsizei size, GC3Dsizei expectedSize);
 
     // Helpers for simulating vertexAttrib0
     void initVertexAttrib0();
-    bool simulateVertexAttrib0(long numVertex);
+    bool simulateVertexAttrib0(GC3Dsizei numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
     friend class WebGLStateRestorer;

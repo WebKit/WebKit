@@ -37,18 +37,18 @@ class WebGLShader : public WebGLObject {
 public:
     virtual ~WebGLShader() { deleteObject(); }
 
-    static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
+    static PassRefPtr<WebGLShader> create(WebGLRenderingContext*, GC3Denum);
 
-    GraphicsContext3D::WebGLEnumType getType() const { return m_type; }
+    GC3Denum getType() const { return m_type; }
 
 private:
-    WebGLShader(WebGLRenderingContext*, GraphicsContext3D::WebGLEnumType);
+    WebGLShader(WebGLRenderingContext*, GC3Denum);
 
     virtual void deleteObjectImpl(Platform3DObject);
 
     virtual bool isShader() const { return true; }
 
-    GraphicsContext3D::WebGLEnumType m_type;
+    GC3Denum m_type;
 };
 
 } // namespace WebCore

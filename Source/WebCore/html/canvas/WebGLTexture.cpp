@@ -53,7 +53,7 @@ WebGLTexture::WebGLTexture(WebGLRenderingContext* ctx)
     setObject(context()->graphicsContext3D()->createTexture());
 }
 
-void WebGLTexture::setTarget(unsigned long target, int maxLevel)
+void WebGLTexture::setTarget(GC3Denum target, GC3Dint maxLevel)
 {
     if (!object())
         return;
@@ -75,7 +75,7 @@ void WebGLTexture::setTarget(unsigned long target, int maxLevel)
     }
 }
 
-void WebGLTexture::setParameteri(unsigned long pname, int param)
+void WebGLTexture::setParameteri(GC3Denum pname, GC3Dint param)
 {
     if (!object() || !m_target)
         return;
@@ -124,15 +124,15 @@ void WebGLTexture::setParameteri(unsigned long pname, int param)
     update();
 }
 
-void WebGLTexture::setParameterf(unsigned long pname, float param)
+void WebGLTexture::setParameterf(GC3Denum pname, GC3Dfloat param)
 {
     if (!object() || !m_target)
         return;
-    int iparam = static_cast<int>(param);
+    GC3Dint iparam = static_cast<GC3Dint>(param);
     setParameteri(pname, iparam);
 }
 
-void WebGLTexture::setLevelInfo(unsigned long target, int level, unsigned long internalFormat, int width, int height, unsigned long type)
+void WebGLTexture::setLevelInfo(GC3Denum target, GC3Dint level, GC3Denum internalFormat, GC3Dsizei width, GC3Dsizei height, GC3Denum type)
 {
     if (!object() || !m_target)
         return;
@@ -154,10 +154,10 @@ void WebGLTexture::generateMipmapLevelInfo()
     if (!m_isComplete) {
         for (size_t ii = 0; ii < m_info.size(); ++ii) {
             const LevelInfo& info0 = m_info[ii][0];
-            int width = info0.width;
-            int height = info0.height;
-            int levelCount = computeLevelCount(width, height);
-            for (int level = 1; level < levelCount; ++level) {
+            GC3Dsizei width = info0.width;
+            GC3Dsizei height = info0.height;
+            GC3Dint levelCount = computeLevelCount(width, height);
+            for (GC3Dint level = 1; level < levelCount; ++level) {
                 width = std::max(1, width >> 1);
                 height = std::max(1, height >> 1);
                 LevelInfo& info = m_info[ii][level];
@@ -169,7 +169,7 @@ void WebGLTexture::generateMipmapLevelInfo()
     m_needToUseBlackTexture = false;
 }
 
-unsigned long WebGLTexture::getInternalFormat(unsigned long target, int level) const
+GC3Denum WebGLTexture::getInternalFormat(GC3Denum target, GC3Dint level) const
 {
     const LevelInfo* info = getLevelInfo(target, level);
     if (!info)
@@ -177,7 +177,7 @@ unsigned long WebGLTexture::getInternalFormat(unsigned long target, int level) c
     return info->internalFormat;
 }
 
-unsigned long WebGLTexture::getType(unsigned long target, int level) const
+GC3Denum WebGLTexture::getType(GC3Denum target, GC3Dint level) const
 {
     const LevelInfo* info = getLevelInfo(target, level);
     if (!info)
@@ -185,7 +185,7 @@ unsigned long WebGLTexture::getType(unsigned long target, int level) const
     return info->type;
 }
 
-int WebGLTexture::getWidth(unsigned long target, int level) const
+GC3Dsizei WebGLTexture::getWidth(GC3Denum target, GC3Dint level) const
 {
     const LevelInfo* info = getLevelInfo(target, level);
     if (!info)
@@ -193,7 +193,7 @@ int WebGLTexture::getWidth(unsigned long target, int level) const
     return info->width;
 }
 
-int WebGLTexture::getHeight(unsigned long target, int level) const
+GC3Dsizei WebGLTexture::getHeight(GC3Denum target, GC3Dint level) const
 {
     const LevelInfo* info = getLevelInfo(target, level);
     if (!info)
@@ -201,8 +201,9 @@ int WebGLTexture::getHeight(unsigned long target, int level) const
     return info->height;
 }
 
-bool WebGLTexture::isNPOT(unsigned width, unsigned height)
+bool WebGLTexture::isNPOT(GC3Dsizei width, GC3Dsizei height)
 {
+    ASSERT(width >= 0 && height >= 0);
     if (!width || !height)
         return false;
     if ((width & (width - 1)) || (height & (height - 1)))
@@ -229,7 +230,7 @@ void WebGLTexture::deleteObjectImpl(Platform3DObject object)
     context()->graphicsContext3D()->deleteTexture(object);
 }
 
-int WebGLTexture::mapTargetToIndex(unsigned long target) const
+int WebGLTexture::mapTargetToIndex(GC3Denum target) const
 {
     if (m_target == GraphicsContext3D::TEXTURE_2D) {
         if (target == GraphicsContext3D::TEXTURE_2D)
@@ -268,17 +269,17 @@ bool WebGLTexture::canGenerateMipmaps()
     return true;
 }
 
-int WebGLTexture::computeLevelCount(int width, int height)
+GC3Dint WebGLTexture::computeLevelCount(GC3Dsizei width, GC3Dsizei height)
 {
     // return 1 + log2Floor(std::max(width, height));
-    int n = std::max(width, height);
+    GC3Dsizei n = std::max(width, height);
     if (n <= 0)
         return 0;
-    int log = 0;
-    int value = n;
+    GC3Dint log = 0;
+    GC3Dsizei value = n;
     for (int ii = 4; ii >= 0; --ii) {
         int shift = (1 << ii);
-        int x = (value >> shift);
+        GC3Dsizei x = (value >> shift);
         if (x) {
             value = x;
             log += shift;
@@ -299,7 +300,7 @@ void WebGLTexture::update()
     }
     m_isComplete = true;
     const LevelInfo& first = m_info[0][0];
-    int levelCount = computeLevelCount(first.width, first.height);
+    GC3Dint levelCount = computeLevelCount(first.width, first.height);
     if (levelCount < 1)
         m_isComplete = false;
     else {
@@ -311,9 +312,9 @@ void WebGLTexture::update()
                 m_isComplete = false;
                 break;
             }
-            int width = info0.width;
-            int height = info0.height;
-            for (int level = 1; level < levelCount; ++level) {
+            GC3Dsizei width = info0.width;
+            GC3Dsizei height = info0.height;
+            for (GC3Dint level = 1; level < levelCount; ++level) {
                 width = std::max(1, width >> 1);
                 height = std::max(1, height >> 1);
                 const LevelInfo& info = m_info[ii][level];
@@ -338,14 +339,14 @@ void WebGLTexture::update()
         m_needToUseBlackTexture = true;
 }
 
-const WebGLTexture::LevelInfo* WebGLTexture::getLevelInfo(unsigned long target, int level) const
+const WebGLTexture::LevelInfo* WebGLTexture::getLevelInfo(GC3Denum target, GC3Dint level) const
 {
     if (!object() || !m_target)
         return 0;
     int targetIndex = mapTargetToIndex(target);
     if (targetIndex < 0 || targetIndex >= static_cast<int>(m_info.size()))
         return 0;
-    if (level < 0 || level >= static_cast<int>(m_info[targetIndex].size()))
+    if (level < 0 || level >= static_cast<GC3Dint>(m_info[targetIndex].size()))
         return 0;
     return &(m_info[targetIndex][level]);
 }
