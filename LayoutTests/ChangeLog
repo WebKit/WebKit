@@ -1,3 +1,18 @@
+2011-01-13  Adam Roben  <aroben@apple.com>
+
+        Disable fast/profiler/throw-exception-from-eval.html
+
+        This test fails non-deterministically. See <http://webkit.org/b/49801>.
+
+        * fast/profiler/throw-exception-from-eval.html-disabled: Renamed from LayoutTests/fast/profiler/throw-exception-from-eval.html.
+
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/qt/Skipped:
+        Un-skipped this test now that it's been disabled by other means.
+
+        * platform/win-xp/fast/profiler/throw-exception-from-eval-expected.txt: Removed.
+
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

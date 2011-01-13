@@ -5536,10 +5536,6 @@ fast/history/sibling-visited-test.html
 # https://bugs.webkit.org/show_bug.cgi?id=49793
 fast/text/font-size-zero.html
 
-# REGRESSION (r72351): fast/profiler/throw-exception-from-eval.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=49801
-fast/profiler/throw-exception-from-eval.html
-
 # Rounding color problems inside pixman
 # https://bugs.webkit.org/show_bug.cgi?id=49964
 fast/canvas/canvas-fillPath-shadow.html

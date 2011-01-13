@@ -185,10 +185,6 @@ canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
 # https://bugs.webkit.org/show_bug.cgi?id=49809
 plugins/refcount-leaks.html
 
-# fast/profiler/throw-exception-from-eval.html fails on Leopard bots
-# https://bugs.webkit.org/show_bug.cgi?id=49801
-fast/profiler/throw-exception-from-eval.html
-
 # svg/batik/text/smallFonts.svg failing on leopard release bot
 # https://bugs.webkit.org/show_bug.cgi?id=50467
 svg/batik/text/smallFonts.svg
