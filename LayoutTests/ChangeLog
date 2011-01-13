@@ -1,3 +1,11 @@
+2011-01-12  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed chromium-gpu test expectations fix.
+
+        Disable canvas-large-dimensions.html after r75639.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

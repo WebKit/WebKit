@@ -380,3 +380,6 @@ BUGWEBGL WIN DEBUG : fast/canvas/webgl/context-attributes-alpha-depth-stencil-an
 
 // This was introduced by r75139
 BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
+
+// Started failing after r75639 on everything except Snow Leopard
+BUGWK52341 : fast/canvas/canvas-large-dimensions.html = TEXT
