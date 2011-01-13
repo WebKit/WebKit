@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Getting rid of an assert that was causing build failures that turns out not to be needed.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintsWithTransform):
+
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
         Another fix for Gtk
 
         * rendering/RenderLayer.cpp:
