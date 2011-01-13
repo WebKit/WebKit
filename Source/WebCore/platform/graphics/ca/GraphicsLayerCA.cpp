@@ -857,6 +857,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers()
     
     if (m_uncommittedChanges & AcceleratesDrawingChanged)
         updateAcceleratesDrawing();
+    
+    if (m_uncommittedChanges & ContentsScaleChanged)
+        updateContentsScale();
 }
 
 void GraphicsLayerCA::commitLayerChangesAfterSublayers()

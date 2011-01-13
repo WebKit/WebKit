@@ -2,6 +2,16 @@
 
         Unreviewed.
 
+        A couple of lines of the patch for https://bugs.webkit.org/show_bug.cgi?id=52321
+        were omitted. 
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
         Getting rid of an assert that was causing build failures that turns out not to be needed.
 
         * rendering/RenderLayer.cpp:
