@@ -1,5 +1,14 @@
 2011-01-12  Hayato Ito  <hayato@chromium.org>
 
+        Unreviewed test expectations files fix.
+
+        Fix a culprit revision number.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-01-12  Hayato Ito  <hayato@chromium.org>
+
         Unreviewed chromium-gpu test expectations fix.
 
         Disable canvas-large-dimensions.html after r75639.
