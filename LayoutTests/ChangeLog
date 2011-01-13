@@ -1,3 +1,10 @@
+2011-01-12  Adam Barth  <abarth@webkit.org>
+
+        Removing this test from the Skipped list caused the next test
+        alphabetically to fail instead.
+
+        * platform/mac/Skipped:
+
 2011-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by David Levin.
