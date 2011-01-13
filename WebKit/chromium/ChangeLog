@@ -1,3 +1,16 @@
+2011-01-12  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Remove PartScrollbarHoriztonalTrack
+        https://bugs.webkit.org/show_bug.cgi?id=52329
+        
+        Remove PartScrollbarHoriztonalTrack now that usages of it were removed
+        with http://crrev.com/71249.
+
+        * DEPS:
+        * public/linux/WebThemeEngine.h:
+
 2010-12-29  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

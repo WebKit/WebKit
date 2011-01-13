@@ -39,9 +39,6 @@ namespace WebKit {
 
 struct WebRect;
 
-// FIXME: Remove once webkit/glue/webthemeengine_impl_linux.c has been updated to use the correct spelling.
-#define PartScrollbarHoriztonalTrack PartScrollbarHorizontalTrack
-
 class WebThemeEngine {
 public:
     // The UI part which is being accessed.
