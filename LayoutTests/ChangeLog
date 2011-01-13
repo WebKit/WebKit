@@ -1,3 +1,20 @@
+2011-01-13  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Setting outerText should convert CR/LF to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=52268
+        
+        Add test for setting Element.outerText.
+
+        * fast/dom/set-outer-text-expected.txt: Added.
+        * fast/dom/set-outer-text.html: Added.
+        * fast/dom/text-node-append-data-remove-crash-expected.txt: Changed
+            expectation to "didn't crash" from "threw dom exception" as test
+            assumed the DOMCharacterDataModified event would fire before the node
+            would be replaced.
+        * fast/dom/text-node-append-data-remove-crash.html:
+
 2011-01-13  Adam Roben  <aroben@apple.com>
 
         Skip a crashing test on Windows

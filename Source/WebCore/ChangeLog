@@ -1,3 +1,22 @@
+2011-01-13  Emil Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Setting outerText should convert CR/LF to <br>
+        https://bugs.webkit.org/show_bug.cgi?id=52268
+
+        Make set outerText support line breaks (sharing the text to fragment code
+        with setInnerText) and handle empty text nodes the same way IE does.
+
+        Test: fast/dom/set-outer-text.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::textToFragment): Shared between setInnerText and setOuterText
+        (WebCore::HTMLElement::setInnerText): Split out text parsing code.
+        (WebCore::mergeWithNextTextNode): Split out text node merging code.
+        (WebCore::HTMLElement::setOuterText): Added support for line breaks.
+        * html/HTMLElement.h:
+
 2011-01-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

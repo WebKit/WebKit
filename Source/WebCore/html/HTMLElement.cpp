@@ -376,6 +376,39 @@ void HTMLElement::setOuterHTML(const String& html, ExceptionCode& ec)
     }
 }
 
+PassRefPtr<DocumentFragment> HTMLElement::textToFragment(const String& text, ExceptionCode& ec)
+{
+    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
+    unsigned int i, length = text.length();
+    UChar c = 0;
+    for (unsigned int start = 0; start < length; ) {
+
+        // Find next line break.
+        for (i = start; i < length; i++) {
+          c = text[i];
+          if (c == '\r' || c == '\n')
+              break;
+        }
+
+        fragment->appendChild(Text::create(document(), text.substring(start, i - start)), ec);
+        if (ec)
+            return 0;
+
+        if (c == '\r' || c == '\n') {
+            fragment->appendChild(HTMLBRElement::create(document()), ec);
+            if (ec)
+                return 0;
+            // Make sure \r\n doesn't result in two line breaks.
+            if (c == '\r' && i + 1 < length && text[i + 1] == '\n')
+                i++;
+        }
+
+        start = i + 1; // Character after line break.
+    }
+
+    return fragment;
+}
+
 void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 {
     if (ieForbidsInsertHTML()) {
@@ -419,30 +452,25 @@ void HTMLElement::setInnerText(const String& text, ExceptionCode& ec)
 
     // Add text nodes and <br> elements.
     ec = 0;
-    RefPtr<DocumentFragment> fragment = DocumentFragment::create(document());
-    int lineStart = 0;
-    UChar prev = 0;
-    int length = text.length();
-    for (int i = 0; i < length; ++i) {
-        UChar c = text[i];
-        if (c == '\n' || c == '\r') {
-            if (i > lineStart) {
-                fragment->appendChild(Text::create(document(), text.substring(lineStart, i - lineStart)), ec);
-                if (ec)
-                    return;
-            }
-            if (!(c == '\n' && i != 0 && prev == '\r')) {
-                fragment->appendChild(HTMLBRElement::create(document()), ec);
-                if (ec)
-                    return;
-            }
-            lineStart = i + 1;
-        }
-        prev = c;
-    }
-    if (length > lineStart)
-        fragment->appendChild(Text::create(document(), text.substring(lineStart, length - lineStart)), ec);
-    replaceChildrenWithFragment(this, fragment.release(), ec);
+    RefPtr<DocumentFragment> fragment = textToFragment(text, ec);
+    if (!ec)
+        replaceChildrenWithFragment(this, fragment.release(), ec);
+}
+
+static void mergeWithNextTextNode(PassRefPtr<Node> node, ExceptionCode& ec)
+{
+    ASSERT(node && node->isTextNode());
+    Node* next = node->nextSibling();
+    if (!next || !next->isTextNode())
+        return;
+    
+    RefPtr<Text> textNode = static_cast<Text*>(node.get());
+    RefPtr<Text> textNext = static_cast<Text*>(next);
+    textNode->appendData(textNext->data(), ec);
+    if (ec)
+        return;
+    if (textNext->parentNode()) // Might have been removed by mutation event.
+        textNext->remove(ec);
 }
 
 void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
@@ -465,39 +493,29 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: This creates a new text node even when the text is empty.
-    // FIXME: This creates a single text node even when the text has CR and LF
-    // characters in it. Instead it should create <br> elements.
-    RefPtr<Text> t = Text::create(document(), text);
+    RefPtr<Node> prev = previousSibling();
+    RefPtr<Node> next = nextSibling();
+    RefPtr<Node> newChild;
     ec = 0;
-    parent->replaceChild(t, this, ec);
+    
+    // Convert text to fragment with <br> tags instead of linebreaks if needed.
+    if (text.contains('\r') || text.contains('\n'))
+        newChild = textToFragment(text, ec);
+    else
+        newChild = Text::create(document(), text);
+
+    if (!this || !parentNode())
+        ec = HIERARCHY_REQUEST_ERR;
     if (ec)
         return;
+    parent->replaceChild(newChild.release(), this, ec);
 
-    // Is previous node a text node? If so, merge into it.
-    Node* prev = t->previousSibling();
-    if (prev && prev->isTextNode()) {
-        RefPtr<Text> textPrev = static_cast<Text*>(prev);
-        textPrev->appendData(t->data(), ec);
-        if (ec)
-            return;
-        t->remove(ec);
-        if (ec)
-            return;
-        t = textPrev;
-    }
+    RefPtr<Node> node = next ? next->previousSibling() : 0;
+    if (!ec && node && node->isTextNode())
+        mergeWithNextTextNode(node.release(), ec);
 
-    // Is next node a text node? If so, merge it in.
-    Node* next = t->nextSibling();
-    if (next && next->isTextNode()) {
-        RefPtr<Text> textNext = static_cast<Text*>(next);
-        t->appendData(textNext->data(), ec);
-        if (ec)
-            return;
-        textNext->remove(ec);
-        if (ec)
-            return;
-    }
+    if (!ec && prev && prev->isTextNode())
+        mergeWithNextTextNode(prev.release(), ec);
 }
 
 Node* HTMLElement::insertAdjacent(const String& where, Node* newChild, ExceptionCode& ec)

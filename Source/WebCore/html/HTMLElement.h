@@ -100,6 +100,7 @@ private:
     virtual HTMLFormElement* virtualForm() const;
 
     Node* insertAdjacent(const String& where, Node* newChild, ExceptionCode&);
+    PassRefPtr<DocumentFragment> textToFragment(const String&, ExceptionCode&);
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document* document)
