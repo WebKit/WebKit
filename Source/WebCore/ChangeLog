@@ -2,6 +2,9 @@
 
         Reviewed by Eric Seidel.
 
+        Stop instantiating legacy editing positions in ApplyBlockElementCommand and ApplyStyleCommand
+        https://bugs.webkit.org/show_bug.cgi?id=52250
+
         Removed instantiation of legacy editing positions.
         Calls to Position::Position are replaced by calls to Position's convenience functions.
 
