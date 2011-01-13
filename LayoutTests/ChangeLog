@@ -1,3 +1,9 @@
+2011-01-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip fast/text/emphasis.html as it shows a 1 pixel difference on the 32-bit Debug bot.
+
+        * platform/gtk/Skipped: Skip fast/text/emphasis.html.
+
 2011-01-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
