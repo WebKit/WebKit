@@ -204,20 +204,20 @@ h1 :hover {
     background-color: #fef;
 }
 
-.add {
+.Line.add {
     background-color: #dfd;
 }
 
-.add ins {
+.Line.add ins {
     background-color: #9e9;
     text-decoration: none;
 }
 
-.remove {
+.Line.remove {
     background-color: #fdd;
 }
 
-.remove del {
+.Line.remove del {
     background-color: #e99;
     text-decoration: none;
 }
@@ -395,7 +395,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=21"></script>
+<script src="code-review.js?version=22"></script>
 EOF
 
     def self.revisionOrDescription(string)
@@ -568,6 +568,38 @@ END
         end
     end
 
+    class DiffBlock
+        attr_accessor :parts
+
+        def initialize(container)
+            @parts = []
+            container << self
+        end
+
+        def to_html
+            str = "<div class='DiffBlock'>\n"
+            str += @parts.collect{ |part| part.to_html }.join
+            str += "</div>\n"
+        end
+    end
+
+    class DiffBlockPart
+        attr_reader :className
+        attr :lines
+
+        def initialize(className, container)
+            @className = className
+            @lines = []
+            container.parts << self
+        end
+
+        def to_html
+            str = "<div class='DiffBlockPart %s'>\n" % @className
+            str += @lines.collect{ |line| line.to_html }.join
+            str += "</div>\n"
+        end
+    end
+
     class DiffSection
         def initialize(lines)
             lines.length >= 1 or raise "DiffSection.parse only received %d lines" % lines.length
@@ -575,36 +607,58 @@ END
             matches = START_OF_SECTION_FORMAT.match(lines[0])
             from, to = [matches[1].to_i, matches[2].to_i] unless matches.nil?
 
-            @lines = lines[1...lines.length].collect do |line|
+            @blocks = []
+            diff_block = nil
+            diff_block_part = nil
+
+            for line in lines[1...lines.length]
                 startOfLine = line =~ /^[-\+ ]/ ? 1 : 0
                 text = line[startOfLine...line.length].chomp
                 case line[0]
                 when ?-
-                    result = CodeLine.new(from, nil, text)
+                    if (diff_block_part.nil? or diff_block_part.className != 'remove')
+                        diff_block = DiffBlock.new(@blocks)
+                        diff_block_part = DiffBlockPart.new('remove', diff_block)
+                    end
+
+                    diff_block_part.lines << CodeLine.new(from, nil, text)
                     from += 1 unless from.nil?
-                    result
                 when ?+
-                    result = CodeLine.new(nil, to, text)
+                    if (diff_block_part.nil? or diff_block_part.className != 'add')
+                        # Put add lines that immediately follow remove lines into the same DiffBlock.
+                        if (diff_block.nil? or diff_block_part.className != 'remove')
+                            diff_block = DiffBlock.new(@blocks)
+                        end
+
+                        diff_block_part = DiffBlockPart.new('add', diff_block)
+                    end
+
+                    diff_block_part.lines << CodeLine.new(nil, to, text)
                     to += 1 unless to.nil?
-                    result
                 else
-                    result = CodeLine.new(from, to, text)
+                    if (diff_block_part.nil? or diff_block_part.className != 'shared')
+                        diff_block = DiffBlock.new(@blocks)
+                        diff_block_part = DiffBlockPart.new('shared', diff_block)
+                    end
+
+                    diff_block_part.lines << CodeLine.new(from, to, text)
                     from += 1 unless from.nil?
                     to += 1 unless to.nil?
-                    result
                 end
             end
 
-            @lines.unshift(ContextLine.new(matches[3])) unless matches.nil? || matches[3].empty?
-
             changes = [ [ [], [] ] ]
-            for line in @lines
-                if (!line.fromLineNumber.nil? and !line.toLineNumber.nil?) then
-                    changes << [ [], [] ]
-                    next
+            for block in @blocks
+                for block_part in block.parts
+                    for line in block_part.lines
+                        if (!line.fromLineNumber.nil? and !line.toLineNumber.nil?) then
+                            changes << [ [], [] ]
+                            next
+                        end
+                        changes.last.first << line if line.toLineNumber.nil?
+                        changes.last.last << line if line.fromLineNumber.nil?
+                    end
                 end
-                changes.last.first << line if line.toLineNumber.nil?
-                changes.last.last << line if line.fromLineNumber.nil?
             end
 
             for change in changes
@@ -630,11 +684,13 @@ END
                     change.last[i].operations = operations
                 end
             end
+
+            @blocks.unshift(ContextLine.new(matches[3])) unless matches.nil? || matches[3].empty?
         end
 
         def to_html
             str = "<div class='DiffSection'>\n"
-            str += @lines.collect{ |line| line.to_html }.join
+            str += @blocks.collect{ |block| block.to_html }.join
             str += "</div>\n"
         end
         
@@ -666,7 +722,7 @@ END
         end
 
         def classes
-            lineClasses = ["Line"]
+            lineClasses = ["Line", "LineContainer"]
             lineClasses << ["add"] unless @toLineNumber.nil? or !@fromLineNumber.nil?
             lineClasses << ["remove"] unless @fromLineNumber.nil? or !@toLineNumber.nil?
             lineClasses

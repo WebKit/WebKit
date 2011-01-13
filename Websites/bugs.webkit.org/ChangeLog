@@ -1,3 +1,44 @@
+2011-01-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        add container divs for diff blocks
+        https://bugs.webkit.org/show_bug.cgi?id=52400
+
+        This will help simplify a lot of code in code-review.js
+        and make side-by-side diffs better (i.e. put removed lines
+        to the left of corresponding added lines).
+
+        Also, allow for running the JS from a local file. Now you can modify code-review.js
+        to point to a local file and then run:
+        ruby prettify.rb < foo.diff > foo.html
+
+        foo.html will load a dummy code review matching foo.diff.
+
+        Before structure:
+        Line
+        Line remove
+        Line add
+        Line add
+        Line
+
+        After structure:
+        DiffBlock
+          DiffBlockPart shared
+            Line shared
+        DiffBlock
+          DiffBlockPart remove
+            Line remove
+          DiffBlockPart add
+            Line add
+            Line add
+        DiffBlock
+          DiffBlockPart shared
+            Line shared
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2011-01-12  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Mihai Parparita.

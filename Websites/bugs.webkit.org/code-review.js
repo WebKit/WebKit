@@ -53,11 +53,14 @@
   // Attempt to activate only in the "Review Patch" context.
   if (window.top != window)
     return;
-  if (!window.location.search.match(/action=review/))
+
+  if (!window.location.search.match(/action=review/)
+      && !window.location.toString().match(/bugs\.webkit\.org\/PrettyPatch/))
     return;
+
   var attachment_id = determineAttachmentID();
   if (!attachment_id)
-    return;
+    console.log('No attachment ID');
 
   var next_line_id = 0;
   var files = {};
@@ -82,10 +85,6 @@
 
   function idify() {
     this.id = nextLineID();
-  }
-
-  function containerify() {
-    $(this).addClass('LineContainer');
   }
 
   function hoverify() {
@@ -314,7 +313,7 @@
   }
 
   function crawlDiff() {
-    $('.Line').each(idify).each(hoverify).each(containerify);
+    $('.Line').each(idify).each(hoverify);
     $('.FileDiff').each(function() {
       var file_name = $(this).children('h1').text();
       files[file_name] = this;
@@ -1086,7 +1085,7 @@
   }
 
   $('.lineNumber').live('click', function() {
-    var line = $(this).parent();
+    var line = $(this).parents('.Line');
     if (line.hasClass('commentContext'))
       trimCommentContextToBefore(previousLineFor(line));
   }).live('mousedown', function() {
