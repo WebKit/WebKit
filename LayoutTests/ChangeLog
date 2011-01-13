@@ -1,3 +1,13 @@
+2011-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/8858548> Disable inheritance of text emphasis marks to ruby text
+        https://bugs.webkit.org/show_bug.cgi?id=52359
+
+        * fast/ruby/text-emphasis-expected.txt: Added.
+        * fast/ruby/text-emphasis.html: Added.
+
 2011-01-13  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed, chromium test expectations.
