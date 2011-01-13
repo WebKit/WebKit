@@ -447,9 +447,7 @@ void HTMLInputElement::updateType()
     bool neededActivationCallback = needsActivationCallback();
     bool didRespectHeightAndWidth = m_inputType->shouldRespectHeightAndWidthAttributes();
 
-    m_inputType->destroyShadowSubtree();
     m_inputType = newType.release();
-    m_inputType->createShadowSubtree();
 
     setNeedsWillValidateCheck();
 

@@ -33,9 +33,8 @@
 #define SliderThumbElement_h
 
 #include "FloatPoint.h"
-#include "HTMLDivElement.h"
-#include "HTMLNames.h"
 #include "RenderStyleConstants.h"
+#include "ShadowElement.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -44,9 +43,9 @@ class HTMLElement;
 class Event;
 class FloatPoint;
 
-class SliderThumbElement : public HTMLDivElement {
+class SliderThumbElement : public ShadowBlockElement {
 public:
-    static PassRefPtr<SliderThumbElement> create(Document*);
+    static PassRefPtr<SliderThumbElement> create(HTMLElement* shadowParent);
 
     bool inDragMode() const { return m_inDragMode; }
 
@@ -54,23 +53,22 @@ public:
     virtual void detach();
     virtual AtomicString shadowPseudoId() const;
 
-private:
-    SliderThumbElement(Document*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+private:        
+    SliderThumbElement(HTMLElement* shadowParent);
 
     FloatPoint m_offsetToThumb;
     bool m_inDragMode;
 };
 
-inline SliderThumbElement::SliderThumbElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document)
+inline SliderThumbElement::SliderThumbElement(HTMLElement* shadowParent)
+    : ShadowBlockElement(shadowParent)
     , m_inDragMode(false)
 {
 }
 
-inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document* document)
+inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(HTMLElement* shadowParent)
 {
-    return adoptRef(new SliderThumbElement(document));
+    return adoptRef(new SliderThumbElement(shadowParent));
 }
 
 inline AtomicString SliderThumbElement::shadowPseudoId() const
@@ -79,12 +77,7 @@ inline AtomicString SliderThumbElement::shadowPseudoId() const
     return sliderThumb;
 }
 
-inline SliderThumbElement* toSliderThumbElement(Node* node)
-{
-    ASSERT(!node || node->isHTMLElement());
-    return static_cast<SliderThumbElement*>(node);
 }
 
-}
 
 #endif

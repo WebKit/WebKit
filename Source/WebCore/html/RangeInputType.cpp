@@ -37,7 +37,6 @@
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "RenderSlider.h"
-#include "SliderThumbElement.h"
 #include "StepRange.h"
 #include <limits>
 #include <wtf/MathExtras.h>
@@ -185,11 +184,6 @@ void RangeInputType::forwardEvent(Event* event)
 {
     if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent()))
         toRenderSlider(element()->renderer())->forwardEvent(event);
-}
-
-void RangeInputType::createShadowSubtree()
-{
-    element()->setShadowRoot(SliderThumbElement::create(element()->document()));
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const

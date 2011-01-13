@@ -1,3 +1,45 @@
+2011-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r75725.
+        http://trac.webkit.org/changeset/75725
+        https://bugs.webkit.org/show_bug.cgi?id=52317
+
+        Caused crashes in layout tests.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        * html/InputType.cpp:
+        * html/InputType.h:
+        * html/RangeInputType.cpp:
+        * html/RangeInputType.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::defaultEventHandler):
+        (WebCore::SliderThumbElement::detach):
+        * html/shadow/SliderThumbElement.h:
+        (WebCore::SliderThumbElement::SliderThumbElement):
+        (WebCore::SliderThumbElement::create):
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::attach):
+        (WebCore::MediaControlInputElement::updateStyle):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::~RenderSlider):
+        (WebCore::RenderSlider::styleDidChange):
+        (WebCore::RenderSlider::createThumbStyle):
+        (WebCore::RenderSlider::thumbRect):
+        (WebCore::RenderSlider::layout):
+        (WebCore::RenderSlider::updateFromElement):
+        (WebCore::RenderSlider::mouseEventIsInThumb):
+        (WebCore::RenderSlider::mouseEventOffsetToThumb):
+        (WebCore::RenderSlider::setValueForPosition):
+        (WebCore::RenderSlider::positionForOffset):
+        (WebCore::RenderSlider::currentPosition):
+        (WebCore::RenderSlider::trackSize):
+        (WebCore::RenderSlider::forwardEvent):
+        (WebCore::RenderSlider::inDragMode):
+        * rendering/RenderSlider.h:
+
 2011-01-12  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

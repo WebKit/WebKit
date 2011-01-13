@@ -171,12 +171,6 @@ public:
     virtual void accessKeyAction(bool sendToAnyElement);
     virtual bool canBeSuccessfulSubmitButton();
 
-
-    // Shadow tree handling
-
-    virtual void createShadowSubtree();
-    void destroyShadowSubtree();
-
     // Miscellaneous functions
 
     virtual bool rendererIsNeeded();
