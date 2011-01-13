@@ -1,3 +1,13 @@
+2011-01-13  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Attempt to fix crash in tiled compositor memcpy
+        https://bugs.webkit.org/show_bug.cgi?id=52379
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::update):
+
 2011-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r75725.

@@ -315,12 +315,18 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
             IntRect sourceRect = tileContentRect(i, j);
             const IntPoint anchor = sourceRect.location();
             sourceRect.intersect(layerRectToContentRect(tile->m_dirtyLayerRect));
+            if (sourceRect.isEmpty())
+                continue;
 
             // Calculate tile-space rectangle to upload into.
             IntRect destRect(IntPoint(sourceRect.x() - anchor.x(), sourceRect.y() - anchor.y()), sourceRect.size());
+            ASSERT(destRect.x() >= 0);
+            ASSERT(destRect.y() >= 0);
 
             // Offset from paint rectangle to this tile's dirty rectangle.
             IntPoint paintOffset(sourceRect.x() - paintRect.x(), sourceRect.y() - paintRect.y());
+            ASSERT(paintOffset.x() >= 0);
+            ASSERT(paintOffset.y() >= 0);
 
             uint8_t* pixelSource;
             if (paintRect.width() == sourceRect.width() && !paintOffset.x())
