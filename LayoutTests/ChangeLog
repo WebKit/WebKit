@@ -1,3 +1,11 @@
+2011-01-12  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed chromium test expectations fix.
+
+        Disable canvas-large-dimensions.html after r75639.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-11  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
