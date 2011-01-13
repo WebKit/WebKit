@@ -3098,3 +3098,6 @@ BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
 
 // Started failing after r75648 on everything except Snow Leopard
 BUGWK52341 : fast/canvas/canvas-large-dimensions.html = TEXT
+
+// Flaky since r75638
+BUGCR69513 : html5lib/webkit-resumer.html = TIMEOUT PASS TEXT

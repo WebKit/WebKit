@@ -1,3 +1,11 @@
+2011-01-13  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, chromium test expectations.
+
+        Flaky expectations for html5lib/webkit-resumer.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-12  Adam Barth  <abarth@webkit.org>
 
         Removing this test from the Skipped list caused the next test
