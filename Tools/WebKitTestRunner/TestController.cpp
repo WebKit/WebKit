@@ -272,7 +272,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didFinishProgress
         0, // didBecomeUnresponsive
         0, // didBecomeResponsive
-        0, // processDidExit
+        processDidCrash, // processDidCrash
         0 // didChangeBackForwardList
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
@@ -395,6 +395,11 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didFinishLoadForFrame(page, frame);
 }
 
+void TestController::processDidCrash(WKPageRef page, const void* clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->processDidCrash(page);
+}
+
 void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
 {
     if (m_state != Resetting)
@@ -409,6 +414,12 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
 
     m_doneResetting = true;
     shared().notifyDone();
+}
+
+void TestController::processDidCrash(WKPageRef page)
+{
+    fputs("#CRASHED - WebProcess\n", stderr);
+    fflush(stderr);
 }
 
 } // namespace WTR

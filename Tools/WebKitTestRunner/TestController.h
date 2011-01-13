@@ -82,6 +82,9 @@ private:
     static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void*);
     void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame);
 
+    static void processDidCrash(WKPageRef, const void* clientInfo);
+    void processDidCrash(WKPageRef);
+
 
     OwnPtr<TestInvocation> m_currentInvocation;
 

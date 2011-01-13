@@ -113,7 +113,7 @@ sub splitpath($);
 sub stopRunningTestsEarlyIfNeeded();
 sub stripExtension($);
 sub stripMetrics($$);
-sub testCrashedOrTimedOut($$$$$);
+sub testCrashedOrTimedOut($$$$$$);
 sub toCygwinPath($);
 sub toURL($);
 sub toWindowsPath($);
@@ -806,8 +806,9 @@ for my $test (@tests) {
 
     unless ($readResults->{status} eq "success") {
         my $crashed = $readResults->{status} eq "crashed";
-        testCrashedOrTimedOut($test, $base, $crashed, $actual, $error);
-        countFinishedTest($test, $base, $crashed ? "crash" : "timedout", 0);
+        my $webProcessCrashed = $readResults->{status} eq "webProcessCrashed";
+        testCrashedOrTimedOut($test, $base, $crashed, $webProcessCrashed, $actual, $error);
+        countFinishedTest($test, $base, $webProcessCrashed ? "webProcessCrash" : $crashed ? "crash" : "timedout", 0);
         last if stopRunningTestsEarlyIfNeeded();
         next;
     }
@@ -916,7 +917,7 @@ for my $test (@tests) {
 
     if (dumpToolDidCrash()) {
         $result = "crash";
-        testCrashedOrTimedOut($test, $base, 1, $actual, $error);
+        testCrashedOrTimedOut($test, $base, 1, 0, $actual, $error);
     } elsif (!defined $expected) {
         if ($verbose) {
             print "new " . ($resetResults ? "result" : "test");
@@ -1139,6 +1140,7 @@ if ($ignoreMetrics) {
 print HTML htmlForResultsSection(@{$tests{mismatch}}, "Tests where results did not match expected results", \&linksForMismatchTest);
 print HTML htmlForResultsSection(@{$tests{timedout}}, "Tests that timed out", \&linksForErrorTest);
 print HTML htmlForResultsSection(@{$tests{crash}}, "Tests that caused the DumpRenderTree tool to crash", \&linksForErrorTest);
+print HTML htmlForResultsSection(@{$tests{webProcessCrash}}, "Tests that caused the Web process to crash", \&linksForErrorTest);
 print HTML htmlForResultsSection(@{$tests{error}}, "Tests that had stderr output", \&linksForErrorTest);
 print HTML htmlForResultsSection(@{$tests{new}}, "Tests that had no expected results (probably new)", \&linksForNewTest);
 
@@ -1702,13 +1704,13 @@ sub countFinishedTest($$$$)
     push @{$tests{$result}}, $test;
 }
 
-sub testCrashedOrTimedOut($$$$$)
+sub testCrashedOrTimedOut($$$$$$)
 {
-    my ($test, $base, $didCrash, $actual, $error) = @_;
+    my ($test, $base, $didCrash, $webProcessCrashed, $actual, $error) = @_;
 
-    printFailureMessageForTest($test, $didCrash ? "crashed" : "timed out");
+    printFailureMessageForTest($test, $webProcessCrashed ? "Web process crashed" : $didCrash ? "crashed" : "timed out");
 
-    sampleDumpTool() unless $didCrash;
+    sampleDumpTool() unless $didCrash || $webProcessCrashed;
 
     my $dir = dirname(File::Spec->catdir($testResultsDirectory, $base));
     mkpath $dir;
@@ -2157,6 +2159,10 @@ sub readFromDumpToolWithTimer(**)
             }
         }
         if (defined($lineError)) {
+            if ($lineError =~ /#CRASHED - WebProcess/) {
+                $status = "webProcessCrashed";
+                last;
+            }
             if ($lineError =~ /#CRASHED/) {
                 $status = "crashed";
                 last;
@@ -2394,10 +2400,11 @@ sub printResults
         new => "were new",
         timedout => "timed out",
         crash => "crashed",
+        webProcessCrash => "Web process crashed",
         error => "had stderr output"
     );
 
-    for my $type ("match", "mismatch", "new", "timedout", "crash", "error") {
+    for my $type ("match", "mismatch", "new", "timedout", "crash", "webProcessCrash", "error") {
         my $typeCount = $counts{$type};
         next unless $typeCount;
         my $typeText = $text{$type};

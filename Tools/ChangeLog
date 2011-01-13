@@ -1,3 +1,19 @@
+2011-01-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Detect, identify and recover from WebProcess crashes in run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=52330
+
+        * Scripts/old-run-webkit-tests: Detect when the regression test tool reports
+        a web process crash.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Set up a processDidCrash
+        callback.
+        (WTR::TestController::processDidCrash): Report that the Web process
+        crashed.
+        * WebKitTestRunner/TestController.h:
+
 2011-01-12  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
