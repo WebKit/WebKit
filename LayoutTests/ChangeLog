@@ -1,3 +1,12 @@
+2011-01-13  Adam Roben  <aroben@apple.com>
+
+        Skip a crashing test on Windows
+
+        See <http://webkit.org/b/52397>.
+
+        * platform/win/Skipped: Added
+        compositing/reflections/load-video-in-reflection.html.
+
 2011-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         Skip fast/text/emphasis.html as it shows a 1 pixel difference on the 32-bit Debug bot.
