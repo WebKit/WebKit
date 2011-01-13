@@ -751,6 +751,21 @@ bool Node::hasNonEmptyBoundingBox() const
     return false;
 }
 
+void Node::setDocumentRecursively(Document* document)
+{
+    // FIXME: To match Gecko, we should do this for nodes that are already in the document as well.
+    if (this->document() == document || this->inDocument())
+        return;
+
+    for (Node* node = this; node; node = node->traverseNextNode(this)) {
+        node->setDocument(document);
+        if (!node->isElementNode())
+            continue;
+        if (Node* shadow = toElement(node)->shadowRoot())
+            shadow->setDocumentRecursively(document);
+    }
+}
+
 inline void Node::setStyleChange(StyleChangeType changeType)
 {
     m_nodeFlags = (m_nodeFlags & ~StyleChangeMask) | changeType;
@@ -993,7 +1008,7 @@ void Node::removeCachedLabelsNodeList(DynamicNodeList* list)
     data->m_labelsNodeListCache = 0;
 }
 
-Node *Node::traverseNextNode(const Node *stayWithin) const
+Node* Node::traverseNextNode(const Node* stayWithin) const
 {
     if (firstChild())
         return firstChild();
@@ -1009,7 +1024,7 @@ Node *Node::traverseNextNode(const Node *stayWithin) const
     return 0;
 }
 
-Node *Node::traverseNextSibling(const Node *stayWithin) const
+Node* Node::traverseNextSibling(const Node* stayWithin) const
 {
     if (this == stayWithin)
         return 0;
@@ -1033,7 +1048,7 @@ Node* Node::traverseNextNodePostOrder() const
     return next;
 }
 
-Node *Node::traversePreviousNode(const Node *stayWithin) const
+Node* Node::traversePreviousNode(const Node* stayWithin) const
 {
     if (this == stayWithin)
         return 0;
@@ -1046,7 +1061,7 @@ Node *Node::traversePreviousNode(const Node *stayWithin) const
     return parentNode();
 }
 
-Node *Node::traversePreviousNodePostOrder(const Node *stayWithin) const
+Node* Node::traversePreviousNodePostOrder(const Node* stayWithin) const
 {
     if (lastChild())
         return lastChild();
@@ -1158,15 +1173,6 @@ static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
     }
 }
 
-static void transferOwnerDocument(Document* newDocument, Node* root)
-{
-    // FIXME: To match Gecko, we should do this for nodes that are already in the document as well.
-    if (root->document() != newDocument && !root->inDocument()) {
-        for (Node* node = root; node; node = node->traverseNextNode(root))
-            node->setDocument(newDocument);
-    }
-}
-
 void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
 {
     checkAcceptChild(this, newChild, ec);
@@ -1178,7 +1184,7 @@ void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
         return;
     }
 
-    transferOwnerDocument(document(), newChild);
+    newChild->setDocumentRecursively(document());
 }
 
 void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
@@ -1192,7 +1198,7 @@ void Node::checkAddChild(Node *newChild, ExceptionCode& ec)
         return;
     }
 
-    transferOwnerDocument(document(), newChild);
+    newChild->setDocumentRecursively(document());
 }
 
 bool Node::isDescendantOf(const Node *other) const

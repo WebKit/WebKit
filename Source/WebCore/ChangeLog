@@ -1,3 +1,32 @@
+2011-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Transferring nodes between documents should be aware of the shadow DOM.
+        https://bugs.webkit.org/show_bug.cgi?id=52399
+
+        No visible change in behavior at the moment.
+
+        Once https://bugs.webkit.org/show_bug.cgi?id=52317 lands, the following
+        tests should no longer crash:
+        * fast/css/pseudo-in-range-invalid-value.html
+        * fast/css/pseudo-in-range.html
+        * fast/forms/form-collection-elements.html
+        * fast/forms/range-keyoperation.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode): Changed to use Node::setDocumentRecursively.
+        * dom/Node.cpp:
+        (WebCore::Node::setDocumentRecursively): Added new method, taking existing
+            logic and adding shadow DOM traversal.
+        (WebCore::Node::traverseNextNode): Style fix.
+        (WebCore::Node::traverseNextSibling): Ditto.
+        (WebCore::Node::traversePreviousNode): Ditto.
+        (WebCore::Node::traversePreviousNodePostOrder): Ditto.
+        (WebCore::Node::checkReplaceChild): Changed to use setDocumentRecursively.
+        (WebCore::Node::checkAddChild): Ditto.
+        * dom/Node.h: Added def.
+
 2011-01-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

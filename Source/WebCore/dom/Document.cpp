@@ -909,9 +909,8 @@ PassRefPtr<Node> Document::adoptNode(PassRefPtr<Node> source, ExceptionCode& ec)
         if (source->parentNode())
             source->parentNode()->removeChild(source.get(), ec);
     }
-                
-    for (Node* node = source.get(); node; node = node->traverseNextNode(source.get()))
-        node->setDocument(this);
+
+    source->setDocumentRecursively(this);
 
     return source;
 }
