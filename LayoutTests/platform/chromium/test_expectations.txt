@@ -97,6 +97,7 @@ BUGCR18702 WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PA
 BUGCR36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
 
 BUGCR32018 SLOW : http/tests/websocket/tests/frame-lengths.html = PASS
+BUGCR69513 DEBUG SLOW : html5lib/webkit-resumer.html = PASS
 
 // -----------------------------------------------------------------
 // SKIPPED TESTS
@@ -3096,6 +3097,3 @@ BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
 
 // Started failing after r75648 on everything except Snow Leopard
 BUGWK52341 : fast/canvas/canvas-large-dimensions.html = TEXT
-
-// Flaky since r75638
-BUGCR69513 : html5lib/webkit-resumer.html = TIMEOUT PASS TEXT

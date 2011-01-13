@@ -1,3 +1,9 @@
+2011-01-13  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, updating chromium test_expectations.txt
+
+        * platform/chromium/test_expectations.txt: Mark a test as slow in debug.
+
 2011-01-13  Adam Roben  <aroben@apple.com>
 
         Check in Windows-XP-specific results for fast/canvas/set-colors.html
