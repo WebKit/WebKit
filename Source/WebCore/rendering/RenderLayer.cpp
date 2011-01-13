@@ -3483,7 +3483,7 @@ bool RenderLayer::hasCompositedMask() const
 bool RenderLayer::paintsWithTransform(PaintBehavior paintBehavior) const
 {
 #if USE(ACCELERATED_COMPOSITING)
-    assert(backing());
+    ASSERT(backing());
     bool paintsToWindow = !isComposited() || backing()->paintingGoesToWindow();
 #else
     bool paintsToWindow = true;

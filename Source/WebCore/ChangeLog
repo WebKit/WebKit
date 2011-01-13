@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        Another fix for Gtk
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintsWithTransform):
+
+2011-01-12  Chris Marrin  <cmarrin@apple.com>
+
+        Unreviewed.
+
         Fix for Gtk and Windows builds
 
         * page/Frame.cpp:
