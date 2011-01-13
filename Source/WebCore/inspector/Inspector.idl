@@ -37,7 +37,6 @@ module core {
         ///////////////////////////////////////////////////////////////////////
 
         // HUGE FIXME: we need to expose InjectedScript methods here. Or document InjectedScript capabilities.
-        [domain=Inspector] void setInjectedScriptSource(in String scriptSource);
         [domain=Inspector] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
         [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
         [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();

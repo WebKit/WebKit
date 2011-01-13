@@ -574,6 +574,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\InjectedScriptSource.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSAbstractWorker.cpp"
 				>
 				<FileConfiguration
@@ -65362,10 +65366,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\InjectedFakeWorker.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\InjectedScript.js"
 					>
 				</File>
 				<File

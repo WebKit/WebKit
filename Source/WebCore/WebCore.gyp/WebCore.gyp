@@ -333,6 +333,29 @@
       ]
     },
     {
+      'target_name': 'injected_script_source',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'generateInjectedScriptSource',
+          'inputs': [
+            '../inspector/InjectedScriptSource.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptSource.h',
+          ],
+          'action': [
+            'perl',
+            '../inspector/xxd.pl',
+            'InjectedScriptSource_js',
+            '../inspector/InjectedScriptSource.js',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptSource.h'
+          ],
+          'message': 'Generating InjectedScriptSource.h from InjectedScriptSource.js',
+        },
+      ]
+    },
+    {
       'target_name': 'webcore_bindings_sources',
       'type': 'none',
       'hard_dependency': 1,
@@ -723,6 +746,7 @@
       'dependencies': [
         'webcore_bindings_sources',
         'inspector_protocol_sources',
+        'injected_script_source',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:pcre',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',

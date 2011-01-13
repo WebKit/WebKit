@@ -199,8 +199,7 @@ InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* scriptState)
     if (!canAccessInspectedWindow(scriptState))
         return InjectedScript();
 
-    ASSERT(!m_injectedScriptSource.isEmpty()); 
-    pair<long, ScriptObject> injectedScriptObject = injectScript(m_injectedScriptSource, scriptState);
+    pair<long, ScriptObject> injectedScriptObject = injectScript(injectedScriptSource(), scriptState);
     globalObject->setInjectedScript(injectedScriptObject.second.jsObject());
     InjectedScript result(injectedScriptObject.second);
     m_idToInjectedScript.set(injectedScriptObject.first, result);

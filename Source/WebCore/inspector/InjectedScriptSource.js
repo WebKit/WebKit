@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var injectedScriptConstructor = (function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
+(function (InjectedScriptHost, inspectedWindow, injectedScriptId) {
 
 var InjectedScript = function()
 {
@@ -713,4 +713,5 @@ CommandLineAPI.prototype = {
 
 injectedScript._commandLineAPI = new CommandLineAPI();
 return injectedScript;
-});
+})
+

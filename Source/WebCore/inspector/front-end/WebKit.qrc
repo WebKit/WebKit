@@ -51,7 +51,6 @@
     <file>HelpScreen.js</file>
     <file>ImageView.js</file>
     <file>InjectedFakeWorker.js</file>
-    <file>InjectedScript.js</file>
     <file>InjectedScriptAccess.js</file>
     <file>inspector.js</file>
     <file>InspectorFrontendHostStub.js</file>

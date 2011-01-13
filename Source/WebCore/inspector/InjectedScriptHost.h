@@ -58,9 +58,6 @@ public:
 
     ~InjectedScriptHost();
 
-    String injectedScriptSource() { return m_injectedScriptSource; }
-    void setInjectedScriptSource(const String& source) { m_injectedScriptSource = source; }
-
     InspectorController* inspectorController() { return m_inspectorController; }
     void disconnectController() { m_inspectorController = 0; }
 
@@ -96,11 +93,11 @@ private:
     InjectedScriptHost(InspectorController* inspectorController);
     InspectorDOMAgent* inspectorDOMAgent();
     InspectorFrontend* frontend();
+    String injectedScriptSource();
     ScriptObject createInjectedScript(const String& source, ScriptState* scriptState, long id);
     void discardInjectedScript(ScriptState*);
 
     InspectorController* m_inspectorController;
-    String m_injectedScriptSource;
     long m_nextInjectedScriptId;
     long m_lastWorkerId;
     typedef HashMap<long, InjectedScript> IdToInjectedScriptMap;

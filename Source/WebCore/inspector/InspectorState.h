@@ -56,7 +56,6 @@ public:
         consoleMessagesEnabled,
         userInitiatedProfiling,
         stickyBreakpoints,
-        injectedScriptSource,
         lastPropertyId
     };
 

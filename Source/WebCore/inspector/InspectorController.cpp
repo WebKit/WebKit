@@ -230,10 +230,6 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
 {
     m_state->restoreFromInspectorCookie(inspectorStateCookie);
 
-    String injectedScriptSource = m_state->getString(InspectorState::injectedScriptSource);
-    if (!injectedScriptSource.isEmpty())
-        injectedScriptHost()->setInjectedScriptSource(injectedScriptSource);
-
     if (!m_frontend)
         connectFrontend();
 
@@ -1341,12 +1337,6 @@ bool InspectorController::hasXHRBreakpoint(const String& url, String* breakpoint
 }
 
 #endif
-
-void InspectorController::setInjectedScriptSource(const String& source)
-{
-     injectedScriptHost()->setInjectedScriptSource(source);
-     m_state->setString(InspectorState::injectedScriptSource, source);
-}
 
 void InspectorController::dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException)
 {

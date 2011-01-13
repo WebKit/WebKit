@@ -1,3 +1,45 @@
+2011-01-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: embed injected script into the backend.
+        https://bugs.webkit.org/show_bug.cgi?id=52312
+
+        InjectedScript belongs to the backend of the system and
+        should be exposed by means of protocol, not InjectedScriptAccess.
+        This patch makes injected script a part of the backend.
+        It introduces single manual generation step (xxd -i) that should be
+        automated by the build scripts for all the platforms.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::InjectedScriptHost::injectedScriptFor):
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::injectedScriptSource):
+        * inspector/InjectedScriptHost.h:
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        * inspector/InspectorState.h:
+        * inspector/front-end/InjectedScript.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone.propertyNamesCallback):
+        (WebInspector.doLoadedDone):
+        * inspector/xxd.pl: Added.
+
 2011-01-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Timothy Hatcher.

@@ -866,6 +866,11 @@ INSPECTOR_GENERATOR_SCRIPTS = $(GENERATE_SCRIPTS) inspector/CodeGeneratorInspect
 InspectorFrontend.h : Inspector.idl $(INSPECTOR_GENERATOR_SCRIPTS)
 	$(call generator_script, $(INSPECTOR_GENERATOR_SCRIPTS)) --outputDir . --defines "$(FEATURE_DEFINES) LANGUAGE_JAVASCRIPT" --generator Inspector $<
 
+all : InjectedScriptSource.h
+
+InjectedScriptSource.h : InjectedScriptSource.js
+	perl $(WebCore)/inspector/xxd.pl InjectedScriptSource_js $(WebCore)/inspector/InjectedScriptSource.js InjectedScriptSource.h
+
 -include $(JS_DOM_HEADERS:.h=.dep)
 
 ifeq ($(findstring BUILDING_WX,$(FEATURE_DEFINES)), BUILDING_WX)

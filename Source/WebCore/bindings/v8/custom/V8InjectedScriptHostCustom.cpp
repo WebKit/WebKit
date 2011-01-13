@@ -241,8 +241,7 @@ InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState* inspectedScrip
     if (!canAccessInspectedWindow(inspectedScriptState))
         return InjectedScript();
 
-    ASSERT(!m_injectedScriptSource.isEmpty());
-    pair<long, ScriptObject> injectedScript = injectScript(m_injectedScriptSource, inspectedScriptState);
+    pair<long, ScriptObject> injectedScript = injectScript(injectedScriptSource(), inspectedScriptState);
     InjectedScript result(injectedScript.second);
     m_idToInjectedScript.set(injectedScript.first, result);
     global->SetHiddenValue(key, injectedScript.second.v8Object());

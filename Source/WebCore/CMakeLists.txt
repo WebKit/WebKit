@@ -2099,6 +2099,15 @@ ADD_CUSTOM_COMMAND(
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/InspectorBackendDispatcher.cpp ${DERIVED_SOURCES_DIR}/InspectorFrontend.cpp)
 
 
+# Generate InjectedScriptSource.h
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_DIR}/InjectedScriptSource.h
+    MAIN_DEPENDENCY inspector/InjectedScriptSource.js
+    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/inspector/xxd.pl InjectedScriptSource_js ${WEBCORE_DIR}/inspector/InjectedScriptSource.js ${DERIVED_SOURCES_DIR}/InjectedScriptSource.h
+    VERBATIM)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/InjectedScriptSource.h)
+
+
 MAKE_HASH_TOOLS(${WEBCORE_DIR}/platform/ColorData)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/ColorData.cpp)
 

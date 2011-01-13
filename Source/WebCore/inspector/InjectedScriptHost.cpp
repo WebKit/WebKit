@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "InjectedScriptHost.h"
+#include "InjectedScriptSource.h"
 #include "InspectorDatabaseAgent.h"
 #include "InspectorDOMStorageAgent.h"
 
@@ -180,6 +181,11 @@ InspectorFrontend* InjectedScriptHost::frontend()
     if (!m_inspectorController)
         return 0;
     return m_inspectorController->m_frontend.get();
+}
+
+String InjectedScriptHost::injectedScriptSource()
+{
+    return String(reinterpret_cast<char*>(InjectedScriptSource_js), sizeof(InjectedScriptSource_js));
 }
 
 pair<long, ScriptObject> InjectedScriptHost::injectScript(const String& source, ScriptState* scriptState)

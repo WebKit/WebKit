@@ -492,7 +492,6 @@ WebInspector.loaded = function()
 
 WebInspector.doLoadedDone = function()
 {
-    InspectorBackend.setInjectedScriptSource("(" + injectedScriptConstructor + ");");
     InspectorFrontendHost.loaded();
 
     var platform = WebInspector.platform;
@@ -618,7 +617,6 @@ WebInspector.doLoadedDone = function()
     {
         WebInspector.cssNameCompletions = new WebInspector.CSSCompletions(names);
     }
-
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
     InspectorBackend.getSupportedCSSProperties(propertyNamesCallback);
 }
