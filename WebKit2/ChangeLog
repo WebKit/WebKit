@@ -1,5 +1,24 @@
 2011-01-12  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Implement DrawingAreaImpl::scroll
+        https://bugs.webkit.org/show_bug.cgi?id=52346
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scroll):
+        If there is already an active scroll, compute the area of both scroll rects and
+        invalidate the smallest one. Compute a new dirty region if necessary and also
+        add the scroll repaint region to the dirty region.
+
+        (WebKit::DrawingAreaImpl::display):
+        Reset the scroll area and scroll delta.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Add scroll area and scroll delta member variables.
+
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Region improvements

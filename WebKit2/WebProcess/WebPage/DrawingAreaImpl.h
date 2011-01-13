@@ -61,7 +61,9 @@ private:
     void display(UpdateInfo&);
 
     Region m_dirtyRegion;
-
+    WebCore::IntRect m_scrollRect;
+    WebCore::IntSize m_scrollDelta;
+    
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.
     bool m_isWaitingForDidUpdate;

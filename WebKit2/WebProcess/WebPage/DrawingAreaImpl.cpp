@@ -67,6 +67,46 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 
 void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
+    if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
+        unsigned long long scrollArea = scrollRect.width() * scrollRect.height();
+        unsigned long long currentScrollArea = m_scrollRect.width() * m_scrollRect.height();
+
+        if (currentScrollArea > scrollArea) {
+            // The rect being scrolled has a greater area than the rect we'd like to scroll.
+            // Go ahead and just invalidate the scroll rect.
+            setNeedsDisplay(scrollRect);
+            return;
+        }
+
+        ASSERT(scrollArea > currentScrollArea);
+
+        // Just repaint the entire current scroll rect, we'll scroll the new rect instead.
+        setNeedsDisplay(m_scrollRect);
+        m_scrollRect = IntRect();
+        m_scrollDelta = IntSize();
+    }
+
+    // Get the part of the dirty region that is in the scroll rect.
+    Region dirtyRegionInScrollRect = intersect(scrollRect, m_dirtyRegion);
+    if (!dirtyRegionInScrollRect.isEmpty()) {
+        // There are parts of the dirty region that are inside the scroll rect.
+        // We need to subtract them from the region, move them and re-add them.
+        m_dirtyRegion.subtract(scrollRect);
+
+        // Move the dirty parts.
+        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollDelta), scrollRect);
+
+        // And add them back.
+        m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
+    } 
+    
+    // Compute the scroll repaint region.
+    Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollDelta));
+
+    m_dirtyRegion.unite(scrollRepaintRegion);
+
+    m_scrollRect = scrollRect;
+    m_scrollDelta += scrollDelta;
 }
 
 void DrawingAreaImpl::attachCompositingContext()
@@ -150,7 +190,9 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     Vector<IntRect> rects = m_dirtyRegion.rects();
 
     m_dirtyRegion = Region();
-
+    m_scrollRect = IntRect();
+    m_scrollDelta = IntSize();
+    
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
     if (!bitmap->createHandle(updateInfo.bitmapHandle))
         return;
