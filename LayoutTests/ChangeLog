@@ -1,3 +1,11 @@
+2011-01-13  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        Exclude destroy-on-setwindow.html (added in r75720).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-13  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
