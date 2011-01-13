@@ -147,6 +147,7 @@ DOM_CLASSES = \
     DOMStringMap \
     DOMSettableTokenList \
     DOMTokenList \
+    DOMURL \
     DOMWindow \
     Database \
     DatabaseCallback \

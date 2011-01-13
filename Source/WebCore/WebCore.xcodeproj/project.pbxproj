@@ -703,6 +703,10 @@
 		2E2D99EA10E2BC3800496337 /* DOMBlobInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E910E2BC3800496337 /* DOMBlobInternal.h */; };
 		2E2D99EB10E2BD3900496337 /* DOMBlob.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E510E2BC1C00496337 /* DOMBlob.h */; };
 		2E2D99EC10E2BD3900496337 /* DOMBlobInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E910E2BC3800496337 /* DOMBlobInternal.h */; };
+		2E37DFDA12DBAFB800A6B233 /* DOMURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E37DFD712DBAFB800A6B233 /* DOMURL.cpp */; };
+		2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E37DFD812DBAFB800A6B233 /* DOMURL.h */; };
+		2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E37E00312DBC5A400A6B233 /* JSDOMURL.cpp */; };
+		2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E37E00412DBC5A400A6B233 /* JSDOMURL.h */; };
 		2E3BBF071162DA1100B9409A /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E3BBF051162DA1100B9409A /* UUID.cpp */; };
 		2E3BBF081162DA1100B9409A /* UUID.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E3BBF061162DA1100B9409A /* UUID.h */; };
 		2E3BC0CA117D3E0800B9409A /* JSFileError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E3BC0C8117D3E0800B9409A /* JSFileError.cpp */; };
@@ -7012,6 +7016,11 @@
 		2E2D99E510E2BC1C00496337 /* DOMBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMBlob.h; sourceTree = "<group>"; };
 		2E2D99E610E2BC1C00496337 /* DOMBlob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMBlob.mm; sourceTree = "<group>"; };
 		2E2D99E910E2BC3800496337 /* DOMBlobInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMBlobInternal.h; sourceTree = "<group>"; };
+		2E37DFD712DBAFB800A6B233 /* DOMURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMURL.cpp; sourceTree = "<group>"; };
+		2E37DFD812DBAFB800A6B233 /* DOMURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMURL.h; sourceTree = "<group>"; };
+		2E37DFD912DBAFB800A6B233 /* DOMURL.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMURL.idl; sourceTree = "<group>"; };
+		2E37E00312DBC5A400A6B233 /* JSDOMURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMURL.cpp; sourceTree = "<group>"; };
+		2E37E00412DBC5A400A6B233 /* JSDOMURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMURL.h; sourceTree = "<group>"; };
 		2E3BBF051162DA1100B9409A /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
 		2E3BBF061162DA1100B9409A /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
 		2E3BC0C8117D3E0800B9409A /* JSFileError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileError.cpp; sourceTree = "<group>"; };
@@ -15391,6 +15400,9 @@
 				76FC2B0812370DA0006A991A /* DOMTokenList.cpp */,
 				76FC2B0912370DA0006A991A /* DOMTokenList.h */,
 				76FC2B0A12370DA0006A991A /* DOMTokenList.idl */,
+				2E37DFD712DBAFB800A6B233 /* DOMURL.cpp */,
+				2E37DFD812DBAFB800A6B233 /* DOMURL.h */,
+				2E37DFD912DBAFB800A6B233 /* DOMURL.idl */,
 				F55B3D871251F12D003EF269 /* EmailInputType.cpp */,
 				F55B3D881251F12D003EF269 /* EmailInputType.h */,
 				F55B3D891251F12D003EF269 /* FileInputType.cpp */,
@@ -15956,6 +15968,8 @@
 				4ACBC0C912713D0A0094F9B2 /* JSDOMSettableTokenList.h */,
 				7694563A1214D97C0007CBAE /* JSDOMTokenList.cpp */,
 				7694563B1214D97C0007CBAE /* JSDOMTokenList.h */,
+				2E37E00312DBC5A400A6B233 /* JSDOMURL.cpp */,
+				2E37E00412DBC5A400A6B233 /* JSDOMURL.h */,
 				49EECEF4105070C400099FAB /* JSFloat32Array.cpp */,
 				49EECEF5105070C400099FAB /* JSFloat32Array.h */,
 				BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */,
@@ -22298,6 +22312,8 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
+				2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */,
+				2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22357,7 +22373,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -24982,6 +24997,8 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				7A563F9612DF5C9100F4536D /* InjectedScriptSource.js in Sources */,
+				2E37DFDA12DBAFB800A6B233 /* DOMURL.cpp in Sources */,
+				2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

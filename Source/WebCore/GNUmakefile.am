@@ -237,6 +237,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMStringMap.h \
 	DerivedSources/WebCore/JSDOMTokenList.cpp \
 	DerivedSources/WebCore/JSDOMTokenList.h \
+	DerivedSources/WebCore/JSDOMURL.cpp \
+	DerivedSources/WebCore/JSDOMURL.h \
 	DerivedSources/WebCore/JSDOMWindow.cpp \
 	DerivedSources/WebCore/JSDOMWindow.h \
 	DerivedSources/WebCore/JSElement.cpp \
@@ -1618,6 +1620,8 @@ webcore_sources += \
 	Source/WebCore/html/DOMDataGridDataSource.h \
 	Source/WebCore/html/DOMFormData.cpp \
 	Source/WebCore/html/DOMFormData.h \
+	Source/WebCore/html/DOMURL.cpp \
+	Source/WebCore/html/DOMURL.h \
 	Source/WebCore/html/EmailInputType.cpp \
 	Source/WebCore/html/EmailInputType.h \
 	Source/WebCore/html/FileInputType.cpp \

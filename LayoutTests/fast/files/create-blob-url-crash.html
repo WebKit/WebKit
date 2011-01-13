@@ -10,7 +10,7 @@ function log(message)
 function test()
 {
     log("Test that createObjectURL with no argument should not cause crash.");
-    var url = createObjectURL();
+    var url = webkitURL.createObjectURL();
     log(url == undefined ? "PASS" : "FAIL");
 
     log("DONE");

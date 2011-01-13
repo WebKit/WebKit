@@ -101,9 +101,9 @@ module threads {
         attribute BlobBuilderConstructor BlobBuilder;
         attribute FileReaderConstructor FileReader;
         attribute FileReaderSyncConstructor FileReaderSync;
-        DOMString createObjectURL(in Blob blob);
-        void revokeObjectURL(in DOMString blobURL);
 #endif
+
+        readonly attribute [Conditional=BLOB] DOMURL webkitURL;
 
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
         const unsigned short TEMPORARY = 0;

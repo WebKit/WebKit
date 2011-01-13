@@ -19,7 +19,7 @@ function sendXMLHttpRequest(method, url)
 onmessage = function(event)
 {
     var file = event.data;
-    var fileURL = createObjectURL(file);
+    var fileURL = webkitURL.createObjectURL(file);
 
     log("Test that XMLHttpRequest GET succeeds.");
     sendXMLHttpRequest("GET", fileURL);

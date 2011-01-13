@@ -214,6 +214,7 @@ IDL_BINDINGS += \
     html/DOMFormData.idl \
     html/DOMSettableTokenList.idl \
     html/DOMTokenList.idl \
+    html/DOMURL.idl \
     html/HTMLAllCollection.idl \
     html/HTMLAudioElement.idl \
     html/HTMLAnchorElement.idl \

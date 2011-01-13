@@ -46,6 +46,7 @@ namespace WebCore {
 
     class Blob;
     class DOMFileSystemSync;
+    class DOMURL;
     class Database;
     class DatabaseCallback;
     class DatabaseSync;
@@ -121,8 +122,7 @@ namespace WebCore {
         virtual bool isJSExecutionTerminated() const;
 
 #if ENABLE(BLOB)
-        String createObjectURL(Blob*);
-        void revokeObjectURL(const String&);
+        DOMURL* webkitURL() const;
 #endif
 
 #if ENABLE(FILE_SYSTEM)
@@ -185,6 +185,9 @@ namespace WebCore {
 
 #if ENABLE_NOTIFICATIONS
         mutable RefPtr<NotificationCenter> m_notifications;
+#endif
+#if ENABLE(BLOB)
+        mutable RefPtr<DOMURL> m_domURL;
 #endif
         bool m_closing;
         bool m_reportingException;

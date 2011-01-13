@@ -41,7 +41,9 @@ var __skip__ = {
     "FileReader" : 1,
     "ondeviceorientation" : 1,
     // Ignore this property because it only appears in debug builds and not in release.
-    "jscprint" : 1
+    "jscprint" : 1,
+    // Ignore this property because it is not supported in all platforms.
+    "webkitURL" : 1,
 };
 
 var windowPropertyNames = Object.getOwnPropertyNames(window)
@@ -66,9 +68,6 @@ for (var name in protoPropertySet)
 protoPropertyNames.sort();
 
 for (var i = 0; i < protoPropertyNames.length; ++i) {
-    // Ignore these properties because they do not exist in all implementations.
-    if (protoPropertyNames[i] == "createObjectURL" || protoPropertyNames[i] == "revokeObjectURL")
-        continue;
     if (protoPropertyNames[i] == "constructor")
         continue;
     shouldBeUndefined("Object.getOwnPropertyDescriptor(window, '" + protoPropertyNames[i] + "')");

@@ -38,6 +38,7 @@
 #include "DatabaseSync.h"
 #include "DatabaseTracker.h"
 #include "DOMTimer.h"
+#include "DOMURL.h"
 #include "DOMWindow.h"
 #include "ErrorEvent.h"
 #include "Event.h"
@@ -338,14 +339,11 @@ EventTargetData* WorkerContext::ensureEventTargetData()
 }
 
 #if ENABLE(BLOB)
-String WorkerContext::createObjectURL(Blob* blob)
+DOMURL* WorkerContext::webkitURL() const
 {
-    return scriptExecutionContext()->createPublicBlobURL(blob).string();
-}
-
-void WorkerContext::revokeObjectURL(const String& blobURLString)
-{
-    scriptExecutionContext()->revokePublicBlobURL(KURL(ParsedURLString, blobURLString));
+    if (!m_domURL)
+        m_domURL = DOMURL::create(this->scriptExecutionContext());
+    return m_domURL.get();
 }
 #endif
 

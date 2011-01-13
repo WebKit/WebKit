@@ -198,6 +198,7 @@ SET(WebCore_IDL_FILES
     html/DOMFormData.idl
     html/DOMSettableTokenList.idl
     html/DOMTokenList.idl
+    html/DOMURL.idl
     html/HTMLAllCollection.idl
     html/HTMLAnchorElement.idl
     html/HTMLAppletElement.idl
@@ -996,6 +997,7 @@ SET(WebCore_SOURCES
     html/DOMFormData.cpp
     html/DOMSettableTokenList.cpp
     html/DOMTokenList.cpp
+    html/DOMURL.cpp
     html/DataGridColumn.cpp
     html/DataGridColumnList.cpp
     html/DateComponents.cpp

@@ -10,19 +10,19 @@ function log(message)
 function test()
 {
     log("Test calling revokeObjectURL with no argument.");
-    var url = revokeObjectURL();
+    var url = webkitURL.revokeObjectURL();
     log(url == undefined ? "PASS" : "FAIL");
 
     log("Test calling revokeObjectURL with empty URL.");
-    revokeObjectURL("");
+    webkitURL.revokeObjectURL("");
     log("PASS");
 
     log("Test calling revokeObjectURL with invalid URL.");
-    revokeObjectURL("[foo bar]");
+    webkitURL.revokeObjectURL("[foo bar]");
     log("PASS");
 
     log("Test calling revokeObjectURL with non-existent URL.");
-    revokeObjectURL("blob:non-existent");
+    webkitURL.revokeObjectURL("blob:non-existent");
     log("PASS");
 
     log("DONE");

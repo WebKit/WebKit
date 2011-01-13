@@ -273,6 +273,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/DOMFormData.cpp \
 	html/DOMSettableTokenList.cpp \
 	html/DOMTokenList.cpp \
+	html/DOMURL.cpp \
 	html/DateInputType.cpp \
 	html/DateTimeInputType.cpp \
 	html/DateTimeLocalInputType.cpp \

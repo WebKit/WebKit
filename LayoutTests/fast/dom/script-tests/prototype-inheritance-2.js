@@ -18,6 +18,8 @@ var skippedProperties = [
     "prototype",
     // Skip Geolocation until it is supported on most platforms.
     "geolocation",
+    // Skip webkitURL until it is supported on most platforms.
+    "webkitURL",
 ];
 
 var skippedPropertiesSet = {};

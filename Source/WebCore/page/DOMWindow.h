@@ -34,12 +34,12 @@
 namespace WebCore {
 
     class BarInfo;
-    class Blob;
     class CSSRuleList;
     class CSSStyleDeclaration;
     class Console;
     class DOMApplicationCache;
     class DOMSelection;
+    class DOMURL;
     class Database;
     class DatabaseCallback;
     class Document;
@@ -343,8 +343,7 @@ namespace WebCore {
         using RefCounted<DOMWindow>::deref;
 
 #if ENABLE(BLOB)
-        String createObjectURL(Blob*);
-        void revokeObjectURL(const String&);
+        DOMURL* webkitURL() const;
 #endif
 
 #if ENABLE(DATABASE)
@@ -465,6 +464,10 @@ namespace WebCore {
 
 #if ENABLE(WEB_TIMING)
         mutable RefPtr<Performance> m_performance;
+#endif
+
+#if ENABLE(BLOB)
+        mutable RefPtr<DOMURL> m_domURL;
 #endif
     };
 

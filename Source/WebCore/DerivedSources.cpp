@@ -94,6 +94,7 @@
 #include "JSDOMStringList.cpp"
 #include "JSDOMStringMap.cpp"
 #include "JSDOMTokenList.cpp"
+#include "JSDOMURL.cpp"
 #include "JSDOMWindow.cpp"
 #include "JSElement.cpp"
 #include "JSEntity.cpp"

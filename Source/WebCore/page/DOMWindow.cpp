@@ -43,6 +43,7 @@
 #include "DOMStringList.h"
 #include "DOMTimer.h"
 #include "DOMTokenList.h"
+#include "DOMURL.h"
 #include "Database.h"
 #include "DatabaseCallback.h"
 #include "DeviceMotionController.h"
@@ -1606,18 +1607,6 @@ EventTargetData* DOMWindow::ensureEventTargetData()
     return &m_eventTargetData;
 }
 
-#if ENABLE(BLOB)
-String DOMWindow::createObjectURL(Blob* blob)
-{
-    return scriptExecutionContext()->createPublicBlobURL(blob).string();
-}
-
-void DOMWindow::revokeObjectURL(const String& blobURLString)
-{
-    scriptExecutionContext()->revokePublicBlobURL(KURL(KURL(), blobURLString));
-}
-#endif
-
 void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow, SetLocationLocking locking)
 {
     Frame* activeFrame = activeWindow->frame();
@@ -1816,5 +1805,14 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
 
     dialogFrame->page()->chrome()->runModal();
 }
+
+#if ENABLE(BLOB)
+DOMURL* DOMWindow::webkitURL() const
+{
+    if (!m_domURL)
+        m_domURL = DOMURL::create(this->scriptExecutionContext());
+    return m_domURL.get();
+}
+#endif
 
 } // namespace WebCore

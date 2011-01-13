@@ -892,6 +892,7 @@ SOURCES += \
     html/DOMFormData.cpp \
     html/DOMSettableTokenList.cpp \
     html/DOMTokenList.cpp \
+    html/DOMURL.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
     html/DateComponents.cpp \
@@ -1813,6 +1814,7 @@ HEADERS += \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \
     html/DOMTokenList.h \
+    html/DOMURL.h \
     html/FormAssociatedElement.h \
     html/FormDataList.h \
     html/FTPDirectoryDocument.h \
