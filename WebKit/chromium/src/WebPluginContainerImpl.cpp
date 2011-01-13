@@ -255,10 +255,10 @@ void WebPluginContainerImpl::printEnd()
 
 void WebPluginContainerImpl::copy()
 {
-    if (!plugin()->hasSelection())
+    if (!m_webPlugin->hasSelection())
         return;
 
-    webKitClient()->clipboard()->writeHTML(plugin()->selectionAsMarkup(), WebURL(), plugin()->selectionAsText(), false);
+    webKitClient()->clipboard()->writeHTML(m_webPlugin->selectionAsMarkup(), WebURL(), m_webPlugin->selectionAsText(), false);
 }
 
 WebElement WebPluginContainerImpl::element()
@@ -514,7 +514,11 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
 #else
         if (webEvent.modifiers == WebInputEvent::ControlKey
 #endif
-            && webEvent.windowsKeyCode == VKEY_C) {
+            && webEvent.windowsKeyCode == VKEY_C
+            // Only copy if there's a selection, so that we only ever do this
+            // for Pepper plugins that support copying.  Windowless NPAPI
+            // plugins will get the event as before.
+            && m_webPlugin->hasSelection()) {
             copy();
             event->setDefaultHandled();
             return;
