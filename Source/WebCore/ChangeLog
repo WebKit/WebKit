@@ -1,3 +1,21 @@
+2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r69831): focus() in onkeypress discards input (affects chaseonline.chase.com)
+        https://bugs.webkit.org/show_bug.cgi?id=52241
+
+        The bug was caused by RenderTextControl::selection's creating a Range with m_insertText
+        which is a shadow DOM div as both start and end containers. Fixed the bug by traversing
+        through the descendents of m_innerText and using the right start and end containers to
+        create a Range.
+
+        Test: fast/forms/focus-change-on-keypress.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::setContainerAndOffsetForRange): Added; a helper function.
+        (WebCore::RenderTextControl::selection): See above.
+
 2011-01-12  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.

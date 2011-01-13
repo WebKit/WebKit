@@ -1,3 +1,16 @@
+2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r69831): focus() in onkeypress discards input (affects chaseonline.chase.com)
+        https://bugs.webkit.org/show_bug.cgi?id=52241
+
+        Added a test to ensure WebKit inserts the character typed by a user when focus's node
+        is changed by a presskey event handler.
+
+        * fast/forms/focus-change-on-keypress-expected.txt: Added.
+        * fast/forms/focus-change-on-keypress.html: Added.
+
 2011-01-12  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.

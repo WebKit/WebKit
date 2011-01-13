@@ -33,6 +33,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "Position.h"
 #include "RenderLayer.h"
 #include "RenderText.h"
 #include "ScrollbarTheme.h"
@@ -271,12 +272,49 @@ bool RenderTextControl::isSelectableElement(Node* node) const
         || (shadowAncestor->hasTagName(inputTag) && static_cast<HTMLInputElement*>(shadowAncestor)->isTextField()));
 }
 
+static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& containerNode, int& offsetInContainer)
+{
+    if (node->isTextNode()) {
+        containerNode = node;
+        offsetInContainer = offset;
+    } else {
+        containerNode = node->parentNode();
+        offsetInContainer = node->nodeIndex() + offset;
+    }
+}
+
 PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
 {
+    ASSERT(start <= end);
     if (!m_innerText)
         return 0;
 
-    return Range::create(document(), m_innerText, start, m_innerText, end);
+    if (!m_innerText->firstChild())
+        return Range::create(document(), m_innerText, 0, m_innerText, 0);
+
+    int offset = 0;
+    Node* startNode = 0;
+    Node* endNode = 0;
+    for (Node* node = m_innerText->firstChild(); node; node = node->traverseNextNode(m_innerText.get())) {
+        ASSERT(!node->firstChild());
+        ASSERT(node->isTextNode() || node->hasTagName(brTag));
+        int length = node->isTextNode() ? lastOffsetInNode(node) : 1;
+    
+        if (offset <= start && start <= offset + length)
+            setContainerAndOffsetForRange(node, start - offset, startNode, start);
+
+        if (offset <= end && end <= offset + length) {
+            setContainerAndOffsetForRange(node, end - offset, endNode, end);
+            break;
+        }
+
+        offset += length;
+    }
+    
+    if (!startNode || !endNode)
+        return 0;
+
+    return Range::create(document(), startNode, start, endNode, end);
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
