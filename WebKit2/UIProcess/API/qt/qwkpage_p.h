@@ -41,7 +41,7 @@ public:
 
     static QWKPagePrivate* get(QWKPage* page) { return page->d; }
 
-    void init(QGraphicsItem*, const QSize& viewportSize, WTF::PassOwnPtr<WebKit::DrawingAreaProxy>);
+    void init(QGraphicsItem*, WTF::PassOwnPtr<WebKit::DrawingAreaProxy>);
 
     // PageClient
     virtual PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();

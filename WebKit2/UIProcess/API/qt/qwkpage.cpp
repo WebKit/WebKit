@@ -100,7 +100,7 @@ QWKPagePrivate::~QWKPagePrivate()
     delete history;
 }
 
-void QWKPagePrivate::init(QGraphicsItem* view, const QSize& viewportSize, PassOwnPtr<DrawingAreaProxy> proxy)
+void QWKPagePrivate::init(QGraphicsItem* view, PassOwnPtr<DrawingAreaProxy> proxy)
 {
     this->view = view;
     page->setDrawingArea(proxy);

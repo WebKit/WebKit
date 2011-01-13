@@ -1,3 +1,16 @@
+2011-01-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed.
+
+        Getting rid of the unused 'viewportSize' argument in QWKPagePrivate:init.
+        The argument is unused since http://trac.webkit.org/changeset/75468.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::init):
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2011-01-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
