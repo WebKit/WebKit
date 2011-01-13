@@ -48,6 +48,7 @@ static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
         phase |= PlatformWheelEventPhaseCancelled;
     return static_cast<PlatformWheelEventPhase>(phase);
 #else
+    (void)event;
     return PlatformWheelEventPhaseNone;
 #endif
 }
