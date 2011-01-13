@@ -2882,8 +2882,6 @@ bool FrameLoader::shouldClose()
         NavigationDisablerForBeforeUnload navigationDisabler;
         size_t i;
 
-        puts("about to test for before unload events");
-
         for (i = 0; i < targetFrames.size(); i++) {
             if (!targetFrames[i]->tree()->isDescendantOf(m_frame))
                 continue;

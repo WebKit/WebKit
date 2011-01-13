@@ -1,3 +1,12 @@
+2011-01-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by David Levin.
+
+        Trivial fix after r75682.
+
+        * loader/FrameLoader.cpp: Remove accidentally committed debug code.
+        (WebCore::FrameLoader::shouldClose):
+
 2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
