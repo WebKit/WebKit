@@ -114,7 +114,17 @@ Position positionBeforeTabSpan(const Position&);
 Position positionBeforeContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 Position positionAfterContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 Position positionOutsideContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
-    
+
+inline Position firstPositionInOrBeforeNode(Node* node)
+{
+    return canHaveChildrenForEditing(node) ? firstPositionInNode(node) : positionBeforeNode(node);
+}
+
+inline Position lastPositionInOrAfterNode(Node* node)
+{
+    return canHaveChildrenForEditing(node) ? lastPositionInNode(node) : positionAfterNode(node);
+}
+
 // Position creation functions are inline to prevent ref-churn.
 // Other Position creation functions are in Position.h
 // but these depend on lastOffsetForEditing which is defined in htmlediting.h.

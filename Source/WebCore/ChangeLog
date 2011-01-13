@@ -1,3 +1,41 @@
+2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Removed instantiation of legacy editing positions.
+        Calls to Position::Position are replaced by calls to Position's convenience functions.
+
+        Also added firstPositionInOrBeforeNode and lastPositionInOrAfterNode,
+        which are functions that return firstPositionInNode and lastPositionInNode respectively
+        when the specified node can have children for editing purpose and return positionBeforeNode
+        and positionAfterNode respectively otherwise. They can be used to guarantee that we never
+        create a bogus position like [img, 0] or [br, 0].
+
+        No tests are added since this is a cleanup.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::formatSelection):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle):
+        (WebCore::ApplyStyleCommand::highestAncestorWithConflictingInlineStyle):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::nodeFullySelected):
+        (WebCore::ApplyStyleCommand::nodeFullyUnselected):
+        (WebCore::ApplyStyleCommand::splitTextAtStart):
+        (WebCore::ApplyStyleCommand::splitTextAtEnd):
+        (WebCore::ApplyStyleCommand::splitTextElementAtStart):
+        (WebCore::ApplyStyleCommand::splitTextElementAtEnd):
+        (WebCore::ApplyStyleCommand::isValidCaretPositionInTextNode):
+        (WebCore::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (WebCore::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (WebCore::ApplyStyleCommand::computedFontSize):
+        (WebCore::ApplyStyleCommand::joinChildTextNodes):
+        * editing/ApplyStyleCommand.h:
+        * editing/htmlediting.h:
+        (WebCore::firstPositionInOrBeforeNode): Added.
+        (WebCore::lastPositionInOrAfterNode): Added.
+
 2011-01-12  Sam Weinig  <sam@webkit.org>
 
         Another build fix.

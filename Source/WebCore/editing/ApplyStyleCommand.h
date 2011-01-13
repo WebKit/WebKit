@@ -108,7 +108,7 @@ private:
     void cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor);
 
     void surroundNodeRangeWithElement(PassRefPtr<Node> start, PassRefPtr<Node> end, PassRefPtr<Element>);
-    float computedFontSize(const Node*);
+    float computedFontSize(Node*);
     void joinChildTextNodes(Node*, const Position& start, const Position& end);
 
     HTMLElement* splitAncestorsWithUnicodeBidi(Node*, bool before, int allowedDirection);
