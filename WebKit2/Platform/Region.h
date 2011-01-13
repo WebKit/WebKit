@@ -47,7 +47,7 @@ public:
     void intersect(const Region&);
     void subtract(const Region&);
 
-    void move(int x, int y);
+    void translate(const WebCore::IntSize&);
 
 #ifndef NDEBUG
     void dump() const;
@@ -84,7 +84,7 @@ private:
         static Shape intersectShapes(const Shape& shape1, const Shape& shape2);
         static Shape subtractShapes(const Shape& shape1, const Shape& shape2);
 
-        void move(int x, int y);
+        void translate(const WebCore::IntSize&);
         void swap(Shape&);
 
 #ifndef NDEBUG
@@ -114,6 +114,30 @@ private:
     WebCore::IntRect m_bounds;
     Shape m_shape;
 };
+
+static inline Region intersect(const Region& a, const Region& b)
+{
+    Region result(a);
+    result.intersect(b);
+
+    return result;
+}
+    
+static inline Region subtract(const Region& a, const Region& b)
+{
+    Region result(a);
+    result.subtract(b);
+
+    return result;
+}
+
+static inline Region translate(const Region& region, const WebCore::IntSize& offset)
+{
+    Region result(region);
+    result.translate(offset);
+
+    return result;
+}
 
 } // namespace WebKit
 

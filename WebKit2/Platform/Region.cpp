@@ -211,12 +211,12 @@ IntRect Region::Shape::bounds() const
     return IntRect(minX, minY, maxX - minX, maxY - minY);
 }
 
-void Region::Shape::move(int x, int y)
+void Region::Shape::translate(const IntSize& offset)
 {
     for (size_t i = 0; i < m_segments.size(); ++i)
-        m_segments[i] += x;
+        m_segments[i] += offset.width();
     for (size_t i = 0; i < m_spans.size(); ++i)
-        m_spans[i].y += y;
+        m_spans[i].y += offset.height();
 }
 
 void Region::Shape::swap(Shape& other)
@@ -444,10 +444,10 @@ void Region::subtract(const Region& region)
     m_bounds = m_shape.bounds();
 }
 
-void Region::move(int x, int y)
+void Region::translate(const IntSize& offset)
 {
-    m_bounds.move(x, y);
-    m_shape.move(x, y);
+    m_bounds.move(offset);
+    m_shape.translate(offset);
 }
 
 } // namespace WebKit

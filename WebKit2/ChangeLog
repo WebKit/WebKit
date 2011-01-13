@@ -1,3 +1,21 @@
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Region improvements
+        https://bugs.webkit.org/show_bug.cgi?id=52344
+
+        * Platform/Region.cpp:
+        (WebKit::Region::Shape::move):
+        (WebKit::Region::move):
+        Change Region::move to take an IntSize.
+
+        * Platform/Region.h:
+        (WebKit::intersect):
+        (WebKit::subtract):
+        (WebKit::move):
+        Add convenience functions.
+
 2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Qt build fix for r75661
