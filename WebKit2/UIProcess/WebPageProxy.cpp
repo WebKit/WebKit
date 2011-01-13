@@ -64,6 +64,7 @@
 #include "WebProtectionSpace.h"
 #include "WebSecurityOrigin.h"
 #include "WebURLRequest.h"
+#include <WebCore/DragData.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/WindowFeatures.h>
@@ -124,6 +125,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_hasSpellDocumentTag(false)
     , m_pendingLearnOrIgnoreWordMessageCount(0)
     , m_mainFrameHasCustomRepresentation(false)
+    , m_currentDragOperation(DragOperationNone)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();
@@ -587,6 +589,18 @@ void WebPageProxy::setActualVisibleContentRect(const IntRect& rect)
     process()->send(Messages::WebPage::SetActualVisibleContentRect(rect), m_pageID);
 }
 #endif
+
+void WebPageProxy::performDragControllerAction(DragControllerAction action, WebCore::DragData* dragData, const String& dragStorageName)
+{
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags()), m_pageID);
+}
+
+void WebPageProxy::didPerformDragControllerAction(uint64_t resultOperation)
+{
+    m_currentDragOperation = static_cast<DragOperation>(resultOperation);
+}
 
 void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
 {

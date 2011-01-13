@@ -657,6 +657,7 @@
 		C0E3AA7A1209E83000A49D01 /* ModuleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA481209E45000A49D01 /* ModuleMac.mm */; };
 		C0E3AA7B1209E83500A49D01 /* Module.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E3AA451209E2BA00A49D01 /* Module.cpp */; };
 		C0E3AA7C1209E83C00A49D01 /* Module.h in Headers */ = {isa = PBXBuildFile; fileRef = C0E3AA441209E2BA00A49D01 /* Module.h */; };
+		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
 		C5237F6012441CA300780472 /* WebEditorClientMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5237F5F12441CA300780472 /* WebEditorClientMac.mm */; };
 		D3B9484611FF4B6500032B39 /* WebPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */; };
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
@@ -1409,6 +1410,7 @@
 		C0E3AA441209E2BA00A49D01 /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
 		C0E3AA451209E2BA00A49D01 /* Module.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Module.cpp; sourceTree = "<group>"; };
 		C0E3AA481209E45000A49D01 /* ModuleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModuleMac.mm; sourceTree = "<group>"; };
+		C517388012DF8F4F00EE3F47 /* DragControllerAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragControllerAction.h; sourceTree = "<group>"; };
 		C5237F5F12441CA300780472 /* WebEditorClientMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClientMac.mm; sourceTree = "<group>"; };
 		D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
@@ -1724,6 +1726,7 @@
 				1A2D956D12848564001EB962 /* ChildProcess.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
 				1A2C306F12D555450063DAA2 /* ContextMenuState.h */,
+				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
@@ -3028,6 +3031,7 @@
 				1A64235312DD187C00CAAE2C /* Region.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */,
+				C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

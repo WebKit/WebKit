@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "ContextMenuState.h"
+#include "DragControllerAction.h"
 #include "DrawingAreaProxy.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "SelectionState.h"
@@ -47,6 +48,7 @@
 #include "WebPopupMenuProxy.h"
 #include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
+#include <WebCore/DragActions.h>
 #include <WebCore/EditAction.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -68,6 +70,7 @@ namespace CoreIPC {
 namespace WebCore {
     class AuthenticationChallenge;
     class Cursor;
+    class DragData;
     class FloatRect;
     class IntSize;
     class ProtectionSpace;
@@ -269,6 +272,10 @@ public:
 
     void backForwardRemovedItem(uint64_t itemID);
 
+    // Drag and drop support.
+    void performDragControllerAction(DragControllerAction, WebCore::DragData*, const String&);
+    void didPerformDragControllerAction(uint64_t resultOperation);
+
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
@@ -294,6 +301,9 @@ public:
     WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
 
     bool isValid();
+    
+    WebCore::DragOperation dragOperation() { return m_currentDragOperation; }
+    void resetDragOperation() { m_currentDragOperation = WebCore::DragOperationNone; }
 
     // REMOVE: For demo purposes only.
     const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
@@ -592,6 +602,7 @@ private:
     unsigned m_pendingLearnOrIgnoreWordMessageCount;
 
     bool m_mainFrameHasCustomRepresentation;
+    WebCore::DragOperation m_currentDragOperation;
 };
 
 } // namespace WebKit

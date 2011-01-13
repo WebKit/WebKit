@@ -50,9 +50,12 @@
 #import "WebSystemInterface.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/ColorMac.h>
+#import <WebCore/DragController.h>
+#import <WebCore/DragData.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
@@ -154,6 +157,25 @@ static bool useNewDrawingArea()
     return [self initWithFrame:frame contextRef:contextRef pageGroupRef:nil];
 }
 
+static NSString * const WebArchivePboardType = @"Apple Web Archive pasteboard type";
+static NSString * const WebURLsWithTitlesPboardType = @"WebURLsWithTitlesPboardType";
+static NSString * const WebURLPboardType = @"public.url";
+static NSString * const WebURLNamePboardType = @"public.url-name";
+
+- (void)_registerDraggedTypes
+{
+    NSArray *editableTypes = [NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+        NSPICTPboardType,
+#endif
+        NSURLPboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, kUTTypePNG, nil];
+    NSArray *URLTypes = [NSArray arrayWithObjects:WebURLsWithTitlesPboardType, NSURLPboardType, WebURLPboardType,  WebURLNamePboardType, NSStringPboardType, NSFilenamesPboardType, nil];
+    NSMutableSet *types = [[NSMutableSet alloc] initWithArray:editableTypes];
+    [types addObjectsFromArray:URLTypes];
+    [self registerForDraggedTypes:[types allObjects]];
+    [types release];
+}
+
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef
 {
     self = [super initWithFrame:frame];
@@ -175,6 +197,8 @@ static bool useNewDrawingArea()
     _data->_pageClient = PageClientImpl::create(self);
     _data->_page = toImpl(contextRef)->createWebPage(_data->_pageClient.get(), toImpl(pageGroupRef));
     _data->_page->initializeWebPage();
+
+    [self _registerDraggedTypes];
 
     WebContext::statistics().wkViewCount++;
 
@@ -975,6 +999,62 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     
     LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
     return resultRect;
+}
+
+- (DragApplicationFlags)applicationFlags:(id <NSDraggingInfo>)draggingInfo
+{
+    uint32_t flags = 0;
+    if ([NSApp modalWindow])
+        flags = DragApplicationIsModal;
+    if ([[self window] attachedSheet])
+        flags |= DragApplicationHasAttachedSheet;
+    if ([draggingInfo draggingSource] == self)
+        flags |= DragApplicationIsSource;
+    if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+        flags |= DragApplicationIsCopyKeyDown;
+    return static_cast<DragApplicationFlags>(flags);
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
+{
+    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
+    
+    _data->_page->performDragControllerAction(DragControllerActionEntered, &dragData, [[draggingInfo draggingPasteboard] name]);
+    return NSDragOperationCopy;
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
+{
+    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
+    _data->_page->performDragControllerAction(DragControllerActionUpdated, &dragData, [[draggingInfo draggingPasteboard] name]);
+    return _data->_page->dragOperation();
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
+{
+    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
+    _data->_page->performDragControllerAction(DragControllerActionExited, &dragData, [[draggingInfo draggingPasteboard] name]);
+    _data->_page->resetDragOperation();
+}
+
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo
+{
+    return YES;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)draggingInfo
+{
+    IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
+    IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
+    _data->_page->performDragControllerAction(DragControllerActionPerformDrag, &dragData, [[draggingInfo draggingPasteboard] name]);
+    return YES;
 }
 
 - (void)_updateWindowVisibility

@@ -3765,11 +3765,25 @@ static bool needsWebViewInitThreadWorkaround()
     return [documentView _shouldAutoscrollForDraggingInfo:draggingInfo];
 }
 
+- (DragApplicationFlags)applicationFlags:(id <NSDraggingInfo>)draggingInfo
+{
+    uint32_t flags = 0;
+    if ([NSApp modalWindow])
+        flags = DragApplicationIsModal;
+    if ([[self window] attachedSheet])
+        flags |= DragApplicationHasAttachedSheet;
+    if ([draggingInfo draggingSource] == self)
+        flags |= DragApplicationIsSource;
+    if ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+        flags |= DragApplicationIsCopyKeyDown;
+    return static_cast<DragApplicationFlags>(flags);
+}
+
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
 {
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     return core(self)->dragController()->dragEntered(&dragData);
 }
 
@@ -3781,7 +3795,7 @@ static bool needsWebViewInitThreadWorkaround()
 
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     return page->dragController()->dragUpdated(&dragData);
 }
 
@@ -3793,7 +3807,7 @@ static bool needsWebViewInitThreadWorkaround()
 
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     page->dragController()->dragExited(&dragData);
 }
 
@@ -3806,7 +3820,7 @@ static bool needsWebViewInitThreadWorkaround()
 {
     IntPoint client([draggingInfo draggingLocation]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
-    DragData dragData(draggingInfo, client, global, (DragOperation)[draggingInfo draggingSourceOperationMask]);
+    DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
     return core(self)->dragController()->performDrag(&dragData);
 }
 

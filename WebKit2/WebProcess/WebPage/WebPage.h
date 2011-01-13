@@ -298,6 +298,7 @@ public:
 #endif
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
+    void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags);
 
     bool mainFrameHasCustomRepresentation() const;
 

@@ -54,7 +54,7 @@ DragOperation DragController::dragOperation(DragData* dragData)
     return dragData->containsURL(0) && !m_didInitiateDrag ? DragOperationCopy : DragOperationNone;
 }
 
-bool DragController::isCopyKeyDown()
+bool DragController::isCopyKeyDown(DragData*)
 {
     // FIXME: This should not be OS specific.  Delegate to the embedder instead.
 #if OS(WINDOWS)

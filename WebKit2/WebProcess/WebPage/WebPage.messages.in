@@ -96,6 +96,9 @@ messages -> WebPage {
     HideFindUI()
     CountStringMatches(WTF::String string, uint32_t findOptions, unsigned maxMatchCount)
 
+    # Drag and drop.
+    PerformDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, WTF::String dragStorageName, uint32_t flags)
+
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
     SetTextForActivePopupMenu(int32_t index);

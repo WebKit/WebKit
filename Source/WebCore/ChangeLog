@@ -1,3 +1,67 @@
+2011-01-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Add support for drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=52343
+        <rdar://problem/7660558>
+               
+        This patch contains the changes required to support dropping content
+        in WebKit on the Mac. The DragData class has been extended to provide
+        additional context from the application (keyboard state, modal windows, etc.)
+        as well as information of the drag pasteboard being used.
+        The support for WebKit as drag source will be added with a separate patch.
+
+        * WebCore.exp.in:
+        * page/DragController.cpp:
+        (WebCore::DragController::dragIsMove): Added DragData parameter.
+        (WebCore::DragController::tryDocumentDrag): Modified call to dragIsMove.
+        (WebCore::DragController::concludeEditDrag): Same as above.
+        * page/DragController.h: Added parameter to isCopyKeyDown.
+        * page/mac/DragControllerMac.mm:
+        The following methods have been modified to use the information stored
+        in the DragData class.
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::dragOperation):
+        * platform/DragData.h:
+        (WebCore::DragData::flags):
+        * platform/DragData.cpp: Added default flags parameter to the constructor.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::DragData): Added constructor that receives the name of the pasteboard to use.
+        (WebCore::DragData::canSmartReplace):
+        (WebCore::DragData::containsColor):
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsPlainText):
+        (WebCore::DragData::asPlainText):
+        (WebCore::DragData::containsCompatibleContent):
+        (WebCore::DragData::asURL):
+        (WebCore::DragData::asFragment):
+        All the following files have been modified to add the DragData
+        parameter to isCopyKeyDown. I plan to improve this in the future
+        and make isCopyKeyDown not platform specific.
+        * page/android/DragControllerAndroid.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/brew/DragControllerBrew.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/chromium/DragControllerChromium.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/efl/DragControllerEfl.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/gtk/DragControllerGtk.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/haiku/DragControllerHaiku.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::isCopyKeyDown):
+        (WebCore::DragController::dragOperation):
+        * page/qt/DragControllerQt.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/win/DragControllerWin.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+        * page/wx/DragControllerWx.cpp:
+        (WebCore::DragController::isCopyKeyDown):
+
 2011-01-13  David Kilzer  <ddkilzer@apple.com>
 
         Add missing MathMLElementFactory.h and MathMLNames.h to Xcode project
@@ -299,6 +363,7 @@
 
         * html/canvas/WebGLRenderingContext.cpp:
 
+>>>>>>> .r75740
 2011-01-13  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.
@@ -758,6 +823,7 @@
         (WebCore::firstPositionInOrBeforeNode): Added.
         (WebCore::lastPositionInOrAfterNode): Added.
 
+>>>>>>> .r75734
 2011-01-12  Sam Weinig  <sam@webkit.org>
 
         Another build fix.

@@ -141,9 +141,9 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     return 0;
 }
 
-bool DragController::dragIsMove(SelectionController* selection)
+bool DragController::dragIsMove(SelectionController* selection, DragData* dragData)
 {
-    return m_documentUnderMouse == m_dragInitiator && selection->isContentEditable() && !isCopyKeyDown();
+    return m_documentUnderMouse == m_dragInitiator && selection->isContentEditable() && !isCopyKeyDown(dragData);
 }
 
 // FIXME: This method is poorly named.  We're just clearing the selection from the document this drag is exiting.
@@ -335,7 +335,7 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
         }
 
         Frame* innerFrame = element->document()->frame();
-        operation = dragIsMove(innerFrame->selection()) ? DragOperationMove : DragOperationCopy;
+        operation = dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
         return true;
     }
     // If we're not over an editable region, make sure we're clearing any prior drag cursor.
@@ -449,7 +449,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         return false;
     CachedResourceLoader* cachedResourceLoader = range->ownerDocument()->cachedResourceLoader();
     cachedResourceLoader->setAllowStaleResources(true);
-    if (dragIsMove(innerFrame->selection()) || dragCaret.isContentRichlyEditable()) {
+    if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) {
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, innerFrame, range, true, chosePlainText);
         if (!fragment || !innerFrame->editor()->shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
@@ -458,7 +458,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         }
 
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
-        if (dragIsMove(innerFrame->selection())) {
+        if (dragIsMove(innerFrame->selection(), dragData)) {
             // NSTextView behavior is to always smart delete on moving a selection,
             // but only to smart insert if the selection granularity is word granularity.
             bool smartDelete = innerFrame->editor()->smartInsertDeleteEnabled();

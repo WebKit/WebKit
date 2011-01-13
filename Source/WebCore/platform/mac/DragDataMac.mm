@@ -38,11 +38,24 @@
 namespace WebCore {
 
 DragData::DragData(DragDataRef data, const IntPoint& clientPosition, const IntPoint& globalPosition, 
-    DragOperation sourceOperationMask)
+    DragOperation sourceOperationMask, DragApplicationFlags flags)
     : m_clientPosition(clientPosition)
     , m_globalPosition(globalPosition)
     , m_platformDragData(data)
     , m_draggingSourceOperationMask(sourceOperationMask)
+    , m_applicationFlags(flags)
+    , m_pasteboard([m_platformDragData draggingPasteboard])
+{
+}
+
+DragData::DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition,
+    DragOperation sourceOperationMask, DragApplicationFlags flags)
+    : m_clientPosition(clientPosition)
+    , m_globalPosition(globalPosition)
+    , m_platformDragData(0)
+    , m_draggingSourceOperationMask(sourceOperationMask)
+    , m_applicationFlags(flags)
+    , m_pasteboard([NSPasteboard pasteboardWithName:dragStorageName])
 {
 }
     
@@ -50,22 +63,22 @@ bool DragData::canSmartReplace() const
 {
     //Need to call this so that the various Pasteboard type strings are intialised
     Pasteboard::generalPasteboard();
-    return [[[m_platformDragData draggingPasteboard] types] containsObject:WebSmartPastePboardType];
+    return [[m_pasteboard.get() types] containsObject:WebSmartPastePboardType];
 }
 
 bool DragData::containsColor() const
 {
-    return [[[m_platformDragData draggingPasteboard] types] containsObject:NSColorPboardType];
+    return [[m_pasteboard.get() types] containsObject:NSColorPboardType];
 }
 
 bool DragData::containsFiles() const
 {
-    return [[[m_platformDragData draggingPasteboard] types] containsObject:NSFilenamesPboardType];
+    return [[m_pasteboard.get() types] containsObject:NSFilenamesPboardType];
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
-    NSArray *filenames = [[m_platformDragData draggingPasteboard] propertyListForType:NSFilenamesPboardType];
+    NSArray *filenames = [m_pasteboard.get() propertyListForType:NSFilenamesPboardType];
     NSEnumerator *fileEnumerator = [filenames objectEnumerator];
     
     while (NSString *filename = [fileEnumerator nextObject])
@@ -74,19 +87,18 @@ void DragData::asFilenames(Vector<String>& result) const
 
 bool DragData::containsPlainText() const
 {
-    NSPasteboard *pasteboard = [m_platformDragData draggingPasteboard];
-    NSArray *types = [pasteboard types];
+    NSArray *types = [m_pasteboard.get() types];
     
     return [types containsObject:NSStringPboardType] 
         || [types containsObject:NSRTFDPboardType]
         || [types containsObject:NSRTFPboardType]
         || [types containsObject:NSFilenamesPboardType]
-        || [NSURL URLFromPasteboard:pasteboard];
+        || [NSURL URLFromPasteboard:m_pasteboard.get()];
 }
 
 String DragData::asPlainText(Frame *frame) const
 {
-    Pasteboard pasteboard([m_platformDragData draggingPasteboard]);
+    Pasteboard pasteboard(m_pasteboard.get());
     return pasteboard.plainText(frame);
 }
 
@@ -113,8 +125,7 @@ static NSArray *insertablePasteboardTypes()
     
 bool DragData::containsCompatibleContent() const
 {
-    NSPasteboard *pasteboard = [m_platformDragData draggingPasteboard];
-    NSMutableSet *types = [NSMutableSet setWithArray:[pasteboard types]];
+    NSMutableSet *types = [NSMutableSet setWithArray:[m_pasteboard.get() types]];
     [types intersectSet:[NSSet setWithArray:insertablePasteboardTypes()]];
     return [types count] != 0;
 }
@@ -133,13 +144,13 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
         if (NSString *URLTitleString = [[m_platformDragData draggingPasteboard] stringForType:WebURLNamePboardType])
             *title = URLTitleString;
     }
-    Pasteboard pasteboard([m_platformDragData draggingPasteboard]);
+    Pasteboard pasteboard(m_pasteboard.get());
     return pasteboard.asURL(frame);
 }
 
 PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range> range, bool allowPlainText, bool& chosePlainText) const
 {
-    Pasteboard pasteboard([m_platformDragData draggingPasteboard]);
+    Pasteboard pasteboard(m_pasteboard.get());
     
     return pasteboard.documentFragment(frame, range, allowPlainText, chosePlainText);
 }

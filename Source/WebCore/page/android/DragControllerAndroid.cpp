@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-bool DragController::isCopyKeyDown()
+bool DragController::isCopyKeyDown(DragData*)
 {
     return false;
 }

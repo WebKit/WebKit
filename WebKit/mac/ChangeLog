@@ -1,3 +1,23 @@
+2011-01-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Add support for drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=52343
+        <rdar://problem/7660558>
+        
+        The DragData class has been extended to provide
+        additional context from the application (keyboard state, modal windows, etc.)
+        as well as information of the drag pasteboard being used.
+        These are the changes to align the behavior for WebKit.
+
+        * WebView/WebView.mm:
+        (-[WebView applicationFlags:]): Added.
+        (-[WebView draggingEntered:]): Added parameter to the DragData constructor.
+        (-[WebView draggingUpdated:]): Added parameter to the DragData constructor.
+        (-[WebView draggingExited:]): Added parameter to the DragData constructor.
+        (-[WebView performDragOperation:]): Added parameter to the DragData constructor.
+
 2011-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -1,3 +1,50 @@
+2011-01-13  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Add support for drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=52343
+        <rdar://problem/7660558>
+               
+        This patch contains the changes required to support dropping content
+        in WebKit on the Mac. The DragData class has been extended to provide
+        additional context from the application (keyboard state, modal windows, etc.)
+        as well as information of the drag pasteboard being used.
+        The support for WebKit as drag source will be added with a separate patch.
+
+        * Shared/DragControllerAction.h: Added.
+        * UIProcess/API/mac/WKView.mm:
+        Added implemention of the methods required to add suport for a drop target.
+        To maintain asynchronous communication with the WebProcess, we always return
+        the previous calculated value for the drag operation.
+        (-[WKView _registerDraggedTypes]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView applicationFlags:]):
+        (-[WKView draggingEntered:]):
+        (-[WKView draggingUpdated:]):
+        (-[WKView draggingExited:]):
+        (-[WKView prepareForDragOperation:]):
+        (-[WKView performDragOperation:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::didPerformDragControllerAction):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::dragOperation):
+        (WebKit::WebPageProxy::resetDragOperation):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::willPerformDragDestinationAction):
+        (WebKit::WebDragClient::willPerformDragSourceAction):
+        (WebKit::WebDragClient::actionMaskForDrag):
+        (WebKit::WebDragClient::dragSourceActionMaskForPoint):
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

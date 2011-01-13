@@ -71,6 +71,8 @@
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentMarkerController.h>
+#include <WebCore/DragController.h>
+#include <WebCore/DragData.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -818,6 +820,7 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
             return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
         case WebCore::MouseEventMoved:
             return frame->eventHandler()->mouseMoved(platformMouseEvent);
+
         default:
             ASSERT_NOT_REACHED();
             return false;
@@ -1249,6 +1252,36 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
     return frame->editor()->insertText(evt->keyEvent()->text(), evt);
 }
 #endif
+
+void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags)
+{
+    if (!m_page) {
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
+        return;
+    }
+
+    DragData dragData(dragStorageName, clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
+    switch (action) {
+    case DragControllerActionEntered:
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragEntered(&dragData)));
+        break;
+
+    case DragControllerActionUpdated:
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(m_page->dragController()->dragUpdated(&dragData)));
+        break;
+        
+    case DragControllerActionExited:
+        m_page->dragController()->dragExited(&dragData);
+        break;
+        
+    case DragControllerActionPerformDrag:
+        m_page->dragController()->performDrag(&dragData);
+        break;
+        
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
 
 WebEditCommand* WebPage::webEditCommand(uint64_t commandID)
 {

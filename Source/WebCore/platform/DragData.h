@@ -34,12 +34,15 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
 #ifdef __OBJC__ 
 #import <Foundation/Foundation.h>
 #import <AppKit/NSDragging.h>
 typedef id <NSDraggingInfo> DragDataRef;
+@class NSPasteboard;
 #else
 typedef void* DragDataRef;
+class NSPasteboard;
 #endif
 #elif PLATFORM(QT)
 QT_BEGIN_NAMESPACE
@@ -72,14 +75,25 @@ class DocumentFragment;
 class KURL;
 class Range;
 
+enum DragApplicationFlags {
+    DragApplicationNone = 0,
+    DragApplicationIsModal = 1,
+    DragApplicationIsSource = 2,
+    DragApplicationHasAttachedSheet = 4,
+    DragApplicationIsCopyKeyDown = 8
+};
+    
 class DragData {
 public:
     enum FilenameConversionPolicy { DoNotConvertFilenames, ConvertFilenames };
 
     // clientPosition is taken to be the position of the drag event within the target window, with (0,0) at the top left
-    DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation operation);
+    DragData(DragDataRef, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone);
+    DragData(const String& dragStorageName, const IntPoint& clientPosition, const IntPoint& globalPosition, DragOperation, DragApplicationFlags = DragApplicationNone);
+
     const IntPoint& clientPosition() const { return m_clientPosition; }
     const IntPoint& globalPosition() const { return m_globalPosition; }
+    DragApplicationFlags flags() { return m_applicationFlags; }
     DragDataRef platformData() const { return m_platformDragData; }
     DragOperation draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }
     bool containsURL(Frame*, FilenameConversionPolicy filenamePolicy = ConvertFilenames) const;
@@ -99,6 +113,10 @@ private:
     IntPoint m_globalPosition;
     DragDataRef m_platformDragData;
     DragOperation m_draggingSourceOperationMask;
+    DragApplicationFlags m_applicationFlags;
+#if PLATFORM(MAC)
+    RetainPtr<NSPasteboard> m_pasteboard;
+#endif
 };
     
 }

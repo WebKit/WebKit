@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebDragClient.h"
-
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
-
-using namespace WebCore;
+#ifndef DragControllerAction_h
+#define DragControllerAction_h
 
 namespace WebKit {
 
-void WebDragClient::willPerformDragDestinationAction(DragDestinationAction, DragData*)
-{
-}
-
-void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)
-{
-}
-
-DragDestinationAction WebDragClient::actionMaskForDrag(DragData*)
-{
-    return DragDestinationActionAny;
-}
-
-DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint& windowPoint)
-{
-    return DragSourceActionAny;
-}
-
-void WebDragClient::startDrag(DragImageRef, const IntPoint&, const IntPoint&, Clipboard*, Frame*, bool)
-{
-}
-
-DragImageRef WebDragClient::createDragImageForLink(KURL&, const String&, Frame*)
-{
-    notImplemented();
-    return 0;
-}
-
-void WebDragClient::dragControllerDestroyed()
-{
-    delete this;
-}
+enum DragControllerAction {
+    DragControllerActionEntered,
+    DragControllerActionUpdated,
+    DragControllerActionExited,
+    DragControllerActionPerformDrag
+};
 
 } // namespace WebKit
+
+#endif // DragControllerAction_h

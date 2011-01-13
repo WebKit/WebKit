@@ -42,19 +42,19 @@ const int DragController::DragIconBottomInset = 3;
 
 const float DragController::DragImageAlpha = 0.75f;
 
-bool DragController::isCopyKeyDown()
+bool DragController::isCopyKeyDown(DragData* dragData)
 {
-    return [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
+    return dragData->flags() & DragApplicationIsCopyKeyDown;
 }
     
 DragOperation DragController::dragOperation(DragData* dragData)
 {
     ASSERT(dragData);
-    if ([NSApp modalWindow] || !dragData->containsURL(m_page->mainFrame()))
+
+    if ((dragData->flags() & DragApplicationIsModal) || !dragData->containsURL(m_page->mainFrame()))
         return DragOperationNone;
 
-    if (!m_documentUnderMouse || (![[m_page->mainFrame()->view()->getOuterView() window] attachedSheet] 
-        && [dragData->platformData() draggingSource] != m_page->mainFrame()->view()->getOuterView()))
+    if (!m_documentUnderMouse || (!(dragData->flags() & (DragApplicationHasAttachedSheet | DragApplicationIsSource))))
         return DragOperationCopy;
 
     return DragOperationNone;
