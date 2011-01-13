@@ -73,6 +73,7 @@ private:
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
+    virtual void willMoveToNewOwnerDocument();
     
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 

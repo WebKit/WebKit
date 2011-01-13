@@ -1,3 +1,26 @@
+2011-01-12  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        M_formElementsWithFormAttribute not cleared when Node is moved to another document.
+        https://bugs.webkit.org/show_bug.cgi?id=51418
+
+        Calls unregisterFormElementWithFormAttribute() when form associated elements
+        are moved to another document.
+
+        Test: fast/forms/change-form-element-document-crash.html
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::willMoveToNewOwnerDocument): Added.
+        * html/FormAssociatedElement.h: Added willMoveToNewOwnerDocument().
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::willMoveToNewOwnerDocument): Added.
+        * html/HTMLFormControlElement.h: Added willMoveToNewOwnerDocument().
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::willMoveToNewOwnerDocument): Added.
+        * html/HTMLObjectElement.h: Added willMoveToNewOwnerDocument().
+        * html/HTMLPlugInImageElement.h: Moves willMoveToNewOwnerDocument() to protected.
+
 2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

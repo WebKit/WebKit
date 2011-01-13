@@ -479,6 +479,12 @@ void HTMLObjectElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) con
         addSubresourceURL(urls, document()->completeURL(useMap));
 }
 
+void HTMLObjectElement::willMoveToNewOwnerDocument()
+{
+    FormAssociatedElement::willMoveToNewOwnerDocument();
+    HTMLPlugInImageElement::willMoveToNewOwnerDocument();
+}
+
 void HTMLObjectElement::insertedIntoTree(bool deep)
 {
     FormAssociatedElement::insertedIntoTree();

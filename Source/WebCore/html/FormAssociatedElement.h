@@ -63,6 +63,8 @@ protected:
     void insertedIntoTree();
     void removedFromTree();
 
+    void willMoveToNewOwnerDocument();
+
     void setForm(HTMLFormElement* form) { m_form = form; }
     void removeFromForm();
     void formAttributeChanged();

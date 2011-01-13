@@ -144,6 +144,12 @@ void HTMLFormControlElement::attach()
          focus();
 }
 
+void HTMLFormControlElement::willMoveToNewOwnerDocument()
+{
+    FormAssociatedElement::willMoveToNewOwnerDocument();
+    HTMLElement::willMoveToNewOwnerDocument();
+}
+
 void HTMLFormControlElement::insertedIntoTree(bool deep)
 {
     FormAssociatedElement::insertedIntoTree();

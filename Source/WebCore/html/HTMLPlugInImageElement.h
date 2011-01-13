@@ -58,12 +58,13 @@ protected:
     bool allowedToLoadFrameURL(const String& url);
     bool wouldLoadAsNetscapePlugin(const String& url, const String& serviceType);
 
+    virtual void willMoveToNewOwnerDocument();
+
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange);
     
     virtual void finishParsingChildren();
-    virtual void willMoveToNewOwnerDocument();
 
     void updateWidgetIfNecessary();
     virtual bool useFallbackContent() const { return false; }
