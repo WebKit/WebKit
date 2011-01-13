@@ -408,7 +408,7 @@ static void resetDefaultsToConsistentValues()
                  "fantasy-font-family", "fantasy",
                  "default-font-size", 16,
                  "default-monospace-font-size", 13,
-                 "minimum-font-size", 1,
+                 "minimum-font-size", 0,
                  "enable-caret-browsing", FALSE,
                  "enable-page-cache", FALSE,
                  "auto-resize-window", TRUE,

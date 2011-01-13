@@ -1,3 +1,15 @@
+2011-01-13  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [gtk] Zero-sized font does not yet work
+        https://bugs.webkit.org/show_bug.cgi?id=49793
+
+        Allow 0 as a minimum-font-size value for the settings.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+
 2011-01-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed build fix for 32-bits Release. Include GRefPtrGtk.h so

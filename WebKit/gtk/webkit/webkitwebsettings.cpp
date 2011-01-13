@@ -335,7 +335,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     "minimum-font-size",
                                     _("Minimum Font Size"),
                                     _("The minimum font size used to display text."),
-                                    1, G_MAXINT, 5,
+                                    0, G_MAXINT, 5,
                                     flags));
 
     g_object_class_install_property(gobject_class,
