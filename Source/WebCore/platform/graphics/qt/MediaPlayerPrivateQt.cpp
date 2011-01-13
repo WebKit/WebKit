@@ -108,7 +108,7 @@ MediaPlayerPrivateQt::MediaPlayerPrivateQt(MediaPlayer* player)
     , m_queuedSeek(-1)
     , m_preload(MediaPlayer::Auto)
 {
-    m_mediaPlayer->bind(m_videoItem);
+    m_mediaPlayer->setVideoOutput(m_videoItem);
     m_videoScene->addItem(m_videoItem);
 
     // Signal Handlers
@@ -585,6 +585,22 @@ IntSize MediaPlayerPrivateQt::naturalSize() const
             m_naturalSize.width(), m_naturalSize.height());
 
     return m_naturalSize;
+}
+
+void MediaPlayerPrivateQt::removeVideoItem()
+{
+    m_oldNaturalSize = m_naturalSize;
+    m_mediaPlayer->setVideoOutput(static_cast<QGraphicsVideoItem*>(0));
+    m_videoScene->removeItem(m_videoItem);
+}
+
+void MediaPlayerPrivateQt::restoreVideoItem()
+{
+    m_mediaPlayer->setVideoOutput(m_videoItem);
+    m_videoScene->addItem(m_videoItem);
+    // FIXME: a qtmobility bug, need to reset the size when restore the videoitem, otherwise the size is 0
+    // http://bugreports.qt.nokia.com/browse/QTMOBILITY-971
+    nativeSizeChanged(QSize(m_oldNaturalSize));
 }
 
 void MediaPlayerPrivateQt::paint(GraphicsContext* context, const IntRect& rect)

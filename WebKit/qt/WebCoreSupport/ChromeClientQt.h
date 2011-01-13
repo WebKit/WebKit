@@ -50,6 +50,7 @@ namespace WebCore {
     struct FrameLoadRequest;
     class QtAbstractWebPopup;
     struct ViewportArguments;
+    class FullScreenVideoQt;
 
     class ChromeClientQt : public ChromeClient
     {
@@ -162,6 +163,14 @@ namespace WebCore {
 #if ENABLE(TOUCH_EVENTS)
         virtual void needTouchEvents(bool) { }
 #endif
+ 
+#if ENABLE(VIDEO)
+        virtual bool supportsFullscreenForNode(const Node*);
+        virtual void enterFullscreenForNode(Node*);
+        virtual void exitFullscreenForNode(Node*);
+        virtual bool requiresFullscreenForVideoPlayback();
+        FullScreenVideoQt* fullScreenVideo();
+#endif
 
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
         virtual void chooseIconForFiles(const Vector<String>&, FileChooser*);
@@ -195,6 +204,10 @@ namespace WebCore {
         bool statusBarVisible;
         bool menuBarVisible;
         QEventLoop* m_eventLoop;
+
+#if ENABLE(VIDEO)
+        FullScreenVideoQt* m_fullScreenVideo;
+#endif
 
         static bool dumpVisitedLinksCallbacks;
 

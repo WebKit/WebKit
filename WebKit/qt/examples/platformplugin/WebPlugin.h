@@ -24,6 +24,9 @@
 #include "WebNotificationPresenter.h"
 
 #include <QDialog>
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+#include <QVideoWidget>
+#endif
 
 class QListWidgetItem;
 class QListWidget;
@@ -93,6 +96,40 @@ public:
         return 10;
     }
 };
+
+#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
+class FullScreenVideoWidget : public QVideoWidget {
+    Q_OBJECT
+public:
+    FullScreenVideoWidget(QMediaPlayer*);
+    virtual ~FullScreenVideoWidget() {}
+
+Q_SIGNALS:
+    void fullScreenClosed();
+
+protected:
+    bool event(QEvent*);
+    void keyPressEvent(QKeyEvent*);
+
+private:
+    QMediaPlayer* m_mediaPlayer; // not owned
+};
+
+class FullScreenVideoHandler : public QWebFullScreenVideoHandler {
+    Q_OBJECT
+public:
+    FullScreenVideoHandler();
+    virtual ~FullScreenVideoHandler();
+    bool requiresFullScreenForVideoPlayback() const;
+
+public Q_SLOTS:
+    void enterFullScreen(QMediaPlayer*);
+    void exitFullScreen();
+
+private:
+    FullScreenVideoWidget* m_mediaWidget; // owned
+};
+#endif
 
 class WebPlugin : public QObject, public QWebKitPlatformPlugin
 {

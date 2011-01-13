@@ -1,3 +1,25 @@
+2011-01-13  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Extend the Platform Plugin to support full screen video handler
+        https://bugs.webkit.org/show_bug.cgi?id=51249
+
+        Make MediaPlayerPrivateQt support a fullscreen player.
+
+        No new tests because LayoutTests/media/media-fullscreen-inline.html already exists.
+        However, this test failed for Qt (QtMediaPlayer) due to durationchange event getting fired twice.
+        So, still skip it for Qt.
+
+        * WebCore.pro:
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::MediaPlayerPrivateQt):
+        (WebCore::MediaPlayerPrivateQt::removeVideoItem):
+        (WebCore::MediaPlayerPrivateQt::restoreVideoItem):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (WebCore::MediaPlayerPrivateQt::supportsFullscreen):
+        (WebCore::MediaPlayerPrivateQt::mediaPlayer):
+
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
