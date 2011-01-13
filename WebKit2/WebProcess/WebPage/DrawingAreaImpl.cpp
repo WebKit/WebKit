@@ -71,14 +71,12 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDel
         unsigned long long scrollArea = scrollRect.width() * scrollRect.height();
         unsigned long long currentScrollArea = m_scrollRect.width() * m_scrollRect.height();
 
-        if (currentScrollArea > scrollArea) {
-            // The rect being scrolled has a greater area than the rect we'd like to scroll.
+        if (currentScrollArea >= scrollArea) {
+            // The rect being scrolled is at least as large as the rect we'd like to scroll.
             // Go ahead and just invalidate the scroll rect.
             setNeedsDisplay(scrollRect);
             return;
         }
-
-        ASSERT(scrollArea > currentScrollArea);
 
         // Just repaint the entire current scroll rect, we'll scroll the new rect instead.
         setNeedsDisplay(m_scrollRect);

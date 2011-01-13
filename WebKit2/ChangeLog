@@ -1,3 +1,14 @@
+2011-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Incorrect assertion in DrawingAreaImpl::scroll()
+        https://bugs.webkit.org/show_bug.cgi?id=52376
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scroll): Changed to take the fast path if the rects have the same area.
+        This made the assertion valid, but I removed it anyway.
+
 2011-01-12  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed.
