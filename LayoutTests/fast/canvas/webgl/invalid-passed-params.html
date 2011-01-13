@@ -77,7 +77,7 @@ shouldGenerateGLError(context, context.NO_ERROR, "context.viewport(0, 0, 16, 16)
 
 debug("");
 debug("Set up a program to test invalid characters");
-var invalidSet = ['"', '$', '`', '@', '\\', "'"];
+var invalidSet = ['$', '@', '\\'];
 var validUniformName = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890";
 var validAttribName = "abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 var validShaderSource = "uniform float " + validUniformName + ";\n"

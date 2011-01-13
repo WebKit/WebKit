@@ -66,14 +66,8 @@ Test shaderSource() with invalid characters
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
 
 Test bindAttribLocation() with invalid characters
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
@@ -82,14 +76,8 @@ Test getAttribLocation() with invalid characters
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
 
 Test getUniformLocation() with invalid characters
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
-PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE
 PASS context.getError() is context.INVALID_VALUE

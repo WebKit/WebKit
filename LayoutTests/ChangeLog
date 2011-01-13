@@ -1,3 +1,13 @@
+2011-01-13  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Relax the ESSL valid charset a little bit to include " ' `
+        https://bugs.webkit.org/show_bug.cgi?id=52396
+
+        * fast/canvas/webgl/invalid-passed-params-expected.txt:
+        * fast/canvas/webgl/invalid-passed-params.html:
+
 2011-01-13  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by nobody - reinstrumenting a test to save burning trees.

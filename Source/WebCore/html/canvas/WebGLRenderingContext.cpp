@@ -101,11 +101,12 @@ namespace {
 
     // Return true if a character belongs to the ASCII subset as defined in
     // GLSL ES 1.0 spec section 3.1.
+    // We make exceptions for " ' `.
     bool validateCharacter(unsigned char c)
     {
         // Printing characters are valid except " $ ` @ \ ' DEL.
         if (c >= 32 && c <= 126
-            && c != '"' && c != '$' && c != '`' && c != '@' && c != '\\' && c != '\'')
+            && c != '$' && c != '@' && c != '\\')
             return true;
         // Horizontal tab, line feed, vertical tab, form feed, carriage return
         // are also valid.
