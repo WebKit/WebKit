@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -170,25 +170,29 @@ void Widget::setFrameRect(const IntRect& rect)
     m_frame = rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    NSView *v = getOuterView();
-    if (!v)
+    NSView *outerView = getOuterView();
+    if (!outerView)
         return;
 
-    NSRect visibleRect = [v visibleRect];
+    // Take a reference to this Widget, because sending messages to outerView can invoke arbitrary
+    // code, which can deref it.
+    RefPtr<Widget> protectedThis(this);
+
+    NSRect visibleRect = [outerView visibleRect];
     NSRect f = rect;
-    if (!NSEqualRects(f, [v frame])) {
-        [v setFrame:f];
-        [v setNeedsDisplay:NO];
-    } else if (!NSEqualRects(visibleRect, m_data->previousVisibleRect) && [v respondsToSelector:@selector(visibleRectDidChange)])
-        [v visibleRectDidChange];
+    if (!NSEqualRects(f, [outerView frame])) {
+        [outerView setFrame:f];
+        [outerView setNeedsDisplay:NO];
+    } else if (!NSEqualRects(visibleRect, m_data->previousVisibleRect) && [outerView respondsToSelector:@selector(visibleRectDidChange)])
+        [outerView visibleRectDidChange];
 
     m_data->previousVisibleRect = visibleRect;
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-NSView* Widget::getOuterView() const
+NSView *Widget::getOuterView() const
 {
-    NSView* view = platformWidget();
+    NSView *view = platformWidget();
 
     // If this widget's view is a WebCoreFrameScrollView then we
     // resize its containing view, a WebFrameView.
@@ -205,6 +209,11 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     if (p->paintingDisabled())
         return;
     NSView *view = getOuterView();
+
+    // Take a reference to this Widget, because sending messages to the views can invoke arbitrary
+    // code, which can deref it.
+    RefPtr<Widget> protectedThis(this);
+
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
         // This is the common case of drawing into a window or printing.
@@ -261,6 +270,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 void Widget::setIsSelected(bool isSelected)
 {
     NSView *view = platformWidget();
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)])
         [view webPlugInSetIsSelected:isSelected];
