@@ -1,3 +1,11 @@
+2011-01-13  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        Remove exception for canvas-large-dimensions.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip editing/input/page-up-down-scrolls.html as it's passing locally.

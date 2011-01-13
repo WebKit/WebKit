@@ -3095,8 +3095,5 @@ BUGCR69395 WIN : inspector/timeline-network-resource.html = TEXT
 // Flaky since r75548; transformed character is occasionally corrupt
 BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
 
-// Started failing after r75648 on everything except Snow Leopard
-BUGWK52341 : fast/canvas/canvas-large-dimensions.html = TEXT
-
 // New test added in r75720
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH
