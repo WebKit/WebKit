@@ -822,12 +822,7 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
 {
     m_checker.m_pseudoStyle = pseudoID;
 
-    m_parentNode = e ? e->parentNode() : 0;
-
-#if ENABLE(SVG)
-    if (!m_parentNode && e && e->isSVGElement() && e->isShadowRoot())
-        m_parentNode = e->shadowHost();
-#endif
+    m_parentNode = e ? e->parentOrHostNode() : 0;
 
     if (parentStyle)
         m_parentStyle = parentStyle;

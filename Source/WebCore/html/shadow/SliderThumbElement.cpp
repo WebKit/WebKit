@@ -37,13 +37,53 @@
 #include "Frame.h"
 #include "MouseEvent.h"
 #include "RenderSlider.h"
+#include "RenderTheme.h"
 
 namespace WebCore {
+
+// FIXME: Find a way to cascade appearance (see the layout method) and get rid of this class.
+class RenderSliderThumb : public RenderBlock {
+public:
+    RenderSliderThumb(Node*);
+    virtual void layout();
+};
+
+
+RenderSliderThumb::RenderSliderThumb(Node* node)
+    : RenderBlock(node)
+{
+}
+
+void RenderSliderThumb::layout()
+{
+    // FIXME: Hard-coding this cascade of appearance is bad, because it's something
+    // that CSS usually does. We need to find a way to express this in CSS.
+    RenderStyle* parentStyle = parent()->style();
+    if (parentStyle->appearance() == SliderVerticalPart)
+        style()->setAppearance(SliderThumbVerticalPart);
+    else if (parentStyle->appearance() == SliderHorizontalPart)
+        style()->setAppearance(SliderThumbHorizontalPart);
+    else if (parentStyle->appearance() == MediaSliderPart)
+        style()->setAppearance(MediaSliderThumbPart);
+    else if (parentStyle->appearance() == MediaVolumeSliderPart)
+        style()->setAppearance(MediaVolumeSliderThumbPart);
+
+    if (style()->hasAppearance()) {
+        // FIXME: This should pass the style, not the renderer, to the theme.
+        theme()->adjustSliderThumbSize(this);
+    }
+    RenderBlock::layout();
+}
+
+RenderObject* SliderThumbElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSliderThumb(this);
+}
 
 void SliderThumbElement::defaultEventHandler(Event* event)
 {
     if (!event->isMouseEvent()) {
-        ShadowBlockElement::defaultEventHandler(event);
+        HTMLDivElement::defaultEventHandler(event);
         return;
     }
 
@@ -93,7 +133,7 @@ void SliderThumbElement::defaultEventHandler(Event* event)
         }
     }
 
-    ShadowBlockElement::defaultEventHandler(event);
+    HTMLDivElement::defaultEventHandler(event);
 }
 
 void SliderThumbElement::detach()
@@ -102,7 +142,7 @@ void SliderThumbElement::detach()
         if (Frame* frame = document()->frame())
             frame->eventHandler()->setCapturingMouseEventsNode(0);      
     }
-    ShadowBlockElement::detach();
+    HTMLDivElement::detach();
 }
 
 }
