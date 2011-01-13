@@ -35,7 +35,7 @@ namespace WebCore {
 
 static PlatformWheelEventPhase phaseForEvent(NSEvent *event)
 {
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     uint32_t phase = PlatformWheelEventPhaseNone; 
     if ([event momentumPhase] & NSEventPhaseBegan)
         phase |= PlatformWheelEventPhaseBegan;

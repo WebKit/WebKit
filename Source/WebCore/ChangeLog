@@ -1,5 +1,12 @@
 2011-01-12  Sam Weinig  <sam@webkit.org>
 
+        Another build fix.
+
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::phaseForEvent):
+
+2011-01-12  Sam Weinig  <sam@webkit.org>
+
         Fix build.
 
         * platform/mac/WheelEventMac.mm:
