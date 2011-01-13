@@ -68,8 +68,22 @@ namespace WebCore {
     // and synthesized in other cases where platforms generate line-by-line scrolling events.
     // The ScrollByPageWheelEvent indicates that the wheel event should scroll an entire page.  In this case WebCore's built in paging behavior is used to page
     // up and down (you get the same behavior as if the user was clicking in a scrollbar track to page up or page down).  Page scrolling only works in the vertical direction.
-    enum PlatformWheelEventGranularity { ScrollByPageWheelEvent, ScrollByPixelWheelEvent };
-    
+    enum PlatformWheelEventGranularity {
+        ScrollByPageWheelEvent,
+        ScrollByPixelWheelEvent
+    };
+
+#if PLATFORM(MAC)
+    enum PlatformWheelEventPhase {
+        PlatformWheelEventPhaseNone        = 0,
+        PlatformWheelEventPhaseBegan       = 1 << 1,
+        PlatformWheelEventPhaseStationary  = 1 << 2,
+        PlatformWheelEventPhaseChanged     = 1 << 3,
+        PlatformWheelEventPhaseEnded       = 1 << 4,
+        PlatformWheelEventPhaseCancelled   = 1 << 5,
+    };
+#endif
+
     class PlatformWheelEvent {
     public:
         PlatformWheelEvent()
@@ -83,6 +97,9 @@ namespace WebCore {
             , m_ctrlKey(false)
             , m_altKey(false)
             , m_metaKey(false)
+#if PLATFORM(MAC)
+            , m_phase(PlatformWheelEventPhaseNone)
+#endif
         {
         }
 
@@ -128,8 +145,12 @@ namespace WebCore {
         PlatformWheelEvent(const Evas_Event_Mouse_Wheel*);
 #endif
 
-#if PLATFORM(MAC) && defined(__OBJC__)
+#if PLATFORM(MAC)
+#if defined(__OBJC__)
         PlatformWheelEvent(NSEvent *, NSView *windowView);
+#endif
+
+        PlatformWheelEventPhase phase() const { return m_phase; }
 #endif
 
 #if PLATFORM(QT)
@@ -164,6 +185,9 @@ namespace WebCore {
         bool m_ctrlKey;
         bool m_altKey;
         bool m_metaKey;
+#if PLATFORM(MAC)
+        PlatformWheelEventPhase m_phase;
+#endif
     };
 
 } // namespace WebCore

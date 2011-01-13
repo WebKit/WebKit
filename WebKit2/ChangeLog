@@ -1,3 +1,24 @@
+2011-01-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52337
+        PlatformWheelEvent should know about the scroll phase on the Mac
+
+        Add a phase parameter on Mac WebWheelEvent and pipe it down to PlatformWheelEvent.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebWheelEvent::phase):
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        (WebKit::WebWheelEvent::encode):
+        (WebKit::WebWheelEvent::decode):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::phaseForEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+
 2011-01-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -169,6 +169,26 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
     }
 }
 
+static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    uint32_t phase = WebWheelEvent::PhaseNone; 
+    if ([event momentumPhase] & NSEventPhaseBegan)
+        phase |= WebWheelEvent::PhaseBegan;
+    if ([event momentumPhase] & NSEventPhaseStationary)
+        phase |= WebWheelEvent::PhaseStationary;
+    if ([event momentumPhase] & NSEventPhaseChanged)
+        phase |= WebWheelEvent::PhaseChanged;
+    if ([event momentumPhase] & NSEventPhaseEnded)
+        phase |= WebWheelEvent::PhaseEnded;
+    if ([event momentumPhase] & NSEventPhaseCancelled)
+        phase |= WebWheelEvent::PhaseCancelled;
+    return static_cast<WebWheelEvent::Phase>(phase);
+#else
+    return WebWheelEvent::PhaseNone;
+#endif
+}
+    
 static inline String textFromEvent(NSEvent* event)
 {
     if ([event type] == NSFlagsChanged)
@@ -999,10 +1019,11 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
     }
 
+    WebWheelEvent::Phase phase              = phaseForEvent(event);
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = [event timestamp];
-
-    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
+    
+    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, phase, modifiers, timestamp);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView *)

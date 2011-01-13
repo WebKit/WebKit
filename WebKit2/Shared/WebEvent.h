@@ -151,15 +151,30 @@ public:
         ScrollByPixelWheelEvent
     };
 
+#if PLATFORM(MAC)
+    enum Phase {
+        PhaseNone        = 0,
+        PhaseBegan       = 1 << 1,
+        PhaseStationary  = 1 << 2,
+        PhaseChanged     = 1 << 3,
+        PhaseEnded       = 1 << 4,
+        PhaseCancelled   = 1 << 5,
+    };
+#endif
+
     WebWheelEvent() { }
 
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Modifiers, double timestamp);
+#if PLATFORM(MAC)
+    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Modifiers, double timestamp);
+#endif
 
     const WebCore::IntPoint position() const { return m_position; }
     const WebCore::IntPoint globalPosition() const { return m_globalPosition; }
     const WebCore::FloatSize delta() const { return m_delta; }
     const WebCore::FloatSize wheelTicks() const { return m_wheelTicks; }
     Granularity granularity() const { return static_cast<Granularity>(m_granularity); }
+    Phase phase() const { return static_cast<Phase>(m_phase); }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebWheelEvent&);
@@ -172,6 +187,9 @@ private:
     WebCore::FloatSize m_delta;
     WebCore::FloatSize m_wheelTicks;
     uint32_t m_granularity; // Granularity
+#if PLATFORM(MAC)
+    uint32_t m_phase; // Phase
+#endif
 };
 
 // FIXME: Move this class to its own header file.

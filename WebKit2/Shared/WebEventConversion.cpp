@@ -110,6 +110,9 @@ public:
         m_ctrlKey = webEvent.controlKey();
         m_altKey = webEvent.altKey();
         m_metaKey = webEvent.metaKey();
+#if PLATFORM(MAC)
+        m_phase = static_cast<WebCore::PlatformWheelEventPhase>(webEvent.phase());
+#endif
     }
 };
 

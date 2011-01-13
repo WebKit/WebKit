@@ -43,19 +43,53 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     ASSERT(isWheelEventType(type));
 }
 
+#if PLATFORM(MAC)
+WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Modifiers modifiers, double timestamp)
+    : WebEvent(type, modifiers, timestamp)
+    , m_position(position)
+    , m_globalPosition(globalPosition)
+    , m_delta(delta)
+    , m_wheelTicks(wheelTicks)
+    , m_granularity(granularity)
+    , m_phase(phase)
+{
+    ASSERT(isWheelEventType(type));
+}
+#endif
+
 void WebWheelEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder->encode(CoreIPC::In(m_position, m_globalPosition, m_delta, m_wheelTicks, m_granularity));
+    encoder->encode(m_position);
+    encoder->encode(m_globalPosition);
+    encoder->encode(m_delta);
+    encoder->encode(m_wheelTicks);
+    encoder->encode(m_granularity);
+#if PLATFORM(MAC)
+    encoder->encode(m_phase);
+#endif
 }
 
 bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebWheelEvent& t)
 {
     if (!WebEvent::decode(decoder, t))
         return false;
-
-    return decoder->decode(CoreIPC::Out(t.m_position, t.m_globalPosition, t.m_delta, t.m_wheelTicks, t.m_granularity));
+    if (!decoder->decode(t.m_position))
+        return false;
+    if (!decoder->decode(t.m_globalPosition))
+        return false;
+    if (!decoder->decode(t.m_delta))
+        return false;
+    if (!decoder->decode(t.m_wheelTicks))
+        return false;
+    if (!decoder->decode(t.m_granularity))
+        return false;
+#if PLATFORM(MAC)
+    if (!decoder->decode(t.m_phase))
+        return false;
+#endif
+    return true;
 }
 
 bool WebWheelEvent::isWheelEventType(Type type)
