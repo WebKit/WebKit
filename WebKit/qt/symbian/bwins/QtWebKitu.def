@@ -650,4 +650,4 @@ EXPORTS
 	?setResizesToContents@QGraphicsWebView@@QAEX_N@Z @ 649 NONAME ; void QGraphicsWebView::setResizesToContents(bool)
 	?setTiledBackingStoreFrozen@QGraphicsWebView@@QAEX_N@Z @ 650 NONAME ; void QGraphicsWebView::setTiledBackingStoreFrozen(bool)
 	?qtwebkit_webframe_scrollOverflow@@YA_NPAVQWebFrame@@HHABVQPoint@@@Z @ 651 NONAME ; bool qtwebkit_webframe_scrollOverflow(QWebFrame *, int, int, const QPoint&)
-
+        ?qtwebkit_setPluginCreatedCallback@@YAXP6AXPAVQWebFrame@@PAX1@Z@Z @ 652 NONAME ; void qtwebkit_setPluginCreatedCallback(void (*)(class QWebFrame *, void *, void *))

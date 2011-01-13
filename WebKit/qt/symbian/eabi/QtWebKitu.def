@@ -835,4 +835,4 @@ EXPORTS
 	_ZN8QWebPage20setFeaturePermissionEP9QWebFrameNS_7FeatureENS_16PermissionPolicyE @ 834 NONAME
 	_ZN8QWebPage26featurePermissionRequestedEP9QWebFrameNS_7FeatureE @ 835 NONAME
 	_ZN8QWebPage32featurePermissionRequestCanceledEP9QWebFrameNS_7FeatureE @ 836 NONAME
-
+        _Z33qtwebkit_setPluginCreatedCallbackPFvP9QWebFramePvS1_E @ 837 NONAME

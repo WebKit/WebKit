@@ -53,6 +53,8 @@
 #include "npinterface.h"
 #include "npruntime_impl.h"
 #include "qgraphicswebview.h"
+#include "qwebframe.h"
+#include "qwebframe_p.h"
 #include "runtime_root.h"
 #include <QGraphicsProxyWidget>
 #include <QKeyEvent>
@@ -62,6 +64,13 @@
 #include <QWidget>
 #include <runtime/JSLock.h>
 #include <runtime/JSValue.h>
+
+typedef void (*_qtwebkit_page_plugin_created)(QWebFrame*, void*, void*); // frame, plugin instance, plugin functions
+static _qtwebkit_page_plugin_created qt_page_plugin_created = 0;
+QWEBKIT_EXPORT void qtwebkit_setPluginCreatedCallback(_qtwebkit_page_plugin_created cb)
+{
+    qtwebkit_page_plugin_created = cb;
+}
 
 using JSC::ExecState;
 using JSC::Interpreter;
@@ -415,7 +424,10 @@ bool PluginView::platformStart()
     }    
     updatePluginWidget();
     setNPWindowIfNeeded();
-    
+
+    if (qtwebkit_page_plugin_created)
+        qtwebkit_page_plugin_created(QWebFramePrivate::kit(m_parentFrame.get()), m_instance, (void*)(m_plugin->pluginFuncs()));
+
     return true;
 }
 

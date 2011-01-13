@@ -1,3 +1,16 @@
+2011-01-13  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Need a way to inform the application when a Netscape plugin is created.
+        https://bugs.webkit.org/show_bug.cgi?id=30179
+
+        Added "c" style static method for the application to hook up for
+        receiving notifications when a plugin is created.
+
+        * symbian/bwins/QtWebKitu.def:
+        * symbian/eabi/QtWebKitu.def:
+
 2011-01-13  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Simon Hausmann.
