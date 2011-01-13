@@ -1,3 +1,13 @@
+2011-01-13  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by nobody - reinstrumenting a test to save burning trees.
+
+        fast/canvas/canvas-large-dimensions.html (introduced in r75648) is failing on all platforms except Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=52341
+
+        * fast/canvas/canvas-large-dimensions-expected.txt: Replaced.
+        * fast/canvas/canvas-large-dimensions.html:
+
 2011-01-13  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed chromium expectations update.

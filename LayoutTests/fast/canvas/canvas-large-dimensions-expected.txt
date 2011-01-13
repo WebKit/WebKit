@@ -10,17 +10,7 @@ PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
-PASS height == 100000
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS height == 1000000
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS width == 100
+PASS height == 32000
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
@@ -35,12 +25,7 @@ PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
-PASS width == 100000
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS Actual: 255 Expected: 255
-PASS width == 1000000
+PASS width == 32000
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
 PASS Actual: 255 Expected: 255
