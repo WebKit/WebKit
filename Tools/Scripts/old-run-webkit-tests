@@ -448,6 +448,8 @@ my @platformTestHierarchy = buildPlatformTestHierarchy(@platformResultHierarchy)
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
 
 $testResultsDirectory = File::Spec->rel2abs($testResultsDirectory);
+# $testResultsDirectory must be empty before testing.
+rmtree $testResultsDirectory;
 my $testResults = File::Spec->catfile($testResultsDirectory, "results.html");
 
 if (isAppleMacWebKit()) {
