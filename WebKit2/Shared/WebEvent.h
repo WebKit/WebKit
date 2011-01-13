@@ -174,7 +174,9 @@ public:
     const WebCore::FloatSize delta() const { return m_delta; }
     const WebCore::FloatSize wheelTicks() const { return m_wheelTicks; }
     Granularity granularity() const { return static_cast<Granularity>(m_granularity); }
+#if PLATFORM(MAC)
     Phase phase() const { return static_cast<Phase>(m_phase); }
+#endif
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebWheelEvent&);

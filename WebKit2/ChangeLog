@@ -1,3 +1,9 @@
+2011-01-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Qt build fix for r75661
+
+        * Shared/WebEvent.h: Don't declare phase() on non-Mac platforms.
+
 2011-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.
