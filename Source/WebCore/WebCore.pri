@@ -651,6 +651,12 @@ inspectorBackendStub.tempNames = $$PWD/$$INSPECTOR_BACKEND_STUB_QRC $${WC_GENERA
 inspectorBackendStub.commands = $$QMAKE_COPY $$replace(inspectorBackendStub.tempNames, "/", $$QMAKE_DIR_SEP)
 addExtraCompiler(inspectorBackendStub)
 
+# GENERATOR 2-a: inspector injected script source compiler
+injectedScriptSource.output = $${WC_GENERATED_SOURCES_DIR}/InjectedScriptSource.h
+injectedScriptSource.input = $$PWD/inspector/InjectedScriptSource.js
+injectedScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptSource_js $$PWD/inspector/InjectedScriptSource.js  $${WC_GENERATED_SOURCES_DIR}/InjectedScriptSource.h
+addExtraCompiler(injectedScriptSource)
+
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp
 tokenizer.input = TOKENIZER

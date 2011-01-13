@@ -1,3 +1,9 @@
+2011-01-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: Qt build fix.
+
+        * WebCore.pri:
+
 2011-01-12  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
