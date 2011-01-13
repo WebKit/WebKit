@@ -569,7 +569,8 @@
     for (var i = 0; i < end_line_num - start_line_num; i++) {
       // FIXME: from line numbers are wrong
       var line_number = start_from_line_num + i + 1;
-      var contents = patched_file_contents[file_name][start_line_num + i];
+      var contents = $('<span class="text"></span>');
+      contents.text(patched_file_contents[file_name][start_line_num + i]);
       var line = is_side_by_side ? sideBySideExpansionLine(line_number, contents) : unifiedExpansionLine(line_number, contents);
       fragment.appendChild(line[0]);
     }
@@ -879,7 +880,7 @@
 
   function convertExpansionLine(diff_type, line) {
     var convert_function = diff_type == 'sidebyside' ? sideBySideExpansionLine : unifiedExpansionLine;
-    var contents = textContentsFor(line);
+    var contents = $('.text', line);
     var line_number = fromLineNumber(line);
     var new_line = convert_function(line_number, contents);
     $(line).replaceWith(new_line);

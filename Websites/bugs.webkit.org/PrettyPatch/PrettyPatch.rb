@@ -317,7 +317,7 @@ body {
   border-right-color: #69F;
 }
 
-.ExpandArea {
+.ExpandArea, .ExpandLinkContainer {
   margin: 0;
   white-space: pre-wrap;
 }
