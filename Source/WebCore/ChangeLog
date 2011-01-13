@@ -1,3 +1,18 @@
+2011-01-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove premature optimization from SchemeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=52283
+
+        As far as I can tell, this optimization isn't necessary.  I'm slightly
+        unsure which benchmarks to run to demonstrate this numerically, but
+        none of the benchmarks Chromium tracks were affected by adding a
+        similar check for "display-isolated" schemes.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal):
+
 2011-01-12  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.
