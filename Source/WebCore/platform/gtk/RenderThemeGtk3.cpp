@@ -203,24 +203,18 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObj
     gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction())));
     gtk_style_context_add_class(context, widgetType == GTK_TYPE_CHECK_BUTTON ? GTK_STYLE_CLASS_CHECK : GTK_STYLE_CLASS_RADIO);
 
-    gint indicatorSize, indicatorSpacing;
-    gtk_style_context_get_style(context,
-                                "indicator-size", &indicatorSize,
-                                "indicator-spacing", &indicatorSpacing,
-                                NULL);
-
     guint flags = 0;
     if (!theme->isEnabled(renderObject) || theme->isReadOnlyControl(renderObject))
         flags |= GTK_STATE_FLAG_INSENSITIVE;
     else if (theme->isHovered(renderObject))
         flags |= GTK_STATE_FLAG_PRELIGHT;
-    if (theme->isChecked(renderObject))
+    if (theme->isIndeterminate(renderObject))
+        flags |= GTK_STATE_FLAG_INCONSISTENT;
+    else if (theme->isChecked(renderObject))
         flags |= GTK_STATE_FLAG_ACTIVE;
     if (theme->isPressed(renderObject))
         flags |= GTK_STATE_FLAG_SELECTED;
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
-
-    IntRect indicatorRect(rect);
 
     if (widgetType == GTK_TYPE_CHECK_BUTTON)
         gtk_render_check(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
@@ -229,6 +223,8 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObj
 
     if (theme->isFocused(renderObject)) {
         IntRect indicatorRect(rect);
+        gint indicatorSpacing;
+        gtk_style_context_get_style(context, "indicator-spacing", &indicatorSpacing, NULL);
         indicatorRect.inflate(indicatorSpacing);
         gtk_render_focus(context, paintInfo.context->platformContext(), indicatorRect.x(), indicatorRect.y(),
                          indicatorRect.width(), indicatorRect.height());
