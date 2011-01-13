@@ -116,6 +116,9 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         m_backingStore = BackingStore::create(updateInfo.viewSize);
 
     m_backingStore->incorporateUpdate(updateInfo);
+
+    for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
+        m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
 }
 
 void DrawingAreaProxyImpl::sendSetSize()

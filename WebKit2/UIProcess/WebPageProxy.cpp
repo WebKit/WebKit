@@ -461,6 +461,11 @@ void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground
         process()->send(Messages::WebPage::SetDrawsTransparentBackground(drawsTransparentBackground), m_pageID);
 }
 
+void WebPageProxy::setViewNeedsDisplay(const IntRect& rect)
+{
+    m_pageClient->setViewNeedsDisplay(rect);
+}
+
 void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
 {
     if (!isValid())
@@ -2157,6 +2162,8 @@ void WebPageProxy::processDidCrash()
         m_urlAtProcessExit = m_mainFrame->url();
 
     m_mainFrame = 0;
+
+    m_drawingArea = nullptr;
 
 #if ENABLE(INSPECTOR)
     if (m_inspector) {

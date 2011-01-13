@@ -167,6 +167,8 @@ public:
     void setInitialFocus(bool);
     void setWindowResizerSize(const WebCore::IntSize&);
 
+    void setViewNeedsDisplay(const WebCore::IntRect&);
+
     enum {
         ViewWindowIsActive = 1 << 0,
         ViewIsFocused = 1 << 1,

@@ -2,6 +2,28 @@
 
         Reviewed by Sam Weinig.
 
+        Get the new drawing area painting to the screen
+        https://bugs.webkit.org/show_bug.cgi?id=52331
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        Call setViewNeedsDisplay on all the update rects.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setViewNeedsDisplay):
+        Call through to the page client.
+
+        (WebKit::WebPageProxy::processDidCrash):
+        Null out the drawing area proxy.
+        
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::paint):
+        Paint.
+
+2011-01-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         More work on getting the drawing area proxy to paint
         https://bugs.webkit.org/show_bug.cgi?id=52328
 
