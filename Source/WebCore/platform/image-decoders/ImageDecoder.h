@@ -49,10 +49,10 @@ namespace WebCore {
     // FIXME: Do we want better encapsulation?
     typedef Vector<char> ColorProfile;
 
-    // The RGBA32Buffer object represents the decoded image data in RGBA32
+    // The ImageFrame object represents the decoded image data in RGBA32
     // format.  This buffer is what all decoders write a single frame into.
     // Frames are then instantiated for drawing by being handed this buffer.
-    class RGBA32Buffer {
+    class ImageFrame {
     public:
         enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
         enum FrameDisposalMethod {
@@ -71,13 +71,13 @@ namespace WebCore {
         typedef unsigned PixelData;
 #endif
 
-        RGBA32Buffer();
+        ImageFrame();
 
-        RGBA32Buffer(const RGBA32Buffer& other) { operator=(other); }
+        ImageFrame(const ImageFrame& other) { operator=(other); }
 
         // For backends which refcount their data, this operator doesn't need to
         // create a new copy of the image data, only increase the ref count.
-        RGBA32Buffer& operator=(const RGBA32Buffer& other);
+        ImageFrame& operator=(const ImageFrame& other);
 
         // Deletes the pixel data entirely; used by ImageDecoder to save memory
         // when we no longer need to display a frame and only need its metadata.
@@ -88,11 +88,11 @@ namespace WebCore {
 
         // Creates a new copy of the image data in |other|, so the two images
         // can be modified independently.  Returns whether the copy succeeded.
-        bool copyBitmapData(const RGBA32Buffer&);
+        bool copyBitmapData(const ImageFrame&);
 
         // Creates a new reference to the image data in |other|.  The two images
         // share a common backing store.
-        void copyReferenceToBitmapData(const RGBA32Buffer&);
+        void copyReferenceToBitmapData(const ImageFrame&);
 
         // Copies the pixel data at [(startX, startY), (endX, startY)) to the
         // same X-coordinates on each subsequent row up to but not including
@@ -307,10 +307,10 @@ namespace WebCore {
         // The number of repetitions to perform for an animation loop.
         virtual int repetitionCount() const { return cAnimationNone; }
 
-        // Called to obtain the RGBA32Buffer full of decoded data for rendering.
+        // Called to obtain the ImageFrame full of decoded data for rendering.
         // The decoder plugin will decode as much of the frame as it can before
         // handing back the buffer.
-        virtual RGBA32Buffer* frameBufferAtIndex(size_t) = 0;
+        virtual ImageFrame* frameBufferAtIndex(size_t) = 0;
 
         // Whether or not the underlying image format even supports alpha
         // transparency.
@@ -354,7 +354,7 @@ namespace WebCore {
         int scaledY(int origY, int searchStart = 0);
 
         RefPtr<SharedBuffer> m_data; // The encoded data.
-        Vector<RGBA32Buffer> m_frameBufferCache;
+        Vector<ImageFrame> m_frameBufferCache;
         ColorProfile m_colorProfile;
         bool m_scaled;
         Vector<int> m_scaledColumns;

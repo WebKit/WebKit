@@ -97,16 +97,16 @@ size_t WebImageDecoder::frameCount() const
 bool WebImageDecoder::isFrameCompleteAtIndex(int index) const
 {
     ASSERT(m_private);
-    RGBA32Buffer* const frameBuffer = m_private->frameBufferAtIndex(index);
+    ImageFrame* const frameBuffer = m_private->frameBufferAtIndex(index);
     if (!frameBuffer)
         return false;
-    return (frameBuffer->status() == RGBA32Buffer::FrameComplete);
+    return (frameBuffer->status() == ImageFrame::FrameComplete);
 }
 
 WebImage WebImageDecoder::getFrameAtIndex(int index = 0) const
 {
     ASSERT(m_private);
-    RGBA32Buffer* const frameBuffer = m_private->frameBufferAtIndex(index);
+    ImageFrame* const frameBuffer = m_private->frameBufferAtIndex(index);
     if (!frameBuffer)
         return WebImage();
 #if WEBKIT_USING_SKIA

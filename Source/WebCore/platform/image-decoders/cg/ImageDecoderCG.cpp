@@ -33,22 +33,22 @@
 
 namespace WebCore {
 
-static RGBA32Buffer::PixelData* getPtrAsPixelData(CFMutableDataRef data)
+static ImageFrame::PixelData* getPtrAsPixelData(CFMutableDataRef data)
 {
-    return data ? reinterpret_cast<RGBA32Buffer::PixelData*>(CFDataGetMutableBytePtr(data)) : 0;
+    return data ? reinterpret_cast<ImageFrame::PixelData*>(CFDataGetMutableBytePtr(data)) : 0;
 }
    
-void RGBA32Buffer::copyReferenceToBitmapData(const RGBA32Buffer& other)
+void ImageFrame::copyReferenceToBitmapData(const ImageFrame& other)
 {
     ASSERT(this != &other);
     m_backingStore = other.m_backingStore;
     m_bytes = getPtrAsPixelData(m_backingStore.get());
-    // FIXME: The rest of this function seems redundant with RGBA32Buffer::copyBitmapData.
+    // FIXME: The rest of this function seems redundant with ImageFrame::copyBitmapData.
     m_size = other.m_size;
     setHasAlpha(other.m_hasAlpha);
 }
 
-bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
+bool ImageFrame::copyBitmapData(const ImageFrame& other)
 {
     if (this == &other)
         return true;
@@ -60,7 +60,7 @@ bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
     return true;
 }
 
-bool RGBA32Buffer::setSize(int newWidth, int newHeight)
+bool ImageFrame::setSize(int newWidth, int newHeight)
 {
     ASSERT(!m_backingStore);
     size_t backingStoreSize = newWidth * newHeight * sizeof(PixelData);
@@ -91,7 +91,7 @@ static CGColorSpaceRef createColorSpace(const ColorProfile& colorProfile)
 #endif
 }
 
-NativeImagePtr RGBA32Buffer::asNewNativeImage() const
+NativeImagePtr ImageFrame::asNewNativeImage() const
 {
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, createColorSpace(m_colorProfile));
     RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(m_backingStore.get()));

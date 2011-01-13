@@ -1,3 +1,125 @@
+2011-01-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Rename RGBA32Buffer to ImageFrame
+        https://bugs.webkit.org/show_bug.cgi?id=52363
+
+        RGBA32Buffer is a terrible misnomer.  ImageFrame is vastly
+        more accurate.  More cleanup to come.
+
+        * WebCore.pro:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameIsCompleteAtIndex):
+        * platform/graphics/qt/ImageDecoderQt.cpp:
+        (WebCore::ImageDecoderQt::frameBufferAtIndex):
+        (WebCore::ImageDecoderQt::internalReadImage):
+        (WebCore::ImageDecoderQt::internalHandleCurrentImage):
+        * platform/graphics/qt/ImageDecoderQt.h:
+        * platform/graphics/wince/ImageWinCE.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageFrame::ImageFrame):
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::clear):
+        (WebCore::ImageFrame::zeroFill):
+        (WebCore::ImageFrame::copyReferenceToBitmapData):
+        (WebCore::ImageFrame::copyBitmapData):
+        (WebCore::ImageFrame::setSize):
+        (WebCore::ImageFrame::hasAlpha):
+        (WebCore::ImageFrame::setHasAlpha):
+        (WebCore::ImageFrame::setColorProfile):
+        (WebCore::ImageFrame::setStatus):
+        (WebCore::ImageFrame::width):
+        (WebCore::ImageFrame::height):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::ImageFrame):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::frameBufferAtIndex):
+        (WebCore::BMPImageDecoder::decode):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/bmp/BMPImageReader.cpp:
+        (WebCore::BMPImageReader::decodeBMP):
+        * platform/image-decoders/bmp/BMPImageReader.h:
+        (WebCore::BMPImageReader::setBuffer):
+        * platform/image-decoders/cairo/ImageDecoderCairo.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/image-decoders/cg/ImageDecoderCG.cpp:
+        (WebCore::getPtrAsPixelData):
+        (WebCore::ImageFrame::copyReferenceToBitmapData):
+        (WebCore::ImageFrame::copyBitmapData):
+        (WebCore::ImageFrame::setSize):
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::clearFrameBufferCache):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::frameComplete):
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::read):
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFFrameReader::GIFFrameReader):
+        * platform/image-decoders/haiku/ImageDecoderHaiku.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::frameBufferAtIndex):
+        (WebCore::ICOImageDecoder::decode):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        (WebCore::JPEGImageDecoder::jpegComplete):
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/openvg/ImageDecoderOpenVG.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::rowAvailable):
+        (WebCore::PNGImageDecoder::pngComplete):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        (WebCore::PNGImageDecoder::isComplete):
+        * platform/image-decoders/qt/ImageFrameQt.cpp: Copied from Source/WebCore/platform/image-decoders/qt/RGBA32BufferQt.cpp.
+        (WebCore::ImageFrame::ImageFrame):
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::clear):
+        (WebCore::ImageFrame::zeroFill):
+        (WebCore::ImageFrame::copyBitmapData):
+        (WebCore::ImageFrame::setSize):
+        (WebCore::ImageFrame::asNewNativeImage):
+        (WebCore::ImageFrame::hasAlpha):
+        (WebCore::ImageFrame::setHasAlpha):
+        (WebCore::ImageFrame::setColorProfile):
+        (WebCore::ImageFrame::setStatus):
+        (WebCore::ImageFrame::setPixmap):
+        (WebCore::ImageFrame::width):
+        (WebCore::ImageFrame::height):
+        * platform/image-decoders/qt/RGBA32BufferQt.cpp: Removed.
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::ImageFrame):
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::clear):
+        (WebCore::ImageFrame::zeroFill):
+        (WebCore::ImageFrame::copyBitmapData):
+        (WebCore::ImageFrame::setSize):
+        (WebCore::ImageFrame::asNewNativeImage):
+        (WebCore::ImageFrame::hasAlpha):
+        (WebCore::ImageFrame::setHasAlpha):
+        (WebCore::ImageFrame::setColorProfile):
+        (WebCore::ImageFrame::setStatus):
+        (WebCore::ImageFrame::width):
+        (WebCore::ImageFrame::height):
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::frameBufferAtIndex):
+        (WebCore::WEBPImageDecoder::decode):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+        * platform/image-decoders/wx/ImageDecoderWx.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+
 2011-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

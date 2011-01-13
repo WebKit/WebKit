@@ -41,7 +41,7 @@ public:
     virtual ~WEBPImageDecoder();
     virtual String filenameExtension() const { return "vp8"; }
     virtual bool isSizeAvailable();
-    virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+    virtual ImageFrame* frameBufferAtIndex(size_t index);
     virtual bool supportsAlpha() const { return false; }
 
 private:

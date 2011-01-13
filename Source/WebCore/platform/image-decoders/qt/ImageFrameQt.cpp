@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-RGBA32Buffer::RGBA32Buffer()
+ImageFrame::ImageFrame()
     : m_hasAlpha(false) 
     , m_size()
     , m_status(FrameEmpty)
@@ -44,7 +44,7 @@ RGBA32Buffer::RGBA32Buffer()
 {
 }
 
-RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
+ImageFrame& ImageFrame::operator=(const ImageFrame& other)
 {
     if (this == &other)
         return *this;
@@ -57,7 +57,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     return *this;
 }
 
-void RGBA32Buffer::clear()
+void ImageFrame::clear()
 {
     m_pixmap = QPixmap();
     m_image = QImage();
@@ -68,7 +68,7 @@ void RGBA32Buffer::clear()
     // other metadata out of this frame later.
 }
 
-void RGBA32Buffer::zeroFill()
+void ImageFrame::zeroFill()
 {
     if (m_pixmap.isNull() && !m_image.isNull()) {
         m_pixmap = QPixmap(m_image.width(), m_image.height());
@@ -77,7 +77,7 @@ void RGBA32Buffer::zeroFill()
     m_pixmap.fill(QColor(0, 0, 0, 0));
 }
 
-bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
+bool ImageFrame::copyBitmapData(const ImageFrame& other)
 {
     if (this == &other)
         return true;
@@ -89,7 +89,7 @@ bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
     return true;
 }
 
-bool RGBA32Buffer::setSize(int newWidth, int newHeight)
+bool ImageFrame::setSize(int newWidth, int newHeight)
 {
     // This function should only be called once, it will leak memory
     // otherwise.
@@ -107,7 +107,7 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
     return true;
 }
 
-QPixmap* RGBA32Buffer::asNewNativeImage() const
+QPixmap* ImageFrame::asNewNativeImage() const
 {
     if (m_pixmap.isNull() && !m_image.isNull()) {
         m_pixmap = QPixmap::fromImage(m_image);
@@ -116,28 +116,28 @@ QPixmap* RGBA32Buffer::asNewNativeImage() const
     return new QPixmap(m_pixmap);
 }
 
-bool RGBA32Buffer::hasAlpha() const
+bool ImageFrame::hasAlpha() const
 {
     return m_hasAlpha;
 }
 
-void RGBA32Buffer::setHasAlpha(bool alpha)
+void ImageFrame::setHasAlpha(bool alpha)
 {
     m_hasAlpha = alpha;
 }
 
-void RGBA32Buffer::setColorProfile(const ColorProfile& colorProfile)
+void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
 {
     notImplemented();
 }
 
-void RGBA32Buffer::setStatus(FrameStatus status)
+void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;
 }
 
 // The image must not have format 8888 pre multiplied...
-void RGBA32Buffer::setPixmap(const QPixmap& pixmap)
+void ImageFrame::setPixmap(const QPixmap& pixmap)
 {
     m_pixmap = pixmap;
     m_image = QImage();
@@ -145,12 +145,12 @@ void RGBA32Buffer::setPixmap(const QPixmap& pixmap)
     m_hasAlpha = pixmap.hasAlphaChannel();
 }
 
-int RGBA32Buffer::width() const
+int ImageFrame::width() const
 {
     return m_size.width();
 }
 
-int RGBA32Buffer::height() const
+int ImageFrame::height() const
 {
     return m_size.height();
 }

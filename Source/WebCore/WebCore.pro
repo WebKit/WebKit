@@ -1180,7 +1180,7 @@ SOURCES += \
     platform/FileStream.cpp \
     platform/FileSystem.cpp \
     platform/GeolocationService.cpp \
-    platform/image-decoders/qt/RGBA32BufferQt.cpp \
+    platform/image-decoders/qt/ImageFrameQt.cpp \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFallbackList.cpp \
     platform/graphics/FontFamily.cpp \

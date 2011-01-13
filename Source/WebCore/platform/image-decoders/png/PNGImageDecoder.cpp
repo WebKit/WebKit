@@ -197,7 +197,7 @@ bool PNGImageDecoder::setSize(unsigned width, unsigned height)
     return true;
 }
 
-RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
+ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index)
         return 0;
@@ -207,8 +207,8 @@ RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
         m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
     }
 
-    RGBA32Buffer& frame = m_frameBufferCache[0];
-    if (frame.status() != RGBA32Buffer::FrameComplete)
+    ImageFrame& frame = m_frameBufferCache[0];
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(false);
     return &frame;
 }
@@ -330,13 +330,13 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         return;
 
     // Initialize the framebuffer if needed.
-    RGBA32Buffer& buffer = m_frameBufferCache[0];
-    if (buffer.status() == RGBA32Buffer::FrameEmpty) {
+    ImageFrame& buffer = m_frameBufferCache[0];
+    if (buffer.status() == ImageFrame::FrameEmpty) {
         if (!buffer.setSize(scaledSize().width(), scaledSize().height())) {
             longjmp(JMPBUF(m_reader->pngPtr()), 1);
             return;
         }
-        buffer.setStatus(RGBA32Buffer::FramePartial);
+        buffer.setStatus(ImageFrame::FramePartial);
         buffer.setHasAlpha(false);
         buffer.setColorProfile(m_colorProfile);
 
@@ -410,7 +410,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 void PNGImageDecoder::pngComplete()
 {
     if (!m_frameBufferCache.isEmpty())
-        m_frameBufferCache.first().setStatus(RGBA32Buffer::FrameComplete);
+        m_frameBufferCache.first().setStatus(ImageFrame::FrameComplete);
 }
 
 void PNGImageDecoder::decode(bool onlySize)

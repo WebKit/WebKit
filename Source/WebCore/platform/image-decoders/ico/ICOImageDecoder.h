@@ -51,7 +51,7 @@ namespace WebCore {
         virtual IntSize frameSizeAtIndex(size_t) const;
         virtual bool setSize(unsigned width, unsigned height);
         virtual size_t frameCount();
-        virtual RGBA32Buffer* frameBufferAtIndex(size_t);
+        virtual ImageFrame* frameBufferAtIndex(size_t);
         // CAUTION: setFailed() deletes all readers and decoders.  Be careful to
         // avoid accessing deleted memory, especially when calling this from
         // inside BMPImageReader!

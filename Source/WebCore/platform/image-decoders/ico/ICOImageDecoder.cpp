@@ -109,14 +109,14 @@ size_t ICOImageDecoder::frameCount()
     return m_frameBufferCache.size();
 }
 
-RGBA32Buffer* ICOImageDecoder::frameBufferAtIndex(size_t index)
+ImageFrame* ICOImageDecoder::frameBufferAtIndex(size_t index)
 {
     // Ensure |index| is valid.
     if (index >= frameCount())
         return 0;
 
-    RGBA32Buffer* buffer = &m_frameBufferCache[index];
-    if (buffer->status() != RGBA32Buffer::FrameComplete)
+    ImageFrame* buffer = &m_frameBufferCache[index];
+    if (buffer->status() != ImageFrame::FrameComplete)
         decode(index, false);
     return buffer;
 }
@@ -162,7 +162,7 @@ void ICOImageDecoder::decode(size_t index, bool onlySize)
     // If we're done decoding this frame, we don't need the BMPImageReader or
     // PNGImageDecoder anymore.  (If we failed, these have already been
     // cleared.)
-    else if ((m_frameBufferCache.size() > index) && (m_frameBufferCache[index].status() == RGBA32Buffer::FrameComplete)) {
+    else if ((m_frameBufferCache.size() > index) && (m_frameBufferCache[index].status() == ImageFrame::FrameComplete)) {
         m_bmpReaders[index].clear();
         m_pngDecoders[index].clear();
     }

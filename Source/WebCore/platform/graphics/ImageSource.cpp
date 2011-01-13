@@ -130,8 +130,8 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     if (!m_decoder)
         return 0;
 
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
+    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
         return 0;
 
     // Zero-height images can cause problems for some ports.  If we have an
@@ -149,8 +149,8 @@ float ImageSource::frameDurationAtIndex(size_t index)
     if (!m_decoder)
         return 0;
 
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
+    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == ImageFrame::FrameEmpty)
         return 0;
 
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
@@ -180,8 +180,8 @@ bool ImageSource::frameIsCompleteAtIndex(size_t index)
     if (!m_decoder)
         return false;
 
-    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
-    return buffer && buffer->status() == RGBA32Buffer::FrameComplete;
+    ImageFrame* buffer = m_decoder->frameBufferAtIndex(index);
+    return buffer && buffer->status() == ImageFrame::FrameComplete;
 }
 
 }

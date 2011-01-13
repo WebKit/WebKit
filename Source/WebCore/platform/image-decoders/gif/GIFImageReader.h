@@ -101,7 +101,7 @@ struct GIFFrameReader {
     unsigned int x_offset, y_offset;    /* With respect to "screen" origin */
     unsigned int height, width;
     int tpixel;                 /* Index of transparent pixel */
-    WebCore::RGBA32Buffer::FrameDisposalMethod disposal_method;   /* Restore to background, leave in place, etc.*/
+    WebCore::ImageFrame::FrameDisposalMethod disposal_method;   /* Restore to background, leave in place, etc.*/
     unsigned char *local_colormap;    /* Per-image colormap */
     int local_colormap_size;    /* Size of local colormap array. */
     
@@ -130,7 +130,7 @@ struct GIFFrameReader {
 
         x_offset = y_offset = width = height = 0;
         tpixel = 0;
-        disposal_method = WebCore::RGBA32Buffer::DisposeNotSpecified;
+        disposal_method = WebCore::ImageFrame::DisposeNotSpecified;
 
         local_colormap = 0;
         local_colormap_size = 0;

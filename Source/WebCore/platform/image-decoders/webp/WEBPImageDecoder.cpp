@@ -53,7 +53,7 @@ bool WEBPImageDecoder::isSizeAvailable()
     return ImageDecoder::isSizeAvailable();
 }
 
-RGBA32Buffer* WEBPImageDecoder::frameBufferAtIndex(size_t index)
+ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index)
         return 0;
@@ -63,8 +63,8 @@ RGBA32Buffer* WEBPImageDecoder::frameBufferAtIndex(size_t index)
         m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
     }
 
-    RGBA32Buffer& frame = m_frameBufferCache[0];
-    if (frame.status() != RGBA32Buffer::FrameComplete)
+    ImageFrame& frame = m_frameBufferCache[0];
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(false);
     return &frame;
 }
@@ -96,8 +96,8 @@ bool WEBPImageDecoder::decode(bool onlySize)
     if (!isAllDataReceived())
         return true;
     ASSERT(!m_frameBufferCache.isEmpty());
-    RGBA32Buffer& buffer = m_frameBufferCache[0];
-    if (buffer.status() == RGBA32Buffer::FrameEmpty) {
+    ImageFrame& buffer = m_frameBufferCache[0];
+    if (buffer.status() == ImageFrame::FrameEmpty) {
         ASSERT(width == size().width());
         ASSERT(height == size().height());
         if (!buffer.setSize(width, height))
@@ -114,7 +114,7 @@ bool WEBPImageDecoder::decode(bool onlySize)
         for (int x = 0; x < width; ++x)
             buffer.setRGBA(x, y, src[bytesPerPixel * x + 2], src[bytesPerPixel * x + 1], src[bytesPerPixel * x + 0], 0xff);
     }
-    buffer.setStatus(RGBA32Buffer::FrameComplete);
+    buffer.setStatus(ImageFrame::FrameComplete);
     buffer.setHasAlpha(false);
     buffer.setRect(IntRect(IntPoint(), size()));
     return true;

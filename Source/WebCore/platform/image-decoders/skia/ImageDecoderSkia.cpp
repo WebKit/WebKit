@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-RGBA32Buffer::RGBA32Buffer()
+ImageFrame::ImageFrame()
     : m_status(FrameEmpty)
     , m_duration(0)
     , m_disposalMethod(DisposeNotSpecified)
@@ -39,7 +39,7 @@ RGBA32Buffer::RGBA32Buffer()
 {
 }
 
-RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
+ImageFrame& ImageFrame::operator=(const ImageFrame& other)
 {
     if (this == &other)
         return *this;
@@ -56,7 +56,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     return *this;
 }
 
-void RGBA32Buffer::clear()
+void ImageFrame::clear()
 {
     m_bitmap.reset();
     m_status = FrameEmpty;
@@ -66,12 +66,12 @@ void RGBA32Buffer::clear()
     // other metadata out of this frame later.
 }
 
-void RGBA32Buffer::zeroFill()
+void ImageFrame::zeroFill()
 {
     m_bitmap.eraseARGB(0, 0, 0, 0);
 }
 
-bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
+bool ImageFrame::copyBitmapData(const ImageFrame& other)
 {
     if (this == &other)
         return true;
@@ -81,7 +81,7 @@ bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
     return otherBitmap.copyTo(&m_bitmap, otherBitmap.config());
 }
 
-bool RGBA32Buffer::setSize(int newWidth, int newHeight)
+bool ImageFrame::setSize(int newWidth, int newHeight)
 {
     // This function should only be called once, it will leak memory
     // otherwise.
@@ -96,39 +96,39 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
     return true;
 }
 
-NativeImagePtr RGBA32Buffer::asNewNativeImage() const
+NativeImagePtr ImageFrame::asNewNativeImage() const
 {
     return new NativeImageSkia(m_bitmap);
 }
 
-bool RGBA32Buffer::hasAlpha() const
+bool ImageFrame::hasAlpha() const
 {
     return !m_bitmap.isOpaque();
 }
 
-void RGBA32Buffer::setHasAlpha(bool alpha)
+void ImageFrame::setHasAlpha(bool alpha)
 {
     m_bitmap.setIsOpaque(!alpha);
 }
 
-void RGBA32Buffer::setColorProfile(const ColorProfile& colorProfile)
+void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
 {
     notImplemented();
 }
 
-void RGBA32Buffer::setStatus(FrameStatus status)
+void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;
     if (m_status == FrameComplete)
         m_bitmap.setDataComplete();  // Tell the bitmap it's done.
 }
 
-int RGBA32Buffer::width() const
+int ImageFrame::width() const
 {
     return m_bitmap.width();
 }
 
-int RGBA32Buffer::height() const
+int ImageFrame::height() const
 {
     return m_bitmap.height();
 }

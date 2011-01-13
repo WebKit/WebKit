@@ -64,11 +64,11 @@ namespace WebCore {
 
         // |parent| is the decoder that owns us.
         // |startOffset| points to the start of the BMP within the file.
-        // |buffer| points at an empty RGBA32Buffer that we'll initialize and
+        // |buffer| points at an empty ImageFrame that we'll initialize and
         // fill with decoded data.
         BMPImageReader(ImageDecoder* parent, size_t decodedAndHeaderOffset, size_t imgDataOffset, bool usesAndMask);
 
-        void setBuffer(RGBA32Buffer* buffer) { m_buffer = buffer; }
+        void setBuffer(ImageFrame* buffer) { m_buffer = buffer; }
         void setData(SharedBuffer* data) { m_data = data; }
 
         // Does the actual decoding.  If |onlySize| is true, decoding only
@@ -274,7 +274,7 @@ namespace WebCore {
         ImageDecoder* m_parent;
 
         // The destination for the pixel data.
-        RGBA32Buffer* m_buffer;
+        ImageFrame* m_buffer;
 
         // The file to decode.
         RefPtr<SharedBuffer> m_data;

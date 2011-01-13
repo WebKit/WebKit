@@ -425,7 +425,7 @@ bool JPEGImageDecoder::setSize(unsigned width, unsigned height)
     return true;
 }
 
-RGBA32Buffer* JPEGImageDecoder::frameBufferAtIndex(size_t index)
+ImageFrame* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index)
         return 0;
@@ -435,8 +435,8 @@ RGBA32Buffer* JPEGImageDecoder::frameBufferAtIndex(size_t index)
         m_frameBufferCache[0].setPremultiplyAlpha(m_premultiplyAlpha);
     }
 
-    RGBA32Buffer& frame = m_frameBufferCache[0];
-    if (frame.status() != RGBA32Buffer::FrameComplete)
+    ImageFrame& frame = m_frameBufferCache[0];
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(false);
     return &frame;
 }
@@ -453,11 +453,11 @@ bool JPEGImageDecoder::outputScanlines()
         return false;
 
     // Initialize the framebuffer if needed.
-    RGBA32Buffer& buffer = m_frameBufferCache[0];
-    if (buffer.status() == RGBA32Buffer::FrameEmpty) {
+    ImageFrame& buffer = m_frameBufferCache[0];
+    if (buffer.status() == ImageFrame::FrameEmpty) {
         if (!buffer.setSize(scaledSize().width(), scaledSize().height()))
             return setFailed();
-        buffer.setStatus(RGBA32Buffer::FramePartial);
+        buffer.setStatus(ImageFrame::FramePartial);
         buffer.setHasAlpha(false);
         buffer.setColorProfile(m_colorProfile);
 
@@ -513,7 +513,7 @@ void JPEGImageDecoder::jpegComplete()
 
     // Hand back an appropriately sized buffer, even if the image ended up being
     // empty.
-    m_frameBufferCache[0].setStatus(RGBA32Buffer::FrameComplete);
+    m_frameBufferCache[0].setStatus(ImageFrame::FrameComplete);
 }
 
 void JPEGImageDecoder::decode(bool onlySize)
@@ -530,7 +530,7 @@ void JPEGImageDecoder::decode(bool onlySize)
         setFailed();
     // If we're done decoding the image, we don't need the JPEGImageReader
     // anymore.  (If we failed, |m_reader| has already been cleared.)
-    else if (!m_frameBufferCache.isEmpty() && (m_frameBufferCache[0].status() == RGBA32Buffer::FrameComplete))
+    else if (!m_frameBufferCache.isEmpty() && (m_frameBufferCache[0].status() == ImageFrame::FrameComplete))
         m_reader.clear();
 }
 

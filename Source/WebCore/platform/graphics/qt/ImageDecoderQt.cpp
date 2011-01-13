@@ -131,7 +131,7 @@ String ImageDecoderQt::filenameExtension() const
     return String(m_format.constData(), m_format.length());
 };
 
-RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
+ImageFrame* ImageDecoderQt::frameBufferAtIndex(size_t index)
 {
     // In case the ImageDecoderQt got recreated we don't know
     // yet how many images we are going to have and need to
@@ -145,8 +145,8 @@ RGBA32Buffer* ImageDecoderQt::frameBufferAtIndex(size_t index)
     if (index >= count)
         return 0;
 
-    RGBA32Buffer& frame = m_frameBufferCache[index];
-    if (frame.status() != RGBA32Buffer::FrameComplete && m_reader)
+    ImageFrame& frame = m_frameBufferCache[index];
+    if (frame.status() != ImageFrame::FrameComplete && m_reader)
         internalReadImage(index);
     return &frame;
 }
@@ -185,7 +185,7 @@ void ImageDecoderQt::internalReadImage(size_t frameIndex)
 
     // Attempt to return some memory
     for (int i = 0; i < m_frameBufferCache.size(); ++i) {
-        if (m_frameBufferCache[i].status() != RGBA32Buffer::FrameComplete)
+        if (m_frameBufferCache[i].status() != ImageFrame::FrameComplete)
             return;
     }
 
@@ -211,10 +211,10 @@ bool ImageDecoderQt::internalHandleCurrentImage(size_t frameIndex)
         return false;
     }
 
-    // now into the RGBA32Buffer - even if the image is not
-    RGBA32Buffer* const buffer = &m_frameBufferCache[frameIndex];
+    // now into the ImageFrame - even if the image is not
+    ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
     buffer->setRect(m_reader->currentImageRect());
-    buffer->setStatus(RGBA32Buffer::FrameComplete);
+    buffer->setStatus(ImageFrame::FrameComplete);
     buffer->setDuration(m_reader->nextImageDelay());
     buffer->setPixmap(pixmap);
     return true;

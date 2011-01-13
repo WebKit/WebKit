@@ -77,10 +77,10 @@ bool BMPImageReader::decodeBMP(bool onlySize)
 
     // Initialize the framebuffer if needed.
     ASSERT(m_buffer);  // Parent should set this before asking us to decode!
-    if (m_buffer->status() == RGBA32Buffer::FrameEmpty) {
+    if (m_buffer->status() == ImageFrame::FrameEmpty) {
         if (!m_buffer->setSize(m_parent->size().width(), m_parent->size().height()))
             return m_parent->setFailed(); // Unable to allocate.
-        m_buffer->setStatus(RGBA32Buffer::FramePartial);
+        m_buffer->setStatus(ImageFrame::FramePartial);
         // setSize() calls eraseARGB(), which resets the alpha flag, so we force
         // it back to false here.  We'll set it true below in all cases where
         // these 0s could actually show through.
@@ -122,7 +122,7 @@ bool BMPImageReader::decodeBMP(bool onlySize)
     }
 
     // Done!
-    m_buffer->setStatus(RGBA32Buffer::FrameComplete);
+    m_buffer->setStatus(ImageFrame::FrameComplete);
     return true;
 }
 

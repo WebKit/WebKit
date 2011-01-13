@@ -118,13 +118,13 @@ int GIFImageDecoder::repetitionCount() const
     return m_repetitionCount;
 }
 
-RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
+ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index >= frameCount())
         return 0;
 
-    RGBA32Buffer& frame = m_frameBufferCache[index];
-    if (frame.status() != RGBA32Buffer::FrameComplete)
+    ImageFrame& frame = m_frameBufferCache[index];
+    if (frame.status() != ImageFrame::FrameComplete)
         decode(index + 1, GIFFullQuery);
     return &frame;
 }
@@ -151,7 +151,7 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     // always use ImageSource::clear(true, ...) to completely free the memory in
     // this case.
     clearBeforeFrame = std::min(clearBeforeFrame, m_frameBufferCache.size() - 1);
-    const Vector<RGBA32Buffer>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
+    const Vector<ImageFrame>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
 
     // We need to preserve frames such that:
     //   * We don't clear |end|
@@ -171,16 +171,16 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     //   * If the frame is partial, we're decoding it, so don't clear it; if it
     //     has a disposal method other than DisposeOverwritePrevious, stop
     //     scanning, as we'll only need this frame when decoding the next one.
-    Vector<RGBA32Buffer>::iterator i(end);
-    for (; (i != m_frameBufferCache.begin()) && ((i->status() == RGBA32Buffer::FrameEmpty) || (i->disposalMethod() == RGBA32Buffer::DisposeOverwritePrevious)); --i) {
-        if ((i->status() == RGBA32Buffer::FrameComplete) && (i != end))
+    Vector<ImageFrame>::iterator i(end);
+    for (; (i != m_frameBufferCache.begin()) && ((i->status() == ImageFrame::FrameEmpty) || (i->disposalMethod() == ImageFrame::DisposeOverwritePrevious)); --i) {
+        if ((i->status() == ImageFrame::FrameComplete) && (i != end))
             i->clear();
     }
 
     // Now |i| holds the last frame we need to preserve; clear prior frames.
-    for (Vector<RGBA32Buffer>::iterator j(m_frameBufferCache.begin()); j != i; ++j) {
-        ASSERT(j->status() != RGBA32Buffer::FramePartial);
-        if (j->status() != RGBA32Buffer::FrameEmpty)
+    for (Vector<ImageFrame>::iterator j(m_frameBufferCache.begin()); j != i; ++j) {
+        ASSERT(j->status() != ImageFrame::FramePartial);
+        if (j->status() != ImageFrame::FrameEmpty)
             j->clear();
     }
 }
@@ -220,8 +220,8 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuff
         return true;
 
     // Initialize the frame if necessary.
-    RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
-    if ((buffer.status() == RGBA32Buffer::FrameEmpty) && !initFrameBuffer(frameIndex))
+    ImageFrame& buffer = m_frameBufferCache[frameIndex];
+    if ((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex))
         return false;
 
     // Write one row's worth of data into the frame.  
@@ -251,15 +251,15 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuff
     return true;
 }
 
-bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod)
+bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::FrameDisposalMethod disposalMethod)
 {
     // Initialize the frame if necessary.  Some GIFs insert do-nothing frames,
     // in which case we never reach haveDecodedRow() before getting here.
-    RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
-    if ((buffer.status() == RGBA32Buffer::FrameEmpty) && !initFrameBuffer(frameIndex))
+    ImageFrame& buffer = m_frameBufferCache[frameIndex];
+    if ((buffer.status() == ImageFrame::FrameEmpty) && !initFrameBuffer(frameIndex))
         return false; // initFrameBuffer() has already called setFailed().
 
-    buffer.setStatus(RGBA32Buffer::FrameComplete);
+    buffer.setStatus(ImageFrame::FrameComplete);
     buffer.setDuration(frameDuration);
     buffer.setDisposalMethod(disposalMethod);
 
@@ -277,8 +277,8 @@ bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
             // First skip over prior DisposeOverwritePrevious frames (since they
             // don't affect the start state of this frame) the same way we do in
             // initFrameBuffer().
-            const RGBA32Buffer* prevBuffer = &m_frameBufferCache[--frameIndex];
-            while (frameIndex && (prevBuffer->disposalMethod() == RGBA32Buffer::DisposeOverwritePrevious))
+            const ImageFrame* prevBuffer = &m_frameBufferCache[--frameIndex];
+            while (frameIndex && (prevBuffer->disposalMethod() == ImageFrame::DisposeOverwritePrevious))
                 prevBuffer = &m_frameBufferCache[--frameIndex];
 
             // Now, if we're at a DisposeNotSpecified or DisposeKeep frame, then
@@ -289,7 +289,7 @@ bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
             // The only remaining case is a DisposeOverwriteBgcolor frame.  If
             // it had no alpha, and its rect is contained in the current frame's
             // rect, we know the current frame has no alpha.
-            if ((prevBuffer->disposalMethod() == RGBA32Buffer::DisposeOverwriteBgcolor) && !prevBuffer->hasAlpha() && buffer.rect().contains(prevBuffer->rect()))
+            if ((prevBuffer->disposalMethod() == ImageFrame::DisposeOverwriteBgcolor) && !prevBuffer->hasAlpha() && buffer.rect().contains(prevBuffer->rect()))
                 buffer.setHasAlpha(false);
         }
     }
@@ -332,7 +332,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     if (frameRect.bottom() > size().height())
         frameRect.setHeight(size().height() - frameReader->y_offset);
 
-    RGBA32Buffer* const buffer = &m_frameBufferCache[frameIndex];
+    ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
     int left = upperBoundScaledX(frameRect.x());
     int right = lowerBoundScaledX(frameRect.right(), left);
     int top = upperBoundScaledY(frameRect.y());
@@ -352,15 +352,15 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         // the starting state of the previous frame, so skip over them.  (If the
         // first frame specifies this method, it will get treated like
         // DisposeOverwriteBgcolor below and reset to a completely empty image.)
-        const RGBA32Buffer* prevBuffer = &m_frameBufferCache[--frameIndex];
-        RGBA32Buffer::FrameDisposalMethod prevMethod = prevBuffer->disposalMethod();
-        while (frameIndex && (prevMethod == RGBA32Buffer::DisposeOverwritePrevious)) {
+        const ImageFrame* prevBuffer = &m_frameBufferCache[--frameIndex];
+        ImageFrame::FrameDisposalMethod prevMethod = prevBuffer->disposalMethod();
+        while (frameIndex && (prevMethod == ImageFrame::DisposeOverwritePrevious)) {
             prevBuffer = &m_frameBufferCache[--frameIndex];
             prevMethod = prevBuffer->disposalMethod();
         }
-        ASSERT(prevBuffer->status() == RGBA32Buffer::FrameComplete);
+        ASSERT(prevBuffer->status() == ImageFrame::FrameComplete);
 
-        if ((prevMethod == RGBA32Buffer::DisposeNotSpecified) || (prevMethod == RGBA32Buffer::DisposeKeep)) {
+        if ((prevMethod == ImageFrame::DisposeNotSpecified) || (prevMethod == ImageFrame::DisposeKeep)) {
             // Preserve the last frame as the starting state for this frame.
             if (!buffer->copyBitmapData(*prevBuffer))
                 return setFailed();
@@ -389,7 +389,7 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
     }
 
     // Update our status to be partially complete.
-    buffer->setStatus(RGBA32Buffer::FramePartial);
+    buffer->setStatus(ImageFrame::FramePartial);
 
     // Reset the alpha pixel tracker for this frame.
     m_currentBufferSawAlpha = false;

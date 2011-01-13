@@ -48,7 +48,7 @@ public:
     virtual bool isSizeAvailable();
     virtual size_t frameCount();
     virtual int repetitionCount() const;
-    virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+    virtual ImageFrame* frameBufferAtIndex(size_t index);
 
     virtual String filenameExtension() const;
 

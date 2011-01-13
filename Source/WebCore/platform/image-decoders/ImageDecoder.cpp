@@ -103,7 +103,7 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, ImageSource::AlphaO
 
 #if !PLATFORM(SKIA)
 
-RGBA32Buffer::RGBA32Buffer()
+ImageFrame::ImageFrame()
     : m_hasAlpha(false)
     , m_status(FrameEmpty)
     , m_duration(0)
@@ -112,7 +112,7 @@ RGBA32Buffer::RGBA32Buffer()
 {
 } 
 
-RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
+ImageFrame& ImageFrame::operator=(const ImageFrame& other)
 {
     if (this == &other)
         return *this;
@@ -126,7 +126,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     return *this;
 }
 
-void RGBA32Buffer::clear()
+void ImageFrame::clear()
 {
     m_backingStore.clear();
     m_bytes = 0;
@@ -137,7 +137,7 @@ void RGBA32Buffer::clear()
     // later.
 }
 
-void RGBA32Buffer::zeroFill()
+void ImageFrame::zeroFill()
 {
     memset(m_bytes, 0, m_size.width() * m_size.height() * sizeof(PixelData));
     m_hasAlpha = true;
@@ -145,13 +145,13 @@ void RGBA32Buffer::zeroFill()
 
 #if !PLATFORM(CG)
 
-void RGBA32Buffer::copyReferenceToBitmapData(const RGBA32Buffer& other)
+void ImageFrame::copyReferenceToBitmapData(const ImageFrame& other)
 {
     ASSERT(this != &other);
     copyBitmapData(other);
 }
 
-bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
+bool ImageFrame::copyBitmapData(const ImageFrame& other)
 {
     if (this == &other)
         return true;
@@ -163,7 +163,7 @@ bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
     return true;
 }
 
-bool RGBA32Buffer::setSize(int newWidth, int newHeight)
+bool ImageFrame::setSize(int newWidth, int newHeight)
 {
     // NOTE: This has no way to check for allocation failure if the requested
     // size was too big...
@@ -179,32 +179,32 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
 #endif
 
-bool RGBA32Buffer::hasAlpha() const
+bool ImageFrame::hasAlpha() const
 {
     return m_hasAlpha;
 }
 
-void RGBA32Buffer::setHasAlpha(bool alpha)
+void ImageFrame::setHasAlpha(bool alpha)
 {
     m_hasAlpha = alpha;
 }
 
-void RGBA32Buffer::setColorProfile(const ColorProfile& colorProfile)
+void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
 {
     m_colorProfile = colorProfile;
 }
 
-void RGBA32Buffer::setStatus(FrameStatus status)
+void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;
 }
 
-int RGBA32Buffer::width() const
+int ImageFrame::width() const
 {
     return m_size.width();
 }
 
-int RGBA32Buffer::height() const
+int ImageFrame::height() const
 {
     return m_size.height();
 }

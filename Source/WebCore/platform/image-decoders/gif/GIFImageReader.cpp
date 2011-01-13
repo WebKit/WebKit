@@ -638,11 +638,11 @@ bool GIFImageReader::read(const unsigned char *buf, unsigned len,
         }
         // NOTE: This relies on the values in the FrameDisposalMethod enum
         // matching those in the GIF spec!
-        frame_reader->disposal_method = (WebCore::RGBA32Buffer::FrameDisposalMethod)(((*q) >> 2) & 0x7);
+        frame_reader->disposal_method = (WebCore::ImageFrame::FrameDisposalMethod)(((*q) >> 2) & 0x7);
         // Some specs say 3rd bit (value 4), other specs say value 3
         // Let's choose 3 (the more popular)
         if (frame_reader->disposal_method == 4)
-          frame_reader->disposal_method = WebCore::RGBA32Buffer::DisposeOverwritePrevious;
+          frame_reader->disposal_method = WebCore::ImageFrame::DisposeOverwritePrevious;
         frame_reader->delay_time = GETINT16(q + 1) * 10;
       }
       GETN(1, gif_consume_block);

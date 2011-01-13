@@ -48,7 +48,7 @@ namespace WebCore {
         virtual bool setSize(int width, int height);
         virtual size_t frameCount();
         virtual int repetitionCount() const;
-        virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+        virtual ImageFrame* frameBufferAtIndex(size_t index);
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // GIFImageReader!
@@ -58,7 +58,7 @@ namespace WebCore {
         // Callbacks from the GIF reader.
         void decodingHalted(unsigned bytesLeft);
         bool haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, unsigned repeatCount, bool writeTransparentPixels);
-        bool frameComplete(unsigned frameIndex, unsigned frameDuration, RGBA32Buffer::FrameDisposalMethod disposalMethod);
+        bool frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::FrameDisposalMethod disposalMethod);
         void gifComplete();
 
     private:

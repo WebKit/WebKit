@@ -43,7 +43,7 @@ namespace WebCore {
         virtual String filenameExtension() const { return "png"; }
         virtual bool isSizeAvailable();
         virtual bool setSize(unsigned width, unsigned height);
-        virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
+        virtual ImageFrame* frameBufferAtIndex(size_t index);
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
         // PNGImageReader!
@@ -56,7 +56,7 @@ namespace WebCore {
 
         bool isComplete() const
         {
-            return !m_frameBufferCache.isEmpty() && (m_frameBufferCache.first().status() == RGBA32Buffer::FrameComplete);
+            return !m_frameBufferCache.isEmpty() && (m_frameBufferCache.first().status() == ImageFrame::FrameComplete);
         }
 
     private:
