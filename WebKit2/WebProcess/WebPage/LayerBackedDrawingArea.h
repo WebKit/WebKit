@@ -56,7 +56,7 @@ public:
     virtual ~LayerBackedDrawingArea();
 
     virtual void setNeedsDisplay(const WebCore::IntRect&);
-    virtual void scroll(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& rectToScroll, const WebCore::IntRect& clipRect);
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta);
     virtual void display();
 
     virtual void pageBackgroundTransparencyChanged();

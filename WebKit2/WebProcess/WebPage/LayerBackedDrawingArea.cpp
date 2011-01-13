@@ -61,10 +61,10 @@ LayerBackedDrawingArea::~LayerBackedDrawingArea()
     platformClear();
 }
 
-void LayerBackedDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+void LayerBackedDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
     // FIXME: Do something much smarter.
-    setNeedsDisplay(rectToScroll);
+    setNeedsDisplay(scrollRect);
 }
 
 void LayerBackedDrawingArea::setNeedsDisplay(const IntRect& rect)

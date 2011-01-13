@@ -49,10 +49,10 @@ ChunkedUpdateDrawingArea::~ChunkedUpdateDrawingArea()
 {
 }
 
-void ChunkedUpdateDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+void ChunkedUpdateDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
     // FIXME: Do something much smarter.
-    setNeedsDisplay(rectToScroll);
+    setNeedsDisplay(scrollRect);
 }
 
 void ChunkedUpdateDrawingArea::setNeedsDisplay(const IntRect& rect)

@@ -55,10 +55,10 @@ TiledDrawingArea::~TiledDrawingArea()
 {
 }
 
-void TiledDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+void TiledDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
     // FIXME: Do something much smarter.
-    setNeedsDisplay(rectToScroll);
+    setNeedsDisplay(scrollRect);
 }
 
 void TiledDrawingArea::setNeedsDisplay(const IntRect& rect)
