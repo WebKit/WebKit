@@ -259,7 +259,6 @@ class BuildBotTest(unittest.TestCase):
             "Leopard",
             "Tiger",
             "Windows.*Build",
-            "EFL",
             "GTK.*32",
             "GTK.*64.*Debug",  # Disallow the 64-bit Release bot which is broken.
             "Qt",
