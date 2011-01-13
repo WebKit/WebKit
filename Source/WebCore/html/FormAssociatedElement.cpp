@@ -147,6 +147,7 @@ void FormAssociatedElement::formAttributeChanged()
         m_form = element->findFormAncestor();
         if (m_form)
             form()->registerFormElement(this);
+        element->document()->unregisterFormElementWithFormAttribute(this);
     } else
         resetFormOwner(0);
 }

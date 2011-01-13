@@ -2,6 +2,22 @@
 
         Reviewed by Kent Tamura.
 
+        M_formElementsWithFormAttribute not cleared when FormAssociatedElement is inserted with a null m_form and then removed.
+        https://bugs.webkit.org/show_bug.cgi?id=51905
+
+        Calls unregisterFormElementWithFormAttribute() when 'form' attribute
+        is removed.
+
+        Tests: fast/forms/form-associated-element-crash.html
+               fast/forms/form-associated-element-crash2.html
+
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::formAttributeChanged):
+
+2011-01-12  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
         M_formElementsWithFormAttribute not cleared when Node is moved to another document.
         https://bugs.webkit.org/show_bug.cgi?id=51418
 

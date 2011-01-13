@@ -2,6 +2,21 @@
 
         Reviewed by Kent Tamura.
 
+        M_formElementsWithFormAttribute not cleared when FormAssociatedElement is inserted with a null m_form and then removed.
+        https://bugs.webkit.org/show_bug.cgi?id=51905
+
+        Add test for crash when modifying the form attribute of a form
+        associated element before removing it.
+
+        * fast/forms/form-associated-element-crash-expected.txt: Added.
+        * fast/forms/form-associated-element-crash.html: Added.
+        * fast/forms/form-associated-element-crash2-expected.txt: Added.
+        * fast/forms/form-associated-element-crash2.html: Added.
+
+2011-01-12  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
         M_formElementsWithFormAttribute not cleared when Node is moved to another document.
         https://bugs.webkit.org/show_bug.cgi?id=51418
 
