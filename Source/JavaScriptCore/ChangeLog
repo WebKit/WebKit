@@ -1,3 +1,27 @@
+2011-01-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gavin Barraclough.
+
+        JIT requires VM overcommit (particularly on x86-64), Linux does not by default support this without swap?
+        https://bugs.webkit.org/show_bug.cgi?id=42756
+
+        The FixedVMPool Allocator does not work well on systems where
+        allocating very large amounts of memory upfront is not reasonable,
+        like Linux without overcommit enabled. As a workaround, on Linux,
+        default to the values used in embedded environments (in the MB
+        range), and only jump to the GB range if we detect at runtime that
+        overcommit is enabled. Should fix crashes on Linux/x86_64 with
+        less than 3 or 4GB of RAM.
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::free): use new variables for VM pool
+        size and coalesce limit.
+        (JSC::ExecutableAllocator::isValid): swap the variables from
+        embedded to generic values at runtime, on linux, if overcommit is
+        enabled.
+        (JSC::ExecutableAllocator::underMemoryPressure): use new variables
+        for VM pool size and coalesce limit.
+
 2011-01-12  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
