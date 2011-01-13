@@ -2036,9 +2036,6 @@ plugins/get-url-with-blank-target.html
 fast/parser/remove-misnested-iframe-in-beforeload.html
 fast/parser/remove-misnested-iframe-parent-in-beforeload.html
 
-# Unexplained failures that were formerly in the WebKitTestRunner needs to print onunload handler list.
-fast/events/onunload-clears-onbeforeunload.html
-
 # Unexplained failures that were formerly in the dumpChildFramesAsText list.
 fast/frames/sandboxed-iframe-storage.html
 http/tests/misc/isindex-with-no-form-base-href.html

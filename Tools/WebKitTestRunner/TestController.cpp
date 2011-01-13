@@ -97,6 +97,12 @@ static void setWindowFrameOtherPage(WKPageRef page, WKRect frame, const void* cl
     view->setWindowFrame(frame);
 }
 
+static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo)
+{
+    printf("%s\n", toSTD(message).c_str());
+    return true;
+}
+
 static void closeOtherPage(WKPageRef page, const void* clientInfo)
 {
     WKPageClose(page);
@@ -134,7 +140,7 @@ static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModi
         0, // setIsResizable
         getWindowFrameOtherPage,
         setWindowFrameOtherPage,
-        0, // runBeforeUnloadConfirmPanel
+        runBeforeUnloadConfirmPanel,
         0, // didDraw
         0, // pageDidScroll
         0, // exceededDatabaseQuota
@@ -239,7 +245,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // setIsResizable
         getWindowFrameMainPage,
         setWindowFrameMainPage,
-        0, // runBeforeUnloadConfirmPanel
+        runBeforeUnloadConfirmPanel,
         0, // didDraw
         0, // pageDidScroll
         0, // exceededDatabaseQuota

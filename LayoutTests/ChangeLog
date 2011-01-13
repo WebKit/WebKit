@@ -1,3 +1,13 @@
+2011-01-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by David Levin.
+
+        Add beforeunload support to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=52353
+
+        * platform/mac-wk2/Skipped: Unskip a test that was failing solely due to missing
+        beforeunload support.
+
 2011-01-12  Hayato Ito  <hayato@chromium.org>
 
         Unreviewed test expectations files fix.

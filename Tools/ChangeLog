@@ -1,5 +1,19 @@
 2011-01-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by David Levin.
+
+        Add beforeunload support to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=52353
+        
+        This makes a number of currently failing tests pass.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::runBeforeUnloadConfirmPanel):
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+
+2011-01-12  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam Weinig.
 
         Detect, identify and recover from WebProcess crashes in run-webkit-tests
