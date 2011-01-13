@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        [Qt] Use a black background color for the video element on Qt Mobile
+        https://bugs.webkit.org/show_bug.cgi?id=52252
+
+        Use black as the background color for the video element on Qt Mobile.
+
+        * css/themeQtMobile.css:
+        (video):
+
+2011-01-13  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Eric Seidel.
+
         [Qt] Use a big central media play control button for video element 
         https://bugs.webkit.org/show_bug.cgi?id=52315
 

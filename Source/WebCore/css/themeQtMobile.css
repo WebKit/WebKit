@@ -128,3 +128,7 @@ input[type="url"]:active,
 textarea:active {
     background: ButtonShadow;
 }
+
+video {
+    background-color: #000000;
+}
