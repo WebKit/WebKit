@@ -55,7 +55,27 @@ WebInspector.Resource.Type = {
 
     toUIString: function(type)
     {
-        return WebInspector.UIString(WebInspector.Resource.Type.toString(type));
+        switch (type) {
+            case this.Document:
+                return WebInspector.UIString("Document");
+            case this.Stylesheet:
+                return WebInspector.UIString("Stylesheet");
+            case this.Image:
+                return WebInspector.UIString("Image");
+            case this.Font:
+                return WebInspector.UIString("Font");
+            case this.Script:
+                return WebInspector.UIString("Script");
+            case this.XHR:
+                return WebInspector.UIString("XHR");
+            case this.Media:
+                return WebInspector.UIString("Media");
+            case this.WebSocket:
+                return WebInspector.UIString("WebSocket");
+            case this.Other:
+            default:
+                return WebInspector.UIString("Other");
+        }
     },
 
     // Returns locale-independent string identifier of resource type (primarily for use in extension API).
@@ -64,24 +84,24 @@ WebInspector.Resource.Type = {
     {
         switch (type) {
             case this.Document:
-                return /*@LS*/"document";
+                return "document";
             case this.Stylesheet:
-                return /*@LS*/"stylesheet";
+                return "stylesheet";
             case this.Image:
-                return /*@LS*/"image";
+                return "image";
             case this.Font:
-                return /*@LS*/"font";
+                return "font";
             case this.Script:
-                return /*@LS*/"script";
+                return "script";
             case this.XHR:
-                return /*@LS*/"xhr";
+                return "xhr";
             case this.Media:
-                return /*@LS*/"media";
+                return "media";
             case this.WebSocket:
-                return /*@LS*/"websocket";
+                return "websocket";
             case this.Other:
             default:
-                return /*@LS*/"other";
+                return "other";
         }
     }
 }

@@ -167,7 +167,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
         this._emptyMsgElement.addStyleClass("hidden");
         this.deleteButton.visible = true;
 
-        var totalSizeString = Number.bytesToString(this._size, WebInspector.UIString);
+        var totalSizeString = Number.bytesToString(this._size);
         this._treeElement.subtitle = WebInspector.UIString("%s (%s)", lastPathComponent, totalSizeString);
 
         // FIXME: For Chrome, put creationTime and updateTime somewhere.
@@ -223,7 +223,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
             var resource = this._resources[i];
             data[0] = resource.name;
             data[1] = resource.type;
-            data[2] = Number.bytesToString(resource.size, WebInspector.UIString);
+            data[2] = Number.bytesToString(resource.size);
             var node = new WebInspector.DataGridNode(data);
             node.resource = resource;
             node.selectable = true;

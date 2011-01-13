@@ -1230,7 +1230,7 @@ WebInspector.NetworkTimeCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value, WebInspector.UIString);
+        return Number.secondsToString(value);
     },
 
     _lowerBound: function(resource)
@@ -1254,7 +1254,7 @@ WebInspector.NetworkTransferTimeCalculator = function()
 WebInspector.NetworkTransferTimeCalculator.prototype = {
     formatValue: function(value)
     {
-        return Number.secondsToString(value, WebInspector.UIString);
+        return Number.secondsToString(value);
     },
 
     _lowerBound: function(resource)
@@ -1278,7 +1278,7 @@ WebInspector.NetworkTransferDurationCalculator = function()
 WebInspector.NetworkTransferDurationCalculator.prototype = {
     formatValue: function(value)
     {
-        return Number.secondsToString(value, WebInspector.UIString);
+        return Number.secondsToString(value);
     },
 
     _upperBound: function(resource)

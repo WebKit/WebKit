@@ -83,7 +83,7 @@ WebInspector.TimelinePanel = function()
 
     this._calculator = new WebInspector.TimelineCalculator();
     this._calculator._showShortEvents = false;
-    var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold, WebInspector.UIString);
+    var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePanel.shortRecordThreshold);
     this._showShortRecordsTitleText = WebInspector.UIString("Show the records that are shorter than %s", shortRecordThresholdTitle);
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
     this._createStatusbarButtons();
@@ -710,7 +710,7 @@ WebInspector.TimelineCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary, WebInspector.UIString);
+        return Number.secondsToString(value + this.minimumBoundary - this._absoluteMinimumBoundary);
     }
 }
 
@@ -908,7 +908,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             label.className = "timeline-aggregated-category timeline-" + index;
             cell.appendChild(label);
             var text = document.createElement("span");
-            text.textContent = Number.secondsToString(this._aggregatedStats[index] + 0.0001, WebInspector.UIString);
+            text.textContent = Number.secondsToString(this._aggregatedStats[index] + 0.0001);
             cell.appendChild(text);
         }
         return cell;
@@ -919,10 +919,10 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
         var contentHelper = new WebInspector.TimelinePanel.PopupContentHelper(this.title);
 
         if (this._children && this._children.length) {
-            contentHelper._appendTextRow(WebInspector.UIString("Self Time"), Number.secondsToString(this._selfTime + 0.0001, WebInspector.UIString));
+            contentHelper._appendTextRow(WebInspector.UIString("Self Time"), Number.secondsToString(this._selfTime + 0.0001));
             contentHelper._appendElementRow(WebInspector.UIString("Aggregated Time"), this._generateAggregatedInfo());
         }
-        var text = WebInspector.UIString("%s (at %s)", Number.secondsToString(this._lastChildEndTime - this.startTime, WebInspector.UIString),
+        var text = WebInspector.UIString("%s (at %s)", Number.secondsToString(this._lastChildEndTime - this.startTime),
             calculator.formatValue(this.startTime - calculator.minimumBoundary));
         contentHelper._appendTextRow(WebInspector.UIString("Duration"), text);
 
@@ -930,14 +930,14 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
 
         switch (this.type) {
             case recordTypes.GCEvent:
-                contentHelper._appendTextRow(WebInspector.UIString("Collected"), Number.bytesToString(this.data.usedHeapSizeDelta, WebInspector.UIString));
+                contentHelper._appendTextRow(WebInspector.UIString("Collected"), Number.bytesToString(this.data.usedHeapSizeDelta));
                 break;
             case recordTypes.TimerInstall:
             case recordTypes.TimerFire:
             case recordTypes.TimerRemove:
                 contentHelper._appendTextRow(WebInspector.UIString("Timer ID"), this.data.timerId);
                 if (typeof this.timeout === "number") {
-                    contentHelper._appendTextRow(WebInspector.UIString("Timeout"), Number.secondsToString(this.timeout / 1000, WebInspector.UIString));
+                    contentHelper._appendTextRow(WebInspector.UIString("Timeout"), Number.secondsToString(this.timeout / 1000));
                     contentHelper._appendTextRow(WebInspector.UIString("Repeats"), !this.singleShot);
                 }
                 break;
@@ -978,7 +978,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             contentHelper._appendLinkRow(WebInspector.UIString("Function Call"), this.data.scriptName, this.data.scriptLine);
 
         if (this.usedHeapSize)
-            contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"), WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize, WebInspector.UIString), Number.bytesToString(this.totalHeapSize, WebInspector.UIString)));
+            contentHelper._appendTextRow(WebInspector.UIString("Used Heap Size"), WebInspector.UIString("%s of %s", Number.bytesToString(this.usedHeapSize), Number.bytesToString(this.totalHeapSize)));
 
         if (this.callSiteStackTrace && this.callSiteStackTrace.length)
             contentHelper._appendStackTrace(WebInspector.UIString("Call Site stack"), this.callSiteStackTrace);
@@ -993,7 +993,7 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
     {
         switch (record.type) {
             case WebInspector.TimelineAgent.RecordType.GCEvent:
-                return WebInspector.UIString("%s collected", Number.bytesToString(record.data.usedHeapSizeDelta, WebInspector.UIString));
+                return WebInspector.UIString("%s collected", Number.bytesToString(record.data.usedHeapSizeDelta));
             case WebInspector.TimelineAgent.RecordType.TimerFire:
                 return record.data.scriptName ? WebInspector.linkifyResourceAsNode(record.data.scriptName, "scripts", record.data.scriptLine, "", "") : record.data.timerId;
             case WebInspector.TimelineAgent.RecordType.FunctionCall:

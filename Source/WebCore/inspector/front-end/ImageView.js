@@ -87,7 +87,7 @@ WebInspector.ImageView.prototype = {
 
             var imageProperties = [
                 { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", imagePreviewElement.naturalWidth, imagePreviewElement.naturalHeight) },
-                { name: WebInspector.UIString("File size"), value: Number.bytesToString(resourceSize, WebInspector.UIString) },
+                { name: WebInspector.UIString("File size"), value: Number.bytesToString(resourceSize) },
                 { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
             ];
     

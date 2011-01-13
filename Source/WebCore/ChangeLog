@@ -1,3 +1,49 @@
+2011-01-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Cleanup after r75613 -- make all UI-facing strings
+        to be passed directly to WebInspector.UIString
+
+        https://bugs.webkit.org/show_bug.cgi?id=52365
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView.prototype._updateCallback):
+        (WebInspector.ApplicationCacheItemsView.prototype._populateDataGrid):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.GzipRule.prototype.doRun):
+        (WebInspector.AuditRules.CookieSizeRule.prototype.processCookies):
+        (WebInspector.AuditRules.StaticCookielessRule.prototype.processCookies):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._createCategory):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype._createContentIfNeeded.onImageLoad):
+        (WebInspector.ImageView.prototype._createContentIfNeeded):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkTimeCalculator.prototype.formatValue):
+        (WebInspector.NetworkTransferTimeCalculator.prototype.formatValue):
+        (WebInspector.NetworkTransferDurationCalculator.prototype.formatValue):
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.get data.formatMilliseconds):
+        (WebInspector.ProfileDataGridNode.prototype.get data):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.Type.toUIString):
+        (WebInspector.Resource.Type.toString):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewCalculator.prototype.formatValue):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelineCalculator.prototype.formatValue):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generateAggregatedInfo):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-01-13  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Simon Hausmann.

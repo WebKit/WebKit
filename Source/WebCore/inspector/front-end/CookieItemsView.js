@@ -101,7 +101,7 @@ WebInspector.CookieItemsView.prototype = {
         this._emptyMsgElement.addStyleClass("hidden");
         if (isAdvanced) {
             this._treeElement.subtitle = String.sprintf(WebInspector.UIString("%d cookies (%s)"), this._cookies.length,
-                Number.bytesToString(this._totalSize, WebInspector.UIString));
+                Number.bytesToString(this._totalSize));
             this._deleteButton.visible = true;
         }
         this._cookiesTable.updateWidths();

@@ -1,3 +1,14 @@
+2011-01-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: Cleanup after r75613 -- make all UI-facing strings
+        to be passed directly to WebInspector.UIString
+
+        https://bugs.webkit.org/show_bug.cgi?id=52365
+
+        * Scripts/check-inspector-strings:
+
 2011-01-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r74881.

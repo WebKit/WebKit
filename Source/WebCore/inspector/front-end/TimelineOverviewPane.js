@@ -398,7 +398,7 @@ WebInspector.TimelineOverviewCalculator.prototype = {
 
     formatValue: function(value)
     {
-        return Number.secondsToString(value, WebInspector.UIString);
+        return Number.secondsToString(value);
     }
 }
 

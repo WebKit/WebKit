@@ -265,24 +265,24 @@ WebInspector.EventListenerBreakpointsSidebarPane = function()
     WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.EventListenerBreakpointAdded, this._breakpointAdded, this);
 
     this._breakpointItems = {};
-    this._createCategory(/*@LS*/"Keyboard", "listener", ["keydown", "keyup", "keypress", "textInput"]);
-    this._createCategory(/*@LS*/"Mouse", "listener", ["click", "dblclick", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout", "mousewheel"]);
+    this._createCategory(WebInspector.UIString("Keyboard"), "listener", ["keydown", "keyup", "keypress", "textInput"]);
+    this._createCategory(WebInspector.UIString("Mouse"), "listener", ["click", "dblclick", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout", "mousewheel"]);
     // FIXME: uncomment following once inspector stops being drop targer in major ports.
     // Otherwise, inspector page reacts on drop event and tries to load the event data.
-    // this._createCategory(/*@LS*/"Drag", "listener", ["drag", "drop", "dragstart", "dragend", "dragenter", "dragleave", "dragover"]);
-    this._createCategory(/*@LS*/"Control", "listener", ["resize", "scroll", "zoom", "focus", "blur", "select", "change", "submit", "reset"]);
-    this._createCategory(/*@LS*/"Clipboard", "listener", ["copy", "cut", "paste", "beforecopy", "beforecut", "beforepaste"]);
-    this._createCategory(/*@LS*/"Load", "listener", ["load", "unload", "abort", "error"]);
-    this._createCategory(/*@LS*/"DOM Mutation", "listener", ["DOMActivate", "DOMFocusIn", "DOMFocusOut", "DOMAttrModified", "DOMCharacterDataModified", "DOMNodeInserted", "DOMNodeInsertedIntoDocument", "DOMNodeRemoved", "DOMNodeRemovedFromDocument", "DOMSubtreeModified", "DOMContentLoaded"]);
-    this._createCategory(/*@LS*/"Device", "listener", ["deviceorientation", "devicemotion"]);
-    this._createCategory(/*@LS*/"Timer", "instrumentation", ["setTimer", "clearTimer", "timerFired"]);
+    // this._createCategory(WebInspector.UIString("Drag"), "listener", ["drag", "drop", "dragstart", "dragend", "dragenter", "dragleave", "dragover"]);
+    this._createCategory(WebInspector.UIString("Control"), "listener", ["resize", "scroll", "zoom", "focus", "blur", "select", "change", "submit", "reset"]);
+    this._createCategory(WebInspector.UIString("Clipboard"), "listener", ["copy", "cut", "paste", "beforecopy", "beforecut", "beforepaste"]);
+    this._createCategory(WebInspector.UIString("Load"), "listener", ["load", "unload", "abort", "error"]);
+    this._createCategory(WebInspector.UIString("DOM Mutation"), "listener", ["DOMActivate", "DOMFocusIn", "DOMFocusOut", "DOMAttrModified", "DOMCharacterDataModified", "DOMNodeInserted", "DOMNodeInsertedIntoDocument", "DOMNodeRemoved", "DOMNodeRemovedFromDocument", "DOMSubtreeModified", "DOMContentLoaded"]);
+    this._createCategory(WebInspector.UIString("Device"), "listener", ["deviceorientation", "devicemotion"]);
+    this._createCategory(WebInspector.UIString("Timer"), "instrumentation", ["setTimer", "clearTimer", "timerFired"]);
 }
 
 WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
     _createCategory: function(name, type, eventNames)
     {
         var categoryItem = {};
-        categoryItem.element = new TreeElement(WebInspector.UIString(name));
+        categoryItem.element = new TreeElement(name);
         this.categoriesTreeOutline.appendChild(categoryItem.element);
         categoryItem.element.listItemElement.addStyleClass("event-category");
         categoryItem.element.selectable = true;

@@ -94,7 +94,7 @@ if __name__ == "__main__":
     _log.debug("WebKit checkout found with root: %s" % checkout_root)
     change_directory(checkout_root=checkout_root, paths=None)
 
-    strings_extractor = StringsExtractor([r"(?:WebInspector\.(?:UIString|formatLocalized)\(|/\*@LS\*/)\"((?:[^\"\\]|\\.)*?)\"", r"\"((?:[^\"\\]|\\.)*?)\""])
+    strings_extractor = StringsExtractor([r"WebInspector\.(?:UIString|formatLocalized)\(\"((?:[^\"\\]|\\.)*?)\"", r"\"((?:[^\"\\]|\\.)*?)\""])
     file_reader = TextFileReader(strings_extractor)
     file_reader.process_paths([_inspector_directory])
     localized_strings_extractor = LocalizedStringsExtractor()

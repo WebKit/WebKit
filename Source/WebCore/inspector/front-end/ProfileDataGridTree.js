@@ -50,7 +50,7 @@ WebInspector.ProfileDataGridNode.prototype = {
     {
         function formatMilliseconds(time)
         {
-            return Number.secondsToString(time / 1000, WebInspector.UIString, !Preferences.samplingCPUProfiler);
+            return Number.secondsToString(time / 1000, !Preferences.samplingCPUProfiler);
         }
 
         var data = {};
