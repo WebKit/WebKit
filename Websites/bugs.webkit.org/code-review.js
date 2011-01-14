@@ -1086,7 +1086,7 @@
     else {
       var last = lineFromLineDescendant(selected.last());
       addCommentFor($(last));
-      comment_base_line = last.id;
+      comment_base_line = last.attr('id');
     }
 
     selected.each(function() {

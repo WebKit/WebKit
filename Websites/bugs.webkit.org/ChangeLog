@@ -1,5 +1,11 @@
 2011-01-14  Ojan Vafai  <ojan@chromium.org>
 
+        Fix bad merge in r75816.
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         improve line selection with fast drags
