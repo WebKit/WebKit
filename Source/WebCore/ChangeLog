@@ -1,3 +1,19 @@
+2011-01-14  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Replace BackForwardListClient with BackForwardControllerClient/BackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42237
+
+        Remove Chromium-specific implementation from WebCore.
+
+        No tests added; this refactor should be covered by existing history-exercising tests.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * history/BackForwardListChromium.cpp: Removed.
+        * history/BackForwardListImpl.h:
+
 2011-01-12  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Dimitri Glazkov.

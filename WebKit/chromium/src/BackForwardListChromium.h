@@ -28,36 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BackForwardListClientImpl_h
-#define BackForwardListClientImpl_h
+#ifndef BackForwardListChromium_h
+#define BackForwardListChromium_h
 
-#include "BackForwardListImpl.h"
+#include "BackForwardList.h"
+#include "HistoryItem.h"
 
 namespace WebKit {
 class WebViewImpl;
 
 extern const char backForwardNavigationScheme[];
 
-class BackForwardListClientImpl : public WebCore::BackForwardListClient {
+class BackForwardListChromium : public WebCore::BackForwardList {
 public:
-    BackForwardListClientImpl(WebViewImpl* webview);
-    ~BackForwardListClientImpl();
-
-    void setCurrentHistoryItem(WebCore::HistoryItem* item);
-    WebCore::HistoryItem* previousHistoryItem() const;
+    static PassRefPtr<BackForwardListChromium> create(WebViewImpl*);
+    virtual ~BackForwardListChromium();
 
 private:
-    // WebCore::BackForwardListClient methods:
+    BackForwardListChromium(WebViewImpl*);
+
+    // WebCore::BackForwardList methods:
     virtual void addItem(PassRefPtr<WebCore::HistoryItem>);
     virtual void goToItem(WebCore::HistoryItem*);
     virtual WebCore::HistoryItem* itemAtIndex(int index);
     virtual int backListCount();
     virtual int forwardListCount();
+    virtual bool isActive();
     virtual void close();
 
     WebViewImpl* m_webView;
 
-    RefPtr<WebCore::HistoryItem> m_previousItem;
     RefPtr<WebCore::HistoryItem> m_currentItem;
 
     // The last history item that was accessed via itemAtIndex().  We keep track

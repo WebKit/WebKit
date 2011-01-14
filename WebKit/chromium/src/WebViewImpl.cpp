@@ -33,7 +33,7 @@
 
 #include "AutoFillPopupMenuClient.h"
 #include "AXObjectCache.h"
-#include "BackForwardListImpl.h"
+#include "BackForwardListChromium.h"
 #include "Chrome.h"
 #include "ChromiumBridge.h"
 #include "ColorSpace.h"
@@ -274,7 +274,6 @@ void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)
 WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devToolsClient, WebAutoFillClient* autoFillClient)
     : m_client(client)
     , m_autoFillClient(autoFillClient)
-    , m_backForwardListClientImpl(this)
     , m_chromeClientImpl(this)
     , m_contextMenuClientImpl(this)
     , m_dragClientImpl(this)
@@ -338,12 +337,12 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
 #endif
     pageClients.deviceOrientationClient = m_deviceOrientationClientProxy.get();
     pageClients.geolocationClient = m_geolocationClientProxy.get();
+    pageClients.backForwardClient = BackForwardListChromium::create(this);
 
     m_page.set(new Page(pageClients));
 
     m_geolocationClientProxy->setController(m_page->geolocationController());
 
-    static_cast<BackForwardListImpl*>(m_page->backForwardList())->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
 
     m_inspectorSettingsMap.set(new SettingsMap);
@@ -2163,16 +2162,6 @@ void WebViewImpl::startDragging(const WebDragData& dragData,
     ASSERT(!m_doingDragAndDrop);
     m_doingDragAndDrop = true;
     m_client->startDragging(dragData, mask, dragImage, dragImageOffset);
-}
-
-void WebViewImpl::setCurrentHistoryItem(HistoryItem* item)
-{
-    m_backForwardListClientImpl.setCurrentHistoryItem(item);
-}
-
-HistoryItem* WebViewImpl::previousHistoryItem()
-{
-    return m_backForwardListClientImpl.previousHistoryItem();
 }
 
 void WebViewImpl::observeNewNavigation()

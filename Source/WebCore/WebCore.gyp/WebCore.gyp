@@ -1323,9 +1323,6 @@
         # Don't build IDBKeyPathBackendImpl.  We have our own implementation.
         ['exclude', 'storage/IDBKeyPathBackendImpl\\.cpp$'],
 
-        # Use history/BackForwardListChromium.cpp instead.
-        ['exclude', 'history/BackForwardListImpl\\.cpp$'],
-
         # Use loader/icon/IconDatabaseNone.cpp instead.
         ['exclude', 'loader/icon/IconDatabase\\.cpp$'],
 

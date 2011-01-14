@@ -39,25 +39,6 @@ class Page;
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
-// FIXME: Change Chromium to use its own BackForwardList implementation
-// and not use BackForwardListImpl at all, then remove this
-// BackForwardListClient feature entirely and just don't use this
-// class on Chromium.
-#if PLATFORM(CHROMIUM)
-// In the Chromium port, the back/forward list is managed externally.
-// See BackForwardListChromium.cpp
-class BackForwardListClient {
-public:
-    virtual ~BackForwardListClient() { }
-    virtual void addItem(PassRefPtr<HistoryItem>) = 0;
-    virtual void goToItem(HistoryItem*) = 0;
-    virtual HistoryItem* itemAtIndex(int) = 0;
-    virtual int backListCount() = 0;
-    virtual int forwardListCount() = 0;
-    virtual void close() = 0;
-};
-#endif
-
 // FIXME: After renaming BackForwardList to BackForwardClient,
 // rename this to BackForwardList.
 class BackForwardListImpl : public BackForwardList {
@@ -65,11 +46,6 @@ public:
     static PassRefPtr<BackForwardListImpl> create(Page* page) { return adoptRef(new BackForwardListImpl(page)); }
     virtual ~BackForwardListImpl();
 
-#if PLATFORM(CHROMIUM)
-    // Must be called before any other methods. 
-    void setClient(BackForwardListClient* client) { m_client = client; }
-#endif
-    
     Page* page() { return m_page; }
     
     virtual void addItem(PassRefPtr<HistoryItem>);
@@ -109,13 +85,9 @@ private:
     virtual bool isActive() { return enabled() && capacity(); }
 
     Page* m_page;
-#if PLATFORM(CHROMIUM) 
-    BackForwardListClient* m_client;
-#else
     HistoryItemVector m_entries;
     HistoryItemHashSet m_entryHash;
     unsigned m_current;
-#endif
     unsigned m_capacity;
     bool m_closed;
     bool m_enabled;

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FrameLoaderClientImpl.h"
 
+#include "BackForwardListChromium.h"
 #include "Chrome.h"
 #include "Document.h"
 #include "DocumentLoader.h"

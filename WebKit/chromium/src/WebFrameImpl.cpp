@@ -72,6 +72,7 @@
 #include "WebFrameImpl.h"
 
 #include "AssociatedURLLoader.h"
+#include "BackForwardController.h"
 #include "Chrome.h"
 #include "ChromiumBridge.h"
 #include "ClipboardUtilitiesChromium.h"
@@ -890,7 +891,7 @@ void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
         currentItem = HistoryItem::create();
         currentItem->setLastVisitWasFailure(true);
         m_frame->loader()->history()->setCurrentItem(currentItem.get());
-        viewImpl()->setCurrentHistoryItem(currentItem.get());
+        m_frame->page()->backForward()->setCurrentItem(currentItem.get());
     }
 
     m_frame->loader()->history()->goToItem(
@@ -992,7 +993,7 @@ WebHistoryItem WebFrameImpl::currentHistoryItem() const
         || !m_frame->loader()->activeDocumentLoader()->isLoadingInAPISense())
         m_frame->loader()->history()->saveDocumentAndScrollState();
 
-    return WebHistoryItem(m_frame->page()->backForwardList()->currentItem());
+    return WebHistoryItem(m_frame->page()->backForward()->currentItem());
 }
 
 void WebFrameImpl::enableViewSourceMode(bool enable)

@@ -38,7 +38,6 @@
 #include "WebString.h"
 #include "WebView.h"
 
-#include "BackForwardListClientImpl.h"
 #include "ChromeClientImpl.h"
 #include "ContextMenuClientImpl.h"
 #include "DragClientImpl.h"
@@ -239,8 +238,6 @@ public:
     WebFrameImpl* mainFrameImpl();
 
     // History related methods:
-    void setCurrentHistoryItem(WebCore::HistoryItem*);
-    WebCore::HistoryItem* previousHistoryItem();
     void observeNewNavigation();
 
     // Event related methods:
@@ -410,7 +407,6 @@ private:
     WebViewClient* m_client;
     WebAutoFillClient* m_autoFillClient;
 
-    BackForwardListClientImpl m_backForwardListClientImpl;
     ChromeClientImpl m_chromeClientImpl;
     ContextMenuClientImpl m_contextMenuClientImpl;
     DragClientImpl m_dragClientImpl;

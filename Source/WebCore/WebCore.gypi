@@ -1589,7 +1589,6 @@
             'history/BackForwardList.h',
             'history/BackForwardListImpl.cpp',
             'history/BackForwardListImpl.h',
-            'history/BackForwardListChromium.cpp',
             'history/CachedFrame.cpp',
             'history/CachedFrame.h',
             'history/CachedFramePlatformData.h',

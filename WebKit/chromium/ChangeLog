@@ -1,3 +1,36 @@
+2011-01-14  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Replace BackForwardListClient with BackForwardControllerClient/BackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42237
+
+        Replace Chromium-specific BackForwardListClient in WebCore with a Chromium impl
+        of the BackForwardList interface.
+
+        * WebKit.gyp:
+        * src/BackForwardListChromium.cpp: Copied from WebKit/chromium/src/BackForwardListClientImpl.cpp.
+        (WebKit::BackForwardListChromium::create):
+        (WebKit::BackForwardListChromium::BackForwardListChromium):
+        (WebKit::BackForwardListChromium::~BackForwardListChromium):
+        (WebKit::BackForwardListChromium::addItem):
+        (WebKit::BackForwardListChromium::goToItem):
+        (WebKit::BackForwardListChromium::itemAtIndex):
+        (WebKit::BackForwardListChromium::backListCount):
+        (WebKit::BackForwardListChromium::forwardListCount):
+        (WebKit::BackForwardListChromium::isActive):
+        (WebKit::BackForwardListChromium::close):
+        * src/BackForwardListChromium.h: Copied from WebKit/chromium/src/BackForwardListClientImpl.h.
+        * src/BackForwardListClientImpl.cpp: Removed.
+        * src/BackForwardListClientImpl.h: Removed.
+        * src/FrameLoaderClientImpl.cpp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::loadHistoryItem):
+        (WebKit::WebFrameImpl::currentHistoryItem):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
 2011-01-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.
