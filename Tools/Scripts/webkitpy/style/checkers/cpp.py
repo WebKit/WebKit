@@ -497,12 +497,13 @@ class _FunctionState(object):
         self.body_start_position = Position(-1000, 0)
         self.end_position = Position(-1000, 0)
 
-    def begin(self, function_name, body_start_position, end_position,
+    def begin(self, function_name, function_name_start_position, body_start_position, end_position,
               parameter_start_position, parameter_end_position, clean_lines):
         """Start analyzing function body.
 
         Args:
             function_name: The name of the function being tracked.
+            function_name_start_position: Position in elided where the function name starts.
             body_start_position: Position in elided of the { or the ; for a prototype.
             end_position: Position in elided just after the final } (or ; is.
             parameter_start_position: Position in elided of the '(' for the parameters.
@@ -512,6 +513,7 @@ class _FunctionState(object):
         self.in_a_function = True
         self.lines_in_function = -1  # Don't count the open brace line.
         self.current_function = function_name
+        self.function_name_start_position = function_name_start_position
         self.body_start_position = body_start_position
         self.end_position = end_position
         self.is_declaration = clean_lines.elided[body_start_position.row][body_start_position.column] == ';'
@@ -1441,6 +1443,7 @@ def detect_functions(clean_lines, line_number, function_state, error):
             # Use the column numbers from the modified line to find the
             # function name in the original line.
             function = line[match_function.start(1):match_function.end(1)]
+            function_name_start_position = Position(line_number, match_function.start(1))
 
             if match(r'TEST', function):    # Handle TEST... macros
                 parameter_regexp = search(r'(\(.*\))', joined_line)
@@ -1464,7 +1467,7 @@ def detect_functions(clean_lines, line_number, function_state, error):
             if parameter_end_position > body_start_position:
                 return
 
-            function_state.begin(function, body_start_position, end_position,
+            function_state.begin(function, function_name_start_position, body_start_position, end_position,
                                  parameter_start_position, parameter_end_position, clean_lines)
             return
 

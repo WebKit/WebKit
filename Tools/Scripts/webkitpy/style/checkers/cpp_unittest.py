@@ -364,6 +364,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.assertEquals(function_state.current_function, function_information['name'] + '()')
         self.assertEquals(function_state.is_pure, function_information['is_pure'])
         self.assertEquals(function_state.is_declaration, function_information['is_declaration'])
+        self.assert_positions_equal(function_state.function_name_start_position, function_information['function_name_start_position'])
         self.assert_positions_equal(function_state.parameter_start_position, function_information['parameter_start_position'])
         self.assert_positions_equal(function_state.parameter_end_position, function_information['parameter_end_position'])
         self.assert_positions_equal(function_state.body_start_position, function_information['body_start_position'])
@@ -384,6 +385,7 @@ class FunctionDetectionTest(CppStyleTestBase):
             ['void theTestFunctionName(int) {',
              '}'],
             {'name': 'theTestFunctionName',
+             'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 29),
              'body_start_position': (0, 30),
@@ -395,6 +397,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['void aFunctionName(int);'],
             {'name': 'aFunctionName',
+             'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 18),
              'parameter_end_position': (0, 23),
              'body_start_position': (0, 23),
@@ -405,6 +408,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator /(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator /',
+             'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
@@ -415,6 +419,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator -(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator -',
+             'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
@@ -425,6 +430,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator !=(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator !=',
+             'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 25),
              'parameter_end_position': (0, 77),
              'body_start_position': (0, 77),
@@ -435,6 +441,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['CheckedInt<T> operator +(const CheckedInt<T> &lhs, const CheckedInt<T> &rhs);'],
             {'name': 'operator +',
+             'function_name_start_position': (0, 14),
              'parameter_start_position': (0, 24),
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
@@ -446,6 +453,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['virtual void theTestFunctionName(int = 0);'],
             {'name': 'theTestFunctionName',
+             'function_name_start_position': (0, 13),
              'parameter_start_position': (0, 32),
              'parameter_end_position': (0, 41),
              'body_start_position': (0, 41),
@@ -456,6 +464,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         self.perform_function_detection(
             ['virtual void theTestFunctionName(int) = 0;'],
             {'name': 'theTestFunctionName',
+             'function_name_start_position': (0, 13),
              'parameter_start_position': (0, 32),
              'parameter_end_position': (0, 37),
              'body_start_position': (0, 41),
@@ -469,6 +478,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              ' = ',
              ' 0 ;'],
             {'name': 'theTestFunctionName',
+             'function_name_start_position': (0, 13),
              'parameter_start_position': (0, 32),
              'parameter_end_position': (0, 37),
              'body_start_position': (2, 3),
@@ -488,6 +498,7 @@ class FunctionDetectionTest(CppStyleTestBase):
             # This isn't a function but it looks like one to our simple
             # algorithm and that is ok.
             {'name': 'asm',
+             'function_name_start_position': (0, 0),
              'parameter_start_position': (0, 3),
              'parameter_end_position': (2, 1),
              'body_start_position': (2, 1),
@@ -503,6 +514,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         function_state = self.perform_function_detection(
             ['void functionName();'],
             {'name': 'functionName',
+             'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 17),
              'parameter_end_position': (0, 19),
              'body_start_position': (0, 19),
@@ -515,6 +527,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         function_state = self.perform_function_detection(
             ['void functionName(int);'],
             {'name': 'functionName',
+             'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 17),
              'parameter_end_position': (0, 22),
              'body_start_position': (0, 22),
@@ -528,6 +541,7 @@ class FunctionDetectionTest(CppStyleTestBase):
         function_state = self.perform_function_detection(
             ['void functionName(unsigned a, short b, long c, long long short unsigned int);'],
             {'name': 'functionName',
+             'function_name_start_position': (0, 5),
              'parameter_start_position': (0, 17),
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
@@ -545,6 +559,7 @@ class FunctionDetectionTest(CppStyleTestBase):
             ['virtual void determineARIADropEffects(Vector<String>*&, const unsigned long int*&, const MediaPlayer::Preload, Other<Other2, Other3<P1, P2> >, int);'],
             {'name': 'determineARIADropEffects',
              'parameter_start_position': (0, 37),
+             'function_name_start_position': (0, 13),
              'parameter_end_position': (0, 147),
              'body_start_position': (0, 147),
              'end_position': (0, 148),
@@ -564,6 +579,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'const ComplexTemplate<Class1, NestedTemplate<P1, P2> >* const * param = new ComplexTemplate<Class1, NestedTemplate<P1, P2> >(34, 42),',
              'int* myCount = 0);'],
             {'name': 'aFunctionName',
+             'function_name_start_position': (0, 32),
              'parameter_start_position': (0, 45),
              'parameter_end_position': (3, 17),
              'body_start_position': (3, 17),
