@@ -63,21 +63,22 @@ typedef const struct OpaqueJSValue* JSValueRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 
 /* JavaScript symbol exports */
+/* These rules should stay the same as in WebKit2/Shared/API/c/WKBase.h */
 
 #undef JS_EXPORT
 #if defined(JS_NO_EXPORT)
-    #define JS_EXPORT
+#define JS_EXPORT
 #elif defined(__GNUC__) && !defined(__CC_ARM) && !defined(__ARMCC__)
-    #define JS_EXPORT __attribute__((visibility("default")))
-#elif defined(WIN32) || defined(_WIN32) || defined(_WIN32_WCE)
-    #if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
-        #define JS_EXPORT __declspec(dllexport)
-    #else
-        #define JS_EXPORT __declspec(dllimport)
-    #endif
+#define JS_EXPORT __attribute__((visibility("default")))
+#elif defined(WIN32) || defined(_WIN32) || defined(_WIN32_WCE) || defined(__CC_ARM) || defined(__ARMCC__)
+#if defined(BUILDING_JavaScriptCore) || defined(BUILDING_WTF)
+#define JS_EXPORT __declspec(dllexport)
 #else
-    #define JS_EXPORT
+#define JS_EXPORT __declspec(dllimport)
 #endif
+#else /* !defined(JS_NO_EXPORT) */
+#define JS_EXPORT
+#endif /* defined(JS_NO_EXPORT) */
 
 #ifdef __cplusplus
 extern "C" {
