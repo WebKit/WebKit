@@ -362,6 +362,7 @@ class FunctionDetectionTest(CppStyleTestBase):
             return
         self.assertEquals(function_state.in_a_function, True)
         self.assertEquals(function_state.current_function, function_information['name'] + '()')
+        self.assertEquals(function_state.is_pure, function_information['is_pure'])
         self.assertEquals(function_state.is_declaration, function_information['is_declaration'])
         self.assert_positions_equal(function_state.parameter_start_position, function_information['parameter_start_position'])
         self.assert_positions_equal(function_state.parameter_end_position, function_information['parameter_end_position'])
@@ -387,6 +388,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 29),
              'body_start_position': (0, 30),
              'end_position': (1, 1),
+             'is_pure': False,
              'is_declaration': False})
 
     def test_function_declaration_detection(self):
@@ -397,6 +399,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 23),
              'body_start_position': (0, 23),
              'end_position': (0, 24),
+             'is_pure': False,
              'is_declaration': True})
 
         self.perform_function_detection(
@@ -406,6 +409,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_pure': False,
              'is_declaration': True})
 
         self.perform_function_detection(
@@ -415,6 +419,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_pure': False,
              'is_declaration': True})
 
         self.perform_function_detection(
@@ -424,6 +429,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 77),
              'body_start_position': (0, 77),
              'end_position': (0, 78),
+             'is_pure': False,
              'is_declaration': True})
 
         self.perform_function_detection(
@@ -433,6 +439,41 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_pure': False,
+             'is_declaration': True})
+
+    def test_pure_function_detection(self):
+        self.perform_function_detection(
+            ['virtual void theTestFunctionName(int = 0);'],
+            {'name': 'theTestFunctionName',
+             'parameter_start_position': (0, 32),
+             'parameter_end_position': (0, 41),
+             'body_start_position': (0, 41),
+             'end_position': (0, 42),
+             'is_pure': False,
+             'is_declaration': True})
+
+        self.perform_function_detection(
+            ['virtual void theTestFunctionName(int) = 0;'],
+            {'name': 'theTestFunctionName',
+             'parameter_start_position': (0, 32),
+             'parameter_end_position': (0, 37),
+             'body_start_position': (0, 41),
+             'end_position': (0, 42),
+             'is_pure': True,
+             'is_declaration': True})
+
+        # Hopefully, no one writes code like this but it is a tricky case.
+        self.perform_function_detection(
+            ['virtual void theTestFunctionName(int)',
+             ' = ',
+             ' 0 ;'],
+            {'name': 'theTestFunctionName',
+             'parameter_start_position': (0, 32),
+             'parameter_end_position': (0, 37),
+             'body_start_position': (2, 3),
+             'end_position': (2, 4),
+             'is_pure': True,
              'is_declaration': True})
 
     def test_ignore_macros(self):
@@ -451,6 +492,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (2, 1),
              'body_start_position': (2, 1),
              'end_position': (2, 2),
+             'is_pure': False,
              'is_declaration': True})
 
         # Simple test case with something that is not a function.
@@ -465,6 +507,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 19),
              'body_start_position': (0, 19),
              'end_position': (0, 20),
+             'is_pure': False,
              'is_declaration': True,
              'parameter_list': ()})
 
@@ -476,6 +519,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 22),
              'body_start_position': (0, 22),
              'end_position': (0, 23),
+             'is_pure': False,
              'is_declaration': True,
              'parameter_list':
                  ({'type': 'int', 'name': '', 'row': 0},)})
@@ -488,6 +532,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 76),
              'body_start_position': (0, 76),
              'end_position': (0, 77),
+             'is_pure': False,
              'is_declaration': True,
              'parameter_list':
                  ({'type': 'unsigned', 'name': 'a', 'row': 0},
@@ -503,6 +548,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (0, 147),
              'body_start_position': (0, 147),
              'end_position': (0, 148),
+             'is_pure': False,
              'is_declaration': True,
              'parameter_list':
                  ({'type': 'Vector<String>*&', 'name': '', 'row': 0},
@@ -522,6 +568,7 @@ class FunctionDetectionTest(CppStyleTestBase):
              'parameter_end_position': (3, 17),
              'body_start_position': (3, 17),
              'end_position': (3, 18),
+             'is_pure': False,
              'is_declaration': True,
              'parameter_list':
                  ({'type': 'PassRefPtr<MyClass>', 'name': 'paramName', 'row': 0},

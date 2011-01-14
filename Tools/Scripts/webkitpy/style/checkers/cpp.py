@@ -517,6 +517,10 @@ class _FunctionState(object):
         self.is_declaration = clean_lines.elided[body_start_position.row][body_start_position.column] == ';'
         self.parameter_start_position = parameter_start_position
         self.parameter_end_position = parameter_end_position
+        self.is_pure = False
+        if self.is_declaration:
+            characters_after_parameters = SingleLineView(clean_lines.elided, parameter_end_position, body_start_position).single_line
+            self.is_pure = bool(match(r'\s*=\s*0\s*', characters_after_parameters))
         self._clean_lines = clean_lines
         self._parameter_list = None
 
