@@ -130,7 +130,9 @@ class CheckoutTest(unittest.TestCase):
             self.assertEqual(revision, "bar")
             # contents_at_revision is expected to return a byte array (str)
             # so we encode our unicode ChangeLog down to a utf-8 stream.
-            return _changelog1.encode("utf-8")
+            # The ChangeLog utf-8 decoding should ignore invalid codepoints.
+            invalid_utf8 = str(b"\255")
+            return _changelog1.encode("utf-8") + invalid_utf8
         scm.contents_at_revision = mock_contents_at_revision
         checkout = Checkout(scm)
         entry = checkout._latest_entry_for_changelog_at_revision("foo", "bar")

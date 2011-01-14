@@ -439,6 +439,7 @@ class SVN(SCM):
     def changed_files(self, git_commit=None):
         status_command = ["svn", "status"]
         status_command.extend(self._patch_directories)
+        # ACDMR: Addded, Conflicted, Deleted, Modified or Replaced
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
 
     def changed_files_for_revision(self, revision):
@@ -704,7 +705,10 @@ class Git(SCM):
         return self.remote_merge_base()
 
     def changed_files(self, git_commit=None):
+        # FIXME: --diff-filter could be used to avoid the "extract_filenames" step.
         status_command = ['git', 'diff', '-r', '--name-status', '-C', '-M', "--no-ext-diff", "--full-index", self.merge_base(git_commit)]
+        # FIXME: I'm not sure we're returning the same set of files that SVN.changed_files is.
+        # Added (A), Copied (C), Deleted (D), Modified (M), Renamed (R)
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ADM"))
 
     def _changes_files_for_commit(self, git_commit):

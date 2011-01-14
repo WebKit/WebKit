@@ -1,5 +1,23 @@
 2011-01-13  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mihai Parparita.
+
+        webkit-patch suggest-reviewers fails due to invalid utf8 in ChangeLog files
+        https://bugs.webkit.org/show_bug.cgi?id=52416
+
+        Example: webkit-patch suggest-reviewers -g ca3890fe74d94d85d6bfa48f9ea497b094d8e717 
+        UnicodeDecodeError: 'utf8' codec can't decode bytes in position 536-538: invalid data
+
+        I also added FIXMEs about the changed_files returning deleted files problem
+        which is causing the other most common exception for suggest-reviewers
+        (and is probably breaking sheriff-bots blame detection).
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm.py:
+
+2011-01-13  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         results archives from commit-queue are too large to upload
