@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        improve line selection with fast drags
+        https://bugs.webkit.org/show_bug.cgi?id=52477
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         tweak line selection in code review tool
         https://bugs.webkit.org/show_bug.cgi?id=52462
 

@@ -1046,12 +1046,12 @@
   }
 
   $('.lineNumber').live('click', function() {
-    var line = $(this).parents('.Line');
+    var line = lineFromLineDescendant($(this));
     if (line.hasClass('commentContext'))
       trimCommentContextToBefore(previousLineFor(line), line.attr('data-comment-base-line'));
   }).live('mousedown', function() {
     in_drag_select = true;
-    $(lineFromLineDescendant(this)).addClass('selected');
+    lineFromLineDescendant($(this)).addClass('selected');
     event.preventDefault();
   });
 
@@ -1066,6 +1066,17 @@
       return;
 
     var selected = $('.selected');
+
+    // Select all the lines between the first and last selected lines
+    // in case we didn't get mouseenter events for any of them.
+    var current_index = numberFrom(selected.first().attr('id'));
+    var last_index = numberFrom(selected.last().attr('id'));
+    while (current_index != last_index) {
+      $('#line' + current_index).addClass('selected')
+      current_index++;
+    }
+
+    selected = $('.selected');
     var already_has_comment = selected.last().hasClass('commentContext');
     selected.addClass('commentContext');
 
@@ -1073,7 +1084,7 @@
     if (already_has_comment)
       comment_base_line = selected.last().attr('data-comment-base-line');
     else {
-      var last = lineFromLineDescendant(selected.last()[0]);
+      var last = lineFromLineDescendant(selected.last());
       addCommentFor($(last));
       comment_base_line = last.id;
     }
@@ -1113,10 +1124,7 @@
   }
 
   function lineFromLineDescendant(descendant) {
-    while (descendant && !$(descendant).hasClass('Line')) {
-      descendant = descendant.parentNode;
-    }
-    return descendant;
+    return descendant.hasClass('Line') ? descendant : descendant.parents('.Line');
   }
 
   function lineFromLineContainer(lineContainer) {
