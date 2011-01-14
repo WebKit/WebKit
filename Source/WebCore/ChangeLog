@@ -1,3 +1,21 @@
+2011-01-14  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Fix parent block calculation when trying to find top most node
+        containing "this" float.
+        https://bugs.webkit.org/show_bug.cgi?id=51711
+
+        Replace use of containingBlock and traverse the parents directly
+        to check for float existence. containingBlock can skip parents and
+        jump to the RenderView directly which will cause floats to not get
+        cleared from intermediate parents.
+
+        Test: fast/block/float/floats-not-cleared-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+
 2011-01-14  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.

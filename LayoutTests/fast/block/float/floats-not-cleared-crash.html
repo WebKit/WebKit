@@ -1,0 +1,26 @@
+<html>
+<script>
+if (window.layoutTestController)
+{
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}   
+window.setTimeout('crash();', 0);
+function crash()
+{
+    document.body.offsetTop;
+
+    block1.style.position = 'absolute';
+    float1.style.display = 'none';
+
+    document.body.offsetTop;
+    block1.innerHTML = "PASS";
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+<div id="block1">
+<span id="float1" style="float: left; margin-bottom: 10000px;">
+</div>
+<junk>
+<html>

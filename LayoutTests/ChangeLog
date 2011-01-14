@@ -1,3 +1,13 @@
+2011-01-14  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash due to uncleared floats in parent nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=51711
+
+        * fast/block/float/floats-not-cleared-crash-expected.txt: Added.
+        * fast/block/float/floats-not-cleared-crash.html: Added.
+
 2011-01-14  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION (r75660): compositing/reflections/load-video-in-reflection.html crashes on Windows 7
