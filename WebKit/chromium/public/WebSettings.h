@@ -40,7 +40,7 @@ class WebURL;
 
 // WebSettings is owned by the WebView and allows code to modify the settings for
 // the WebView's page without any knowledge of WebCore itself.  For the most part,
-// these functions have a 1:1 mapping with the methods in WebCore/page/settings.h.
+// these functions have a 1:1 mapping with the methods in WebCore/page/Settings.h.
 class WebSettings {
 public:
     enum EditingBehavior {
@@ -102,6 +102,7 @@ public:
     virtual void setMemoryInfoEnabled(bool) = 0;
     virtual void setHyperlinkAuditingEnabled(bool) = 0;
     virtual void setCaretBrowsingEnabled(bool) = 0;
+    virtual void setInteractiveFormValidationEnabled(bool) = 0;
 
 protected:
     ~WebSettings() { }

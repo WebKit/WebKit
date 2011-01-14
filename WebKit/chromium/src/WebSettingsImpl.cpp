@@ -329,4 +329,9 @@ void WebSettingsImpl::setCaretBrowsingEnabled(bool enabled)
     m_settings->setCaretBrowsingEnabled(enabled);
 }
 
+void WebSettingsImpl::setInteractiveFormValidationEnabled(bool enabled)
+{
+    m_settings->setInteractiveFormValidationEnabled(enabled);
+}
+
 } // namespace WebKit

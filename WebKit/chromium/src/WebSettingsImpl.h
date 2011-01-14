@@ -97,6 +97,7 @@ public:
     virtual void setMemoryInfoEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
     virtual void setCaretBrowsingEnabled(bool);
+    virtual void setInteractiveFormValidationEnabled(bool);
 
 private:
     WebCore::Settings* m_settings;
