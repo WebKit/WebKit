@@ -99,6 +99,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     void updateCompositingLayers();
+    void syncCompositingStateForThisFrame();
 
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
     // content rendered via the normal painting path.
