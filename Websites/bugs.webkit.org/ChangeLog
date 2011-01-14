@@ -2,6 +2,22 @@
 
         Reviewed by Adam Barth.
 
+        simplify keyboard handling in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52407
+
+        Now that we have DiffBlock containers, the only things that are
+        focusable are previousComment nodes and DiffBlock containers
+        that contain add/remove lines.
+
+        Also, this means we show the focus border around the entire diff
+        instead of just the first line.
+
+        * code-review.js:
+
+2011-01-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         add container divs for diff blocks
         https://bugs.webkit.org/show_bug.cgi?id=52400
 

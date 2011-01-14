@@ -946,64 +946,20 @@
     $(document).scrollTop(node.addClass('focused').position().top - window.innerHeight / 2);
   }
 
-  function diffBlockEndPoint(focusable_nodes, line, line_offset, is_backward) {
-    if (!line_offset && is_backward)
-      return line;
-
-    var offset = is_backward ? -1 : 1;
-
-    // If we're at a comment, get a Line in the diff block that contains the comment.
-    if (line.hasClass('previousComment')) {
-      var line_for_comment = $('#' + line.attr('data-comment-for'));
-      line_offset = focusable_nodes.index(line_for_comment);
-
-      // If the comment is not inside a diff block, return the comment node.
-      if (line_offset == -1)
-        return line;
-
-      line = line_for_comment;
-    }
-
-    // Find the Line at the beginning/end of this contiguous block of lines.
-    // Contiguous blocks of lines have contiguous IDs and are contained in the same FileDiff.
-    // Skip over comment nodes.
-    var id = numberFrom(line.attr('id'));
-    var next_node = $(focusable_nodes[line_offset + offset]);
-    while (next_node.size()
-           && (!next_node.hasClass('Line') || next_node.attr('id') == 'line' + (id + offset))
-           && fileDiffFor(line)[0] == fileDiffFor(next_node)[0]) {
-      if (next_node.hasClass('Line')) {
-        line = next_node;
-        id += offset;
-      }
-
-      line_offset += offset;
-      next_node = $(focusable_nodes[line_offset + offset]);
-    }
-    return line;
-  }
-
   function focusNext(className, is_backward) {
-    var focusable_nodes = $('.previousComment,.Line.add,.Line.remove');
-    var focused_node = $('.focused');
-    var index = focusable_nodes.index(focused_node);
-    if (is_backward && (!index || index == -1))
-      return;
+    var focusable_nodes = $('.previousComment,.DiffBlock').filter(function() {
+      return ($(this).hasClass('previousComment') || $('.add,.remove', this).size());
+    });
 
-    if (focused_node.size() && className == 'Line') {
-      focused_node = diffBlockEndPoint(focusable_nodes, focused_node, index, is_backward);
-      index = focusable_nodes.index(focused_node);
-    }
+    var index = focusable_nodes.index($('.focused'));
+    if (index == -1 && is_backward)
+      index = focusable_nodes.length;
 
-    var end = is_backward ? 0 : focusable_nodes.size();
     var offset = is_backward ? -1 : 1;
+    var end = is_backward ? -1 : focusable_nodes.size();
     for (var i = index + offset; i != end; i = i + offset) {
       var node = $(focusable_nodes[i]);
       if (node.hasClass(className)) {
-        if (className == 'Line') {
-          // Pass in true for is_backward because we always want to focus the start of the diff block.
-          node = diffBlockEndPoint(focusable_nodes, node, i, true);
-        }
         focusOn(node);
         return;
       }
@@ -1031,11 +987,11 @@
       break;
 
     case kCharCodeForJ:
-      focusNext('Line', false);
+      focusNext('DiffBlock', false);
       break;
 
     case kCharCodeForK:
-      focusNext('Line', true);
+      focusNext('DiffBlock', true);
       break;
     }
   });
