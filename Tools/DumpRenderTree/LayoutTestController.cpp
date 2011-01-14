@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Joone Hur <joone@kldp.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -331,6 +331,31 @@ static JSValueRef addDisallowedURLCallback(JSContextRef context, JSObjectRef fun
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->addDisallowedURL(url.get());
+
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef addURLToRedirectCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 2)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> origin(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+
+    JSRetainPtr<JSStringRef> destination(Adopt, JSValueToStringCopy(context, arguments[1], exception));
+    ASSERT(!*exception);
+
+    size_t maxLength = JSStringGetMaximumUTF8CStringSize(origin.get());
+    char* originBuffer = new char[maxLength + 1];
+    JSStringGetUTF8CString(origin.get(), originBuffer, maxLength + 1);
+
+    maxLength = JSStringGetMaximumUTF8CStringSize(destination.get());
+    char* destinationBuffer = new char[maxLength + 1];
+    JSStringGetUTF8CString(destination.get(), destinationBuffer, maxLength + 1);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->addURLToRedirect(originBuffer, destinationBuffer);
 
     return JSValueMakeUndefined(context);
 }
@@ -1930,6 +1955,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
     static JSStaticFunction staticFunctions[] = {
         { "abortModal", abortModalCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "addDisallowedURL", addDisallowedURLCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "addURLToRedirect", addURLToRedirectCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "addUserScript", addUserScriptCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "addUserStyleSheet", addUserStyleSheetCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "apiTestNewWindowDataLoadBaseURL", apiTestNewWindowDataLoadBaseURLCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2138,6 +2164,16 @@ void LayoutTestController::setPOSIXLocale(JSStringRef locale)
     char localeBuf[32];
     JSStringGetUTF8CString(locale, localeBuf, sizeof(localeBuf));
     setlocale(LC_ALL, localeBuf);
+}
+
+void LayoutTestController::addURLToRedirect(std::string origin, std::string destination)
+{
+    m_URLsToRedirect[origin] = destination;
+}
+
+const std::string& LayoutTestController::redirectionDestinationForURL(std::string origin)
+{
+    return m_URLsToRedirect[origin];
 }
 
 const unsigned LayoutTestController::maxViewWidth = 800;

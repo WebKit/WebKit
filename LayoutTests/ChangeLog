@@ -1,3 +1,16 @@
+2011-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/8827065> REGRESSION (r71884): Cross-origin XHR fails if willSendRequest changes the URL
+        https://bugs.webkit.org/show_bug.cgi?id=52419
+
+        * http/tests/loading/cross-origin-XHR-willLoadRequest-expected.txt: Added.
+        * http/tests/loading/cross-origin-XHR-willLoadRequest.html: Added.
+        * platform/gtk/Skipped: Skip the new test.
+        * platform/qt/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+
 2011-01-13  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed chromium expectations update.

@@ -1,3 +1,24 @@
+2011-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/8827065> REGRESSION (r71884): Cross-origin XHR fails if willSendRequest changes the URL
+        https://bugs.webkit.org/show_bug.cgi?id=52419
+
+        Allow to further control the behavior of the willSendRequest delegate callback by making it
+        set a different URL in the new request.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (addURLToRedirectCallback): Added.
+        (LayoutTestController::staticFunctions): Added addURLToRedirect.
+        (LayoutTestController::addURLToRedirect): Added. Adds the redirection to the map.
+        (LayoutTestController::redirectionDestinationForURL): Added this getter.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        (-[ResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]): Check
+        if there is a redirection for the request’s URL, established by addURLToRedirect(), and if so,
+        change the URL in the new request to the redirect destination.
+
 2011-01-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mihai Parparita.

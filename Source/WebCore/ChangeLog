@@ -1,5 +1,19 @@
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/8827065> REGRESSION (r71884): Cross-origin XHR fails if willSendRequest changes the URL
+        https://bugs.webkit.org/show_bug.cgi?id=52419
+
+        Test: http/tests/loading/cross-origin-XHR-willLoadRequest.html
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init): Complete r74453 by ensuring that m_request is only set after
+        willSendRequest(). Otherwise, willSendRequest() ends up calling into
+        ThreadableDocumentRequest::willSendRequest(), which cancels the request.
+
+2011-01-13  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Mark Rowe.
 
         Don’t try to compile InjectedScriptSource.js into WebCore.

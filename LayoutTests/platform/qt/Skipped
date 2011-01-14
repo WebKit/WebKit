@@ -764,6 +764,9 @@ fast/ruby/rubyDOM-remove-rt2.html
 fast/ruby/rubyDOM-remove-text1.html
 fast/ruby/rubyDOM-remove-text2.html
 
+# ------- not obeying layoutTestController.addURLToRedirect()
+http/tests/loading/cross-origin-XHR-willLoadRequest
+
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #

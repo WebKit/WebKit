@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -165,6 +165,9 @@ using namespace std;
         [newRequest setValue:nil forHTTPHeaderField:nsHeader];
         [nsHeader release];
     }
+    const std::string& destination = gLayoutTestController->redirectionDestinationForURL([[url absoluteString] UTF8String]);
+    if (destination.length())
+        [newRequest setURL:[NSURL URLWithString:[NSString stringWithUTF8String:destination.data()]]];
 
     return [newRequest autorelease];
 }
