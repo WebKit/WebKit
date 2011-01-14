@@ -84,7 +84,10 @@ public:
     void setCompositingConsultsOverlap(bool b) { m_compositingConsultsOverlap = b; }
     bool compositingConsultsOverlap() const { return m_compositingConsultsOverlap; }
     
-    void scheduleSync();
+    // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
+    // at specific times.
+    void scheduleLayerFlush();
+    void flushPendingLayerChanges();
     
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(CompositingUpdateType = CompositingUpdateAfterLayoutOrStyleChange, RenderLayer* updateRoot = 0);
@@ -179,7 +182,7 @@ public:
 private:
     // GraphicsLayerClient Implementation
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) { }
-    virtual void notifySyncRequired(const GraphicsLayer*) { scheduleSync(); }
+    virtual void notifySyncRequired(const GraphicsLayer*) { scheduleLayerFlush(); }
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&) { }
 
     // These calls return false always. They are saying that the layers associated with this client

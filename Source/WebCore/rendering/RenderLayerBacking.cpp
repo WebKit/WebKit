@@ -1264,7 +1264,7 @@ void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, double tim
 void RenderLayerBacking::notifySyncRequired(const GraphicsLayer*)
 {
     if (!renderer()->documentBeingDestroyed())
-        compositor()->scheduleSync();
+        compositor()->scheduleLayerFlush();
 }
 
 // This is used for the 'freeze' API, for testing only.

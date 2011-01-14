@@ -170,7 +170,7 @@ void RenderLayerCompositor::setCompositingLayersNeedRebuild(bool needRebuild)
         m_compositingLayersNeedRebuild = needRebuild;
 }
 
-void RenderLayerCompositor::scheduleSync()
+void RenderLayerCompositor::scheduleLayerFlush()
 {
     Frame* frame = m_renderView->frameView()->frame();
     Page* page = frame ? frame->page() : 0;
@@ -178,6 +178,16 @@ void RenderLayerCompositor::scheduleSync()
         return;
 
     page->chrome()->client()->scheduleCompositingLayerSync();
+}
+
+void RenderLayerCompositor::flushPendingLayerChanges()
+{
+    // FIXME: FrameView::syncCompositingStateRecursive() calls this for each
+    // frame, so when compositing layers are connected between frames, we'll
+    // end up syncing subframe's layers multiple times.
+    // https://bugs.webkit.org/show_bug.cgi?id=52489
+    if (GraphicsLayer* rootLayer = rootPlatformLayer())
+        rootLayer->syncCompositingState();
 }
 
 void RenderLayerCompositor::scheduleCompositingLayerUpdate()

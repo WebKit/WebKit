@@ -556,12 +556,8 @@ void FrameView::updateCompositingLayers()
 
 void FrameView::syncCompositingStateForThisFrame()
 {
-    RenderView* view = m_frame->contentRenderer();
-    GraphicsLayer* rootLayer = view ? view->compositor()->rootPlatformLayer() : 0;
-    if (!rootLayer)
-        return;
-
-    rootLayer->syncCompositingState();
+    if (RenderView* view = m_frame->contentRenderer())
+        view->compositor()->flushPendingLayerChanges();
 
 #if ENABLE(FULLSCREEN_API)
     // The fullScreenRenderer's graphicsLayer  has been re-parented, and the above recursive syncCompositingState

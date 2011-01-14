@@ -1,3 +1,27 @@
+2011-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Layer syncing should go through the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=52486
+
+        Rather than have FrameView go directly to GraphicsLayer to
+        sync pending changes, route the call through RenderLayerCompositor.
+        
+        Add a FIXME about an existing issue with flushing and subframes.
+        
+        No behavior change, so no tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::syncCompositingStateForThisFrame):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::notifySyncRequired):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::scheduleLayerFlush):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::notifySyncRequired):
+
 2011-01-14  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Hyatt.
