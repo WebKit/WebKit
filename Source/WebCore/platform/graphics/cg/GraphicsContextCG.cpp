@@ -546,20 +546,45 @@ void GraphicsContext::fillPath(const Path& path)
 
     CGContextRef context = platformContext();
 
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
-
     if (m_state.fillGradient) {
-        CGContextSaveGState(context);
-        if (fillRule() == RULE_EVENODD)
-            CGContextEOClip(context);
-        else
-            CGContextClip(context);
-        CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
-        m_state.fillGradient->paint(this);
-        CGContextRestoreGState(context);
+        if (hasShadow()) {
+            FloatRect rect = path.boundingRect();
+            CGLayerRef layer = CGLayerCreateWithContext(context, CGSizeMake(rect.width(), rect.height()), 0);
+            CGContextRef layerContext = CGLayerGetContext(layer);
+
+            CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
+            CGContextBeginPath(layerContext);
+            CGContextAddPath(layerContext, path.platformPath());
+            CGContextConcatCTM(layerContext, m_state.fillGradient->gradientSpaceTransform());
+
+            if (fillRule() == RULE_EVENODD)
+                CGContextEOClip(layerContext);
+            else
+                CGContextClip(layerContext);
+
+            m_state.fillGradient->paint(layerContext);
+            CGContextDrawLayerAtPoint(context, CGPointMake(rect.left(), rect.top()), layer);
+            CGLayerRelease(layer);
+        } else {
+            CGContextBeginPath(context);
+            CGContextAddPath(context, path.platformPath());
+            CGContextSaveGState(context);
+            CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
+
+            if (fillRule() == RULE_EVENODD)
+                CGContextEOClip(context);
+            else
+                CGContextClip(context);
+
+            m_state.fillGradient->paint(this);
+            CGContextRestoreGState(context);
+        }
+
         return;
     }
+
+    CGContextBeginPath(context);
+    CGContextAddPath(context, path.platformPath());
 
     if (m_state.fillPattern)
         applyFillPattern();
