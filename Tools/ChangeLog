@@ -1,3 +1,31 @@
+2011-01-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        webkit-patch suggest-reviewers dies when ChangeLogs are missing
+        https://bugs.webkit.org/show_bug.cgi?id=49158
+
+        This is not the most elegant, but it is a very safe fix to this bug.
+        One advantage of catching ScriptError like this instead of adding a
+        new added_or_modified_files or fixing all changed_files callers
+        to use a more specific change_files variant, is that we catch
+        all kinds of ScriptErrors which might cause our (non-essential)
+        suggest-reviewers code to fail out.  This should make passing
+        --suggest-reviewers to webkit-patch upload much more robust
+        and may even make it possible for us to make it default.
+
+        The root of the problem here is that SCM.changed_files includes
+        deleted ChangeLog paths (from moves, etc) which then when we ask
+        SVN/Git for the contents of the file at that revision, the command
+        errors out and Executive.run_command raises a ScriptError.
+
+        In the future we might fix this differently by making all current
+        callers of chagned_files use a more specific method for requesting
+        what types of changes they're interested in (adds, modifies, deletes, etc.)
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

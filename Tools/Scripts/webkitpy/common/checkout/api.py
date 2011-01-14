@@ -62,7 +62,17 @@ class Checkout(object):
         changed_files = self._scm.changed_files_for_revision(revision)
         # FIXME: This gets confused if ChangeLog files are moved, as
         # deletes are still "changed files" per changed_files_for_revision.
-        return [self._latest_entry_for_changelog_at_revision(path, revision) for path in changed_files if self.is_path_to_changelog(path)]
+        # FIXME: For now we hack around this by caching any exceptions
+        # which result from having deleted files included the changed_files list.
+        changelog_entries = []
+        for path in changed_files:
+            if not self.is_path_to_changelog(path):
+                continue
+            try:
+                changelog_entries.append(self._latest_entry_for_changelog_at_revision(path, revision))
+            except ScriptError:
+                pass
+        return changelog_entries
 
     @memoized
     def commit_info_for_revision(self, revision):
