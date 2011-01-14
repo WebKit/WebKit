@@ -349,6 +349,15 @@ RenderObject* InputType::createRenderer(RenderArena*, RenderStyle* style) const
     return RenderObject::createObject(element(), style);
 }
 
+void InputType::createShadowSubtree()
+{
+}
+
+void InputType::destroyShadowSubtree()
+{
+    element()->setShadowRoot(0);
+}
+
 double InputType::parseToDouble(const String&, double defaultValue) const
 {
     return defaultValue;

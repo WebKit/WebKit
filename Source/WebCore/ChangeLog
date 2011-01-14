@@ -1,3 +1,64 @@
+2011-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Flip input[type=range] to use the new shadow DOM model.
+        https://bugs.webkit.org/show_bug.cgi?id=52317
+
+        This is a straight-up flip, minimal change to the logic, which will be
+        refactored in a follow-up patch.
+
+        Covered by existing tests.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve): Changed to use either
+            host or parent node to find parent.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType): Added logic for destroying/creating
+            shadow DOM subtree.
+        * html/InputType.cpp:
+        (WebCore::InputType::createShadowSubtree): Added empty decl.
+        (WebCore::InputType::destroyShadowSubtree): Added a method to destroy
+            shadow subtree.
+        * html/InputType.h: Added defs.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree): Added a virtual method to create
+            slider thumb.
+        * html/RangeInputType.h: Adde def.
+        * html/shadow/SliderThumbElement.cpp: Added temporary RenderSliderThumb class
+            to handle cascading appearance.
+        (WebCore::RenderSliderThumb::RenderSliderThumb): Added.
+        (WebCore::RenderSliderThumb::layout): Moved here the logic from
+            RenderSlider::createThumbStyle.
+        (WebCore::SliderThumbElement::createRenderer): Added virtual method to
+            create RenderSliderThumb instance.
+        (WebCore::SliderThumbElement::defaultEventHandler): Changed to use HTMLDivElement
+            as base class.
+        (WebCore::SliderThumbElement::detach): Ditto.
+        * html/shadow/SliderThumbElement.h:
+        (WebCore::SliderThumbElement::SliderThumbElement): Ditto.
+        (WebCore::SliderThumbElement::create): Ditto.
+        (WebCore::toSliderThumbElement): Added a casting helper.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlInputElement::attach): Added handling of shadow DOM,
+            since the whole method is hand-rolled.
+        (WebCore::MediaControlInputElement::updateStyle): Ditto.
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::~RenderSlider): Removed unneeded code.
+        (WebCore::RenderSlider::thumbRect): Changed to use sliderThumbElement helper.
+        (WebCore::RenderSlider::layout): Ditto.
+        (WebCore::RenderSlider::sliderThumbElement): Added a temporary helper to access
+            SliderThumbElement.
+        (WebCore::RenderSlider::mouseEventIsInThumb): Changed to use sliderThumbElement helper.
+        (WebCore::RenderSlider::mouseEventOffsetToThumb): Ditto.
+        (WebCore::RenderSlider::setValueForPosition): Ditto.
+        (WebCore::RenderSlider::positionForOffset): Ditto.
+        (WebCore::RenderSlider::currentPosition): Ditto.
+        (WebCore::RenderSlider::trackSize): Ditto.
+        (WebCore::RenderSlider::forwardEvent): Ditto.
+        (WebCore::RenderSlider::inDragMode): Ditto.
+        * rendering/RenderSlider.h: Added def.
+
 2011-01-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

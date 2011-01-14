@@ -58,6 +58,7 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*);
     virtual void forwardEvent(Event*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
+    virtual void createShadowSubtree();
     virtual double parseToDouble(const String&, double) const;
     virtual String serialize(double) const;
     virtual void accessKeyAction(bool sendToAnyElement);
