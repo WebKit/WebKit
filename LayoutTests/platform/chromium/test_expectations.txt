@@ -3108,3 +3108,6 @@ BUGCR69612 LINUX : fast/text/international/bidi-linebreak-003.html = IMAGE
 BUGCR69612 LINUX : fast/text/international/bidi-mirror-he-ar.html = IMAGE
 BUGCR69612 LINUX : fast/text/international/bidi-neutral-run.html = IMAGE
 BUGCR69612 LINUX : fast/text/international/hebrew-vowels.html = IMAGE
+
+// Failing after r75768
+BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
