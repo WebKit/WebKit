@@ -46,10 +46,8 @@ String filenameToString(const char* filename)
 #if OS(WINDOWS)
     return String::fromUTF8(filename);
 #else
-    gchar* escapedString = g_uri_escape_string(filename, "/:", false);
-    String string(escapedString);
-    g_free(escapedString);
-    return string;
+    GOwnPtr<gchar> escapedString(g_uri_escape_string(filename, "/:", false));
+    return escapedString.get();
 #endif
 }
 
@@ -58,10 +56,8 @@ CString fileSystemRepresentation(const String& path)
 #if OS(WINDOWS)
     return path.utf8();
 #else
-    char* filename = g_uri_unescape_string(path.utf8().data(), 0);
-    CString cfilename(filename);
-    g_free(filename);
-    return cfilename;
+    GOwnPtr<gchar> filename(g_uri_unescape_string(path.utf8().data(), 0));
+    return filename.get();
 #endif
 }
 
@@ -72,14 +68,11 @@ String filenameForDisplay(const String& string)
     return string;
 #else
     CString filename = fileSystemRepresentation(string);
-    gchar* display = g_filename_to_utf8(filename.data(), 0, 0, 0, 0);
+    GOwnPtr<gchar> display(g_filename_to_utf8(filename.data(), 0, 0, 0, 0));
     if (!display)
         return string;
 
-    String displayString = String::fromUTF8(display);
-    g_free(display);
-
-    return displayString;
+    return String::fromUTF8(display.get());
 #endif
 }
 
@@ -177,11 +170,8 @@ String pathGetFileName(const String& pathName)
         return pathName;
 
     CString tmpFilename = fileSystemRepresentation(pathName);
-    char* baseName = g_path_get_basename(tmpFilename.data());
-    String fileName = String::fromUTF8(baseName);
-    g_free(baseName);
-
-    return fileName;
+    GOwnPtr<gchar> baseName(g_path_get_basename(tmpFilename.data()));
+    return String::fromUTF8(baseName.get());
 }
 
 CString applicationDirectoryPath()

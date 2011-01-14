@@ -1,3 +1,19 @@
+2011-01-14  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by David Levin.
+
+        [GTK] Convert use of raw pointers to GOwnPtr in FileSystemGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=52434
+
+        No new tests. This code will be tested when an implementation 
+        of beginDragWithFiles is complete. 
+
+        * platform/gtk/FileSystemGtk.cpp:
+        (WebCore::filenameToString): Use GOwnPtr instead of gchar pointer.
+        (WebCore::fileSystemRepresentation): Ditto.
+        (WebCore::filenameForDisplay): Ditto.
+        (WebCore::pathGetFileName): Ditto.
+
 2011-01-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
