@@ -1,5 +1,11 @@
 2011-01-14  Simon Fraser  <simon.fraser@apple.com>
 
+        Let Xcode have it's way with the project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2011-01-14  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Refactor some FrameView::syncCompositingState code

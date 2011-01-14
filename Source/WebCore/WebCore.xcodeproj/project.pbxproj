@@ -5589,9 +5589,9 @@
 		ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED501DC50B249F2900AE18D9 /* EditorMac.mm */; };
 		EDE3A5000C7A430600956A37 /* ColorMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EDE3A4FF0C7A430600956A37 /* ColorMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
-		F33F0282120947F200E5743A /* ScriptProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33F0281120947F200E5743A /* ScriptProfile.cpp */; };
 		F3335BF812E07DC300D33011 /* InspectorConsoleAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3335BF612E07DC300D33011 /* InspectorConsoleAgent.cpp */; };
 		F3335BF912E07DC300D33011 /* InspectorConsoleAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3335BF712E07DC300D33011 /* InspectorConsoleAgent.h */; };
+		F33F0282120947F200E5743A /* ScriptProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33F0281120947F200E5743A /* ScriptProfile.cpp */; };
 		F33F053D120B0DA500E5743A /* InspectorDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33F053B120B0DA500E5743A /* InspectorDebuggerAgent.cpp */; };
 		F33F053E120B0DA500E5743A /* InspectorDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F33F053C120B0DA500E5743A /* InspectorDebuggerAgent.h */; };
 		F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F344C7121125B82C00F26EEE /* InspectorFrontendClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11929,9 +11929,9 @@
 		ED501DC50B249F2900AE18D9 /* EditorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = EditorMac.mm; path = mac/EditorMac.mm; sourceTree = "<group>"; };
 		EDE3A4FF0C7A430600956A37 /* ColorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorMac.h; sourceTree = "<group>"; };
 		EDEC98020AED7E170059137F /* WebCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
-		F33F0281120947F200E5743A /* ScriptProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptProfile.cpp; sourceTree = "<group>"; };
 		F3335BF612E07DC300D33011 /* InspectorConsoleAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorConsoleAgent.cpp; sourceTree = "<group>"; };
 		F3335BF712E07DC300D33011 /* InspectorConsoleAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorConsoleAgent.h; sourceTree = "<group>"; };
+		F33F0281120947F200E5743A /* ScriptProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptProfile.cpp; sourceTree = "<group>"; };
 		F33F053B120B0DA500E5743A /* InspectorDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDebuggerAgent.cpp; sourceTree = "<group>"; };
 		F33F053C120B0DA500E5743A /* InspectorDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDebuggerAgent.h; sourceTree = "<group>"; };
 		F344C7121125B82C00F26EEE /* InspectorFrontendClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendClient.h; sourceTree = "<group>"; };
