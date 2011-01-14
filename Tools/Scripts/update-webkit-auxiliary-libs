@@ -54,11 +54,12 @@ my $file = "WebKitAuxiliaryLibrary";
 my $zipFile = "$file.zip"; 
 my $auxiliaryLibsURL = "http://developer.apple.com/opensource/internet/$zipFile";
 my $webkitLibrariesDir = toUnixPath($ENV{'WEBKITLIBRARIESDIR'}) || "$sourceDir/WebKitLibraries/win";
-my $tmpDir = File::Spec->rel2abs(File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1));
+my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
+my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 
 print "Checking Last-Modified date of $zipFile...\n";
 
-my $result = system "curl -s -I $auxiliaryLibsURL | grep Last-Modified > \"$tmpDir/$file.headers\"";
+my $result = system "curl -s -I $auxiliaryLibsURL | grep Last-Modified > \"$tmpAbsDir/$file.headers\"";
 
 if (WEXITSTATUS($result)) {
     print STDERR "Couldn't check Last-Modified date of new $zipFile.\n";
@@ -73,7 +74,7 @@ if (WEXITSTATUS($result)) {
     exit 0;
 }
 
-if (open NEW, "$tmpDir/$file.headers") {
+if (open NEW, "$tmpAbsDir/$file.headers") {
     my $new = lastModifiedToUnixTime(<NEW>);
     close NEW;
 
@@ -88,17 +89,17 @@ if (open NEW, "$tmpDir/$file.headers") {
 }
 
 print "Downloading $zipFile...\n\n";
-$result = system "curl -o \"$tmpDir/$zipFile\" $auxiliaryLibsURL";
+$result = system "curl -o \"$tmpAbsDir/$zipFile\" $auxiliaryLibsURL";
 die "Couldn't download $zipFile!" if $result;
 
-$result = system "unzip", "-q", "-d", $tmpDir, "$tmpDir/$zipFile";
+$result = system "unzip", "-q", "-d", $tmpAbsDir, "$tmpAbsDir/$zipFile";
 die "Couldn't unzip $zipFile." if $result;
 
 print "\nInstalling $file...\n";
 
 sub wanted
 {
-    my $relativeName = File::Spec->abs2rel($File::Find::name, "$tmpDir/$file/win");
+    my $relativeName = File::Spec->abs2rel($File::Find::name, "$tmpAbsDir/$file/win");
     my $destination = "$webkitLibrariesDir/$relativeName";
 
     if (-d $_) {
@@ -109,9 +110,9 @@ sub wanted
     system "cp", $_, $destination;
 }
 
-File::Find::find(\&wanted, "$tmpDir/$file");
+File::Find::find(\&wanted, "$tmpAbsDir/$file");
 
-$result = system "mv", "$tmpDir/$file.headers", $webkitLibrariesDir;
+$result = system "mv", "$tmpAbsDir/$file.headers", $webkitLibrariesDir;
 print STDERR "Couldn't move $file.headers to $webkitLibrariesDir" . ".\n" if $result;
 
 print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";

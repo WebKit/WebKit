@@ -49,7 +49,8 @@ my $pathToZip = File::Spec->catfile($zipDirectory, $zipFile);
 my $webkitLibrariesDir = toUnixPath($ENV{'WEBKITLIBRARIESDIR'}) || "$sourceDir/WebKitLibraries/win";
 my $versionFile = $file . "Version";
 my $pathToVersionFile = File::Spec->catfile($webkitLibrariesDir, $versionFile);
-my $tmpDir = File::Spec->rel2abs(File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1));
+my $tmpRelativeDir = File::Temp::tempdir("webkitlibsXXXXXXX", TMPDIR => 1, CLEANUP => 1);
+my $tmpAbsDir = File::Spec->rel2abs($tmpRelativeDir);
 my $versionFileURL = "http://developer.apple.com/opensource/internet/$versionFile";
 
 my $extractedVersion = extractedVersion();
@@ -70,14 +71,14 @@ if ($zipFileVersion eq $extractedVersion) {
     exit;
 }
 
-my $result = system "unzip", "-q", "-d", $tmpDir, $pathToZip;
+my $result = system "unzip", "-q", "-d", $tmpAbsDir, $pathToZip;
 die "Couldn't unzip $zipFile." if $result;
 
 print "\nInstalling $file...\n";
 
 sub wanted
 {
-    my $relativeName = File::Spec->abs2rel($File::Find::name, "$tmpDir/$file/win");
+    my $relativeName = File::Spec->abs2rel($File::Find::name, "$tmpAbsDir/$file/win");
     my $destination = "$webkitLibrariesDir/$relativeName";
 
     if (-d $_) {
@@ -88,7 +89,7 @@ sub wanted
     system "cp", $_, $destination;
 }
 
-File::Find::find(\&wanted, "$tmpDir/$file");
+File::Find::find(\&wanted, "$tmpAbsDir/$file");
 
 print "The $file has been sucessfully installed in\n $webkitLibrariesDir\n";
 exit;
