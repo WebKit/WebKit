@@ -2,6 +2,31 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: breakpoint text snippet in breakpoints sidebar pane disappears after reload.
+        https://bugs.webkit.org/show_bug.cgi?id=52215
+
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.populateLabelElement):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.get linesCount):
+        (WebInspector.Script.prototype.sourceLine):
+        (WebInspector.Script.prototype.sourceLine.didRequestSource):
+        (WebInspector.Script.prototype.set source):
+        (WebInspector.Script.prototype.requestSource.didGetScriptSource):
+        (WebInspector.Script.prototype.requestSource):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded.didRequestSource):
+        (WebInspector.ScriptView.prototype.setupSourceFrameIfNeeded):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._addBreakpoint):
+        * inspector/front-end/utilities.js:
+        (String.prototype.findAll):
+
+2011-01-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: provide script column offset to frontend.
         https://bugs.webkit.org/show_bug.cgi?id=52377
 

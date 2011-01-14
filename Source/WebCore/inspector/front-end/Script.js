@@ -68,15 +68,30 @@ WebInspector.Script.prototype = {
     {
         if (!this.source)
             return 0;
-        if (this._linesCount)
-            return this._linesCount;
-        this._linesCount = 0;
-        var lastIndex = this.source.indexOf("\n");
-        while (lastIndex !== -1) {
-            lastIndex = this.source.indexOf("\n", lastIndex + 1)
-            this._linesCount++;
+        if (!this._lineEndings)
+            this._lineEndings = this._source.findAll("\n");
+        return this._lineEndings.length + 1;
+    },
+
+    sourceLine: function(lineNumber, callback)
+    {
+        function extractSourceLine()
+        {
+            lineNumber -= this.startingLine;
+            callback(this._source.substring(this._lineEndings[lineNumber - 1], this._lineEndings[lineNumber]));
         }
-        return this._linesCount;
+
+        if (this._lineEndings) {
+            extractSourceLine.call(this);
+            return;
+        }
+
+        function didRequestSource()
+        {
+            this._lineEndings = this._source.findAll("\n");
+            extractSourceLine.call(this);
+        }
+        this.requestSource(didRequestSource.bind(this));
     },
 
     get source()
@@ -87,5 +102,20 @@ WebInspector.Script.prototype = {
     set source(source)
     {
         this._source = source;
+    },
+
+    requestSource: function(callback)
+    {
+        if (this._source) {
+            callback(this._source);
+            return;
+        }
+
+        function didGetScriptSource(source)
+        {
+            this._source = source;
+            callback(this._source);
+        }
+        InspectorBackend.getScriptSource(this.sourceID, didGetScriptSource.bind(this));
     }
 }

@@ -53,22 +53,13 @@ WebInspector.ScriptView.prototype = {
 
         this.attach();
 
-        if (this.script.source)
-            this._sourceFrameSetupFinished();
-        else
-            InspectorBackend.getScriptSource(this.script.sourceID, this._didGetScriptSource.bind(this));
-    },
-
-    _didGetScriptSource: function(source)
-    {
-        this.script.source = source || WebInspector.UIString("<source is not available>");
-        this._sourceFrameSetupFinished();
-    },
-
-    _sourceFrameSetupFinished: function()
-    {
-        this.sourceFrame.setContent("text/javascript", this._prependWhitespace(this.script.source));
-        this._sourceFrameSetup = true;
+        function didRequestSource(source)
+        {
+            source = source || WebInspector.UIString("<source is not available>");
+            this.sourceFrame.setContent("text/javascript", this._prependWhitespace(source));
+            this._sourceFrameSetup = true;
+        }
+        this.script.requestSource(didRequestSource.bind(this));
     },
 
     _prependWhitespace: function(content) {

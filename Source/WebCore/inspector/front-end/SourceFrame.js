@@ -432,7 +432,6 @@ WebInspector.SourceFrame.prototype = {
         breakpoint.addEventListener("condition-changed", this._breakpointChanged, this);
         breakpoint.addEventListener("removed", this._breakpointRemoved, this);
 
-        breakpoint.sourceText = this._textModel.line(breakpoint.line - 1);
         this._setBreakpointDecoration(breakpoint.line, breakpoint.enabled, !!breakpoint.condition);
     },
 

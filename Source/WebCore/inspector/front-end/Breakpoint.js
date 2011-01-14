@@ -37,7 +37,6 @@ WebInspector.Breakpoint = function(debuggerModel, breakpointId, sourceID, url, l
     this.sourceID = sourceID;
     this._enabled = enabled;
     this._condition = condition || "";
-    this._sourceText = "";
     this._hit = false;
     this._debuggerModel = debuggerModel;
 }
@@ -54,17 +53,6 @@ WebInspector.Breakpoint.prototype = {
             return;
         this.remove();
         WebInspector.debuggerModel.setBreakpoint(this.sourceID, this.line, enabled, this.condition);
-    },
-
-    get sourceText()
-    {
-        return this._sourceText;
-    },
-
-    set sourceText(text)
-    {
-        this._sourceText = text;
-        this.dispatchEventToListeners("label-changed");
     },
 
     get condition()
@@ -99,14 +87,19 @@ WebInspector.Breakpoint.prototype = {
 
     populateLabelElement: function(element)
     {
-        var displayName = this.url ? WebInspector.displayNameForURL(this.url) : WebInspector.UIString("(program)");
-        var labelElement = document.createTextNode(displayName + ":" + this.line);
-        element.appendChild(labelElement);
+        function didGetSourceLine(text)
+        {
+            var displayName = this.url ? WebInspector.displayNameForURL(this.url) : WebInspector.UIString("(program)");
+            var labelElement = document.createTextNode(displayName + ":" + this.line);
+            element.appendChild(labelElement);
 
-        var sourceTextElement = document.createElement("div");
-        sourceTextElement.textContent = this.sourceText;
-        sourceTextElement.className = "source-text monospace";
-        element.appendChild(sourceTextElement);
+            var sourceTextElement = document.createElement("div");
+            sourceTextElement.textContent = text;
+            sourceTextElement.className = "source-text monospace";
+            element.appendChild(sourceTextElement);
+        }
+        var script = this._debuggerModel.scriptForSourceID(this.sourceID);
+        script.sourceLine(this.line, didGetSourceLine.bind(this));
     },
 
     remove: function()

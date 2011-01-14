@@ -388,6 +388,17 @@ String.prototype.hasSubstring = function(string, caseInsensitive)
     return this.match(new RegExp(string.escapeForRegExp(), "i"));
 }
 
+String.prototype.findAll = function(string)
+{
+    var matches = [];
+    var i = this.indexOf(string);
+    while (i !== -1) {
+        matches.push(i);
+        i = this.indexOf(string, i + string.length);
+    }
+    return matches;
+}
+
 String.prototype.asParsedURL = function()
 {
     // RegExp groups:
