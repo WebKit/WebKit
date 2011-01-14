@@ -124,6 +124,9 @@ class FileSystem(object):
                 if retry_timeout_sec < 0:
                     raise e
 
+    def remove_tree(self, path, ignore_errors=False):
+        shutil.rmtree(path, ignore_errors)
+
     def read_binary_file(self, path):
         """Return the contents of the file at the given path as a byte string."""
         with file(path, 'rb') as f:

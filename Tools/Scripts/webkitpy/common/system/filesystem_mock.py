@@ -116,3 +116,6 @@ class MockFileSystem(object):
 
     def remove(self, path):
         del self.files[path]
+
+    def remove_tree(self, path, ignore_errors=False):
+        self.files = [file for file in self.files if not file.startswith(path)]
