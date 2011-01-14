@@ -145,16 +145,16 @@ class AmbiguousCommitError(Exception):
 
 # SCM methods are expected to return paths relative to self.checkout_root.
 class SCM:
-    def __init__(self, cwd):
+    def __init__(self, cwd, executive=None):
         self.cwd = cwd
         self.checkout_root = self.find_checkout_root(self.cwd)
         self.dryrun = False
+        self._executive = executive or Executive()
 
     # A wrapper used by subclasses to create processes.
     def run(self, args, cwd=None, input=None, error_handler=None, return_exit_code=False, return_stderr=True, decode_output=True):
         # FIXME: We should set cwd appropriately.
-        # FIXME: We should use Executive.
-        return run_command(args,
+        return self._executive.run_command(args,
                            cwd=cwd,
                            input=input,
                            error_handler=error_handler,
@@ -266,7 +266,7 @@ class SCM:
     def display_name(self):
         self._subclass_must_implement()
 
-    def create_patch(self, git_commit=None, changed_files=[]):
+    def create_patch(self, git_commit=None, changed_files=None):
         self._subclass_must_implement()
 
     def committer_email_for_revision(self, revision):
@@ -319,14 +319,15 @@ class SCM:
 
 
 class SVN(SCM):
-    # FIXME: We should move these values to a WebKit-specific config. file.
+    # FIXME: We should move these values to a WebKit-specific config file.
     svn_server_host = "svn.webkit.org"
     svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
 
-    def __init__(self, cwd, patch_directories):
-        SCM.__init__(self, cwd)
+    def __init__(self, cwd, patch_directories, executive=None):
+        SCM.__init__(self, cwd, executive)
         self._bogus_dir = None
         if patch_directories == []:
+            # FIXME: ScriptError is for Executive, this should probably be a normal Exception.
             raise ScriptError(script_args=svn_info_args, message='Empty list of patch directories passed to SCM.__init__')
         elif patch_directories == None:
             self._patch_directories = [ospath.relpath(cwd, self.checkout_root)]
@@ -591,8 +592,8 @@ class SVN(SCM):
 
 # All git-specific logic should go here.
 class Git(SCM):
-    def __init__(self, cwd):
-        SCM.__init__(self, cwd)
+    def __init__(self, cwd, executive=None):
+        SCM.__init__(self, cwd, executive)
         self._check_git_architecture()
 
     def _machine_is_64bit(self):
@@ -745,11 +746,14 @@ class Git(SCM):
     def display_name(self):
         return "git"
 
-    def create_patch(self, git_commit=None, changed_files=[]):
+    def create_patch(self, git_commit=None, changed_files=None):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
-        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit), "--"] + changed_files, decode_output=False, cwd=self.checkout_root)
+        command = ['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit), "--"]
+        if changed_files:
+            command += changed_files
+        return self.run(command, decode_output=False, cwd=self.checkout_root)
 
     def _run_git_svn_find_rev(self, arg):
         # git svn find-rev always exits 0, even when the revision or commit is not found.

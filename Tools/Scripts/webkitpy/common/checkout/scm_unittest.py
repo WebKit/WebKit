@@ -45,11 +45,12 @@ import shutil
 
 from datetime import date
 from webkitpy.common.checkout.api import Checkout
-from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError, AmbiguousCommitError, find_checkout_root, default_scm
+from webkitpy.common.checkout.scm import detect_scm_system, SCM, SVN, Git, CheckoutNeedsUpdate, commit_error_handler, AuthenticationError, AmbiguousCommitError, find_checkout_root, default_scm
 from webkitpy.common.config.committers import Committer  # FIXME: This should not be needed
 from webkitpy.common.net.bugzilla import Attachment # FIXME: This should not be needed
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.tool.mocktool import MockExecutive
 
 # Eventually we will want to write tests which work for both scms. (like update_webkit, changed_files, etc.)
 # Perhaps through some SCMTest base-class which both SVNTest and GitTest inherit from.
@@ -455,6 +456,7 @@ OcmYex&reD$;sO8*F9L)B
         write_into_file_at_path("added_dir/added_file", "new stuff")
         self.scm.add("added_dir/added_file")
         self.assertTrue("added_dir/added_file" in self.scm.added_files())
+
 
 class SVNTest(SCMTest):
 
@@ -1315,6 +1317,21 @@ class GitSVNTest(SCMTest):
         cached_diff = self.scm.diff_for_file('test_file_commit1')
         self.assertTrue("+Updated" in cached_diff)
         self.assertTrue("-more test content" in cached_diff)
+
+
+# We need to split off more of these SCM tests to use mocks instead of the filesystem.
+# This class is the first part of that.
+class GitTestWithMock(unittest.TestCase):
+    def setUp(self):
+        executive = MockExecutive(should_log=False)
+        # We do this should_log dance to avoid logging when Git.__init__ runs sysctl on mac to check for 64-bit support.
+        self.scm = Git(None, executive=executive)
+        executive.should_log = True
+
+    def test_create_patch(self):
+        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD']\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--']\n"
+        OutputCapture().assert_outputs(self, self.scm.create_patch, kwargs={'changed_files': None}, expected_stderr=expected_stderr)
+
 
 if __name__ == '__main__':
     unittest.main()
