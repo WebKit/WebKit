@@ -1,3 +1,11 @@
+2011-01-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Don’t try to compile InjectedScriptSource.js into WebCore.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-01-13  Mike Thole  <mthole@apple.com>
 
         Reviewed by Darin Adler and Brady Eidson.

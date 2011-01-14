@@ -1652,7 +1652,6 @@
 		7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */; };
 		7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A2458791021EAF4000A00AA /* InspectorDOMAgent.cpp */; };
 		7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A24587A1021EAF4000A00AA /* InspectorDOMAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7A563F9612DF5C9100F4536D /* InjectedScriptSource.js in Sources */ = {isa = PBXBuildFile; fileRef = 7A563F9512DF5C9100F4536D /* InjectedScriptSource.js */; };
 		7A674BDB0F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A674BD90F9EBF4E006CF099 /* PageGroupLoadDeferrer.cpp */; };
 		7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */; };
 		7A74ECBA101839A600BF939E /* InspectorDOMStorageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECB8101839A500BF939E /* InspectorDOMStorageAgent.cpp */; };
@@ -25005,7 +25004,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
-				7A563F9612DF5C9100F4536D /* InjectedScriptSource.js in Sources */,
 				2E37DFDA12DBAFB800A6B233 /* DOMURL.cpp in Sources */,
 				2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */,
 			);
