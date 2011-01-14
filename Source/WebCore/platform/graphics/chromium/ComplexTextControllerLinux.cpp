@@ -50,7 +50,6 @@ ComplexTextController::ComplexTextController(const TextRun& run, unsigned starti
     , m_startingX(startingX)
     , m_offsetX(m_startingX)
     , m_run(getNormalizedTextRun(run, m_normalizedRun, m_normalizedBuffer))
-    , m_iterateBackwards(m_run.rtl())
     , m_wordSpacingAdjustment(0)
     , m_padding(0)
     , m_padPerWordBreak(0)
@@ -140,54 +139,33 @@ void ComplexTextController::setPadding(int padding)
 
 void ComplexTextController::reset()
 {
-    if (m_iterateBackwards)
-        m_indexOfNextScriptRun = m_run.length() - 1;
-    else
-        m_indexOfNextScriptRun = 0;
+    m_indexOfNextScriptRun = 0;
     m_offsetX = m_startingX;
-}
-
-void ComplexTextController::setBackwardsIteration(bool isBackwards)
-{
-    m_iterateBackwards = isBackwards;
-    reset();
 }
 
 // Advance to the next script run, returning false when the end of the
 // TextRun has been reached.
 bool ComplexTextController::nextScriptRun()
 {
-    if (m_iterateBackwards) {
-        // In right-to-left mode we need to render the shaped glyph backwards and
-        // also render the script runs themselves backwards. So given a TextRun:
-        //    AAAAAAACTTTTTTT   (A = Arabic, C = Common, T = Thai)
-        // we render:
-        //    TTTTTTCAAAAAAA
-        // (and the glyphs in each A, C and T section are backwards too)
-        if (!hb_utf16_script_run_prev(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
-            return false;
-        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
-    } else {
-        if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
-            return false;
+    if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
+        return false;
 
-        // It is actually wrong to consider script runs at all in this code.
-        // Other WebKit code (e.g. Mac) segments complex text just by finding
-        // the longest span of text covered by a single font.
-        // But we currently need to call hb_utf16_script_run_next anyway to fill
-        // in the harfbuzz data structures to e.g. pick the correct script's shaper.
-        // So we allow that to run first, then do a second pass over the range it
-        // found and take the largest subregion that stays within a single font.
-        m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
-        unsigned endOfRun;
-        for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
-            const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false).fontData;
-            if (nextFontData != m_currentFontData)
-                break;
-        }
-        m_item.item.length = endOfRun;
-        m_indexOfNextScriptRun = m_item.item.pos + endOfRun;
+    // It is actually wrong to consider script runs at all in this code.
+    // Other WebKit code (e.g. Mac) segments complex text just by finding
+    // the longest span of text covered by a single font.
+    // But we currently need to call hb_utf16_script_run_next anyway to fill
+    // in the harfbuzz data structures to e.g. pick the correct script's shaper.
+    // So we allow that to run first, then do a second pass over the range it
+    // found and take the largest subregion that stays within a single font.
+    m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
+    unsigned endOfRun;
+    for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
+        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false).fontData;
+        if (nextFontData != m_currentFontData)
+            break;
     }
+    m_item.item.length = endOfRun;
+    m_indexOfNextScriptRun = m_item.item.pos + endOfRun;
 
     setupFontForScriptRun();
     shapeGlyphs();

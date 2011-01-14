@@ -1,3 +1,26 @@
+2011-01-13  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] drop backwards iteration in Linux complex text code
+        https://bugs.webkit.org/show_bug.cgi?id=52403
+
+        ComplexTextController previously supported iterating through the text in
+        both directions, but this resulted in duplicate code for each path.
+        Instead, by being more careful about flipping signs where appropriate,
+        we can refactor the code into one code path.
+
+        No tests, just a refactoring; should be covered by existing tests.
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::reset):
+        (WebCore::ComplexTextController::nextScriptRun):
+        * platform/graphics/chromium/ComplexTextControllerLinux.h:
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::glyphIndexForXPositionInScriptRun):
+        (WebCore::Font::selectionRectForComplexText):
+
 2011-01-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

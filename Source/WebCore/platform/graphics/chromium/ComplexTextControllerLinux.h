@@ -52,9 +52,8 @@ class SimpleFontData;
 // only ever done with script runs since the shapers only know how to deal with
 // a single script.
 //
-// After creating it, the script runs are either iterated backwards or forwards.
-// It defaults to backwards for RTL and forwards otherwise (which matches the
-// presentation order), however you can set it with |setBackwardsIteration|.
+// Iteration is always in logical (aka reading) order.  For RTL text that means
+// the rightmost part of the text will be first.
 //
 // Once you have setup the object, call |nextScriptRun| to get the first script
 // run. This will return false when the iteration is complete. At any time you
@@ -70,7 +69,6 @@ public:
     // WebKit uses this to justify text.
     void setPadding(int);
     void reset();
-    void setBackwardsIteration(bool);
     // Advance to the next script run, returning false when the end of the
     // TextRun has been reached.
     bool nextScriptRun();
@@ -148,7 +146,6 @@ private:
     OwnPtr<TextRun> m_normalizedRun;
     OwnArrayPtr<UChar> m_normalizedBuffer; // A buffer for normalized run.
     const TextRun& m_run;
-    bool m_iterateBackwards;
     int m_wordSpacingAdjustment; // delta adjustment (pixels) for each word break.
     float m_padding; // pixels to be distributed over the line at word breaks.
     float m_padPerWordBreak; // pixels to be added to each word break.
