@@ -106,6 +106,7 @@ committers_unable_to_review = [
     Committer("Enrica Casucci", "enrica@apple.com"),
     Committer("Erik Arvidsson", "arv@chromium.org", "arv"),
     Committer("Eric Roman", "eroman@chromium.org", "eroman"),
+    Committer("Eric Uhrhane", "ericu@chromium.org", "ericu"),
     Committer("Evan Martin", "evan@chromium.org", "evmar"),
     Committer("Evan Stade", "estade@chromium.org", "estade"),
     Committer("Fady Samuel", "fsamuel@chromium.org", "fsamuel"),
