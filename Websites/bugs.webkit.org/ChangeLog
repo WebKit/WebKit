@@ -1,5 +1,22 @@
 2011-01-14  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        tweak line selection in code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52462
+
+        -Improve handling of data-comment-base-line code to deal with
+        lines that have multiple values.
+        -Make it so that if you click on the line immediately above
+        a line that has a comment it will add a new comment instead of
+        adding lines to the following comment. If the last selected line
+        overlaps existing comment lines though they will still get
+        added to the existing comment.
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Roben.
 
         fix bugs going back and forth between unified and sidebyside

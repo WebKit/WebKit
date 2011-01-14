@@ -914,7 +914,7 @@
     findCommentBlockFor(line).slideUp('fast', function() {
       $(this).remove();
       line.removeAttr('data-has-comment');
-      trimCommentContextToBefore(line);
+      trimCommentContextToBefore(line, line.attr('data-comment-base-line'));
     });
   }
 
@@ -997,23 +997,27 @@
     }
   });
 
-  function contextLinesFor(line_id) {
-    return $('div[data-comment-base-line~="' + line_id + '"]');
+  function contextLinesFor(comment_base_lines, file_diff) {
+    var base_lines = comment_base_lines.split(' ');
+    return $('div[data-comment-base-line]', file_diff).filter(function() {
+      return $(this).attr('data-comment-base-line').split(' ').some(function(item) {
+        return base_lines.indexOf(item) != -1;
+      });
+    });
   }
 
   function numberFrom(line_id) {
     return Number(line_id.replace('line', ''));
   }
 
-  function trimCommentContextToBefore(line) {
-    var base_line_id = line.attr('data-comment-base-line');
+  function trimCommentContextToBefore(line, comment_base_line) {
     var line_to_trim_to = numberFrom(line.attr('id'));
-    contextLinesFor(base_line_id).each(function() {
+    contextLinesFor(comment_base_line, fileDiffFor(line)).each(function() {
       var id = $(this).attr('id');
       if (numberFrom(id) > line_to_trim_to)
         return;
 
-      removeDataCommentBaseLine(this, base_line_id);
+      removeDataCommentBaseLine(this, comment_base_line);
       if (!$(this).attr('data-comment-base-line'))
         $(this).removeClass('commentContext');
     });
@@ -1044,7 +1048,7 @@
   $('.lineNumber').live('click', function() {
     var line = $(this).parents('.Line');
     if (line.hasClass('commentContext'))
-      trimCommentContextToBefore(previousLineFor(line));
+      trimCommentContextToBefore(previousLineFor(line), line.attr('data-comment-base-line'));
   }).live('mousedown', function() {
     in_drag_select = true;
     $(lineFromLineDescendant(this)).addClass('selected');
@@ -1060,21 +1064,22 @@
   }).live('mouseup', function() {
     if (!in_drag_select)
       return;
+
     var selected = $('.selected');
-    var should_add_comment = !nextLineFor(selected.last()).hasClass('commentContext');
+    var already_has_comment = selected.last().hasClass('commentContext');
     selected.addClass('commentContext');
 
-    var id;
-    if (should_add_comment) {
+    var comment_base_line;
+    if (already_has_comment)
+      comment_base_line = selected.last().attr('data-comment-base-line');
+    else {
       var last = lineFromLineDescendant(selected.last()[0]);
       addCommentFor($(last));
-      id = last.id;
-    } else {
-      id = nextLineFor(selected.last())[0].getAttribute('data-comment-base-line');
+      comment_base_line = last.id;
     }
 
     selected.each(function() {
-      addDataCommentBaseLine(this, id);
+      addDataCommentBaseLine(this, comment_base_line);
     });
   });
 
@@ -1091,15 +1096,16 @@
     $(line).attr('data-comment-base-line', parts.join(' '));
   }
 
-  function removeDataCommentBaseLine(line, id) {
+  function removeDataCommentBaseLine(line, comment_base_lines) {
     var val = $(line).attr('data-comment-base-line');
     if (!val)
       return;
 
+    var base_lines = comment_base_lines.split(' ');
     var parts = val.split(' ');
     var newVal = [];
     for (var i = 0; i < parts.length; i++) {
-      if (parts[i] != id)
+      if (base_lines.indexOf(parts[i]) == -1)
         newVal.push(parts[i]);
     }
 
@@ -1124,7 +1130,7 @@
 
   function contextSnippetFor(line, indent) {
     var snippets = []
-    contextLinesFor(line.attr('id')).each(function() {
+    contextLinesFor(line.attr('id'), fileDiffFor(line)).each(function() {
       var action = ' ';
       if ($(this).hasClass('add'))
         action = '+';
