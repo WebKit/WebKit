@@ -287,12 +287,11 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, con
     String sourceID = ustringToString(JSC::UString::number(source.provider()->asID()));
     String url = ustringToString(source.provider()->url());
     String data = ustringToString(JSC::UString(source.data(), source.length()));
-    int firstLine = source.firstLine();
 
     Vector<ScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(sourceID, url, data, firstLine, worldType);
+        copy[i]->didParseSource(sourceID, url, data, source.firstLine() - 1, source.firstColumn() - 1, worldType);
 }
 
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, const SourceCode& source, int errorLine, const String& errorMessage)

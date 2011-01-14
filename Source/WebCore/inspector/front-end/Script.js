@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Script = function(sourceID, sourceURL, source, startingLine, errorLine, errorMessage, worldType)
+WebInspector.Script = function(sourceID, sourceURL, source, lineOffset, columnOffset, errorLine, errorMessage, worldType)
 {
     this.sourceID = sourceID;
     this.sourceURL = sourceURL;
     this._source = source;
-    this.startingLine = startingLine;
+    this.lineOffset = lineOffset;
+    this.columnOffset = columnOffset;
     this.errorLine = errorLine;
     this.errorMessage = errorMessage;
     this.worldType = worldType;
@@ -58,6 +59,11 @@ WebInspector.Script.WorldType = {
 }
 
 WebInspector.Script.prototype = {
+    get startingLine()
+    {
+        return this.lineOffset + 1;
+    },
+
     get linesCount()
     {
         if (!this.source)

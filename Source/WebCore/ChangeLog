@@ -1,3 +1,28 @@
+2011-01-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: provide script column offset to frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=52377
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * inspector/Inspector.idl:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/ScriptDebugListener.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.parsedScriptSource):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+
 2011-01-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed one line fix for console-xhr-logging test.

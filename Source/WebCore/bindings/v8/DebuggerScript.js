@@ -83,8 +83,8 @@ DebuggerScript._formatScript = function(script)
         id: script.id,
         name: script.nameOrSourceURL(),
         source: script.source,
-        lineOffset: DebuggerScript._v8ToWebkitLineNumber(script.line_offset),
-        lineCount: script.lineCount(),
+        lineOffset: script.line_offset,
+        columnOffset: script.column_offset,
         scriptWorldType: scriptWorldType
     };
 }

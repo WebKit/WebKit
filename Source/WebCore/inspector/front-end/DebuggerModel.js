@@ -191,9 +191,9 @@ WebInspector.DebuggerModel.prototype = {
         delete this._lastHitBreakpoint;
     },
 
-    _parsedScriptSource: function(sourceID, sourceURL, source, startingLine, scriptWorldType)
+    _parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, scriptWorldType)
     {
-        var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, undefined, undefined, scriptWorldType);
+        var script = new WebInspector.Script(sourceID, sourceURL, "", lineOffset, columnOffset, undefined, undefined, scriptWorldType);
         this._scripts[sourceID] = script;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, sourceID);
     },
@@ -244,9 +244,9 @@ WebInspector.DebuggerDispatcher.prototype = {
         WebInspector.panels.scripts.debuggerWasDisabled();
     },
 
-    parsedScriptSource: function(sourceID, sourceURL, source, startingLine, scriptWorldType)
+    parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, scriptWorldType)
     {
-        this._debuggerModel._parsedScriptSource(sourceID, sourceURL, source, startingLine, scriptWorldType);
+        this._debuggerModel._parsedScriptSource(sourceID, sourceURL, lineOffset, columnOffset, scriptWorldType);
     },
 
     failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)

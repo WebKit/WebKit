@@ -46,7 +46,7 @@ class ScriptDebugListener {
 public:
     virtual ~ScriptDebugListener() { }
 
-    virtual void didParseSource(const String&  sourceID, const String& url, const String& data, int firstLine, ScriptWorldType) = 0;
+    virtual void didParseSource(const String&  sourceID, const String& url, const String& data, int lineOffset, int columnOffset, ScriptWorldType) = 0;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
     virtual void didPause(ScriptState*) = 0;
     virtual void didContinue() = 0;

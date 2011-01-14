@@ -87,7 +87,7 @@ private:
 
     PassRefPtr<InspectorValue> currentCallFrames();
 
-    virtual void didParseSource(const String& sourceID, const String& url, const String& data, int firstLine, ScriptWorldType);
+    virtual void didParseSource(const String& sourceID, const String& url, const String& data, int lineOffset, int columnOffset, ScriptWorldType);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
     virtual void didPause(ScriptState*);
     virtual void didContinue();
