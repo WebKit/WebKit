@@ -42,11 +42,6 @@
 #import <wtf/Threading.h>
 #import <wtf/text/CString.h>
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
-#import <sandbox.h>
-#import <stdlib.h>
-#endif
-
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
 
@@ -59,38 +54,6 @@ namespace WebKit {
 int WebProcessMain(const CommandLine& commandLine)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-#if ENABLE(WEB_PROCESS_SANDBOX)
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"DisableSandbox"]) {
-        char* errorBuf;
-        char tmpPath[PATH_MAX];
-        char tmpRealPath[PATH_MAX];
-        char cachePath[PATH_MAX];
-        char cacheRealPath[PATH_MAX];
-        const char* frameworkPath = [[[[NSBundle bundleForClass:[WKView class]] bundlePath] stringByDeletingLastPathComponent] UTF8String];
-        const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
-
-        if (confstr(_CS_DARWIN_USER_TEMP_DIR, tmpPath, PATH_MAX) <= 0 || !realpath(tmpPath, tmpRealPath))
-            tmpRealPath[0] = '\0';
-
-        if (confstr(_CS_DARWIN_USER_CACHE_DIR, cachePath, PATH_MAX) <= 0 || !realpath(cachePath, cacheRealPath))
-            cacheRealPath[0] = '\0';
-
-        const char* const sandboxParam[] = {
-            "WEBKIT2_FRAMEWORK_DIR", frameworkPath,
-            "DARWIN_USER_TEMP_DIR", (const char*)tmpRealPath,
-            "DARWIN_USER_CACHE_DIR", (const char*)cacheRealPath,
-            NULL
-        };
-
-        if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParam, &errorBuf)) {
-            fprintf(stderr, "WebProcess: couldn't initialize sandbox profile [%s] with framework path [%s], tmp path [%s], cache path [%s]: %s\n", profilePath, frameworkPath, tmpRealPath, cacheRealPath, errorBuf);
-            exit(EX_NOPERM);
-        }
-    } else
-        fprintf(stderr, "Bypassing sandbox due to DisableSandbox user default.\n");
-
-#endif
 
     String serviceName = commandLine["servicename"];
     if (serviceName.isEmpty())

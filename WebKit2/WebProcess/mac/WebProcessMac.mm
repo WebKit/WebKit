@@ -36,6 +36,12 @@
 #include <mach/mach.h>
 #include <mach/mach_error.h>
 
+#if ENABLE(WEB_PROCESS_SANDBOX)
+#include <sandbox.h>
+#include <stdlib.h>
+#include <sysexits.h>
+#endif
+
 using namespace WebCore;
 using namespace std;
 
@@ -103,8 +109,46 @@ void WebProcess::platformClearResourceCaches()
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
+static void initializeSandbox(const WebProcessCreationParameters& parameters)
+{
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DisableSandbox"]) {
+        fprintf(stderr, "Bypassing sandbox due to DisableSandbox user default.\n");
+        return;
+    }
+
+    char* errorBuf;
+    char tmpPath[PATH_MAX];
+    char tmpRealPath[PATH_MAX];
+    char cachePath[PATH_MAX];
+    char cacheRealPath[PATH_MAX];
+    const char* frameworkPath = [[[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent] UTF8String];
+    const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] UTF8String];
+
+    if (confstr(_CS_DARWIN_USER_TEMP_DIR, tmpPath, PATH_MAX) <= 0 || !realpath(tmpPath, tmpRealPath))
+        tmpRealPath[0] = '\0';
+
+    if (confstr(_CS_DARWIN_USER_CACHE_DIR, cachePath, PATH_MAX) <= 0 || !realpath(cachePath, cacheRealPath))
+        cacheRealPath[0] = '\0';
+
+    const char* const sandboxParam[] = {
+        "WEBKIT2_FRAMEWORK_DIR", frameworkPath,
+        "DARWIN_USER_TEMP_DIR", (const char*)tmpRealPath,
+        "DARWIN_USER_CACHE_DIR", (const char*)cacheRealPath,
+        NULL
+    };
+
+    if (sandbox_init_with_parameters(profilePath, SANDBOX_NAMED_EXTERNAL, sandboxParam, &errorBuf)) {
+        fprintf(stderr, "WebProcess: couldn't initialize sandbox profile [%s] with framework path [%s], tmp path [%s], cache path [%s]: %s\n", profilePath, frameworkPath, tmpRealPath, cacheRealPath, errorBuf);
+        exit(EX_NOPERM);
+    }
+#endif
+}
+
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
 {
+    initializeSandbox(parameters);
+
     if (!parameters.nsURLCachePath.isNull()) {
         NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
         NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
