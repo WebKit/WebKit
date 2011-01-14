@@ -1,3 +1,22 @@
+2011-01-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Use the Windows thread pool instead of an extra thread for FastMalloc scavenging
+        https://bugs.webkit.org/show_bug.cgi?id=45186
+
+        Use CreateTimerQueueTimer() to start periodicScavenge() and stop it with DeleteTimerQueueTimer().
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::initializeScavenger):
+        (WTF::TCMalloc_PageHeap::isScavengerSuspended):
+        (WTF::TCMalloc_PageHeap::scheduleScavenger):
+        (WTF::TCMalloc_PageHeap::rescheduleScavenger):
+        (WTF::TCMalloc_PageHeap::suspendScavenger):
+        (WTF::scavengerTimerFired):
+        (WTF::TCMalloc_PageHeap::periodicScavenge):
+        (WTF::TCMalloc_PageHeap::signalScavenger):
+
 2011-01-14  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
