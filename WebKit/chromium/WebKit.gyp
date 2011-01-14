@@ -900,7 +900,11 @@
             ],
             'conditions': [
                 ['OS=="win"', {
-                    'dependencies': ['LayoutTestHelper'],
+                    'dependencies': [
+                        'LayoutTestHelper',
+                        '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:libEGL',
+                        '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:libGLESv2',
+                    ],
 
                     'resource_include_dirs': ['<(SHARED_INTERMEDIATE_DIR)/webkit'],
                     'sources': [

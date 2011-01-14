@@ -50,6 +50,8 @@ static const char optionTestShell[] = "--test-shell";
 static const char optionAllowExternalPages[] = "--allow-external-pages";
 static const char optionStartupDialog[] = "--testshell-startup-dialog";
 static const char optionCheckLayoutTestSystemDeps[] = "--check-layout-test-sys-deps";
+
+static const char optionHardwareAcceleratedGL[] = "--enable-hardware-gpu";
 static const char optionEnableAcceleratedCompositing[] = "--enable-accelerated-compositing";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
 
@@ -119,6 +121,7 @@ int main(int argc, char* argv[])
     bool accelerated2DCanvasEnabled = false;
     bool stressOpt = false;
     bool stressDeopt = false;
+    bool hardwareAcceleratedGL = false;
     string javaScriptFlags;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
@@ -140,6 +143,8 @@ int main(int argc, char* argv[])
             startupDialog = true;
         else if (argument == optionCheckLayoutTestSystemDeps)
             exit(checkLayoutTestSystemDependencies() ? EXIT_SUCCESS : EXIT_FAILURE);
+        else if (argument == optionHardwareAcceleratedGL)
+            hardwareAcceleratedGL = true;
         else if (argument == optionEnableAcceleratedCompositing)
             acceleratedCompositingEnabled = true;
         else if (argument == optionEnableAccelerated2DCanvas)
@@ -163,6 +168,8 @@ int main(int argc, char* argv[])
         fprintf(stderr, "--stress-opt and --stress-deopt are mutually exclusive.\n");
         return EXIT_FAILURE;
     }
+
+    webkit_support::SetUpGLBindings(hardwareAcceleratedGL ? webkit_support::GL_BINDING_DEFAULT : webkit_support::GL_BINDING_SOFTWARE_RENDERER);
 
     if (startupDialog)
         openStartupDialog();
