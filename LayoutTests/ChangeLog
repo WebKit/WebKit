@@ -1,3 +1,12 @@
+2011-01-14  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Update media/video-zoom-controls.html to set the video source before initializing the test.
+        https://bugs.webkit.org/show_bug.cgi?id=52461
+
+        * media/video-zoom-controls.html:
+
 2011-01-14  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.
