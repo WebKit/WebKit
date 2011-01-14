@@ -45,7 +45,6 @@ namespace WebCore {
 
 class CachedResource;
 class CharacterData;
-class ConsoleMessage;
 class Database;
 class Document;
 class DocumentLoader;
@@ -59,6 +58,7 @@ class InspectorArray;
 class InspectorBackendDispatcher;
 class InspectorBrowserDebuggerAgent;
 class InspectorClient;
+class InspectorConsoleAgent;
 class InspectorCSSAgent;
 class InspectorDOMAgent;
 class InspectorDOMStorageAgent;
@@ -143,11 +143,8 @@ public:
     void reuseFrontend();
     void disconnectFrontend();
 
-    void setConsoleMessagesEnabled(bool enabled, bool* newState);
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack>);
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String&);
-    void clearConsoleMessages();
-    const Vector<OwnPtr<ConsoleMessage> >& consoleMessages() const { return m_consoleMessages; }
+    InspectorConsoleAgent* consoleAgent() const { return m_consoleAgent.get(); }
+    InspectorDOMAgent* domAgent() const { return m_domAgent.get(); }
 
     bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
@@ -206,20 +203,10 @@ public:
     void openInInspectedWindow(const String& url);
     void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
-    void count(const String& title, unsigned lineNumber, const String& sourceID);
-
-    void startTiming(const String& title);
-    bool stopTiming(const String& title, double& elapsed);
-
-    void startGroup(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callFrame, bool collapsed = false);
-    void endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL);
-
     void markTimeline(const String& message);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void addProfile(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
-    void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
-    void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
     bool isRecordingUserInitiatedProfile() const;
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
     void startProfiling() { startUserInitiatedProfiling(); }
@@ -265,14 +252,10 @@ private:
     friend class InjectedScriptHost;
 
     void willSendRequest(ResourceRequest&);
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
-    void didFailLoading(unsigned long identifier, const ResourceError&);
-    void resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber);
 
     void ensureSettingsLoaded();
 
     void getInspectorState(RefPtr<InspectorObject>* state);
-    void setConsoleMessagesEnabled(bool);
 
     void populateScriptObjects();
     void restoreDebugger();
@@ -301,8 +284,6 @@ private:
     PassRefPtr<InspectorArray> buildArrayForCookies(ListHashSet<Cookie>&);
 
     void focusNode();
-
-    void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
     bool isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl);
 
@@ -338,10 +319,6 @@ private:
 
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
-    Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
-    unsigned m_expiredConsoleMessageCount;
-    HashMap<String, double> m_times;
-    HashMap<String, unsigned> m_counts;
 
 #if ENABLE(DATABASE)
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
@@ -354,9 +331,9 @@ private:
 
     String m_showAfterVisible;
     RefPtr<Node> m_highlightedNode;
-    ConsoleMessage* m_previousMessage;
     OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
+    OwnPtr<InspectorConsoleAgent> m_consoleAgent;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
     Vector<String> m_scriptsToEvaluateOnLoad;

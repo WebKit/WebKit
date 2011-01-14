@@ -51,6 +51,7 @@ public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, unsigned long identifier);
+    ~ConsoleMessage();
 
     void addToFrontend(InspectorFrontend*, InjectedScriptHost*);
     void updateRepeatCountInConsole(InspectorFrontend* frontend);

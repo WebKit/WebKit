@@ -49,6 +49,8 @@ class KURL;
 class Node;
 class ResourceRequest;
 class ResourceResponse;
+class ScriptArguments;
+class ScriptCallStack;
 class ScriptExecutionContext;
 class XMLHttpRequest;
 
@@ -118,6 +120,18 @@ public:
 #endif
     static void networkStateChanged(Page*);
     static void updateApplicationCacheStatus(Frame*);
+
+    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
+    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String&);
+
+    static void count(Page*, const String& title, unsigned lineNumber, const String& sourceID);
+    static void startTiming(Page*, const String& title);
+    static void stopTiming(Page*, const String& title, unsigned lineNumber, const String& sourceName);
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    static void addStartProfilingMessageToConsole(InspectorController*, const String& title, unsigned lineNumber, const String& sourceURL);
+#endif
+
 #if ENABLE(INSPECTOR)
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }

@@ -35,8 +35,6 @@
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
-#include "Console.h"
-#include "ConsoleMessage.h"
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "DOMWindow.h"
@@ -61,6 +59,7 @@
 #include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
+#include "InspectorConsoleAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageResource.h"
 #include "InspectorDatabaseResource.h"
@@ -132,24 +131,20 @@ const char* const InspectorController::ConsolePanel = "console";
 const char* const InspectorController::ScriptsPanel = "scripts";
 const char* const InspectorController::ProfilesPanel = "profiles";
 
-static const unsigned maximumConsoleMessages = 1000;
-static const unsigned expireConsoleMessagesStep = 100;
-
 InspectorController::InspectorController(Page* page, InspectorClient* client)
     : m_inspectedPage(page)
     , m_client(client)
     , m_openingFrontend(false)
     , m_cssAgent(new InspectorCSSAgent())
-    , m_expiredConsoleMessageCount(0)
-    , m_previousMessage(0)
+    , m_state(new InspectorState(client))
     , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(this))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
+    , m_consoleAgent(new InspectorConsoleAgent(this, m_state.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
-    m_state = new InspectorState(client);
     ASSERT_ARG(page, page);
     ASSERT_ARG(client, client);
 }
@@ -308,85 +303,6 @@ void InspectorController::hideHighlight()
     m_client->hideHighlight();
 }
 
-void InspectorController::setConsoleMessagesEnabled(bool enabled, bool* newState)
-{
-    *newState = enabled;
-    setConsoleMessagesEnabled(enabled);
-}
-
-void InspectorController::setConsoleMessagesEnabled(bool enabled)
-{
-    m_state->setBoolean(InspectorState::consoleMessagesEnabled, enabled);
-    if (!enabled)
-        return;
-
-    if (m_expiredConsoleMessageCount)
-        m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
-    unsigned messageCount = m_consoleMessages.size();
-    for (unsigned i = 0; i < messageCount; ++i)
-        m_consoleMessages[i]->addToFrontend(m_frontend.get(), m_injectedScriptHost.get());
-}
-
-void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
-{
-    if (!enabled())
-        return;
-
-    addConsoleMessage(new ConsoleMessage(source, type, level, message, arguments, callStack));
-}
-
-void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
-{
-    if (!enabled())
-        return;
-
-    addConsoleMessage(new ConsoleMessage(source, type, level, message, lineNumber, sourceID));
-}
-
-void InspectorController::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
-{
-    ASSERT(enabled());
-    ASSERT_ARG(consoleMessage, consoleMessage);
-
-    if (m_previousMessage && m_previousMessage->isEqual(consoleMessage.get())) {
-        m_previousMessage->incrementCount();
-        if (m_state->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
-            m_previousMessage->updateRepeatCountInConsole(m_frontend.get());
-    } else {
-        m_previousMessage = consoleMessage.get();
-        m_consoleMessages.append(consoleMessage);
-        if (m_state->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
-            m_previousMessage->addToFrontend(m_frontend.get(), m_injectedScriptHost.get());
-    }
-
-    if (!m_frontend && m_consoleMessages.size() >= maximumConsoleMessages) {
-        m_expiredConsoleMessageCount += expireConsoleMessagesStep;
-        m_consoleMessages.remove(0, expireConsoleMessagesStep);
-    }
-}
-
-void InspectorController::clearConsoleMessages()
-{
-    m_consoleMessages.clear();
-    m_expiredConsoleMessageCount = 0;
-    m_previousMessage = 0;
-    m_injectedScriptHost->releaseWrapperObjectGroup(0 /* release the group in all scripts */, "console");
-    if (m_domAgent)
-        m_domAgent->releaseDanglingNodes();
-    if (m_frontend)
-        m_frontend->consoleMessagesCleared();
-}
-
-void InspectorController::startGroup(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, bool collapsed)
-{
-    addConsoleMessage(new ConsoleMessage(JSMessageSource, collapsed ? StartGroupCollapsedMessageType : StartGroupMessageType, LogMessageLevel, "", arguments, callStack));
-}
-
-void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)
-{
-    addConsoleMessage(new ConsoleMessage(source, EndGroupMessageType, LogMessageLevel, String(), lineNumber, sourceURL));
-}
-
 void InspectorController::markTimeline(const String& message)
 {
     if (timelineAgent())
@@ -490,6 +406,8 @@ void InspectorController::connectFrontend()
     if (m_timelineAgent)
         m_timelineAgent->resetFrontendProxyObject(m_frontend.get());
 
+    m_consoleAgent->setFrontend(m_frontend.get());
+
     // Initialize Web Inspector title.
     m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
 
@@ -573,6 +491,7 @@ void InspectorController::disconnectFrontend()
     m_profilerAgent->setFrontend(0);
     m_profilerAgent->stopUserInitiatedProfiling(true);
 #endif
+    m_consoleAgent->setFrontend(0);
 
     releaseFrontendLifetimeAgents();
     m_timelineAgent.clear();
@@ -717,10 +636,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
             m_frontend->inspectedURLChanged(loader->url().string());
 
         m_injectedScriptHost->discardInjectedScripts();
-        clearConsoleMessages();
-
-        m_times.clear();
-        m_counts.clear();
+        m_consoleAgent->reset();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_debuggerAgent) {
@@ -814,37 +730,6 @@ void InspectorController::willSendRequest(ResourceRequest& request)
                 request.setHTTPHeaderField(it->first, it->second);
         }
     }
-}
-
-void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
-{
-    if (!enabled())
-        return;
-
-    if (response.httpStatusCode() >= 400) {
-        String message = makeString("Failed to load resource: the server responded with a status of ", String::number(response.httpStatusCode()), " (", response.httpStatusText(), ')');
-        addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), identifier));
-    }
-}
-
-void InspectorController::didFailLoading(unsigned long identifier, const ResourceError& error)
-{
-    if (!enabled())
-        return;
-
-    String message = "Failed to load resource";
-    if (!error.localizedDescription().isEmpty())
-        message += ": " + error.localizedDescription();
-    addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
-}
-
-void InspectorController::resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber)
-{
-    if (!enabled())
-        return;
-
-    if (m_state->getBoolean(InspectorState::monitoringXHR))
-        addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
 }
 
 void InspectorController::ensureSettingsLoaded()
@@ -1112,17 +997,6 @@ void InspectorController::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsig
         return;
     m_profilerAgent->addProfile(prpProfile, lineNumber, sourceURL);
 }
-
-void InspectorController::addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL)
-{
-    m_profilerAgent->addProfileFinishedMessageToConsole(prpProfile, lineNumber, sourceURL);
-}
-
-void InspectorController::addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL)
-{
-    m_profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
-}
-
 
 bool InspectorController::isRecordingUserInitiatedProfile() const
 {
@@ -1596,42 +1470,6 @@ void InspectorController::openInInspectedWindow(const String& url)
     newFrame->loader()->setOpener(mainFrame);
     newFrame->page()->setOpenedByDOM();
     newFrame->loader()->changeLocation(mainFrame->document()->securityOrigin(), newFrame->loader()->completeURL(url), "", false, false);
-}
-
-void InspectorController::count(const String& title, unsigned lineNumber, const String& sourceID)
-{
-    String identifier = makeString(title, '@', sourceID, ':', String::number(lineNumber));
-    HashMap<String, unsigned>::iterator it = m_counts.find(identifier);
-    int count;
-    if (it == m_counts.end())
-        count = 1;
-    else {
-        count = it->second + 1;
-        m_counts.remove(it);
-    }
-
-    m_counts.add(identifier, count);
-
-    String message = makeString(title, ": ", String::number(count));
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceID);
-}
-
-void InspectorController::startTiming(const String& title)
-{
-    m_times.add(title, currentTime() * 1000);
-}
-
-bool InspectorController::stopTiming(const String& title, double& elapsed)
-{
-    HashMap<String, double>::iterator it = m_times.find(title);
-    if (it == m_times.end())
-        return false;
-
-    double startTime = it->second;
-    m_times.remove(it);
-
-    elapsed = currentTime() * 1000 - startTime;
-    return true;
 }
 
 InjectedScript InspectorController::injectedScriptForNodeId(long id)

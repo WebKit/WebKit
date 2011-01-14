@@ -43,6 +43,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScript.h"
 #include "InspectorClient.h"
+#include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
@@ -83,7 +84,7 @@ InjectedScriptHost::~InjectedScriptHost()
 void InjectedScriptHost::clearConsoleMessages()
 {
     if (m_inspectorController)
-        m_inspectorController->clearConsoleMessages();
+        m_inspectorController->consoleAgent()->clearConsoleMessages();
 }
 
 void InjectedScriptHost::copyText(const String& text)

@@ -82,6 +82,10 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
 {
 }
 
+ConsoleMessage::~ConsoleMessage()
+{
+}
+
 void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHost* injectedScriptHost)
 {
     RefPtr<InspectorObject> jsonObj = InspectorObject::create();

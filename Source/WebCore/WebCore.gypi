@@ -2006,6 +2006,8 @@
             'inspector/InspectorBrowserDebuggerAgent.h',
             'inspector/InspectorClient.cpp',
             'inspector/InspectorClient.h',
+            'inspector/InspectorConsoleAgent.cpp',
+            'inspector/InspectorConsoleAgent.h',
             'inspector/InspectorController.cpp',
             'inspector/InspectorController.h',
             'inspector/InspectorCSSAgent.cpp',

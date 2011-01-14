@@ -1952,6 +1952,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorClient.h \
 	Source/WebCore/inspector/InspectorController.cpp \
 	Source/WebCore/inspector/InspectorController.h \
+	Source/WebCore/inspector/InspectorConsoleAgent.cpp \
+	Source/WebCore/inspector/InspectorConsoleAgent.h \
 	Source/WebCore/inspector/InspectorCSSAgent.cpp \
 	Source/WebCore/inspector/InspectorCSSAgent.h \
 	Source/WebCore/inspector/InspectorDatabaseAgent.cpp \

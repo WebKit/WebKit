@@ -1178,11 +1178,6 @@ WebInspector.showPanel = function(panel)
     this.currentPanel = this.panels[panel];
 }
 
-WebInspector.consoleMessagesCleared = function()
-{
-    WebInspector.console.clearMessages();
-}
-
 WebInspector.domContentEventFired = function(time)
 {
     this.panels.audits.mainResourceDOMContentTime = time;
@@ -1238,33 +1233,6 @@ WebInspector.inspectedURLChanged = function(url)
     InspectorFrontendHost.inspectedURLChanged(url);
     this.settings.inspectedURLChanged(url);
     this.extensionServer.notifyInspectedURLChanged();
-}
-
-WebInspector.updateConsoleMessageExpiredCount = function(count)
-{
-    var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
-    WebInspector.console.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
-}
-
-WebInspector.addConsoleMessage = function(payload)
-{
-    var consoleMessage = new WebInspector.ConsoleMessage(
-        payload.source,
-        payload.type,
-        payload.level,
-        payload.line,
-        payload.url,
-        payload.repeatCount,
-        payload.message,
-        payload.parameters,
-        payload.stackTrace,
-        payload.requestId);
-    this.console.addMessage(consoleMessage);
-}
-
-WebInspector.updateConsoleMessageRepeatCount = function(count)
-{
-    this.console.updateMessageRepeatCount(count);
 }
 
 WebInspector.log = function(message, messageLevel)

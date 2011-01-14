@@ -31,11 +31,11 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "ConsoleMessage.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "MemoryInfo.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -148,9 +148,9 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
 
 #if ENABLE(INSPECTOR)
     if (callStack)
-        page->inspectorController()->addMessageToConsole(source, type, level, message, 0, callStack);
+        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, 0, callStack);
     else
-        page->inspectorController()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
+        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, lineNumber, sourceURL);
 #endif
 
     if (!Console::shouldPrintExceptions())
@@ -190,7 +190,7 @@ void Console::addMessage(MessageType type, MessageLevel level, PassRefPtr<Script
         page->chrome()->client()->addMessageToConsole(JSMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 
 #if ENABLE(INSPECTOR)
-    page->inspectorController()->addMessageToConsole(JSMessageSource, type, level, message, arguments, callStack);
+    InspectorInstrumentation::addMessageToConsole(page, JSMessageSource, type, level, message, arguments, callStack);
 #endif
 }
 
@@ -260,8 +260,7 @@ void Console::count(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCall
     // the same bucket as no argument
     String title;
     arguments->getFirstArgumentAsString(title);
-
-    page->inspectorController()->count(title, lastCaller.lineNumber(), lastCaller.sourceURL());
+    InspectorInstrumentation::count(page, title, lastCaller.lineNumber(), lastCaller.sourceURL());
 #else
     UNUSED_PARAM(callStack);
 #endif
@@ -282,33 +281,6 @@ void Console::markTimeline(PassRefPtr<ScriptArguments> arguments, PassRefPtr<Scr
     UNUSED_PARAM(arguments);
 #endif
 }
-
-#if ENABLE(WML)
-String Console::lastWMLErrorMessage() const
-{
-#if ENABLE(INSPECTOR)
-    Page* page = this->page();
-    if (!page)
-        return String();
-
-    const Vector<OwnPtr<ConsoleMessage> >& consoleMessages = page->inspectorController()->consoleMessages();
-    if (consoleMessages.isEmpty())
-        return String();
-
-    Vector<OwnPtr<ConsoleMessage> >::const_iterator it = consoleMessages.begin();
-    const Vector<OwnPtr<ConsoleMessage> >::const_iterator end = consoleMessages.end();
-
-    for (; it != end; ++it) {
-        ConsoleMessage* message = it->get();
-        if (message->source() != WMLMessageSource)
-            continue;
-
-        return message->message();
-    }
-#endif
-    return String();
-}
-#endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
@@ -337,7 +309,7 @@ void Console::profile(const String& title, ScriptState* state, PassRefPtr<Script
 
 #if ENABLE(INSPECTOR)
     const ScriptCallFrame& lastCaller = callStack->at(0);
-    controller->addStartProfilingMessageToConsole(resolvedTitle, lastCaller.lineNumber(), lastCaller.sourceURL());
+    InspectorInstrumentation::addStartProfilingMessageToConsole(controller, resolvedTitle, lastCaller.lineNumber(), lastCaller.sourceURL());
 #endif
 }
 
@@ -370,16 +342,7 @@ void Console::profileEnd(const String& title, ScriptState* state, PassRefPtr<Scr
 void Console::time(const String& title)
 {
 #if ENABLE(INSPECTOR)
-    Page* page = this->page();
-    if (!page)
-        return;
-
-    // Follow Firebug's behavior of requiring a title that is not null or
-    // undefined for timing functions
-    if (title.isNull())
-        return;
-
-    page->inspectorController()->startTiming(title);
+    InspectorInstrumentation::startTiming(page(), title);
 #else
     UNUSED_PARAM(title);
 #endif
@@ -388,23 +351,8 @@ void Console::time(const String& title)
 void Console::timeEnd(const String& title, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack)
 {
 #if ENABLE(INSPECTOR)
-    Page* page = this->page();
-    if (!page)
-        return;
-
-    // Follow Firebug's behavior of requiring a title that is not null or
-    // undefined for timing functions
-    if (title.isNull())
-        return;
-
-    double elapsed;
-    if (!page->inspectorController()->stopTiming(title, elapsed))
-        return;
-
-    String message = title + String::format(": %.0fms", elapsed);
-
     const ScriptCallFrame& lastCaller = callStack->at(0);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.lineNumber(), lastCaller.sourceURL());
+    InspectorInstrumentation::stopTiming(page(), title, lastCaller.lineNumber(), lastCaller.sourceURL());
 #else
     UNUSED_PARAM(title);
     UNUSED_PARAM(callStack);
@@ -414,11 +362,7 @@ void Console::timeEnd(const String& title, PassRefPtr<ScriptArguments>, PassRefP
 void Console::group(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
 #if ENABLE(INSPECTOR)
-    Page* page = this->page();
-    if (!page)
-        return;
-
-    page->inspectorController()->startGroup(arguments, callStack);
+    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupMessageType, LogMessageLevel, String(), arguments, callStack);
 #else
     UNUSED_PARAM(arguments);
     UNUSED_PARAM(callStack);
@@ -428,11 +372,7 @@ void Console::group(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCall
 void Console::groupCollapsed(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
 #if ENABLE(INSPECTOR)
-    Page* page = this->page();
-    if (!page)
-        return;
-
-    page->inspectorController()->startGroup(arguments, callStack, true);
+    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupCollapsedMessageType, LogMessageLevel, String(), arguments, callStack);
 #else
     UNUSED_PARAM(arguments);
     UNUSED_PARAM(callStack);
@@ -442,11 +382,7 @@ void Console::groupCollapsed(PassRefPtr<ScriptArguments> arguments, PassRefPtr<S
 void Console::groupEnd()
 {
 #if ENABLE(INSPECTOR)
-    Page* page = this->page();
-    if (!page)
-        return;
-
-    page->inspectorController()->endGroup(JSMessageSource, 0, String());
+    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, EndGroupMessageType, LogMessageLevel, String(), 0, String());
 #endif
 }
 

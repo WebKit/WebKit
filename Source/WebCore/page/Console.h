@@ -101,9 +101,6 @@ public:
     void assertCondition(bool condition, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void count(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     void markTimeline(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
-#if ENABLE(WML)
-    String lastWMLErrorMessage() const;
-#endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     const ProfilesArray& profiles() const { return m_profiles; }
     void profile(const String&, ScriptState*, PassRefPtr<ScriptCallStack>);

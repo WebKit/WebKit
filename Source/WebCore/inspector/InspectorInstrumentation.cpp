@@ -39,11 +39,15 @@
 #include "EventContext.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorBrowserDebuggerAgent.h"
+#include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
 #include "InspectorTimelineAgent.h"
+#include "ScriptArguments.h"
+#include "ScriptCallStack.h"
 #include "XMLHttpRequest.h"
 #include <wtf/text/CString.h>
 
@@ -409,8 +413,7 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
     InspectorController* ic = cookie.first;
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
         resourceAgent->didReceiveResponse(identifier, loader, response);
-    // FIXME(52282): move this to console agent.
-    ic->didReceiveResponse(identifier, response);
+    ic->m_consoleAgent->didReceiveResponse(identifier, response);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didReceiveResourceResponse();
 }
@@ -431,8 +434,7 @@ void InspectorInstrumentation::didFinishLoadingImpl(InspectorController* ic, uns
 
 void InspectorInstrumentation::didFailLoadingImpl(InspectorController* ic, unsigned long identifier, const ResourceError& error)
 {
-    // FIXME(52282): move this to console agent.
-    ic->didFailLoading(identifier, error);
+    ic->m_consoleAgent->didFailLoading(identifier, error);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
         timelineAgent->didFinishLoadingResource(identifier, true, 0);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
@@ -441,7 +443,7 @@ void InspectorInstrumentation::didFailLoadingImpl(InspectorController* ic, unsig
 
 void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorController* ic, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
-    ic->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
+    ic->m_consoleAgent->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
         resourceAgent->setInitialContent(identifier, sourceString, "XHR");
 }
@@ -502,6 +504,49 @@ void InspectorInstrumentation::updateApplicationCacheStatusImpl(InspectorControl
 {
     if (InspectorApplicationCacheAgent* applicationCacheAgent = ic->applicationCacheAgent())
         applicationCacheAgent->updateApplicationCacheStatus(frame);
+}
+#endif
+
+void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+{
+    if (!page)
+        return;
+    page->inspectorController()->consoleAgent()->addMessageToConsole(source, type, level, message, arguments, callStack);
+}
+
+void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+{
+    if (!page)
+        return;
+    page->inspectorController()->consoleAgent()->addMessageToConsole(source, type, level, message, lineNumber, sourceID);
+}
+
+void InspectorInstrumentation::count(Page* page, const String& title, unsigned lineNumber, const String& sourceID)
+{
+    if (!page)
+        return;
+    page->inspectorController()->consoleAgent()->count(title, lineNumber, sourceID);
+}
+
+void InspectorInstrumentation::startTiming(Page* page, const String& title)
+{
+    if (!page)
+        return;
+    page->inspectorController()->consoleAgent()->startTiming(title);
+}
+
+void InspectorInstrumentation::stopTiming(Page* page, const String& title, unsigned lineNumber, const String& sourceName)
+{
+    if (!page)
+        return;
+    page->inspectorController()->consoleAgent()->stopTiming(title, lineNumber, sourceName);
+}
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+void InspectorInstrumentation::addStartProfilingMessageToConsole(InspectorController* ic, const String& title, unsigned lineNumber, const String& sourceURL)
+{
+    if (InspectorProfilerAgent* profilerAgent = ic->m_profilerAgent.get())
+        profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
 #endif
 

@@ -1,0 +1,222 @@
+/*
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1.  Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ * 2.  Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+#include "config.h"
+#include "InspectorConsoleAgent.h"
+
+#if ENABLE(INSPECTOR)
+#include "Console.h"
+#include "ConsoleMessage.h"
+#include "InjectedScriptHost.h"
+#include "InspectorController.h"
+#include "InspectorDOMAgent.h"
+#include "InspectorFrontend.h"
+#include "InspectorState.h"
+#include "ResourceError.h"
+#include "ResourceResponse.h"
+#include "ScriptArguments.h"
+#include "ScriptCallStack.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/text/StringConcatenate.h>
+
+namespace WebCore {
+
+static const unsigned maximumConsoleMessages = 1000;
+static const unsigned expireConsoleMessagesStep = 100;
+
+InspectorConsoleAgent::InspectorConsoleAgent(InspectorController* inspectorController, InspectorState* state)
+    : m_inspectorController(inspectorController)
+    , m_state(state)
+    , m_frontend(0)
+    , m_previousMessage(0)
+    , m_expiredConsoleMessageCount(0)
+{
+}
+
+InspectorConsoleAgent::~InspectorConsoleAgent()
+{
+    m_inspectorController = 0;
+}
+
+void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled, bool* newState)
+{
+    *newState = enabled;
+    setConsoleMessagesEnabled(enabled);
+}
+
+void InspectorConsoleAgent::clearConsoleMessages()
+{
+    m_consoleMessages.clear();
+    m_expiredConsoleMessageCount = 0;
+    m_previousMessage = 0;
+    m_inspectorController->injectedScriptHost()->releaseWrapperObjectGroup(0 /* release the group in all scripts */, "console");
+    if (InspectorDOMAgent* domAgent = m_inspectorController->domAgent())
+        domAgent->releaseDanglingNodes();
+    if (m_frontend)
+        m_frontend->consoleMessagesCleared();
+}
+
+void InspectorConsoleAgent::reset()
+{
+    clearConsoleMessages();
+    m_times.clear();
+    m_counts.clear();
+}
+
+void InspectorConsoleAgent::setFrontend(InspectorFrontend* frontend)
+{
+    m_frontend = frontend;
+}
+
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+{
+    if (!m_inspectorController->enabled())
+        return;
+    addConsoleMessage(new ConsoleMessage(source, type, level, message, arguments, callStack));
+}
+
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+{
+    if (!m_inspectorController->enabled())
+        return;
+    addConsoleMessage(new ConsoleMessage(source, type, level, message, lineNumber, sourceID));
+}
+
+void InspectorConsoleAgent::startTiming(const String& title)
+{
+    // Follow Firebug's behavior of requiring a title that is not null or
+    // undefined for timing functions
+    if (title.isNull())
+        return;
+
+    m_times.add(title, currentTime() * 1000);
+}
+
+void InspectorConsoleAgent::stopTiming(const String& title, unsigned lineNumber, const String& sourceName)
+{
+    // Follow Firebug's behavior of requiring a title that is not null or
+    // undefined for timing functions
+    if (title.isNull())
+        return;
+
+    HashMap<String, double>::iterator it = m_times.find(title);
+    if (it == m_times.end())
+        return;
+
+    double startTime = it->second;
+    m_times.remove(it);
+
+    double elapsed = currentTime() * 1000 - startTime;
+    String message = title + String::format(": %.0fms", elapsed);
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceName);
+}
+
+void InspectorConsoleAgent::count(const String& title, unsigned lineNumber, const String& sourceID)
+{
+    String identifier = makeString(title, '@', sourceID, ':', String::number(lineNumber));
+    HashMap<String, unsigned>::iterator it = m_counts.find(identifier);
+    int count;
+    if (it == m_counts.end())
+        count = 1;
+    else {
+        count = it->second + 1;
+        m_counts.remove(it);
+    }
+
+    m_counts.add(identifier, count);
+
+    String message = makeString(title, ": ", String::number(count));
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceID);
+}
+
+void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber)
+{
+    if (!m_inspectorController->enabled())
+        return;
+    if (m_state->getBoolean(InspectorState::monitoringXHR))
+        addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
+}
+
+void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+{
+    if (!m_inspectorController->enabled())
+        return;
+
+    if (response.httpStatusCode() >= 400) {
+        String message = makeString("Failed to load resource: the server responded with a status of ", String::number(response.httpStatusCode()), " (", response.httpStatusText(), ')');
+        addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), identifier));
+    }
+}
+
+void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const ResourceError& error)
+{
+    if (!m_inspectorController->enabled())
+        return;
+
+    String message = "Failed to load resource";
+    if (!error.localizedDescription().isEmpty())
+        message += ": " + error.localizedDescription();
+    addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
+}
+
+void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
+{
+    m_state->setBoolean(InspectorState::consoleMessagesEnabled, enabled);
+    if (!m_inspectorController->enabled())
+        return;
+    if (m_expiredConsoleMessageCount)
+        m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
+    unsigned messageCount = m_consoleMessages.size();
+    for (unsigned i = 0; i < messageCount; ++i)
+        m_consoleMessages[i]->addToFrontend(m_frontend, m_inspectorController->injectedScriptHost());
+}
+
+void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> consoleMessage)
+{
+    ASSERT(m_inspectorController->enabled());
+    ASSERT_ARG(consoleMessage, consoleMessage);
+
+    if (m_previousMessage && m_previousMessage->isEqual(consoleMessage.get())) {
+        m_previousMessage->incrementCount();
+        if (m_state->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
+            m_previousMessage->updateRepeatCountInConsole(m_frontend);
+    } else {
+        m_previousMessage = consoleMessage.get();
+        m_consoleMessages.append(consoleMessage);
+        if (m_state->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
+            m_previousMessage->addToFrontend(m_frontend, m_inspectorController->injectedScriptHost());
+    }
+
+    if (!m_frontend && m_consoleMessages.size() >= maximumConsoleMessages) {
+        m_expiredConsoleMessageCount += expireConsoleMessagesStep;
+        m_consoleMessages.remove(0, expireConsoleMessagesStep);
+    }
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

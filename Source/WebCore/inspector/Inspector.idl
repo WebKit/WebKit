@@ -75,12 +75,12 @@ module core {
         // Console API
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Inspector] void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
-        [notify, domain=Inspector] void addConsoleMessage(out Object messageObj);
-        [notify, domain=Inspector] void updateConsoleMessageExpiredCount(out unsigned long count);
-        [notify, domain=Inspector] void updateConsoleMessageRepeatCount(out unsigned long count);
-        [domain=Inspector] void clearConsoleMessages();
-        [notify, domain=Inspector] void consoleMessagesCleared();
+        [domain=Console] void setConsoleMessagesEnabled(in boolean enabled, out boolean newState);
+        [notify, domain=Console] void addConsoleMessage(out Object messageObj);
+        [notify, domain=Console] void updateConsoleMessageExpiredCount(out unsigned long count);
+        [notify, domain=Console] void updateConsoleMessageRepeatCount(out unsigned long count);
+        [domain=Console] void clearConsoleMessages();
+        [notify, domain=Console] void consoleMessagesCleared();
 
         ///////////////////////////////////////////////////////////////////////
         // Network API

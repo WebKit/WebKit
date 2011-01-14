@@ -97,9 +97,63 @@ WebInspector.ConsoleView = function(drawer)
         "node":   this._formatnode,
         "string": this._formatstring
     };
+
+    this._registerConsoleDomainDispatcher();
 }
 
 WebInspector.ConsoleView.prototype = {
+    _registerConsoleDomainDispatcher: function() {
+        var console = this;
+        var dispatcher = {
+            addConsoleMessage: function(payload)
+            {
+                var consoleMessage = new WebInspector.ConsoleMessage(
+                    payload.source,
+                    payload.type,
+                    payload.level,
+                    payload.line,
+                    payload.url,
+                    payload.repeatCount,
+                    payload.message,
+                    payload.parameters,
+                    payload.stackTrace,
+                    payload.requestId);
+                console.addMessage(consoleMessage);
+            },
+
+            updateConsoleMessageExpiredCount: function(count)
+            {
+                var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
+                console.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
+            },
+
+            updateConsoleMessageRepeatCount: function(count)
+            {
+                var msg = console.previousMessage;
+                var prevRepeatCount = msg.totalRepeatCount;
+
+                if (!console.commandSincePreviousMessage) {
+                    msg.repeatDelta = count - prevRepeatCount;
+                    msg.repeatCount = msg.repeatCount + msg.repeatDelta;
+                    msg.totalRepeatCount = count;
+                    msg._updateRepeatCount();
+                    console._incrementErrorWarningCount(msg);
+                } else {
+                    var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._requestId);
+                    msgCopy.totalRepeatCount = count;
+                    msgCopy._formatMessage();
+                    console.addMessage(msgCopy);
+                }
+            },
+
+            consoleMessagesCleared: function()
+            {
+                console.clearMessages();
+            }
+        }
+        InspectorBackend.registerDomainDispatcher("Console", dispatcher);
+    },
+
     _updateFilter: function(e)
     {
         var isMac = WebInspector.isMac();
@@ -245,25 +299,6 @@ WebInspector.ConsoleView.prototype = {
 
         if (shouldScrollToLastMessage)
             this._scheduleScrollIntoView();
-    },
-
-    updateMessageRepeatCount: function(count)
-    {
-        var msg = this.previousMessage;
-        var prevRepeatCount = msg.totalRepeatCount;
-
-        if (!this.commandSincePreviousMessage) {
-            msg.repeatDelta = count - prevRepeatCount;
-            msg.repeatCount = msg.repeatCount + msg.repeatDelta;
-            msg.totalRepeatCount = count;
-            msg._updateRepeatCount();
-            this._incrementErrorWarningCount(msg);
-        } else {
-            var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._requestId);
-            msgCopy.totalRepeatCount = count;
-            msgCopy._formatMessage();
-            this.addMessage(msgCopy);
-        }
     },
 
     _incrementErrorWarningCount: function(msg)
