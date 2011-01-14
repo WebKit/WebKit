@@ -1,3 +1,13 @@
+2011-01-13  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed, build fix.
+
+        Fix Skipped lists in r75768.
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

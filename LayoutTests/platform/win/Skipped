@@ -1119,4 +1119,4 @@ fast/loader/user-stylesheet-fast-path.html
 editing/selection/caret-mode-paragraph-keys-navigation.html
 
 # DRT does not obey addURLToRedirect
-http/tests/loading/cross-origin-XHR-willLoadRequest
+http/tests/loading/cross-origin-XHR-willLoadRequest.html

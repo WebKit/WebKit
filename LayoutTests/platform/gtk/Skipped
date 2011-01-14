@@ -5595,4 +5595,4 @@ http/tests/xmlhttprequest/basic-auth-nopassword.html
 editing/input/page-up-down-scrolls.html
 
 # DRT does not obey layoutTestController.addURLToRedirect()
-http/tests/loading/cross-origin-XHR-willLoadRequest
+http/tests/loading/cross-origin-XHR-willLoadRequest.html
