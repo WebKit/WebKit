@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -204,7 +204,7 @@ WebInspector.HARLog.prototype = {
                 version: webKitVersion ? webKitVersion[1] : "n/a"
             },
             pages: this._buildPages(),
-            entries: Object.keys(WebInspector.networkResources).map(this._convertResource.bind(this))
+            entries: WebInspector.networkResources.map(this._convertResource.bind(this))
         }
     },
 
@@ -228,11 +228,11 @@ WebInspector.HARLog.prototype = {
         }
     },
 
-    _convertResource: function(id)
+    _convertResource: function(resource)
     {
-        var entry = (new WebInspector.HAREntry(WebInspector.networkResources[id])).build();
+        var entry = (new WebInspector.HAREntry(resource)).build();
         if (this.includeResourceIds)
-            entry._resourceId = id;
+            entry._resourceId = resource.identifier;
         return entry;
     },
 

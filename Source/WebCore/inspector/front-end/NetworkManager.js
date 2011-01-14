@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -32,6 +32,7 @@ WebInspector.NetworkManager = function(resourceTreeModel)
 {
     this._resourcesById = {};
     this._resourceTreeModel = resourceTreeModel;
+    this._lastIdentifierForCachedResource = 0;
     InspectorBackend.registerDomainDispatcher("Network", this);
 }
 
@@ -86,18 +87,12 @@ WebInspector.NetworkManager.updateResourceWithCachedResource = function(resource
 }
 
 WebInspector.NetworkManager.prototype = {
-    identifierForInitialRequest: function(identifier, url, loader, isMainResource, callStack)
+    identifierForInitialRequest: function(identifier, url, loader, callStack)
     {
-        var resource = this._createResource(identifier, url, loader, callStack);
-        if (isMainResource) {
-            WebInspector.mainResource = resource;
-            resource.isMainResource = true;
-        }
+        var resource = this._resourceTreeModel.createResource(identifier, url, loader, callStack);
+        this._resourcesById[identifier] = resource;
 
-        // It is important to bind resource url early (before scripts compile).
-        this._resourceTreeModel.bindResourceURL(resource);
-
-        WebInspector.panels.network.refreshResource(resource);
+        WebInspector.panels.network.appendResource(resource);
         WebInspector.panels.audits.resourceStarted(resource);
     },
 
@@ -120,7 +115,7 @@ WebInspector.NetworkManager.prototype = {
         resource.startTime = time;
 
         if (isRedirect) {
-            WebInspector.panels.network.refreshResource(resource);
+            WebInspector.panels.network.appendResource(resource);
             WebInspector.panels.audits.resourceStarted(resource);
         } else
             WebInspector.panels.network.refreshResource(resource);
@@ -197,14 +192,14 @@ WebInspector.NetworkManager.prototype = {
 
     didLoadResourceFromMemoryCache: function(time, cachedResource)
     {
-        var resource = this._createResource(null, cachedResource.url, cachedResource.loader);
+        var resource = this._resourceTreeModel.createResource("cached:" + ++this._lastIdentifierForCachedResource, cachedResource.url, cachedResource.loader);
         WebInspector.NetworkManager.updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
         resource.startTime = resource.responseReceivedTime = resource.endTime = time;
         resource.finished = true;
 
-        WebInspector.panels.network.refreshResource(resource);
+        WebInspector.panels.network.appendResource(resource);
         WebInspector.panels.audits.resourceStarted(resource);
         WebInspector.panels.audits.resourceFinished(resource);
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
@@ -217,7 +212,7 @@ WebInspector.NetworkManager.prototype = {
 
     setInitialContent: function(identifier, sourceString, type)
     {
-        var resource = WebInspector.panels.network.resources[identifier];
+        var resource = WebInspector.networkResourceById(identifier);
         if (!resource)
             return;
 
@@ -230,14 +225,22 @@ WebInspector.NetworkManager.prototype = {
     didCommitLoadForFrame: function(frame, loader)
     {
         this._resourceTreeModel.didCommitLoadForFrame(frame, loader);
-        WebInspector.panels.network.refreshResource(WebInspector.mainResource);
+        if (!frame.parentId) {
+            var mainResource = this._resourceTreeModel.resourceForURL(frame.url);
+            if (mainResource) {
+                WebInspector.mainResource = mainResource;
+                mainResource.isMainResource = true;
+                WebInspector.panels.network.mainResourceChanged();
+            }
+        }
     },
 
     didCreateWebSocket: function(identifier, requestURL)
     {
-        var resource = this._createResource(identifier, requestURL);
+        var resource = this._resourceTreeModel.createResource(identifier, requestURL);
+        this._resourcesById[identifier] = resource;
         resource.type = WebInspector.Resource.Type.WebSocket;
-        WebInspector.panels.network.refreshResource(resource);
+        WebInspector.panels.network.appendResource(resource);
     },
 
     willSendWebSocketHandshakeRequest: function(identifier, time, request)
@@ -279,28 +282,22 @@ WebInspector.NetworkManager.prototype = {
         WebInspector.panels.network.refreshResource(resource);
     },
 
-    _createResource: function(identifier, url, loader, callStack)
-    {
-        var resource = WebInspector.ResourceTreeModel.createResource(identifier, url, loader, callStack);
-        this._resourcesById[identifier] = resource;
-        return resource;
-    },
-
     _appendRedirect: function(identifier, redirectURL)
     {
         var originalResource = this._resourcesById[identifier];
+        var previousRedirects = originalResource.redirects || [];
         originalResource.finished = true;
-        originalResource.identifier = null;
-
-        var newResource = this._createResource(identifier, redirectURL, originalResource.loader, originalResource.stackTrace);
-        newResource.redirects = originalResource.redirects || [];
+        originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
         delete originalResource.redirects;
-        newResource.redirects.push(originalResource);
-        if (originalResource.isMainResource) {
-            delete originalResource.isMainResource;
-            newResource.isMainResource = true;
-            WebInspector.mainResource = newResource;
-        }
+        // We bound resource early, but it happened to be a redirect and won't make it through to
+        // the resource tree -- so unbind it.
+        // FIXME: we should bind upon adding to the tree only (encapsulated into ResourceTreeModel),
+        // Script debugger should do explicit late binding on its own.
+        this._resourceTreeModel.unbindResourceURL(originalResource);
+        
+        var newResource = this._resourceTreeModel.createResource(identifier, redirectURL, originalResource.loader, originalResource.stackTrace);
+        newResource.redirects = previousRedirects.concat(originalResource);
+        this._resourcesById[identifier] = newResource;
         return newResource;
     }
 }

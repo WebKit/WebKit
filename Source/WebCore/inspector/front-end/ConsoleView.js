@@ -668,7 +668,7 @@ WebInspector.ConsoleMessage.prototype = {
                 messageText = document.createTextNode(this._messageText);
                 break;
             case WebInspector.ConsoleMessage.MessageType.NetworkError:
-                var resource = this._requestId && WebInspector.panels.network.resources[this._requestId];
+                var resource = this._requestId && WebInspector.networkResourceById(this._requestId);
                 if (resource) {
                     stackTrace = resource.stackTrace;
 

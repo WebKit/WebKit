@@ -77,7 +77,7 @@ public:
 
     ~InspectorResourceAgent();
 
-    void identifierForInitialRequest(unsigned long identifier, const KURL&, DocumentLoader*, bool isMainResource);
+    void identifierForInitialRequest(unsigned long identifier, const KURL&, DocumentLoader*);
     void willSendRequest(unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
     void markResourceAsCached(unsigned long identifier);
     void didReceiveResponse(unsigned long identifier, DocumentLoader* laoder, const ResourceResponse&);

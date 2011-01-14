@@ -1,3 +1,52 @@
+2011-01-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: redirected resources not handled properly in Network panel
+        https://bugs.webkit.org/show_bug.cgi?id=52292
+
+        * inspector/Inspector.idl: Do not pass isMainResource to identifierForInitialRequest() (it's useless, as we may hit provisional load)
+        * inspector/InspectorInstrumentation.cpp: Ditto.
+        (WebCore::InspectorInstrumentation::identifierForInitialRequestImpl):
+        * inspector/InspectorResourceAgent.cpp: Ditto.
+        (WebCore::InspectorResourceAgent::identifierForInitialRequest):
+        * inspector/InspectorResourceAgent.h: Ditto.
+        * inspector/InspectorInstrumentation.cpp: Ditto.
+        (WebCore::InspectorInstrumentation::identifierForInitialRequestImpl): Fix main resource detection.
+        * inspector/front-end/AuditsPanel.js: WebInspector.networkResources now returns array, not map.
+        * inspector/front-end/ConsoleView.js: User WebInspector.resourceById() to get resource
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        * inspector/front-end/ExtensionServer.js: Ditto.
+        (WebInspector.ExtensionServer.prototype._onRevealAndSelectResource):
+        (WebInspector.ExtensionServer.prototype._onGetResourceContent):
+        * inspector/front-end/HAREntry.js: WebInspector.networkResources now returns array, not map
+        (WebInspector.HARLog.prototype.build):
+        (WebInspector.HARLog.prototype._convertResource):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager): Use appendResource, not refreshResource, when adding a new resource.
+        (WebInspector.NetworkManager.prototype.identifierForInitialRequest):
+        (WebInspector.NetworkManager.prototype.willSendRequest):
+        (WebInspector.NetworkManager.prototype.didLoadResourceFromMemoryCache):
+        (WebInspector.NetworkManager.prototype.setInitialContent):
+        (WebInspector.NetworkManager.prototype.didCommitLoadForFrame):
+        (WebInspector.NetworkManager.prototype.didCreateWebSocket):
+        (WebInspector.NetworkManager.prototype._createResource): always register resource URL with ResourceTreeModel
+        (WebInspector.NetworkManager.prototype._appendRedirect):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype.get resources):
+        (WebInspector.NetworkPanel.prototype.resourceById):
+        (WebInspector.NetworkPanel.prototype.appendResource): Add resource as new iff appendResource was added.
+        (WebInspector.NetworkPanel.prototype.refreshResource): ditto.
+        (WebInspector.NetworkPanel.prototype.mainResourceChanged): Clear console upon arrival of new main resource.
+        * inspector/front-end/ResourceTreeModel.js: Expose unbindResourceURL, bind resources automatically upon creation.
+        (WebInspector.ResourceTreeModel.prototype._clearResources):
+        (WebInspector.ResourceTreeModel.prototype.unbindResourceURL):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        (WebInspector.ResourceTreeModel.prototype.createResource):
+        * inspector/front-end/inspector.js:
+        (WebInspector.resourceById):
+
 2011-01-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r75783.

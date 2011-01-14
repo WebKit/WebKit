@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2010 Google Inc. All rights reserved.
+* Copyright (C) 2011 Google Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -382,7 +382,7 @@ void InspectorInstrumentation::identifierForInitialRequestImpl(InspectorControll
     ic->ensureSettingsLoaded();
 
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
-        resourceAgent->identifierForInitialRequest(identifier, request.url(), loader, ic->isMainResourceLoader(loader, request.url()));
+        resourceAgent->identifierForInitialRequest(identifier, request.url(), loader);
 }
 
 void InspectorInstrumentation::willSendRequestImpl(InspectorController* ic, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,17 +36,6 @@ WebInspector.ResourceTreeModel = function()
     this._subframes = {};
     InspectorBackend.registerDomainDispatcher("Resources", this);
     InspectorBackend.cachedResources(this._processCachedResources.bind(this));
-}
-
-WebInspector.ResourceTreeModel.createResource = function(identifier, url, loader, stackTrace)
-{
-    var resource = new WebInspector.Resource(identifier, url);
-    resource.loader = loader;
-    if (loader)
-        resource.documentURL = loader.url;
-    resource.stackTrace = stackTrace;
-
-    return resource;
 }
 
 WebInspector.ResourceTreeModel.prototype = {
@@ -175,7 +164,7 @@ WebInspector.ResourceTreeModel.prototype = {
                 preservedResourcesForFrame.push(resource);
                 continue;
             }
-            this._unbindResourceURL(resource);
+            this.unbindResourceURL(resource);
         }
 
         delete this._resourcesByFrameId[frameId];
@@ -201,7 +190,7 @@ WebInspector.ResourceTreeModel.prototype = {
         return false;
     },
 
-    _unbindResourceURL: function(resource)
+    unbindResourceURL: function(resource)
     {
         var resourceForURL = this._resourcesByURL[resource.url];
         if (!resourceForURL)
@@ -226,13 +215,12 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _addFramesRecursively: function(framePayload)
     {
-        var frameResource = WebInspector.ResourceTreeModel.createResource(null, framePayload.resource.url, framePayload.resource.loader);
+        var frameResource = this.createResource(null, framePayload.resource.url, framePayload.resource.loader);
         WebInspector.NetworkManager.updateResourceWithRequest(frameResource, framePayload.resource.request);
         WebInspector.NetworkManager.updateResourceWithResponse(frameResource, framePayload.resource.response);
         frameResource.type = WebInspector.Resource.Type["Document"];
         frameResource.finished = true;
 
-        this.bindResourceURL(frameResource);
         this.addOrUpdateFrame(framePayload);
         this.addResourceToFrame(framePayload.id, frameResource);
 
@@ -244,12 +232,24 @@ WebInspector.ResourceTreeModel.prototype = {
 
         for (var i = 0; i < framePayload.subresources.length; ++i) {
             var cachedResource = framePayload.subresources[i];
-            var resource = WebInspector.ResourceTreeModel.createResource(null, cachedResource.url, cachedResource.loader);
+            var resource = this.createResource(null, cachedResource.url, cachedResource.loader);
             WebInspector.NetworkManager.updateResourceWithCachedResource(resource, cachedResource);
             resource.finished = true;
-            this.bindResourceURL(resource);
             this.addResourceToFrame(framePayload.id, resource);
         }
         return frameResource;
+    },
+
+    createResource: function(identifier, url, loader, stackTrace)
+    {
+        var resource = new WebInspector.Resource(identifier, url);
+        resource.loader = loader;
+        if (loader) {
+            resource.documentURL = loader.url;
+            this.bindResourceURL(resource);
+        }
+        resource.stackTrace = stackTrace;
+
+        return resource;
     }
 }

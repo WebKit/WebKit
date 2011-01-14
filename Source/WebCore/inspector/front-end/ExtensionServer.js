@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -288,7 +288,7 @@ WebInspector.ExtensionServer.prototype = {
         var id = message.id;
         var resource = null;
 
-        resource = WebInspector.networkResources[id] || WebInspector.resourceForURL(id);
+        resource = WebInspector.networkResourceById(id) || WebInspector.resourceForURL(id);
         if (!resource)
             return this._status.E_NOTFOUND(typeof id + ": " + id);
 
@@ -318,7 +318,7 @@ WebInspector.ExtensionServer.prototype = {
             };
             this._dispatchCallback(message.requestId, port, response);
         }
-        var resource = WebInspector.networkResources[message.id];
+        var resource = WebInspector.networkResourceById(message.id);
         if (!resource)
             return this._status.E_NOTFOUND(message.id);
         resource.requestContent(onContentAvailable.bind(this));

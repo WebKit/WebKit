@@ -5,6 +5,20 @@
 <script src="extensions-test.js"></script>
 <script type="text/javascript">
 
+function extension_doRequest(callback)
+{
+    function callbackWrapper()
+    {
+        webInspector.resources.onFinished.removeListener(callbackWrapper);
+        callback();
+    }
+    webInspector.resources.onFinished.addListener(callbackWrapper);
+    webInspector.inspectedWindow.eval("doRequest()", function(result) {
+        if (result)
+            callbackWrapper();
+    });
+}
+
 function extension_testGetRedirectResourceContent(nextTest)
 {
     function onFinished()
@@ -18,17 +32,47 @@ function extension_testGetRedirectResourceContent(nextTest)
         output("content: " + content + ", encoding: " + encoding);
         nextTest();
     }
-
-    webInspector.resources.onFinished.addListener(onFinished);
-    webInspector.inspectedWindow.eval("doRequest()");
+    extension_doRequest(onFinished);
 }
+
+function extension_testRedirectResourcesInHAR(nextTest)
+{
+    function onFinished()
+    {
+        webInspector.resources.getHAR(onHAR);
+    }
+    function onHAR(har)
+    {
+        var entries = har.entries;
+        var urls = [];
+        for (var i = 0; i < entries.length; ++i)
+            urls.push(entries[i].request.url);
+        urls.sort();
+        output("Resources in HAR:\n" + urls.join("\n"));
+        nextTest();
+    }
+    extension_doRequest(onFinished);
+}
+
+var requestDone = false;
 
 function doRequest()
 {
+    // Only do request once per test suite, to make tests independent on each other.
+    // Returns true iff request is alredy done (so the caller shouldn't wait for onFinished).
+    if (requestDone)
+        return true;
+    requestDone = true;
     // We can't use XHR here -- the content for XHRs is pushed from back-end.
     var iframe = document.createElement("iframe");
     iframe.src = "/loading/resources/redirect-methods-result.php?status=302";
     document.body.appendChild(iframe);
+    return false;
+}
+
+var test = function()
+{
+    InspectorTest.reloadPage(InspectorTest.runExtensionTests);
 }
 
 </script>

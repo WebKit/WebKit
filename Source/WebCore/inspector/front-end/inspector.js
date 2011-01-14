@@ -443,6 +443,11 @@ var WebInspector = {
         return this.panels.network.resources;
     },
 
+    networkResourceById: function(id)
+    {
+        return this.panels.network.resourceById(id);
+    },
+
     forAllResources: function(callback)
     {
         WebInspector.resourceTreeModel.forAllResources(callback);

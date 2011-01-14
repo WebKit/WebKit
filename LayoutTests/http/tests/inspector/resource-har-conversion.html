@@ -7,11 +7,6 @@
 
 var test = function()
 {
-    function getHAR(id)
-    {
-        return new WebInspector.HAREntry(WebInspector.networkResources[id]).build();
-    }
-
     function addCookieHeadersToResource(resource)
     {
         resource.requestHeaders = {
@@ -33,8 +28,9 @@ var test = function()
     InspectorTest.reloadPageIfNeeded(function() {
         InjectedScriptAccess.getDefault().evaluate("doXHR()", "console", function() {
             addCookieHeadersToResource(findResourceByURL(/inspector-test2\.js$/));
-            var resources = Object.keys(WebInspector.networkResources).map(getHAR).sort(InspectorTest.resourceURLComparer);
-            InspectorTest.addObject(resources, InspectorTest.HARNondeterministicPropertiesWithSize);
+            var entries = (new WebInspector.HARLog()).build().entries;
+            entries.sort(InspectorTest.resourceURLComparer);
+            InspectorTest.addObject(entries, InspectorTest.HARNondeterministicPropertiesWithSize);
             InspectorTest.completeTest();
         });
     });
