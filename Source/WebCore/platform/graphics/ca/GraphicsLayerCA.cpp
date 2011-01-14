@@ -253,6 +253,7 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_contentsLayerHasBackgroundColor(false)
     , m_uncommittedChanges(NoChange)
+    , m_contentsScale(1)
 {
     m_layer = PlatformCALayer::create(PlatformCALayer::LayerTypeWebLayer, this);
 
@@ -1934,7 +1935,8 @@ void GraphicsLayerCA::updateContentsScale()
         swapFromOrToTiledLayer(needTiledLayer);
 
     m_layer->setContentsScale(m_contentsScale);
-    m_layer->setNeedsDisplay();
+    if (drawsContent())
+        m_layer->setNeedsDisplay();
 }
 
 void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
@@ -1994,6 +1996,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);
+    m_layer->setContentsScale(m_contentsScale);
 
     m_usingTiledLayer = useTiledLayer;
     
@@ -2268,6 +2271,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, 
     newLayer->setDoubleSided(layer->isDoubleSided());
     newLayer->setOpaque(layer->isOpaque());
     newLayer->setBackgroundColor(layer->backgroundColor());
+    newLayer->setContentsScale(layer->contentsScale());
 
     if (cloneLevel == IntermediateCloneLevel) {
         newLayer->setOpacity(layer->opacity());
