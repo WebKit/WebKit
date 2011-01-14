@@ -39,6 +39,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorState.h"
+#include <wtf/text/CString.h>
 
 namespace {
 

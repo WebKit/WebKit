@@ -1,3 +1,9 @@
+2011-01-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][V8] Unreviewed buildfix after r75788.
+
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+
 2011-01-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
