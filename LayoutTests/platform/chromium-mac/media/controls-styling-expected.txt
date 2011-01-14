@@ -22,13 +22,13 @@ layer at (25,256) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (48,250) size 256x32
   RenderFlexibleBox (positioned) {DIV} at (30,0) size 256x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-    RenderSlider {INPUT} at (7,7) size 184x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-      RenderBlock {DIV} at (1,-5) size 9x29
-layer at (245,256) size 58x20 scrollHeight 21
-  RenderFlexibleBox {DIV} at (197,6) size 58x20 [color=#FFFFFF]
-    RenderBlock (anonymous) at (8,0) size 41x21
-      RenderText {#text} at (0,2) size 41x17
-        text run at (0,2) width 41: "00:00"
+layer at (245,256) size 58x20 scrollWidth 201 scrollHeight 21
+  RenderBlock (positioned) {DIV} at (197,6) size 58x20 [color=#FFFFFF]
+    RenderText {#text} at (10,2) size 191x17
+      text run at (10,2) width 191: "00:00"
+layer at (55,257) size 183x18
+  RenderSlider {INPUT} at (7,7) size 183x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+    RenderBlock {DIV} at (3,-5) size 9x29
 layer at (304,250) size 34x32
   RenderButton {INPUT} at (286,0) size 34x32
 layer at (8,282) size 320x240
@@ -39,12 +39,12 @@ layer at (15,496) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,490) size 256x32
   RenderFlexibleBox (positioned) {DIV} at (30,0) size 256x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-    RenderSlider {INPUT} at (7,7) size 184x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-      RenderBlock {DIV} at (1,-5) size 9x29
 layer at (235,496) size 58x20 scrollHeight 21
-  RenderFlexibleBox {DIV} at (197,6) size 58x20 [color=#FFFFFF]
-    RenderBlock (anonymous) at (8,0) size 41x21
-      RenderText {#text} at (0,2) size 41x17
-        text run at (0,2) width 41: "00:00"
+  RenderBlock (positioned) {DIV} at (197,6) size 58x20 [color=#FFFFFF]
+    RenderText {#text} at (8,2) size 41x17
+      text run at (8,2) width 41: "00:00"
+layer at (45,497) size 183x18
+  RenderSlider {INPUT} at (7,7) size 183x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+    RenderBlock {DIV} at (3,-5) size 9x29
 layer at (294,490) size 34x32
   RenderButton {INPUT} at (286,0) size 34x32
