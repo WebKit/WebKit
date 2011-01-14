@@ -443,8 +443,9 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             m_page->triggerAction(action);
             event->setDefaultHandled();
             return;
-        } else {
+        } else 
 #endif // QT_NO_SHORTCUT
+        {
             String commandName = editorCommandForKeyDownEvent(event);
             if (!commandName.isEmpty()) {
                 if (frame->editor()->command(commandName).execute()) // Event handled.
@@ -495,10 +496,12 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         case VK_HOME:
         case VK_END:
             {
+#ifndef QT_NO_SHORTCUT
                 QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
                 ASSERT(action != QWebPage::NoWebAction);
                 m_page->triggerAction(action);
                 event->setDefaultHandled();
+#endif
                 return;
             }
         case VK_PRIOR: // PageUp

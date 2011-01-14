@@ -1,3 +1,16 @@
+2011-01-14  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fixed compilation when QT_NO_SHORTCUT is defined
+        https://bugs.webkit.org/show_bug.cgi?id=52460
+
+        This patch fixes compilation when QT_NO_SHORTCUT is defined in Qt
+        configuration.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent): Added QT_NO_SHORTCUT guards
+
 2011-01-13  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Simon Hausmann.
