@@ -1,3 +1,16 @@
+2011-01-14  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Incorrect backtracking for nested alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=52387
+
+        Added tests to verfiy backtracking of alternatives following 
+        parenthesis.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: do not use this as protocol message

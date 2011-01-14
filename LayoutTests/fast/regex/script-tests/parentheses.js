@@ -147,6 +147,29 @@ shouldBeNull("regexp34.exec('btn- abc')");
 shouldBeNull("regexp34.exec('XXbtn-abc')");
 shouldBe("regexp34.exec('XX btn-abc')","['btn-abc']");
 
+var regexp35 = /^((a|b)(x|xxx)|)$/;
+shouldBe("regexp35.exec('ax')", "['ax','ax','a','x']");
+shouldBeNull("regexp35.exec('axx')");
+shouldBe("regexp35.exec('axxx')", "['axxx','axxx','a','xxx']");
+shouldBe("regexp35.exec('bx')", "['bx','bx','b','x']");
+shouldBeNull("regexp35.exec('bxx')");
+shouldBe("regexp35.exec('bxxx')", "['bxxx','bxxx','b','xxx']");
+
+var regexp36 = /^((\/|\.|\-)(\d\d|\d\d\d\d)|)$/;
+shouldBe("regexp36.exec('/2011')", "['/2011','/2011','/','2011']");
+shouldBe("regexp36.exec('/11')", "['/11','/11','/','11']");
+shouldBeNull("regexp36.exec('/123')");
+
+var regexp37 = /^([1][0-2]|[0]\d|\d)(\/|\.|\-)([0-2]\d|[3][0-1]|\d)((\/|\.|\-)(\d\d|\d\d\d\d)|)$/;
+shouldBe("regexp37.exec('7/4/1776')", "['7/4/1776','7','/','4','/1776','/','1776']");
+shouldBe("regexp37.exec('07-04-1776')", "['07-04-1776','07','-','04','-1776','-','1776']");
+
+var regexp38 = /^(z|(x|xx)|b|)$/;
+shouldBe("regexp38.exec('xx')", "['xx','xx','xx']");
+shouldBe("regexp38.exec('b')", "['b','b',undefined]");
+shouldBe("regexp38.exec('z')", "['z','z',undefined]");
+shouldBe("regexp38.exec('')", "['','',undefined]");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

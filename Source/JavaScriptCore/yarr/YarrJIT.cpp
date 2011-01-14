@@ -299,13 +299,25 @@ class YarrGenerator : private MacroAssembler {
             addJump(jump);
         }
 
+        IndirectJumpEntry(int32_t stackOffset, DataLabelPtr dataLabel)
+        : m_stackOffset(stackOffset)
+        {
+            addDataLabel(dataLabel);
+        }
+
         void addJump(Jump jump)
         {
             m_relJumps.append(jump);
         }
+        
+        void addDataLabel(DataLabelPtr dataLabel)
+        {
+            m_dataLabelPtrVector.append(dataLabel);
+        }
 
         int32_t m_stackOffset;
         JumpList m_relJumps;
+        Vector<DataLabelPtr, 16> m_dataLabelPtrVector;
     };
 
     struct AlternativeBacktrackRecord {
@@ -354,10 +366,31 @@ class YarrGenerator : private MacroAssembler {
             jumps.empty();
         }
 
+        void addIndirectJumpEntry(int32_t stackOffset, DataLabelPtr dataLabel)
+        {
+            IndirectJumpHashMap::iterator result = m_indirectJumpMap.find(stackOffset);
+
+            ASSERT(stackOffset >= 0);
+
+            uint32_t offset = static_cast<uint32_t>(stackOffset);
+
+            if (result == m_indirectJumpMap.end())
+                m_indirectJumpMap.add(offset, new IndirectJumpEntry(stackOffset, dataLabel));
+            else
+                result->second->addDataLabel(dataLabel);
+        }
+
         void emitIndirectJumpTable(MacroAssembler* masm)
         {
             for (IndirectJumpHashMap::iterator iter = m_indirectJumpMap.begin(); iter != m_indirectJumpMap.end(); ++iter) {
                 IndirectJumpEntry* indJumpEntry = iter->second;
+                size_t size = indJumpEntry->m_dataLabelPtrVector.size();
+                if (size) {
+                    // Link any associated DataLabelPtr's with indirect jump via label
+                    Label hereLabel = masm->label();
+                    for (size_t i = 0; i < size; ++i)
+                        m_backtrackRecords.append(AlternativeBacktrackRecord(indJumpEntry->m_dataLabelPtrVector[i], hereLabel));
+                }
                 indJumpEntry->m_relJumps.link(masm);
                 masm->jump(Address(stackPointerRegister, indJumpEntry->m_stackOffset));
                 delete indJumpEntry;
@@ -605,6 +638,11 @@ class YarrGenerator : private MacroAssembler {
                 m_dataLabelPtr = dp;
         }
 
+        void clearSubDataLabelPtr()
+        {
+            m_subDataLabelPtr = 0;
+        }
+
         void setSubDataLabelPtr(DataLabelPtr* subDataLabelPtr)
         {
             m_subDataLabelPtr = subDataLabelPtr;
@@ -680,17 +718,6 @@ class YarrGenerator : private MacroAssembler {
                 jumps.linkTo(getLabel(), generator);
             else
                 m_backTrackJumps.append(jumps);
-        }
-
-        bool linkDataLabelToHereIfExists(YarrGenerator* generator)
-        {
-            if (hasDataLabel()) {
-                generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(getDataLabel(), generator->label()));
-                clearDataLabel();
-                return true;
-            }
-
-            return false;
         }
 
         bool plantJumpToBacktrackIfExists(YarrGenerator* generator)
@@ -892,12 +919,21 @@ class YarrGenerator : private MacroAssembler {
             return m_backtrack.plantJumpToBacktrackIfExists(generator);
         }
 
-        bool linkDataLabelToBacktrackIfExists(YarrGenerator* generator)
+        bool linkDataLabelToBacktrackIfExists(YarrGenerator* generator, DataLabelPtr dataLabel)
         {
-            if ((m_backtrack.isLabel()) && (m_backtrack.hasDataLabel())) {
-                generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(m_backtrack.getDataLabel(), m_backtrack.getLabel()));
-                m_backtrack.clearDataLabel();
-                return true;
+            // If we have a stack offset backtrack destination, use it directly
+            if (m_backtrack.isStackOffset()) {
+                generator->m_expressionState.addIndirectJumpEntry(m_backtrack.getStackOffset(), dataLabel);
+                m_backtrack.clearSubDataLabelPtr();
+            } else {
+                // Otherwise set the data label (which may be linked)
+                setBacktrackDataLabel(dataLabel);
+
+                if ((m_backtrack.isLabel()) && (m_backtrack.hasDataLabel())) {
+                    generator->m_expressionState.m_backtrackRecords.append(AlternativeBacktrackRecord(m_backtrack.getDataLabel(), m_backtrack.getLabel()));
+                    m_backtrack.clearDataLabel();
+                    return true;
+                }
             }
 
             return false;
@@ -1565,11 +1601,9 @@ class YarrGenerator : private MacroAssembler {
 
                 // Alternative did not match.
 
-                state.setBacktrackDataLabel(dataLabel);
-
                 // Do we have a backtrack destination?
                 //    if so, link the data label to it.
-                state.linkDataLabelToBacktrackIfExists(this);
+                state.linkDataLabelToBacktrackIfExists(this, dataLabel);
 
                 if (!state.isLastAlternative() || countToCheck)
                     state.linkAlternativeBacktracks(this);

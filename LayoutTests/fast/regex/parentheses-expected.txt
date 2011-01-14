@@ -43,6 +43,21 @@ PASS regexp34.exec('btn-abc') is ['btn-abc']
 PASS regexp34.exec('btn- abc') is null
 PASS regexp34.exec('XXbtn-abc') is null
 PASS regexp34.exec('XX btn-abc') is ['btn-abc']
+PASS regexp35.exec('ax') is ['ax','ax','a','x']
+PASS regexp35.exec('axx') is null
+PASS regexp35.exec('axxx') is ['axxx','axxx','a','xxx']
+PASS regexp35.exec('bx') is ['bx','bx','b','x']
+PASS regexp35.exec('bxx') is null
+PASS regexp35.exec('bxxx') is ['bxxx','bxxx','b','xxx']
+PASS regexp36.exec('/2011') is ['/2011','/2011','/','2011']
+PASS regexp36.exec('/11') is ['/11','/11','/','11']
+PASS regexp36.exec('/123') is null
+PASS regexp37.exec('7/4/1776') is ['7/4/1776','7','/','4','/1776','/','1776']
+PASS regexp37.exec('07-04-1776') is ['07-04-1776','07','-','04','-1776','-','1776']
+PASS regexp38.exec('xx') is ['xx','xx','xx']
+PASS regexp38.exec('b') is ['b','b',undefined]
+PASS regexp38.exec('z') is ['z','z',undefined]
+PASS regexp38.exec('') is ['','',undefined]
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true
 

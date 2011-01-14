@@ -1,3 +1,31 @@
+2011-01-14  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Incorrect backtracking for nested alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=52387
+
+        In the process of propigating a datalabel it wasn't getting connected
+        to a destination when the destination was an indirect jump.  Added
+        code to recognize a direct backtrack destination that was an indirect
+        jump and added mechanism to associate DataLabelPtrs with indirect
+        jump entries.
+        Removed dead method
+        BacktrackDestination::linkDataLabelToHereIfExists()
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::IndirectJumpEntry::IndirectJumpEntry):
+        (JSC::Yarr::YarrGenerator::IndirectJumpEntry::addDataLabel):
+        (JSC::Yarr::YarrGenerator::GenerationState::addIndirectJumpEntry):
+        (JSC::Yarr::YarrGenerator::GenerationState::emitIndirectJumpTable):
+        Changes to link indirect jumps with DataLabelPtr's.
+        (JSC::Yarr::YarrGenerator::BacktrackDestination::clearSubDataLabelPtr):
+        (JSC::Yarr::YarrGenerator::TermGenerationState::linkDataLabelToBacktrackIfExists): 
+        Updated to handle immediate linking of indirect jumps to
+        DataLabelPtr.
+        (JSC::Yarr::YarrGenerator::generateParenthesesDisjunction): Changed to
+        reflect updated linkDataLabelToBacktrackIfExists().
+
 2011-01-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
