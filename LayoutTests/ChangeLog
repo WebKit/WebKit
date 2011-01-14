@@ -1,3 +1,11 @@
+2011-01-13  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed chromium expectations update.
+
+        Several text layout tests failing on linux after r75756
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r75740.
