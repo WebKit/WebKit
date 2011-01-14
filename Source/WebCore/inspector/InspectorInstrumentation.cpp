@@ -38,6 +38,7 @@
 #include "Event.h"
 #include "EventContext.h"
 #include "InspectorApplicationCacheAgent.h"
+#include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
@@ -47,10 +48,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-
-static const char* const domNativeBreakpointType = "DOM";
-static const char* const eventListenerNativeBreakpointType = "EventListener";
-static const char* const xhrNativeBreakpointType = "XHR";
 
 static const char* const listenerEventCategoryType = "listener";
 static const char* const instrumentationEventCategoryType = "instrumentation";
@@ -81,17 +78,8 @@ static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, 
 void InspectorInstrumentation::willInsertDOMNodeImpl(InspectorController* inspectorController, Node* node, Node* parent)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get();
-    if (!debuggerAgent)
-        return;
-    InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get();
-    if (!domAgent)
-        return;
-    RefPtr<InspectorObject> eventData = InspectorObject::create();
-    if (domAgent->shouldBreakOnNodeInsertion(node, parent, eventData)) {
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
-    }
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+        browserDebuggerAgent->willInsertDOMNode(node, parent);
 #endif
 }
 
@@ -99,27 +87,26 @@ void InspectorInstrumentation::didInsertDOMNodeImpl(InspectorController* inspect
 {
     if (InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get())
         domAgent->didInsertDOMNode(node);
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+        browserDebuggerAgent->didInsertDOMNode(node);
+#endif
 }
 
 void InspectorInstrumentation::willRemoveDOMNodeImpl(InspectorController* inspectorController, Node* node)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get();
-    if (!debuggerAgent)
-        return;
-    InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get();
-    if (!domAgent)
-        return;
-    RefPtr<InspectorObject> eventData = InspectorObject::create();
-    if (domAgent->shouldBreakOnNodeRemoval(node, eventData)) {
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
-    }
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+        browserDebuggerAgent->willRemoveDOMNode(node);
 #endif
 }
 
 void InspectorInstrumentation::didRemoveDOMNodeImpl(InspectorController* inspectorController, Node* node)
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+        browserDebuggerAgent->didRemoveDOMNode(node);
+#endif
     if (InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get())
         domAgent->didRemoveDOMNode(node);
 }
@@ -127,17 +114,8 @@ void InspectorInstrumentation::didRemoveDOMNodeImpl(InspectorController* inspect
 void InspectorInstrumentation::willModifyDOMAttrImpl(InspectorController* inspectorController, Element* element)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get();
-    if (!debuggerAgent)
-        return;
-    InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get();
-    if (!domAgent)
-        return;
-    RefPtr<InspectorObject> eventData = InspectorObject::create();
-    if (domAgent->shouldBreakOnAttributeModification(element, eventData)) {
-        eventData->setString("breakpointType", domNativeBreakpointType);
-        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
-    }
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+        browserDebuggerAgent->willModifyDOMAttr(element);
 #endif
 }
 
@@ -156,19 +134,8 @@ void InspectorInstrumentation::characterDataModifiedImpl(InspectorController* in
 void InspectorInstrumentation::willSendXMLHttpRequestImpl(InspectorController* inspectorController, const String& url)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get();
-    if (!debuggerAgent)
-        return;
-
-    String breakpointURL;
-    if (!inspectorController->hasXHRBreakpoint(url, &breakpointURL))
-        return;
-
-    RefPtr<InspectorObject> eventData = InspectorObject::create();
-    eventData->setString("breakpointType", xhrNativeBreakpointType);
-    eventData->setString("breakpointURL", breakpointURL);
-    eventData->setString("url", url);
-    debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+        browserDebuggerAgent->willSendXMLHttpRequest(url);
 #endif
 }
 
@@ -546,19 +513,8 @@ bool InspectorInstrumentation::hasFrontend(InspectorController* inspectorControl
 void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InspectorController* inspectorController, const String& categoryType, const String& eventName, bool synchronous)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get();
-    if (!debuggerAgent)
-        return;
-    String fullEventName = String::format("%s:%s", categoryType.utf8().data(), eventName.utf8().data());
-    if (!inspectorController->hasEventListenerBreakpoint(fullEventName))
-        return;
-    RefPtr<InspectorObject> eventData = InspectorObject::create();
-    eventData->setString("breakpointType", eventListenerNativeBreakpointType);
-    eventData->setString("eventName", fullEventName);
-    if (synchronous)
-        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
-    else
-        debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData);
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+        browserDebuggerAgent->pauseOnNativeEventIfNeeded(categoryType, eventName, synchronous);
 #endif
 }
 

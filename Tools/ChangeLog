@@ -1,3 +1,13 @@
+2011-01-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Just small fix for problem with check-webkit-style.
+        It just didn't work for this patch.
+        Old code can't concatenate a list of strings with None.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2011-01-13  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
