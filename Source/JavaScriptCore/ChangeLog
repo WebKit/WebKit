@@ -7,6 +7,13 @@
 
 2011-01-14  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed Windows Release build fix.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::scavengerTimerFired):
+
+2011-01-14  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Adam Roben.
 
         Use the Windows thread pool instead of an extra thread for FastMalloc scavenging
