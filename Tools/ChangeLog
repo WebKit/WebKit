@@ -1,3 +1,13 @@
+2011-01-14  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] update fonts.conf to fix 6 linux tests in drt
+        https://bugs.webkit.org/show_bug.cgi?id=52411
+
+        * DumpRenderTree/chromium/fonts.conf: Update to match the copy in
+            chromium's src/webkit/tools/test_shell/resources/fonts.conf
+
 2011-01-14  Eric Seidel  <eric@webkit.org>
 
         Original patch from Peter Gal  <galpater@inf.u-szeged.hu>

@@ -2839,11 +2839,6 @@ BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 // The first didFinishDocumentLoadForFrame line is for the previous test document.
 BUG_DRT WIN MAC LINUX : http/tests/loading/preload-img-test.html = TEXT TIMEOUT PASS
 
-// Font anti-aliasing issue
-BUG_DRT LINUX : fast/text/international/001.html = IMAGE
-BUG_DRT LINUX : fast/text/international/002.html = IMAGE
-BUG_DRT LINUX : fast/text/international/003.html = IMAGE
-
 // CJK characters are not rotated.
 BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT CRASH PASS
 // Flaky since 2010-09-17?
@@ -2905,10 +2900,7 @@ BUG_DRT LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUG_DRT LINUX : fast/table/border-changes.html = TIMEOUT PASS
-BUG_DRT LINUX : fast/text/backslash-to-yen-sign-euc.html = IMAGE
-BUG_DRT LINUX : fast/text/backslash-to-yen-sign.html = IMAGE
 BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
-BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT LINUX : fast/text/justification-padding-mid-word.html = PASS CRASH
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
 BUG_DRT BUGCR8729 MAC LINUX : http/tests/multipart/invalid-image-data.html = IMAGE PASS
