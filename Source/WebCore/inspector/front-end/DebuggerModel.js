@@ -86,11 +86,6 @@ WebInspector.DebuggerModel.prototype = {
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointRemoved, breakpointId);
     },
 
-    breakpointResolved: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber)
-    {
-        this._breakpointSetOnBackend(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, true);
-    },
-
     _breakpointSetOnBackend: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, restored)
     {
         var sourceIDAndLine = this._encodeSourceIDAndLine(sourceID, lineNumber);
@@ -252,6 +247,11 @@ WebInspector.DebuggerDispatcher.prototype = {
     failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)
     {
         this._debuggerModel._failedToParseScriptSource(sourceURL, source, startingLine, errorLine, errorMessage);
+    },
+
+    breakpointResolved: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber)
+    {
+        this._debuggerModel._breakpointSetOnBackend(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, true);
     },
 
     didCreateWorker: function()
