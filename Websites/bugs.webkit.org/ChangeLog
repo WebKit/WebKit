@@ -1,3 +1,19 @@
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        fix bugs going back and forth between unified and sidebyside
+        https://bugs.webkit.org/show_bug.cgi?id=52470
+
+        Now that we're appending DOM nodes directly, we only want to
+        get the first ".text" element in the subtree. In the cases
+        where there are multiple, their contents are the same.
+
+        Also, when making side-by-side expansion lines, we need to
+        clone the contents so we have a second copy to append to the DOM.
+
+        * code-review.js:
+
 2011-01-13  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Barth.

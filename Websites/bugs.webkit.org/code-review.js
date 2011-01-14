@@ -532,7 +532,8 @@
 
   function sideBySideExpansionLine(line_number, contents) {
     var line = $('<div class="ExpansionLine"></div>');
-    line.append(lineSide('from', contents, true, line_number));
+    // Clone the contents so we have two copies we can put back in the DOM.
+    line.append(lineSide('from', contents.clone(true), true, line_number));
     line.append(lineSide('to', contents, true, line_number));
     return line;
   }
@@ -813,7 +814,7 @@
     var convert_function = diff_type == 'sidebyside' ? sideBySideifyLine : unifyLine;
     var from = fromLineNumber(line);
     var to = toLineNumber(line);
-    var contents = $('.text', line);
+    var contents = $('.text', line).first();
     var classNames = classNamesForMovingLine(line);
     var attributes = attributesForMovingLine(line);
     var id = line.id;
@@ -879,7 +880,7 @@
 
   function convertExpansionLine(diff_type, line) {
     var convert_function = diff_type == 'sidebyside' ? sideBySideExpansionLine : unifiedExpansionLine;
-    var contents = $('.text', line);
+    var contents = $('.text', line).first();
     var line_number = fromLineNumber(line);
     var new_line = convert_function(line_number, contents);
     $(line).replaceWith(new_line);
