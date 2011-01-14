@@ -64,7 +64,7 @@ private:
     static void didHandleOnloadEventsForFrame(WKBundlePageRef, WKBundleFrameRef, const void*);
     static void didDisplayInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
     static void didRunInsecureContentForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
-    static bool shouldLoadResourceForFrame(WKBundlePageRef, WKBundleFrameRef, WKURLRef, const void*);
+    static bool shouldLoadResourceForFrame(WKBundlePageRef, WKBundleFrameRef, WKStringRef, const void*);
     void didStartProvisionalLoadForFrame(WKBundleFrameRef);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WKBundleFrameRef);
     void didFailProvisionalLoadWithErrorForFrame(WKBundleFrameRef, WKErrorRef);

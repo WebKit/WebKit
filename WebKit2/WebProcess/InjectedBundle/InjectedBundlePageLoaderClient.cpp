@@ -175,12 +175,12 @@ void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-bool InjectedBundlePageLoaderClient::shouldLoadResourceForFrame(WebPage* page, WebFrame* frame, const String& subResourceURL)
+bool InjectedBundlePageLoaderClient::shouldLoadResourceForFrame(WebPage* page, WebFrame* frame, const String& resourceURL)
 {
     if (!m_client.shouldLoadResourceForFrame)
         return true;
 
-    return m_client.shouldLoadResourceForFrame(toAPI(page), toAPI(frame), toURLRef(subResourceURL.impl()), m_client.clientInfo);
+    return m_client.shouldLoadResourceForFrame(toAPI(page), toAPI(frame), toAPI(resourceURL.impl()), m_client.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)

@@ -1,3 +1,15 @@
+2011-01-14  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        ShouldLoadResourceForFrame should use strings, not URLs.
+        https://bugs.webkit.org/show_bug.cgi?id=52476
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::shouldLoadResourceForFrame): Pass resourceURL as a string instead of
+            a URL, and rename from subresourceURL to resourceURL.
+
 2011-01-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -87,7 +87,7 @@ typedef void (*WKBundlePageDidClearWindowObjectForFrameCallback)(WKBundlePageRef
 typedef void (*WKBundlePageDidCancelClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageWillPerformClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date, const void *clientInfo);
 typedef void (*WKBundlePageDidHandleOnloadEventsForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
-typedef bool (*WKBundlePageShouldLoadResourceForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, const void *clientInfo);
+typedef bool (*WKBundlePageShouldLoadResourceForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKStringRef url, const void *clientInfo);
 
 
 struct WKBundlePageLoaderClient {

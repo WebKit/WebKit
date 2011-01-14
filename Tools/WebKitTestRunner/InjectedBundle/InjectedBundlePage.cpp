@@ -323,7 +323,7 @@ void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKB
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
 }
 
-bool InjectedBundlePage::shouldLoadResourceForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef, const void* clientInfo)
+bool InjectedBundlePage::shouldLoadResourceForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKStringRef, const void* clientInfo)
 {
     return static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->shouldLoadResourceForFrame(frame);
 }
