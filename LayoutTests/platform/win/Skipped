@@ -395,9 +395,6 @@ accessibility/iframe-bastardization.html
 # Spews a console message into the next test under Aero http://webkit.org/b/49945
 svg/custom/clip-path-referencing-use2.svg
 
-# Crashes on Windows 7 http://webkit.org/b/52397
-compositing/reflections/load-video-in-reflection.html
-
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
