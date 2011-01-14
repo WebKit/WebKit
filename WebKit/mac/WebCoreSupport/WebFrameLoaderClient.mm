@@ -210,6 +210,10 @@ static inline void applyAppleDictionaryApplicationQuirk(WebFrameLoaderClient* cl
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
     : m_webFrame(webFrame)
     , m_policyFunction(0)
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    , m_verticalElasticity(NSScrollElasticityAutomatic)
+    , m_horizontalElasticity(NSScrollElasticityAutomatic)
+#endif
 {
 }
 
@@ -687,6 +691,15 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didFirstLayoutInFrameFunc)
         CallFrameLoadDelegate(implementations->didFirstLayoutInFrameFunc, webView, @selector(webView:didFirstLayoutInFrame:), m_webFrame.get());
+    
+    // See WebFrameLoaderClient::provisionalLoadStarted.
+    WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
+    if ([getWebView(m_webFrame.get()) drawsBackground])
+        [scrollView setDrawsBackground:YES];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    [scrollView setVerticalScrollElasticity:m_verticalElasticity];
+    [scrollView setHorizontalScrollElasticity:m_horizontalElasticity];
+#endif
 }
 
 void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
@@ -1089,7 +1102,14 @@ void WebFrameLoaderClient::provisionalLoadStarted()
     // or 3) The view is moved out of the window: -[WebFrameView viewDidMoveToWindow].
     // Please keep the comments in these four functions in agreement with each other.
 
-    [[m_webFrame->_private->webFrameView _scrollView] setDrawsBackground:NO];
+    WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
+    [scrollView setDrawsBackground:NO];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    m_verticalElasticity = [scrollView verticalScrollElasticity];
+    m_horizontalElasticity = [scrollView horizontalScrollElasticity];
+    [scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
+    [scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
+#endif
 }
 
 void WebFrameLoaderClient::didFinishLoad()

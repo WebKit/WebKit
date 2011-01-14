@@ -1,3 +1,20 @@
+2011-01-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix for <rdar://problem/7793902> Artifacts when scrolling
+        page in Safari while page is loading
+
+        Call setDrawsBackground:YES on the scrollView in 
+        dispatchDidFirstLayout() rather than waiting until
+        frameLoadCompleted(). Also suspend scrolling elasticity
+        between provisionalLoadStarted() and dispatchDidFirstLayout()
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::WebFrameLoaderClient):
+        (WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebFrameLoaderClient::provisionalLoadStarted):
+
 2011-01-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
