@@ -1,5 +1,11 @@
 2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: extract InspectorSettings from InspectorState,

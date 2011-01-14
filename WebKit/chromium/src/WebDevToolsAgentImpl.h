@@ -41,6 +41,7 @@
 
 namespace WebCore {
 class Document;
+class Frame;
 class InspectorClient;
 class InspectorController;
 class Node;
