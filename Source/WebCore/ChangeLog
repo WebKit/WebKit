@@ -1,3 +1,21 @@
+2011-01-14  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Prevent merging of anonymous blocks if one of them is already getting
+        destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=52402
+
+        Test: fast/block/merge-anonymous-block-remove-child-crash2.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::RenderBlock): initialize m_beingDestroyed to false.
+        (WebCore::RenderBlock::destroy): set m_beingDestroyed to true.
+        (WebCore::canMergeContiguousAnonymousBlocks): do not merge if any or prev or next is being destroyed.
+        (WebCore::RenderBlock::removeChild): remove the hack previously done for preventing oldChild merging with nextBlock's next sibling.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::beingDestroyed): public function for m_beingDestroyed.
+
 2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Follow up to r75791: fix missing dispatch.

@@ -112,6 +112,7 @@ RenderBlock::RenderBlock(Node* node)
       , m_positionedObjects(0)
       , m_rareData(0)
       , m_lineHeight(-1)
+      , m_beingDestroyed(false)
 {
     setChildrenInline(true);
 }
@@ -146,6 +147,9 @@ RenderBlock::~RenderBlock()
 
 void RenderBlock::destroy()
 {
+    // Mark as being destroyed to avoid trouble with merges in removeChild().
+    m_beingDestroyed = true;
+
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     children()->destroyLeftoverChildren();
@@ -926,8 +930,8 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
     if (oldChild->documentBeingDestroyed() || oldChild->isInline() || oldChild->virtualContinuation())
         return false;
 
-    if ((prev && (!prev->isAnonymousBlock() || toRenderBlock(prev)->continuation()))
-        || (next && (!next->isAnonymousBlock() || toRenderBlock(next)->continuation())))
+    if ((prev && (!prev->isAnonymousBlock() || toRenderBlock(prev)->continuation() || toRenderBlock(prev)->beingDestroyed()))
+        || (next && (!next->isAnonymousBlock() || toRenderBlock(next)->continuation() || toRenderBlock(next)->beingDestroyed())))
         return false;
 
     // FIXME: This check isn't required when inline run-ins can't be split into continuations.
@@ -987,27 +991,12 @@ void RenderBlock::removeChild(RenderObject* oldChild)
         } else {
             // Take all the children out of the |next| block and put them in
             // the |prev| block.
-            nextBlock->moveAllChildrenTo(prevBlock, nextBlock->hasLayer() || prevBlock->hasLayer());
-
-            // FIXME: When we destroy nextBlock, it might happen that nextBlock's next sibling block and
-            // oldChild can get merged. Since oldChild is getting removed, we do not want to move
-            // nextBlock's next sibling block's children into it. By setting a fake continuation,
-            // we prevent this from happening. This is not the best approach, we should replace this
-            // something better later to automatically detect that oldChild is getting removed.
-            RenderBlock* oldChildBlock = 0;
-            if (oldChild->isAnonymous() && oldChild->isRenderBlock() && !toRenderBlock(oldChild)->continuation()) {
-                oldChildBlock = toRenderBlock(oldChild);
-                oldChildBlock->setContinuation(oldChildBlock);                
-            }          
+            nextBlock->moveAllChildrenTo(prevBlock, nextBlock->hasLayer() || prevBlock->hasLayer());        
             
             // Delete the now-empty block's lines and nuke it.
             nextBlock->deleteLineBoxTree();
             nextBlock->destroy();
             next = 0;
-
-            // FIXME: Revert the continuation change done above.
-            if (oldChildBlock)
-                oldChildBlock->setContinuation(0);
         }
     }
 
