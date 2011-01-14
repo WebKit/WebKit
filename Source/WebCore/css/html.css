@@ -553,6 +553,59 @@ output {
     display: inline;
 }
 
+/* form validation message bubble */
+
+::-webkit-validation-bubble {
+    display: block;
+    z-index: 2147483647;
+    position: absolute;
+    opacity: 0.9;
+    line-height: 0;
+    -webkit-transition: opacity 05.5s ease;
+}
+
+::-webkit-validation-bubble-message {
+    display: block;
+    font: message-box;
+    min-width: 50px;
+    max-width: 200px;
+    border: solid 2px black;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fbf9f9), to(#f0e4e4));
+    padding: 8px;
+    -webkit-border-radius: 8px;
+    -webkit-box-shadow: 4px 4px 4px rgba(204,204,204,0.7);
+    line-height: normal;
+}
+
+::-webkit-validation-bubble-top-outer-arrow {
+    display: inline-block;
+    position: relative;
+    left: 14px;
+    height: 0;
+    width: 0;
+    border-style: solid;
+    border-width: 14px;
+    border-bottom-color: black;
+    border-right-color: transparent;
+    border-top-width: 0;
+    border-left-width: 0;
+}
+
+::-webkit-validation-bubble-top-inner-arrow {
+    display: inline-block;
+    height: 0;
+    width: 0;
+    border-style: solid;
+    border-width: 10px; /* <border box width of outer-arrow> - <message border width> * 2 */
+    border-bottom-color: #fbf9f9;
+    border-right-color: transparent;
+    border-top-width: 0;
+    border-left-width: 0;
+    position: relative;
+    top: 2px; /* <message border width> */
+    left: 2px; /* <outer-arrow position> + <message border width> - <border box width of outer-arrow>  */
+}
+
 /* meter */
 
 meter {

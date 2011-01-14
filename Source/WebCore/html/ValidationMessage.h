@@ -34,11 +34,13 @@
 #include "Timer.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class FormAssociatedElement;
+class HTMLElement;
 
 class ValidationMessage : public Noncopyable {
 public:
@@ -46,14 +48,19 @@ public:
     ~ValidationMessage();
     String message() const { return m_message; }
     void setMessage(const String&);
+    void requestToHideMessage();
 
 private:
     ValidationMessage(FormAssociatedElement*);
-    void hideMessage(Timer<ValidationMessage>* = 0);
+    void setMessageDOMAndStartTimer(Timer<ValidationMessage>* = 0);
+    void buildBubbleTree(Timer<ValidationMessage>*);
+    void deleteBubbleTree(Timer<ValidationMessage>* = 0);
 
     FormAssociatedElement* m_element;
     String m_message;
     OwnPtr<Timer<ValidationMessage> > m_timer;
+    RefPtr<HTMLElement> m_bubble;
+    RefPtr<HTMLElement> m_bubbleMessage;
 };
 
 } // namespace WebCore

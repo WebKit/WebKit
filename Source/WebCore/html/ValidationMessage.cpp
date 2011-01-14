@@ -31,9 +31,17 @@
 #include "config.h"
 #include "ValidationMessage.h"
 
+#include "CSSStyleSelector.h"
+#include "FormAssociatedElement.h"
+#include "HTMLBRElement.h"
+#include "HTMLNames.h"
+#include "RenderObject.h"
+#include "Text.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 ALWAYS_INLINE ValidationMessage::ValidationMessage(FormAssociatedElement* element)
     : m_element(element)
@@ -42,7 +50,7 @@ ALWAYS_INLINE ValidationMessage::ValidationMessage(FormAssociatedElement* elemen
 
 ValidationMessage::~ValidationMessage()
 {
-    hideMessage();
+    deleteBubbleTree();
 }
 
 PassOwnPtr<ValidationMessage> ValidationMessage::create(FormAssociatedElement* element)
@@ -52,18 +60,105 @@ PassOwnPtr<ValidationMessage> ValidationMessage::create(FormAssociatedElement* e
 
 void ValidationMessage::setMessage(const String& message)
 {
-    // FIXME: Construct validation message UI if m_message is empty.
-
+    // Don't modify the DOM tree in this context.
+    // If so, an assertion in Node::isFocusable() fails.
+    ASSERT(!message.isEmpty());
     m_message = message;
-
-    m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::hideMessage));
-    m_timer->startOneShot(6.0); // FIXME: should be <message length> * something.
+    if (!m_bubble)
+        m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::buildBubbleTree));
+    else
+        m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::setMessageDOMAndStartTimer));
+    m_timer->startOneShot(0);
 }
 
-void ValidationMessage::hideMessage(Timer<ValidationMessage>*)
+void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
 {
-    // FIXME: Implement.
+    ASSERT(m_bubbleMessage);
+    m_bubbleMessage->removeAllChildren();
+    Vector<String> lines;
+    m_message.split('\n', lines);
+    Document* doc = m_bubbleMessage->document();
+    ExceptionCode ec = 0;
+    for (unsigned i = 0; i < lines.size(); ++i) {
+        if (i) {
+            m_bubbleMessage->appendChild(HTMLBRElement::create(doc), ec);
+            m_bubbleMessage->appendChild(Text::create(doc, lines[i]), ec);
+        } else {
+            RefPtr<HTMLElement> bold = HTMLElement::create(bTag, doc);
+            bold->setInnerText(lines[i], ec);
+            m_bubbleMessage->appendChild(bold.release(), ec);
+        }
+    }
 
+    m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
+    m_timer->startOneShot(max(5.0, m_message.length() / 20.0));
+}
+
+class ElementWithPseudoId : public HTMLElement {
+public:
+    static PassRefPtr<HTMLElement> create(Document* doc, const AtomicString& pseudoName)
+    {
+        return adoptRef(new ElementWithPseudoId(doc, pseudoName));
+    }
+
+protected:
+    ElementWithPseudoId(Document* doc, const AtomicString& pseudoName)
+        : HTMLElement(divTag, doc)
+        , m_pseudoName(pseudoName) { };
+    virtual AtomicString shadowPseudoId() const { return m_pseudoName; }
+
+private:
+    AtomicString m_pseudoName;
+};
+
+void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
+{
+    HTMLElement* host = toHTMLElement(m_element);
+    Document* doc = host->document();
+    m_bubble = ElementWithPseudoId::create(doc, "-webkit-validation-bubble");
+    ExceptionCode ec = 0;
+    // FIXME: We need a way to host multiple shadow roots in a single node, or
+    // to inherit an existing shadow tree.
+    if (host->shadowRoot())
+        host->shadowRoot()->appendChild(m_bubble.get(), ec);
+    else {
+        host->setShadowRoot(m_bubble);
+        // FIXME: The following attach() should be unnecessary.
+        m_bubble->attach();
+    }
+
+    m_bubble->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-top-outer-arrow"), ec);
+    m_bubble->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-top-inner-arrow"), ec);
+    m_bubbleMessage = ElementWithPseudoId::create(doc, "-webkit-validation-bubble-message");
+    m_bubble->appendChild(m_bubbleMessage, ec);
+
+    setMessageDOMAndStartTimer();
+
+    // FIXME: Use transition to show the bubble.
+
+    // We don't need to adjust the bubble location. The default position is enough.
+}
+
+void ValidationMessage::requestToHideMessage()
+{
+    // We must not modify the DOM tree in this context by the same reason as setMessage().
+    m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
+    m_timer->startOneShot(0);
+}
+
+void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
+{
+    if (m_bubble) {
+        m_bubbleMessage = 0;
+        HTMLElement* host = toHTMLElement(m_element);
+        if (m_bubble->isShadowRoot())
+            host->setShadowRoot(0);
+        else {
+            ExceptionCode ec;
+            host->shadowRoot()->removeChild(m_bubble.get(), ec);
+        }
+        m_bubble = 0;
+    }
     m_message = String();
 }
 

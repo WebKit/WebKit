@@ -981,6 +981,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
             (s->hovered() == m_element->hovered()) &&
             (s->active() == m_element->active()) &&
             (s->focused() == m_element->focused()) &&
+            (s->shadowPseudoId() == m_element->shadowPseudoId()) &&
             (s != s->document()->cssTarget() && m_element != m_element->document()->cssTarget()) &&
             (s->fastGetAttribute(typeAttr) == m_element->fastGetAttribute(typeAttr)) &&
             (s->fastGetAttribute(XMLNames::langAttr) == m_element->fastGetAttribute(XMLNames::langAttr)) &&

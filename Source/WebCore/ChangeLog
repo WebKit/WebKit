@@ -1,3 +1,57 @@
+2011-01-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement form validation message UI
+        https://bugs.webkit.org/show_bug.cgi?id=48980
+
+        * Add four internal pseudo selectors:
+          - -webkit-validation-bubble
+          - -webkit-validation-bubble-message
+          - -webkit-validation-bubble-top-outer-arrow
+          - -webkit-validation-bubble-top-inner-arrow
+
+        * Implement ValidationMessage functions
+          Show the message for <the number of characters> / 20.0 seconds.
+
+        No new tests because the feature is disabled by default for now and the
+        new behavior is strongly timing-dependent.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+          Do not share a style with elements with different shadowPseudoId().
+        * css/html.css: Define appearance for the internal selectors.
+        (::-webkit-validation-bubble):
+        (::-webkit-validation-bubble-message):
+        (::-webkit-validation-bubble-top-outer-arrow):
+        (::-webkit-validation-bubble-top-inner-arrow):
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+          Allow to add shadow renderers even if canHaveChildren() returns false.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::detach):
+          Remove m_validationMessage immediately because we can't use
+          hideVisibleValidationMessage(), which calls a ValidationMessage function later.
+        (WebCore::HTMLFormControlElement::updateVisibleValidationMessage):
+          - Don't create ValidationMessage if the message is empty.
+          - Remove the check for message equality.
+        (WebCore::HTMLFormControlElement::hideVisibleValidationMessage):
+          Don't remove m_validationMessage immediately. We shouldn't make the
+          element needsLayout() state in this context.
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::~ValidationMessage):
+          hideMessage() -> deleteBubbleTree() renaming.
+        (WebCore::ValidationMessage::setMessage): Implemented.
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+          Added. This updates the validation message and starts the timer to hide it.
+        (WebCore::ElementWithPseudoId):
+          Added to help implementations of styled shadow nodes.
+        (WebCore::ValidationMessage::buildBubbleTree): Added.
+        (WebCore::ValidationMessage::requestToHideMessage): Added.
+        (WebCore::ValidationMessage::deleteBubbleTree):
+          Renamed from hideMessage(), and implemented.
+        * html/ValidationMessage.h: Add declarations.
+
 2011-01-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

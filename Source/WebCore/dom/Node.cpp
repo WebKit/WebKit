@@ -1380,8 +1380,10 @@ void Node::createRendererIfNeeded()
         document()->setFullScreenRenderer(fullscreenRenderer);
     }
 #endif
-    
-    if (parentRenderer && parentRenderer->canHaveChildren() && parent->childShouldCreateRenderer(this)) {
+
+    // FIXME: Ignoreing canHaveChildren() in a case of isShadowRoot() might be wrong.
+    // See https://bugs.webkit.org/show_bug.cgi?id=52423
+    if (parentRenderer && (parentRenderer->canHaveChildren() || isShadowRoot()) && parent->childShouldCreateRenderer(this)) {
         RefPtr<RenderStyle> style = styleForRenderer();
         if (rendererIsNeeded(style.get())) {
             if (RenderObject* r = createRenderer(document()->renderArena(), style.get())) {
