@@ -1,5 +1,17 @@
 2011-01-14  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Use the Windows thread pool instead of an extra thread for FastMalloc scavenging
+        https://bugs.webkit.org/show_bug.cgi?id=45186
+
+        r75819 accidentally changed the initial state of the scavenge timer.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::initializeScavenger): Changed initial state of m_scavengingSuspended to true.
+
+2011-01-14  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed Windows Release build fix.
 
         * wtf/FastMalloc.cpp:

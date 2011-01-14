@@ -1515,7 +1515,7 @@ void TCMalloc_PageHeap::initializeScavenger()
     dispatch_time_t startTime = dispatch_time(DISPATCH_TIME_NOW, kScavengeDelayInSeconds * NSEC_PER_SEC);
     dispatch_source_set_timer(m_scavengeTimer, startTime, kScavengeDelayInSeconds * NSEC_PER_SEC, 1000 * NSEC_PER_USEC);
     dispatch_source_set_event_handler(m_scavengeTimer, ^{ periodicScavenge(); });
-    m_scavengingSuspended = false;
+    m_scavengingSuspended = true;
 }
 
 ALWAYS_INLINE bool TCMalloc_PageHeap::isScavengerSuspended()
