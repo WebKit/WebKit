@@ -223,9 +223,6 @@ module core {
 
         [domain=Inspector] void enableDebuggerFromFrontend(in boolean always);
         [domain=Inspector] void disableDebugger(in boolean always);
-
-        [domain=Inspector] void setStickyBreakpoints(in Object breakpoints);
-
         [notify, domain=Debugger] void debuggerWasEnabled();
         [notify, domain=Debugger] void debuggerWasDisabled();
 
@@ -240,12 +237,16 @@ module core {
         [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in String condition, in boolean enabled, out String breakpointId, out unsigned int actualLineNumber);
         [domain=Debugger] void removeBreakpoint(in String breakpointId);
 
-        [domain=BrowserDebugger] void setDOMBreakpoint(in long nodeId, in long type);
-        [domain=BrowserDebugger] void removeDOMBreakpoint(in long nodeId, in long type);
-        [domain=BrowserDebugger] void setEventListenerBreakpoint(in String eventName);
-        [domain=BrowserDebugger] void removeEventListenerBreakpoint(in String eventName);
-        [domain=BrowserDebugger] void setXHRBreakpoint(in String url);
-        [domain=BrowserDebugger] void removeXHRBreakpoint(in String url);
+        [domain=Inspector] void setStickyBreakpoints(in Object breakpoints); // FIXME: Move to newly introduced BrowserDebugger.
+
+        [domain=DOM] void setDOMBreakpoint(in long nodeId, in long type); // FIXME: Move to newly introduced BrowserDebugger.
+        [domain=DOM] void removeDOMBreakpoint(in long nodeId, in long type); // FIXME: Move to newly introduced BrowserDebugger.
+
+        [domain=Inspector] void setEventListenerBreakpoint(in String eventName); // FIXME: Move to newly introduced BrowserDebugger.
+        [domain=Inspector] void removeEventListenerBreakpoint(in String eventName); // FIXME: Move to newly introduced BrowserDebugger.
+
+        [domain=Inspector] void setXHRBreakpoint(in String url); // FIXME: Move to newly introduced BrowserDebugger.
+        [domain=Inspector] void removeXHRBreakpoint(in String url); // FIXME: Move to newly introduced BrowserDebugger.
 
         [domain=Debugger] void stepOver();
         [domain=Debugger] void stepInto();

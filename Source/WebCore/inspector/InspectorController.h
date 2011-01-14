@@ -57,7 +57,6 @@ class InjectedScript;
 class InjectedScriptHost;
 class InspectorArray;
 class InspectorBackendDispatcher;
-class InspectorBrowserDebuggerAgent;
 class InspectorClient;
 class InspectorCSSAgent;
 class InspectorDOMAgent;
@@ -236,6 +235,12 @@ public:
     void resume();
 
     void setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints);
+    void setEventListenerBreakpoint(const String& eventName);
+    void removeEventListenerBreakpoint(const String& eventName);
+    bool hasEventListenerBreakpoint(const String& eventName);
+    void setXHRBreakpoint(const String& url);
+    void removeXHRBreakpoint(const String& url);
+    bool hasXHRBreakpoint(const String& url, String* breakpointURL);
 #endif
 
     void setInjectedScriptSource(const String& source);
@@ -260,7 +265,6 @@ public:
 private:
     friend class InspectorBackend;
     friend class InspectorBackendDispatcher;
-    friend class InspectorBrowserDebuggerAgent;
     friend class InspectorInstrumentation;
     friend class InjectedScriptHost;
 
@@ -364,7 +368,10 @@ private:
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     bool m_attachDebuggerWhenShown;
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
-    OwnPtr<InspectorBrowserDebuggerAgent> m_browserDebuggerAgent;
+
+    HashSet<String> m_eventListenerBreakpoints;
+    HashSet<String> m_XHRBreakpoints;
+    bool m_hasXHRBreakpointWithEmptyURL;
 
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
