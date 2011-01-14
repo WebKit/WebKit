@@ -1,5 +1,12 @@
 2011-01-14  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed test fix.
+        Filter out /favicon.ico from page resources list to avoid test expectations mismatch on GTK.
+
+        * http/tests/inspector/extensions-resources-redirect.html:
+
+2011-01-14  Andrey Kosyakov  <caseq@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: redirected resources not handled properly in Network panel
