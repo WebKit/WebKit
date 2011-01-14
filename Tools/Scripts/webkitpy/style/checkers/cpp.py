@@ -492,30 +492,29 @@ class _FunctionState(object):
         self.current_function = ''
         self.in_a_function = False
         self.lines_in_function = 0
-        # Make sure these will not be mistaken for real lines (even when a
+        # Make sure these will not be mistaken for real positions (even when a
         # small amount is added to them).
-        self.body_start_line_number = -1000
-        self.ending_line_number = -1000
+        self.body_start_position = Position(-1000, 0)
+        self.end_position = Position(-1000, 0)
 
-    def begin(self, function_name, body_start_line_number, ending_line_number, is_declaration,
+    def begin(self, function_name, body_start_position, end_position,
               parameter_start_position, parameter_end_position, clean_lines):
         """Start analyzing function body.
 
         Args:
             function_name: The name of the function being tracked.
-            body_start_line_number: The line number of the { or the ; for a protoype.
-            ending_line_number: The line number where the function ends.
-            is_declaration: True if this is a prototype.
-            parameter_start_position: position in elided of the '(' for the parameters.
-            parameter_end_position: position in elided of the ')' for the parameters.
+            body_start_position: Position in elided of the { or the ; for a prototype.
+            end_position: Position in elided just after the final } (or ; is.
+            parameter_start_position: Position in elided of the '(' for the parameters.
+            parameter_end_position: Position in elided just after the ')' for the parameters.
             clean_lines: A CleansedLines instance containing the file.
         """
         self.in_a_function = True
         self.lines_in_function = -1  # Don't count the open brace line.
         self.current_function = function_name
-        self.body_start_line_number = body_start_line_number
-        self.ending_line_number = ending_line_number
-        self.is_declaration = is_declaration
+        self.body_start_position = body_start_position
+        self.end_position = end_position
+        self.is_declaration = clean_lines.elided[body_start_position.row][body_start_position.column] == ';'
         self.parameter_start_position = parameter_start_position
         self.parameter_end_position = parameter_end_position
         self._clean_lines = clean_lines
@@ -530,7 +529,7 @@ class _FunctionState(object):
 
     def count(self, line_number):
         """Count line in current function body."""
-        if self.in_a_function and line_number >= self.body_start_line_number:
+        if self.in_a_function and line_number >= self.body_start_position.row:
             self.lines_in_function += 1
 
     def check(self, error, line_number):
@@ -1393,7 +1392,7 @@ def detect_functions(clean_lines, line_number, function_state, error):
       error: The function to call with any errors found.
     """
     # Are we now past the end of a function?
-    if function_state.ending_line_number + 1 == line_number:
+    if function_state.end_position.row + 1 == line_number:
         function_state.end()
 
     # If we're in a function, don't try to detect a new one.
@@ -1424,7 +1423,10 @@ def detect_functions(clean_lines, line_number, function_state, error):
     for start_line_number in xrange(line_number, clean_lines.num_lines()):
         start_line = clean_lines.elided[start_line_number]
         joined_line += ' ' + start_line.lstrip()
-        if search(r'{|;', start_line):
+        body_match = search(r'{|;', start_line)
+        if body_match:
+            body_start_position = Position(start_line_number, body_match.start(0))
+
             # Replace template constructs with _ so that no spaces remain in the function name,
             # while keeping the column numbers of other characters the same as "line".
             line_with_no_templates = iteratively_replace_matches_with_char(r'<[^<>]*>', '_', line)
@@ -1449,13 +1451,16 @@ def detect_functions(clean_lines, line_number, function_state, error):
                 # No end was found.
                 return
 
-            is_declaration = bool(search(r'^[^{]*;', start_line))
-            if is_declaration:
-                ending_line_number = start_line_number
+            if start_line[body_start_position.column] == ';':
+                end_position = Position(body_start_position.row, body_start_position.column + 1)
             else:
-                open_brace_index = start_line.find('{')
-                ending_line_number = close_expression(clean_lines.elided, Position(start_line_number, open_brace_index)).row
-            function_state.begin(function, start_line_number, ending_line_number, is_declaration,
+                end_position = close_expression(clean_lines.elided, body_start_position)
+
+            # Check for nonsensical positions. (This happens in test cases which check code snippets.)
+            if parameter_end_position > body_start_position:
+                return
+
+            function_state.begin(function, body_start_position, end_position,
                                  parameter_start_position, parameter_end_position, clean_lines)
             return
 
@@ -1485,7 +1490,7 @@ def check_for_function_lengths(clean_lines, line_number, function_state, error):
     raw = clean_lines.raw_lines
     raw_line = raw[line_number]
 
-    if function_state.ending_line_number == line_number:  # last line
+    if function_state.end_position.row == line_number:  # last line
         if not search(r'\bNOLINT\b', raw_line):
             function_state.check(error, line_number)
     elif not match(r'^\s*$', line):
@@ -1531,7 +1536,7 @@ def check_function_definition(clean_lines, line_number, function_state, error):
        error: The function to call with any errors found.
     """
     # Only do checks when we have a function declaration.
-    if line_number != function_state.body_start_line_number or not function_state.is_declaration:
+    if line_number != function_state.body_start_position.row or not function_state.is_declaration:
         return
 
     parameter_list = function_state.parameter_list()
@@ -1567,7 +1572,7 @@ def check_pass_ptr_usage(clean_lines, line_number, function_state, error):
 
     lines = clean_lines.lines
     line = lines[line_number]
-    if line_number > function_state.body_start_line_number:
+    if line_number > function_state.body_start_position.row:
         matched_pass_ptr = match(r'^\s*Pass([A-Z][A-Za-z]*)Ptr<', line)
         if matched_pass_ptr:
             type_name = 'Pass%sPtr' % matched_pass_ptr.group(1)

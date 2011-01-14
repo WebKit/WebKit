@@ -1,3 +1,19 @@
+2011-01-13  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style: _FunctionState should use Position to know where items are.
+        https://bugs.webkit.org/show_bug.cgi?id=52424
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_FunctionState.*): Changed _FunctionState to use Position instead of line numbers.
+        (detect_functions): Changed to pass Position's to _FunctionState.begin and
+        did some minor clean-up.
+        (*): Other changes are simply about converting to use the Position's in_FunctionState
+        instead of line numbers.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py: Changed the test code
+        to verify the positions stored in _FunctionState.
+
 2011-01-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Levin.
