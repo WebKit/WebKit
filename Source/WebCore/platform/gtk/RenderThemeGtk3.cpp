@@ -596,7 +596,7 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
 bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ControlPart part = renderObject->style()->appearance();
-    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
+    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
     GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
     gtk_style_context_save(context);
@@ -631,7 +631,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
 bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     ControlPart part = renderObject->style()->appearance();
-    ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart);
+    ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
 
     GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
     gtk_style_context_save(context);
@@ -667,7 +667,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* renderObject) const
 {
     ControlPart part = renderObject->style()->appearance();
 #if ENABLE(VIDEO)
-    if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) {
+    if (part == MediaSliderThumbPart) {
         adjustMediaSliderThumbSize(renderObject);
         return;
     }
@@ -683,7 +683,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* renderObject) const
         renderObject->style()->setHeight(Length(sliderWidth, Fixed));
         return;
     }
-    ASSERT(part == SliderThumbVerticalPart);
+    ASSERT(part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
     renderObject->style()->setWidth(Length(sliderWidth, Fixed));
     renderObject->style()->setHeight(Length(sliderLength, Fixed));
 }

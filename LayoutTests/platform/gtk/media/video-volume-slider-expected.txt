@@ -3,15 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 493x19
-        text run at (0,0) width 493: "This tests that toggling the display property won't make the controls disappear."
-      RenderBR {BR} at (493,15) size 0x0
+      RenderText {#text} at (0,0) size 433x19
+        text run at (0,0) width 433: "Tests if the volume slider is rendererd properly. This test assumes the"
+      RenderBR {BR} at (433,15) size 0x0
+      RenderText {#text} at (0,19) size 446x19
+        text run at (0,19) width 446: "volume slider is implmented and mouse over the right bottom corner of"
+      RenderBR {BR} at (446,34) size 0x0
+      RenderText {#text} at (0,38) size 270x19
+        text run at (0,38) width 270: "video element will show the volume slider."
+      RenderBR {BR} at (270,53) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (8,27) size 320x240
-  RenderVideo {VIDEO} at (0,19) size 320x240
-layer at (8,27) size 320x240
+layer at (8,65) size 320x240
+  RenderVideo {VIDEO} at (0,57) size 320x240
+layer at (8,65) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,27) size 320x240 scrollHeight 250
+layer at (8,65) size 320x240 scrollHeight 250
   RenderFlexibleBox (positioned) {DIV} at (0,0) size 320x240
     RenderButton {INPUT} at (0,220) size 20x20
     RenderFlexibleBox {DIV} at (20,220) size 220x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
@@ -25,3 +31,8 @@ layer at (8,27) size 320x240 scrollHeight 250
     RenderButton {INPUT} at (260,220) size 20x20
     RenderButton {INPUT} at (280,220) size 20x20
     RenderButton {INPUT} at (300,220) size 20x20
+layer at (308,185) size 20x100
+  RenderBlock (positioned) {DIV} at (300,120) size 20x100
+layer at (311,190) size 14x95
+  RenderSlider {INPUT} at (3,5) size 14x95
+    RenderBlock {DIV} at (0,19) size 14x31

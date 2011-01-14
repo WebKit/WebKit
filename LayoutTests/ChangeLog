@@ -1,3 +1,21 @@
+2011-01-14  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add volume slider to media player
+        https://bugs.webkit.org/show_bug.cgi?id=51532
+
+        * platform/gtk/Skipped:
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.txt: Added.
+
 2011-01-14  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

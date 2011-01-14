@@ -1,3 +1,29 @@
+2011-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add volume slider to media player
+        https://bugs.webkit.org/show_bug.cgi?id=51532
+
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-volume-slider-container, video::-webkit-media-controls-volume-slider-container):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustMediaSliderThumbSize):
+        (WebCore::RenderThemeGtk::paintMediaVolumeSliderContainer):
+        (WebCore::RenderThemeGtk::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeGtk::paintMediaVolumeSliderThumb):
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize):
+
 2011-01-14  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by David Levin.

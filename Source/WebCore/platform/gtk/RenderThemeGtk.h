@@ -156,6 +156,9 @@ protected:
     virtual bool paintMediaSeekForwardButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 

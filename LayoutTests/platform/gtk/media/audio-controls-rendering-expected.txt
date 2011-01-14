@@ -48,16 +48,16 @@ layer at (8,121) size 320x100
   RenderMedia {AUDIO} at (8,121) size 320x100 [bgcolor=#0000FF]
 layer at (8,121) size 320x100
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x100
-layer at (8,201) size 320x20 scrollHeight 30
-  RenderFlexibleBox (positioned) {DIV} at (0,80) size 320x20
-    RenderButton {INPUT} at (0,0) size 20x20
-    RenderFlexibleBox {DIV} at (20,0) size 240x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+layer at (8,121) size 320x100 scrollHeight 110
+  RenderFlexibleBox (positioned) {DIV} at (0,0) size 320x100
+    RenderButton {INPUT} at (0,80) size 20x20
+    RenderFlexibleBox {DIV} at (20,80) size 240x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
         RenderBlock {DIV} at (0,0) size 65x30
           RenderText {#text} at (5,5) size 55x12
             text run at (5,5) width 55: "00:00 / 00:07"
       RenderSlider {INPUT} at (66,0) size 173x20
         RenderBlock {DIV} at (2,4) size 12x12
-    RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
-    RenderButton {INPUT} at (300,0) size 20x20
+    RenderButton {INPUT} at (260,80) size 20x20
+    RenderButton {INPUT} at (280,80) size 20x20
+    RenderButton {INPUT} at (300,80) size 20x20

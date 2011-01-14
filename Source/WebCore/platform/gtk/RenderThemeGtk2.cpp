@@ -299,17 +299,17 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& inf
         return false;
 
     ControlPart part = object->style()->appearance();
-    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart);
+    ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
     // We shrink the trough rect slightly to make room for the focus indicator.
     IntRect troughRect(IntPoint(), rect.size()); // This is relative to rect.
     GtkWidget* widget = 0;
-    if (part == SliderVerticalPart) {
-        widget = gtkVScale();
-        troughRect.inflateY(-gtk_widget_get_style(widget)->ythickness);
-    } else {
+    if (part == SliderHorizontalPart) {
         widget = gtkHScale();
         troughRect.inflateX(-gtk_widget_get_style(widget)->xthickness);
+    } else {
+        widget = gtkVScale();
+        troughRect.inflateY(-gtk_widget_get_style(widget)->ythickness);
     }
     gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
 
@@ -327,19 +327,19 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
         return false;
 
     ControlPart part = object->style()->appearance();
-    ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart);
+    ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
 
     GtkWidget* widget = 0;
     const char* detail = 0;
     GtkOrientation orientation;
-    if (part == SliderThumbVerticalPart) {
-        widget = gtkVScale();
-        detail = "vscale";
-        orientation = GTK_ORIENTATION_VERTICAL;
-    } else {
+    if (part == SliderThumbHorizontalPart) {
         widget = gtkHScale();
         detail = "hscale";
         orientation = GTK_ORIENTATION_HORIZONTAL;
+    } else {
+        widget = gtkVScale();
+        detail = "vscale";
+        orientation = GTK_ORIENTATION_VERTICAL;
     }
     gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
 
@@ -357,7 +357,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
 {
     ControlPart part = o->style()->appearance();
 #if ENABLE(VIDEO)
-    if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) {
+    if (part == MediaSliderThumbPart) {
         adjustMediaSliderThumbSize(o);
         return;
     }
@@ -375,7 +375,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
         o->style()->setHeight(Length(width, Fixed));
         return;
     }
-    ASSERT(part == SliderThumbVerticalPart);
+    ASSERT(part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
     o->style()->setWidth(Length(width, Fixed));
     o->style()->setHeight(Length(length, Fixed));
 }

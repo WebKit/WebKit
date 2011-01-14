@@ -12,15 +12,15 @@ layer at (8,43) size 302x152
   RenderVideo {VIDEO} at (0,0) size 302x152 [border: (1px solid #000000)]
 layer at (9,44) size 300x150
   RenderBlock (relative positioned) {DIV} at (1,1) size 300x150
-layer at (9,174) size 300x20 scrollHeight 30
-  RenderFlexibleBox (positioned) {DIV} at (0,130) size 300x20
-    RenderButton {INPUT} at (0,0) size 20x20
-    RenderFlexibleBox {DIV} at (20,0) size 240x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+layer at (9,44) size 300x150 scrollHeight 160
+  RenderFlexibleBox (positioned) {DIV} at (0,0) size 300x150
+    RenderButton {INPUT} at (0,130) size 20x20
+    RenderFlexibleBox {DIV} at (20,130) size 240x20 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
         RenderBlock {DIV} at (0,0) size 65x30
           RenderText {#text} at (5,5) size 55x12
             text run at (5,5) width 55: "00:00 / 00:00"
       RenderSlider {INPUT} at (66,0) size 173x20
         RenderBlock {DIV} at (2,4) size 12x12
-    RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
+    RenderButton {INPUT} at (260,130) size 20x20
+    RenderButton {INPUT} at (280,130) size 20x20

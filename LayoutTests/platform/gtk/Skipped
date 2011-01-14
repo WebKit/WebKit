@@ -2846,8 +2846,6 @@ media/video-display-toggle.html
 
 #   Tests generating new results
 media/video-aspect-ratio.html
-# This test requires media controls has a volume slider.
-media/video-volume-slider.html
 # Requires media engine closed caption support
 media/media-captions.html
 

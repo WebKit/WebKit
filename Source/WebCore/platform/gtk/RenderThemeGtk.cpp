@@ -387,12 +387,9 @@ String RenderThemeGtk::extraMediaControlsStyleSheet()
 
 void RenderThemeGtk::adjustMediaSliderThumbSize(RenderObject* renderObject) const
 {
-    ControlPart part = renderObject->style()->appearance();
-
-    if (part == MediaSliderThumbPart) {
-        renderObject->style()->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
-        renderObject->style()->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
-    }
+    ASSERT(renderObject->style()->appearance() == MediaSliderThumbPart);
+    renderObject->style()->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
+    renderObject->style()->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
 }
 
 bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* iconName)
@@ -507,6 +504,23 @@ bool RenderThemeGtk::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pai
     // Make the thumb nicer with rounded corners.
     paintInfo.context->fillRoundedRect(r, IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), m_sliderThumbColor, ColorSpaceDeviceRGB);
     return false;
+}
+
+bool RenderThemeGtk::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    GraphicsContext* context = paintInfo.context;
+    context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+    return false;
+}
+
+bool RenderThemeGtk::paintMediaVolumeSliderTrack(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return paintSliderTrack(renderObject, paintInfo, rect);
+}
+
+bool RenderThemeGtk::paintMediaVolumeSliderThumb(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return paintSliderThumb(renderObject, paintInfo, rect);
 }
 
 String RenderThemeGtk::formatMediaControlsCurrentTime(float currentTime, float duration) const
