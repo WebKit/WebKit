@@ -1,3 +1,12 @@
+2011-01-13  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Unskip http/tests/security/originHeader/origin-header-for-empty.html
+        https://bugs.webkit.org/show_bug.cgi?id=52389
+
+        * platform/qt/Skipped:
+
 2011-01-13  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed chromium expectations update.

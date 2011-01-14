@@ -142,8 +142,6 @@ http/tests/security/xss-DENIED-xsl-document.xml
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
 # - FAIL: Subframe did not finish loading.
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
-# missing origin header
-http/tests/security/originHeader/origin-header-for-empty.html
 
 # Disabled HTTP subdirs for now, needs investigation.
 http/tests/media
