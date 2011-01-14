@@ -70,6 +70,7 @@ class InspectorFrontendClient;
 class InspectorObject;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
+class InspectorSettings;
 class InspectorState;
 class InspectorStorageAgent;
 class InspectorTimelineAgent;
@@ -259,9 +260,7 @@ public:
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
     void setInspectorAttachedHeight(long height);
-    int inspectorAttachedHeight() const;
-
-    static const unsigned defaultAttachedHeight;
+    long inspectorAttachedHeight() const;
 
 private:
     friend class InspectorBackend;
@@ -331,6 +330,7 @@ private:
 
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
     OwnPtr<InspectorState> m_state;
+    OwnPtr<InspectorSettings> m_settings;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
@@ -359,12 +359,8 @@ private:
     String m_showAfterVisible;
     RefPtr<Node> m_highlightedNode;
     ConsoleMessage* m_previousMessage;
-    bool m_settingsLoaded;
     OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
-
-    typedef HashMap<String, String> Settings;
-    mutable Settings m_settings;
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
     Vector<String> m_scriptsToEvaluateOnLoad;

@@ -30,6 +30,7 @@
 #include "WebInspectorFrontendClient.h"
 #include "WebInspector.h"
 #include "WebPage.h"
+#include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1

@@ -39,17 +39,16 @@ namespace WebCore {
 InspectorState::InspectorState(InspectorClient* client)
     : m_client(client)
 {
-    registerBoolean(monitoringXHR, false, "monitoringXHREnabled", "xhrMonitor");
-    registerBoolean(timelineProfilerEnabled, false, "timelineProfilerEnabled", String());
-    registerBoolean(searchingForNode, false, "searchingForNodeEnabled", String());
-    registerBoolean(profilerAlwaysEnabled, false, String(), "profilerEnabled");
-    registerBoolean(debuggerAlwaysEnabled, false, String(), "debuggerEnabled");
-    registerBoolean(inspectorStartsAttached, true, String(), "InspectorStartsAttached");
-    registerLong(inspectorAttachedHeight, InspectorController::defaultAttachedHeight, String(), "inspectorAttachedHeight");
-    registerLong(pauseOnExceptionsState, 0, "pauseOnExceptionsState", String());
-    registerBoolean(consoleMessagesEnabled, false, "consoleMessagesEnabled", String());
-    registerBoolean(userInitiatedProfiling, false, "userInitiatedProfiling", String());
-    registerObject(stickyBreakpoints, String(), String());
+    // Pure reload state
+    registerBoolean(userInitiatedProfiling, false, String());
+    registerBoolean(timelineProfilerEnabled, false, String());
+    registerBoolean(searchingForNode, false, String());
+    registerObject(stickyBreakpoints, String());
+
+    // Should go away
+    registerBoolean(consoleMessagesEnabled, false, "consoleMessagesEnabled");
+    registerBoolean(monitoringXHR, false, "monitoringXHREnabled");
+    registerLong(pauseOnExceptionsState, 0, "pauseOnExceptionsState");
 }
 
 void InspectorState::restoreFromInspectorCookie(const String& json)
@@ -82,32 +81,6 @@ PassRefPtr<InspectorObject> InspectorState::generateStateObjectForFrontend()
     return stateObject.release();
 }
 
-void InspectorState::loadFromSettings()
-{
-    for (PropertyMap::iterator i = m_properties.begin(); i != m_properties.end(); ++i) {
-        if (i->second.m_preferenceName.length()) {
-            String value;
-            m_client->populateSetting(i->second.m_preferenceName, &value);
-            switch (i->second.m_value->type()) {
-            case InspectorValue::TypeBoolean:
-                if (value.length())
-                    i->second.m_value = InspectorBasicValue::create(value == "true");
-                break;
-            case InspectorValue::TypeString:
-                i->second.m_value = InspectorString::create(value);
-                break;
-            case InspectorValue::TypeNumber:
-                if (value.length())
-                    i->second.m_value = InspectorBasicValue::create((double)value.toInt());
-                break;
-            default:
-                ASSERT(false);
-                break;
-            }
-        }
-    }
-}
-
 void InspectorState::updateCookie()
 {
     RefPtr<InspectorObject> cookieObject = InspectorObject::create();
@@ -116,13 +89,11 @@ void InspectorState::updateCookie()
     m_client->updateInspectorStateCookie(cookieObject->toJSONString());
 }
 
-void InspectorState::setValue(InspectorPropertyId id, PassRefPtr<InspectorValue> value, const String& stringValue)
+void InspectorState::setValue(InspectorPropertyId id, PassRefPtr<InspectorValue> value)
 {
     PropertyMap::iterator i = m_properties.find(id);
     ASSERT(i != m_properties.end());
     i->second.m_value = value;
-    if (i->second.m_preferenceName.length())
-        m_client->storeSetting(i->second.m_preferenceName, stringValue);
     updateCookie();
 }
 
@@ -166,37 +137,34 @@ void InspectorState::setObject(InspectorPropertyId id, PassRefPtr<InspectorObjec
     ASSERT(i != m_properties.end());
     Property& property = i->second;
     property.m_value = value;
-    if (property.m_preferenceName.length())
-        m_client->storeSetting(property.m_preferenceName, value->toJSONString());
     updateCookie();
 }
 
-void InspectorState::registerBoolean(InspectorPropertyId propertyId, bool value, const String& frontendAlias, const String& preferenceName)
+void InspectorState::registerBoolean(InspectorPropertyId propertyId, bool value, const String& frontendAlias)
 {
-    m_properties.set(propertyId, Property::create(InspectorBasicValue::create(value), frontendAlias, preferenceName));
+    m_properties.set(propertyId, Property::create(InspectorBasicValue::create(value), frontendAlias));
 }
 
-void InspectorState::registerString(InspectorPropertyId propertyId, const String& value, const String& frontendAlias, const String& preferenceName)
+void InspectorState::registerString(InspectorPropertyId propertyId, const String& value, const String& frontendAlias)
 {
-    m_properties.set(propertyId, Property::create(InspectorString::create(value), frontendAlias, preferenceName));
+    m_properties.set(propertyId, Property::create(InspectorString::create(value), frontendAlias));
 }
 
-void InspectorState::registerLong(InspectorPropertyId propertyId, long value, const String& frontendAlias, const String& preferenceName)
+void InspectorState::registerLong(InspectorPropertyId propertyId, long value, const String& frontendAlias)
 {
-    m_properties.set(propertyId, Property::create(InspectorBasicValue::create((double)value), frontendAlias, preferenceName));
+    m_properties.set(propertyId, Property::create(InspectorBasicValue::create((double)value), frontendAlias));
 }
 
-void InspectorState::registerObject(InspectorPropertyId propertyId, const String& frontendAlias, const String& preferenceName)
+void InspectorState::registerObject(InspectorPropertyId propertyId, const String& frontendAlias)
 {
-    m_properties.set(propertyId, Property::create(InspectorObject::create(), frontendAlias, preferenceName));
+    m_properties.set(propertyId, Property::create(InspectorObject::create(), frontendAlias));
 }
 
-InspectorState::Property InspectorState::Property::create(PassRefPtr<InspectorValue> value, const String& frontendAlias, const String& preferenceName)
+InspectorState::Property InspectorState::Property::create(PassRefPtr<InspectorValue> value, const String& frontendAlias)
 {
     Property property;
     property.m_value = value;
     property.m_frontendAlias = frontendAlias;
-    property.m_preferenceName = preferenceName;
     return property;
 }
 

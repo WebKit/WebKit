@@ -26,7 +26,6 @@
 #ifndef InspectorClient_h
 #define InspectorClient_h
 
-#include "InspectorController.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

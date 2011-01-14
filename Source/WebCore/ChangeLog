@@ -1,3 +1,55 @@
+2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: extract InspectorSettings from InspectorState,
+        simplify it.
+        https://bugs.webkit.org/show_bug.cgi?id=52429
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectorStartsAttached):
+        (WebCore::InspectorController::setInspectorStartsAttached):
+        (WebCore::InspectorController::setInspectorAttachedHeight):
+        (WebCore::InspectorController::inspectorAttachedHeight):
+        (WebCore::InspectorController::setMonitoringXHREnabled):
+        (WebCore::InspectorController::restoreDebugger):
+        (WebCore::InspectorController::restoreProfiler):
+        (WebCore::InspectorController::ensureSettingsLoaded):
+        (WebCore::InspectorController::enableProfiler):
+        (WebCore::InspectorController::disableProfiler):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::disableDebugger):
+        * inspector/InspectorController.h:
+        * inspector/InspectorSettings.cpp: Added.
+        (WebCore::InspectorSettings::InspectorSettings):
+        (WebCore::InspectorSettings::getBoolean):
+        (WebCore::InspectorSettings::setBoolean):
+        (WebCore::InspectorSettings::getLong):
+        (WebCore::InspectorSettings::setLong):
+        (WebCore::InspectorSettings::registerBoolean):
+        (WebCore::InspectorSettings::registerLong):
+        * inspector/InspectorSettings.h: Added.
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        (WebCore::InspectorState::setValue):
+        (WebCore::InspectorState::setObject):
+        (WebCore::InspectorState::registerBoolean):
+        (WebCore::InspectorState::registerString):
+        (WebCore::InspectorState::registerLong):
+        (WebCore::InspectorState::registerObject):
+        (WebCore::InspectorState::Property::create):
+        * inspector/InspectorState.h:
+        (WebCore::InspectorState::setBoolean):
+        (WebCore::InspectorState::setString):
+        (WebCore::InspectorState::setLong):
+
 2011-01-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r75774.

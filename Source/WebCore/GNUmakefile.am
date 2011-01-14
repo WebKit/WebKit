@@ -1977,6 +1977,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorProfilerAgent.h \
 	Source/WebCore/inspector/InspectorResourceAgent.cpp \
 	Source/WebCore/inspector/InspectorResourceAgent.h \
+	Source/WebCore/inspector/InspectorSettings.cpp \
+	Source/WebCore/inspector/InspectorSettings.h \
 	Source/WebCore/inspector/InspectorState.cpp \
 	Source/WebCore/inspector/InspectorState.h \
 	Source/WebCore/inspector/InspectorStyleSheet.cpp \

@@ -69,6 +69,7 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
+#include "InspectorSettings.h"
 #include "InspectorState.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
@@ -130,8 +131,6 @@ const char* const InspectorController::ConsolePanel = "console";
 const char* const InspectorController::ScriptsPanel = "scripts";
 const char* const InspectorController::ProfilesPanel = "profiles";
 
-const unsigned InspectorController::defaultAttachedHeight = 300;
-
 static const unsigned maximumConsoleMessages = 1000;
 static const unsigned expireConsoleMessagesStep = 100;
 
@@ -142,7 +141,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_cssAgent(new InspectorCSSAgent())
     , m_expiredConsoleMessageCount(0)
     , m_previousMessage(0)
-    , m_settingsLoaded(false)
     , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(this))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -194,22 +192,22 @@ bool InspectorController::enabled() const
 
 bool InspectorController::inspectorStartsAttached()
 {
-    return m_state->getBoolean(InspectorState::inspectorStartsAttached);
+    return m_settings->getBoolean(InspectorSettings::InspectorStartsAttached);
 }
 
 void InspectorController::setInspectorStartsAttached(bool attached)
 {
-    m_state->setBoolean(InspectorState::inspectorStartsAttached, attached);
+    m_settings->setBoolean(InspectorSettings::InspectorStartsAttached, attached);
 }
 
 void InspectorController::setInspectorAttachedHeight(long height)
 {
-    m_state->setLong(InspectorState::inspectorAttachedHeight, height);
+    m_settings->setLong(InspectorSettings::InspectorAttachedHeight, height);
 }
 
-int InspectorController::inspectorAttachedHeight() const
+long InspectorController::inspectorAttachedHeight() const
 {
-    return m_state->getBoolean(InspectorState::inspectorAttachedHeight);
+    return m_settings->getLong(InspectorSettings::InspectorAttachedHeight);
 }
 
 bool InspectorController::searchingForNodeInPage() const
@@ -467,6 +465,7 @@ void InspectorController::setMonitoringXHREnabled(bool enabled, bool* newState)
 {
     *newState = enabled;
     m_state->setBoolean(InspectorState::monitoringXHR, enabled);
+    m_settings->setBoolean(InspectorSettings::MonitoringXHREnabled, enabled);
 }
 
 void InspectorController::connectFrontend()
@@ -668,7 +667,7 @@ void InspectorController::restoreDebugger()
     if (InspectorDebuggerAgent::isDebuggerAlwaysEnabled())
         enableDebuggerFromFrontend(false);
     else {
-        if (m_state->getBoolean(InspectorState::debuggerAlwaysEnabled) || m_attachDebuggerWhenShown)
+        if (m_settings->getBoolean(InspectorSettings::DebuggerAlwaysEnabled) || m_attachDebuggerWhenShown)
             enableDebugger();
     }
 #endif
@@ -679,7 +678,7 @@ void InspectorController::restoreProfiler(ProfilerRestoreAction action)
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_profilerAgent->setFrontend(m_frontend.get());
-    if (!ScriptProfiler::isProfilerAlwaysEnabled() && m_state->getBoolean(InspectorState::profilerAlwaysEnabled))
+    if (!ScriptProfiler::isProfilerAlwaysEnabled() && m_settings->getBoolean(InspectorSettings::ProfilerAlwaysEnabled))
         enableProfiler();
     if (action == ProfilerRestoreResetAgent)
         m_profilerAgent->resetState();
@@ -847,11 +846,10 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(const String& url, c
 
 void InspectorController::ensureSettingsLoaded()
 {
-    if (m_settingsLoaded)
+    if (m_settings)
         return;
-    m_settingsLoaded = true;
-
-    m_state->loadFromSettings();
+    m_settings = new InspectorSettings(m_client);
+    m_state->setBoolean(InspectorState::monitoringXHR, m_settings->getBoolean(InspectorSettings::MonitoringXHREnabled));
 }
 
 void InspectorController::startTimelineProfiler()
@@ -1157,14 +1155,14 @@ bool InspectorController::profilerEnabled() const
 void InspectorController::enableProfiler(bool always, bool skipRecompile)
 {
     if (always)
-        m_state->setBoolean(InspectorState::profilerAlwaysEnabled, true);
+        m_settings->setBoolean(InspectorSettings::ProfilerAlwaysEnabled, true);
     m_profilerAgent->enable(skipRecompile);
 }
 
 void InspectorController::disableProfiler(bool always)
 {
     if (always)
-        m_state->setBoolean(InspectorState::profilerAlwaysEnabled, false);
+        m_settings->setBoolean(InspectorSettings::ProfilerAlwaysEnabled, false);
     m_profilerAgent->disable();
 }
 #endif
@@ -1174,7 +1172,7 @@ void InspectorController::enableDebuggerFromFrontend(bool always)
 {
     ASSERT(!debuggerEnabled());
     if (always)
-        m_state->setBoolean(InspectorState::debuggerAlwaysEnabled, true);
+        m_settings->setBoolean(InspectorSettings::DebuggerAlwaysEnabled, true);
 
     ASSERT(m_inspectedPage);
 
@@ -1206,7 +1204,7 @@ void InspectorController::disableDebugger(bool always)
         return;
 
     if (always)
-        m_state->setBoolean(InspectorState::debuggerAlwaysEnabled, false);
+        m_settings->setBoolean(InspectorSettings::DebuggerAlwaysEnabled, false);
 
     ASSERT(m_inspectedPage);
 
