@@ -1,3 +1,18 @@
+2011-01-13  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium expectations update.
+        
+        Categorize remaining scrollbar-related failures. 6 are due to bug 52414
+        (small remaining difference between mac and chromium-mac scrollbars).
+        fast/text/international/thai-line-breaks.html just needed a baseline
+        update (done for both Leopard and Snow Leopard).
+
+        * platform/chromium-mac-leopard/fast/text/international/thai-line-breaks-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/text/international/thai-line-breaks-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/thai-line-breaks-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/international/thai-line-breaks-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-13  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed chromium expectations update.

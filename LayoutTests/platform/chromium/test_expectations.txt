@@ -3025,16 +3025,14 @@ BUGCR68436 WIN DEBUG : fast/dom/DOMImplementation/createDocument-with-used-docty
 BUGCR68576 LINUX DEBUG : svg/batik/paints/patternPreserveAspectRatioA.svg = PASS TIMEOUT CRASH
 BUGCR68599 LINUX WIN : http/tests/security/mixedContent/insecure-css-in-main-frame.html = PASS TEXT
 
-// Needs investigation after r74892 (simple removal of chromium-mac baselines
-// is not enough)
-BUG_MIHAIP MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
-BUG_MIHAIP MAC : fast/body-propagation/overflow/001.html = IMAGE
-BUG_MIHAIP MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
-BUG_MIHAIP MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
-BUG_MIHAIP MAC : fast/body-propagation/overflow/005.html = IMAGE
-BUG_MIHAIP MAC : fast/overflow/006.html = IMAGE
-BUG_MIHAIP MAC : fast/overflow/overflow-x-y.html = IMAGE
-BUG_MIHAIP MAC : fast/text/international/thai-line-breaks.html = IMAGE
+// Disabled scrollbars are rendered differently
+BUGWK52414 MAC : fast/body-propagation/overflow/001-xhtml.xhtml = IMAGE
+BUGWK52414 MAC : fast/body-propagation/overflow/001.html = IMAGE
+BUGWK52414 MAC : fast/body-propagation/overflow/005-declarative.xhtml = IMAGE
+BUGWK52414 MAC : fast/body-propagation/overflow/005-xhtml.xhtml = IMAGE
+BUGWK52414 MAC : fast/body-propagation/overflow/005.html = IMAGE
+BUGWK52414 MAC : fast/overflow/006.html = IMAGE
+BUGWK52414 MAC : fast/overflow/overflow-x-y.html = IMAGE
 
 // Platforms that use Skia don't support elliptical gradients.
 BUGWK51841 : fast/gradients/css3-color-stop-units.html = IMAGE
