@@ -1,3 +1,91 @@
+2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: do not use this as protocol message
+        dispatcher in models / agents.
+        https://bugs.webkit.org/show_bug.cgi?id=52442
+
+        Models should never for InspectorBackend.registerDomainDispatcher("foo", this).
+        There should be a clear way to tell whether method is being called
+        from within front-end or by the backend.
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent):
+        (WebInspector.DOMAgent.prototype.nodeForId):
+        (WebInspector.DOMAgent.prototype._bindNodes):
+        (WebInspector.DOMAgent.prototype._removeBreakpoints):
+        (WebInspector.DOMDispatcher):
+        (WebInspector.DOMDispatcher.prototype.setDocument):
+        (WebInspector.DOMDispatcher.prototype.attributesUpdated):
+        (WebInspector.DOMDispatcher.prototype.characterDataModified):
+        (WebInspector.DOMDispatcher.prototype.setChildNodes):
+        (WebInspector.DOMDispatcher.prototype.setDetachedRoot):
+        (WebInspector.DOMDispatcher.prototype.childNodeCountUpdated):
+        (WebInspector.DOMDispatcher.prototype.childNodeInserted):
+        (WebInspector.DOMDispatcher.prototype.childNodeRemoved):
+        (WebInspector.DOMDispatcher.prototype.didCommitLoad):
+        (WebInspector.ApplicationCacheDispatcher):
+        (WebInspector.ApplicationCacheDispatcher.prototype.getApplicationCachesAsync):
+        (WebInspector.ApplicationCacheDispatcher.prototype.updateApplicationCacheStatus):
+        (WebInspector.ApplicationCacheDispatcher.prototype.updateNetworkState):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorageDispatcher):
+        (WebInspector.DOMStorageDispatcher.prototype.addDOMStorage):
+        (WebInspector.DOMStorageDispatcher.prototype.selectDOMStorage):
+        (WebInspector.DOMStorageDispatcher.prototype.updateDOMStorage):
+        * inspector/front-end/Database.js:
+        (WebInspector.Database.prototype.executeSql):
+        (WebInspector.DatabaseDispatcher):
+        (WebInspector.DatabaseDispatcher.prototype.addDatabase):
+        (WebInspector.DatabaseDispatcher.prototype.selectDatabase):
+        (WebInspector.DatabaseDispatcher.prototype.sqlTransactionSucceeded):
+        (WebInspector.DatabaseDispatcher.prototype.sqlTransactionFailed):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype._pausedScript):
+        (WebInspector.DebuggerModel.prototype._resumedScript):
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerModel.prototype._failedToParseScriptSource):
+        (WebInspector.DebuggerDispatcher):
+        (WebInspector.DebuggerDispatcher.prototype.pausedScript):
+        (WebInspector.DebuggerDispatcher.prototype.resumedScript):
+        (WebInspector.DebuggerDispatcher.prototype.parsedScriptSource):
+        (WebInspector.DebuggerDispatcher.prototype.failedToParseScriptSource):
+        * inspector/front-end/FileSystemView.js:
+        (WebInspector.FileSystemDispatcher):
+        (WebInspector.FileSystemDispatcher.prototype.getFileSystemPathsAsync):
+        (WebInspector.FileSystemDispatcher.prototype.didGetFileSystemPath):
+        (WebInspector.FileSystemDispatcher.prototype.didGetFileSystemError):
+        (WebInspector.FileSystemDispatcher.prototype.didGetFileSystemDisabled):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype._addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype._removeProfileHeader):
+        (WebInspector.ProfilesPanel.prototype._addHeapSnapshotChunk):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._setRecordingProfile):
+        (WebInspector.ProfilerDispatcher):
+        (WebInspector.ProfilerDispatcher.prototype.profilerWasEnabled):
+        (WebInspector.ProfilerDispatcher.prototype.profilerWasDisabled):
+        (WebInspector.ProfilerDispatcher.prototype.resetProfiles):
+        (WebInspector.ProfilerDispatcher.prototype.addProfileHeader):
+        (WebInspector.ProfilerDispatcher.prototype.addHeapSnapshotChunk):
+        (WebInspector.ProfilerDispatcher.prototype.finishHeapSnapshot):
+        (WebInspector.ProfilerDispatcher.prototype.setRecordingProfile):
+        (WebInspector.ProfileSidebarTreeElement.prototype.ondelete):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._timelineProfilerWasStarted):
+        (WebInspector.TimelinePanel.prototype._timelineProfilerWasStopped):
+        (WebInspector.TimelinePanel.prototype._addRecordToTimeline):
+        (WebInspector.TimelineDispatcher):
+        (WebInspector.TimelineDispatcher.prototype.timelineProfilerWasStarted):
+        (WebInspector.TimelineDispatcher.prototype.timelineProfilerWasStopped):
+        (WebInspector.TimelineDispatcher.prototype.addRecordToTimeline):
+
 2011-01-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][V8] Unreviewed buildfix after r75788.

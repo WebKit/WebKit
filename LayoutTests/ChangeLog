@@ -1,3 +1,19 @@
+2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: do not use this as protocol message
+        dispatcher in models / agents.
+        https://bugs.webkit.org/show_bug.cgi?id=52442
+
+        Models should never for InspectorBackend.registerDomainDispatcher("foo", this).
+        There should be a clear way to tell whether method is being called
+        from within front-end or by the backend.
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest.startTest):
+        (initialize_DebuggerTest.InspectorTest.startDebuggerTest):
+        (initialize_DebuggerTest.InspectorTest.completeDebuggerTest.disableDebugger):
+        (initialize_DebuggerTest.InspectorTest.showScriptSource):
+
 2011-01-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed test fix.

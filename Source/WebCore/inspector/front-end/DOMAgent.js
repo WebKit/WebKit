@@ -300,7 +300,7 @@ WebInspector.DOMAgent = function() {
     this._window = new WebInspector.DOMWindow(this);
     this._idToDOMNode = null;
     this.document = null;
-    InspectorBackend.registerDomainDispatcher("DOM", this);
+    InspectorBackend.registerDomainDispatcher("DOM", new WebInspector.DOMDispatcher(this));
 }
 
 WebInspector.DOMAgent.prototype = {
@@ -351,7 +351,7 @@ WebInspector.DOMAgent.prototype = {
             elem.updateTitle();
     },
 
-    attributesUpdated: function(nodeId, attrsArray)
+    _attributesUpdated: function(nodeId, attrsArray)
     {
         var node = this._idToDOMNode[nodeId];
         node._setAttributesPayload(attrsArray);
@@ -359,7 +359,7 @@ WebInspector.DOMAgent.prototype = {
         this.document._fireDomEvent("DOMAttrModified", event);
     },
 
-    characterDataModified: function(nodeId, newValue)
+    _characterDataModified: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
         node._nodeValue = newValue;
@@ -373,13 +373,13 @@ WebInspector.DOMAgent.prototype = {
         return this._idToDOMNode[nodeId];
     },
 
-    didCommitLoad: function()
+    _didCommitLoad: function()
     {
         // Cleanup elements panel early on inspected page refresh.
-        this.setDocument(null);
+        this._setDocument(null);
     },
 
-    setDocument: function(payload)
+    _setDocument: function(payload)
     {
         this._idToDOMNode = {};
         if (payload && "id" in payload) {
@@ -392,13 +392,13 @@ WebInspector.DOMAgent.prototype = {
         WebInspector.panels.elements.setDocument(this.document);
     },
 
-    setDetachedRoot: function(payload)
+    _setDetachedRoot: function(payload)
     {
         var root = new WebInspector.DOMNode(this.document, payload);
         this._idToDOMNode[payload.id] = root;
     },
 
-    setChildNodes: function(parentId, payloads)
+    _setChildNodes: function(parentId, payloads)
     {
         var parent = this._idToDOMNode[parentId];
         parent._setChildrenPayload(payloads);
@@ -415,7 +415,7 @@ WebInspector.DOMAgent.prototype = {
         }
     },
 
-    childNodeCountUpdated: function(nodeId, newValue)
+    _childNodeCountUpdated: function(nodeId, newValue)
     {
         var node = this._idToDOMNode[nodeId];
         node._childNodeCount = newValue;
@@ -425,7 +425,7 @@ WebInspector.DOMAgent.prototype = {
             treeElement.hasChildren = newValue;
     },
 
-    childNodeInserted: function(parentId, prevId, payload)
+    _childNodeInserted: function(parentId, prevId, payload)
     {
         var parent = this._idToDOMNode[parentId];
         var prev = this._idToDOMNode[prevId];
@@ -435,7 +435,7 @@ WebInspector.DOMAgent.prototype = {
         this.document._fireDomEvent("DOMNodeInserted", event);
     },
 
-    childNodeRemoved: function(parentId, nodeId)
+    _childNodeRemoved: function(parentId, nodeId)
     {
         var parent = this._idToDOMNode[parentId];
         var node = this._idToDOMNode[nodeId];
@@ -457,31 +457,87 @@ WebInspector.DOMAgent.prototype = {
     }
 }
 
-WebInspector.ApplicationCache = {}
-
-WebInspector.ApplicationCache.getApplicationCachesAsync = function(callback)
+WebInspector.DOMDispatcher = function(domAgent)
 {
-    function mycallback(applicationCaches)
+    this._domAgent = domAgent;
+}
+
+WebInspector.DOMDispatcher.prototype = {
+    setDocument: function(payload)
     {
-        // FIXME: Currently, this list only returns a single application cache.
-        if (applicationCaches)
-            callback(applicationCaches);
+        this._domAgent._setDocument(payload);
+    },
+
+    attributesUpdated: function(nodeId, attrsArray)
+    {
+        this._domAgent._attributesUpdated(nodeId, attrsArray);
+    },
+
+    characterDataModified: function(nodeId, newValue)
+    {
+        this._domAgent._characterDataModified(nodeId, newValue);
+    },
+
+    setChildNodes: function(parentId, payloads)
+    {
+        this._domAgent._setChildNodes(parentId, payloads);
+    },
+
+    setDetachedRoot: function(payload)
+    {
+        this._domAgent._setDetachedRoot(payload);
+    },
+
+    childNodeCountUpdated: function(nodeId, newValue)
+    {
+        this._domAgent._childNodeCountUpdated(nodeId, newValue);
+    },
+
+    childNodeInserted: function(parentId, prevId, payload)
+    {
+        this._domAgent._childNodeInserted(parentId, prevId, payload);
+    },
+
+    childNodeRemoved: function(parentId, nodeId)
+    {
+        this._domAgent._childNodeRemoved(parentId, nodeId);
+    },
+
+    didCommitLoad: function()
+    {
+        this._domAgent._didCommitLoad();
     }
-
-    InspectorBackend.getApplicationCaches(mycallback);
 }
 
-WebInspector.ApplicationCache.updateApplicationCacheStatus = function(status)
+WebInspector.ApplicationCacheDispatcher = function()
 {
-    WebInspector.panels.resources.updateApplicationCacheStatus(status);
 }
 
-WebInspector.ApplicationCache.updateNetworkState = function(isNowOnline)
-{
-    WebInspector.panels.resources.updateNetworkState(isNowOnline);
+WebInspector.ApplicationCacheDispatcher.prototype = {
+    getApplicationCachesAsync: function(callback)
+    {
+        function mycallback(applicationCaches)
+        {
+            // FIXME: Currently, this list only returns a single application cache.
+            if (applicationCaches)
+                callback(applicationCaches);
+        }
+    
+        InspectorBackend.getApplicationCaches(mycallback);
+    },
+        
+    updateApplicationCacheStatus: function(status)
+    {
+        WebInspector.panels.resources.updateApplicationCacheStatus(status);
+    },
+
+    updateNetworkState: function(isNowOnline)
+    {
+        WebInspector.panels.resources.updateNetworkState(isNowOnline);
+    }
 }
 
-InspectorBackend.registerDomainDispatcher("ApplicationCache", WebInspector.ApplicationCache);
+InspectorBackend.registerDomainDispatcher("ApplicationCache", new WebInspector.ApplicationCacheDispatcher());
 
 WebInspector.Cookies = {}
 

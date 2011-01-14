@@ -99,7 +99,7 @@ WebInspector.TimelinePanel = function()
     this._markTimelineRecords = [];
     this._expandOffset = 15;
 
-    InspectorBackend.registerDomainDispatcher("Timeline", this);
+    InspectorBackend.registerDomainDispatcher("Timeline", new WebInspector.TimelineDispatcher(this));
 }
 
 // Define row height, should be in sync with styles for timeline graphs.
@@ -285,17 +285,17 @@ WebInspector.TimelinePanel.prototype = {
         this._scheduleRefresh(true);
     },
 
-    timelineProfilerWasStarted: function()
+    _timelineProfilerWasStarted: function()
     {
         this.toggleTimelineButton.toggled = true;
     },
 
-    timelineProfilerWasStopped: function()
+    _timelineProfilerWasStopped: function()
     {
         this.toggleTimelineButton.toggled = false;
     },
 
-    addRecordToTimeline: function(record)
+    _addRecordToTimeline: function(record)
     {
         if (record.type == WebInspector.TimelineAgent.RecordType.ResourceSendRequest) {
             var isMainResource = (record.data.identifier === WebInspector.mainResource.identifier);
@@ -642,6 +642,28 @@ WebInspector.TimelinePanel.prototype = {
 }
 
 WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
+
+WebInspector.TimelineDispatcher = function(timelinePanel)
+{
+    this._timelinePanel = timelinePanel;
+}
+
+WebInspector.TimelineDispatcher.prototype = {
+    timelineProfilerWasStarted: function()
+    {
+        this._timelinePanel._timelineProfilerWasStarted();
+    },
+
+    timelineProfilerWasStopped: function()
+    {
+        this._timelinePanel._timelineProfilerWasStopped();
+    },
+
+    addRecordToTimeline: function(record)
+    {
+        this._timelinePanel._addRecordToTimeline(record);
+    }
+}
 
 WebInspector.TimelineCategory = function(name, title, color)
 {

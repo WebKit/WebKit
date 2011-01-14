@@ -7,15 +7,15 @@ InspectorTest.startDebuggerTest = function(callback)
     if (WebInspector.panels.scripts._debuggerEnabled)
         startTest();
     else {
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "debuggerWasEnabled", startTest);
+        InspectorTest._addSniffer(WebInspector.panels.scripts, "debuggerWasEnabled", startTest);
         WebInspector.panels.scripts._toggleDebugging(false);
     }
 
     function startTest()
     {
         InspectorTest.addResult("Debugger was enabled.");
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "pausedScript", InspectorTest._pausedScript, true);
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "resumedScript", InspectorTest._resumedScript, true);
+        InspectorTest._addSniffer(WebInspector.debuggerModel, "_pausedScript", InspectorTest._pausedScript, true);
+        InspectorTest._addSniffer(WebInspector.debuggerModel, "_resumedScript", InspectorTest._resumedScript, true);
         callback();
     }
 };
@@ -34,7 +34,7 @@ InspectorTest.completeDebuggerTest = function()
         if (!scriptsPanel._debuggerEnabled)
             completeTest();
         else {
-            InspectorTest._addSniffer(WebInspector.debuggerModel, "debuggerWasDisabled", completeTest);
+            InspectorTest._addSniffer(WebInspector.panels.scripts, "debuggerWasDisabled", completeTest);
             scriptsPanel._toggleDebugging(false);
         }
     }
@@ -124,7 +124,7 @@ InspectorTest.showScriptSource = function(scriptName, callback)
     if (InspectorTest._scriptsAreParsed([scriptName]))
         InspectorTest._showScriptSource(scriptName, callback);
     else
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
+        InspectorTest._addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
 InspectorTest.waitUntilCurrentSourceFrameIsLoaded = function(callback)

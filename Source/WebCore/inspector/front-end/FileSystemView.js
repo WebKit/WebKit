@@ -28,34 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.FileSystem = {}
+WebInspector.FileSystemDispatcher = function()
+{
+}
 
 // Keep in sync with Type in AsyncFileSystem.h
-WebInspector.FileSystem.TEMPORARY = 0;
-WebInspector.FileSystem.PERSISTENT = 1;
+WebInspector.FileSystemDispatcher.TEMPORARY = 0;
+WebInspector.FileSystemDispatcher.PERSISTENT = 1;
 
-WebInspector.FileSystem.getFileSystemPathsAsync = function(origin)
-{
-    InspectorBackend.getFileSystemPathAsync(WebInspector.FileSystem.PERSISTENT, origin);
-    InspectorBackend.getFileSystemPathAsync(WebInspector.FileSystem.TEMPORARY, origin);
+WebInspector.FileSystemDispatcher.prototype = {
+    getFileSystemPathsAsync: function(origin)
+    {
+        InspectorBackend.getFileSystemPathAsync(WebInspector.FileSystemDispatcher.PERSISTENT, origin);
+        InspectorBackend.getFileSystemPathAsync(WebInspector.FileSystemDispatcher.TEMPORARY, origin);
+    },
+
+    didGetFileSystemPath: function(root, type, origin)
+    {
+        WebInspector.panels.resources.updateFileSystemPath(root, type, origin);
+    },
+
+    didGetFileSystemError: function(type, origin)
+    {
+        WebInspector.panels.resources.updateFileSystemError(type, origin);
+    },
+
+    didGetFileSystemDisabled: function()
+    {
+        WebInspector.panels.resources.setFileSystemDisabled();
+    }
 }
 
-WebInspector.FileSystem.didGetFileSystemPath = function(root, type, origin)
-{
-    WebInspector.panels.resources.updateFileSystemPath(root, type, origin);
-}
-
-WebInspector.FileSystem.didGetFileSystemError = function(type, origin)
-{
-    WebInspector.panels.resources.updateFileSystemError(type, origin);
-}
-
-WebInspector.FileSystem.didGetFileSystemDisabled = function()
-{
-    WebInspector.panels.resources.setFileSystemDisabled();
-}
-
-InspectorBackend.registerDomainDispatcher("FileSystem", WebInspector.FileSystem);
+InspectorBackend.registerDomainDispatcher("FileSystem", new WebInspector.FileSystemDispatcher());
 
 WebInspector.FileSystemView = function(treeElement, fileSystemOrigin)
 {

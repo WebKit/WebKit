@@ -34,7 +34,6 @@ WebInspector.ResourceTreeModel = function()
     this._resourcesByURL = {};
     this._resourcesByFrameId = {};
     this._subframes = {};
-    InspectorBackend.registerDomainDispatcher("Resources", this);
     InspectorBackend.cachedResources(this._processCachedResources.bind(this));
 }
 
