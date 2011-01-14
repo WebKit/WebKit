@@ -1,3 +1,66 @@
+2011-01-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Extract BrowserDebuggerAgent from InspectorController, InspectorDOMAgent and InspectorDebugger agent.
+        We have some methods of Debugger which are related to DOM.
+        Lets extract these methods to BrowserDebugger agent.
+
+        http://bugs.webkit.org/show_bug.cgi?id=52294
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBrowserDebuggerAgent.cpp: Added.
+        (WebCore::InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent):
+        (WebCore::InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent):
+        (WebCore::InspectorBrowserDebuggerAgent::discardBindings):
+        (WebCore::InspectorBrowserDebuggerAgent::setEventListenerBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeEventListenerBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::didInsertDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::didRemoveDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorBrowserDebuggerAgent::hasBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::updateSubtreeBreakpoints):
+        (WebCore::InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorBrowserDebuggerAgent::setXHRBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeXHRBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::willSendXMLHttpRequest):
+        (WebCore::InspectorBrowserDebuggerAgent::clearForPageNavigation):
+        * inspector/InspectorBrowserDebuggerAgent.h: Added.
+        (WebCore::InspectorBrowserDebuggerAgent::create):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::restoreStickyBreakpoints):
+        (WebCore::InspectorController::restoreStickyBreakpoint):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::discardBindings):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+
 2011-01-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

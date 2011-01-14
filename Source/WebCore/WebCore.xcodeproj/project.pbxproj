@@ -5604,6 +5604,8 @@
 		F39BE95C12673BF400E0A674 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = F39BE95A12673BF400E0A674 /* ScriptArguments.h */; };
 		F3D461481161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3D461461161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp */; };
 		F3D461491161D53200CA0D09 /* JSWorkerContextErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */; };
+		F3D4C47812E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3D4C47612E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp */; };
+		F3D4C47912E07663003DA150 /* InspectorBrowserDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D4C47712E07663003DA150 /* InspectorBrowserDebuggerAgent.h */; };
 		F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */; };
 		F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EAF4AD10C742B1009100D3 /* OpenTypeSanitizer.h */; };
 		F55B3DAD1251F12D003EF269 /* BaseTextInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */; };
@@ -11940,6 +11942,8 @@
 		F39BE95A12673BF400E0A674 /* ScriptArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArguments.h; sourceTree = "<group>"; };
 		F3D461461161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextErrorHandler.cpp; sourceTree = "<group>"; };
 		F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextErrorHandler.h; sourceTree = "<group>"; };
+		F3D4C47612E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBrowserDebuggerAgent.cpp; sourceTree = "<group>"; };
+		F3D4C47712E07663003DA150 /* InspectorBrowserDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBrowserDebuggerAgent.h; sourceTree = "<group>"; };
 		F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpenTypeSanitizer.cpp; path = opentype/OpenTypeSanitizer.cpp; sourceTree = "<group>"; };
 		F4EAF4AD10C742B1009100D3 /* OpenTypeSanitizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenTypeSanitizer.h; path = opentype/OpenTypeSanitizer.h; sourceTree = "<group>"; };
 		F523D23B02DE4396018635CA /* HTMLDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDocument.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -12923,6 +12927,8 @@
 				7A5640BE12DF9E5E00F4536D /* InspectorSettings.h */,
 				B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */,
 				B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */,
+				F3D4C47612E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp */,
+				F3D4C47712E07663003DA150 /* InspectorBrowserDebuggerAgent.h */,
 				7A1F2B51126C61B20006A7E6 /* InspectorClient.cpp */,
 				1C81B9580E97330800266E07 /* InspectorClient.h */,
 				1C81B9570E97330800266E07 /* InspectorController.cpp */,
@@ -22327,8 +22333,8 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				2E37DFDB12DBAFB800A6B233 /* DOMURL.h in Headers */,
 				2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */,
-				4FC2842412DDF27E00BF42E4 /* InspectorBrowserDebuggerAgent.h in Headers */,
 				7A5640C012DF9E5E00F4536D /* InspectorSettings.h in Headers */,
+				F3D4C47912E07663003DA150 /* InspectorBrowserDebuggerAgent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25014,8 +25020,8 @@
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				2E37DFDA12DBAFB800A6B233 /* DOMURL.cpp in Sources */,
 				2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */,
-				4FC2842512DDF27E00BF42E4 /* InspectorBrowserDebuggerAgent.cpp in Sources */,
 				7A5640BF12DF9E5E00F4536D /* InspectorSettings.cpp in Sources */,
+				F3D4C47812E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
