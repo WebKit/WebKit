@@ -1,3 +1,57 @@
+2011-01-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r75774.
+        http://trac.webkit.org/changeset/75774
+        https://bugs.webkit.org/show_bug.cgi?id=52431
+
+        gtk builds were broken (Requested by loislo2 on #webkit).
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.idl:
+        * inspector/InspectorBrowserDebuggerAgent.cpp: Removed.
+        * inspector/InspectorBrowserDebuggerAgent.h: Removed.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::enableDebuggerFromFrontend):
+        (WebCore::InspectorController::disableDebugger):
+        (WebCore::InspectorController::restoreStickyBreakpoints):
+        (WebCore::InspectorController::restoreStickyBreakpoint):
+        (WebCore::InspectorController::setEventListenerBreakpoint):
+        (WebCore::InspectorController::removeEventListenerBreakpoint):
+        (WebCore::InspectorController::hasEventListenerBreakpoint):
+        (WebCore::InspectorController::setXHRBreakpoint):
+        (WebCore::InspectorController::removeXHRBreakpoint):
+        (WebCore::InspectorController::hasXHRBreakpoint):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::discardBindings):
+        (WebCore::InspectorDOMAgent::setDOMBreakpoint):
+        (WebCore::InspectorDOMAgent::removeDOMBreakpoint):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeInsertion):
+        (WebCore::InspectorDOMAgent::shouldBreakOnNodeRemoval):
+        (WebCore::InspectorDOMAgent::shouldBreakOnAttributeModification):
+        (WebCore::InspectorDOMAgent::descriptionForDOMEvent):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::hasBreakpoint):
+        (WebCore::InspectorDOMAgent::updateSubtreeBreakpoints):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+
 2011-01-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

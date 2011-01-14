@@ -2002,8 +2002,6 @@
             'inspector/InjectedScriptHost.h',
             'inspector/InspectorApplicationCacheAgent.cpp',
             'inspector/InspectorApplicationCacheAgent.h',
-            'inspector/InspectorBrowserDebuggerAgent.cpp',
-            'inspector/InspectorBrowserDebuggerAgent.h',
             'inspector/InspectorClient.cpp',
             'inspector/InspectorClient.h',
             'inspector/InspectorController.cpp',

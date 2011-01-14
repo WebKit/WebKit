@@ -749,8 +749,6 @@ class Git(SCM):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
-        if changed_files == None:
-            changed_files = []
         return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit), "--"] + changed_files, decode_output=False, cwd=self.checkout_root)
 
     def _run_git_svn_find_rev(self, arg):
