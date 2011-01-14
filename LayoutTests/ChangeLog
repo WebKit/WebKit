@@ -2,6 +2,68 @@
 
         Unreviewed chromium expectations update.
         
+        Add Chromium Snow Leopard expectations. These need to go into a new
+        chromium-mac-snowleopard directory, since these tests do not have
+        chromium-mac expectations, but currently pass on Leopard.
+        
+        The differences are due to bug 52335 (which explains why we can't use
+        the regular mac port Snow Leopard baselines).
+
+        * platform/chromium-mac-snowleopard/css1/box_properties/clear-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css1/box_properties/clear-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css1/box_properties/float-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css1/box_properties/float-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css1/text_properties/vertical_align-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css1/text_properties/vertical_align-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5505-mrgn-00-b-ag-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5505-mrgn-00-b-ag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0905-c414-flt-01-d-g-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t0905-c414-flt-01-d-g-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-00-d-ag-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-00-d-ag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-02-d-ag-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-02-d-ag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-03-d-ag-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-03-d-ag-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-02-d-agi-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-02-d-agi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-03-d-agi-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-03-d-agi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-04-d-agi-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-04-d-agi-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/resize-corner-tracking-transformed-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/css/resize-corner-tracking-transformed-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/searchfield-heights-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/searchfield-heights-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/slider-thumb-shared-style-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/slider-thumb-shared-style-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/gradients/background-clipped-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/gradients/background-clipped-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/replaced/selection-rect-transform-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/replaced/selection-rect-transform-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/whitespace/tab-character-basics-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/text/whitespace/tab-character-basics-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/transforms/diamond-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/transforms/diamond-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/transforms/shadows-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/transforms/shadows-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-caret-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-caret-expected.png: Added.
+
+2011-01-13  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed chromium expectations update.
+        
         Categorize remaining scrollbar-related failures. 6 are due to bug 52414
         (small remaining difference between mac and chromium-mac scrollbars).
         fast/text/international/thai-line-breaks.html just needed a baseline
