@@ -58,6 +58,7 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
+#include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorCSSAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
@@ -145,7 +146,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_injectedScriptHost(InjectedScriptHost::create(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
-    , m_hasXHRBreakpointWithEmptyURL(false)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
 #endif
 {
@@ -175,6 +175,7 @@ void InspectorController::inspectedPageDestroyed()
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_debuggerAgent.clear();
+    m_browserDebuggerAgent.clear();
 #endif
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
@@ -724,6 +725,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_debuggerAgent) {
             m_debuggerAgent->clearForPageNavigation();
+            if (m_browserDebuggerAgent)
+                m_browserDebuggerAgent->clearForPageNavigation();
             restoreStickyBreakpoints();
         }
 #endif
@@ -1177,6 +1180,7 @@ void InspectorController::enableDebuggerFromFrontend(bool always)
     ASSERT(m_inspectedPage);
 
     m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get());
+    m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this);
     restoreStickyBreakpoints();
 
     m_frontend->debuggerWasEnabled();
@@ -1209,6 +1213,7 @@ void InspectorController::disableDebugger(bool always)
     ASSERT(m_inspectedPage);
 
     m_debuggerAgent.clear();
+    m_browserDebuggerAgent.clear();
 
     m_attachDebuggerWhenShown = false;
 
@@ -1229,10 +1234,6 @@ void InspectorController::setStickyBreakpoints(PassRefPtr<InspectorObject> break
 
 void InspectorController::restoreStickyBreakpoints()
 {
-    m_eventListenerBreakpoints.clear();
-    m_XHRBreakpoints.clear();
-    m_hasXHRBreakpointWithEmptyURL = false;
-
     RefPtr<InspectorObject> allBreakpoints = m_state->getObject(InspectorState::stickyBreakpoints);
     KURL url = m_inspectedPage->mainFrame()->loader()->url();
     url.removeFragmentIdentifier();
@@ -1261,13 +1262,14 @@ void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> br
     if (!condition)
         return;
 
-    if (type == eventListenerBreakpointType) {
+    if (type == eventListenerBreakpointType && m_browserDebuggerAgent) {
         if (!enabled)
             return;
         String eventName;
-        if (condition->getString("eventName", &eventName))
-            setEventListenerBreakpoint(eventName);
-    } else if (type == javaScriptBreakpointType) {
+        if (!condition->getString("eventName", &eventName))
+            return;
+        m_browserDebuggerAgent->setEventListenerBreakpoint(eventName);
+    } else if (type == javaScriptBreakpointType && m_debuggerAgent) {
         String url;
         if (!condition->getString("url", &url))
             return;
@@ -1277,63 +1279,16 @@ void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> br
         String javaScriptCondition;
         if (!condition->getString("condition", &javaScriptCondition))
             return;
-        if (m_debuggerAgent)
-            m_debuggerAgent->setStickyBreakpoint(url, static_cast<unsigned>(lineNumber), javaScriptCondition, enabled);
-    } else if (type == xhrBreakpointType) {
+        m_debuggerAgent->setStickyBreakpoint(url, static_cast<unsigned>(lineNumber), javaScriptCondition, enabled);
+    } else if (type == xhrBreakpointType && m_browserDebuggerAgent) {
         if (!enabled)
             return;
         String url;
-        if (condition->getString("url", &url))
-            setXHRBreakpoint(url);
+        if (!condition->getString("url", &url))
+            return;
+        m_browserDebuggerAgent->setXHRBreakpoint(url);
     }
 }
-
-void InspectorController::setEventListenerBreakpoint(const String& eventName)
-{
-    m_eventListenerBreakpoints.add(eventName);
-}
-
-void InspectorController::removeEventListenerBreakpoint(const String& eventName)
-{
-    m_eventListenerBreakpoints.remove(eventName);
-}
-
-bool InspectorController::hasEventListenerBreakpoint(const String& eventName)
-{
-    return m_eventListenerBreakpoints.contains(eventName);
-}
-
-void InspectorController::setXHRBreakpoint(const String& url)
-{
-    if (url.isEmpty())
-        m_hasXHRBreakpointWithEmptyURL = true;
-    else
-        m_XHRBreakpoints.add(url);
-}
-
-void InspectorController::removeXHRBreakpoint(const String& url)
-{
-    if (url.isEmpty())
-        m_hasXHRBreakpointWithEmptyURL = false;
-    else
-        m_XHRBreakpoints.remove(url);
-}
-
-bool InspectorController::hasXHRBreakpoint(const String& url, String* breakpointURL)
-{
-    if (m_hasXHRBreakpointWithEmptyURL) {
-        *breakpointURL = "";
-        return true;
-    }
-    for (HashSet<String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
-        if (url.contains(*it)) {
-            *breakpointURL = *it;
-            return true;
-        }
-    }
-    return false;
-}
-
 #endif
 
 void InspectorController::dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException)

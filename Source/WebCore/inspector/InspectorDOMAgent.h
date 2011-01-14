@@ -144,8 +144,14 @@ namespace WebCore {
 
         String documentURLString(Document* document) const;
 
-        void setDOMBreakpoint(long nodeId, long type);
-        void removeDOMBreakpoint(long nodeId, long type);
+        // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
+        // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
+        static Node* innerFirstChild(Node*);
+        static Node* innerNextSibling(Node*);
+        static Node* innerPreviousSibling(Node*);
+        static unsigned innerChildNodeCount(Node*);
+        static Node* innerParentNode(Node*);
+        static bool isWhitespace(Node*);
 
     private:
         void startListeningFrameDocument(Node* frameOwnerNode);
@@ -169,15 +175,6 @@ namespace WebCore {
         PassRefPtr<InspectorArray> buildArrayForElementAttributes(Element* element);
         PassRefPtr<InspectorArray> buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap);
         PassRefPtr<InspectorObject> buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node);
-
-        // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
-        // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
-        Node* innerFirstChild(Node* node);
-        Node* innerNextSibling(Node* node);
-        Node* innerPreviousSibling(Node* node);
-        unsigned innerChildNodeCount(Node* node);
-        Node* innerParentNode(Node* node);
-        bool isWhitespace(Node* node);
 
         Document* mainFrameDocument() const;
 
@@ -203,7 +200,6 @@ namespace WebCore {
         Timer<InspectorDOMAgent> m_matchJobsTimer;
         HashSet<RefPtr<Node> > m_searchResults;
         Vector<long> m_inspectedNodes;
-        HashMap<Node*, uint32_t> m_breakpoints;
     };
 
 #endif
