@@ -1,3 +1,12 @@
+2011-01-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r75740.
+        http://trac.webkit.org/changeset/75740
+
+        This led to GTK+ redness
+
+        * platform/gtk/Skipped:
+
 2011-01-13  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
