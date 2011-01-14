@@ -1,4 +1,4 @@
-# Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+# Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,20 +37,21 @@ VPATH = \
 .PHONY : all
 all : \
     ArrayPrototype.lut.h \
-    chartables.c \
     DatePrototype.lut.h \
+    HeaderDetection.h \
     JSONObject.lut.h \
+    JavaScriptCore.JSVALUE32.exp \
+    JavaScriptCore.JSVALUE32_64.exp \
+    JavaScriptCore.JSVALUE64.exp \
     Lexer.lut.h \
     MathObject.lut.h \
     NumberConstructor.lut.h \
     RegExpConstructor.lut.h \
+    RegExpJitTables.h \
     RegExpObject.lut.h \
     StringPrototype.lut.h \
+    chartables.c \
     docs/bytecode.html \
-    RegExpJitTables.h \
-    JavaScriptCore.JSVALUE32.exp \
-    JavaScriptCore.JSVALUE32_64.exp \
-    JavaScriptCore.JSVALUE64.exp \
 #
 
 # lookup tables for classes
@@ -68,9 +69,12 @@ chartables.c : dftables
 docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp 
 	perl $^ $@
 
-#character tables for Yarr
+# character tables for Yarr
+
 RegExpJitTables.h: create_regex_tables
 	python $^ > $@
+
+# export files
 
 JavaScriptCore.JSVALUE32.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32only.exp
 	cat $^ > $@
@@ -80,3 +84,8 @@ JavaScriptCore.JSVALUE32_64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE32_64o
 
 JavaScriptCore.JSVALUE64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE64only.exp
 	cat $^ > $@
+
+# header detection
+
+HeaderDetection.h : DerivedSources.make
+	if [ -f $SDKROOT/System/Library/Frameworks/System.framework/PrivateHeaders/pthread_machdep.h ]; then echo "#define HAVE_PTHREAD_MACHDEP_H 1" > $@; else echo > $@; fi

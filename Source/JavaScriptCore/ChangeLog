@@ -1,3 +1,16 @@
+2011-01-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/5469576> Use __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0 if available.
+
+        * DerivedSources.make: Create a header file, HeaderDetection.h, that tells
+        us whether pthread_machdep.h is available.
+        * wtf/FastMalloc.cpp: If __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0 is available, then
+        don't do the pthread_getspecific_function_pointer trick.
+        (WTF::setThreadHeap): Ditto, but set thread-specific data.
+        (WTF::TCMalloc_ThreadCache::GetThreadHeap): Ditto, but get rather than set.
+
 2011-01-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gavin Barraclough.

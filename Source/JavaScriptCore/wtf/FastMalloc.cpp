@@ -1,6 +1,6 @@
 // Copyright (c) 2005, 2007, Google Inc.
 // All rights reserved.
-// Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+// Copyright (C) 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -442,10 +442,18 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #endif
+
+#if HAVE(HEADER_DETECTION_H)
+#include "HeaderDetection.h"
+#endif
+
 #if HAVE(DISPATCH_H)
 #include <dispatch/dispatch.h>
 #endif
 
+#if HAVE(PTHREAD_MACHDEP_H)
+#include <System/pthread_machdep.h>
+#endif
 
 #ifndef PRIuS
 #define PRIuS "zu"
@@ -455,7 +463,7 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 // call to the function on Mac OS X, and it's used in performance-critical code. So we
 // use a function pointer. But that's not necessarily faster on other platforms, and we had
 // problems with this technique on Windows, so we'll do this only on Mac OS X.
-#if OS(DARWIN)
+#if OS(DARWIN) && !defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
 static void* (*pthread_getspecific_function_pointer)(pthread_key_t) = pthread_getspecific;
 #define pthread_getspecific(key) pthread_getspecific_function_pointer(key)
 #endif
@@ -2448,11 +2456,18 @@ DWORD tlsIndex = TLS_OUT_OF_INDEXES;
 
 static ALWAYS_INLINE void setThreadHeap(TCMalloc_ThreadCache* heap)
 {
-    // still do pthread_setspecific when using MSVC fast TLS to
-    // benefit from the delete callback.
+    // Still do pthread_setspecific even if there's an alternate form
+    // of thread-local storage in use, to benefit from the delete callback.
     pthread_setspecific(heap_key, heap);
+
 #if OS(WINDOWS)
     TlsSetValue(tlsIndex, heap);
+#elif defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
+    // Can't have two libraries both doing this in the same process,
+    // so check and make this crash right away.
+    if (_pthread_getspecific_direct(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0))
+        CRASH();
+    _pthread_setspecific_direct(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0, heap);
 #endif
 }
 
@@ -2964,6 +2979,8 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetThreadHeap() {
     return threadlocal_heap;
 #elif OS(WINDOWS)
     return static_cast<TCMalloc_ThreadCache*>(TlsGetValue(tlsIndex));
+#elif defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
+    return static_cast<TCMalloc_ThreadCache*>(_pthread_getspecific_direct(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0));
 #else
     return static_cast<TCMalloc_ThreadCache*>(pthread_getspecific(heap_key));
 #endif
