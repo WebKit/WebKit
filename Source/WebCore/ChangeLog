@@ -1,3 +1,12 @@
+2011-01-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Fix build problem introduced by http://trac.webkit.org/changeset/75713
+        https://bugs.webkit.org/show_bug.cgi?id=30179
+
+        * plugins/symbian/PluginViewSymbian.cpp:
+
 2011-01-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

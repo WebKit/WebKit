@@ -66,7 +66,7 @@
 #include <runtime/JSValue.h>
 
 typedef void (*_qtwebkit_page_plugin_created)(QWebFrame*, void*, void*); // frame, plugin instance, plugin functions
-static _qtwebkit_page_plugin_created qt_page_plugin_created = 0;
+static _qtwebkit_page_plugin_created qtwebkit_page_plugin_created = 0;
 QWEBKIT_EXPORT void qtwebkit_setPluginCreatedCallback(_qtwebkit_page_plugin_created cb)
 {
     qtwebkit_page_plugin_created = cb;
