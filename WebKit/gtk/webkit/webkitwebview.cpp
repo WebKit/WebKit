@@ -62,6 +62,7 @@
 #include "HitTestResult.h"
 #include "IconDatabase.h"
 #include "InspectorClientGtk.h"
+#include "InspectorController.h"
 #include "MemoryCache.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NotImplemented.h"

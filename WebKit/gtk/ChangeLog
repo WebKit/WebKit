@@ -1,5 +1,11 @@
 2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: gtk build fix (2).
+
+        * webkit/webkitwebview.cpp:
+
+2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: gtk build fix.
 
         * webkit/webkitwebinspector.cpp:
