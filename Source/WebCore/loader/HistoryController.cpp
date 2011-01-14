@@ -80,6 +80,8 @@ void HistoryController::saveScrollPositionAndViewStateToItem(HistoryItem* item)
         return;
         
     item->setScrollPoint(m_frame->view()->scrollPosition());
+    item->setPageScaleFactor(m_frame->pageScaleFactor());
+    
     // FIXME: It would be great to work out a way to put this code in WebCore instead of calling through to the client.
     m_frame->loader()->client()->saveViewStateToItem(item);
 }
@@ -114,9 +116,12 @@ void HistoryController::restoreScrollPositionAndViewState()
     // through to the client. It's currently used only for the PDF view on Mac.
     m_frame->loader()->client()->restoreViewState();
     
-    if (FrameView* view = m_frame->view())
-        if (!view->wasScrolledByUser())
+    if (FrameView* view = m_frame->view()) {
+        if (!view->wasScrolledByUser()) {
             view->setScrollPosition(m_currentItem->scrollPoint());
+            m_frame->scalePage(m_currentItem->pageScaleFactor(), m_currentItem->scrollPoint());
+        }
+    }
 }
 
 void HistoryController::updateBackForwardListForFragmentScroll()

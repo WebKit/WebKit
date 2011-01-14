@@ -1,3 +1,22 @@
+2011-01-13  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Darin Adler and Brady Eidson.
+
+        The pageScaleFactor() should be saved/restored along with the scroll position
+        https://bugs.webkit.org/show_bug.cgi?id=52406
+        <rdar://problem/8714412>
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem): Initialize m_pageScaleFactor.
+        (WebCore::HistoryItem::pageScaleFactor): Added getter.
+        (WebCore::HistoryItem::setPageScaleFactor): Added setter.
+        (WebCore::HistoryItem::encodeBackForwardTreeNode): Encode m_pageScaleFactor.
+        (WebCore::HistoryItem::decodeBackForwardTree): Decode m_pageScaleFactor.
+        * history/HistoryItem.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::saveScrollPositionAndViewStateToItem): Save the page scale factor...
+        (WebCore::HistoryController::restoreScrollPositionAndViewState): ...and restore it here.
+
 2011-01-13  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

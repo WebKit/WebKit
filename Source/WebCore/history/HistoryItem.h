@@ -123,6 +123,10 @@ public:
     const IntPoint& scrollPoint() const;
     void setScrollPoint(const IntPoint&);
     void clearScrollPoint();
+    
+    float pageScaleFactor() const;
+    void setPageScaleFactor(float);
+    
     const Vector<String>& documentState() const;
     void setDocumentState(const Vector<String>&);
     void clearDocumentState();
@@ -245,6 +249,7 @@ private:
     bool m_lastVisitWasHTTPNonGet;
 
     IntPoint m_scrollPoint;
+    float m_pageScaleFactor;
     Vector<String> m_documentState;
     
     HistoryItemVector m_children;

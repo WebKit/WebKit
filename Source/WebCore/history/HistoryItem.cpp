@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-const uint32_t backForwardTreeEncodingVersion = 0;
+const uint32_t backForwardTreeEncodingVersion = 1;
 
 static long long generateSequenceNumber()
 {
@@ -59,6 +59,7 @@ void (*notifyHistoryItemChanged)(HistoryItem*) = defaultNotifyHistoryItemChanged
 HistoryItem::HistoryItem()
     : m_lastVisitedTime(0)
     , m_lastVisitWasHTTPNonGet(false)
+    , m_pageScaleFactor(1)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -73,6 +74,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_title(title)
     , m_lastVisitedTime(time)
     , m_lastVisitWasHTTPNonGet(false)
+    , m_pageScaleFactor(1)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -89,6 +91,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_displayTitle(alternateTitle)
     , m_lastVisitedTime(time)
     , m_lastVisitWasHTTPNonGet(false)
+    , m_pageScaleFactor(1)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -106,6 +109,7 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_title(title)
     , m_lastVisitedTime(0)
     , m_lastVisitWasHTTPNonGet(false)
+    , m_pageScaleFactor(1)
     , m_lastVisitWasFailure(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -137,6 +141,7 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
     , m_lastVisitedTime(item.m_lastVisitedTime)
     , m_lastVisitWasHTTPNonGet(item.m_lastVisitWasHTTPNonGet)
     , m_scrollPoint(item.m_scrollPoint)
+    , m_pageScaleFactor(item.m_pageScaleFactor)
     , m_lastVisitWasFailure(item.m_lastVisitWasFailure)
     , m_isTargetItem(item.m_isTargetItem)
     , m_visitCount(item.m_visitCount)
@@ -377,6 +382,16 @@ void HistoryItem::clearScrollPoint()
 {
     m_scrollPoint.setX(0);
     m_scrollPoint.setY(0);
+}
+
+float HistoryItem::pageScaleFactor() const
+{
+    return m_pageScaleFactor;
+}
+
+void HistoryItem::setPageScaleFactor(float scaleFactor)
+{
+    m_pageScaleFactor = scaleFactor;
 }
 
 void HistoryItem::setDocumentState(const Vector<String>& state)
@@ -667,6 +682,8 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
 
     encoder.encodeInt32(m_scrollPoint.x());
     encoder.encodeInt32(m_scrollPoint.y());
+    
+    encoder.encodeFloat(m_pageScaleFactor);
 
     encoder.encodeBool(m_stateObject);
     if (m_stateObject) {
@@ -776,6 +793,9 @@ resume:
     if (!decoder.decodeInt32(y))
         return 0;
     node->m_scrollPoint = IntPoint(x, y);
+    
+    if (!decoder.decodeFloat(node->m_pageScaleFactor))
+        return 0;
 
     bool hasStateObject;
     if (!decoder.decodeBool(hasStateObject))
