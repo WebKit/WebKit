@@ -2702,8 +2702,6 @@ BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 BUGCR65877 LINUX WIN : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
-BUGCR65877 LINUX : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
-BUGCR65877 LINUX : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
@@ -2839,8 +2837,6 @@ BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 // The first didFinishDocumentLoadForFrame line is for the previous test document.
 BUG_DRT WIN MAC LINUX : http/tests/loading/preload-img-test.html = TEXT TIMEOUT PASS
 
-// CJK characters are not rotated.
-BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT CRASH PASS
 // Flaky since 2010-09-17?
 BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
 
@@ -2896,8 +2892,6 @@ BUG_DRT MAC : fast/loader/for-window-event-onload-scripts.html = TIMEOUT PASS
 BUG_DRT MAC : fast/loader/fragment-after-redirect-gets-back-entry.html = TIMEOUT PASS
 BUG_DRT DEBUG : fast/loader/non-deferred-substitute-load.html = CRASH
 BUG_DRT WIN : fast/repaint/iframe-scroll-repaint.html = IMAGE
-BUG_DRT LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
-BUG_DRT LINUX : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
 BUG_DRT LINUX : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUG_DRT LINUX : fast/table/border-changes.html = TIMEOUT PASS
 BUG_DRT LINUX : fast/text/find-soft-hyphen.html = CRASH PASS
