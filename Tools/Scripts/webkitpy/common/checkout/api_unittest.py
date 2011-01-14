@@ -132,7 +132,7 @@ class CheckoutTest(unittest.TestCase):
             # contents_at_revision is expected to return a byte array (str)
             # so we encode our unicode ChangeLog down to a utf-8 stream.
             # The ChangeLog utf-8 decoding should ignore invalid codepoints.
-            invalid_utf8 = str(b"\255")
+            invalid_utf8 = "\255"
             return _changelog1.encode("utf-8") + invalid_utf8
         scm.contents_at_revision = mock_contents_at_revision
         checkout = Checkout(scm)
