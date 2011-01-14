@@ -154,7 +154,6 @@
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 
-
 #if OS(DARWIN)
 #include "LocalCurrentGraphicsContext.h"
 #endif
@@ -1541,6 +1540,9 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         }
     }
 
+    Node* originalEndContainer = searchRange->endContainer();
+    int originalEndOffset = searchRange->endOffset();
+
     // This timeout controls how long we scope before releasing control.  This
     // value does not prevent us from running for longer than this, but it is
     // periodically checked to see if we have exceeded our allocated time.
@@ -1563,28 +1565,15 @@ void WebFrameImpl::scopeStringMatches(int identifier,
             if (!resultRange->startContainer()->isInShadowTree())
                 break;
 
-            searchRange = rangeOfContents(frame()->document());
             searchRange->setStartAfter(
                 resultRange->startContainer()->shadowAncestorNode(), ec);
+            searchRange->setEnd(originalEndContainer, originalEndOffset, ec);
             continue;
         }
-
-        // A non-collapsed result range can in some funky whitespace cases still not
-        // advance the range's start position (4509328). Break to avoid infinite
-        // loop. (This function is based on the implementation of
-        // Frame::markAllMatchesForText, which is where this safeguard comes from).
-        VisiblePosition newStart = endVisiblePosition(resultRange.get(), DOWNSTREAM);
-        if (newStart == startVisiblePosition(searchRange.get(), DOWNSTREAM))
-            break;
 
         // Only treat the result as a match if it is visible
         if (frame()->editor()->insideVisibleArea(resultRange.get())) {
             ++matchCount;
-
-            setStart(searchRange.get(), newStart);
-            Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
-            if (searchRange->collapsed(ec) && shadowTreeRoot)
-                searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), ec);
 
             // Catch a special case where Find found something but doesn't know what
             // the bounding box for it is. In this case we set the first match we find
@@ -1621,6 +1610,16 @@ void WebFrameImpl::scopeStringMatches(int identifier,
 
             addMarker(resultRange.get(), foundActiveMatch);
         }
+
+        // Set the new start for the search range to be the end of the previous
+        // result range. There is no need to use a VisiblePosition here,
+        // since findPlainText will use a TextIterator to go over the visible
+        // text nodes. 
+        searchRange->setStart(resultRange->endContainer(ec), resultRange->endOffset(ec), ec);
+
+        Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
+        if (searchRange->collapsed(ec) && shadowTreeRoot)
+            searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), ec);
 
         m_resumeScopingFromRange = resultRange;
         timedOut = (currentTime() - startTime) >= maxScopingDuration;

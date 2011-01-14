@@ -1,3 +1,34 @@
+2011-01-14  Finnur Thorarinsson  <finnur.webkit@gmail.com>
+
+        Reviewed by Ojan Vafai.
+
+        Address some user-select-none issues better in our Find in page scoping
+        function.
+
+        The scoping function is in part based on Editor::countMatchesForText
+        (formerly Frame::markAllMatchesForText), but was rewritten with
+        asychronous search and interruptability in mind. At the time the
+        function was written, countMatchesForText didn't work well with
+        user-select-none style but that has now changed. While
+        investigating http://crbug.com/68494 I noticed WebKit had fixed this
+        very problem in the countMatchesForText and I believe we should make
+        the same changes in our platform code. Therefore, this changelist
+        adopts the same approach by integrating:
+        https://bugs.webkit.org/show_bug.cgi?id=33508
+        (r53142: handling user-select-none better) and
+        https://bugs.webkit.org/show_bug.cgi?id=51623
+        (r74886: handling match within textfield better).
+        For more details see those changelists.
+
+        This changelist, however, is tracked here:
+        https://bugs.webkit.org/show_bug.cgi?id=52367
+
+        The original changelists did not come with layout tests, but I'm adding
+        a test on the Chromium side for this.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::scopeStringMatches):
+
 2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: build fix.
