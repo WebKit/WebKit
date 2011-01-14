@@ -303,7 +303,7 @@ void InspectorBrowserDebuggerAgent::willSendXMLHttpRequest(const String& url)
         }
     }
 
-    if (!breakpointURL.isNull())
+    if (breakpointURL.isNull())
         return;
 
     RefPtr<InspectorObject> eventData = InspectorObject::create();

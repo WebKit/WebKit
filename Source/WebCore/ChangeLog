@@ -1,3 +1,12 @@
+2011-01-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed one line fix for console-xhr-logging test.
+
+        The problem was introduced at r75788.
+
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::willSendXMLHttpRequest):
+
 2011-01-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
