@@ -383,7 +383,7 @@ inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(HTMLElement*
 InputFieldSpeechButtonElement::~InputFieldSpeechButtonElement()
 {
     SpeechInput* speech = speechInput();
-    if (speech)  { // Could be null when page is unloading.
+    if (speech && m_listenerId)  { // Could be null when page is unloading.
         if (m_state != Idle)
             speech->cancelRecognition(m_listenerId);
         speech->unregisterListener(m_listenerId);
@@ -416,6 +416,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
         // remove the input element from DOM. To make sure it remains valid until we finish our work
         // here, we take a temporary reference.
         RefPtr<HTMLInputElement> holdRef(input);
+        RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
         input->focus();
         input->select();
         event->setDefaultHandled();
@@ -482,9 +483,14 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> holdRef(input);
+    RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
     input->setValue(results.isEmpty() ? "" : results[0]->utterance());
     input->dispatchEvent(SpeechInputEvent::create(eventNames().webkitspeechchangeEvent, results));
-    renderer()->repaint();
+
+    // Check before accessing the renderer as the above event could have potentially turned off
+    // speech in the input element, hence removing this button and renderer from the hierarchy.
+    if (renderer())
+        renderer()->repaint();
 }
 
 void InputFieldSpeechButtonElement::detach()
@@ -494,8 +500,12 @@ void InputFieldSpeechButtonElement::detach()
             frame->eventHandler()->setCapturingMouseEventsNode(0);
     }
 
-    if (m_state != Idle)
-      speechInput()->cancelRecognition(m_listenerId);
+    if (m_listenerId) {
+        if (m_state != Idle)
+            speechInput()->cancelRecognition(m_listenerId);
+        speechInput()->unregisterListener(m_listenerId);
+        m_listenerId = 0;
+    }
 
     TextControlInnerElement::detach();
 }

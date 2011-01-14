@@ -72,8 +72,8 @@ void SpeechInputClientMock::stopRecording(int requestId)
 
 void SpeechInputClientMock::cancelRecognition(int requestId)
 {
-    ASSERT(requestId == m_requestId);
     if (m_timer.isActive()) {
+        ASSERT(requestId == m_requestId);
         m_timer.stop();
         m_recording = false;
         m_listener->didCompleteRecognition(m_requestId);
@@ -107,15 +107,20 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
     } else {
         bool noResultsFound = false;
 
+        // We take a copy of the requestId here so that if scripts destroyed the input element
+        // inside one of the callbacks below, we'll still know what this session's requestId was.
+        int requestId = m_requestId;
+        m_requestId = 0;
+
         // Empty language case must be handled separately to avoid problems with HashMap and empty keys.
         if (m_language.isEmpty()) {
             if (!m_resultsForEmptyLanguage.isEmpty())
-                m_listener->setRecognitionResult(m_requestId, m_resultsForEmptyLanguage);
+                m_listener->setRecognitionResult(requestId, m_resultsForEmptyLanguage);
             else
                 noResultsFound = true;
         } else {
             if (m_recognitionResults.contains(m_language))
-                m_listener->setRecognitionResult(m_requestId, m_recognitionResults.get(m_language));
+                m_listener->setRecognitionResult(requestId, m_recognitionResults.get(m_language));
             else
                 noResultsFound = true;
         }
@@ -128,11 +133,10 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
             error.append("'");
             SpeechInputResultArray results;
             results.append(SpeechInputResult::create(error, 1.0));
-            m_listener->setRecognitionResult(m_requestId, results);
+            m_listener->setRecognitionResult(requestId, results);
         }
 
-        m_listener->didCompleteRecognition(m_requestId);
-        m_requestId = 0;
+        m_listener->didCompleteRecognition(requestId);
     }
 }
 

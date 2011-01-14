@@ -1,3 +1,15 @@
+2011-01-12  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a crash when accessing speech input from script.
+        https://bugs.webkit.org/show_bug.cgi?id=52325
+
+        Added a layout test to check enabling/disabling speech input from script.
+
+        * fast/speech/speech-input-scripting-expected.txt: Added.
+        * fast/speech/speech-input-scripting.html: Added.
+
 2011-01-14  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Hyatt.

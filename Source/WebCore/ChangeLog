@@ -1,3 +1,21 @@
+2011-01-12  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a crash when accessing speech input from script.
+        https://bugs.webkit.org/show_bug.cgi?id=52325
+
+        Test: fast/speech/speech-input-scripting.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute): Recreate renderer when speech input is enabled/disabled.
+        * rendering/RenderTextControlSingleLine.cpp: Remove unused code.
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/TextControlInnerElements.cpp: Take self references before firing events and check for renderer validity after.
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult):
+        (WebCore::InputFieldSpeechButtonElement::detach):
+
 2011-01-14  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by David Hyatt.
