@@ -2,6 +2,36 @@
 
         Reviewed by Sam Weinig.
 
+        Fix for <rdar://problem/8711576> The web process should be able to read resources from the UI process.
+
+        Based on a patch by Ivan Krstić. This also makes the NSURLCache path a sandbox parameter.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        Encode and decode the uiProcessBundleResourcePath member variable.
+
+        * Shared/WebProcessCreationParameters.h:
+        Add uiProcessBundleResourcePath member variable.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Set the uiProcessBundleResourcePath member variable.
+
+        * WebProcess/com.apple.WebProcess.sb:
+        Allow read-only access to UI_PROCESS_BUNDLE_RESOURCE_DIR and all subdirectories.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+        When initializing the sandbox, pass UI_PROCESS_BUNDLE_RESOURCE_DIR.
+
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Remove the code that would consume a sandbox extension for the url cache path.
+
+2011-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Delay initializing the sandbox until we get the InitializeWebProcess message.
 
         * WebProcess/mac/WebProcessMac.mm:

@@ -58,10 +58,10 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
 #if PLATFORM(MAC)
     encoder->encode(presenterApplicationPid);
     encoder->encode(nsURLCachePath);
-    encoder->encode(nsURLCachePathExtensionHandle);
     encoder->encode(nsURLCacheMemoryCapacity);
     encoder->encode(nsURLCacheDiskCapacity);
     encoder->encode(acceleratedCompositingPort);
+    encoder->encode(uiProcessBundleResourcePath);
 #elif PLATFORM(WIN)
     encoder->encode(shouldPaintNativeControls);
 #endif
@@ -99,13 +99,13 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.nsURLCachePath))
         return false;
-    if (!decoder->decode(parameters.nsURLCachePathExtensionHandle))
-        return false;
     if (!decoder->decode(parameters.nsURLCacheMemoryCapacity))
         return false;
     if (!decoder->decode(parameters.nsURLCacheDiskCapacity))
         return false;
     if (!decoder->decode(parameters.acceleratedCompositingPort))
+        return false;
+    if (!decoder->decode(parameters.uiProcessBundleResourcePath))
         return false;
 #elif PLATFORM(WIN)
     if (!decoder->decode(parameters.shouldPaintNativeControls))

@@ -135,6 +135,8 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
         "WEBKIT2_FRAMEWORK_DIR", frameworkPath,
         "DARWIN_USER_TEMP_DIR", (const char*)tmpRealPath,
         "DARWIN_USER_CACHE_DIR", (const char*)cacheRealPath,
+        "NSURL_CACHE_DIR", (const char*)parameters.nsURLCachePath.data(),
+        "UI_PROCESS_BUNDLE_RESOURCE_DIR", (const char*)parameters.uiProcessBundleResourcePath.data(),
         NULL
     };
 
@@ -153,12 +155,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
         NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
 
-        CString utf8CachePath = parameters.nsURLCachePath.utf8();
-        NSString *nsCachePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:utf8CachePath.data() length:utf8CachePath.length()];
-
-        RefPtr<SandboxExtension> parentProcessURLCacheSandboxExtension = SandboxExtension::create(parameters.nsURLCachePathExtensionHandle);
-        parentProcessURLCacheSandboxExtension->consumePermanently();
-
+        NSString *nsCachePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:parameters.nsURLCachePath.data() length:parameters.nsURLCachePath.length()];
         RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:nsCachePath]);
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }

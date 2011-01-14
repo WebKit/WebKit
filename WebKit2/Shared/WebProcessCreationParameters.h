@@ -74,12 +74,13 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(MAC)
     pid_t presenterApplicationPid;
-    String nsURLCachePath;
-    SandboxExtension::Handle nsURLCachePathExtensionHandle;
+    CString nsURLCachePath;
 
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;
     CoreIPC::MachPort acceleratedCompositingPort;
+
+    CString uiProcessBundleResourcePath;
 #elif PLATFORM(WIN)
     bool shouldPaintNativeControls;
 #endif

@@ -27,6 +27,7 @@
 
 #include "WebKitSystemInterface.h"
 #include "WebProcessCreationParameters.h"
+#include <WebCore/FileSystem.h>
 #include <sys/param.h>
 
 using namespace WebCore;
@@ -73,9 +74,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
         cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
 
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
-    parameters.nsURLCachePath = cachePath.get();
-    SandboxExtension::createHandle(cachePath.get(), SandboxExtension::ReadWrite, parameters.nsURLCachePathExtensionHandle);
-
+    
+    parameters.nsURLCachePath = fileSystemRepresentation([(NSString *)cachePath.get() stringByStandardizingPath]);
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 
@@ -84,6 +84,9 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
 #endif
+
+    // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
+    parameters.uiProcessBundleResourcePath = fileSystemRepresentation([[NSBundle mainBundle] resourcePath]);
 }
 
 } // namespace WebKit
