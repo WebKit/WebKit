@@ -1,3 +1,13 @@
+2011-01-13  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [chromium] Fix minor type in plugin printing
+        https://bugs.webkit.org/show_bug.cgi?id=52410
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::printBegin):
+
 2011-01-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

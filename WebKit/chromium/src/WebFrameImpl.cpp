@@ -1287,7 +1287,7 @@ int WebFrameImpl::printBegin(const WebSize& pageSize,
     } else {
         // We only support printing plugin nodes for now.
         const Node* coreNode = constrainToNode.constUnwrap<Node>();
-        if (coreNode->hasTagName(HTMLNames::objectTag) && coreNode->hasTagName(HTMLNames::embedTag)) {
+        if (coreNode->hasTagName(HTMLNames::objectTag) || coreNode->hasTagName(HTMLNames::embedTag)) {
             RenderObject* object = coreNode->renderer();
             if (object && object->isWidget()) {
                 Widget* widget = toRenderWidget(object)->widget();
