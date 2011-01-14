@@ -1459,6 +1459,7 @@ class TCMalloc_PageHeap {
   dispatch_source_t m_scavengeTimer;
   bool m_scavengingSuspended;
 #elif OS(WINDOWS)
+  static void CALLBACK scavengerTimerFired(void*, BOOLEAN)
   HANDLE m_scavengeQueueTimer;
 #else 
   static NO_RETURN_WITH_VALUE void* runScavengerThread(void*);
@@ -1544,7 +1545,7 @@ ALWAYS_INLINE void TCMalloc_PageHeap::suspendScavenger()
 
 #elif OS(WINDOWS)
 
-static void CALLBACK scavengerTimerFired(void* context, BOOLEAN)
+static void CALLBACK TCMalloc_PageHeap::scavengerTimerFired(void* context, BOOLEAN)
 {
     static_cast<TCMalloc_PageHeap*>(context)->periodicScavenge();
 }
