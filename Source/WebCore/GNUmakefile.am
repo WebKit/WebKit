@@ -2284,6 +2284,8 @@ webcore_sources += \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/AsyncFileStream.h \
+	Source/WebCore/platform/AsyncFileSystem.cpp \
+	Source/WebCore/platform/AsyncFileSystem.h \
 	Source/WebCore/platform/AutodrainedPool.h \
 	Source/WebCore/platform/ContentType.cpp \
 	Source/WebCore/platform/ContentType.h \
@@ -4083,8 +4085,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileEntry.h \
 	DerivedSources/WebCore/JSFileEntrySync.cpp \
 	DerivedSources/WebCore/JSFileEntrySync.h \
-	DerivedSources/WebCore/JSFileException.cpp \
-	DerivedSources/WebCore/JSFileException.h \
 	DerivedSources/WebCore/JSFileSystemCallback.cpp \
 	DerivedSources/WebCore/JSFileSystemCallback.h \
 	DerivedSources/WebCore/JSFileWriter.cpp \

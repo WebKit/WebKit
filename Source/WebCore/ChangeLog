@@ -1,3 +1,17 @@
+2011-01-15  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Linux build with FileSystem API enabled fails
+        https://bugs.webkit.org/show_bug.cgi?id=43878
+
+        This patch allows WebKitGtk+ to build with FileSystem API option.
+
+        No new tests because no new functionality.
+
+        * GNUmakefile.am: Included AsyncFileSystem.h,cpp and Excluded duplicated JSFileException.h,cpp.
+        * bindings/js/JSDirectoryEntryCustom.cpp: Included ExceptionCode.h.
+
 2011-01-14  Sam Magnuson  <smagnuso@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -34,6 +34,7 @@
 
 #include "JSDirectoryEntry.h"
 
+#include "ExceptionCode.h"
 #include "JSDOMBinding.h"
 #include "JSEntryCallback.h"
 #include "JSErrorCallback.h"
