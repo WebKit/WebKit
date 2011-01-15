@@ -71,6 +71,8 @@ namespace JSC {
             m_error = 0;
             m_code = m_codeStart + offset;
             m_current = *m_code;
+            m_buffer8.resize(0);
+            m_buffer16.resize(0);
         }
 
     private:

@@ -1,3 +1,16 @@
+2011-01-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        [jsfunfuzz] We should be clearing the lexers temporary character buffers when switching to strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=52501
+
+        Clear the temporary character buffers used for reading escaped characters and
+        numbers.
+
+        * parser/Lexer.h:
+        (JSC::Lexer::setOffset):
+
 2011-01-14  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix non-Dtrace builds: #include Tracing.h instead of TracingDtrace.h.

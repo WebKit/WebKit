@@ -127,6 +127,10 @@ PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescri
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f, 'caller'); return descriptor.get === descriptor.set; })() is true
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f, 'arguments'); return descriptor.get === descriptor.set; })() is true
 PASS 'use strict'; (function f() { for(var i in this); })(); true; is true
+PASS 'use strict'̻ threw exception SyntaxError: Parse error.
+PASS 'use strict'5.f threw exception SyntaxError: Parse error.
+PASS 'use strict';̻ threw exception SyntaxError: Parse error.
+PASS 'use strict';5.f threw exception SyntaxError: Parse error.
 PASS successfullyParsed is true
 
 TEST COMPLETE

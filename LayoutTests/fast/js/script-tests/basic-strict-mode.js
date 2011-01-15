@@ -157,4 +157,9 @@ shouldBeTrue("(function f(arg){'use strict'; var descriptor = Object.getOwnPrope
 shouldBeTrue("(function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f, 'arguments'); return descriptor.get === descriptor.set; })()");
 shouldBeTrue("'use strict'; (function f() { for(var i in this); })(); true;")
 
+shouldThrow("'use strict'\u033b");
+shouldThrow("'use strict'5.f");
+shouldThrow("'use strict';\u033b");
+shouldThrow("'use strict';5.f");
+
 var successfullyParsed = true;
