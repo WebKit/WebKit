@@ -77,7 +77,7 @@ BUGCR67732 DEBUG : fast/canvas/shadow-offset-7.html = PASS CRASH
 
 BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint-2.html = FAIL
 BUGCR11153 WIN LINUX : fast/canvas/canvas-incremental-repaint.html = FAIL
-BUGWK51982 LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT
+BUGWK51982 LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT TIMEOUT
 // Passes on the GPU, but leaving this here for reference.
 // BUGCR22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
 BUGCR22700 DEBUG WIN SLOW : fast/canvas/canvas-getImageData.html = PASS
