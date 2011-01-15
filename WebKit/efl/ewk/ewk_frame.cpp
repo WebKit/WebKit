@@ -34,6 +34,7 @@
 #include "HTMLPlugInElement.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
+#include "IntSize.h"
 #include "KURL.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"

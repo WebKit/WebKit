@@ -26,6 +26,7 @@
 #include "ContentData.h"
 #include "RenderCounter.h"
 #include "RenderStyle.h"
+#include "ShadowData.h"
 #include "StyleImage.h"
 
 namespace WebCore {

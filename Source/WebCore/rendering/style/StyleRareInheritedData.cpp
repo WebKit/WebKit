@@ -25,6 +25,7 @@
 #include "CursorList.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
+#include "ShadowData.h"
 
 namespace WebCore {
 
