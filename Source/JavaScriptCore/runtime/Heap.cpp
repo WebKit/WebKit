@@ -29,7 +29,7 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSONObject.h"
-#include "TracingDtrace.h"
+#include "Tracing.h"
 
 #define COLLECT_ON_EVERY_ALLOCATION 0
 
