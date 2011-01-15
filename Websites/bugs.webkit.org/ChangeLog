@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        fix expanded lines in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=52498
+
+        Fixes them to work now that we have wrapper divs.
+        Also fixes the long-standing bug that the line numbers
+        were incorrect sometimes.
+
+        * code-review.js:
+
+2011-01-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         put remove lines to the left of add lines in sidebyside view
         https://bugs.webkit.org/show_bug.cgi?id=52458
 

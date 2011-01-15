@@ -442,6 +442,30 @@
   var BELOW = 'below';
   var ALL = 'all';
 
+  function lineNumbersFromSet(set, is_last) {
+    var to = -1;
+    var from = -1;
+
+    var size = set.size();
+    var start = is_last ? (size - 1) : 0;
+    var end = is_last ? -1 : size;
+    var offset = is_last ? -1 : 1;
+
+    for (var i = start; i != end; i += offset) {
+      if (to != -1 && from != -1)
+        return {to: to, from: from};
+
+      var line_number = set[i];
+      if ($(line_number).hasClass('to')) {
+        if (to == -1)
+          to = Number(line_number.textContent);
+      } else {
+        if (from == -1)
+          from = Number(line_number.textContent);
+      }
+    }
+  }
+
   function expand(expand_bar, file_name, direction, amount) {
     if (file_name in original_file_contents && !patched_file_contents[file_name]) {
       // FIXME: In this case, try fetching the source file at the revision the patch was created at.
@@ -453,30 +477,32 @@
     var above_expansion = expand_bar.querySelector('.Expand' + ABOVE)
     var below_expansion = expand_bar.querySelector('.Expand' + BELOW)
 
-    var above_last_line = above_expansion.querySelector('.ExpansionLine:last-of-type');
-    if (!above_last_line) {
+    var above_line_numbers = $('.expansionLineNumber', above_expansion);
+    if (!above_line_numbers[0]) {
       var diff_section = expand_bar.previousElementSibling;
-      above_last_line = diff_section.querySelector('.LineContainer:last-of-type');
+      above_line_numbers = $('.lineNumber', diff_section);
     }
 
     var above_last_line_num, above_last_from_line_num;
-    if (above_last_line) {
-      above_last_line_num = toLineNumber(above_last_line);
-      above_last_from_line_num = fromLineNumber(above_last_line);
+    if (above_line_numbers[0]) {
+      var above_numbers = lineNumbersFromSet(above_line_numbers, true);
+      above_last_line_num = above_numbers.to;
+      above_last_from_line_num = above_numbers.from;
     } else
       above_last_from_line_num = above_last_line_num = 0;
 
-    var below_first_line = below_expansion.querySelector('.ExpansionLine');
-    if (!below_first_line) {
+    var below_line_numbers = $('.expansionLineNumber', below_expansion);
+    if (!below_line_numbers[0]) {
       var diff_section = expand_bar.nextElementSibling;
       if (diff_section)
-        below_first_line = diff_section.querySelector('.LineContainer');
+        below_line_numbers = $('.lineNumber', diff_section);
     }
 
     var below_first_line_num, below_first_from_line_num;
-    if (below_first_line) {
-      below_first_line_num = toLineNumber(below_first_line) - 1;
-      below_first_from_line_num = fromLineNumber(below_first_line) - 1;
+    if (below_line_numbers[0]) {
+      var below_numbers = lineNumbersFromSet(below_line_numbers, false);
+      below_first_line_num = below_numbers.to - 1;
+      below_first_from_line_num = below_numbers.from - 1;
     } else
       below_first_from_line_num = below_first_line_num = patched_file_contents[file_name].length - 1;
 
@@ -526,15 +552,15 @@
     return line;
   }
 
-  function unifiedExpansionLine(line_number, contents) {
-    return unifiedLine(line_number, line_number, contents, true);
+  function unifiedExpansionLine(from, to, contents) {
+    return unifiedLine(from, to, contents, true);
   }
 
-  function sideBySideExpansionLine(line_number, contents) {
+  function sideBySideExpansionLine(from, to, contents) {
     var line = $('<div class="ExpansionLine"></div>');
     // Clone the contents so we have two copies we can put back in the DOM.
-    line.append(lineSide('from', contents.clone(true), true, line_number));
-    line.append(lineSide('to', contents, true, line_number));
+    line.append(lineSide('from', contents.clone(true), true, from));
+    line.append(lineSide('to', contents, true, to));
     return line;
   }
 
@@ -567,11 +593,11 @@
     var is_side_by_side = isDiffSideBySide(files[file_name]);
 
     for (var i = 0; i < end_line_num - start_line_num; i++) {
-      // FIXME: from line numbers are wrong
-      var line_number = start_from_line_num + i + 1;
+      var from = start_from_line_num + i + 1;
+      var to = start_line_num + i + 1;
       var contents = $('<span class="text"></span>');
       contents.text(patched_file_contents[file_name][start_line_num + i]);
-      var line = is_side_by_side ? sideBySideExpansionLine(line_number, contents) : unifiedExpansionLine(line_number, contents);
+      var line = is_side_by_side ? sideBySideExpansionLine(from, to, contents) : unifiedExpansionLine(from, to, contents);
       fragment.appendChild(line[0]);
     }
 
@@ -845,7 +871,6 @@
     return attributesBuffer.join(' ');
   }
 
-  // FIXME: Put removed lines to the left of their corresponding added lines.
   function sideBySideifyLine(line, from, to, contents, classNames, attributes, id) {
     var from_class = '';
     var to_class = '';
@@ -884,8 +909,9 @@
   function convertExpansionLine(diff_type, line) {
     var convert_function = diff_type == 'sidebyside' ? sideBySideExpansionLine : unifiedExpansionLine;
     var contents = $('.text', line).first();
-    var line_number = fromLineNumber(line);
-    var new_line = convert_function(line_number, contents);
+    var from = fromLineNumber(line);
+    var to = toLineNumber(line);
+    var new_line = convert_function(from, to, contents);
     $(line).replaceWith(new_line);
   }
 
