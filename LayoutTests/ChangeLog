@@ -1,3 +1,10 @@
+2011-01-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; updated chromium test expectations.
+
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-15  Tony Chang  <tony@chromium.org>
 
         Unreviewed, add new test to GTK+ Skipped list.
