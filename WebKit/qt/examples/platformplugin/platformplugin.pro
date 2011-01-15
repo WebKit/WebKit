@@ -3,20 +3,6 @@ TARGET = $$qtLibraryTarget(platformplugin)
 TEMPLATE = lib
 CONFIG += plugin
 
-## load mobilityconfig if mobility is available
-load(mobilityconfig, true)
-
-# HTML5 Media Support
-# We require QtMultimedia
-!contains(DEFINES, ENABLE_VIDEO=.) {
-    contains(MOBILITY_CONFIG, multimedia) {
-        CONFIG += mobility
-        MOBILITY += multimedia
-        DEFINES -= ENABLE_VIDEO=0
-        DEFINES += ENABLE_VIDEO=1
-    }
-}
-
 DESTDIR = $$[QT_INSTALL_PLUGINS]/webkit
 
 SOURCES += \

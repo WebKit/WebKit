@@ -3257,13 +3257,8 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
         PKGCONFIG += glib-2.0 gio-2.0 gstreamer-0.10 gstreamer-app-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-pbutils-0.10 gstreamer-plugins-base-0.10 gstreamer-video-0.10
      } else:contains(MOBILITY_CONFIG, multimedia) {
-        HEADERS += \ 
-            platform/graphics/qt/MediaPlayerPrivateQt.h \
-            $$PWD/../../WebKit/qt/WebCoreSupport/FullScreenVideoQt.h
-
-        SOURCES += \
-            platform/graphics/qt/MediaPlayerPrivateQt.cpp \
-            $$PWD/../../WebKit/qt/WebCoreSupport/FullScreenVideoQt.cpp
+        HEADERS += platform/graphics/qt/MediaPlayerPrivateQt.h
+        SOURCES += platform/graphics/qt/MediaPlayerPrivateQt.cpp
 
         CONFIG *= mobility
         MOBILITY += multimedia

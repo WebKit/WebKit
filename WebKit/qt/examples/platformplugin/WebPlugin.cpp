@@ -19,9 +19,7 @@
  */
 #include "WebPlugin.h"
 
-#include <QEvent>
 #include <QHBoxLayout>
-#include <QKeyEvent>
 #include <QListWidget>
 #include <QListWidgetItem>
 #include <QPainter>
@@ -210,71 +208,6 @@ MultipleSelectionPopup::MultipleSelectionPopup(const QWebSelectData& data)
     resize(size().width(), visibleItemCount * gMaemoListItemSize);
 }
 
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-FullScreenVideoWidget::FullScreenVideoWidget(QMediaPlayer* player)
-    : QVideoWidget()
-    , m_mediaPlayer(player)
-{
-    Q_ASSERT(m_mediaPlayer);
-
-    setFullScreen(true);
-    m_mediaPlayer->setVideoOutput(this);
-}
-
-bool FullScreenVideoWidget::event(QEvent* ev)
-{
-    if (ev->type() ==  QEvent::MouseButtonDblClick) {
-        emit fullScreenClosed();
-        ev->accept();
-        return true;
-    } 
-    return QWidget::event(ev);
-}
-
-void FullScreenVideoWidget::keyPressEvent(QKeyEvent* ev)
-{
-    if (ev->key() == Qt::Key_Space) {
-        if (m_mediaPlayer->state() == QMediaPlayer::PlayingState)
-            m_mediaPlayer->pause();
-        else
-            m_mediaPlayer->play();
-        ev->accept();
-        return;
-    }
-}
-
-FullScreenVideoHandler::FullScreenVideoHandler()
-    : m_mediaWidget(0)
-{
-}
-
-FullScreenVideoHandler::~FullScreenVideoHandler()
-{
-    delete m_mediaWidget;
-}
-
-bool FullScreenVideoHandler::requiresFullScreenForVideoPlayback() const
-{
-    return true;
-}
-
-void FullScreenVideoHandler::enterFullScreen(QMediaPlayer* player)
-{
-    Q_ASSERT(player);
-
-    m_mediaWidget = new FullScreenVideoWidget(player);
-    connect(m_mediaWidget, SIGNAL(fullScreenClosed()), this, SIGNAL(fullScreenClosed()));
-    m_mediaWidget->showFullScreen();
-}
-
-void FullScreenVideoHandler::exitFullScreen()
-{
-    m_mediaWidget->hide();
-    delete m_mediaWidget;
-    m_mediaWidget = 0;
-}
-#endif
-
 bool WebPlugin::supportsExtension(Extension extension) const
 {
     switch (extension) {
@@ -286,10 +219,6 @@ bool WebPlugin::supportsExtension(Extension extension) const
 #endif
     case TouchInteraction:
         return true;
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    case FullScreenVideoPlayer:
-        return true;
-#endif
     default:
         return false;
     }
@@ -306,10 +235,6 @@ QObject* WebPlugin::createExtension(Extension extension) const
 #endif
     case TouchInteraction:
         return new TouchModifier();
-#if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-    case FullScreenVideoPlayer:
-        return new FullScreenVideoHandler();
-#endif
     default:
         return 0;
     }

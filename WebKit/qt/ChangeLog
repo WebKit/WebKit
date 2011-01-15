@@ -1,3 +1,28 @@
+2011-01-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r75708.
+        http://trac.webkit.org/changeset/75708
+        https://bugs.webkit.org/show_bug.cgi?id=52521
+
+        Breaks Qt build if mobility is not installed. (Requested by
+        benjaminp on #webkit).
+
+        * Api/qwebkitplatformplugin.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FullScreenVideoQt.cpp: Removed.
+        * WebCoreSupport/FullScreenVideoQt.h: Removed.
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        * WebCoreSupport/QtPlatformPlugin.h:
+        * examples/platformplugin/WebPlugin.cpp:
+        (WebPlugin::supportsExtension):
+        (WebPlugin::createExtension):
+        * examples/platformplugin/WebPlugin.h:
+        * examples/platformplugin/platformplugin.pro:
+        * examples/platformplugin/qwebkitplatformplugin.h:
+
 2011-01-15  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
