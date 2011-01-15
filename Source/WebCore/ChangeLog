@@ -1,3 +1,24 @@
+2011-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/52512> REGRESSION(r73818): range.cloneContents() ignores end offset
+
+        Reviewed by Adele Peterson.
+
+        The fix for Bug 50710 in r73799 introduced an off-by-one error
+        when copying nodes to a local NodeVector for processing.  A fix
+        was attempted for Bug 50854 in r73818, but instead of stopping
+        at the end offset, it iterates through all the sibling nodes
+        because the loop variable (i) is never incremented.  To clean
+        this up, revert back to the code in r73799 and fix the
+        off-by-one error.
+
+        Test: fast/dom/Range/range-clone-contents.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::processContents): Fix the loop that copies
+        nodes to a local NodeVector by restoring the code from r73799
+        and fixing the off-by-one error.
+
 2011-01-15  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

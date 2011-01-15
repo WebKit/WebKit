@@ -794,13 +794,8 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
             Node* n = m_end.container()->firstChild();
             if (n && m_end.offset()) {
                 NodeVector nodes;
-                int i = 0;
-                do {
+                for (int i = 0; i < m_end.offset() && n; i++, n = n->nextSibling())
                     nodes.append(n);
-                    if (!n->nextSibling())
-                        break;
-                    n = n->nextSibling();
-                } while (i + 1 < m_end.offset());
                 for (int i = nodes.size() - 1; i >= 0; i--) {
                     n = nodes[i].get();
                     if (action == EXTRACT_CONTENTS)

@@ -1,3 +1,12 @@
+2011-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/52512> REGRESSION(r73818): range.cloneContents() ignores end offset
+
+        Reviewed by Adele Peterson.
+
+        * fast/dom/Range/range-clone-contents-expected.txt: Added.
+        * fast/dom/Range/range-clone-contents.html: Added.
+
 2011-01-15  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
