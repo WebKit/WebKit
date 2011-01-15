@@ -25,6 +25,7 @@
 #define RenderBoxModelObject_h
 
 #include "RenderObject.h"
+#include "ShadowData.h"
 
 namespace WebCore {
 
