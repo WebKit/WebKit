@@ -1,3 +1,16 @@
+2011-01-14  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        Rename cache() to memoryCache()
+        https://bugs.webkit.org/show_bug.cgi?id=52433
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::_q_cleanupLeakMessages):
+        * Api/qwebsettings.cpp:
+        (QWebSettings::clearMemoryCaches):
+        (QWebSettings::setObjectCacheCapacities):
+
 2011-01-14  Konstantin Tokarev  <annulen@yandex.ru>
 
         Reviewed by Laszlo Gombos.

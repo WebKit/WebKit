@@ -270,7 +270,7 @@ static wxWebViewCachePolicy gs_cachePolicy;
 /* static */
 void wxWebView::SetCachePolicy(const wxWebViewCachePolicy& cachePolicy)
 {
-    WebCore::MemoryCache* globalCache = WebCore::cache();
+    WebCore::MemoryCache* globalCache = WebCore::memoryCache();
     globalCache->setCapacities(cachePolicy.GetMinDeadCapacity(),
                                cachePolicy.GetMaxDeadCapacity(),
                                cachePolicy.GetCapacity());

@@ -529,7 +529,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
                     continue;
                 }
 
-                CachedResource *cachedResource = cache()->resourceForURL(subresourceURL);
+                CachedResource* cachedResource = memoryCache()->resourceForURL(subresourceURL);
                 if (cachedResource) {
                     resource = ArchiveResource::create(cachedResource->data(), subresourceURL, cachedResource->response());
                     if (resource) {

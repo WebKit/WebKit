@@ -1,3 +1,18 @@
+2011-01-14  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        Rename cache() to memoryCache()
+        https://bugs.webkit.org/show_bug.cgi?id=52433
+
+        * WebCache.cpp:
+        (WebCache::statistics):
+        (WebCache::empty):
+        (WebCache::setDisabled):
+        (WebCache::disabled):
+        * WebView.cpp:
+        (WebView::setCacheModel):
+
 2011-01-10  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix Windows build.

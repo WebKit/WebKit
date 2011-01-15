@@ -116,7 +116,7 @@ CachedResource::~CachedResource()
     ASSERT(canDelete());
     ASSERT(!inCache());
     ASSERT(!m_deleted);
-    ASSERT(url().isNull() || cache()->resourceForURL(KURL(ParsedURLString, url())) != this);
+    ASSERT(url().isNull() || memoryCache()->resourceForURL(KURL(ParsedURLString, url())) != this);
 #ifndef NDEBUG
     m_deleted = true;
     cachedResourceLeakCounter.decrement();
@@ -259,7 +259,7 @@ void CachedResource::addClientToSet(CachedResourceClient* client)
             m_preloadResult = PreloadReferenced;
     }
     if (!hasClients() && inCache())
-        cache()->addToLiveResourcesSize(this);
+        memoryCache()->addToLiveResourcesSize(this);
     m_clients.add(client);
 }
 
@@ -271,8 +271,8 @@ void CachedResource::removeClient(CachedResourceClient* client)
     if (canDelete() && !inCache())
         delete this;
     else if (!hasClients() && inCache()) {
-        cache()->removeFromLiveResourcesSize(this);
-        cache()->removeFromLiveDecodedResourcesList(this);
+        memoryCache()->removeFromLiveResourcesSize(this);
+        memoryCache()->removeFromLiveDecodedResourcesList(this);
         allClientsRemoved();
         if (response().cacheControlContainsNoStore()) {
             // RFC2616 14.9.2:
@@ -280,9 +280,9 @@ void CachedResource::removeClient(CachedResourceClient* client)
             // "... History buffers MAY store such responses as part of their normal operation."
             // We allow non-secure content to be reused in history, but we do not allow secure content to be reused.
             if (protocolIs(url(), "https"))
-                cache()->remove(this);
+                memoryCache()->remove(this);
         } else
-            cache()->prune();
+            memoryCache()->prune();
     }
     // This object may be dead here.
 }
@@ -304,13 +304,13 @@ void CachedResource::setDecodedSize(unsigned size)
     // We have to remove explicitly before updating m_decodedSize, so that we find the correct previous
     // queue.
     if (inCache())
-        cache()->removeFromLRUList(this);
+        memoryCache()->removeFromLRUList(this);
     
     m_decodedSize = size;
    
     if (inCache()) { 
         // Now insert into the new LRU list.
-        cache()->insertInLRUList(this);
+        memoryCache()->insertInLRUList(this);
         
         // Insert into or remove from the live decoded list if necessary.
         // When inserting into the LiveDecodedResourcesList it is possible
@@ -320,12 +320,12 @@ void CachedResource::setDecodedSize(unsigned size)
         // by access time. The weakening of the invariant does not pose
         // a problem. For more details please see: https://bugs.webkit.org/show_bug.cgi?id=30209
         if (m_decodedSize && !m_inLiveDecodedResourcesList && hasClients())
-            cache()->insertInLiveDecodedResourcesList(this);
+            memoryCache()->insertInLiveDecodedResourcesList(this);
         else if (!m_decodedSize && m_inLiveDecodedResourcesList)
-            cache()->removeFromLiveDecodedResourcesList(this);
+            memoryCache()->removeFromLiveDecodedResourcesList(this);
 
         // Update the cache's size totals.
-        cache()->adjustSize(hasClients(), delta);
+        memoryCache()->adjustSize(hasClients(), delta);
     }
 }
 
@@ -343,16 +343,16 @@ void CachedResource::setEncodedSize(unsigned size)
     // We have to remove explicitly before updating m_encodedSize, so that we find the correct previous
     // queue.
     if (inCache())
-        cache()->removeFromLRUList(this);
+        memoryCache()->removeFromLRUList(this);
     
     m_encodedSize = size;
    
     if (inCache()) { 
         // Now insert into the new LRU list.
-        cache()->insertInLRUList(this);
+        memoryCache()->insertInLRUList(this);
         
         // Update the cache's size totals.
-        cache()->adjustSize(hasClients(), delta);
+        memoryCache()->adjustSize(hasClients(), delta);
     }
 }
 
@@ -362,10 +362,10 @@ void CachedResource::didAccessDecodedData(double timeStamp)
     
     if (inCache()) {
         if (m_inLiveDecodedResourcesList) {
-            cache()->removeFromLiveDecodedResourcesList(this);
-            cache()->insertInLiveDecodedResourcesList(this);
+            memoryCache()->removeFromLiveDecodedResourcesList(this);
+            memoryCache()->insertInLiveDecodedResourcesList(this);
         }
-        cache()->prune();
+        memoryCache()->prune();
     }
 }
     

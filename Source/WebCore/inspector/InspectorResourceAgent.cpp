@@ -132,7 +132,7 @@ CachedResource* InspectorResourceAgent::cachedResource(Frame* frame, const KURL&
 {
     CachedResource* cachedResource = frame->document()->cachedResourceLoader()->cachedResource(url);
     if (!cachedResource)
-        cachedResource = cache()->resourceForURL(url);
+        cachedResource = memoryCache()->resourceForURL(url);
     return cachedResource;
 }
 

@@ -469,7 +469,7 @@ void WebProcess::shutdownIfPossible()
 
 #ifndef NDEBUG
     gcController().garbageCollectNow();
-    cache()->setDisabled(true);
+    memoryCache()->setDisabled(true);
 #endif
 
     // Invalidate our connection.
@@ -551,7 +551,7 @@ void WebProcess::didClose(CoreIPC::Connection*)
     pages.clear();
 
     gcController().garbageCollectNow();
-    cache()->setDisabled(true);
+    memoryCache()->setDisabled(true);
 #endif    
 
     // The UI process closed this connection, shut down.

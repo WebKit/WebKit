@@ -498,7 +498,7 @@ void QWebPagePrivate::_q_cleanupLeakMessages()
 {
 #ifndef NDEBUG
     // Need this to make leak messages accurate.
-    cache()->setCapacities(0, 0, 0);
+    memoryCache()->setCapacities(0, 0, 0);
 #endif
 }
 

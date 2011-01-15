@@ -56,7 +56,7 @@ static void ToResourceTypeStat(const MemoryCache::TypeStatistic& from,
 void WebCache::setCapacities(
     size_t minDeadCapacity, size_t maxDeadCapacity, size_t capacity)
 {
-    MemoryCache* cache = WebCore::cache();
+    MemoryCache* cache = WebCore::memoryCache();
     if (cache)
         cache->setCapacities(static_cast<unsigned int>(minDeadCapacity),
                              static_cast<unsigned int>(maxDeadCapacity),
@@ -65,7 +65,7 @@ void WebCache::setCapacities(
 
 void WebCache::clear()
 {
-    MemoryCache* cache = WebCore::cache();
+    MemoryCache* cache = WebCore::memoryCache();
     if (cache && !cache->disabled()) {
         cache->setDisabled(true);
         cache->setDisabled(false);
@@ -76,7 +76,7 @@ void WebCache::getUsageStats(UsageStats* result)
 {
     ASSERT(result);
 
-    MemoryCache* cache = WebCore::cache();
+    MemoryCache* cache = WebCore::memoryCache();
     if (cache) {
         result->minDeadCapacity = cache->m_minDeadCapacity;
         result->maxDeadCapacity = cache->m_maxDeadCapacity;
@@ -89,7 +89,7 @@ void WebCache::getUsageStats(UsageStats* result)
 
 void WebCache::getResourceTypeStats(ResourceTypeStats* result)
 {
-    MemoryCache* cache = WebCore::cache();
+    MemoryCache* cache = WebCore::memoryCache();
     if (cache) {
         MemoryCache::Statistics stats = cache->getStatistics();
         ToResourceTypeStat(stats.images, result->images);

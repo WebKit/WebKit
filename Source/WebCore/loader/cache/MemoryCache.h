@@ -72,7 +72,7 @@ class KURL;
 
 class MemoryCache : public Noncopyable {
 public:
-    friend MemoryCache* cache();
+    friend MemoryCache* memoryCache();
 
     typedef HashMap<String, CachedResource*> CachedResourceMap;
 
@@ -219,7 +219,7 @@ inline bool MemoryCache::shouldMakeResourcePurgeableOnEviction()
 }
 
 // Function to obtain the global cache.
-MemoryCache* cache();
+MemoryCache* memoryCache();
 
 }
 

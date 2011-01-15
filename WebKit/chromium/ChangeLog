@@ -1,3 +1,16 @@
+2011-01-14  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        Rename cache() to memoryCache()
+        https://bugs.webkit.org/show_bug.cgi?id=52433
+
+        * src/WebCache.cpp:
+        (WebKit::WebCache::setCapacities):
+        (WebKit::WebCache::clear):
+        (WebKit::WebCache::getUsageStats):
+        (WebKit::WebCache::getResourceTypeStats):
+
 2011-01-14  Jochen Eisinger  <jochen@chromium.org>
 
         Unreviewed, roll chromium deps to r71432.

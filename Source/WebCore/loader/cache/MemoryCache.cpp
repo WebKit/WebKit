@@ -50,7 +50,7 @@ static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 static const double cDefaultDecodedDataDeletionInterval = 0;
 
-MemoryCache* cache()
+MemoryCache* memoryCache()
 {
     static MemoryCache* staticCache = new MemoryCache;
     return staticCache;

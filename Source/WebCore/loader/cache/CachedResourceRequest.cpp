@@ -122,7 +122,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
         cachedResourceLoader->decrementRequestCount(resource);
         cachedResourceLoader->loadFinishing();
         if (resource->resourceToRevalidate()) 
-            cache()->revalidationFailed(resource); 
+            memoryCache()->revalidationFailed(resource); 
         resource->error(CachedResource::LoadError);
         cachedResourceLoader->loadDone(0);
         return 0;
@@ -186,7 +186,7 @@ void CachedResourceRequest::didFail(bool cancelled)
     m_loader->clearClient();
 
     if (m_resource->resourceToRevalidate())
-        cache()->revalidationFailed(m_resource);
+        memoryCache()->revalidationFailed(m_resource);
 
     if (!cancelled) {
         m_cachedResourceLoader->loadFinishing();
@@ -194,7 +194,7 @@ void CachedResourceRequest::didFail(bool cancelled)
     }
 
     if (cancelled || !m_resource->isPreloaded())
-        cache()->remove(m_resource);
+        memoryCache()->remove(m_resource);
     
     m_cachedResourceLoader->loadDone(this);
 }
@@ -211,7 +211,7 @@ void CachedResourceRequest::didReceiveResponse(SubresourceLoader* loader, const 
             m_finishing = true;
 
             // Existing resource is ok, just use it updating the expiration time.
-            cache()->revalidationSucceeded(m_resource, response);
+            memoryCache()->revalidationSucceeded(m_resource, response);
             
             if (m_cachedResourceLoader->frame())
                 m_cachedResourceLoader->frame()->loader()->checkCompleted();
@@ -220,7 +220,7 @@ void CachedResourceRequest::didReceiveResponse(SubresourceLoader* loader, const 
             return;
         } 
         // Did not get 304 response, continue as a regular resource load.
-        cache()->revalidationFailed(m_resource);
+        memoryCache()->revalidationFailed(m_resource);
     }
 
     m_resource->setResponse(response);

@@ -1,3 +1,13 @@
+2011-01-14  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        Rename cache() to memoryCache()
+        https://bugs.webkit.org/show_bug.cgi?id=52433
+
+        * webkit/webkitglobals.cpp:
+        (webkit_set_cache_model):
+
 2011-01-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: gtk build fix (2).

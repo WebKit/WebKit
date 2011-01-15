@@ -757,9 +757,9 @@ void QWebSettings::clearMemoryCaches()
     // Turn the cache on and off.  Disabling the object cache will remove all
     // resources from the cache.  They may still live on if they are referenced
     // by some Web page though.
-    if (!WebCore::cache()->disabled()) {
-        WebCore::cache()->setDisabled(true);
-        WebCore::cache()->setDisabled(false);
+    if (!WebCore::memoryCache()->disabled()) {
+        WebCore::memoryCache()->setDisabled(true);
+        WebCore::memoryCache()->setDisabled(false);
     }
 
     int pageCapacity = WebCore::pageCache()->capacity();
@@ -819,9 +819,9 @@ int QWebSettings::maximumPagesInCache()
 void QWebSettings::setObjectCacheCapacities(int cacheMinDeadCapacity, int cacheMaxDead, int totalCapacity)
 {
     bool disableCache = !cacheMinDeadCapacity && !cacheMaxDead && !totalCapacity;
-    WebCore::cache()->setDisabled(disableCache);
+    WebCore::memoryCache()->setDisabled(disableCache);
 
-    WebCore::cache()->setCapacities(qMax(0, cacheMinDeadCapacity),
+    WebCore::memoryCache()->setCapacities(qMax(0, cacheMinDeadCapacity),
                                     qMax(0, cacheMaxDead),
                                     qMax(0, totalCapacity));
 }

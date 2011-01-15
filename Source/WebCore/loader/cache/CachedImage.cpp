@@ -107,7 +107,7 @@ void CachedImage::allClientsRemoved()
 {
     if (m_image && !errorOccurred())
         m_image->resetAnimation();
-    if (double interval = cache()->deadDecodedDataDeletionInterval())
+    if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
         m_decodedDataDeletionTimer.startOneShot(interval);
 }
 
@@ -277,7 +277,7 @@ void CachedImage::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
         if (m_image->isNull() || (maxDecodedImageSize > 0 && estimatedDecodedImageSize > maxDecodedImageSize)) {
             error(errorOccurred() ? status() : DecodeError);
             if (inCache())
-                cache()->remove(this);
+                memoryCache()->remove(this);
             return;
         }
         
