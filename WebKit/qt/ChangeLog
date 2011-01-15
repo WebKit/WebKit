@@ -1,3 +1,17 @@
+2011-01-15  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] plugins/no-mime-with-valid-extension.html fails
+        Check extension of resource against installed
+        plugins when determining mime-type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52288
+        https://bugs.webkit.org/show_bug.cgi?id=50657
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::objectContentType):
+
 2011-01-14  Sam Magnuson  <smagnuso@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

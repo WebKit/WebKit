@@ -1304,6 +1304,8 @@ void FrameLoaderClientQt::transferLoadingResourceFromPage(unsigned long, Documen
 ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& _mimeType)
 {
 //    qDebug()<<" ++++++++++++++++ url is "<<url.prettyURL()<<", mime = "<<_mimeType;
+    QFileInfo fi(url.path());
+    String extension = fi.suffix();
     if (_mimeType == "application/x-qt-plugin" || _mimeType == "application/x-qt-styled-widget")
         return ObjectContentOtherPlugin;
 
@@ -1311,10 +1313,11 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
         return ObjectContentNone;
 
     String mimeType = _mimeType;
-    if (!mimeType.length()) {
-        QFileInfo fi(url.path());
-        mimeType = MIMETypeRegistry::getMIMETypeForExtension(fi.suffix());
-    }
+    if (!mimeType.length())
+        mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+
+    if (!mimeType.length())
+        mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(extension);
 
     if (!mimeType.length())
         return ObjectContentFrame;
