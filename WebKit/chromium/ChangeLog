@@ -1,3 +1,12 @@
+2011-01-14  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Prepare Linux WebThemeEngine interface to support new theme parts.
+        https://bugs.webkit.org/show_bug.cgi?id=52413
+
+        * public/linux/WebThemeEngine.h:
+
 2011-01-14  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Antti Koivisto.

@@ -43,6 +43,7 @@ class WebThemeEngine {
 public:
     // The UI part which is being accessed.
     enum Part {
+        // ScrollbarTheme parts
         PartScrollbarDownArrow,
         PartScrollbarLeftArrow,
         PartScrollbarRightArrow,
@@ -50,7 +51,18 @@ public:
         PartScrollbarHorizontalThumb,
         PartScrollbarVerticalThumb,
         PartScrollbarHorizontalTrack,
-        PartScrollbarVerticalTrack
+        PartScrollbarVerticalTrack,
+
+        // RenderTheme parts
+        PartCheckbox,
+        PartRadio,
+        PartButton,
+        PartTextField,
+        PartMenuList,
+        PartSliderTrack,
+        PartSliderThumb,
+        PartInnerSpinButton,
+        PartProgressBar
     };
 
     // The current state of the associated Part.
@@ -71,8 +83,57 @@ public:
         int trackHeight;
     };
 
+    // Extra parameters for PartCheckbox, PartPushButton and PartRadio.
+    struct ButtonExtraParams {
+        bool checked;
+        bool indeterminate; // Whether the button state is indeterminate.
+        bool isDefault; // Whether the button is default button.
+        WebColor backgroundColor;
+    };
+
+    // Extra parameters for PartTextField
+    struct TextFieldExtraParams {
+        bool isTextArea;
+        bool isListbox;
+        WebColor backgroundColor;
+    };
+
+    // Extra parameters for PartMenuList
+    struct MenuListExtraParams {
+        int arrowX;
+        int arrowY;
+        WebColor backgroundColor;
+    };
+
+    // Extra parameters for PartSliderTrack and PartSliderThumb
+    struct SliderExtraParams {
+        bool vertical;
+        bool inDrag;
+    };
+
+    // Extra parameters for PartInnerSpinButton
+    struct InnerSpinButtonExtraParams {
+        bool spinUp;
+        bool readOnly;
+    };
+
+    // Extra parameters for PartProgressBar
+    struct ProgressBarExtraParams {
+        bool determinate;
+        int valueRectX;
+        int valueRectY;
+        int valueRectWidth;
+        int valueRectHeight;
+    };
+
     union ExtraParams {
         ScrollbarTrackExtraParams scrollbarTrack;
+        ButtonExtraParams button;
+        TextFieldExtraParams textField;
+        MenuListExtraParams menuList;
+        SliderExtraParams slider;
+        InnerSpinButtonExtraParams innerSpin;
+        ProgressBarExtraParams progressBar;
     };
 
     // Gets the size of the given theme part. For variable sized items
