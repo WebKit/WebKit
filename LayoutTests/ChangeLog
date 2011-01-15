@@ -1,5 +1,16 @@
 2011-01-14  Dmitry Titov  <dimich@chromium.org>
 
+        Not reviewed, update of Chromium test expectations.
+        Update of files affected by mass rebaseline in r75828 and r75838
+
+        * platform/chromium-mac/animations/3d/state-at-end-event-transform-expected.checksum:
+        * platform/chromium-mac/animations/3d/state-at-end-event-transform-expected.png:
+        * platform/chromium-mac/plugins/embed-attributes-style-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.checksum:
+        * platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.png:
+
+2011-01-14  Dmitry Titov  <dimich@chromium.org>
+
         Not reviewed, update of test expectations.
         Ignore new test fast/js/js-continue-break-restrictions.html, it fails for V8.
 
