@@ -1,3 +1,9 @@
+2011-01-14  Jochen Eisinger  <jochen@chromium.org>
+
+        Unreviewed, roll chromium deps to r71432.
+
+        * DEPS:
+
 2011-01-14  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.
