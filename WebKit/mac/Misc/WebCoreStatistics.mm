@@ -197,7 +197,7 @@ using namespace WebCore;
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
     
     JSLock lock(SilenceAssertionsOnly);
-    Heap::Statistics heapMemoryStats = heapStatistics(JSDOMWindow::commonJSGlobalData());
+    MarkedSpace::Statistics heapMemoryStats = heapStatistics(JSDOMWindow::commonJSGlobalData());
     GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
     
     return [NSDictionary dictionaryWithObjectsAndKeys:

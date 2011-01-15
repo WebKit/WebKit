@@ -1,3 +1,81 @@
+2011-01-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Split out a MarkedSpace strategy object from Heap.
+        https://bugs.webkit.org/show_bug.cgi?id=52421
+        
+        SunSpider reports no change.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Updated our 7 build systems. Which is cool.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::recordExtraCost):
+        (JSC::Heap::allocate):
+        (JSC::Heap::markConservatively):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::statistics):
+        (JSC::Heap::size):
+        (JSC::Heap::isBusy):
+        (JSC::Heap::collectAllGarbage):
+        (JSC::Heap::primaryHeapBegin):
+        (JSC::Heap::primaryHeapEnd):
+        * runtime/Heap.h:
+        (JSC::Heap::globalData):
+        (JSC::Heap::markedSpace):
+        (JSC::Heap::isCellMarked):
+        (JSC::Heap::checkMarkCell):
+        (JSC::Heap::markCell): Moved all code pertaining to managing chunks of
+        collector memory out of this class. Heap now just delegates to MarkedSpace.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::Heap::heap): Updated for MarkedSpace delegation.
+
+        * runtime/JSValue.h: Moved the ValueStringPair typedef to help with #includes.
+
+        * runtime/MarkedSpace.cpp: Copied from runtime/Heap.cpp.
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::destroy):
+        (JSC::MarkedSpace::allocateBlock):
+        (JSC::MarkedSpace::freeBlock):
+        (JSC::MarkedSpace::allocate):
+        (JSC::MarkedSpace::resizeBlocks):
+        (JSC::MarkedSpace::growBlocks):
+        (JSC::MarkedSpace::shrinkBlocks):
+        (JSC::MarkedSpace::markConservatively):
+        (JSC::MarkedSpace::clearMarkBits):
+        (JSC::MarkedSpace::markedCells):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::objectCount):
+        (JSC::MarkedSpace::addToStatistics):
+        (JSC::MarkedSpace::statistics):
+        (JSC::MarkedSpace::size):
+        (JSC::MarkedSpace::reset):
+        (JSC::MarkedSpace::primaryHeapBegin):
+        (JSC::MarkedSpace::primaryHeapEnd):
+        * runtime/MarkedSpace.h: Copied from runtime/Heap.h.
+        (JSC::MarkedSpace::globalData):
+        (JSC::MarkedSpace::didShrink):
+        (JSC::MarkedSpace::cellBlock):
+        (JSC::MarkedSpace::cellOffset):
+        (JSC::MarkedSpace::isCellMarked):
+        (JSC::MarkedSpace::checkMarkCell):
+        (JSC::MarkedSpace::markCell): Moved all code pertaining to managing chunks of
+        collector memory into this class.
+
+        * runtime/MemoryStatistics.cpp:
+        (JSC::heapStatistics):
+        * runtime/MemoryStatistics.h: Updated for MarkedSpace delegation.
+
 2011-01-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

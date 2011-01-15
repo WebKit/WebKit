@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-Heap::Statistics heapStatistics(JSGlobalData* commonGlobalData)
+MarkedSpace::Statistics heapStatistics(JSGlobalData* commonGlobalData)
 {
     return commonGlobalData->heap.statistics();
 }        

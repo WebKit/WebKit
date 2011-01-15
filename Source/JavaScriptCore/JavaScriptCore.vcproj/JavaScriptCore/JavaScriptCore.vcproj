@@ -594,6 +594,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\MarkedSpace.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\MarkedSpace.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\CollectorHeapIntrospector.h"
 				>
 			</File>

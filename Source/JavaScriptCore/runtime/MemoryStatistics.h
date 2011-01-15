@@ -37,7 +37,7 @@ struct GlobalMemoryStatistics {
     size_t JITBytes;
 };
 
-Heap::Statistics heapStatistics(JSGlobalData* commonGlobalData);
+MarkedSpace::Statistics heapStatistics(JSGlobalData* commonGlobalData);
 GlobalMemoryStatistics globalMemoryStatistics();
 
 }

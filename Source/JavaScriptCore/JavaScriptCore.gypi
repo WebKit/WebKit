@@ -182,6 +182,8 @@
             'runtime/CallData.cpp',
             'runtime/CallData.h',
             'runtime/ClassInfo.h',
+            'runtime/MarkedSpace.cpp',
+            'runtime/MarkedSpace.h',
             'runtime/Heap.cpp',
             'runtime/Heap.h',
             'runtime/CollectorHeapIterator.h',

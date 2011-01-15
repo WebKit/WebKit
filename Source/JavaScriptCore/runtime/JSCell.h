@@ -63,6 +63,7 @@ namespace JSC {
         friend class JSAPIValueWrapper;
         friend class JSZombie;
         friend class JSGlobalData;
+        friend class MarkedSpace;
 
     private:
         explicit JSCell(Structure*);
@@ -362,7 +363,7 @@ namespace JSC {
 
     inline Heap* Heap::heap(JSCell* c)
     {
-        return cellBlock(c)->heap;
+        return MarkedSpace::cellBlock(c)->heap;
     }
     
 #if ENABLE(JSC_ZOMBIES)
