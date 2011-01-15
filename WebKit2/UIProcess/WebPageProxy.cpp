@@ -468,6 +468,11 @@ void WebPageProxy::setViewNeedsDisplay(const IntRect& rect)
     m_pageClient->setViewNeedsDisplay(rect);
 }
 
+void WebPageProxy::displayView()
+{
+    m_pageClient->displayView();
+}
+
 void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
 {
     if (!isValid())

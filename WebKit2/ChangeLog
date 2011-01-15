@@ -1,5 +1,26 @@
 2011-01-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Add a new PageClient::displayView function and expose it on WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=52500
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::displayView):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::displayView):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::displayView):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::displayView):
+        * UIProcess/win/WebView.h:
+
+2011-01-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement the "should paint bounds instead of indiviual rects" algorithm from WebKit1

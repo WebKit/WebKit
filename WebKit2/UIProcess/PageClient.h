@@ -55,6 +55,9 @@ public:
     // Tell the view to invalidate the given rect. The rect is in view coordinates.
     virtual void setViewNeedsDisplay(const WebCore::IntRect&) = 0;
 
+    // Tell the view to immediately display its invalid rect.
+    virtual void displayView() = 0;
+
     // Return the size of the view the page is associated with.
     virtual WebCore::IntSize viewSize() = 0;
 

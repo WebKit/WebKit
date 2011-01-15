@@ -586,6 +586,11 @@ void WebView::setViewNeedsDisplay(const WebCore::IntRect& rect)
     ::InvalidateRect(m_window, &r, false);
 }
 
+void WebView::displayView()
+{
+    ::UpdateWindow(m_window);
+}
+
 WebCore::IntSize WebView::viewSize()
 {
     RECT clientRect;

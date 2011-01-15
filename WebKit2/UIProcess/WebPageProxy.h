@@ -171,6 +171,7 @@ public:
     void setWindowResizerSize(const WebCore::IntSize&);
 
     void setViewNeedsDisplay(const WebCore::IntRect&);
+    void displayView();
 
     enum {
         ViewWindowIsActive = 1 << 0,

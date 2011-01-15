@@ -128,6 +128,11 @@ void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
     [m_wkView setNeedsDisplayInRect:rect];
 }
 
+void PageClientImpl::displayView()
+{
+    [m_wkView displayIfNeeded];
+}
+
 IntSize PageClientImpl::viewSize()
 {
     return IntSize([m_wkView bounds].size);

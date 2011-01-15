@@ -142,6 +142,11 @@ void QWKPagePrivate::setViewNeedsDisplay(const WebCore::IntRect& rect)
     view->update(QRect(rect));
 }
 
+void QWKPagePrivate::displayView()
+{
+    // FIXME: Implement.
+}
+
 WebCore::IntSize QWKPagePrivate::viewSize()
 {
     // FIXME: Implement.

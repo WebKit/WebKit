@@ -46,6 +46,7 @@ public:
     // PageClient
     virtual PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
+    virtual void displayView();
 
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();
