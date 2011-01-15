@@ -1,3 +1,14 @@
+2011-01-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WebKit/mac part of <rdar://problem/8441312> Crash in -[NSView _invalidateGStatesForTree]
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _invalidateGStatesForTree]): Override this NSView method, and bracket the call
+        to the superclass implementation with suspending WebCore Widget hierarchy updates. This ensures
+        that the NSView tree doesn’t change from under AppKit as it traverses it.
+
 2011-01-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Mark Rowe.

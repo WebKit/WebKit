@@ -159,7 +159,6 @@ RenderWidget::~RenderWidget()
 
 bool RenderWidget::setWidgetGeometry(const IntRect& frame)
 {
-    ASSERT(!widgetHierarchyUpdateSuspendCount);
     if (!node())
         return false;
 
