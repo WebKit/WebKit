@@ -963,6 +963,21 @@ String WebHaltablePlugin::pluginName() const
     }
 }
 
+- (NSRect)actualVisibleRectInWindow
+{
+    RenderObject* renderer = _element->renderer();
+    if (!renderer || !renderer->view())
+        return NSZeroRect;
+
+    FrameView* frameView = renderer->view()->frameView();
+    if (!frameView)
+        return NSZeroRect;
+
+    IntRect widgetRect = renderer->absoluteClippedOverflowRect();
+    widgetRect = frameView->contentsToWindow(widgetRect);
+    return intersection(toRenderWidget(renderer)->windowClipRect(), widgetRect);
+}
+
 #ifndef BUILDING_ON_TIGER
 - (CALayer *)pluginLayer
 {

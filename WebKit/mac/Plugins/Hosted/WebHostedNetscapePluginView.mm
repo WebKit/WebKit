@@ -194,7 +194,7 @@ extern "C" {
     // compatible with this behavior.    
     BOOL shouldClipOutPlugin = _pluginLayer && [self shouldClipOutPlugin];
     if (!shouldClipOutPlugin)
-        visibleRectInWindow = [self convertRect:[self visibleRect] toView:windowContentView];
+        visibleRectInWindow = [self actualVisibleRectInWindow];
     else
         visibleRectInWindow = NSZeroRect;
     

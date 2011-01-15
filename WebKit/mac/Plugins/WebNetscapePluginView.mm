@@ -281,7 +281,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // of 1. For non-1.0 scale factors this assumption is false.
     NSView *windowContentView = [[self window] contentView];
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:windowContentView];
-    NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:windowContentView];
+    NSRect visibleRectInWindow = [self actualVisibleRectInWindow];
     
     // Flip Y to convert -[NSWindow contentView] coordinates to top-left-based window coordinates.
     float borderViewHeight = [[self currentWindow] frame].size.height;
