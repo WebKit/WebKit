@@ -1,3 +1,10 @@
+2011-01-14  Dmitry Titov  <dimich@chromium.org>
+
+        Not reviewed, update of test expectations.
+        Ignore new test fast/js/js-continue-break-restrictions.html, it fails for V8.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-14  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
