@@ -145,7 +145,9 @@ public:
     };
 
     void adjustPointForClicking(QMouseEvent*);
+#if !defined(QT_NO_GRAPHICSVIEW)
     void adjustPointForClicking(QGraphicsSceneMouseEvent*);
+#endif
 
     void setInspector(QWebInspector*);
     QWebInspector* getOrCreateInspector();

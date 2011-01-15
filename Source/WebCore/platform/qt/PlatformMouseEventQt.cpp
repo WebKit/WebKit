@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+#if !defined(QT_NO_GRAPHICSVIEW)
 PlatformMouseEvent::PlatformMouseEvent(QGraphicsSceneMouseEvent* event, int clickCount)
 {
     m_timestamp = WTF::currentTime();
@@ -69,6 +70,7 @@ PlatformMouseEvent::PlatformMouseEvent(QGraphicsSceneMouseEvent* event, int clic
     m_altKey =  (event->modifiers() & Qt::AltModifier);
     m_metaKey = (event->modifiers() & Qt::MetaModifier);
 }
+#endif // QT_NO_GRAPHICSVIEW
 
 PlatformMouseEvent::PlatformMouseEvent(QInputEvent* event, int clickCount)
 {

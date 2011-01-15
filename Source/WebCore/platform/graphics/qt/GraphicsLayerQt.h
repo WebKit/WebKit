@@ -26,6 +26,8 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerClient.h"
 
+#if !defined(QT_NO_GRAPHICSVIEW)
+
 namespace WebCore {
 
 class GraphicsLayerQtImpl;
@@ -92,4 +94,5 @@ private:
 };
 
 }
+#endif
 #endif // GraphicsLayerQt_h

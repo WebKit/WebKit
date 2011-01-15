@@ -21,6 +21,8 @@
 #include "config.h"
 #include "qgraphicswebview.h"
 
+#if !defined(QT_NO_GRAPHICSVIEW)
+
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
@@ -1142,5 +1144,7 @@ void QGraphicsWebView::inputMethodEvent(QInputMethodEvent* ev)
 
     \sa QWebPage::linkDelegationPolicy()
 */
+
+#endif // QT_NO_GRAPHICSVIEW
 
 #include "moc_qgraphicswebview.cpp"

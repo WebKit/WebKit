@@ -20,6 +20,8 @@
 #include "config.h"
 #include "GraphicsLayerQt.h"
 
+#if !defined(QT_NO_GRAPHICSVIEW)
+
 #include "CurrentTime.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -1777,3 +1779,6 @@ void GraphicsLayerQt::resumeAnimations()
 }
 
 #include <GraphicsLayerQt.moc>
+
+
+#endif // QT_NO_GRAPHICSVIEW

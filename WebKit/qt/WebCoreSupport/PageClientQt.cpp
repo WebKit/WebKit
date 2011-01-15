@@ -116,6 +116,7 @@ private:
     QWidget* m_widget;
 };
 
+#if !defined(QT_NO_GRAPHICSVIEW)
 class PlatformLayerProxyQGraphicsObject : public PlatformLayerProxyQt {
 public:
     PlatformLayerProxyQGraphicsObject(QWebFrame* frame, TextureMapperContentLayer* layer, QGraphicsObject* object)
@@ -150,6 +151,7 @@ public:
 private:
     QGraphicsItem* m_graphicsItem;
 };
+#endif // QT_NO_GRAPHICSVIEW
 
 void PageClientQWidget::setRootGraphicsLayer(TextureMapperPlatformLayer* layer)
 {
@@ -254,6 +256,7 @@ QRectF PageClientQWidget::windowRect() const
     return QRectF(view->window()->geometry());
 }
 
+#if !defined(QT_NO_GRAPHICSVIEW)
 PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
 {
     delete overlay;
@@ -475,5 +478,6 @@ QRectF PageClientQGraphicsWidget::windowRect() const
     // The sceneRect is a good approximation of the size of the application, independent of the view.
     return view->scene()->sceneRect();
 }
+#endif // QT_NO_GRAPHICSVIEW
 
 } // namespace WebCore

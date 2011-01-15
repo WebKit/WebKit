@@ -1405,6 +1405,7 @@ private:
     }
 };
 
+#if !defined(QT_NO_GRAPHICSVIEW)
 class QtPluginGraphicsWidget: public Widget
 {
 public:
@@ -1454,6 +1455,7 @@ private:
 
     QGraphicsWidget* graphicsWidget;
 };
+#endif // QT_NO_GRAPHICSVIEW
 
 PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames,
                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
@@ -1527,6 +1529,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
                 return w;
             }
 
+#if !defined(QT_NO_GRAPHICSVIEW)
             QGraphicsWidget* graphicsWidget = qobject_cast<QGraphicsWidget*>(object);
             if (graphicsWidget) {
                 QGraphicsObject* parentWidget = 0;
@@ -1540,6 +1543,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
                 w->setFrameRect(IntRect(0, 0, 0, 0));
                 return w;
             }
+#endif // QT_NO_GRAPHICSVIEW
 
             // FIXME: make things work for widgetless plugins as well
             delete object;

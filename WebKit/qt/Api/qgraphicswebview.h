@@ -29,6 +29,8 @@
 #include <QtGui/qpainter.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
 
+#if !defined(QT_NO_GRAPHICSVIEW)
+
 class QWebPage;
 class QWebHistory;
 class QWebSettings;
@@ -155,5 +157,7 @@ private:
     QGraphicsWebViewPrivate* const d;
     friend class QGraphicsWebViewPrivate;
 };
+
+#endif // QT_NO_GRAPHICSVIEW
 
 #endif // QGraphicsWebView_h

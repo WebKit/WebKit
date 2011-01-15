@@ -108,6 +108,7 @@ public:
 #endif
 };
 
+#if !defined(QT_NO_GRAPHICSVIEW)
 // the overlay is here for one reason only: to have the scroll-bars and other
 // extra UI elements appear on top of any QGraphicsItems created by CSS compositing layers
 class QGraphicsItemOverlay : public QGraphicsObject {
@@ -232,6 +233,7 @@ public:
     // we need to put the root graphics layer behind the overlay (which contains the scrollbar)
     enum { RootGraphicsLayerZValue, OverlayZValue };
 };
+#endif // QT_NO_GRAPHICSVIEW
 
 }
 #endif // PageClientQt

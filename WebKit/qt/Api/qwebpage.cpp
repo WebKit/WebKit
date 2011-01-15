@@ -1297,6 +1297,7 @@ void QWebPagePrivate::adjustPointForClicking(QMouseEvent*)
     notImplemented();
 }
 
+#if !defined(QT_NO_GRAPHICSVIEW)
 void QWebPagePrivate::adjustPointForClicking(QGraphicsSceneMouseEvent* ev)
 {
     QtPlatformPlugin platformPlugin;
@@ -1327,6 +1328,7 @@ void QWebPagePrivate::adjustPointForClicking(QGraphicsSceneMouseEvent* ev)
 
     ev->setPos(QPointF(adjustedPoint));
 }
+#endif
 
 bool QWebPagePrivate::touchEvent(QTouchEvent* event)
 {
@@ -2998,42 +3000,48 @@ bool QWebPage::event(QEvent *ev)
     case QEvent::MouseMove:
         d->mouseMoveEvent(static_cast<QMouseEvent*>(ev));
         break;
-    case QEvent::GraphicsSceneMouseMove:
-        d->mouseMoveEvent(static_cast<QGraphicsSceneMouseEvent*>(ev));
-        break;
     case QEvent::MouseButtonPress:
         d->mousePressEvent(static_cast<QMouseEvent*>(ev));
-        break;
-    case QEvent::GraphicsSceneMousePress:
-        d->mousePressEvent(static_cast<QGraphicsSceneMouseEvent*>(ev));
         break;
     case QEvent::MouseButtonDblClick:
         d->mouseDoubleClickEvent(static_cast<QMouseEvent*>(ev));
         break;
-    case QEvent::GraphicsSceneMouseDoubleClick:
-        d->mouseDoubleClickEvent(static_cast<QGraphicsSceneMouseEvent*>(ev));
-        break;
     case QEvent::MouseButtonRelease:
         d->mouseReleaseEvent(static_cast<QMouseEvent*>(ev));
+        break;
+#if !defined(QT_NO_GRAPHICSVIEW)
+    case QEvent::GraphicsSceneMouseMove:
+        d->mouseMoveEvent(static_cast<QGraphicsSceneMouseEvent*>(ev));
+        break;
+    case QEvent::GraphicsSceneMousePress:
+        d->mousePressEvent(static_cast<QGraphicsSceneMouseEvent*>(ev));
+        break;
+    case QEvent::GraphicsSceneMouseDoubleClick:
+        d->mouseDoubleClickEvent(static_cast<QGraphicsSceneMouseEvent*>(ev));
         break;
     case QEvent::GraphicsSceneMouseRelease:
         d->mouseReleaseEvent(static_cast<QGraphicsSceneMouseEvent*>(ev));
         break;
+#endif
 #ifndef QT_NO_CONTEXTMENU
     case QEvent::ContextMenu:
         d->contextMenuEvent(static_cast<QContextMenuEvent*>(ev)->globalPos());
         break;
+#if !defined(QT_NO_GRAPHICSVIEW)
     case QEvent::GraphicsSceneContextMenu:
         d->contextMenuEvent(static_cast<QGraphicsSceneContextMenuEvent*>(ev)->screenPos());
         break;
+#endif
 #endif
 #ifndef QT_NO_WHEELEVENT
     case QEvent::Wheel:
         d->wheelEvent(static_cast<QWheelEvent*>(ev));
         break;
+#if !defined(QT_NO_GRAPHICSVIEW)
     case QEvent::GraphicsSceneWheel:
         d->wheelEvent(static_cast<QGraphicsSceneWheelEvent*>(ev));
         break;
+#endif
 #endif
     case QEvent::KeyPress:
         d->keyPressEvent(static_cast<QKeyEvent*>(ev));
@@ -3051,27 +3059,30 @@ bool QWebPage::event(QEvent *ev)
     case QEvent::DragEnter:
         d->dragEnterEvent(static_cast<QDragEnterEvent*>(ev));
         break;
-    case QEvent::GraphicsSceneDragEnter:
-        d->dragEnterEvent(static_cast<QGraphicsSceneDragDropEvent*>(ev));
-        break;
     case QEvent::DragLeave:
         d->dragLeaveEvent(static_cast<QDragLeaveEvent*>(ev));
-        break;
-    case QEvent::GraphicsSceneDragLeave:
-        d->dragLeaveEvent(static_cast<QGraphicsSceneDragDropEvent*>(ev));
         break;
     case QEvent::DragMove:
         d->dragMoveEvent(static_cast<QDragMoveEvent*>(ev));
         break;
+    case QEvent::Drop:
+        d->dropEvent(static_cast<QDropEvent*>(ev));
+        break;
+#if !defined(QT_NO_GRAPHICSVIEW)
+    case QEvent::GraphicsSceneDragEnter:
+        d->dragEnterEvent(static_cast<QGraphicsSceneDragDropEvent*>(ev));
+        break;
     case QEvent::GraphicsSceneDragMove:
         d->dragMoveEvent(static_cast<QGraphicsSceneDragDropEvent*>(ev));
         break;
-    case QEvent::Drop:
-        d->dropEvent(static_cast<QDropEvent*>(ev));
+    case QEvent::GraphicsSceneDragLeave:
+        d->dragLeaveEvent(static_cast<QGraphicsSceneDragDropEvent*>(ev));
         break;
     case QEvent::GraphicsSceneDrop:
         d->dropEvent(static_cast<QGraphicsSceneDragDropEvent*>(ev));
         break;
+#endif
+
 #endif
     case QEvent::InputMethod:
         d->inputMethodEvent(static_cast<QInputMethodEvent*>(ev));
