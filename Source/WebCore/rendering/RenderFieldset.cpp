@@ -25,8 +25,9 @@
 #include "RenderFieldset.h"
 
 #include "CSSPropertyNames.h"
-#include "HTMLNames.h"
 #include "GraphicsContext.h"
+#include "HTMLNames.h"
+#include "PaintInfo.h"
 
 #if ENABLE(WML)
 #include "WMLNames.h"

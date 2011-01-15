@@ -22,6 +22,8 @@
 #include "config.h"
 #include "RenderStyle.h"
 
+#include "ContentData.h"
+#include "CursorList.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "FontSelector.h"

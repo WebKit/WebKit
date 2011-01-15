@@ -27,6 +27,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Color.h"
+#include "PaintInfo.h"
 #include "PlatformThemeChromiumGtk.h"
 #include "RenderObject.h"
 #include "ScrollbarTheme.h"

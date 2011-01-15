@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "RenderScrollbarPart.h"
+
+#include "PaintInfo.h"
 #include "RenderScrollbar.h"
 #include "RenderScrollbarTheme.h"
 #include "RenderView.h"

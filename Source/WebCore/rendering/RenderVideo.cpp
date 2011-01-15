@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
 #include "MediaPlayer.h"
+#include "PaintInfo.h"
 #include "RenderView.h"
 
 #if USE(ACCELERATED_COMPOSITING)

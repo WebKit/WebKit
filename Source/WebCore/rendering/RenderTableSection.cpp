@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "HitTestResult.h"
 #include "HTMLNames.h"
+#include "PaintInfo.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"

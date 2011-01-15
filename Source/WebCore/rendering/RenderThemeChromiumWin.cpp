@@ -38,6 +38,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
+#include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderProgress.h"
 #include "RenderSlider.h"

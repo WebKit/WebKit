@@ -28,6 +28,7 @@
 #include "RenderObjectChildList.h"
 
 #include "AXObjectCache.h"
+#include "ContentData.h"
 #include "RenderBlock.h"
 #include "RenderCounter.h"
 #include "RenderImage.h"

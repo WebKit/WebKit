@@ -27,6 +27,9 @@
 #include "CSSStyleSelector.h"
 
 #include "Attribute.h"
+#include "ContentData.h"
+#include "CounterContent.h"
+#include "CursorList.h"
 #include "CSSBorderImageValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSFontFaceRule.h"

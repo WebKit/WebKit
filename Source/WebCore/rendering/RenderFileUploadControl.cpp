@@ -32,6 +32,7 @@
 #include "Icon.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
+#include "PaintInfo.h"
 #include "RenderButton.h"
 #include "RenderText.h"
 #include "RenderTheme.h"

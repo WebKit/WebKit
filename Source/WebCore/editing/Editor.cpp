@@ -52,6 +52,7 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"

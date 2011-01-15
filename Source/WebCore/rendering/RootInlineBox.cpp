@@ -29,6 +29,7 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "Page.h"
+#include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 

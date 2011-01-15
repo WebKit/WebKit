@@ -32,6 +32,7 @@
 
 #include "GraphicsContext.h"
 #include "MathMLNames.h"
+#include "PaintInfo.h"
 #include "RenderText.h"
 
 namespace WebCore {

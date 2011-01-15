@@ -28,6 +28,7 @@
 #include "config.h"
 #include "RenderImageResource.h"
 
+#include "Image.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderObject.h"
 

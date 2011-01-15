@@ -41,6 +41,7 @@
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "PaintInfo.h"
 #include "Path.h"
 #include "PluginViewBase.h"
 #include "RenderTheme.h"

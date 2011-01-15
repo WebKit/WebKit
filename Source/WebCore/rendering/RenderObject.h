@@ -28,11 +28,10 @@
 
 #include "AffineTransform.h"
 #include "CachedResourceClient.h"
-#include "CSSPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
-#include "PaintInfo.h"
+#include "PaintPhase.h"
 #include "RenderObjectChildList.h"
 #include "RenderStyle.h"
 #include "TextAffinity.h"
@@ -63,6 +62,8 @@ class VisiblePosition;
 #if ENABLE(SVG)
 class RenderSVGResourceContainer;
 #endif
+
+struct PaintInfo;
 
 enum HitTestFilter {
     HitTestAll,

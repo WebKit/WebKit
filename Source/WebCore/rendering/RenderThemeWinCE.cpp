@@ -28,10 +28,11 @@
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "GraphicsContext.h"
-#include "NotImplemented.h"
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #endif
+#include "NotImplemented.h"
+#include "PaintInfo.h"
 
 #include <windows.h>
 

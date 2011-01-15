@@ -35,6 +35,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "PaintInfo.h"
 #include "RenderMediaControls.h"
 #include "RenderSlider.h"
 #include "RenderView.h"

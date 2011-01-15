@@ -28,11 +28,12 @@
 
 #include "CanvasRenderingContext.h"
 #include "Document.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLNames.h"
+#include "PaintInfo.h"
 #include "RenderView.h"
-#include "FrameView.h"
 
 namespace WebCore {
 

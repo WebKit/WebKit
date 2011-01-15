@@ -32,6 +32,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Cursor.h"
+#include "CursorList.h"
 #include "Document.h"
 #include "DragController.h"
 #include "Editor.h"

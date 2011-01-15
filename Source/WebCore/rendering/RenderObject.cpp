@@ -28,8 +28,9 @@
 #include "RenderObject.h"
 
 #include "AXObjectCache.h"
-#include "Chrome.h"
 #include "CSSStyleSelector.h"
+#include "Chrome.h"
+#include "ContentData.h"
 #include "DashArray.h"
 #include "EditingBoundary.h"
 #include "FloatQuad.h"

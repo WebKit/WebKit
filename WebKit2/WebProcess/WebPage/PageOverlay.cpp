@@ -28,6 +28,7 @@
 #include "WebPage.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;

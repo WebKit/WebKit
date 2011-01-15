@@ -24,6 +24,7 @@
 #include "CSSComputedStyleDeclaration.h"
 
 #include "AnimationController.h"
+#include "CursorList.h"
 #include "CSSBorderImageValue.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"

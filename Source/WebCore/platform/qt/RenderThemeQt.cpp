@@ -47,6 +47,7 @@
 #include "QtMobileWebStyle.h"
 #endif
 #include "NotImplemented.h"
+#include "PaintInfo.h"
 #include "Page.h"
 #include "QWebPageClient.h"
 #include "QtStyleOptionWebComboBox.h"

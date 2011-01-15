@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "Image.h"
 #include "MediaControlElements.h"
+#include "PaintInfo.h"
 #include "PlatformContextSkia.h"
 #include "RenderBox.h"
 #include "RenderMediaControlsChromium.h"

@@ -33,6 +33,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
+#include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "TimeRanges.h"

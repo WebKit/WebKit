@@ -21,6 +21,7 @@
 #import "config.h"
 #import "RenderThemeChromiumMac.h"
 #import "ChromiumBridge.h"
+#import "PaintInfo.h"
 #import "RenderMediaControlsChromium.h"
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>

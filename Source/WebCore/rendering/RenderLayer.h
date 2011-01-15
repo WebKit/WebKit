@@ -44,6 +44,7 @@
 #ifndef RenderLayer_h
 #define RenderLayer_h
 
+#include "PaintInfo.h"
 #include "RenderBox.h"
 #include "ScrollBehavior.h"
 #include "ScrollbarClient.h"

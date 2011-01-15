@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "Page.h"
+#include "PaintInfo.h"
 #include "RenderObject.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"

@@ -35,6 +35,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "PaintInfo.h"
 #include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderInline.h"

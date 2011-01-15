@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "Page.h"
+#include "PaintInfo.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "SelectionController.h"

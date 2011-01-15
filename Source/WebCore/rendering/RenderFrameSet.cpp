@@ -34,6 +34,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "MouseEvent.h"
+#include "PaintInfo.h"
 #include "RenderFrame.h"
 #include "RenderView.h"
 #include "Settings.h"

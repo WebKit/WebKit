@@ -24,6 +24,7 @@
 #include "config.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageBuffer.h"
 

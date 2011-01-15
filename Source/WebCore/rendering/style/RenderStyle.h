@@ -25,36 +25,24 @@
 #ifndef RenderStyle_h
 #define RenderStyle_h
 
-#include "TransformationMatrix.h"
 #include "AnimationList.h"
-#include "BorderData.h"
 #include "BorderValue.h"
-#include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
-#include "CSSReflectionDirection.h"
-#include "CSSValueList.h"
-#include "CollapsedBorderValue.h"
 #include "Color.h"
 #include "ColorSpace.h"
-#include "ContentData.h"
 #include "CounterDirectives.h"
-#include "CursorList.h"
 #include "DataRef.h"
 #include "FillLayer.h"
-#include "FloatPoint.h"
 #include "Font.h"
 #include "GraphicsTypes.h"
-#include "IntRect.h"
 #include "Length.h"
 #include "LengthBox.h"
 #include "LengthSize.h"
 #include "LineClampValue.h"
 #include "NinePieceImage.h"
 #include "OutlineValue.h"
-#include "Pair.h"
 #include "RenderStyleConstants.h"
-#include "ShadowData.h"
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
 #include "StyleFlexibleBoxData.h"
@@ -69,7 +57,6 @@
 #include "StyleVisualData.h"
 #include "TextDirection.h"
 #include "ThemeTypes.h"
-#include "TimingFunction.h"
 #include "TransformOperations.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -99,10 +86,17 @@ namespace WebCore {
 
 using std::max;
 
+class BorderData;
 class CSSStyleSelector;
-class CSSValueList;
+class CounterContent;
+class CursorList;
+class IntRect;
 class Pair;
+class ShadowData;
 class StyleImage;
+class TransformationMatrix;
+
+struct ContentData;
 
 typedef Vector<RefPtr<RenderStyle>, 4> PseudoStyleCache;
 

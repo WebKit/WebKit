@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+struct PaintInfo;
+
 enum LogicalWidthType { LogicalWidth, MinLogicalWidth, MaxLogicalWidth };
 
 class RenderBox : public RenderBoxModelObject {

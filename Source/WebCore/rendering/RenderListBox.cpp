@@ -46,6 +46,7 @@
 #include "OptionGroupElement.h"
 #include "OptionElement.h"
 #include "Page.h"
+#include "PaintInfo.h"
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"

@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class CollapsedBorderValue;
 class RenderTableCol;
 class RenderTableCell;
 class RenderTableSection;

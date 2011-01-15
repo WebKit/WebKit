@@ -28,6 +28,7 @@
 #include "CachedImage.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "PaintInfo.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 

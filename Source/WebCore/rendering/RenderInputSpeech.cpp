@@ -35,6 +35,7 @@
 
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
+#include "PaintInfo.h"
 #include "RenderBox.h"
 #include "TextControlInnerElements.h"
 

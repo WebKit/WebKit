@@ -38,6 +38,7 @@ class LayoutStateMaintainer;
 class RenderInline;
 
 struct BidiRun;
+struct PaintInfo;
 
 template <class Iterator, class Run> class BidiResolver;
 template <class Iterator> struct MidpointState;

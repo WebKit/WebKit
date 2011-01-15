@@ -1,3 +1,52 @@
+2011-01-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by David Levin.
+
+        Do some forward declaration in RenderStyle.h
+        https://bugs.webkit.org/show_bug.cgi?id=52453
+
+        No new tests because no new functionality.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSStyleSelector.cpp:
+        * editing/Editor.cpp:
+        * page/EventHandler.cpp:
+        * rendering/EllipsisBox.cpp:
+        * rendering/InlineBox.cpp:
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        * rendering/RenderFieldset.cpp:
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderFrameSet.cpp:
+        * rendering/RenderHTMLCanvas.cpp:
+        * rendering/RenderImageResource.cpp:
+        * rendering/RenderInputSpeech.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLineBoxList.cpp:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderMediaControlsChromium.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderObjectChildList.cpp:
+        * rendering/RenderProgress.cpp:
+        * rendering/RenderScrollbarPart.cpp:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableRow.cpp:
+        * rendering/RenderTableSection.cpp:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderThemeChromiumSkia.cpp:
+        * rendering/RenderThemeChromiumWin.cpp:
+        * rendering/RootInlineBox.cpp:
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+
 2011-01-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

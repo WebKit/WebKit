@@ -25,10 +25,12 @@
 #include "config.h"
 #include "RenderTableCell.h"
 
+#include "CollapsedBorderValue.h"
 #include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
+#include "PaintInfo.h"
 #include "RenderTableCol.h"
 #include "RenderView.h"
 #include "TransformState.h"

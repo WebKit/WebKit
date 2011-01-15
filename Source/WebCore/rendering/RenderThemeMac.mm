@@ -35,6 +35,7 @@
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "MediaControlElements.h"
+#import "PaintInfo.h"
 #import "RenderMedia.h"
 #import "RenderSlider.h"
 #import "RenderView.h"

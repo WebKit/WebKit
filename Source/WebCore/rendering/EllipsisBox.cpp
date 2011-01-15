@@ -23,6 +23,7 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "PaintInfo.h"
 #include "RootInlineBox.h"
 
 namespace WebCore {

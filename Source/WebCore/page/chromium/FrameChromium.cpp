@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderView.h"
 #include "Settings.h"

@@ -22,6 +22,7 @@
 
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"
+#include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
 #include "RootInlineBox.h"

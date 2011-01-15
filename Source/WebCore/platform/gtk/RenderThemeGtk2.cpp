@@ -32,6 +32,7 @@
 #include "GtkVersioning.h"
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
+#include "PaintInfo.h"
 #include "RenderObject.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
