@@ -1,3 +1,16 @@
+2011-01-14  Nico Weber  <thakis@chromium.org>
+
+        Unreviewed, test expectations.
+
+        Rebaseline gradient test due to updated skia. reed checked the test and
+        says the new look is right and is an intentional change.
+        https://bugs.webkit.org/show_bug.cgi?id=52105
+
+        * platform/chromium-linux/svg/batik/paints/gradientLimit-expected.checksum:
+        * platform/chromium-linux/svg/batik/paints/gradientLimit-expected.png:
+        * platform/chromium-win/svg/batik/paints/gradientLimit-expected.checksum:
+        * platform/chromium-win/svg/batik/paints/gradientLimit-expected.png:
+
 2011-01-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
