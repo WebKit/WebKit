@@ -159,7 +159,7 @@ static HTMLElement* enclosingDeletableElement(const VisibleSelection& selection)
     if (!container->isContentEditable())
         return 0;
 
-    Node* element = enclosingNodeOfType(Position(container, 0), &isDeletableElement);
+    Node* element = enclosingNodeOfType(firstPositionInNode(container), &isDeletableElement);
     if (!element)
         return 0;
 

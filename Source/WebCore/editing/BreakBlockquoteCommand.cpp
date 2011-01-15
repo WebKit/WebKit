@@ -82,7 +82,7 @@ void BreakBlockquoteCommand::doApply()
     // Instead, insert the break before the blockquote, unless the position is as the end of the the quoted content.
     if (isFirstVisiblePositionInNode(visiblePos, topBlockquote) && !isLastVisPosInNode) {
         insertNodeBefore(breakNode.get(), topBlockquote);
-        setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.get()), DOWNSTREAM));
         rebalanceWhitespace();   
         return;
     }
@@ -92,7 +92,7 @@ void BreakBlockquoteCommand::doApply()
 
     // If we're inserting the break at the end of the quoted content, we don't need to break the quote.
     if (isLastVisPosInNode) {
-        setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.get()), DOWNSTREAM));
         rebalanceWhitespace();
         return;
     }
@@ -125,7 +125,7 @@ void BreakBlockquoteCommand::doApply()
     
     // If there's nothing inside topBlockquote to move, we're finished.
     if (!startNode->isDescendantOf(topBlockquote)) {
-        setEndingSelection(VisibleSelection(VisiblePosition(Position(startNode, 0))));
+        setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInOrBeforeNode(startNode))));
         return;
     }
     
@@ -198,7 +198,7 @@ void BreakBlockquoteCommand::doApply()
     addBlockPlaceholderIfNeeded(clonedBlockquote.get());
     
     // Put the selection right before the break.
-    setEndingSelection(VisibleSelection(Position(breakNode.get(), 0), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(positionBeforeNode(breakNode.get()), DOWNSTREAM));
     rebalanceWhitespace();
 }
 

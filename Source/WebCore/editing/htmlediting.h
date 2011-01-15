@@ -117,12 +117,12 @@ Position positionOutsideContainingSpecialElement(const Position&, Node** contain
 
 inline Position firstPositionInOrBeforeNode(Node* node)
 {
-    return canHaveChildrenForEditing(node) ? firstPositionInNode(node) : positionBeforeNode(node);
+    return editingIgnoresContent(node) ? positionBeforeNode(node) : firstPositionInNode(node);
 }
 
 inline Position lastPositionInOrAfterNode(Node* node)
 {
-    return canHaveChildrenForEditing(node) ? lastPositionInNode(node) : positionAfterNode(node);
+    return editingIgnoresContent(node) ? positionAfterNode(node) : lastPositionInNode(node);
 }
 
 // Position creation functions are inline to prevent ref-churn.

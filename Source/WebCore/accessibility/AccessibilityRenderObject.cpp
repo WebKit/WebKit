@@ -2026,8 +2026,8 @@ void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range
     if (!frame)
         return;
     Node* node = m_renderer->node();
-    frame->selection()->setSelection(VisibleSelection(Position(node, range.start),
-        Position(node, range.start + range.length), DOWNSTREAM));
+    frame->selection()->setSelection(VisibleSelection(Position(node, range.start, Position::PositionIsOffsetInAnchor),
+        Position(node, range.start + range.length, Position::PositionIsOffsetInAnchor), DOWNSTREAM));
 }
 
 KURL AccessibilityRenderObject::url() const

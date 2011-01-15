@@ -301,7 +301,7 @@ void CompositeEditCommand::inputText(const String& text, bool selectInsertedText
 {
     unsigned offset = 0;
     unsigned length = text.length();
-    RefPtr<Range> startRange = Range::create(document(), Position(document()->documentElement(), 0), endingSelection().start());
+    RefPtr<Range> startRange = Range::create(document(), firstPositionInNode(document()->documentElement()), endingSelection().start());
     unsigned startIndex = TextIterator::rangeLength(startRange.get());
     size_t newline;
     do {
@@ -398,17 +398,17 @@ static inline bool isWhitespace(UChar c)
 // FIXME: Doesn't go into text nodes that contribute adjacent text (siblings, cousins, etc).
 void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
 {
-    Node* node = position.node();
-    if (!node || !node->isTextNode())
+    Node* node = position.containerNode();
+    if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())
         return;
     Text* textNode = static_cast<Text*>(node);
-    
+
     if (textNode->length() == 0)
         return;
     RenderObject* renderer = textNode->renderer();
     if (renderer && !renderer->style()->collapseWhiteSpace())
         return;
-        
+
     String text = textNode->data();
     ASSERT(!text.isEmpty());
 
@@ -432,8 +432,8 @@ void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
     int length = downstream - upstream + 1;
     ASSERT(length > 0);
     
-    VisiblePosition visibleUpstreamPos(Position(position.node(), upstream));
-    VisiblePosition visibleDownstreamPos(Position(position.node(), downstream + 1));
+    VisiblePosition visibleUpstreamPos(Position(position.containerNode(), upstream, Position::PositionIsOffsetInAnchor));
+    VisiblePosition visibleDownstreamPos(Position(position.containerNode(), downstream + 1, Position::PositionIsOffsetInAnchor));
     
     String string = text.substring(upstream, length);
     String rebalancedString = stringWithRebalancedWhitespace(string,
@@ -715,10 +715,10 @@ PassRefPtr<Node> CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessar
     }
 
     RefPtr<Node> newBlock = insertNewDefaultParagraphElementAt(upstreamStart);
-    
+
     bool endWasBr = visibleParagraphEnd.deepEquivalent().node()->hasTagName(brTag);
 
-    moveParagraphs(visibleParagraphStart, visibleParagraphEnd, VisiblePosition(Position(newBlock.get(), 0)));
+    moveParagraphs(visibleParagraphStart, visibleParagraphEnd, VisiblePosition(firstPositionInNode(newBlock.get())));
 
     if (newBlock->lastChild() && newBlock->lastChild()->hasTagName(brTag) && !endWasBr)
         removeNode(newBlock->lastChild());
@@ -973,10 +973,10 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         // Need an updateLayout here in case inserting the br has split a text node.
         updateLayout();
     }
-        
-    RefPtr<Range> startToDestinationRange(Range::create(document(), Position(document(), 0), rangeCompliantEquivalent(destination.deepEquivalent())));
+
+    RefPtr<Range> startToDestinationRange(Range::create(document(), firstPositionInNode(document()->documentElement()), rangeCompliantEquivalent(destination.deepEquivalent())));
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get(), true);
-    
+
     setEndingSelection(destination);
     ASSERT(endingSelection().isCaretOrRange());
     applyCommandToComposite(ReplaceSelectionCommand::create(document(), fragment, true, false, !preserveStyle, false, true));
@@ -1055,7 +1055,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     }
 
     appendBlockPlaceholder(newBlock);
-    setEndingSelection(VisibleSelection(Position(newBlock.get(), 0), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(firstPositionInNode(newBlock.get()), DOWNSTREAM));
 
     style->prepareToApplyAt(endingSelection().start());
     if (!style->isEmpty())
@@ -1088,7 +1088,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     // We want to replace this quoted paragraph with an unquoted one, so insert a br
     // to hold the caret before the highest blockquote.
     insertNodeBefore(br, highestBlockquote);
-    VisiblePosition atBR(Position(br.get(), 0));
+    VisiblePosition atBR(positionBeforeNode(br.get()));
     // If the br we inserted collapsed, for example foo<br><blockquote>...</blockquote>, insert
     // a second one.
     if (!isStartOfParagraph(atBR))
@@ -1191,8 +1191,8 @@ PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, b
     for (node = start; node && node->parentNode() != end; node = node->parentNode()) {
         if (!node->parentNode()->isElementNode())
             break;
-        VisiblePosition positionInParent(Position(node->parentNode(), 0), DOWNSTREAM);
-        VisiblePosition positionInNode(Position(node, 0), DOWNSTREAM);
+        VisiblePosition positionInParent(firstPositionInNode(node->parentNode()), DOWNSTREAM);
+        VisiblePosition positionInNode(firstPositionInOrBeforeNode(node.get()), DOWNSTREAM);
         if (positionInParent != positionInNode)
             applyCommandToComposite(SplitElementCommand::create(static_cast<Element*>(node->parentNode()), node));
     }

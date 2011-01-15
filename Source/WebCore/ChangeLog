@@ -1,3 +1,38 @@
+2011-01-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Stop instantiating legacy editing positions in AccessibilityRenderObject.cpp, Element.cpp,
+        BreakBlockquoteCommand.cpp, CompositeEditCommand.cpp, and DeleteButtonController.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=52481
+
+        Removed instantiation of legacy editing positions.
+        Calls to Position::Position are replaced by calls to Position's convenience functions.
+        
+        Also fixed firstPositionInOrBeforeNode and lastPositionInOrAfterNode so that
+        they instantiate right positions for text nodes.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedTextRange):
+        * dom/Element.cpp:
+        (WebCore::Element::updateFocusAppearance):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::inputText):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph):
+        (WebCore::CompositeEditCommand::splitTreeToNode):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::enclosingDeletableElement):
+        * editing/htmlediting.h:
+        (WebCore::firstPositionInOrBeforeNode): Instantiates firstPositionInNode instead of
+        positionBeforeNode for a text node.
+        (WebCore::lastPositionInOrAfterNode): Ditto.
+
 2011-01-14  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.
