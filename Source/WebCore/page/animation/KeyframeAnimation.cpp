@@ -189,7 +189,7 @@ void KeyframeAnimation::animate(CompositeAnimation*, RenderObject*, const Render
         // Get the from/to styles and progress between
         const RenderStyle* fromStyle = 0;
         const RenderStyle* toStyle = 0;
-        double progress;
+        double progress = 0.0;
         fetchIntervalEndpointsForProperty(property, fromStyle, toStyle, progress);
     
         bool needsAnim = blendProperties(this, property, animatedStyle.get(), fromStyle, toStyle, progress);
@@ -226,7 +226,7 @@ void KeyframeAnimation::getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle)
         // Get the from/to styles and progress between
         const RenderStyle* fromStyle = 0;
         const RenderStyle* toStyle = 0;
-        double progress;
+        double progress = 0.0;
         fetchIntervalEndpointsForProperty(property, fromStyle, toStyle, progress);
 
         blendProperties(this, property, animatedStyle.get(), fromStyle, toStyle, progress);
