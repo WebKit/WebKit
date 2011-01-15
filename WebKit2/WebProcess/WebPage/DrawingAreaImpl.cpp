@@ -68,8 +68,8 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
 void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
     if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
-        unsigned long long scrollArea = scrollRect.width() * scrollRect.height();
-        unsigned long long currentScrollArea = m_scrollRect.width() * m_scrollRect.height();
+        unsigned scrollArea = scrollRect.width() * scrollRect.height();
+        unsigned currentScrollArea = m_scrollRect.width() * m_scrollRect.height();
 
         if (currentScrollArea >= scrollArea) {
             // The rect being scrolled is at least as large as the rect we'd like to scroll.
@@ -178,6 +178,27 @@ void DrawingAreaImpl::display()
     m_isWaitingForDidUpdate = true;
 }
 
+static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& rects)
+{
+    const size_t rectThreshold = 10;
+    const float wastedSpaceThreshold = 0.75f;
+
+    if (rects.size() <= 1 || rects.size() > rectThreshold)
+        return true;
+
+    // Attempt to guess whether or not we should use the region bounds rect or the individual rects.
+    // We do this by computing the percentage of "wasted space" in the bounds.  If that wasted space
+    // is too large, then we will do individual rect painting instead.
+    unsigned boundsArea = bounds.width() * bounds.height();
+    unsigned rectsArea = 0;
+    for (size_t i = 0; i < rects.size(); ++i)
+        rectsArea += rects[i].width() * rects[i].height();
+
+    float wastedSpace = 1 - (rectsArea / boundsArea);
+
+    return wastedSpace <= wastedSpaceThreshold;
+}
+
 void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 {
     // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
@@ -187,6 +208,11 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     IntRect bounds = m_dirtyRegion.bounds();
     Vector<IntRect> rects = m_dirtyRegion.rects();
 
+    if (shouldPaintBoundsRect(bounds, rects)) {
+        rects.clear();
+        rects.append(bounds);
+    }
+        
     m_dirtyRegion = Region();
     m_scrollRect = IntRect();
     m_scrollDelta = IntSize();

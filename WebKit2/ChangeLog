@@ -1,3 +1,17 @@
+2011-01-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement the "should paint bounds instead of indiviual rects" algorithm from WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=52499
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::shouldPaintBoundsRect):
+        Port code from -[WebView _mustDrawUnionedRect:singleRects:count:].
+
+        (WebKit::DrawingAreaImpl::display):
+        If shouldPaintBoundsRect returns true, clear the rects vector and append the bounds rect.
+
 2011-01-14  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Geoff Garen.
