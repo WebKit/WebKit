@@ -260,49 +260,34 @@ void Heap::markRoots()
 
     m_operationInProgress = Collection;
 
-    // Gather conservative references. We must do this before resetting mark bits
-    // because we rely on mark bits to tell us whether a candidate reference
-    // is valid.
-    HashSet<JSCell*> machineStackReferences;
-    m_machineStackMarker.markMachineStackConservatively(machineStackReferences);
-
-    m_markedSpace.clearMarkBits();
-
     MarkStack& markStack = m_globalData->markStack;
 
-    HashSet<JSCell*>::iterator end = machineStackReferences.end();
-    for (HashSet<JSCell*>::iterator it = machineStackReferences.begin(); it != end; ++it)
-        markStack.append(*it);
-    markStack.drain();
+    // Reset mark bits.
+    m_markedSpace.clearMarkBits();
 
-    // FIXME: Do we need extra conservatism here too?
+    // Mark stack roots.
+    m_machineStackMarker.markMachineStackConservatively(markStack);
     m_globalData->interpreter->registerFile().markCallFrames(markStack, this);
-    markStack.drain();
 
     // Mark explicitly registered roots.
     markProtectedObjects(markStack);
-    markStack.drain();
-
+    
     // Mark temporary vector for Array sorting
     markTempSortVectors(markStack);
-    markStack.drain();
 
     // Mark misc. other roots.
     if (m_markListSet && m_markListSet->size())
         MarkedArgumentBuffer::markLists(markStack, *m_markListSet);
-    markStack.drain();
-
     if (m_globalData->exception)
         markStack.append(m_globalData->exception);
     if (m_globalData->firstStringifierToMark)
         JSONObject::markStringifiers(markStack, m_globalData->firstStringifierToMark);
-    markStack.drain();
 
     // Mark the small strings cache last, since it will clear itself if nothing
     // else has marked it.
     m_globalData->smallStrings.markChildren(markStack);
-    markStack.drain();
 
+    markStack.drain();
     markStack.compact();
 
     updateWeakGCHandles();

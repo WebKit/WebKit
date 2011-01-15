@@ -1,5 +1,12 @@
 2011-01-14  Geoffrey Garen  <ggaren@apple.com>
 
+        Reverted accidentally committed code from my last checkin.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots):
+
+2011-01-14  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
         
         Try to fix the GTK bot.
