@@ -70,7 +70,6 @@ private
         Source
         Tools
         WebKit
-        WebKit2
         WebKitLibraries
         Websites
     ]

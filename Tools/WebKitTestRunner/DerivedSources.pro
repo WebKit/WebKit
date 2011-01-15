@@ -37,8 +37,8 @@ defineTest(addExtraCompiler) {
 SRC_ROOT_DIR = $$replace(PWD, /Tools/WebKitTestRunner, /)
 
 # Make sure forwarded headers needed by this project are present
-fwheader_generator.commands = perl $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/Tools/WebKitTestRunner $${OUTPUT_DIR}/include qt
-fwheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl
+fwheader_generator.commands = perl $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/Tools/WebKitTestRunner $${OUTPUT_DIR}/include qt
+fwheader_generator.depends  = $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl
 generated_files.depends     += fwheader_generator
 QMAKE_EXTRA_TARGETS         += fwheader_generator
 

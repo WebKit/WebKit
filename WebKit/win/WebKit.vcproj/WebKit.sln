@@ -42,19 +42,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testapi", "..\..\..\Source\
 		{DA31DA52-6675-48D4-89E0-333A7144397C} = {DA31DA52-6675-48D4-89E0-333A7144397C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit", "..\..\..\WebKit2\win\WebKit2.vcproj", "{2E51ABE8-76CB-485B-A66C-46AEF4DF8ACD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit", "..\..\..\Source\WebKit2\win\WebKit2.vcproj", "{2E51ABE8-76CB-485B-A66C-46AEF4DF8ACD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2EDAD637-CBA8-4E55-97ED-7D2BBC336FDB} = {2EDAD637-CBA8-4E55-97ED-7D2BBC336FDB}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebKit2 Folder", "WebKit2 Folder", "{9AB9C96C-9039-4FA9-8F83-BBFC8F8B2182}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit2Generated", "..\..\..\WebKit2\win\WebKit2Generated.vcproj", "{2EDAD637-CBA8-4E55-97ED-7D2BBC336FDB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit2Generated", "..\..\..\Source\WebKit2\win\WebKit2Generated.vcproj", "{2EDAD637-CBA8-4E55-97ED-7D2BBC336FDB}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0662A8A9-82A3-4638-97D8-EC425D8D87C9} = {0662A8A9-82A3-4638-97D8-EC425D8D87C9}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit2WebProcess", "..\..\..\WebKit2\win\WebKit2WebProcess.vcproj", "{AAE88FEF-509E-4D49-870B-7357922C276F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebKit2WebProcess", "..\..\..\Source\WebKit2\win\WebKit2WebProcess.vcproj", "{AAE88FEF-509E-4D49-870B-7357922C276F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2E51ABE8-76CB-485B-A66C-46AEF4DF8ACD} = {2E51ABE8-76CB-485B-A66C-46AEF4DF8ACD}
 	EndProjectSection

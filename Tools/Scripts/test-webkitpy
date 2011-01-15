@@ -248,7 +248,7 @@ def _test_import(module_path):
 if __name__ == "__main__":
     # FIXME: We should probably test each package separately to avoid naming conflicts.
     external_package_paths = [
-        _path_from_webkit_root('WebKit2', 'Scripts', 'webkit2'),
+        _path_from_webkit_root('Source', 'WebKit2', 'Scripts', 'webkit2'),
         _path_from_webkit_root('Tools', 'QueueStatusServer'),
     ]
     init(sys.argv[1:], external_package_paths)

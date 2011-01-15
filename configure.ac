@@ -1032,7 +1032,7 @@ if test "$enable_webkit2" = "no"; then
     )
 else
     AC_CONFIG_FILES([
-    WebKit2/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:WebKit2/gtk/webkit2.pc.in
+    Source/WebKit2/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/gtk/webkit2.pc.in
     ]
     ,[WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME]
     )

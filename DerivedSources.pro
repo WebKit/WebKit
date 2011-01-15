@@ -7,7 +7,7 @@ SUBDIRS += \
         WebKit/qt/Api/DerivedSources.pro
 
 webkit2 {
-    SUBDIRS += WebKit2/DerivedSources.pro \
+    SUBDIRS += Source/WebKit2/DerivedSources.pro \
             Tools/WebKitTestRunner/DerivedSources.pro \
             Tools/MiniBrowser/DerivedSources.pro
 }

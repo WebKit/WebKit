@@ -16,10 +16,10 @@ isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 include(../../../WebKit.pri)
 
 INCLUDEPATH += \
-    $$PWD/../../../WebKit2/ \
-    $$PWD/../../../WebKit2/UIProcess/API/cpp \
-    $$PWD/../../../WebKit2/UIProcess/API/C \
-    $$PWD/../../../WebKit2/UIProcess/API/qt \
+    $$PWD/../../../Source/WebKit2/ \
+    $$PWD/../../../Source/WebKit2/UIProcess/API/cpp \
+    $$PWD/../../../Source/WebKit2/UIProcess/API/C \
+    $$PWD/../../../Source/WebKit2/UIProcess/API/qt \
     $$OUTPUT_DIR/include
 
 

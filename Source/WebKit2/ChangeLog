@@ -1,3 +1,17 @@
+2011-01-15  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebKit2 into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52438
+
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * WebKit2.pro:
+        * WebProcess.pro:
+        * win/WebKit2.vcproj:
+        * win/WebKit2WebProcess.vcproj:
+
 2011-01-14  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Antti Koivisto.

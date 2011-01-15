@@ -1,3 +1,19 @@
+2011-01-15  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebKit2 into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52438
+
+        Update reference to WebKit2.
+
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * Makefile:
+        * Source/cmake/WebKitPackaging.cmake:
+        * WebKit.pro:
+        * configure.ac:
+
 2011-01-14  Ahmad Sharif  <asharif.tools@gmail.com>
 
         Reviewed by Darin Fisher.

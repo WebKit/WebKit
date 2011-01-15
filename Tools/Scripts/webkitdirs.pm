@@ -1593,7 +1593,7 @@ sub buildQMakeProject($@)
     # Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
     my @subdirs = ("Source/JavaScriptCore", "Source/WebCore", "WebKit/qt/Api");
     if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
-        push @subdirs, "WebKit2";
+        push @subdirs, "Source/WebKit2";
         push @subdirs, "Tools/WebKitTestRunner";
         push @subdirs, "Tools/MiniBrowser";
     }

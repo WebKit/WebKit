@@ -5,7 +5,7 @@ include(WebKit.pri)
 
 !v8: SUBDIRS += Source/JavaScriptCore
 webkit2 {
-    SUBDIRS += WebKit2
+    SUBDIRS += Source/WebKit2
 }
 SUBDIRS += Source/WebCore
 
@@ -31,7 +31,7 @@ build-qtscript {
 }
 
 webkit2 {
-    exists($$PWD/WebKit2/WebProcess.pro): SUBDIRS += WebKit2/WebProcess.pro
+    exists($$PWD/Source/WebKit2/WebProcess.pro): SUBDIRS += Source/WebKit2/WebProcess.pro
     exists($$PWD/Tools/MiniBrowser/qt/MiniBrowser.pro): SUBDIRS += Tools/MiniBrowser/qt/MiniBrowser.pro
     exists($$PWD/Tools/WebKitTestRunner/WebKitTestRunner.pro): SUBDIRS += Tools/WebKitTestRunner/WebKitTestRunner.pro
 }

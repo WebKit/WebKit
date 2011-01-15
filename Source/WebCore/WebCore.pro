@@ -181,8 +181,8 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 !v8: addJavaScriptCoreLib(../JavaScriptCore)
 
 webkit2 {
-    include($$PWD/../../WebKit2/WebKit2.pri)
-    addWebKit2LibWholeArchive(../../WebKit2)
+    include($$PWD/../../Source/WebKit2/WebKit2.pri)
+    addWebKit2LibWholeArchive(../../Source/WebKit2)
 }
 
 # Extract sources to build from the generator definitions

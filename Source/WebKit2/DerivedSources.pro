@@ -5,10 +5,10 @@ CONFIG -= debug_and_release
 
 CONFIG(standalone_package) {
     isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$PWD/generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../Source/WebCore/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../../Source/WebCore/generated
 } else {
     isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../Source/WebCore/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../Source/WebCore/generated
 }
 
 WEBCORE_GENERATED_HEADERS_FOR_WEBKIT2 += \
@@ -41,7 +41,7 @@ SBOX_CHECK = $$(_SBOX_DIR)
     PYTHON = python
 }
 
-SRC_ROOT_DIR = $$replace(PWD, /WebKit2, /)
+SRC_ROOT_DIR = $$replace(PWD, /Source/WebKit2, /)
 
 defineTest(addExtraCompiler) {
     eval($${1}.CONFIG = target_predeps no_link)
@@ -111,20 +111,20 @@ SCRIPTS = \
     $$PWD/Scripts/webkit2/__init__.py \
     $$PWD/Scripts/webkit2/messages.py
 
-message_header_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}WebKit2/Scripts/generate-messages-header.py ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
+message_header_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}Source/WebKit2/Scripts/generate-messages-header.py ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
 message_header_generator.input = MESSAGE_RECEIVERS
 message_header_generator.depends = $$SCRIPTS
 message_header_generator.output_function = message_header_generator_output
 addExtraCompiler(message_header_generator)
 
-message_receiver_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}WebKit2/Scripts/generate-message-receiver.py  ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
+message_receiver_generator.commands = $${PYTHON} $${SRC_ROOT_DIR}Source/WebKit2/Scripts/generate-message-receiver.py  ${QMAKE_FILE_IN} > ${QMAKE_FILE_OUT}
 message_receiver_generator.input = MESSAGE_RECEIVERS
 message_receiver_generator.depends = $$SCRIPTS
 message_receiver_generator.output_function = message_receiver_generator_output
 addExtraCompiler(message_receiver_generator)
 
-fwheader_generator.commands = perl $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/WebKit2 ../include qt
-fwheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-forwarding-headers.pl
+fwheader_generator.commands = perl $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/Source/WebKit2 ../../include qt
+fwheader_generator.depends  = $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl
 generated_files.depends     += fwheader_generator
 QMAKE_EXTRA_TARGETS         += fwheader_generator
 

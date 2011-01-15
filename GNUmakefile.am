@@ -39,7 +39,7 @@ GENPROGRAMS := $(top_builddir)/Programs
 GENSOURCES_INSPECTOR := $(GENPROGRAMS)/resources/inspector
 WebCore := $(srcdir)/Source/WebCore
 WebKit := $(srcdir)/WebKit/gtk
-WebKit2 := $(srcdir)/WebKit2
+WebKit2 := $(srcdir)/Source/WebKit2
 
 # Libraries and support components
 bin_PROGRAMS :=
@@ -228,7 +228,7 @@ EXTRA_DIST += \
 include Source/JavaScriptCore/GNUmakefile.am
 include Source/WebCore/GNUmakefile.am
 if ENABLE_WEBKIT2
-include WebKit2/GNUmakefile.am
+include Source/WebKit2/GNUmakefile.am
 else
 include WebKit/gtk/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am

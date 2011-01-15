@@ -422,7 +422,7 @@ if (isGtk()) {
     splice @projects, 0, 0, "Source/ThirdParty/ANGLE";
 
     # WebKit2 is only supported in SnowLeopard and later at present.
-    push @projects, ("WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
+    push @projects, ("Source/WebKit2", "Tools/MiniBrowser") if osXVersion()->{"minor"} >= 6 and !$noWebKit2;
 
     # Copy library and header from WebKitLibraries to a findable place in the product directory.
     my @librariesToCopy = (

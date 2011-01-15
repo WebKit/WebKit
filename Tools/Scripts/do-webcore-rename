@@ -73,7 +73,7 @@ find(\&wanted, "Source/JavaScriptCore");
 find(\&wanted, "Source/JavaScriptGlue");
 find(\&wanted, "Source/WebCore");
 find(\&wanted, "WebKit");
-find(\&wanted, "WebKit2");
+find(\&wanted, "Source/WebKit2");
 find(\&wanted, "Tools/DumpRenderTree");
 
 sub wanted

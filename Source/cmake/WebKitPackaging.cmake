@@ -140,7 +140,7 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
       "/wxcode/" "/Wxcode/" "wxcode\\\\." "Wxcode\\\\."
       "/WebKitLibraries/"
       "/English\\\\.lproj/"
-      "/WebKit2/"
+      "/Source/WebKit2/"
       "\\\\.a$"
       "\\\\.exe$"
       "\\\\.mm$"

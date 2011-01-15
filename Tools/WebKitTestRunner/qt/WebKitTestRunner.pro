@@ -19,10 +19,10 @@ DEFINES += USE_SYSTEM_MALLOC=1
 INCLUDEPATH += \
     $$BASEDIR \
     $$BASEDIR/../../Source/JavaScriptCore \
-    $$BASEDIR/../../WebKit2 \
-    $$BASEDIR/../../WebKit2/Shared \
-    $$BASEDIR/../../WebKit2/UIProcess/API/qt \
-    $$BASEDIR/../../WebKit2/UIProcess/API/cpp/qt \
+    $$BASEDIR/../../Source/WebKit2 \
+    $$BASEDIR/../../Source/WebKit2/Shared \
+    $$BASEDIR/../../Source/WebKit2/UIProcess/API/qt \
+    $$BASEDIR/../../Source/WebKit2/UIProcess/API/cpp/qt \
     $$GENERATED_SOURCES_DIR
 
 INCLUDEPATH += \

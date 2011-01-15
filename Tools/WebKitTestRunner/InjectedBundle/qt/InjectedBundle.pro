@@ -46,8 +46,8 @@ HEADERS += \
 include(../../../../WebKit.pri)
 include(../../../../Source/JavaScriptCore/JavaScriptCore.pri)
 addJavaScriptCoreLib(../../../../Source/JavaScriptCore)
-include(../../../../WebKit2/WebKit2.pri)
-addWebKit2Lib(../../../../WebKit2)
+include(../../../../Source/WebKit2/WebKit2.pri)
+addWebKit2Lib(../../../../Source/WebKit2)
 
 INCLUDEPATH += \
     $$PWD \
@@ -56,8 +56,8 @@ INCLUDEPATH += \
     $$PWD/../Bindings \
     $$PWD/../../../../Source/JavaScriptCore \
     $$PWD/../../../../Source/JavaScriptCore/wtf \
-    $$PWD/../../../../WebKit2 \
-    $$PWD/../../../../WebKit2/Shared \
+    $$PWD/../../../../Source/WebKit2 \
+    $$PWD/../../../../Source/WebKit2/Shared \
     $$GENERATED_SOURCES_DIR
 
 INCLUDEPATH += \
