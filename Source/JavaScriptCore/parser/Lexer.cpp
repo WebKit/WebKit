@@ -703,6 +703,15 @@ ALWAYS_INLINE bool Lexer::parseMultilineComment()
     }
 }
 
+bool Lexer::nextTokenIsColon()
+{
+    const UChar* code = m_code;
+    while (code < m_codeEnd && (isWhiteSpace(*code) || isLineTerminator(*code)))
+        code++;
+        
+    return code < m_codeEnd && *code == ':';
+}
+
 JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType lexType, bool strictMode)
 {
     ASSERT(!m_error);

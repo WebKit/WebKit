@@ -53,6 +53,7 @@ namespace JSC {
         // Functions for the parser itself.
         enum LexType { IdentifyReservedWords, IgnoreReservedWords };
         JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType, bool strictMode);
+        bool nextTokenIsColon();
         int lineNumber() const { return m_lineNumber; }
         void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
         int lastLineNumber() const { return m_lastLineNumber; }
@@ -67,6 +68,7 @@ namespace JSC {
         int currentOffset() { return m_code - m_codeStart; }
         void setOffset(int offset)
         {
+            m_error = 0;
             m_code = m_codeStart + offset;
             m_current = *m_code;
         }

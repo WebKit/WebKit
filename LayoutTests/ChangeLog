@@ -1,3 +1,17 @@
+2011-01-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [jsfunfuzz] parser doesn't enforce continue restrictions correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=52493
+
+        Add a few tests for continue to cover the cases where continue
+        isn't syntactically valid.
+
+        * fast/js/js-continue-break-restrictions-expected.txt: Added.
+        * fast/js/js-continue-break-restrictions.html: Added.
+        * fast/js/script-tests/js-continue-break-restrictions.js: Added.
+
 2011-01-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -84,6 +84,16 @@ private:
         JSParser* m_parser;
         bool m_oldAllowsIn;
     };
+    
+    struct ScopeLabelInfo {
+        ScopeLabelInfo(StringImpl* ident, bool isLoop)
+        : m_ident(ident)
+        , m_isLoop(isLoop)
+        {
+        }
+        StringImpl* m_ident;
+        bool m_isLoop;
+    };
 
     void next(Lexer::LexType lexType = Lexer::IdentifyReservedWords)
     {
@@ -91,7 +101,11 @@ private:
         m_lastTokenEnd = m_token.m_info.endOffset;
         m_lexer->setLastLineNumber(m_lastLine);
         m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexType, strictMode());
-        m_tokenCount++;
+    }
+    
+    bool nextTokenIsColon()
+    {
+        return m_lexer->nextTokenIsColon();
     }
 
     bool consume(JSTokenType expected)
@@ -140,17 +154,28 @@ private:
         }
         return true;
     }
-    void pushLabel(const Identifier* label) { currentScope()->pushLabel(label); }
-    void popLabel() { currentScope()->popLabel(); }
-    bool hasLabel(const Identifier* label)
+    bool continueIsValid()
     {
         ScopeRef current = currentScope();
-        while (!current->hasLabel(label)) {
+        while (!current->continueIsValid()) {
             if (!current.hasContainingScope())
                 return false;
             current = current.containingScope();
         }
         return true;
+    }
+    void pushLabel(const Identifier* label, bool isLoop) { currentScope()->pushLabel(label, isLoop); }
+    void popLabel() { currentScope()->popLabel(); }
+    ScopeLabelInfo* getLabel(const Identifier* label)
+    {
+        ScopeRef current = currentScope();
+        ScopeLabelInfo* result = 0;
+        while (!(result = current->getLabel(label))) {
+            if (!current.hasContainingScope())
+                return 0;
+            current = current.containingScope();
+        }
+        return result;
     }
 
     enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
@@ -224,7 +249,6 @@ private:
     JSGlobalData* m_globalData;
     JSToken m_token;
     bool m_allowsIn;
-    int m_tokenCount;
     int m_lastLine;
     int m_lastTokenEnd;
     int m_assignmentCount;
@@ -250,7 +274,7 @@ private:
         int m_originalDepth;
         int* m_depth;
     };
-
+    
     struct Scope {
         Scope(JSGlobalData* globalData, bool isFunction, bool strictMode)
             : m_globalData(globalData)
@@ -274,12 +298,13 @@ private:
         void endLoop() { ASSERT(m_loopDepth); m_loopDepth--; }
         bool inLoop() { return !!m_loopDepth; }
         bool breakIsValid() { return m_loopDepth || m_switchDepth; }
+        bool continueIsValid() { return m_loopDepth; }
 
-        void pushLabel(const Identifier* label)
+        void pushLabel(const Identifier* label, bool isLoop)
         {
             if (!m_labels)
                 m_labels = new LabelStack;
-            m_labels->append(label->impl());
+            m_labels->append(ScopeLabelInfo(label->impl(), isLoop));
         }
 
         void popLabel()
@@ -289,15 +314,15 @@ private:
             m_labels->removeLast();
         }
 
-        bool hasLabel(const Identifier* label)
+        ScopeLabelInfo* getLabel(const Identifier* label)
         {
             if (!m_labels)
-                return false;
+                return 0;
             for (int i = m_labels->size(); i > 0; i--) {
-                if (m_labels->at(i - 1) == label->impl())
-                    return true;
+                if (m_labels->at(i - 1).m_ident == label->impl())
+                    return &m_labels->at(i - 1);
             }
-            return false;
+            return 0;
         }
 
         void setIsFunction()
@@ -405,7 +430,8 @@ private:
         bool m_isValidStrictMode : 1;
         int m_loopDepth;
         int m_switchDepth;
-        typedef Vector<StringImpl*, 2> LabelStack;
+
+        typedef Vector<ScopeLabelInfo, 2> LabelStack;
         LabelStack* m_labels;
         IdentifierSet m_declaredVariables;
         IdentifierSet m_usedVariables;
@@ -532,7 +558,6 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     , m_errorMessage("Parse error")
     , m_globalData(globalData)
     , m_allowsIn(true)
-    , m_tokenCount(0)
     , m_lastLine(0)
     , m_lastTokenEnd(0)
     , m_assignmentCount(0)
@@ -862,7 +887,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseBreakStatement(TreeBui
     }
     matchOrFail(IDENT);
     const Identifier* ident = m_token.m_data.ident;
-    failIfFalse(hasLabel(ident));
+    failIfFalse(getLabel(ident));
     endCol = tokenEnd();
     endLine = tokenLine();
     next();
@@ -880,12 +905,14 @@ template <class TreeBuilder> TreeStatement JSParser::parseContinueStatement(Tree
     next();
 
     if (autoSemiColon()) {
-        failIfFalse(breakIsValid());
+        failIfFalse(continueIsValid());
         return context.createContinueStatement(startCol, endCol, startLine, endLine);
     }
     matchOrFail(IDENT);
     const Identifier* ident = m_token.m_data.ident;
-    failIfFalse(hasLabel(ident));
+    ScopeLabelInfo* label = getLabel(ident);
+    failIfFalse(label);
+    failIfFalse(label->m_isLoop);
     endCol = tokenEnd();
     endLine = tokenLine();
     next();
@@ -1240,35 +1267,79 @@ template <class TreeBuilder> TreeStatement JSParser::parseFunctionDeclaration(Tr
     return context.createFuncDeclStatement(name, body, parameters, openBracePos, closeBracePos, bodyStartLine, m_lastLine);
 }
 
+struct LabelInfo {
+    LabelInfo(const Identifier* ident, int start, int end)
+        : m_ident(ident)
+        , m_start(start)
+        , m_end(end)
+    {
+    }
+
+    const Identifier* m_ident;
+    int m_start;
+    int m_end;
+};
+
 template <class TreeBuilder> TreeStatement JSParser::parseExpressionOrLabelStatement(TreeBuilder& context)
 {
 
-    /* Expression and Label statements are ambiguous at LL(1), to avoid
-     * the cost of having a token buffer to support LL(2) we simply assume
-     * we have an expression statement, and then only look for a label if that
-     * parse fails.
+    /* Expression and Label statements are ambiguous at LL(1), so we have a
+     * special case that looks for a colon as the next character in the input.
      */
-    int start = tokenStart();
-    int startLine = tokenLine();
-    const Identifier* ident = m_token.m_data.ident;
-    int currentToken = m_tokenCount;
-    TreeExpression expression = parseExpression(context);
-    failIfFalse(expression);
-    if (autoSemiColon())
-        return context.createExprStatement(expression, startLine, m_lastLine);
-    failIfFalse(currentToken + 1 == m_tokenCount);
-    int end = tokenEnd();
-    consumeOrFail(COLON);
+    Vector<LabelInfo> labels;
+
+    do {
+        int start = tokenStart();
+        int startLine = tokenLine();
+        if (!nextTokenIsColon()) {
+            // If we hit this path we're making a expression statement, which
+            // by definition can't make use of continue/break so we can just
+            // ignore any labels we might have accumulated.
+            TreeExpression expression = parseExpression(context);
+            failIfFalse(expression);
+            failIfFalse(autoSemiColon());
+            return context.createExprStatement(expression, startLine, m_lastLine);
+        }
+        const Identifier* ident = m_token.m_data.ident;
+        int end = tokenEnd();
+        next();
+        consumeOrFail(COLON);
+        if (!m_syntaxAlreadyValidated) {
+            // This is O(N^2) over the current list of consecutive labels, but I
+            // have never seen more than one label in a row in the real world.
+            for (size_t i = 0; i < labels.size(); i++)
+                failIfTrue(ident == labels[i].m_ident);
+            failIfTrue(getLabel(ident));
+            labels.append(LabelInfo(ident, start, end));
+        }
+    } while (match(IDENT));
+    bool isLoop = false;
+    switch (m_token.m_type) {
+    case FOR:
+    case WHILE:
+    case DO:
+        isLoop = true;
+        break;
+
+    default:
+        break;
+    }
     const Identifier* unused = 0;
     if (!m_syntaxAlreadyValidated) {
-        failIfTrue(hasLabel(ident));
-        pushLabel(ident);
+        for (size_t i = 0; i < labels.size(); i++)
+            pushLabel(labels[i].m_ident, isLoop);
     }
     TreeStatement statement = parseStatement(context, unused);
-    if (!m_syntaxAlreadyValidated)
-        popLabel();
+    if (!m_syntaxAlreadyValidated) {
+        for (size_t i = 0; i < labels.size(); i++)
+            popLabel();
+    }
     failIfFalse(statement);
-    return context.createLabelStatement(ident, statement, start, end);
+    for (size_t i = 0; i < labels.size(); i++) {
+        const LabelInfo& info = labels[labels.size() - i - 1];
+        statement = context.createLabelStatement(info.m_ident, statement, info.m_start, info.m_end);
+    }
+    return statement;
 }
 
 template <class TreeBuilder> TreeStatement JSParser::parseExpressionStatement(TreeBuilder& context)
