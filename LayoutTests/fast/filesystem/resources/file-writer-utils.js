@@ -16,20 +16,25 @@ function onError(e)
 
 function assert(s)
 {
-    if (!s)
-        onError(new Error("Assertion failed. "));
+    if (!s) {
+        var e = new Error("Assertion failed. ");
+        onError(e);
+        throw e;
+    }
 }
 
 var fileEntryForCleanup;  // Set as soon as we have one.
 
 function cleanUp()
 {
-    try {
-        if (fileEntryForCleanup)
+    if (fileEntryForCleanup) {
+        try {
             fileEntryForCleanup.remove(finishJSTest, finishJSTest);
-    } catch (ex) {
-        finishJSTest();
+            return;
+        } catch (ex) {
+        }
     }
+    finishJSTest();
 }
 
 // Generic function that gets a File from a FileEntry and calls a custom verification function on it.

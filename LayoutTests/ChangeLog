@@ -1,3 +1,20 @@
+2011-01-14  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add tests for FileWriterSync
+        https://bugs.webkit.org/show_bug.cgi?id=50720
+
+        * fast/filesystem/resources/file-writer-sync-truncate-extend.js: Added.
+        * fast/filesystem/workers/file-writer-sync-truncate-extend.html: Added.
+        * fast/filesystem/workers/file-writer-sync-truncate-extend-expected.txt: Added.
+        * fast/filesystem/resources/file-writer-sync-write-overlapped.js: Added.
+        * fast/filesystem/workers/file-writer-sync-write-overlapped.html: Added.
+        * fast/filesystem/workers/file-writer-sync-write-overlapped-expected.txt: Added.
+        * fast/filesystem/resources/file-writer-utils.js:
+        (assert): Make assert throw, rather than continue.
+        (cleanUp): Always call finishJSTest, even without fileEntryForCleanup.
+
 2011-01-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Stephanie Lewis.
