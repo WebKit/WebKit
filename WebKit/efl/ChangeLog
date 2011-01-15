@@ -1,3 +1,12 @@
+2011-01-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Try to fix EFL build.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_scroll_add): Added WebCore namespace to IntSize.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute): Ditto.
+
 2011-01-14  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed build fix.
