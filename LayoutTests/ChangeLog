@@ -1,3 +1,15 @@
+2011-01-14  Mihai Parparita  <mihaip@chromium.org>
+
+        Update the svg/ pixel expectations for the chromium-mac port.
+        
+        For the pixel tests that currently fail on Snow Leopard, this moves the
+        current pixel results to platform/chromium-mac-leopard and adds new
+        results to platform/chromium-mac.
+
+        List of files omitted due to length but composed entirely of moves from
+        platform/chromium-mac to platform/chromium-mac-leopard and newly added
+        files in platform/chromium-mac.
+
 2011-01-14  Helder Correia  <helder@sencha.com>
 
         Reviewed by Simon Fraser.
