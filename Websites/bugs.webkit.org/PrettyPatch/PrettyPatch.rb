@@ -164,10 +164,21 @@ h1 :hover {
     border-width: 1px 0px;
 }
 
-.LineSide {
+.sidebyside .DiffBlockPart.add:first-child {
+    float: right;
+}
+
+.LineSide,
+.sidebyside .DiffBlockPart.remove,
+.sidebyside .DiffBlockPart.add {
     display:inline-block;
     width:50%;
     vertical-align: top;
+}
+
+.sidebyside .DiffBlockPart.remove .to,
+.sidebyside .DiffBlockPart.add .from {
+    display: none;
 }
 
 .lineNumber, .expansionLineNumber {
@@ -191,8 +202,8 @@ h1 :hover {
 
 .text {
     padding-left: 5px;
-    white-space: pre;
     white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .image {
@@ -393,9 +404,13 @@ body {
   position: absolute;
   top: -11%;
 }
+
+.clear_float {
+    clear: both;
+}
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=23"></script>
+<script src="code-review.js?version=24"></script>
 EOF
 
     def self.revisionOrDescription(string)
@@ -579,7 +594,7 @@ END
         def to_html
             str = "<div class='DiffBlock'>\n"
             str += @parts.collect{ |part| part.to_html }.join
-            str += "</div>\n"
+            str += "<div class='clear_float'></div></div>\n"
         end
     end
 
@@ -596,7 +611,8 @@ END
         def to_html
             str = "<div class='DiffBlockPart %s'>\n" % @className
             str += @lines.collect{ |line| line.to_html }.join
-            str += "</div>\n"
+            # Don't put white-space after this so adjacent inline-block DiffBlockParts will not wrap.
+            str += "</div>"
         end
     end
 

@@ -798,10 +798,13 @@
     if (diffState(file_diff) == diff_type)
       return;
 
+    $(file_diff).removeClass('sidebyside unified');
+    $(file_diff).addClass(diff_type);
+
     $(file_diff).attr('data-diffstate', diff_type);
     updateDiffLinkVisibility(file_diff);
 
-    $('.Line', file_diff).each(function() {
+    $('.shared .Line', file_diff).each(function() {
       convertLine(diff_type, this);
     });
 
