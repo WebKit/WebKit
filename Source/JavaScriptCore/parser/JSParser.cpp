@@ -1308,7 +1308,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseExpressionOrLabelState
             // This is O(N^2) over the current list of consecutive labels, but I
             // have never seen more than one label in a row in the real world.
             for (size_t i = 0; i < labels.size(); i++)
-                failIfTrue(ident == labels[i].m_ident);
+                failIfTrue(ident->impl() == labels[i].m_ident->impl());
             failIfTrue(getLabel(ident));
             labels.append(LabelInfo(ident, start, end));
         }

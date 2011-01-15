@@ -339,4 +339,8 @@ valid  ("switch (l) { case 1: a: with(g) switch (g) { case 2: default: } default
 invalid("switch (4 - ) { }");
 invalid("switch (l) { default case: 5; }");
 
+invalid("L: L: ;");
+invalid("L: L1: L: ;");
+invalid("L: L1: L2: L3: L4: L: ;");
+
 var successfullyParsed = true;

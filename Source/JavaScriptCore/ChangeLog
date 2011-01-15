@@ -1,3 +1,16 @@
+2011-01-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [jsfunfuzz] Incorrect handling of consecutive duplicate labels
+        https://bugs.webkit.org/show_bug.cgi?id=52505
+
+        Compare StringImpl*'s instead of Identifier*'s when looking for duplicate
+        labels.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseExpressionOrLabelStatement):
+
 2011-01-14  Simon Fraser  <simon.fraser@apple.com>
 
         No review.

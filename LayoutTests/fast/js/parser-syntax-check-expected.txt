@@ -531,6 +531,12 @@ PASS Invalid: "switch (4 - ) { }"
 PASS Invalid: "function f() { switch (4 - ) { } }"
 PASS Invalid: "switch (l) { default case: 5; }"
 PASS Invalid: "function f() { switch (l) { default case: 5; } }"
+PASS Invalid: "L: L: ;"
+PASS Invalid: "function f() { L: L: ; }"
+PASS Invalid: "L: L1: L: ;"
+PASS Invalid: "function f() { L: L1: L: ; }"
+PASS Invalid: "L: L1: L2: L3: L4: L: ;"
+PASS Invalid: "function f() { L: L1: L2: L3: L4: L: ; }"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,15 @@
+2011-01-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        [jsfunfuzz] Incorrect handling of consecutive duplicate labels
+        https://bugs.webkit.org/show_bug.cgi?id=52505
+
+        Add a few tests of consecutive labels containing duplicates to the parser check.
+
+        * fast/js/parser-syntax-check-expected.txt:
+        * fast/js/script-tests/parser-syntax-check.js:
+
 2011-01-14  Dmitry Titov  <dimich@chromium.org>
 
         Not reviewed, update of Chromium test expectations.
