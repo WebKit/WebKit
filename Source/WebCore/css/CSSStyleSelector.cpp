@@ -79,6 +79,7 @@
 #include "ScaleTransformOperation.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "ShadowData.h"
 #include "ShadowValue.h"
 #include "SkewTransformOperation.h"
 #include "StyleCachedImage.h"
