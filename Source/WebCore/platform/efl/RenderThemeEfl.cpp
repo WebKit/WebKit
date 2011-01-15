@@ -32,6 +32,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
+#include "PaintInfo.h"
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderObject.h"

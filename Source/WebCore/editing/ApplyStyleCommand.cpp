@@ -33,6 +33,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
+#include "CSSValueList.h"
 #include "Document.h"
 #include "EditingStyle.h"
 #include "Editor.h"
