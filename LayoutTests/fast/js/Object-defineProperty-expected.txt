@@ -23,6 +23,7 @@ PASS Object.defineProperty('foo') threw exception TypeError: Properties can only
 PASS Object.defineProperty({}) threw exception TypeError: Property description must be an object..
 PASS Object.defineProperty({}, 'foo') threw exception TypeError: Property description must be an object..
 PASS Object.defineProperty({}, 'foo', {get:undefined, value:true}).foo is true
+PASS Object.defineProperty({get foo() { return true; } }, 'foo', {configurable:false}).foo is true
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {configurable: true}) threw exception TypeError: Attempting to configurable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {writable: true}) threw exception TypeError: Attempting to change writable attribute of unconfigurable property..
 PASS Object.defineProperty(createUnconfigurableProperty({}, 'foo'), 'foo', {enumerable: true}) threw exception TypeError: Attempting to change enumerable attribute of unconfigurable property..

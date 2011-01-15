@@ -1,3 +1,20 @@
+2011-01-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Incorrect behavior changing attributes of an accessor
+        https://bugs.webkit.org/show_bug.cgi?id=52515
+
+        defineProperty doesn't correctly handle changing attributes of an accessor
+        property.  This is because we don't pass the full descriptor to the 
+        putDescriptor helper function, which means we have insufficient information
+        to do the right thing. Once that's passed the correct behavior is relatively
+        simple to implement.
+
+        * runtime/JSObject.cpp:
+        (JSC::putDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+
 2011-01-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

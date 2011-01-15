@@ -1,3 +1,16 @@
+2011-01-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Incorrect behavior changing attributes of an accessor
+        https://bugs.webkit.org/show_bug.cgi?id=52515
+
+        Add an additional test for validating changing attributes of
+        an accessor property.s
+
+        * fast/js/Object-defineProperty-expected.txt:
+        * fast/js/script-tests/Object-defineProperty.js:
+
 2011-01-15  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/52512> REGRESSION(r73818): range.cloneContents() ignores end offset

@@ -31,6 +31,7 @@ shouldThrow("Object.defineProperty('foo')");
 shouldThrow("Object.defineProperty({})");
 shouldThrow("Object.defineProperty({}, 'foo')");
 shouldBeTrue("Object.defineProperty({}, 'foo', {get:undefined, value:true}).foo");
+shouldBeTrue("Object.defineProperty({get foo() { return true; } }, 'foo', {configurable:false}).foo");
 
 function createUnconfigurableProperty(o, prop, writable, enumerable) {
     writable = writable || false;

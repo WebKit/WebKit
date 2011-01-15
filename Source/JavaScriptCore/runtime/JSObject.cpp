@@ -588,10 +588,28 @@ bool JSObject::getPropertyDescriptor(ExecState* exec, const Identifier& property
     }
 }
 
-static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& propertyName, PropertyDescriptor& descriptor, unsigned attributes, JSValue oldValue)
+static bool putDescriptor(ExecState* exec, JSObject* target, const Identifier& propertyName, PropertyDescriptor& descriptor, unsigned attributes, const PropertyDescriptor& oldDescriptor)
 {
     if (descriptor.isGenericDescriptor() || descriptor.isDataDescriptor()) {
-        target->putWithAttributes(exec, propertyName, descriptor.value() ? descriptor.value() : oldValue, attributes & ~(Getter | Setter));
+        if (descriptor.isGenericDescriptor() && oldDescriptor.isAccessorDescriptor()) {
+            GetterSetter* accessor = new (exec) GetterSetter(exec);
+            if (oldDescriptor.getter()) {
+                attributes |= Getter;
+                accessor->setGetter(asObject(oldDescriptor.getter()));
+            }
+            if (oldDescriptor.setter()) {
+                attributes |= Setter;
+                accessor->setSetter(asObject(oldDescriptor.setter()));
+            }
+            target->putWithAttributes(exec, propertyName, accessor, attributes);
+            return true;
+        }
+        JSValue newValue = jsUndefined();
+        if (descriptor.value())
+            newValue = descriptor.value();
+        else if (oldDescriptor.value())
+            newValue = oldDescriptor.value();
+        target->putWithAttributes(exec, propertyName, newValue, attributes & ~(Getter | Setter));
         return true;
     }
     attributes &= ~ReadOnly;
@@ -608,8 +626,11 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
 {
     // If we have a new property we can just put it on normally
     PropertyDescriptor current;
-    if (!getOwnPropertyDescriptor(exec, propertyName, current))
-        return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributes(), jsUndefined());
+    if (!getOwnPropertyDescriptor(exec, propertyName, current)) {
+        PropertyDescriptor oldDescriptor;
+        oldDescriptor.setValue(jsUndefined());
+        return putDescriptor(exec, this, propertyName, descriptor, descriptor.attributes(), oldDescriptor);
+    }
 
     if (descriptor.isEmpty())
         return true;
@@ -635,7 +656,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
     if (descriptor.isGenericDescriptor()) {
         if (!current.attributesEqual(descriptor)) {
             deleteProperty(exec, propertyName);
-            putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current.value());
+            putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
         }
         return true;
     }
@@ -648,7 +669,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             return false;
         }
         deleteProperty(exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current.value() ? current.value() : jsUndefined());
+        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
     // Changing the value and attributes of an existing property
@@ -676,7 +697,7 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
             return true;
         }
         deleteProperty(exec, propertyName);
-        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current.value());
+        return putDescriptor(exec, this, propertyName, descriptor, current.attributesWithOverride(descriptor), current);
     }
 
     // Changing the accessor functions of an existing accessor property
