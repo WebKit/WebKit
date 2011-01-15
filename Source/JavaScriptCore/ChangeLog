@@ -1,3 +1,14 @@
+2011-01-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Try to fix the GTK bot.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::markRoots): Kids, remember to initialize your data members.
+        Knowing is half the battle.
+
 2011-01-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Stephanie Lewis.
