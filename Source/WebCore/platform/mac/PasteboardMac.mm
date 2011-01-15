@@ -191,7 +191,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, Range* selectedRange, 
     if ([types containsObject:NSStringPboardType]) {
         // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
         // and because HTML forces you to do this any time you want two spaces in a row.
-        String text = selectedRange->text();
+        String text = frame->editor()->selectedText();
         NSMutableString *s = [[[(NSString*)text copy] autorelease] mutableCopy];
         
         NSString *NonBreakingSpaceString = [NSString stringWithCharacters:&noBreakSpace length:1];

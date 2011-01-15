@@ -1,3 +1,17 @@
+2011-01-14  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Strip NUL character when copying text on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=52236
+
+        Test: editing/pasteboard/copy-null-characters.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedText):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection): Use editor()->selectedText() which matches the other platforms.
+
 2011-01-14  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Antti Koivisto.
