@@ -30,6 +30,7 @@
 #include "RenderArena.h"
 #include "RenderObject.h"
 #include "ScaleTransformOperation.h"
+#include "ShadowData.h"
 #include "StyleImage.h"
 #include <wtf/StdLibExtras.h>
 #include <algorithm>

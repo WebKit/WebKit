@@ -39,6 +39,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InspectorClientEfl.h"
+#include "IntSize.h"
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
