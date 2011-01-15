@@ -5594,3 +5594,6 @@ editing/input/page-up-down-scrolls.html
 
 # DRT does not obey layoutTestController.addURLToRedirect()
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=52508
+editing/pasteboard/copy-null-characters.html
