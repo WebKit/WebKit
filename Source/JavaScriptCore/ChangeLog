@@ -1,3 +1,12 @@
+2011-01-14  Simon Fraser  <simon.fraser@apple.com>
+
+        No review.
+        
+        Initialize m_operationInProgress after r75855.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::Heap):
+
 2011-01-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reverted accidentally committed code from my last checkin.
