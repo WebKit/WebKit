@@ -1566,7 +1566,7 @@ ALWAYS_INLINE void TCMalloc_PageHeap::scheduleScavenger()
     // We need to use WT_EXECUTEONLYONCE here and reschedule the timer, because
     // Windows will fire the timer event even when the function is already running.
     ASSERT(IsHeld(pageheap_lock));
-    CreateTimerQueueTimer(&m_scavengeQueueTimer, 0, scavengerTimerFired, 0, kScavengeDelayInSeconds * 1000, 0, WT_EXECUTEONLYONCE);
+    CreateTimerQueueTimer(&m_scavengeQueueTimer, 0, scavengerTimerFired, this, kScavengeDelayInSeconds * 1000, 0, WT_EXECUTEONLYONCE);
 }
 
 ALWAYS_INLINE void TCMalloc_PageHeap::rescheduleScavenger()
