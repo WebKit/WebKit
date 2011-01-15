@@ -45,7 +45,7 @@
 static const unsigned vmPoolSizeGeneric = 2u * 1024u * 1024u * 1024u; // 2Gb
 static const unsigned coalesceLimitGeneric = 16u * 1024u * 1024u; // 16Mb
 
-static const unsigned vmPoolSizeEmbedded = 32u * 1024u * 1024u; // 32Mb
+static const unsigned vmPoolSizeEmbedded = 16u * 1024u * 1024u; // 16Mb
 static const unsigned coalesceLimitEmbedded = 4u * 1024u * 1024u; // 4Mb
 
 #if CPU(X86_64) && !OS(LINUX)
@@ -59,7 +59,7 @@ static unsigned vmPoolSize = vmPoolSizeGeneric; // 2Gb
 static unsigned coalesceLimit = coalesceLimitGeneric; // 16Mb
 #else
     // These limits are hopefully sensible on embedded platforms.
-static unsigned vmPoolSize = vmPoolSizeEmbedded; // 32Mb
+static unsigned vmPoolSize = vmPoolSizeEmbedded; // 16Mb
 static unsigned coalesceLimit = coalesceLimitEmbedded; // 4Mb
 #endif
 

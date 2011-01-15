@@ -1,3 +1,12 @@
+2011-01-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8870429> Shrink the executable pool on embedded devices
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp: Dropped the pool size from 32MB
+        to 16MB.
+
 2011-01-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
