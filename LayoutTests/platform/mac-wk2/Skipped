@@ -61,6 +61,7 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+fast/forms/focus-change-on-keypress.html
 fast/forms/select-live-pseudo-selectors.html
 editing/selection/caret-bidi-first-and-last-letters.html
 compositing/iframes/layout-on-compositing-change.html
@@ -319,7 +320,6 @@ fast/events/scroll-to-anchor-in-overflow-hidden.html
 fast/events/scrollbar-double-click.html
 fast/events/select-onchange-crash.html
 fast/events/selectstart-during-autoscroll.html
-fast/events/shadow-boundary-crossing-2.html
 fast/events/shadow-boundary-crossing.html
 fast/events/space-scroll-event.html
 fast/events/special-key-events-in-input-text.html
@@ -1223,6 +1223,15 @@ fast/forms/textarea-paste-newline.html
 http/tests/misc/copy-resolves-urls.html
 platform/mac/editing/pasteboard/text-precomposed.html
 
+# execCommand("undo") doesn't work in WebKit2
+# <rdar://problem/8862023>
+editing/style/stylewithcss-without-selection.html
+editing/execCommand/format-block-multiple-paragraphs-in-pre.html
+
+# Assigning location.hash is not immediately reflected in location object
+# <rdar://problem/8867804>
+svg/css/cursor-replace.svg
+
 # WebKitTestRunner needs to support evaluateInWebInspector
 # <https://bugs.webkit.org/show_bug.cgi?id=42319>
 # Need Web Inspector in WebKit2
@@ -1947,6 +1956,9 @@ fast/frames/meta-refresh-user-gesture.html
 
 # WebKitTestRunner needs layoutTestController.setUseDashboardCompatibilityMode
 platform/mac/fast/dom/HTMLImageElement/dashboard-src-quirk.html
+
+# WebKitTestRunner needs layoutTestController.addURLToRedirect
+http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-resize-and-move-arguments.html

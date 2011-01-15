@@ -22,7 +22,7 @@ document.execCommand('bold', false, null);
 
 var result = 'PASS';
 if (firstInnerHTML != test.innerHTML)
-    result = 'FAIL: ' + firstResult + ' does not match ' + test.innerHTML;
+    result = 'FAIL: ' + firstInnerHTML + ' does not match ' + test.innerHTML;
 document.body.appendChild(document.createTextNode(result));
 
 </script>

@@ -1,3 +1,14 @@
+2011-01-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix a few things in the WebKit2 skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=52484
+
+        * platform/mac-wk2/Skipped: Add/remove some tests to the WK2 skipped list.
+        * editing/style/stylewithcss-without-selection.html: Fix this test to avoid
+        referencing an undefined variable in the failure case.
+
 2011-01-14  Mihai Parparita  <mihaip@chromium.org>
 
         Update the svg/ pixel expectations for the chromium-mac port.
