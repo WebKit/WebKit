@@ -1,3 +1,13 @@
+2011-01-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r75886.
+        http://trac.webkit.org/changeset/75886
+        https://bugs.webkit.org/show_bug.cgi?id=52526
+
+        "Broke GTK+ 64bit" (Requested by xan_ on #webkit).
+
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+
 2011-01-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
