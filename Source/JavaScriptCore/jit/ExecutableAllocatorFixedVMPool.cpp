@@ -42,10 +42,13 @@
 #include <stdio.h>
 #endif
 
-static const unsigned vmPoolSizeGeneric = 2u * 1024u * 1024u * 1024u; // 2Gb
-static const unsigned coalesceLimitGeneric = 16u * 1024u * 1024u; // 16Mb
+static const unsigned vmPoolSizeOvercommit = 2u * 1024u * 1024u * 1024u; // 2Gb
+static const unsigned coalesceLimitOvercommit = 16u * 1024u * 1024u; // 16Mb
 
-static const unsigned vmPoolSizeEmbedded = 32u * 1024u * 1024u; // 32Mb
+static const unsigned vmPoolSizeNoOvercommit = 32u * 1024u * 1024u; // 32Mb
+static const unsigned coalesceLimitNoOvercommit = 4u * 1024u * 1024u; // 4Mb
+
+static const unsigned vmPoolSizeEmbedded = 16u * 1024u * 1024u; // 16Mb
 static const unsigned coalesceLimitEmbedded = 4u * 1024u * 1024u; // 4Mb
 
 #if CPU(X86_64) && !OS(LINUX)
@@ -55,12 +58,14 @@ static const unsigned coalesceLimitEmbedded = 4u * 1024u * 1024u; // 4Mb
 // distros commonly disable that feature. We'll check the value
 // for the overcommit feature at runtime and re-assign the Generic
 // values if it's enabled.
-static unsigned vmPoolSize = vmPoolSizeGeneric; // 2Gb
-static unsigned coalesceLimit = coalesceLimitGeneric; // 16Mb
+static unsigned vmPoolSize = vmPoolSizeOvercommit;
+static unsigned coalesceLimit = coalesceLimitOvercommit;
+#elif CPU(ARM)
+static unsigned vmPoolSize = vmPoolSizeEmbedded;
+static unsigned coalesceLimit = coalesceLimitEmbedded;
 #else
-    // These limits are hopefully sensible on embedded platforms.
-static unsigned vmPoolSize = vmPoolSizeEmbedded; // 32Mb
-static unsigned coalesceLimit = coalesceLimitEmbedded; // 4Mb
+static unsigned vmPoolSize = vmPoolSizeNoOvercommit;
+static unsigned coalesceLimit = coalesceLimitNoOvercommit;
 #endif
 
 using namespace WTF;
@@ -458,8 +463,8 @@ static void maybeModifyVMPoolSize()
     unsigned overcommit = 0;
     fscanf(fp, "%u", &overcommit);
     if (overcommit == 1) {
-        vmPoolSize = vmPoolSizeGeneric; // 2Gb
-        coalesceLimit = coalesceLimitGeneric; // 16Mb
+        vmPoolSize = vmPoolSizeOvercommit;
+        coalesceLimit = coalesceLimitOvercommit;
     }
 
     fclose(fp);
