@@ -1,3 +1,18 @@
+2011-01-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Strict mode restrictions on arguments and eval usage aren't complete
+        https://bugs.webkit.org/show_bug.cgi?id=52528
+
+        Add a helper function to aid parse failure tests by testing both direct
+        eval/global code, and nested code (so that we test the syntax checker
+        mode as well)
+
+        * fast/js/basic-strict-mode-expected.txt:
+        * fast/js/script-tests/basic-strict-mode.js:
+        (shouldBeSyntaxError):
+
 2011-01-16  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, re-skip test after r75894.

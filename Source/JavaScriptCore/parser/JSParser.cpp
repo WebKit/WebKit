@@ -1490,6 +1490,7 @@ template <typename TreeBuilder> TreeExpression JSParser::parseAssignmentExpressi
         next();
         if (strictMode() && m_lastIdentifier && context.isResolve(lhs)) {
             failIfTrueIfStrict(m_globalData->propertyNames->eval == *m_lastIdentifier);
+            failIfTrueIfStrict(m_globalData->propertyNames->arguments == *m_lastIdentifier);
             declareWrite(m_lastIdentifier);
             m_lastIdentifier = 0;
         }
@@ -1545,6 +1546,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseBinaryExpression(Tree
 
     int operandStackDepth = 0;
     int operatorStackDepth = 0;
+    typename TreeBuilder::BinaryExprContext binaryExprContext(context);
     while (true) {
         int exprStart = tokenStart();
         int initialAssignments = m_assignmentCount;
@@ -1942,6 +1944,7 @@ endMemberExpression:
 
 template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeBuilder& context)
 {
+    typename TreeBuilder::UnaryExprContext unaryExprContext(context);
     AllowInOverride allowInOverride(this);
     int tokenStackDepth = 0;
     bool modifiesExpr = false;
@@ -1977,9 +1980,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeB
     bool isEvalOrArguments = false;
     if (strictMode() && !m_syntaxAlreadyValidated) {
         if (context.isResolve(expr)) {
-            isEvalOrArguments = m_globalData->propertyNames->eval == *m_lastIdentifier;
-            if (!isEvalOrArguments && currentScope()->isFunction())
-                isEvalOrArguments = m_globalData->propertyNames->arguments == *m_lastIdentifier;
+            isEvalOrArguments = *m_lastIdentifier == m_globalData->propertyNames->eval || *m_lastIdentifier == m_globalData->propertyNames->arguments;
         }
     }
     failIfTrueIfStrict(isEvalOrArguments && modifiesExpr);

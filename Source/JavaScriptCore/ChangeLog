@@ -1,3 +1,36 @@
+2011-01-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Strict mode restrictions on arguments and eval usage aren't complete
+        https://bugs.webkit.org/show_bug.cgi?id=52528
+
+        Fix a few bugs in strict mode where we incorrect allow mutation of
+        arguments and eval in the parser.
+
+        Alas the "optimisation" used by the syntax checker for validating
+        binary and unary expressions was too aggressive: we do actually need
+        a stack for operations and operands although it needn't be as complete
+        as that used for the full AST builder.
+
+        Also disallow assignment to arguments in all cases as allowing arguments
+        to be assignable is always an error in strict mode, regardless of context.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::BinaryExprContext::BinaryExprContext):
+        (JSC::ASTBuilder::UnaryExprContext::UnaryExprContext):
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseAssignmentExpression):
+        (JSC::JSParser::parseBinaryExpression):
+        (JSC::JSParser::parseUnaryExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::BinaryExprContext::BinaryExprContext):
+        (JSC::SyntaxChecker::BinaryExprContext::~BinaryExprContext):
+        (JSC::SyntaxChecker::UnaryExprContext::UnaryExprContext):
+        (JSC::SyntaxChecker::UnaryExprContext::~UnaryExprContext):
+        (JSC::SyntaxChecker::appendBinaryExpressionInfo):
+        (JSC::SyntaxChecker::operatorStackPop):
+
 2011-01-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

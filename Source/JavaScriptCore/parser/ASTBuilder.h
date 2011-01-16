@@ -80,6 +80,13 @@ public:
     {
         m_scopes.append(Scope(globalData));
     }
+    
+    struct BinaryExprContext {
+        BinaryExprContext(ASTBuilder&) {}
+    };
+    struct UnaryExprContext {
+        UnaryExprContext(ASTBuilder&) {}
+    };
 
     typedef SyntaxChecker FunctionBodyBuilder;
 

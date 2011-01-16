@@ -31,8 +31,38 @@
 namespace JSC {
 class SyntaxChecker {
 public:
+    struct BinaryExprContext {
+        BinaryExprContext(SyntaxChecker& context)
+            : m_context(&context)
+        {
+            m_context->m_topBinaryExprs.append(m_context->m_topBinaryExpr);
+            m_context->m_topBinaryExpr = 0;
+        }
+        ~BinaryExprContext()
+        {
+            m_context->m_topBinaryExpr = m_context->m_topBinaryExprs.last();
+            m_context->m_topBinaryExprs.removeLast();
+        }
+    private:
+        SyntaxChecker* m_context;
+    };
+    struct UnaryExprContext {
+        UnaryExprContext(SyntaxChecker& context)
+            : m_context(&context)
+        {
+            m_context->m_topUnaryTokens.append(m_context->m_topUnaryToken);
+            m_context->m_topUnaryToken = 0;
+        }
+        ~UnaryExprContext()
+        {
+            m_context->m_topUnaryToken = m_context->m_topUnaryTokens.last();
+            m_context->m_topUnaryTokens.removeLast();
+        }
+    private:
+        SyntaxChecker* m_context;
+    };
+    
     SyntaxChecker(JSGlobalData* , Lexer*)
-        : m_topBinaryExpr(0)
     {
     }
 
@@ -212,6 +242,8 @@ public:
 private:
     int m_topBinaryExpr;
     int m_topUnaryToken;
+    Vector<int, 8> m_topBinaryExprs;
+    Vector<int, 8> m_topUnaryTokens;
 };
 
 }
