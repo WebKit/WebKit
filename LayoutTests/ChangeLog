@@ -1,3 +1,14 @@
+2011-01-15  David Kilzer  <ddkilzer@apple.com>
+
+        Skip fast/dom/Range/range-clone-contents.html on Windows
+
+        Not reviewed.
+
+        Filed: <https://bugs.webkit.org/show_bug.cgi?id=52524>
+
+        * platform/win/Skipped: Skip test on Windows. The test passes
+        on all other bots.
+
 2011-01-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.

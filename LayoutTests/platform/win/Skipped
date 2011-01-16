@@ -1117,3 +1117,6 @@ editing/selection/caret-mode-paragraph-keys-navigation.html
 
 # DRT does not obey addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=52524
+fast/dom/Range/range-clone-contents.html
