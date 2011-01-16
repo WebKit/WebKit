@@ -1,3 +1,12 @@
+2011-01-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] plugins/keyboard-events.html fails after r72717
+        https://bugs.webkit.org/show_bug.cgi?id=50050
+
+        * platform/qt/Skipped: Unskip plugins/keyboard-events.html
+
 2011-01-15  David Kilzer  <ddkilzer@apple.com>
 
         Skip fast/dom/Range/range-clone-contents.html on Windows

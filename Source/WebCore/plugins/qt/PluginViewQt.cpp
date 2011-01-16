@@ -417,15 +417,14 @@ void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
     xEvent->xkey.keycode = keyEvent->nativeScanCode();
 
     // We may not have a nativeScanCode() if the key event is from DRT's eventsender. In that
-    // case just populate the XEvent's keycode with the Qt platform-independent keycode. The only
+    // case fetch the XEvent's keycode from the event's text. The only
     // place this keycode will be used is in webkit_test_plugin_handle_event().
+    // FIXME: Create Qt API so that we can set the appropriate keycode in DRT EventSender instead.
     if (QWebPagePrivate::drtRun && !xEvent->xkey.keycode) {
         QKeyEvent* qKeyEvent = keyEvent->qtEvent();
         ASSERT(qKeyEvent);
-        if (!qKeyEvent->text().isEmpty())
-            xEvent->xkey.keycode = int(qKeyEvent->text().at(0).unicode() + qKeyEvent->modifiers());
-        else if (qKeyEvent->key() && (qKeyEvent->key() != Qt::Key_unknown))
-            xEvent->xkey.keycode = int(qKeyEvent->key() + qKeyEvent->modifiers());
+        QString keyText = qKeyEvent->text().left(1);
+        xEvent->xkey.keycode = XKeysymToKeycode(QX11Info::display(), XStringToKeysym(keyText.toUtf8().constData()));
     }
 
     xEvent->xkey.same_screen = true;

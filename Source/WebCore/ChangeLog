@@ -1,3 +1,13 @@
+2011-01-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] plugins/keyboard-events.html fails after r72717
+        https://bugs.webkit.org/show_bug.cgi?id=50050
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::setXKeyEventSpecificFields): map event text to keycode
+
 2011-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
