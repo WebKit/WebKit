@@ -136,20 +136,32 @@ void RenderView::layout()
     setNeedsLayout(false);
 }
 
-void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool /*useTransforms*/, TransformState& transformState) const
+void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
     ASSERT_UNUSED(repaintContainer, !repaintContainer || repaintContainer == this);
 
+    if (useTransforms && shouldUseTransformFromContainer(0)) {
+        TransformationMatrix t;
+        getTransformFromContainer(0, IntSize(), t);
+        transformState.applyTransform(t);
+    }
+    
     if (fixed && m_frameView)
         transformState.move(m_frameView->scrollOffset());
 }
 
-void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool /*useTransforms*/, TransformState& transformState) const
+void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState& transformState) const
 {
     if (fixed && m_frameView)
         transformState.move(-m_frameView->scrollOffset());
+
+    if (useTransforms && shouldUseTransformFromContainer(0)) {
+        TransformationMatrix t;
+        getTransformFromContainer(0, IntSize(), t);
+        transformState.applyTransform(t);
+    }
 }
 
 void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
