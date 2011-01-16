@@ -210,10 +210,6 @@ static inline void applyAppleDictionaryApplicationQuirk(WebFrameLoaderClient* cl
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
     : m_webFrame(webFrame)
     , m_policyFunction(0)
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    , m_verticalElasticity(NSScrollElasticityAutomatic)
-    , m_horizontalElasticity(NSScrollElasticityAutomatic)
-#endif
 {
 }
 
@@ -697,8 +693,8 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     if ([getWebView(m_webFrame.get()) drawsBackground])
         [scrollView setDrawsBackground:YES];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    [scrollView setVerticalScrollElasticity:m_verticalElasticity];
-    [scrollView setHorizontalScrollElasticity:m_horizontalElasticity];
+    [scrollView setVerticalScrollElasticity:NSScrollElasticityAutomatic];
+    [scrollView setHorizontalScrollElasticity:NSScrollElasticityAutomatic];
 #endif
 }
 
@@ -1105,8 +1101,6 @@ void WebFrameLoaderClient::provisionalLoadStarted()
     WebDynamicScrollBarsView *scrollView = [m_webFrame->_private->webFrameView _scrollView];
     [scrollView setDrawsBackground:NO];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    m_verticalElasticity = [scrollView verticalScrollElasticity];
-    m_horizontalElasticity = [scrollView horizontalScrollElasticity];
     [scrollView setVerticalScrollElasticity:NSScrollElasticityNone];
     [scrollView setHorizontalScrollElasticity:NSScrollElasticityNone];
 #endif

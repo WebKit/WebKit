@@ -245,9 +245,4 @@ private:
 
     RetainPtr<WebFramePolicyListener> m_policyListener;
     WebCore::FramePolicyFunction m_policyFunction;
-
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    NSScrollElasticity m_verticalElasticity;
-    NSScrollElasticity m_horizontalElasticity;
-#endif
 };
