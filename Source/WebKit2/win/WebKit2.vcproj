@@ -2835,6 +2835,18 @@
 				>
 			</File>
 			<Filter
+				Name="cg"
+				>
+				<File
+					RelativePath="..\Platform\cg\CGUtilities.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\cg\CGUtilities.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="win"
 				>
 				<File

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ShareableBitmap.h"
-
-#include <WebCore/GraphicsContext.h>
-#include <wtf/RetainPtr.h>
-#include "CGUtilities.h"
-
-using namespace WebCore;
+#ifndef CGUtilities_h
+#define CGUtilities_h
 
 namespace WebKit {
 
-PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
-{
-    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreate(data(), m_size.width(), m_size.height(), 8,  m_size.width() * 4, colorSpace.get(), 
-                                                                         kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
+void paintBitmapContext(CGContextRef, CGContextRef bitmapContext, CGPoint destination, CGRect source);
 
-    // We want the origin to be in the top left corner so flip the backing store context.
-    CGContextTranslateCTM(bitmapContext.get(), 0, m_size.height());
-    CGContextScaleCTM(bitmapContext.get(), 1, -1);
-
-    return adoptPtr(new GraphicsContext(bitmapContext.get()));
-}
-
-void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
-{
-    OwnPtr<GraphicsContext> sourceContext(createGraphicsContext());
-
-    paintBitmapContext(context.platformContext(), sourceContext->platformContext(), dstPoint, srcRect);
-}
-        
 } // namespace WebKit
+
+#endif // CGUtilities_h
