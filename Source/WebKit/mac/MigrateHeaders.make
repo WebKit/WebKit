@@ -60,9 +60,11 @@ all : \
     $(PUBLIC_HEADERS_DIR)/DOMCore.h \
     $(PUBLIC_HEADERS_DIR)/DOMCounter.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocument.h \
-    $(INTERNAL_HEADERS_DIR)/DOMDocumentInternal.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocumentFragment.h \
     $(INTERNAL_HEADERS_DIR)/DOMDocumentFragmentInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMDocumentFragmentPrivate.h \
+    $(INTERNAL_HEADERS_DIR)/DOMDocumentInternal.h \
+    $(PRIVATE_HEADERS_DIR)/DOMDocumentPrivate.h \
     $(PUBLIC_HEADERS_DIR)/DOMDocumentType.h \
     $(PUBLIC_HEADERS_DIR)/DOMElement.h \
     $(INTERNAL_HEADERS_DIR)/DOMElementInternal.h \
