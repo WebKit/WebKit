@@ -1,3 +1,9 @@
+2011-01-17  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * WebCore.exp.in:
+
 2011-01-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
