@@ -34,6 +34,7 @@
 #import "Chrome.h"
 #import "Cursor.h"
 #import "Document.h"
+#import "FloatConversion.h"
 #import "Font.h"
 #import "Frame.h"
 #import "GraphicsContext.h"
@@ -190,6 +191,25 @@ void Widget::setFrameRect(const IntRect& rect)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+void Widget::setBoundsSize(const IntSize& size)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    NSView *outerView = getOuterView();
+    if (!outerView)
+        return;
+
+    // Take a reference to this Widget, because sending messages to outerView can invoke arbitrary
+    // code, which can deref it.
+    RefPtr<Widget> protectedThis(this);
+
+    NSSize nsSize = size;
+    if (!NSEqualSizes(nsSize, [outerView bounds].size)) {
+        [outerView setBoundsSize:nsSize];
+        [outerView setNeedsDisplay:NO];
+    }
+    END_BLOCK_OBJC_EXCEPTIONS;
+}
+
 NSView *Widget::getOuterView() const
 {
     NSView *view = platformWidget();
@@ -214,11 +234,30 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     // code, which can deref it.
     RefPtr<Widget> protectedThis(this);
 
+    IntPoint transformOrigin = frameRect().location();
+    AffineTransform widgetToViewTranform = makeMapBetweenRects(IntRect(IntPoint(), frameRect().size()), [view bounds]);
+
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
         // This is the common case of drawing into a window or printing.
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
+        
+        CGContextRef context = (CGContextRef)[currentContext graphicsPort];
+
+        CGContextSaveGState(context);
+        CGContextTranslateCTM(context, transformOrigin.x(), transformOrigin.y());
+        CGContextScaleCTM(context, narrowPrecisionToFloat(widgetToViewTranform.xScale()), narrowPrecisionToFloat(widgetToViewTranform.yScale()));
+        CGContextTranslateCTM(context, -transformOrigin.x(), -transformOrigin.y());
+
+        IntRect dirtyRect = r;
+        dirtyRect.move(-transformOrigin.x(), -transformOrigin.y());
+        if (![view isFlipped])
+            dirtyRect.setY([view bounds].size.height - dirtyRect.bottom());
+
+        [view displayRectIgnoringOpacity:dirtyRect];
+
+        CGContextRestoreGState(context);
+
         END_BLOCK_OBJC_EXCEPTIONS;
     } else {
         // This is the case of drawing into a bitmap context other than a window backing store. It gets hit beneath
@@ -243,6 +282,10 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         ASSERT(cgContext == [currentContext graphicsPort]);
         CGContextSaveGState(cgContext);
 
+        CGContextTranslateCTM(cgContext, transformOrigin.x(), transformOrigin.y());
+        CGContextScaleCTM(cgContext, narrowPrecisionToFloat(widgetToViewTranform.xScale()), narrowPrecisionToFloat(widgetToViewTranform.yScale()));
+        CGContextTranslateCTM(cgContext, -transformOrigin.x(), -transformOrigin.y());
+
         NSRect viewFrame = [view frame];
         NSRect viewBounds = [view bounds];
         // Set up the translation and (flipped) orientation of the graphics context. In normal drawing, AppKit does it as it descends down
@@ -250,13 +293,18 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewFrame.size.height + viewBounds.origin.y);
         CGContextScaleCTM(cgContext, 1, -1);
 
+        IntRect dirtyRect = r;
+        dirtyRect.move(-transformOrigin.x(), -transformOrigin.y());
+        if (![view isFlipped])
+            dirtyRect.setY([view bounds].size.height - dirtyRect.bottom());
+
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         {
 #ifdef BUILDING_ON_TIGER
             AutodrainedPool pool;
 #endif
             NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
-            [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
+            [view displayRectIgnoringOpacity:dirtyRect inContext:nsContext];
         }
         END_BLOCK_OBJC_EXCEPTIONS;
 

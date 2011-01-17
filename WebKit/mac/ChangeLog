@@ -1,3 +1,25 @@
+2011-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Issues with iframes and plugins when the WebView is scaled.
+        <rdar://problem/6213380>
+        
+        When _scaleWebView has been called on a WebView, iframes
+        in WebKit1 render and hit-test incorrectly, and plug-ins don't scale up.
+        This is caused by AppKit NSViews not playing nicely with the scale
+        applied through style.
+        
+        Work around most of these issues by adjusting the bounds size
+        of widgets to allow iframe contents to paint with the correct scale,
+        and fix various places in the code where we relied on coordinate
+        transforms via NSViews (which ignore CSS transforms).
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView updateAndSetWindow]):
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView setBoundsSize:]):
+
 2011-01-16  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Kevin Decker.

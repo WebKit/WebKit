@@ -509,6 +509,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     [super setFrameSize:size];
 }
 
+- (void)setBoundsSize:(NSSize)size
+{
+    [super setBoundsSize:size];
+    [[self _scrollView] setFrameSize:size];
+}
+
 - (void)viewDidMoveToWindow
 {
     // See WebFrameLoaderClient::provisionalLoadStarted.

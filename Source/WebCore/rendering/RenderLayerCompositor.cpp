@@ -1118,7 +1118,12 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
         return true;
 
     // On Mac, only propagate compositing if the iframe is overlapped in the parent
-    // document, or the parent is already compositing.
+    // document, or the parent is already compositing, or the main frame is scaled.
+    Frame* frame = m_renderView->frameView()->frame();
+    Page* page = frame ? frame->page() : 0;
+    if (page->mainFrame()->pageScaleFactor() != 1)
+        return true;
+    
     RenderIFrame* iframeRenderer = toRenderIFrame(renderer);
     if (iframeRenderer->widget()) {
         ASSERT(iframeRenderer->widget()->isFrameView());

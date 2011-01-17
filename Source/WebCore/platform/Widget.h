@@ -153,6 +153,7 @@ public:
     IntPoint pos() const { return frameRect().location(); }
 
     virtual void setFrameRect(const IntRect&);
+    virtual void setBoundsSize(const IntSize&);
     virtual IntRect frameRect() const;
     IntRect boundsRect() const { return IntRect(0, 0, width(),  height()); }
 

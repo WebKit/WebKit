@@ -70,7 +70,7 @@ private:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void setOverlapTestResult(bool);
 
-    bool setWidgetGeometry(const IntRect&);
+    bool setWidgetGeometry(const IntRect&, const IntSize&);
 
     RefPtr<Widget> m_widget;
     RefPtr<Image> m_substituteImage;
