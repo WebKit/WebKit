@@ -537,6 +537,10 @@ PASS Invalid: "L: L1: L: ;"
 PASS Invalid: "function f() { L: L1: L: ; }"
 PASS Invalid: "L: L1: L2: L3: L4: L: ;"
 PASS Invalid: "function f() { L: L1: L2: L3: L4: L: ; }"
+PASS Invalid: "for(var a,b 'this shouldn't be allowed' false ; ) ;"
+PASS Invalid: "function f() { for(var a,b 'this shouldn't be allowed' false ; ) ; }"
+PASS Invalid: "for(var a,b '"
+PASS Invalid: "function f() { for(var a,b ' }"
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -795,8 +795,10 @@ template <class TreeBuilder> TreeStatement JSParser::parseForStatement(TreeBuild
             fail();
 
         // Remainder of a standard for loop is handled identically
-        if (declarations > 1 || match(SEMICOLON))
+        if (match(SEMICOLON))
             goto standardForLoop;
+
+        failIfFalse(declarations == 1);
 
         // Handle for-in with var declaration
         int inLocation = tokenStart();

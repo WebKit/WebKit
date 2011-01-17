@@ -1,5 +1,18 @@
 2011-01-16  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        [jsfunfuzz] Parser doesn't correctly validate for-loop syntax
+        https://bugs.webkit.org/show_bug.cgi?id=52516
+
+        Add test for the case where a syntax error immediately follows
+        multiple declarations in a for-loop initialiser.
+
+        * fast/js/parser-syntax-check-expected.txt:
+        * fast/js/script-tests/parser-syntax-check.js:
+
+2011-01-16  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Strict mode restrictions on arguments and eval usage aren't complete
