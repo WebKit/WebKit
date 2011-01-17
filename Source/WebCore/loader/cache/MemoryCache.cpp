@@ -346,16 +346,6 @@ void MemoryCache::evict(CachedResource* resource)
         delete resource;
 }
 
-void MemoryCache::addCachedResourceLoader(CachedResourceLoader* cachedResourceLoader)
-{
-    m_cachedResourceLoaders.add(cachedResourceLoader);
-}
-
-void MemoryCache::removeCachedResourceLoader(CachedResourceLoader* cachedResourceLoader)
-{
-    m_cachedResourceLoaders.remove(cachedResourceLoader);
-}
-
 static inline unsigned fastLog2(unsigned i)
 {
     unsigned log2 = 0;

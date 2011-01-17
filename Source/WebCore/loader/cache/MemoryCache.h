@@ -181,9 +181,6 @@ private:
     bool makeResourcePurgeable(CachedResource*);
     void evict(CachedResource*);
 
-    // Member variables.
-    HashSet<CachedResourceLoader*> m_cachedResourceLoaders;
-
     bool m_disabled;  // Whether or not the cache is enabled.
     bool m_pruneEnabled;
     bool m_inPruneDeadResources;

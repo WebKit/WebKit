@@ -1,3 +1,26 @@
+2011-01-13  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Antti Koivisto.
+
+        Fix for Bug 52427 - Inconsistent use of m_cache in CachedResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=52427
+
+        In constructor/destructor of CachedResourceLoader, m_cache has been
+        used to call MemoryCache::addCachedResourceLoader/removeCachedResourceLoader
+        while cache() is used everywhere else.
+
+        Actually addCachedResourceLoader/removeCachedResourceLoader need not be called at all.
+        Remove the call sites and make MemoryCache non-friend of CachedResourceLoader.
+
+        No new tests because the behavior remains the same.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::CachedResourceLoader):
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/MemoryCache.cpp:
+        * loader/cache/MemoryCache.h:
+
 2011-01-16  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

@@ -78,14 +78,12 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
 }
 
 CachedResourceLoader::CachedResourceLoader(Document* document)
-    : m_cache(memoryCache())
-    , m_document(document)
+    : m_document(document)
     , m_requestCount(0)
     , m_autoLoadImages(true)
     , m_loadFinishing(false)
     , m_allowStaleResources(false)
 {
-    m_cache->addCachedResourceLoader(this);
 }
 
 CachedResourceLoader::~CachedResourceLoader()
@@ -95,7 +93,6 @@ CachedResourceLoader::~CachedResourceLoader()
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it)
         it->second->setOwningCachedResourceLoader(0);
-    m_cache->removeCachedResourceLoader(this);
 
     // Make sure no requests still point to this CachedResourceLoader
     ASSERT(m_requestCount == 0);

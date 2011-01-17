@@ -50,7 +50,6 @@ class KURL;
 
 // The CachedResourceLoader manages the loading of scripts/images/stylesheets for a single document.
 class CachedResourceLoader : public Noncopyable {
-friend class MemoryCache;
 friend class ImageLoader;
 
 public:
@@ -118,7 +117,6 @@ private:
     void notifyLoadedFromMemoryCache(CachedResource*);
     bool canRequest(CachedResource::Type, const KURL&);
     
-    MemoryCache* m_cache;
     HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;
     Document* m_document;
