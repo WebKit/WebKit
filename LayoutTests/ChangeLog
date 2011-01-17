@@ -1,3 +1,13 @@
+2011-01-17  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/52524> fast/dom/Range/range-clone-contents.html fails only on Windows
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/win/Skipped: Removed
+        fast/dom/Range/range-clone-contents.html.  It appears the
+        Windows buildbots need a clean build.
+
 2011-01-17  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.
