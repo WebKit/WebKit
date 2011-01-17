@@ -1,3 +1,15 @@
+2011-01-17  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update xcodeproj svn:ignore to include xcuserdata.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj: Modified property svn:ignore.
+        * MiniBrowser/MiniBrowser.xcodeproj: Modified property svn:ignore.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj: Modified property svn:ignore.
+        * WebKitLauncher/WebKitLauncher.xcodeproj: Modified property svn:ignore.
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj: Modified property svn:ignore.
+
 2011-01-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r75908.

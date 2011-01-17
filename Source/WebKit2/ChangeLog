@@ -1,3 +1,11 @@
+2011-01-17  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Update xcodeproj svn:ignore to include xcuserdata.
+
+        * WebKit2.xcodeproj: Modified property svn:ignore.
+
 2011-01-17  Alexey Proskuryakov  <ap@apple.com>
 
         Fixing a typo from a bad merge.
