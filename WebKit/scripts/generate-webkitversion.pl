@@ -46,7 +46,7 @@ my $usage = "generate-webkitversion --config WebKit/mac/Configurations/Version.x
 my $major_version = "";
 my $minor_version = "";
 # The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in WebKit/mac/Configurations/.
-my $configFile = "./WebKit/mac/Configurations/Version.xcconfig";
+my $configFile = "./Soure/WebKit/mac/Configurations/Version.xcconfig";
 my $outputDir = "";
 
 GetOptions('config=s' => \$configFile,
@@ -55,7 +55,7 @@ GetOptions('config=s' => \$configFile,
 die "You must specify a --config <file> " unless (length($configFile));
 die "You must specify a --outputDir <outputdir> " unless (length($outputDir));
 
-die "./WebKit/mac/Configurations/Version.xcconfig does not exist: use --config <file> to specify its correct location." unless (-e $configFile);
+die "./Source/WebKit/mac/Configurations/Version.xcconfig does not exist: use --config <file> to specify its correct location." unless (-e $configFile);
 die "$outputDir/ does not exist: use --outputDir <directory> to specify the location of an output directory that exists" unless (-e "$outputDir");
 
 unless (open INPUT, "<", $configFile) { print STDERR "File does not exist: $configFile\n";}

@@ -87,7 +87,7 @@ sub determineSourceDir
 
     # walks up path checking each directory to see if it is the main WebKit project dir, 
     # defined by containing Sources, WebCore, and WebKit
-    until ((-d "$sourceDir/Source" && -d "$sourceDir/Source/WebCore" && -d "$sourceDir/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
+    until ((-d "$sourceDir/Source" && -d "$sourceDir/Source/WebCore" && -d "$sourceDir/Source/WebKit") || (-d "$sourceDir/Internal" && -d "$sourceDir/OpenSource"))
     {
         if ($sourceDir !~ s|/[^/]+$||) {
             die "Could not find top level webkit directory above source directory using FindBin.\n";
@@ -1591,7 +1591,7 @@ sub buildQMakeProject($@)
     my $dsMakefile = "Makefile.DerivedSources";
 
     # Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
-    my @subdirs = ("Source/JavaScriptCore", "Source/WebCore", "WebKit/qt/Api");
+    my @subdirs = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit/qt/Api");
     if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
         push @subdirs, "Source/WebKit2";
         push @subdirs, "Tools/WebKitTestRunner";
@@ -1638,9 +1638,9 @@ sub buildQMakeProject($@)
     }
 
     # Manually create makefiles for the examples so we don't build by default
-    my $examplesDir = $dir . "/WebKit/qt/examples";
+    my $examplesDir = $dir . "/Source/WebKit/qt/examples";
     File::Path::mkpath($examplesDir);
-    $buildArgs[-1] = sourceDir() . "/WebKit/qt/examples/examples.pro";
+    $buildArgs[-1] = sourceDir() . "/Source/WebKit/qt/examples/examples.pro";
     chdir $examplesDir or die;
     print "Calling '$qmakebin @buildArgs' in " . $examplesDir . "\n\n";
     $result = system "$qmakebin @buildArgs";
@@ -1665,6 +1665,7 @@ sub buildQMakeProject($@)
 
 sub buildQMakeQtProject($$@)
 {
+   print "XXX";
     my ($project, $clean, @buildArgs) = @_;
 
     return buildQMakeProject($clean, @buildArgs);
@@ -1746,10 +1747,10 @@ sub buildChromium($@)
     my $result = 1;
     if (isDarwin()) {
         # Mac build - builds the root xcode project.
-        $result = buildXCodeProject("WebKit/chromium/WebKit", $clean, "-configuration", configuration(), @options);
+        $result = buildXCodeProject("Source/WebKit/chromium/WebKit", $clean, "-configuration", configuration(), @options);
     } elsif (isCygwin() || isWindows()) {
         # Windows build - builds the root visual studio solution.
-        $result = buildChromiumVisualStudioProject("WebKit/chromium/WebKit.sln", $clean);
+        $result = buildChromiumVisualStudioProject("Source/WebKit/chromium/WebKit.sln", $clean);
     } elsif (isLinux()) {
         # Linux build - build using make.
         $ result = buildChromiumMakefile("all", $clean);

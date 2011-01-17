@@ -29,7 +29,7 @@
 
 #include "config.h"
 #include "GCControllerQt.h"
-#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include "../../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 
 #include <qwebpage.h>
 

@@ -40,7 +40,7 @@
 #include <QSslError>
 #endif
 
-#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include "../../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 #include <qgraphicsview.h>
 #include <qgraphicswebview.h>
 #include <qwebframe.h>

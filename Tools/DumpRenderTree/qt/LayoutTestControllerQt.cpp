@@ -28,7 +28,7 @@
  */
 #include "config.h"
 #include "LayoutTestControllerQt.h"
-#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include "../../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 
 #include "DumpRenderTreeQt.h"
 #include "WorkQueue.h"

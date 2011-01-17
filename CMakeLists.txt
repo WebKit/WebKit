@@ -11,7 +11,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")
 
 SET(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/Source/JavaScriptCore")
 SET(WEBCORE_DIR "${CMAKE_SOURCE_DIR}/Source/WebCore")
-SET(WEBKIT_DIR "${CMAKE_SOURCE_DIR}/WebKit")
+SET(WEBKIT_DIR "${CMAKE_SOURCE_DIR}/Source/WebKit")
 SET(TOOLS_DIR "${CMAKE_SOURCE_DIR}/Tools")
 SET(DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources")
 
@@ -106,7 +106,7 @@ INCLUDE(WebKitPackaging)
 # -----------------------------------------------------------------------------
 ADD_SUBDIRECTORY(Source/JavaScriptCore)
 ADD_SUBDIRECTORY(Source/WebCore)
-ADD_SUBDIRECTORY(WebKit)
+ADD_SUBDIRECTORY(Source/WebKit)
 
 # -----------------------------------------------------------------------------
 # Add test browser if exists

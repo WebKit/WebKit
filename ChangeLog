@@ -1,3 +1,20 @@
+2011-01-16  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebKit into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52530
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * Makefile:
+        * WebKit.pri:
+        * WebKit.pro:
+        * configure.ac:
+        * wscript:
+
 2011-01-15  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

@@ -67,7 +67,7 @@
 #include "webinspector.h"
 #include "webpage.h"
 #include "webview.h"
-#include "../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include "../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 
 #ifdef Q_WS_MAEMO_5
 #include <X11/Xatom.h>

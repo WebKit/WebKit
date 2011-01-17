@@ -44,7 +44,7 @@ building-libs {
             }
         }
     }
-    DEPENDPATH += $$PWD/WebKit/qt/Api
+    DEPENDPATH += $$PWD/Source/WebKit/qt/Api
 }
 
 !mac:!unix|symbian {
@@ -55,7 +55,7 @@ CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }
 
-INCLUDEPATH += $$OUTPUT_DIR/include/QtWebKit
+INCLUDEPATH += $$OUTPUT_DIR/Source/include/QtWebKit
 
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wall -Wextra -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self

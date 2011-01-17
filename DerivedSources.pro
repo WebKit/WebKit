@@ -4,7 +4,7 @@ CONFIG += ordered
 SUBDIRS += \
         Source/JavaScriptCore/DerivedSources.pro \
         Source/WebCore/DerivedSources.pro \
-        WebKit/qt/Api/DerivedSources.pro
+        Source/WebKit/qt/Api/DerivedSources.pro
 
 webkit2 {
     SUBDIRS += Source/WebKit2/DerivedSources.pro \

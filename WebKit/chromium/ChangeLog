@@ -1,3 +1,13 @@
+2011-01-16  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebKit into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52530
+
+        * WebKit.grd:
+        * WebKit.gyp:
+
 2011-01-15  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by David Levin.

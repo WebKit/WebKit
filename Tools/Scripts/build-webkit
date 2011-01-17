@@ -377,7 +377,7 @@ sub unlinkZeroFiles ()
 }
 
 # Check that all the project directories are there.
-my @projects = ("Source/JavaScriptCore", "Source/WebCore", "WebKit");
+my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
 
 my @otherDirs = ("WebKitLibraries");
 for my $dir (@projects, @otherDirs) {
@@ -542,7 +542,7 @@ for my $dir (@projects) {
     my $result = 0;
 
     # For Gtk and Qt the WebKit project builds all others
-    if ((isGtk() || isQt()) && $dir ne "WebKit") {
+    if ((isGtk() || isQt()) && $dir ne "Source/WebKit") {
         chdirWebKit();
         next;
     }

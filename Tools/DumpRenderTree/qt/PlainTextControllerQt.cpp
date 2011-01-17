@@ -28,7 +28,7 @@
 #include "config.h"
 #include "PlainTextControllerQt.h"
 
-#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include "../../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 #include <QApplication>
 #include <QInputMethodEvent>
 #include <QKeyEvent>

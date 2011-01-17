@@ -42,7 +42,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPF
 	-I$(WebKit)/WebCoreSupport \
 	-I$(WebKit)/webkit \
 	-I$(GENSOURCES_WEBKIT) \
-	-IWebKit/gtk/webkit \
+	-ISource/WebKit/gtk/webkit \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
@@ -99,35 +99,35 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBA
 
 webkitgtk_static_h_api += \
 	$(srcdir)/Source/WebCore/platform/network/soup/cache/webkit/soup-cache.h \
-	$(srcdir)/WebKit/gtk/webkit/webkit.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitdefines.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitdownload.h \
-	$(srcdir)/WebKit/gtk/webkit/webkiterror.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitglobals.h \
-	$(srcdir)/WebKit/gtk/webkit/webkithittestresult.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitnetworkrequest.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitnetworkresponse.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitsecurityorigin.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitsoupauthdialog.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitviewportattributes.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebbackforwardlist.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebdatabase.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebdatasource.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebframe.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebhistoryitem.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebinspector.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebnavigationaction.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebplugin.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebplugindatabase.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebpolicydecision.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebresource.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebsettings.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebwindowfeatures.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebview.h
+	$(srcdir)/Source/WebKit/gtk/webkit/webkit.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitdefines.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitdownload.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkiterror.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitglobals.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkithittestresult.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitnetworkrequest.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitnetworkresponse.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitsecurityorigin.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitsoupauthdialog.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitviewportattributes.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebbackforwardlist.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebdatabase.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebdatasource.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebframe.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebhistoryitem.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebinspector.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebnavigationaction.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebplugin.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebplugindatabase.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebpolicydecision.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebresource.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebsettings.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebwindowfeatures.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebview.h
 
 webkitgtk_built_h_api += \
-	WebKit/gtk/webkit/webkitversion.h
+	Source/WebKit/gtk/webkit/webkitversion.h
 
 webkitgtk_h_api += \
 	$(webkitgtk_built_h_api) \
@@ -160,84 +160,84 @@ webkitgtk_sources += \
 	Source/WebCore/bindings/gobject/WebKitDOMObject.h \
 	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
 	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h \
-	WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
-	WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
-	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
-	WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
-	WebKit/gtk/WebCoreSupport/DocumentLoaderGtk.cpp \
-	WebKit/gtk/WebCoreSupport/DocumentLoaderGtk.h \
-	WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
-	WebKit/gtk/WebCoreSupport/DragClientGtk.h \
-	WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.cpp \
-	WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.h \
-	WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
-	WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
-	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
-	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
-	WebKit/gtk/WebCoreSupport/FrameNetworkingContextGtk.h \
-	WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp \
-	WebKit/gtk/WebCoreSupport/FullscreenVideoController.h \
-	WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
-	WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
-	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp \
-	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h \
-	WebKit/gtk/webkit/webkitapplicationcache.cpp \
-	WebKit/gtk/webkit/webkitapplicationcacheprivate.h \
-	WebKit/gtk/webkit/webkitdownload.cpp \
-	WebKit/gtk/webkit/webkitdownloadprivate.h \
-	WebKit/gtk/webkit/webkiterror.cpp \
-	WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
-	WebKit/gtk/webkit/webkitgeolocationpolicydecisionprivate.h \
-	WebKit/gtk/webkit/webkitglobals.cpp \
-	WebKit/gtk/webkit/webkitglobals.h \
-	WebKit/gtk/webkit/webkitglobalsprivate.h \
-	WebKit/gtk/webkit/webkithittestresult.cpp \
-	WebKit/gtk/webkit/webkithittestresultprivate.h \
-	WebKit/gtk/webkit/webkitnetworkrequest.cpp \
-	WebKit/gtk/webkit/webkitnetworkrequestprivate.h \
-	WebKit/gtk/webkit/webkitnetworkresponse.cpp \
-	WebKit/gtk/webkit/webkitnetworkresponseprivate.h \
-	WebKit/gtk/webkit/webkitsecurityorigin.cpp \
-	WebKit/gtk/webkit/webkitsecurityoriginprivate.h \
-	WebKit/gtk/webkit/webkitsoupauthdialog.c \
-	WebKit/gtk/webkit/webkitversion.cpp \
-	WebKit/gtk/webkit/webkitviewportattributes.cpp \
-	WebKit/gtk/webkit/webkitviewportattributesprivate.h \
-	WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
-	WebKit/gtk/webkit/webkitwebbackforwardlistprivate.h \
-	WebKit/gtk/webkit/webkitwebdatabase.cpp \
-	WebKit/gtk/webkit/webkitwebdatasource.cpp \
-	WebKit/gtk/webkit/webkitwebdatasourceprivate.h \
-	WebKit/gtk/webkit/webkitwebframe.cpp \
-	WebKit/gtk/webkit/webkitwebframeprivate.h \
-	WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
-	WebKit/gtk/webkit/webkitwebhistoryitemprivate.h \
-	WebKit/gtk/webkit/webkitwebinspector.cpp \
-	WebKit/gtk/webkit/webkitwebinspectorprivate.h \
-	WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
-	WebKit/gtk/webkit/webkitwebnavigationactionprivate.h \
-	WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
-	WebKit/gtk/webkit/webkitwebpolicydecisionprivate.h \
-	WebKit/gtk/webkit/webkitwebresource.cpp \
-	WebKit/gtk/webkit/webkitwebresourceprivate.h \
-	WebKit/gtk/webkit/webkitwebplugin.cpp \
-	WebKit/gtk/webkit/webkitwebpluginprivate.h \
-	WebKit/gtk/webkit/webkitwebplugindatabase.cpp \
-	WebKit/gtk/webkit/webkitwebplugindatabaseprivate.h \
-	WebKit/gtk/webkit/webkitwebsettings.cpp \
-	WebKit/gtk/webkit/webkitwebsettingsprivate.h \
-	WebKit/gtk/webkit/webkitwebview.cpp \
-	WebKit/gtk/webkit/webkitwebviewprivate.h \
-	WebKit/gtk/webkit/webkitwebwindowfeatures.cpp \
-	WebKit/gtk/webkit/webkitwebwindowfeaturesprivate.h
+	Source/WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/ChromeClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/ContextMenuClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/DocumentLoaderGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/DocumentLoaderGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/DragClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/DragClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/EditorClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/EditorClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/FrameNetworkingContextGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/FullscreenVideoController.cpp \
+	Source/WebKit/gtk/WebCoreSupport/FullscreenVideoController.h \
+	Source/WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/InspectorClientGtk.h \
+	Source/WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp \
+	Source/WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.h \
+	Source/WebKit/gtk/webkit/webkitapplicationcache.cpp \
+	Source/WebKit/gtk/webkit/webkitapplicationcacheprivate.h \
+	Source/WebKit/gtk/webkit/webkitdownload.cpp \
+	Source/WebKit/gtk/webkit/webkitdownloadprivate.h \
+	Source/WebKit/gtk/webkit/webkiterror.cpp \
+	Source/WebKit/gtk/webkit/webkitgeolocationpolicydecision.cpp \
+	Source/WebKit/gtk/webkit/webkitgeolocationpolicydecisionprivate.h \
+	Source/WebKit/gtk/webkit/webkitglobals.cpp \
+	Source/WebKit/gtk/webkit/webkitglobals.h \
+	Source/WebKit/gtk/webkit/webkitglobalsprivate.h \
+	Source/WebKit/gtk/webkit/webkithittestresult.cpp \
+	Source/WebKit/gtk/webkit/webkithittestresultprivate.h \
+	Source/WebKit/gtk/webkit/webkitnetworkrequest.cpp \
+	Source/WebKit/gtk/webkit/webkitnetworkrequestprivate.h \
+	Source/WebKit/gtk/webkit/webkitnetworkresponse.cpp \
+	Source/WebKit/gtk/webkit/webkitnetworkresponseprivate.h \
+	Source/WebKit/gtk/webkit/webkitsecurityorigin.cpp \
+	Source/WebKit/gtk/webkit/webkitsecurityoriginprivate.h \
+	Source/WebKit/gtk/webkit/webkitsoupauthdialog.c \
+	Source/WebKit/gtk/webkit/webkitversion.cpp \
+	Source/WebKit/gtk/webkit/webkitviewportattributes.cpp \
+	Source/WebKit/gtk/webkit/webkitviewportattributesprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebbackforwardlist.cpp \
+	Source/WebKit/gtk/webkit/webkitwebbackforwardlistprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebdatabase.cpp \
+	Source/WebKit/gtk/webkit/webkitwebdatasource.cpp \
+	Source/WebKit/gtk/webkit/webkitwebdatasourceprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebframe.cpp \
+	Source/WebKit/gtk/webkit/webkitwebframeprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebhistoryitem.cpp \
+	Source/WebKit/gtk/webkit/webkitwebhistoryitemprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebinspector.cpp \
+	Source/WebKit/gtk/webkit/webkitwebinspectorprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebnavigationaction.cpp \
+	Source/WebKit/gtk/webkit/webkitwebnavigationactionprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebpolicydecision.cpp \
+	Source/WebKit/gtk/webkit/webkitwebpolicydecisionprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebresource.cpp \
+	Source/WebKit/gtk/webkit/webkitwebresourceprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebplugin.cpp \
+	Source/WebKit/gtk/webkit/webkitwebpluginprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebplugindatabase.cpp \
+	Source/WebKit/gtk/webkit/webkitwebplugindatabaseprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebsettings.cpp \
+	Source/WebKit/gtk/webkit/webkitwebsettingsprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebview.cpp \
+	Source/WebKit/gtk/webkit/webkitwebviewprivate.h \
+	Source/WebKit/gtk/webkit/webkitwebwindowfeatures.cpp \
+	Source/WebKit/gtk/webkit/webkitwebwindowfeaturesprivate.h
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
+pkgconfig_DATA = Source/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
 
 if ENABLE_INTROSPECTION
 
-JSCore-@WEBKITGTK_API_VERSION@.gir: $(top_builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
-	$(AM_V_GEN)cp $(top_builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir $(top_builddir)/
+JSCore-@WEBKITGTK_API_VERSION@.gir: $(top_builddir)/Source/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
+	$(AM_V_GEN)cp $(top_builddir)/Source/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir $(top_builddir)/
 
 JSCORE_GIRSOURCES += JSCore-@WEBKITGTK_API_VERSION@.gir
 WEBKIT_GIRSOURCES += WebKit-@WEBKITGTK_API_VERSION@.gir
@@ -265,7 +265,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \
 	     -I$(GENSOURCES_WEBKIT) \
-	     -I$(top_builddir)/WebKit/gtk \
+	     -I$(top_builddir)/Source/WebKit/gtk \
 	     -I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \
 	     $(GENSOURCES_WEBKIT)/webkitenumtypes.h \
@@ -286,7 +286,7 @@ CLEANFILES += $(JSCORE_GIRSOURCES) $(WEBKIT_GIRSOURCES) $(typelibs_DATA)
 
 endif
 
-EXTRA_DIST += $(top_builddir)/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
+EXTRA_DIST += $(top_builddir)/Source/WebKit/gtk/JSCore-@WEBKITGTK_API_VERSION@.gir
 
 WEBKIT_MARSHAL_LIST = $(WebKit)/webkitmarshal.list
 $(GENSOURCES_WEBKIT)/webkitmarshal.cpp: stamp-webkitmarshal.cpp
@@ -350,7 +350,7 @@ $(GENSOURCES_WEBKIT)/webkitenumtypes.cpp: $(webkitgtk_h_api) $(WebKit)/GNUmakefi
 
 # GSettings
 if USE_GSETTINGS
-gsettings_SCHEMAS = $(top_builddir)/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml
+gsettings_SCHEMAS = $(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml
 @GSETTINGS_RULES@
 endif
 
@@ -372,7 +372,7 @@ EXTRA_DIST += \
 # extra resource files
 resourcesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/resources
 dist_resources_DATA = \
-	$(shell ls $(srcdir)/WebKit/gtk/resources/*.html)
+	$(shell ls $(srcdir)/Source/WebKit/gtk/resources/*.html)
 
 # Build unit tests
 noinst_PROGRAMS += $(TEST_PROGS)
@@ -382,7 +382,7 @@ webkit_tests_cflags = \
 	-I$(WebCore)/platform/network/soup/cache \
 	-I$(WebKit) \
 	-I$(GENSOURCES) \
-	-I$(top_builddir)/WebKit/gtk \
+	-I$(top_builddir)/Source/WebKit/gtk \
 	-I$(top_srcdir)/Source/WebCore/bindings \
 	-I$(top_srcdir)/Source/WebCore/bindings/gobject \
 	$(global_cppflags) \
@@ -429,119 +429,119 @@ TEST_PROGS += \
 	Programs/unittests/testcopyandpaste
 
 # Add additional tests here
-Programs_unittests_testdomdocument_SOURCES = WebKit/gtk/tests/testdomdocument.c
+Programs_unittests_testdomdocument_SOURCES = Source/WebKit/gtk/tests/testdomdocument.c
 Programs_unittests_testdomdocument_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testdomdocument_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testdomdocument_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testdomdomwindow_SOURCES = WebKit/gtk/tests/testdomdomwindow.c
+Programs_unittests_testdomdomwindow_SOURCES = Source/WebKit/gtk/tests/testdomdomwindow.c
 Programs_unittests_testdomdomwindow_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testdomdomwindow_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testdomdomwindow_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testdomnode_SOURCES = WebKit/gtk/tests/testdomnode.c
+Programs_unittests_testdomnode_SOURCES = Source/WebKit/gtk/tests/testdomnode.c
 Programs_unittests_testdomnode_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testdomnode_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testdomnode_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testhttpbackend_SOURCES = WebKit/gtk/tests/testhttpbackend.c
+Programs_unittests_testhttpbackend_SOURCES = Source/WebKit/gtk/tests/testhttpbackend.c
 Programs_unittests_testhttpbackend_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testhttpbackend_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testhttpbackend_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testglobals_SOURCES = WebKit/gtk/tests/testglobals.c
+Programs_unittests_testglobals_SOURCES = Source/WebKit/gtk/tests/testglobals.c
 Programs_unittests_testglobals_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testglobals_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testglobals_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testloading_SOURCES = WebKit/gtk/tests/testloading.c
+Programs_unittests_testloading_SOURCES = Source/WebKit/gtk/tests/testloading.c
 Programs_unittests_testloading_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testloading_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testloading_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testmimehandling_SOURCES = WebKit/gtk/tests/testmimehandling.c WebKit/gtk/tests/test_utils.c
+Programs_unittests_testmimehandling_SOURCES = Source/WebKit/gtk/tests/testmimehandling.c Source/WebKit/gtk/tests/test_utils.c
 Programs_unittests_testmimehandling_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testmimehandling_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testmimehandling_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testnetworkrequest_SOURCES = WebKit/gtk/tests/testnetworkrequest.c
+Programs_unittests_testnetworkrequest_SOURCES = Source/WebKit/gtk/tests/testnetworkrequest.c
 Programs_unittests_testnetworkrequest_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testnetworkrequest_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testnetworkrequest_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testnetworkresponse_SOURCES = WebKit/gtk/tests/testnetworkresponse.c
+Programs_unittests_testnetworkresponse_SOURCES = Source/WebKit/gtk/tests/testnetworkresponse.c
 Programs_unittests_testnetworkresponse_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testnetworkresponse_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testnetworkresponse_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testwebframe_SOURCES = WebKit/gtk/tests/testwebframe.c
+Programs_unittests_testwebframe_SOURCES = Source/WebKit/gtk/tests/testwebframe.c
 Programs_unittests_testwebframe_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebframe_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebframe_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testwebplugindatabase_SOURCES = WebKit/gtk/tests/testwebplugindatabase.c
+Programs_unittests_testwebplugindatabase_SOURCES = Source/WebKit/gtk/tests/testwebplugindatabase.c
 Programs_unittests_testwebplugindatabase_CFLAGS = -DTEST_PLUGIN_DIR=\"${shell pwd}/${top_builddir}/TestNetscapePlugin/.libs\" $(webkit_tests_cflags)
 Programs_unittests_testwebplugindatabase_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebplugindatabase_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testwebbackforwardlist_SOURCES = WebKit/gtk/tests/testwebbackforwardlist.c
+Programs_unittests_testwebbackforwardlist_SOURCES = Source/WebKit/gtk/tests/testwebbackforwardlist.c
 Programs_unittests_testwebbackforwardlist_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebbackforwardlist_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebbackforwardlist_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testwebhistoryitem_SOURCES = WebKit/gtk/tests/testwebhistoryitem.c
+Programs_unittests_testwebhistoryitem_SOURCES = Source/WebKit/gtk/tests/testwebhistoryitem.c
 Programs_unittests_testwebhistoryitem_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebhistoryitem_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebhistoryitem_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testwindow_SOURCES = WebKit/gtk/tests/testwindow.c
+Programs_unittests_testwindow_SOURCES = Source/WebKit/gtk/tests/testwindow.c
 Programs_unittests_testwindow_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwindow_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwindow_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testdownload_SOURCES = WebKit/gtk/tests/testdownload.c
+Programs_unittests_testdownload_SOURCES = Source/WebKit/gtk/tests/testdownload.c
 Programs_unittests_testdownload_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testdownload_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testdownload_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testatk_SOURCES = WebKit/gtk/tests/testatk.c
+Programs_unittests_testatk_SOURCES = Source/WebKit/gtk/tests/testatk.c
 Programs_unittests_testatk_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testatk_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testatk_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testatkroles_SOURCES = WebKit/gtk/tests/testatkroles.c
+Programs_unittests_testatkroles_SOURCES = Source/WebKit/gtk/tests/testatkroles.c
 Programs_unittests_testatkroles_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testatkroles_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testatkroles_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testwebsettings_SOURCES = WebKit/gtk/tests/testwebsettings.c
+Programs_unittests_testwebsettings_SOURCES = Source/WebKit/gtk/tests/testwebsettings.c
 Programs_unittests_testwebsettings_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebsettings_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebsettings_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testwebresource_SOURCES = WebKit/gtk/tests/testwebresource.c
+Programs_unittests_testwebresource_SOURCES = Source/WebKit/gtk/tests/testwebresource.c
 Programs_unittests_testwebresource_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebresource_LDADD = $(webkit_tests_ldadd)
 
-Programs_unittests_testwebdatasource_SOURCES = WebKit/gtk/tests/testwebdatasource.c
+Programs_unittests_testwebdatasource_SOURCES = Source/WebKit/gtk/tests/testwebdatasource.c
 Programs_unittests_testwebdatasource_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebdatasource_LDADD = $(webkit_tests_ldadd)
 
-Programs_unittests_testwebview_SOURCES = WebKit/gtk/tests/testwebview.c WebKit/gtk/tests/test_utils.c
+Programs_unittests_testwebview_SOURCES = Source/WebKit/gtk/tests/testwebview.c Source/WebKit/gtk/tests/test_utils.c
 Programs_unittests_testwebview_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testwebview_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testwebview_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testhittestresult_SOURCES = WebKit/gtk/tests/testhittestresult.c
+Programs_unittests_testhittestresult_SOURCES = Source/WebKit/gtk/tests/testhittestresult.c
 Programs_unittests_testhittestresult_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testhittestresult_LDADD = $(webkit_tests_ldadd)
 
-Programs_unittests_testkeyevents_SOURCES = WebKit/gtk/tests/testkeyevents.c
+Programs_unittests_testkeyevents_SOURCES = Source/WebKit/gtk/tests/testkeyevents.c
 Programs_unittests_testkeyevents_CFLAGS = $(webkit_tests_cflags)
 Programs_unittests_testkeyevents_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testkeyevents_LDFLAGS = $(webkit_tests_ldflags)
 
-Programs_unittests_testcopyandpaste_SOURCES = WebKit/gtk/tests/testcopyandpaste.c \
+Programs_unittests_testcopyandpaste_SOURCES = Source/WebKit/gtk/tests/testcopyandpaste.c \
 	Source/WebCore/platform/gtk/GtkVersioning.c
 Programs_unittests_testcopyandpaste_CFLAGS = $(webkit_tests_cflags) \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
@@ -560,11 +560,11 @@ CLEANFILES += \
 	$(top_builddir)/Programs/GtkLauncher
 
 DISTCLEANFILES += \
-	$(top_builddir)/WebKit/gtk/docs/version.xml \
-	$(top_builddir)/WebKit/gtk/docs/GNUmakefile \
-	$(top_builddir)/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
-	$(top_builddir)/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml \
-	$(top_builddir)/WebKit/gtk/webkit/webkitversion.h
+	$(top_builddir)/Source/WebKit/gtk/docs/version.xml \
+	$(top_builddir)/Source/WebKit/gtk/docs/GNUmakefile \
+	$(top_builddir)/Source/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
+	$(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml \
+	$(top_builddir)/Source/WebKit/gtk/webkit/webkitversion.h
 
 dist-hook:
 	cp $(WebKit)/NEWS $(distdir)

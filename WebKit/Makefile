@@ -1,1 +1,1 @@
-include ../Makefile.shared
+include ../../Makefile.shared

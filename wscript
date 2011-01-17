@@ -30,7 +30,7 @@ import Options
 from settings import *
 
 if build_port == "wx":
-    webcore_dirs.extend(['WebKit/wx', 'WebKit/wx/WebKitSupport'])
+    webcore_dirs.extend(['Source/WebKit/wx', 'Source/WebKit/wx/WebKitSupport'])
 
 wk_includes = ['.',
                 os.path.join(wk_root, 'Source', 'JavaScriptCore'),
@@ -44,7 +44,7 @@ wk_includes = ['.',
         ]
 
 if build_port == "wx":
-    wk_includes.append(os.path.join(wk_root, 'WebKit', 'wx'))
+    wk_includes.append(os.path.join(wk_root, 'Source', 'WebKit', 'wx'))
     wk_includes.append(os.path.join(wk_root, 'Source', 'WebCore', 'platform', 'wx', 'wxcode'))
 
 if sys.platform.startswith("win"):
@@ -187,7 +187,7 @@ def configure(conf):
 
     if build_port == "wx" and Options.options.wxpython:
         common_configure(conf)
-        conf.check_tool('swig', tooldir='WebKit/wx/bindings/python')
+        conf.check_tool('swig', tooldir='Source/WebKit/wx/bindings/python')
         conf.check_swig_version('1.3.29')
 
 def build(bld):  
@@ -310,8 +310,8 @@ def build(bld):
         excludes.append('ResourceErrorCF.cpp')
         
         if sys.platform.startswith('darwin'):
-            webcore.includes += ' WebKit/mac/WebCoreSupport WebCore/platform/mac'
-            webcore.source += " WebKit/mac/WebCoreSupport/WebSystemInterface.mm"
+            webcore.includes += ' Source/WebKit/mac/WebCoreSupport WebCore/platform/mac'
+            webcore.source += ' Source/WebKit/mac/WebCoreSupport/WebSystemInterface.mm'
             
         if building_on_win32:
             for wxlib in bld.env['LIB_WX']:
@@ -327,4 +327,4 @@ def build(bld):
     bld.add_group()
     
     if build_port == "wx":    
-        bld.add_subdirs(['Tools/DumpRenderTree', 'Tools/wx/browser', 'WebKit/wx/bindings/python'])
+        bld.add_subdirs(['Tools/DumpRenderTree', 'Tools/wx/browser', 'Source/WebKit/wx/bindings/python'])

@@ -12,10 +12,10 @@ SUBDIRS += Source/WebCore
 # If the source exists, built it
 exists($$PWD/Tools/QtTestBrowser): SUBDIRS += Tools/QtTestBrowser
 contains(QT_CONFIG, declarative) {
-    exists($$PWD/WebKit/qt/declarative): SUBDIRS += WebKit/qt/declarative
+    exists($$PWD/Source/WebKit/qt/declarative): SUBDIRS += Source/WebKit/qt/declarative
 }
 !v8:exists($$PWD/Source/JavaScriptCore/jsc.pro): SUBDIRS += Source/JavaScriptCore/jsc.pro
-exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests
+exists($$PWD/Source/WebKit/qt/tests): SUBDIRS += Source/WebKit/qt/tests
 exists($$PWD/Tools/DumpRenderTree/qt/DumpRenderTree.pro): SUBDIRS += Tools/DumpRenderTree/qt/DumpRenderTree.pro
 exists($$PWD/Tools/DumpRenderTree/qt/ImageDiff.pro): SUBDIRS += Tools/DumpRenderTree/qt/ImageDiff.pro
 
@@ -42,4 +42,4 @@ symbian {
     QMAKE_EXTRA_TARGETS += install
 }
 
-include(WebKit/qt/docs/docs.pri)
+include(Source/WebKit/qt/docs/docs.pri)

@@ -32,7 +32,7 @@
 #include "config.h"
 
 #include "DumpRenderTreeQt.h"
-#include "../../../WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include "../../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 #include "EventSenderQt.h"
 #include "GCControllerQt.h"
 #include "LayoutTestControllerQt.h"

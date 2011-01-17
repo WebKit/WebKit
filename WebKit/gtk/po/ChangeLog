@@ -1,3 +1,12 @@
+2011-01-16  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Move WebKit into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52530
+
+        * GNUmakefile.am:
+
 2010-12-08  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Fix name of the Korean translation file.
