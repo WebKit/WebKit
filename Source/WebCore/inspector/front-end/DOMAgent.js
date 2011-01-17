@@ -373,12 +373,6 @@ WebInspector.DOMAgent.prototype = {
         return this._idToDOMNode[nodeId];
     },
 
-    _didCommitLoad: function()
-    {
-        // Cleanup elements panel early on inspected page refresh.
-        this._setDocument(null);
-    },
-
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
@@ -501,11 +495,6 @@ WebInspector.DOMDispatcher.prototype = {
     childNodeRemoved: function(parentId, nodeId)
     {
         this._domAgent._childNodeRemoved(parentId, nodeId);
-    },
-
-    didCommitLoad: function()
-    {
-        this._domAgent._didCommitLoad();
     }
 }
 

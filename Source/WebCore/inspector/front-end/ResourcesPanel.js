@@ -165,6 +165,12 @@ WebInspector.ResourcesPanel.prototype = {
             this.sidebarTree.selectedTreeElement.deselect();
     },
 
+    clear: function()
+    {
+        this.resourcesListTreeElement.removeChildren();
+        this.reset();
+    },
+
     addOrUpdateFrame: function(parentFrameId, frameId, title, subtitle)
     {
         var frameTreeElement = this._treeElementForFrameId[frameId];

@@ -226,8 +226,13 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
 {
     m_state->restoreFromInspectorCookie(inspectorStateCookie);
 
-    if (!m_frontend)
+    if (!m_frontend) {
         connectFrontend();
+        m_frontend->frontendReused();
+        m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
+        m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
+        pushDataCollectedOffline();
+    }
 
     if (m_state->getBoolean(InspectorState::timelineProfilerEnabled))
         startTimelineProfiler();
@@ -546,10 +551,23 @@ void InspectorController::populateScriptObjects()
         m_frontend->profilerWasEnabled();
 #endif
 
-    m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
+    pushDataCollectedOffline();
 
     if (m_nodeToFocus)
         focusNode();
+
+    // Dispatch pending frontend commands
+    for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); it != m_pendingEvaluateTestCommands.end(); ++it)
+        m_frontend->evaluateForTestInFrontend((*it).first, (*it).second);
+    m_pendingEvaluateTestCommands.clear();
+
+    restoreDebugger();
+    restoreProfiler(ProfilerRestoreNoAction);
+}
+
+void InspectorController::pushDataCollectedOffline()
+{
+    m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
 #if ENABLE(DATABASE)
     DatabaseResourcesMap::iterator databasesEnd = m_databaseResources.end();
@@ -568,14 +586,6 @@ void InspectorController::populateScriptObjects()
         m_frontend->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
 #endif
-
-    // Dispatch pending frontend commands
-    for (Vector<pair<long, String> >::iterator it = m_pendingEvaluateTestCommands.begin(); it != m_pendingEvaluateTestCommands.end(); ++it)
-        m_frontend->evaluateForTestInFrontend((*it).first, (*it).second);
-    m_pendingEvaluateTestCommands.clear();
-
-    restoreDebugger();
-    restoreProfiler(ProfilerRestoreNoAction);
 }
 
 void InspectorController::restoreDebugger()
@@ -667,10 +677,8 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_domStorageResources.clear();
 #endif
 
-        if (m_frontend) {
-            m_frontend->didCommitLoad();
+        if (m_frontend)
             m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
-        }
     }
 }
 

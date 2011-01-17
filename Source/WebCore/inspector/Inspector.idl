@@ -48,6 +48,7 @@ module core {
 
         [domain=Inspector] void openInInspectedWindow(in String url);
         [domain=Inspector] void setSearchingForNode(in boolean enabled, out boolean newState);
+        [notify, domain=Inspector] void frontendReused();
         [notify, domain=Inspector] void addNodesToSearchResult(out Array nodeIds);
         [notify, domain=Inspector] void bringToFront();
         [notify, domain=Inspector] void disconnectFromBackend();
@@ -185,7 +186,6 @@ module core {
         [notify, domain=DOM] void childNodeCountUpdated(out long id, out int newValue);
         [notify, domain=DOM] void childNodeInserted(out long parentId, out long prevId, out Object node);
         [notify, domain=DOM] void childNodeRemoved(out long parentId, out long id);
-        [notify, domain=DOM] void didCommitLoad();
 
         ///////////////////////////////////////////////////////////////////////
         // CSS API

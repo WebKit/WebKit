@@ -804,12 +804,17 @@ WebInspector.NetworkPanel.prototype = {
             this.visibleView = newView;
     },
 
-    mainResourceChanged: function()
+    clear: function()
     {
         if (this._preserveLogToggle.toggled)
             return;
 
         this._reset();
+    },
+
+    mainResourceChanged: function()
+    {
+        this.clear();
         // Now resurrect the main resource along with all redirects that lead to it.
         var resourcesToAppend = (WebInspector.mainResource.redirects || []).concat(WebInspector.mainResource);
         resourcesToAppend.forEach(this.appendResource, this);

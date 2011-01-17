@@ -31,13 +31,18 @@
 
 WebInspector.ResourceTreeModel = function()
 {
-    this._resourcesByURL = {};
-    this._resourcesByFrameId = {};
-    this._subframes = {};
-    InspectorBackend.cachedResources(this._processCachedResources.bind(this));
+    this.reloadCachedResources();
 }
 
 WebInspector.ResourceTreeModel.prototype = {
+    reloadCachedResources: function()
+    {
+        this._resourcesByURL = {};
+        this._resourcesByFrameId = {};
+        this._subframes = {};
+        InspectorBackend.cachedResources(this._processCachedResources.bind(this));
+    },
+
     addOrUpdateFrame: function(frame)
     {
         var tmpResource = new WebInspector.Resource(null, frame.url);

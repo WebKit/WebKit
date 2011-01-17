@@ -1652,6 +1652,12 @@ WebInspector.doPerformSearch = function(query, forceSearch, isBackwardSearch, re
     this.currentPanel.performSearch(query);
 }
 
+WebInspector.frontendReused = function()
+{
+    this.networkManager.reset();
+    this.reset();
+}
+
 WebInspector.addNodesToSearchResult = function(nodeIds)
 {
     WebInspector.panels.elements.addNodesToSearchResult(nodeIds);

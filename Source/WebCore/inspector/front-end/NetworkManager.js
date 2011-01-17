@@ -87,6 +87,13 @@ WebInspector.NetworkManager.updateResourceWithCachedResource = function(resource
 }
 
 WebInspector.NetworkManager.prototype = {
+    reset: function()
+    {
+        WebInspector.panels.network.clear();
+        WebInspector.panels.resources.clear();
+        this._resourceTreeModel.reloadCachedResources();
+    },
+
     identifierForInitialRequest: function(identifier, url, loader, callStack)
     {
         var resource = this._resourceTreeModel.createResource(identifier, url, loader, callStack);

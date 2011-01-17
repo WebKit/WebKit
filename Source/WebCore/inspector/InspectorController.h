@@ -257,6 +257,7 @@ private:
     void getInspectorState(RefPtr<InspectorObject>* state);
 
     void populateScriptObjects();
+    void pushDataCollectedOffline();
     void restoreDebugger();
     enum ProfilerRestoreAction {
         ProfilerRestoreNoAction = 0,
