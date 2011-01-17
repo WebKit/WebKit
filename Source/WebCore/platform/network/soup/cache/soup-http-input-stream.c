@@ -267,7 +267,7 @@ webkit_soup_http_input_stream_got_chunk (SoupMessage *msg, SoupBuffer *chunk_buf
 		g_warning ("webkit_soup_http_input_stream_got_chunk called again before previous chunk was processed");
 
 	/* Copy what we can into priv->caller_buffer */
-	if (priv->caller_bufsize - priv->caller_nread > 0) {
+	if (priv->caller_bufsize > priv->caller_nread) {
 		gsize nread = MIN (chunk_size, priv->caller_bufsize - priv->caller_nread);
 
 		memcpy (priv->caller_buffer + priv->caller_nread, chunk, nread);
