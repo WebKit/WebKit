@@ -34,7 +34,7 @@ use Getopt::Long;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-chdir("WebKit/chromium") or die $!;
+chdir("Source/WebKit/chromium") or die $!;
 
 # Find gclient or install it.
 my $gclientPath;

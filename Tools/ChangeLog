@@ -1,3 +1,9 @@
+2011-01-16  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, Chromium build fix.
+
+        * Scripts/update-webkit-chromium: Webkit/chromium -> Source/WebKit/chromium
+
 2011-01-16  Martin Robinson  <mrobinson@igalia.com>
 
         Build fix for GTK+ after source directory movement.
