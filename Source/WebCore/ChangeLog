@@ -1,5 +1,20 @@
 2011-01-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        frame-removed-during-resize.html test crashes (shows up as image-map-2.html crash)
+        https://bugs.webkit.org/show_bug.cgi?id=52549
+
+        Fix regression from r75900; m_widget->setFrameRect() can run script that
+        clears m_widget, so null-check it before calling setBoundsSize().
+        
+        Tested by fast/replaced/frame-removed-during-resize.html
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+
+2011-01-16  Simon Fraser  <simon.fraser@apple.com>
+
         Keep Leopard build happy.
 
         * platform/mac/WidgetMac.mm:

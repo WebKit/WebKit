@@ -174,7 +174,8 @@ bool RenderWidget::setWidgetGeometry(const IntRect& frame, const IntSize& bounds
     RenderWidgetProtector protector(this);
     RefPtr<Node> protectedNode(node());
     m_widget->setFrameRect(frame);
-    m_widget->setBoundsSize(boundsSize);
+    if (m_widget) // setFrameRect can run arbitrary script, which might clear m_widget.
+        m_widget->setBoundsSize(boundsSize);
     
 #if USE(ACCELERATED_COMPOSITING)
     if (hasLayer() && layer()->isComposited())
