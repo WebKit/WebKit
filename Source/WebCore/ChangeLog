@@ -1,3 +1,35 @@
+2011-01-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52495
+
+        No change in behavior, so no tests.
+
+        * WebCore.exp.in: Export additional methods, as I'm going to use more code from PrintContext.
+
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::~PrintContext): No need to clear m_pageRects, the object is being
+        destroyed already.
+        (WebCore::PrintContext::pageCount): Changed page count from int to size_t.
+        (WebCore::PrintContext::pageRect): Ditto.
+        (WebCore::PrintContext::computePageRects): Pass allowHorizontalTiling as an argument.
+        PrintContext already has code to calculate scale factor, so it makes sense to make methods
+        that contain it universal (allowHorizontalTiling is always true for Safari).
+        Round page height to an integer, because Mac code does that, and because page height is
+        treated as integer almost everywhere else in code.
+        (WebCore::PrintContext::begin): Allow calling this function multiple times. There is no need
+        to return to screen mode if e.g. "print backgounds" option changes.
+        (WebCore::PrintContext::computeAutomaticScaleFactor): Expose scale factor computation, so
+        that clients don't have to copy it.
+        (WebCore::PrintContext::spoolRect): Add a way to spool a precomputed rect - handy if a request
+        comes from code that doesn't have page number.
+        (WebCore::PrintContext::pageNumberForElement): Page number int -> size_t.
+
+        * page/PrintContext.h: Added comments and FIXMEs. PrintContext needs cleanup, but that
+        depends on deciding how it really needs to work (e.g. whether computePageRects() should
+        cause relayout).
+
 2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -38,23 +38,38 @@ public:
     PrintContext(Frame*);
     ~PrintContext();
 
-    int pageCount() const;
-    const IntRect& pageRect(int pageNumber) const;
+    Frame* frame() const { return m_frame; }
+
+    // Break up a page into rects without relayout.
+    // FIXME: This means that CSS page breaks won't be on page boundary if the size is different than what was passed to begin(). That's probably not always desirable.
+    // FIXME: Header and footer height should be applied before layout, not after.
+    // FIXME: The printRect argument is only used to determine page aspect ratio, it would be better to pass a FloatSize with page dimensions instead.
+    void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight, bool allowHorizontalTiling = false);
+
+    // Deprecated. Page size computation is already in this class, clients shouldn't be copying it.
+    void computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
+
+    // These are only valid after page rects are computed.
+    size_t pageCount() const;
+    const IntRect& pageRect(size_t pageNumber) const;
     const Vector<IntRect>& pageRects() const { return m_pageRects; }
 
-    void computePageRects(const FloatRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, float& outPageHeight);
-    void computePageRectsWithPageSize(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages);
+    float computeAutomaticScaleFactor(float availablePaperWidth);
 
-    // TODO: eliminate width param
+    // Enter print mode, updating layout for new page size.
+    // This function can be called multiple times to apply new print options without going back to screen mode.
     void begin(float width, float height = 0);
 
-    // TODO: eliminate width param
+    // FIXME: eliminate width argument.
     void spoolPage(GraphicsContext& ctx, int pageNumber, float width);
 
+    void spoolRect(GraphicsContext& ctx, const IntRect&);
+
+    // Return to screen mode.
     void end();
 
     // Used by layout tests.
-    static int pageNumberForElement(Element*, const FloatSize& pageSizeInPixels);
+    static int pageNumberForElement(Element*, const FloatSize& pageSizeInPixels); // Returns -1 if page isn't found.
     static String pageProperty(Frame* frame, const char* propertyName, int pageNumber);
     static bool isPageBoxVisible(Frame* frame, int pageNumber);
     static String pageSizeAndMarginsInPixels(Frame* frame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
@@ -69,7 +84,7 @@ protected:
     Vector<IntRect> m_pageRects;
 
 private:
-    void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalMultiPages);
+    void computePageRectsWithPageSizeInternal(const FloatSize& pageSizeInPixels, bool allowHorizontalTiling);
 
     // Used to prevent misuses of begin() and end() (e.g., call end without begin).
     bool m_isPrinting;
