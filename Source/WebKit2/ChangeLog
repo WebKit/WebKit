@@ -1,5 +1,11 @@
 2011-01-17  Alexey Proskuryakov  <ap@apple.com>
 
+        Fixing a typo from a bad merge.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView canChangeFrameLayout:]):
+
+2011-01-17  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by John Sullivan.
 
         https://bugs.webkit.org/show_bug.cgi?id=52590
