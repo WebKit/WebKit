@@ -38,6 +38,7 @@
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "DOMWindow.h"
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -172,6 +173,7 @@ void InspectorController::inspectedPageDestroyed()
     m_debuggerAgent.clear();
     m_browserDebuggerAgent.clear();
 #endif
+
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
 
@@ -303,12 +305,6 @@ void InspectorController::hideHighlight()
     m_client->hideHighlight();
 }
 
-void InspectorController::markTimeline(const String& message)
-{
-    if (timelineAgent())
-        timelineAgent()->didMarkTimeline(message);
-}
-
 void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
 {
     if (!enabled() || !searchingForNodeInPage())
@@ -321,18 +317,17 @@ void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, u
         highlight(node);
 }
 
-void InspectorController::handleMousePress()
+bool InspectorController::handleMousePress()
 {
-    if (!enabled())
-        return;
+    if (!enabled() || !searchingForNodeInPage())
+        return false;
 
-    ASSERT(searchingForNodeInPage());
-    if (!m_highlightedNode)
-        return;
-
-    RefPtr<Node> node = m_highlightedNode;
-    setSearchingForNode(false);
-    inspect(node.get());
+    if (m_highlightedNode) {
+        RefPtr<Node> node = m_highlightedNode;
+        setSearchingForNode(false);
+        inspect(node.get());
+    }
+    return true;
 }
 
 void InspectorController::setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> client)
@@ -341,8 +336,11 @@ void InspectorController::setInspectorFrontendClient(PassOwnPtr<InspectorFronten
     m_inspectorFrontendClient = client;
 }
 
-void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
+void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
 {
+    if (world != mainThreadNormalWorld())
+        return;
+
     // If the page is supposed to serve as InspectorFrontend notify inspetor frontend
     // client that it's cleared so that the client can expose inspector bindings.
     if (m_inspectorFrontendClient && frame == m_inspectedPage->mainFrame())
@@ -678,15 +676,6 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
     }
 }
 
-void InspectorController::frameDetachedFromParent(Frame* rootFrame)
-{
-    if (!enabled())
-        return;
-
-    if (m_resourceAgent)
-        m_resourceAgent->frameDetachedFromParent(rootFrame);
-}
-
 void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loader, const KURL& url)
 {
     if (!enabled() || !isMainResourceLoader(loader, url))
@@ -787,8 +776,10 @@ private:
 
     virtual void performTask(ScriptExecutionContext* scriptContext)
     {
-        if (InspectorController* inspector = scriptContext->inspectorController())
-            inspector->postWorkerNotificationToFrontend(*m_worker, m_action);
+        if (scriptContext->isDocument()) {
+            if (InspectorController* inspector = static_cast<Document*>(scriptContext)->page()->inspectorController())
+                inspector->postWorkerNotificationToFrontend(*m_worker, m_action);
+        }
     }
 
 private:

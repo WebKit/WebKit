@@ -38,7 +38,7 @@
 #include "Event.h"
 #include "EventException.h"
 #include "EventNames.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 
@@ -56,10 +56,7 @@ AbstractWorker::~AbstractWorker()
 
 void AbstractWorker::onDestroyWorker()
 {
-#if ENABLE(INSPECTOR)
-    if (InspectorController* inspector = scriptExecutionContext() ? scriptExecutionContext()->inspectorController() : 0)
-        inspector->didDestroyWorker(asID());
-#endif
+    InspectorInstrumentation::didDestroyWorker(scriptExecutionContext(), asID());
 }
 
 void AbstractWorker::contextDestroyed()

@@ -60,8 +60,8 @@ public:
     void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
 
     void startTiming(const String& title);
-    void stopTiming(const String& title, unsigned lineNumber, const String& sourceName);
-    void count(const String& title, unsigned lineNumber, const String& sourceID);
+    void stopTiming(const String& title, PassRefPtr<ScriptCallStack>);
+    void count(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
 
     void resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber);
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&);

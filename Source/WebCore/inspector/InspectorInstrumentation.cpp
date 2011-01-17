@@ -34,6 +34,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "DOMWindow.h"
+#include "Database.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventContext.h"
@@ -77,6 +78,16 @@ static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, 
     }
 
     return false;
+}
+
+void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InspectorController* inspectorController, Frame* frame, DOMWrapperWorld* world)
+{
+    inspectorController->didClearWindowObjectInWorld(frame, world);
+}
+
+void InspectorInstrumentation::inspectedPageDestroyedImpl(InspectorController* inspectorController)
+{
+    inspectorController->inspectedPageDestroyed();
 }
 
 void InspectorInstrumentation::willInsertDOMNodeImpl(InspectorController* inspectorController, Node* node, Node* parent)
@@ -129,6 +140,16 @@ void InspectorInstrumentation::didModifyDOMAttrImpl(InspectorController* inspect
         domAgent->didModifyDOMAttr(element);
 }
 
+void InspectorInstrumentation::mouseDidMoveOverElementImpl(InspectorController* inspectorController, const HitTestResult& result, unsigned modifierFlags)
+{
+    inspectorController->mouseDidMoveOverElement(result, modifierFlags);
+}
+
+bool InspectorInstrumentation::handleMousePressImpl(InspectorController* inspectorController)
+{
+    return inspectorController->handleMousePress();
+}
+
 void InspectorInstrumentation::characterDataModifiedImpl(InspectorController* inspectorController, CharacterData* characterData)
 {
     if (InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get())
@@ -162,7 +183,6 @@ void InspectorInstrumentation::didRemoveTimerImpl(InspectorController* inspector
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorController))
         timelineAgent->didRemoveTimer(timerId);
 }
-
 
 InspectorInstrumentationCookie InspectorInstrumentation::willCallFunctionImpl(InspectorController* inspectorController, const String& scriptName, int scriptLine)
 {
@@ -454,6 +474,27 @@ void InspectorInstrumentation::scriptImportedImpl(InspectorController* ic, unsig
         resourceAgent->setInitialContent(identifier, sourceString, "Script");
 }
 
+void InspectorInstrumentation::mainResourceFiredLoadEventImpl(InspectorController* inspectorController, Frame* frame, const KURL& url)
+{
+    inspectorController->mainResourceFiredLoadEvent(frame->loader()->documentLoader(), url);
+}
+
+void InspectorInstrumentation::mainResourceFiredDOMContentEventImpl(InspectorController* inspectorController, Frame* frame, const KURL& url)
+{
+    inspectorController->mainResourceFiredDOMContentEvent(frame->loader()->documentLoader(), url);
+}
+
+void InspectorInstrumentation::frameDetachedFromParentImpl(InspectorController* inspectorController, Frame* frame)
+{
+    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorController))
+        resourceAgent->frameDetachedFromParent(frame);
+}
+
+void InspectorInstrumentation::didCommitLoadImpl(InspectorController* inspectorController, DocumentLoader* loader)
+{
+    inspectorController->didCommitLoad(loader);
+}
+
 InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTMLImpl(InspectorController* inspectorController, unsigned int length, unsigned int startLine)
 {
     int timelineAgentId = 0;
@@ -470,6 +511,74 @@ void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCo
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didWriteHTML(endLine);
 }
+
+void InspectorInstrumentation::addMessageToConsoleImpl(InspectorController* inspectorController, MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptArguments* arguments, ScriptCallStack* callStack)
+{
+    inspectorController->consoleAgent()->addMessageToConsole(source, type, level, message, arguments, callStack);
+}
+
+void InspectorInstrumentation::addMessageToConsoleImpl(InspectorController* inspectorController, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
+{
+    inspectorController->consoleAgent()->addMessageToConsole(source, type, level, message, lineNumber, sourceID);
+}
+
+void InspectorInstrumentation::consoleCountImpl(InspectorController* inspectorController, ScriptArguments* arguments, ScriptCallStack* stack)
+{
+    inspectorController->consoleAgent()->count(arguments, stack);
+}
+
+void InspectorInstrumentation::startConsoleTimingImpl(InspectorController* inspectorController, const String& title)
+{
+    inspectorController->consoleAgent()->startTiming(title);
+}
+
+void InspectorInstrumentation::stopConsoleTimingImpl(InspectorController* inspectorController, const String& title, ScriptCallStack* stack)
+{
+    inspectorController->consoleAgent()->stopTiming(title, stack);
+}
+
+void InspectorInstrumentation::consoleMarkTimelineImpl(InspectorController* inspectorController, ScriptArguments* arguments)
+{
+    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorController)) {
+        String message;
+        arguments->getFirstArgumentAsString(message);
+        timelineAgent->didMarkTimeline(message);
+    }
+}
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+void InspectorInstrumentation::addStartProfilingMessageToConsoleImpl(InspectorController* inspectorController, const String& title, unsigned lineNumber, const String& sourceURL)
+{
+    if (InspectorProfilerAgent* profilerAgent = inspectorController->m_profilerAgent.get())
+        profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
+}
+#endif
+
+#if ENABLE(DATABASE)
+void InspectorInstrumentation::didOpenDatabaseImpl(InspectorController* inspectorController, Database* database, const String& domain, const String& name, const String& version)
+{
+    inspectorController->didOpenDatabase(database, domain, name, version);
+}
+#endif
+
+#if ENABLE(DOM_STORAGE)
+void InspectorInstrumentation::didUseDOMStorageImpl(InspectorController* inspectorController, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
+{
+    inspectorController->didUseDOMStorage(storageArea, isLocalStorage, frame);
+}
+#endif
+
+#if ENABLE(WORKERS)
+void InspectorInstrumentation::didCreateWorkerImpl(InspectorController* inspectorController, intptr_t id, const String& url, bool isSharedWorker)
+{
+    inspectorController->didCreateWorker(id, url, isSharedWorker);
+}
+
+void InspectorInstrumentation::didDestroyWorkerImpl(InspectorController* inspectorController, intptr_t id)
+{
+    inspectorController->didDestroyWorker(id);
+}
+#endif
 
 #if ENABLE(WEB_SOCKETS)
 void InspectorInstrumentation::didCreateWebSocketImpl(InspectorController* inspectorController, unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
@@ -504,49 +613,6 @@ void InspectorInstrumentation::updateApplicationCacheStatusImpl(InspectorControl
 {
     if (InspectorApplicationCacheAgent* applicationCacheAgent = ic->applicationCacheAgent())
         applicationCacheAgent->updateApplicationCacheStatus(frame);
-}
-#endif
-
-void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
-{
-    if (!page)
-        return;
-    page->inspectorController()->consoleAgent()->addMessageToConsole(source, type, level, message, arguments, callStack);
-}
-
-void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
-{
-    if (!page)
-        return;
-    page->inspectorController()->consoleAgent()->addMessageToConsole(source, type, level, message, lineNumber, sourceID);
-}
-
-void InspectorInstrumentation::count(Page* page, const String& title, unsigned lineNumber, const String& sourceID)
-{
-    if (!page)
-        return;
-    page->inspectorController()->consoleAgent()->count(title, lineNumber, sourceID);
-}
-
-void InspectorInstrumentation::startTiming(Page* page, const String& title)
-{
-    if (!page)
-        return;
-    page->inspectorController()->consoleAgent()->startTiming(title);
-}
-
-void InspectorInstrumentation::stopTiming(Page* page, const String& title, unsigned lineNumber, const String& sourceName)
-{
-    if (!page)
-        return;
-    page->inspectorController()->consoleAgent()->stopTiming(title, lineNumber, sourceName);
-}
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-void InspectorInstrumentation::addStartProfilingMessageToConsole(InspectorController* ic, const String& title, unsigned lineNumber, const String& sourceURL)
-{
-    if (InspectorProfilerAgent* profilerAgent = ic->m_profilerAgent.get())
-        profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
 #endif
 

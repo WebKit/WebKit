@@ -37,7 +37,6 @@ namespace WebCore {
 
 class Database;
 class InspectorArray;
-class InspectorController;
 class InspectorDatabaseResource;
 class InspectorFrontend;
 

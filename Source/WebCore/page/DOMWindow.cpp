@@ -65,7 +65,6 @@
 #include "History.h"
 #include "IDBFactory.h"
 #include "IDBFactoryBackendInterface.h"
-#include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Location.h"
@@ -628,9 +627,7 @@ Storage* DOMWindow::sessionStorage(ExceptionCode& ec) const
         return 0;
 
     RefPtr<StorageArea> storageArea = page->sessionStorage()->storageArea(document->securityOrigin());
-#if ENABLE(INSPECTOR)
-    page->inspectorController()->didUseDOMStorage(storageArea.get(), false, m_frame);
-#endif
+    InspectorInstrumentation::didUseDOMStorage(page, storageArea.get(), false, m_frame);
 
     m_sessionStorage = Storage::create(m_frame, storageArea.release());
     return m_sessionStorage.get();
@@ -658,9 +655,7 @@ Storage* DOMWindow::localStorage(ExceptionCode& ec) const
         return 0;
 
     RefPtr<StorageArea> storageArea = page->group().localStorage()->storageArea(document->securityOrigin());
-#if ENABLE(INSPECTOR)
-    page->inspectorController()->didUseDOMStorage(storageArea.get(), true, m_frame);
-#endif
+    InspectorInstrumentation::didUseDOMStorage(page, storageArea.get(), true, m_frame);
 
     m_localStorage = Storage::create(m_frame, storageArea.release());
     return m_localStorage.get();
@@ -1527,13 +1522,7 @@ void DOMWindow::dispatchLoadEvent()
         ownerElement->dispatchGenericEvent(ownerEvent.release());
     }
 
-#if ENABLE(INSPECTOR)
-    if (!frame() || !frame()->page())
-        return;
-
-    if (InspectorController* controller = frame()->page()->inspectorController())
-        controller->mainResourceFiredLoadEvent(frame()->loader()->documentLoader(), url());
-#endif
+    InspectorInstrumentation::mainResourceFiredLoadEvent(frame(), url());
 }
 
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)

@@ -92,7 +92,6 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "ImageLoader.h"
-#include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
@@ -4258,13 +4257,7 @@ void Document::finishedParsing()
 
         f->loader()->finishedParsing();
 
-#if ENABLE(INSPECTOR)
-        if (!page())
-            return;
-
-        if (InspectorController* controller = page()->inspectorController())
-            controller->mainResourceFiredDOMContentEvent(f->loader()->documentLoader(), url());
-#endif
+        InspectorInstrumentation::mainResourceFiredDOMContentEvent(f, url());
     }
 }
 
@@ -4812,13 +4805,6 @@ bool Document::isXHTMLMPDocument() const
     // and SHOULD accept it identified as "application/xhtml+xml" , "application/xhtml+xml" is a 
     // general MIME type for all XHTML documents, not only for XHTMLMP
     return frame()->loader()->writer()->mimeType() == "application/vnd.wap.xhtml+xml";
-}
-#endif
-
-#if ENABLE(INSPECTOR)
-InspectorController* Document::inspectorController() const
-{
-    return page() ? page()->inspectorController() : 0;
 }
 #endif
 

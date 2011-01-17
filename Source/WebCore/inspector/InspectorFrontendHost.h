@@ -32,7 +32,6 @@
 #include "Console.h"
 #include "ContextMenu.h"
 #include "ContextMenuProvider.h"
-#include "InspectorController.h"
 #include "PlatformString.h"
 
 #include <wtf/RefCounted.h>
@@ -46,6 +45,7 @@ class FrontendMenuProvider;
 class InspectorClient;
 class InspectorFrontendClient;
 class Node;
+class Page;
 
 class InspectorFrontendHost : public RefCounted<InspectorFrontendHost>
 {

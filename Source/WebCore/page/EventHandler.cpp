@@ -52,7 +52,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
@@ -1309,17 +1309,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     m_mousePressNode = mev.targetNode();
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page()) {
-        InspectorController* inspector = page->inspectorController();
-        if (inspector && inspector->enabled() && inspector->searchingForNodeInPage()) {
-            inspector->handleMousePress();
-            invalidateClick();
-            return true;
-        }
+    if (InspectorInstrumentation::handleMousePress(m_frame->page())) {
+        invalidateClick();
+        return true;
     }
-#endif
-
+        
     Frame* subframe = subframeForHitTestResult(mev);
     if (subframe && passMousePressEventToSubframe(mev, subframe)) {
         // Start capturing future events for this frame.  We only do this if we didn't clear

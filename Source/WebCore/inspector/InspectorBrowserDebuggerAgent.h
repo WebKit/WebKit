@@ -50,9 +50,9 @@ class Node;
 
 class InspectorBrowserDebuggerAgent : public Noncopyable {
 public:
-    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorController* controller)
+    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorController* inspectorController)
     {
-        return adoptPtr(new InspectorBrowserDebuggerAgent(controller));
+        return adoptPtr(new InspectorBrowserDebuggerAgent(inspectorController));
     }
 
     virtual ~InspectorBrowserDebuggerAgent();
@@ -83,7 +83,7 @@ private:
     bool hasBreakpoint(Node*, long type);
     void discardBindings();
 
-    InspectorController* m_controller;
+    InspectorController* m_inspectorController;
     HashMap<Node*, uint32_t> m_breakpoints;
     HashSet<String> m_eventListenerBreakpoints;
     HashSet<String> m_XHRBreakpoints;

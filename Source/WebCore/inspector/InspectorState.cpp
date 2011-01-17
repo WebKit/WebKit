@@ -32,7 +32,6 @@
 #if ENABLE(INSPECTOR)
 
 #include "InspectorClient.h"
-#include "InspectorController.h"
 
 namespace WebCore {
 

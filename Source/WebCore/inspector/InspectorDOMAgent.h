@@ -124,7 +124,7 @@ namespace WebCore {
         bool shouldBreakOnNodeRemoval(Node* node, PassRefPtr<InspectorObject> details);
         bool shouldBreakOnAttributeModification(Element* element, PassRefPtr<InspectorObject> details);
 
-        // Methods called from the InspectorController.
+        // Methods called from the InspectorInstrumentation.
         void setDocument(Document* document);
         void releaseDanglingNodes();
 

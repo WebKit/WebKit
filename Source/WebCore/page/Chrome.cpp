@@ -33,7 +33,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroupLoadDeferrer.h"
 #include "RenderObject.h"
@@ -344,10 +344,7 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
     }
     m_client->mouseDidMoveOverElement(result, modifierFlags);
 
-#if ENABLE(INSPECTOR)
-    if (InspectorController* inspector = m_page->inspectorController())
-        inspector->mouseDidMoveOverElement(result, modifierFlags);
-#endif
+    InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);
 }
 
 void Chrome::setToolTip(const HitTestResult& result)

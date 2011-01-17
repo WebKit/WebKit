@@ -40,7 +40,6 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "TextEncoding.h"
@@ -71,10 +70,7 @@ PassRefPtr<Worker> Worker::create(const String& url, ScriptExecutionContext* con
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
     worker->setPendingActivity(worker.get());
 
-#if ENABLE(INSPECTOR)
-    if (InspectorController* inspector = context->inspectorController())
-        inspector->didCreateWorker(worker->asID(), scriptURL.string(), false);
-#endif
+    InspectorInstrumentation::didCreateWorker(context, worker->asID(), scriptURL.string(), false);
 
     return worker.release();
 }

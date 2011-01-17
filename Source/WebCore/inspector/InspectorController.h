@@ -46,6 +46,7 @@ namespace WebCore {
 class CachedResource;
 class CharacterData;
 class Database;
+class DOMWrapperWorld;
 class Document;
 class DocumentLoader;
 class FloatRect;
@@ -148,15 +149,14 @@ public:
 
     bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
-    void handleMousePress();
+    bool handleMousePress();
 
     void setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> client);
     bool hasInspectorFrontendClient() const { return m_inspectorFrontendClient; }
 
-    void inspectedWindowScriptObjectCleared(Frame*);
+    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
 
     void didCommitLoad(DocumentLoader*);
-    void frameDetachedFromParent(Frame*);
 
     void setExtraHeaders(PassRefPtr<InspectorObject>);
 
@@ -202,8 +202,6 @@ public:
     void drawNodeHighlight(GraphicsContext&) const;
     void openInInspectedWindow(const String& url);
     void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings*) const;
-
-    void markTimeline(const String& message);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void addProfile(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);

@@ -34,9 +34,9 @@
 
 #include "Database.h"
 #include "ExceptionCode.h"
-#include "InspectorFrontend.h"
 #include "InspectorController.h"
 #include "InspectorDatabaseResource.h"
+#include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "SQLError.h"
 #include "SQLStatementCallback.h"

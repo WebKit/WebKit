@@ -35,7 +35,7 @@
 
 #include "SharedWorker.h"
 
-#include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
@@ -64,10 +64,7 @@ PassRefPtr<SharedWorker> SharedWorker::create(const String& url, const String& n
 
     SharedWorkerRepository::connect(worker.get(), remotePort.release(), scriptURL, name, ec);
 
-#if ENABLE(INSPECTOR)
-    if (InspectorController* inspector = context->inspectorController())
-        inspector->didCreateWorker(worker->asID(), scriptURL.string(), true);
-#endif
+    InspectorInstrumentation::didCreateWorker(context, worker->asID(), scriptURL.string(), true);
 
     return worker.release();
 }

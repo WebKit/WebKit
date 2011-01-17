@@ -61,8 +61,8 @@ const int domBreakpointDerivedTypeShift = 16;
 
 namespace WebCore {
 
-InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent(InspectorController* controller)
-    : m_controller(controller)
+InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent(InspectorController* inspectorController)
+    : m_inspectorController(inspectorController)
     , m_hasXHRBreakpointWithEmptyURL(false)
 {
 }
@@ -116,7 +116,7 @@ void InspectorBrowserDebuggerAgent::didRemoveDOMNode(Node* node)
 
 void InspectorBrowserDebuggerAgent::setDOMBreakpoint(long nodeId, long type)
 {
-    Node* node = m_controller->m_domAgent->nodeForId(nodeId);
+    Node* node = m_inspectorController->m_domAgent->nodeForId(nodeId);
     if (!node)
         return;
 
@@ -130,7 +130,7 @@ void InspectorBrowserDebuggerAgent::setDOMBreakpoint(long nodeId, long type)
 
 void InspectorBrowserDebuggerAgent::removeDOMBreakpoint(long nodeId, long type)
 {
-    Node* node = m_controller->m_domAgent->nodeForId(nodeId);
+    Node* node = m_inspectorController->m_domAgent->nodeForId(nodeId);
     if (!node)
         return;
 
@@ -149,7 +149,7 @@ void InspectorBrowserDebuggerAgent::removeDOMBreakpoint(long nodeId, long type)
 
 void InspectorBrowserDebuggerAgent::willInsertDOMNode(Node*, Node* parent)
 {
-    InspectorDebuggerAgent* debuggerAgent = m_controller->m_debuggerAgent.get();
+    InspectorDebuggerAgent* debuggerAgent = m_inspectorController->m_debuggerAgent.get();
     if (!debuggerAgent)
         return;
 
@@ -163,7 +163,7 @@ void InspectorBrowserDebuggerAgent::willInsertDOMNode(Node*, Node* parent)
 
 void InspectorBrowserDebuggerAgent::willRemoveDOMNode(Node* node)
 {
-    InspectorDebuggerAgent* debuggerAgent = m_controller->m_debuggerAgent.get();
+    InspectorDebuggerAgent* debuggerAgent = m_inspectorController->m_debuggerAgent.get();
     if (!debuggerAgent)
         return;
 
@@ -182,7 +182,7 @@ void InspectorBrowserDebuggerAgent::willRemoveDOMNode(Node* node)
 
 void InspectorBrowserDebuggerAgent::willModifyDOMAttr(Element* element)
 {
-    InspectorDebuggerAgent* debuggerAgent = m_controller->m_debuggerAgent.get();
+    InspectorDebuggerAgent* debuggerAgent = m_inspectorController->m_debuggerAgent.get();
     if (!debuggerAgent)
         return;
 
@@ -202,7 +202,7 @@ void InspectorBrowserDebuggerAgent::descriptionForDOMEvent(Node* target, long br
     if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {
         // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
         // Target node may be unknown to frontend, so we need to push it first.
-        long targetNodeId = m_controller->m_domAgent->pushNodePathToFrontend(target);
+        long targetNodeId = m_inspectorController->m_domAgent->pushNodePathToFrontend(target);
         ASSERT(targetNodeId);
         description->setNumber("targetNodeId", targetNodeId);
 
@@ -219,7 +219,7 @@ void InspectorBrowserDebuggerAgent::descriptionForDOMEvent(Node* target, long br
             description->setBoolean("insertion", insertion);
     }
 
-    long breakpointOwnerNodeId = m_controller->m_domAgent->pushNodePathToFrontend(breakpointOwner);
+    long breakpointOwnerNodeId = m_inspectorController->m_domAgent->pushNodePathToFrontend(breakpointOwner);
     ASSERT(breakpointOwnerNodeId);
     description->setNumber("nodeId", breakpointOwnerNodeId);
     description->setNumber("type", breakpointType);
@@ -252,7 +252,7 @@ void InspectorBrowserDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_
 
 void InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous)
 {
-    InspectorDebuggerAgent* debuggerAgent = m_controller->m_debuggerAgent.get();
+    InspectorDebuggerAgent* debuggerAgent = m_inspectorController->m_debuggerAgent.get();
     if (!debuggerAgent)
         return;
 
@@ -287,7 +287,7 @@ void InspectorBrowserDebuggerAgent::removeXHRBreakpoint(const String& url)
 
 void InspectorBrowserDebuggerAgent::willSendXMLHttpRequest(const String& url)
 {
-    InspectorDebuggerAgent* debuggerAgent = m_controller->m_debuggerAgent.get();
+    InspectorDebuggerAgent* debuggerAgent = m_inspectorController->m_debuggerAgent.get();
     if (!debuggerAgent)
         return;
 

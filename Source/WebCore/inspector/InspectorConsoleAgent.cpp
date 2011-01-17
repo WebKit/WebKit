@@ -37,6 +37,7 @@
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptArguments.h"
+#include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
@@ -116,7 +117,7 @@ void InspectorConsoleAgent::startTiming(const String& title)
     m_times.add(title, currentTime() * 1000);
 }
 
-void InspectorConsoleAgent::stopTiming(const String& title, unsigned lineNumber, const String& sourceName)
+void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCallStack> callStack)
 {
     // Follow Firebug's behavior of requiring a title that is not null or
     // undefined for timing functions
@@ -132,12 +133,19 @@ void InspectorConsoleAgent::stopTiming(const String& title, unsigned lineNumber,
 
     double elapsed = currentTime() * 1000 - startTime;
     String message = title + String::format(": %.0fms", elapsed);
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceName);
+    const ScriptCallFrame& lastCaller = callStack->at(0);
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 }
 
-void InspectorConsoleAgent::count(const String& title, unsigned lineNumber, const String& sourceID)
+void InspectorConsoleAgent::count(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    String identifier = makeString(title, '@', sourceID, ':', String::number(lineNumber));
+    const ScriptCallFrame& lastCaller = callStack->at(0);
+    // Follow Firebug's behavior of counting with null and undefined title in
+    // the same bucket as no argument
+    String title;
+    arguments->getFirstArgumentAsString(title);
+    String identifier = makeString(title, '@', lastCaller.sourceURL(), ':', String::number(lastCaller.lineNumber()));
+
     HashMap<String, unsigned>::iterator it = m_counts.find(identifier);
     int count;
     if (it == m_counts.end())
@@ -150,7 +158,7 @@ void InspectorConsoleAgent::count(const String& title, unsigned lineNumber, cons
     m_counts.add(identifier, count);
 
     String message = makeString(title, ": ", String::number(count));
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceID);
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 }
 
 void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(const String& url, const String& sendURL, unsigned sendLineNumber)

@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class InspectorArray;
-class InspectorController;
 class InspectorDOMStorageResource;
 class InspectorFrontend;
 class Storage;

@@ -1,3 +1,176 @@
+2011-01-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make WebCore use InspectorInstrumentation
+        for instrumentation calls.
+        https://bugs.webkit.org/show_bug.cgi?id=52532
+
+        This change makes WebCore classes issue instrumentation signals
+        by means of InspectorInstrumentation interface. It covered migration
+        for Document, FrameLoader, Database, DOMStorage, etc. It fixed
+        instrumentation handling for Console as well. This all is a part
+        of story described in the bug 52510.
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent):
+        (WebCore::InspectorBrowserDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorBrowserDebuggerAgent::willSendXMLHttpRequest):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        (WebCore::InspectorBrowserDebuggerAgent::create):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::stopTiming):
+        (WebCore::InspectorConsoleAgent::count):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::~InspectorController):
+        (WebCore::InspectorController::handleMousePress):
+        (WebCore::InspectorController::didClearWindowObjectInWorld):
+        (WebCore::PostWorkerNotificationToFrontendTask::performTask):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorFrontendHost.cpp:
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::inspectedPageDestroyedImpl):
+        (WebCore::InspectorInstrumentation::mouseDidMoveOverElementImpl):
+        (WebCore::InspectorInstrumentation::handleMousePressImpl):
+        (WebCore::InspectorInstrumentation::mainResourceFiredLoadEventImpl):
+        (WebCore::InspectorInstrumentation::mainResourceFiredDOMContentEventImpl):
+        (WebCore::InspectorInstrumentation::frameDetachedFromParentImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::consoleCountImpl):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleMarkTimelineImpl):
+        (WebCore::InspectorInstrumentation::addStartProfilingMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        (WebCore::InspectorInstrumentation::didUseDOMStorageImpl):
+        (WebCore::InspectorInstrumentation::didCreateWorkerImpl):
+        (WebCore::InspectorInstrumentation::didDestroyWorkerImpl):
+        (WebCore::InspectorInstrumentation::didCreateWebSocketImpl):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl):
+        (WebCore::InspectorInstrumentation::didCloseWebSocketImpl):
+        (WebCore::InspectorInstrumentation::networkStateChangedImpl):
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatusImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::inspectorControllerCreated):
+        (WebCore::InspectorInstrumentation::inspectorControllerDeleted):
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorld):
+        (WebCore::InspectorInstrumentation::inspectedPageDestroyed):
+        (WebCore::InspectorInstrumentation::willInsertDOMNode):
+        (WebCore::InspectorInstrumentation::didInsertDOMNode):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNode):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttr):
+        (WebCore::InspectorInstrumentation::didModifyDOMAttr):
+        (WebCore::InspectorInstrumentation::mouseDidMoveOverElement):
+        (WebCore::InspectorInstrumentation::handleMousePress):
+        (WebCore::InspectorInstrumentation::characterDataModified):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequest):
+        (WebCore::InspectorInstrumentation::didScheduleResourceRequest):
+        (WebCore::InspectorInstrumentation::didInstallTimer):
+        (WebCore::InspectorInstrumentation::didRemoveTimer):
+        (WebCore::InspectorInstrumentation::willCallFunction):
+        (WebCore::InspectorInstrumentation::willChangeXHRReadyState):
+        (WebCore::InspectorInstrumentation::willDispatchEvent):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindow):
+        (WebCore::InspectorInstrumentation::willEvaluateScript):
+        (WebCore::InspectorInstrumentation::willFireTimer):
+        (WebCore::InspectorInstrumentation::willLayout):
+        (WebCore::InspectorInstrumentation::willLoadXHR):
+        (WebCore::InspectorInstrumentation::willPaint):
+        (WebCore::InspectorInstrumentation::willRecalculateStyle):
+        (WebCore::InspectorInstrumentation::identifierForInitialRequest):
+        (WebCore::InspectorInstrumentation::willSendRequest):
+        (WebCore::InspectorInstrumentation::markResourceAsCached):
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorInstrumentation::willReceiveResourceData):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::didReceiveContentLength):
+        (WebCore::InspectorInstrumentation::didFinishLoading):
+        (WebCore::InspectorInstrumentation::didFailLoading):
+        (WebCore::InspectorInstrumentation::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorInstrumentation::scriptImported):
+        (WebCore::InspectorInstrumentation::mainResourceFiredLoadEvent):
+        (WebCore::InspectorInstrumentation::mainResourceFiredDOMContentEvent):
+        (WebCore::InspectorInstrumentation::frameDetachedFromParent):
+        (WebCore::InspectorInstrumentation::didCommitLoad):
+        (WebCore::InspectorInstrumentation::willWriteHTML):
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        (WebCore::InspectorInstrumentation::didUseDOMStorage):
+        (WebCore::InspectorInstrumentation::didCreateWorker):
+        (WebCore::InspectorInstrumentation::didDestroyWorker):
+        (WebCore::InspectorInstrumentation::didCreateWebSocket):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorInstrumentation::didCloseWebSocket):
+        (WebCore::InspectorInstrumentation::networkStateChanged):
+        (WebCore::InspectorInstrumentation::updateApplicationCacheStatus):
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::startConsoleTiming):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::consoleMarkTimeline):
+        (WebCore::InspectorInstrumentation::addStartProfilingMessageToConsole):
+        (WebCore::InspectorInstrumentation::inspectorControllerForContext):
+        (WebCore::InspectorInstrumentation::inspectorControllerForFrame):
+        (WebCore::InspectorInstrumentation::inspectorControllerForPage):
+        (WebCore::InspectorInstrumentation::inspectorControllerWithFrontendForContext):
+        (WebCore::InspectorInstrumentation::inspectorControllerWithFrontendForDocument):
+        (WebCore::InspectorInstrumentation::inspectorControllerWithFrontendForFrame):
+        (WebCore::InspectorInstrumentation::inspectorControllerWithFrontendForPage):
+        * inspector/InspectorState.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::detachFromParent):
+        (WebCore::FrameLoader::dispatchDidClearWindowObjectInWorld):
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::mouseDidMoveOverElement):
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        (WebCore::Console::count):
+        (WebCore::Console::markTimeline):
+        (WebCore::Console::profile):
+        (WebCore::Console::time):
+        (WebCore::Console::timeEnd):
+        (WebCore::Console::group):
+        (WebCore::Console::groupCollapsed):
+        (WebCore::Console::groupEnd):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        (WebCore::DOMWindow::dispatchLoadEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::onDestroyWorker):
+        * workers/SharedWorker.cpp:
+        (WebCore::SharedWorker::create):
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        * workers/WorkerMessagingProxy.cpp:
+
 2011-01-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed, rolling out r75923.

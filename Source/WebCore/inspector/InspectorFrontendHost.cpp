@@ -41,6 +41,7 @@
 #include "FrameLoader.h"
 #include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
+#include "InspectorController.h"
 #include "InspectorFrontendClient.h"
 #include "Page.h"
 #include "Pasteboard.h"

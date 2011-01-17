@@ -2580,10 +2580,7 @@ void FrameLoader::detachFromParent()
     // handlers might start a new subresource load in this frame.
     stopAllLoaders();
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->frameDetachedFromParent(m_frame);
-#endif
+    InspectorInstrumentation::frameDetachedFromParent(m_frame);
 
     detachViewsAndDocumentLoader();
 
@@ -3371,15 +3368,7 @@ void FrameLoader::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 
     m_client->dispatchDidClearWindowObjectInWorld(world);
 
-#if ENABLE(INSPECTOR)
-    if (world != mainThreadNormalWorld())
-        return;
-
-    if (Page* page = m_frame->page()) {
-        if (InspectorController* inspector = page->inspectorController())
-            inspector->inspectedWindowScriptObjectCleared(m_frame);
-    }
-#endif
+    InspectorInstrumentation::didClearWindowObjectInWorld(m_frame, world);
 }
 
 void FrameLoader::updateSandboxFlags()
@@ -3426,10 +3415,7 @@ void FrameLoader::dispatchDidCommitLoad()
 
     m_client->dispatchDidCommitLoad();
 
-#if ENABLE(INSPECTOR)
-    if (Page* page = m_frame->page())
-        page->inspectorController()->didCommitLoad(m_documentLoader.get());
-#endif
+    InspectorInstrumentation::didCommitLoad(m_frame, m_documentLoader.get());
 }
 
 void FrameLoader::tellClientAboutPastMemoryCacheLoads()
