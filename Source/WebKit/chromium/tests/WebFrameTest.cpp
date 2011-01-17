@@ -55,7 +55,7 @@ public:
     void registerMockedURLLoad(const WebURL& url, const WebURLResponse& response, const WebString& fileName)
     {
         std::string filePath = webkit_support::GetWebKitRootDir().utf8();
-        filePath.append("/WebKit/chromium/tests/data/");
+        filePath.append("/Source/WebKit/chromium/tests/data/");
         filePath.append(fileName.utf8());
         webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
     }
