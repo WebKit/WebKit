@@ -24,6 +24,9 @@
  *
  */
 
+#ifndef CrossOriginAccessControl_h
+#define CrossOriginAccessControl_h
+
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -40,3 +43,5 @@ namespace WebCore {
     bool passesAccessControlCheck(const ResourceResponse&, bool includeCredentials, SecurityOrigin*, String& errorDescription);
 
 } // namespace WebCore
+
+#endif // CrossOriginAccessControl_h

@@ -29,7 +29,7 @@
  */
 
 #ifndef WebPreferences_h
-#define WebPerferences_h
+#define WebPreferences_h
 
 #include "WebSettings.h"
 #include "WebString.h"

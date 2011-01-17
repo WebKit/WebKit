@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef NetscapePlugInStreamLoader_h
+#define NetscapePlugInStreamLoader_h
+
 #include "ResourceLoader.h"
 #include <wtf/Forward.h>
 
@@ -68,3 +71,5 @@ namespace WebCore {
     };
 
 }
+
+#endif // NetscapePlugInStreamLoader_h

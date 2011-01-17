@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebProcessMain_h
+#define WebProcessMain_h
+
 #include "WKBase.h"
 
 namespace WebKit {
@@ -32,3 +35,5 @@ class CommandLine;
 int WebProcessMain(const CommandLine&);
 
 } // namespace WebKit
+
+#endif // WebProcessMain_h

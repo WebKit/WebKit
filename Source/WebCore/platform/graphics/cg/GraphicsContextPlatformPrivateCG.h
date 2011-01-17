@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef GraphicsContextPlatformPrivateCG_h
+#define GraphicsContextPlatformPrivateCG_h
+
 #include <wtf/RetainPtr.h>
 #include <CoreGraphics/CGContext.h>
 
@@ -84,3 +87,5 @@ public:
 };
 
 }
+
+#endif // GraphicsContextPlatformPrivateCG_h

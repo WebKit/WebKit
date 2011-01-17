@@ -18,6 +18,9 @@
  *
  */
 
+#ifndef RefPtrHashMap_h
+#define RefPtrHashMap_h
+
 namespace WTF {
 
     // This specialization is a direct copy of HashMap, with overloaded functions
@@ -334,3 +337,5 @@ namespace WTF {
     }
 
 } // namespace WTF
+
+#endif // RefPtrHashMap_h

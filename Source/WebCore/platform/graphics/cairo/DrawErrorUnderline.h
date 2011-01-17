@@ -23,6 +23,9 @@
 
 #if PLATFORM(CAIRO)
 
+#ifndef DrawErrorUnderline_h
+#define DrawErrorUnderline_h
+
 #include <cairo.h>
 
 //
@@ -95,5 +98,7 @@ static inline void drawErrorUnderline(cairo_t* cr, double x, double y, double wi
         cairo_line_to(cr, left, top); // H
     }
 }
+
+#endif // DrawErrorUnderline_h
 
 #endif

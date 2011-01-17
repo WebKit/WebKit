@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef InjectedBundleNodeHandle_h
+#define InjectedBundleNodeHandle_h
+
 #include "APIObject.h"
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
@@ -72,3 +75,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // InjectedBundleNodeHandle_h

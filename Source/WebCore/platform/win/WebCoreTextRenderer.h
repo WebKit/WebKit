@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef WebCoreTextRenderer_h
+#define WebCoreTextRenderer_h
+
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -43,3 +46,5 @@ namespace WebCore {
     bool WebCoreAlwaysUsesComplexTextCodePath();
 
 } // namespace WebCore
+
+#endif // WebCoreTextRenderer_h

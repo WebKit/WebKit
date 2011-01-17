@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef ClipboardUtilitiesChromium_h
+#define ClipboardUtilitiesChromium_h
+
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -40,3 +43,5 @@ void replaceNewlinesWithWindowsStyleNewlines(String&);
 void replaceNBSPWithSpace(String&);
 
 } // namespace WebCore
+
+#endif // ClipboardUtilitiesChromium_h

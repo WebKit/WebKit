@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef InjectedBundleUserMessageCoders_h
+#define InjectedBundleUserMessageCoders_h
+
 #include "UserMessageCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
@@ -134,3 +137,5 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // InjectedBundleUserMessageCoders_h

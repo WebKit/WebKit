@@ -27,7 +27,7 @@
  */
 
 #ifndef WebKitStatistics_h
-#define WebkitStatistics_h
+#define WebKitStatistics_h
 
 #include "WebKit.h"
 
@@ -70,4 +70,4 @@ protected:
     ULONG m_refCount;
 };
 
-#endif
+#endif // WebKitStatistics_h

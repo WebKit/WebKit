@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef TestEventPrinter_h
+#define TestEventPrinter_h
+
 class TestEventPrinter {
 public:
     static TestEventPrinter* createDRTPrinter();
@@ -41,3 +44,5 @@ public:
     virtual void handleImageFooter() const = 0;
     virtual void handleTestFooter(bool dumpedAnything) const = 0;
 };
+
+#endif // TestEventPrinter_h

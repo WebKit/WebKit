@@ -23,6 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef UserMessageCoders_h
+#define UserMessageCoders_h
+
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "ImmutableArray.h"
@@ -302,3 +305,5 @@ protected:
 };
 
 } // namespace WebKit
+
+#endif // UserMessageCoders_h

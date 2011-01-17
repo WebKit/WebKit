@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef PDFDocumentImage_h
+#define PDFDocumentImage_h
+
 #include "Image.h"
 
 #include "FloatRect.h"
@@ -76,3 +79,5 @@ namespace WebCore {
 }
 
 #endif // PLATFORM(CG)
+
+#endif // PDFDocumentImage_h

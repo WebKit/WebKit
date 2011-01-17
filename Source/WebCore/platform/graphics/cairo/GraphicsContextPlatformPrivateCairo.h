@@ -25,6 +25,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef GraphicsContextPlatformPrivateCairo_h
+#define GraphicsContextPlatformPrivateCairo_h
+
 #include "GraphicsContext.h"
 
 #include "ContextShadow.h"
@@ -111,3 +114,4 @@ public:
 
 } // namespace WebCore
 
+#endif // GraphicsContextPlatformPrivateCairo_h
