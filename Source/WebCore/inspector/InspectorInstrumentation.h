@@ -161,8 +161,9 @@ public:
     static void didCloseWebSocket(ScriptExecutionContext*, unsigned long identifier);
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     static void networkStateChanged(Page*);
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     static void updateApplicationCacheStatus(Frame*);
 #endif
 
@@ -806,7 +807,6 @@ inline void InspectorInstrumentation::didCloseWebSocket(ScriptExecutionContext* 
 }
 #endif
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 inline void InspectorInstrumentation::networkStateChanged(Page* page)
 {
 #if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -815,6 +815,7 @@ inline void InspectorInstrumentation::networkStateChanged(Page* page)
 #endif
 }
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
