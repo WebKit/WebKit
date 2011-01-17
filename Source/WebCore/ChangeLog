@@ -1,3 +1,20 @@
+2011-01-17  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] No need to content sniff 304 Not Modified responses
+        https://bugs.webkit.org/show_bug.cgi?id=52570
+
+        Makes no sense to wait for the outcome of content sniffing when WebCore
+        is validating resources. If we get a 304 Not Modified it means that we can
+        safely use the cached version of the resource we're asking for.
+
+        No new tests because it does not change functionality, it just
+        calls didReceiveResponse sooner for 304 Not Modified responses.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback):
+
 2011-01-17  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

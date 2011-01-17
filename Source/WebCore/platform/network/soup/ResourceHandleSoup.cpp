@@ -215,6 +215,8 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
 #endif
 }
 
+static void contentSniffedCallback(SoupMessage*, const char*, GHashTable*, gpointer);
+
 static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 {
     // For 401, we will accumulate the resource body, and only use it
@@ -235,8 +237,17 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 
     // The content-sniffed callback will handle the response if WebCore
     // require us to sniff.
-    if (!handle || statusWillBeHandledBySoup(msg->status_code) || handle->shouldContentSniff())
+    if (!handle || statusWillBeHandledBySoup(msg->status_code))
         return;
+
+    if (handle->shouldContentSniff()) {
+        // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
+        if (msg->status_code == SOUP_STATUS_NOT_MODIFIED) {
+            soup_message_disable_feature(msg, SOUP_TYPE_CONTENT_SNIFFER);
+            g_signal_handlers_disconnect_by_func(msg, reinterpret_cast<gpointer>(contentSniffedCallback), handle.get());
+        } else
+            return;
+    }
 
     ResourceHandleInternal* d = handle->getInternal();
     if (d->m_cancelled)
