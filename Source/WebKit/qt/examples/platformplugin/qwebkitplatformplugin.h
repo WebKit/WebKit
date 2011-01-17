@@ -28,6 +28,9 @@
 
 #include <QObject>
 #include <QUrl>
+#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#include <QMediaPlayer>
+#endif
 
 class QWebSelectData
 {
@@ -115,6 +118,23 @@ public:
     virtual unsigned hitTestPaddingForTouch(const PaddingDirection) const = 0;
 };
 
+#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+class QWebFullScreenVideoHandler : public QObject {
+    Q_OBJECT
+public:
+    QWebFullScreenVideoHandler() {}
+    virtual ~QWebFullScreenVideoHandler() {}
+    virtual bool requiresFullScreenForVideoPlayback() const = 0;
+
+Q_SIGNALS:
+    void fullScreenClosed();
+
+public Q_SLOTS:
+    virtual void enterFullScreen(QMediaPlayer*) = 0;
+    virtual void exitFullScreen() = 0;
+};
+#endif
+
 class QWebKitPlatformPlugin
 {
 public:
@@ -124,7 +144,8 @@ public:
         MultipleSelections,
         Notifications,
         Haptics,
-        TouchInteraction
+        TouchInteraction,
+        FullScreenVideoPlayer
     };
 
     virtual bool supportsExtension(Extension extension) const = 0;
@@ -132,7 +153,7 @@ public:
 };
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.6");
+Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.7");
 QT_END_NAMESPACE
 
 #endif // QWEBKITPLATFORMPLUGIN_H

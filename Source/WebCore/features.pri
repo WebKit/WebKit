@@ -152,9 +152,13 @@ contains(MOBILITY_CONFIG, sensors) {
     contains(MOBILITY_CONFIG, multimedia) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
+        DEFINES -= ENABLE_QT_MULTIMEDIA=0
+        DEFINES += ENABLE_QT_MULTIMEDIA=1
     } else:contains(QT_CONFIG, phonon) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
+        DEFINES -= ENABLE_QT_MULTIMEDIA=1
+        DEFINES += ENABLE_QT_MULTIMEDIA=0
     }
 }
 

@@ -1,3 +1,56 @@
+2011-01-17  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Extend the Platform Plugin to support full screen video handler
+        https://bugs.webkit.org/show_bug.cgi?id=51249
+
+        Add a new webkit platform plugin interface to support full screen video handler.
+
+        * Api/qwebkitplatformplugin.h:
+        (QWebFullScreenVideoHandler::QWebFullScreenVideoHandler):
+        (QWebFullScreenVideoHandler::~QWebFullScreenVideoHandler):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        (WebCore::ChromeClientQt::fullScreenVideo):
+        (WebCore::ChromeClientQt::supportsFullscreenForNode):
+        (WebCore::ChromeClientQt::requiresFullscreenForVideoPlayback):
+        (WebCore::ChromeClientQt::enterFullscreenForNode):
+        (WebCore::ChromeClientQt::exitFullscreenForNode):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FullScreenVideoQt.cpp: Added.
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+        (WebCore::FullScreenVideoQt::aboutToClose):
+        (WebCore::FullScreenVideoQt::mediaPlayer):
+        (WebCore::FullScreenVideoQt::mediaPlayerForNode):
+        (WebCore::FullScreenVideoQt::requiresFullScreenForVideoPlayback):
+        * WebCoreSupport/FullScreenVideoQt.h: Added.
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::createFullScreenVideoHandler):
+        * WebCoreSupport/QtPlatformPlugin.h:
+        * examples/platformplugin/WebPlugin.cpp:
+        (FullScreenVideoWidget::FullScreenVideoWidget):
+        (FullScreenVideoWidget::event):
+        (FullScreenVideoWidget::keyPressEvent):
+        (FullScreenVideoHandler::FullScreenVideoHandler):
+        (FullScreenVideoHandler::~FullScreenVideoHandler):
+        (FullScreenVideoHandler::requiresFullScreenForVideoPlayback):
+        (FullScreenVideoHandler::enterFullScreen):
+        (FullScreenVideoHandler::exitFullScreen):
+        (WebPlugin::supportsExtension):
+        (WebPlugin::createExtension):
+        * examples/platformplugin/WebPlugin.h:
+        (FullScreenVideoWidget::~FullScreenVideoWidget):
+        * examples/platformplugin/platformplugin.pro:
+        * examples/platformplugin/qwebkitplatformplugin.h:
+        (QWebFullScreenVideoHandler::QWebFullScreenVideoHandler):
+        (QWebFullScreenVideoHandler::~QWebFullScreenVideoHandler):
+
 2011-01-16  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

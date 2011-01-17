@@ -29,6 +29,9 @@ class QWebNotificationPresenter;
 class QWebHapticFeedbackPlayer;
 class QWebSelectData;
 class QWebTouchModifier;
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+class QWebFullScreenVideoHandler;
+#endif
 
 namespace WebCore {
 
@@ -41,6 +44,9 @@ public:
     QWebNotificationPresenter* createNotificationPresenter();
     QWebHapticFeedbackPlayer* createHapticFeedbackPlayer();
     QWebTouchModifier* createTouchModifier();
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+    QWebFullScreenVideoHandler* createFullScreenVideoHandler();
+#endif
 
     QWebKitPlatformPlugin* plugin();
 

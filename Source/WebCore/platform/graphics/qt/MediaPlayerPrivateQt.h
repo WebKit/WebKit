@@ -90,7 +90,7 @@ public:
 
     void paint(GraphicsContext*, const IntRect&);
 
-    bool supportsFullscreen() const { return false; }
+    bool supportsFullscreen() const { return true; }
 
 #if USE(ACCELERATED_COMPOSITING)
 #if USE(TEXTURE_MAPPER)
@@ -108,6 +108,11 @@ public:
 #endif
 
     virtual PlatformMedia platformMedia() const;
+
+    QMediaPlayer* mediaPlayer() const { return m_mediaPlayer; }
+    void removeVideoItem();
+    void restoreVideoItem();
+
 private slots:
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
     void handleError(QMediaPlayer::Error);
@@ -142,6 +147,7 @@ private:
 
     IntSize m_currentSize;
     IntSize m_naturalSize;
+    IntSize m_oldNaturalSize;
     bool m_isVisible;
     bool m_isSeeking;
     bool m_composited;

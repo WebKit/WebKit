@@ -76,6 +76,14 @@
 #include <qtooltip.h>
 #include <wtf/OwnPtr.h>
 
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#include "FullScreenVideoQt.h"
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
+#include "HTMLVideoElement.h"
+#include "MediaPlayerPrivateQt.h"
+#endif
+
 namespace WebCore {
 
 bool ChromeClientQt::dumpVisitedLinksCallbacks = false;
@@ -83,6 +91,9 @@ bool ChromeClientQt::dumpVisitedLinksCallbacks = false;
 ChromeClientQt::ChromeClientQt(QWebPage* webPage)
     : m_webPage(webPage)
     , m_eventLoop(0)
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+    , m_fullScreenVideo(0)
+#endif
 {
     toolBarsVisible = statusBarVisible = menuBarVisible = true;
 }
@@ -91,6 +102,10 @@ ChromeClientQt::~ChromeClientQt()
 {
     if (m_eventLoop)
         m_eventLoop->exit();
+
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+    delete m_fullScreenVideo;
+#endif
 }
 
 void ChromeClientQt::setWindowRect(const FloatRect& rect)
@@ -646,6 +661,54 @@ IntRect ChromeClientQt::visibleRectForTiledBackingStore() const
 
     return enclosingIntRect(FloatRect(platformPageClient()->graphicsItemVisibleRect()));
 }
+#endif
+
+#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+FullScreenVideoQt* ChromeClientQt::fullScreenVideo()
+{
+    if (!m_fullScreenVideo)
+        m_fullScreenVideo = new FullScreenVideoQt(this);
+    return m_fullScreenVideo;
+}
+
+bool ChromeClientQt::supportsFullscreenForNode(const Node* node)
+{
+    ASSERT(node);
+    return node->hasTagName(HTMLNames::videoTag) && fullScreenVideo()->isValid();
+}
+
+bool ChromeClientQt::requiresFullscreenForVideoPlayback()
+{
+    return fullScreenVideo()->requiresFullScreenForVideoPlayback();
+}
+
+void ChromeClientQt::enterFullscreenForNode(Node* node)
+{
+    ASSERT(node && node->hasTagName(HTMLNames::videoTag));
+
+    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(node);
+    PlatformMedia platformMedia = videoElement->platformMedia();
+
+    ASSERT(platformMedia.type == PlatformMedia::QtMediaPlayerType);
+    if (platformMedia.type != PlatformMedia::QtMediaPlayerType)
+        return;
+
+    fullScreenVideo()->enterFullScreenForNode(node);
+}
+
+void ChromeClientQt::exitFullscreenForNode(Node* node)
+{
+    ASSERT(node && node->hasTagName(HTMLNames::videoTag));
+
+    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(node);
+    PlatformMedia platformMedia = videoElement->platformMedia();
+
+    ASSERT(platformMedia.type == PlatformMedia::QtMediaPlayerType);
+    if (platformMedia.type != PlatformMedia::QtMediaPlayerType)
+        return;
+
+    fullScreenVideo()->exitFullScreenForNode(node);
+} 
 #endif
 
 QWebSelectMethod* ChromeClientQt::createSelectPopup() const
