@@ -1,5 +1,11 @@
 2011-01-16  Adam Barth  <abarth@webkit.org>
 
+        Teach svn-apply about WebKit move.
+
+        * Scripts/VCSUtils.pm:
+
+2011-01-16  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Move WebKit into Source
