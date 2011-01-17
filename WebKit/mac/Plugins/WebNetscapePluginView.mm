@@ -988,8 +988,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         // protecting only against this one case, which actually comes up when
         // you first install the SVG viewer plug-in.
         NPError npErr;
-        ASSERT(!inSetWindow);
         
+        BOOL wasInSetWindow = inSetWindow;
         inSetWindow = YES;        
         [self willCallPlugInFunction];
         {
@@ -997,7 +997,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             npErr = [_pluginPackage.get() pluginFuncs]->setwindow(plugin, &window);
         }
         [self didCallPlugInFunction];
-        inSetWindow = NO;
+        inSetWindow = wasInSetWindow;
 
 #ifndef NDEBUG
         switch (drawingModel) {

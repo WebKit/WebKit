@@ -1,3 +1,14 @@
+2011-01-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Assertion failure (!inSetWindow) with in-process plug-in in plugins/destroy-on-setwindow.html
+        https://bugs.webkit.org/show_bug.cgi?id=52550
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView setWindowIfNecessary]): Removed the assertion, making sure
+        that inSetWindow remains YES until we exit the top-level setWindowIfNecessary.
+
 2011-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
