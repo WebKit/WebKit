@@ -1011,7 +1011,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
         if (this._resource.category === WebInspector.resourceCategories.images) {
             var previewImage = document.createElement("img");
             previewImage.className = "image-resource-icon-preview";
-            previewImage.src = this._resource.url;
+            this._resource.populateImageSource(previewImage);
 
             var iconElement = document.createElement("div");
             iconElement.className = "icon";

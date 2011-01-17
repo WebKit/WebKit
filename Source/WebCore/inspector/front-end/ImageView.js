@@ -70,12 +70,7 @@ WebInspector.ImageView.prototype = {
         var infoListElement = document.createElement("dl");
         infoListElement.className = "infoList";
 
-        function onResourceContent(element, content)
-        {
-            imagePreviewElement.setAttribute("src", this.resource.contentURL);
-        }
-        this.resource.requestContent(onResourceContent.bind(this));
-
+        this.resource.populateImageSource(imagePreviewElement);
 
         function onImageLoad()
         {
@@ -100,6 +95,13 @@ WebInspector.ImageView.prototype = {
                 dd.textContent = imageProperties[i].value;
                 infoListElement.appendChild(dd);
             }
+            var dt = document.createElement("dt");
+            dt.textContent = WebInspector.UIString("URL");
+            infoListElement.appendChild(dt);
+            var dd = document.createElement("dd");
+            dd.appendChild(WebInspector.linkifyURLAsNode(this.resource.url));
+            infoListElement.appendChild(dd);
+
             this._container.appendChild(infoListElement);
         }
         imagePreviewElement.addEventListener("load", onImageLoad.bind(this), false);

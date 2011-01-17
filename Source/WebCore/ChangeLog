@@ -1,3 +1,23 @@
+2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: unify image data source assignment, add image url
+        to the image view properties list.
+        https://bugs.webkit.org/show_bug.cgi?id=52584
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype._createContentIfNeeded.onImageLoad):
+        (WebInspector.ImageView.prototype._createContentIfNeeded):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshNameCell):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.populateImageSource):
+        (WebInspector.Resource.prototype._contentURL):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype.onattach):
+
 2011-01-17  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

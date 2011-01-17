@@ -678,7 +678,20 @@ WebInspector.Resource.prototype = {
             this._innerRequestContent();
     },
 
-    get contentURL()
+    populateImageSource: function(image)
+    {
+        function onResourceContent()
+        {
+            image.src = this._contentURL();
+        }
+
+        if (Preferences.useDataURLForResourceImageIcons)
+            this.requestContent(onResourceContent.bind(this));
+        else
+            image.src = this.url;
+    },
+
+    _contentURL: function()
     {
         const maxDataUrlSize = 1024 * 1024;
         // If resource content is not available or won't fit a data URL, fall back to using original URL.

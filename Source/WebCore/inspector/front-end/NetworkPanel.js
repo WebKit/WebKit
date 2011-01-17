@@ -1419,15 +1419,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         if (this._resource.category === WebInspector.resourceCategories.images) {
             var previewImage = document.createElement("img");
             previewImage.className = "image-network-icon-preview";
-
-            function onResourceContent()
-            {
-                previewImage.src = this._resource.contentURL;
-            }
-            if (Preferences.useDataURLForResourceImageIcons)
-                this._resource.requestContent(onResourceContent.bind(this));
-            else
-                previewImage.src = this._resource.url;
+            this._resource.populateImageSource(imagePreviewElement);
 
             var iconElement = document.createElement("div");
             iconElement.className = "icon";
