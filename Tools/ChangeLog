@@ -1,3 +1,9 @@
+2011-01-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for GTK+ after source directory movement.
+
+        * GNUmakefile.am: Correct include paths.
+
 2011-01-16  Adam Barth  <abarth@webkit.org>
 
         Teach svn-apply about WebKit move.

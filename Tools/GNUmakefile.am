@@ -5,9 +5,9 @@ noinst_PROGRAMS += \
 
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
-	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/Source/WebKit/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/ \
-	-I$(top_builddir)/WebKit/gtk \
+	-I$(top_builddir)/Source/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
@@ -37,10 +37,10 @@ dumprendertree_cppflags := \
 	-I$(srcdir)/Tools/DumpRenderTree \
 	-I$(srcdir)/Tools/DumpRenderTree/cairo \
 	-I$(srcdir)/Tools/DumpRenderTree/gtk \
-	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/Source/WebKit/gtk \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/ \
-	-I$(top_builddir)/WebKit/gtk \
+	-I$(top_builddir)/Source/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
