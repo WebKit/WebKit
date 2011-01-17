@@ -33,11 +33,11 @@
 #ifndef _NP_RUNTIME_H_
 #define _NP_RUNTIME_H_
 
+#include "npapi.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "npapi.h"
 
 /*
     This API is used to facilitate binding code written in C to script
