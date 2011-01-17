@@ -49,6 +49,10 @@ public:
     // The size of the web view.
     WebCore::IntSize viewSize;
 
+    // The rect and delta to be scrolled.
+    WebCore::IntRect scrollRect;
+    WebCore::IntSize scrollDelta;
+    
     // The bounds of the update rects.
     WebCore::IntRect updateRectBounds;
 
@@ -57,7 +61,6 @@ public:
 
     // The handle of the shareable bitmap containing the updates. Will be null if there are no updates.
     SharedMemory::Handle bitmapHandle;
-
 };
 
 } // namespace WebKit

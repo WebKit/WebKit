@@ -212,7 +212,10 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         rects.clear();
         rects.append(bounds);
     }
-        
+
+    updateInfo.scrollRect = m_scrollRect;
+    updateInfo.scrollDelta = m_scrollDelta;
+
     m_dirtyRegion = Region();
     m_scrollRect = IntRect();
     m_scrollDelta = IntSize();

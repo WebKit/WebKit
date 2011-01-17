@@ -1,3 +1,34 @@
+2011-01-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement scrolling support
+        https://bugs.webkit.org/show_bug.cgi?id=52502
+
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::encode):
+        (WebKit::UpdateInfo::decode):
+        * Shared/UpdateInfo.h:
+        Add scrollRect and scrollDelta member variables.
+
+        * UIProcess/BackingStore.h:
+        Add scroll member function.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        Repaint the scroll rect. Force a display of the view when the update info contains a scroll rect.
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::incorporateUpdate):
+        Call scroll.
+
+        (WebKit::BackingStore::scroll):
+        Paint the backing store into itself.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        Pass the scroll information in the update info.
+
 2011-01-17  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Fixed malformed reference to WebKitVSPropsRedirectionDir that broke win build.

@@ -119,6 +119,11 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 
     for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
         m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
+
+    if (!updateInfo.scrollRect.isEmpty()) {
+        m_webPageProxy->setViewNeedsDisplay(updateInfo.scrollRect);
+        m_webPageProxy->displayView();
+    }
 }
 
 void DrawingAreaProxyImpl::sendSetSize()

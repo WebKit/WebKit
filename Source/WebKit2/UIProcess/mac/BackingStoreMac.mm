@@ -79,6 +79,8 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
         CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
     }
 
+    scroll(updateInfo.scrollRect, updateInfo.scrollDelta);
+
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
 
     GraphicsContext graphicsContext(m_bitmapContext.get());
@@ -91,6 +93,35 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
 
         bitmap->paint(graphicsContext, updateRect.location(), srcRect);
     }
+}
+
+void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
+{
+    if (scrollDelta.isZero())
+        return;
+
+    // FIXME: This code should be shared with ShareableBitmap::paint.
+    size_t sizeInBytes = CGBitmapContextGetBytesPerRow(m_bitmapContext.get()) * CGBitmapContextGetHeight(m_bitmapContext.get());
+    RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithData(0, CGBitmapContextGetData(m_bitmapContext.get()), sizeInBytes, 0));
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(CGBitmapContextGetWidth(m_bitmapContext.get()), 
+                                                       CGBitmapContextGetHeight(m_bitmapContext.get()),
+                                                       CGBitmapContextGetBitsPerComponent(m_bitmapContext.get()),
+                                                       CGBitmapContextGetBitsPerPixel(m_bitmapContext.get()),
+                                                       CGBitmapContextGetBytesPerRow(m_bitmapContext.get()),
+                                                       CGBitmapContextGetColorSpace(m_bitmapContext.get()),
+                                                       CGBitmapContextGetBitmapInfo(m_bitmapContext.get()),
+                                                       dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    
+    CGFloat imageWidth = CGImageGetWidth(image.get());
+    CGFloat imageHeight = CGImageGetHeight(image.get());
+    
+    CGContextSaveGState(m_bitmapContext.get());
+    
+    CGContextClipToRect(m_bitmapContext.get(), scrollRect);
+    CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
+    
+    CGContextDrawImage(m_bitmapContext.get(), CGRectMake(scrollDelta.width(), - imageHeight - scrollDelta.height(), imageWidth, imageHeight), image.get());
+    CGContextRestoreGState(m_bitmapContext.get());
 }
 
 } // namespace WebKit
