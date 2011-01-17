@@ -256,9 +256,6 @@ WebInspector.ScriptsPanel.prototype = {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
                 script.resource = resource;
-                var view = WebInspector.ResourceView.existingResourceViewForResource(resource);
-                if (view && view.sourceFrame)
-                    view.sourceFrame.addScript(script);
             } else {
                 // Resource is not finished, bind the script later.
                 if (!resource._scriptsPendingResourceLoad) {
@@ -536,7 +533,6 @@ WebInspector.ScriptsPanel.prototype = {
         if (!this.element.parentNode)
             this.attach();
 
-        view.setupSourceFrameIfNeeded();
         return view.sourceFrame;
     },
 
@@ -554,10 +550,6 @@ WebInspector.ScriptsPanel.prototype = {
         if (!view)
             return null;
 
-        if (!view.setupSourceFrameIfNeeded)
-            return null;
-
-        view.setupSourceFrameIfNeeded();
         return view.sourceFrame;
     },
 

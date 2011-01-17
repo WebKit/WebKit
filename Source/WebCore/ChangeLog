@@ -1,3 +1,47 @@
+2011-01-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: refactoring: encapsulate lazy initialization of SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=51738
+
+        Extract content loading logic from SourceView and ScriptView to ContentProvider implementations.
+        Pass ContentProvider in SourceFrame constructor to allow SourceFrame manage it's lazy initialization.
+
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        (WebInspector.SourceFrameContentProviderForScript):
+        (WebInspector.SourceFrameContentProviderForScript.prototype.requestContent.didRequestSource):
+        (WebInspector.SourceFrameContentProviderForScript.prototype.requestContent):
+        (WebInspector.SourceFrameContentProviderForScript.prototype.scripts):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addScript):
+        (WebInspector.ScriptsPanel.prototype.sourceFrameForScript):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameForResource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.set visible):
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype._breakpointAdded):
+        (WebInspector.SourceFrame.prototype._breakpoints):
+        (WebInspector.SourceFrame.prototype._sourceIDForLine):
+        (WebInspector.SourceFrame.prototype._sourceIDSet):
+        (WebInspector.SourceFrameContentProvider):
+        (WebInspector.SourceFrameContentProvider.prototype.requestContent):
+        (WebInspector.SourceFrameContentProvider.prototype.scripts):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        (WebInspector.SourceView.prototype.show):
+        (WebInspector.SourceView.prototype.resize):
+        (WebInspector.SourceView.prototype.performSearch.didFindSearchMatches):
+        (WebInspector.SourceView.prototype.performSearch):
+        (WebInspector.SourceView.prototype.revealLine):
+        (WebInspector.SourceView.prototype.highlightLine):
+        (WebInspector.SourceView.prototype._jumpToSearchResult):
+        (WebInspector.SourceFrameContentProviderForResource):
+        (WebInspector.SourceFrameContentProviderForResource.prototype.requestContent):
+        (WebInspector.SourceFrameContentProviderForResource.prototype.scripts):
+
 2011-01-17  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Jeremy Orlow.

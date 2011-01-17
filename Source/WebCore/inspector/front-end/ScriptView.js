@@ -29,55 +29,15 @@ WebInspector.ScriptView = function(script)
 
     this.element.addStyleClass("script-view");
 
-    this.script = script;
-
-    this._frameNeedsSetup = true;
-    this._sourceFrameSetup = false;
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, [script], WebInspector.panels.scripts.canEditScripts());
+    var contentProvider = new WebInspector.SourceFrameContentProviderForScript(script);
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, contentProvider, "", WebInspector.panels.scripts.canEditScripts());
 }
 
 WebInspector.ScriptView.prototype = {
-    show: function(parentElement)
-    {
-        WebInspector.View.prototype.show.call(this, parentElement);
-        this.setupSourceFrameIfNeeded();
-        this.sourceFrame.visible = true;
-        this.resize();
-    },
-
-    setupSourceFrameIfNeeded: function()
-    {
-        if (!this._frameNeedsSetup)
-            return;
-        delete this._frameNeedsSetup;
-
-        this.attach();
-
-        function didRequestSource(source)
-        {
-            source = source || WebInspector.UIString("<source is not available>");
-            this.sourceFrame.setContent("text/javascript", this._prependWhitespace(source));
-            this._sourceFrameSetup = true;
-        }
-        this.script.requestSource(didRequestSource.bind(this));
-    },
-
-    _prependWhitespace: function(content) {
-        var prefix = "";
-        for (var i = 0; i < this.script.startingLine - 1; ++i)
-            prefix += "\n";
-        return prefix + content;
-    },
-
-    attach: function()
-    {
-        if (!this.element.parentNode)
-            document.getElementById("script-resource-views").appendChild(this.element);
-    },
-
     // The following methods are pulled from SourceView, since they are
     // generic and work with ScriptView just fine.
 
+    show: WebInspector.SourceView.prototype.show,
     hide: WebInspector.SourceView.prototype.hide,
     revealLine: WebInspector.SourceView.prototype.revealLine,
     highlightLine: WebInspector.SourceView.prototype.highlightLine,
@@ -96,3 +56,41 @@ WebInspector.ScriptView.prototype = {
 }
 
 WebInspector.ScriptView.prototype.__proto__ = WebInspector.View.prototype;
+
+
+WebInspector.SourceFrameContentProviderForScript = function(script)
+{
+    WebInspector.SourceFrameContentProvider.call(this);
+    this._script = script;
+}
+
+WebInspector.SourceFrameContentProviderForScript.prototype = {
+    requestContent: function(callback)
+    {
+        if (this._script.source) {
+            callback("text/javascript", this._script.source);
+            return;
+        }
+
+        function didRequestSource(content)
+        {
+            var source;
+            if (content) {
+                var prefix = "";
+                for (var i = 0; i < this._script.startingLine - 1; ++i)
+                    prefix += "\n";
+                source = prefix + content;
+            } else
+                source = WebInspector.UIString("<source is not available>");
+            callback("text/javascript", source);
+        }
+        this._script.requestSource(didRequestSource.bind(this));
+    },
+
+    scripts: function()
+    {
+        return [this._script];
+    }
+}
+
+WebInspector.SourceFrameContentProviderForScript.prototype.__proto__ = WebInspector.SourceFrameContentProvider.prototype;

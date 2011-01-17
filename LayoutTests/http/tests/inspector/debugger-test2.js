@@ -121,19 +121,11 @@ InspectorTest._resumedScript = function()
 
 InspectorTest.showScriptSource = function(scriptName, callback)
 {
-    if (InspectorTest._scriptsAreParsed([scriptName]))
-        InspectorTest._showScriptSource(scriptName, callback);
-    else
+    if (InspectorTest._scriptsAreParsed([scriptName])) {
+        var scriptOrResource = InspectorTest._showScriptSource(scriptName);
+        callback(scriptOrResource.sourceFrame);
+    } else
         InspectorTest._addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
-};
-
-InspectorTest.waitUntilCurrentSourceFrameIsLoaded = function(callback)
-{
-    var sourceFrame = WebInspector.currentPanel.visibleView.sourceFrame;
-    if (sourceFrame._loaded)
-        callback(sourceFrame);
-    else
-        InspectorTest._addSniffer(sourceFrame, "setContent", callback.bind(null, sourceFrame));
 };
 
 InspectorTest._scriptsAreParsed = function(scripts)
@@ -177,8 +169,7 @@ InspectorTest._showScriptSource = function(scriptName, callback)
         scriptResource = options[pageScriptIndex].representedObject;
         scriptsPanel._showScriptOrResource(scriptResource);
     }
-
-    InspectorTest.waitUntilCurrentSourceFrameIsLoaded(callback);
+    return scriptResource;
 };
 
 InspectorTest.expandProperties = function(properties, callback)

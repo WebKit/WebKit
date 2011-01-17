@@ -3,8 +3,8 @@ Tests that debugger will stop on "debugger" statement in a function that was add
 Debugger was enabled.
 Evaluated script in console.
 Script execution paused.
-Execution line number: 4
-Execution line text:     debugger;
+Call stack:
+    0) testFunction (:4)
 Script execution resumed.
 Debugger was disabled.
 

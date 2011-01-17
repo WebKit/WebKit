@@ -1,3 +1,16 @@
+2011-01-17  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: refactoring: encapsulate lazy initialization of SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=51738
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.showScriptSource):
+        (initialize_DebuggerTest.InspectorTest._showScriptSource):
+        * inspector/debugger-pause-in-eval-script-expected.txt:
+        * inspector/debugger-pause-in-eval-script.html:
+
 2011-01-17  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Jeremy Orlow.

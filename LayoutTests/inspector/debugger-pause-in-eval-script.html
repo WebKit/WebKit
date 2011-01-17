@@ -20,15 +20,9 @@ var test = function()
         InspectorTest.waitUntilPaused(step2);
     }
 
-    function step2()
+    function step2(callFrames)
     {
-        InspectorTest.waitUntilCurrentSourceFrameIsLoaded(step3);
-    }
-
-    function step3(sourceFrame)
-    {
-        InspectorTest.addResult("Execution line number: " + sourceFrame.executionLine);
-        InspectorTest.addResult("Execution line text: " + sourceFrame._textModel.line(sourceFrame.executionLine - 1));
+        InspectorTest.captureStackTrace(callFrames);
         InspectorTest.completeDebuggerTest();
     }
 }

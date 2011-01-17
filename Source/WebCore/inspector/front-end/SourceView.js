@@ -32,28 +32,16 @@ WebInspector.SourceView = function(resource)
 
     this.element.addStyleClass("source");
 
-    var scripts = WebInspector.debuggerModel.scriptsForURL(resource.url);
+    var contentProvider = new WebInspector.SourceFrameContentProviderForResource(resource);
     var canEditScripts = WebInspector.panels.scripts.canEditScripts() && resource.type === WebInspector.Resource.Type.Script;
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, scripts, canEditScripts);
-    resource.addEventListener("finished", this._resourceLoadingFinished, this);
-    this._frameNeedsSetup = true;
-}
-
-// This is a map from resource.type to mime types
-// found in WebInspector.SourceTokenizer.Registry.
-WebInspector.SourceView.DefaultMIMETypeForResourceType = {
-    0: "text/html",
-    1: "text/css",
-    4: "text/javascript"
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, contentProvider, resource.url, canEditScripts);
 }
 
 WebInspector.SourceView.prototype = {
     show: function(parentElement)
     {
-        WebInspector.ResourceView.prototype.show.call(this, parentElement);
-        this.setupSourceFrameIfNeeded();
+        WebInspector.View.prototype.show.call(this, parentElement);
         this.sourceFrame.visible = true;
-        this.resize();
     },
 
     hide: function()
@@ -66,8 +54,7 @@ WebInspector.SourceView.prototype = {
 
     resize: function()
     {
-        if (this.sourceFrame)
-            this.sourceFrame.resize();
+        this.sourceFrame.resize();
     },
 
     get scrollTop()
@@ -80,40 +67,9 @@ WebInspector.SourceView.prototype = {
         this.sourceFrame.scrollTop = scrollTop;
     },
 
-
-    setupSourceFrameIfNeeded: function()
-    {
-        if (!this._frameNeedsSetup)
-            return;
-
-        delete this._frameNeedsSetup;
-        this.resource.requestContent(this._contentLoaded.bind(this));
-    },
-
     hasContent: function()
     {
         return true;
-    },
-
-    _contentLoaded: function(content)
-    {
-        var mimeType = this._canonicalMimeType(this.resource);
-        this.sourceFrame.setContent(mimeType, content, this.resource.url);
-        this._sourceFrameSetupFinished();
-    },
-
-    _canonicalMimeType: function(resource)
-    {
-        return WebInspector.SourceView.DefaultMIMETypeForResourceType[resource.type] || resource.mimeType;
-    },
-
-    _resourceLoadingFinished: function(event)
-    {
-        this._frameNeedsSetup = true;
-        this._sourceFrameSetup = false;
-        if (this.visible)
-            this.setupSourceFrameIfNeeded();
-        this.resource.removeEventListener("finished", this._resourceLoadingFinished, this);
     },
 
     // The rest of the methods in this prototype need to be generic enough to work with a ScriptView.
@@ -138,7 +94,6 @@ WebInspector.SourceView.prototype = {
             if (this._searchResults)
                 finishedCallback(this, this._searchResults.length);
         }
-
         this.sourceFrame.findSearchMatches(query, didFindSearchMatches.bind(this));
     },
 
@@ -188,13 +143,11 @@ WebInspector.SourceView.prototype = {
 
     revealLine: function(lineNumber)
     {
-        this.setupSourceFrameIfNeeded();
         this.sourceFrame.revealLine(lineNumber);
     },
 
     highlightLine: function(lineNumber)
     {
-        this.setupSourceFrameIfNeeded();
         this.sourceFrame.highlightLine(lineNumber);
     },
 
@@ -215,17 +168,41 @@ WebInspector.SourceView.prototype = {
             return;
 
         this.sourceFrame.markAndRevealRange(foundRange);
-    },
-
-    _sourceFrameSetupFinished: function()
-    {
-        this._sourceFrameSetup = true;
-        this.resize();
-        if (this._delayedFindSearchMatches) {
-            this._delayedFindSearchMatches();
-            delete this._delayedFindSearchMatches;
-        }
     }
 }
 
 WebInspector.SourceView.prototype.__proto__ = WebInspector.ResourceView.prototype;
+
+
+WebInspector.SourceFrameContentProviderForResource = function(resource)
+{
+    WebInspector.SourceFrameContentProvider.call(this);
+    this._resource = resource;
+}
+
+//This is a map from resource.type to mime types
+//found in WebInspector.SourceTokenizer.Registry.
+WebInspector.SourceFrameContentProviderForResource.DefaultMIMETypeForResourceType = {
+ 0: "text/html",
+ 1: "text/css",
+ 4: "text/javascript"
+}
+
+WebInspector.SourceFrameContentProviderForResource.prototype = {
+    requestContent: function(callback)
+    {
+        function contentLoaded(content)
+        {
+            var mimeType = WebInspector.SourceFrameContentProviderForResource.DefaultMIMETypeForResourceType[this._resource.type] || this._resource.mimeType;
+            callback(mimeType, content);
+        }
+        this._resource.requestContent(contentLoaded.bind(this));
+    },
+
+    scripts: function()
+    {
+        return WebInspector.debuggerModel.scriptsForURL(this._resource.url);
+    }
+}
+
+WebInspector.SourceFrameContentProviderForResource.prototype.__proto__ = WebInspector.SourceFrameContentProvider.prototype;
