@@ -1,3 +1,16 @@
+2011-01-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8871903> REGRESSION (r75897): Crash with 0-by-0 iframe in scaled WebView
+
+        Avoid use of FloatRect::enclosingBoundingBox(), which can stretch an empty
+        quad to a non-empty rect.
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::updateWidgetPosition):
+
 2011-01-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

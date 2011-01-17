@@ -203,7 +203,7 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
         // style pointer).
         if (style()) {
             if (!needsLayout())
-                setWidgetGeometry(localToAbsoluteQuad(FloatQuad(contentBoxRect())).enclosingBoundingBox(), contentBoxRect().size());
+                setWidgetGeometry(IntRect(localToAbsoluteQuad(FloatQuad(contentBoxRect())).boundingBox()), contentBoxRect().size());
             if (style()->visibility() != VISIBLE)
                 m_widget->hide();
             else
@@ -344,8 +344,8 @@ void RenderWidget::updateWidgetPosition()
         return;
 
     IntRect contentBox = contentBoxRect();
-    IntRect absoluteContentBox = localToAbsoluteQuad(FloatQuad(contentBoxRect())).enclosingBoundingBox();
-    bool boundsChanged = setWidgetGeometry(absoluteContentBox, contentBoxRect().size());
+    IntRect absoluteContentBox = IntRect(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
+    bool boundsChanged = setWidgetGeometry(absoluteContentBox, contentBox.size());
 
     // if the frame bounds got changed, or if view needs layout (possibly indicating
     // content size is wrong) we have to do a layout to set the right widget size
