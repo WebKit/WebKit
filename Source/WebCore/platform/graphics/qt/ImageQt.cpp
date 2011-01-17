@@ -125,8 +125,30 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     if (!pixmap.hasAlpha() && p->compositionMode() == QPainter::CompositionMode_SourceOver)
         p->setCompositionMode(QPainter::CompositionMode_Source);
 
-    /* Translate the coordinates as phase is not in world matrix coordinate space but the tile rect origin is. */
     QTransform transform(patternTransform);
+
+    // If this would draw more than one scaled tile, we scale the pixmap first and then use the result to draw.
+    if (transform.type() == QTransform::TxScale) {
+        QRectF tileRectInTargetCoords = (transform * QTransform().translate(phase.x(), phase.y())).mapRect(tr);
+
+        bool tileWillBePaintedOnlyOnce = tileRectInTargetCoords.contains(dr);
+        if (!tileWillBePaintedOnlyOnce) {
+            QSizeF scaledSize(float(pixmap.width()) * transform.m11(), float(pixmap.height()) * transform.m22());
+            QPixmap scaledPixmap(scaledSize.toSize());
+            if (pixmap.hasAlpha())
+                scaledPixmap.fill(Qt::transparent);
+            {
+                QPainter painter(&scaledPixmap);
+                painter.setCompositionMode(QPainter::CompositionMode_Source);
+                painter.setRenderHints(p->renderHints());
+                painter.drawPixmap(QRect(0, 0, scaledPixmap.width(), scaledPixmap.height()), pixmap);
+            }
+            pixmap = scaledPixmap;
+            transform = QTransform::fromTranslate(transform.dx(), transform.dy());
+        }
+    }
+
+    /* Translate the coordinates as phase is not in world matrix coordinate space but the tile rect origin is. */
     transform *= QTransform().translate(phase.x(), phase.y());
     transform.translate(tr.x(), tr.y());
 
