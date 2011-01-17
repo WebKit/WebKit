@@ -1,3 +1,9 @@
+2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: skip flaky inspector test (will look at it tomorrow).
+
+        * platform/mac-leopard/Skipped:
+
 2011-01-17  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
