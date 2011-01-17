@@ -496,7 +496,11 @@ void GraphicsContext::fillPath(const Path& path)
         {
             QPainter* shadowPainter = shadow->beginShadowLayer(this, platformPath.controlPointRect());
             if (shadowPainter) {
-                if (m_state.fillGradient) {
+                if (m_state.fillPattern) {
+                    AffineTransform affine;
+                    shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
+                    shadowPainter->fillPath(platformPath, QBrush(m_state.fillPattern->createPlatformPattern(affine)));
+                } else if (m_state.fillGradient) {
                     QBrush brush(*m_state.fillGradient->platformGradient());
                     brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
                     shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);

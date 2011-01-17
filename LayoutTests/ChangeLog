@@ -1,3 +1,17 @@
+2011-01-17  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Incorrect shadow alpha with pattern fillStyle
+        https://bugs.webkit.org/show_bug.cgi?id=52559
+
+        The shadow color opacity needs to be set on the shadow painter.
+        This is related to bug 52556.
+
+        * fast/canvas/canvas-fillPath-pattern-shadow-expected.txt: Added.
+        * fast/canvas/canvas-fillPath-pattern-shadow.html: Added.
+        * fast/canvas/script-tests/canvas-fillPath-pattern-shadow.js: Added.
+
 2011-01-17  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/52524> fast/dom/Range/range-clone-contents.html fails only on Windows
