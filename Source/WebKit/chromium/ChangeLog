@@ -1,5 +1,12 @@
 2011-01-16  Adam Barth  <abarth@webkit.org>
 
+        Roll Chromium DEPS to pick up the changes reflecting the new location
+        of WebKit.
+
+        * DEPS:
+
+2011-01-16  Adam Barth  <abarth@webkit.org>
+
         Rubber-stamped by Eric Seidel.
 
         Move WebKit into Source
