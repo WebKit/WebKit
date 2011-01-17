@@ -1584,6 +1584,7 @@ fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/timestamp.html
 fast/dom/Geolocation/watch.html
+fast/dom/Geolocation/window-close-crash.html
 
 # WebKitTestRunner needs layoutTestController.setMockGeolocationPosition
 fast/dom/Geolocation/timeout-clear-watch.html

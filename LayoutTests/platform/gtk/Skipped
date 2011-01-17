@@ -4909,6 +4909,7 @@ fast/dom/Geolocation/timeout-clear-watch.html
 fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/timestamp.html
 fast/dom/Geolocation/watch.html
+fast/dom/Geolocation/window-close-crash.html
 
 # We're not quite ready to run these tests, because the slaves need
 # Geoclue support. If we implement support for the mock geolocation service

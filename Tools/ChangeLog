@@ -1,3 +1,23 @@
+2011-01-17  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        GeolocationController should call stopUpdating on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=52216
+
+        fast/dom/Geolocation/window-close-crash.html requires that a
+        Geolocation watch be started in a secondary window. Consequently,
+        we need to allow geolocation permission and provide a mock
+        geolocation position for the secondary window's
+        GeolocationClientMock.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setGeolocationPermission):
+        (LayoutTestController::setMockGeolocationPosition):
+        (LayoutTestController::setMockGeolocationError):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::windowList):
+
 2011-01-16  Adam Barth  <abarth@webkit.org>
 
         Update more include paths to reflect WebKit move.

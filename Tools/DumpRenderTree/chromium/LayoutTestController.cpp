@@ -1515,12 +1515,16 @@ void LayoutTestController::setMockDeviceOrientation(const CppArgumentList& argum
     m_shell->webViewHost()->deviceOrientationClientMock()->setOrientation(orientation);
 }
 
+// FIXME: For greater test flexibility, we should be able to set each page's geolocation mock individually.
+// https://bugs.webkit.org/show_bug.cgi?id=52368
 void LayoutTestController::setGeolocationPermission(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 1 || !arguments[0].isBool())
         return;
-    m_shell->webViewHost()->geolocationClientMock()->setPermission(arguments[0].toBoolean());
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    for (size_t i = 0; i < windowList.size(); i++)
+        windowList[i]->geolocationClientMock()->setPermission(arguments[0].toBoolean());
 }
 
 void LayoutTestController::setMockGeolocationPosition(const CppArgumentList& arguments, CppVariant* result)
@@ -1528,7 +1532,9 @@ void LayoutTestController::setMockGeolocationPosition(const CppArgumentList& arg
     result->setNull();
     if (arguments.size() < 3 || !arguments[0].isNumber() || !arguments[1].isNumber() || !arguments[2].isNumber())
         return;
-    m_shell->webViewHost()->geolocationClientMock()->setPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    for (size_t i = 0; i < windowList.size(); i++)
+        windowList[i]->geolocationClientMock()->setPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
 }
 
 void LayoutTestController::setMockGeolocationError(const CppArgumentList& arguments, CppVariant* result)
@@ -1536,7 +1542,9 @@ void LayoutTestController::setMockGeolocationError(const CppArgumentList& argume
     result->setNull();
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
         return;
-    m_shell->webViewHost()->geolocationClientMock()->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
+    Vector<WebViewHost*> windowList = m_shell->windowList();
+    for (size_t i = 0; i < windowList.size(); i++)
+        windowList[i]->geolocationClientMock()->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
 }
 
 void LayoutTestController::abortModal(const CppArgumentList& arguments, CppVariant* result)

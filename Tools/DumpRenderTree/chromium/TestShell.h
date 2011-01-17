@@ -166,6 +166,9 @@ public:
 
     static const int virtualWindowBorder = 3;
 
+    typedef Vector<WebViewHost*> WindowList;
+    WindowList windowList() const { return m_windowList; }
+
 private:
     WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent*);
     void createMainWindow();
@@ -207,7 +210,6 @@ private:
 
     // List of all windows in this process.
     // The main window should be put into windowList[0].
-    typedef Vector<WebViewHost*> WindowList;
     WindowList m_windowList;
 
 #if defined(OS_WIN)
