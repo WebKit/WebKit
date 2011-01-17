@@ -1665,7 +1665,6 @@ sub buildQMakeProject($@)
 
 sub buildQMakeQtProject($$@)
 {
-   print "XXX";
     my ($project, $clean, @buildArgs) = @_;
 
     return buildQMakeProject($clean, @buildArgs);

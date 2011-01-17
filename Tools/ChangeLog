@@ -1,3 +1,11 @@
+2011-01-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Remove accidentally committed debug printing after r75908.
+
+        * Scripts/webkitdirs.pm:
+
 2011-01-17  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.
