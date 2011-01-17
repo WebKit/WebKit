@@ -1,5 +1,11 @@
 2011-01-17  Alexey Proskuryakov  <ap@apple.com>
 
+        Leopard build fix.
+
+        * page/PrintContext.cpp: GCC complained about shortening a double value to float.
+
+2011-01-17  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Dan Bernstein.
 
         https://bugs.webkit.org/show_bug.cgi?id=52495
