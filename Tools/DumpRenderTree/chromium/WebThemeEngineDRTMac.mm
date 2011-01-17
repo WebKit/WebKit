@@ -30,8 +30,8 @@
 
 #include "WebThemeEngineDRTMac.h"
 
-#include "third_party/WebKit/WebKit/chromium/public/WebCanvas.h"
-#include "third_party/WebKit/WebKit/chromium/public/WebRect.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebCanvas.h"
+#include "third_party/WebKit/Source/WebKit/chromium/public/WebRect.h"
 #import <AppKit/NSAffineTransform.h>
 #import <AppKit/NSGraphicsContext.h>
 #import <AppKit/NSScroller.h>

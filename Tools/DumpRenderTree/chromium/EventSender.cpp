@@ -553,7 +553,7 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     }
 
     // For one generated keyboard event, we need to generate a keyDown/keyUp
-    // pair; refer to EventSender.cpp in WebKit/WebKitTools/DumpRenderTree/win.
+    // pair; refer to EventSender.cpp in Tools/DumpRenderTree/win.
     // On Windows, we might also need to generate a char event to mimic the
     // Windows event flow; on other platforms we create a merged event and test
     // the event flow that that platform provides.
@@ -590,7 +590,7 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     // the command will be dispatched to the renderer just before dispatching
     // the keyboard event, and then it will be executed in the
     // RenderView::handleCurrentKeyboardEvent() method, which is called from
-    // third_party/WebKit/WebKit/chromium/src/EditorClientImpl.cpp.
+    // third_party/WebKit/Source/WebKit/chromium/src/EditorClientImpl.cpp.
     // We just simulate the same behavior here.
     string editCommand;
     if (getEditCommand(eventDown, &editCommand))
@@ -637,7 +637,7 @@ bool EventSender::needsShiftModifier(int keyCode)
 {
     // If code is an uppercase letter, assign a SHIFT key to
     // eventDown.modifier, this logic comes from
-    // WebKit/WebKitTools/DumpRenderTree/Win/EventSender.cpp
+    // Tools/DumpRenderTree/win/EventSender.cpp
     return (keyCode & 0xFF) >= 'A' && (keyCode & 0xFF) <= 'Z';
 }
 
