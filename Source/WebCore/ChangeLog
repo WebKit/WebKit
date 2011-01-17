@@ -1,3 +1,10 @@
+2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixing typo in r75952.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshNameCell):
+
 2011-01-17  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.
