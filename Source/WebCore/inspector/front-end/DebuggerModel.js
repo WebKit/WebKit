@@ -224,11 +224,6 @@ WebInspector.DebuggerDispatcher.prototype = {
         this._debuggerModel._resumedScript();
     },
 
-    attachDebuggerWhenShown: function()
-    {
-        WebInspector.panels.scripts.attachDebuggerWhenShown();
-    },
-
     debuggerWasEnabled: function()
     {
         WebInspector.panels.scripts.debuggerWasEnabled();

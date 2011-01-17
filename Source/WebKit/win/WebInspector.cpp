@@ -170,10 +170,8 @@ HRESULT STDMETHODCALLTYPE WebInspector::toggleDebuggingJavaScript()
 
     if (inspector->debuggerEnabled())
         inspector->disableDebugger();
-    else {
-        inspector->showPanel(InspectorController::ScriptsPanel);
-        inspector->enableDebugger();
-    }
+    else
+        inspector->showAndEnableDebugger();
 
     return S_OK;
 }

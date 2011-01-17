@@ -221,15 +221,13 @@ module core {
         // Debugger API
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Inspector] void enableDebuggerFromFrontend(in boolean always);
+        [domain=Inspector] void enableDebugger(in boolean always);
         [domain=Inspector] void disableDebugger(in boolean always);
 
         [domain=Inspector] void setStickyBreakpoints(in Object breakpoints);
 
         [notify, domain=Debugger] void debuggerWasEnabled();
         [notify, domain=Debugger] void debuggerWasDisabled();
-
-        [notify, domain=Debugger] void attachDebuggerWhenShown(); // FIXME: do something with this eventually.
 
         [notify, domain=Debugger] void parsedScriptSource(out String sourceID, out String url, out int lineOffset, out int columnOffset, out int scriptWorldType);
         [notify, domain=Debugger] void failedToParseScriptSource(out String url, out String data, out int firstLine, out int errorLine, out String errorMessage);

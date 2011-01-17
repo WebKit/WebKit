@@ -215,7 +215,8 @@ public:
     void disableProfiler(bool always = false);
     bool profilerEnabled() const;
 
-    void enableDebugger();
+    void showAndEnableDebugger();
+    void enableDebugger(bool always);
     void disableDebugger(bool always = false);
     bool debuggerEnabled() const { return m_debuggerAgent; }
     void resume();
@@ -273,7 +274,6 @@ private:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void toggleRecordButton(bool);
-    void enableDebuggerFromFrontend(bool always);
     void restoreStickyBreakpoints();
     void restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint);
 #endif

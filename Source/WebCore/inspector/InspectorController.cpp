@@ -582,11 +582,9 @@ void InspectorController::restoreDebugger()
 {
     ASSERT(m_frontend);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent::isDebuggerAlwaysEnabled())
-        enableDebuggerFromFrontend(false);
-    else {
-        if (m_settings->getBoolean(InspectorSettings::DebuggerAlwaysEnabled) || m_attachDebuggerWhenShown)
-            enableDebugger();
+    if (InspectorDebuggerAgent::isDebuggerAlwaysEnabled() || m_attachDebuggerWhenShown || m_settings->getBoolean(InspectorSettings::DebuggerAlwaysEnabled)) {
+        enableDebugger(false);
+        m_attachDebuggerWhenShown = false;
     }
 #endif
 }
@@ -1036,7 +1034,22 @@ void InspectorController::disableProfiler(bool always)
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-void InspectorController::enableDebuggerFromFrontend(bool always)
+void InspectorController::showAndEnableDebugger()
+{
+    if (!enabled())
+        return;
+
+    if (debuggerEnabled())
+        return;
+
+    if (!m_frontend) {
+        m_attachDebuggerWhenShown = true;
+        showPanel(ScriptsPanel);
+    } else
+        enableDebugger(false);
+}
+
+void InspectorController::enableDebugger(bool always)
 {
     ASSERT(!debuggerEnabled());
     if (always)
@@ -1049,22 +1062,6 @@ void InspectorController::enableDebuggerFromFrontend(bool always)
     restoreStickyBreakpoints();
 
     m_frontend->debuggerWasEnabled();
-}
-
-void InspectorController::enableDebugger()
-{
-    if (!enabled())
-        return;
-
-    if (debuggerEnabled())
-        return;
-
-    if (!m_frontend)
-        m_attachDebuggerWhenShown = true;
-    else {
-        m_frontend->attachDebuggerWhenShown();
-        m_attachDebuggerWhenShown = false;
-    }
 }
 
 void InspectorController::disableDebugger(bool always)

@@ -96,8 +96,7 @@ using namespace WebCore;
     Page* page = core(_webView);
     if (!page)
         return;
-    page->inspectorController()->showPanel(InspectorController::ScriptsPanel);
-    page->inspectorController()->enableDebugger();
+    page->inspectorController()->showAndEnableDebugger();
 }
 
 - (void)stopDebuggingJavaScript:(id)sender

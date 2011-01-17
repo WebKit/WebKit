@@ -99,8 +99,7 @@ void WebInspector::showConsole()
 void WebInspector::startJavaScriptDebugging()
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    m_page->corePage()->inspectorController()->showPanel(InspectorController::ScriptsPanel);
-    m_page->corePage()->inspectorController()->enableDebugger();
+    m_page->corePage()->inspectorController()->showAndEnableDebugger();
 #endif
 }
 
