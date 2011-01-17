@@ -58,13 +58,28 @@ function extension_testRedirectResourcesInHAR(nextTest)
     extension_doRequest(onFinished);
 }
 
+function extension_testRedirectResourceFinished(nextTest)
+{
+    var finishedCount = 0;
+    function onFinished(resource)
+    {
+        output("Finished resource: " + resource.request.url);
+        if (++finishedCount === 2) {
+            webInspector.resources.onFinished.removeListener(onFinished);
+            nextTest();
+        }
+    }
+    webInspector.resources.onFinished.addListener(onFinished);
+    webInspector.inspectedWindow.eval("doRequest(true)");
+}
+
 var requestDone = false;
 
-function doRequest()
+function doRequest(force)
 {
     // Only do request once per test suite, to make tests independent on each other.
     // Returns true iff request is alredy done (so the caller shouldn't wait for onFinished).
-    if (requestDone)
+    if (requestDone && !force)
         return true;
     requestDone = true;
     // We can't use XHR here -- the content for XHRs is pushed from back-end.

@@ -82,20 +82,21 @@ WebInspector.AuditLauncherView.prototype = {
     _resetResourceCount: function()
     {
         this.loadedResources = 0;
-
-        // We never receive a resourceStarted notification for the main resource
-        // (see InspectorController.willSendRequest())
-        this.totalResources = 1;
+        this.totalResources = 0;
     },
 
     resourceStarted: function(resource)
     {
-        ++this.totalResources;
+        // Ignore long-living WebSockets for the sake of progress indicator, as we won't be waiting them anyway.
+        if (resource.type !== WebInspector.Resource.Type.WebSocket)
+            ++this.totalResources;
     },
 
     resourceFinished: function(resource)
     {
-        ++this.loadedResources;
+        // See resorceStarted for details.
+        if (resource.type !== WebInspector.Resource.Type.WebSocket)
+            ++this.loadedResources;
     },
 
     reset: function()

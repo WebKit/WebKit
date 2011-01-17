@@ -30,7 +30,7 @@
 
 WebInspector.NetworkManager = function(resourceTreeModel)
 {
-    this._resourcesById = {};
+    this._inflightResources = {};
     this._resourceTreeModel = resourceTreeModel;
     this._lastIdentifierForCachedResource = 0;
     InspectorBackend.registerDomainDispatcher("Network", this);
@@ -96,16 +96,12 @@ WebInspector.NetworkManager.prototype = {
 
     identifierForInitialRequest: function(identifier, url, loader, callStack)
     {
-        var resource = this._resourceTreeModel.createResource(identifier, url, loader, callStack);
-        this._resourcesById[identifier] = resource;
-
-        WebInspector.panels.network.appendResource(resource);
-        WebInspector.panels.audits.resourceStarted(resource);
+        this._startResource(this._resourceTreeModel.createResource(identifier, url, loader, callStack));
     },
 
     willSendRequest: function(identifier, time, request, redirectResponse)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
@@ -113,24 +109,22 @@ WebInspector.NetworkManager.prototype = {
         // See http/tests/misc/will-send-request-returns-null-on-redirect.html
         var isRedirect = !redirectResponse.isNull && request.url.length;
         if (isRedirect) {
-            resource.endTime = time;
             this.didReceiveResponse(identifier, time, "Other", redirectResponse);
-            resource = this._appendRedirect(resource.identifier, request.url);
+            resource = this._appendRedirect(resource.identifier, time, request.url);
         }
 
         WebInspector.NetworkManager.updateResourceWithRequest(resource, request);
         resource.startTime = time;
 
-        if (isRedirect) {
-            WebInspector.panels.network.appendResource(resource);
-            WebInspector.panels.audits.resourceStarted(resource);
-        } else
+        if (isRedirect)
+            this._startResource(resource);
+        else
             WebInspector.panels.network.refreshResource(resource);
     },
 
     markResourceAsCached: function(identifier)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
@@ -140,7 +134,7 @@ WebInspector.NetworkManager.prototype = {
 
     didReceiveResponse: function(identifier, time, resourceType, response)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
@@ -155,7 +149,7 @@ WebInspector.NetworkManager.prototype = {
 
     didReceiveContentLength: function(identifier, time, lengthReceived)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
@@ -167,34 +161,22 @@ WebInspector.NetworkManager.prototype = {
 
     didFinishLoading: function(identifier, finishTime)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
-        resource.endTime = finishTime;
-        resource.finished = true;
-
-        WebInspector.panels.network.refreshResource(resource);
-        WebInspector.panels.audits.resourceFinished(resource);
-        WebInspector.extensionServer.notifyResourceFinished(resource);
-        delete this._resourcesById[identifier];
+        this._finishResource(resource, finishTime);
     },
 
     didFailLoading: function(identifier, time, localizedDescription)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
         resource.failed = true;
         resource.localizedFailDescription = localizedDescription;
-        resource.finished = true;
-        resource.endTime = time;
-
-        WebInspector.panels.network.refreshResource(resource);
-        WebInspector.panels.audits.resourceFinished(resource);
-        WebInspector.extensionServer.notifyResourceFinished(resource);
-        delete this._resourcesById[identifier];
+        this._finishResource(resource, time);
     },
 
     didLoadResourceFromMemoryCache: function(time, cachedResource)
@@ -203,12 +185,9 @@ WebInspector.NetworkManager.prototype = {
         WebInspector.NetworkManager.updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
-        resource.startTime = resource.responseReceivedTime = resource.endTime = time;
-        resource.finished = true;
-
-        WebInspector.panels.network.appendResource(resource);
-        WebInspector.panels.audits.resourceStarted(resource);
-        WebInspector.panels.audits.resourceFinished(resource);
+        this._startResource(resource);
+        resource.startTime = resource.responseReceivedTime = time;
+        this._finishResource(resource, time);
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
     },
 
@@ -245,14 +224,13 @@ WebInspector.NetworkManager.prototype = {
     didCreateWebSocket: function(identifier, requestURL)
     {
         var resource = this._resourceTreeModel.createResource(identifier, requestURL);
-        this._resourcesById[identifier] = resource;
         resource.type = WebInspector.Resource.Type.WebSocket;
-        WebInspector.panels.network.appendResource(resource);
+        this._startResource(resource);
     },
 
     willSendWebSocketHandshakeRequest: function(identifier, time, request)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
@@ -266,7 +244,7 @@ WebInspector.NetworkManager.prototype = {
 
     didReceiveWebSocketHandshakeResponse: function(identifier, time, response)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
 
@@ -281,21 +259,19 @@ WebInspector.NetworkManager.prototype = {
 
     didCloseWebSocket: function(identifier, time)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = this._inflightResources[identifier];
         if (!resource)
             return;
-        resource.endTime = time;
-
-        WebInspector.panels.network.refreshResource(resource);
+        this._finishResource(resource, time);
     },
 
-    _appendRedirect: function(identifier, redirectURL)
+    _appendRedirect: function(identifier, time, redirectURL)
     {
-        var originalResource = this._resourcesById[identifier];
+        var originalResource = this._inflightResources[identifier];
         var previousRedirects = originalResource.redirects || [];
-        originalResource.finished = true;
         originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
         delete originalResource.redirects;
+        this._finishResource(originalResource, time);
         // We bound resource early, but it happened to be a redirect and won't make it through to
         // the resource tree -- so unbind it.
         // FIXME: we should bind upon adding to the tree only (encapsulated into ResourceTreeModel),
@@ -304,7 +280,23 @@ WebInspector.NetworkManager.prototype = {
         
         var newResource = this._resourceTreeModel.createResource(identifier, redirectURL, originalResource.loader, originalResource.stackTrace);
         newResource.redirects = previousRedirects.concat(originalResource);
-        this._resourcesById[identifier] = newResource;
         return newResource;
+    },
+
+    _startResource: function(resource, skipRefresh)
+    {
+        this._inflightResources[resource.identifier] = resource;
+        WebInspector.panels.network.appendResource(resource, skipRefresh);
+        WebInspector.panels.audits.resourceStarted(resource);
+    },
+
+    _finishResource: function(resource, finishTime)
+    {
+        resource.endTime = finishTime;
+        resource.finished = true;
+        WebInspector.panels.network.refreshResource(resource);
+        WebInspector.panels.audits.resourceFinished(resource);
+        WebInspector.extensionServer.notifyResourceFinished(resource);
+        delete this._inflightResources[resource.identifier];
     }
 }
