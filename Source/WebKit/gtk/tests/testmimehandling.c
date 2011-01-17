@@ -192,7 +192,7 @@ int main(int argc, char** argv)
     gtk_test_init(&argc, &argv, NULL);
 
     /* Hopefully make test independent of the path it's called from. */
-    testutils_relative_chdir("WebKit/gtk/tests/resources/test.html", argv[0]);
+    testutils_relative_chdir("Source/WebKit/gtk/tests/resources/test.html", argv[0]);
 
     server = soup_server_new(SOUP_SERVER_PORT, 0, NULL);
     soup_server_run_async(server);
