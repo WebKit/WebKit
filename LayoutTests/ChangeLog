@@ -1,3 +1,9 @@
+2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: first timeline-network-resource flakiness.
+
+        * inspector/timeline-network-resource.html:
+
 2011-01-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

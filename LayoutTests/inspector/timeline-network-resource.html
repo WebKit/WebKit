@@ -16,6 +16,9 @@ function runAfterScriptIsEvaluated()
         else if (record.type === timelineAgentRecordType["ResourceFinish"])
             printFinish(record);
     });
+    evaluateInWebInspector("0", function(result) {
+        // Temporary noop to remove flake.
+    });
 }
 
 function printRecord(record)
