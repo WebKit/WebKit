@@ -1,3 +1,11 @@
+2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: follow-up fix for r52574: do not reuse clear() for navigation.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype.clear):
+        (WebInspector.NetworkPanel.prototype.mainResourceChanged):
+
 2011-01-17  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

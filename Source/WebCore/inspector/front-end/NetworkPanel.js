@@ -808,13 +808,15 @@ WebInspector.NetworkPanel.prototype = {
     {
         if (this._preserveLogToggle.toggled)
             return;
-
         this._reset();
     },
 
     mainResourceChanged: function()
     {
-        this.clear();
+        if (this._preserveLogToggle.toggled)
+            return;
+
+        this._reset();
         // Now resurrect the main resource along with all redirects that lead to it.
         var resourcesToAppend = (WebInspector.mainResource.redirects || []).concat(WebInspector.mainResource);
         resourcesToAppend.forEach(this.appendResource, this);
