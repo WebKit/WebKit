@@ -1,3 +1,14 @@
+2011-01-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52590
+        Should pass a frame into -[WKView canPrintHeadersAndFooters]
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm: (-[WKView canChangeFrameLayout:]): Also, renamed the method
+        to canChangeFrameLayout.
+
 2011-01-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

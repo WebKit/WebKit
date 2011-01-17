@@ -37,7 +37,7 @@ WK_EXPORT
 - (id)initWithFrame:(NSRect)frame contextRef:(WKContextRef)contextRef pageGroupRef:(WKPageGroupRef)pageGroupRef;
 
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef;
-- (BOOL)canPrintHeadersAndFooters;
+- (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef;
 
 @property(readonly) WKPageRef pageRef;
 

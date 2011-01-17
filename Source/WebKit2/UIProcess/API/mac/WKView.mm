@@ -1292,10 +1292,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return [NSPrintOperation printOperationWithView:self printInfo:printInfo];
 }
 
-- (BOOL)canPrintHeadersAndFooters
+- (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
 {
     // PDF documents are already paginated, so we can't change them to add headers and footers.
-    return !_data->_pdfViewController;
+    return !toImpl(frameRef)->isMainFrame() || _data->_pdfViewController;
 }
 
 @end
