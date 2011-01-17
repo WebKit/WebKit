@@ -3259,11 +3259,11 @@ contains(DEFINES, ENABLE_VIDEO=1) {
      } else:contains(MOBILITY_CONFIG, multimedia) {
         HEADERS += \ 
             platform/graphics/qt/MediaPlayerPrivateQt.h \
-            $$PWD/../../WebKit/qt/WebCoreSupport/FullScreenVideoQt.h
+            $$PWD/../../Source/WebKit/qt/WebCoreSupport/FullScreenVideoQt.h
 
         SOURCES += \
             platform/graphics/qt/MediaPlayerPrivateQt.cpp \
-            $$PWD/../../WebKit/qt/WebCoreSupport/FullScreenVideoQt.cpp
+            $$PWD/../../Source/WebKit/qt/WebCoreSupport/FullScreenVideoQt.cpp
 
         CONFIG *= mobility
         MOBILITY += multimedia
