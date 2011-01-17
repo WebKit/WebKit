@@ -496,8 +496,13 @@ void GraphicsContext::fillPath(const Path& path)
         {
             QPainter* shadowPainter = shadow->beginShadowLayer(this, platformPath.controlPointRect());
             if (shadowPainter) {
-                shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
-                shadowPainter->fillPath(platformPath, QColor(m_data->shadow.m_color));
+                if (m_state.fillGradient) {
+                    QBrush brush(*m_state.fillGradient->platformGradient());
+                    brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
+                    shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
+                    shadowPainter->fillPath(platformPath, brush);
+                } else
+                    shadowPainter->fillPath(platformPath, QColor(shadow->m_color));
                 shadow->endShadowLayer(this);
             }
         } else {
