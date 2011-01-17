@@ -1,3 +1,14 @@
+2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chromium: updated DevTools tests.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._waitForScriptPause):
+        (.TestSuite.prototype._waitUntilScriptsAreParsed.waitForAllScripts):
+        (.TestSuite.prototype._waitUntilScriptsAreParsed):
+
 2011-01-17  Adam Barth  <abarth@webkit.org>
 
         Update path to reflect new WebKit directory location.

@@ -215,33 +215,17 @@ TestSuite.prototype.addSniffer = function(receiver, methodName, override, opt_st
 };
 
 
-// UI Tests
-
-
-/**
- * Tests that resources tab is enabled when corresponding item is selected.
- */
 TestSuite.prototype.testEnableResourcesTab = function()
 {
-    this.showPanel("resources");
+    // FIXME once reference is removed downstream.
+}
 
-    var test = this;
-    this.addSniffer(WebInspector, "updateResource",
-        function(payload) {
-            test.assertEquals("simple_page.html", payload.lastPathComponent);
-            WebInspector.panels.resources.refresh();
-            WebInspector.panels.resources.revealAndSelectItem(WebInspector.resources[payload.id]);
+TestSuite.prototype.testCompletionOnPause = function()
+{
+    // FIXME once reference is removed downstream.
+}
 
-            test.releaseControl();
-        });
-
-    // Following call should lead to reload that we capture in the
-    // addResource override.
-    WebInspector.panels.resources._enableResourceTracking();
-
-    // We now have some time to report results to controller.
-    this.takeControl();
-};
+// UI Tests
 
 
 /**
@@ -625,62 +609,6 @@ TestSuite.prototype.evaluateInConsole_ = function(code, callback)
 
 
 /**
- * Tests that console auto completion works when script execution is paused.
- */
-TestSuite.prototype.testCompletionOnPause = function()
-{
-    this.showPanel("scripts");
-    var test = this;
-    this._executeCodeWhenScriptsAreParsed("handleClick()", ["completion_on_pause.html"]);
-
-    this._waitForScriptPause(
-        {
-            functionsOnStack: ["innerFunction", "handleClick", ""],
-            lineNumber: 9,
-            lineText: "    debugger;"
-        },
-        showConsole);
-
-    function showConsole() {
-        if (WebInspector.currentFocusElement === WebInspector.console.promptElement)
-            testLocalsCompletion();
-        else {
-            test.addSniffer(WebInspector.console, "afterShow", testLocalsCompletion);
-            WebInspector.showConsole();
-        }
-    }
-
-    function testLocalsCompletion() {
-        checkCompletions("th", ["parameter1", "closureLocal", "p", "createClosureLocal"], testThisCompletion);
-    }
-
-    function testThisCompletion() {
-        checkCompletions("this.", ["field1", "field2", "m"], testFieldCompletion);
-    }
-
-    function testFieldCompletion() {
-        checkCompletions("this.field1.", ["id", "name"], function() { test.releaseControl(); });
-    }
-
-    function checkCompletions(expression, expectedProperties, callback) {
-        test.addSniffer(WebInspector.console, "_reportCompletions",
-            function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
-                test.assertTrue(!isException, "Exception while collecting completions");
-                for (var i = 0; i < expectedProperties.length; i++) {
-                    var name = expectedProperties[i];
-                    test.assertTrue(result[name], "Name " + name + " not found among the completions: " + JSON.stringify(result));
-                }
-                setTimeout(callback, 0);
-            });
-      WebInspector.console.prompt.text = expression;
-      WebInspector.console.prompt.autoCompleteSoon();
-    }
-
-    this.takeControl();
-};
-
-
-/**
  * Checks current execution line against expectations.
  * @param {WebInspector.SourceFrame} sourceFrame
  * @param {number} lineNumber Expected line number
@@ -731,7 +659,7 @@ TestSuite.prototype._waitForScriptPause = function(expectations, callback)
     // Wait until script is paused.
     test.addSniffer(
         WebInspector.debuggerModel,
-        "pausedScript",
+        "_pausedScript",
         function(details) {
             var callFrames = details.callFrames;
             var functionsOnStack = [];
@@ -805,7 +733,7 @@ TestSuite.prototype._waitUntilScriptsAreParsed = function(expectedScripts, callb
         if (test._scriptsAreParsed(expectedScripts))
             callback();
         else
-            test.addSniffer(WebInspector.debuggerModel, "parsedScriptSource", waitForAllScripts);
+            test.addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", waitForAllScripts);
     }
 
     waitForAllScripts();
@@ -835,29 +763,6 @@ TestSuite.prototype._hookGetPropertiesCallback = function(hook, code)
     } finally {
         accessor.getProperties = orig;
     }
-};
-
-
-/**
- * Tests "Pause" button will pause debugger when a snippet is evaluated.
- */
-TestSuite.prototype.testPauseInEval = function()
-{
-    this.showPanel("scripts");
-
-    var test = this;
-
-    var pauseButton = document.getElementById("scripts-pause");
-    pauseButton.click();
-
-    devtools.tools.evaluateJavaScript("fib(10)");
-
-    this.addSniffer(WebInspector.debuggerModel, "pausedScript",
-        function() {
-            test.releaseControl();
-        });
-
-    test.takeControl();
 };
 
 
