@@ -90,11 +90,16 @@ InspectorTest.captureStackTrace = function(callFrames)
     }
 };
 
-InspectorTest.setBreakpoint = function(url, lineNumber, enabled, condition)
+InspectorTest.setBreakpoint = function(url, lineNumber, enabled, condition, callback)
 {
     var scripts = WebInspector.debuggerModel.scriptsForURL(url);
-    for (var i = 0; i < scripts.length; ++i)
-        WebInspector.debuggerModel.setBreakpoint(scripts[i].sourceID, lineNumber, enabled, condition);
+    if (scripts.length) {
+        WebInspector.debuggerModel.setBreakpoint(scripts[0].sourceID, lineNumber, enabled, condition);
+        callback();
+    } else {
+        var handler = InspectorTest.setBreakpoint.bind(InspectorTest, url, lineNumber, enabled, condition, callback);
+        InspectorTest._addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", handler);
+    }
 }
 
 InspectorTest._pausedScript = function(details)
