@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x385
-  RenderBlock {HTML} at (0,0) size 800x385
-    RenderBody {BODY} at (8,14) size 784x361 [color=#000080]
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 281x19
-          text run at (0,0) width 281: "The five diagrams below should be identical."
-      RenderBlock {DIV} at (0,33) size 138x328 [color=#FFA500]
+layer at (0,0) size 800x391
+  RenderBlock {HTML} at (0,0) size 800x391
+    RenderBody {BODY} at (8,16) size 784x365 [color=#000080]
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 300x21
+          text run at (0,0) width 300: "The five diagrams below should be identical."
+      RenderBlock {DIV} at (0,37) size 138x328 [color=#FFA500]
         RenderBlock {P} at (0,0) size 138x58 [bgcolor=#FF0000] [border: (24px solid #FFFF00)]
           RenderImage {IMG} at (24,24) size 10x10
           RenderImage {IMG} at (34,24) size 10x10
@@ -19,14 +19,14 @@ layer at (0,0) size 800x385
           RenderImage {IMG} at (104,24) size 10x10
           RenderText {#text} at (0,0) size 0x0
         RenderBlock {P} at (0,68) size 138x58 [bgcolor=#FFFF00]
-          RenderText {#text} at (24,24) size 90x11
+          RenderText {#text} at (24,24) size 90x9
             text run at (24,24) width 90: "x x x x x"
         RenderBlock {P} at (0,136) size 138x58 [bgcolor=#FFFF00]
-          RenderText {#text} at (24,24) size 90x11
+          RenderText {#text} at (24,24) size 90x9
             text run at (24,24) width 90: "x x x x x"
         RenderBlock {P} at (0,204) size 138x58 [bgcolor=#FFFF00]
-          RenderText {#text} at (24,24) size 90x11
+          RenderText {#text} at (24,24) size 90x9
             text run at (24,24) width 90: "x x x x x"
         RenderBlock {P} at (0,272) size 138x56 [bgcolor=#FFFF00]
-          RenderText {#text} at (23,23) size 90x11
+          RenderText {#text} at (23,23) size 90x9
             text run at (23,23) width 90: "x x x x x"

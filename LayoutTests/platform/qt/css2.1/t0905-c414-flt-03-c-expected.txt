@@ -1,43 +1,43 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x248
-  RenderBlock {HTML} at (0,0) size 800x66
-    RenderBody {BODY} at (8,14) size 784x38
-      RenderBlock {P} at (0,0) size 784x38 [color=#000080]
-        RenderText {#text} at (0,0) size 742x38
-          text run at (0,0) width 390: "The blue boxes below should be in numeric order and form a "
-          text run at (390,0) width 352: "backwards \"D\". (Boxes labelled \"A\" should be in the first"
-          text run at (0,19) width 54: "column; "
-          text run at (54,19) width 401: "boxes labelled \"B\" should be in the second; arrows indicate the "
-          text run at (455,19) width 119: "correct alignment.)"
-      RenderBlock {DIV} at (14,52) size 280x0
-        RenderBlock (floating) {P} at (167,3) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (75,6) size 29x19
-            text run at (75,6) width 29: "B 2 \x{21E8}"
-        RenderBlock (floating) {P} at (51,3) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (75,6) size 29x19
-            text run at (75,6) width 29: "A 1 \x{21E8}"
-        RenderBlock (floating) {P} at (167,40) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (75,6) size 29x19
-            text run at (75,6) width 29: "B 4 \x{21E8}"
-        RenderBlock (floating) {P} at (3,40) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (6,6) size 29x19
-            text run at (6,6) width 29: "\x{21E6} A 3"
-        RenderBlock (floating) {P} at (167,77) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (75,6) size 29x19
-            text run at (75,6) width 29: "B 6 \x{21E8}"
-        RenderBlock (floating) {P} at (3,77) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (6,6) size 29x19
-            text run at (6,6) width 29: "\x{21E6} A 5"
-        RenderBlock (floating) {P} at (3,114) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (6,6) size 29x19
-            text run at (6,6) width 29: "\x{21E6} A 7"
-        RenderBlock (floating) {P} at (167,114) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (75,6) size 29x19
-            text run at (75,6) width 29: "B 8 \x{21E8}"
-        RenderBlock (floating) {P} at (167,151) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (67,6) size 37x19
-            text run at (67,6) width 37: "B 10 \x{21E8}"
-        RenderBlock (floating) {P} at (51,151) size 110x31 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (75,6) size 29x19
-            text run at (75,6) width 29: "A 9 \x{21E8}"
+layer at (0,0) size 800x74
+  RenderBlock {HTML} at (0,0) size 800x74
+    RenderBody {BODY} at (8,16) size 784x42
+      RenderBlock {P} at (0,0) size 784x42 [color=#000080]
+        RenderText {#text} at (0,0) size 780x42
+          text run at (0,0) width 417: "The blue boxes below should be in numeric order and form a "
+          text run at (417,0) width 363: "backwards \"D\". (Boxes labelled \"A\" should be in the"
+          text run at (0,21) width 90: "first column; "
+          text run at (90,21) width 431: "boxes labelled \"B\" should be in the second; arrows indicate the "
+          text run at (521,21) width 128: "correct alignment.)"
+      RenderBlock {DIV} at (16,58) size 320x0
+        RenderBlock (floating) {P} at (190,4) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (88,7) size 31x21
+            text run at (88,7) width 31: "B 2 \x{21E8}"
+        RenderBlock (floating) {P} at (56,4) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (87,7) size 32x21
+            text run at (87,7) width 32: "A 1 \x{21E8}"
+        RenderBlock (floating) {P} at (190,47) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (88,7) size 31x21
+            text run at (88,7) width 31: "B 4 \x{21E8}"
+        RenderBlock (floating) {P} at (4,47) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (7,7) size 32x21
+            text run at (7,7) width 32: "\x{21E6} A 3"
+        RenderBlock (floating) {P} at (190,90) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (88,7) size 31x21
+            text run at (88,7) width 31: "B 6 \x{21E8}"
+        RenderBlock (floating) {P} at (4,90) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (7,7) size 32x21
+            text run at (7,7) width 32: "\x{21E6} A 5"
+        RenderBlock (floating) {P} at (4,133) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (7,7) size 32x21
+            text run at (7,7) width 32: "\x{21E6} A 7"
+        RenderBlock (floating) {P} at (190,133) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (88,7) size 31x21
+            text run at (88,7) width 31: "B 8 \x{21E8}"
+        RenderBlock (floating) {P} at (190,176) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (80,7) size 39x21
+            text run at (80,7) width 39: "B 10 \x{21E8}"
+        RenderBlock (floating) {P} at (56,176) size 126x35 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
+          RenderText {#text} at (87,7) size 32x21
+            text run at (87,7) width 32: "A 9 \x{21E8}"

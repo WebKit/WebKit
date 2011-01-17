@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x111
-  RenderBlock {HTML} at (0,0) size 800x111
-    RenderBody {BODY} at (8,14) size 784x82
-      RenderBlock {P} at (0,0) size 784x19 [color=#000080]
-        RenderText {#text} at (0,0) size 268x19
-          text run at (0,0) width 268: "The following two bars should be identical:"
-      RenderBlock {DIV} at (15,34) size 180x15
+layer at (0,0) size 800x116
+  RenderBlock {HTML} at (0,0) size 800x116
+    RenderBody {BODY} at (8,16) size 784x85
+      RenderBlock {P} at (0,0) size 784x21 [color=#000080]
+        RenderText {#text} at (0,0) size 291x21
+          text run at (0,0) width 291: "The following two bars should be identical:"
+      RenderBlock {DIV} at (15,37) size 180x15
         RenderBlock {P} at (0,0) size 180x15 [color=#00FF00] [bgcolor=#FFFF00]
-          RenderText {#text} at (0,0) size 45x16
+          RenderText {#text} at (0,0) size 45x14
             text run at (0,0) width 45: "xx "
-          RenderInline {SPAN} at (0,0) size 135x16 [color=#FFA500] [bgcolor=#0000FF]
-            RenderText {#text} at (45,0) size 135x16
+          RenderInline {SPAN} at (0,0) size 135x14 [color=#FFA500] [bgcolor=#0000FF]
+            RenderText {#text} at (45,0) size 135x14
               text run at (45,0) width 135: "xx xx xx "
-          RenderText {#text} at (120,0) size 30x16
+          RenderText {#text} at (120,0) size 30x14
             text run at (120,0) width 30: "xx"
-      RenderBlock {DIV} at (15,64) size 754x18
+      RenderBlock {DIV} at (15,67) size 754x18
         RenderImage {IMG} at (0,0) size 15x15
         RenderImage {IMG} at (15,0) size 15x15
         RenderImage {IMG} at (30,0) size 15x15

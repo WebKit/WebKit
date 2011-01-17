@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x213
-  RenderBlock {HTML} at (0,0) size 800x151
-    RenderBody {BODY} at (8,14) size 784x123
-      RenderBlock {P} at (0,0) size 784x38 [color=#000080]
-        RenderText {#text} at (0,0) size 388x19
-          text run at (0,0) width 246: "In the following test, the purple square "
-          text run at (246,0) width 142: "should be on the left (\x{21E6}"
-        RenderImage {IMG} at (388,3) size 16x16
-        RenderText {#text} at (404,0) size 221x19
-          text run at (404,0) width 221: "), and the teal square on the right ("
-        RenderImage {IMG} at (625,3) size 16x16
-        RenderText {#text} at (641,0) size 721x38
-          text run at (641,0) width 80: "\x{21E8}) of the blue"
-          text run at (0,19) width 63: "rectangle."
-      RenderBlock {DIV} at (0,52) size 784x71
-        RenderBlock {DIV} at (14,0) size 756x71 [color=#0000FF] [bgcolor=#000080]
-          RenderImage {IMG} at (7,7) size 140x140
-          RenderImage {IMG} at (609,7) size 140x140
-          RenderText {#text} at (147,7) size 459x57
-            text run at (147,7) width 424: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle. Blue"
-            text run at (147,26) width 166: "rectangle. Blue rectangle. "
-            text run at (313,26) width 293: "Blue rectangle. Blue rectangle. Blue rectangle."
-            text run at (147,45) width 293: "Blue rectangle. Blue rectangle. Blue rectangle."
+layer at (0,0) size 800x169
+  RenderBlock {HTML} at (0,0) size 800x169
+    RenderBody {BODY} at (8,16) size 784x137
+      RenderBlock {P} at (0,0) size 784x42 [color=#000080]
+        RenderText {#text} at (0,0) size 414x21
+          text run at (0,0) width 265: "In the following test, the purple square "
+          text run at (265,0) width 149: "should be on the left (\x{21E6}"
+        RenderImage {IMG} at (414,2) size 19x19
+        RenderText {#text} at (433,0) size 234x21
+          text run at (433,0) width 234: "), and the teal square on the right ("
+        RenderImage {IMG} at (667,2) size 19x19
+        RenderText {#text} at (686,0) size 770x42
+          text run at (686,0) width 84: "\x{21E8}) of the blue"
+          text run at (0,21) width 66: "rectangle."
+      RenderBlock {DIV} at (0,58) size 784x79
+        RenderBlock {DIV} at (16,0) size 752x79 [color=#0000FF] [bgcolor=#000080]
+          RenderImage {IMG} at (8,8) size 160x160
+          RenderImage {IMG} at (584,8) size 160x160
+          RenderText {#text} at (168,8) size 416x63
+            text run at (168,8) width 416: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
+            text run at (168,29) width 210: "Blue rectangle. Blue rectangle. "
+            text run at (378,29) width 206: "Blue rectangle. Blue rectangle."
+            text run at (168,50) width 416: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
