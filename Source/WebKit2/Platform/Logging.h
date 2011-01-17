@@ -39,6 +39,7 @@ EXTERN_C_BEGIN
 extern WTFLogChannel LogContextMenu;
 extern WTFLogChannel LogSessionState;
 extern WTFLogChannel LogTextInput;
+extern WTFLogChannel LogView;
 
 void initializeLogChannelsIfNecessary(void);
 

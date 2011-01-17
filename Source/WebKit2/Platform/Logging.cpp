@@ -30,6 +30,7 @@
 WTFLogChannel LogSessionState = { 0x00000001, "WebKit2LogLevel", WTFLogChannelOff };
 WTFLogChannel LogContextMenu  = { 0x00000002, "WebKit2LogLevel", WTFLogChannelOff };
 WTFLogChannel LogTextInput    = { 0x00000004, "WebKit2LogLevel", WTFLogChannelOff };
+WTFLogChannel LogTextView     = { 0x00000008, "WebKit2LogLevel", WTFLogChannelOff };
 
 static inline void initializeLogChannel(WTFLogChannel* channel)
 {
@@ -46,6 +47,7 @@ void initializeLogChannelsIfNecessary()
     initializeLogChannel(&LogContextMenu);
     initializeLogChannel(&LogSessionState);
     initializeLogChannel(&LogTextInput);
+    initializeLogChannel(&LogView);
 }
 
 #endif // LOG_DISABLED
