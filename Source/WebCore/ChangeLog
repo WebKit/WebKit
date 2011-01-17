@@ -1,3 +1,10 @@
+2011-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Keep Leopard build happy.
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setBoundsSize):
+
 2011-01-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

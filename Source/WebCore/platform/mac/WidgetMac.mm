@@ -193,6 +193,8 @@ void Widget::setFrameRect(const IntRect& rect)
 
 void Widget::setBoundsSize(const IntSize& size)
 {
+    NSSize nsSize = size;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *outerView = getOuterView();
     if (!outerView)
@@ -201,8 +203,6 @@ void Widget::setBoundsSize(const IntSize& size)
     // Take a reference to this Widget, because sending messages to outerView can invoke arbitrary
     // code, which can deref it.
     RefPtr<Widget> protectedThis(this);
-
-    NSSize nsSize = size;
     if (!NSEqualSizes(nsSize, [outerView bounds].size)) {
         [outerView setBoundsSize:nsSize];
         [outerView setNeedsDisplay:NO];
