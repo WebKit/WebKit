@@ -1,3 +1,12 @@
+2011-01-17  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        Bug 49177's patch enabled platformInit() in super class(ScrollView).
+        But, it didn't removed the function in ScrollViewEfl.cpp.
+
+        * platform/efl/ScrollViewEfl.cpp:
+
 2011-01-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

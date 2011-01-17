@@ -48,10 +48,6 @@ using namespace std;
 
 namespace WebCore {
 
-void ScrollView::platformInit()
-{
-}
-
 void ScrollView::platformDestroy()
 {
 }
