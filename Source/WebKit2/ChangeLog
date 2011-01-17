@@ -1,3 +1,11 @@
+2011-01-17  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Fixed malformed reference to WebKitVSPropsRedirectionDir that broke win build.
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2GeneratedCommon.vsprops:
+        * win/WebKit2WebProcess.vcproj:
+
 2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -4,7 +4,7 @@
 	Version="8.00"
 	Name="WebKit2GeneratedCommon"
 	OutputDirectory="$(ConfigurationBuildDir)\lib"
-	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
+	InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops"
 	>
 	<Tool
 		Name="VCNMakeTool"
