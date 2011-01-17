@@ -80,7 +80,7 @@ if __name__ == '__main__':
   if sys.platform == 'linux2':
     args.extend(['-fmake',
                  '--suffix=.chromium',
-                 '--toplevel-dir=../..',
+                 '--toplevel-dir=../../..',
                  # auto_regeneration doesn't work with toplevel-dir
                  '-Gauto_regeneration=0'])
 

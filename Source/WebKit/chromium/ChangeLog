@@ -1,3 +1,9 @@
+2011-01-16  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, Chromium-linux build fix.
+
+        * gyp_webkit: Fix a relative path to the top directory.
+
 2011-01-16  Adam Barth  <abarth@webkit.org>
 
         Roll Chromium DEPS to pick up the changes reflecting the new location
