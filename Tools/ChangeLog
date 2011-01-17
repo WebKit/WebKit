@@ -1,5 +1,14 @@
 2011-01-17  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed fix after r75908.
+
+        Move WebKit into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52530
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Add Source to the path for Qt API tests.
+
+2011-01-17  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed.
 
         Remove accidentally committed debug printing after r75908.
