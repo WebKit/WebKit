@@ -144,6 +144,9 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
 
 SharedMemory::~SharedMemory()
 {
+    if (CleanupHandler::instance()->hasStartedDeleting())
+        return;
+
     CleanupHandler::instance()->unmark(m_impl);
     delete m_impl;
 }

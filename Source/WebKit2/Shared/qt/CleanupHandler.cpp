@@ -36,7 +36,7 @@ namespace WebKit {
 CleanupHandler* CleanupHandler::theInstance = 0;
 
 CleanupHandler::CleanupHandler()
-    : m_inDeleteObjects(false)
+    : m_hasStartedDeleting(false)
 {
     moveToThread(qApp->thread()); // Ensure that we are acting on the main thread.
     connect(qApp, SIGNAL(aboutToQuit()), SLOT(deleteObjects()), Qt::DirectConnection);
@@ -50,7 +50,7 @@ void CleanupHandler::sigTermHandler(int)
 
 void CleanupHandler::deleteObjects()
 {
-    m_inDeleteObjects = true;
+    m_hasStartedDeleting = true;
     for (unsigned i = 0; i < m_objects.size(); ++i)
         m_objects[i]->deleteLater();
 }

@@ -51,10 +51,12 @@ public:
 
     void unmark(QObject* object)
     {
-        if (m_inDeleteObjects)
+        if (m_hasStartedDeleting)
             return;
         m_objects.removeOne(object);
     }
+
+    bool hasStartedDeleting() const { return m_hasStartedDeleting; }
 
 private slots:
     void deleteObjects();
@@ -66,7 +68,7 @@ private:
     CleanupHandler();
 
     QList<QObject*> m_objects;
-    bool m_inDeleteObjects;
+    bool m_hasStartedDeleting;
 };
 
 } // namespace WebKit
