@@ -61,11 +61,19 @@ public:
     {
     }
 
+    LoadHTMLStringItem(const JSStringRef content, const JSStringRef baseURL, const JSStringRef unreachableURL)
+        : m_content(content)
+        , m_baseURL(baseURL)
+        , m_unreachableURL(unreachableURL)
+    {
+    }
+
 private:
     virtual bool invoke() const;
 
     JSRetainPtr<JSStringRef> m_content;
     JSRetainPtr<JSStringRef> m_baseURL;
+    JSRetainPtr<JSStringRef> m_unreachableURL;
 };
 
 class ReloadItem : public WorkQueueItem {

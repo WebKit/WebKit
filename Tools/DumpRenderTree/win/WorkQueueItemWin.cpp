@@ -89,6 +89,16 @@ bool LoadHTMLStringItem::invoke() const
     BSTR contentBSTR = SysAllocString(content.c_str());
     BSTR baseURLBSTR = SysAllocString(baseURL.c_str());
 
+    if (m_unreachableURL) {
+        wstring unreachableURL = jsStringRefToWString(m_unreachableURL.get());
+        BSTR unreachableURLBSTR = SysAllocString(unreachableURL.c_str());
+        frame->loadAlternateHTMLString(contentBSTR, baseURLBSTR, unreachableURLBSTR);
+        SysFreeString(contentBSTR);
+        SysFreeString(baseURLBSTR);
+        SysFreeString(unreachableURLBSTR);
+        return true;
+    }
+
     frame->loadHTMLString(contentBSTR, baseURLBSTR);
 
     SysFreeString(contentBSTR);

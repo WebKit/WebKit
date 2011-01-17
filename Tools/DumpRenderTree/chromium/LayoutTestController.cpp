@@ -484,15 +484,20 @@ public:
     WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL)
         : m_html(html)
         , m_baseURL(baseURL) {}
+    WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL, const WebURL& unreachableURL)
+        : m_html(html)
+        , m_baseURL(baseURL)
+        , m_unreachableURL(unreachableURL) {}
     bool run(TestShell* shell)
     {
         shell->webView()->mainFrame()->loadHTMLString(
-            WebKit::WebData(m_html.data(), m_html.length()), m_baseURL);
+            WebKit::WebData(m_html.data(), m_html.length()), m_baseURL, m_unreachableURL);
         return true;
     }
 private:
     std::string m_html;
     WebURL m_baseURL;
+    WebURL m_unreachableURL;
 };
 
 void LayoutTestController::queueLoadHTMLString(const CppArgumentList& arguments, CppVariant* result)
@@ -502,7 +507,10 @@ void LayoutTestController::queueLoadHTMLString(const CppArgumentList& arguments,
         WebURL baseURL;
         if (arguments.size() > 1 && arguments[1].isString())
             baseURL = WebURL(GURL(arguments[1].toString()));
-        m_workQueue.addWork(new WorkItemLoadHTMLString(html, baseURL));
+        if (arguments.size() > 2 && arguments[2].isString())
+            m_workQueue.addWork(new WorkItemLoadHTMLString(html, baseURL, WebURL(GURL(arguments[2].toString()))));
+        else
+            m_workQueue.addWork(new WorkItemLoadHTMLString(html, baseURL));
     }
     result->setNull();
 }

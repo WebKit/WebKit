@@ -1,3 +1,18 @@
+2011-01-17  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION: Assertion failure in FrameLoader::continueLoadAfterWillSubmitForm() when
+        navigating back to an unreachable URL
+        https://bugs.webkit.org/show_bug.cgi?id=52388
+
+        Test: http/tests/navigation/go-back-to-error-page.html
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        Do not cache any error pages (which we can recognize as having substitute data and/or an
+        unreachableURL).
+
 2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixing typo in r75952.

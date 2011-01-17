@@ -1,3 +1,23 @@
+2011-01-17  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION: Assertion failure in FrameLoader::continueLoadAfterWillSubmitForm() when
+        navigating back to an unreachable URL
+        https://bugs.webkit.org/show_bug.cgi?id=52388
+
+        Add a test that loads an alternate HTML String for an "unreachable" URL, loads another
+        page, and then goes back to the "unreachable" URL, which is now reachable.
+
+        This tests two things:
+        1) No assertion failure when going back to an unreachable URL.
+        2) There is no page cached for the unreachable URL.
+
+        * http/tests/navigation/go-back-to-error-page-expected.txt: Added.
+        * http/tests/navigation/go-back-to-error-page.html: Added.
+        * http/tests/navigation/resources/page-to-go-back-from.html: Added.
+        * http/tests/navigation/resources/page-treated-as-unreachable.html: Added.
+
 2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: skip flaky inspector test (will look at it tomorrow).

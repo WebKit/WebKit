@@ -858,8 +858,16 @@ static JSValueRef queueLoadHTMLStringCallback(JSContextRef context, JSObjectRef 
         baseURL.adopt(JSStringCreateWithUTF8CString(""));
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->queueLoadHTMLString(content.get(), baseURL.get());
 
+    if (argumentCount >= 3) {
+        JSRetainPtr<JSStringRef> unreachableURL;
+        unreachableURL.adopt(JSValueToStringCopy(context, arguments[2], exception));
+        ASSERT(!*exception);
+        controller->queueLoadAlternateHTMLString(content.get(), baseURL.get(), unreachableURL.get());
+        return JSValueMakeUndefined(context);
+    }
+
+    controller->queueLoadHTMLString(content.get(), baseURL.get());
     return JSValueMakeUndefined(context);
 }
 
@@ -2101,6 +2109,11 @@ JSStaticFunction* LayoutTestController::staticFunctions()
 void LayoutTestController::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL)
 {
     WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL));
+}
+
+void LayoutTestController::queueLoadAlternateHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL)
+{
+    WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL, unreachableURL));
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBack)

@@ -61,6 +61,12 @@ bool LoadHTMLStringItem::invoke() const
 {
     GOwnPtr<gchar> content(JSStringCopyUTF8CString(m_content.get()));
     GOwnPtr<gchar> baseURL(JSStringCopyUTF8CString(m_baseURL.get()));
+
+    if (m_unreachableURL) {
+        GOwnPtr<gchar> unreachableURL(JSStringCopyUTF8CString(m_unreachableURL.get()));
+        webkit_web_frame_load_alternate_string(mainFrame, content.get(), baseURL.get(), unreachableURL.get());
+        return true;
+    }
     webkit_web_frame_load_string(mainFrame, content.get(), 0, 0, baseURL.get());
     return true;
 }

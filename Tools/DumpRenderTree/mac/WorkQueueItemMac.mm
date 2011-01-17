@@ -59,6 +59,12 @@ bool LoadHTMLStringItem::invoke() const
     RetainPtr<CFStringRef> contentCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_content.get()));
     RetainPtr<CFStringRef> baseURLCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_baseURL.get()));
 
+    if (m_unreachableURL) {
+        RetainPtr<CFStringRef> unreachableURLCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, m_unreachableURL.get()));
+        [mainFrame loadAlternateHTMLString:(NSString *)contentCF.get() baseURL:[NSURL URLWithString:(NSString *)baseURLCF.get()] forUnreachableURL:[NSURL URLWithString:(NSString *)unreachableURLCF.get()]];
+        return true;
+    }
+
     [mainFrame loadHTMLString:(NSString *)contentCF.get() baseURL:[NSURL URLWithString:(NSString *)baseURLCF.get()]];
     return true;
 }

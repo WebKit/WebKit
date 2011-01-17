@@ -1,3 +1,34 @@
+2011-01-17  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION: Assertion failure in FrameLoader::continueLoadAfterWillSubmitForm() when
+        navigating back to an unreachable URL
+        https://bugs.webkit.org/show_bug.cgi?id=52388
+
+        Add a third parameter (unreachableURL) to queueLoadHTMLString.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (queueLoadHTMLStringCallback):
+        (LayoutTestController::queueLoadHTMLString):
+        (LayoutTestController::queueLoadAlternateHTMLString):
+        * DumpRenderTree/LayoutTestController.h:
+
+        * DumpRenderTree/WorkQueueItem.h:
+        (LoadHTMLStringItem::LoadHTMLStringItem):
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (WorkItemLoadHTMLString::WorkItemLoadHTMLString):
+        (WorkItemLoadHTMLString::run):
+        (LayoutTestController::queueLoadHTMLString):
+
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (LoadHTMLStringItem::invoke):
+        * DumpRenderTree/mac/WorkQueueItemMac.mm:
+        (LoadHTMLStringItem::invoke):
+        * DumpRenderTree/win/WorkQueueItemWin.cpp:
+        (LoadHTMLStringItem::invoke):
+
 2011-01-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.
