@@ -59,6 +59,9 @@ MainFrameScrollbarGtk::~MainFrameScrollbarGtk()
 
 void MainFrameScrollbarGtk::attachAdjustment(GtkAdjustment* adjustment)
 {
+    if (m_adjustment.get() == adjustment)
+        return;
+
     if (m_adjustment)
         detachAdjustment();
 
@@ -66,9 +69,10 @@ void MainFrameScrollbarGtk::attachAdjustment(GtkAdjustment* adjustment)
     if (!m_adjustment)
         return;
 
-    g_signal_connect(m_adjustment.get(), "value-changed", G_CALLBACK(MainFrameScrollbarGtk::gtkValueChanged), this);
     updateThumbProportion();
     updateThumbPosition();
+    g_signal_connect(m_adjustment.get(), "value-changed", G_CALLBACK(MainFrameScrollbarGtk::gtkValueChanged), this);
+
 }
 
 void MainFrameScrollbarGtk::detachAdjustment()
@@ -108,7 +112,9 @@ void MainFrameScrollbarGtk::updateThumbProportion()
 
 void MainFrameScrollbarGtk::gtkValueChanged(GtkAdjustment*, MainFrameScrollbarGtk* that)
 {
-    that->setValue(static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get())), NotFromScrollAnimator);
+    int newValue = static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get()));
+    if (newValue != that->value())
+        that->setValue(newValue, NotFromScrollAnimator);
 }
 
 void MainFrameScrollbarGtk::paint(GraphicsContext* context, const IntRect& rect)

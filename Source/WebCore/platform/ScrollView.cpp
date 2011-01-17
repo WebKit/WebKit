@@ -75,6 +75,7 @@ void ScrollView::addChild(PassRefPtr<Widget> prpChild)
         platformAddChild(child);
 }
 
+#if !PLATFORM(GTK)
 void ScrollView::removeChild(Widget* child)
 {
     ASSERT(child->parent() == this);
@@ -83,6 +84,7 @@ void ScrollView::removeChild(Widget* child)
     if (child->platformWidget())
         platformRemoveChild(child);
 }
+#endif
 
 void ScrollView::setHasHorizontalScrollbar(bool hasBar)
 {
@@ -1066,11 +1068,11 @@ void ScrollView::setScrollOrigin(const IntPoint& origin, bool updatePosition)
         updateScrollbars(scrollOffset());
 }
 
-#if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(EFL)
-
 void ScrollView::platformInit()
 {
 }
+
+#if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(EFL)
 
 void ScrollView::platformDestroy()
 {
@@ -1078,7 +1080,7 @@ void ScrollView::platformDestroy()
 
 #endif
 
-#if !PLATFORM(WX) && !PLATFORM(GTK) && !PLATFORM(QT) && !PLATFORM(MAC)
+#if !PLATFORM(WX) && !PLATFORM(QT) && !PLATFORM(MAC)
 
 void ScrollView::platformAddChild(Widget*)
 {

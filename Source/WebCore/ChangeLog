@@ -1,3 +1,25 @@
+2011-01-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] fast/events/scroll-after-click-on-tab-index has been failing on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=49177
+
+        * platform/ScrollView.cpp: Move the platform guards around a little. GTK+
+        now shares the implementation of platformAddChild and platformRemoveChild,
+        but has its own implementation of removeChild, which knows how to inform
+        main frame scrollbars that they no longer control the WebCore scrollbar.
+        * platform/gtk/MainFrameScrollbarGtk.cpp:
+        (MainFrameScrollbarGtk::attachAdjustment): If we are attaching the same adjustment
+        that we already have, bail out early. Apply the value changed signal handler
+        after configuring the adjustment. We don't want our reset of the adjustment to
+        stomp on WebCore values.
+        (MainFrameScrollbarGtk::gtkValueChanged): Do not adjust the value if the WebCore
+        state already matches ours. This prevents some unnecessary recursion
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::removeChild): Added, special cases main frame scrollbars
+        which need their adjustments detached.
+
 2011-01-13  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Antti Koivisto.

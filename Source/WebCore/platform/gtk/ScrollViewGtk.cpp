@@ -51,10 +51,6 @@ using namespace std;
 
 namespace WebCore {
 
-void ScrollView::platformInit()
-{
-}
-
 void ScrollView::platformDestroy()
 {
     m_horizontalAdjustment = 0;
@@ -76,6 +72,21 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
 
     // VerticalScrollbar
     return MainFrameScrollbarGtk::create(this, orientation, m_verticalAdjustment.get());
+}
+
+void ScrollView::removeChild(Widget* child)
+{
+    ASSERT(child->parent() == this);
+    child->setParent(0);
+    m_children.remove(child);
+
+    // We need to override the version of ScrollView::removeChild in ScrollView.cpp because
+    // we must inform main frame scrollbars that their adjustments no longer control the
+    // WebCore scrollbars. We cannot use platformRemoveChild for this task, because even
+    // main frame scrollbars do not have a platform widget (a GtkAdjustment is not a GtkWidget).
+    if (parent() || (child != horizontalScrollbar()) && (child != verticalScrollbar()))
+        return;
+    static_cast<MainFrameScrollbarGtk*>(child)->detachAdjustment();
 }
 
 void ScrollView::setHorizontalAdjustment(GtkAdjustment* hadj, bool resetValues)
@@ -160,14 +171,6 @@ void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, boo
 {
     setHorizontalAdjustment(hadj, resetValues);
     setVerticalAdjustment(vadj, resetValues);
-}
-
-void ScrollView::platformAddChild(Widget* child)
-{
-}
-
-void ScrollView::platformRemoveChild(Widget* child)
-{
 }
 
 IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
