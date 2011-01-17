@@ -619,26 +619,26 @@ WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
 
 // Inspector tests in Debug build are very slow.  If we remove SLOW, we'll see
 // random TIMEOUTs.  Is this issue DRT-specific?
-BUG_DRT WIN DEBUG SLOW : inspector = PASS
-BUG_DRT WIN DEBUG SLOW : http/tests/inspector = PASS
-BUG_DRT WIN DEBUG SLOW : http/tests/inspector-enabled = PASS
+BUG_DRT WIN LINUX DEBUG SLOW : inspector = PASS
+BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector = PASS
+BUG_DRT WIN LINUX DEBUG SLOW : http/tests/inspector-enabled = PASS
 
 // Add support for inspector layout tests on non-Windows.
-BUGCR26734 LINUX MAC SKIP : inspector = PASS
-BUGCR26734 LINUX MAC SKIP : http/tests/inspector = PASS
-BUGCR26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
+BUGCR26734 MAC SKIP : inspector = PASS
+BUGCR26734 MAC SKIP : http/tests/inspector = PASS
+BUGCR26734 MAC SKIP : http/tests/inspector-enabled = PASS
 
-BUGCR66087 WIN SLOW : inspector/styles-disable-then-enable.html = PASS TEXT
-BUGCR66087 WIN : inspector/timeline-layout.html = CRASH TIMEOUT PASS TEXT
-BUGCR66087 WIN : inspector/timeline-parse-html.html = CRASH TIMEOUT PASS TEXT
+BUGCR66087 WIN LINUX SLOW : inspector/styles-disable-then-enable.html = PASS TEXT
+BUGCR66087 WIN LINUX : inspector/timeline-layout.html = CRASH TIMEOUT PASS TEXT
+BUGCR66087 WIN LINUX : inspector/timeline-parse-html.html = CRASH TIMEOUT PASS TEXT
 // WebKit roll 74708:74711
-BUGCR68165 WIN DEBUG SLOW : inspector/styles-source-lines.html = PASS
-BUGCR66087 WIN SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
+BUGCR68165 WIN LINUX DEBUG SLOW : inspector/styles-source-lines.html = PASS
+BUGCR66087 WIN LINUX SLOW : inspector/storage-panel-dom-storage.html = PASS TEXT
 
-BUG_DRT WIN : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
-BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
-BUGCR66087 WIN SLOW : http/tests/inspector/console-resource-errors.html = PASS TEXT
-BUGCR66087 WIN SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
+BUG_DRT WIN LINUX : http/tests/inspector-enabled/console-log-before-frame-navigation.html = TEXT
+BUG_DRT WIN LINUX : http/tests/inspector/change-iframe-src.html = CRASH
+BUGCR66087 WIN LINUX SLOW : http/tests/inspector/console-resource-errors.html = PASS TEXT
+BUGCR66087 WIN LINUX SLOW : http/tests/inspector/inspect-iframe-from-different-domain.html = PASS TEXT
 
 // -----------------------------------------------------------------
 // Other
@@ -2973,10 +2973,10 @@ BUG_YURYS DEBUG SLOW : fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUGCR67139 WIN MAC LINUX DEBUG : storage/close-during-stress-test.html = CRASH PASS
 
 // These tests are flaky.
-BUGCR67209 WIN DEBUG : inspector/console-uncaught-exception-in-eval.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN DEBUG : inspector/timeline-enum-stability.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN DEBUG : inspector/console-clear.html = CRASH TIMEOUT PASS
-BUGCR67209 WIN DEBUG : inspector/styles-disable-then-delete.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/console-uncaught-exception-in-eval.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/timeline-enum-stability.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/console-clear.html = CRASH TIMEOUT PASS
+BUGCR67209 WIN LINUX DEBUG : inspector/styles-disable-then-delete.html = CRASH TIMEOUT PASS
 
 // WebKit roll 74255:74308
 BUGCR67416 : fast/text/emphasis.html = FAIL
@@ -2986,15 +2986,12 @@ BUGCR67540 WIN LINUX : fast/text/emphasis-avoid-ruby.html = IMAGE
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-h.html = IMAGE
 BUGCR67540 WIN LINUX : fast/repaint/text-emphasis-v.html = IMAGE
 
-BUGCR67662 WIN RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
-BUGCR67662 WIN DEBUG SLOW : http/tests/inspector/console-websocket-error.html = TEXT
-BUGCR68173 WIN RELEASE : http/tests/inspector/extensions-resources-redirect.html = TIMEOUT
-BUGCR68173 WIN DEBUG : http/tests/inspector/extensions-resources-redirect.html = CRASH TIMEOUT
+BUGCR67662 WIN LINUX RELEASE : http/tests/inspector/console-websocket-error.html = TEXT
+BUGCR67662 WIN LINUX DEBUG SLOW : http/tests/inspector/console-websocket-error.html = TEXT
+BUGCR68173 WIN LINUX RELEASE : http/tests/inspector/extensions-resources-redirect.html = TIMEOUT
+BUGCR68173 WIN LINUX DEBUG : http/tests/inspector/extensions-resources-redirect.html = CRASH TIMEOUT
 
 BUGCR67442 WIN LINUX : fast/canvas/fillText-shadow.html = TEXT
-
-BUGWK51398 MAC : inspector/console-dir-global.html = TIMEOUT
-BUGWK51398 MAC : inspector/debugger-expand-scope.html = TIMEOUT
 
 // WebKit roll 74534:74545
 BUGWK51536 : fast/css/box-shadow.html = FAIL TIMEOUT
