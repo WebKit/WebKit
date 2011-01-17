@@ -77,8 +77,6 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 
 - (void)_frameOrBoundsChanged;
 
-- (NSImage *)_dragImageForLinkElement:(NSDictionary *)element;
-- (NSImage *)_dragImageForURL:(NSString*)linkURL withLabel:(NSString*)label;
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event;
 - (WebPluginController *)_pluginController;
 

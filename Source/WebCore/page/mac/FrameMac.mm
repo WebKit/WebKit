@@ -255,50 +255,33 @@ NSString* Frame::matchLabelsAgainstElement(NSArray* labels, Element* element)
 
 NSImage* Frame::imageFromRect(NSRect rect) const
 {
-    NSView* view = m_view->documentView();
-    if (!view)
-        return nil;
-    if (![view respondsToSelector:@selector(drawSingleRect:)])
-        return nil;
+    PaintBehavior oldBehavior = m_view->paintBehavior();
+    m_view->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
     
-    PaintBehavior oldPaintBehavior = m_view->paintBehavior();
-    m_view->setPaintBehavior(oldPaintBehavior | PaintBehaviorFlattenCompositingLayers);
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    NSRect bounds = [view bounds];
-    
-    // Round image rect size in window coordinate space to avoid pixel cracks at HiDPI (4622794)
-    rect = [view convertRect:rect toView:nil];
-    rect.size.height = roundf(rect.size.height);
-    rect.size.width = roundf(rect.size.width);
-    rect = [view convertRect:rect fromView:nil];
-    
     NSImage* resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
-
+    
     if (rect.size.width != 0 && rect.size.height != 0) {
         [resultImage setFlipped:YES];
         [resultImage lockFocus];
-        CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-        CGContextSaveGState(context);
-        CGContextTranslateCTM(context, bounds.origin.x - rect.origin.x, bounds.origin.y - rect.origin.y);
 
-        // Note: Must not call drawRect: here, because drawRect: assumes that it's called from AppKit's
-        // display machinery. It calls getRectsBeingDrawn:count:, which can only be called inside
-        // when a real AppKit display is underway.
-        [view drawSingleRect:rect];
+        GraphicsContext graphicsContext((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort]);        
+        graphicsContext.save();
+        graphicsContext.translate(-rect.origin.x, -rect.origin.y);
+        m_view->paintContents(&graphicsContext, IntRect(rect));
+        graphicsContext.restore();
 
-        CGContextRestoreGState(context);
         [resultImage unlockFocus];
         [resultImage setFlipped:NO];
     }
-
-    m_view->setPaintBehavior(oldPaintBehavior);
+    
+    m_view->setPaintBehavior(oldBehavior);
     return resultImage;
-
+    
     END_BLOCK_OBJC_EXCEPTIONS;
     
-    m_view->setPaintBehavior(oldPaintBehavior);
+    m_view->setPaintBehavior(oldBehavior);
     return nil;
 }
 

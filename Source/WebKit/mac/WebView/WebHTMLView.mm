@@ -68,7 +68,6 @@
 #import "WebPreferences.h"
 #import "WebPreferencesPrivate.h"
 #import "WebResourcePrivate.h"
-#import "WebStringTruncator.h"
 #import "WebTextCompletionController.h"
 #import "WebTypesInternal.h"
 #import "WebUIDelegatePrivate.h"
@@ -359,18 +358,6 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = 2;
 #define PrintingOrphanShrinkAdjustment  1.1f
 
 #define AUTOSCROLL_INTERVAL             0.1f
-
-#define DRAG_LABEL_BORDER_X             4.0f
-//Keep border_y in synch with DragController::LinkDragBorderInset
-#define DRAG_LABEL_BORDER_Y             2.0f
-#define DRAG_LABEL_RADIUS               5.0f
-#define DRAG_LABEL_BORDER_Y_OFFSET              2.0f
-
-#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP        120.0f
-#define MAX_DRAG_LABEL_WIDTH                    320.0f
-
-#define DRAG_LINK_LABEL_FONT_SIZE   11.0f
-#define DRAG_LINK_URL_FONT_SIZE   10.0f
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE
@@ -1737,87 +1724,6 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 {
     // FIXME: We should put data for NSHTMLPboardType on the pasteboard but Microsoft Excel doesn't like our format of HTML (3640423).
     return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
-}
-
-- (NSImage *)_dragImageForURL:(NSString*)urlString withLabel:(NSString*)label
-{
-    BOOL drawURLString = YES;
-    BOOL clipURLString = NO, clipLabelString = NO;
-    
-    if (!label) {
-        drawURLString = NO;
-        label = urlString;
-    }
-    
-    NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:DRAG_LINK_LABEL_FONT_SIZE]
-                                                           toHaveTrait:NSBoldFontMask];
-    NSFont *urlFont = [NSFont systemFontOfSize: DRAG_LINK_URL_FONT_SIZE];
-    NSSize labelSize;
-    labelSize.width = [label _web_widthWithFont: labelFont];
-    labelSize.height = [labelFont ascender] - [labelFont descender];
-    if (labelSize.width > MAX_DRAG_LABEL_WIDTH){
-        labelSize.width = MAX_DRAG_LABEL_WIDTH;
-        clipLabelString = YES;
-    }
-    
-    NSSize imageSize, urlStringSize;
-    imageSize.width = labelSize.width + DRAG_LABEL_BORDER_X * 2.0f;
-    imageSize.height = labelSize.height + DRAG_LABEL_BORDER_Y * 2.0f;
-    if (drawURLString) {
-        urlStringSize.width = [urlString _web_widthWithFont: urlFont];
-        urlStringSize.height = [urlFont ascender] - [urlFont descender];
-        imageSize.height += urlStringSize.height;
-        if (urlStringSize.width > MAX_DRAG_LABEL_WIDTH) {
-            imageSize.width = max(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
-            clipURLString = YES;
-        } else {
-            imageSize.width = max(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
-        }
-    }
-    NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
-    [dragImage lockFocus];
-    
-    [[NSColor colorWithDeviceRed: 0.7f green: 0.7f blue: 0.7f alpha: 0.8f] set];
-    
-    // Drag a rectangle with rounded corners/
-    NSBezierPath *path = [NSBezierPath bezierPath];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(0.0f, 0.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(0, imageSize.height - DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2.0f, imageSize.height - DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
-    [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2.0f, 0.0f, DRAG_LABEL_RADIUS * 2.0f, DRAG_LABEL_RADIUS * 2.0f)];
-    
-    [path appendBezierPathWithRect: NSMakeRect(DRAG_LABEL_RADIUS, 0.0f, imageSize.width - DRAG_LABEL_RADIUS * 2.0f, imageSize.height)];
-    [path appendBezierPathWithRect: NSMakeRect(0.0f, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 10.0f, imageSize.height - 2.0f * DRAG_LABEL_RADIUS)];
-    [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20.0f, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20.0f, imageSize.height - 2.0f * DRAG_LABEL_RADIUS)];
-    [path fill];
-    
-    NSColor *topColor = [NSColor colorWithDeviceWhite:0.0f alpha:0.75f];
-    NSColor *bottomColor = [NSColor colorWithDeviceWhite:1.0f alpha:0.5f];
-    if (drawURLString) {
-        if (clipURLString)
-            urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2.0f) withFont:urlFont];
-        
-        [urlString _web_drawDoubledAtPoint:NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y - [urlFont descender]) 
-                              withTopColor:topColor bottomColor:bottomColor font:urlFont];
-    }
-    
-    if (clipLabelString)
-        label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2.0f) withFont:labelFont];
-    [label _web_drawDoubledAtPoint:NSMakePoint (DRAG_LABEL_BORDER_X, imageSize.height - DRAG_LABEL_BORDER_Y_OFFSET - [labelFont pointSize])
-                      withTopColor:topColor bottomColor:bottomColor font:labelFont];
-    
-    [dragImage unlockFocus];
-    
-    return dragImage;
-}
-
-- (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
-{
-    NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
-    
-    NSString *label = [element objectForKey: WebElementLinkLabelKey];
-    NSString *urlString = [linkURL _web_userVisibleString];
-    return [self _dragImageForURL:urlString withLabel:label];
 }
 
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
