@@ -1,3 +1,12 @@
+2011-01-18  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] Not implemented warnings should not break layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=52616
+
+        * WebKit2Prefix.h: Define DISABLE_NOT_IMPLEMENTED_WARNINGS on Qt.
+
 2011-01-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Windows build fix. Unreviewed.
