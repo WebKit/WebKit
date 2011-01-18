@@ -1,5 +1,11 @@
 2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, remove wrong chromium expectation for console-xhr-logging test.
+
+        * platform/chromium/http/tests/inspector/console-xhr-logging-expected.txt: Removed.
+
+2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, test fix for r76019.
 
         * http/tests/inspector-enabled/console-log-before-frame-navigation-expected.txt:
