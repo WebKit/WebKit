@@ -5099,3 +5099,7 @@ fast/workers/storage/change-version-sync.html
 fast/workers/storage/interrupt-database.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
+
+# [Qt] Fix LoadHTMLStringItem::invoke() after r75966
+# https://bugs.webkit.org/show_bug.cgi?id=52614
+http/tests/navigation/go-back-to-error-page.html
