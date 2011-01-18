@@ -1,5 +1,27 @@
 2011-01-17  Adam Roben  <aroben@apple.com>
 
+        Remove contexts from WKCACFContextFlusher before destroying them
+
+        We aren't really using WKCACFContextFlusher for anything useful at the
+        moment, but that will probably change in the near future.
+
+        I couldn't come up with a way to test this because it isn't possible to
+        resize a window in DumpRenderTree.
+
+        Fixes <http://webkit.org/b/52573> REGRESSION (r75262): Crash beneath
+        WKCACFContextFlusher::flushAllContexts when resizing window on page
+        that uses accelerated compositing
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::~WKCACFLayerRenderer): Remove our
+        context from WKCACFContextFlusher. (This code was erroneously removed
+        from WKCACFLayerRenderer::destroyRenderer in r75262. This is a more
+        sensible place for it.)
+
+2011-01-17  Adam Roben  <aroben@apple.com>
+
         Don't access the CACFLayerRef's sublayers directly from PlatformCALayer
 
         There might be a secret extra sublayer (the tile parent layer) that

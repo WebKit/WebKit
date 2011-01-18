@@ -225,6 +225,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
 WKCACFLayerRenderer::~WKCACFLayerRenderer()
 {
     destroyRenderer();
+    WKCACFContextFlusher::shared().removeContext(m_context);
     wkCACFContextDestroy(m_context);
 }
 
