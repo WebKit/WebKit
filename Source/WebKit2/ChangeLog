@@ -1,3 +1,30 @@
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NPN_PopUpContextMenu
+        https://bugs.webkit.org/show_bug.cgi?id=52646
+        <rdar://problem/8735616>
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_PopUpContextMenu):
+        Call NetscapePlugin::popUpContextMenu.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_currentMouseEvent.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add m_currentMouseEvent.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::popUpContextMenu):
+        Convert the coordinates from the current mouse event to screen coordinates and call
+        WKPopupContextMenu.
+
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        Update m_currentMouseEvent.
+
 2011-01-18  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

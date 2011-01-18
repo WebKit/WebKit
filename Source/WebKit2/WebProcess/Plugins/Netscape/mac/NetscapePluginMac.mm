@@ -157,6 +157,20 @@ NPBool NetscapePlugin::convertPoint(double sourceX, double sourceY, NPCoordinate
     return true;
 }
 
+
+NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
+{
+    if (!m_currentMouseEvent)
+        return NPERR_GENERIC_ERROR;
+
+    double screenX, screenY;
+    if (!convertPoint(m_currentMouseEvent->data.mouse.pluginX, m_currentMouseEvent->data.mouse.pluginY, NPCoordinateSpacePlugin, screenX, screenY, NPCoordinateSpaceScreen))
+        ASSERT_NOT_REACHED();
+
+    WKPopupContextMenu(reinterpret_cast<NSMenu *>(npMenu), NSMakePoint(screenX, screenY));
+    return NPERR_NO_ERROR;
+}
+
 #ifndef NP_NO_CARBON
 typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 
@@ -474,7 +488,19 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
     switch (m_eventModel) {
         case NPEventModelCocoa: {
             NPCocoaEvent event = initializeMouseEvent(mouseEvent, m_frameRect.location());
-            return NPP_HandleEvent(&event);
+
+            NPCocoaEvent* previousMouseEvent = m_currentMouseEvent;
+            m_currentMouseEvent = &event;
+
+            // Protect against NPP_HandleEvent causing the plug-in to be destroyed, since we
+            // access m_currentMouseEvent afterwards.
+            RefPtr<NetscapePlugin> protect(this);
+
+            bool returnValue = NPP_HandleEvent(&event);
+
+            m_currentMouseEvent = previousMouseEvent;
+
+            return returnValue;
         }
 
 #ifndef NP_NO_CARBON

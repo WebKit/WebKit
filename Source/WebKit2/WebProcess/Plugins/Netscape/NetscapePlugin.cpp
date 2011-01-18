@@ -67,6 +67,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
 #if PLATFORM(MAC)
     , m_drawingModel(static_cast<NPDrawingModel>(-1))
     , m_eventModel(static_cast<NPEventModel>(-1))
+    , m_currentMouseEvent(0)
     , m_pluginHasFocus(false)
     , m_windowHasFocus(false)
 #ifndef NP_NO_CARBON

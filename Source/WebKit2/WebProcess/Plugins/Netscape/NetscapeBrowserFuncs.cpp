@@ -766,10 +766,11 @@ static void NPN_UnscheduleTimer(NPP instance, uint32_t timerID)
 }
 
 #if PLATFORM(MAC)
-static NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
+static NPError NPN_PopUpContextMenu(NPP npp, NPMenu* menu)
 {
-    notImplemented();
-    return NPERR_GENERIC_ERROR;
+    RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+    return plugin->popUpContextMenu(menu);
 }
 
 static NPBool NPN_ConvertPoint(NPP npp, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double* destX, double* destY, NPCoordinateSpace destSpace)

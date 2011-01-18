@@ -54,6 +54,7 @@ public:
     NPError setDrawingModel(NPDrawingModel);
     NPError setEventModel(NPEventModel);
     NPBool convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double& destX, double& destY, NPCoordinateSpace destSpace);
+    NPError popUpContextMenu(NPMenu*);
 
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
@@ -204,6 +205,8 @@ private:
     NPDrawingModel m_drawingModel;
     NPEventModel m_eventModel;
     RetainPtr<PlatformLayer> m_pluginLayer;
+
+    NPCocoaEvent* m_currentMouseEvent;
 
     bool m_pluginHasFocus;
     bool m_windowHasFocus;
