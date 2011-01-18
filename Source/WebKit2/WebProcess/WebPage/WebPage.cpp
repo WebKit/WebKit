@@ -1590,7 +1590,13 @@ void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, const SandboxE
 {
     ASSERT(frame->isMainFrame());
 
-    ASSERT(!m_pendingProvisionalSandboxExtension);
+    // If we get two beginLoad calls in succession, without a provisional load starting, then
+    // m_pendingProvisionalSandboxExtension will be non-null. Invalidate and null out the extension if that is the case.
+    if (m_pendingProvisionalSandboxExtension) {
+        m_pendingProvisionalSandboxExtension->invalidate();
+        m_pendingProvisionalSandboxExtension = nullptr;
+    }
+        
     m_pendingProvisionalSandboxExtension = SandboxExtension::create(handle);
 }
 
@@ -1633,7 +1639,7 @@ void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
         return;
 
     m_provisionalSandboxExtension->invalidate();
-    m_provisionalSandboxExtension = 0;
+    m_provisionalSandboxExtension = nullptr;
 }
 
 bool WebPage::hasLocalDataForURL(const KURL& url)

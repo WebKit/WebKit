@@ -1,5 +1,21 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Assertion when loading two URLs in quick succession
+        https://bugs.webkit.org/show_bug.cgi?id=52649
+        <rdar://problem/8764645>
+
+        If beginLoad is called twice without didStartProvisionalLoad being called in between,
+        m_pendingProvisionalSandboxExtension would be non-null and an assert would fire.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::SandboxExtensionTracker::beginLoad):
+        Instead of asserting that m_pendingProvisionalSandboxExtension is null, invalidate it
+        if it is not null, since that's valid.
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement NPN_PopUpContextMenu
