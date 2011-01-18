@@ -1,5 +1,12 @@
 2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, test fix for r76019.
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation-expected.txt:
+        * http/tests/inspector-enabled/console-log-before-frame-navigation.html:
+
+2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: fix flaky debugger tests.
