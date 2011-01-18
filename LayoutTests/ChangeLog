@@ -1,6 +1,13 @@
 2011-01-17  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Not reviewed, test expectations update.
+        Same as previous patch, now for -gpu file.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
+2011-01-17  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, test expectations update.
         fast/canvas/canvas-fillPath-pattern-shadow.html fails on Win and Linux.
 
         * platform/chromium/test_expectations.txt:
