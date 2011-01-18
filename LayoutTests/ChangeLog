@@ -1,3 +1,16 @@
+2011-01-18  Jeremy Orlow  <jorlow@chromium.org>
+
+        [Chromium] Create baselines for svg/css/text-gradient-shadow.svg
+        https://bugs.webkit.org/show_bug.cgi?id=52640
+
+        * platform/chromium-linux/svg/css/text-gradient-shadow-expected.checksum: Added.
+        * platform/chromium-linux/svg/css/text-gradient-shadow-expected.png: Added.
+        * platform/chromium-mac/svg/css/text-gradient-shadow-expected.checksum: Added.
+        * platform/chromium-win/svg/css/text-gradient-shadow-expected.checksum: Added.
+        * platform/chromium-win/svg/css/text-gradient-shadow-expected.png: Added.
+        * platform/chromium-win/svg/css/text-gradient-shadow-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-18  Martin Robinson  <mrobinson@igalia.com>
 
         Skip two tests which were incorrectly passing before GTK+
