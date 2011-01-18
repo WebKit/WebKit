@@ -1,3 +1,17 @@
+2011-01-18  Dimitry Andric  <dim@freebsd.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix linking JavaScriptCore on FreeBSD/amd64
+        https://bugs.webkit.org/show_bug.cgi?id=52591
+
+        Linking of JavaScriptCore on FreeBSD/amd64 fails, for the same reason as
+        in bug 28422: cti_vm_throw needs a "@plt" suffix, otherwise the linker
+        complains about the relocation type.
+
+        * jit/JITStubs.cpp: use @plt suffix on x86_64 platforms, for both Linux
+        and FreeBSD.
+
 2011-01-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Antti Koivisto.
