@@ -1,3 +1,13 @@
+2011-01-18  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác
+
+        Fixing ChangeLog
+
+        Removing a line introduced by
+        http://trac.webkit.org/changeset/75743/trunk/Source/WebCore/ChangeLog
+        Removing an unnecessary space before a time stamp.
+
 2011-01-17  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
@@ -180,7 +190,7 @@
         ():
         * inspector/JavaScriptCallFrame.idl:
 
- 2011-01-18  Antti Koivisto  <antti@apple.com>
+2011-01-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.
 
@@ -3252,7 +3262,6 @@
 
         * html/canvas/WebGLRenderingContext.cpp:
 
->>>>>>> .r75740
 2011-01-13  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.
