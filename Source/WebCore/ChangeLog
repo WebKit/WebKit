@@ -1,3 +1,14 @@
+2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [REGRESSION] JavaScript exceptions aren't shown in source frame.
+        https://bugs.webkit.org/show_bug.cgi?id=52623
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+
 2011-01-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Revert r76017. No need to guard InspectorInstrumentation:: in WebCore.

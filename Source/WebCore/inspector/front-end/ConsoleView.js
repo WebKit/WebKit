@@ -681,6 +681,15 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCou
     this._parameters = parameters;
     this._stackTrace = stackTrace;
     this._requestId = requestId;
+
+    if (stackTrace && stackTrace.length) {
+        var topCallFrame = stackTrace[0];
+        if (!this.url)
+            this.url = topCallFrame.scriptName;
+        if (!this.line)
+            this.line = topCallFrame.lineNumber;
+    }
+
     this._formatMessage();
 }
 
@@ -737,17 +746,8 @@ WebInspector.ConsoleMessage.prototype = {
         this._formattedMessage = document.createElement("span");
         this._formattedMessage.className = "console-message-text source-code";
 
-        if (stackTrace && stackTrace.length) {
-            var topCallFrame = stackTrace[0];
-            var sourceName = topCallFrame.scriptName;
-            var sourceLine = topCallFrame.lineNumber;
-        } else {
-            var sourceName = this.url;
-            var sourceLine = this.line;
-        }
-
-        if (sourceName && sourceName !== "undefined") {
-            var urlElement = WebInspector.linkifyResourceAsNode(sourceName, "scripts", sourceLine, "console-message-url");
+        if (this.url && this.url !== "undefined") {
+            var urlElement = WebInspector.linkifyResourceAsNode(this.url, "scripts", this.line, "console-message-url");
             this._formattedMessage.appendChild(urlElement);
         }
 
