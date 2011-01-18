@@ -1,3 +1,15 @@
+2011-01-18  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Replace ChromiumBridge::widgetSetCursor with ChromeClient::setCursor
+        https://bugs.webkit.org/show_bug.cgi?id=42236
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::setCursor):
+        * src/ChromeClientImpl.h:
+        * src/ChromiumBridge.cpp:
+
 2011-01-17  Nico Weber  <thakis@chromium.org>
 
         Unreviewed.

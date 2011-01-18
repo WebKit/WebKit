@@ -700,6 +700,11 @@ void ChromeClientImpl::popupClosed(WebCore::PopupContainer* popupContainer)
     m_webView->popupClosed(popupContainer);
 }
 
+void ChromeClientImpl::setCursor(const WebCore::Cursor& cursor)
+{
+    setCursor(WebCursorInfo(cursor));
+}
+
 void ChromeClientImpl::setCursor(const WebCursorInfo& cursor)
 {
     if (m_webView->client())

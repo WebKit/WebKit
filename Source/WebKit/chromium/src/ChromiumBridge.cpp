@@ -39,7 +39,6 @@
 #include "WebClipboard.h"
 #include "WebCookie.h"
 #include "WebCookieJar.h"
-#include "WebCursorInfo.h"
 #include "WebData.h"
 #include "WebDragData.h"
 #include "WebFileUtilities.h"
@@ -988,13 +987,6 @@ bool ChromiumBridge::popupsAllowed(NPP npp)
 {
     // FIXME: Give the embedder a way to control this.
     return false;
-}
-
-void ChromiumBridge::widgetSetCursor(Widget* widget, const Cursor& cursor)
-{
-    ChromeClientImpl* client = toChromeClientImpl(widget);
-    if (client)
-        client->setCursor(WebCursorInfo(cursor));
 }
 
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)

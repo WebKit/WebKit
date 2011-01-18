@@ -346,9 +346,6 @@ namespace WebCore {
         static LinkHash visitedLinkHash(const UChar* url, unsigned length);
         static LinkHash visitedLinkHash(const KURL& base, const AtomicString& attributeURL);
         static bool isLinkVisited(LinkHash);
-
-        // Widget -------------------------------------------------------------
-        static void widgetSetCursor(Widget*, const Cursor&);
     };
 
 } // namespace WebCore
