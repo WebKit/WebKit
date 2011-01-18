@@ -1,3 +1,12 @@
+2011-01-17  Nico Weber  <thakis@chromium.org>
+
+        Unreviewed.
+
+        Roll chromium DEPS forward to pick up the skia roll to skia r692.
+        https://bugs.webkit.org/show_bug.cgi?id=52600
+
+        * DEPS:
+
 2011-01-17  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.
