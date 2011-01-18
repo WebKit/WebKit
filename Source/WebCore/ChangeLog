@@ -1,3 +1,14 @@
+2011-01-18  Victoria Kirst  <vrk@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Adding support for YV16 video frame formats.
+        https://bugs.webkit.org/show_bug.cgi?id=52345
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::determineTextureFormat):
+        (WebCore::VideoLayerChromium::draw):
+
 2011-01-18  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

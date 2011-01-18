@@ -111,6 +111,7 @@ const IntSize VideoFrameChromiumImpl::requiredTextureSize(unsigned plane) const
 {
     switch (format()) {
     case RGBA:
+    case YV16:
         return IntSize(stride(plane), height());
     case YV12:
         if (plane == static_cast<unsigned>(yPlane))

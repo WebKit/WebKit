@@ -264,6 +264,7 @@ unsigned VideoLayerChromium::determineTextureFormat(VideoFrameChromium* frame)
 {
     switch (frame->format()) {
     case VideoFrameChromium::YV12:
+    case VideoFrameChromium::YV16:
         return GraphicsContext3D::LUMINANCE;
     case VideoFrameChromium::RGBA:
         return GraphicsContext3D::RGBA;
@@ -330,6 +331,7 @@ void VideoLayerChromium::draw()
 
     switch (m_frameFormat) {
     case VideoFrameChromium::YV12:
+    case VideoFrameChromium::YV16:
         drawYUV(sv);
         break;
     case VideoFrameChromium::RGBA:

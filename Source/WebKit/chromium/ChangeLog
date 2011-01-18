@@ -1,3 +1,13 @@
+2011-01-18  Victoria Kirst  <vrk@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Adding support for YV16 video frame formats.
+        https://bugs.webkit.org/show_bug.cgi?id=52345
+
+        * src/VideoFrameChromiumImpl.cpp:
+        (WebKit::VideoFrameChromiumImpl::requiredTextureSize):
+
 2011-01-18  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.
