@@ -120,7 +120,7 @@ void WKDrawBezeledTextFieldCell(NSRect, BOOL enabled);
 void WKDrawTextFieldCellFocusRing(NSTextFieldCell*, NSRect);
 void WKDrawBezeledTextArea(NSRect, BOOL enabled);
 void WKPopupMenu(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*);
-
+void WKPopupContextMenu(NSMenu *menu, NSPoint screenLocation);
 void WKSendUserChangeNotifications(void);
 #ifndef __LP64__
 BOOL WKConvertNSEventToCarbonEvent(EventRecord *carbonEvent, NSEvent *cocoaEvent);
