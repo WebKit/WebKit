@@ -1,3 +1,9 @@
+2011-01-18 MORITA Hajime <morrita@google.com>
+
+        Unreviewed windows build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2011-01-17  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Simon Fraser.
