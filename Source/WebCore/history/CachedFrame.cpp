@@ -30,6 +30,7 @@
 #include "DocumentLoader.h"
 #include "ExceptionCode.h"
 #include "EventNames.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -130,6 +131,9 @@ CachedFrame::CachedFrame(Frame* frame)
     ASSERT(m_document);
     ASSERT(m_documentLoader);
     ASSERT(m_view);
+
+    if (frame->page()->focusController()->focusedFrame() == frame)
+        frame->page()->focusController()->setFocusedFrame(frame->page()->mainFrame());
 
     // Active DOM objects must be suspended before we cached the frame script data
     m_document->suspendActiveDOMObjects(ActiveDOMObject::DocumentWillBecomeInactive);

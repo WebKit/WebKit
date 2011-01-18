@@ -1,3 +1,19 @@
+2011-01-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Some WebKit2 layout tests crash due to focus being on a frame in the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=52607
+
+        No new tests. Existing tests crash in WebKit2 without this fix.
+        
+        I suspect there are other consequences besides the WebKit2 crash, but I
+        was unable to identify any for certain.
+
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame): If a frame still has focus when its page
+        goes in the page cache, reset focus to the main frame.
+
 2011-01-17  Adam Roben  <aroben@apple.com>
 
         Simplify WKCACFLayerRenderer's API
