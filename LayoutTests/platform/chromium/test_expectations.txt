@@ -1293,8 +1293,6 @@ BUGCR23477 MAC : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : fast/canvas/canvas-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 BUGCR23477 MAC : fast/dynamic/containing-block-change.html = IMAGE
-BUGWK51982 LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT
-BUGWK51982 LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT
 
 // Unexpected gray
 BUGCR23476 MAC : fast/forms/listbox-clip.html = IMAGE
@@ -2755,8 +2753,12 @@ BUGCR61739 MAC WIN DEBUG SLOW : animations/suspend-resume-animation-events.html 
 
 BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 
-// New test added with http://trac.webkit.org/changeset/72472
+// New tests added with http://trac.webkit.org/changeset/72472 and further.
+// See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT
+BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT
+BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux release
 BUGCR64129 MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS
