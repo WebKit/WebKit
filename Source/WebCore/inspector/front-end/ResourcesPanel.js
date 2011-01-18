@@ -78,6 +78,8 @@ WebInspector.ResourcesPanel = function(database)
 
     this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
     this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
+
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._refreshResource, this);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -253,8 +255,9 @@ WebInspector.ResourcesPanel.prototype = {
             frameTreeElement.removeChildren();
     },
 
-    refreshResource: function(resource)
+    _refreshResource: function(event)
     {
+        var resource = event.data;
         // FIXME: do not add XHR in the first place based on the native instrumentation.
         if (resource.type === WebInspector.Resource.Type.XHR) {
             var resourceTreeElement = this._findTreeElementForResource(resource);

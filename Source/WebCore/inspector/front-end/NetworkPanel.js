@@ -78,6 +78,11 @@ WebInspector.NetworkPanel = function()
     this._filter(this._filterAllElement, false);
 
     this._toggleGridMode();
+
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.MainResourceCommitLoad, this._onMainResourceCommitLoad, this);
 }
 
 WebInspector.NetworkPanel.prototype = {
@@ -772,7 +777,12 @@ WebInspector.NetworkPanel.prototype = {
         return this._resourcesById[id];
     },
 
-    appendResource: function(resource)
+    _onResourceStarted: function(event)
+    {
+        this._appendResource(event.data);
+    },
+
+    _appendResource: function(resource)
     {
         this._resources.push(resource);
         this._resourcesById[resource.identifier] = resource;
@@ -781,13 +791,18 @@ WebInspector.NetworkPanel.prototype = {
         // Pull all the redirects of the main resource upon commit load.
         if (resource.redirects) {
             for (var i = 0; i < resource.redirects.length; ++i)
-                this.refreshResource(resource.redirects[i]);
+                this._refreshResource(resource.redirects[i]);
         }
 
-        this.refreshResource(resource);
+        this._refreshResource(resource);
     },
 
-    refreshResource: function(resource)
+    _onResourceUpdated: function(event)
+    {
+        this._refreshResource(event.data);
+    },
+
+    _refreshResource: function(resource)
     {
         this._staleResources.push(resource);
         this._scheduleRefresh();
@@ -811,7 +826,7 @@ WebInspector.NetworkPanel.prototype = {
         this._reset();
     },
 
-    mainResourceChanged: function()
+    _onMainResourceCommitLoad: function()
     {
         if (this._preserveLogToggle.toggled)
             return;
@@ -819,7 +834,7 @@ WebInspector.NetworkPanel.prototype = {
         this._reset();
         // Now resurrect the main resource along with all redirects that lead to it.
         var resourcesToAppend = (WebInspector.mainResource.redirects || []).concat(WebInspector.mainResource);
-        resourcesToAppend.forEach(this.appendResource, this);
+        resourcesToAppend.forEach(this._appendResource, this);
     },
 
     canShowSourceLine: function(url, line)

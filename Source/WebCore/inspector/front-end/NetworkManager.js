@@ -30,6 +30,8 @@
 
 WebInspector.NetworkManager = function(resourceTreeModel)
 {
+    WebInspector.Object.call(this);
+
     this._inflightResources = {};
     this._resourceTreeModel = resourceTreeModel;
     this._lastIdentifierForCachedResource = 0;
@@ -86,6 +88,13 @@ WebInspector.NetworkManager.updateResourceWithCachedResource = function(resource
     WebInspector.NetworkManager.updateResourceWithResponse(resource, cachedResource.response);
 }
 
+WebInspector.NetworkManager.EventTypes = {
+    ResourceStarted: "ResourceStarted",
+    ResourceUpdated: "ResourceUpdated",
+    ResourceFinished: "ResourceFinished",
+    MainResourceCommitLoad: "MainResourceCommitLoad"
+}
+
 WebInspector.NetworkManager.prototype = {
     reset: function()
     {
@@ -119,7 +128,7 @@ WebInspector.NetworkManager.prototype = {
         if (isRedirect)
             this._startResource(resource);
         else
-            WebInspector.panels.network.refreshResource(resource);
+            this._updateResource(resource);
     },
 
     markResourceAsCached: function(identifier)
@@ -129,7 +138,7 @@ WebInspector.NetworkManager.prototype = {
             return;
 
         resource.cached = true;
-        WebInspector.panels.network.refreshResource(resource);
+        this._updateResource(resource);
     },
 
     didReceiveResponse: function(identifier, time, resourceType, response)
@@ -143,7 +152,7 @@ WebInspector.NetworkManager.prototype = {
 
         WebInspector.NetworkManager.updateResourceWithResponse(resource, response);
 
-        WebInspector.panels.network.refreshResource(resource);
+        this._updateResource(resource);
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
     },
 
@@ -156,7 +165,7 @@ WebInspector.NetworkManager.prototype = {
         resource.resourceSize += lengthReceived;
         resource.endTime = time;
 
-        WebInspector.panels.network.refreshResource(resource);
+        this._updateResource(resource);
     },
 
     didFinishLoading: function(identifier, finishTime)
@@ -204,8 +213,7 @@ WebInspector.NetworkManager.prototype = {
 
         resource.type = WebInspector.Resource.Type[type];
         resource.setInitialContent(sourceString);
-        WebInspector.panels.resources.refreshResource(resource);
-        WebInspector.panels.network.refreshResource(resource);
+        this._updateResource(resource);
     },
 
     didCommitLoadForFrame: function(frame, loader)
@@ -216,7 +224,7 @@ WebInspector.NetworkManager.prototype = {
             if (mainResource) {
                 WebInspector.mainResource = mainResource;
                 mainResource.isMainResource = true;
-                WebInspector.panels.network.mainResourceChanged();
+                this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.MainResourceCommitLoad, mainResource);
             }
         }
     },
@@ -239,7 +247,7 @@ WebInspector.NetworkManager.prototype = {
         resource.webSocketRequestKey3 = request.webSocketRequestKey3;
         resource.startTime = time;
 
-        WebInspector.panels.network.refreshResource(resource);
+        this._updateResource(resource);
     },
 
     didReceiveWebSocketHandshakeResponse: function(identifier, time, response)
@@ -254,7 +262,7 @@ WebInspector.NetworkManager.prototype = {
         resource.webSocketChallengeResponse = response.webSocketChallengeResponse;
         resource.responseReceivedTime = time;
 
-        WebInspector.panels.network.refreshResource(resource);
+        this._updateResource(resource);
     },
 
     didCloseWebSocket: function(identifier, time)
@@ -283,20 +291,24 @@ WebInspector.NetworkManager.prototype = {
         return newResource;
     },
 
-    _startResource: function(resource, skipRefresh)
+    _startResource: function(resource)
     {
         this._inflightResources[resource.identifier] = resource;
-        WebInspector.panels.network.appendResource(resource, skipRefresh);
-        WebInspector.panels.audits.resourceStarted(resource);
+        this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceStarted, resource);
+    },
+
+    _updateResource: function(resource)
+    {
+        this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceUpdated, resource);
     },
 
     _finishResource: function(resource, finishTime)
     {
         resource.endTime = finishTime;
         resource.finished = true;
-        WebInspector.panels.network.refreshResource(resource);
-        WebInspector.panels.audits.resourceFinished(resource);
-        WebInspector.extensionServer.notifyResourceFinished(resource);
+        this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceFinished, resource);
         delete this._inflightResources[resource.identifier];
     }
 }
+
+WebInspector.NetworkManager.prototype.__proto__ = WebInspector.Object.prototype;

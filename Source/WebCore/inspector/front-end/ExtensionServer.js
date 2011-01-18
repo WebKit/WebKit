@@ -53,7 +53,6 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("subscribe", this._onSubscribe.bind(this));
     this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
 
-
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
 }
 
@@ -66,11 +65,6 @@ WebInspector.ExtensionServer.prototype = {
     notifyObjectSelected: function(panelId, objectId)
     {
         this._postNotification("panel-objectSelected-" + panelId, objectId);
-    },
-
-    notifyResourceFinished: function(resource)
-    {
-        this._postNotification("resource-finished", resource.identifier, (new WebInspector.HAREntry(resource)).build());
     },
 
     notifySearchAction: function(panelId, action, searchString)
@@ -112,6 +106,12 @@ WebInspector.ExtensionServer.prototype = {
     stopAuditRun: function(auditRun)
     {
         delete this._clientObjects[auditRun.id];
+    },
+
+    _notifyResourceFinished: function(event)
+    {
+        var resource = event.data;
+        this._postNotification("resource-finished", resource.identifier, (new WebInspector.HAREntry(resource)).build());
     },
 
     _postNotification: function(type, details)
@@ -356,6 +356,9 @@ WebInspector.ExtensionServer.prototype = {
 
     initExtensions: function()
     {
+        // The networkManager is normally created after the ExtensionServer is constructed, but before initExtensions() is called.
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyResourceFinished, this);
+
         InspectorExtensionRegistry.getExtensionsAsync();
     },
 

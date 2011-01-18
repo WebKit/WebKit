@@ -96,16 +96,6 @@ WebInspector.AuditsPanel.prototype = {
         return this._auditCategoriesById;
     },
 
-    resourceStarted: function(resource)
-    {
-        this._launcherView.resourceStarted(resource);
-    },
-
-    resourceFinished: function(resource)
-    {
-        this._launcherView.resourceFinished(resource);
-    },
-
     addCategory: function(category)
     {
         this.categoriesById[category.id] = category;
@@ -244,11 +234,6 @@ WebInspector.AuditsPanel.prototype = {
 
         if (x)
             x.show(this.viewsContainerElement);
-    },
-
-    reset: function()
-    {
-        this._launcherView.reset();
     },
 
     attach: function()
