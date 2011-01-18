@@ -1103,9 +1103,11 @@ void Element::setShadowRoot(PassRefPtr<Node> node)
 
 void Element::removeShadowRoot()
 {
-    if (ElementRareData* data = rareData()) {
-        if (!data->m_shadowRoot)
-            return;
+    if (!hasRareData())
+        return;
+
+    ElementRareData* data = rareData();
+    if (data->m_shadowRoot) {
         RefPtr<Node> oldRoot = data->m_shadowRoot;
         data->m_shadowRoot = 0;
         document()->removeFocusedNodeOfSubtree(oldRoot.get());
