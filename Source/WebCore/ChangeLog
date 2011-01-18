@@ -1,3 +1,10 @@
+2011-01-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Revert r76017. No need to guard InspectorInstrumentation:: in WebCore.
+
+        * page/Page.cpp:
+        (WebCore::networkStateChanged):
+
 2011-01-18  Konstantin Tokarev  <annulen@yandex.ru>
 
         Reviewed by Kent Tamura.

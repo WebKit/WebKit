@@ -112,9 +112,7 @@ static void networkStateChanged()
     for (HashSet<Page*>::iterator it = allPages->begin(); it != end; ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext())
             frames.append(frame);
-#if ENABLE(INSPECTOR)
         InspectorInstrumentation::networkStateChanged(*it);
-#endif
     }
 
     AtomicString eventName = networkStateNotifier().onLine() ? eventNames().onlineEvent : eventNames().offlineEvent;
