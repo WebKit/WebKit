@@ -1,5 +1,11 @@
 2011-01-18  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK build fix as follow-up of r76004.
+
+        * GNUmakefile.am: Include RoundedIntRect files in the build
+
+2011-01-18  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, rolling out r76002.
         http://trac.webkit.org/changeset/76002
         https://bugs.webkit.org/show_bug.cgi?id=49790
