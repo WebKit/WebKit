@@ -1,3 +1,15 @@
+2011-01-18  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WK2 methods WKPageScaleWebView and WKPageGetViewScaleFactor need to have consistent names
+        https://bugs.webkit.org/show_bug.cgi?id=52647
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetScaleFactor):
+        (WKPageGetScaleFactor):
+        * UIProcess/API/C/WKPage.h:
+
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

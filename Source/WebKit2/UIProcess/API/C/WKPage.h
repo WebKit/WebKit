@@ -304,8 +304,8 @@ WK_EXPORT double WKPageGetPageZoomFactor(WKPageRef page);
 WK_EXPORT void WKPageSetPageZoomFactor(WKPageRef page, double zoomFactor);
 WK_EXPORT void WKPageSetPageAndTextZoomFactors(WKPageRef page, double pageZoomFactor, double textZoomFactor);
 
-WK_EXPORT void WKPageScaleWebView(WKPageRef page, double scale, WKPoint origin);
-WK_EXPORT double WKPageGetViewScaleFactor(WKPageRef page);
+WK_EXPORT void WKPageSetScaleFactor(WKPageRef page, double scale, WKPoint origin);
+WK_EXPORT double WKPageGetScaleFactor(WKPageRef page);
 
 WK_EXPORT void WKPageSetUseFixedLayout(WKPageRef page, bool fixed);
 WK_EXPORT void WKPageSetFixedLayoutSize(WKPageRef page, WKSize size);

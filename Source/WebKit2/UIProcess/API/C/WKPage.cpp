@@ -260,9 +260,14 @@ void WKPageSetPageAndTextZoomFactors(WKPageRef pageRef, double pageZoomFactor, d
     toImpl(pageRef)->setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
 }
 
-void WKPageScaleWebView(WKPageRef pageRef, double scale, WKPoint origin)
+void WKPageSetScaleFactor(WKPageRef pageRef, double scale, WKPoint origin)
 {
     toImpl(pageRef)->scaleWebView(scale, toIntPoint(origin));
+}
+
+double WKPageGetScaleFactor(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->viewScaleFactor();
 }
 
 void WKPageSetUseFixedLayout(WKPageRef pageRef, bool fixed)
@@ -283,11 +288,6 @@ bool WKPageUseFixedLayout(WKPageRef pageRef)
 WKSize WKPageFixedLayoutSize(WKPageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->fixedLayoutSize());
-}
-
-double WKPageGetViewScaleFactor(WKPageRef pageRef)
-{
-    return toImpl(pageRef)->viewScaleFactor();
 }
 
 void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindOptions options, unsigned maxMatchCount)
