@@ -1,3 +1,19 @@
+2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: provide script length to frontend.
+        https://bugs.webkit.org/show_bug.cgi?id=52620
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerDispatcher.prototype.parsedScriptSource):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+
 2011-01-18  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác
