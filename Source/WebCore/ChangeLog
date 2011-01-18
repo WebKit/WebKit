@@ -1,3 +1,28 @@
+2011-01-18  Adam Roben  <aroben@apple.com>
+
+        Call alternate CFHTTPCookie functions if available
+
+        Fixes <http://webkit.org/b/52637> <rdar://problem/8878984>.
+
+        Reviewed by Darin Adler.
+
+        * platform/network/cf/CookieJarCFNet.cpp: Added soft-linking macros to
+        pull in the alternate CFHTTPCookie functions.
+
+        (WebCore::cookieDomain):
+        (WebCore::cookieExpirationTime):
+        (WebCore::cookieName):
+        (WebCore::cookiePath):
+        (WebCore::cookieValue):
+        Added these wrappers around the CFHTTPCookie functions. We call the
+        alternate functions if they exist, otherwise fall back to the current
+        functions.
+
+        (WebCore::filterCookies):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        Changed to use the wrapper functions.
+
 2011-01-18  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

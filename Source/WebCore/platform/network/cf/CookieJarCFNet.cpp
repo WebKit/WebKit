@@ -34,6 +34,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "ResourceHandle.h"
+#include "SoftLinking.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -43,6 +44,53 @@ namespace WebCore {
 
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
 static const CFStringRef s_cookieCF = CFSTR("Cookie");
+
+#ifdef DEBUG_ALL
+SOFT_LINK_DEBUG_LIBRARY(CFNetwork)
+#else
+SOFT_LINK_LIBRARY(CFNetwork)
+#endif
+
+SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyDomain, CFStringRef, __cdecl, (CFHTTPCookieRef))
+SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieGetExpirationTime, CFAbsoluteTime, __cdecl, (CFHTTPCookieRef))
+SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyName, CFStringRef, __cdecl, (CFHTTPCookieRef))
+SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyPath, CFStringRef, __cdecl, (CFHTTPCookieRef))
+SOFT_LINK_OPTIONAL(CFNetwork, CFHTTPCookieCopyValue, CFStringRef, __cdecl, (CFHTTPCookieRef))
+
+static inline RetainPtr<CFStringRef> cookieDomain(CFHTTPCookieRef cookie)
+{
+    if (CFHTTPCookieCopyDomainPtr())
+        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyDomainPtr()(cookie));
+    return CFHTTPCookieGetDomain(cookie);
+}
+
+static inline CFAbsoluteTime cookieExpirationTime(CFHTTPCookieRef cookie)
+{
+    if (CFHTTPCookieGetExpirationTimePtr())
+        return CFHTTPCookieGetExpirationTimePtr()(cookie);
+    return CFDateGetAbsoluteTime(CFHTTPCookieGetExpiratonDate(cookie));
+}
+
+static inline RetainPtr<CFStringRef> cookieName(CFHTTPCookieRef cookie)
+{
+    if (CFHTTPCookieCopyNamePtr())
+        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyNamePtr()(cookie));
+    return CFHTTPCookieGetName(cookie);
+}
+
+static inline RetainPtr<CFStringRef> cookiePath(CFHTTPCookieRef cookie)
+{
+    if (CFHTTPCookieCopyPathPtr())
+        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyPathPtr()(cookie));
+    return CFHTTPCookieGetPath(cookie);
+}
+
+static inline RetainPtr<CFStringRef> cookieValue(CFHTTPCookieRef cookie)
+{
+    if (CFHTTPCookieCopyValuePtr())
+        return RetainPtr<CFStringRef>(AdoptCF, CFHTTPCookieCopyValuePtr()(cookie));
+    return CFHTTPCookieGetValue(cookie);
+}
 
 static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
 {
@@ -55,7 +103,7 @@ static RetainPtr<CFArrayRef> filterCookies(CFArrayRef unfilteredCookies)
         // which would be sent as "Cookie: =". We have a workaround in setCookies() to prevent
         // that, but we also need to avoid sending cookies that were previously stored, and
         // there's no harm to doing this check because such a cookie is never valid.
-        if (!CFStringGetLength(CFHTTPCookieGetName(cookie)))
+        if (!CFStringGetLength(cookieName(cookie).get()))
             continue;
 
         if (CFHTTPCookieIsHTTPOnly(cookie))
@@ -147,12 +195,12 @@ bool getRawCookies(const Document*, const KURL& url, Vector<Cookie>& rawCookies)
 
     for (CFIndex i = 0; i < count; i++) {
        CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
-       String name = CFHTTPCookieGetName(cookie);
-       String value = CFHTTPCookieGetValue(cookie);
-       String domain = CFHTTPCookieGetDomain(cookie);
-       String path = CFHTTPCookieGetPath(cookie);
+       String name = cookieName(cookie).get();
+       String value = cookieValue(cookie).get();
+       String domain = cookieDomain(cookie).get();
+       String path = cookiePath(cookie).get();
 
-       double expires = (CFDateGetAbsoluteTime(CFHTTPCookieGetExpiratonDate(cookie)) + kCFAbsoluteTimeIntervalSince1970) * 1000;
+       double expires = (cookieExpirationTime(cookie) + kCFAbsoluteTimeIntervalSince1970) * 1000;
 
        bool httpOnly = CFHTTPCookieIsHTTPOnly(cookie);
        bool secure = CFHTTPCookieIsSecure(cookie);
@@ -178,8 +226,7 @@ void deleteCookie(const Document*, const KURL& url, const String& name)
     CFIndex count = CFArrayGetCount(cookiesCF.get());
     for (CFIndex i = 0; i < count; i++) {
         CFHTTPCookieRef cookie = (CFHTTPCookieRef)CFArrayGetValueAtIndex(cookiesCF.get(), i);
-        String cookieName = CFHTTPCookieGetName(cookie);
-        if (cookieName == name) {
+        if (String(cookieName(cookie).get()) == name) {
             CFHTTPCookieStorageDeleteCookie(cookieStorage, cookie);
             break;
         }
