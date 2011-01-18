@@ -1,3 +1,13 @@
+2011-01-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Filenames are converted to URLs during edit drags
+        https://bugs.webkit.org/show_bug.cgi?id=52096
+
+        * platform/gtk/Skipped: Unskip passing test. Fix a misspelled
+        drag and drop test on the list as well.
+
 2011-01-18  Jeremy Orlow  <jorlow@chromium.org>
 
         [Chromium] Create baselines for svg/css/text-gradient-shadow.svg

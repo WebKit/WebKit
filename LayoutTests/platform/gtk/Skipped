@@ -5338,7 +5338,7 @@ editing/pasteboard/drop-link.html
 # https://bugs.webkit.org/show_bug.cgi?id=52090
 http/tests/local/formdata/upload-events.html
 fast/files/workers/worker-apply-blob-url-to-xhr.html
-fast/files/apply-blob-url-to-xhr.htm
+fast/files/apply-blob-url-to-xhr.html
 
 # [Soup] ResourceHandleSoup does not handle encodedBlobData
 # https://bugs.webkit.org/show_bug.cgi?id=52092
@@ -5350,10 +5350,6 @@ http/tests/local/formdata/send-form-data-with-sliced-file.html
 # [GTK] Dragging images and links results in a DataTransfer object containing a non-empty files array
 # https://bugs.webkit.org/show_bug.cgi?id=52094
 editing/pasteboard/files-during-page-drags.html
-
-# [GTK] Filenames are converted to URLs during edit drags
-# https://bugs.webkit.org/show_bug.cgi?id=52096
-editing/pasteboard/file-drag-to-editable.html
 
 # The feature was disabled due to a compatibility issue.
 # https://bugs.webkit.org/show_bug.cgi?id=40520

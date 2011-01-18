@@ -66,13 +66,21 @@ bool DragData::containsCompatibleContent() const
     return containsPlainText() || containsURL(0) || m_platformDragData->hasMarkup() || containsColor() || containsFiles();
 }
 
-bool DragData::containsURL(Frame*, FilenameConversionPolicy filenamePolicy) const
+bool DragData::containsURL(Frame* frame, FilenameConversionPolicy filenamePolicy) const
 {
-    return m_platformDragData->hasURL();
+    return !asURL(frame, filenamePolicy).isEmpty();
 }
 
 String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* title) const
 {
+    if (!m_platformDragData->hasURL())
+        return String();
+    if (filenamePolicy != ConvertFilenames) {
+        KURL url(KURL(), m_platformDragData->url());
+        if (url.isLocalFile())
+            return String();
+    }
+
     String url(m_platformDragData->url());
     if (title)
         *title = m_platformDragData->urlLabel();

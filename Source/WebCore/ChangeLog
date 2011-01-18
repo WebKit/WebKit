@@ -1,3 +1,15 @@
+2011-01-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Filenames are converted to URLs during edit drags
+        https://bugs.webkit.org/show_bug.cgi?id=52096
+
+        * platform/gtk/DragDataGtk.cpp: Only advertise and deliver filenames as URLs if the
+        conversion policy allows it.
+        (WebCore::DragData::containsURL): Ditto.
+        (WebCore::DragData::asURL): Ditto.
+
 2011-01-18  Helder Correia  <helder@sencha.com>
 
         Reviewed by Kenneth Rohde Christiansen.
