@@ -183,6 +183,14 @@ shouldBe("regexp40.exec('zPPz')", "['',undefined,undefined,undefined,'']");
 shouldBe("regexp40.exec('zPPPz')", "['',undefined,undefined,undefined,'']");
 shouldBe("regexp40.exec('zPPPPz')", "['',undefined,undefined,undefined,'']");
 
+var regexp41 = /(([\w\-]+:\/\/?|www[.])[^\s()<>]+(?:([\w\d]+)|([^\[:punct:\]\s()<>\W]|\/)))/;
+shouldBe("regexp41.exec('Here is a link: http://www.acme.com/our_products/index.html. That is all we want!')", "['http://www.acme.com/our_products/index.html','http://www.acme.com/our_products/index.html','http://','l',undefined]");
+
+var regexp42 = /((?:(4)?))?/;
+shouldBe("regexp42.exec('')", "['',undefined,undefined]");
+shouldBe("regexp42.exec('4')", "['4','4','4']");
+shouldBe("regexp42.exec('4321')", "['4','4','4']");
+
 shouldBeTrue("/(?!(?=r{0}){2,})|((z)?)?/gi.test('')");
 
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");

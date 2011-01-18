@@ -748,6 +748,12 @@ class YarrGenerator : private MacroAssembler {
             return false;
         }
 
+        void linkBacktrackToLabel(Label backtrackLabel)
+        {
+            if (m_backtrackToLabel)
+                *m_backtrackToLabel = backtrackLabel;
+        }
+
         void linkAlternativeBacktracks(YarrGenerator* generator, bool nextIteration = false)
         {
             Label hereLabel = generator->label();
@@ -1007,7 +1013,6 @@ class YarrGenerator : private MacroAssembler {
         BacktrackDestination m_backtrack;
         BacktrackDestination* m_linkedBacktrack;
         ParenthesesTail* m_parenthesesTail;
-
     };
 
     struct ParenthesesTail {
@@ -1638,13 +1643,24 @@ class YarrGenerator : private MacroAssembler {
             m_expressionState.incrementParenNestingLevel();
 
             TermGenerationState parenthesesState(disjunction, state.checkedTotal);
+            
+            // Use the current paren Tail to connect the nested parentheses.
+            parenthesesState.setParenthesesTail(state.getParenthesesTail());
+
             generateParenthesesDisjunction(state.term(), parenthesesState, alternativeFrameLocation);
             // this expects that any backtracks back out of the parentheses will be in the
             // parenthesesState's m_backTrackJumps vector, and that if they need backtracking
             // they will have set an entry point on the parenthesesState's m_backtrackLabel.
             BacktrackDestination& parenthesesBacktrack = parenthesesState.getBacktrackDestination();
-            state.propagateBacktrackingFrom(this, parenthesesBacktrack);
-            state.getBacktrackDestination().copyBacktrackToLabel(parenthesesBacktrack);
+            BacktrackDestination& stateBacktrack = state.getBacktrackDestination();
+
+            // If we have a backtrack label, use it for the parenthesis
+            if (stateBacktrack.isLabel())
+                parenthesesBacktrack.linkBacktrackToLabel(stateBacktrack.getLabel());
+            else {
+                state.propagateBacktrackingFrom(this, parenthesesBacktrack);
+                stateBacktrack.copyBacktrackToLabel(parenthesesBacktrack);
+            }
 
             m_expressionState.decrementParenNestingLevel();
         } else {

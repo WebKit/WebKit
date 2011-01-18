@@ -1,3 +1,17 @@
+2011-01-18  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8875432> Regression: Some text-only e-mails cause hang beneath RegExp::match (52540)
+        https://bugs.webkit.org/show_bug.cgi?id=52540
+        https://bugs.webkit.org/show_bug.cgi?id=52662
+
+        New tests to check for proper linking of parentheses nested under
+        a non-capturing parentheses.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2011-01-18  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

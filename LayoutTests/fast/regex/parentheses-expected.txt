@@ -67,6 +67,10 @@ PASS regexp40.exec('zPz') is ['',undefined,undefined,undefined,'']
 PASS regexp40.exec('zPPz') is ['',undefined,undefined,undefined,'']
 PASS regexp40.exec('zPPPz') is ['',undefined,undefined,undefined,'']
 PASS regexp40.exec('zPPPPz') is ['',undefined,undefined,undefined,'']
+PASS regexp41.exec('Here is a link: http://www.acme.com/our_products/index.html. That is all we want!') is ['http://www.acme.com/our_products/index.html','http://www.acme.com/our_products/index.html','http://','l',undefined]
+PASS regexp42.exec('') is ['',undefined,undefined]
+PASS regexp42.exec('4') is ['4','4','4']
+PASS regexp42.exec('4321') is ['4','4','4']
 PASS /(?!(?=r{0}){2,})|((z)?)?/gi.test('') is true
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true

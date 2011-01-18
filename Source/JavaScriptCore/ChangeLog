@@ -1,3 +1,20 @@
+2011-01-18  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8875432> Regression: Some text-only e-mails cause hang beneath RegExp::match (52540)
+        https://bugs.webkit.org/show_bug.cgi?id=52540
+        https://bugs.webkit.org/show_bug.cgi?id=52662
+
+        Directly use backtrack label with parentheses nested under a
+        non-capturing parentheses.  Also linked current parentheses
+        tail code object for possible parens nested within a non-capturing
+        parentheses.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::BacktrackDestination::linkBacktrackToLabel):
+        (JSC::Yarr::YarrGenerator::generateParenthesesSingle):
+
 2011-01-18  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Gavin Barraclough.
