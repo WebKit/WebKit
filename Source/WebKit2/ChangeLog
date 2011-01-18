@@ -1,5 +1,23 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Factor code to create the backing store bitmap context out into a new function
+        https://bugs.webkit.org/show_bug.cgi?id=52670
+
+        * UIProcess/BackingStore.h:
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::backingStoreContext):
+        Create the backing store context.
+
+        (WebKit::BackingStore::incorporateUpdate):
+        Call backingStoreContext.
+
+        (WebKit::BackingStore::scroll):
+        Assert that the context is not null.
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Add PageClientImpl::containingWindowGraphicsContext

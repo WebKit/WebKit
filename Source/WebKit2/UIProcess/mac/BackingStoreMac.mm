@@ -41,14 +41,8 @@ void BackingStore::paint(PlatformGraphicsContext context, const IntRect& rect)
     paintBitmapContext(context, m_bitmapContext.get(), rect.location(), rect);
 }
 
-void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
+CGContextRef BackingStore::backingStoreContext()
 {
-    ASSERT(m_size == updateInfo.viewSize);
-
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.updateRectBounds.size(), updateInfo.bitmapHandle);
-    if (!bitmap)
-        return;
-
     if (!m_bitmapContext) {
         RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
         
@@ -59,11 +53,24 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
         CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
     }
 
+    return m_bitmapContext.get();
+}
+
+void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
+{
+    ASSERT(m_size == updateInfo.viewSize);
+
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.updateRectBounds.size(), updateInfo.bitmapHandle);
+    if (!bitmap)
+        return;
+
+    CGContextRef context = backingStoreContext();
+
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
 
-    GraphicsContext graphicsContext(m_bitmapContext.get());
+    GraphicsContext graphicsContext(context);
 
     // Paint all update rects.
     for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
@@ -79,6 +86,8 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
 {
     if (scrollOffset.isZero())
         return;
+
+    ASSERT(m_bitmapContext);
 
     CGContextSaveGState(m_bitmapContext.get());
 

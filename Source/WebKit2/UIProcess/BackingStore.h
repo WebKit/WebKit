@@ -65,6 +65,8 @@ private:
     WebCore::IntSize m_size;
 
 #if PLATFORM(MAC)
+    CGContextRef backingStoreContext();
+
     RetainPtr<CGContextRef> m_bitmapContext;
 #endif
 };
