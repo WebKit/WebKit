@@ -565,11 +565,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
 
 - (BOOL)accessibilityIsIgnored 
 {
-    id docView = [self documentView];
-    if ([docView isKindOfClass:[WebFrameView class]] && ![(WebFrameView *)docView allowsScrolling])
-        return YES;
-    
-    return [super accessibilityIsIgnored];
+    return YES;
 }
 
 - (void)setScrollOrigin:(NSPoint)scrollOrigin updatePosition:(BOOL)updatePosition

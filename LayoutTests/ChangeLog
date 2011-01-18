@@ -1,3 +1,13 @@
+2011-01-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: A problem with Voiceover and finding links
+        https://bugs.webkit.org/show_bug.cgi?id=52324
+
+        * platform/mac/accessibility/iframe-with-title-correct-hierarchy-expected.txt: Added.
+        * platform/mac/accessibility/iframe-with-title-correct-hierarchy.html: Added.
+
 2011-01-18  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

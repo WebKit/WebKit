@@ -1013,8 +1013,9 @@ AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntP
     // Send the hit test back into the sub-frame if necessary.
     if (isAttachment()) {
         Widget* widget = widgetForAttachmentView();
+        // Normalize the point for the widget's bounds.
         if (widget && widget->isFrameView())
-            return axObjectCache()->getOrCreate(static_cast<ScrollView*>(widget))->accessibilityHitTest(point);
+            return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
     }
 
     return const_cast<AccessibilityObject*>(this); 

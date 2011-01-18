@@ -1455,7 +1455,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return nil;
     
     if (scroll->platformWidget())
-        return scroll->platformWidget();
+        return NSAccessibilityUnignoredAncestor(scroll->platformWidget());
 
     return [self remoteAccessibilityParentObject];
 }

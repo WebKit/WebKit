@@ -1772,6 +1772,10 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (!isAllowedChildOfTree())
         return true;
 
+    // Allow the platform to decide if the attachment is ignored or not.
+    if (isAttachment())
+        return accessibilityIgnoreAttachment();
+    
     // ignore popup menu items because AppKit does
     for (RenderObject* parent = m_renderer->parent(); parent; parent = parent->parent()) {
         if (parent->isBoxModelObject() && toRenderBoxModelObject(parent)->isMenuList())
@@ -1817,9 +1821,6 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (ariaRoleAttribute() != UnknownRole)
         return false;
 
-    if (!helpText().isEmpty())
-        return false;
-    
     // don't ignore labels, because they serve as TitleUIElements
     Node* node = m_renderer->node();
     if (node && node->hasTagName(labelTag))
@@ -1877,11 +1878,17 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         return false;
     }
     
-    // make a platform-specific decision
-    if (isAttachment())
-        return accessibilityIgnoreAttachment();
+    if (isWebArea() || m_renderer->isListMarker())
+        return false;
     
-    return !m_renderer->isListMarker() && !isWebArea();
+    // Using the help text to decide an element's visibility is not as definitive
+    // as previous checks, so this should remain as one of the last.
+    if (!helpText().isEmpty())
+        return false;
+    
+    // By default, objects should be ignored so that the AX hierarchy is not 
+    // filled with unnecessary items.
+    return true;
 }
 
 bool AccessibilityRenderObject::isLoaded() const

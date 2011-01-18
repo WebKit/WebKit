@@ -1,3 +1,25 @@
+2011-01-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: A problem with Voiceover and finding links
+        https://bugs.webkit.org/show_bug.cgi?id=52324
+
+        Fallout from recent change to make WebCore return its own scroll view.
+           1) There were two scroll views in the hierarchy, one which no needed to be ignored.
+           2) Hit tests for sub frames needed to be offset.
+           3) The check for whether an attachment is ignored must happen earlier than using
+              the helpText to determine if an element should be ignored.
+
+        Test: platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper scrollViewParent]):
+
 2011-01-18  Adam Roben  <aroben@apple.com>
 
         Call alternate CFHTTPCookie functions if available
