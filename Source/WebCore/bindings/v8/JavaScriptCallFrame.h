@@ -51,6 +51,7 @@ public:
 
     int sourceID() const;
     int line() const;
+    int column() const;
     String functionName() const;
     
     v8::Handle<v8::Value> scopeChain() const;

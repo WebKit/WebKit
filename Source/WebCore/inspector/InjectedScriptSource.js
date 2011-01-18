@@ -543,6 +543,7 @@ InjectedScript.CallFrameProxy = function(id, callFrame)
     this.functionName = (this.type === "function" ? callFrame.functionName : "");
     this.sourceID = callFrame.sourceID;
     this.line = callFrame.line;
+    this.column = callFrame.column;
     this.scopeChain = this._wrapScopeChain(callFrame);
     this.worldId = injectedScriptId;
 }

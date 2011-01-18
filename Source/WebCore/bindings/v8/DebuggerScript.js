@@ -201,8 +201,10 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
     var script = func.script();
     var sourceID = script && script.id();
 
-    // Get line number.
-    var line = DebuggerScript._v8ToWebkitLineNumber(frameMirror.sourceLine());
+    // Get location.
+    var location  = frameMirror.sourceLocation();
+    var line = DebuggerScript._v8ToWebkitLineNumber(location.line);
+    var column = DebuggerScript._v8ToWebkitLineNumber(location.column);
 
     // Get this object.
     var thisObject = frameMirror.details_.receiver();
@@ -250,6 +252,7 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
     return {
         "sourceID": sourceID,
         "line": line,
+        "column": column,
         "functionName": functionName,
         "type": "function",
         "thisObject": thisObject,

@@ -33,14 +33,15 @@
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
 class JavaScriptCallFrame : public RefCounted<JavaScriptCallFrame> {
 public:
-    static PassRefPtr<JavaScriptCallFrame> create(const JSC::DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, int line)
+    static PassRefPtr<JavaScriptCallFrame> create(const JSC::DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition1& textPosition)
     {
-        return adoptRef(new JavaScriptCallFrame(debuggerCallFrame, caller, sourceID, line));
+        return adoptRef(new JavaScriptCallFrame(debuggerCallFrame, caller, sourceID, textPosition));
     }
 
     void invalidate()
@@ -54,11 +55,13 @@ public:
     JavaScriptCallFrame* caller();
 
     intptr_t sourceID() const { return m_sourceID; }
-    int line() const { return m_line; }
-    void update(const JSC::DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int line)
+    int line() const { return m_textPosition.m_line.oneBasedInt(); }
+    int column() const { return m_textPosition.m_column.oneBasedInt(); }
+
+    void update(const JSC::DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, const TextPosition1& textPosition)
     {
         m_debuggerCallFrame = debuggerCallFrame;
-        m_line = line;
+        m_textPosition = textPosition;
         m_sourceID = sourceID;
         m_isValid = true;
     }
@@ -72,12 +75,12 @@ public:
     JSC::JSValue evaluate(const JSC::UString& script, JSC::JSValue& exception) const;
     
 private:
-    JavaScriptCallFrame(const JSC::DebuggerCallFrame&, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, int line);
+    JavaScriptCallFrame(const JSC::DebuggerCallFrame&, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition1&);
 
     JSC::DebuggerCallFrame m_debuggerCallFrame;
     RefPtr<JavaScriptCallFrame> m_caller;
     intptr_t m_sourceID;
-    int m_line;
+    TextPosition1 m_textPosition;
     bool m_isValid;
 };
 

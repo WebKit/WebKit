@@ -42,11 +42,11 @@ using namespace JSC;
 
 namespace WebCore {
     
-JavaScriptCallFrame::JavaScriptCallFrame(const DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, int line)
+JavaScriptCallFrame::JavaScriptCallFrame(const DebuggerCallFrame& debuggerCallFrame, PassRefPtr<JavaScriptCallFrame> caller, intptr_t sourceID, const TextPosition1& textPosition)
     : m_debuggerCallFrame(debuggerCallFrame)
     , m_caller(caller)
     , m_sourceID(sourceID)
-    , m_line(line)
+    , m_textPosition(textPosition)
     , m_isValid(true)
 {
 }

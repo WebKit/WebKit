@@ -80,6 +80,16 @@ int JavaScriptCallFrame::line() const
     return 0;
 }
 
+int JavaScriptCallFrame::column() const
+{
+    v8::HandleScope handleScope;
+    v8::Context::Scope contextScope(m_debuggerContext.get());
+    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8String("column"));
+    if (result->IsInt32())
+        return result->Int32Value();
+    return 0;
+}
+
 String JavaScriptCallFrame::functionName() const
 {
     v8::HandleScope handleScope;

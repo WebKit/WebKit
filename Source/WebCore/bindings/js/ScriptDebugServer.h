@@ -118,6 +118,8 @@ private:
     void dispatchDidParseSource(const ListenerSet& listeners, const JSC::SourceCode& source, enum ScriptWorldType);
     void dispatchFailedToParseSource(const ListenerSet& listeners, const JSC::SourceCode& source, int errorLine, const String& errorMessage);
 
+    void createCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
+    void updateCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
     void pauseIfNeeded(Page*);
 
     virtual void detach(JSC::JSGlobalObject*);
