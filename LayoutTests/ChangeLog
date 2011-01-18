@@ -1,3 +1,32 @@
+2011-01-18  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add LayoutTests for new compositing layer logic
+        https://bugs.webkit.org/show_bug.cgi?id=52657
+
+        Add 4 tests checking that the layer tree is properly constructed with nested
+        layers. The first test is a simple static test of a layer with a 3D transform
+        with a non-layered parent. It is a pixel test and is just looking for a correct
+        image. The second test is similar but has a 4 deep hierarchy of <div> element where 
+        only the innermost layer has a 3D transform. It is also a pixel test.
+        The other 2 tests are the same except that they add and then remove the innermost
+        layer's transform. It makes sure the layer tree is correct before and after
+        these changes.
+
+        * compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Added.
+        * compositing/geometry/layer-due-to-layer-children-deep-switch.html: Added.
+        * compositing/geometry/layer-due-to-layer-children-deep.html: Added.
+        * compositing/geometry/layer-due-to-layer-children-switch-expected.txt: Added.
+        * compositing/geometry/layer-due-to-layer-children-switch.html: Added.
+        * compositing/geometry/layer-due-to-layer-children.html: Added.
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-deep-expected.checksum: Added.
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-deep-expected.png: Added.
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-deep-expected.txt: Added.
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-expected.checksum: Added.
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-expected.png: Added.
+        * platform/mac/compositing/geometry/layer-due-to-layer-children-expected.txt: Added.
+
 2011-01-18  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Ojan Vafai.
