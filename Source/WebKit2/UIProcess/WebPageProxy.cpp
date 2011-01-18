@@ -475,6 +475,11 @@ void WebPageProxy::displayView()
     m_pageClient->displayView();
 }
 
+void WebPageProxy::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    m_pageClient->scrollView(scrollRect, scrollOffset);
+}
+
 void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
 {
     if (!isValid())

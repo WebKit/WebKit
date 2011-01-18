@@ -173,6 +173,7 @@ public:
 
     void setViewNeedsDisplay(const WebCore::IntRect&);
     void displayView();
+    void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
     enum {
         ViewWindowIsActive = 1 << 0,

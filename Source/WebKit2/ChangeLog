@@ -1,5 +1,18 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Ask the web page proxy to scroll the view when needed
+        https://bugs.webkit.org/show_bug.cgi?id=52665
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scrollView):
+        * UIProcess/WebPageProxy.h:
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * UIProcess/win/WebView.cpp:
