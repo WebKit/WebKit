@@ -1,3 +1,17 @@
+2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix flaky debugger tests.
+        https://bugs.webkit.org/show_bug.cgi?id=51320
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.setBreakpoint):
+        (initialize_DebuggerTest.InspectorTest.showScriptSource):
+        (initialize_DebuggerTest.InspectorTest._showScriptSource):
+        * inspector/debugger-pause-on-breakpoint-expected.txt:
+        * inspector/debugger-pause-on-breakpoint.html:
+
 2011-01-18  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

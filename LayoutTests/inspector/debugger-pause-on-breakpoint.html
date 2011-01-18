@@ -16,11 +16,13 @@ var test = function()
 
     function step1()
     {
-        InspectorTest.setBreakpoint(WebInspector.mainResource.url, 9, true, "", step2);
+        InspectorTest.showScriptSource("debugger-pause-on-breakpoint.html", step2);
     }
 
     function step2()
     {
+        InspectorTest.addResult("Script source was shown.");
+        InspectorTest.setBreakpoint(WebInspector.mainResource.url, 9, true, "");
         InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
     }
 

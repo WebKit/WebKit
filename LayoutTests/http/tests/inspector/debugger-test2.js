@@ -93,13 +93,8 @@ InspectorTest.captureStackTrace = function(callFrames)
 InspectorTest.setBreakpoint = function(url, lineNumber, enabled, condition, callback)
 {
     var scripts = WebInspector.debuggerModel.scriptsForURL(url);
-    if (scripts.length) {
-        WebInspector.debuggerModel.setBreakpoint(scripts[0].sourceID, lineNumber, enabled, condition);
-        callback();
-    } else {
-        var handler = InspectorTest.setBreakpoint.bind(InspectorTest, url, lineNumber, enabled, condition, callback);
-        InspectorTest._addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", handler);
-    }
+    for (var i = 0; i < scripts.length; ++i)
+        WebInspector.debuggerModel.setBreakpoint(scripts[i].sourceID, lineNumber, enabled, condition);
 }
 
 InspectorTest._pausedScript = function(details)
@@ -126,10 +121,9 @@ InspectorTest._resumedScript = function()
 
 InspectorTest.showScriptSource = function(scriptName, callback)
 {
-    if (InspectorTest._scriptsAreParsed([scriptName])) {
-        var scriptOrResource = InspectorTest._showScriptSource(scriptName);
-        callback(scriptOrResource.sourceFrame);
-    } else
+    if (InspectorTest._scriptsAreParsed([scriptName]))
+        InspectorTest._showScriptSource(scriptName, callback);
+     else
         InspectorTest._addSniffer(WebInspector.debuggerModel, "_parsedScriptSource", InspectorTest.showScriptSource.bind(InspectorTest, scriptName, callback));
 };
 
@@ -174,7 +168,12 @@ InspectorTest._showScriptSource = function(scriptName, callback)
         scriptResource = options[pageScriptIndex].representedObject;
         scriptsPanel._showScriptOrResource(scriptResource);
     }
-    return scriptResource;
+
+    var sourceFrame = WebInspector.currentPanel.visibleView.sourceFrame;
+    if (sourceFrame._content)
+        callback(sourceFrame);
+    else
+        InspectorTest._addSniffer(sourceFrame._textModel, "setText", callback.bind(null, sourceFrame));
 };
 
 InspectorTest.expandProperties = function(properties, callback)

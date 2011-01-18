@@ -24,21 +24,17 @@ var test = function()
     function step2()
     {
         InspectorTest.addResult("Main resource was shown.");
-        InspectorTest.setBreakpoint(WebInspector.mainResource.url, 8, true, "", step3);
-    }
-
-    function step3()
-    {
+        InspectorTest.setBreakpoint(WebInspector.mainResource.url, 8, true, "");
         WebInspector.panels.scripts.toggleBreakpointsButton.element.click();
         InspectorTest.reloadPage(step4);
     }
 
-    function step4()
+    function step3()
     {
-        InspectorTest.showScriptSource(testName, step5);
+        InspectorTest.showScriptSource(testName, step4);
     }
 
-    function step5()
+    function step4()
     {
         InspectorTest.addResult("Main resource was shown.");
         if (!WebInspector.panels.scripts.breakpointsActivated)
