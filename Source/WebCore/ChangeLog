@@ -1,3 +1,16 @@
+2011-01-18  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Make CheckedInt<long> and CheckedInt<unsigned long> work
+        https://bugs.webkit.org/show_bug.cgi?id=52401
+
+        * html/canvas/CheckedInt.h:
+        (WebCore::CheckedInt::CheckedInt): Merge with the patch provided by Benoit Jacob.
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferDataImpl): Use CheckedInt<long> instead of CheckedInt<int>.
+        (WebCore::WebGLBuffer::associateBufferSubDataImpl): Ditto.
+
 2011-01-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.

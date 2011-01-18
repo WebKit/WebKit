@@ -60,29 +60,93 @@ namespace CheckedInt_internal {
 
 struct unsupported_type {};
 
-template<typename T> struct integer_type_manually_recorded_info
-{
-    enum { is_supported = 0 };
-    typedef unsupported_type twice_bigger_type;
-};
+template<typename T> struct integer_type_manually_recorded_info;
 
 
-#define CHECKEDINT_REGISTER_SUPPORTED_TYPE(T,_twice_bigger_type)  \
+#define CHECKEDINT_REGISTER_SUPPORTED_TYPE(T,_twice_bigger_type,_unsigned_type) \
 template<> struct integer_type_manually_recorded_info<T>       \
 {                                                              \
     enum { is_supported = 1 };                                 \
     typedef _twice_bigger_type twice_bigger_type;              \
-    static void TYPE_NOT_SUPPORTED_BY_CheckedInt() {}             \
+    typedef _unsigned_type unsigned_type;                      \
 };
 
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(int8_t,   int16_t)
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint8_t,  uint16_t)
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(int16_t,  int32_t)
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint16_t, uint32_t)
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(int32_t,  int64_t)
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint32_t, uint64_t)
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(int64_t,  unsupported_type)
-CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint64_t, unsupported_type)
+//                                 Type      Twice Bigger Type   Unsigned Type
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(int8_t,   int16_t,             uint8_t)
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint8_t,  uint16_t,            uint8_t)
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(int16_t,  int32_t,             uint16_t)
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint16_t, uint32_t,            uint16_t)
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(int32_t,  int64_t,             uint32_t)
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint32_t, uint64_t,            uint32_t)
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(int64_t,  unsupported_type,    uint64_t)
+CHECKEDINT_REGISTER_SUPPORTED_TYPE(uint64_t, unsupported_type,    uint64_t)
+
+// now implement the fallback for standard types like int, long, ...
+// the difficulty is that they may or may not be equal to one of the above types, and/or
+// to each other. This is why any attempt to handle at once PRInt8... types and standard types
+// is bound to fail.
+template<typename T>
+struct is_standard_integer_type { enum { value = 0 }; };
+
+template<>
+struct is_standard_integer_type<char> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<unsigned char> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<short> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<unsigned short> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<int> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<unsigned int> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<long> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<unsigned long> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<long long> { enum { value = 1 }; };
+template<>
+struct is_standard_integer_type<unsigned long long> { enum { value = 1 }; };
+
+template<int size, bool is_signed>
+struct explicitly_sized_integer_type {};
+
+template<>
+struct explicitly_sized_integer_type<1, true> { typedef int8_t type; };
+template<>
+struct explicitly_sized_integer_type<1, false> { typedef uint8_t type; };
+template<>
+struct explicitly_sized_integer_type<2, true> { typedef int16_t type; };
+template<>
+struct explicitly_sized_integer_type<2, false> { typedef uint16_t type; };
+template<>
+struct explicitly_sized_integer_type<4, true> { typedef int32_t type; };
+template<>
+struct explicitly_sized_integer_type<4, false> { typedef uint32_t type; };
+template<>
+struct explicitly_sized_integer_type<8, true> { typedef int64_t type; };
+template<>
+struct explicitly_sized_integer_type<8, false> { typedef uint64_t type; };
+
+template<typename T> struct integer_type_manually_recorded_info
+{
+    enum {
+      is_supported = is_standard_integer_type<T>::value,
+      size = sizeof(T),
+      is_signed = (T(-1) > T(0)) ? 0 : 1
+    };
+    typedef typename explicitly_sized_integer_type<size, is_signed>::type explicit_sized_type;
+    typedef integer_type_manually_recorded_info<explicit_sized_type> base;
+    typedef typename base::twice_bigger_type twice_bigger_type;
+    typedef typename base::unsigned_type unsigned_type;
+};
+
+template<typename T, bool is_supported = integer_type_manually_recorded_info<T>::is_supported>
+struct TYPE_NOT_SUPPORTED_BY_CheckedInt {};
+
+template<typename T>
+struct TYPE_NOT_SUPPORTED_BY_CheckedInt<T, true> { static void run() {} };
 
 
 /*** Step 2: record some info about a given integer type,
@@ -348,8 +412,7 @@ protected:
     template<typename U>
     CheckedInt(const U& value, bool isValid) : mValue(value), mIsValid(isValid)
     {
-        CheckedInt_internal::integer_type_manually_recorded_info<T>
-            ::TYPE_NOT_SUPPORTED_BY_CheckedInt();
+        CheckedInt_internal::TYPE_NOT_SUPPORTED_BY_CheckedInt<T>::run();
     }
 
 public:
@@ -366,15 +429,13 @@ public:
         : mValue(value),
           mIsValid(CheckedInt_internal::is_in_range<T>(value))
     {
-        CheckedInt_internal::integer_type_manually_recorded_info<T>
-            ::TYPE_NOT_SUPPORTED_BY_CheckedInt();
+        CheckedInt_internal::TYPE_NOT_SUPPORTED_BY_CheckedInt<T>::run();
     }
 
     /** Constructs a valid checked integer with uninitialized value */
     CheckedInt() : mIsValid(1)
     {
-        CheckedInt_internal::integer_type_manually_recorded_info<T>
-            ::TYPE_NOT_SUPPORTED_BY_CheckedInt();
+        CheckedInt_internal::TYPE_NOT_SUPPORTED_BY_CheckedInt<T>::run();
     }
 
     /** \returns the actual value */
