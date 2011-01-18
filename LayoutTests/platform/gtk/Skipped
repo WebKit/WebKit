@@ -5337,6 +5337,8 @@ editing/pasteboard/drop-link.html
 # [Soup] ResourceHandleSoup does not ever call didSendData for file uploads
 # https://bugs.webkit.org/show_bug.cgi?id=52090
 http/tests/local/formdata/upload-events.html
+fast/files/workers/worker-apply-blob-url-to-xhr.html
+fast/files/apply-blob-url-to-xhr.htm
 
 # [Soup] ResourceHandleSoup does not handle encodedBlobData
 # https://bugs.webkit.org/show_bug.cgi?id=52092
