@@ -3073,14 +3073,12 @@ VisiblePosition RenderBox::positionForPoint(const IntPoint& point)
 
 bool RenderBox::shrinkToAvoidFloats() const
 {
-    // FIXME: Technically we should be able to shrink replaced elements on a line, but this is difficult to accomplish, since this
-    // involves doing a relayout during findNextLineBreak and somehow overriding the containingBlockWidth method to return the
-    // current remaining width on a line.
-    if ((isInline() && !isHTMLMarquee()) || !avoidsFloats())
+    // Floating objects don't shrink.  Objects that don't avoid floats don't shrink.  Marquees don't shrink.
+    if ((isInline() && !isHTMLMarquee()) || !avoidsFloats() || isFloating())
         return false;
 
     // All auto-width objects that avoid floats should always use lineWidth.
-    return style()->width().isAuto();
+    return style()->width().isAuto(); 
 }
 
 bool RenderBox::avoidsFloats() const

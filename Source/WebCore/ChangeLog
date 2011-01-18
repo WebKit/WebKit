@@ -1,3 +1,18 @@
+2011-01-18  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8479998> REGRESSION (r67660): broken button layout at devforums.apple.com
+        
+        Exclude floating objects from shrinking to avoid floats.  They should never do this.  Timing-related bugs could
+        occur as a result of this mistake, and the change to rewrite pagination to defer layout of floats until they
+        got encountered on the correct line exposed this issue.
+
+        Added /fast/block/float/float-overflow-hidden-containing-block-width.html.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shrinkToAvoidFloats):
+
 2011-01-18  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
