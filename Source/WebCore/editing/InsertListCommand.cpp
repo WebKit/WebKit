@@ -217,7 +217,7 @@ void InsertListCommand::doApplyForSingleParagraph(bool forceCreateList, const Qu
             RefPtr<HTMLElement> newList = createHTMLElement(document(), listTag);
             insertNodeBefore(newList, listNode);
 
-            Node* firstChildInList = enclosingListChild(VisiblePosition(Position(listNode, 0)).deepEquivalent().node(), listNode.get());
+            Node* firstChildInList = enclosingListChild(VisiblePosition(firstPositionInNode(listNode.get())).deepEquivalent().node(), listNode.get());
             Node* outerBlock = firstChildInList->isBlockFlow() ? firstChildInList : listNode.get();
             
             moveParagraphWithClones(firstPositionInNode(listNode.get()), lastPositionInNode(listNode.get()), newList.get(), outerBlock);
@@ -302,7 +302,7 @@ void InsertListCommand::unlistifyParagraph(const VisiblePosition& originalStart,
     } else
         insertNodeAfter(nodeToInsert, listNode);
 
-    VisiblePosition insertionPoint = VisiblePosition(Position(placeholder.get(), 0));
+    VisiblePosition insertionPoint = VisiblePosition(positionBeforeNode(placeholder.get()));
     moveParagraphs(start, end, insertionPoint, true);
 }
 
@@ -345,7 +345,7 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
     if (previousList)
         appendNode(listItemElement, previousList);
     else if (nextList)
-        insertNodeAt(listItemElement, Position(nextList, 0));
+        insertNodeAt(listItemElement, positionBeforeNode(nextList));
     else {
         // Create the list.
         listElement = createHTMLElement(document(), listTag);
@@ -356,7 +356,7 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
             // by a br or a '\n', will invalidate start and end.  Insert 
             // a placeholder and then recompute start and end.
             RefPtr<Node> placeholder = insertBlockPlaceholder(start.deepEquivalent());
-            start = VisiblePosition(Position(placeholder.get(), 0));
+            start = positionBeforeNode(placeholder.get());
             end = start;
         }
 
@@ -379,7 +379,7 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
             start = startOfParagraph(originalStart);
     }
 
-    moveParagraph(start, end, VisiblePosition(Position(placeholder.get(), 0)), true);
+    moveParagraph(start, end, positionBeforeNode(placeholder.get()), true);
 
     if (listElement)
         return mergeWithNeighboringLists(listElement);

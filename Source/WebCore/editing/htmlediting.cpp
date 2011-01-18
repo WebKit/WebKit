@@ -329,7 +329,7 @@ bool isBlock(const Node* node)
 // knowing about these kinds of special cases.
 Node* enclosingBlock(Node* node)
 {
-    return static_cast<Element*>(enclosingNodeOfType(Position(node, 0), isBlock));
+    return static_cast<Element*>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock));
 }
 
 // Internally editing uses "invalid" positions for historical reasons.  For
@@ -704,7 +704,7 @@ HTMLElement* enclosingList(Node* node)
     if (!node)
         return 0;
         
-    Node* root = highestEditableRoot(Position(node, 0));
+    Node* root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
     for (ContainerNode* n = node->parentNode(); n; n = n->parentNode()) {
         if (n->hasTagName(ulTag) || n->hasTagName(olTag))
@@ -722,7 +722,7 @@ HTMLElement* enclosingListChild(Node *node)
         return 0;
     // Check for a list item element, or for a node whose parent is a list element.  Such a node
     // will appear visually as a list item (but without a list marker)
-    Node* root = highestEditableRoot(Position(node, 0));
+    Node* root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
     // FIXME: This function is inappropriately named if it starts with node instead of node->parentNode()
     for (Node* n = node; n && n->parentNode(); n = n->parentNode()) {
@@ -1081,7 +1081,8 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition)
     if (visiblePosition.isNull())
         return 0;
     Position p(visiblePosition.deepEquivalent());
-    RefPtr<Range> range = Range::create(p.node()->document(), Position(p.node()->document(), 0), rangeCompliantEquivalent(p));
+    RefPtr<Range> range = Range::create(p.node()->document(), firstPositionInNode(p.anchorNode()->document()->documentElement()),
+                                        rangeCompliantEquivalent(p));
     return TextIterator::rangeLength(range.get(), true);
 }
 
@@ -1104,11 +1105,11 @@ bool isNodeVisiblyContainedWithin(Node* node, const Range* selectedRange)
         return true;
 
     bool startIsVisuallySame = visiblePositionBeforeNode(node) == selectedRange->startPosition();
-    if (startIsVisuallySame && comparePositions(Position(node->parentNode(), node->nodeIndex()+1), selectedRange->endPosition()) < 0)
+    if (startIsVisuallySame && comparePositions(positionInParentAfterNode(node), selectedRange->endPosition()) < 0)
         return true;
 
     bool endIsVisuallySame = visiblePositionAfterNode(node) == selectedRange->endPosition();
-    if (endIsVisuallySame && comparePositions(selectedRange->startPosition(), Position(node->parentNode(), node->nodeIndex())) < 0)
+    if (endIsVisuallySame && comparePositions(selectedRange->startPosition(), positionInParentBeforeNode(node)) < 0)
         return true;
 
     return startIsVisuallySame && endIsVisuallySame;
@@ -1157,23 +1158,23 @@ VisibleSelection avoidIntersectionWithNode(const VisibleSelection& selection, No
 {
     if (selection.isNone())
         return VisibleSelection(selection);
-        
+
     VisibleSelection updatedSelection(selection);
     Node* base = selection.base().node();
     Node* extent = selection.extent().node();
     ASSERT(base);
     ASSERT(extent);
-    
+
     if (base == node || base->isDescendantOf(node)) {
         ASSERT(node->parentNode());
-        updatedSelection.setBase(Position(node->parentNode(), node->nodeIndex()));
+        updatedSelection.setBase(positionInParentBeforeNode(node));
     }
-    
+
     if (extent == node || extent->isDescendantOf(node)) {
         ASSERT(node->parentNode());
-        updatedSelection.setExtent(Position(node->parentNode(), node->nodeIndex()));
+        updatedSelection.setExtent(positionInParentBeforeNode(node));
     }
-        
+
     return updatedSelection;
 }
 

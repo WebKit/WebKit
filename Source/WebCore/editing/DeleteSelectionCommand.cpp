@@ -111,9 +111,9 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
     // For HRs, we'll get a position at (HR,1) when hitting delete from the beginning of the previous line, or (HR,0) when forward deleting,
     // but in these cases, we want to delete it, so manually expand the selection
     if (start.node()->hasTagName(hrTag))
-        start = Position(start.node(), 0);
+        start = positionBeforeNode(start.node());
     else if (end.node()->hasTagName(hrTag))
-        end = Position(end.node(), 1);
+        end = positionAfterNode(end.node());
     
     // FIXME: This is only used so that moveParagraphs can avoid the bugs in special element expansion.
     if (!m_expandForSpecialElements)
@@ -315,10 +315,22 @@ static void updatePositionForNodeRemoval(Node* node, Position& position)
 {
     if (position.isNull())
         return;
-    if (node->parentNode() == position.node() && node->nodeIndex() < (unsigned)position.deprecatedEditingOffset())
-        position = Position(position.node(), position.deprecatedEditingOffset() - 1);
-    if (position.node() == node || position.node()->isDescendantOf(node))
-        position = positionInParentBeforeNode(node);
+    switch (position.anchorType()) {
+    case Position::PositionIsOffsetInAnchor:
+        if (position.containerNode() == node->parentNode() && static_cast<unsigned>(position.offsetInContainerNode()) > node->nodeIndex())
+            position.moveToOffset(position.offsetInContainerNode() - 1);
+        else if (node->contains(position.containerNode()))
+            position = positionInParentBeforeNode(node);
+        break;
+    case Position::PositionIsAfterAnchor:
+        if (node->contains(position.anchorNode()))
+            position = positionInParentAfterNode(node);
+        break;
+    case Position::PositionIsBeforeAnchor:
+        if (node->contains(position.anchorNode()))
+            position = positionInParentBeforeNode(node);
+        break;
+    }
 }
 
 void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
@@ -362,7 +374,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         updateLayout();
         RenderObject *r = node->renderer();
         if (r && r->isTableCell() && toRenderTableCell(r)->contentHeight() <= 0)
-            insertBlockPlaceholder(Position(node, 0));
+            insertBlockPlaceholder(firstPositionInNode(node.get()));
         return;
     }
     
@@ -381,12 +393,13 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
 
 static void updatePositionForTextRemoval(Node* node, int offset, int count, Position& position)
 {
-    if (position.node() == node) {
-        if (position.deprecatedEditingOffset() > offset + count)
-            position = Position(position.node(), position.deprecatedEditingOffset() - count);
-        else if (position.deprecatedEditingOffset() > offset)
-            position = Position(position.node(), offset);
-    }
+    if (position.anchorType() != Position::PositionIsOffsetInAnchor || position.containerNode() != node)
+        return;
+
+    if (position.offsetInContainerNode() > offset + count)
+        position.moveToOffset(position.offsetInContainerNode() - count);
+    else if (position.offsetInContainerNode() > offset)
+        position.moveToOffset(offset);
 }
 
 void DeleteSelectionCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned offset, unsigned count)
@@ -463,7 +476,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         
         // handle deleting all nodes that are completely selected
         while (node && node != m_downstreamEnd.node()) {
-            if (comparePositions(Position(node.get(), 0), m_downstreamEnd) >= 0) {
+            if (comparePositions(firstPositionInOrBeforeNode(node.get()), m_downstreamEnd) >= 0) {
                 // traverseNextSibling just blew past the end position, so stop deleting
                 node = 0;
             } else if (!m_downstreamEnd.node()->isDescendantOf(node.get())) {
@@ -471,8 +484,9 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 // if we just removed a node from the end container, update end position so the
                 // check above will work
                 if (node->parentNode() == m_downstreamEnd.node()) {
+                    ASSERT(m_downstreamEnd.deprecatedEditingOffset());
                     ASSERT(node->nodeIndex() < (unsigned)m_downstreamEnd.deprecatedEditingOffset());
-                    m_downstreamEnd = Position(m_downstreamEnd.node(), m_downstreamEnd.deprecatedEditingOffset() - 1);
+                    m_downstreamEnd.moveToOffset(m_downstreamEnd.deprecatedEditingOffset() - 1);
                 }
                 removeNode(node.get());
                 node = nextNode.get();
@@ -513,7 +527,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                             offset = n->nodeIndex() + 1;
                     }
                     removeChildrenInRange(m_downstreamEnd.node(), offset, m_downstreamEnd.deprecatedEditingOffset());
-                    m_downstreamEnd = Position(m_downstreamEnd.node(), offset);
+                    m_downstreamEnd.moveToOffset(offset);
                 }
             }
         }

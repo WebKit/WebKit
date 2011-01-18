@@ -1,3 +1,39 @@
+2011-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Stop instantiating legacy editing positions in DeleteSelectionCommand, IndentOudentCommand,
+        InsertLineBreakCommand, InsertListCOmmand.cpp, InsertParagraphSeparatorCommand, and htmlediting.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=52644
+
+        This is a cleanup to stop instantiating legacy editing positions in the following tests.
+        firstDeepEditingPositionForNode and lastDeepEditingPositionForNode in htmlediting.h are not updated
+        because doing so requires significant code changes. They are tracked on the bug 52642.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializeStartEnd):
+        (WebCore::updatePositionForNodeRemoval):
+        (WebCore::DeleteSelectionCommand::removeNode):
+        (WebCore::updatePositionForTextRemoval):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApplyForSingleParagraph):
+        (WebCore::InsertListCommand::unlistifyParagraph):
+        (WebCore::InsertListCommand::listifyParagraph):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::enclosingBlock):
+        (WebCore::enclosingList):
+        (WebCore::enclosingListChild):
+        (WebCore::indexForVisiblePosition):
+        (WebCore::isNodeVisiblyContainedWithin):
+        (WebCore::avoidIntersectionWithNode):
+
 2011-01-18  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ryosuke Niwa.

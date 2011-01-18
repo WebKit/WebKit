@@ -242,7 +242,7 @@ void InsertParagraphSeparatorCommand::doApply()
         
         appendBlockPlaceholder(parent);
 
-        setEndingSelection(VisibleSelection(Position(parent.get(), 0), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(firstPositionInNode(parent.get()), DOWNSTREAM));
         return;
     }
     
@@ -378,7 +378,8 @@ void InsertParagraphSeparatorCommand::doApply()
     // Handle whitespace that occurs after the split
     if (splitText) {
         updateLayout();
-        insertionPosition = Position(insertionPosition.node(), 0);
+        if (insertionPosition.anchorType() == Position::PositionIsOffsetInAnchor)
+            insertionPosition.moveToOffset(0);
         if (!insertionPosition.isRenderedCharacter()) {
             // Clear out all whitespace and insert one non-breaking space
             ASSERT(!insertionPosition.node()->renderer() || insertionPosition.node()->renderer()->style()->collapseWhiteSpace());
@@ -388,7 +389,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(VisibleSelection(Position(blockToInsert.get(), 0), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(firstPositionInNode(blockToInsert.get()), DOWNSTREAM));
     applyStyleAfterInsertion(startBlock);
 }
 
