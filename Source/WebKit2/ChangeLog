@@ -1,5 +1,12 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::scrollView):
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add PageClient::scrollView

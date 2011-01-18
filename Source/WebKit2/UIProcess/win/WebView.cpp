@@ -591,7 +591,7 @@ void WebView::displayView()
     ::UpdateWindow(m_window);
 }
 
-void PageClientImpl::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
+void WebView::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     // FIXME: Actually scroll the view contents.
     setViewNeedsDisplay(scrollRect);
