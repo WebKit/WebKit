@@ -36,6 +36,7 @@
 #include "PageOverlay.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
+#include "PrintInfo.h"
 #include "SessionState.h"
 #include "ShareableBitmap.h"
 #include "WebBackForwardList.h"
@@ -82,7 +83,10 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/PrintContext.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/RenderLayer.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/ReplaceSelectionCommand.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Settings.h>
@@ -361,6 +365,8 @@ void WebPage::close()
     }
 
     m_sandboxExtensionTracker.invalidate();
+
+    m_printContext = nullptr;
 
     m_mainFrame->coreFrame()->loader()->detachFromParent();
     m_page.clear();
@@ -1188,6 +1194,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setAuthorAndUserStylesEnabled(store.getBoolValueForKey(WebPreferencesKey::authorAndUserStylesEnabledKey()));
     settings->setPaginateDuringLayoutEnabled(store.getBoolValueForKey(WebPreferencesKey::paginateDuringLayoutEnabledKey()));
     settings->setDOMPasteAllowed(store.getBoolValueForKey(WebPreferencesKey::domPasteAllowedKey()));
+    settings->setShouldPrintBackgrounds(store.getBoolValueForKey(WebPreferencesKey::shouldPrintBackgroundsKey()));
 
     settings->setMinimumFontSize(store.getUInt32ValueForKey(WebPreferencesKey::minimumFontSizeKey()));
     settings->setMinimumLogicalFontSize(store.getUInt32ValueForKey(WebPreferencesKey::minimumLogicalFontSizeKey()));
@@ -1670,6 +1677,81 @@ void WebPage::stopSpeaking()
     send(Messages::WebPageProxy::StopSpeaking());
 }
 
+#endif
+
+void WebPage::beginPrinting(uint64_t frameID, const PrintInfo& printInfo)
+{
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    if (!frame)
+        return;
+
+    Frame* coreFrame = frame->coreFrame();
+    if (!coreFrame)
+        return;
+
+    if (!m_printContext)
+        m_printContext = adoptPtr(new PrintContext(coreFrame));
+
+    m_printContext->begin(printInfo.availablePaperWidth, printInfo.availablePaperHeight);
+}
+
+void WebPage::endPrinting()
+{
+    m_printContext = nullptr;
+}
+
+void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting)
+{
+    beginPrinting(frameID, printInfo);
+
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    if (!frame)
+        return;
+
+    float fullPageHeight;
+    m_printContext->computePageRects(FloatRect(0, 0, printInfo.availablePaperWidth, printInfo.availablePaperHeight), 0, 0, printInfo.pageSetupScaleFactor, fullPageHeight, true);
+
+    resultTotalScaleFactorForPrinting = m_printContext->computeAutomaticScaleFactor(printInfo.availablePaperWidth) * printInfo.pageSetupScaleFactor;
+    resultPageRects = m_printContext->pageRects();
+
+    // If we're asked to print, we should actually print at least a blank page.
+    if (resultPageRects.isEmpty())
+        resultPageRects.append(IntRect(0, 0, 1, 1));
+}
+
+#if PLATFORM(MAC)
+// FIXME: Find a better place for Mac specific code.
+void WebPage::drawRectToPDF(uint64_t frameID, const WebCore::IntRect& rect, Vector<uint8_t>& pdfData)
+{
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    if (!frame)
+        return;
+
+    Frame* coreFrame = frame->coreFrame();
+    if (!coreFrame)
+        return;
+
+    ASSERT(coreFrame->document()->printing());
+
+    RetainPtr<CFMutableDataRef> pdfPageData(AdoptCF, CFDataCreateMutable(0, 0));
+
+    // FIXME: Use CGDataConsumerCreate with callbacks to avoid copying the data.
+    RetainPtr<CGDataConsumerRef> pdfDataConsumer(AdoptCF, CGDataConsumerCreateWithCFData(pdfPageData.get()));
+
+    CGRect mediaBox = CGRectMake(0, 0, frame->size().width(), frame->size().height());
+    RetainPtr<CGContextRef> context(AdoptCF, CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
+    CFDictionaryRef pageInfo = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CGPDFContextBeginPage(context.get(), pageInfo);
+
+    GraphicsContext ctx(context.get());
+    m_printContext->spoolRect(ctx, rect);
+
+    CGPDFContextEndPage(context.get());
+    CGPDFContextClose(context.get());
+
+    pdfData.resize(CFDataGetLength(pdfPageData.get()));
+    CFDataGetBytes(pdfPageData.get(), CFRangeMake(0, pdfData.size()), pdfData.data());
+}
 #endif
 
 } // namespace WebKit

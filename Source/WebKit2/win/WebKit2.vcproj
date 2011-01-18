@@ -491,6 +491,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\PrintInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\PrintInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\SameDocumentNavigationType.h"
 				>
 			</File>

@@ -266,6 +266,7 @@ HEADERS += \
     Shared/NotImplemented.h \
     Shared/OriginAndDatabases.h \
     Shared/PlatformPopupMenuData.h \
+    Shared/PrintInfo.h \
     Shared/SameDocumentNavigationType.h \
     Shared/SessionState.h \
     Shared/StringPairVector.h \
@@ -492,6 +493,7 @@ SOURCES += \
     Shared/MutableDictionary.cpp \
     Shared/OriginAndDatabases.cpp \
     Shared/PlatformPopupMenuData.cpp \
+    Shared/PrintInfo.cpp \
     Shared/SessionState.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebBackForwardListItem.cpp \

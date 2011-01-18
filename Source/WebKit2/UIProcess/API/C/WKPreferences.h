@@ -142,6 +142,10 @@ WK_EXPORT bool WKPreferencesGetDNSPrefetchingEnabled(WKPreferencesRef preference
 WK_EXPORT void WKPreferencesSetAuthorAndUserStylesEnabled(WKPreferencesRef preferences, bool enabled);
 WK_EXPORT bool WKPreferencesGetAuthorAndUserStylesEnabled(WKPreferencesRef preferences);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetShouldPrintBackgrounds(WKPreferencesRef preferences, bool shouldPrintBackgrounds);
+WK_EXPORT bool WKPreferencesGetShouldPrintBackgrounds(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif

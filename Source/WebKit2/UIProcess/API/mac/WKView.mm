@@ -35,6 +35,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
+#import "PrintInfo.h"
 #import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
@@ -66,6 +67,10 @@
 
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
+@end
+
+@interface NSView (Details)
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 @end
 
 @interface NSWindow (Details)
@@ -125,6 +130,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     unsigned _selectionStart;
     unsigned _selectionEnd;
 
+    Vector<IntRect> _printingPageRects;
+    double _totalScaleFactorForPrinting;
+
     bool _inBecomeFirstResponder;
     bool _inResignFirstResponder;
 }
@@ -132,6 +140,36 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 @implementation WKViewData
 @end
+
+@interface WebFrameWrapper : NSObject {
+@public
+    RefPtr<WebFrameProxy> _frame;
+}
+
+- (id)initWithFrameProxy:(WebFrameProxy*)frame;
+- (WebFrameProxy*)webFrame;
+@end
+
+@implementation WebFrameWrapper
+
+- (id)initWithFrameProxy:(WebFrameProxy*)frame
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _frame = frame;
+    return self;
+}
+
+- (WebFrameProxy*)webFrame
+{
+    return _frame.get();
+}
+
+@end
+
+NSString * const PrintedFrameKey = @"WebKitPrintedFrameKey";
 
 @interface NSObject (NSTextInputContextDetails)
 - (BOOL)wantsToHandleMouseEvents;
@@ -1192,6 +1230,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)drawRect:(NSRect)rect
 {
+    LOG(View, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     if (useNewDrawingArea()) {
         if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
             CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
@@ -1282,20 +1321,122 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return (NSInteger)self;
 }
 
+static void setFrameBeingPrinted(NSPrintOperation *printOperation, WebFrameProxy* frame)
+{
+    RetainPtr<WebFrameWrapper> frameWrapper(AdoptNS, [[WebFrameWrapper alloc] initWithFrameProxy:frame]);
+    [[[printOperation printInfo] dictionary] setObject:frameWrapper.get() forKey:PrintedFrameKey];
+}
+
+static WebFrameProxy* frameBeingPrinted()
+{
+    return [[[[[NSPrintOperation currentOperation] printInfo] dictionary] objectForKey:PrintedFrameKey] webFrame];
+}
+
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
 {
+    LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
+    NSPrintOperation *printOperation;
+
     // Only the top frame can currently contain a PDF view.
     if (_data->_pdfViewController) {
         ASSERT(toImpl(frameRef)->isMainFrame());
-        return _data->_pdfViewController->makePrintOperation(printInfo);
-    }
-    return [NSPrintOperation printOperationWithView:self printInfo:printInfo];
+        printOperation = _data->_pdfViewController->makePrintOperation(printInfo);
+    } else
+        printOperation = [NSPrintOperation printOperationWithView:self printInfo:printInfo];
+
+    setFrameBeingPrinted(printOperation, toImpl(frameRef));
+    return printOperation;
 }
 
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
 {
     // PDF documents are already paginated, so we can't change them to add headers and footers.
     return !toImpl(frameRef)->isMainFrame() || !_data->_pdfViewController;
+}
+
+// Return the number of pages available for printing
+- (BOOL)knowsPageRange:(NSRangePointer)range
+{
+    LOG(View, "knowsPageRange:");
+    WebFrameProxy* frame = frameBeingPrinted();
+    ASSERT(frame);
+
+    if (frame->isMainFrame() && _data->_pdfViewController)
+        return [super knowsPageRange:range];
+
+    _data->_page->computePagesForPrinting(frame, PrintInfo([[NSPrintOperation currentOperation] printInfo]), _data->_printingPageRects, _data->_totalScaleFactorForPrinting);
+
+    *range = NSMakeRange(1, _data->_printingPageRects.size());
+    return YES;
+}
+
+// Take over printing. AppKit applies incorrect clipping, and doesn't print pages beyond the first one.
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
+{
+    if ([NSGraphicsContext currentContextDrawingToScreen]) {
+        // FIXME: 
+        _data->_page->endPrinting();
+        [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect rectIsVisibleRectForView:visibleView topView:topView];
+        return;
+    }
+
+    LOG(View, "Printing rect x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+
+    ASSERT(self == visibleView);
+    ASSERT(frameBeingPrinted());
+
+    WebFrameProxy* frame = frameBeingPrinted();
+    ASSERT(frame);
+
+    _data->_page->beginPrinting(frame, PrintInfo([[NSPrintOperation currentOperation] printInfo]));
+
+    // FIXME: This is optimized for print preview. Get the whole document at once when actually printing.
+    Vector<uint8_t> pdfData;
+    _data->_page->drawRectToPDF(frame, IntRect(rect), pdfData);
+
+    RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithData(0, pdfData.data(), pdfData.size(), 0));
+    RetainPtr<CGPDFDocumentRef> pdfDocument(AdoptCF, CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
+    if (!pdfDocument) {
+        LOG_ERROR("Couldn't create a PDF document with data passed for printing");
+        return;
+    }
+
+    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfDocument.get(), 1);
+    if (!pdfPage) {
+        LOG_ERROR("Printing data doesn't have page 1");
+        return;
+    }
+
+    NSGraphicsContext *nsGraphicsContext = [NSGraphicsContext currentContext];
+    CGContextRef context = static_cast<CGContextRef>([nsGraphicsContext graphicsPort]);
+
+    CGContextSaveGState(context);
+    // Flip the destination.
+    CGContextScaleCTM(context, 1, -1);
+    CGContextTranslateCTM(context, 0, -rect.size.height);
+    CGContextDrawPDFPage(context, pdfPage);
+    CGContextRestoreGState(context);
+}
+
+// FIXME 3491344: This is an AppKit-internal method that we need to override in order
+// to get our shrink-to-fit to work with a custom pagination scheme. We can do this better
+// if AppKit makes it SPI/API.
+- (CGFloat)_provideTotalScaleFactorForPrintOperation:(NSPrintOperation *)printOperation 
+{
+    return _data->_totalScaleFactorForPrinting;
+}
+
+// Return the drawing rectangle for a particular page number
+- (NSRect)rectForPage:(NSInteger)page
+{
+    WebFrameProxy* frame = frameBeingPrinted();
+    ASSERT(frame);
+
+    if (frame->isMainFrame() && _data->_pdfViewController)
+        return [super rectForPage:page];
+
+    LOG(View, "rectForPage:%d -> x %d, y %d, width %d, height %d\n", (int)page, _data->_printingPageRects[page - 1].x(), _data->_printingPageRects[page - 1].y(), _data->_printingPageRects[page - 1].width(), _data->_printingPageRects[page - 1].height());
+    return _data->_printingPageRects[page - 1];
 }
 
 @end

@@ -72,6 +72,7 @@ namespace WebCore {
     class GraphicsContext;
     class KeyboardEvent;
     class Page;
+    class PrintContext;
     class ResourceRequest;
     class SharedBuffer;
 }
@@ -95,7 +96,7 @@ class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPopupMenu;
 class WebWheelEvent;
-
+struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
@@ -300,6 +301,13 @@ public:
     void replaceSelectionWithText(WebCore::Frame*, const String&);
     void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags);
 
+    void beginPrinting(uint64_t frameID, const PrintInfo&);
+    void endPrinting();
+    void computePagesForPrinting(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting);
+#if PLATFORM(MAC)
+    void drawRectToPDF(uint64_t frameID, const WebCore::IntRect&, Vector<uint8_t>& pdfData);
+#endif
+
     bool mainFrameHasCustomRepresentation() const;
 
 private:
@@ -479,6 +487,8 @@ private:
     RefPtr<WebContextMenu> m_contextMenu;
     RefPtr<WebOpenPanelResultListener> m_activeOpenPanelResultListener;
     GeolocationPermissionRequestManager m_geolocationPermissionRequestManager;
+
+    OwnPtr<WebCore::PrintContext> m_printContext;
 
     SandboxExtensionTracker m_sandboxExtensionTracker;
     uint64_t m_pageID;

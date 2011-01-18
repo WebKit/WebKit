@@ -33,6 +33,7 @@
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
 #include "PageClient.h"
+#include "PrintInfo.h"
 #include "SessionState.h"
 #include "StringPairVector.h"
 #include "TextChecker.h"
@@ -111,6 +112,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
     , m_useFixedLayout(false)
     , m_isValid(true)
     , m_isClosed(false)
+    , m_isInPrintingMode(false)
     , m_inDecidePolicyForMIMEType(false)
     , m_syncMimeTypePolicyActionIsValid(false)
     , m_syncMimeTypePolicyAction(PolicyUse)
@@ -2329,5 +2331,37 @@ void WebPageProxy::backForwardRemovedItem(uint64_t itemID)
 {
     process()->send(Messages::WebPage::DidRemoveBackForwardItem(itemID), m_pageID);
 }
+
+void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInfo)
+{
+    if (m_isInPrintingMode)
+        return;
+
+    m_isInPrintingMode = true;
+    process()->send(Messages::WebPage::BeginPrinting(frame->frameID(), printInfo), m_pageID);
+}
+
+void WebPageProxy::endPrinting()
+{
+    if (!m_isInPrintingMode)
+        return;
+
+    m_isInPrintingMode = false;
+    process()->send(Messages::WebPage::EndPrinting(), m_pageID);
+}
+
+void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, Vector<WebCore::IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting)
+{
+    // Layout for printing can take a long time, but we need to have the answer.
+    process()->sendSync(Messages::WebPage::ComputePagesForPrinting(frame->frameID(), printInfo), Messages::WebPage::ComputePagesForPrinting::Reply(resultPageRects, resultTotalScaleFactorForPrinting), m_pageID);
+}
+
+#if PLATFORM(MAC)
+void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, Vector<uint8_t>& pdfData)
+{
+    // Printing can take a long time, but we need to have the answer.
+    process()->sendSync(Messages::WebPage::DrawRectToPDF(frame->frameID(), rect), Messages::WebPage::DrawRectToPDF::Reply(pdfData), m_pageID);
+}
+#endif
 
 } // namespace WebKit

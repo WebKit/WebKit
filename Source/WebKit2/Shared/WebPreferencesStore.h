@@ -64,6 +64,7 @@ namespace WebKit {
     macro(AuthorAndUserStylesEnabled, authorAndUserStylesEnabled, Bool, bool, true) \
     macro(PaginateDuringLayoutEnabled, paginateDuringLayoutEnabled, Bool, bool, false) \
     macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false) \
+    macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

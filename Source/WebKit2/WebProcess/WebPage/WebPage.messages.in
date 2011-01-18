@@ -128,6 +128,14 @@ messages -> WebPage {
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
+    # Printing.
+    BeginPrinting(uint64_t frameID, WebKit::PrintInfo printInfo);
+    EndPrinting();
+    ComputePagesForPrinting(uint64_t frameID, WebKit::PrintInfo printInfo) -> (Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting)
+#if PLATFORM(MAC)
+    DrawRectToPDF(uint64_t frameID, WebCore::IntRect rect) -> (Vector<uint8_t> pdfData)
+#endif
+
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
     // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
     Dummy() -> (bool dummyReturn)

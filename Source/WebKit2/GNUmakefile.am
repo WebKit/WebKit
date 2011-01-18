@@ -184,6 +184,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/OriginAndDatabases.h \
 	Source/WebKit2/Shared/PlatformPopupMenuData.cpp \
 	Source/WebKit2/Shared/PlatformPopupMenuData.h \
+	Source/WebKit2/Shared/PrintInfo.cpp \
+	Source/WebKit2/Shared/PrintInfo.h \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModule.cpp \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModule.h \
 	Source/WebKit2/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \

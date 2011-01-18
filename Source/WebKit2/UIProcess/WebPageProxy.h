@@ -101,6 +101,7 @@ class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
 struct PlatformPopupMenuData;
+struct PrintInfo;
 struct WebPageCreationParameters;
 struct WebPopupItem;
 
@@ -341,6 +342,13 @@ public:
     void setSmartInsertDeleteEnabled(bool);
 #endif
 
+    void beginPrinting(WebFrameProxy*, const PrintInfo&);
+    void endPrinting();
+    void computePagesForPrinting(WebFrameProxy*, const PrintInfo&, Vector<WebCore::IntRect>& resultPageRects, double& resultTotalScaleFactorForPrinting);
+#if PLATFORM(MAC)
+    void drawRectToPDF(WebFrameProxy*, const WebCore::IntRect&, Vector<uint8_t>& pdfData);
+#endif
+
 private:
     WebPageProxy(PageClient*, WebContext*, WebPageGroup*, uint64_t pageID);
 
@@ -579,6 +587,8 @@ private:
 
     // Whether WebPageProxy::close() has been called on this page.
     bool m_isClosed;
+
+    bool m_isInPrintingMode;
 
     bool m_inDecidePolicyForMIMEType;
     bool m_syncMimeTypePolicyActionIsValid;

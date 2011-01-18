@@ -390,6 +390,16 @@ bool WKPreferencesGetAuthorAndUserStylesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->authorAndUserStylesEnabled();
 }
 
+void WKPreferencesSetShouldPrintBackgrounds(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setShouldPrintBackgrounds(flag);
+}
+
+bool WKPreferencesGetShouldPrintBackgrounds(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->shouldPrintBackgrounds();
+}
+
 void WKPreferencesSetWebArchiveDebugModeEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setWebArchiveDebugModeEnabled(enabled);

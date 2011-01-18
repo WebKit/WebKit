@@ -252,6 +252,7 @@ def struct_or_class(namespace, type):
         'WebCore::CompositionUnderline',
         'WebCore::KeypressCommand',
         'WebCore::PluginInfo',
+        'WebCore::PrintInfo',
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',
         'WebKit::DrawingAreaInfo',
