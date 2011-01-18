@@ -604,8 +604,6 @@ WebInspector.doLoadedDone = function()
     function populateInspectorState(inspectorState)
     {
         WebInspector.monitoringXHREnabled = inspectorState.monitoringXHREnabled;
-        if ("pauseOnExceptionsState" in inspectorState)
-            WebInspector.panels.scripts.updatePauseOnExceptionsState(inspectorState.pauseOnExceptionsState);
     }
     InspectorBackend.getInspectorState(populateInspectorState);
 

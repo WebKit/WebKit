@@ -78,7 +78,6 @@ public:
     void stepOut();
 
     void setPauseOnExceptionsState(long pauseState, long* newState);
-    long pauseOnExceptionsState();
 
     void clearForPageNavigation();
 

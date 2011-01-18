@@ -65,6 +65,7 @@ WebInspector.Settings = function()
     this.installApplicationSetting("showUserAgentStyles", true);
     this.installApplicationSetting("watchExpressions", []);
     this.installApplicationSetting("lastActivePanel", "elements");
+    this.installApplicationSetting("pauseOnExceptionState", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
 
     this.installProjectSetting("breakpoints", {});
     this.installProjectSetting("nativeBreakpoints", []);

@@ -215,10 +215,6 @@ bool InspectorController::searchingForNodeInPage() const
 
 void InspectorController::getInspectorState(RefPtr<InspectorObject>* state)
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_debuggerAgent)
-        m_state->setLong(InspectorState::pauseOnExceptionsState, m_debuggerAgent->pauseOnExceptionsState());
-#endif
     *state = m_state->generateStateObjectForFrontend();
 }
 

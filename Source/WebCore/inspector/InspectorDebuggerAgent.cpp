@@ -173,11 +173,6 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(long pauseState, long* ne
     *newState = ScriptDebugServer::shared().pauseOnExceptionsState();
 }
 
-long InspectorDebuggerAgent::pauseOnExceptionsState()
-{
-    return ScriptDebugServer::shared().pauseOnExceptionsState();
-}
-
 void InspectorDebuggerAgent::clearForPageNavigation()
 {
     m_scriptIDToContent.clear();
