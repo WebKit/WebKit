@@ -1,3 +1,21 @@
+2011-01-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removed RegisterFile::markGlobals because it was obtuse, and it
+        unnecessarily relied on conservative marking.
+        https://bugs.webkit.org/show_bug.cgi?id=52668
+
+        * interpreter/RegisterFile.h: Removed markGlobals.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::markChildren): Added a comment explaning why some
+        JSActivations don't always mark their registers arrays.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::markChildren): Instead of calling markGlobals, mark
+        the registers array directly.
+
 2011-01-18  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.
