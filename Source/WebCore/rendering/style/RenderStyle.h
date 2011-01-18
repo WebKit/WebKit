@@ -43,6 +43,8 @@
 #include "NinePieceImage.h"
 #include "OutlineValue.h"
 #include "RenderStyleConstants.h"
+#include "RoundedIntRect.h"
+#include "ShadowData.h"
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
 #include "StyleFlexibleBoxData.h"
@@ -846,13 +848,10 @@ public:
     {
         setBorderRadius(LengthSize(Length(s.width(), Fixed), Length(s.height(), Fixed)));
     }
-
     
-    void getBorderRadiiForRect(const IntRect&, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const;
-    void getInnerBorderRadiiForRectWithBorderWidths(const IntRect&, unsigned short topWidth, 
-                            unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth, 
-                            IntSize& innerTopLeft, IntSize& innerTopRight, IntSize& innerBottomLeft, 
-                            IntSize& innerBottomRight) const;
+    RoundedIntRect getRoundedBorderFor(const IntRect&) const;
+    RoundedIntRect getRoundedInnerBorderWithBorderWidths(const IntRect&, unsigned short topWidth, 
+                                                         unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const;
 
     void setBorderLeftWidth(unsigned short v) { SET_VAR(surround, border.m_left.m_width, v) }
     void setBorderLeftStyle(EBorderStyle v) { SET_VAR(surround, border.m_left.m_style, v) }

@@ -31,6 +31,7 @@
 #include "Generator.h"
 #include "ImageBuffer.h"
 #include "IntRect.h"
+#include "RoundedIntRect.h"
 
 using namespace std;
 
@@ -536,25 +537,23 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
         image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
 }
 
-void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
-    const IntSize& bottomLeft, const IntSize& bottomRight)
+void GraphicsContext::addRoundedRectClip(const RoundedIntRect& rect)
 {
     if (paintingDisabled())
         return;
 
     Path path;
-    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+    path.addRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight());
     clip(path);
 }
 
-void GraphicsContext::clipOutRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
-                                         const IntSize& bottomLeft, const IntSize& bottomRight)
+void GraphicsContext::clipOutRoundedRect(const RoundedIntRect& rect)
 {
     if (paintingDisabled())
         return;
 
     Path path;
-    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+    path.addRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight());
     clipOut(path);
 }
 
@@ -583,6 +582,11 @@ void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
     if (paintingDisabled())
         return;
     generator.fill(this, rect);
+}
+
+void GraphicsContext::fillRoundedRect(const RoundedIntRect& rect, const Color& color, ColorSpace colorSpace)
+{
+    fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);
 }
 
 void GraphicsContext::setCompositeOperation(CompositeOperator compositeOperation)
