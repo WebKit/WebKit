@@ -1,5 +1,20 @@
 2011-01-17  MORITA Hajime  <morrita@google.com>
 
+        Unreviewed, rolling out r75995.
+        http://trac.webkit.org/changeset/75995
+        https://bugs.webkit.org/show_bug.cgi?id=51914
+
+        Causes assertion failures.
+
+        * dom/Element.cpp:
+        (WebCore::Element::shadowRoot):
+        (WebCore::Element::setShadowRoot):
+        (WebCore::Element::removeShadowRoot):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+
+2011-01-17  MORITA Hajime  <morrita@google.com>
+
         Unreviewed, rolling out r75999.
         http://trac.webkit.org/changeset/75999
 

@@ -41,7 +41,7 @@ public:
 
     IntSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
-    Node* m_shadowRoot;
+    RefPtr<Node> m_shadowRoot;
 
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
     OwnPtr<ClassList> m_classList;
@@ -54,7 +54,6 @@ inline IntSize defaultMinimumSizeForResizing()
 
 inline ElementRareData::ElementRareData()
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
-    , m_shadowRoot(0)
 {
 }
 
