@@ -122,6 +122,7 @@ class EflEWS(AbstractEarlyWarningSystem):
         "leandro@profusion.mobi",
         "antognolli@profusion.mobi",
         "lucas.demarchi@profusion.mobi",
+        "gyuyoung.kim@samsung.com",
     ]
 
 
