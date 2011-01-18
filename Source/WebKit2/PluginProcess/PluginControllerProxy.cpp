@@ -390,6 +390,9 @@ void PluginControllerProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboard
 
 void PluginControllerProxy::paintEntirePlugin()
 {
+    if (m_frameRect.isEmpty())
+        return;
+
     m_dirtyRect = m_frameRect;
     paint();
 }

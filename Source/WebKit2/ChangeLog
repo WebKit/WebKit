@@ -1,5 +1,16 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        ASSERT in plug-in code when going to youtube
+        https://bugs.webkit.org/show_bug.cgi?id=52638
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paintEntirePlugin):
+        Don't try to paint the plug-in if the plug-in frame is empty.
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Plug-in hosting WebProcess instances appear in Activity Monitor as WebProcess
