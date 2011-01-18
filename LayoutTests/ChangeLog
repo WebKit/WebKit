@@ -1,3 +1,20 @@
+2011-01-17  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by David Levin.
+
+        Rebaseline media/video-zoom-controls for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=52415
+
+        * platform/chromium-linux/media/video-zoom-controls-expected.checksum: Added.
+        * platform/chromium-linux/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-mac/media/video-zoom-controls-expected.checksum: Added.
+        * platform/chromium-mac/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-mac/media/video-zoom-controls-expected.txt: Added.
+        * platform/chromium-win/media/video-zoom-controls-expected.checksum: Added.
+        * platform/chromium-win/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-win/media/video-zoom-controls-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-17  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Not reviewed, test expectations update.
