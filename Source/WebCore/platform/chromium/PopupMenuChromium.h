@@ -168,7 +168,7 @@ public:
     int selectedIndex() const;
 
     // Refresh the popup values from the PopupMenuClient.
-    void refresh();
+    void refresh(const IntRect& targetControlRect);
 
     // The menu per-item data.
     const WTF::Vector<PopupItem*>& popupData() const;
@@ -192,6 +192,9 @@ private:
 
     // Paint the border.
     void paintBorder(GraphicsContext*, const IntRect&);
+
+    // Layout and calculate popup widget size and location and returns it as IntRect.
+    IntRect layoutAndCalculateWidgetRect(int targetControlHeight, const IntPoint& popupInitialCoordinate);
 
     // Returns the ChromeClient of the page this popup is associated with.
     ChromeClientChromium* chromeClientChromium();

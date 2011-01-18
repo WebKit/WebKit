@@ -1,3 +1,18 @@
+2011-01-17  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Fix popup menu re-positioning when the menu is opened upward, above the corresponding form field.
+        https://bugs.webkit.org/show_bug.cgi?id=51382
+        http://crbug.com/60427
+
+        Calculate correct location of popup window whenever the items in the window change.
+
+        No new tests, because this fix is for Chromium project and hard to test only in WebKit project
+
+       * WebKit/chromium/src/WebViewImpl.cpp:
+       (WebKit::WebViewImpl::refreshAutoFillPopup): Change the logic in refreshAutoFilPopup() to check both the location and the size of popup window.
+
 2011-01-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

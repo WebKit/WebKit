@@ -329,11 +329,8 @@ PopupContainer::~PopupContainer()
         removeChild(m_listBox.get());
 }
 
-void PopupContainer::showPopup(FrameView* view)
+IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, const IntPoint& popupInitialCoordinate)
 {
-    // Pre-layout, our size matches the <select> dropdown control.
-    int selectHeight = frameRect().height();
-
     // Reset the max height to its default value, it will be recomputed below
     // if necessary.
     m_listBox->setMaxHeight(kMaxHeight);
@@ -341,23 +338,26 @@ void PopupContainer::showPopup(FrameView* view)
     // Lay everything out to figure out our preferred size, then tell the view's
     // WidgetClient about it.  It should assign us a client.
     layout();
+  
+    // Assume m_listBox size is already calculated.
+    IntSize targetSize(m_listBox->width() + kBorderSize * 2,
+                       m_listBox->height() + kBorderSize * 2);
 
-    m_frameView = view;
+    IntRect widgetRect;
     ChromeClientChromium* chromeClient = chromeClientChromium();
     if (chromeClient) {
         // If the popup would extend past the bottom of the screen, open upwards
         // instead.
-        FloatRect screen = screenAvailableRect(view);
-        IntRect widgetRect = chromeClient->windowToScreen(frameRect());
-
+        FloatRect screen = screenAvailableRect(m_frameView.get());
+        widgetRect = chromeClient->windowToScreen(IntRect(popupInitialCoordinate, targetSize));
         if (widgetRect.bottom() > static_cast<int>(screen.bottom())) {
-            if (widgetRect.y() - widgetRect.height() - selectHeight > 0) {
+            if (widgetRect.y() - widgetRect.height() - targetControlHeight > 0) {
                 // There is enough room to open upwards.
-                widgetRect.move(0, -(widgetRect.height() + selectHeight));
+                widgetRect.move(0, -(widgetRect.height() + targetControlHeight));
             } else {
                 // Figure whether upwards or downwards has more room and set the
                 // maximum number of items.
-                int spaceAbove = widgetRect.y() - selectHeight;
+                int spaceAbove = widgetRect.y() - targetControlHeight;
                 int spaceBelow = screen.bottom() - widgetRect.y();
                 if (spaceAbove > spaceBelow)
                     m_listBox->setMaxHeight(spaceAbove);
@@ -368,10 +368,21 @@ void PopupContainer::showPopup(FrameView* view)
                 widgetRect = chromeClient->windowToScreen(frameRect());
                 // And move upwards if necessary.
                 if (spaceAbove > spaceBelow)
-                    widgetRect.move(0, -(widgetRect.height() + selectHeight));
+                    widgetRect.move(0, -(widgetRect.height() + targetControlHeight));
             }
         }
-        chromeClient->popupOpened(this, widgetRect, false);
+    }
+    return widgetRect;
+}
+
+void PopupContainer::showPopup(FrameView* view)
+{
+    m_frameView = view;
+
+    ChromeClientChromium* chromeClient = chromeClientChromium();
+    if (chromeClient) {
+        IntRect popupRect = frameRect();
+        chromeClient->popupOpened(this, layoutAndCalculateWidgetRect(popupRect.height(), popupRect.location()), false);
         m_popupOpen = true;
     }
 
@@ -556,15 +567,24 @@ void PopupContainer::show(const IntRect& r, FrameView* v, int index)
     // Move it below the select widget.
     location.move(0, r.height());
 
-    IntRect popupRect(location, r.size());
-    setFrameRect(popupRect);
+    setFrameRect(IntRect(location, r.size()));
     showPopup(v);
 }
 
-void PopupContainer::refresh()
+void PopupContainer::refresh(const IntRect& targetControlRect)
 {
+    IntPoint location = m_frameView->contentsToWindow(targetControlRect.location());
+    // Move it below the select widget.
+    location.move(0, targetControlRect.height());
+
     listBox()->updateFromElement();
-    layout();
+    // Store the original height to check if we need to request the location.
+    int originalHeight = height();
+    IntRect widgetRect = layoutAndCalculateWidgetRect(targetControlRect.height(), location);
+    if (originalHeight != widgetRect.height())
+        setFrameRect(widgetRect);
+
+    invalidate();
 }
 
 int PopupContainer::selectedIndex() const

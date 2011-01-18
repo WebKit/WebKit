@@ -1,3 +1,21 @@
+2011-01-17  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Fix popup menu re-positioning when the menu is opened upward, above the corresponding form field.
+        https://bugs.webkit.org/show_bug.cgi?id=51382
+        http://crbug.com/60427
+
+        Calculate correct location of popup window whenever the items in the window change.
+
+        No new tests, because this fix is for Chromium project and hard to test only in WebKit project
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect): New Function to layout and calculate popup widget rect.
+        (WebCore::PopupContainer::showPopup): Move widgetRect calculation logic to calculateWidgetRect().
+        (WebCore::PopupContainer::refresh): Add parameter focusRect to take the location and the size of focus text input field to calculate correct popup window location.
+        * platform/chromium/PopupMenuChromium.h: Append new input parameter for refresh().
+
 2011-01-17  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build.

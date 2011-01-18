@@ -2197,9 +2197,9 @@ void WebViewImpl::refreshAutoFillPopup()
         return;
     }
 
-    IntRect oldBounds = m_autoFillPopup->boundsRect();
-    m_autoFillPopup->refresh();
-    IntRect newBounds = m_autoFillPopup->boundsRect();
+    IntRect oldBounds = m_autoFillPopup->frameRect();
+    m_autoFillPopup->refresh(focusedWebCoreNode()->getRect());
+    IntRect newBounds = m_autoFillPopup->frameRect();
     // Let's resize the backing window if necessary.
     if (oldBounds != newBounds) {
         WebPopupMenuImpl* popupMenu =
