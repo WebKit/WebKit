@@ -37,7 +37,7 @@ size_t ExecutableAllocator::pageSize = 0;
 
 void ExecutableAllocator::intializePageSize()
 {
-#if CPU(ARMV5_OR_LOWER)
+#if OS(SYMBIAN) && CPU(ARMV5_OR_LOWER)
     // The moving memory model (as used in ARMv5 and earlier platforms)
     // on Symbian OS limits the number of chunks for each process to 16. 
     // To mitigate this limitation increase the pagesize to allocate

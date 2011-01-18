@@ -1,3 +1,20 @@
+2011-01-18  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Only use moving memory model assumption in ExecutableAllocator::intializePageSize() for Symbian OS
+        https://bugs.webkit.org/show_bug.cgi?id=52517
+
+        Patch by David Tapuska
+
+        Currently, we compile code with respect to the Symbian-specific moving memory model
+        assumption for all ARMv5 or lower architectures. Instead, we should only compile
+        such code when building for Symbian OS on those architectures because this model
+        is Symbian-specific.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::intializePageSize):
+
 2011-01-18  Dimitry Andric  <dim@freebsd.org>
 
         Reviewed by Andreas Kling.
