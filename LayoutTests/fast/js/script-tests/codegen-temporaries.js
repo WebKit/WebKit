@@ -925,5 +925,10 @@ function construct_test()
 }
 
 shouldBeTrue("construct_test()");
+var testStr = "[";
+for (var i = 0; i < 64; i++)
+    testStr += "(0/0), ";
+testStr += "].length";
+shouldBe(testStr, "64");
 
 var successfullyParsed = true;

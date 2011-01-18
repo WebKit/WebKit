@@ -1,3 +1,16 @@
+2011-01-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        [jsfunfuzz] Assertion in codegen for array of NaN constants
+        https://bugs.webkit.org/show_bug.cgi?id=52643
+
+        Add a testcase to ensure we handle a large number of NaN literals
+        in (0/0 is folded to NaN automatically during parsing).
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/script-tests/codegen-temporaries.js:
+
 2011-01-18  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
 
         Reviewed by Simon Fraser.
