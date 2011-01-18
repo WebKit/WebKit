@@ -1234,7 +1234,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (useNewDrawingArea()) {
         if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
             CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-            drawingArea->paint(context, enclosingIntRect(rect));
+
+            const NSRect *rectsBeingDrawn;
+            NSInteger numRectsBeingDrawn;
+            [self getRectsBeingDrawn:&rectsBeingDrawn count:&numRectsBeingDrawn];
+            for (NSInteger i = 0; i < numRectsBeingDrawn; ++i) {
+                IntRect rect = enclosingIntRect(rectsBeingDrawn[i]);
+                drawingArea->paint(context, rect);
+            }
         } else if (_data->_page->drawsBackground()) {
             [_data->_page->drawsTransparentBackground() ? [NSColor clearColor] : [NSColor whiteColor] set];
             NSRectFill(rect);
