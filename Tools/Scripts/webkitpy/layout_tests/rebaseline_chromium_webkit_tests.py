@@ -41,26 +41,18 @@ The script does the following for each platform specified:
 At the end, the script generates a html that compares old and new baselines.
 """
 
-from __future__ import with_statement
-
-import codecs
 import copy
 import logging
 import optparse
-import os
 import re
-import shutil
-import subprocess
 import sys
-import tempfile
 import time
 import urllib
 import zipfile
 
+from webkitpy.common.checkout import scm
 from webkitpy.common.system import path
-from webkitpy.common.system import user
-from webkitpy.common.system.executive import Executive, ScriptError
-import webkitpy.common.checkout.scm as scm
+from webkitpy.common.system.executive import ScriptError
 
 import port
 from layout_package import test_expectations
@@ -100,41 +92,35 @@ def log_dashed_string(text, platform, logging_level=logging.INFO):
         _log.info(msg)
 
 
-def setup_html_directory(html_directory):
+def setup_html_directory(filesystem, parent_directory):
     """Setup the directory to store html results.
 
-       All html related files are stored in the "rebaseline_html" subdirectory.
-
-    Args:
-      html_directory: parent directory that stores the rebaselining results.
-                      If None, a temp directory is created.
-
-    Returns:
-      the directory that stores the html related rebaselining results.
+       All html related files are stored in the "rebaseline_html" subdirectory of
+       the parent directory. The path to the created directory is returned.
     """
 
-    if not html_directory:
-        html_directory = tempfile.mkdtemp()
-    elif not os.path.exists(html_directory):
-        os.mkdir(html_directory)
+    if not parent_directory:
+        parent_directory = str(filesystem.mkdtemp())
+    else:
+        filesystem.maybe_make_directory(parent_directory)
 
-    html_directory = os.path.join(html_directory, 'rebaseline_html')
+    html_directory = filesystem.join(parent_directory, 'rebaseline_html')
     _log.info('Html directory: "%s"', html_directory)
 
-    if os.path.exists(html_directory):
-        shutil.rmtree(html_directory, True)
-        _log.info('Deleted file at html directory: "%s"', html_directory)
+    if filesystem.exists(html_directory):
+        filesystem.rmtree(html_directory)
+        _log.info('Deleted html directory: "%s"', html_directory)
 
-    if not os.path.exists(html_directory):
-        os.mkdir(html_directory)
+    filesystem.maybe_make_directory(html_directory)
     return html_directory
 
 
-def get_result_file_fullpath(html_directory, baseline_filename, platform,
+def get_result_file_fullpath(filesystem, html_directory, baseline_filename, platform,
                              result_type):
     """Get full path of the baseline result file.
 
     Args:
+      filesystem: wrapper object
       html_directory: directory that stores the html related files.
       baseline_filename: name of the baseline file.
       platform: win, linux or mac
@@ -144,9 +130,9 @@ def get_result_file_fullpath(html_directory, baseline_filename, platform,
       Full path of the baseline file for rebaselining result comparison.
     """
 
-    base, ext = os.path.splitext(baseline_filename)
+    base, ext = filesystem.splitext(baseline_filename)
     result_filename = '%s-%s-%s%s' % (base, platform, result_type, ext)
-    fullpath = os.path.join(html_directory, result_filename)
+    fullpath = filesystem.join(html_directory, result_filename)
     _log.debug('  Result file full path: "%s".', fullpath)
     return fullpath
 
@@ -168,6 +154,7 @@ class Rebaseliner(object):
         self._platform = platform
         self._options = options
         self._port = running_port
+        self._filesystem = running_port._filesystem
         self._target_port = target_port
         self._rebaseline_port = port.get(
             self._target_port.test_platform_name_to_name(platform), options)
@@ -370,7 +357,7 @@ class Rebaseliner(object):
 
             found = False
             scm_error = False
-            test_basename = os.path.splitext(test)[0]
+            test_basename = self._filesystem.splitext(test)[0]
             for suffix in BASELINE_SUFFIXES:
                 archive_test_name = ('layout-test-results/%s-actual%s' %
                                       (test_basename, suffix))
@@ -385,15 +372,14 @@ class Rebaseliner(object):
 
                 # Extract new baseline from archive and save it to a temp file.
                 data = zip_file.read(archive_test_name)
-                temp_fd, temp_name = tempfile.mkstemp(suffix)
-                f = os.fdopen(temp_fd, 'wb')
-                f.write(data)
-                f.close()
+                tempfile, temp_name = self._filesystem.open_binary_tempfile(suffix)
+                tempfile.write(data)
+                tempfile.close()
 
                 expected_filename = '%s-expected%s' % (test_basename, suffix)
-                expected_fullpath = os.path.join(
+                expected_fullpath = self._filesystem.join(
                     self._rebaseline_port.baseline_path(), expected_filename)
-                expected_fullpath = os.path.normpath(expected_fullpath)
+                expected_fullpath = self._filesystem.normpath(expected_fullpath)
                 _log.debug('  Expected file full path: "%s"',
                            expected_fullpath)
 
@@ -407,16 +393,13 @@ class Rebaseliner(object):
                                         test,
                                         suffix,
                                         self._platform):
-                    os.remove(temp_name)
+                    self._filesystem.remove(temp_name)
                     self._delete_baseline(expected_fullpath)
                     continue
 
-                # Create the new baseline directory if it doesn't already
-                # exist.
-                self._port.maybe_make_directory(
-                    os.path.dirname(expected_fullpath))
+                self._filesystem.maybe_make_directory(self._filesystem.dirname(expected_fullpath))
 
-                shutil.move(temp_name, expected_fullpath)
+                self._filesystem.move(temp_name, expected_fullpath)
 
                 if 0 != self._scm.add(expected_fullpath, return_exit_code=True):
                     # FIXME: print detailed diagnose messages
@@ -436,7 +419,7 @@ class Rebaseliner(object):
             test_no += 1
 
         zip_file.close()
-        os.remove(archive_file)
+        self._filesystem.remove(archive_file)
 
         return self._rebaselined_tests
 
@@ -458,21 +441,17 @@ class Rebaseliner(object):
           True if the baseline is unnecessary.
           False otherwise.
         """
-        test_filepath = os.path.join(self._target_port.layout_tests_dir(),
+        test_filepath = self._filesystem.join(self._target_port.layout_tests_dir(),
                                      test)
         all_baselines = self._rebaseline_port.expected_baselines(
             test_filepath, suffix, True)
         for (fallback_dir, fallback_file) in all_baselines:
             if fallback_dir and fallback_file:
-                fallback_fullpath = os.path.normpath(
-                    os.path.join(fallback_dir, fallback_file))
+                fallback_fullpath = self._filesystem.normpath(
+                    self._filesystem.join(fallback_dir, fallback_file))
                 if fallback_fullpath.lower() != baseline_path.lower():
-                    with codecs.open(new_baseline, "r",
-                                     None) as file_handle1:
-                        new_output = file_handle1.read()
-                    with codecs.open(fallback_fullpath, "r",
-                                     None) as file_handle2:
-                        fallback_output = file_handle2.read()
+                    new_output = self._filesystem.read_binary_file(new_baseline)
+                    fallback_output = self._filesystem.read_binary_file(fallback_fullpath)
                     is_image = baseline_path.lower().endswith('.png')
                     if not self._diff_baselines(new_output, fallback_output,
                                                 is_image):
@@ -507,7 +486,7 @@ class Rebaseliner(object):
           filename: full path of the file to delete.
         """
 
-        if not filename or not os.path.isfile(filename):
+        if not filename or not self._filesystem.isfile(filename):
             return
         self._scm.delete(filename)
 
@@ -530,14 +509,12 @@ class Rebaseliner(object):
                 date_suffix = time.strftime('%Y%m%d%H%M%S',
                                             time.localtime(time.time()))
                 backup_file = ('%s.orig.%s' % (path, date_suffix))
-                if os.path.exists(backup_file):
-                    os.remove(backup_file)
+                if self._filesystem.exists(backup_file):
+                    self._filesystem.remove(backup_file)
                 _log.info('Saving original file to "%s"', backup_file)
-                os.rename(path, backup_file)
-            # FIXME: What encoding are these files?
-            # Or is new_expectations always a byte array?
-            with open(path, "w") as file:
-                file.write(new_expectations)
+                self._filesystem.move(path, backup_file)
+
+            self._filesystem.write_text_file(path, new_expectations)
             # self._scm.add(path)
         else:
             _log.info('No test was rebaselined so nothing to remove.')
@@ -551,15 +528,15 @@ class Rebaseliner(object):
           baseline_fullpath: full path of the expected baseline file.
         """
 
-        if not baseline_fullpath or not os.path.exists(baseline_fullpath):
+        if not baseline_fullpath or not self._filesystem.exists(baseline_fullpath):
             return
 
         # Copy the new baseline to html directory for result comparison.
-        baseline_filename = os.path.basename(baseline_fullpath)
-        new_file = get_result_file_fullpath(self._options.html_directory,
+        baseline_filename = self._filesystem.basename(baseline_fullpath)
+        new_file = get_result_file_fullpath(self._filesystem, self._options.html_directory,
                                             baseline_filename, self._platform,
                                             'new')
-        shutil.copyfile(baseline_fullpath, new_file)
+        self._filesystem.copyfile(baseline_fullpath, new_file)
         _log.info('  Html: copied new baseline file from "%s" to "%s".',
                   baseline_fullpath, new_file)
 
@@ -574,7 +551,7 @@ class Rebaseliner(object):
             'NO SUCH FILE OR DIRECTORY')):
             _log.info('  No base file: "%s"', baseline_fullpath)
             return
-        base_file = get_result_file_fullpath(self._options.html_directory,
+        base_file = get_result_file_fullpath(self._filesystem, self._options.html_directory,
                                              baseline_filename, self._platform,
                                              'old')
         # We should be using an explicit encoding here.
@@ -587,7 +564,7 @@ class Rebaseliner(object):
         if baseline_filename.upper().endswith('.TXT'):
             output = self._scm.diff_for_file(baseline_fullpath, log=_log)
             if output:
-                diff_file = get_result_file_fullpath(
+                diff_file = get_result_file_fullpath(self._filesystem,
                     self._options.html_directory, baseline_filename,
                     self._platform, 'diff')
                 with open(diff_file, 'wb') as file:
@@ -642,19 +619,19 @@ class HtmlGenerator(object):
                         '<img style="width: 200" src="%(uri)s" /></a></td>')
     HTML_TR = '<tr>%s</tr>'
 
-    def __init__(self, target_port, options, platforms, rebaselining_tests,
-                 executive):
+    def __init__(self, port, target_port, options, platforms, rebaselining_tests):
         self._html_directory = options.html_directory
+        self._port = port
         self._target_port = target_port
         self._platforms = platforms
         self._rebaselining_tests = rebaselining_tests
-        self._executive = executive
-        self._html_file = os.path.join(options.html_directory,
-                                       'rebaseline.html')
+        self._filesystem = port._filesystem
+        self._html_file = self._filesystem.join(options.html_directory,
+                                                'rebaseline.html')
 
     def abspath_to_uri(self, filename):
         """Converts an absolute path to a file: URI."""
-        return path.abspath_to_uri(filename, self._executive)
+        return path.abspath_to_uri(filename, self._port._executive)
 
     def generate_html(self):
         """Generate html file for rebaselining result comparison."""
@@ -677,9 +654,7 @@ class HtmlGenerator(object):
                                         'body': html_body})
         _log.debug(html)
 
-        with codecs.open(self._html_file, "w", "utf-8") as file:
-            file.write(html)
-
+        self._filesystem.write_text_file(self._html_file, html)
         _log.info('Baseline comparison html generated at "%s"',
                   self._html_file)
 
@@ -687,7 +662,7 @@ class HtmlGenerator(object):
         """Launch the rebaselining html in brwoser."""
 
         _log.info('Launching html: "%s"', self._html_file)
-        user.User().open_url(self._html_file)
+        self._port._user.open_url(self._html_file)
         _log.info('Html launched.')
 
     def _generate_baseline_links(self, test_basename, suffix, platform):
@@ -705,14 +680,14 @@ class HtmlGenerator(object):
         baseline_filename = '%s-expected%s' % (test_basename, suffix)
         _log.debug('    baseline filename: "%s"', baseline_filename)
 
-        new_file = get_result_file_fullpath(self._html_directory,
+        new_file = get_result_file_fullpath(self._filesystem, self._html_directory,
                                             baseline_filename, platform, 'new')
         _log.info('    New baseline file: "%s"', new_file)
-        if not os.path.exists(new_file):
+        if not self._filesystem.exists(new_file):
             _log.info('    No new baseline file: "%s"', new_file)
             return ''
 
-        old_file = get_result_file_fullpath(self._html_directory,
+        old_file = get_result_file_fullpath(self._filesystem, self._html_directory,
                                             baseline_filename, platform, 'old')
         _log.info('    Old baseline file: "%s"', old_file)
         if suffix == '.png':
@@ -721,7 +696,7 @@ class HtmlGenerator(object):
             html_td_link = self.HTML_TD_LINK
 
         links = ''
-        if os.path.exists(old_file):
+        if self._filesystem.exists(old_file):
             links += html_td_link % {
                 'uri': self.abspath_to_uri(old_file),
                 'name': baseline_filename}
@@ -732,11 +707,11 @@ class HtmlGenerator(object):
         links += html_td_link % {'uri': self.abspath_to_uri(new_file),
                                  'name': baseline_filename}
 
-        diff_file = get_result_file_fullpath(self._html_directory,
+        diff_file = get_result_file_fullpath(self._filesystem, self._html_directory,
                                              baseline_filename, platform,
                                              'diff')
         _log.info('    Baseline diff file: "%s"', diff_file)
-        if os.path.exists(diff_file):
+        if self._filesystem.exists(diff_file):
             links += html_td_link % {'uri': self.abspath_to_uri(diff_file),
                                      'name': 'Diff'}
         else:
@@ -755,7 +730,7 @@ class HtmlGenerator(object):
           html that compares baseline results for the test.
         """
 
-        test_basename = os.path.basename(os.path.splitext(test)[0])
+        test_basename = self._filesystem.basename(self._filesystem.splitext(test)[0])
         _log.info('  basename: "%s"', test_basename)
         rows = []
         for suffix in BASELINE_SUFFIXES:
@@ -776,8 +751,7 @@ class HtmlGenerator(object):
                     rows.append(self.HTML_TR % row)
 
         if rows:
-            test_path = os.path.join(self._target_port.layout_tests_dir(),
-                                     test)
+            test_path = self._filesystem.join(self._target_port.layout_tests_dir(), test)
             html = self.HTML_TR_TEST % (self.abspath_to_uri(test_path), test)
             html += self.HTML_TEST_DETAIL % ' '.join(rows)
 
@@ -883,7 +857,7 @@ def parse_options(args):
     return (options, target_options)
 
 
-def main(executive=Executive()):
+def main():
     """Main function to produce new baselines."""
 
     (options, target_options) = parse_options(sys.argv[1:])
@@ -929,7 +903,7 @@ def main(executive=Executive()):
         if platform in platforms:
             rebaseline_platforms.append(platform)
 
-    options.html_directory = setup_html_directory(options.html_directory)
+    options.html_directory = setup_html_directory(host_port_obj._filesystem, options.html_directory)
 
     rebaselining_tests = set()
     backup = options.backup
@@ -950,11 +924,11 @@ def main(executive=Executive()):
 
     _log.info('')
     log_dashed_string('Rebaselining result comparison started', None)
-    html_generator = HtmlGenerator(target_port_obj,
+    html_generator = HtmlGenerator(host_port_obj,
+                                   target_port_obj,
                                    options,
                                    rebaseline_platforms,
-                                   rebaselining_tests,
-                                   executive=executive)
+                                   rebaselining_tests)
     html_generator.generate_html()
     if not options.quiet:
         html_generator.show_html()

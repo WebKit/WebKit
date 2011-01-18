@@ -326,7 +326,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         archive = self._tool.workspace.create_zip(zip_path, results_directory)
         # Remove the results directory to prevent http logs, etc. from getting huge between runs.
         # We could have create_zip remove the original, but this is more explicit.
-        self._tool.filesystem.remove_tree(results_directory, ignore_errors=True)
+        self._tool.filesystem.rmtree(results_directory)
         return archive
 
     def refetch_patch(self, patch):

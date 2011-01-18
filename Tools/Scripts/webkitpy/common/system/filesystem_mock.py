@@ -43,9 +43,38 @@ class MockFileSystem(object):
                 not exist.
         """
         self.files = files or {}
+        self._current_tmpno = 0
+
+    def _raise_not_found(self, path):
+        raise IOError(errno.ENOENT, path, os.strerror(errno.ENOENT))
+
+    def _split(self, path):
+        idx = path.rfind('/')
+        return (path[0:idx], path[idx + 1:])
+
+    def basename(self):
+        return self._split(path)[1]
+
+    def copyfile(self, source, destination):
+        if not self.exists(source):
+            self._raise_not_found(source)
+        if self.isdir(source):
+            raise IOError(errno.EISDIR, source, os.strerror(errno.ISDIR))
+        if self.isdir(destination):
+            raise IOError(errno.EISDIR, destination, os.strerror(errno.ISDIR))
+
+        self.files[destination] = self.files[source]
+
+    def dirname(self, path):
+        return self._split(path)[0]
 
     def exists(self, path):
         return self.isfile(path) or self.isdir(path)
+
+    def files_under(self, path):
+        if not path.endswith('/'):
+            path += '/'
+        return [file for file in self.files if file.startswith(path)]
 
     def isfile(self, path):
         return path in self.files and self.files[path] is not None
@@ -80,9 +109,52 @@ class MockFileSystem(object):
                     files.append(remaining)
         return dirs + files
 
+    def _mktemp(self, suffix='', prefix='tmp', dir=None, **kwargs):
+        if dir is None:
+            dir = '/__im_tmp'
+        curno = self.current_tmpno
+        self.current_tmpno += 1
+        return self.join(dir, "%s_%u_%s" % (prefix, curno, suffix))
+
+    def mkdtemp(self, **kwargs):
+        class TemporaryDirectory(object):
+            def __init__(self, fs, **kwargs):
+                self._kwargs = kwargs
+                self._filesystem = fs
+                self._directory_path = fs._mktemp(**kwargs)
+                fs.maybe_make_directory(self._directory_path)
+
+            def __str__(self):
+                return self._directory_path
+
+            def __enter__(self):
+                return self._directory_path
+
+            def __exit__(self, type, value, traceback):
+                # Only self-delete if necessary.
+
+                # FIXME: Should we delete non-empty directories?
+                if self._filesystem.exists(self._directory_path):
+                    self._filesystem.rmdir(self._directory_path)
+
+        return TemporaryDirectory(fs=self, **kwargs)
+
     def maybe_make_directory(self, *path):
         # FIXME: Implement such that subsequent calls to isdir() work?
         pass
+
+    def move(self, src, dst):
+        if self.files[src] is None:
+            self._raise_not_found(src)
+        self.files[dst] = self.files[src]
+        self.files[src] = None
+
+    def normpath(self, path):
+        return path
+
+    def open_binary_tempfile(self, suffix):
+        path = self._mktemp(suffix)
+        return WritableFileObject(self, path), path
 
     def read_text_file(self, path):
         return self.read_binary_file(path)
@@ -90,8 +162,27 @@ class MockFileSystem(object):
     def read_binary_file(self, path):
         if path in self.files:
             if self.files[path] is None:
-                raise IOError(errno.ENOENT, path, os.strerror(errno.ENOENT))
+                self._raise_not_found(path)
             return self.files[path]
+
+    def remove(self, path):
+        if self.files[path] is None:
+            self._raise_not_found(path)
+        self.files[path] = None
+
+    def rmtree(self, path):
+        if not path.endswith('/'):
+            path += '/'
+
+        for f in self.files:
+            if f.startswith(path):
+                self.files[f] = None
+
+    def splitext(self, path):
+        idx = path.rfind('.')
+        if idx == -1:
+            idx = 0
+        return (path[0:idx], path[idx:])
 
     def write_text_file(self, path, contents):
         return self.write_binary_file(path, contents)
@@ -99,23 +190,24 @@ class MockFileSystem(object):
     def write_binary_file(self, path, contents):
         self.files[path] = contents
 
-    def copyfile(self, source, destination):
-        if not self.exists(source):
-            raise IOError(errno.ENOENT, source, os.strerror(errno.ENOENT))
-        if self.isdir(source):
-            raise IOError(errno.EISDIR, source, os.strerror(errno.ISDIR))
-        if self.isdir(destination):
-            raise IOError(errno.EISDIR, destination, os.strerror(errno.ISDIR))
 
-        self.files[destination] = self.files[source]
+class WritableFileObject(object):
+    def __init__(self, fs, path, append=False, encoding=None):
+        self.fs = fs
+        self.name = name
+        self.closed = False
+        if path not in self.fs.files or not append:
+            self.fs.files[path] = ""
 
-    def files_under(self, path):
-        if not path.endswith('/'):
-            path += '/'
-        return [file for file in self.files if file.startswith(path)]
+    def __enter__(self):
+        return self
 
-    def remove(self, path):
-        del self.files[path]
+    def __exit__(self, type, value, traceback):
+        self.close()
 
-    def remove_tree(self, path, ignore_errors=False):
-        self.files = [file for file in self.files if not file.startswith(path)]
+    def close(self):
+        self.closed = True
+
+    def write(self, str):
+        self.fs.files[self.name] += str
+        self.fs.written_files[self.name] = self.fs.files[self.name]

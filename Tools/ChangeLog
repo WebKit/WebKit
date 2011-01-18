@@ -2,6 +2,28 @@
 
         Reviewed by Mihai Parparita.
 
+        Update rebaseline-chromium-webkit-tests to use filesystem objects
+        instead of direct references to os.path, shutil, tempfile, etc.
+
+        This patch doesn't change anything, but will allow subsequent
+        patches to change the unit tests to no longer use the real
+        filesystem.
+
+        This patch adds a bunch more methods to the filesystem object as
+        well.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52482
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+
+2011-01-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
         new-run-webkit-tests shouldn't crash when you try to run a
         directory containing only skipped files.
 

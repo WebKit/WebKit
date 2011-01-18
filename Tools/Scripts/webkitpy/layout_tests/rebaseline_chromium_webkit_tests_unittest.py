@@ -29,14 +29,14 @@
 
 """Unit tests for rebaseline_chromium_webkit_tests.py."""
 
-import os
 import sys
 import unittest
 
 from webkitpy.tool import mocktool
-from webkitpy.layout_tests import port
-from webkitpy.layout_tests import rebaseline_chromium_webkit_tests
 from webkitpy.common.system.executive import Executive, ScriptError
+
+import port
+import rebaseline_chromium_webkit_tests
 
 
 class MockPort(object):
@@ -113,44 +113,44 @@ class TestRebaseliner(unittest.TestCase):
     def test_diff_baselines_txt(self):
         rebaseliner = self.make_rebaseliner()
         output = rebaseliner._port.expected_text(
-            os.path.join(rebaseliner._port.layout_tests_dir(),
-                         'passes/text.html'))
+            rebaseliner._port._filesystem.join(rebaseliner._port.layout_tests_dir(),
+                                               'passes/text.html'))
         self.assertFalse(rebaseliner._diff_baselines(output, output,
                                                      is_image=False))
 
     def test_diff_baselines_png(self):
         rebaseliner = self.make_rebaseliner()
         image = rebaseliner._port.expected_image(
-            os.path.join(rebaseliner._port.layout_tests_dir(),
-                         'passes/image.html'))
+            rebaseliner._port._filesystem.join(rebaseliner._port.layout_tests_dir(),
+                                               'passes/image.html'))
         self.assertFalse(rebaseliner._diff_baselines(image, image,
                                                      is_image=True))
 
 
 class TestHtmlGenerator(unittest.TestCase):
     def make_generator(self, tests):
-        return rebaseline_chromium_webkit_tests.HtmlGenerator(
+        options = mocktool.MockOptions(configuration=None, html_directory='/tmp')
+        host_port = port.get('test', options)
+        generator = rebaseline_chromium_webkit_tests.HtmlGenerator(
+            host_port,
             target_port=None,
-            options=mocktool.MockOptions(configuration=None,
-                                         html_directory='/tmp'),
+            options=options,
             platforms=['mac'],
-            rebaselining_tests=tests,
-            executive=Executive())
+            rebaselining_tests=tests)
+        return generator, host_port
 
     def test_generate_baseline_links(self):
         orig_platform = sys.platform
-        orig_exists = os.path.exists
-
         try:
+            # FIXME: Use the mock filesystem instead of monkey-patching sys.platform
             sys.platform = 'darwin'
-            os.path.exists = lambda x: True
-            generator = self.make_generator(["foo.txt"])
+            generator, host_port = self.make_generator(["foo.txt"])
+            host_port._filesystem.exists = lambda x: True
             links = generator._generate_baseline_links("foo", ".txt", "mac")
             expected_links = '<td align=center><a href="file:///tmp/foo-expected-mac-old.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-new.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-diff.txt">Diff</a></td>'
             self.assertEqual(links, expected_links)
         finally:
             sys.platform = orig_platform
-            os.path.exists = orig_exists
 
 
 if __name__ == '__main__':
