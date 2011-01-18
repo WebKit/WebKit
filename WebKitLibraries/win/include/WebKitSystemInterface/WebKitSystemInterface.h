@@ -152,7 +152,7 @@ void wkCACFContextSetUserData(WKCACFContext*, void*);
 
 void* wkCACFLayerGetContextUserData(CACFLayerRef);
 
-void wkCACFContextInitializeD3DDevice(WKCACFContext*, IDirect3DDevice9*);
+void wkCACFContextSetD3DDevice(WKCACFContext*, IDirect3DDevice9*);
 void wkCACFContextReleaseD3DResources(WKCACFContext*);
 
 bool wkCACFContextBeginUpdate(WKCACFContext*, void* buffer, size_t bufferSize, CFTimeInterval time, const CGRect& bounds, const CGRect dirtyRects[], size_t dirtyRectCount);

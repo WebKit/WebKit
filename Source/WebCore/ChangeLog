@@ -1,5 +1,50 @@
 2011-01-17  Adam Roben  <aroben@apple.com>
 
+        Simplify WKCACFLayerRenderer's API
+
+        createRenderer/destroyRenderer are now hidden behind setHostWindow.
+        WKCACFLayerRendererClient::animationsStarted has been removed, as it
+        was never called. (The work it was supposed to do was already being
+        accomplished by WKCACFLayerRenderer::render telling each layer that
+        animations are starting.)
+
+        Fixes <http://webkit.org/b/52587> WKCACFLayerRenderer is hard to use
+
+        Reviewed by Chris Marrin.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::createWindow): Moved the
+        call to setHostWindow here from the WM_CREATE handler. The WM_CREATE
+        handler was causing the Direct3D device to be created, but MSDN says
+        you shouldn't create a device while handling WM_CREATE. Removed
+        no-longer-needed call to createRenderer (setHostWindow does this now)
+        and the never-needed call to setNeedsDisplay (we never draw into the
+        root layer; this was just creating an unnecessary backing store the
+        size of the screen!).
+        (WebCore::MediaPlayerPrivateFullscreenWindow::wndProc): Moved WM_CREATE
+        code, as described above. Removed call to destroyRenderer when handling
+        WM_DESTROY; setHostWindow does this now. Fixed up our WM_PAINT handler
+        to do a synchronous paint and to clear our dirty region, while I was in
+        here.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::~WKCACFLayerRenderer): Changed to call
+        setHostWindow instead of destroyRenderer; the former calls the latter
+        if needed.
+        (WebCore::WKCACFLayerRenderer::setHostWindow): Moved here from the
+        header file. Destroys our old renderer (i.e., IDirect3DDevice9) if
+        we're losing our window, or creates a renderer if we're gaining a
+        window.
+        (WebCore::WKCACFLayerRenderer::createRenderer): Updated for WKSI function rename.
+        (WebCore::WKCACFLayerRenderer::destroyRenderer): Changed to clear the
+        D3D device from our context before releasing the device.
+
+        * platform/graphics/win/WKCACFLayerRenderer.h: Removed
+        WKCACFLayerRendererClient::animationsStarted. Removed setNeedsDisplay.
+        Make createRenderer, destroyRenderer, and renderSoon private.
+
+2011-01-17  Adam Roben  <aroben@apple.com>
+
         Remove special-cased support for providing content for the root layer
 
         Clients will just have to provide content through the normal

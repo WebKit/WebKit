@@ -2135,10 +2135,6 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 // Null out our backing store.
                 webView->deleteBackingStore();
             }
-#if USE(ACCELERATED_COMPOSITING)
-            else if (webView->isAcceleratedCompositing())
-                webView->layerRendererBecameVisible();
-#endif
             break;
         case WM_SETFOCUS: {
             COMPtr<IWebUIDelegate> uiDelegate;
@@ -6286,7 +6282,6 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             // Create the root layer
             ASSERT(m_viewWindow);
             m_layerRenderer->setHostWindow(m_viewWindow);
-            m_layerRenderer->createRenderer();
 
             // FIXME: We could perhaps get better performance by never allowing this layer to
             // become tiled (or choosing a higher-than-normal tiling threshold).
@@ -6311,11 +6306,6 @@ void WebView::setAcceleratedCompositing(bool accelerated)
         m_backingLayer = 0;
         m_isAcceleratedCompositing = false;
     }
-}
-
-void WebView::layerRendererBecameVisible()
-{
-    m_layerRenderer->createRenderer();
 }
 #endif
 
@@ -6513,12 +6503,6 @@ bool WebView::shouldRender() const
         return true;
 
     return !frameView->layoutPending();
-}
-
-void WebView::animationsStarted(CFTimeInterval t)
-{
-    // Tell the animation controller that its animations have started
-    m_page->mainFrame()->animation()->notifyAnimationStarted(0, t);
 }
 
 void WebView::syncCompositingState()

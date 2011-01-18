@@ -949,7 +949,6 @@ private:
 
     // WKCACFLayerRendererClient
     virtual bool shouldRender() const;
-    virtual void animationsStarted(CFTimeInterval);
     virtual void syncCompositingState();
 #endif
 
@@ -1056,7 +1055,6 @@ protected:
 #if USE(ACCELERATED_COMPOSITING)
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
     void setAcceleratedCompositing(bool);
-    void layerRendererBecameVisible();
 
     OwnPtr<WebCore::WKCACFLayerRenderer> m_layerRenderer;
     OwnPtr<WebCore::GraphicsLayer> m_backingLayer;

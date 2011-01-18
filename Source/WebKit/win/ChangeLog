@@ -1,5 +1,23 @@
 2011-01-17  Adam Roben  <aroben@apple.com>
 
+        Update for WKCACFLayerRenderer changes
+
+        Fixes <http://webkit.org/b/52587> WKCACFLayerRenderer is hard to use
+
+        Reviewed by Chris Marrin.
+
+        * WebView.cpp:
+        (WebView::WebViewWndProc): Removed call to layerRendererBecameVisible
+        when handling WM_SHOWWINDOW. All this did was try to create the
+        renderer, but it had already been created in setAcceleratedCompositing,
+        so wasn't needed.
+        (WebView::setAcceleratedCompositing): Removed call to createRenderer;
+        setHostWindow does this for us now.
+
+        * WebView.h: Removed animationsStarted and layerRendererBecameVisible.
+
+2011-01-17  Adam Roben  <aroben@apple.com>
+
         Paint directly into a GraphicsLayer when using accelerated compositing
 
         Before this patch, we were painting into our normal backing store

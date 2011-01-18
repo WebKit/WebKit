@@ -223,9 +223,23 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
 
 WKCACFLayerRenderer::~WKCACFLayerRenderer()
 {
-    destroyRenderer();
+    setHostWindow(0);
     WKCACFContextFlusher::shared().removeContext(m_context);
     wkCACFContextDestroy(m_context);
+}
+
+void WKCACFLayerRenderer::setHostWindow(HWND window)
+{
+    if (window == m_hostWindow)
+        return;
+
+    if (m_hostWindow)
+        destroyRenderer();
+
+    m_hostWindow = window;
+
+    if (m_hostWindow)
+        createRenderer();
 }
 
 PlatformCALayer* WKCACFLayerRenderer::rootLayer() const
@@ -250,17 +264,6 @@ void WKCACFLayerRenderer::layerTreeDidChange()
 {
     WKCACFContextFlusher::shared().addContext(m_context);
     renderSoon();
-}
-
-void WKCACFLayerRenderer::setNeedsDisplay(bool sync)
-{
-    ASSERT(m_rootLayer);
-    m_rootLayer->setNeedsDisplay(0);
-
-    if (sync)
-        syncCompositingStateSoon();
-    else
-        renderSoon();
 }
 
 bool WKCACFLayerRenderer::createRenderer()
@@ -327,7 +330,7 @@ bool WKCACFLayerRenderer::createRenderer()
 
     initD3DGeometry();
 
-    wkCACFContextInitializeD3DDevice(m_context, m_d3dDevice.get());
+    wkCACFContextSetD3DDevice(m_context, m_d3dDevice.get());
 
     if (IsWindow(m_hostWindow))
         m_rootLayer->setBounds(bounds());
@@ -339,6 +342,7 @@ void WKCACFLayerRenderer::destroyRenderer()
 {
     wkCACFContextSetLayer(m_context, m_rootLayer->platformLayer());
 
+    wkCACFContextSetD3DDevice(m_context, 0);
     m_d3dDevice = 0;
     if (s_d3d)
         s_d3d->Release();

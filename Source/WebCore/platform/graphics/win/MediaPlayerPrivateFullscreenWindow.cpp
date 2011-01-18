@@ -80,6 +80,10 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
         parentHwnd, 0, WebCore::instanceHandle(), this);
     ASSERT(IsWindow(m_hwnd));
 
+#if USE(ACCELERATED_COMPOSITING)
+    m_layerRenderer->setHostWindow(m_hwnd);
+#endif
+
     ::SetFocus(m_hwnd);
 }
 
@@ -139,17 +143,10 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
     switch (message) {
     case WM_CREATE:
         m_hwnd = hWnd;
-#if USE(ACCELERATED_COMPOSITING)
-        m_layerRenderer->setHostWindow(m_hwnd);
-        m_layerRenderer->createRenderer();
-        if (m_rootChild)
-            m_layerRenderer->setNeedsDisplay();
-#endif
         break;
     case WM_DESTROY:
         m_hwnd = 0;
 #if USE(ACCELERATED_COMPOSITING)
-        m_layerRenderer->destroyRenderer();
         m_layerRenderer->setHostWindow(0);
 #endif
         break;
@@ -169,7 +166,8 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
         break;
     case WM_PAINT:
 #if USE(ACCELERATED_COMPOSITING)
-        m_layerRenderer->renderSoon();
+        m_layerRenderer->paint();
+        ::ValidateRect(m_hwnd, 0);
 #endif
         break;
     }

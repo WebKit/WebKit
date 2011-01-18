@@ -54,7 +54,6 @@ class WKCACFLayerRendererClient {
 public:
     virtual ~WKCACFLayerRendererClient() { }
     virtual bool shouldRender() const = 0;
-    virtual void animationsStarted(CFTimeInterval) { }
     virtual void syncCompositingState() { }
 };
 
@@ -72,13 +71,9 @@ public:
 
     void setRootChildLayer(PlatformCALayer*);
     void layerTreeDidChange();
-    void setNeedsDisplay(bool sync = false);
-    void setHostWindow(HWND window) { m_hostWindow = window; }
-    bool createRenderer();
-    void destroyRenderer();
+    void setHostWindow(HWND);
     void paint();
     void resize();
-    void renderSoon();
     void syncCompositingStateSoon();
 
 protected:
@@ -88,6 +83,9 @@ protected:
 private:
     WKCACFLayerRenderer(WKCACFLayerRendererClient*);
 
+    bool createRenderer();
+    void destroyRenderer();
+    void renderSoon();
     void renderTimerFired(Timer<WKCACFLayerRenderer>*);
 
     CGRect bounds() const;

@@ -1,3 +1,14 @@
+2011-01-17  Adam Roben  <aroben@apple.com>
+
+        Make it possible to both set and clear a wkCACFContext's D3D device
+
+        Fixes <http://webkit.org/b/52587> WKCACFLayerRenderer is hard to use
+
+        Reviewed by Chris Marrin.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+
 2011-01-07  Chris Marrin  <cmarrin@apple.com>
 
         Unreviewed.
