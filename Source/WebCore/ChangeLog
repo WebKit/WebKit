@@ -1,3 +1,13 @@
+2011-01-18  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Reviewed by Kent Tamura.
+
+        Fixed compilation when Inspector is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=52564
+
+        * page/Page.cpp:
+        (WebCore::networkStateChanged): Added ENABLE(INSPECTOR) guard
+
 2011-01-18  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r76004, r76005, r76007, and r76011.
