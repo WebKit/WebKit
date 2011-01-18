@@ -1,3 +1,9 @@
+2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, update localizedStrings.js.
+
+        * English.lproj/localizedStrings.js:
+
 2011-01-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
