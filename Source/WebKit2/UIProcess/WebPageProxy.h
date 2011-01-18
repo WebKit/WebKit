@@ -198,6 +198,7 @@ public:
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
+    CGContextRef containingWindowGraphicsContext();
 #endif
 #if PLATFORM(WIN)
     void didChangeCompositionSelection(bool);

@@ -1,3 +1,16 @@
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add PageClientImpl::containingWindowGraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=52666
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::containingWindowGraphicsContext):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+
 2011-01-18  Damian Kaleta  <dkaleta@apple.com>
 
         Reviewed by Sam Weinig.

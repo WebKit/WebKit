@@ -333,6 +333,11 @@ void PageClientImpl::setComplexTextInputEnabled(uint64_t pluginComplexTextInputI
     [m_wkView _setComplexTextInputEnabled:complexTextInputEnabled pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
 }
 
+CGContextRef PageClientImpl::containingWindowGraphicsContext()
+{
+    return static_cast<CGContextRef>([[[m_wkView window] graphicsContext] graphicsPort]);
+}
+
 void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
     [m_wkView _setPageHasCustomRepresentation:useCustomRepresentation];

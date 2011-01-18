@@ -89,6 +89,8 @@ private:
     virtual void accessibilityChildTokenReceived(const CoreIPC::DataReference&);    
     virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
 
+    virtual CGContextRef containingWindowGraphicsContext();
+
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
     virtual void didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference&);
 
