@@ -51,7 +51,7 @@ public:
 
     // The rect and delta to be scrolled.
     WebCore::IntRect scrollRect;
-    WebCore::IntSize scrollDelta;
+    WebCore::IntSize scrollOffset;
     
     // The bounds of the update rects.
     WebCore::IntRect updateRectBounds;

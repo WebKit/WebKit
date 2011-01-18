@@ -44,7 +44,7 @@ private:
 
     // DrawingArea
     virtual void setNeedsDisplay(const WebCore::IntRect&);
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta);
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void attachCompositingContext();
     virtual void detachCompositingContext();
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
@@ -62,7 +62,7 @@ private:
 
     Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
-    WebCore::IntSize m_scrollDelta;
+    WebCore::IntSize m_scrollOffset;
     
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.

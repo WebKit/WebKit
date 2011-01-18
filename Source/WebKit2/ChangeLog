@@ -2,6 +2,36 @@
 
         Reviewed by Sam Weinig.
 
+        Rename scrollDelta to scrollOffset everywhere.
+
+        * Shared/UpdateInfo.cpp:
+        (WebKit::UpdateInfo::encode):
+        (WebKit::UpdateInfo::decode):
+        * Shared/UpdateInfo.h:
+        * UIProcess/BackingStore.h:
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::incorporateUpdate):
+        (WebKit::BackingStore::scroll):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scroll):
+        (WebKit::WebChromeClient::delegatedScrollRequested):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::scroll):
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::scroll):
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::scroll):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Get and paint each individual rect in -[WKView drawRect:]
         https://bugs.webkit.org/show_bug.cgi?id=52660
 

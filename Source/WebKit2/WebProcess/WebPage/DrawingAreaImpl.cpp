@@ -65,7 +65,7 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
     scheduleDisplay();
 }
 
-void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
+void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
         unsigned scrollArea = scrollRect.width() * scrollRect.height();
@@ -81,7 +81,7 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDel
         // Just repaint the entire current scroll rect, we'll scroll the new rect instead.
         setNeedsDisplay(m_scrollRect);
         m_scrollRect = IntRect();
-        m_scrollDelta = IntSize();
+        m_scrollOffset = IntSize();
     }
 
     // Get the part of the dirty region that is in the scroll rect.
@@ -92,19 +92,19 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDel
         m_dirtyRegion.subtract(scrollRect);
 
         // Move the dirty parts.
-        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollDelta), scrollRect);
+        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollOffset), scrollRect);
 
         // And add them back.
         m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
     } 
     
     // Compute the scroll repaint region.
-    Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollDelta));
+    Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollOffset));
 
     m_dirtyRegion.unite(scrollRepaintRegion);
 
     m_scrollRect = scrollRect;
-    m_scrollDelta += scrollDelta;
+    m_scrollOffset += scrollOffset;
 }
 
 void DrawingAreaImpl::attachCompositingContext()
@@ -214,11 +214,11 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     }
 
     updateInfo.scrollRect = m_scrollRect;
-    updateInfo.scrollDelta = m_scrollDelta;
+    updateInfo.scrollOffset = m_scrollOffset;
 
     m_dirtyRegion = Region();
     m_scrollRect = IntRect();
-    m_scrollDelta = IntSize();
+    m_scrollOffset = IntSize();
     
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
     if (!bitmap->createHandle(updateInfo.bitmapHandle))

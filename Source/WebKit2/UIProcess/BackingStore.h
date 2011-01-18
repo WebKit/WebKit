@@ -60,7 +60,7 @@ public:
 private:
     explicit BackingStore(const WebCore::IntSize&);
 
-    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta);
+    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
     WebCore::IntSize m_size;
 

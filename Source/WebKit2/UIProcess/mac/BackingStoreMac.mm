@@ -59,7 +59,7 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
         CGContextScaleCTM(m_bitmapContext.get(), 1, -1);
     }
 
-    scroll(updateInfo.scrollRect, updateInfo.scrollDelta);
+    scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
 
@@ -75,16 +75,16 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
     }
 }
 
-void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
+void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    if (scrollDelta.isZero())
+    if (scrollOffset.isZero())
         return;
 
     CGContextSaveGState(m_bitmapContext.get());
 
     CGContextClipToRect(m_bitmapContext.get(), scrollRect);
 
-    CGPoint destination = CGPointMake(scrollRect.x() + scrollDelta.width(), scrollRect.y() + scrollDelta.height());
+    CGPoint destination = CGPointMake(scrollRect.x() + scrollOffset.width(), scrollRect.y() + scrollOffset.height());
     paintBitmapContext(m_bitmapContext.get(), m_bitmapContext.get(), destination, scrollRect);
 
     CGContextRestoreGState(m_bitmapContext.get());

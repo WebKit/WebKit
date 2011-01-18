@@ -40,7 +40,7 @@ public:
     virtual ~ChunkedUpdateDrawingArea();
 
     virtual void setNeedsDisplay(const WebCore::IntRect&);
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta);
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void display();
 
 #if USE(ACCELERATED_COMPOSITING)
