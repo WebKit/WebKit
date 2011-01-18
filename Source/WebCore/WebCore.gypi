@@ -4677,6 +4677,7 @@
             'inspector/front-end/ResourcesPanel.js',
             'inspector/front-end/ScopeChainSidebarPane.js',
             'inspector/front-end/Script.js',
+            'inspector/front-end/ScriptFormatter.js',
             'inspector/front-end/ScriptsPanel.js',
             'inspector/front-end/ScriptView.js',
             'inspector/front-end/ShortcutsHelp.js',

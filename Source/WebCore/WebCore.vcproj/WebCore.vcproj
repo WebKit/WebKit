@@ -65597,6 +65597,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ScriptFormatter.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ScriptsPanel.js"
 					>
 				</File>

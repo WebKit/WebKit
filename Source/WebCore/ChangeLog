@@ -1,3 +1,34 @@
+2011-01-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: implement script beautifier prototype.
+        https://bugs.webkit.org/show_bug.cgi?id=51588
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ScriptFormatter.js: Added.
+        (WebInspector.ScriptFormatter): Implements JavaScript source beautification and conversion between original and
+        formatted line numbers
+        (WebInspector.ScriptFormatter.findLineEndings):
+        (WebInspector.ScriptFormatter.locationToPosition):
+        (WebInspector.ScriptFormatter.positionToLocation):
+        (WebInspector.ScriptFormatter.upperBound):
+        (WebInspector.ScriptFormatter.prototype.format):
+        (WebInspector.ScriptFormatter.prototype.originalLineNumberToFormattedLineNumber):
+        (WebInspector.ScriptFormatter.prototype.formattedLineNumberToOriginalLineNumber):
+        (WebInspector.ScriptFormatter.prototype.originalPositionToFormattedLineNumber):
+        (WebInspector.ScriptFormatter.prototype.formattedLineNumberToOriginalPosition):
+        (WebInspector.ScriptFormatter.prototype._convertPosition):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._clearCurrentExecutionLine):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.ScriptsPanel.prototype._formatScript):
+        * inspector/front-end/SourceFrame.js: Convert original line numbers to UI line numbers and vice versa
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-01-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix as follow-up of r76004.

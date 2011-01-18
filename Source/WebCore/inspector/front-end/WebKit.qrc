@@ -81,6 +81,7 @@
     <file>ResourcesPanel.js</file>
     <file>ScopeChainSidebarPane.js</file>
     <file>Script.js</file>
+    <file>ScriptFormatter.js</file>
     <file>ScriptsPanel.js</file>
     <file>ScriptView.js</file>
     <file>Section.js</file>

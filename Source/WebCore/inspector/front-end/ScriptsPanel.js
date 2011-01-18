@@ -63,6 +63,15 @@ WebInspector.ScriptsPanel = function()
     // FIXME: append the functions select element to the top status bar when it is implemented.
     // this.topStatusBar.appendChild(this.functionsSelectElement);
 
+    this.formatButton = document.createElement("button");
+    this.formatButton.className = "status-bar-item";
+    this.formatButton.id = "format-script";
+    this.formatButton.title = WebInspector.UIString("Format script.");
+    this.formatButton.appendChild(document.createElement("img"));
+    this.formatButton.addEventListener("click", this._formatScript.bind(this), false);
+    if (Preferences.debugMode)
+        this.topStatusBar.appendChild(this.formatButton);
+
     this.sidebarButtonsElement = document.createElement("div");
     this.sidebarButtonsElement.id = "scripts-sidebar-buttons";
     this.topStatusBar.appendChild(this.sidebarButtonsElement);
@@ -677,7 +686,7 @@ WebInspector.ScriptsPanel.prototype = {
     _clearCurrentExecutionLine: function()
     {
         if (this._executionSourceFrame)
-            this._executionSourceFrame.executionLine = 0;
+            this._executionSourceFrame.clearExecutionLine();
         delete this._executionSourceFrame;
     },
 
@@ -699,7 +708,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._executionSourceFrame = this._sourceFrameForScriptOrResource(scriptOrResource);
         if (this._executionSourceFrame)
-            this._executionSourceFrame.executionLine = currentFrame.line;
+            this._executionSourceFrame.setExecutionLine(currentFrame.line);
     },
 
     _changeVisibleFile: function(event)
@@ -831,6 +840,12 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._showScriptOrResource(this._backForwardList[++this._currentBackForwardIndex], {fromBackForwardAction: true});
         this._updateBackAndForwardButtons();
+    },
+
+    _formatScript: function()
+    {
+        if (this.visibleView && this.visibleView.sourceFrame)
+            this.visibleView.sourceFrame.formatSource();
     },
 
     _enableDebugging: function()
