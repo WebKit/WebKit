@@ -625,8 +625,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
 
     if (m_state.fillGradient) {
         CGContextSaveGState(context);
-        CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
         if (hasShadow()) {
+            CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
             CGLayerRef layer = CGLayerCreateWithContext(context, CGSizeMake(rect.width(), rect.height()), 0);
             CGContextRef layerContext = CGLayerGetContext(layer);
             m_state.fillGradient->paint(layerContext);
@@ -634,6 +634,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
             CGLayerRelease(layer);
         } else {
             CGContextClipToRect(context, rect);
+            CGContextConcatCTM(context, m_state.fillGradient->gradientSpaceTransform());
             m_state.fillGradient->paint(this);
         }
         CGContextRestoreGState(context);
