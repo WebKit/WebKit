@@ -1,3 +1,10 @@
+2011-01-18  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed crash fix on release builds.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, update localizedStrings.js.

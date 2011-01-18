@@ -548,7 +548,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context->save();
 
         RoundedIntRect border = style()->getRoundedBorderFor(borderRect);
-        border.excludeLogicalEdges(box->isHorizontal(), !includeLeftEdge, !includeRightEdge);
+        border.excludeLogicalEdges(box && box->isHorizontal(), !includeLeftEdge, !includeRightEdge);
         context->addRoundedRectClip(border);
         clippedToBorderRadius = true;
     }
