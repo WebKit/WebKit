@@ -47,7 +47,9 @@ CGContextRef BackingStore::backingStoreContext()
         RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
         
         m_bitmapContext.adoptCF(CGBitmapContextCreate(0, m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
-        
+
+        CGContextSetBlendMode(m_bitmapContext.get(), kCGBlendModeCopy);
+
         // We want the origin to be in the top left corner so flip the backing store context.
         CGContextTranslateCTM(m_bitmapContext.get(), 0, m_size.height());
         CGContextScaleCTM(m_bitmapContext.get(), 1, -1);

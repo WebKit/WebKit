@@ -33,13 +33,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size)
+PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size, WebPageProxy* webPageProxy)
 {
-    return adoptPtr(new BackingStore(size));
+    return adoptPtr(new BackingStore(size, webPageProxy));
 }
 
-BackingStore::BackingStore(const IntSize& size)
+BackingStore::BackingStore(const IntSize& size, WebPageProxy* webPageProxy)
     : m_size(size)
+    , m_webPageProxy(webPageProxy)
 {
     ASSERT(!m_size.isEmpty());
 }

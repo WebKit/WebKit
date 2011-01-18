@@ -47,7 +47,7 @@ class BackingStore {
     WTF_MAKE_NONCOPYABLE(BackingStore);
 
 public:
-    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&);
+    static PassOwnPtr<BackingStore> create(const WebCore::IntSize&, WebPageProxy*);
     ~BackingStore();
 
 #if PLATFORM(MAC)
@@ -58,15 +58,17 @@ public:
     void incorporateUpdate(const UpdateInfo&);
 
 private:
-    explicit BackingStore(const WebCore::IntSize&);
+    BackingStore(const WebCore::IntSize&, WebPageProxy*);
 
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
     WebCore::IntSize m_size;
+    WebPageProxy* m_webPageProxy;
 
 #if PLATFORM(MAC)
     CGContextRef backingStoreContext();
 
+    RetainPtr<CGLayerRef> m_cgLayer;
     RetainPtr<CGContextRef> m_bitmapContext;
 #endif
 };

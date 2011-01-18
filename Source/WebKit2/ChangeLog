@@ -1,5 +1,30 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Pass the web page proxy to BackingStore::create
+        https://bugs.webkit.org/show_bug.cgi?id=52673
+
+        * UIProcess/BackingStore.cpp:
+        (WebKit::BackingStore::create):
+        Add WebPageProxy parameter.
+    
+        (WebKit::BackingStore::BackingStore):
+        Add WebPageProxy parameter.
+
+        * UIProcess/BackingStore.h:
+        Add WebPageProxy member variable.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        Pass the web page proxy when creating the backing store.
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::backingStoreContext):
+        Set the default blend mode.
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Factor code to create the backing store bitmap context out into a new function

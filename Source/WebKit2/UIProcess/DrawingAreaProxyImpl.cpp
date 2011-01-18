@@ -113,7 +113,7 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
     // FIXME: Check for the update bounds being empty here.
 
     if (!m_backingStore)
-        m_backingStore = BackingStore::create(updateInfo.viewSize);
+        m_backingStore = BackingStore::create(updateInfo.viewSize, m_webPageProxy);
 
     m_backingStore->incorporateUpdate(updateInfo);
 
