@@ -187,7 +187,9 @@ class CommitQueueTask(object):
         first_failing_tests = [result.filename for result in first_results]
         first_results_archive = self._delegate.archive_last_layout_test_results(self._patch)
         if self._test():
-            self._report_flaky_tests(first_results, first_results_archive)
+            # Only report flaky tests if we were successful at archiving results.
+            if first_results_archive:
+                self._report_flaky_tests(first_results, first_results_archive)
             return True
 
         second_results = self._failing_results_from_last_run()

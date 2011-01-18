@@ -40,10 +40,13 @@ class WorkspaceTest(unittest.TestCase):
         filesystem = MockFileSystem({
             "dir/foo.jpg": "",
             "dir/foo-1.jpg": "",
+            "dir/foo-2.jpg": "",
         })
         workspace = Workspace(filesystem, None)
         self.assertEqual(workspace.find_unused_filename("bar", "bar", "bar"), "bar/bar.bar")
-        self.assertEqual(workspace.find_unused_filename("dir", "foo", "jpg"), "dir/foo-2.jpg")
+        self.assertEqual(workspace.find_unused_filename("dir", "foo", "jpg", search_limit=1), None)
+        self.assertEqual(workspace.find_unused_filename("dir", "foo", "jpg", search_limit=2), None)
+        self.assertEqual(workspace.find_unused_filename("dir", "foo", "jpg"), "dir/foo-3.jpg")
 
     def test_create_zip(self):
         workspace = Workspace(None, MockExecutive(should_log=True))

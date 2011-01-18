@@ -209,6 +209,34 @@ command_passed: success_message='Landed patch' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
 
+    def test_failed_archive(self):
+        commit_queue = MockCommitQueue([
+            None,
+            None,
+            None,
+            None,
+            ScriptError("MOCK tests failure"),
+        ])
+        # It's possible delegate to fail to archive layout tests, don't try to report
+        # flaky tests when that happens.
+        commit_queue.archive_last_layout_test_results = lambda patch: None
+        expected_stderr = """run_webkit_patch: ['clean']
+command_passed: success_message='Cleaned working directory' patch='197'
+run_webkit_patch: ['update']
+command_passed: success_message='Updated working directory' patch='197'
+run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
+command_passed: success_message='Applied patch' patch='197'
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both']
+command_passed: success_message='Built patch' patch='197'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_failed: failure_message='Patch does not pass tests' script_error='MOCK tests failure' patch='197'
+run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
+command_passed: success_message='Passed tests' patch='197'
+run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
+command_passed: success_message='Landed patch' patch='197'
+"""
+        self._run_through_task(commit_queue, expected_stderr)
+
     _double_flaky_test_counter = 0
 
     def test_double_flaky_test_failure(self):

@@ -36,7 +36,7 @@ class Workspace(object):
         self._filesystem = filesystem
         self._executive = executive  # FIXME: Remove if create_zip is moved to python.
 
-    def find_unused_filename(self, directory, name, extension, search_limit=10):
+    def find_unused_filename(self, directory, name, extension, search_limit=100):
         for count in range(search_limit):
             if count:
                 target_name = "%s-%s.%s" % (name, count, extension)
