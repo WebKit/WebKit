@@ -1,5 +1,12 @@
 2011-01-17  Alexey Proskuryakov  <ap@apple.com>
 
+        Actually wrote a FIXME promised for a review comment.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+
+2011-01-17  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Anders Carlsson and Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=52595

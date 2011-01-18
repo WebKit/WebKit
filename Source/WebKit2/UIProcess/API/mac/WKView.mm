@@ -1373,8 +1373,8 @@ static WebFrameProxy* frameBeingPrinted()
 // Take over printing. AppKit applies incorrect clipping, and doesn't print pages beyond the first one.
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
 {
+    // FIXME: This check isn't right for some non-printing cases, such as capturing into a buffer using cacheDisplayInRect:toBitmapImageRep:.
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
-        // FIXME: 
         _data->_page->endPrinting();
         [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect rectIsVisibleRectForView:visibleView topView:topView];
         return;
