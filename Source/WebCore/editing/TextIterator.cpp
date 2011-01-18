@@ -1128,10 +1128,10 @@ void SimplifiedBackwardsTextIterator::advance()
         if (!next) {
             // Exit empty containers as we pass over them or containers
             // where [container, 0] is where we started iterating.
-            if (!m_handledNode &&
-                canHaveChildrenForEditing(m_node) && 
-                m_node->parentNode() && 
-                (!m_node->lastChild() || (m_node == m_endNode && m_endOffset == 0))) {
+            if (!m_handledNode
+                    && canHaveChildrenForEditing(m_node)
+                    && m_node->parentNode()
+                    && (!m_node->lastChild() || (m_node == m_endNode && !m_endOffset))) {
                 exitNode();
                 if (m_positionNode) {
                     m_handledNode = true;

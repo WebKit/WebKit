@@ -1,3 +1,17 @@
+2011-01-18  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Tweak style in visible_units.cpp and TextIterator.cpp in preparation for another patch
+        https://bugs.webkit.org/show_bug.cgi?id=52610
+
+        This is a purely aesthetic change.
+
+        * editing/TextIterator.cpp:
+        (WebCore::SimplifiedBackwardsTextIterator::advance):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+
 2011-01-18  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.
