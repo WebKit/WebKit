@@ -1,3 +1,13 @@
+2011-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] Build fixes for gtk3 build
+        https://bugs.webkit.org/show_bug.cgi?id=52648
+
+        * DumpRenderTree/gtk/EventSender.cpp:
+        (beginDragWithFilesCallback):
+
 2011-01-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.

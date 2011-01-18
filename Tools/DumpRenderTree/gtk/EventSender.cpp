@@ -475,17 +475,18 @@ static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef f
         NULL);
 
     GdkEvent event;
+    GdkWindow* viewGDKWindow = gtk_widget_get_window(view);
     memset(&event, 0, sizeof(event));
     event.type = GDK_MOTION_NOTIFY;
     event.motion.x = lastMousePositionX;
     event.motion.y = lastMousePositionY;
     event.motion.time = GDK_CURRENT_TIME;
-    event.motion.window = view->window;
-    event.motion.device = gdk_device_get_core_pointer();
+    event.motion.window = viewGDKWindow;
+    event.motion.device = getDefaultGDKPointerDevice(viewGDKWindow);
     event.motion.state = GDK_BUTTON1_MASK;
 
     int xRoot, yRoot;
-    gdk_window_get_root_coords(view->window, lastMousePositionX, lastMousePositionY, &xRoot, &yRoot);
+    gdk_window_get_root_coords(viewGDKWindow, lastMousePositionX, lastMousePositionY, &xRoot, &yRoot);
     event.motion.x_root = xRoot;
     event.motion.y_root = yRoot;
 
