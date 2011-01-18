@@ -94,6 +94,8 @@ PASS [shaders/implicit/ternary_int_float.vert/fshader]: implicit cast of int to 
 PASS [shaders/implicit/ternary_ivec2_vec2.vert/fshader]: implicit cast of ivec2 to vec2 in ternary expression should fail
 PASS [shaders/implicit/ternary_ivec3_vec3.vert/fshader]: implicit cast of ivec3 to vec3 in ternary expression should fail
 PASS [shaders/implicit/ternary_ivec4_vec4.vert/fshader]: implicit cast of ivec4 to vec4 in ternary expression should fail
+PASS [shaders/misc/non-ascii.vert/fshader]: Non ascii data in source should fail
+PASS [shaders/misc/non-ascii-comments.vert/fshader]: Non ascii comments in source should succeed
 PASS [shaders/reserved/_webgl_field.vert/fshader]: use of reserved _webgl prefix as structure field should fail
 PASS [shaders/reserved/_webgl_function.vert/fshader]: use of reserved _webgl prefix as function name should fail
 PASS [shaders/reserved/_webgl_struct.vert/fshader]: use of reserved _webgl prefix as structure name should fail

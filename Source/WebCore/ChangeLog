@@ -1,3 +1,22 @@
+2011-01-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Must strip comments from WebGL shaders before enforcing character set
+        https://bugs.webkit.org/show_bug.cgi?id=52390
+
+        Strip comments from incoming shaders, preserving line numbers,
+        before validating that they conform to the ESSL character set.
+        Revert changes from http://trac.webkit.org/changeset/75735 which
+        allowed invalid characters to be passed to certain APIs.
+
+        Tested with WebGL layout tests, conformance test suite and several
+        WebGL demos in both Safari and Chromium.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::StripComments::StripComments::process):
+        (WebCore::WebGLRenderingContext::shaderSource):
+
 2011-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

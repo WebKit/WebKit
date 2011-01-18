@@ -77,17 +77,27 @@ shouldGenerateGLError(context, context.NO_ERROR, "context.viewport(0, 0, 16, 16)
 
 debug("");
 debug("Set up a program to test invalid characters");
-var invalidSet = ['$', '@', '\\'];
+var invalidSet = ['"', '$', '`', '@', '\\', "'"];
 var validUniformName = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_1234567890";
 var validAttribName = "abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-var validShaderSource = "uniform float " + validUniformName + ";\n"
-                        + "varying float " + validAttribName + ";\n"
-                        + "void main() {\n"
-                        + validAttribName  + " = " + validUniformName + ";\n"
-                        + "gl_Position = vec4(0.0, 0.0, 0.0, 1.0); }\n";
-                        + "//.+-/*%<>[](){}^|&~=!:;,?# ";
+function generateShaderSource(opt_invalidIdentifierChar, opt_invalidCommentChar) {
+  var invalidIdentifierString = "";
+  var invalidCommentString = "";
+  if (opt_invalidIdentifierChar != undefined) {
+    invalidIdentifierString += opt_invalidIdentifierChar;
+  }
+  if (opt_invalidCommentChar != undefined) {
+    invalidCommentString += opt_invalidCommentChar;
+  }
+  return "uniform float " + validUniformName + invalidIdentifierString + ";\n"
+                          + "varying float " + validAttribName + ";\n"
+                          + "void main() {\n"
+                          + validAttribName  + " = " + validUniformName + ";\n"
+                          + "gl_Position = vec4(0.0, 0.0, 0.0, 1.0); }\n";
+                          + "//.+-/*%<>[](){}^|&~=!:;,?# " + invalidCommentString;
+}
 var vShader = context.createShader(context.VERTEX_SHADER);
-context.shaderSource(vShader, validShaderSource);
+context.shaderSource(vShader, generateShaderSource());
 context.compileShader(vShader);
 shouldBe("context.getError()", "context.NO_ERROR");
 var fShader = context.createShader(context.FRAGMENT_SHADER);
@@ -113,7 +123,10 @@ shouldBe("context.getError()", "context.NO_ERROR");
 debug("");
 debug("Test shaderSource() with invalid characters");
 for (var i = 0; i < invalidSet.length; ++i) {
-  var invalidShaderSource = validShaderSource + "\n//" + invalidSet[i];
+  var validShaderSource = generateShaderSource(undefined, invalidSet[i]);
+  context.shaderSource(vShader, validShaderSource);
+  shouldBe("context.getError()", "context.NO_ERROR");
+  var invalidShaderSource = generateShaderSource(invalidSet[i], undefined);
   context.shaderSource(vShader, invalidShaderSource);
   shouldBe("context.getError()", "context.INVALID_VALUE");
 }

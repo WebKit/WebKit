@@ -1,3 +1,24 @@
+2011-01-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by David Levin.
+
+        Must strip comments from WebGL shaders before enforcing character set
+        https://bugs.webkit.org/show_bug.cgi?id=52390
+
+        Incorporated non-ASCII GLSL conformance tests from Khronos
+        repository. Updated and synchronized invalid-passed-params.html
+        with Khronos repository, undoing changes from
+        http://trac.webkit.org/changeset/75735 .
+
+        * fast/canvas/webgl/glsl-conformance-expected.txt:
+        * fast/canvas/webgl/invalid-passed-params-expected.txt:
+        * fast/canvas/webgl/invalid-passed-params.html:
+        * fast/canvas/webgl/shaders/00_shaders.txt:
+        * fast/canvas/webgl/shaders/misc: Added.
+        * fast/canvas/webgl/shaders/misc/00_shaders.txt: Added.
+        * fast/canvas/webgl/shaders/misc/non-ascii-comments.vert: Added.
+        * fast/canvas/webgl/shaders/misc/non-ascii.vert: Added.
+
 2011-01-18  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
