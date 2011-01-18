@@ -1,3 +1,21 @@
+2011-01-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Fix a small race condition that could cause the unit tests for
+        new-run-webkit-tests to fail in a multithreaded environment.
+        There was a small window in the code where one thread would
+        check to see if a thread had raised an exception, do something,
+        and then check to see if the thread was alive. If the other
+        thread raised an exception and exited in between these two
+        steps, the exception would be lost. Flipping the order of the
+        two checks fixes the race, since we will now always check for an
+        exception on the thread before exiting.
+
+        https://bugs.webkit.org/show_bug.cgi?id=51579
+
+        * Scripts/webkitpy/layout_tests/layout_package/message_broker.py:
+
 2011-01-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

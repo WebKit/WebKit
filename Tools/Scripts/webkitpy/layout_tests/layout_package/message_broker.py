@@ -144,6 +144,13 @@ class MultiThreadedBroker(WorkerMessageBroker):
             some_thread_is_alive = False
             t = time.time()
             for thread in threads:
+                if thread.isAlive():
+                    some_thread_is_alive = True
+                    next_timeout = thread.next_timeout()
+                    if next_timeout and t > next_timeout:
+                        log_wedged_worker(thread.getName(), thread.id())
+                        thread.clear_next_timeout()
+
                 exception_info = thread.exception_info()
                 if exception_info is not None:
                     # Re-raise the thread's exception here to make it
@@ -151,13 +158,6 @@ class MultiThreadedBroker(WorkerMessageBroker):
                     # the tests that did not run would be assumed
                     # to have passed.
                     raise exception_info[0], exception_info[1], exception_info[2]
-
-                if thread.isAlive():
-                    some_thread_is_alive = True
-                    next_timeout = thread.next_timeout()
-                    if next_timeout and t > next_timeout:
-                        log_wedged_worker(thread.getName(), thread.id())
-                        thread.clear_next_timeout()
 
             self._test_runner.update()
 
