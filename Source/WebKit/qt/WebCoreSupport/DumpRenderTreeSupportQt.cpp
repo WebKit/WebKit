@@ -31,6 +31,7 @@
 #include "ContextMenuController.h"
 #include "DeviceOrientation.h"
 #include "DeviceOrientationClientMockQt.h"
+#include "DocumentLoader.h"
 #include "Editor.h"
 #include "EditorClientQt.h"
 #include "Element.h"
@@ -883,6 +884,13 @@ QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document,
         res << v;
     }
     return res;
+}
+
+QString DumpRenderTreeSupportQt::responseMimeType(QWebFrame* frame)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    WebCore::DocumentLoader* docLoader = coreFrame->loader()->documentLoader();
+    return docLoader->responseMIMEType();
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release

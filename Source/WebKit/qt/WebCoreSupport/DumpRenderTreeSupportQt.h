@@ -184,6 +184,7 @@ public:
     static QString viewportAsText(QWebPage*, const QSize&);
 
     static QVariantList nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
+    static QString responseMimeType(QWebFrame*);
 };
 
 #endif

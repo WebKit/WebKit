@@ -915,6 +915,10 @@ void DumpRenderTree::dump()
         fprintf(stdout, "Source:\n\n%s\n", markup.toUtf8().constData());
     }
 
+    QString mimeType = DumpRenderTreeSupportQt::responseMimeType(mainFrame);
+    if (mimeType == "text/plain")
+        m_controller->dumpAsText();
+
     // Dump render text...
     QString resultString;
     if (m_controller->shouldDumpAsText())
