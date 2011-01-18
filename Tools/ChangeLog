@@ -1,3 +1,16 @@
+2011-01-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        new-run-webkit-tests shouldn't crash when you try to run a
+        directory containing only skipped files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52478
+        
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-01-18  Adam Bergkvist  <adam.bergkvist@ericsson.com> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

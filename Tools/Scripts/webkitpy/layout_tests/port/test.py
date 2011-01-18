@@ -213,7 +213,7 @@ class TestPort(base.Port):
 
     def layout_tests_dir(self):
         return self.path_from_webkit_base('Tools', 'Scripts',
-                                          'webkitpy', 'layout_tests', 'data')
+                                          'webkitpy', 'layout_tests', 'data', 'LayoutTests')
 
     def path_isdir(self, path):
         # Used by test_expectations.py

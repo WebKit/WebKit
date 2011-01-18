@@ -199,11 +199,14 @@ class TestRunner:
           last_unexpected_results: list of unexpected results to retest, if any
 
         """
-        paths = [self._strip_test_dir_prefix(arg) for arg in args if arg and arg != '']
+        paths = self._strip_test_dir_prefixes(args)
         paths += last_unexpected_results
         if self._options.test_list:
-            paths += read_test_files(self._options.test_list)
+            paths += self._strip_test_dir_prefixes(read_test_files(self._options.test_list))
         self._test_files = self._port.tests(paths)
+
+    def _strip_test_dir_prefixes(self, paths):
+        return [self._strip_test_dir_prefix(path) for path in paths if path]
 
     def _strip_test_dir_prefix(self, path):
         if path.startswith(LAYOUT_TESTS_DIRECTORY):
@@ -389,6 +392,11 @@ class TestRunner:
                 result.type = test_expectations.SKIP
                 result_summary.add(result, expected=True)
         self._printer.print_expected('')
+
+        # Check to make sure we didn't filter out all of the tests.
+        if not len(self._test_files):
+            _log.info("All tests are being skipped")
+            return None
 
         return result_summary
 

@@ -315,6 +315,14 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['passes/text.html'], tests_included=True, flatten_batches=True)
         self.assertEquals(['passes/text.html'], tests_run)
 
+    def test_single_file_with_prefix(self):
+        tests_run = get_tests_run(['LayoutTests/passes/text.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/text.html'], tests_run)
+
+    def test_single_skipped_file(self):
+        tests_run = get_tests_run(['failures/expected/keybaord.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals([], tests_run)
+
     def test_test_list(self):
         filename = tempfile.mktemp()
         tmpfile = file(filename, mode='w+')
@@ -327,6 +335,14 @@ class MainTest(unittest.TestCase):
                                           tests_included=True)
         self.assertEqual(res, -1)
         self.assertFalse(err.empty())
+
+    def test_test_list_with_prefix(self):
+        filename = tempfile.mktemp()
+        tmpfile = file(filename, mode='w+')
+        tmpfile.write('LayoutTests/passes/text.html')
+        tmpfile.close()
+        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/text.html'], tests_run)
 
     def test_unexpected_failures(self):
         # Run tests including the unexpected failures.
