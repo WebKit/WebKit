@@ -1,3 +1,14 @@
+2011-01-18  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] Adjust test expectations fast/files/revoke-blob-url.html is flaky on linux.
+        https://bugs.webkit.org/show_bug.cgi?id=52633
+
+        Combine test expectations for the test into one line.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-18  Helder Correia  <helder@sencha.com>
 
         Reviewed by Kenneth Rohde Christiansen.

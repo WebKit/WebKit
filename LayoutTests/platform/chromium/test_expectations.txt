@@ -2758,9 +2758,8 @@ BUGWK49477 WIN LINUX : fast/canvas/canvas-arc-360-winding.html = TEXT
 // New test added with http://trac.webkit.org/changeset/72472
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 
-BUGCR64129 MAC DEBUG : fast/files/revoke-blob-url.html = CRASH PASS
-
-BUGCR64129 LINUX: fast/files/revoke-blob-url.html = CRASH PASS
+// Mainly flaky with mac debug, but also intermittent crashes seen on linux release
+BUGCR64129 MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS
 
 // Unknown reason. Was introduced at r72588
 BUG_LOISLO WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
