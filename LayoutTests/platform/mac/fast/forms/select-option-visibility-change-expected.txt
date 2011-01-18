@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 456x18
+          text run at (0,0) width 456: "This tests changing the visibility of an option element updates the listbox"
+      RenderBlock (anonymous) at (0,34) size 784x61
+        RenderListBox {SELECT} at (2,2) size 25x57 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
+        RenderText {#text} at (0,0) size 0x0
