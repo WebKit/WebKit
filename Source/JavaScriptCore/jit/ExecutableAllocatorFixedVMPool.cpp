@@ -461,10 +461,11 @@ static void maybeModifyVMPoolSize()
         return;
 
     unsigned overcommit = 0;
-    fscanf(fp, "%u", &overcommit);
-    if (overcommit == 1) {
-        vmPoolSize = vmPoolSizeOvercommit;
-        coalesceLimit = coalesceLimitOvercommit;
+    if (fscanf(fp, "%u", &overcommit) == 1) {
+        if (overcommit == 1) {
+            vmPoolSize = vmPoolSizeOvercommit;
+            coalesceLimit = coalesceLimitOvercommit;
+        }
     }
 
     fclose(fp);
