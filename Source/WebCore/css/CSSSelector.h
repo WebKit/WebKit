@@ -278,6 +278,7 @@ namespace WebCore {
             return m_match == PseudoElement;
         }
         bool isUnknownPseudoElement() const;
+        bool isSiblingSelector() const;
 
         Relation relation() const { return static_cast<Relation>(m_relation); }
 
@@ -348,6 +349,24 @@ namespace WebCore {
 inline bool CSSSelector::isUnknownPseudoElement() const
 {
     return m_match == PseudoElement && m_pseudoType == PseudoUnknown;
+}
+
+inline bool CSSSelector::isSiblingSelector() const
+{
+    PseudoType type = pseudoType();
+    return m_relation == DirectAdjacent
+        || m_relation == IndirectAdjacent
+        || type == PseudoEmpty
+        || type == PseudoFirstChild
+        || type == PseudoFirstOfType
+        || type == PseudoLastChild
+        || type == PseudoLastOfType
+        || type == PseudoOnlyChild
+        || type == PseudoOnlyOfType
+        || type == PseudoNthChild
+        || type == PseudoNthOfType
+        || type == PseudoNthLastChild
+        || type == PseudoNthLastOfType;
 }
 
 } // namespace WebCore

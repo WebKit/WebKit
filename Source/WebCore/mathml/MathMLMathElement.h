@@ -39,6 +39,7 @@ public:
 private:
     MathMLMathElement(const QualifiedName& tagName, Document*);
 
+    virtual void insertedIntoDocument();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 };
     

@@ -1176,11 +1176,11 @@ public:
     bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
     void setChildrenAffectedByBackwardPositionalRules() { m_childrenAffectedByBackwardPositionalRules = true; }
     bool firstChildState() const { return m_firstChildState; }
-    void setFirstChildState() { m_firstChildState = true; }
+    void setFirstChildState() { m_unique = true; m_firstChildState = true; }
     bool lastChildState() const { return m_lastChildState; }
-    void setLastChildState() { m_lastChildState = true; }
+    void setLastChildState() { m_unique = true; m_lastChildState = true; }
     unsigned childIndex() const { return m_childIndex; }
-    void setChildIndex(unsigned index) { m_childIndex = index; }
+    void setChildIndex(unsigned index) { m_unique = true; m_childIndex = index; }
 
     const Color visitedDependentColor(int colorProperty) const;
 

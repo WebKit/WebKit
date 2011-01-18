@@ -94,7 +94,7 @@ layer at (0,0) size 800x256
                   text run at (0,8) width 9: "Z"
             RenderBlock {msubsup} at (10,0) size 32x32
               RenderBlock {msubsup} at (0,0) size 18x16
-                RenderBlock {mrow} at (1,3) size 16x12
+                RenderBlock {mrow} at (0,3) size 16x12
                   RenderInline {mi} at (0,0) size 5x12
                     RenderText {#text} at (0,0) size 5x12
                       text run at (0,0) width 5: "k"

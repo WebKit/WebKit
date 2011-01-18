@@ -359,6 +359,8 @@ bool NamedNodeMap::mappedMapsEquivalent(const NamedNodeMap* otherMap) const
             Attribute* otherAttr = otherMap->getAttributeItem(attr->name());
             if (!otherAttr || attr->value() != otherAttr->value())
                 return false;
+            if (!attr->decl()->propertiesEqual(otherAttr->decl()))
+                return false;
         }
     }
     return true;

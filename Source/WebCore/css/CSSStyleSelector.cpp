@@ -400,8 +400,8 @@ public:
         }
     }
 
-    CSSRuleData* first() { return m_first; }
-    CSSRuleData* last() { return m_last; }
+    CSSRuleData* first() const { return m_first; }
+    CSSRuleData* last() const { return m_last; }
 
     void append(unsigned pos, CSSStyleRule* rule, CSSSelector* sel) { m_last = new CSSRuleData(pos, rule, sel, m_last); }
 
@@ -424,6 +424,8 @@ public:
     void addPageRule(CSSStyleRule* rule, CSSSelector* sel);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
                       CSSStyleRule* rule, CSSSelector* sel);
+    
+    void collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<CSSRuleSet>& siblingRules) const;
     
     CSSRuleDataList* getIDRules(AtomicStringImpl* key) { return m_idRules.get(key); }
     CSSRuleDataList* getClassRules(AtomicStringImpl* key) { return m_classRules.get(key); }
@@ -448,6 +450,8 @@ static CSSRuleSet* defaultQuirksStyle;
 static CSSRuleSet* defaultPrintStyle;
 static CSSRuleSet* defaultViewSourceStyle;
 static CSSStyleSheet* simpleDefaultStyleSheet;
+    
+static CSSRuleSet* siblingRulesInDefaultStyle;
 
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
@@ -459,11 +463,31 @@ static void loadSimpleDefaultStyle();
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}body{margin:8px}div:focus,span:focus{outline:auto 5px -webkit-focus-ring-color}a:-webkit-any-link{color:-webkit-link;text-decoration:underline}a:-webkit-any-link:active{color:-webkit-activelink}";
 
-static bool elementCanUseSimpleDefaultStyle(Element* e)
+static inline bool elementCanUseSimpleDefaultStyle(Element* e)
 {
     return e->hasTagName(htmlTag) || e->hasTagName(bodyTag) || e->hasTagName(divTag) || e->hasTagName(spanTag) || e->hasTagName(brTag) || e->hasTagName(aTag);
 }
 
+static inline void collectSiblingRulesInDefaultStyle()
+{
+    OwnPtr<CSSRuleSet> siblingRules;
+    HashSet<AtomicStringImpl*> ids;
+    defaultStyle->collectIdsAndSiblingRules(ids, siblingRules);
+    ASSERT(ids.isEmpty());
+    delete siblingRulesInDefaultStyle;
+    siblingRulesInDefaultStyle = siblingRules.leakPtr();
+}
+
+static inline void assertNoSiblingRulesInDefaultStyle()
+{
+#ifndef NDEBUG
+    if (siblingRulesInDefaultStyle)
+        return;
+    collectSiblingRulesInDefaultStyle();
+    ASSERT(!siblingRulesInDefaultStyle);
+#endif
+}
+    
 static const MediaQueryEvaluator& screenEval()
 {
     DEFINE_STATIC_LOCAL(const MediaQueryEvaluator, staticScreenEval, ("screen"));
@@ -549,6 +573,16 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
         if (sheet->isCSSStyleSheet() && !sheet->disabled())
             m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(sheet), *m_medium, this);
     }
+    
+    // Collect all ids and rules using sibling selectors (:first-child and similar)
+    // in the current set of stylesheets. Style sharing code uses this information to reject
+    // sharing candidates.
+    // Usually there are no sibling rules in the default style but the MathML sheet has some.
+    if (siblingRulesInDefaultStyle)
+        siblingRulesInDefaultStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
+    m_authorStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
+    if (m_userStyle)
+        m_userStyle->collectIdsAndSiblingRules(m_idsInRules, m_siblingRules);
 
     if (document->renderer() && document->renderer()->style())
         document->renderer()->style()->font().update(fontSelector());
@@ -944,31 +978,43 @@ static const unsigned cStyleSearchThreshold = 10;
 
 Node* CSSStyleSelector::locateCousinList(Element* parent, unsigned depth) const
 {
-    if (parent && parent->isStyledElement()) {
-        StyledElement* p = static_cast<StyledElement*>(parent);
-        if (!p->inlineStyleDecl() && !p->hasID()) {
-            Node* r = p->previousSibling();
-            unsigned subcount = 0;
-            RenderStyle* st = p->renderStyle();
-            while (r) {
-                if (r->renderStyle() == st)
-                    return r->lastChild();
-                if (subcount++ == cStyleSearchThreshold)
-                    return 0;
-                r = r->previousSibling();
-            }
-            if (!r && depth < cStyleSearchThreshold)
-                r = locateCousinList(parent->parentElement(), depth + 1);
-            while (r) {
-                if (r->renderStyle() == st)
-                    return r->lastChild();
-                if (subcount++ == cStyleSearchThreshold)
-                    return 0;
-                r = r->previousSibling();
-            }
-        }
+    if (!parent || !parent->isStyledElement())
+        return 0;
+    StyledElement* p = static_cast<StyledElement*>(parent);
+    if (p->inlineStyleDecl())
+        return 0;
+    if (p->hasID() && m_idsInRules.contains(p->idForStyleResolution().impl()))
+        return 0;
+    Node* r = p->previousSibling();
+    unsigned subcount = 0;
+    RenderStyle* st = p->renderStyle();
+    while (r) {
+        if (r->renderStyle() == st)
+            return r->lastChild();
+        if (subcount++ == cStyleSearchThreshold)
+            return 0;
+        r = r->previousSibling();
+    }
+    if (!r && depth < cStyleSearchThreshold)
+        r = locateCousinList(parent->parentElement(), depth + 1);
+    while (r) {
+        if (r->renderStyle() == st)
+            return r->lastChild();
+        if (subcount++ == cStyleSearchThreshold)
+            return 0;
+        r = r->previousSibling();
     }
     return 0;
+}
+
+bool CSSStyleSelector::matchesSiblingRules()
+{
+    int firstSiblingRule = -1, lastSiblingRule = -1;
+    matchRules(m_siblingRules.get(), firstSiblingRule, lastSiblingRule, false);
+    if (m_matchedDecls.isEmpty())
+        return false;
+    m_matchedDecls.clear();
+    return true;
 }
 
 bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
@@ -977,7 +1023,7 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
         StyledElement* s = static_cast<StyledElement*>(n);
         RenderStyle* style = s->renderStyle();
         if (style && !style->unique() &&
-            (s->tagQName() == m_element->tagQName()) && !s->hasID() &&
+            (s->tagQName() == m_element->tagQName()) &&
             (s->hasClass() == m_element->hasClass()) && !s->inlineStyleDecl() &&
             (s->hasMappedAttributes() == m_styledElement->hasMappedAttributes()) &&
             (s->isLink() == m_element->isLink()) && 
@@ -992,6 +1038,10 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
             (s->fastGetAttribute(langAttr) == m_element->fastGetAttribute(langAttr)) &&
             (s->fastGetAttribute(readonlyAttr) == m_element->fastGetAttribute(readonlyAttr)) &&
             (s->fastGetAttribute(cellpaddingAttr) == m_element->fastGetAttribute(cellpaddingAttr))) {
+            
+            if (s->hasID() && m_idsInRules.contains(s->idForStyleResolution().impl()))
+                return 0;
+            
             bool isControl = s->isFormControlElement();
             if (isControl != m_element->isFormControlElement())
                 return false;
@@ -1062,32 +1112,46 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* n) const
     }
     return false;
 }
-
-ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle() const
+    
+inline Node* CSSStyleSelector::findSiblingForStyleSharing(Node* node, unsigned& count) const
 {
-    if (m_styledElement && !m_styledElement->inlineStyleDecl() && !m_styledElement->hasID() && !m_styledElement->document()->usesSiblingRules()) {
-        // Check previous siblings.
-        unsigned count = 0;
-        Node* n;
-        for (n = m_element->previousSibling(); n && !n->isElementNode(); n = n->previousSibling()) { }
-        while (n) {
-            if (canShareStyleWithElement(n))
-                return n->renderStyle();
-            if (count++ == cStyleSearchThreshold)
-                return 0;
-            for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling()) { }
-        }
-        if (!n) 
-            n = locateCousinList(m_element->parentElement());
-        while (n) {
-            if (canShareStyleWithElement(n))
-                return n->renderStyle();
-            if (count++ == cStyleSearchThreshold)
-                return 0;
-            for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling()) { }
-        }        
+    for (; node; node = node->previousSibling()) {
+        if (!node->isElementNode())
+            continue;
+        if (canShareStyleWithElement(node))
+            break;
+        if (count++ == cStyleSearchThreshold)
+            return 0;
     }
-    return 0;
+    return node;
+}
+
+ALWAYS_INLINE RenderStyle* CSSStyleSelector::locateSharedStyle()
+{
+    if (!m_styledElement || !m_parentStyle)
+        return 0;
+    // If the element has inline style it is probably unique.
+    if (m_styledElement->inlineStyleDecl())
+        return 0;
+    // Ids stop style sharing if they show up in the stylesheets.
+    if (m_styledElement->hasID() && m_idsInRules.contains(m_styledElement->idForStyleResolution().impl()))
+        return 0;
+    // Check previous siblings.
+    unsigned count = 0;
+    Node* shareNode = findSiblingForStyleSharing(m_styledElement->previousSibling(), count);
+    if (!shareNode) {
+        Node* cousinList = locateCousinList(m_styledElement->parentElement());
+        shareNode = findSiblingForStyleSharing(cousinList, count); 
+        if (!shareNode)
+            return 0;
+    }
+    // Can't share if sibling rules apply. This is checked at the end as it should rarely fail.
+    if (matchesSiblingRules())
+        return 0;
+    // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
+    if (m_parentStyle->childrenAffectedByPositionalRules())
+        return 0;
+    return shareNode->renderStyle();
 }
 
 void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
@@ -1180,12 +1244,12 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     }
 
     initElement(e);
+    initForStyleResolve(e, defaultParent);
     if (allowSharing) {
         RenderStyle* sharedStyle = locateSharedStyle();
         if (sharedStyle)
             return sharedStyle;
     }
-    initForStyleResolve(e, defaultParent);
 
     // Compute our style allowing :visited to match first.
     RefPtr<RenderStyle> visitedStyle;
@@ -1227,6 +1291,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
 #if ENABLE(FULLSCREEN_API)
         loadFullScreenRulesIfNeeded(e->document());
 #endif
+        assertNoSiblingRulesInDefaultStyle();
     }
 
 #if ENABLE(SVG)
@@ -1237,6 +1302,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(svgSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
+        assertNoSiblingRulesInDefaultStyle();
     }
 #endif
 
@@ -1248,6 +1314,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* mathMLSheet = parseUASheet(mathmlUserAgentStyleSheet, sizeof(mathmlUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(mathMLSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mathMLSheet, printEval());
+        // There are some sibling rules here.
+        collectSiblingRulesInDefaultStyle();
     }
 #endif
 
@@ -1259,6 +1327,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* wmlSheet = parseUASheet(wmlUserAgentStyleSheet, sizeof(wmlUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(wmlSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(wmlSheet, printEval());
+        assertNoSiblingRulesInDefaultStyle();
     }
 #endif
 
@@ -1270,6 +1339,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         CSSStyleSheet* mediaControlsSheet = parseUASheet(mediaRules);
         defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
+        assertNoSiblingRulesInDefaultStyle();
     }
 #endif
 
@@ -2925,6 +2995,47 @@ void CSSRuleSet::addStyleRule(CSSStyleRule* rule)
         for (CSSSelector* s = rule->selectorList().first(); s; s = CSSSelectorList::next(s))
             addRule(rule, s);
     }
+}
+
+static void collectIdsAndSiblingRulesFromList(HashSet<AtomicStringImpl*>& ids, OwnPtr<CSSRuleSet>& siblingRules, const CSSRuleDataList* rules)
+{
+    for (CSSRuleData* data = rules->first(); data; data = data->next()) {
+        bool foundSiblingSelector = false;
+        for (CSSSelector* selector = data->selector(); selector; selector = selector->tagHistory()) {
+            if (selector->m_match == CSSSelector::Id && !selector->m_value.isEmpty())
+                ids.add(selector->m_value.impl());
+            if (CSSSelector* simpleSelector = selector->simpleSelector()) {
+                ASSERT(!simpleSelector->simpleSelector());
+                if (simpleSelector->m_match == CSSSelector::Id && !simpleSelector->m_value.isEmpty())
+                    ids.add(simpleSelector->m_value.impl());
+            }
+            if (selector->isSiblingSelector())
+                foundSiblingSelector = true;
+        }
+        if (foundSiblingSelector) {
+            if (!siblingRules)
+                siblingRules = adoptPtr(new CSSRuleSet);
+            siblingRules->addRule(data->rule(), data->selector());   
+        }
+    }
+}
+
+void CSSRuleSet::collectIdsAndSiblingRules(HashSet<AtomicStringImpl*>& ids, OwnPtr<CSSRuleSet>& siblingRules) const
+{
+    AtomRuleMap::const_iterator end = m_idRules.end();
+    for (AtomRuleMap::const_iterator it = m_idRules.begin(); it != end; ++it)
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
+    end = m_classRules.end();
+    for (AtomRuleMap::const_iterator it = m_classRules.begin(); it != end; ++it)
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
+    end = m_tagRules.end();
+    for (AtomRuleMap::const_iterator it = m_tagRules.begin(); it != end; ++it)
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
+    end = m_pseudoRules.end();
+    for (AtomRuleMap::const_iterator it = m_pseudoRules.begin(); it != end; ++it)
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, it->second);
+    if (m_universalRules)
+        collectIdsAndSiblingRulesFromList(ids, siblingRules, m_universalRules.get());
 }
 
 // -------------------------------------------------------------------------------------

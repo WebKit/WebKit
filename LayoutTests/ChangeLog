@@ -1,3 +1,16 @@
+2011-01-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52370
+        Style sharing optimization no longer works on major web sites
+        
+        These are progressions (with no noticable visual change). 
+        MathML code was improperly sharing style.
+
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+
 2011-01-18  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r76002.

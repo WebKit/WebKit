@@ -1,3 +1,67 @@
+ 2011-01-18  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52370
+        <rdar://problem/8856808>
+        Style sharing optimization no longer works on major web sites
+        
+        The code in CSSStyleSelector::locateSharedStyle() that tries to share style information between element has been defeated 
+        by widespread use of certain CSS selectors (:first-child pseudo class and similar). The current implementation disables
+        the sharing optimization for the whole page if one of these constructs is seen in any style sheet used by the page.  
+        
+        This patch gets the style sharing back to 25-40% range on most web sites.
+
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::propertiesEqual):
+            
+            Needed to improve equality checking in NamedNodeMap::mappedMapsEquivalent.
+        
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::isSiblingSelector):
+        
+            Test for selectors that are affected by the sibling elements.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::elementCanUseSimpleDefaultStyle):
+        (WebCore::collectSiblingRulesInDefaultStyle):
+        (WebCore::assertNoSiblingRulesInDefaultStyle):
+            
+            Extract sibling rules from the MathML default stylesheet. 
+            Assert that no other default stylesheet has them.
+            
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::locateCousinList):
+        (WebCore::CSSStyleSelector::matchesSiblingRules):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::locateSharedStyle):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::collectIdsAndSiblingRulesFromList):
+        (WebCore::CSSRuleSet::collectIdsAndSiblingRules):
+
+            Track sibling rules and ids used in the stylesheets to allow much more fine-grained rejection of cases
+            where style sharing can't be used.
+
+        * css/CSSStyleSelector.h:
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::mappedMapsEquivalent):
+            
+            Check also for CSSValue mutation from DOM. 
+            
+        * mathml/MathMLMathElement.cpp:
+        (WebCore::MathMLMathElement::insertedIntoDocument):
+        * mathml/MathMLMathElement.h:
+        
+            MathML default style sheet has sibling rules which don't get noticed by the normal document
+            stylesheet parsing.
+        
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setFirstChildState):
+        (WebCore::InheritedFlags::setLastChildState):
+        (WebCore::InheritedFlags::setChildIndex):
+        
+            These all make style non-shareable (unique).
+
 2011-01-18  MORITA Hajime  <morrita@google.com>
 
         Unreviewed crash fix on release builds.
