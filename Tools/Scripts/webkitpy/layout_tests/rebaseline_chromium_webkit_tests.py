@@ -554,9 +554,10 @@ class Rebaseliner(object):
         base_file = get_result_file_fullpath(self._filesystem, self._options.html_directory,
                                              baseline_filename, self._platform,
                                              'old')
-        # We should be using an explicit encoding here.
-        with open(base_file, "wb") as file:
-            file.write(output)
+        if base_file.upper().endswith('.PNG'):
+            self._filesystem.write_binary_file(base_file, output)
+        else:
+            self._filesystem.write_text_file(base_file, output)
         _log.info('  Html: created old baseline file: "%s".',
                   base_file)
 
@@ -567,8 +568,7 @@ class Rebaseliner(object):
                 diff_file = get_result_file_fullpath(self._filesystem,
                     self._options.html_directory, baseline_filename,
                     self._platform, 'diff')
-                with open(diff_file, 'wb') as file:
-                    file.write(output)
+                self._filesystem.write_text_file(diff_file, output)
                 _log.info('  Html: created baseline diff file: "%s".',
                           diff_file)
 

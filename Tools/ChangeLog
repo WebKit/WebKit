@@ -1,3 +1,15 @@
+2011-01-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Update rebaseline-chromium-webkit-tests unit tests to use a mock
+        filesystem. Also fix a couple of "with" statements missed by
+        r76050.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52487
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+
 2011-01-18  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -29,10 +29,10 @@
 
 """Unit tests for rebaseline_chromium_webkit_tests.py."""
 
-import sys
 import unittest
 
 from webkitpy.tool import mocktool
+from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system.executive import Executive, ScriptError
 
 import port
@@ -88,9 +88,10 @@ class TestRebaseliner(unittest.TestCase):
     def make_rebaseliner(self):
         options = mocktool.MockOptions(configuration=None,
                                        html_directory=None)
-        host_port_obj = port.get('test', options)
+        filesystem = filesystem_mock.MockFileSystem()
+        host_port_obj = port.get('test', options, filesystem=filesystem)
         target_options = options
-        target_port_obj = port.get('test', target_options)
+        target_port_obj = port.get('test', target_options, filesystem=filesystem)
         platform = 'test'
         return rebaseline_chromium_webkit_tests.Rebaseliner(
             host_port_obj, target_port_obj, platform, options)
@@ -128,9 +129,9 @@ class TestRebaseliner(unittest.TestCase):
 
 
 class TestHtmlGenerator(unittest.TestCase):
-    def make_generator(self, tests):
+    def make_generator(self, files, tests):
         options = mocktool.MockOptions(configuration=None, html_directory='/tmp')
-        host_port = port.get('test', options)
+        host_port = port.get('test', options, filesystem=filesystem_mock.MockFileSystem(files))
         generator = rebaseline_chromium_webkit_tests.HtmlGenerator(
             host_port,
             target_port=None,
@@ -140,17 +141,16 @@ class TestHtmlGenerator(unittest.TestCase):
         return generator, host_port
 
     def test_generate_baseline_links(self):
-        orig_platform = sys.platform
-        try:
-            # FIXME: Use the mock filesystem instead of monkey-patching sys.platform
-            sys.platform = 'darwin'
-            generator, host_port = self.make_generator(["foo.txt"])
-            host_port._filesystem.exists = lambda x: True
-            links = generator._generate_baseline_links("foo", ".txt", "mac")
-            expected_links = '<td align=center><a href="file:///tmp/foo-expected-mac-old.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-new.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-diff.txt">Diff</a></td>'
-            self.assertEqual(links, expected_links)
-        finally:
-            sys.platform = orig_platform
+        files = {
+            "/tmp/foo-expected-mac-old.txt": "",
+            "/tmp/foo-expected-mac-new.txt": "",
+            "/tmp/foo-expected-mac-diff.txt": "",
+        }
+        tests = ["foo.txt"]
+        generator, host_port = self.make_generator(files, tests)
+        links = generator._generate_baseline_links("foo", ".txt", "mac")
+        expected_links = '<td align=center><a href="file:///tmp/foo-expected-mac-old.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-new.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-diff.txt">Diff</a></td>'
+        self.assertEqual(links, expected_links)
 
 
 if __name__ == '__main__':
