@@ -1,3 +1,15 @@
+2011-01-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium] Update Sputnik test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=52656
+        
+        Mark Sputnik tests as WONTFIX, so that they don't artificially inflate
+        our failing test count.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-18  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Not reviewed, test expectations update.

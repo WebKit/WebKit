@@ -2001,10 +2001,12 @@ BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
 // Skip since not relevant
 BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
-// WebKit roll 58400:58523
-// We probably don't want to run these massive amount of new ECMA script conformance tests:
-BUGCR42875 SKIP : fast/js/sputnik = TEXT
+// These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
+// They should be moved to the JavaScriptCore test suite.
+BUGCR42875 WONTFIX SKIP : fast/js/sputnik = TEXT
+
 // These tests may just need to be rebaselined.
+// WebKit roll 58400:58523
 BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
 BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
 
