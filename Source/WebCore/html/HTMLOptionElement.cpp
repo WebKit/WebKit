@@ -221,9 +221,6 @@ String HTMLOptionElement::label() const
 void HTMLOptionElement::setRenderStyle(PassRefPtr<RenderStyle> newStyle)
 {
     m_style = newStyle;
-    if (HTMLSelectElement* select = ownerSelectElement())
-        if (RenderObject* renderer = select->renderer())
-            renderer->repaint();
 }
 
 RenderStyle* HTMLOptionElement::nonRendererRenderStyle() const

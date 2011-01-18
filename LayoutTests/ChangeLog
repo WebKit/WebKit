@@ -1,3 +1,24 @@
+2011-01-18  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rolling out r76002.
+        http://trac.webkit.org/changeset/76002
+        https://bugs.webkit.org/show_bug.cgi?id=49790
+
+        breaks a bunch of fast/forms tests on mac and GTK
+
+        * fast/forms/select-option-background-color-change.html: Removed.
+        * fast/forms/select-option-color-change.html: Removed.
+        * fast/forms/select-option-visibility-change.html: Removed.
+        * platform/mac/fast/forms/select-option-background-color-change-expected.checksum: Removed.
+        * platform/mac/fast/forms/select-option-background-color-change-expected.png: Removed.
+        * platform/mac/fast/forms/select-option-background-color-change-expected.txt: Removed.
+        * platform/mac/fast/forms/select-option-color-change-expected.checksum: Removed.
+        * platform/mac/fast/forms/select-option-color-change-expected.png: Removed.
+        * platform/mac/fast/forms/select-option-color-change-expected.txt: Removed.
+        * platform/mac/fast/forms/select-option-visibility-change-expected.checksum: Removed.
+        * platform/mac/fast/forms/select-option-visibility-change-expected.png: Removed.
+        * platform/mac/fast/forms/select-option-visibility-change-expected.txt: Removed.
+
 2011-01-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
