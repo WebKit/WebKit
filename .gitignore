@@ -26,41 +26,41 @@ Source/WebCore/WebCore.gyp/*.sln
 Source/WebCore/WebCore.gyp/*.tmp
 Source/WebCore/WebCore.gyp/*.vcproj*
 Source/WebCore/WebCore.gyp/WebCore.xcodeproj
-WebKit/chromium/*.Makefile
-WebKit/chromium/*.mk
-WebKit/chromium/*.sln
-WebKit/chromium/*.vcproj*
-WebKit/chromium/WebKit.xcodeproj
+Source/WebKit/chromium/*.Makefile
+Source/WebKit/chromium/*.mk
+Source/WebKit/chromium/*.sln
+Source/WebKit/chromium/*.vcproj*
+Source/WebKit/chromium/WebKit.xcodeproj
 Tools/DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.xcodeproj
 
 # Ignore status files that manage Chromium dependencies.
-WebKit/chromium/.gclient
-WebKit/chromium/.gclient_entries
+Source/WebKit/chromium/.gclient
+Source/WebKit/chromium/.gclient_entries
 
 # Ignore Chromium dependencies
-WebKit/chromium/.gclient
-WebKit/chromium/.gclient_entries
-WebKit/chromium/app/
-WebKit/chromium/base/
-WebKit/chromium/chromium_deps/
-WebKit/chromium/depot_tools/
-WebKit/chromium/gfx/
-WebKit/chromium/googleurl/
-WebKit/chromium/gpu/
-WebKit/chromium/ipc/
-WebKit/chromium/media/
-WebKit/chromium/net/
-WebKit/chromium/ppapi/
-WebKit/chromium/printing/
-WebKit/chromium/sdch/
-WebKit/chromium/skia/
-WebKit/chromium/testing/
-WebKit/chromium/third_party/
-WebKit/chromium/tools/
-WebKit/chromium/ui/
-WebKit/chromium/v8/
-WebKit/chromium/webkit/
-WebKit/chromium/xcodebuild/
+Source/WebKit/chromium/.gclient
+Source/WebKit/chromium/.gclient_entries
+Source/WebKit/chromium/app/
+Source/WebKit/chromium/base/
+Source/WebKit/chromium/chromium_deps/
+Source/WebKit/chromium/depot_tools/
+Source/WebKit/chromium/gfx/
+Source/WebKit/chromium/googleurl/
+Source/WebKit/chromium/gpu/
+Source/WebKit/chromium/ipc/
+Source/WebKit/chromium/media/
+Source/WebKit/chromium/net/
+Source/WebKit/chromium/ppapi/
+Source/WebKit/chromium/printing/
+Source/WebKit/chromium/sdch/
+Source/WebKit/chromium/skia/
+Source/WebKit/chromium/testing/
+Source/WebKit/chromium/third_party/
+Source/WebKit/chromium/tools/
+Source/WebKit/chromium/ui/
+Source/WebKit/chromium/v8/
+Source/WebKit/chromium/webkit/
+Source/WebKit/chromium/xcodebuild/
 
 # Ignore files that Chromium port generates
 /Makefile.chromium

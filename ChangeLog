@@ -1,3 +1,9 @@
+2011-01-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed. Update .gitignore to reflect that WebKit is now in Source.
+        
+        * .gitignore:
+
 2011-01-18  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
 
         Reviewed by Simon Fraser.
