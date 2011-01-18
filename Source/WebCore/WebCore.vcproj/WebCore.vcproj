@@ -26693,14 +26693,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\RoundedIntRect.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\RoundedIntRect.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\SegmentedFontData.cpp"
 					>
 				</File>

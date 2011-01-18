@@ -1350,7 +1350,6 @@ SET(WebCore_SOURCES
     platform/graphics/Path.cpp
     platform/graphics/PathTraversalState.cpp
     platform/graphics/Pattern.cpp
-    platform/graphics/RoundedIntRect.cpp
     platform/graphics/SegmentedFontData.cpp
     platform/graphics/SimpleFontData.cpp
     platform/graphics/StringTruncator.cpp

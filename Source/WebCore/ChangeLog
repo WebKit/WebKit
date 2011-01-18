@@ -1,3 +1,60 @@
+2011-01-18  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r76004, r76005, r76007, and r76011.
+        http://trac.webkit.org/changeset/76004
+        http://trac.webkit.org/changeset/76005
+        http://trac.webkit.org/changeset/76007
+        http://trac.webkit.org/changeset/76011
+        https://bugs.webkit.org/show_bug.cgi?id=51664
+
+        The r76004 broke pixel tests.
+        (The failure was missed due to the tolerance.)
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/RoundedIntRect.cpp: Removed.
+        * platform/graphics/RoundedIntRect.h: Removed.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::uniformlyExpandBorderRadii):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBoxSideFromPath):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::paintSearchFieldCancelButton):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/style/BorderData.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::constrainCornerRadiiForRect):
+        (WebCore::RenderStyle::getBorderRadiiForRect):
+        (WebCore::RenderStyle::getInnerBorderRadiiForRectWithBorderWidths):
+        * rendering/style/RenderStyle.h:
+
 2011-01-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

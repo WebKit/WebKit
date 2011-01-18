@@ -752,8 +752,14 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
 
     paintInfo.context->save();
 
-    RoundedIntRect bound = o->style()->getRoundedBorderFor(r);
-    int radius = bound.radii().topLeft().width();
+    IntSize topLeftRadius;
+    IntSize topRightRadius;
+    IntSize bottomLeftRadius;
+    IntSize bottomRightRadius;
+
+    o->style()->getBorderRadiiForRect(r, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+
+    int radius = topLeftRadius.width();
 
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
 
@@ -775,28 +781,28 @@ void RenderThemeSafari::paintMenuListButtonGradients(RenderObject* o, const Pain
 
     RetainPtr<CGShadingRef> rightShading(AdoptCF, CGShadingCreateAxial(cspace, CGPointMake(r.right(),  r.y()), CGPointMake(r.right() - radius, r.y()), mainFunction.get(), false, false));
     paintInfo.context->save();
-    CGContextClipToRect(context, bound.rect());
-    paintInfo.context->addRoundedRectClip(bound);
+    CGContextClipToRect(context, r);
+    paintInfo.context->addRoundedRectClip(r, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
     CGContextDrawShading(context, mainShading.get());
     paintInfo.context->restore();
 
     paintInfo.context->save();
     CGContextClipToRect(context, topGradient);
-    paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(topGradient), bound.radii().topLeft(), bound.radii().topRight(), IntSize(), IntSize()));
+    paintInfo.context->addRoundedRectClip(enclosingIntRect(topGradient), topLeftRadius, topRightRadius, IntSize(), IntSize());
     CGContextDrawShading(context, topShading.get());
     paintInfo.context->restore();
 
     if (!bottomGradient.isEmpty()) {
         paintInfo.context->save();
         CGContextClipToRect(context, bottomGradient);
-        paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), bound.radii().bottomLeft(), bound.radii().bottomRight()));
+        paintInfo.context->addRoundedRectClip(enclosingIntRect(bottomGradient), IntSize(), IntSize(), bottomLeftRadius, bottomRightRadius);
         CGContextDrawShading(context, bottomShading.get());
         paintInfo.context->restore();
     }
 
     paintInfo.context->save();
-    CGContextClipToRect(context, bound.rect());
-    paintInfo.context->addRoundedRectClip(bound);
+    CGContextClipToRect(context, r);
+    paintInfo.context->addRoundedRectClip(r, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
     CGContextDrawShading(context, leftShading.get());
     CGContextDrawShading(context, rightShading.get());
     paintInfo.context->restore();
@@ -952,35 +958,34 @@ const int trackRadius = 2;
 
 bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    IntSize radius(trackRadius, trackRadius);
-    RoundedIntRect bounds(r, radius, radius, radius, radius);
+    IntRect bounds = r;
 
-    if (o->style()->appearance() ==  SliderHorizontalPart)
-        bounds.setRect(IntRect(r.x(),
-                               r.y() + r.height() / 2 - trackWidth / 2,
-                               r.width(),
-                               trackWidth));
-    else if (o->style()->appearance() == SliderVerticalPart)
-        bounds.setRect(IntRect(r.x() + r.width() / 2 - trackWidth / 2,
-                               r.y(),
-                               trackWidth, 
-                               r.height()));
+    if (o->style()->appearance() ==  SliderHorizontalPart) {
+        bounds.setHeight(trackWidth);
+        bounds.setY(r.y() + r.height() / 2 - trackWidth / 2);
+    } else if (o->style()->appearance() == SliderVerticalPart) {
+        bounds.setWidth(trackWidth);
+        bounds.setX(r.x() + r.width() / 2 - trackWidth / 2);
+    }
 
     CGContextRef context = paintInfo.context->platformContext();
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
 
     paintInfo.context->save();
-    CGContextClipToRect(context, bounds.rect());
+    CGContextClipToRect(context, bounds);
 
     struct CGFunctionCallbacks mainCallbacks = { 0, TrackGradientInterpolate, NULL };
     RetainPtr<CGFunctionRef> mainFunction(AdoptCF, CGFunctionCreate(NULL, 1, NULL, 4, NULL, &mainCallbacks));
     RetainPtr<CGShadingRef> mainShading;
     if (o->style()->appearance() == SliderVerticalPart)
-        mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.rect().x(),  bounds.rect().bottom()), CGPointMake(bounds.rect().right(), bounds.rect().bottom()), mainFunction.get(), false, false));
+        mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.bottom()), CGPointMake(bounds.right(), bounds.bottom()), mainFunction.get(), false, false));
     else
-        mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.rect().x(),  bounds.rect().y()), CGPointMake(bounds.rect().x(), bounds.rect().bottom()), mainFunction.get(), false, false));
+        mainShading.adoptCF(CGShadingCreateAxial(cspace, CGPointMake(bounds.x(),  bounds.y()), CGPointMake(bounds.x(), bounds.bottom()), mainFunction.get(), false, false));
 
-    paintInfo.context->addRoundedRectClip(bounds);
+    IntSize radius(trackRadius, trackRadius);
+    paintInfo.context->addRoundedRectClip(bounds,
+        radius, radius,
+        radius, radius);
     CGContextDrawShading(context, mainShading.get());
     paintInfo.context->restore();
     

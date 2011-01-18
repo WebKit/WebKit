@@ -676,7 +676,9 @@ bool RenderThemeChromiumWin::paintTextFieldInternal(RenderObject* o,
         // background (themed or filled) appropriately.
         // FIXME: make sure we do the right thing if css background-clip is set.
         i.context->save();
-        i.context->addRoundedRectClip(o->style()->getRoundedBorderFor(r));
+        IntSize topLeft, topRight, bottomLeft, bottomRight;
+        o->style()->getBorderRadiiForRect(r, topLeft, topRight, bottomLeft, bottomRight);
+        i.context->addRoundedRectClip(r, topLeft, topRight, bottomLeft, bottomRight);
     }
     {
         const ThemeData& themeData = getThemeData(o);

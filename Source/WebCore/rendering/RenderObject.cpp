@@ -979,24 +979,36 @@ void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, IntRect
             innerBorderLeftWidth += 1;
 
         // Get the inner border rects for both the outer border line and the inner border line
+        IntRect outerBorderInnerRect = borderInnerRect(borderRect, outerBorderTopWidth, outerBorderBottomWidth, 
+            outerBorderLeftWidth, outerBorderRightWidth);
+        IntRect innerBorderInnerRect = borderInnerRect(borderRect, innerBorderTopWidth, innerBorderBottomWidth, 
+            innerBorderLeftWidth, innerBorderRightWidth);
+
+        // Get the inner radii for the outer border line
+        IntSize outerBorderTopLeftInnerRadius, outerBorderTopRightInnerRadius, outerBorderBottomLeftInnerRadius, 
+            outerBorderBottomRightInnerRadius;
+        style->getInnerBorderRadiiForRectWithBorderWidths(outerBorderInnerRect, outerBorderTopWidth, outerBorderBottomWidth, 
+            outerBorderLeftWidth, outerBorderRightWidth, outerBorderTopLeftInnerRadius, outerBorderTopRightInnerRadius, 
+            outerBorderBottomLeftInnerRadius, outerBorderBottomRightInnerRadius);
+
+        // Get the inner radii for the inner border line
+        IntSize innerBorderTopLeftInnerRadius, innerBorderTopRightInnerRadius, innerBorderBottomLeftInnerRadius, 
+            innerBorderBottomRightInnerRadius;
+        style->getInnerBorderRadiiForRectWithBorderWidths(innerBorderInnerRect, innerBorderTopWidth, innerBorderBottomWidth, 
+            innerBorderLeftWidth, innerBorderRightWidth, innerBorderTopLeftInnerRadius, innerBorderTopRightInnerRadius, 
+            innerBorderBottomLeftInnerRadius, innerBorderBottomRightInnerRadius);
 
         // Draw inner border line
         graphicsContext->save();
-        IntRect innerBorderInnerRect = borderInnerRect(borderRect, innerBorderTopWidth, innerBorderBottomWidth, 
-                                                       innerBorderLeftWidth, innerBorderRightWidth);
-        RoundedIntRect innerClip = style->getRoundedInnerBorderWithBorderWidths(innerBorderInnerRect, innerBorderTopWidth, innerBorderBottomWidth,
-                                                                                innerBorderLeftWidth, innerBorderRightWidth);
-        graphicsContext->addRoundedRectClip(innerClip);
+        graphicsContext->addRoundedRectClip(innerBorderInnerRect, innerBorderTopLeftInnerRadius, 
+            innerBorderTopRightInnerRadius, innerBorderBottomLeftInnerRadius, innerBorderBottomRightInnerRadius);
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, SOLID);
         graphicsContext->restore();
 
         // Draw outer border line
         graphicsContext->save();
-        IntRect outerBorderInnerRect = borderInnerRect(borderRect, outerBorderTopWidth, outerBorderBottomWidth, 
-                                                       outerBorderLeftWidth, outerBorderRightWidth);
-        RoundedIntRect outerClip = style->getRoundedInnerBorderWithBorderWidths(outerBorderInnerRect, outerBorderTopWidth, outerBorderBottomWidth, 
-                                                                                outerBorderLeftWidth, outerBorderRightWidth);
-        graphicsContext->clipOutRoundedRect(outerClip);
+        graphicsContext->clipOutRoundedRect(outerBorderInnerRect, outerBorderTopLeftInnerRadius, 
+            outerBorderTopRightInnerRadius, outerBorderBottomLeftInnerRadius, outerBorderBottomRightInnerRadius);
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, SOLID);
         graphicsContext->restore();
 
@@ -1018,14 +1030,18 @@ void RenderObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, IntRect
         IntRect halfBorderRect = borderInnerRect(borderRect, style->borderLeftWidth() / 2, style->borderBottomWidth() / 2, 
             style->borderLeftWidth() / 2, style->borderRightWidth() / 2);
 
+        IntSize topLeftHalfRadius, topRightHalfRadius, bottomLeftHalfRadius, bottomRightHalfRadius;
+        style->getInnerBorderRadiiForRectWithBorderWidths(halfBorderRect, style->borderLeftWidth() / 2, 
+            style->borderBottomWidth() / 2, style->borderLeftWidth() / 2, style->borderRightWidth() / 2, 
+            topLeftHalfRadius, topRightHalfRadius, bottomLeftHalfRadius, bottomRightHalfRadius);
+
         // Paint full border
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, s1);
 
         // Paint inner only
         graphicsContext->save();
-        RoundedIntRect clipRect = style->getRoundedInnerBorderWithBorderWidths(halfBorderRect, style->borderLeftWidth() / 2, style->borderBottomWidth() / 2, 
-                                                                               style->borderLeftWidth() / 2, style->borderRightWidth() / 2);
-        graphicsContext->addRoundedRectClip(clipRect);
+        graphicsContext->addRoundedRectClip(halfBorderRect, topLeftHalfRadius, topRightHalfRadius,
+            bottomLeftHalfRadius, bottomRightHalfRadius);
         drawBoxSideFromPath(graphicsContext, borderRect, borderPath, thickness, drawThickness, s, style, c, s2);
         graphicsContext->restore();
 

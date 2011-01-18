@@ -2435,8 +2435,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/PathTraversalState.h \
 	Source/WebCore/platform/graphics/Pattern.cpp \
 	Source/WebCore/platform/graphics/Pattern.h \
-	Source/WebCore/platform/graphics/RoundedIntRect.h \
-	Source/WebCore/platform/graphics/RoundedIntRect.cpp \
 	Source/WebCore/platform/graphics/SegmentedFontData.cpp \
 	Source/WebCore/platform/graphics/SegmentedFontData.h \
 	Source/WebCore/platform/graphics/SimpleFontData.cpp \
