@@ -39,17 +39,6 @@ RUNNING TEST: extension_testAPI
             addListener : <function>
             removeListener : <function>
         }
-        Types : {
-            Document : "document"
-            Stylesheet : "stylesheet"
-            Image : "image"
-            Font : "font"
-            Script : "script"
-            XHR : "xhr"
-            Media : "media"
-            WebSocket : "websocket"
-            Other : "other"
-        }
         getHAR : <function>
         addRequestHeaders : <function>
     }

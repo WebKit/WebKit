@@ -396,7 +396,6 @@ WebInspector.ExtensionServer.prototype = {
             "var apiPrivate = {};" +
             "(" + WebInspector.commonExtensionSymbols.toString() + ")(apiPrivate);" +
             "(" + WebInspector.injectedExtensionAPI.toString() + ").apply(this, arguments);" +
-            "webInspector.resources.Types = " + JSON.stringify(resourceTypes) + ";" +
             platformAPI +
             "})";
     },

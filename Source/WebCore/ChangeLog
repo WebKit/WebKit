@@ -1,3 +1,19 @@
+2011-01-18  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fail resource.requestContent() immediately for WebSocket resources
+        https://bugs.webkit.org/show_bug.cgi?id=52628
+
+        * English.lproj/localizedStrings.js: Rename WebSocket -> WebSockets in resource catetegories (rest are in plural, too)
+        * inspector/front-end/ExtensionServer.js: Do not expose webInspector.resources.Types in extensions API (obsolete)
+        (WebInspector.ExtensionServer.prototype._buildExtensionAPIInjectedScript):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.Type.toUIString): Remove ResourceType.Media as it's not used.
+        (WebInspector.Resource.Type.toString): ditto.
+        (WebInspector.Resource.prototype.requestContent): Fail immediately for WebSocket resources.
+        * inspector/front-end/inspector.js: Rename WebSocket -> WebSockets in resource catetegories (rest are in plural, too)
+
 2011-01-18  Helder Correia  <helder@sencha.com>
 
         Reviewed by Dirk Schulze.

@@ -44,7 +44,6 @@ WebInspector.Resource.Type = {
     Font:       3,
     Script:     4,
     XHR:        5,
-    Media:      6,
     WebSocket:  7,
     Other:      8,
 
@@ -68,8 +67,6 @@ WebInspector.Resource.Type = {
                 return WebInspector.UIString("Script");
             case this.XHR:
                 return WebInspector.UIString("XHR");
-            case this.Media:
-                return WebInspector.UIString("Media");
             case this.WebSocket:
                 return WebInspector.UIString("WebSocket");
             case this.Other:
@@ -95,8 +92,6 @@ WebInspector.Resource.Type = {
                 return "script";
             case this.XHR:
                 return "xhr";
-            case this.Media:
-                return "media";
             case this.WebSocket:
                 return "websocket";
             case this.Other:
@@ -669,6 +664,13 @@ WebInspector.Resource.prototype = {
 
     requestContent: function(callback)
     {
+        // We do not support content retrieval for WebSockets at the moment.
+        // Since WebSockets are potentially long-living, fail requests immediately
+        // to prevent caller blocking until resource is marked as finished.
+        if (this.type === WebInspector.Resource.Type.WebSocket) {
+            callback(null, null);
+            return;
+        }
         if (this._content) {
             callback(this._content, this._contentEncoded);
             return;
