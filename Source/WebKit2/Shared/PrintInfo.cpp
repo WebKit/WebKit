@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "PrintInfo.h"
+#include "PrintInfo.h"
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"

@@ -1,3 +1,10 @@
+2011-01-17  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * Shared/PrintInfo.cpp:
+        Use #include, not #import.
+
 2011-01-17  Alexey Proskuryakov  <ap@apple.com>
 
         Actually wrote a FIXME promised for a review comment.
