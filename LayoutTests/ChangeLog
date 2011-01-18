@@ -1,3 +1,18 @@
+2011-01-18  Adam Bergkvist  <adam.bergkvist@ericsson.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] The GTK+ EventSender needs support for beginDragWithFiles
+        https://bugs.webkit.org/show_bug.cgi?id=40833
+
+        Unskip passing tests, add in a GTK+-specific result and one more result
+        which is necessary because GTK+ tests run in Xvfb.
+
+        * platform/gtk/Skipped: Unskip tests that are now passing and organize
+        the remaining skipped tests.
+        * platform/gtk/fast/forms/input-file-re-render-expected.txt: Added.
+        * platform/gtk/http/tests/security/clipboard/clipboard-file-access-expected.txt: Added.
+
 2011-01-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

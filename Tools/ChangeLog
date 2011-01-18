@@ -1,3 +1,16 @@
+2011-01-18  Adam Bergkvist  <adam.bergkvist@ericsson.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] The GTK+ EventSender needs support for beginDragWithFiles
+        https://bugs.webkit.org/show_bug.cgi?id=40833
+
+        * DumpRenderTree/gtk/EventSender.cpp: Add a beginDragWithFiles implementation for the
+        GTK+ event sender.
+        (dragWithFilesDragDataGetCallback): Added.
+        (dragWithFilesDragEndCallback): Added.
+        (beginDragWithFilesCallback): Added.
+
 2011-01-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Adam Barth.

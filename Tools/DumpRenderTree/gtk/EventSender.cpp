@@ -34,20 +34,20 @@
 
 #include "DumpRenderTree.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
-
+#include <GOwnPtrGtk.h>
+#include <GRefPtrGtk.h>
 #include <GtkVersioning.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <cstring>
+#include <gdk/gdk.h>
+#include <gdk/gdkkeysyms.h>
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebview.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Platform.h>
 #include <wtf/text/CString.h>
-
-#include <gdk/gdk.h>
-#include <gdk/gdkkeysyms.h>
-#include <string.h>
 
 extern "C" {
     extern GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
@@ -416,12 +416,84 @@ static JSValueRef continuousMouseScrollByCallback(JSContextRef context, JSObject
     return JSValueMakeUndefined(context);
 }
 
+static void dragWithFilesDragDataGetCallback(GtkWidget*, GdkDragContext*, GtkSelectionData *data, guint, guint, gpointer userData)
+{
+    gtk_selection_data_set_uris(data, static_cast<gchar**>(userData));
+}
+
+static void dragWithFilesDragEndCallback(GtkWidget* widget, GdkDragContext*, gpointer userData)
+{
+    g_signal_handlers_disconnect_by_func(widget, reinterpret_cast<void*>(dragWithFilesDragEndCallback), userData);
+    g_signal_handlers_disconnect_by_func(widget, reinterpret_cast<void*>(dragWithFilesDragDataGetCallback), userData);
+    g_strfreev(static_cast<gchar**>(userData));
+}
+
 static JSValueRef beginDragWithFilesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    // FIXME: Implement this completely once WebCore has complete drag and drop support
+    JSObjectRef filesArray = JSValueToObject(context, arguments[0], exception);
+    ASSERT(!exception || !*exception);
+
+    const gchar* mainFrameURI = webkit_web_frame_get_uri(mainFrame);
+    GRefPtr<GFile> testFile(adoptGRef(g_file_new_for_uri(mainFrameURI)));
+    GRefPtr<GFile> parentDirectory(g_file_get_parent(testFile.get()));
+    if (!parentDirectory)
+        return JSValueMakeUndefined(context);
+
+    // If this is an HTTP test, we still need to pass a local file path
+    // to WebCore. Even though the file doesn't exist, this should be fine
+    // for most tests.
+    GOwnPtr<gchar> scheme(g_file_get_uri_scheme(parentDirectory.get()));
+    if (g_str_equal(scheme.get(), "http") || g_str_equal(scheme.get(), "https")) {
+        GOwnPtr<gchar> currentDirectory(g_get_current_dir());
+        parentDirectory = g_file_new_for_path(currentDirectory.get());
+    }
+
+    JSStringRef lengthProperty = JSStringCreateWithUTF8CString("length");
+    int filesArrayLength = JSValueToNumber(context, JSObjectGetProperty(context, filesArray, lengthProperty, 0), 0);
+    JSStringRelease(lengthProperty);
+
+    gchar** draggedFilesURIList = g_new0(gchar*, filesArrayLength + 1);
+    for (int i = 0; i < filesArrayLength; ++i) {
+        JSStringRef filenameString = JSValueToStringCopy(context,
+                                                         JSObjectGetPropertyAtIndex(context, filesArray, i, 0), 0);
+        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(filenameString);
+        GOwnPtr<gchar> filenameBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
+        JSStringGetUTF8CString(filenameString, filenameBuffer.get(), bufferSize);
+        JSStringRelease(filenameString);
+
+        GRefPtr<GFile> dragFile(g_file_get_child(parentDirectory.get(), filenameBuffer.get()));
+        draggedFilesURIList[i] = g_file_get_uri(dragFile.get());
+    }
+
+    GtkWidget* view = GTK_WIDGET(webkit_web_frame_get_web_view(mainFrame));
+    g_object_connect(G_OBJECT(view),
+        "signal::drag-end", dragWithFilesDragEndCallback, draggedFilesURIList,
+        "signal::drag-data-get", dragWithFilesDragDataGetCallback, draggedFilesURIList,
+        NULL);
+
+    GdkEvent event;
+    memset(&event, 0, sizeof(event));
+    event.type = GDK_MOTION_NOTIFY;
+    event.motion.x = lastMousePositionX;
+    event.motion.y = lastMousePositionY;
+    event.motion.time = GDK_CURRENT_TIME;
+    event.motion.window = view->window;
+    event.motion.device = gdk_device_get_core_pointer();
+    event.motion.state = GDK_BUTTON1_MASK;
+
+    int xRoot, yRoot;
+    gdk_window_get_root_coords(view->window, lastMousePositionX, lastMousePositionY, &xRoot, &yRoot);
+    event.motion.x_root = xRoot;
+    event.motion.y_root = yRoot;
+
+    GtkTargetList* targetList = gtk_target_list_new(0, 0);
+    gtk_target_list_add_uri_targets(targetList, 0);
+    gtk_drag_begin(view, targetList, GDK_ACTION_COPY, 1, &event);
+    gtk_target_list_unref(targetList);
+
     return JSValueMakeUndefined(context);
 }
 

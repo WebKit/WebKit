@@ -2720,11 +2720,7 @@ http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/preload-img-test.html
 http/tests/loading/redirect-with-no-location-crash.html
 http/tests/loading/text-content-type-with-binary-extension.html
-http/tests/local/blob/send-data-blob.html
-http/tests/local/blob/send-hybrid-blob.html
-http/tests/local/blob/send-sliced-data-blob.html
-# File API is not supported yet
-fast/files
+
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
 http/tests/media/video-seekable-stall.html
@@ -5326,19 +5322,6 @@ http/tests/xmlhttprequest/remember-bad-password.html
 # different DOM to be created.
 html5lib/runner.html
 
-#Tests failing because beginDragWithFiles is unimplemented
-editing/pasteboard/file-drag-to-editable.html
-editing/pasteboard/file-input-files-access.html
-editing/pasteboard/files-during-page-drags.html
-fast/dom/Window/window-postmessage-clone-frames.html
-fast/dom/Window/window-postmessage-clone.html
-fast/events/drag-to-navigate.html
-fast/events/prevent-drag-to-navigate.html
-fast/forms/input-file-re-render.html
-http/tests/local/formdata
-http/tests/local/fileapi
-http/tests/security/clipboard/clipboard-file-access.html
-
 # Still failing, looks like a bug in the EventSender drag-and-drop
 fast/css/user-drag-none.html
 
@@ -5350,6 +5333,25 @@ fast/events/drag-in-frames.html
 http/tests/misc/bubble-drag-events.html
 fast/events/content-changed-during-drop.html
 editing/pasteboard/drop-link.html
+
+# [Soup] ResourceHandleSoup does not ever call didSendData for file uploads
+# https://bugs.webkit.org/show_bug.cgi?id=52090
+http/tests/local/formdata/upload-events.html
+
+# [Soup] ResourceHandleSoup does not handle encodedBlobData
+# https://bugs.webkit.org/show_bug.cgi?id=52092
+http/tests/local/blob/send-data-blob.html
+http/tests/local/blob/send-hybrid-blob.html
+http/tests/local/blob/send-sliced-data-blob.html
+http/tests/local/formdata/send-form-data-with-sliced-file.html
+
+# [GTK] Dragging images and links results in a DataTransfer object containing a non-empty files array
+# https://bugs.webkit.org/show_bug.cgi?id=52094
+editing/pasteboard/files-during-page-drags.html
+
+# [GTK] Filenames are converted to URLs during edit drags
+# https://bugs.webkit.org/show_bug.cgi?id=52096
+editing/pasteboard/file-drag-to-editable.html
 
 # The feature was disabled due to a compatibility issue.
 # https://bugs.webkit.org/show_bug.cgi?id=40520
@@ -5479,6 +5481,7 @@ fast/parser/pre-html5-parser-quirks.html
 
 # FileSystem API is not supported.
 fast/filesystem
+http/tests/local/fileapi
 
 # Needs more investigation like QT
 fast/dom/nodesFromRect-links-and-text.html
