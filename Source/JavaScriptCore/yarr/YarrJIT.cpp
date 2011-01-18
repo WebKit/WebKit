@@ -981,12 +981,6 @@ class YarrGenerator : private MacroAssembler {
                 m_linkedBacktrack->linkToNextBacktrack(followonBacktrack);
         }
 
-        void chainBacktrackJumps(JumpList* jumpList)
-        {
-            if (m_linkedBacktrack && !(m_linkedBacktrack->hasDestination()))
-                m_linkedBacktrack->setBacktrackJumpList(jumpList);
-        }
-
         BacktrackDestination& getBacktrackDestination()
         {
             return m_backtrack;
@@ -1050,8 +1044,6 @@ class YarrGenerator : private MacroAssembler {
                 stateBacktrack.setBacktrackJumpList(&m_pattBacktrackJumps);
                 stateBacktrack.setBacktrackSourceLabel(&m_backtrackFromAfterParens);
             }
-
-            parenthesesState.chainBacktrackJumps(&m_pattBacktrackJumps);
         }
 
         void setNextIteration(Label nextIteration)

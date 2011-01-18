@@ -58,6 +58,16 @@ PASS regexp38.exec('xx') is ['xx','xx','xx']
 PASS regexp38.exec('b') is ['b','b',undefined]
 PASS regexp38.exec('z') is ['z','z',undefined]
 PASS regexp38.exec('') is ['','',undefined]
+PASS regexp39.exec('') is ['',undefined,undefined]
+PASS regexp39.exec('8') is ['8','8',undefined]
+PASS regexp39.exec('zP') is ['',undefined,undefined]
+PASS regexp40.exec('') is ['',undefined,undefined,undefined,'']
+PASS regexp40.exec('8') is ['8','8','8',undefined,'']
+PASS regexp40.exec('zPz') is ['',undefined,undefined,undefined,'']
+PASS regexp40.exec('zPPz') is ['',undefined,undefined,undefined,'']
+PASS regexp40.exec('zPPPz') is ['',undefined,undefined,undefined,'']
+PASS regexp40.exec('zPPPPz') is ['',undefined,undefined,undefined,'']
+PASS /(?!(?=r{0}){2,})|((z)?)?/gi.test('') is true
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true
 

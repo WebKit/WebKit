@@ -170,6 +170,21 @@ shouldBe("regexp38.exec('b')", "['b','b',undefined]");
 shouldBe("regexp38.exec('z')", "['z','z',undefined]");
 shouldBe("regexp38.exec('')", "['','',undefined]");
 
+var regexp39 = /(8|((?=P)))?/;
+shouldBe("regexp39.exec('')", "['',undefined,undefined]");
+shouldBe("regexp39.exec('8')", "['8','8',undefined]");
+shouldBe("regexp39.exec('zP')", "['',undefined,undefined]");
+
+var regexp40 = /((8)|((?=P){4}))?()/;
+shouldBe("regexp40.exec('')", "['',undefined,undefined,undefined,'']");
+shouldBe("regexp40.exec('8')", "['8','8','8',undefined,'']");
+shouldBe("regexp40.exec('zPz')", "['',undefined,undefined,undefined,'']");
+shouldBe("regexp40.exec('zPPz')", "['',undefined,undefined,undefined,'']");
+shouldBe("regexp40.exec('zPPPz')", "['',undefined,undefined,undefined,'']");
+shouldBe("regexp40.exec('zPPPPz')", "['',undefined,undefined,undefined,'']");
+
+shouldBeTrue("/(?!(?=r{0}){2,})|((z)?)?/gi.test('')");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;
