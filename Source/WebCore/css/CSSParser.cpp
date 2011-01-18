@@ -1872,7 +1872,8 @@ void CSSParser::addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval)
 
 static bool parseBackgroundClip(CSSParserValue* parserValue, RefPtr<CSSValue>& cssValue)
 {
-    if (parserValue->id == CSSValueBorderBox || parserValue->id == CSSValuePaddingBox || parserValue->id == CSSValueWebkitText) {
+    if (parserValue->id == CSSValueBorderBox || parserValue->id == CSSValuePaddingBox
+        || parserValue->id == CSSValueContentBox || parserValue->id == CSSValueWebkitText) {
         cssValue = CSSPrimitiveValue::createIdentifier(parserValue->id);
         return true;
     }

@@ -1,3 +1,15 @@
+2011-01-18  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        Support background-clip: content-box
+        https://bugs.webkit.org/show_bug.cgi?id=48771
+
+        Addded content-box as a valid background-clip value.
+
+        * WebCore/css/CSSParser.cpp:
+        (WebCore::parseBackgroundClip):
+
 2011-01-18  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Kent Tamura.

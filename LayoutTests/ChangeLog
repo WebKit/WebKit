@@ -1,3 +1,18 @@
+2011-01-18  Krithigassree Sambamurthy  <krithigassree.sambamurthy@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        Support background-clip: content-box
+        https://bugs.webkit.org/show_bug.cgi?id=48771 
+
+        Added test cases to check the various valid background-clip values.
+
+        * fast/css/background-clip-text-expected.txt:
+        * fast/css/background-clip-values-expected.checksum: Added.
+        * fast/css/background-clip-values-expected.txt: Added.
+        * fast/css/background-clip-values.html: Added.
+        * fast/css/script-tests/background-clip-text.js:
+
 2011-01-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
