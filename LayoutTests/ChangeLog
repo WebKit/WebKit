@@ -1,3 +1,15 @@
+2011-01-18  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, updated expectations for tests
+        affected by http://trac.webkit.org/changeset/76047
+
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize22-expected.checksum:
+        * platform/chromium-mac/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize22-expected.checksum:
+        * platform/chromium-win/fast/backgrounds/size/backgroundSize22-expected.png:
+        * platform/chromium-win/fast/css/background-clip-values-expected.checksum: Added.
+        * platform/chromium-win/fast/css/background-clip-values-expected.png: Added.
+
 2011-01-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.
