@@ -2,6 +2,24 @@
 
         Reviewed by Sam Weinig.
 
+        Add PageClient::scrollView
+        https://bugs.webkit.org/show_bug.cgi?id=52663
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::scrollView):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::scrollView):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::PageClientImpl::scrollView):
+        * UIProcess/win/WebView.h:
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Rename scrollDelta to scrollOffset everywhere.
 
         * Shared/UpdateInfo.cpp:

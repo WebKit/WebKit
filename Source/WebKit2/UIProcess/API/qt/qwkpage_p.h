@@ -47,6 +47,7 @@ public:
     virtual PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
+    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();

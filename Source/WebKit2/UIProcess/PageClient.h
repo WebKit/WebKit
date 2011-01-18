@@ -58,6 +58,9 @@ public:
     // Tell the view to immediately display its invalid rect.
     virtual void displayView() = 0;
 
+    // Tell the view to scroll scrollRect by scrollOffset.
+    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
+
     // Return the size of the view the page is associated with.
     virtual WebCore::IntSize viewSize() = 0;
 

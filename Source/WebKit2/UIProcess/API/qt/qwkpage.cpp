@@ -147,6 +147,11 @@ void QWKPagePrivate::displayView()
     // FIXME: Implement.
 }
 
+void QWKPagePrivate::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
+{
+    // FIXME: Implement.
+}
+
 WebCore::IntSize QWKPagePrivate::viewSize()
 {
     // FIXME: Implement.

@@ -133,6 +133,12 @@ void PageClientImpl::displayView()
     [m_wkView displayIfNeeded];
 }
 
+void PageClientImpl::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
+{
+    // FIXME: Actually scroll the view contents.
+    setViewNeedsDisplay(scrollRect);
+}
+
 IntSize PageClientImpl::viewSize()
 {
     return IntSize([m_wkView bounds].size);
