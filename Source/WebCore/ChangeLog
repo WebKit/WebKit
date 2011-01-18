@@ -1,5 +1,35 @@
 2011-01-17  Adam Roben  <aroben@apple.com>
 
+        Remove special-cased support for providing content for the root layer
+
+        Clients will just have to provide content through the normal
+        GraphicsLayer channels now!
+
+        Support for <http://webkit.org/b/52582> WebView should paint directly
+        into a GraphicsLayer when in accelerated compositing mode
+
+        Reviewed by Simon Fraser and Chris Marrin.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer): Removed
+        initialization of m_backingStoreDirty, which has itself been removed.
+        (WebCore::WKCACFLayerRenderer::setNeedsDisplay): Moved code to schedule
+        a sync from here to syncCompositingStateSoon. We only need to call
+        renderSoon if we don't call syncCompositingStateSoon; the latter
+        function calls the former.
+        (WebCore::WKCACFLayerRenderer::paint): Removed code to handle
+        m_backingStoreDirty. We don't want to know anything about clients'
+        backing stores.
+        (WebCore::WKCACFLayerRenderer::syncCompositingStateSoon): Added. Code
+        came from setNeedsDisplay.
+
+        * platform/graphics/win/WKCACFLayerRenderer.h:
+        Removed setRootContents[AndDisplay], setBackingStoreDirty, and
+        m_backingStoreDirty. Made paint() public so that clients can force a
+        synchronous render (e.g., when handling WM_PAINT).
+
+2011-01-17  Adam Roben  <aroben@apple.com>
+
         Remove contexts from WKCACFContextFlusher before destroying them
 
         We aren't really using WKCACFContextFlusher for anything useful at the

@@ -821,12 +821,12 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
 #if USE(ACCELERATED_COMPOSITING)
 void WebChromeClient::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
-    m_webView->setRootChildLayer(graphicsLayer ? PlatformCALayer::platformCALayer(graphicsLayer->platformLayer()) : 0);
+    m_webView->setRootChildLayer(graphicsLayer);
 }
 
 void WebChromeClient::scheduleCompositingLayerSync()
 {
-    m_webView->setRootLayerNeedsDisplay(true);
+    m_webView->scheduleCompositingLayerSync();
 }
 
 #endif

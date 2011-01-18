@@ -1,3 +1,86 @@
+2011-01-17  Adam Roben  <aroben@apple.com>
+
+        Paint directly into a GraphicsLayer when using accelerated compositing
+
+        Before this patch, we were painting into our normal backing store
+        HBITMAP, wrapping it in a CGImage, and handing it off to Core
+        Animation. This had at least two disadvantages:
+           1) The bitmap could be modified while Core Animation was using it.
+           2) It introduced extra complexity.
+
+        When entering accelerated compositing mode, WebView now creates a
+        GraphicsLayer to draw into. This GraphicsLayer sits between the root
+        layer (owned by WKCACFLayerRenderer) and the RenderView's layer. When
+        WebView invalidates, it just calls setNeedsDisplayInRect on its
+        GraphicsLayer. When WebView paints, it just tells its
+        WKCACFLayerRenderer to paint, which will call back to WebView to draw
+        into the GraphicsLayer if it has a dirty region. This is very similar
+        to the current implementation of LayerBackedDrawingArea in WebKit2.
+
+        Fixes <http://webkit.org/b/52582> WebView should paint directly into a
+        GraphicsLayer when in accelerated compositing mode
+
+        Reviewed by Simon Fraser and Chris Marrin.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::attachRootGraphicsLayer):
+        (WebChromeClient::scheduleCompositingLayerSync):
+        Updated for WebView changes.
+
+        * WebView.cpp:
+        (WebView::repaint): When using accelerated compositing, just invalidate
+        our backing layer. This matches the behavior of LayerBackedDrawingArea.
+        (WebView::deleteBackingStore): Removed accelerated compositing code.
+        The WKCACFLayerRenderer doesn't need to know about our backing store
+        anymore; we don't use it at all when in accelerated compositing mode.
+        (WebView::addToDirtyRegion): When using accelerated compositing, just
+        invalidate our backing layer.
+        (WebView::scrollBackingStore): Added an assertion that this isn't
+        called in accelerated compositing mode.
+        (WebView::sizeChanged): Update our backing layer's size, too, and
+        invalidate it.
+        (WebView::updateBackingStore): Added an assertion that this isn't
+        called in accelerated compositing mode.
+        (WebView::paint): If we're in accelerated compositing mode, sync our
+        compositing state. If we're *still* in accelerated compositing mode,
+        just tell our WKCACFLayerRenderer to paint and clear our dirty region.
+        (The later changes in this function are just un-indenting code that
+        used to be inside an if.)
+
+        (WebView::paintIntoBackingStore):
+        (WebView::paintIntoWindow):
+        Added assertions that these aren't called in accelerated compositing
+        mode.
+
+        (WebView::WebViewWndProc): Updated WM_XP_THEMECHANGED handling for
+        removal of setRootLayerNeedsDisplay.
+        (WebView::setRootChildLayer): Changed to take a GraphicsLayer. We now
+        set the layer as a child of our own backing layer.
+        (WebView::scheduleCompositingLayerSync): Just call through to
+        WKCACFLayerRenderer.
+        (WebView::setAcceleratedCompositing): Create our backing layer and set
+        it as the child of WKCACFLayerRenderer's root layer.
+        (WebView::notifyAnimationStarted): Added. We never expect this
+        GraphicsLayerClient override to be called, as we don't use animations
+        on our backing layer.
+        (WebView::notifySyncRequired): Added. Just schedule a sync.
+        (WebView::paintContents): Added. Just clip and paint!
+
+        (WebView::showDebugBorders):
+        (WebView::showRepaintCounter):
+        Added. These just call through to Settings.
+
+        (WebView::syncCompositingState): Changed to first update layout, then
+        sync state for our backing layer, then sync WebCore's state. This
+        matches LayerBackedDrawingArea.
+
+        * WebView.h: WebView now implements the GraphicsLayerClient interface.
+        Removed setRootLayerNeedsDisplay; it's been replaced by calling
+        setNeedsDisplay on our backing layer and calling
+        syncCompositingStateSoon on WKCACFLayerRenderer as needed. Removed
+        updateRootLayerContents; that function was used to pass our backing
+        store to Core Animation, which we no longer do. Added m_backingLayer.
+
 2011-01-17  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

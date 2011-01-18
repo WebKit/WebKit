@@ -70,6 +70,7 @@ class WebView
     , public IDropTarget
     , WebCore::WindowMessageListener
 #if USE(ACCELERATED_COMPOSITING)
+    , WebCore::GraphicsLayerClient
     , WebCore::WKCACFLayerRendererClient
 #endif
 {
@@ -904,12 +905,8 @@ public:
     void downloadURL(const WebCore::KURL&);
 
 #if USE(ACCELERATED_COMPOSITING)
-    void setRootLayerNeedsDisplay(bool sync = false)
-    {
-        if (m_layerRenderer)
-            m_layerRenderer->setNeedsDisplay(sync);
-    }
-    void setRootChildLayer(WebCore::PlatformCALayer*);
+    void scheduleCompositingLayerSync();
+    void setRootChildLayer(WebCore::GraphicsLayer*);
 #endif
 
     void enterFullscreenForNode(WebCore::Node*);
@@ -943,6 +940,13 @@ private:
     DWORD m_lastDropEffect;
 
 #if USE(ACCELERATED_COMPOSITING)
+    // GraphicsLayerClient
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time);
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip);
+    virtual bool showDebugBorders() const;
+    virtual bool showRepaintCounter() const;
+
     // WKCACFLayerRendererClient
     virtual bool shouldRender() const;
     virtual void animationsStarted(CFTimeInterval);
@@ -1052,10 +1056,10 @@ protected:
 #if USE(ACCELERATED_COMPOSITING)
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
     void setAcceleratedCompositing(bool);
-    void updateRootLayerContents();
     void layerRendererBecameVisible();
 
     OwnPtr<WebCore::WKCACFLayerRenderer> m_layerRenderer;
+    OwnPtr<WebCore::GraphicsLayer> m_backingLayer;
     bool m_isAcceleratedCompositing;
 #endif
 

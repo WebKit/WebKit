@@ -70,17 +70,16 @@ public:
 
     static bool acceleratedCompositingAvailable();
 
-    void setRootContents(CGImageRef);
-    void setRootContentsAndDisplay(CGImageRef);
     void setRootChildLayer(PlatformCALayer*);
     void layerTreeDidChange();
     void setNeedsDisplay(bool sync = false);
     void setHostWindow(HWND window) { m_hostWindow = window; }
-    void setBackingStoreDirty(bool dirty) { m_backingStoreDirty = dirty; }
     bool createRenderer();
     void destroyRenderer();
+    void paint();
     void resize();
     void renderSoon();
+    void syncCompositingStateSoon();
 
 protected:
     PlatformCALayer* rootLayer() const;
@@ -102,7 +101,6 @@ private:
     bool resetDevice(ResetReason);
 
     void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
-    void paint();
 
     WKCACFLayerRendererClient* m_client;
     bool m_mightBeAbleToCreateDeviceLater;
@@ -112,7 +110,6 @@ private:
     WKCACFContext* m_context;
     HWND m_hostWindow;
     Timer<WKCACFLayerRenderer> m_renderTimer;
-    bool m_backingStoreDirty;
     bool m_mustResetLostDeviceBeforeRendering;
     bool m_syncLayerChanges;
     HashSet<RefPtr<PlatformCALayer> > m_pendingAnimatedLayers;

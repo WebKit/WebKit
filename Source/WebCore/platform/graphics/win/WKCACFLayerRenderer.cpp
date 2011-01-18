@@ -187,7 +187,6 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
     , m_context(wkCACFContextCreate())
     , m_hostWindow(0)
     , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
-    , m_backingStoreDirty(false)
     , m_mustResetLostDeviceBeforeRendering(false)
     , m_syncLayerChanges(false)
 {
@@ -239,20 +238,6 @@ void WKCACFLayerRenderer::addPendingAnimatedLayer(PassRefPtr<PlatformCALayer> la
     m_pendingAnimatedLayers.add(layer);
 }
 
-void WKCACFLayerRenderer::setRootContents(CGImageRef image)
-{
-    ASSERT(m_rootLayer);
-    m_rootLayer->setContents(image);
-    renderSoon();
-}
-
-void WKCACFLayerRenderer::setRootContentsAndDisplay(CGImageRef image)
-{
-    ASSERT(m_rootLayer);
-    m_rootLayer->setContents(image);
-    paint();
-}
-
 void WKCACFLayerRenderer::setRootChildLayer(PlatformCALayer* layer)
 {
     m_rootLayer->removeAllSublayers();
@@ -269,12 +254,13 @@ void WKCACFLayerRenderer::layerTreeDidChange()
 
 void WKCACFLayerRenderer::setNeedsDisplay(bool sync)
 {
-    if (!m_syncLayerChanges && sync)
-        m_syncLayerChanges = true;
-
     ASSERT(m_rootLayer);
     m_rootLayer->setNeedsDisplay(0);
-    renderSoon();
+
+    if (sync)
+        syncCompositingStateSoon();
+    else
+        renderSoon();
 }
 
 bool WKCACFLayerRenderer::createRenderer()
@@ -423,15 +409,6 @@ void WKCACFLayerRenderer::paint()
         return;
     }
 
-    if (m_backingStoreDirty) {
-        // If the backing store is still dirty when we are about to draw the
-        // composited content, we need to force the window to paint into the
-        // backing store. The paint will only paint the dirty region that
-        // if being tracked in WebView.
-        UpdateWindow(m_hostWindow);
-        return;
-    }
-
     Vector<CGRect> dirtyRects;
     getDirtyRects(m_hostWindow, dirtyRects);
     render(dirtyRects);
@@ -544,6 +521,12 @@ void WKCACFLayerRenderer::renderSoon()
 {
     if (!m_renderTimer.isActive())
         m_renderTimer.startOneShot(0);
+}
+
+void WKCACFLayerRenderer::syncCompositingStateSoon()
+{
+    m_syncLayerChanges = true;
+    renderSoon();
 }
 
 CGRect WKCACFLayerRenderer::bounds() const

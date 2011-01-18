@@ -722,8 +722,12 @@ HRESULT STDMETHODCALLTYPE WebView::close()
 void WebView::repaint(const WebCore::IntRect& windowRect, bool contentChanged, bool immediate, bool repaintContentOnly)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (isAcceleratedCompositing())
-        setRootLayerNeedsDisplay();
+    if (isAcceleratedCompositing()) {
+        // The contentChanged, immediate, and repaintContentOnly parameters are all based on a non-
+        // compositing painting/scrolling model.
+        addToDirtyRegion(windowRect);
+        return;
+    }
 #endif
 
     if (!repaintContentOnly) {
@@ -750,11 +754,6 @@ void WebView::deleteBackingStore()
     }
     m_backingStoreBitmap.clear();
     m_backingStoreDirtyRegion.clear();
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_layerRenderer)
-        m_layerRenderer->setBackingStoreDirty(false);
-#endif
-
     m_backingStoreSize.cx = m_backingStoreSize.cy = 0;
 }
 
@@ -785,6 +784,13 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
     // but it was being hit during our layout tests, and is being investigated in
     // http://webkit.org/b/29350.
 
+#if USE(ACCELERATED_COMPOSITING)
+    if (isAcceleratedCompositing()) {
+        m_backingLayer->setNeedsDisplayInRect(dirtyRect);
+        return;
+    }
+#endif
+
     HRGN newRegion = ::CreateRectRgn(dirtyRect.x(), dirtyRect.y(),
                                      dirtyRect.right(), dirtyRect.bottom());
     addToDirtyRegion(newRegion);
@@ -792,6 +798,10 @@ void WebView::addToDirtyRegion(const IntRect& dirtyRect)
 
 void WebView::addToDirtyRegion(HRGN newRegion)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(!isAcceleratedCompositing());
+#endif
+
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
     if (m_backingStoreDirtyRegion) {
@@ -802,17 +812,16 @@ void WebView::addToDirtyRegion(HRGN newRegion)
     } else
         m_backingStoreDirtyRegion = RefCountedHRGN::create(newRegion);
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_layerRenderer)
-        m_layerRenderer->setBackingStoreDirty(true);
-#endif
-
     if (m_uiDelegatePrivate)
         m_uiDelegatePrivate->webViewDidInvalidate(this);
 }
 
 void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(!isAcceleratedCompositing());
+#endif
+
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
     // If there's no backing store we don't need to update it
@@ -866,6 +875,10 @@ void WebView::sizeChanged(const IntSize& newSize)
 #if USE(ACCELERATED_COMPOSITING)
     if (m_layerRenderer)
         m_layerRenderer->resize();
+    if (m_backingLayer) {
+        m_backingLayer->setSize(newSize);
+        m_backingLayer->setNeedsDisplay();
+    }
 #endif
 }
 
@@ -913,6 +926,10 @@ static void getUpdateRects(HRGN region, const IntRect& dirtyRect, Vector<IntRect
 
 void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStoreCompletelyDirty, WindowsToPaint windowsToPaint)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(!isAcceleratedCompositing());
+#endif
+
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
     HDC windowDC = 0;
@@ -947,10 +964,6 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
             m_uiDelegatePrivate->webViewPainted(this);
 
         m_backingStoreDirtyRegion.clear();
-#if USE(ACCELERATED_COMPOSITING)
-        if (m_layerRenderer)
-            m_layerRenderer->setBackingStoreDirty(false);
-#endif
     }
 
     if (!dc) {
@@ -964,6 +977,19 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
 void WebView::paint(HDC dc, LPARAM options)
 {
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (isAcceleratedCompositing()) {
+        syncCompositingState();
+        // Syncing might have taken us out of compositing mode.
+        if (isAcceleratedCompositing()) {
+            // FIXME: We need to paint into dc (if provided). <http://webkit.org/b/52578>
+            m_layerRenderer->paint();
+            ::ValidateRect(m_viewWindow, 0);
+            return;
+        }
+    }
+#endif
 
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
@@ -1009,25 +1035,18 @@ void WebView::paint(HDC dc, LPARAM options)
     // Update our backing store if needed.
     updateBackingStore(frameView, bitmapDC, backingStoreCompletelyDirty, windowsToPaint);
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (!isAcceleratedCompositing()) {
-#endif
-        // Now we blit the updated backing store
-        IntRect windowDirtyRect = rcPaint;
-        
-        // Apply the same heuristic for this update region too.
-        Vector<IntRect> blitRects;
-        if (region && regionType == COMPLEXREGION)
-            getUpdateRects(region.get(), windowDirtyRect, blitRects);
-        else
-            blitRects.append(windowDirtyRect);
+    // Now we blit the updated backing store
+    IntRect windowDirtyRect = rcPaint;
+    
+    // Apply the same heuristic for this update region too.
+    Vector<IntRect> blitRects;
+    if (region && regionType == COMPLEXREGION)
+        getUpdateRects(region.get(), windowDirtyRect, blitRects);
+    else
+        blitRects.append(windowDirtyRect);
 
-        for (unsigned i = 0; i < blitRects.size(); ++i)
-            paintIntoWindow(bitmapDC, hdc, blitRects[i]);
-#if USE(ACCELERATED_COMPOSITING)
-    } else
-        updateRootLayerContents();
-#endif
+    for (unsigned i = 0; i < blitRects.size(); ++i)
+        paintIntoWindow(bitmapDC, hdc, blitRects[i]);
 
     ::SelectObject(bitmapDC, oldBitmap);
     ::DeleteDC(bitmapDC);
@@ -1045,6 +1064,10 @@ void WebView::paint(HDC dc, LPARAM options)
 
 void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRect, WindowsToPaint windowsToPaint)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(!isAcceleratedCompositing());
+#endif
+
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
     // FIXME: We want an assert here saying that the dirtyRect is inside the clienRect,
@@ -1084,6 +1107,10 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 
 void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRect)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(!isAcceleratedCompositing());
+#endif
+
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 #if FLASH_WINDOW_REDRAW
     OwnPtr<HBRUSH> greenBrush = CreateSolidBrush(RGB(0, 255, 0));
@@ -2201,7 +2228,7 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
                 ::InvalidateRect(hWnd, &windowRect, false);
 #if USE(ACCELERATED_COMPOSITING)
                 if (webView->isAcceleratedCompositing())
-                    webView->setRootLayerNeedsDisplay();
+                    webView->m_backingLayer->setNeedsDisplay();
 #endif
            }
             break;
@@ -6231,11 +6258,19 @@ void WebView::downloadURL(const KURL& url)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebView::setRootChildLayer(WebCore::PlatformCALayer* layer)
+void WebView::setRootChildLayer(GraphicsLayer* layer)
 {
     setAcceleratedCompositing(layer ? true : false);
-    if (m_layerRenderer)
-        m_layerRenderer->setRootChildLayer(layer);
+    if (!m_backingLayer)
+        return;
+    m_backingLayer->addChild(layer);
+}
+
+void WebView::scheduleCompositingLayerSync()
+{
+    if (!m_layerRenderer)
+        return;
+    m_layerRenderer->syncCompositingStateSoon();
 }
 
 void WebView::setAcceleratedCompositing(bool accelerated)
@@ -6252,53 +6287,30 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             ASSERT(m_viewWindow);
             m_layerRenderer->setHostWindow(m_viewWindow);
             m_layerRenderer->createRenderer();
+
+            // FIXME: We could perhaps get better performance by never allowing this layer to
+            // become tiled (or choosing a higher-than-normal tiling threshold).
+            // <http://webkit.org/b/52603>
+            m_backingLayer = GraphicsLayer::create(this);
+            m_backingLayer->setDrawsContent(true);
+            m_backingLayer->setContentsOpaque(true);
+            RECT clientRect;
+            ::GetClientRect(m_viewWindow, &clientRect);
+            m_backingLayer->setSize(IntRect(clientRect).size());
+            m_backingLayer->setNeedsDisplay();
+
+            m_layerRenderer->setRootChildLayer(PlatformCALayer::platformCALayer(m_backingLayer->platformLayer()));
+
+            // We aren't going to be using our backing store while we're in accelerated compositing
+            // mode. But don't delete it immediately, in case we switch out of accelerated
+            // compositing mode soon (e.g., if we're only compositing for a :hover animation).
+            deleteBackingStoreSoon();
         }
     } else {
         m_layerRenderer = 0;
+        m_backingLayer = 0;
         m_isAcceleratedCompositing = false;
     }
-}
-
-void releaseBackingStoreCallback(void* info, const void* data, size_t size)
-{
-    // Release the backing store bitmap previously retained by updateRootLayerContents().
-    ASSERT(info);
-    if (info)
-        static_cast<RefCountedHBITMAP*>(info)->deref();
-}
-
-void WebView::updateRootLayerContents()
-{
-    if (!m_backingStoreBitmap || !m_layerRenderer)
-        return;
-
-    // Get the backing store into a CGImage
-    BITMAP bitmap;
-    GetObject(m_backingStoreBitmap->handle(), sizeof(bitmap), &bitmap);
-    size_t bmSize = bitmap.bmWidthBytes * bitmap.bmHeight;
-    RetainPtr<CGDataProviderRef> cgData(AdoptCF,
-        CGDataProviderCreateWithData(static_cast<void*>(m_backingStoreBitmap.get()),
-                                                        bitmap.bmBits, bmSize,
-                                                        releaseBackingStoreCallback));
-    RetainPtr<CGColorSpaceRef> space(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGImageRef> backingStoreImage(AdoptCF, CGImageCreate(bitmap.bmWidth, bitmap.bmHeight,
-                                     8, bitmap.bmBitsPixel, 
-                                     bitmap.bmWidthBytes, space.get(), 
-                                     kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipFirst,
-                                     cgData.get(), 0, false, 
-                                     kCGRenderingIntentDefault));
-
-    // Retain the backing store bitmap so that it is not deleted by deleteBackingStore()
-    // while still in use within CA. When CA is done with the bitmap, it will
-    // call releaseBackingStoreCallback(), which will release the backing store bitmap.
-    m_backingStoreBitmap->ref();
-
-    // Hand the CGImage to CACF for compositing
-    if (m_nextDisplayIsSynchronous) {
-        m_layerRenderer->setRootContentsAndDisplay(backingStoreImage.get());
-        m_nextDisplayIsSynchronous = false;
-    } else
-        m_layerRenderer->setRootContents(backingStoreImage.get());
 }
 
 void WebView::layerRendererBecameVisible()
@@ -6458,6 +6470,39 @@ HRESULT WebView::nextDisplayIsSynchronous()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
+void WebView::notifyAnimationStarted(const GraphicsLayer*, double)
+{
+    // We never set any animations on our backing layer.
+    ASSERT_NOT_REACHED();
+}
+
+void WebView::notifySyncRequired(const GraphicsLayer*)
+{
+    scheduleCompositingLayerSync();
+}
+
+void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& inClip)
+{
+    Frame* frame = core(m_mainFrame);
+    if (!frame)
+        return;
+
+    context.save();
+    context.clip(inClip);
+    frame->view()->paint(&context, inClip);
+    context.restore();
+}
+
+bool WebView::showDebugBorders() const
+{
+    return m_page->settings()->showDebugBorders();
+}
+
+bool WebView::showRepaintCounter() const
+{
+    return m_page->settings()->showRepaintCounter();
+}
+
 bool WebView::shouldRender() const
 {
     Frame* coreFrame = core(m_mainFrame);
@@ -6479,8 +6524,21 @@ void WebView::animationsStarted(CFTimeInterval t)
 void WebView::syncCompositingState()
 {
     Frame* coreFrame = core(m_mainFrame);
-    if (coreFrame && coreFrame->view())
-        coreFrame->view()->syncCompositingStateRecursive();
+    if (!coreFrame)
+        return;
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return;
+    if (!m_backingLayer)
+        return;
+
+    view->updateLayoutAndStyleIfNeededRecursive();
+
+    // Updating layout might have taken us out of compositing mode.
+    if (m_backingLayer)
+        m_backingLayer->syncCompositingStateForThisLayerOnly();
+
+    view->syncCompositingStateRecursive();
 }
 
 #endif
