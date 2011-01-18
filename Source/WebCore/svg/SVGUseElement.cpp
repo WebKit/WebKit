@@ -330,7 +330,7 @@ void SVGUseElement::updateContainerOffsets()
 void SVGUseElement::recalcStyle(StyleChange change)
 {
     // Eventually mark shadow root element needing style recalc
-    if (needsStyleRecalc() && m_targetElementInstance && !m_updatesBlocked) {
+    if ((change >= Inherit || needsStyleRecalc() || childNeedsStyleRecalc()) && m_targetElementInstance && !m_updatesBlocked) {
         if (SVGElement* shadowRoot = m_targetElementInstance->shadowTreeElement())
             shadowRoot->setNeedsStyleRecalc();
     }
