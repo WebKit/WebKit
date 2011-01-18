@@ -117,7 +117,6 @@ bool WebFrameProxy::isDisplayingMarkupDocument() const
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
-    ASSERT(!url.isEmpty());
     ASSERT(m_loadState == LoadStateFinished);
     ASSERT(m_provisionalURL.isEmpty());
     m_loadState = LoadStateProvisional;
@@ -143,7 +142,6 @@ void WebFrameProxy::didFailProvisionalLoad()
 void WebFrameProxy::didCommitLoad(const String& contentType, const PlatformCertificateInfo& certificateInfo)
 {
     ASSERT(m_loadState == LoadStateProvisional);
-    ASSERT(!m_provisionalURL.isEmpty());
     m_loadState = LoadStateCommitted;
     m_url = m_provisionalURL;
     m_provisionalURL = String();
@@ -157,7 +155,6 @@ void WebFrameProxy::didFinishLoad()
 {
     ASSERT(m_loadState == LoadStateCommitted);
     ASSERT(m_provisionalURL.isEmpty());
-    ASSERT(!m_url.isEmpty());
     m_loadState = LoadStateFinished;
 }
 

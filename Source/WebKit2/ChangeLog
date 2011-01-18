@@ -1,3 +1,15 @@
+2011-01-18  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Do not assert that the provisional and committed URLs cannot be empty/null
+        https://bugs.webkit.org/show_bug.cgi?id=52641
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didCommitLoad):
+        (WebKit::WebFrameProxy::didFinishLoad):
+
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
