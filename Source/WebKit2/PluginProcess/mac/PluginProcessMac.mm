@@ -24,11 +24,16 @@
  */
 
 #if ENABLE(PLUGIN_PROCESS)
+
+// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
+#define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
  
 #include "PluginProcess.h"
 
 #include "NetscapePlugin.h"
 #include "PluginProcessShim.h"
+#include "PluginProcessCreationParameters.h"
+#include <WebKitSystemInterface.h>
 #include <dlfcn.h>
 
 namespace WebKit {
@@ -82,6 +87,19 @@ void PluginProcess::initializeShim()
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));
     initFunc(callbacks);
+}
+
+void PluginProcess::platformInitialize(const PluginProcessCreationParameters& parameters)
+{
+    m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
+
+    NSString *applicationName = [NSString stringWithFormat:UI_STRING("%@ (%@ Internet plug-in)",
+                                                                     "visible name of the plug-in host process. The first argument is the plug-in name "
+                                                                     "and the second argument is the application name."),
+                                 [[(NSString *)parameters.pluginPath lastPathComponent] stringByDeletingPathExtension], 
+                                 (NSString *)parameters.parentProcessName];
+    
+    WKSetVisibleApplicationName((CFStringRef)applicationName);
 }
 
 } // namespace WebKit

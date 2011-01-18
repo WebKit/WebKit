@@ -151,6 +151,12 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 {
     initializeSandbox(parameters);
 
+    if (!parameters.parentProcessName.isNull()) {
+        // FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
+        NSString *applicationName = [NSString stringWithFormat:@"%@ Web Content", (NSString *)parameters.parentProcessName];
+        WKSetVisibleApplicationName((CFStringRef)applicationName);
+    }
+
     if (!parameters.nsURLCachePath.isNull()) {
         NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
         NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;

@@ -115,9 +115,7 @@ void PluginProcess::initialize(const PluginProcessCreationParameters& parameters
 
     m_pluginPath = parameters.pluginPath;
 
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-    m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
-#endif
+    platformInitialize(parameters);
 }
 
 void PluginProcess::createWebProcessConnection()

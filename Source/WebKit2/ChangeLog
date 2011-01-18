@@ -1,3 +1,58 @@
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Plug-in hosting WebProcess instances appear in Activity Monitor as WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=52635
+        <rdar://problem/8731337>
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::initialize):
+        Call platformInitialize.
+
+        * PluginProcess/PluginProcess.h:
+        Add platformInitialize.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::PluginProcess::platformInitialize):
+        Set the compositing render server port and the visible application name.
+
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::encode):
+        (WebKit::PluginProcessCreationParameters::decode):
+        Encode/decode the parent process name.
+
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        Add parentProcessName.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        Encode/decode the parent process name.
+
+        * Shared/WebProcessCreationParameters.h:
+        Add parentProcessName.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        Don't pass the parent process name here.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        Set the visible name.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Pass along the parent process name.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Set the visible name.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+        Don't set the visible name here. It's done in platformInitializeWebProcess.
+
 2011-01-18  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

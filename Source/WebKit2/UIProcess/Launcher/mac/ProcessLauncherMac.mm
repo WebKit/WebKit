@@ -49,32 +49,6 @@ extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, u
 
 namespace WebKit {
 
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-static const char* processName()
-{
-    return [[[NSProcessInfo processInfo] processName] fileSystemRepresentation];
-}
-#else
-// -[NSProcessInfo processName] isn't thread-safe on Leopard and Snow Leopard so we have our own implementation.
-static const char* createProcessName()
-{
-    uint32_t bufferSize = MAXPATHLEN;
-    char executablePath[bufferSize];
-    
-    if (_NSGetExecutablePath(executablePath, &bufferSize))
-        return "";
-    
-    const char *processName = strrchr(executablePath, '/') + 1;
-    return strdup(processName);
-}
-
-static const char* processName()
-{
-    static const char* processName = createProcessName();
-    return processName;
-}
-#endif
-
 static void setUpTerminationNotificationHandler(pid_t pid)
 {
 #if HAVE(DISPATCH_H)
@@ -226,7 +200,7 @@ void ProcessLauncher::launchProcess()
     CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
 
     const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-    const char* args[] = { path, bundlePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-parentprocessname", processName(), 0 };
+    const char* args[] = { path, bundlePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), 0 };
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);

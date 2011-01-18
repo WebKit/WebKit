@@ -73,6 +73,8 @@ struct WebProcessCreationParameters {
     TextCheckerState textCheckerState;
 
 #if PLATFORM(MAC)
+    String parentProcessName;
+
     pid_t presenterApplicationPid;
     CString nsURLCachePath;
 

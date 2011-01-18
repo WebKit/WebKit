@@ -35,6 +35,7 @@ namespace WebKit {
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)
 {
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
+    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
     mach_port_t renderServerPort = WKInitializeRenderServer();
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);

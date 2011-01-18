@@ -80,14 +80,6 @@ int WebProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-    // Set the visible application name.
-    String parentProcessName = commandLine["parentprocessname"];
-    if (!parentProcessName.isNull()) {
-        // FIXME: Localization!
-        NSString *applicationName = [NSString stringWithFormat:@"%@ Web Content", (NSString *)parentProcessName];
-        WKSetVisibleApplicationName((CFStringRef)applicationName);
-    }
-
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
 

@@ -74,7 +74,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
         cachePath = reinterpret_cast<CFStringRef>(NSHomeDirectory());
 
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
-    
+
+    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];    
     parameters.nsURLCachePath = fileSystemRepresentation([(NSString *)cachePath.get() stringByStandardizingPath]);
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];

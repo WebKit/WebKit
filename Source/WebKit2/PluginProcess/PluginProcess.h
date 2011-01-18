@@ -72,6 +72,8 @@ private:
     
     void shutdownTimerFired();
 
+    void platformInitialize(const PluginProcessCreationParameters&);
+
     // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_connection;
 

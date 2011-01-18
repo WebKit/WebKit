@@ -40,6 +40,7 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) 
     encoder->encode(pluginPath);
 
 #if PLATFORM(MAC)
+    encoder->encode(parentProcessName);
     encoder->encode(acceleratedCompositingPort);
 #endif
 }
@@ -50,6 +51,8 @@ bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, 
         return false;
 
 #if PLATFORM(MAC)
+    if (!decoder->decode(result.parentProcessName))
+        return false;
     if (!decoder->decode(result.acceleratedCompositingPort))
         return false;
 #endif
