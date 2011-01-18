@@ -26,45 +26,36 @@
     }
     </style>
     <script type="text/javascript" charset="utf-8">
-        if (window.layoutTestController) {
+        if (window.layoutTestController)
             layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
-        }
         
-        result = "";
-
         function testOnLoad()
         {
             // Small layer first
-            window.setTimeout(function() {
-                if (window.layoutTestController)
-                    result = "First (small layer):<br>" + layoutTestController.layerTreeAsText();
-            }, 0);
-            
+            var result = recordLayerTree("First (small layer):<br>");
+
             // Huge layer second
-            window.setTimeout(function() {
-                document.getElementById('container').style.height = "5000px";
-                
-                // Let it render
-                window.setTimeout(function() {
-                    if (window.layoutTestController)
-                        result += "<br><br>Second (huge layer):<br>" + layoutTestController.layerTreeAsText();
-                }, 0);
-            }, 100);
-            
+            document.getElementById('container').style.height = "5000px";
+            result += recordLayerTree("<br><br>Second (huge layer):<br>");
+
             // Small layer third
-            window.setTimeout(function() {
-                document.getElementById('container').style.height = "500px";
-                
-                // Let it render
-                window.setTimeout(function() {
-                    if (window.layoutTestController) {
-                        result += "<br><br>Third (small layer):<br>" + layoutTestController.layerTreeAsText();
-                        document.getElementById('layers').innerHTML = result;
-                        layoutTestController.notifyDone();
-                    }
-                }, 0);
-            }, 200);
+            document.getElementById('container').style.height = "500px";
+            result += recordLayerTree("<br><br>Third (small layer):<br>");
+
+            document.getElementById('layers').innerHTML = result;
+        }
+
+        function recordLayerTree(messagePrefix)
+        {
+            if (!window.layoutTestController)
+                return "";
+
+            // Force a layout and a paint to make sure the compositing layers
+            // have been updated.
+            document.body.offsetLeft;
+            layoutTestController.display();
+
+            return messagePrefix + layoutTestController.layerTreeAsText();
         }
       
         window.addEventListener('load', testOnLoad, false);

@@ -1,3 +1,36 @@
+2011-01-17  Adam Roben  <aroben@apple.com>
+
+        Don't access the CACFLayerRef's sublayers directly from PlatformCALayer
+
+        There might be a secret extra sublayer (the tile parent layer) that
+        PlatformCALayer doesn't know about. When PlatformCALayer would
+        encounter this, it would try to use the tile parent layer's
+        PlatformCALayer wrapper, which was null, and then would crash. We now
+        ask PlatformCALayerWinInternal for the sublayer list, since that class
+        knows about the tile parent layer and can exclude it from the sublayer
+        list.
+
+        Covered by compositing/tiling/huge-layer-resize.html.
+
+        Fixes <http://webkit.org/b/52597> Crash beneath
+        PlatformCALayer::adoptSublayers when switching out of tiling mode
+        (null-dereference of a PlatformCALayer)
+
+        Reviewed by Darin Adler and Chris Marrin.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (PlatformCALayer::adoptSublayers):
+        (printLayer):
+        Changed to use PlatformCALayerWinInternal::getSublayers.
+
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::getSublayers): Added. Retrieves the list
+        of PlatformCALayers that represent our sublayers. Significantly, this
+        code knows about the tile parent layer and can thus exclude it.
+
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.h: Added
+        getSublayers.
+
 2011-01-17  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.

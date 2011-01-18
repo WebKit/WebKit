@@ -210,6 +210,27 @@ void PlatformCALayerWinInternal::setSublayers(const PlatformCALayerList& list)
     }
 }
 
+void PlatformCALayerWinInternal::getSublayers(PlatformCALayerList& list) const
+{
+    CFArrayRef sublayers = CACFLayerGetSublayers(owner()->platformLayer());
+    if (!sublayers) {
+        list.clear();
+        return;
+    }
+
+    size_t count = CFArrayGetCount(sublayers);
+
+    size_t layersToSkip = 0;
+    if (owner()->layerType() == PlatformCALayer::LayerTypeWebTiledLayer) {
+        // Exclude the tile parent layer.
+        layersToSkip = 1;
+    }
+
+    list.resize(count - layersToSkip);
+    for (size_t arrayIndex = layersToSkip; arrayIndex < count; ++arrayIndex)
+        list[arrayIndex - layersToSkip] = PlatformCALayer::platformCALayer(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, arrayIndex)));
+}
+
 void PlatformCALayerWinInternal::removeAllSublayers()
 {
     CACFLayerSetSublayers(owner()->platformLayer(), 0);

@@ -52,6 +52,7 @@ public:
     PlatformCALayer* owner() const { return m_owner; }
 
     void setSublayers(const PlatformCALayerList&);
+    void getSublayers(PlatformCALayerList&) const;
     void removeAllSublayers();
     void insertSublayer(PlatformCALayer*, size_t);
     size_t sublayerCount() const;

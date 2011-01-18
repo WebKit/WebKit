@@ -253,15 +253,8 @@ size_t PlatformCALayer::sublayerCount() const
 
 void PlatformCALayer::adoptSublayers(PlatformCALayer* source)
 {
-    // Make a list of the sublayers from source
     PlatformCALayerList sublayers;
-    size_t n = source->sublayerCount();
-    CFArrayRef sourceSublayers = CACFLayerGetSublayers(source->platformLayer());
-
-    for (size_t i = 0; i < n; ++i) {
-        CACFLayerRef layer = static_cast<CACFLayerRef>(const_cast<void*>(CFArrayGetValueAtIndex(sourceSublayers, i)));
-        sublayers.append(platformCALayer(layer));
-    }
+    intern(source)->getSublayers(sublayers);
 
     // Use setSublayers() because it properly nulls out the superlayer pointers.
     setSublayers(sublayers);
@@ -690,11 +683,11 @@ static void printLayer(const PlatformCALayer* layer, int indent)
         printIndent(indent + 1);
         fprintf(stderr, "(sublayers\n");
 
-        CFArrayRef sublayers = CACFLayerGetSublayers(layer->platformLayer());
-        for (int i = 0; i < n; ++i) {
-            PlatformCALayer* sublayer = PlatformCALayer::platformCALayer(const_cast<void*>(CFArrayGetValueAtIndex(sublayers, i)));
-            printLayer(sublayer, indent + 2);
-        }
+        PlatformCALayerList sublayers;
+        intern(layer)->getSublayers(sublayers);
+        ASSERT(n == sublayers.size());
+        for (int i = 0; i < n; ++i)
+            printLayer(sublayers[i].get(), indent + 2);
 
         printIndent(indent + 1);
         fprintf(stderr, ")\n");
