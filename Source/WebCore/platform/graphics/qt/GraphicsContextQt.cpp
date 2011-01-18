@@ -8,7 +8,7 @@
  * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
- * Copyright (C) 2010 Sencha, Inc.
+ * Copyright (C) 2010, 2011 Sencha, Inc.
  *
  * All rights reserved.
  *
@@ -505,14 +505,19 @@ void GraphicsContext::fillPath(const Path& path)
                     brush.setTransform(m_state.fillGradient->gradientSpaceTransform());
                     shadowPainter->setOpacity(static_cast<qreal>(shadow->m_color.alpha()) / 255);
                     shadowPainter->fillPath(platformPath, brush);
-                } else
-                    shadowPainter->fillPath(platformPath, QColor(shadow->m_color));
+                } else {
+                    QColor shadowColor = shadow->m_color;
+                    shadowColor.setAlphaF(shadowColor.alphaF() * p->brush().color().alphaF());
+                    shadowPainter->fillPath(platformPath, shadowColor);
+                }
                 shadow->endShadowLayer(this);
             }
         } else {
             QPointF offset = shadow->offset();
             p->translate(offset);
-            p->fillPath(platformPath, QColor(shadow->m_color));
+            QColor shadowColor = shadow->m_color;
+            shadowColor.setAlphaF(shadowColor.alphaF() * p->brush().color().alphaF());
+            p->fillPath(platformPath, shadowColor);
             p->translate(-offset);
         }
     }
