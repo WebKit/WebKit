@@ -70,6 +70,7 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
+#include "InspectorRuntimeAgent.h"
 #include "InspectorSettings.h"
 #include "InspectorState.h"
 #include "InspectorTimelineAgent.h"
@@ -389,8 +390,9 @@ void InspectorController::connectFrontend()
     m_openingFrontend = false;
     releaseFrontendLifetimeAgents();
     m_frontend = new InspectorFrontend(m_client);
-    m_domAgent = InspectorDOMAgent::create(m_frontend.get());
+    m_domAgent = InspectorDOMAgent::create(m_injectedScriptHost.get(), m_frontend.get());
     m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_frontend.get());
+    m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
 
     m_cssAgent->setDOMAgent(m_domAgent.get());
 
@@ -500,6 +502,7 @@ void InspectorController::disconnectFrontend()
 void InspectorController::releaseFrontendLifetimeAgents()
 {
     m_resourceAgent.clear();
+    m_runtimeAgent.clear();
 
     // This should be invoked prior to m_domAgent destruction.
     m_cssAgent->setDOMAgent(0);

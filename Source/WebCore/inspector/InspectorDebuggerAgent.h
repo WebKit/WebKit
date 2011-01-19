@@ -31,6 +31,7 @@
 #define InspectorDebuggerAgent_h
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#include "InjectedScript.h"
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
@@ -59,15 +60,14 @@ public:
 
     static bool isDebuggerAlwaysEnabled();
 
+    // Part of the protocol.
     void activateBreakpoints();
     void deactivateBreakpoints();
     void setStickyBreakpoint(const String& url, unsigned lineNumber, const String& condition, bool enabled);
     void setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, String* breakpointId, unsigned int* actualLineNumber);
     void removeBreakpoint(const String& breakpointId);
-
     void editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
     void getScriptSource(const String& sourceID, String* scriptSource);
-
     void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
     void cancelPauseOnNextStatement();
     void breakProgram(DebuggerEventType type, PassRefPtr<InspectorValue> data);
@@ -76,8 +76,9 @@ public:
     void stepOver();
     void stepInto();
     void stepOut();
-
     void setPauseOnExceptionsState(long pauseState, long* newState);
+    void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
+    void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result);
 
     void clearForPageNavigation();
 

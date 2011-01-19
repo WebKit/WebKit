@@ -355,14 +355,11 @@ WebInspector.ConsoleView.prototype = {
         // Collect comma separated object properties for the completion.
 
         var includeInspectorCommandLineAPI = (!dotNotation && !bracketNotation);
-        var callFrameId = WebInspector.panels.scripts.selectedCallFrameId() || -1;
         var injectedScriptAccess;
-        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
-            var selectedCallFrame = WebInspector.panels.scripts.sidebarPanes.callstack.selectedCallFrame;
-            var injectedScriptId = selectedCallFrame.worldId;
-        } else
-            var injectedScriptId = 0;
-        InspectorBackend.getCompletions(injectedScriptId, expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions);
+        if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused)
+            InspectorBackend.getCompletionsOnCallFrame(WebInspector.panels.scripts.selectedCallFrameId(), expressionString, includeInspectorCommandLineAPI, reportCompletions);
+        else
+            InspectorBackend.getCompletions(expressionString, includeInspectorCommandLineAPI, reportCompletions);
     },
 
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {

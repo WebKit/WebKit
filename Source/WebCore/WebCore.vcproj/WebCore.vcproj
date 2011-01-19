@@ -65162,6 +65162,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorRuntimeAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorRuntimeAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorSettings.cpp"
 				>
 			</File>

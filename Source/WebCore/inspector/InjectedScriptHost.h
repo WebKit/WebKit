@@ -44,6 +44,7 @@ class Database;
 class InjectedScript;
 class InspectorDOMAgent;
 class InspectorFrontend;
+class InspectorObject;
 class Node;
 class ScriptObject;
 class Storage;
@@ -59,16 +60,7 @@ public:
     ~InjectedScriptHost();
 
     // Part of the protocol.
-    void evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
-    void evaluateInCallFrame(long injectedScriptId, long callFrame, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
     void evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result);
-    void getCompletions(long injectedScriptId, const String& expression, bool includeInspectorCommandLineAPI, long callFrameId, RefPtr<InspectorValue>* result);
-    void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
-    void pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result);
-    void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
-    void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
-    void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);
-    void setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
 
     InspectorController* inspectorController() { return m_inspectorController; }
     void disconnectController() { m_inspectorController = 0; }
@@ -96,6 +88,8 @@ public:
     pair<long, ScriptObject> injectScript(const String& source, ScriptState*);
     InjectedScript injectedScriptFor(ScriptState*);
     InjectedScript injectedScriptForId(long);
+    InjectedScript injectedScriptForObjectId(InspectorObject* objectId);
+    InjectedScript injectedScriptForMainFrame();
     void discardInjectedScripts();
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
 
@@ -108,10 +102,6 @@ private:
     String injectedScriptSource();
     ScriptObject createInjectedScript(const String& source, ScriptState* scriptState, long id);
     void discardInjectedScript(ScriptState*);
-
-    InjectedScript injectedScriptForObjectId(InspectorObject* objectId);
-    InjectedScript injectedScriptForNodeId(long nodeId);
-    InjectedScript injectedScriptForMainWorld();
 
     InspectorController* m_inspectorController;
     long m_nextInjectedScriptId;

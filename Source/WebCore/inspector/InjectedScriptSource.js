@@ -186,31 +186,44 @@ InjectedScript.prototype = {
         return Object.keys(propertyNameSet);
     },
 
-    getCompletions: function(expression, includeInspectorCommandLineAPI, callFrameId)
+    getCompletions: function(expression, includeInspectorCommandLineAPI)
     {
         var props = {};
         try {
-            var expressionResult;
-            // Evaluate on call frame if call frame id is available.
-            if (callFrameId !== -1) {
-                var callFrame = this._callFrameForId(callFrameId);
-                if (!callFrame)
-                    return props;
-                if (expression)
-                    expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true);
-                else {
-                    // Evaluate into properties in scope of the selected call frame.
-                    var scopeChain = callFrame.scopeChain;
-                    for (var i = 0; i < scopeChain.length; ++i)
-                        this._populatePropertyNames(scopeChain[i], props);
-                }
-            } else {
-                if (!expression)
-                    expression = "this";
-                expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
-            }
+            if (!expression)
+                expression = "this";
+            var expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
+
             if (typeof expressionResult === "object")
                 this._populatePropertyNames(expressionResult, props);
+    
+            if (includeInspectorCommandLineAPI) {
+                for (var prop in this._commandLineAPI)
+                    props[prop] = true;
+            }
+        } catch(e) {
+        }
+        return props;
+    },
+
+    getCompletionsOnCallFrame: function(callFrameId, expression, includeInspectorCommandLineAPI)
+    {
+        var props = {};
+        try {
+            var callFrame = this._callFrameForId(callFrameId);
+            if (!callFrame)
+                return props;
+
+            if (expression) {
+                var expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true);
+                if (typeof expressionResult === "object")
+                    this._populatePropertyNames(expressionResult, props);
+            } else {
+                // Evaluate into properties in scope of the selected call frame.
+                var scopeChain = callFrame.scopeChain;
+                for (var i = 0; i < scopeChain.length; ++i)
+                    this._populatePropertyNames(scopeChain[i], props);
+            }
     
             if (includeInspectorCommandLineAPI) {
                 for (var prop in this._commandLineAPI)
@@ -278,7 +291,7 @@ InjectedScript.prototype = {
         return result;
     },
 
-    evaluateInCallFrame: function(callFrameId, code, objectGroup)
+    evaluateOnCallFrame: function(callFrameId, code, objectGroup)
     {
         var callFrame = this._callFrameForId(callFrameId);
         if (!callFrame)
@@ -286,10 +299,12 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup, true);
     },
 
-    _callFrameForId: function(id)
+    _callFrameForId: function(callFrameId)
     {
+        var parsedCallFrameId = eval("(" + callFrameId + ")");
+        var ordinal = parsedCallFrameId.ordinal;
         var callFrame = InjectedScriptHost.currentCallFrame();
-        while (--id >= 0 && callFrame)
+        while (--ordinal >= 0 && callFrame)
             callFrame = callFrame.caller;
         return callFrame;
     },
@@ -531,16 +546,15 @@ InjectedScript.RemoteObject.fromObject = function(object, objectId, abbreviate)
     }
 }
 
-InjectedScript.CallFrameProxy = function(id, callFrame)
+InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 {
-    this.id = id;
+    this.id = { ordinal: ordinal, injectedScriptId: injectedScriptId };
     this.type = callFrame.type;
     this.functionName = (this.type === "function" ? callFrame.functionName : "");
     this.sourceID = callFrame.sourceID;
     this.line = callFrame.line;
     this.column = callFrame.column;
     this.scopeChain = this._wrapScopeChain(callFrame);
-    this.worldId = injectedScriptId;
 }
 
 InjectedScript.CallFrameProxy.prototype = {

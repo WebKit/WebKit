@@ -2035,6 +2035,8 @@
             'inspector/InspectorProfilerAgent.h',
             'inspector/InspectorResourceAgent.cpp',
             'inspector/InspectorResourceAgent.h',
+            'inspector/InspectorRuntimeAgent.cpp',
+            'inspector/InspectorRuntimeAgent.h',
             'inspector/InspectorState.cpp',
             'inspector/InspectorSettings.h',
             'inspector/InspectorSettings.cpp',

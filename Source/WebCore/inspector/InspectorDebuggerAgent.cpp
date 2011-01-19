@@ -173,6 +173,20 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(long pauseState, long* ne
     *newState = ScriptDebugServer::shared().pauseOnExceptionsState();
 }
 
+void InspectorDebuggerAgent::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.evaluateOnCallFrame(callFrameId, expression, objectGroup, result);
+}
+
+void InspectorDebuggerAgent::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.getCompletionsOnCallFrame(callFrameId, expression, includeInspectorCommandLineAPI, result);
+}
+
 void InspectorDebuggerAgent::clearForPageNavigation()
 {
     m_scriptIDToContent.clear();

@@ -72,6 +72,7 @@ class InspectorFrontendClient;
 class InspectorObject;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
+class InspectorRuntimeAgent;
 class InspectorSettings;
 class InspectorState;
 class InspectorStorageAgent;
@@ -311,6 +312,7 @@ private:
 
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
+    OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
 
 #if ENABLE(DATABASE)
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;

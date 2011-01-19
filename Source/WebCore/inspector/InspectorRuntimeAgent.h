@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,58 +28,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedScript_h
-#define InjectedScript_h
+#ifndef InspectorRuntimeAgent_h
+#define InspectorRuntimeAgent_h
 
-#include "InjectedScriptHost.h"
-#include "ScriptObject.h"
-#include <wtf/Forward.h>
+#if ENABLE(INSPECTOR)
+
+#include "InjectedScript.h"
+#include "PlatformString.h"
+
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class InjectedScriptHost;
+class InspectorObject;
 class InspectorValue;
-class ScriptFunctionCall;
 
-class InjectedScript {
+class InspectorRuntimeAgent : public Noncopyable {
 public:
-    InjectedScript() { }
-    ~InjectedScript() { }
+    static PassOwnPtr<InspectorRuntimeAgent> create(InjectedScriptHost* injectedScriptHost)
+    {
+        return adoptPtr(new InspectorRuntimeAgent(injectedScriptHost));
+    }
 
-    bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
+    ~InspectorRuntimeAgent();
 
+    // Part of the protocol.
     void evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
-    void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
-    void evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result);
     void getCompletions(const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result);
-    void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result);
     void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
-    void pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result);
-    void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
-    void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
-    void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);
     void setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
 
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    PassRefPtr<InspectorValue> callFrames();
-#endif
-
-    PassRefPtr<InspectorValue> wrapForConsole(ScriptValue);
-    void releaseWrapperObjectGroup(const String&);
-    ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
-
 private:
-    friend InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState*);
-    explicit InjectedScript(ScriptObject);
-    bool canAccessInspectedWindow();
+    InspectorRuntimeAgent(InjectedScriptHost*);
 
-    void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
-
-    ScriptObject m_injectedScriptObject;
+    InjectedScriptHost* m_injectedScriptHost;
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INSPECTOR)
+#endif // InspectorRuntimeAgent_h

@@ -366,7 +366,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (result)
                 callback(WebInspector.RemoteObject.fromPayload(result));
         }
-        InspectorBackend.evaluateInCallFrame(callFrame.worldId, callFrame.id, code, objectGroup, evalCallback);
+        InspectorBackend.evaluateOnCallFrame(callFrame.id, code, objectGroup, evalCallback);
     },
 
     _debuggerPaused: function(event)

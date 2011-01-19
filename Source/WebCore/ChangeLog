@@ -1,3 +1,67 @@
+2011-01-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move methods from InjectedScript domain into DOM,
+        Runtime and Debugger domains. Introduce InspectorRuntimeAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=52717
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        (WebCore::InjectedScript::getCompletions):
+        (WebCore::InjectedScript::getCompletionsOnCallFrame):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::injectedScriptForMainWorld):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        ():
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::releaseFrontendLifetimeAgents):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::resolveNode):
+        (WebCore::InspectorDOMAgent::getNodeProperties):
+        (WebCore::InspectorDOMAgent::getNodePrototypes):
+        (WebCore::InspectorDOMAgent::injectedScriptForNodeId):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::EventListenerInfo::EventListenerInfo):
+        (WebCore::InspectorDOMAgent::DOMListener::~DOMListener):
+        (WebCore::InspectorDOMAgent::create):
+        (WebCore::InspectorDOMAgent::cast):
+        (WebCore::InspectorDOMAgent::documents):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::getCompletionsOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::injectedScriptForCallFrameId):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp: Added.
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::~InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::getCompletions):
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        (WebCore::InspectorRuntimeAgent::setPropertyValue):
+        (WebCore::InspectorRuntimeAgent::pushNodeToFrontend):
+        (WebCore::InspectorRuntimeAgent::injectedScriptForObjectId):
+        * inspector/InspectorRuntimeAgent.h: Copied from Source/WebCore/inspector/InjectedScript.h.
+        (WebCore::InspectorRuntimeAgent::create):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.doEvalInCallFrame):
+
 2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

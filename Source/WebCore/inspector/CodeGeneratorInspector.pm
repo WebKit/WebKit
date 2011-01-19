@@ -73,6 +73,11 @@ $typeTransform{"Profiler"} = {
     "header" => "InspectorProfilerAgent.h",
     "domainAccessor" => "m_inspectorController->m_profilerAgent",
 };
+$typeTransform{"Runtime"} = {
+    "forward" => "InspectorRuntimeAgent",
+    "header" => "InspectorRuntimeAgent.h",
+    "domainAccessor" => "m_inspectorController->m_runtimeAgent",
+};
 
 $typeTransform{"Frontend"} = {
     "forward" => "InspectorFrontend",
@@ -117,7 +122,7 @@ $typeTransform{"String"} = {
     "variable" => "String",
     "return" => "String",
     "defaultValue" => "\"\"",
-    "forwardHeader" => "wtf/Forward.h",
+    "forwardHeader" => "PlatformString.h",
     "header" => "PlatformString.h",
     "JSONType" => "String",
     "JSType" => "string"

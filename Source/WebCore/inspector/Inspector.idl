@@ -71,19 +71,19 @@ module core {
         [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
 
         ///////////////////////////////////////////////////////////////////////
+        // Runtime
+        ///////////////////////////////////////////////////////////////////////
+
+        [domain=Runtime] void evaluate(in String expression, in String objectGroup, out Value result);
+        [domain=Runtime] void getCompletions(in String expression, in boolean includeInspectorCommandLineAPI, out Value result);
+        [domain=Runtime] void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
+        [domain=Runtime] void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
+
+        ///////////////////////////////////////////////////////////////////////
         // Injected Script
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=InjectedScript] void evaluate(in String expression, in String objectGroup, out Value result);
-        [domain=InjectedScript] void evaluateInCallFrame(in long injectedScriptId, in long callFrame, in String expression, in String objectGroup, out Value result);
         [domain=InjectedScript] void evaluateOnSelf(in String functionBody, in Array argumentsArray, out Value result);
-        [domain=InjectedScript] void getCompletions(in long injectedScriptId, in String expression, in boolean includeInspectorCommandLineAPI, in long callFrameId, out Value result);
-        [domain=InjectedScript] void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
-        [domain=InjectedScript] void pushNodeToFrontend(in Object objectId, out Value result);
-        [domain=InjectedScript] void resolveNode(in long nodeId, out Value result);
-        [domain=InjectedScript] void getNodeProperties(in long nodeId, in Array propertiesArray, out Value result);
-        [domain=InjectedScript] void getNodePrototypes(in long nodeId, out Value result);
-        [domain=InjectedScript] void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
 
         ///////////////////////////////////////////////////////////////////////
         // Console API
@@ -190,6 +190,10 @@ module core {
         [domain=DOM] void performSearch(in String query, in boolean runSynchronously);
         [domain=DOM] void searchCanceled();
         [domain=DOM] void pushNodeByPathToFrontend(in String path, out long nodeId);
+        [domain=DOM] void resolveNode(in long nodeId, out Value result);
+        [domain=DOM] void getNodeProperties(in long nodeId, in Array propertiesArray, out Value result);
+        [domain=DOM] void getNodePrototypes(in long nodeId, out Value result);
+        [domain=DOM] void pushNodeToFrontend(in Object objectId, out Value result);
 
         [notify, domain=DOM] void setDocument(out Value root); // FIXME: should be requested from the front-end as getDocument.
         [notify, domain=DOM] void attributesUpdated(out long id, out Array attributes);
@@ -266,10 +270,13 @@ module core {
         [domain=Debugger] void resume();
         [notify, domain=Debugger] void resumedScript(); // FIXME: Make this out parameter fo resume if possible.
 
-        [domain=Debugger] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
-
         [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
         [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
+
+        [domain=Debugger] void setPauseOnExceptionsState(in long pauseOnExceptionsState, out long newState);
+
+        [domain=Debugger] void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, out Value result);
+        [domain=Debugger] void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeInspectorCommandLineAPI, out Value result);
 
         [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out String sourceID, out unsigned int lineNumber, out String condition, out boolean enabled, out unsigned int originalLineNumber);
 

@@ -59,6 +59,7 @@
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
 #include "MutationEvent.h"
 #include "Node.h"
@@ -206,8 +207,9 @@ public:
 
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InspectorFrontend* frontend)
+InspectorDOMAgent::InspectorDOMAgent(InjectedScriptHost* injectedScriptHost, InspectorFrontend* frontend)
     : EventListener(InspectorDOMAgentType)
+    , m_injectedScriptHost(injectedScriptHost)
     , m_frontend(frontend)
     , m_domListener(0)
     , m_lastNodeId(1)
@@ -758,6 +760,34 @@ void InspectorDOMAgent::searchCanceled()
     m_searchResults.clear();
 }
 
+void InspectorDOMAgent::resolveNode(long nodeId, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
+    if (!injectedScript.hasNoValue())
+        injectedScript.resolveNode(nodeId, result);
+}
+
+void InspectorDOMAgent::getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
+    if (!injectedScript.hasNoValue())
+        injectedScript.getNodeProperties(nodeId, propertiesArray, result);
+}
+
+void InspectorDOMAgent::getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
+    if (!injectedScript.hasNoValue())
+        injectedScript.getNodePrototypes(nodeId, result);
+}
+
+void InspectorDOMAgent::pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = m_injectedScriptHost->injectedScriptForObjectId(objectId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.pushNodeToFrontend(objectId, result);
+}
+
 String InspectorDOMAgent::documentURLString(Document* document) const
 {
     if (!document || document->url().isNull())
@@ -1111,6 +1141,26 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(const String& path, long* nodeI
     if (Node* node = nodeForPath(path))
         *nodeId = pushNodePathToFrontend(node);
 }
+
+InjectedScript InspectorDOMAgent::injectedScriptForNodeId(long nodeId)
+{
+    Frame* frame = 0;
+    if (nodeId) {
+        Node* node = nodeForId(nodeId);
+        if (node) {
+            Document* document = node->ownerDocument();
+            if (document)
+                frame = document->frame();
+        }
+    } else
+        frame = mainFrameDocument()->frame();
+
+    if (frame)
+        return m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
+
+    return InjectedScript();
+}
+
 
 } // namespace WebCore
 

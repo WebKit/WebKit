@@ -52,10 +52,10 @@ void InjectedScript::evaluate(const String& expression, const String& objectGrou
     makeCall(function, result);
 }
 
-void InjectedScript::evaluateInCallFrame(long callFrame, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+void InjectedScript::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
 {
-    ScriptFunctionCall function(m_injectedScriptObject, "evaluateInCallFrame");
-    function.appendArgument(callFrame);
+    ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnCallFrame");
+    function.appendArgument(callFrameId->toJSONString());
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     makeCall(function, result);
@@ -69,12 +69,20 @@ void InjectedScript::evaluateOnSelf(const String& functionBody, PassRefPtr<Inspe
     makeCall(function, result);
 }
 
-void InjectedScript::getCompletions(const String& expression, bool includeInspectorCommandLineAPI, long callFrameId, RefPtr<InspectorValue>* result)
+void InjectedScript::getCompletions(const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getCompletions");
     function.appendArgument(expression);
     function.appendArgument(includeInspectorCommandLineAPI);
-    function.appendArgument(callFrameId);
+    makeCall(function, result);
+}
+
+void InjectedScript::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "getCompletionsOnCallFrame");
+    function.appendArgument(callFrameId->toJSONString());
+    function.appendArgument(expression);
+    function.appendArgument(includeInspectorCommandLineAPI);
     makeCall(function, result);
 }
 
