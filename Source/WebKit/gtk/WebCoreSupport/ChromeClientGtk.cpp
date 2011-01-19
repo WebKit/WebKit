@@ -377,7 +377,7 @@ void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool i
     GdkRectangle rect = updateRect;
     GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(m_webView));
 
-    if (window) {
+    if (window && !updateRect.isEmpty()) {
         gdk_window_invalidate_rect(window, &rect, FALSE);
         // We don't currently do immediate updates since they delay other UI elements.
         //if (immediate)
