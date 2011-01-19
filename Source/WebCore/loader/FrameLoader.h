@@ -304,6 +304,11 @@ public:
 
     void open(CachedFrameBase&);
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    void hideMediaPlayerProxyPlugin(Widget*);
+    void showMediaPlayerProxyPlugin(Widget*);
+#endif
+
     // FIXME: Should these really be public?
     void completed();
     bool allAncestorsAreComplete() const; // including this

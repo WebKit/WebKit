@@ -184,17 +184,6 @@ PassRefPtr<Widget> SubframeLoader::loadMediaPlayerProxyPlugin(Node* node, const 
 
     return widget ? widget.release() : 0;
 }
-
-void FrameLoader::hideMediaPlayerProxyPlugin(Widget* widget)
-{
-    m_client->hideMediaPlayerProxyPlugin(widget);
-}
-
-void FrameLoader::showMediaPlayerProxyPlugin(Widget* widget)
-{
-    m_client->showMediaPlayerProxyPlugin(widget);
-}
-
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, HTMLAppletElement* element, const HashMap<String, String>& args)

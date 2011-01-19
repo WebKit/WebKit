@@ -1,3 +1,19 @@
+2011-01-19  David D. Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/52687> Clean up FrameLoader methods for PLUGIN_PROXY_FOR_VIDEO
+
+        Reviewed by Eric Carlson.
+
+        * loader/FrameLoader.cpp: Declare the methods here.
+        (WebCore::FrameLoader::hideMediaPlayerProxyPlugin):
+        (WebCore::FrameLoader::showMediaPlayerProxyPlugin):
+        * loader/FrameLoader.cpp: Moved methods to here...
+        (WebCore::FrameLoader::hideMediaPlayerProxyPlugin):
+        (WebCore::FrameLoader::showMediaPlayerProxyPlugin):
+        * loader/SubframeLoader.cpp: ...from here.
+        (WebCore::FrameLoader::hideMediaPlayerProxyPlugin):
+        (WebCore::FrameLoader::showMediaPlayerProxyPlugin):
+
 2011-01-19  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Mihai Parparita.

@@ -99,10 +99,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLMediaElement.h"
-#endif
-
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
 #endif
@@ -988,6 +984,18 @@ ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const S
 
     return WebCore::ObjectContentNone;
 }
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+void FrameLoader::hideMediaPlayerProxyPlugin(Widget* widget)
+{
+    m_client->hideMediaPlayerProxyPlugin(widget);
+}
+
+void FrameLoader::showMediaPlayerProxyPlugin(Widget* widget)
+{
+    m_client->showMediaPlayerProxyPlugin(widget);
+}
+#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 String FrameLoader::outgoingReferrer() const
 {
