@@ -4802,12 +4802,13 @@ JSValue Interpreter::retrieveArguments(CallFrame* callFrame, JSFunction* functio
     if (codeBlock->usesArguments()) {
         ASSERT(codeBlock->codeType() == FunctionCode);
         int argumentsRegister = codeBlock->argumentsRegister();
-        if (!functionCallFrame->r(argumentsRegister).jsValue()) {
-            JSValue arguments = JSValue(new (callFrame) Arguments(functionCallFrame));
-            functionCallFrame->r(argumentsRegister) = arguments;
-            functionCallFrame->r(unmodifiedArgumentsRegister(argumentsRegister)) = arguments;
-        }
-        return functionCallFrame->r(argumentsRegister).jsValue();
+        int realArgumentsRegister = unmodifiedArgumentsRegister(argumentsRegister);
+        if (JSValue arguments = functionCallFrame->uncheckedR(argumentsRegister).jsValue())
+            return arguments;
+        JSValue arguments = JSValue(new (callFrame) Arguments(functionCallFrame));
+        functionCallFrame->r(argumentsRegister) = arguments;
+        functionCallFrame->r(realArgumentsRegister) = arguments;
+        return arguments;
     }
 
     Arguments* arguments = new (functionCallFrame) Arguments(functionCallFrame);

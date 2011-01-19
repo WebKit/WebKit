@@ -37,6 +37,9 @@ PASS argumentsNotLiveWrite1(0, 2, 3) is 0
 PASS argumentsNotLiveWrite2(1, 0, 3) is 0
 PASS argumentsNotLiveWrite3(1, 2, 0) is 0
 PASS argumentsIdentity() is true
+PASS overwroteArgumentsInDynamicScope1() is true
+PASS overwroteArgumentsInDynamicScope2() is true
+PASS overwroteArgumentsInDynamicScope3() is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

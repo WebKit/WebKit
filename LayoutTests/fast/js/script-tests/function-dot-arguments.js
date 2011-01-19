@@ -305,4 +305,22 @@ function argumentsIdentity()
 }
 shouldBeTrue("argumentsIdentity()");
 
+function overwroteArgumentsInDynamicScope1() {
+    eval("arguments = true"); 
+    return arguments;
+}
+
+function overwroteArgumentsInDynamicScope2() {
+    arguments = true;
+    return eval("arguments");
+}
+
+function overwroteArgumentsInDynamicScope3() {
+    eval("arguments = true"); 
+    return overwroteArgumentsInDynamicScope3.arguments;
+}
+shouldBeTrue("overwroteArgumentsInDynamicScope1()");
+shouldBeTrue("overwroteArgumentsInDynamicScope2()");
+shouldBeTrue("overwroteArgumentsInDynamicScope3()");
+
 var successfullyParsed = true;
