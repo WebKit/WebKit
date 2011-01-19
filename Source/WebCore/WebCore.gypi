@@ -1348,6 +1348,7 @@
             'dom/Text.h',
             'dom/TextEvent.cpp',
             'dom/TextEvent.h',
+            'dom/TextEventInputType.h',
             'dom/Touch.cpp',
             'dom/Touch.h',
             'dom/TouchEvent.cpp',

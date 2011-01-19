@@ -1300,6 +1300,7 @@ webcore_sources += \
 	Source/WebCore/dom/Text.cpp \
 	Source/WebCore/dom/TextEvent.cpp \
 	Source/WebCore/dom/TextEvent.h \
+	Source/WebCore/dom/TextEventInputType.h \
 	Source/WebCore/dom/Text.h \
 	Source/WebCore/dom/TouchList.h \
 	Source/WebCore/dom/TransformSource.h \

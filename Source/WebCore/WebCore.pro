@@ -1714,6 +1714,7 @@ HEADERS += \
     dom/StyleElement.h \
     dom/TagNodeList.h \
     dom/TextEvent.h \
+    dom/TextEventInputType.h \
     dom/Text.h \
     dom/Touch.h \
     dom/TouchEvent.h \

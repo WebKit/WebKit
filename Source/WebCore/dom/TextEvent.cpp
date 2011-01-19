@@ -31,21 +31,12 @@
 
 namespace WebCore {
 
-TextEvent::InputType TextEvent::selectInputType(bool isLineBreak, bool isBackTab)
-{
-    if (isLineBreak)
-        return TextEvent::InputTypeLineBreak;
-    if (isBackTab)
-        return TextEvent::InputTypeBackTab;
-    return TextEvent::InputTypeKeyboard;
-}
-
 PassRefPtr<TextEvent> TextEvent::create()
 {
     return adoptRef(new TextEvent);
 }
 
-PassRefPtr<TextEvent> TextEvent::create(PassRefPtr<AbstractView> view, const String& data, TextEvent::InputType inputType)
+PassRefPtr<TextEvent> TextEvent::create(PassRefPtr<AbstractView> view, const String& data, TextEventInputType inputType)
 {
     return adoptRef(new TextEvent(view, data, inputType));
 }
@@ -62,17 +53,17 @@ PassRefPtr<TextEvent> TextEvent::createForFragmentPaste(PassRefPtr<AbstractView>
 
 PassRefPtr<TextEvent> TextEvent::createForDrop(PassRefPtr<AbstractView> view, const String& data)
 {
-    return adoptRef(new TextEvent(view, data, TextEvent::InputTypeDrop));
+    return adoptRef(new TextEvent(view, data, TextEventInputDrop));
 }
 
 TextEvent::TextEvent()
-    : m_inputType(TextEvent::InputTypeKeyboard)
+    : m_inputType(TextEventInputKeyboard)
     , m_shouldSmartReplace(false)
     , m_shouldMatchStyle(false)
 {
 }
 
-TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, InputType inputType)
+TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, TextEventInputType inputType)
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
     , m_inputType(inputType)
     , m_data(data)
@@ -85,7 +76,7 @@ TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, InputTyp
 TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data, PassRefPtr<DocumentFragment> pastingFragment,
                      bool shouldSmartReplace, bool shouldMatchStyle)
     : UIEvent(eventNames().textInputEvent, true, true, view, 0)
-    , m_inputType(TextEvent::InputTypePaste)
+    , m_inputType(TextEventInputPaste)
     , m_data(data)
     , m_pastingFragment(pastingFragment)
     , m_shouldSmartReplace(shouldSmartReplace)

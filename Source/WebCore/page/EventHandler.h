@@ -31,6 +31,7 @@
 #include "HitTestRequest.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollTypes.h"
+#include "TextEventInputType.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -173,8 +174,7 @@ public:
     bool keyEvent(const PlatformKeyboardEvent&);
     void defaultKeyboardEventHandler(KeyboardEvent*);
 
-    bool handleTextInputEvent(const String& text, Event* underlyingEvent = 0,
-        bool isLineBreak = false, bool isBackTab = false);
+    bool handleTextInputEvent(const String& text, Event* underlyingEvent = 0, TextEventInputType = TextEventInputKeyboard);
     void defaultTextInputEventHandler(TextEvent*);
 
 #if ENABLE(DRAG_SUPPORT)

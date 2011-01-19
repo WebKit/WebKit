@@ -46194,6 +46194,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\TextEventInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\TransformSource.h"
 				>
 			</File>

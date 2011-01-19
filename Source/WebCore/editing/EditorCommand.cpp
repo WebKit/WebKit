@@ -477,7 +477,7 @@ static bool executeIndent(Frame* frame, Event*, EditorCommandSource, const Strin
 
 static bool executeInsertBacktab(Frame* frame, Event* event, EditorCommandSource, const String&)
 {
-    return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\t", event, false, true);
+    return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\t", event, TextEventInputBackTab);
 }
 
 static bool executeInsertHorizontalRule(Frame* frame, Event*, EditorCommandSource, const String& value)
@@ -505,7 +505,7 @@ static bool executeInsertLineBreak(Frame* frame, Event* event, EditorCommandSour
 {
     switch (source) {
     case CommandFromMenuOrKeyBinding:
-        return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\n", event, true);
+        return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\n", event, TextEventInputLineBreak);
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
         // Doesn't scroll to make the selection visible, or modify the kill ring.
@@ -521,7 +521,7 @@ static bool executeInsertLineBreak(Frame* frame, Event* event, EditorCommandSour
 static bool executeInsertNewline(Frame* frame, Event* event, EditorCommandSource, const String&)
 {
     Frame* targetFrame = WebCore::targetFrame(frame, event);
-    return targetFrame->eventHandler()->handleTextInputEvent("\n", event, !targetFrame->editor()->canEditRichly());
+    return targetFrame->eventHandler()->handleTextInputEvent("\n", event, targetFrame->editor()->canEditRichly() ? TextEventInputKeyboard : TextEventInputLineBreak);
 }
 
 static bool executeInsertNewlineInQuotedContent(Frame* frame, Event*, EditorCommandSource, const String&)
@@ -544,7 +544,7 @@ static bool executeInsertParagraph(Frame* frame, Event*, EditorCommandSource, co
 
 static bool executeInsertTab(Frame* frame, Event* event, EditorCommandSource, const String&)
 {
-    return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\t", event, false, false);
+    return targetFrame(frame, event)->eventHandler()->handleTextInputEvent("\t", event);
 }
 
 static bool executeInsertText(Frame* frame, Event*, EditorCommandSource, const String& value)
