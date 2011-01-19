@@ -1,3 +1,18 @@
+2011-01-19  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtTestBrowser crashes when closing if Facebook is opened
+        https://bugs.webkit.org/show_bug.cgi?id=52554
+        
+        QtNetworkAccessManager is created in a thread and set as
+        member variable in QWebPage. When the thread is destroyed
+        the object is still used. So fix will set the object to
+        NULL once the thread is destroyed.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::~LauncherWindow):
+
 2011-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Csaba Osztrogonac

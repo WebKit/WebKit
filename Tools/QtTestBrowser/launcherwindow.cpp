@@ -56,6 +56,9 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
 LauncherWindow::~LauncherWindow()
 {
     grabZoomKeys(false);
+
+    if (page())
+        page()->setQnamThreaded(false);
 }
 
 void LauncherWindow::init()
