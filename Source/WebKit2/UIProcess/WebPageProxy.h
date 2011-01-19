@@ -274,6 +274,11 @@ public:
     void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
     void runJavaScriptInMainFrame(const String&, PassRefPtr<StringCallback>);
 
+    float headerHeight(WebFrameProxy*);
+    float footerHeight(WebFrameProxy*);
+    void drawHeader(WebFrameProxy*, const WebCore::FloatRect&);
+    void drawFooter(WebFrameProxy*, const WebCore::FloatRect&);
+
     void receivedPolicyDecision(WebCore::PolicyAction, WebFrameProxy*, uint64_t listenerID);
 
     void backForwardRemovedItem(uint64_t itemID);

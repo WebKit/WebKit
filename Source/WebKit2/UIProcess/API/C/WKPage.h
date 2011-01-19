@@ -177,6 +177,10 @@ typedef void (*WKPageDidScrollCallback)(WKPageRef page, const void *clientInfo);
 typedef unsigned long long (*WKPageExceededDatabaseQuotaCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef displayName, unsigned long long currentQuota, unsigned long long currentUsage, unsigned long long expectedUsage, const void *clientInfo);
 typedef void (*WKPageRunOpenPanelCallback)(WKPageRef page, WKFrameRef frame, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void *clientInfo);
 typedef void (*WKPageDecidePolicyForGeolocationPermissionRequestCallback)(WKPageRef page, WKFrameRef frame, WKSecurityOriginRef origin, WKGeolocationPermissionRequestRef permissionRequest, const void* clientInfo);
+typedef float (*WKPageHeaderHeight)(WKPageRef page, WKFrameRef frame, const void* clientInfo);
+typedef float (*WKPageFooterHeight)(WKPageRef page, WKFrameRef frame, const void* clientInfo);
+typedef void (*WKPageDrawHeader)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
+typedef void (*WKPageDrawFooter)(WKPageRef page, WKFrameRef frame, WKRect rect, const void* clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -207,6 +211,10 @@ struct WKPageUIClient {
     WKPageExceededDatabaseQuotaCallback                                 exceededDatabaseQuota;
     WKPageRunOpenPanelCallback                                          runOpenPanel;
     WKPageDecidePolicyForGeolocationPermissionRequestCallback           decidePolicyForGeolocationPermissionRequest;
+    WKPageHeaderHeight                                                  headerHeight;
+    WKPageFooterHeight                                                  footerHeight;
+    WKPageDrawHeader                                                    drawHeader;
+    WKPageDrawFooter                                                    drawFooter;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

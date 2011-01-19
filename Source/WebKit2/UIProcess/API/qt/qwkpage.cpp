@@ -445,7 +445,11 @@ QWKPage::QWKPage(QWKContext* context)
         0,  /* pageDidScroll */
         0,  /* exceededDatabaseQuota */
         0,  /* runOpenPanel */
-        0   /* decidePolicyForGeolocationPermissionRequest */
+        0,  /* decidePolicyForGeolocationPermissionRequest */
+        0,  /* headerHeight */
+        0,  /* footerHeight */
+        0,  /* drawHeader */
+        0   /* drawFooter */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }

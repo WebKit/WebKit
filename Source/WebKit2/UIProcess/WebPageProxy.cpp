@@ -2336,6 +2336,26 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
         request->deny();
 }
 
+float WebPageProxy::headerHeight(WebFrameProxy* frame)
+{
+    return m_uiClient.headerHeight(this, frame);
+}
+
+float WebPageProxy::footerHeight(WebFrameProxy* frame)
+{
+    return m_uiClient.footerHeight(this, frame);
+}
+
+void WebPageProxy::drawHeader(WebFrameProxy* frame, const WebCore::FloatRect& rect)
+{
+    m_uiClient.drawHeader(this, frame, rect);
+}
+
+void WebPageProxy::drawFooter(WebFrameProxy* frame, const WebCore::FloatRect& rect)
+{
+    m_uiClient.drawFooter(this, frame, rect);
+}
+
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const CoreIPC::DataReference& dataReference)
 {
     m_pageClient->didFinishLoadingDataForCustomRepresentation(dataReference);

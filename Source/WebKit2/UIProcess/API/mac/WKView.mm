@@ -95,6 +95,9 @@ typedef HashMap<String, ValidationVector> ValidationMap;
 
 }
 
+NSString* const WebKitOriginalTopPrintingMarginKey = @"WebKitOriginalTopMargin";
+NSString* const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomMargin";
+
 @interface WKViewData : NSObject {
 @public
     OwnPtr<PageClientImpl> _pageClient;
@@ -1339,6 +1342,44 @@ static WebFrameProxy* frameBeingPrinted()
     return [[[[[NSPrintOperation currentOperation] printInfo] dictionary] objectForKey:PrintedFrameKey] webFrame];
 }
 
+static float currentPrintOperationScale()
+{
+    ASSERT([NSPrintOperation currentOperation]);
+    ASSERT([[[[NSPrintOperation currentOperation] printInfo] dictionary] objectForKey:NSPrintScalingFactor]);
+    return [[[[[NSPrintOperation currentOperation] printInfo] dictionary] objectForKey:NSPrintScalingFactor] floatValue];
+}
+
+- (void)_adjustPrintingMarginsForHeaderAndFooter
+{
+    NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
+    NSPrintInfo *info = [printOperation printInfo];
+    NSMutableDictionary *infoDictionary = [info dictionary];
+
+    // We need to modify the top and bottom margins in the NSPrintInfo to account for the space needed by the
+    // header and footer. Because this method can be called more than once on the same NSPrintInfo (see 5038087),
+    // we stash away the unmodified top and bottom margins the first time this method is called, and we read from
+    // those stashed-away values on subsequent calls.
+    float originalTopMargin;
+    float originalBottomMargin;
+    NSNumber *originalTopMarginNumber = [infoDictionary objectForKey:WebKitOriginalTopPrintingMarginKey];
+    if (!originalTopMarginNumber) {
+        ASSERT(![infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey]);
+        originalTopMargin = [info topMargin];
+        originalBottomMargin = [info bottomMargin];
+        [infoDictionary setObject:[NSNumber numberWithFloat:originalTopMargin] forKey:WebKitOriginalTopPrintingMarginKey];
+        [infoDictionary setObject:[NSNumber numberWithFloat:originalBottomMargin] forKey:WebKitOriginalBottomPrintingMarginKey];
+    } else {
+        ASSERT([originalTopMarginNumber isKindOfClass:[NSNumber class]]);
+        ASSERT([[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] isKindOfClass:[NSNumber class]]);
+        originalTopMargin = [originalTopMarginNumber floatValue];
+        originalBottomMargin = [[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] floatValue];
+    }
+    
+    float scale = currentPrintOperationScale();
+    [info setTopMargin:originalTopMargin + _data->_page->headerHeight(frameBeingPrinted()) * scale];
+    [info setBottomMargin:originalBottomMargin + _data->_page->footerHeight(frameBeingPrinted()) * scale];
+}
+
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
 {
     LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
@@ -1370,6 +1411,8 @@ static WebFrameProxy* frameBeingPrinted()
 
     if (frame->isMainFrame() && _data->_pdfViewController)
         return [super knowsPageRange:range];
+
+    [self _adjustPrintingMarginsForHeaderAndFooter];
 
     _data->_page->computePagesForPrinting(frame, PrintInfo([[NSPrintOperation currentOperation] printInfo]), _data->_printingPageRects, _data->_totalScaleFactorForPrinting);
 
@@ -1423,6 +1466,34 @@ static WebFrameProxy* frameBeingPrinted()
     CGContextTranslateCTM(context, 0, -rect.size.height);
     CGContextDrawPDFPage(context, pdfPage);
     CGContextRestoreGState(context);
+}
+
+- (void)drawPageBorderWithSize:(NSSize)borderSize
+{
+    ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));    
+
+    // The header and footer rect height scales with the page, but the width is always
+    // all the way across the printed page (inset by printing margins).
+    NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
+    NSPrintInfo *printInfo = [printOperation printInfo];
+    float scale = currentPrintOperationScale();
+    NSSize paperSize = [printInfo paperSize];
+    float headerFooterLeft = [printInfo leftMargin] / scale;
+    float headerFooterWidth = (paperSize.width - ([printInfo leftMargin] + [printInfo rightMargin])) / scale;
+    WebFrameProxy* frame = frameBeingPrinted();
+    NSRect footerRect = NSMakeRect(headerFooterLeft, [printInfo bottomMargin] / scale - _data->_page->footerHeight(frame), headerFooterWidth, _data->_page->footerHeight(frame));
+    NSRect headerRect = NSMakeRect(headerFooterLeft, (paperSize.height - [printInfo topMargin]) / scale, headerFooterWidth, _data->_page->headerHeight(frame));
+
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    [currentContext saveGraphicsState];
+    NSRectClip(headerRect);
+    _data->_page->drawHeader(frame, headerRect);
+    [currentContext restoreGraphicsState];
+
+    [currentContext saveGraphicsState];
+    NSRectClip(footerRect);
+    _data->_page->drawFooter(frame, footerRect);
+    [currentContext restoreGraphicsState];
 }
 
 // FIXME 3491344: This is an AppKit-internal method that we need to override in order

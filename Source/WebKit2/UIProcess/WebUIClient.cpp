@@ -273,4 +273,36 @@ bool WebUIClient::decidePolicyForGeolocationPermissionRequest(WebPageProxy* page
     return true;
 }
 
+float WebUIClient::headerHeight(WebPageProxy* page, WebFrameProxy* frame)
+{
+    if (!m_client.headerHeight)
+        return 0;
+
+    return m_client.headerHeight(toAPI(page), toAPI(frame), m_client.clientInfo);
+}
+
+float WebUIClient::footerHeight(WebPageProxy* page, WebFrameProxy* frame)
+{
+    if (!m_client.footerHeight)
+        return 0;
+
+    return m_client.footerHeight(toAPI(page), toAPI(frame), m_client.clientInfo);
+}
+
+void WebUIClient::drawHeader(WebPageProxy* page, WebFrameProxy* frame, const WebCore::FloatRect& rect)
+{
+    if (!m_client.drawHeader)
+        return;
+
+    m_client.drawHeader(toAPI(page), toAPI(frame), toAPI(rect), m_client.clientInfo);
+}
+
+void WebUIClient::drawFooter(WebPageProxy* page, WebFrameProxy* frame, const WebCore::FloatRect& rect)
+{
+    if (!m_client.drawFooter)
+        return;
+
+    m_client.drawFooter(toAPI(page), toAPI(frame), toAPI(rect), m_client.clientInfo);
+}
+
 } // namespace WebKit

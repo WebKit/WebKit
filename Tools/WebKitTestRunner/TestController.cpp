@@ -146,6 +146,10 @@ static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModi
         0, // exceededDatabaseQuota
         0, // runOpenPanel
         0, // decidePolicyForGeolocationPermissionRequest
+        0, // headerHeight
+        0, // footerHeight
+        0, // drawHeader
+        0, // drawFooter
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -251,6 +255,10 @@ void TestController::initialize(int argc, const char* argv[])
         0, // exceededDatabaseQuota
         0, // runOpenPanel
         0, // decidePolicyForGeolocationPermissionRequest
+        0, // headerHeight
+        0, // footerHeight
+        0, // drawHeader
+        0, // drawFooter
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

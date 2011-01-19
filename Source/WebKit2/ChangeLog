@@ -1,3 +1,36 @@
+2011-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52739
+        Make it possible for a WebKit2 client to print headers and footers
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::headerHeight):
+        (WebKit::WebPageProxy::footerHeight):
+        (WebKit::WebPageProxy::drawHeader):
+        (WebKit::WebPageProxy::drawFooter):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::headerHeight):
+        (WebKit::WebUIClient::footerHeight):
+        (WebKit::WebUIClient::drawHeader):
+        (WebKit::WebUIClient::drawFooter):
+        * UIProcess/WebUIClient.h:
+        Pass UIClient calls through.
+
+        * UIProcess/API/mac/WKView.mm:
+        (currentPrintOperationScale): A helper to extract scale factor from the current NSPrintOperation.
+        (-[WKView _adjustPrintingMarginsForHeaderAndFooter]): Copied from WebKit1. Change current
+        print info to account for header and footer height as provided by the client.
+        (-[WKView knowsPageRange:]): Call -[self _adjustPrintingMarginsForHeaderAndFooter].
+        (-[WKView drawPageBorderWithSize:]): When AppKit asks to print page border, call the client
+        to do that. Code adapted form WebKit1.
+
+        * UIProcess/API/qt/qwkpage:
+        (QWKPage::QWKPage): Added zeroes for new WKPageUIClient members to avoid breaking the build.
+
 2011-01-19  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

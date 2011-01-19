@@ -86,6 +86,12 @@ public:
 
     bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebOpenPanelParameters::Data&, WebOpenPanelResultListenerProxy*);
     bool decidePolicyForGeolocationPermissionRequest(WebPageProxy*, WebFrameProxy*, WebSecurityOrigin*, GeolocationPermissionRequestProxy*);
+
+    // Printing.
+    float headerHeight(WebPageProxy*, WebFrameProxy*);
+    float footerHeight(WebPageProxy*, WebFrameProxy*);
+    void drawHeader(WebPageProxy*, WebFrameProxy*, const WebCore::FloatRect&);
+    void drawFooter(WebPageProxy*, WebFrameProxy*, const WebCore::FloatRect&);
 };
 
 } // namespace WebKit
