@@ -410,8 +410,8 @@ protected:
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
 
 private:
-    bool includeVerticalScrollbarSize() const { return hasOverflowClip() && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO); }
-    bool includeHorizontalScrollbarSize() const { return hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO); }
+    bool includeVerticalScrollbarSize() const;
+    bool includeHorizontalScrollbarSize() const;
 
     void paintRootBoxDecorations(PaintInfo&, int tx, int ty);
     // Returns true if we did a full repaint

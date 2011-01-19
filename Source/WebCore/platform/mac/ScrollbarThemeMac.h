@@ -40,6 +40,7 @@ public:
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
     
     virtual bool supportsControlTints() const { return true; }
+    virtual bool usesOverlayScrollbars() const;
 
     virtual double initialAutoscrollTimerDelay();
     virtual double autoscrollTimerDelay();

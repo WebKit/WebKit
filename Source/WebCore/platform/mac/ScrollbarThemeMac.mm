@@ -165,6 +165,12 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
     return cScrollbarThickness[controlSize];
 }
 
+bool ScrollbarThemeMac::usesOverlayScrollbars() const
+{
+    // FIXME: This should be enabled when <rdar://problem/8492788> is resolved.
+    return false;
+}
+
 double ScrollbarThemeMac::initialAutoscrollTimerDelay()
 {
     return gInitialButtonDelay;

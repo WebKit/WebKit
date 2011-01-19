@@ -47,6 +47,7 @@
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ScrollbarTheme.h"
 #include "TransformState.h"
 #include <algorithm>
 #include <math.h>
@@ -560,6 +561,18 @@ IntRect RenderBox::reflectedRect(const IntRect& r) const
             break;
     }
     return result;
+}
+
+bool RenderBox::includeVerticalScrollbarSize() const
+{
+    return !ScrollbarTheme::nativeTheme()->usesOverlayScrollbars() 
+        && hasOverflowClip() && (style()->overflowY() == OSCROLL || style()->overflowY() == OAUTO);
+}
+
+bool RenderBox::includeHorizontalScrollbarSize() const
+{
+    return !ScrollbarTheme::nativeTheme()->usesOverlayScrollbars()
+        && hasOverflowClip() && (style()->overflowX() == OSCROLL || style()->overflowX() == OAUTO);
 }
 
 int RenderBox::verticalScrollbarWidth() const

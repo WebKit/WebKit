@@ -229,9 +229,15 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     if (paintsEntireContents())
         return IntRect(IntPoint(0, 0), contentsSize());
 
+    bool hasOverlayScrollbars = ScrollbarTheme::nativeTheme()->usesOverlayScrollbars();
+    int verticalScrollbarWidth = verticalScrollbar() && !hasOverlayScrollbars && !includeScrollbars
+        ? verticalScrollbar()->width() : 0;
+    int horizontalScrollbarHeight = horizontalScrollbar() && !hasOverlayScrollbars && !includeScrollbars
+        ? horizontalScrollbar()->height() : 0;
+
     return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
-                   IntSize(max(0, width() - (verticalScrollbar() && !includeScrollbars ? verticalScrollbar()->width() : 0)), 
-                           max(0, height() - (horizontalScrollbar() && !includeScrollbars ? horizontalScrollbar()->height() : 0))));
+                   IntSize(max(0, width() - verticalScrollbarWidth), 
+                           max(0, height() - horizontalScrollbarHeight)));
 }
 #endif
 
@@ -824,7 +830,10 @@ void ScrollView::repaintContentRectangle(const IntRect& rect, bool now)
 IntRect ScrollView::scrollCornerRect() const
 {
     IntRect cornerRect;
-    
+
+    if (ScrollbarTheme::nativeTheme()->usesOverlayScrollbars())
+        return cornerRect;
+
     if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
         cornerRect.unite(IntRect(m_horizontalScrollbar->width(),
                                  height() - m_horizontalScrollbar->height(),

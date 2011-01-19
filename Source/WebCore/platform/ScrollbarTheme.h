@@ -48,6 +48,7 @@ public:
     virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarButtonsSingle; }
 
     virtual bool supportsControlTints() const { return false; }
+    virtual bool usesOverlayScrollbars() const { return false; }
 
     virtual void themeChanged() {}
     

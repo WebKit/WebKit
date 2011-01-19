@@ -1,3 +1,45 @@
+2011-01-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for <rdar://problem/8882916> Overlay scrollers require 
+        content to layout underneath the scrollbar area
+
+        The render tree should not include scrollbar size for
+        overlay scrollers. This patch will allow scrollers on
+        the WebView to behave like overflow:overlay.
+
+        Treat overlay scrollers the same way as the !includeScrollbars
+        case.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+
+        No corner rect for overlay scrollers.
+        (WebCore::ScrollView::scrollCornerRect):
+
+        usesOverlayScrollbars() currently always returns no.
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::usesOverlayScrollbars):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+
+        includeVerticalScrollbarSize() and includeHorizontalScrollbarSize()
+        should return false for overlay scrollers. They already return
+        false for overflow:overlay.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::includeVerticalScrollbarSize):
+        (WebCore::RenderBox::includeHorizontalScrollbarSize):
+        * rendering/RenderBox.h:
+
+        In the render tree, always treat overlay scrollers like
+        they have a width and height of 0.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::verticalScrollbarWidth):
+        (WebCore::RenderLayer::horizontalScrollbarHeight):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::verticalScrollbarWidth):
+
 2011-01-18  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
