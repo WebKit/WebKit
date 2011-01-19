@@ -25,6 +25,7 @@
 
 #include "WebPageProxy.h"
 
+#include "PageClient.h"
 #include <WebCore/Language.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -108,6 +109,11 @@ void WebPageProxy::speak(const String& string)
 void WebPageProxy::stopSpeaking()
 {
     [NSApp stopSpeaking:nil];
+}
+
+CGContextRef WebPageProxy::containingWindowGraphicsContext()
+{
+    return m_pageClient->containingWindowGraphicsContext();
 }
 
 } // namespace WebKit

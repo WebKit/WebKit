@@ -28,6 +28,7 @@
 #include "CGUtilities.h"
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
+#include "WebPageProxy.h"
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
@@ -36,13 +37,46 @@ namespace WebKit {
 
 void BackingStore::paint(PlatformGraphicsContext context, const IntRect& rect)
 {
-    ASSERT(m_bitmapContext);
+    if (m_cgLayer) {
+        CGContextSaveGState(context);
+        CGContextClipToRect(context, rect);
 
+        CGContextScaleCTM(context, 1, -1);
+        CGContextDrawLayerAtPoint(context, CGPointMake(0, -m_size.height()), m_cgLayer.get());
+
+        CGContextRestoreGState(context);
+        return;
+    }
+
+    ASSERT(m_bitmapContext);
     paintBitmapContext(context, m_bitmapContext.get(), rect.location(), rect);
 }
 
 CGContextRef BackingStore::backingStoreContext()
 {
+    if (m_cgLayer)
+        return CGLayerGetContext(m_cgLayer.get());
+
+    // Try to create a layer.
+    if (CGContextRef containingWindowContext = m_webPageProxy->containingWindowGraphicsContext()) {
+        m_cgLayer.adoptCF(CGLayerCreateWithContext(containingWindowContext, NSSizeToCGSize(m_size), 0));
+        CGContextRef layerContext = CGLayerGetContext(m_cgLayer.get());
+        
+        CGContextSetBlendMode(layerContext, kCGBlendModeCopy);
+
+        // We want the origin to be in the top left corner so flip the backing store context.
+        CGContextTranslateCTM(layerContext, 0, m_size.height());
+        CGContextScaleCTM(layerContext, 1, -1);
+
+        if (m_bitmapContext) {
+            // Paint the contents of the bitmap into the layer context.
+            paintBitmapContext(layerContext, m_bitmapContext.get(), CGPointZero, CGRectMake(0, 0, m_size.width(), m_size.height()));
+            m_bitmapContext = nullptr;
+        }
+
+        return layerContext;
+    }
+
     if (!m_bitmapContext) {
         RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
         
@@ -89,15 +123,25 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     if (scrollOffset.isZero())
         return;
 
+    if (m_cgLayer) {
+        CGContextRef layerContext = CGLayerGetContext(m_cgLayer.get());
+
+        // Scroll the layer by painting it into itself with the given offset.
+        CGContextSaveGState(layerContext);
+        CGContextClipToRect(layerContext, scrollRect);
+        CGContextScaleCTM(layerContext, 1, -1);
+        CGContextDrawLayerAtPoint(layerContext, CGPointMake(scrollOffset.width(), -m_size.height() - scrollOffset.height()), m_cgLayer.get());
+        CGContextRestoreGState(layerContext);
+
+        return;
+    }
+
     ASSERT(m_bitmapContext);
 
     CGContextSaveGState(m_bitmapContext.get());
-
     CGContextClipToRect(m_bitmapContext.get(), scrollRect);
-
     CGPoint destination = CGPointMake(scrollRect.x() + scrollOffset.width(), scrollRect.y() + scrollOffset.height());
     paintBitmapContext(m_bitmapContext.get(), m_bitmapContext.get(), destination, scrollRect);
-
     CGContextRestoreGState(m_bitmapContext.get());
 }
 

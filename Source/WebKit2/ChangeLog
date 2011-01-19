@@ -1,5 +1,27 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Use a CGLayer for the backing store when possible
+        https://bugs.webkit.org/show_bug.cgi?id=52679
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::paint):
+        If there is a layer, paint it into the given context.
+
+        (WebKit::BackingStore::backingStoreContext):
+        If we can get the containing window graphics context, use it to create a 
+        CGLayer that we'll use for the backing store.
+
+        (WebKit::BackingStore::scroll):
+        Paint the layer into itself.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::containingWindowGraphicsContext):
+        Call the page client.
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Pass the web page proxy to BackingStore::create
