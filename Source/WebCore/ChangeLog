@@ -1,3 +1,13 @@
+2011-01-19  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Extensions API] delete pending callback from callback map before invoking it
+        https://bugs.webkit.org/show_bug.cgi?id=52707
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.ExtensionServerClient.prototype._onCallback):
+
 2011-01-19  Levi Weintraub  <leviw@google.com>
 
         Reviewed by Ryosuke Niwa.

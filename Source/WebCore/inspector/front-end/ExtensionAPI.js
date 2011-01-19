@@ -450,8 +450,9 @@ ExtensionServerClient.prototype = {
     _onCallback: function(request)
     {
         if (request.requestId in this._callbacks) {
-            this._callbacks[request.requestId](request.result);
+            var callback = this._callbacks[request.requestId];
             delete this._callbacks[request.requestId];
+            callback(request.result);
         }
     },
 
