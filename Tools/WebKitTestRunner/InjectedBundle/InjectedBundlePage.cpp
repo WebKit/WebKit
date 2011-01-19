@@ -37,8 +37,6 @@
 #include <WebKit2/WKBundleFramePrivate.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 
-#include <WebKit2/WKStringCF.h>
-
 using namespace std;
 
 namespace WTR {

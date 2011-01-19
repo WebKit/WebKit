@@ -1,3 +1,9 @@
+2011-01-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Csaba Osztrogonac
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp: Removed unncessary inculde of WKStringCF.h
+
 2011-01-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
