@@ -1,3 +1,9 @@
+2011-01-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, roll chromium deps to pick up fixes for the linux build.
+
+        * DEPS:
+
 2011-01-19  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
