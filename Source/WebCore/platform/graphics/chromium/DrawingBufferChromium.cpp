@@ -72,15 +72,16 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              bool multisampleExtensionSupported,
                              bool packedDepthStencilExtensionSupported)
     : m_context(context)
-    , m_size(size)
+    , m_size(-1, -1)
     , m_multisampleExtensionSupported(multisampleExtensionSupported)
     , m_packedDepthStencilExtensionSupported(packedDepthStencilExtensionSupported)
     , m_fbo(0)
     , m_colorBuffer(0)
     , m_depthStencilBuffer(0)
+    , m_depthBuffer(0)
+    , m_stencilBuffer(0)
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
-    , m_multisampleDepthStencilBuffer(0)
     , m_internal(new DrawingBufferInternal)
 {
     if (!m_context->getExtensions()->supports("GL_CHROMIUM_copy_texture_to_parent_texture")) {
@@ -91,6 +92,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_colorBuffer = generateColorTexture(context, size);
     createSecondaryBuffers();
+    reset(size);
 }
 
 DrawingBuffer::~DrawingBuffer()

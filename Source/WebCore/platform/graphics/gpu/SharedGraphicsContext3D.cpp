@@ -51,6 +51,9 @@ namespace WebCore {
 PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* hostWindow)
 {
     GraphicsContext3D::Attributes attr;
+    attr.depth = false;
+    attr.stencil = true;
+    attr.antialias = false;
     attr.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
     RefPtr<GraphicsContext3D> context = GraphicsContext3D::create(attr, hostWindow);
     if (!context)
@@ -291,6 +294,14 @@ void SharedGraphicsContext3D::applyCompositeOperator(CompositeOperator op)
         m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE);
         break;
     }
+}
+
+void SharedGraphicsContext3D::enableStencil(bool enable)
+{
+    if (enable)
+        m_context->enable(GraphicsContext3D::STENCIL_TEST);
+    else
+        m_context->disable(GraphicsContext3D::STENCIL_TEST);
 }
 
 void SharedGraphicsContext3D::useQuadVertices()

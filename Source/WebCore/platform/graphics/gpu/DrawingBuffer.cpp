@@ -67,14 +67,19 @@ void DrawingBuffer::clear()
         m_multisampleColorBuffer = 0;
     }
     
-    if (m_multisampleDepthStencilBuffer) {
-        m_context->deleteRenderbuffer(m_multisampleDepthStencilBuffer);
-        m_multisampleDepthStencilBuffer = 0;
-    }
-    
     if (m_depthStencilBuffer) {
         m_context->deleteRenderbuffer(m_depthStencilBuffer);
         m_depthStencilBuffer = 0;
+    }
+    
+    if (m_depthBuffer) {
+        m_context->deleteRenderbuffer(m_depthBuffer);
+        m_depthBuffer = 0;
+    }
+    
+    if (m_stencilBuffer) {
+        m_context->deleteRenderbuffer(m_stencilBuffer);
+        m_stencilBuffer = 0;
     }
     
     if (m_multisampleFBO) {
@@ -92,20 +97,50 @@ void DrawingBuffer::clear()
 
 void DrawingBuffer::createSecondaryBuffers()
 {
-    const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
-
-    // Create the stencil and depth buffer if needed
-    if (!multisample() && (attributes.stencil || attributes.depth))
-        m_depthStencilBuffer = m_context->createRenderbuffer();
-
     // create a multisample FBO
     if (multisample()) {
         m_multisampleFBO = m_context->createFramebuffer();
         m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
         m_multisampleColorBuffer = m_context->createRenderbuffer();
-        if (attributes.stencil || attributes.depth)
-            m_multisampleDepthStencilBuffer = m_context->createRenderbuffer();
     }
+}
+
+void DrawingBuffer::resizeDepthStencil(int sampleCount)
+{
+    const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
+    if (attributes.depth && attributes.stencil && m_packedDepthStencilExtensionSupported) {
+        if (!m_depthStencilBuffer)
+            m_depthStencilBuffer = m_context->createRenderbuffer();
+        m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+        if (multisample())
+            m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, Extensions3D::DEPTH24_STENCIL8, m_size.width(), m_size.height());
+        else
+            m_context->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, Extensions3D::DEPTH24_STENCIL8, m_size.width(), m_size.height());
+        m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+        m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    } else {
+        if (attributes.depth) {
+            if (!m_depthBuffer)
+                m_depthBuffer = m_context->createRenderbuffer();
+            m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+            if (multisample())
+                m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, GraphicsContext3D::DEPTH_COMPONENT16, m_size.width(), m_size.height());
+            else
+                m_context->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, m_size.width(), m_size.height());
+            m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+        }
+        if (attributes.stencil) {
+            if (!m_stencilBuffer)
+                m_stencilBuffer = m_context->createRenderbuffer();
+            m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+            if (multisample())
+                m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, GraphicsContext3D::STENCIL_INDEX8, m_size.width(), m_size.height());
+            else 
+                m_context->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::STENCIL_INDEX8, m_size.width(), m_size.height());
+            m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+        }
+    }
+    m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
 }
 
 void DrawingBuffer::reset(const IntSize& newSize)
@@ -120,7 +155,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
     m_context->makeContextCurrent();
     
     const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
-    unsigned long internalColorFormat, colorFormat, internalDepthStencilFormat = 0;
+    unsigned long internalColorFormat, colorFormat;
     if (attributes.alpha) {
         internalColorFormat = GraphicsContext3D::RGBA;
         colorFormat = GraphicsContext3D::RGBA;
@@ -128,17 +163,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
         internalColorFormat = GraphicsContext3D::RGB;
         colorFormat = GraphicsContext3D::RGB;
     }
-    if (attributes.stencil || attributes.depth) {
-        // We don't allow the logic where stencil is required and depth is not.
-        // See GraphicsContext3D constructor.
 
-        // FIXME:  If packed depth/stencil is not supported, we should
-        // create separate renderbuffers for depth and stencil.
-        if (attributes.stencil && attributes.depth && m_packedDepthStencilExtensionSupported)
-            internalDepthStencilFormat = Extensions3D::DEPTH24_STENCIL8;
-        else
-            internalDepthStencilFormat = GraphicsContext3D::DEPTH_COMPONENT16;
-    }
 
     // resize multisample FBO
     if (multisample()) {
@@ -152,15 +177,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
         m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
         m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, internalColorFormat, m_size.width(), m_size.height());
         m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
-        if (attributes.stencil || attributes.depth) {
-            m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_multisampleDepthStencilBuffer);
-            m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, internalDepthStencilFormat, m_size.width(), m_size.height());
-            if (attributes.stencil)
-                m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_multisampleDepthStencilBuffer);
-            if (attributes.depth)
-                m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_multisampleDepthStencilBuffer);
-        }
-        m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
+        resizeDepthStencil(sampleCount);
         if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
             // Cleanup
             clear();
@@ -175,15 +192,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
     m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE);
     m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
-    if (!multisample() && (attributes.stencil || attributes.depth)) {
-        m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-        m_context->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, internalDepthStencilFormat, m_size.width(), m_size.height());
-        if (attributes.stencil)
-            m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-        if (attributes.depth)
-            m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-        m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
-    }
+    resizeDepthStencil(0);
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
         // Cleanup
         clear();

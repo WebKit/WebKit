@@ -48,6 +48,7 @@ class Color;
 class DrawingBuffer;
 class FloatRect;
 class GraphicsContext3D;
+class Path;
 class SharedGraphicsContext3D;
 
 class GLES2Canvas : public Noncopyable {
@@ -55,6 +56,7 @@ public:
     GLES2Canvas(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
     ~GLES2Canvas();
 
+    void fillPath(const Path&);
     void fillRect(const FloatRect&, const Color&, ColorSpace);
     void fillRect(const FloatRect&);
     void clearRect(const FloatRect&);
@@ -65,6 +67,8 @@ public:
     void rotate(float angleInRadians);
     void scale(const FloatSize&);
     void concatCTM(const AffineTransform&);
+    void clipPath(const Path&);
+    void clipOut(const Path&);
 
     void save();
     void restore();
@@ -72,9 +76,13 @@ public:
     // non-standard functions
     // These are not standard GraphicsContext functions, and should be pushed
     // down into a PlatformContextGLES2 at some point.
+
+    // This version is called by the canvas->canvas draws.
     void drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace, CompositeOperator);
-    void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha, ColorSpace, CompositeOperator);
+    // This version is called by BitmapImage::draw().
     void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace, CompositeOperator);
+    // This version is called by the above, and by the software->hardware uploads.
+    void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha, ColorSpace, CompositeOperator, bool clip);
     Texture* createTexture(NativeImagePtr, Texture::Format, int width, int height);
     Texture* getTexture(NativeImagePtr);
 
@@ -88,6 +96,10 @@ private:
     void drawTexturedRectTile(Texture* texture, int tile, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
     void drawQuad(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha);
     void applyCompositeOperator(CompositeOperator);
+    void createVertexBufferFromPath(const Path&, int* count, unsigned* vertexBuffer, unsigned* indexBuffer);
+    void fillPath(const Path&, const Color&);
+    void beginStencilDraw();
+    void applyClipping(bool enable);
     void checkGLError(const char* header);
 
     IntSize m_size;
@@ -96,7 +108,8 @@ private:
     DrawingBuffer* m_drawingBuffer;
 
     struct State;
-    WTF::Vector<State> m_stateStack;
+    typedef WTF::Vector<State> StateVector;
+    StateVector m_stateStack;
     State* m_state;
     AffineTransform m_flipMatrix;
 };

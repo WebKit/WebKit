@@ -67,6 +67,8 @@ public:
     // Create the depth/stencil and multisample buffers, if needed.
     void createSecondaryBuffers();
     
+    void resizeDepthStencil(int sampleCount);
+
     // Copies the multisample color buffer to the normal color buffer and leaves m_fbo bound
     void commit(long x = 0, long y = 0, long width = -1, long height = -1);
     
@@ -106,13 +108,18 @@ private:
     bool m_packedDepthStencilExtensionSupported;
     Platform3DObject m_fbo;
     Platform3DObject m_colorBuffer;
+
+    // This is used when we have OES_packed_depth_stencil.
     Platform3DObject m_depthStencilBuffer;
+
+    // These are used when we don't.
+    Platform3DObject m_depthBuffer;
+    Platform3DObject m_stencilBuffer;
 
     // For multisampling
     Platform3DObject m_multisampleFBO;
     Platform3DObject m_multisampleColorBuffer;
-    Platform3DObject m_multisampleDepthStencilBuffer;
-    
+
 #if PLATFORM(CHROMIUM)
     OwnPtr<WillPublishCallback> m_callback;
     OwnPtr<DrawingBufferInternal> m_internal;

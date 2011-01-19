@@ -150,11 +150,11 @@ static void RenderMaximumFaceGroup( GLUtesselator *tess, GLUface *fOrig )
 
 #define AddToTrail(f,t)	((f)->trail = (t), (t) = (f), (f)->marked = TRUE)
 
-#define FreeTrail(t)	if( 1 ) { \
+#define FreeTrail(t)	do { \
 			  while( (t) != NULL ) { \
 			    (t)->marked = FALSE; t = (t)->trail; \
 			  } \
-			} else /* absorb trailing semicolon */
+			} while(0) /* absorb trailing semicolon */
 
 
 

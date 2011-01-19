@@ -170,7 +170,7 @@ void CanvasRenderingContext2D::reset()
     m_path.clear();
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (GraphicsContext* c = drawingContext()) {
-        if (m_context3D) {
+        if (m_context3D && m_drawingBuffer) {
             m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()));
             c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
         }
@@ -1895,7 +1895,7 @@ void CanvasRenderingContext2D::paintRenderingResultsToCanvas()
 #if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
 PlatformLayer* CanvasRenderingContext2D::platformLayer() const
 {
-    return m_drawingBuffer->platformLayer();
+    return m_drawingBuffer ? m_drawingBuffer->platformLayer() : 0;
 }
 #endif
 

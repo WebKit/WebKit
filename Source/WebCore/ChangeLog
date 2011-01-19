@@ -1,3 +1,127 @@
+2011-01-18  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Implement accelerated path drawing and clipping for the Canvas2D GPU
+        path.
+        https://bugs.webkit.org/show_bug.cgi?id=52627
+        
+        This is done with a simple curve interpolator and the GLU tesselator,
+        which is good enough for a 3-5X speedup on
+        http://ie.microsoft.com/testdrive/Performance/Galactic/Default.html.
+
+        Covered by canvas/philip/2d.path.clip.basic.html, and many, many more.
+        All tests canvas/philip and fast/canvas paths pass with no
+        regressions, although two have minor pixel differences which require
+        rebaselining.
+
+        * WebCore.gyp/WebCore.gyp:
+        Add internal_glu include path to chromium build.
+        * WebCore.gypi:
+        Add internal_glu files to chromium build.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::reset):
+        (WebCore::CanvasRenderingContext2D::platformLayer):
+        Make CanvasRenderingContext2D more robust against failure to create
+        a DrawingBuffer.
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        As in DrawingBufferMac.cpp, call reset() from the constructor.
+        Also initialize size to (-1, -1), so reset() doesn't early-out.
+        Add initializers for depthBuffer and stencilBuffer, and remove
+        multisampleDepthStencilBuffer.
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        Remove some unused #includes.
+        (WebCore::GLES2Canvas::State::State):
+        Add clipping state, and implement save/restore via the copy constructor.
+        (WebCore::operator*):
+        (WebCore::Quadratic::Quadratic):
+        (WebCore::Quadratic::fromBezier):
+        (WebCore::Quadratic::evaluate):
+        Quadratic Bezier curve class.
+        (WebCore::Cubic::Cubic):
+        (WebCore::Cubic::fromBezier):
+        (WebCore::Cubic::evaluate):
+        Cubic Bezier curve class.
+        (WebCore::GLES2Canvas::clearRect):
+        Add clipping support to clearRect().
+        (WebCore::GLES2Canvas::fillPath):
+        Implement fillPath().
+        (WebCore::GLES2Canvas::fillRect):
+        Add clipping support to fillRect().
+        (WebCore::GLES2Canvas::clipPath):
+        Implement clipPath().
+        (WebCore::GLES2Canvas::clipOut):
+        Stub out clipOut() (not called by Canvas 2D).
+        (WebCore::GLES2Canvas::restore):
+        When restoring, draw any remaining clipping paths to the stencil buffer.
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        Add clipping support.
+        (WebCore::interpolateQuadratic):
+        (WebCore::interpolateCubic):
+        Simple curve interpolation, using the Cubic and Quadratic classes.
+        (WebCore::PolygonData::PolygonData):
+        A struct to hold the tesselation data for callbacks.
+        (WebCore::beginData):
+        (WebCore::edgeFlagData):
+        (WebCore::vertexData):
+        (WebCore::endData):
+        (WebCore::combineData):
+        internal_glu tesselation callbacks.
+        (WebCore::GLES2Canvas::createVertexBufferFromPath):
+        Build an interpolated, tesselated vertex buffer and element array buffer from a given path, suitable for filling.
+        (WebCore::GLES2Canvas::beginStencilDraw):
+        Enable stencilling, and disable draws to the color buffer.
+        (WebCore::GLES2Canvas::applyClipping):
+        If clipping is enabled, set the appropriate GL state.
+        * platform/graphics/chromium/GLES2Canvas.h:
+        Document the flavours of drawTexturedRect() a bit, so I don't get confused.
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::clear):
+        (WebCore::DrawingBuffer::createSecondaryBuffers):
+        (WebCore::DrawingBuffer::resizeDepthStencil):
+        (WebCore::DrawingBuffer::reset):
+        * platform/graphics/gpu/DrawingBuffer.h:
+        Unify m_multisampleDepthStencilBuffer with m_depthStencilBuffer. 
+        Implement separate depth and stencil buffers for when
+        OES_packed_depth_stencil is not available.  Refactor creation of
+        multisampled and non-multisampled depth and stencil buffers into
+        resizeDepthStencil().
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+        Turn on stencil, turn off depth, turn off antialiasing (for now).
+        (WebCore::SharedGraphicsContext3D::enableStencil):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+        Implement stencil enable/disable.
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        Remove m_multisampleDepthStencilBuffer.  Set the size to (-1, -1)
+        on creation, so reset() doesn't early-out.  Initialize m_depthBuffer
+        and m_stencilBuffer.
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::fillPath):
+        Put in GPU hooks for path clipping, and path drawing.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::canAccelerate):
+        Don't check for clipping paths in canAccelerate() (since we can
+        now accelerate them).
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+        Don't do clipping when uploading software draws to hardware.
+        * thirdparty/glu/README.webkit:
+        * thirdparty/glu/gluos.h:
+        #undef MIN and MAX, to fix warnings-as-errors in Chrome/Mac build.
+        * thirdparty/glu/libtess/geom.c:
+        * thirdparty/glu/libtess/priorityq.c:
+        * thirdparty/glu/libtess/render.c:
+        Use do{}while(0) instead of if(1)else construct in macro.
+        * thirdparty/glu/libtess/sweep.c:
+        (IsWindingInside):
+        (DoneEdgeDict):
+        Fix some warnings treated as errors for the Linux Release build.
+
 2011-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76144.
