@@ -1,3 +1,50 @@
+2011-01-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove event forwarding logic from input[type=range], simplify event flow and thumb positioning logic.
+        https://bugs.webkit.org/show_bug.cgi?id=52464
+
+        This change has two parts:
+
+        1) Utilize shadow DOM event retargeting to get rid of forwarding events
+           via render tree;
+        2) Move thumb positioning logic from RenderSlider to SliderThumbElement.
+
+        These two are highly co-dependent. It looked ugly when I tried to
+        separate them.
+
+        No change in behavior, covered by existing tests.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Added invocation of
+            InputType::handleMouseDownEvent.
+        * html/InputType.cpp:
+        (WebCore::InputType::handleMouseDownEvent): Added empty decl.
+        * html/InputType.h: Added def.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent): Added to handle the case
+            when the user clicks on the track of the slider. Also removed the
+            forwardEvent method.
+        * html/RangeInputType.h: Added/removed defs.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::dragFrom): Added a helper method to start
+            dragging from any position.
+        (WebCore::SliderThumbElement::dragTo): Added a helper method to drag to
+            specified position.
+        (WebCore::SliderThumbElement::setPosition): Collapsed most of the positioning
+            logic in RenderSlider into this method, which is now a simple calculation
+            and adjusting of thumb position based on supplied coordinates.
+        (WebCore::SliderThumbElement::startDragging): Added.
+        (WebCore::SliderThumbElement::stopDragging): Added.
+        (WebCore::SliderThumbElement::defaultEventHandler): Removed most of the
+            old position-sniffing logic and replaced with simple calls to start,
+            stop, and drag the thumb.
+        * html/shadow/SliderThumbElement.h: Added defs.
+        * rendering/RenderSlider.cpp: Removed a bunch of code that is no longer
+            necessary.
+        * rendering/RenderSlider.h: Removed defs, removed now-unnecessary friendliness.
+
 2011-01-19  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by Chris Marrin.

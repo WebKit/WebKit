@@ -153,6 +153,7 @@ public:
     // Event handlers
 
     virtual void handleClickEvent(MouseEvent*);
+    virtual void handleMouseDownEvent(MouseEvent*);
     virtual PassOwnPtr<ClickHandlingState> willDispatchClick();
     virtual void didDispatchClick(Event*, const ClickHandlingState&);
     virtual void handleDOMActivateEvent(Event*);

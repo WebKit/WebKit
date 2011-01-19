@@ -50,6 +50,7 @@ public:
 
     bool inDragMode() const { return m_inDragMode; }
 
+    void dragFrom(const IntPoint&);
     virtual void defaultEventHandler(Event*);
     virtual void detach();
     virtual AtomicString shadowPseudoId() const;
@@ -57,6 +58,9 @@ public:
 private:
     SliderThumbElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    void startDragging();
+    void stopDragging();
+    void setPosition(const IntPoint&);
 
     FloatPoint m_offsetToThumb;
     bool m_inDragMode;

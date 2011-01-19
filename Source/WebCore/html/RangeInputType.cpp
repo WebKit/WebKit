@@ -36,6 +36,8 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
+#include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
@@ -141,6 +143,15 @@ double RangeInputType::stepScaleFactor() const
     return rangeStepScaleFactor;
 }
 
+void RangeInputType::handleMouseDownEvent(MouseEvent* event)
+{
+    if (event->button() != LeftButton || event->target() != element())
+        return;
+
+    if (SliderThumbElement* thumb = toSliderThumbElement(element()->shadowRoot()))
+        thumb->dragFrom(event->absoluteLocation());
+}
+
 void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     const String& key = event->keyIdentifier();
@@ -179,12 +190,6 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
         element()->stepUpFromRenderer(stepMagnification);
     }
     event->setDefaultHandled();
-}
-
-void RangeInputType::forwardEvent(Event* event)
-{
-    if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->isWheelEvent()))
-        toRenderSlider(element()->renderer())->forwardEvent(event);
 }
 
 void RangeInputType::createShadowSubtree()

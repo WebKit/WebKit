@@ -305,6 +305,10 @@ void InputType::handleClickEvent(MouseEvent*)
 {
 }
 
+void InputType::handleMouseDownEvent(MouseEvent*)
+{
+}
+
 void InputType::handleDOMActivateEvent(Event*)
 {
 }

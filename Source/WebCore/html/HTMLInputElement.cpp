@@ -1036,6 +1036,12 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             return;
     }
 
+    if (evt->isMouseEvent() && evt->type() == eventNames().mousedownEvent) {
+        m_inputType->handleMouseDownEvent(static_cast<MouseEvent*>(evt));
+        if (evt->defaultHandled())
+            return;
+    }
+
     m_inputType->forwardEvent(evt);
 
     if (!callBaseClassEarly && !evt->defaultHandled())

@@ -55,8 +55,8 @@ private:
     virtual double stepBase() const;
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
+    virtual void handleMouseDownEvent(MouseEvent*);
     virtual void handleKeydownEvent(KeyboardEvent*);
-    virtual void forwardEvent(Event*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual void createShadowSubtree();
     virtual double parseToDouble(const String&, double) const;

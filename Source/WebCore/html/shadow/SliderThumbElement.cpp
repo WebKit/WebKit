@@ -35,9 +35,15 @@
 
 #include "Event.h"
 #include "Frame.h"
+#include "HTMLInputElement.h"
+#include "HTMLParserIdioms.h"
 #include "MouseEvent.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
+#include "StepRange.h"
+#include <wtf/MathExtras.h>
+
+using namespace std;
 
 namespace WebCore {
 
@@ -47,7 +53,6 @@ public:
     RenderSliderThumb(Node*);
     virtual void layout();
 };
-
 
 RenderSliderThumb::RenderSliderThumb(Node* node)
     : RenderBlock(node)
@@ -80,6 +85,70 @@ RenderObject* SliderThumbElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderSliderThumb(this);
 }
 
+void SliderThumbElement::dragFrom(const IntPoint& point)
+{
+    setPosition(point);
+    startDragging();
+}
+
+void SliderThumbElement::setPosition(const IntPoint& point)
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    ASSERT(input);
+
+    if (!input->renderer() || !renderer())
+        return;
+
+    IntPoint offset = roundedIntPoint(input->renderer()->absoluteToLocal(point, false, true));
+    RenderStyle* sliderStyle = input->renderer()->style();
+    bool isVertical = sliderStyle->appearance() == SliderVerticalPart || sliderStyle->appearance() == MediaVolumeSliderPart;
+
+    int trackSize;
+    int position;
+    int currentPosition;
+    if (isVertical) {
+        trackSize = input->renderBox()->contentHeight() - renderBox()->height();
+        position = offset.y() - renderBox()->height() / 2;
+        currentPosition = renderBox()->y() - input->renderBox()->contentBoxRect().y();
+    } else {
+        trackSize = input->renderBox()->contentWidth() - renderBox()->width();
+        position = offset.x() - renderBox()->width() / 2;
+        currentPosition = renderBox()->x() - input->renderBox()->contentBoxRect().x();
+    }
+    position = max(0, min(position, trackSize));
+    if (position == currentPosition)
+        return;
+
+    StepRange range(input);
+    double fraction = static_cast<double>(position) / trackSize;
+    if (isVertical)
+        fraction = 1 - fraction;
+    double value = range.clampValue(range.valueFromProportion(fraction));
+
+    // FIXME: This is no longer being set from renderer. Consider updating the method name.
+    input->setValueFromRenderer(serializeForNumberType(value));
+    renderer()->setNeedsLayout(true);
+    input->dispatchFormControlChangeEvent();
+}
+
+void SliderThumbElement::startDragging()
+{
+    if (Frame* frame = document()->frame()) {
+        frame->eventHandler()->setCapturingMouseEventsNode(this);
+        m_inDragMode = true;
+    }
+}
+
+void SliderThumbElement::stopDragging()
+{
+    if (!m_inDragMode)
+        return;
+
+    if (Frame* frame = document()->frame())
+        frame->eventHandler()->setCapturingMouseEventsNode(0);
+    m_inDragMode = false;
+}
+
 void SliderThumbElement::defaultEventHandler(Event* event)
 {
     if (!event->isMouseEvent()) {
@@ -92,45 +161,15 @@ void SliderThumbElement::defaultEventHandler(Event* event)
     const AtomicString& eventType = event->type();
 
     if (eventType == eventNames().mousedownEvent && isLeftButton) {
-        if (document()->frame() && renderer()) {
-            RenderSlider* slider = toRenderSlider(renderer()->parent());
-            if (slider) {
-                if (slider->mouseEventIsInThumb(mouseEvent)) {
-                    // We selected the thumb, we want the cursor to always stay at
-                    // the same position relative to the thumb.
-                    m_offsetToThumb = slider->mouseEventOffsetToThumb(mouseEvent);
-                } else {
-                    // We are outside the thumb, move the thumb to the point were
-                    // we clicked. We'll be exactly at the center of the thumb.
-                    m_offsetToThumb.setX(0);
-                    m_offsetToThumb.setY(0);
-                }
-
-                m_inDragMode = true;
-                document()->frame()->eventHandler()->setCapturingMouseEventsNode(shadowHost());
-                event->setDefaultHandled();
-                return;
-            }
-        }
+        startDragging();
+        return;
     } else if (eventType == eventNames().mouseupEvent && isLeftButton) {
-        if (m_inDragMode) {
-            if (Frame* frame = document()->frame())
-                frame->eventHandler()->setCapturingMouseEventsNode(0);      
-            m_inDragMode = false;
-            event->setDefaultHandled();
-            return;
-        }
+        stopDragging();
+        return;
     } else if (eventType == eventNames().mousemoveEvent) {
-        if (m_inDragMode && renderer() && renderer()->parent()) {
-            RenderSlider* slider = toRenderSlider(renderer()->parent());
-            if (slider) {
-                FloatPoint curPoint = slider->absoluteToLocal(mouseEvent->absoluteLocation(), false, true);
-                IntPoint eventOffset(curPoint.x() + m_offsetToThumb.x(), curPoint.y() + m_offsetToThumb.y());
-                slider->setValueForPosition(slider->positionForOffset(eventOffset));
-                event->setDefaultHandled();
-                return;
-            }
-        }
+        if (m_inDragMode)
+            setPosition(mouseEvent->absoluteLocation());
+        return;
     }
 
     HTMLDivElement::defaultEventHandler(event);

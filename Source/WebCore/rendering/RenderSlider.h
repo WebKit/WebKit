@@ -34,7 +34,6 @@ namespace WebCore {
         RenderSlider(HTMLInputElement*);
         virtual ~RenderSlider();
 
-        void forwardEvent(Event*);
         bool inDragMode() const;
         IntRect thumbRect();
 
@@ -49,20 +48,8 @@ namespace WebCore {
         // FIXME: Eventually, the logic of manipulating slider thumb should move to
         // SliderThumbElement and accessing sliderThumbElement should not be necessary in this class.
         SliderThumbElement* sliderThumbElement() const;
-        bool mouseEventIsInThumb(MouseEvent*);
-        FloatPoint mouseEventOffsetToThumb(MouseEvent*);
-
-        void setValueForPosition(int position);
-        void setPositionFromValue();
-        int positionForOffset(const IntPoint&);
-
-        int currentPosition();
 
         virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
-
-        int trackSize();
-
-        friend class SliderThumbElement;
     };
 
     inline RenderSlider* toRenderSlider(RenderObject* object)
