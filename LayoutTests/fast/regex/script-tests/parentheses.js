@@ -193,6 +193,12 @@ shouldBe("regexp42.exec('4321')", "['4','4','4']");
 
 shouldBeTrue("/(?!(?=r{0}){2,})|((z)?)?/gi.test('')");
 
+var regexp43 = /(?!(?:\1+s))/;
+shouldBe("regexp43.exec('SSS')", "['']");
+
+var regexp44 = /(?!(?:\3+(s+?)))/gy;
+shouldBe("regexp44.exec('SSS')", "['',undefined]");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

@@ -1,3 +1,15 @@
+2011-01-19  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8882994> Regression: Simple nested backtrack hangs
+        https://bugs.webkit.org/show_bug.cgi?id=52675
+
+        New tests to support change.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2011-01-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.

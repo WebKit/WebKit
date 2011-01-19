@@ -618,6 +618,11 @@ class YarrGenerator : private MacroAssembler {
                 m_backtrackToLabel = backtrackToLabel;
         }
 
+        bool hasBacktrackToLabel()
+        {
+            return m_backtrackToLabel;
+        }
+
         void setBacktrackJumpList(JumpList* jumpList)
         {
             m_backtrackType = BacktrackJumpList;
@@ -996,6 +1001,10 @@ class YarrGenerator : private MacroAssembler {
         {
             if (doJump)
                 m_backtrack.jumpToBacktrack(generator, backtrack.getBacktrackJumps());
+
+            if (m_backtrack.isLabel() && backtrack.hasBacktrackToLabel())
+                backtrack.linkBacktrackToLabel(m_backtrack.getLabel());
+
             if (backtrack.hasDestination()) {
                 if (m_backtrack.hasDataLabel())
                     generator->m_expressionState.addDataLabelToNextIteration(m_backtrack.getDataLabel());
@@ -1654,13 +1663,8 @@ class YarrGenerator : private MacroAssembler {
             BacktrackDestination& parenthesesBacktrack = parenthesesState.getBacktrackDestination();
             BacktrackDestination& stateBacktrack = state.getBacktrackDestination();
 
-            // If we have a backtrack label, use it for the parenthesis
-            if (stateBacktrack.isLabel())
-                parenthesesBacktrack.linkBacktrackToLabel(stateBacktrack.getLabel());
-            else {
-                state.propagateBacktrackingFrom(this, parenthesesBacktrack);
-                stateBacktrack.copyBacktrackToLabel(parenthesesBacktrack);
-            }
+            state.propagateBacktrackingFrom(this, parenthesesBacktrack);
+            stateBacktrack.copyBacktrackToLabel(parenthesesBacktrack);
 
             m_expressionState.decrementParenNestingLevel();
         } else {
