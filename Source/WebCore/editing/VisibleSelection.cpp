@@ -121,8 +121,8 @@ PassRefPtr<Range> VisibleSelection::firstRange() const
 {
     if (isNone())
         return 0;
-    Position start = rangeCompliantEquivalent(m_start);
-    Position end = rangeCompliantEquivalent(m_end);
+    Position start = m_start.parentAnchoredEquivalent();
+    Position end = m_end.parentAnchoredEquivalent();
     return Range::create(start.node()->document(), start, end);
 }
 
@@ -146,7 +146,7 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
         // If the selection is a caret, move the range start upstream. This helps us match
         // the conventions of text editors tested, which make style determinations based
         // on the character before the caret, if any. 
-        s = rangeCompliantEquivalent(m_start.upstream());
+        s = m_start.upstream().parentAnchoredEquivalent();
         e = s;
     } else {
         // If the selection is a range, select the minimum range that encompasses the selection.
@@ -170,8 +170,8 @@ PassRefPtr<Range> VisibleSelection::toNormalizedRange() const
             s = e;
             e = tmp;
         }
-        s = rangeCompliantEquivalent(s);
-        e = rangeCompliantEquivalent(e);
+        s = s.parentAnchoredEquivalent();
+        e = e.parentAnchoredEquivalent();
     }
 
     // VisibleSelections are supposed to always be valid.  This constructor will ASSERT
@@ -204,7 +204,7 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
     RefPtr<Range> searchRange(Range::create(d));
     ExceptionCode ec = 0;
 
-    Position start(rangeCompliantEquivalent(pos));
+    Position start(pos.parentAnchoredEquivalent());
     searchRange->selectNodeContents(boundary, ec);
     searchRange->setStart(start.node(), start.deprecatedEditingOffset(), ec);
 

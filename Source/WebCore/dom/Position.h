@@ -80,6 +80,7 @@ public:
     // will return img->parentNode() and img->nodeIndex() from these functions.
     Node* containerNode() const; // NULL for a before/after position anchored to a node with no parent
     int computeOffsetInContainerNode() const;  // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
+    Position parentAnchoredEquivalent() const; // Convenience method for DOM positions that also fixes up some positions for editing
 
     // Inline O(1) access for Positions which callers know to be parent-anchored
     int offsetInContainerNode() const
@@ -179,7 +180,7 @@ private:
     RefPtr<Node> m_anchorNode;
     // m_offset can be the offset inside m_anchorNode, or if editingIgnoresContent(m_anchorNode)
     // returns true, then other places in editing will treat m_offset == 0 as "before the anchor"
-    // and m_offset > 0 as "after the anchor node".  See rangeCompliantEquivalent for more info.
+    // and m_offset > 0 as "after the anchor node".  See parentAnchoredEquivalent for more info.
     int m_offset;
     unsigned m_anchorType : 2;
     bool m_isLegacyEditingPosition : 1;

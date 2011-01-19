@@ -159,8 +159,8 @@ void InsertParagraphSeparatorCommand::doApply()
         affinity = endingSelection().affinity();
     }
     
-    // FIXME: The rangeCompliantEquivalent conversion needs to be moved into enclosingBlock.
-    Node* startBlockNode = enclosingBlock(rangeCompliantEquivalent(insertionPosition).node());
+    // FIXME: The parentAnchoredEquivalent conversion needs to be moved into enclosingBlock.
+    Node* startBlockNode = enclosingBlock(insertionPosition.parentAnchoredEquivalent().containerNode());
     Position canonicalPos = VisiblePosition(insertionPosition).deepEquivalent();
     Element* startBlock = static_cast<Element*>(startBlockNode);
     if (!startBlockNode

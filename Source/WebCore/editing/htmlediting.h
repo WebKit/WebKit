@@ -101,9 +101,6 @@ bool isNodeInTextFormControl(Node* node);
     
 // Functions returning Position
     
-Position rangeCompliantEquivalent(const Position&);
-Position rangeCompliantEquivalent(const VisiblePosition&);
-    
 Position nextCandidate(const Position&);
 Position previousCandidate(const Position&);
     

@@ -57,8 +57,8 @@ static VisiblePosition previousBoundary(const VisiblePosition& c, BoundarySearch
         return VisiblePosition();
 
     Document* d = boundary->document();
-    Position start = rangeCompliantEquivalent(Position(boundary, 0));
-    Position end = rangeCompliantEquivalent(pos);
+    Position start = Position(boundary, 0).parentAnchoredEquivalent();
+    Position end = pos.parentAnchoredEquivalent();
     RefPtr<Range> searchRange = Range::create(d);
     
     Vector<UChar, 1024> string;
@@ -138,7 +138,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
 
     Document* d = boundary->document();
     RefPtr<Range> searchRange(d->createRange());
-    Position start(rangeCompliantEquivalent(pos));
+    Position start(pos.parentAnchoredEquivalent());
 
     Vector<UChar, 1024> string;
     unsigned prefixLength = 0;

@@ -802,8 +802,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (newEnd.isNull())
         newEnd = end;
 
-    newStart = rangeCompliantEquivalent(newStart);
-    newEnd = rangeCompliantEquivalent(newEnd);
+    newStart = newStart.parentAnchoredEquivalent();
+    newEnd = newEnd.parentAnchoredEquivalent();
 
     RefPtr<Range> range = _private->coreFrame->document()->createRange();
     int exception = 0;

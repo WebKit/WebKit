@@ -568,7 +568,7 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
     Node* sourceDocumentStyleSpan = topNode;
     RefPtr<Node> copiedRangeStyleSpan = sourceDocumentStyleSpan->firstChild();
 
-    RefPtr<EditingStyle> styleAtInsertionPos = EditingStyle::create(rangeCompliantEquivalent(insertionPos));
+    RefPtr<EditingStyle> styleAtInsertionPos = EditingStyle::create(insertionPos.parentAnchoredEquivalent());
     String styleText = styleAtInsertionPos->style()->cssText();
 
     // FIXME: This string comparison is a naive way of comparing two styles.

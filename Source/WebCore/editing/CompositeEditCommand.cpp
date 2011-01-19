@@ -159,7 +159,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
     ASSERT(isEditablePosition(editingPosition));
     // For editing positions like [table, 0], insert before the table,
     // likewise for replaced elements, brs, etc.
-    Position p = rangeCompliantEquivalent(editingPosition);
+    Position p = editingPosition.parentAnchoredEquivalent();
     Node* refChild = p.node();
     int offset = p.deprecatedEditingOffset();
     
@@ -905,13 +905,13 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             
             startIndex = 0;
             if (startInParagraph) {
-                RefPtr<Range> startRange = Range::create(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleStart.deepEquivalent()));
+                RefPtr<Range> startRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleStart.deepEquivalent().parentAnchoredEquivalent());
                 startIndex = TextIterator::rangeLength(startRange.get(), true);
             }
 
             endIndex = 0;
             if (endInParagraph) {
-                RefPtr<Range> endRange = Range::create(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(visibleEnd.deepEquivalent()));
+                RefPtr<Range> endRange = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
                 endIndex = TextIterator::rangeLength(endRange.get(), true);
             }
         }
@@ -926,8 +926,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     Position end = endOfParagraphToMove.deepEquivalent().upstream();
     
     // start and end can't be used directly to create a Range; they are "editing positions"
-    Position startRangeCompliant = rangeCompliantEquivalent(start);
-    Position endRangeCompliant = rangeCompliantEquivalent(end);
+    Position startRangeCompliant = start.parentAnchoredEquivalent();
+    Position endRangeCompliant = end.parentAnchoredEquivalent();
     RefPtr<Range> range = Range::create(document(), startRangeCompliant.node(), startRangeCompliant.deprecatedEditingOffset(), endRangeCompliant.node(), endRangeCompliant.deprecatedEditingOffset());
 
     // FIXME: This is an inefficient way to preserve style on nodes in the paragraph to move. It
@@ -974,7 +974,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         updateLayout();
     }
 
-    RefPtr<Range> startToDestinationRange(Range::create(document(), firstPositionInNode(document()->documentElement()), rangeCompliantEquivalent(destination.deepEquivalent())));
+    RefPtr<Range> startToDestinationRange(Range::create(document(), firstPositionInNode(document()->documentElement()), destination.deepEquivalent().parentAnchoredEquivalent()));
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get(), true);
 
     setEndingSelection(destination);

@@ -1,3 +1,59 @@
+2011-01-19  Levi Weintraub  <leviw@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Replaced rangeCompliantEquivalent with Position::parentAnchoredEquivalent
+        and simplified the logic a bit. Unfortunately, Tables and some legacy
+        editing positions still need to be handled specifically.
+
+        remove rangeCompliantEquivalent and replace it with Position methods
+        https://bugs.webkit.org/show_bug.cgi?id=25057
+
+        No new tests as this is a refactor that doesn't change behavior.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::caretRangeFromPoint):
+        * dom/Position.cpp:
+        (WebCore::Position::parentAnchoredEquivalent):
+        * dom/Position.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        * editing/Editor.cpp:
+        (WebCore::Editor::textDirectionForSelection):
+        (WebCore::Editor::advanceToNextMisspelling):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::shouldUseBreakElement):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::handleStyleSpansBeforeInsertion):
+        * editing/VisiblePosition.cpp:
+        (WebCore::makeRange):
+        (WebCore::setStart):
+        (WebCore::setEnd):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::firstRange):
+        (WebCore::VisibleSelection::toNormalizedRange):
+        (WebCore::makeSearchRange):
+        * editing/htmlediting.cpp:
+        (WebCore::indexForVisiblePosition):
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        * page/DOMSelection.cpp:
+        (WebCore::anchorPosition):
+        (WebCore::focusPosition):
+        (WebCore::basePosition):
+        (WebCore::extentPosition):
+
 2011-01-19  Peter Rybin  <peter.rybin@gmail.com>
 
         Reviewed by Yury Semikhatsky.

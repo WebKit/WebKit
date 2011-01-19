@@ -146,6 +146,27 @@ int Position::computeOffsetInContainerNode() const
     return 0;
 }
 
+// Neighbor-anchored positions are invalid DOM positions, so they need to be
+// fixed up before handing them off to the Range object.
+Position Position::parentAnchoredEquivalent() const
+{
+    if (!m_anchorNode)
+        return Position();
+    
+    // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
+    if (m_offset <= 0) {
+        if (m_anchorNode->parentNode() && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get())))
+            return positionInParentBeforeNode(m_anchorNode.get());
+        return Position(m_anchorNode, 0, PositionIsOffsetInAnchor);
+    }
+    if (!m_anchorNode->offsetInCharacters() && static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount()
+        && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get()))) {
+        return positionInParentAfterNode(m_anchorNode.get());
+    }
+
+    return Position(containerNode(), computeOffsetInContainerNode(), PositionIsOffsetInAnchor);
+}
+
 Node* Position::computeNodeBeforePosition() const
 {
     if (!m_anchorNode)

@@ -256,14 +256,14 @@ void DeleteSelectionCommand::initializePositionData()
         }
     }
     
-    // We must pass the positions through rangeCompliantEquivalent, since some editing positions
+    // We must pass call parentAnchoredEquivalent on the positions since some editing positions
     // that appear inside their nodes aren't really inside them.  [hr, 0] is one example.
-    // FIXME: rangeComplaintEquivalent should eventually be moved into enclosing element getters
+    // FIXME: parentAnchoredEquivalent should eventually be moved into enclosing element getters
     // like the one below, since editing functions should obviously accept editing positions.
     // FIXME: Passing false to enclosingNodeOfType tells it that it's OK to return a non-editable
     // node.  This was done to match existing behavior, but it seems wrong.
-    m_startBlock = enclosingNodeOfType(rangeCompliantEquivalent(m_downstreamStart), &isBlock, false);
-    m_endBlock = enclosingNodeOfType(rangeCompliantEquivalent(m_upstreamEnd), &isBlock, false);
+    m_startBlock = enclosingNodeOfType(m_downstreamStart.parentAnchoredEquivalent(), &isBlock, false);
+    m_endBlock = enclosingNodeOfType(m_upstreamEnd.parentAnchoredEquivalent(), &isBlock, false);
 }
 
 void DeleteSelectionCommand::saveTypingStyleState()
@@ -623,8 +623,8 @@ void DeleteSelectionCommand::mergeParagraphs()
         return;
     }
     
-    RefPtr<Range> range = Range::create(document(), rangeCompliantEquivalent(startOfParagraphToMove.deepEquivalent()), rangeCompliantEquivalent(endOfParagraphToMove.deepEquivalent()));
-    RefPtr<Range> rangeToBeReplaced = Range::create(document(), rangeCompliantEquivalent(mergeDestination.deepEquivalent()), rangeCompliantEquivalent(mergeDestination.deepEquivalent()));
+    RefPtr<Range> range = Range::create(document(), startOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent(), endOfParagraphToMove.deepEquivalent().parentAnchoredEquivalent());
+    RefPtr<Range> rangeToBeReplaced = Range::create(document(), mergeDestination.deepEquivalent().parentAnchoredEquivalent(), mergeDestination.deepEquivalent().parentAnchoredEquivalent());
     if (!document()->frame()->editor()->client()->shouldMoveRangeAfterDelete(range.get(), rangeToBeReplaced.get()))
         return;
     

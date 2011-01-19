@@ -1301,7 +1301,7 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
     if (visiblePosition.isNull())
         return 0;
 
-    Position rangeCompliantPosition = rangeCompliantEquivalent(visiblePosition);
+    Position rangeCompliantPosition = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     return Range::create(this, rangeCompliantPosition, rangeCompliantPosition);
 }
 

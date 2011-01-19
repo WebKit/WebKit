@@ -569,8 +569,8 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     // addBlockStyleIfNeeded may moveParagraphs, which can remove these endpoints.
     // Calculate start and end indices from the start of the tree that they're in.
     Node* scope = highestAncestor(visibleStart.deepEquivalent().node());
-    RefPtr<Range> startRange = Range::create(document(), firstPositionInNode(scope), rangeCompliantEquivalent(visibleStart.deepEquivalent()));
-    RefPtr<Range> endRange = Range::create(document(), firstPositionInNode(scope), rangeCompliantEquivalent(visibleEnd.deepEquivalent()));
+    RefPtr<Range> startRange = Range::create(document(), firstPositionInNode(scope), visibleStart.deepEquivalent().parentAnchoredEquivalent());
+    RefPtr<Range> endRange = Range::create(document(), firstPositionInNode(scope), visibleEnd.deepEquivalent().parentAnchoredEquivalent());
     int startIndex = TextIterator::rangeLength(startRange.get(), true);
     int endIndex = TextIterator::rangeLength(endRange.get(), true);
 

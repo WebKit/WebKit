@@ -76,23 +76,23 @@ const VisibleSelection& DOMSelection::visibleSelection() const
 static Position anchorPosition(const VisibleSelection& selection)
 {
     Position anchor = selection.isBaseFirst() ? selection.start() : selection.end();
-    return rangeCompliantEquivalent(anchor);
+    return anchor.parentAnchoredEquivalent();
 }
 
 static Position focusPosition(const VisibleSelection& selection)
 {
     Position focus = selection.isBaseFirst() ? selection.end() : selection.start();
-    return rangeCompliantEquivalent(focus);
+    return focus.parentAnchoredEquivalent();
 }
 
 static Position basePosition(const VisibleSelection& selection)
 {
-    return rangeCompliantEquivalent(selection.base());
+    return selection.base().parentAnchoredEquivalent();
 }
 
 static Position extentPosition(const VisibleSelection& selection)
 {
-    return rangeCompliantEquivalent(selection.extent());
+    return selection.extent().parentAnchoredEquivalent();
 }
 
 Node* DOMSelection::anchorNode() const

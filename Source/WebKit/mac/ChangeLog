@@ -1,3 +1,16 @@
+2011-01-19  Levi Weintraub  <leviw@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Updating to use Position::parentAnchoredEquivalent instead of
+        the old htmlediting rangeCompliantEquivalent.
+
+        remove rangeCompliantEquivalent and replace it with Position methods
+        https://bugs.webkit.org/show_bug.cgi?id=25057
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _smartDeleteRangeForProposedRange:]):
+
 2011-01-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

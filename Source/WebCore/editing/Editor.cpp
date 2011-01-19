@@ -643,7 +643,7 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
     if (m_frame->selection()->isRange()) {
         end = m_frame->selection()->selection().end().upstream();
 
-        Node* pastLast = Range::create(m_frame->document(), rangeCompliantEquivalent(position), rangeCompliantEquivalent(end))->pastLastNode();
+        Node* pastLast = Range::create(m_frame->document(), position.parentAnchoredEquivalent(), end.parentAnchoredEquivalent())->pastLastNode();
         for (Node* n = node; n && n != pastLast; n = n->traverseNextNode()) {
             if (!n->isStyledElement())
                 continue;
@@ -1783,7 +1783,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         if (position.isNull())
             return;
         
-        Position rangeCompliantPosition = rangeCompliantEquivalent(position);
+        Position rangeCompliantPosition = position.parentAnchoredEquivalent();
         spellingSearchRange->setStart(rangeCompliantPosition.node(), rangeCompliantPosition.deprecatedEditingOffset(), ec);
         startedWithSelection = false; // won't need to wrap
     }

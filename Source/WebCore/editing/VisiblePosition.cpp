@@ -597,8 +597,8 @@ PassRefPtr<Range> makeRange(const VisiblePosition &start, const VisiblePosition 
     if (start.isNull() || end.isNull())
         return 0;
     
-    Position s = rangeCompliantEquivalent(start);
-    Position e = rangeCompliantEquivalent(end);
+    Position s = start.deepEquivalent().parentAnchoredEquivalent();
+    Position e = end.deepEquivalent().parentAnchoredEquivalent();
     return Range::create(s.node()->document(), s.node(), s.deprecatedEditingOffset(), e.node(), e.deprecatedEditingOffset());
 }
 
@@ -618,7 +618,7 @@ bool setStart(Range *r, const VisiblePosition &visiblePosition)
 {
     if (!r)
         return false;
-    Position p = rangeCompliantEquivalent(visiblePosition);
+    Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     int code = 0;
     r->setStart(p.node(), p.deprecatedEditingOffset(), code);
     return code == 0;
@@ -628,7 +628,7 @@ bool setEnd(Range *r, const VisiblePosition &visiblePosition)
 {
     if (!r)
         return false;
-    Position p = rangeCompliantEquivalent(visiblePosition);
+    Position p = visiblePosition.deepEquivalent().parentAnchoredEquivalent();
     int code = 0;
     r->setEnd(p.node(), p.deprecatedEditingOffset(), code);
     return code == 0;

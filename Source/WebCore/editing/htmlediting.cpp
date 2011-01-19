@@ -332,57 +332,9 @@ Node* enclosingBlock(Node* node)
     return static_cast<Element*>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock));
 }
 
-// Internally editing uses "invalid" positions for historical reasons.  For
-// example, in <div><img /></div>, Editing might use (img, 1) for the position
-// after <img>, but we have to convert that to (div, 1) before handing the
-// position to a Range object.  Ideally all internal positions should
-// be "range compliant" for simplicity.
-Position rangeCompliantEquivalent(const Position& pos)
-{
-    if (pos.isNull())
-        return Position();
-
-    Node* node = pos.node();
-
-    if (pos.deprecatedEditingOffset() <= 0) {
-        if (node->parentNode() && (editingIgnoresContent(node) || isTableElement(node)))
-            return positionInParentBeforeNode(node);
-        return Position(node, 0);
-    }
-
-    if (node->offsetInCharacters())
-        return Position(node, min(node->maxCharacterOffset(), pos.deprecatedEditingOffset()));
-
-    int maxCompliantOffset = node->childNodeCount();
-    if (pos.deprecatedEditingOffset() > maxCompliantOffset) {
-        if (node->parentNode())
-            return positionInParentAfterNode(node);
-
-        // there is no other option at this point than to
-        // use the highest allowed position in the node
-        return Position(node, maxCompliantOffset);
-    } 
-
-    // Editing should never generate positions like this.
-    if ((pos.deprecatedEditingOffset() < maxCompliantOffset) && editingIgnoresContent(node)) {
-        ASSERT_NOT_REACHED();
-        return node->parentNode() ? positionInParentBeforeNode(node) : Position(node, 0);
-    }
-    
-    if (pos.deprecatedEditingOffset() == maxCompliantOffset && (editingIgnoresContent(node) || isTableElement(node)))
-        return positionInParentAfterNode(node);
-    
-    return Position(pos);
-}
-
-Position rangeCompliantEquivalent(const VisiblePosition& vpos)
-{
-    return rangeCompliantEquivalent(vpos.deepEquivalent());
-}
-
 // This method is used to create positions in the DOM. It returns the maximum valid offset
 // in a node.  It returns 1 for some elements even though they do not have children, which
-// creates technically invalid DOM Positions.  Be sure to call rangeCompliantEquivalent
+// creates technically invalid DOM Positions.  Be sure to call parentAnchoredEquivalent
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
 int lastOffsetForEditing(const Node* node)
 {
@@ -1082,7 +1034,7 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition)
         return 0;
     Position p(visiblePosition.deepEquivalent());
     RefPtr<Range> range = Range::create(p.node()->document(), firstPositionInNode(p.anchorNode()->document()->documentElement()),
-                                        rangeCompliantEquivalent(p));
+                                        p.parentAnchoredEquivalent());
     return TextIterator::rangeLength(range.get(), true);
 }
 
