@@ -227,7 +227,9 @@ void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
         m_backForwardList->goToItem(item);
     
     reattachToWebProcess();
-    process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
+    
+    if (item)
+        process()->send(Messages::WebPage::GoToBackForwardItem(item->itemID()), m_pageID);
 }
 
 void WebPageProxy::initializeWebPage()

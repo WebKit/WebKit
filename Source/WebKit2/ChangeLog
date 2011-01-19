@@ -1,5 +1,15 @@
 2011-01-18  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8860833> and https://bugs.webkit.org/show_bug.cgi?id=52599
+        UIProcess crash in WebPageProxy::reattachToWebProcess when web process crashes with a new tab/window.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcessWithItem): Null check item *both* places it is used.
+
+2011-01-18  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Maciej Stachowiak. 
 
         <rdar://problem/8752200> and https://bugs.webkit.org/show_bug.cgi?id=52664
