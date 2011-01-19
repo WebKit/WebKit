@@ -22,7 +22,18 @@ function test()
 {
     function dumpHref()
     {
-        var href = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2].propertiesTreeOutline.children[0].valueElement.childNodes[2].href;
+        var href;
+        var valueChildNodes = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2].propertiesTreeOutline.children[0].valueElement.childNodes;
+        for (var i = 0; i < valueChildNodes.length; ++i) {
+            if (valueChildNodes[i].href) {
+                href = valueChildNodes[i].href;
+                break;
+            }
+        }
+        if (!href) {
+            InspectorTest.addResult("href property not found");
+            return;
+        }
         var segments = href.split("/");
         var output = [];
         for (var i = segments.length - 1, minSegment = i - 3; i >= 0 && i >= minSegment; --i)

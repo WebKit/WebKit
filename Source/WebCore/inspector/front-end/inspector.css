@@ -778,8 +778,8 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     color: red;
 }
 
-.auto-complete-text {
-    color: rgb(128, 128, 128);
+.auto-complete-text, .editing .auto-complete-text {
+    color: rgb(128, 128, 128) !important;
     -webkit-user-select: none;
     -webkit-user-modify: read-only;
 }

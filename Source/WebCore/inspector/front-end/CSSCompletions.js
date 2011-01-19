@@ -44,7 +44,7 @@ WebInspector.CSSCompletions.prototype = {
             return [];
 
         var results = [];
-        while (this._values[firstIndex].indexOf(prefix) === 0)
+        while (firstIndex < this._values.length && this._values[firstIndex].indexOf(prefix) === 0)
             results.push(this._values[firstIndex++]);
         return results;
     },

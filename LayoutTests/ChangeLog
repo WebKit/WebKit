@@ -1,3 +1,13 @@
+2011-01-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Employ TextPrompt for CSS property name/value autocompletion
+        https://bugs.webkit.org/show_bug.cgi?id=52212
+
+        * inspector/styles-add-blank-property.html: Follow the altered event handling.
+        * inspector/styles-url-linkify.html: Eliminate flakiness.
+
 2011-01-19  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

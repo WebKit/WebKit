@@ -1,3 +1,35 @@
+2011-01-19  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Employ TextPrompt for CSS property name/value autocompletion
+        https://bugs.webkit.org/show_bug.cgi?id=52212
+
+        WebInspector.CSSKeywordCompletions contains a hand-written list of accepted CSS property value keywords
+        for each property. WebInspector.TextPrompt is used to suggest both the name and value keywords while
+        editing styles, in place of the old custom suggestion code.
+
+        * inspector/front-end/CSSCompletions.js:
+        (WebInspector.CSSCompletions.prototype.startsWith): Fix array-out-of-bounds error.
+        * inspector/front-end/CSSKeywordCompletions.js: Added.
+        (WebInspector.CSSKeywordCompletions.forProperty):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        ():
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt):
+        (WebInspector.TextPrompt.prototype.removeFromElement):
+        (WebInspector.TextPrompt.prototype._onKeyDown):
+        (WebInspector.TextPrompt.prototype.tabKeyPressed):
+        (WebInspector.TextPrompt.prototype.upKeyPressed):
+        (WebInspector.TextPrompt.prototype.downKeyPressed):
+        (WebInspector.TextPrompt.prototype._moveBackInHistory):
+        (WebInspector.TextPrompt.prototype._moveForwardInHistory):
+        * inspector/front-end/inspector.css:
+        (.auto-complete-text, .editing .auto-complete-text):
+        * inspector/front-end/inspector.html:
+
 2011-01-19  Dai Mikurube  <dmikurube@google.com>
 
         Reviewed by Kent Tamura.

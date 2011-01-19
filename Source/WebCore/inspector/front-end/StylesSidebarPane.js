@@ -81,6 +81,8 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
+WebInspector.StylesSidebarPane.StyleValueDelimiters = " \t\n\"':;,/()";
+
 // Taken from http://www.w3.org/TR/CSS21/propidx.html.
 WebInspector.StylesSidebarPane.InheritedProperties = [
     "azimuth", "border-collapse", "border-spacing", "caption-side", "color", "cursor", "direction", "elevation",
@@ -1379,6 +1381,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
 
         this.listItemElement.removeChildren();
+        nameElement.normalize();
+        valueElement.normalize();
 
         if (!this.treeOutline)
             return;
@@ -1529,16 +1533,15 @@ WebInspector.StylePropertyTreeElement.prototype = {
         var context = {
             expanded: this.expanded,
             hasChildren: this.hasChildren,
-            keyDownListener: isEditingName ? this.editingNameKeyDown.bind(this) : this.editingValueKeyDown.bind(this),
-            keyPressListener: isEditingName ? this.editingNameKeyPress.bind(this) : this.editingValueKeyPress.bind(this),
+            keyDownListener: isEditingName ? null : this.editingValueKeyDown.bind(this),
             isEditingName: isEditingName,
         };
 
         // Lie about our children to prevent expanding on double click and to collapse shorthands.
         this.hasChildren = false;
 
-        selectElement.addEventListener("keydown", context.keyDownListener, false);
-        selectElement.addEventListener("keypress", context.keyPressListener, false);
+        if (!isEditingName)
+            selectElement.addEventListener("keydown", context.keyDownListener, false);
         if (selectElement.parentElement)
             selectElement.parentElement.addStyleClass("child-editing");
         selectElement.textContent = selectElement.textContent; // remove color swatch and the like
@@ -1613,76 +1616,15 @@ WebInspector.StylePropertyTreeElement.prototype = {
             customFinishHandler: nameValueFinishHandler.bind(this, context, isEditingName),
             pasteHandler: isEditingName ? pasteHandler.bind(this, context) : null
         });
+
+        this._prompt = new WebInspector.StylesSidebarPane.CSSPropertyPrompt(selectElement, isEditingName ? WebInspector.cssNameCompletions : WebInspector.CSSKeywordCompletions.forProperty(this.nameElement.textContent));
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
-    },
-
-    editingNameKeyPress: function(event)
-    {
-        // Complete property names.
-        var character = event.data.toLowerCase();
-        if (character && /[a-z-]/.test(character)) {
-            var selection = window.getSelection();
-            var prefix = selection.anchorNode.textContent.substring(0, selection.anchorOffset);
-            var property = WebInspector.cssNameCompletions.firstStartsWith(prefix + character);
-
-            if (!selection.isCollapsed)
-                selection.deleteFromDocument();
-
-            this.restoreNameElement();
-
-            if (property) {
-                if (property !== this.nameElement.textContent)
-                    this.nameElement.textContent = property;
-                this.nameElement.firstChild.select(prefix.length + 1);
-                event.preventDefault();
-            }
-        }
-    },
-
-    editingValueKeyPress: function(event)
-    {
-        // FIXME: This should complete property values.
-    },
-
-    editingNameKeyDown: function(event)
-    {
-        var showNext;
-        if (event.keyIdentifier === "Up")
-            showNext = false;
-        else if (event.keyIdentifier === "Down")
-            showNext = true;
-        else
-            return;
-
-        var selection = window.getSelection();
-        if (!selection.rangeCount)
-            return;
-
-        var selectionRange = selection.getRangeAt(0);
-        if (selectionRange.commonAncestorContainer !== this.nameElement && !selectionRange.commonAncestorContainer.isDescendant(this.nameElement))
-            return;
-
-        const styleValueDelimeters = " \t\n\"':;,/()";
-        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, styleValueDelimeters, this.nameElement);
-        var wordString = wordRange.toString();
-        var cursorPosition = selectionRange.startOffset != selectionRange.endOffset ? selectionRange.startOffset : 0;
-        var prefix = selectionRange.startContainer.textContent.substring(0, cursorPosition);
-        var property;
-
-        if (showNext)
-            property = WebInspector.cssNameCompletions.next(wordString, prefix);
-        else
-            property = WebInspector.cssNameCompletions.previous(wordString, prefix);
-
-        if (property) {
-            this.nameElement.textContent = property;
-            this.nameElement.firstChild.select(cursorPosition);
-        }
-        event.preventDefault();
     },
 
     editingValueKeyDown: function(event)
     {
+        if (event.handled)
+            return;
         var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
         var pageKeyPressed = (event.keyIdentifier === "PageUp" || event.keyIdentifier === "PageDown");
         if (!arrowKeyPressed && !pageKeyPressed)
@@ -1696,8 +1638,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (selectionRange.commonAncestorContainer !== this.valueElement && !selectionRange.commonAncestorContainer.isDescendant(this.valueElement))
             return;
 
-        const styleValueDelimeters = " \t\n\"':;,/()";
-        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, styleValueDelimeters, this.valueElement);
+        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this.valueElement);
         var wordString = wordRange.toString();
         var replacementString = wordString;
 
@@ -1739,42 +1680,45 @@ WebInspector.StylePropertyTreeElement.prototype = {
             }
 
             replacementString = prefix + number + suffix;
-        } else {
-            // FIXME: this should cycle through known keywords for the current property value.
+
+            var replacementTextNode = document.createTextNode(replacementString);
+
+            wordRange.deleteContents();
+            wordRange.insertNode(replacementTextNode);
+
+            var finalSelectionRange = document.createRange();
+            finalSelectionRange.setStart(replacementTextNode, 0);
+            finalSelectionRange.setEnd(replacementTextNode, replacementString.length);
+
+            selection.removeAllRanges();
+            selection.addRange(finalSelectionRange);
+
+            event.handled = true;
+            event.preventDefault();
+
+            if (!("originalPropertyText" in this)) {
+                // Remember the rule's original CSS text on [Page](Up|Down), so it can be restored
+                // if the editing is canceled.
+                this.originalPropertyText = this.property.propertyText;
+            }
+
+            // Synthesize property text disregarding any comments, custom whitespace etc.
+            this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
         }
-
-        var replacementTextNode = document.createTextNode(replacementString);
-
-        wordRange.deleteContents();
-        wordRange.insertNode(replacementTextNode);
-
-        var finalSelectionRange = document.createRange();
-        finalSelectionRange.setStart(replacementTextNode, 0);
-        finalSelectionRange.setEnd(replacementTextNode, replacementString.length);
-
-        selection.removeAllRanges();
-        selection.addRange(finalSelectionRange);
-
-        event.preventDefault();
-
-        if (!("originalPropertyText" in this)) {
-            // Remember the rule's original CSS text on [Page](Up|Down), so it can be restored
-            // if the editing is canceled.
-            this.originalPropertyText = this.property.propertyText;
-        }
-
-        // Synthesize property text disregarding any comments, custom whitespace etc.
-        this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
     },
 
     editingEnded: function(context)
     {
+        if (this._prompt) {
+            this._prompt.removeFromElement();
+            delete this._prompt;
+        }
         this.hasChildren = context.hasChildren;
         if (context.expanded)
             this.expand();
         var editedElement = context.isEditingName ? this.nameElement : this.valueElement;
-        editedElement.removeEventListener("keydown", context.keyDownListener, false);
-        editedElement.removeEventListener("keypress", context.keyPressListener, false);
+        if (!context.isEditingName)
+            editedElement.removeEventListener("keydown", context.keyDownListener, false);
         if (editedElement.parentElement)
             editedElement.parentElement.removeStyleClass("child-editing");
 
@@ -1783,6 +1727,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     editingCancelled: function(element, context)
     {
+        this.editingEnded(context);
         if ("originalPropertyText" in this)
             this.applyStyleText(this.originalPropertyText, true);
         else {
@@ -1791,7 +1736,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
             else
                 this.updateTitle();
         }
-        this.editingEnded(context);
     },
 
     editingCommitted: function(element, userInput, previousContent, context, moveDirection)
@@ -1948,3 +1892,57 @@ WebInspector.StylePropertyTreeElement.prototype = {
 }
 
 WebInspector.StylePropertyTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+WebInspector.StylesSidebarPane.CSSPropertyPrompt = function(element, cssCompletions)
+{
+    WebInspector.TextPrompt.call(this, element, this._buildPropertyCompletions.bind(this), WebInspector.StylesSidebarPane.StyleValueDelimiters, true);
+    this._cssCompletions = cssCompletions;
+}
+
+WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
+    upKeyPressed: function(event)
+    {
+        this._handleNameOrValueUpDown(event);
+    },
+
+    downKeyPressed: function(event)
+    {
+        this._handleNameOrValueUpDown(event);
+    },
+
+    tabKeyPressed: function(event)
+    {
+        this.acceptAutoComplete();
+    },
+
+    _handleNameOrValueUpDown: function(event)
+    {
+        var reverse = event.keyIdentifier === "Up";
+        if (this.autoCompleteElement)
+            this.complete(false, reverse); // Accept the current suggestion, if any.
+        this.complete(false, reverse); // Actually increment/decrement the suggestion.
+        event.handled = true;
+    },
+
+    _buildPropertyCompletions: function(wordRange, bestMatchOnly, completionsReadyCallback)
+    {
+        var prefix = wordRange.toString().toLowerCase();
+        if (!prefix.length)
+            return;
+
+        var results;
+        if (bestMatchOnly) {
+            results = [];
+            var firstMatch = this._cssCompletions.firstStartsWith(prefix);
+            if (firstMatch)
+                results.push(firstMatch);
+            return completionsReadyCallback(results);
+        }
+
+        results = this._cssCompletions.startsWith(prefix);
+        if (results)
+            completionsReadyCallback(results);
+    }
+}
+
+WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype.__proto__ = WebInspector.TextPrompt.prototype;

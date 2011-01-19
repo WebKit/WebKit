@@ -26,15 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextPrompt = function(element, completions, stopCharacters)
+WebInspector.TextPrompt = function(element, completions, stopCharacters, omitHistory)
 {
     this.element = element;
     this.element.addStyleClass("text-prompt");
     this.completions = completions;
     this.completionStopCharacters = stopCharacters;
-    this.history = [];
-    this.historyOffset = 0;
-    this.element.addEventListener("keydown", this._onKeyDown.bind(this), true);
+    if (!omitHistory) {
+        this.history = [];
+        this.historyOffset = 0;
+    }
+    this._boundOnKeyDown = this._onKeyDown.bind(this);
+    this.element.addEventListener("keydown", this._boundOnKeyDown, true);
 }
 
 WebInspector.TextPrompt.prototype = {
@@ -55,6 +58,12 @@ WebInspector.TextPrompt.prototype = {
         this.moveCaretToEndOfPrompt();
     },
 
+    removeFromElement: function()
+    {
+        this.clearAutoComplete(true);
+        this.element.removeEventListener("keydown", this._boundOnKeyDown, true);
+    },
+
     _onKeyDown: function(event)
     {
         function defaultAction()
@@ -63,16 +72,20 @@ WebInspector.TextPrompt.prototype = {
             this.autoCompleteSoon();
         }
 
+        if (event.handled)
+            return;
+
         var handled = false;
+
         switch (event.keyIdentifier) {
             case "Up":
-                this._upKeyPressed(event);
+                this.upKeyPressed(event);
                 break;
             case "Down":
-                this._downKeyPressed(event);
+                this.downKeyPressed(event);
                 break;
             case "U+0009": // Tab
-                this._tabKeyPressed(event);
+                this.tabKeyPressed(event);
                 break;
             case "Right":
             case "End":
@@ -85,7 +98,7 @@ WebInspector.TextPrompt.prototype = {
             case "Control":
                 break;
             case "U+0050": // Ctrl+P = Previous
-                if (WebInspector.isMac() && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+                if (this.history && WebInspector.isMac() && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
                     handled = true;
                     this._moveBackInHistory();
                     break;
@@ -93,7 +106,7 @@ WebInspector.TextPrompt.prototype = {
                 defaultAction.call(this);
                 break;
             case "U+004E": // Ctrl+N = Next
-                if (WebInspector.isMac() && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+                if (this.history && WebInspector.isMac() && event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
                     handled = true;
                     this._moveForwardInHistory();
                     break;
@@ -105,7 +118,9 @@ WebInspector.TextPrompt.prototype = {
                 break;
         }
 
+        handled |= event.handled;
         if (handled) {
+            event.handled = true;
             event.preventDefault();
             event.stopPropagation();
         }
@@ -376,39 +391,33 @@ WebInspector.TextPrompt.prototype = {
         selection.addRange(selectionRange);
     },
 
-    _tabKeyPressed: function(event)
+    tabKeyPressed: function(event)
     {
-        event.preventDefault();
-        event.stopPropagation();
-
+        event.handled = true;
         this.complete(false, event.shiftKey);
     },
 
-    _upKeyPressed: function(event)
+    upKeyPressed: function(event)
     {
         if (!this.isCaretOnFirstLine())
             return;
 
-        event.preventDefault();
-        event.stopPropagation();
-
+        event.handled = true;
         this._moveBackInHistory();
     },
 
-    _downKeyPressed: function(event)
+    downKeyPressed: function(event)
     {
         if (!this.isCaretOnLastLine())
             return;
 
-        event.preventDefault();
-        event.stopPropagation();
-
+        event.handled = true;
         this._moveForwardInHistory();
     },
 
     _moveBackInHistory: function()
     {
-        if (this.historyOffset == this.history.length)
+        if (!this.history || this.historyOffset == this.history.length)
             return;
 
         this.clearAutoComplete(true);
@@ -437,7 +446,7 @@ WebInspector.TextPrompt.prototype = {
 
     _moveForwardInHistory: function()
     {
-        if (this.historyOffset === 0)
+        if (!this.history || this.historyOffset === 0)
             return;
 
         this.clearAutoComplete(true);
