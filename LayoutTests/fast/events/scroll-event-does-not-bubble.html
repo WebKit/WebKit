@@ -14,9 +14,6 @@ function divScrolled() {
         document.getElementById('result').innerHTML = 'SUCCESS: div.onscroll was called, but window.onscroll was not.'; 
     // Don't call notifyDone straight away, in case there's another scroll event coming/bubbling.
     doneTimeout = setTimeout(function() {
-
-        // Don't pollute the test result with nonsense.
-        document.getElementById('container').innerHTML = '';
         if (window.layoutTestController)
             layoutTestController.notifyDone();
         }, 100);    
@@ -35,6 +32,9 @@ function runTest() {
     div.onscroll = divScrolled;
     window.onscroll = windowScrolled;
     div.scrollByLines(1);
+    
+    // Don't pollute the test result with nonsense.
+    div.innerHTML = '';
 }
 
 </script>

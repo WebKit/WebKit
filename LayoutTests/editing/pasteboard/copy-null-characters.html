@@ -18,7 +18,6 @@ function runTest()
     var destinationRichText = document.getElementById("destination-rich-text");
     sel.setPosition(destinationRichText, 0);
     document.execCommand("Paste");
-    alert(destinationRichText.innerHTML);
 
     var destinationPlainText = document.getElementById("destination-plain-text");
     destinationPlainText.focus();
@@ -30,8 +29,6 @@ function runTest()
         results.innerText = "Plain text field has the wrong value (expected " +
             JSON.stringify(expectedPlainTextValue) + " but found " +
             JSON.stringify(destinationPlainText.value) + ").";
-        Markup.dump(document.body);
-        Markup.notifyDone();
         return;
     }
 
@@ -55,8 +52,6 @@ function runTest()
         results.innerText = "Plain text field has the wrong value (expected " +
             JSON.stringify(expectedPlainTextValue2) + " but found " +
             JSON.stringify(destinationPlainText.value) + ").";
-        Markup.dump(document.body);
-        Markup.notifyDone();
         return;
     }
 

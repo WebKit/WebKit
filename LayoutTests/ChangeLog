@@ -1,3 +1,14 @@
+2011-01-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+
+        Revert inadvertantly committed test changes.
+
+        * editing/pasteboard/copy-null-characters.html:
+        * fast/events/scroll-event-does-not-bubble.html:
+        * platform/mac-wk2/Skipped:
+        * transitions/remove-transition-style.html:
+
 2011-01-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

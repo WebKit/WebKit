@@ -976,7 +976,6 @@ java
 
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
-http/tests/navigation/go-back-to-error-page.html
 http/tests/navigation/ping-cookie.html
 plugins/application-plugin-plugins-disabled.html
 fast/canvas/webgl/context-lost-restored.html
@@ -1085,7 +1084,6 @@ media/restore-from-page-cache.html
 
 # Pasteboard doesn't work in WebKit2
 # <https://bugs.webkit.org/show_bug.cgi?id=42317>
-editing/pasteboard/copy-null-characters.html
 editing/execCommand/4128080-2.html
 editing/execCommand/5939887.html
 editing/execCommand/copy-without-selection.html
@@ -2335,24 +2333,3 @@ http/tests/media/video-buffered.html
 # These require DRT setSerializeHTTPLoads implementation for WebKit2 to be reliable.
 http/tests/local/link-stylesheet-load-order.html
 http/tests/local/link-stylesheet-load-order-preload.html
-
-
-# Transitions sometimes don't stop when they should
-transitions/hang-with-bad-transition-list.html
-transitions/remove-transition-style.html
-transitions/repeated-firing-background-color.html
-transitions/zero-duration-with-non-zero-delay-end.html
-
-
-# CSSValue and CSSPrimitiveValue prototypes are wrong
-fast/dom/global-constructors.html
-
-# WebKit2 doesn't support tiled layers
-compositing/tiling/huge-layer-resize.html
-
-# Unexplained plugin failures
-plugins/destroy-reentry.html
-platform/mac/plugins/testplugin-onnew-onpaint.html
-plugins/destroy-stream-twice.html
-plugins/embed-inside-object.html
-plugins/no-mime-with-valid-extension.html
