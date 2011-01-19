@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Open Window with an empty URL</title>
+</head>
+<body>
+    <p id="description">Test that calling window.open(""); does not trigger any assertions or cause any crashes.</p>
+    <div id="results"></div>
+    <script type="text/javascript">
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.setCanOpenWindows();
+        }
+        var newWindow = window.open("");
+        newWindow.close();
+        document.getElementById("results").innerText = "PASS: Calling window.open() with an empty URL did not trigger any assertions or cause any crashes.";
+    </script>
+</body>
+</html>
+

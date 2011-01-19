@@ -1,3 +1,14 @@
+2011-01-18  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a test that calling window.open with an empty URL does not trigger an assertion or
+        cause a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=52654
+
+        * fast/dom/Window/open-window-empty-url-expected.txt: Added.
+        * fast/dom/Window/open-window-empty-url.html: Added.
+
 2011-01-18  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
