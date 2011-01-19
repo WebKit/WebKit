@@ -30,11 +30,9 @@
 """Dummy Port implementation used for testing."""
 from __future__ import with_statement
 
-import codecs
-import fnmatch
-import os
-import sys
 import time
+
+from webkitpy.common.system import filesystem_mock
 
 from webkitpy.layout_tests.layout_package import test_output
 
@@ -64,8 +62,7 @@ class TestInstance:
 # This is an in-memory list of tests, what we want them to produce, and
 # what we want to claim are the expected results.
 class TestList:
-    def __init__(self, port):
-        self.port = port
+    def __init__(self):
         self.tests = {}
 
     def add(self, name, **kwargs):
@@ -84,66 +81,125 @@ class TestList:
         return self.tests[item]
 
 
+def unit_test_list():
+    tests = TestList()
+    tests.add('failures/expected/checksum.html',
+                actual_checksum='checksum_fail-checksum')
+    tests.add('failures/expected/crash.html', crash=True)
+    tests.add('failures/expected/exception.html', exception=True)
+    tests.add('failures/expected/timeout.html', timeout=True)
+    tests.add('failures/expected/hang.html', hang=True)
+    tests.add('failures/expected/missing_text.html',
+                expected_text=None)
+    tests.add('failures/expected/image.html',
+                actual_image='image_fail-png',
+                expected_image='image-png')
+    tests.add('failures/expected/image_checksum.html',
+                actual_checksum='image_checksum_fail-checksum',
+                actual_image='image_checksum_fail-png')
+    tests.add('failures/expected/keyboard.html',
+                keyboard=True)
+    tests.add('failures/expected/missing_check.html',
+                expected_checksum=None)
+    tests.add('failures/expected/missing_image.html',
+                expected_image=None)
+    tests.add('failures/expected/missing_text.html',
+                expected_text=None)
+    tests.add('failures/expected/newlines_leading.html',
+                expected_text="\nfoo\n",
+                actual_text="foo\n")
+    tests.add('failures/expected/newlines_trailing.html',
+                expected_text="foo\n\n",
+                actual_text="foo\n")
+    tests.add('failures/expected/newlines_with_excess_CR.html',
+                expected_text="foo\r\r\r\n",
+                actual_text="foo\n")
+    tests.add('failures/expected/text.html',
+                actual_text='text_fail-png')
+    tests.add('failures/unexpected/crash.html', crash=True)
+    tests.add('failures/unexpected/text-image-checksum.html',
+                actual_text='text-image-checksum_fail-txt',
+                actual_checksum='text-image-checksum_fail-checksum')
+    tests.add('failures/unexpected/timeout.html', timeout=True)
+    tests.add('http/tests/passes/text.html')
+    tests.add('http/tests/ssl/text.html')
+    tests.add('passes/error.html', error='stuff going to stderr')
+    tests.add('passes/image.html')
+    tests.add('passes/platform_image.html')
+    # Text output files contain "\r\n" on Windows.  This may be
+    # helpfully filtered to "\r\r\n" by our Python/Cygwin tooling.
+    tests.add('passes/text.html',
+                expected_text='\nfoo\n\n',
+                actual_text='\nfoo\r\n\r\r\n')
+    tests.add('websocket/tests/passes/text.html')
+    return tests
+
+
+# Here we use a non-standard location for the layout tests, to ensure that
+# this works. The path contains a '.' in the name because we've seen bugs
+# related to this before.
+
+LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
+
+
+# Here we synthesize an in-memory filesystem from the test list
+# in order to fully control the test output and to demonstrate that
+# we don't need a real filesystem to run the tests.
+
+def unit_test_filesystem(test_list=None):
+    """Return the FileSystem object used by the unit tests."""
+    test_list = test_list or unit_test_list()
+    files = {}
+
+    def add_file(files, test, suffix, contents):
+        dirname = test.name[0:test.name.rfind('/')]
+        base = test.base
+        path = LAYOUT_TEST_DIR + '/' + dirname + '/' + base + suffix
+        files[path] = contents
+
+    # Add each test and the expected output, if any.
+    for test in test_list.tests.values():
+        add_file(files, test, '.html', '')
+        add_file(files, test, '-expected.txt', test.expected_text)
+        add_file(files, test, '-expected.checksum', test.expected_checksum)
+        add_file(files, test, '-expected.png', test.expected_image)
+
+    # Add the test_expectations file.
+    files[LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'] = """
+WONTFIX : failures/expected/checksum.html = IMAGE
+WONTFIX : failures/expected/crash.html = CRASH
+// This one actually passes because the checksums will match.
+WONTFIX : failures/expected/image.html = PASS
+WONTFIX : failures/expected/image_checksum.html = IMAGE
+WONTFIX : failures/expected/missing_check.html = MISSING PASS
+WONTFIX : failures/expected/missing_image.html = MISSING PASS
+WONTFIX : failures/expected/missing_text.html = MISSING PASS
+WONTFIX : failures/expected/newlines_leading.html = TEXT
+WONTFIX : failures/expected/newlines_trailing.html = TEXT
+WONTFIX : failures/expected/newlines_with_excess_CR.html = TEXT
+WONTFIX : failures/expected/text.html = TEXT
+WONTFIX : failures/expected/timeout.html = TIMEOUT
+WONTFIX SKIP : failures/expected/hang.html = TIMEOUT
+WONTFIX SKIP : failures/expected/keyboard.html = CRASH
+WONTFIX SKIP : failures/expected/exception.html = CRASH
+"""
+
+    return filesystem_mock.MockFileSystem(files)
+
+
 class TestPort(base.Port):
     """Test implementation of the Port interface."""
 
     def __init__(self, **kwargs):
+        self._tests = unit_test_list()
+        if 'filesystem' not in kwargs:
+            kwargs['filesystem'] = unit_test_filesystem(self._tests)
+        kwargs.setdefault('port_name', 'test')
         base.Port.__init__(self, **kwargs)
-        tests = TestList(self)
-        tests.add('failures/expected/checksum.html',
-                  actual_checksum='checksum_fail-checksum')
-        tests.add('failures/expected/crash.html', crash=True)
-        tests.add('failures/expected/exception.html', exception=True)
-        tests.add('failures/expected/timeout.html', timeout=True)
-        tests.add('failures/expected/hang.html', hang=True)
-        tests.add('failures/expected/missing_text.html',
-                  expected_text=None)
-        tests.add('failures/expected/image.html',
-                  actual_image='image_fail-png',
-                  expected_image='image-png')
-        tests.add('failures/expected/image_checksum.html',
-                  actual_checksum='image_checksum_fail-checksum',
-                  actual_image='image_checksum_fail-png')
-        tests.add('failures/expected/keyboard.html',
-                  keyboard=True)
-        tests.add('failures/expected/missing_check.html',
-                  expected_checksum=None)
-        tests.add('failures/expected/missing_image.html',
-                  expected_image=None)
-        tests.add('failures/expected/missing_text.html',
-                  expected_text=None)
-        tests.add('failures/expected/newlines_leading.html',
-                  expected_text="\nfoo\n",
-                  actual_text="foo\n")
-        tests.add('failures/expected/newlines_trailing.html',
-                  expected_text="foo\n\n",
-                  actual_text="foo\n")
-        tests.add('failures/expected/newlines_with_excess_CR.html',
-                  expected_text="foo\r\r\r\n",
-                  actual_text="foo\n")
-        tests.add('failures/expected/text.html',
-                  actual_text='text_fail-png')
-        tests.add('failures/unexpected/crash.html', crash=True)
-        tests.add('failures/unexpected/text-image-checksum.html',
-                  actual_text='text-image-checksum_fail-txt',
-                  actual_checksum='text-image-checksum_fail-checksum')
-        tests.add('failures/unexpected/timeout.html', timeout=True)
-        tests.add('http/tests/passes/text.html')
-        tests.add('http/tests/ssl/text.html')
-        tests.add('passes/error.html', error='stuff going to stderr')
-        tests.add('passes/image.html')
-        tests.add('passes/platform_image.html')
-        # Text output files contain "\r\n" on Windows.  This may be
-        # helpfully filtered to "\r\r\n" by our Python/Cygwin tooling.
-        tests.add('passes/text.html',
-                  expected_text='\nfoo\n\n',
-                  actual_text='\nfoo\r\n\r\r\n')
-        tests.add('websocket/tests/passes/text.html')
-        self._tests = tests
 
     def baseline_path(self):
-        return os.path.join(self.layout_tests_dir(), 'platform',
-                            self.name() + self.version())
+        return self._filesystem.join(self.layout_tests_dir(), 'platform',
+                                     self.name() + self.version())
 
     def baseline_search_path(self):
         return [self.baseline_path()]
@@ -155,92 +211,12 @@ class TestPort(base.Port):
                    diff_filename=None):
         diffed = actual_contents != expected_contents
         if diffed and diff_filename:
-            with codecs.open(diff_filename, "w", "utf-8") as diff_fh:
-                diff_fh.write("< %s\n---\n> %s\n" %
-                              (expected_contents, actual_contents))
+            self._filesystem.write_text_file(diff_filename,
+                "< %s\n---\n> %s\n" % (expected_contents, actual_contents))
         return diffed
 
-    def expected_checksum(self, test):
-        test = self.relative_test_filename(test)
-        return self._tests[test].expected_checksum
-
-    def expected_image(self, test):
-        test = self.relative_test_filename(test)
-        return self._tests[test].expected_image
-
-    def expected_text(self, test):
-        test = self.relative_test_filename(test)
-        text = self._tests[test].expected_text
-        if not text:
-            text = ''
-        return text
-
-    def tests(self, paths):
-        # Test the idea of port-specific overrides for test lists. Also
-        # keep in memory to speed up the test harness.
-        if not paths:
-            paths = ['*']
-
-        matched_tests = []
-        for p in paths:
-            if self.path_isdir(p):
-                matched_tests.extend(fnmatch.filter(self._tests.keys(), p + '*'))
-            else:
-                matched_tests.extend(fnmatch.filter(self._tests.keys(), p))
-        layout_tests_dir = self.layout_tests_dir()
-        return set([os.path.join(layout_tests_dir, p) for p in matched_tests])
-
-    def path_exists(self, path):
-        # used by test_expectations.py and printing.py
-        rpath = self.relative_test_filename(path)
-        if rpath in self._tests:
-            return True
-        if self.path_isdir(rpath):
-            return True
-        if rpath.endswith('-expected.txt'):
-            test = rpath.replace('-expected.txt', '.html')
-            return (test in self._tests and
-                    self._tests[test].expected_text)
-        if rpath.endswith('-expected.checksum'):
-            test = rpath.replace('-expected.checksum', '.html')
-            return (test in self._tests and
-                    self._tests[test].expected_checksum)
-        if rpath.endswith('-expected.png'):
-            test = rpath.replace('-expected.png', '.html')
-            return (test in self._tests and
-                    self._tests[test].expected_image)
-        return False
-
     def layout_tests_dir(self):
-        return self.path_from_webkit_base('Tools', 'Scripts',
-                                          'webkitpy', 'layout_tests', 'data', 'LayoutTests')
-
-    def path_isdir(self, path):
-        # Used by test_expectations.py
-        #
-        # We assume that a path is a directory if we have any tests
-        # that whose prefix matches the path plus a directory modifier
-        # and not a file extension.
-        if path[-1] != '/':
-            path += '/'
-
-        # FIXME: Directories can have a dot in the name. We should
-        # probably maintain a white list of known cases like CSS2.1
-        # and check it here in the future.
-        if path.find('.') != -1:
-            # extension separator found, assume this is a file
-            return False
-
-        # strip out layout tests directory path if found. The tests
-        # keys are relative to it.
-        tests_dir = self.layout_tests_dir()
-        if path.startswith(tests_dir):
-            path = path[len(tests_dir) + 1:]
-
-        return any([t.startswith(path) for t in self._tests.keys()])
-
-    def test_dirs(self):
-        return ['passes', 'failures']
+        return LAYOUT_TEST_DIR
 
     def name(self):
         return self._name
@@ -269,32 +245,11 @@ class TestPort(base.Port):
     def stop_websocket_server(self):
         pass
 
-    def test_expectations(self):
-        """Returns the test expectations for this port.
-
-        Basically this string should contain the equivalent of a
-        test_expectations file. See test_expectations.py for more details."""
-        return """
-WONTFIX : failures/expected/checksum.html = IMAGE
-WONTFIX : failures/expected/crash.html = CRASH
-// This one actually passes because the checksums will match.
-WONTFIX : failures/expected/image.html = PASS
-WONTFIX : failures/expected/image_checksum.html = IMAGE
-WONTFIX : failures/expected/missing_check.html = MISSING PASS
-WONTFIX : failures/expected/missing_image.html = MISSING PASS
-WONTFIX : failures/expected/missing_text.html = MISSING PASS
-WONTFIX : failures/expected/newlines_leading.html = TEXT
-WONTFIX : failures/expected/newlines_trailing.html = TEXT
-WONTFIX : failures/expected/newlines_with_excess_CR.html = TEXT
-WONTFIX : failures/expected/text.html = TEXT
-WONTFIX : failures/expected/timeout.html = TIMEOUT
-WONTFIX SKIP : failures/expected/hang.html = TIMEOUT
-WONTFIX SKIP : failures/expected/keyboard.html = CRASH
-WONTFIX SKIP : failures/expected/exception.html = CRASH
-"""
-
     def test_base_platform_names(self):
         return ('mac', 'win')
+
+    def test_expectations(self):
+        return self._filesystem.read_text_file(LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt')
 
     def test_platform_name(self):
         return 'mac'
