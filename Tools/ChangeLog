@@ -1,3 +1,22 @@
+2011-01-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Change more modules in the layout-tests code to use the
+        filesystem wrapper for cleaner unit testing.
+
+        This patch also adds the glob() wrapper to the filesystem
+        abstraction.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=52604
+
+        * Scripts/webkitpy/layout_tests/port/test_files.py:
+        * Scripts/webkitpy/layout_tests/port/test_files_unittest.py:
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+
 2011-01-19  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed.

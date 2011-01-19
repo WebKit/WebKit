@@ -58,6 +58,7 @@ def find(port, paths):
       paths: a list of command line paths relative to the layout_tests_dir()
           to limit the search to. glob patterns are ok.
     """
+    fs = port._filesystem
     gather_start_time = time.time()
     paths_to_walk = set()
     # if paths is empty, provide a pre-defined list.
@@ -65,9 +66,9 @@ def find(port, paths):
         _log.debug("Gathering tests from: %s relative to %s" % (paths, port.layout_tests_dir()))
         for path in paths:
             # If there's an * in the name, assume it's a glob pattern.
-            path = os.path.join(port.layout_tests_dir(), path)
+            path = fs.join(port.layout_tests_dir(), path)
             if path.find('*') > -1:
-                filenames = glob.glob(path)
+                filenames = fs.glob(path)
                 paths_to_walk.update(filenames)
             else:
                 paths_to_walk.add(path)
@@ -78,8 +79,8 @@ def find(port, paths):
     # Now walk all the paths passed in on the command line and get filenames
     test_files = set()
     for path in paths_to_walk:
-        if os.path.isfile(path) and _is_test_file(path):
-            test_files.add(os.path.normpath(path))
+        if fs.isfile(path) and _is_test_file(fs, path):
+            test_files.add(fs.normpath(path))
             continue
 
         for root, dirs, files in os.walk(path):
@@ -95,9 +96,9 @@ def find(port, paths):
                     dirs.remove(directory)
 
             for filename in files:
-                if _is_test_file(filename):
-                    filename = os.path.join(root, filename)
-                    filename = os.path.normpath(filename)
+                if _is_test_file(fs, filename):
+                    filename = fs.join(root, filename)
+                    filename = fs.normpath(filename)
                     test_files.add(filename)
 
     gather_time = time.time() - gather_start_time
@@ -106,10 +107,10 @@ def find(port, paths):
     return test_files
 
 
-def _has_supported_extension(filename):
+def _has_supported_extension(fs, filename):
     """Return true if filename is one of the file extensions we want to run a
     test on."""
-    extension = os.path.splitext(filename)[1]
+    extension = fs.splitext(filename)[1]
     return extension in _supported_file_extensions
 
 
@@ -122,7 +123,7 @@ def _is_reference_html_file(filename):
     return False
 
 
-def _is_test_file(filename):
+def _is_test_file(fs, filename):
     """Return true if the filename points to a test file."""
-    return (_has_supported_extension(filename) and
+    return (_has_supported_extension(fs, filename) and
             not _is_reference_html_file(filename))

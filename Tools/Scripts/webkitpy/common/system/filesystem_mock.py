@@ -76,6 +76,14 @@ class MockFileSystem(object):
             path += '/'
         return [file for file in self.files if file.startswith(path)]
 
+    def glob(self, path):
+        # FIXME: This only handles a wildcard '*' at the end of the path.
+        # Maybe it should handle more?
+        if path[-1] == '*':
+            return [f for f in self.files if f.startswith(path[:-1])]
+        else:
+            return [f for f in self.files if f == path]
+
     def isfile(self, path):
         return path in self.files and self.files[path] is not None
 

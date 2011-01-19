@@ -32,13 +32,9 @@
 Also defines the TestArguments "struct" to pass them additional arguments.
 """
 
-from __future__ import with_statement
-
-import codecs
 import cgi
 import errno
 import logging
-import os.path
 
 _log = logging.getLogger("webkitpy.layout_tests.test_types.test_type_base")
 
@@ -86,9 +82,10 @@ class TestTypeBase(object):
     def _make_output_directory(self, filename):
         """Creates the output directory (if needed) for a given test
         filename."""
-        output_filename = os.path.join(self._root_output_dir,
+        fs = self._port._filesystem
+        output_filename = fs.join(self._root_output_dir,
             self._port.relative_test_filename(filename))
-        self._port.maybe_make_directory(os.path.split(output_filename)[0])
+        fs.maybe_make_directory(fs.dirname(output_filename))
 
     def _save_baseline_data(self, filename, data, modifier, encoding,
                             generate_new_baseline=True):
@@ -106,21 +103,22 @@ class TestTypeBase(object):
             baseline, or update the existing one
         """
 
+        port = self._port
+        fs = self._port._filesystem
         if generate_new_baseline:
-            relative_dir = os.path.dirname(
-                self._port.relative_test_filename(filename))
-            baseline_path = self._port.baseline_path()
-            output_dir = os.path.join(baseline_path, relative_dir)
-            output_file = os.path.basename(os.path.splitext(filename)[0] +
+            relative_dir = fs.dirname(port.relative_test_filename(filename))
+            baseline_path = port.baseline_path()
+            output_dir = fs.join(baseline_path, relative_dir)
+            output_file = fs.basename(fs.splitext(filename)[0] +
                 self.FILENAME_SUFFIX_EXPECTED + modifier)
-            self._port.maybe_make_directory(output_dir)
-            output_path = os.path.join(output_dir, output_file)
+            fs.maybe_make_directory(output_dir)
+            output_path = fs.join(output_dir, output_file)
             _log.debug('writing new baseline result "%s"' % (output_path))
         else:
-            output_path = self._port.expected_filename(filename, modifier)
+            output_path = port.expected_filename(filename, modifier)
             _log.debug('resetting baseline result "%s"' % output_path)
 
-        self._port.update_baseline(output_path, data, encoding)
+        port.update_baseline(output_path, data, encoding)
 
     def output_filename(self, filename, modifier):
         """Returns a filename inside the output dir that contains modifier.
@@ -136,9 +134,10 @@ class TestTypeBase(object):
         Return:
           The absolute windows path to the output filename
         """
-        output_filename = os.path.join(self._root_output_dir,
+        fs = self._port._filesystem
+        output_filename = fs.join(self._root_output_dir,
             self._port.relative_test_filename(filename))
-        return os.path.splitext(output_filename)[0] + modifier
+        return fs.splitext(output_filename)[0] + modifier
 
     def compare_output(self, port, filename, test_args, actual_test_output,
                         expected_test_output):
@@ -165,11 +164,11 @@ class TestTypeBase(object):
     def _write_into_file_at_path(self, file_path, contents, encoding):
         """This method assumes that byte_array is already encoded
         into the right format."""
-        open_mode = 'w'
+        fs = self._port._filesystem
         if encoding is None:
-            open_mode = 'w+b'
-        with codecs.open(file_path, open_mode, encoding=encoding) as file:
-            file.write(contents)
+            fs.write_binary_file(file_path, contents)
+            return
+        fs.write_text_file(file_path, contents)
 
     def write_output_files(self, filename, file_type,
                            output, expected, encoding,

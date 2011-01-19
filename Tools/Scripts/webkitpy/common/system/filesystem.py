@@ -33,6 +33,7 @@ from __future__ import with_statement
 import codecs
 import errno
 import exceptions
+import glob
 import os
 import shutil
 import tempfile
@@ -45,6 +46,7 @@ class FileSystem(object):
     or relative."""
 
     def basename(self, path):
+        """Wraps os.path.basename()."""
         return os.path.basename(path)
 
     def copyfile(self, source, destination):
@@ -53,6 +55,7 @@ class FileSystem(object):
         shutil.copyfile(source, destination)
 
     def dirname(self, path):
+        """Wraps os.path.dirname()."""
         return os.path.dirname(path)
 
     def exists(self, path):
@@ -64,6 +67,10 @@ class FileSystem(object):
         return [self.join(path_to_file, filename)
             for (path_to_file, _, filenames) in os.walk(path)
             for filename in filenames]
+
+    def glob(self, path):
+        """Wraps glob.glob()."""
+        return glob.glob(path)
 
     def isfile(self, path):
         """Return whether the path refers to a file."""
@@ -125,6 +132,7 @@ class FileSystem(object):
         shutil.move(src, dest)
 
     def normpath(self, path):
+        """Wraps os.path.normpath()."""
         return os.path.normpath(path)
 
     def open_binary_tempfile(self, suffix):
@@ -188,7 +196,7 @@ class FileSystem(object):
             return f.read()
 
     def splitext(self, path):
-        """Return (dirname, basename + ext)."""
+        """Return (dirname + os.sep + basename, '.' + ext)"""
         return os.path.splitext(path)
 
     def write_binary_file(self, path, contents):
