@@ -1105,6 +1105,10 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         if (m_structuralLayer) {
             // Replace the transformLayer in the parent with this layer.
             m_layer->removeFromSuperlayer();
+ 
+            // If m_layer doesn't have a parent, it means it's the root layer and
+            // is likely hosted by something that is not expecting to be changed
+            ASSERT(m_structuralLayer->superlayer());
             m_structuralLayer->superlayer()->replaceSublayer(m_structuralLayer.get(), m_layer.get());
 
             moveOrCopyAnimationsForProperty(Move, AnimatedPropertyWebkitTransform, m_structuralLayer.get(), m_layer.get());
@@ -1178,6 +1182,9 @@ void GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
     }
 
     // Move this layer to be a child of the transform layer.
+    // If m_layer doesn't have a parent, it means it's the root layer and
+    // is likely hosted by something that is not expecting to be changed
+    ASSERT(m_layer->superlayer());
     m_layer->superlayer()->replaceSublayer(m_layer.get(), m_structuralLayer.get());
     m_structuralLayer->appendSublayer(m_layer.get());
 
@@ -2013,6 +2020,9 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 
     m_layer->adoptSublayers(oldLayer.get());
     
+    // If m_layer doesn't have a parent, it means it's the root layer and
+    // is likely hosted by something that is not expecting to be changed
+    ASSERT(oldLayer->superlayer());
     oldLayer->superlayer()->replaceSublayer(oldLayer.get(), m_layer.get());
 
     updateContentsTransform();

@@ -44,7 +44,7 @@ void LayerBackedDrawingArea::platformInit()
 {
     setUpUpdateLayoutRunLoopObserver();
 
-    [m_backingLayer->platformLayer() setGeometryFlipped:YES];
+    [m_hostingLayer->platformLayer() setGeometryFlipped:YES];
 #if HAVE(HOSTED_CORE_ANIMATION)
     attachCompositingContext();
 #endif
@@ -80,7 +80,7 @@ void LayerBackedDrawingArea::attachCompositingContext()
 #if HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerRef = WKCARemoteLayerClientMakeWithServerPort(serverPort);
-    WKCARemoteLayerClientSetLayer(m_remoteLayerRef.get(), m_backingLayer->platformLayer());
+    WKCARemoteLayerClientSetLayer(m_remoteLayerRef.get(), m_hostingLayer->platformLayer());
     
     uint32_t contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerRef.get());
     WebProcess::shared().connection()->sendSync(DrawingAreaProxyLegacyMessage::AttachCompositingContext, m_webPage->pageID(), CoreIPC::In(contextID), CoreIPC::Out());
@@ -115,6 +115,7 @@ void LayerBackedDrawingArea::scheduleCompositingLayerSync()
 
 void LayerBackedDrawingArea::syncCompositingLayers()
 {
+    m_hostingLayer->syncCompositingStateForThisLayerOnly();
     m_backingLayer->syncCompositingStateForThisLayerOnly();
 
     bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateRecursive();

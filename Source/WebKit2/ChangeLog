@@ -1,3 +1,31 @@
+2011-01-19  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WK2 - Multiple crashes in PlatformCALayer::replaceSublayer
+        https://bugs.webkit.org/show_bug.cgi?id=52695
+
+        Added a hostingLayer as the parent of the existing drawingLayer.
+        The hostingLayer is now the root which is passed to the 
+        remote context. It never changes except to track the size
+        of the window. The backingLayer is now a child of the 
+        hostingLayer, which allow it to switch between tiled and
+        non-tiled.
+
+        I also now give back accurate settings for debug borders and
+        repaint counters.
+
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::setSize):
+        (WebKit::LayerBackedDrawingArea::showDebugBorders):
+        (WebKit::LayerBackedDrawingArea::showRepaintCounter):
+        * WebProcess/WebPage/LayerBackedDrawingArea.h:
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::platformInit):
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+        (WebKit::LayerBackedDrawingArea::syncCompositingLayers):
+
 2011-01-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

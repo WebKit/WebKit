@@ -34,6 +34,8 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 
 using namespace WebCore;
 
@@ -45,6 +47,12 @@ LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaInfo::Identifier ident
     , m_attached(false)
     , m_shouldPaint(true)
 {
+    m_hostingLayer = GraphicsLayer::create(this);
+    m_hostingLayer->setDrawsContent(false);
+#ifndef NDEBUG
+    m_hostingLayer->setName("DrawingArea hosting layer");
+#endif
+    m_hostingLayer->setSize(webPage->size());
     m_backingLayer = GraphicsLayer::create(this);
     m_backingLayer->setDrawsContent(true);
     m_backingLayer->setContentsOpaque(webPage->drawsBackground() && !webPage->drawsTransparentBackground());
@@ -53,6 +61,7 @@ LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaInfo::Identifier ident
     m_backingLayer->setName("DrawingArea backing layer");
 #endif
     m_backingLayer->setSize(webPage->size());
+    m_hostingLayer->addChild(m_backingLayer.get());
     platformInit();
 }
 
@@ -99,6 +108,7 @@ void LayerBackedDrawingArea::setSize(const IntSize& viewSize)
     ASSERT(m_shouldPaint);
     ASSERT_ARG(viewSize, !viewSize.isEmpty());
 
+    m_hostingLayer->setSize(viewSize);
     m_backingLayer->setSize(viewSize);
     scheduleCompositingLayerSync();
 
@@ -183,14 +193,12 @@ void LayerBackedDrawingArea::paintContents(const GraphicsLayer*, GraphicsContext
 
 bool LayerBackedDrawingArea::showDebugBorders() const
 {
-    // FIXME: get from settings;
-    return false;
+    return m_webPage->corePage()->settings()->showDebugBorders();
 }
 
 bool LayerBackedDrawingArea::showRepaintCounter() const
 {
-    // FIXME: get from settings;
-    return false;
+    return m_webPage->corePage()->settings()->showRepaintCounter();
 }
 
 #if !PLATFORM(MAC) && !PLATFORM(WIN)

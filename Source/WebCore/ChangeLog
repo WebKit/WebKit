@@ -1,3 +1,16 @@
+2011-01-19  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        WK2 - Multiple crashes in PlatformCALayer::replaceSublayer
+        https://bugs.webkit.org/show_bug.cgi?id=52695
+
+        Added ASSERTs to the places we assume a non-null superlayer.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+
 2011-01-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej Stachowiak.
