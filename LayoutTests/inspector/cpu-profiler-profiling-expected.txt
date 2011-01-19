@@ -1,4 +1,0 @@
-Tests that CPU profiling works. Bug 52634.
-
-found pageFunction
-
