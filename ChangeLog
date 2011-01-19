@@ -1,3 +1,14 @@
+2011-01-19  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Enable usage of Google ld if it exist but is not on by default.
+
+        [Qt] Enable the google ld if it exist but is not on by default
+        https://bugs.webkit.org/show_bug.cgi?id=52625
+
+        * common.pri: flip the test.
+
 2011-01-18  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed. Update .gitignore to reflect that WebKit is now in Source.
