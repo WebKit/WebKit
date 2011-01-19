@@ -106,6 +106,10 @@ class ChromiumWinPort(chromium.ChromiumPort):
     # PROTECTED ROUTINES
     #
     def _build_path(self, *comps):
+        if self.get_option('build_directory'):
+            return self._filesystem.join(self.get_option('build_directory'),
+                                         *comps)
+
         p = self.path_from_chromium_base('webkit', *comps)
         if os.path.exists(p):
             return p

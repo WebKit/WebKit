@@ -277,6 +277,8 @@ def parse_args(args=None):
             default="layout-test-results",
             help="Output results directory source dir, relative to Debug or "
                  "Release"),
+        optparse.make_option("--build-directory",
+            help="Path to the directory under which build files are kept (should not include configuration)"),
         optparse.make_option("--new-baseline", action="store_true",
             default=False, help="Save all generated results as new baselines "
                  "into the platform directory, overwriting whatever's "

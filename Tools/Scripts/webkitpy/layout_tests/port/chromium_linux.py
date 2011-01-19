@@ -78,6 +78,10 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
+        if self.get_option('build_directory'):
+            return self._filesystem.join(self.get_option('build_directory'),
+                                         *comps)
+
         base = self.path_from_chromium_base()
         if os.path.exists(os.path.join(base, 'sconsbuild')):
             return os.path.join(base, 'sconsbuild', *comps)

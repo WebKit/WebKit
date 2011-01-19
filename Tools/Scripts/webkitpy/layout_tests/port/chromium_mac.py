@@ -105,6 +105,10 @@ class ChromiumMacPort(chromium.ChromiumPort):
     #
 
     def _build_path(self, *comps):
+        if self.get_option('build_directory'):
+            return self._filesystem.join(self.get_option('build_directory'),
+                                         *comps)
+
         path = self.path_from_chromium_base('xcodebuild', *comps)
         if os.path.exists(path) or self.get_option('use_test_shell'):
             return path

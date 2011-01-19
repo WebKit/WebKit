@@ -1,3 +1,26 @@
+2011-01-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: add a --build-directory command line argument
+
+        Official Google Chrome builds use a non-standard build directory
+        location. This patch adds a --build-directory argument that
+        allows that location to be specified on the command line. Only
+        Chromium-based builds will use this flag for now, but anyone can
+        in the future.
+
+        There are no unit tests for this since it's difficult to test
+        until mock filesystems are fully supported in the code. This was
+        tested by hand for now.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52694
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed. Bot fix.
