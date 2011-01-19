@@ -745,6 +745,22 @@ Object.defineProperty(Array.prototype, "keySet", { value: function()
     return keys;
 }});
 
+Object.defineProperty(Array.prototype, "upperBound", { value: function(value)
+{
+    var first = 0;
+    var count = this.length;
+    while (count > 0) {
+      var step = count >> 1;
+      var middle = first + step;
+      if (value >= this[middle]) {
+          first = middle + 1;
+          count -= step + 1;
+      } else
+          count = step;
+    }
+    return first;
+}});
+
 Array.diff = function(left, right)
 {
     var o = left;

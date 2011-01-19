@@ -44,7 +44,7 @@ WebInspector.ScriptFormatter.locationToPosition = function(lineEndings, location
 WebInspector.ScriptFormatter.positionToLocation = function(lineEndings, position)
 {
     var location = {};
-    location.line = WebInspector.ScriptFormatter.upperBound(lineEndings, position - 1);
+    location.line = lineEndings.upperBound(position - 1);
     if (!location.line)
         location.column = position;
     else
@@ -52,30 +52,26 @@ WebInspector.ScriptFormatter.positionToLocation = function(lineEndings, position
     return location;
 }
 
-WebInspector.ScriptFormatter.upperBound = function(array, number)
-{
-    var first = 0;
-    var count = array.length;
-    while (count > 0) {
-      var step = count >> 1;
-      var middle = first + step;
-      if (number >= array[middle]) {
-          first = middle + 1;
-          count -= step + 1;
-      } else
-          count = step;
-    }
-    return first;
-}
-
 WebInspector.ScriptFormatter.prototype = {
-    format: function()
+    format: function(callback)
     {
-        this._formatted = true;
-        this._formattedSource = this._originalSource.replace(/;/g, ";\n");
-        this._formattedLineEndings = this._formattedSource.findAll("\n");
-        this._formattedLineEndings.push(this._formattedSource.length);
+        var worker = new Worker("scriptFormatterWorker.js");
+        function messageHandler(event)
+        {
+            var formattedSource = event.data;
+            this._formatted = true;
+            this._formattedSource = formattedSource;
+            this._formattedLineEndings = formattedSource.findAll("\n");
+            this._formattedLineEndings.push(formattedSource.length);
+            this._buildMapping();
+            callback(formattedSource);
+        }
+        worker.onmessage = messageHandler.bind(this);
+        worker.postMessage(this._originalSource);
+    },
 
+    _buildMapping: function()
+    {
         this._originalSymbolPositions = [];
         this._formattedSymbolPositions = [];
         var lastCodePosition = 0;
@@ -93,8 +89,6 @@ WebInspector.ScriptFormatter.prototype = {
         }
         this._originalSymbolPositions.push(this._originalSource.length);
         this._formattedSymbolPositions.push(this._formattedSource.length);
-
-        return this._formattedSource;
     },
 
     originalLineNumberToFormattedLineNumber: function(originalLineNumber)
@@ -132,7 +126,7 @@ WebInspector.ScriptFormatter.prototype = {
 
     _convertPosition: function(symbolPositions1, symbolPositions2, position)
     {
-        var index = WebInspector.ScriptFormatter.upperBound(symbolPositions1, position);
+        var index = symbolPositions1.upperBound(position);
         if (index === symbolPositions2.length - 1)
             return symbolPositions2[index] - 1;
         return symbolPositions2[index];

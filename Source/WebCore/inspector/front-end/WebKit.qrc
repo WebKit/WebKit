@@ -81,6 +81,7 @@
     <file>ScopeChainSidebarPane.js</file>
     <file>Script.js</file>
     <file>ScriptFormatter.js</file>
+    <file>ScriptFormatterWorker.js</file>
     <file>ScriptsPanel.js</file>
     <file>ScriptView.js</file>
     <file>Section.js</file>
@@ -114,6 +115,8 @@
     <file>WatchExpressionsSidebarPane.js</file>
     <file>WelcomeView.js</file>
     <file>WorkersSidebarPane.js</file>
+    <file>UglifyJS/parse-js.js</file>
+    <file>UglifyJS/process.js</file>
     <file>audits.css</file>
     <file>goToLineDialog.css</file>
     <file>heapProfiler.css</file>

@@ -1,3 +1,32 @@
+2011-01-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add UglifyJS parser and formatter files
+        https://bugs.webkit.org/show_bug.cgi?id=51702
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.positionToLocation):
+        (WebInspector.ScriptFormatter.prototype.format.messageHandler):
+        (WebInspector.ScriptFormatter.prototype.format):
+        (WebInspector.ScriptFormatter.prototype._buildMapping):
+        (WebInspector.ScriptFormatter.prototype._convertPosition):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.formatSource.didFormat):
+        (WebInspector.SourceFrame.prototype.formatSource):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/parse-js.js: Added. UglifyJS parser.
+        * inspector/front-end/process.js: Added. UglifyJS formatter.
+        * inspector/front-end/scriptFormatterWorker.js: Added. Worker script that wraps UglifyJS code.
+        (onmessage):
+        (beautify):
+        (loadModule):
+        (require):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-01-19  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -786,8 +786,12 @@ WebInspector.SourceFrame.prototype = {
         if (!this._formatter)
             return;
 
-        this._textModel.setText(null, this._formatter.format());
-        this._setTextViewerDecorations();
+        function didFormat(source)
+        {
+            this._textModel.setText(null, source);
+            this._setTextViewerDecorations();
+        }
+        this._formatter.format(didFormat.bind(this));
     },
 
     _continueToLine: function(lineNumber)

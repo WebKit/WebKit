@@ -65601,6 +65601,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\scriptFormatterWorker.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ScriptsPanel.js"
 					>
 				</File>
@@ -65734,6 +65738,14 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\WorkersSidebarPane.js"
+					>
+				</File>
+					<File
+					RelativePath="..\inspector\front-end\UglifyJS\parse-js.js"
+					>
+				</File>
+					<File
+					RelativePath="..\inspector\front-end\UglifyJS\process.js"
 					>
 				</File>
 			</Filter>
