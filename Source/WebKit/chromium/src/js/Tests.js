@@ -616,7 +616,7 @@ TestSuite.prototype.evaluateInConsole_ = function(code, callback)
  */
 TestSuite.prototype._checkExecutionLine = function(sourceFrame, lineNumber, lineContent)
 {
-    this.assertEquals(lineNumber, sourceFrame.executionLine, "Unexpected execution line number.");
+    this.assertEquals(lineNumber, sourceFrame._executionLine, "Unexpected execution line number.");
     this.assertEquals(lineContent, sourceFrame._textModel.line(lineNumber - 1), "Unexpected execution line text.");
 }
 
@@ -686,7 +686,8 @@ TestSuite.prototype._checkSourceFrameWhenLoaded = function(expectations, callbac
     var test = this;
 
     var frame = WebInspector.currentPanel.visibleView.sourceFrame;
-    if (frame._loaded)
+
+    if (frame._textViewer)
         checkExecLine();
     else {
         setTimeout(function() {

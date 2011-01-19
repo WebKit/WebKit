@@ -1,3 +1,10 @@
+2011-01-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: updating Chromium devtools sanity tests for downstream use.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._checkExecutionLine):
+
 2011-01-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
