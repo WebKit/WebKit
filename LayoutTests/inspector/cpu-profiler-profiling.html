@@ -4,8 +4,10 @@
 <script>
 
 function pageFunction() {
-    console.profile();  // Make sure we capture the current callstack.
-    console.profileEnd();
+    console.profile("outer");
+    console.profile("inner");  // [Chromium] Make sure we capture the current callstack.
+    console.profileEnd("inner");
+    console.profileEnd("outer");
 }
 
 function initialize_ProfilerTests()
@@ -33,11 +35,35 @@ function initialize_ProfilerTests()
         InspectorTest.completeTest();
     }
 
+    var oldAddProfileHeader = WebInspector.panels.profiles._addProfileHeader;
+    WebInspector.panels.profiles._addProfileHeader = function(profile)
+    {
+        oldAddProfileHeader.call(this, profile);
+        if (profile.title === "inner") {
+            this.showProfile(profile);
+        }
+    }
+
     var oldRefresh = WebInspector.CPUProfileView.prototype.refresh;
     WebInspector.CPUProfileView.prototype.refresh = function()
     {
         oldRefresh.call(this);
-        InspectorTest.findPageFunctionProfileNode();       
+        if (this.profile.title === "inner") {
+            var tree = this.profileDataGridTree;
+            if (!tree)
+                 InspectorTest.addResult("no tree");
+            var node = tree.children[0];
+            if (!node)
+                 InspectorTest.addResult("no node");
+            while (node) {
+                if (node.functionName.indexOf("pageFunction") !== -1) {
+                    InspectorTest.addResult("found pageFunction");
+                    break;
+                }
+                node = node.traverseNextNode(true, null, true);
+            }
+            InspectorTest.completeTest();
+        }
     }
 }
 
