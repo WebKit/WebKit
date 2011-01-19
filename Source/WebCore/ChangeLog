@@ -1,3 +1,13 @@
+2011-01-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Laszlo Gombos and Tor Arne Vestbø.
+
+        [Qt] Remove unnecessary "../Source" from paths
+        after moving source files into Source is finished.
+
+        * WebCore.pri:
+        * WebCore.pro:
+
 2011-01-19  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

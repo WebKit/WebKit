@@ -23,7 +23,6 @@ CONFIG(standalone_package): DEFINES *= NDEBUG
 JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD \
     $$PWD/.. \
-    $$PWD/../.. \ # FIXME: Remove this include once we finish moving the source to Source
     $$PWD/assembler \
     $$PWD/bytecode \
     $$PWD/bytecompiler \

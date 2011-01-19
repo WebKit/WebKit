@@ -747,10 +747,10 @@ addExtraCompiler(xpathbison)
 
 # GENERATOR 11: WebKit Version
 # The appropriate Apple-maintained Version.xcconfig file for WebKit version information is in Source/WebKit/mac/Configurations/.
-webkitversion.wkScript = $$PWD/../../Source/WebKit/scripts/generate-webkitversion.pl
+webkitversion.wkScript = $$PWD/../WebKit/scripts/generate-webkitversion.pl
 webkitversion.output = $${WC_GENERATED_SOURCES_DIR}/WebKitVersion.h
 webkitversion.input = webkitversion.wkScript
-webkitversion.commands = perl $$webkitversion.wkScript --config $$PWD/../../Source/WebKit/mac/Configurations/Version.xcconfig --outputDir $${WC_GENERATED_SOURCES_DIR}/
+webkitversion.commands = perl $$webkitversion.wkScript --config $$PWD/../WebKit/mac/Configurations/Version.xcconfig --outputDir $${WC_GENERATED_SOURCES_DIR}/
 webkitversion.clean = ${QMAKE_VAR_WC_GENERATED_SOURCES_DIR}/WebKitVersion.h
 webkitversion.wkAddOutputToSources = false
 addExtraCompiler(webkitversion)

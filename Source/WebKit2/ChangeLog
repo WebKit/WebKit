@@ -1,3 +1,13 @@
+2011-01-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Laszlo Gombos and Tor Arne Vestbø.
+
+        [Qt] Remove unnecessary "../Source" from paths
+        after moving source files into Source is finished.
+
+        * DerivedSources.pro:
+        * WebKit2.pro:
+
 2011-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

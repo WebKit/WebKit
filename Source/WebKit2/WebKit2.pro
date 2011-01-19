@@ -7,15 +7,15 @@ isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 
 CONFIG(standalone_package) {
     isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = $$PWD/generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../../Source/WebCore/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../WebCore/generated
 } else {
     isEmpty(WEBKIT2_GENERATED_SOURCES_DIR):WEBKIT2_GENERATED_SOURCES_DIR = generated
-    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../Source/WebCore/generated
+    isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../WebCore/generated
 }
 
 include($$PWD/../../WebKit.pri)
 include($$PWD/../../common.pri)
-include($$PWD/../../Source/WebCore/features.pri)
+include($$PWD/../WebCore/features.pri)
 include(WebKit2.pri)
 
 TEMPLATE = lib
@@ -34,89 +34,88 @@ DESTDIR = $$WEBKIT2_DESTDIR
 mac: CONFIG += build_all
 
 WEBKIT2_INCLUDEPATH = \
-    $$PWD/../.. \ # FIXME: Remove this include once we move all the source to Source.
-    $$PWD/../../Source \
+    $$PWD/.. \
 
 WEBKIT2_INCLUDEPATH = \
-    $$PWD/../../Source/JavaScriptCore \
-    $$PWD/../../Source/JavaScriptCore/assembler \
-    $$PWD/../../Source/JavaScriptCore/bytecode \
-    $$PWD/../../Source/JavaScriptCore/bytecompiler \
-    $$PWD/../../Source/JavaScriptCore/debugger \
-    $$PWD/../../Source/JavaScriptCore/interpreter \
-    $$PWD/../../Source/JavaScriptCore/jit \
-    $$PWD/../../Source/JavaScriptCore/parser \
-    $$PWD/../../Source/JavaScriptCore/pcre \
-    $$PWD/../../Source/JavaScriptCore/profiler \
-    $$PWD/../../Source/JavaScriptCore/runtime \
-    $$PWD/../../Source/JavaScriptCore/wtf \
-    $$PWD/../../Source/JavaScriptCore/wtf/symbian \
-    $$PWD/../../Source/JavaScriptCore/wtf/unicode \
-    $$PWD/../../Source/JavaScriptCore/yarr \
-    $$PWD/../../Source/JavaScriptCore/API \
-    $$PWD/../../Source/JavaScriptCore/ForwardingHeaders \
+    $$PWD/../JavaScriptCore \
+    $$PWD/../JavaScriptCore/assembler \
+    $$PWD/../JavaScriptCore/bytecode \
+    $$PWD/../JavaScriptCore/bytecompiler \
+    $$PWD/../JavaScriptCore/debugger \
+    $$PWD/../JavaScriptCore/interpreter \
+    $$PWD/../JavaScriptCore/jit \
+    $$PWD/../JavaScriptCore/parser \
+    $$PWD/../JavaScriptCore/pcre \
+    $$PWD/../JavaScriptCore/profiler \
+    $$PWD/../JavaScriptCore/runtime \
+    $$PWD/../JavaScriptCore/wtf \
+    $$PWD/../JavaScriptCore/wtf/symbian \
+    $$PWD/../JavaScriptCore/wtf/unicode \
+    $$PWD/../JavaScriptCore/yarr \
+    $$PWD/../JavaScriptCore/API \
+    $$PWD/../JavaScriptCore/ForwardingHeaders \
     $$WEBKIT2_INCLUDEPATH
 
 WEBKIT2_INCLUDEPATH = \
-    $$PWD/../../Source/WebCore \
-    $$PWD/../../Source/WebCore/accessibility \
-    $$PWD/../../Source/WebCore/bindings \
-    $$PWD/../../Source/WebCore/bindings/generic \
-    $$PWD/../../Source/WebCore/bindings/js \
-    $$PWD/../../Source/WebCore/bridge \
-    $$PWD/../../Source/WebCore/bridge/c \
-    $$PWD/../../Source/WebCore/bridge/jsc \
-    $$PWD/../../Source/WebCore/css \
-    $$PWD/../../Source/WebCore/dom \
-    $$PWD/../../Source/WebCore/dom/default \
-    $$PWD/../../Source/WebCore/editing \
-    $$PWD/../../Source/WebCore/history \
-    $$PWD/../../Source/WebCore/html \
-    $$PWD/../../Source/WebCore/html/canvas \
-    $$PWD/../../Source/WebCore/inspector \
-    $$PWD/../../Source/WebCore/loader \
-    $$PWD/../../Source/WebCore/loader/appcache \
-    $$PWD/../../Source/WebCore/loader/archive \
-    $$PWD/../../Source/WebCore/loader/cache \
-    $$PWD/../../Source/WebCore/loader/icon \
-    $$PWD/../../Source/WebCore/mathml \
-    $$PWD/../../Source/WebCore/notifications \
-    $$PWD/../../Source/WebCore/page \
-    $$PWD/../../Source/WebCore/page/animation \
-    $$PWD/../../Source/WebCore/platform \
-    $$PWD/../../Source/WebCore/platform/animation \
-    $$PWD/../../Source/WebCore/platform/graphics \
-    $$PWD/../../Source/WebCore/platform/graphics/filters \
-    $$PWD/../../Source/WebCore/platform/graphics/transforms \
-    $$PWD/../../Source/WebCore/platform/image-decoders \
-    $$PWD/../../Source/WebCore/platform/mock \
-    $$PWD/../../Source/WebCore/platform/network \
-    $$PWD/../../Source/WebCore/platform/sql \
-    $$PWD/../../Source/WebCore/platform/text \
-    $$PWD/../../Source/WebCore/platform/text/transcoder \
-    $$PWD/../../Source/WebCore/plugins \
-    $$PWD/../../Source/WebCore/rendering \
-    $$PWD/../../Source/WebCore/rendering/style \
-    $$PWD/../../Source/WebCore/storage \
-    $$PWD/../../Source/WebCore/svg \
-    $$PWD/../../Source/WebCore/svg/animation \
-    $$PWD/../../Source/WebCore/svg/graphics \
-    $$PWD/../../Source/WebCore/svg/graphics/filters \
-    $$PWD/../../Source/WebCore/svg/properties \
-    $$PWD/../../Source/WebCore/websockets \
-    $$PWD/../../Source/WebCore/wml \
-    $$PWD/../../Source/WebCore/workers \
-    $$PWD/../../Source/WebCore/xml \
+    $$PWD/../WebCore \
+    $$PWD/../WebCore/accessibility \
+    $$PWD/../WebCore/bindings \
+    $$PWD/../WebCore/bindings/generic \
+    $$PWD/../WebCore/bindings/js \
+    $$PWD/../WebCore/bridge \
+    $$PWD/../WebCore/bridge/c \
+    $$PWD/../WebCore/bridge/jsc \
+    $$PWD/../WebCore/css \
+    $$PWD/../WebCore/dom \
+    $$PWD/../WebCore/dom/default \
+    $$PWD/../WebCore/editing \
+    $$PWD/../WebCore/history \
+    $$PWD/../WebCore/html \
+    $$PWD/../WebCore/html/canvas \
+    $$PWD/../WebCore/inspector \
+    $$PWD/../WebCore/loader \
+    $$PWD/../WebCore/loader/appcache \
+    $$PWD/../WebCore/loader/archive \
+    $$PWD/../WebCore/loader/cache \
+    $$PWD/../WebCore/loader/icon \
+    $$PWD/../WebCore/mathml \
+    $$PWD/../WebCore/notifications \
+    $$PWD/../WebCore/page \
+    $$PWD/../WebCore/page/animation \
+    $$PWD/../WebCore/platform \
+    $$PWD/../WebCore/platform/animation \
+    $$PWD/../WebCore/platform/graphics \
+    $$PWD/../WebCore/platform/graphics/filters \
+    $$PWD/../WebCore/platform/graphics/transforms \
+    $$PWD/../WebCore/platform/image-decoders \
+    $$PWD/../WebCore/platform/mock \
+    $$PWD/../WebCore/platform/network \
+    $$PWD/../WebCore/platform/sql \
+    $$PWD/../WebCore/platform/text \
+    $$PWD/../WebCore/platform/text/transcoder \
+    $$PWD/../WebCore/plugins \
+    $$PWD/../WebCore/rendering \
+    $$PWD/../WebCore/rendering/style \
+    $$PWD/../WebCore/storage \
+    $$PWD/../WebCore/svg \
+    $$PWD/../WebCore/svg/animation \
+    $$PWD/../WebCore/svg/graphics \
+    $$PWD/../WebCore/svg/graphics/filters \
+    $$PWD/../WebCore/svg/properties \
+    $$PWD/../WebCore/websockets \
+    $$PWD/../WebCore/wml \
+    $$PWD/../WebCore/workers \
+    $$PWD/../WebCore/xml \
     $$WEBKIT2_INCLUDEPATH
 
 WEBKIT2_INCLUDEPATH = \
-    $$PWD/../../Source/WebCore/bridge/qt \
-    $$PWD/../../Source/WebCore/page/qt \
-    $$PWD/../../Source/WebCore/platform/graphics/qt \
-    $$PWD/../../Source/WebCore/platform/network/qt \
-    $$PWD/../../Source/WebCore/platform/qt \
-    $$PWD/../../WebKit/qt/Api \
-    $$PWD/../../WebKit/qt/WebCoreSupport \
+    $$PWD/../WebCore/bridge/qt \
+    $$PWD/../WebCore/page/qt \
+    $$PWD/../WebCore/platform/graphics/qt \
+    $$PWD/../WebCore/platform/network/qt \
+    $$PWD/../WebCore/platform/qt \
+    $$PWD/../WebKit/qt/Api \
+    $$PWD/../WebKit/qt/WebCoreSupport \
     $$WEBKIT2_INCLUDEPATH
 
 WEBKIT2_INCLUDEPATH = \
@@ -171,7 +170,7 @@ symbian {
     INCLUDEPATH = $$WEBKIT2_INCLUDEPATH $$INCLUDEPATH
 }
 
-PREFIX_HEADER = $$PWD/../../Source/WebKit2/WebKit2Prefix.h
+PREFIX_HEADER = $$PWD/../WebKit2/WebKit2Prefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
 WEBKIT2_GENERATED_HEADERS = \

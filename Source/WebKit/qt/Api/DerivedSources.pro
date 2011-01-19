@@ -45,7 +45,7 @@ for(HEADER, WEBKIT_API_HEADERS) {
     # the package sources are relocatable.
 
     PATH_TO_HEADER = $$HEADER
-    CONFIG(standalone_package): PATH_TO_HEADER = ../../../Source/WebKit/qt/Api/$$basename(HEADER)
+    CONFIG(standalone_package): PATH_TO_HEADER = ../../WebKit/qt/Api/$$basename(HEADER)
 
     eval($${HEADER_TARGET}.target = $${DESTDIR}/$${HEADER_NAME})
     eval($${HEADER_TARGET}.depends = $$HEADER)

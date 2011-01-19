@@ -1,3 +1,12 @@
+2011-01-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Laszlo Gombos and Tor Arne Vestbø.
+
+        [Qt] Remove unnecessary "../Source" from paths
+        after moving source files into Source is finished.
+
+        * JavaScriptCore.pri:
+
 2011-01-19  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Darin Adler.
