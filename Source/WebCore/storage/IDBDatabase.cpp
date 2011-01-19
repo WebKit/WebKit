@@ -73,12 +73,6 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     options.getKeyBool("autoIncrement", autoIncrement);
     // FIXME: Look up evictable and pass that on as well.
 
-    if (autoIncrement) {
-        // FIXME: Implement support for auto increment.
-        ec = IDBDatabaseException::UNKNOWN_ERR;
-        return 0;
-    }
-
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_setVersionTransaction.get(), ec);
     if (!objectStore) {
         ASSERT(ec);

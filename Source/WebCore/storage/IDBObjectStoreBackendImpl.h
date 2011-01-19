@@ -82,6 +82,7 @@ private:
 
     void loadIndexes();
     SQLiteDatabase& sqliteDatabase() const;
+    PassRefPtr<IDBKey> genAutoIncrementKey();
 
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
     static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
@@ -103,6 +104,7 @@ private:
 
     typedef HashMap<String, RefPtr<IDBIndexBackendImpl> > IndexMap;
     IndexMap m_indexes;
+    int m_autoIncrementNumber;
 };
 
 } // namespace WebCore

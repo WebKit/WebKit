@@ -1,0 +1,183 @@
+Test IndexedDB's IDBObjectStore auto-increment feature.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('Address Book')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+openSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+db = event.result
+db.setVersion('new version')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+setVersionSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+trans = event.result
+PASS trans !== null is true
+Deleted all object stores.
+createObjectStore():
+store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})
+db.createObjectStore('StoreWithAutoIncrement', {autoIncrement: true})
+db.createObjectStore('PlainOldStore', {autoIncrement: false})
+storeNames = db.objectStoreNames
+PASS store.name is "StoreWithKeyPath"
+PASS store.keyPath is 'id'
+PASS storeNames.contains('StoreWithKeyPath') is true
+PASS storeNames.contains('StoreWithAutoIncrement') is true
+PASS storeNames.contains('PlainOldStore') is true
+PASS storeNames.length is 3
+setVersionCompleted():
+trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+store = trans.objectStore('StoreWithKeyPath')
+Insert in object store with key gen and key path
+store.add({name: 'Lincoln', number: '7012'})
+addLincolnError():
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.UNKNOWN_ERR
+store = trans.objectStore('StoreWithAutoIncrement')
+Insert into object store with key gen using explicit key
+store.add({name: 'Lincoln'}, 1)
+addWithExplicitKeyError():
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+Insert into object store with key gen and no key path
+store.add({name: 'Lincoln', number: '7012'})
+addLincolnSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is 1
+store.get(1)
+getLincolnSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result.name is "Lincoln"
+PASS event.result.number is "7012"
+store.put({name: 'Abraham', number: '2107'})
+putAbrahamSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is 2
+store.get(2)
+getAbrahamSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result.name is "Abraham"
+PASS event.result.number is "2107"
+store = trans.objectStore('PlainOldStore')
+Try adding with no key to object store without auto increment.
+store.add({name: 'Adam'})
+addAdamError():
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is webkitIDBDatabaseException.DATA_ERR
+store.add({name: 'Adam'}, 1)
+addAdamSuccess():
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

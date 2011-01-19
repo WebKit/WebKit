@@ -44,16 +44,8 @@ function cleaned()
     evalAndLog("db.createObjectStore('a', {keyPath: 'a'})");
     evalAndLog("db.createObjectStore('b')");
 
-    try {
-        // FIXME: This should work in the future.
-        debug("db.createObjectStore('c', {autoIncrement: true});");
-        db.createObjectStore('c', {autoIncrement: true});
-        testFailed('createObjectStore with autoIncrement = true should throw');
-    } catch (err) {
-        testPassed("Exception thrown");
-        code = err.code;
-        shouldBe("code", "webkitIDBDatabaseException.UNKNOWN_ERR");
-    }
+    debug("db.createObjectStore('c', {autoIncrement: true});");
+    db.createObjectStore('c', {autoIncrement: true});
 
     trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     shouldBe("trans.mode", "webkitIDBTransaction.READ_WRITE");

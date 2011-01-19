@@ -59,6 +59,7 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBSQLiteDatabase* database
     , m_name(name)
     , m_keyPath(keyPath)
     , m_autoIncrement(autoIncrement)
+    , m_autoIncrementNumber(-1)
 {
     loadIndexes();
 }
@@ -69,6 +70,7 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBSQLiteDatabase* database
     , m_name(name)
     , m_keyPath(keyPath)
     , m_autoIncrement(autoIncrement)
+    , m_autoIncrementNumber(-1)
 {
 }
 
@@ -113,7 +115,7 @@ void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<
     }
 
     ASSERT((key->type() == IDBKey::StringType) != query.isColumnNull(0));
-    // FIXME: Implement date.
+    ASSERT((key->type() == IDBKey::DateType) != query.isColumnNull(1));
     ASSERT((key->type() == IDBKey::NumberType) != query.isColumnNull(2));
 
     callbacks->onSuccess(SerializedScriptValue::createFromWire(query.getColumnText(3)));
@@ -200,22 +202,36 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
 
-    // FIXME: Support auto-increment.
+    if (!objectStore->m_keyPath.isNull() && key) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "A key was supplied for an objectStore that has a keyPath."));
+        return;
+    }
 
-    if (!objectStore->m_keyPath.isNull()) {
-        if (key) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "A key was supplied for an objectStore that has a keyPath."));
+    if (objectStore->autoIncrement() && key) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "A key was supplied for an objectStore that is using auto increment."));
+        return;
+    }
+
+    if (objectStore->autoIncrement()) {
+        key = objectStore->genAutoIncrementKey();
+
+        if (!objectStore->m_keyPath.isNull()) {
+            // FIXME: Inject the generated key into the object.
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Adding data to object stores with auto increment and in-line keys not yet supported."));
             return;
         }
+    } else if (!objectStore->m_keyPath.isNull()) {
         key = fetchKeyFromKeyPath(value.get(), objectStore->m_keyPath);
+
         if (!key) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "The key could not be fetched from the keyPath."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "The key could not be fetched from the keyPath."));
             return;
         }
     } else if (!key) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "No key supplied."));
         return;
     }
+
     if (key->type() == IDBKey::NullType) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "NULL key is not allowed."));
         return;
@@ -509,6 +525,27 @@ void IDBObjectStoreBackendImpl::addIndexToMap(ScriptExecutionContext*, PassRefPt
     RefPtr<IDBIndexBackendImpl> indexPtr = index;
     ASSERT(!objectStore->m_indexes.contains(indexPtr->name()));
     objectStore->m_indexes.set(indexPtr->name(), indexPtr);
+}
+
+PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::genAutoIncrementKey()
+{
+    if (m_autoIncrementNumber > 0)
+        return IDBKey::createNumber(m_autoIncrementNumber++);
+
+    String sql = "SELECT max(keyNumber) + 1 FROM ObjectStoreData WHERE objectStoreId = ? AND keyString IS NULL AND keyDate IS NULL";
+
+    SQLiteStatement query(sqliteDatabase(), sql);
+    bool ok = query.prepare() == SQLResultOk;
+    ASSERT_UNUSED(ok, ok);
+
+    query.bindInt64(1, id());
+
+    if (query.step() != SQLResultRow || query.isColumnNull(0))
+        m_autoIncrementNumber = 1;
+    else
+        m_autoIncrementNumber = static_cast<int>(query.getColumnDouble(0));
+
+    return IDBKey::createNumber(m_autoIncrementNumber++);
 }
 
 

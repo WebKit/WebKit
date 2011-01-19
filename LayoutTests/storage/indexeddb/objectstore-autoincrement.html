@@ -1,0 +1,181 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB's IDBObjectStore auto-increment feature.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("webkitIndexedDB.open('Address Book')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    verifySuccessEvent(event);
+    window.db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = setVersionSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = setVersionCompleted;
+
+    deleteAllObjectStores(db, createObjectStore);
+}
+
+function createObjectStore()
+{
+    debug("createObjectStore():");
+    window.store = evalAndLog("store = db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})");
+    evalAndLog("db.createObjectStore('StoreWithAutoIncrement', {autoIncrement: true})");
+    evalAndLog("db.createObjectStore('PlainOldStore', {autoIncrement: false})");
+    var storeNames = evalAndLog("storeNames = db.objectStoreNames");
+
+    shouldBeEqualToString("store.name", "StoreWithKeyPath");
+    shouldBe("store.keyPath", "'id'");
+    shouldBe("storeNames.contains('StoreWithKeyPath')", "true");
+    shouldBe("storeNames.contains('StoreWithAutoIncrement')", "true");
+    shouldBe("storeNames.contains('PlainOldStore')", "true");
+    shouldBe("storeNames.length", "3");
+
+    // Let the setVersion transaction complete.
+}
+
+function setVersionCompleted()
+{
+    debug("setVersionCompleted():");
+
+    window.trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = done;
+
+    window.store = evalAndLog("store = trans.objectStore('StoreWithKeyPath')");
+
+    debug("Insert in object store with key gen and key path");
+    result = evalAndLog("store.add({name: 'Lincoln', number: '7012'})");
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = addLincolnError;
+}
+
+function addLincolnError()
+{
+    debug("addLincolnError():");
+    verifyErrorEvent(event);
+    // FIXME: This should be implemented, but we make it an error for now.
+    shouldBe("event.code", "webkitIDBDatabaseException.UNKNOWN_ERR");
+
+    window.store = evalAndLog("store = trans.objectStore('StoreWithAutoIncrement')");
+    debug("Insert into object store with key gen using explicit key");
+    result = evalAndLog("store.add({name: 'Lincoln'}, 1)");
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = addWithExplicitKeyError;
+}
+
+function addWithExplicitKeyError()
+{
+    debug("addWithExplicitKeyError():");
+    verifyErrorEvent(event);
+    shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+
+    debug("Insert into object store with key gen and no key path");
+    result = evalAndLog("store.add({name: 'Lincoln', number: '7012'})");
+    result.onsuccess = addLincolnSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addLincolnSuccess()
+{
+    debug("addLincolnSuccess():");
+    verifySuccessEvent(event);
+    shouldBe("event.result", "1");
+
+    result = evalAndLog("store.get(1)");
+    result.onsuccess = getLincolnSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getLincolnSuccess()
+{
+    debug("getLincolnSuccess():");
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result.name", "Lincoln");
+    shouldBeEqualToString("event.result.number", "7012");
+
+    result = evalAndLog("store.put({name: 'Abraham', number: '2107'})");
+    result.onsuccess = putAbrahamSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function putAbrahamSuccess()
+{
+    debug("putAbrahamSuccess():");
+    verifySuccessEvent(event);
+    shouldBe("event.result", "2");
+
+    result = evalAndLog("store.get(2)");
+    result.onsuccess = getAbrahamSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getAbrahamSuccess()
+{
+    debug("getAbrahamSuccess():");
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result.name", "Abraham");
+    shouldBeEqualToString("event.result.number", "2107");
+
+    window.store = evalAndLog("store = trans.objectStore('PlainOldStore')");
+    debug("Try adding with no key to object store without auto increment.");
+    result = evalAndLog("store.add({name: 'Adam'})");
+    result.onsuccess = unexpectedSuccessCallback;
+    result.onerror = addAdamError;
+}
+
+function addAdamError()
+{
+    debug("addAdamError():");
+    verifyErrorEvent(event);
+    shouldBe("event.code", "webkitIDBDatabaseException.DATA_ERR");
+
+    result = evalAndLog("store.add({name: 'Adam'}, 1)");
+    result.onsuccess = addAdamSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function addAdamSuccess()
+{
+    debug("addAdamSuccess():");
+    verifySuccessEvent(event);
+    shouldBe("event.result", "1");
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

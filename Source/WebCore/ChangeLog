@@ -1,3 +1,20 @@
+2011-01-19  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Support auto-increment keys
+        https://bugs.webkit.org/show_bug.cgi?id=52576
+
+        Add support for auto-increment keys.
+
+        Test: storage/indexeddb/objectstore-autoincrement.html
+
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::genAutoIncrementKey):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+
 2011-01-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Laszlo Gombos and Tor Arne Vestbø.
