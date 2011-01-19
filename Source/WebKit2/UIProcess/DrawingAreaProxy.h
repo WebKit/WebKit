@@ -89,7 +89,7 @@ private:
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
     virtual void update(const UpdateInfo&) { }
-    virtual void didSetSize() { }
+    virtual void didSetSize(const UpdateInfo&) { }
 };
 
 } // namespace WebKit

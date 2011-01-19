@@ -28,6 +28,31 @@
 
 2011-01-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Send a new SetSize message if the size differs from the current size
+        https://bugs.webkit.org/show_bug.cgi?id=52728
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::didSetSize):
+        Add UpdateInfo parameter.
+
+        * UIProcess/DrawingAreaProxy.messages.in:
+        Add UpdateInfo parameter to the DidSetSize message.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didSetSize):
+        If the view size differs from the current size send another SetSize message.
+
+        * UIProcess/DrawingAreaProxyImpl.h:
+        Add UpdateInfo parameter to didSetSize.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setSize):
+        The DidSetSize message now takes an UpdateInfo parameter.
+
+2011-01-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Throttle sending of SetSize messages

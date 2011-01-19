@@ -22,5 +22,5 @@
 
 messages -> DrawingAreaProxy {
     Update(WebKit::UpdateInfo updateInfo)
-    DidSetSize()
+    DidSetSize(WebKit::UpdateInfo updateInfo)
 }

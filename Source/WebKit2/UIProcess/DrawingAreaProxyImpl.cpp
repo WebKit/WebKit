@@ -105,12 +105,13 @@ void DrawingAreaProxyImpl::update(const UpdateInfo& updateInfo)
     m_webPageProxy->process()->send(Messages::DrawingArea::DidUpdate(), m_webPageProxy->pageID());
 }
 
-void DrawingAreaProxyImpl::didSetSize()
+void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
 {
     ASSERT(m_isWaitingForDidSetSize);
     m_isWaitingForDidSetSize = false;
 
-    // FIXME: Send a new SetSize message if needed.
+    if (m_size != updateInfo.viewSize)
+        sendSetSize();
 
     m_backingStore = nullptr;
 }

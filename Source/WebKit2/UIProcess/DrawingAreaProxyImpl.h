@@ -52,7 +52,7 @@ private:
 
     // CoreIPC message handlers
     virtual void update(const UpdateInfo&);
-    virtual void didSetSize();
+    virtual void didSetSize(const UpdateInfo&);
     
     void incorporateUpdate(const UpdateInfo&);
     void sendSetSize();

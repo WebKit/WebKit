@@ -140,9 +140,12 @@ void DrawingAreaImpl::setSize(const IntSize& size)
     m_webPage->setSize(size);
     m_webPage->layoutIfNeeded();
 
+    UpdateInfo updateInfo;
+    updateInfo.viewSize = m_webPage->size();
+
     // FIXME: Repaint.
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize());
+    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(updateInfo));
 }
 
 void DrawingAreaImpl::didUpdate()
