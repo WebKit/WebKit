@@ -1,0 +1,4 @@
+Tests that CPU profiling works.
+
+found fib
+
