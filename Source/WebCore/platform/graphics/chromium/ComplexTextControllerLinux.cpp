@@ -32,6 +32,7 @@
 #include "ComplexTextControllerLinux.h"
 
 #include "Font.h"
+#include "TextRun.h"
 
 #include <unicode/normlzr.h>
 

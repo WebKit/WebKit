@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 #include <wtf/MathExtras.h>
 
 using namespace std;

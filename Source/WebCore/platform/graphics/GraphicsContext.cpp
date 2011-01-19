@@ -32,6 +32,7 @@
 #include "ImageBuffer.h"
 #include "IntRect.h"
 #include "RoundedIntRect.h"
+#include "TextRun.h"
 
 using namespace std;
 

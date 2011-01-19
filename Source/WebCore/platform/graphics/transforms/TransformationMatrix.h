@@ -26,7 +26,6 @@
 #ifndef TransformationMatrix_h
 #define TransformationMatrix_h
 
-#include "AffineTransform.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"
 #include <string.h> //for memcpy

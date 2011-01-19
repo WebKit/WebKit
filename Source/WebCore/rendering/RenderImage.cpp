@@ -41,6 +41,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SelectionController.h"
+#include "TextRun.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/UnusedParam.h>
 

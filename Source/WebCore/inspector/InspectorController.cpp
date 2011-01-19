@@ -96,6 +96,7 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
+#include "TextRun.h"
 #include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
 #include <wtf/text/StringConcatenate.h>

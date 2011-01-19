@@ -40,6 +40,7 @@
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 #include "WebCoreInstanceHandle.h"
 #include <tchar.h>
 #include <windows.h>

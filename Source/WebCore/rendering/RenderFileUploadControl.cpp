@@ -37,6 +37,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "TextRun.h"
 #include <math.h>
 
 using namespace std;

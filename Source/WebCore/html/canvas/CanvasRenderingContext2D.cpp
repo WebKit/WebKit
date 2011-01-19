@@ -57,6 +57,7 @@
 #include "Settings.h"
 #include "StrokeStyleApplier.h"
 #include "TextMetrics.h"
+#include "TextRun.h"
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
 #include "Chrome.h"

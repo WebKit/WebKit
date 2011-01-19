@@ -32,6 +32,7 @@
 #include "CharacterNames.h"
 #include "Font.h"
 #include "TextBreakIterator.h"
+#include "TextRun.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 

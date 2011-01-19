@@ -30,6 +30,7 @@
 
 #import <WebCore/Font.h>
 #import <WebCore/GraphicsContext.h>
+#import <WebCore/TextRun.h>
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <WebKit/WebNSFileManagerExtras.h>
 #import <WebKit/WebNSObjectExtras.h>

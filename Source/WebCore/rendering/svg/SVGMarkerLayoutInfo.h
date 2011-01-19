@@ -21,6 +21,7 @@
 #define SVGMarkerLayoutInfo_h
 
 #if ENABLE(SVG)
+#include "AffineTransform.h"
 #include "RenderObject.h"
 #include "SVGMarkerData.h"
 #include <wtf/Noncopyable.h>

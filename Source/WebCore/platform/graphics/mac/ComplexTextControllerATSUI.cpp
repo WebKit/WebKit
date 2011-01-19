@@ -28,6 +28,7 @@
 #include "CharacterNames.h"
 #include "Font.h"
 #include "ShapeArabic.h"
+#include "TextRun.h"
 
 #ifdef __LP64__
 // ATSUTextInserted() is SPI in 64-bit.

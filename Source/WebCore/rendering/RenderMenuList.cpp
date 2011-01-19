@@ -39,6 +39,7 @@
 #include "RenderScrollbar.h"
 #include "RenderTheme.h"
 #include "SelectElement.h"
+#include "TextRun.h"
 #include <math.h>
 
 using namespace std;

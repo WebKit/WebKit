@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 #include <cairo.h>
 #include <gdk/gdk.h>
 #include <pango/pango.h>

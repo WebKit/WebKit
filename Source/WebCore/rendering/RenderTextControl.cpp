@@ -41,6 +41,7 @@
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
+#include "TextRun.h"
 
 using namespace std;
 

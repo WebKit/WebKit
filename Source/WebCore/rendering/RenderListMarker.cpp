@@ -32,6 +32,7 @@
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderView.h"
+#include "TextRun.h"
 
 using namespace std;
 using namespace WTF;

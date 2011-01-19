@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TransformationMatrix.h"
 
+#include "AffineTransform.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatQuad.h"

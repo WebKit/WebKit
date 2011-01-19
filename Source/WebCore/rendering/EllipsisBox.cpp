@@ -25,6 +25,7 @@
 #include "HitTestResult.h"
 #include "PaintInfo.h"
 #include "RootInlineBox.h"
+#include "TextRun.h"
 
 namespace WebCore {
 

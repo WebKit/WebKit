@@ -35,6 +35,7 @@
 #include "FontDescription.h"
 #include "GraphicsContext.h"
 #include "PlatformContextSkia.h"
+#include "TextRun.h"
 #include "WebFloatPoint.h"
 #include "WebFloatRect.h"
 #include "WebFontDescription.h"

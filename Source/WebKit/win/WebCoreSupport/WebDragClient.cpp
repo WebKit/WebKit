@@ -43,6 +43,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StringTruncator.h>
+#include <WebCore/TextRun.h>
 #include <WebCore/WebCoreTextRenderer.h>
 #pragma warning(pop) 
 

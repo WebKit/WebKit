@@ -29,7 +29,6 @@
 #include "FontDescription.h"
 #include "FontFallbackList.h"
 #include "SimpleFontData.h"
-#include "TextRun.h"
 #include "TypesettingFeatures.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -51,6 +50,7 @@ class GlyphBuffer;
 class GlyphPageTreeNode;
 class GraphicsContext;
 class SVGFontElement;
+class TextRun;
 
 struct GlyphData;
 

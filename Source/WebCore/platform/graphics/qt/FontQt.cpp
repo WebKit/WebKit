@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "Pattern.h"
+#include "TextRun.h"
 
 #include <QBrush>
 #include <QFontInfo>

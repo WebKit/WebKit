@@ -1,3 +1,49 @@
+2011-01-19  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Perform some forward declaration
+        https://bugs.webkit.org/show_bug.cgi?id=52522
+
+        No new tests because no new functionality.
+
+        * accessibility/AccessibilityObject.h:
+        * css/WebKitCSSMatrix.cpp:
+        * html/HTMLAreaElement.cpp:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * inspector/InspectorController.cpp:
+        * platform/graphics/FloatPoint.cpp:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/Font.h:
+        * platform/graphics/FontFastPath.cpp:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/StringTruncator.cpp:
+        * platform/graphics/WidthIterator.cpp:
+        * platform/graphics/mac/ComplexTextController.cpp:
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/EllipsisBox.cpp:
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlockLineLayout.cpp:
+        * rendering/RenderEmbeddedObject.cpp:
+        * rendering/RenderFileUploadControl.cpp:
+        * rendering/RenderFlexibleBox.cpp:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListMarker.cpp:
+        * rendering/RenderMenuList.cpp:
+        * rendering/RenderObject.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderTextControl.cpp:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        * rendering/svg/SVGMarkerLayoutInfo.h:
+        * rendering/svg/SVGTextMetrics.cpp:
+        * svg/SVGFont.cpp:
+
 2011-01-19  Adrienne Walker  <enne@google.com>
 
         Reviewed by Kenneth Russell.

@@ -31,6 +31,7 @@
 
 #include "Font.h"
 #include "PlatformCALayer.h"
+#include "TextRun.h"
 #include <QuartzCore/CACFLayer.h>
 
 using namespace std;

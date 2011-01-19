@@ -29,6 +29,7 @@
 #include "CachedResourceLoader.h"
 #include "ColorSpace.h"
 #include "Document.h"
+#include "Image.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
 #include "SVGImageBufferTools.h"

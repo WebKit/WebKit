@@ -49,6 +49,7 @@
 #include "RenderWidgetProtector.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TextRun.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLVideoElement.h"

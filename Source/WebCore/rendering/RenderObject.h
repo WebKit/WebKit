@@ -26,7 +26,6 @@
 #ifndef RenderObject_h
 #define RenderObject_h
 
-#include "AffineTransform.h"
 #include "CachedResourceClient.h"
 #include "Document.h"
 #include "Element.h"
@@ -44,6 +43,7 @@
 
 namespace WebCore {
 
+class AffineTransform;
 class AnimationController;
 class HitTestResult;
 class InlineBox;

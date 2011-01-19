@@ -30,6 +30,7 @@
 #include "GlyphBuffer.h"
 #include "GlyphPageTreeNode.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 #include "WidthIterator.h"
 
 #include <wtf/MathExtras.h>

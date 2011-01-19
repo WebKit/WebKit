@@ -25,6 +25,7 @@
 #include "Font.h"
 #include "GlyphBuffer.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 #include <wtf/MathExtras.h>
 
 #if USE(ICU_UNICODE)

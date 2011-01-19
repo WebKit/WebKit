@@ -23,6 +23,7 @@
 #include "SVGTextMetrics.h"
 
 #include "RenderSVGInlineText.h"
+#include "TextRun.h"
 
 namespace WebCore {
 

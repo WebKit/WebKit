@@ -43,6 +43,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "NodeRenderStyle.h"
 #include "OptionGroupElement.h"
 #include "OptionElement.h"
 #include "Page.h"
@@ -54,7 +55,7 @@
 #include "ScrollbarTheme.h"
 #include "SelectElement.h"
 #include "SelectionController.h"
-#include "NodeRenderStyle.h"
+#include "TextRun.h"
 #include <math.h>
 
 using namespace std;

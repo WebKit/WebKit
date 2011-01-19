@@ -31,6 +31,7 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGRootInlineBox.h"
+#include "TextRun.h"
 
 using namespace std;
 

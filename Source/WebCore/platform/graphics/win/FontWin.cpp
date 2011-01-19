@@ -32,6 +32,7 @@
 #include "IntRect.h"
 #include "Logging.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 #include "UniscribeController.h"
 #include <wtf/MathExtras.h>
 

@@ -48,6 +48,7 @@
 #include "RenderView.h"
 #include "SelectionController.h"
 #include "Settings.h"
+#include "TextRun.h"
 #include "TransformState.h"
 #include <wtf/StdLibExtras.h>
 

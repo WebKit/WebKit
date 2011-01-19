@@ -31,7 +31,6 @@
 #define AccessibilityObject_h
 
 #include "IntRect.h"
-#include "Range.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include <wtf/Forward.h>

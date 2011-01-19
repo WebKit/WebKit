@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "ComplexTextController.h"
+#include "TextRun.h"
 #include "WebCoreSystemInterface.h"
 
 #if USE(CORE_TEXT)

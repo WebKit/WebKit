@@ -28,6 +28,7 @@
 #include "CharacterNames.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "TextRun.h"
 #include <wtf/StdLibExtras.h>
 
 using namespace std;

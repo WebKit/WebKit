@@ -40,6 +40,7 @@
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
 #include "Text.h"
+#include "TextRun.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 

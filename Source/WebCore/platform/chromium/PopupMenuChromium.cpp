@@ -54,6 +54,7 @@
 #include "ScrollbarTheme.h"
 #include "StringTruncator.h"
 #include "SystemTime.h"
+#include "TextRun.h"
 #include "UserGestureIndicator.h"
 
 #include <wtf/CurrentTime.h>

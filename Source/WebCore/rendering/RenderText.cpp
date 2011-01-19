@@ -40,6 +40,7 @@
 #include "Text.h"
 #include "TextBreakIterator.h"
 #include "TextResourceDecoder.h"
+#include "TextRun.h"
 #include "VisiblePosition.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>

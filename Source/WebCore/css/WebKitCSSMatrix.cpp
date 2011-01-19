@@ -32,7 +32,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
-#include "RenderStyle.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {

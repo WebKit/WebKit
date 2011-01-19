@@ -34,6 +34,7 @@
 #include "RenderListMarker.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "TextRun.h"
 #include "TrailingFloatsRootInlineBox.h"
 #include "VerticalPositionCache.h"
 #include "break_lines.h"

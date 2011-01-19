@@ -27,6 +27,7 @@
 #include "config.h"
 #include "FloatPoint.h"
 
+#include "AffineTransform.h"
 #include "TransformationMatrix.h"
 #include "FloatConversion.h"
 #include "IntPoint.h"
