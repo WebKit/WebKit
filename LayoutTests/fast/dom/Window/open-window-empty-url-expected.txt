@@ -1,3 +1,0 @@
-Test that calling window.open(""); does not trigger any assertions or cause any crashes.
-
-PASS: Calling window.open() with an empty URL did not trigger any assertions or cause any crashes.

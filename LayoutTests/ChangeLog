@@ -1,3 +1,14 @@
+2011-01-18  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r76084.
+        http://trac.webkit.org/changeset/76084
+        https://bugs.webkit.org/show_bug.cgi?id=52654
+
+        Crashes on the bots
+
+        * fast/dom/Window/open-window-empty-url-expected.txt: Removed.
+        * fast/dom/Window/open-window-empty-url.html: Removed.
+
 2011-01-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.
