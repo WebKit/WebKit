@@ -52,7 +52,7 @@ class MockFileSystem(object):
         idx = path.rfind('/')
         return (path[0:idx], path[idx + 1:])
 
-    def basename(self):
+    def basename(self, path):
         return self._split(path)[1]
 
     def copyfile(self, source, destination):
