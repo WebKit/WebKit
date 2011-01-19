@@ -117,13 +117,16 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 
     m_backingStore->incorporateUpdate(updateInfo);
 
+    bool shouldScroll = !updateInfo.scrollRect.isEmpty();
+
+    if (shouldScroll)
+        m_webPageProxy->scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
+    
     for (size_t i = 0; i < updateInfo.updateRects.size(); ++i)
         m_webPageProxy->setViewNeedsDisplay(updateInfo.updateRects[i]);
 
-    if (!updateInfo.scrollRect.isEmpty()) {
-        m_webPageProxy->scrollView(updateInfo.scrollRect, updateInfo.scrollOffset);
+    if (shouldScroll)
         m_webPageProxy->displayView();
-    }
 }
 
 void DrawingAreaProxyImpl::sendSetSize()

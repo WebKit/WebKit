@@ -135,8 +135,10 @@ void PageClientImpl::displayView()
 
 void PageClientImpl::scrollView(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
-    // FIXME: Actually scroll the view contents.
-    setViewNeedsDisplay(scrollRect);
+    NSRect clippedScrollRect = NSIntersectionRect(scrollRect, NSOffsetRect(scrollRect, -scrollOffset.width(), -scrollOffset.height()));
+
+    [m_wkView translateRectsNeedingDisplayInRect:clippedScrollRect by:scrollOffset];
+    [m_wkView scrollRect:clippedScrollRect by:scrollOffset];
 }
 
 IntSize PageClientImpl::viewSize()

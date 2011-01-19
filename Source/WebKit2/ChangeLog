@@ -1,5 +1,20 @@
 2011-01-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Make PageClientImpl::scrollView do hardware blitting
+        https://bugs.webkit.org/show_bug.cgi?id=52689
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::scrollView):
+        Clip the scroll rect and scroll the view.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        Scroll before painting.
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Artifacts when scrolling with new drawing area
