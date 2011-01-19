@@ -1,3 +1,18 @@
+2011-01-19  Peter Rybin  <peter.rybin@gmail.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: script column offset is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=52580
+
+        Column is updated in 3 places, 2 less probable places contained error.
+        Fixed now.
+
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::advanceSlowCase):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedString::advancePastNewline):
+
 2011-01-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

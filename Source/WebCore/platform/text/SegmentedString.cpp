@@ -246,7 +246,8 @@ void SegmentedString::advanceSlowCase(int& lineNumber)
         if (*m_currentString.m_current++ == '\n' && m_currentString.doNotExcludeLineNumbers()) {
             ++lineNumber;
             ++m_currentLine;
-            m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed();
+            // Plus 1 because numberOfCharactersConsumed value hasn't incremented yet; it does with m_length decrement below.
+            m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
         }
         if (--m_currentString.m_length == 0)
             advanceSubstring();

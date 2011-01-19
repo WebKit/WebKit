@@ -164,7 +164,7 @@ public:
             lineNumber += newLineFlag;
             m_currentLine += newLineFlag;
             if (newLineFlag)
-                m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed();
+                m_numberOfCharactersConsumedPriorToCurrentLine = numberOfCharactersConsumed() + 1;
             --m_currentString.m_length;
             m_currentChar = ++m_currentString.m_current;
             return;
