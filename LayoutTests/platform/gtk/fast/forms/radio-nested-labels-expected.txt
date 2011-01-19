@@ -8,29 +8,29 @@ layer at (0,0) size 800x600
           text run at (0,0) width 595: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
           text run at (595,0) width 87: "only works in"
           text run at (0,19) width 534: "DumpRenderTree. It can be tested manually outside of DRT just by clicking around."
-      RenderBlock {FORM} at (0,54) size 784x40
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderBlock {INPUT} at (4,3) size 15x15
-          RenderInline {LABEL} at (0,0) size 185x19
-            RenderText {#text} at (23,1) size 27x19
-              text run at (23,1) width 27: "one "
-            RenderBlock {INPUT} at (54,3) size 15x15
-            RenderInline {LABEL} at (0,0) size 135x19
-              RenderText {#text} at (73,1) size 28x19
-                text run at (73,1) width 28: "two "
-              RenderBlock {INPUT} at (105,3) size 15x15
-              RenderInline {LABEL} at (0,0) size 84x19
-                RenderText {#text} at (124,1) size 35x19
-                  text run at (124,1) width 35: "three "
-                RenderBlock {INPUT} at (163,3) size 15x15
+      RenderBlock {FORM} at (0,54) size 784x39
+        RenderBlock (anonymous) at (0,0) size 784x20
+          RenderBlock {INPUT} at (4,4) size 13x13
+          RenderInline {LABEL} at (0,0) size 179x19
+            RenderText {#text} at (21,0) size 27x19
+              text run at (21,0) width 27: "one "
+            RenderBlock {INPUT} at (52,4) size 13x13
+            RenderInline {LABEL} at (0,0) size 131x19
+              RenderText {#text} at (69,0) size 28x19
+                text run at (69,0) width 28: "two "
+              RenderBlock {INPUT} at (101,4) size 13x13
+              RenderInline {LABEL} at (0,0) size 82x19
+                RenderText {#text} at (118,0) size 35x19
+                  text run at (118,0) width 35: "three "
+                RenderBlock {INPUT} at (157,4) size 13x13
                 RenderInline {LABEL} at (0,0) size 26x19
-                  RenderText {#text} at (182,1) size 26x19
-                    text run at (182,1) width 26: "four"
-        RenderBlock (anonymous) at (0,21) size 784x19
+                  RenderText {#text} at (174,0) size 26x19
+                    text run at (174,0) width 26: "four"
+        RenderBlock (anonymous) at (0,20) size 784x19
           RenderBlock {DIV} at (0,0) size 784x19
             RenderText {#text} at (0,0) size 104x19
               text run at (0,0) width 104: "Test Succeeded!"
-        RenderBlock (anonymous) at (0,40) size 784x0
+        RenderBlock (anonymous) at (0,39) size 784x0
           RenderInline {LABEL} at (0,0) size 0x0
             RenderInline {LABEL} at (0,0) size 0x0
               RenderInline {LABEL} at (0,0) size 0x0

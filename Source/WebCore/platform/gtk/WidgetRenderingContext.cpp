@@ -65,21 +65,6 @@ static void scheduleScratchBufferPurge()
     purgeScratchBufferTimer.startOneShot(2);
 }
 
-static IntSize getExtraSpaceForWidget(RenderThemeGtk* theme)
-{
-    // Checkboxes and scrollbar thumbs often draw outside their boundaries. Here we figure out
-    // the maximum amount of space we need for any type of widget and use that to increase the
-    // size of the scratch buffer, while preserving the final widget position.
-
-    // The checkbox extra space is calculated by looking at the widget style.
-    int indicatorSize, indicatorSpacing;
-    theme->getIndicatorMetrics(CheckboxPart, indicatorSize, indicatorSpacing);
-    IntSize extraSpace(indicatorSpacing, indicatorSpacing);
-
-    // Scrollbar thumbs need at least an extra pixel along their movement axis.
-    return extraSpace.expandedTo(IntSize(1, 1));
-}
-
 WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* graphicsContext, const IntRect& targetRect)
     : m_graphicsContext(graphicsContext)
     , m_targetRect(targetRect)
@@ -96,8 +81,9 @@ WidgetRenderingContext::WidgetRenderingContext(GraphicsContext* graphicsContext,
         return;
     }
 
-    // Some widgets render outside their rectangles. We need to account for this.
-    m_extraSpace = getExtraSpaceForWidget(theme);
+    // Widgets sometimes need to draw outside their boundaries for things such as
+    // exterior focus. We want to allocate a some extra pixels in our surface for this.
+    m_extraSpace = IntSize(15, 15);
 
     // Offset the target rectangle so that the extra space is within the boundaries of the scratch buffer.
     m_paintRect = IntRect(IntPoint(m_extraSpace.width(), m_extraSpace.height()),
@@ -176,7 +162,7 @@ void WidgetRenderingContext::gtkPaintBox(const IntRect& rect, GtkWidget* widget,
 void WidgetRenderingContext::gtkPaintFocus(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, const gchar* detail)
 {
     GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
-    gtk_paint_focus(gtk_widget_get_style(widget), m_target, stateType, &m_paintRect, widget,
+    gtk_paint_focus(gtk_widget_get_style(widget), m_target, stateType, &paintRect, widget,
                     detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
 }
 
@@ -185,6 +171,20 @@ void WidgetRenderingContext::gtkPaintSlider(const IntRect& rect, GtkWidget* widg
     GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
     gtk_paint_slider(gtk_widget_get_style(widget), m_target, stateType, shadowType, &m_paintRect, widget,
                      detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height, orientation);
+}
+
+void WidgetRenderingContext::gtkPaintCheck(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_check(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget,
+                    detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+}
+
+void WidgetRenderingContext::gtkPaintOption(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_option(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget,
+                     detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
 }
 
 }

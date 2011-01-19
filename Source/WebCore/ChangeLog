@@ -1,3 +1,38 @@
+2011-01-11  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Move toggle button rendering out of gtk2drawing.c
+        https://bugs.webkit.org/show_bug.cgi?id=52258
+
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::platformInit): Initialize new button members.
+        (WebCore::adjustRectForFocus): Added this function which inflates a rect based
+        on a widget's exterior focus.
+        (WebCore::RenderThemeGtk::adjustRepaintRect): Account for exterior focus.
+        (WebCore::setToggleSize): Only listen to indicator-size to properly size
+        checkboxes and radio buttons.
+        (WebCore::RenderThemeGtk::setCheckboxSize): Call new setToggleSize properly.
+        (WebCore::paintToggle): Added.
+        (WebCore::RenderThemeGtk::paintCheckbox): Call paintToggle.
+        (WebCore::RenderThemeGtk::setRadioSize): Call new setToggleSize properly.
+        (WebCore::RenderThemeGtk::paintRadio): Call paintToggle.
+        (WebCore::RenderThemeGtk::gtkRadioButton): Added.
+        (WebCore::RenderThemeGtk::gtkCheckButton): Added.
+        * platform/gtk/WidgetRenderingContext.cpp:
+        (WebCore::WidgetRenderingContext::WidgetRenderingContext): Use a static extra space
+        variable. This is good enough for all themes that I've tested and prevents having to
+        pass information from RenderThemeGtk about every single type of widget.
+        (WebCore::WidgetRenderingContext::gtkPaintFocus): Use the paintRect
+        to draw instead of m_paintRect. This is important when we're painting
+        something that isn't the size of the total rect.
+        (WebCore::WidgetRenderingContext::gtkPaintCheck): Added.
+        (WebCore::WidgetRenderingContext::gtkPaintOption): Added.
+        * platform/gtk/WidgetRenderingContext.h: Updated to reflect new methods.
+        * platform/gtk/gtkdrawing.h: Remove newly unused code.
+        * platform/gtk/gtk2drawing.c: Ditto.
+
 2011-01-19  Tony Gentilcore  <tonyg@chromium.org>
 
         Unreviewed build fix.

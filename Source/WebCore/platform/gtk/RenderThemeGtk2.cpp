@@ -61,6 +61,8 @@ void RenderThemeGtk::platformInit()
     m_gtkTreeView = 0;
     m_gtkVScale = 0;
     m_gtkHScale = 0;
+    m_gtkRadioButton = 0;
+    m_gtkCheckButton = 0;
 
     memset(&m_themeParts, 0, sizeof(GtkThemeParts));
     GdkColormap* colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
@@ -99,8 +101,34 @@ void RenderThemeGtk::initMediaColors()
 }
 #endif
 
-void RenderThemeGtk::adjustRepaintRect(const RenderObject*, IntRect&)
+static void adjustRectForFocus(GtkWidget* widget, IntRect& rect, bool ignoreInteriorFocusProperty = false)
 {
+    gint focusWidth, focusPad;
+    gboolean interiorFocus = 0;
+    gtk_widget_style_get(widget,
+                         "interior-focus", &interiorFocus,
+                         "focus-line-width", &focusWidth,
+                         "focus-padding", &focusPad, NULL);
+    if (!ignoreInteriorFocusProperty && interiorFocus)
+        return;
+    rect.inflate(focusWidth + focusPad);
+}
+
+void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect& rect)
+{
+    ControlPart part = renderObject->style()->appearance();
+    switch (part) {
+    case CheckboxPart:
+    case RadioPart: {
+        // We ignore the interior focus property and always expand the focus rect. In GTK+, the
+        // focus indicator is usually on the text next to a checkbox or radio button, but that doesn't
+        // happen in WebCore. By expanding the focus rectangle unconditionally we increase its prominence.
+        adjustRectForFocus(part == CheckboxPart ? gtkCheckButton() : gtkRadioButton(), rect, true);
+        return;
+    }
+    default:
+        return;
+    }
 }
 
 static GtkStateType getGtkStateType(RenderThemeGtk* theme, RenderObject* object)
@@ -142,56 +170,77 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
                                              gtkTextDirection(renderObject->style()->direction()));
 }
 
-void RenderThemeGtk::getIndicatorMetrics(ControlPart part, int& indicatorSize, int& indicatorSpacing)
-{
-    ASSERT(part == CheckboxPart || part == RadioPart);
-    if (part == CheckboxPart) {
-        moz_gtk_checkbox_get_metrics(&indicatorSize, &indicatorSpacing);
-        return;
-    }
-
-    // RadioPart
-    moz_gtk_radio_get_metrics(&indicatorSize, &indicatorSpacing);
-}
-
-static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, ControlPart appearance)
+static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, GtkWidget* widget)
 {
     // The width and height are both specified, so we shouldn't change them.
     if (!style->width().isIntrinsicOrAuto() && !style->height().isAuto())
         return;
 
-    // FIXME: This is probably not correct use of indicatorSize and indicatorSpacing.
-    gint indicatorSize, indicatorSpacing;
-    RenderThemeGtk::getIndicatorMetrics(appearance, indicatorSize, indicatorSpacing);
-
-    // Other ports hard-code this to 13, but GTK+ users tend to demand the native look.
-    // It could be made a configuration option values other than 13 actually break site compatibility.
-    int length = indicatorSize + indicatorSpacing;
+    gint indicatorSize;
+    gtk_widget_style_get(widget, "indicator-size", &indicatorSize, NULL);
     if (style->width().isIntrinsicOrAuto())
-        style->setWidth(Length(length, Fixed));
-
+        style->setWidth(Length(indicatorSize, Fixed));
     if (style->height().isAuto())
-        style->setHeight(Length(length, Fixed));
+        style->setHeight(Length(indicatorSize, Fixed));
+}
+
+static void paintToggle(RenderThemeGtk* theme, RenderObject* renderObject, const PaintInfo& info, const IntRect& rect, GtkWidget* widget)
+{
+    // We do not call gtk_toggle_button_set_active here, because some themes begin a series of
+    // animation frames in a "toggled" signal handler. This puts some checkboxes in a half-way
+    // checked state. Every GTK+ theme I tested merely looks at the shadow type (and not the
+    // 'active' property) to determine whether or not to draw the check.
+    gtk_widget_set_sensitive(widget, theme->isEnabled(renderObject) && !theme->isReadOnlyControl(renderObject));
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
+
+    bool indeterminate = theme->isIndeterminate(renderObject);
+    gtk_toggle_button_set_inconsistent(GTK_TOGGLE_BUTTON(widget), indeterminate);
+
+    GtkShadowType shadowType = GTK_SHADOW_OUT;
+    if (indeterminate) // This originates from the Mozilla code.
+        shadowType = GTK_SHADOW_ETCHED_IN;
+    else if (theme->isChecked(renderObject))
+        shadowType = GTK_SHADOW_IN;
+
+    WidgetRenderingContext widgetContext(info.context, rect);
+    IntRect buttonRect(IntPoint(), rect.size());
+    GtkStateType toggleState = getGtkStateType(theme, renderObject);
+    const char* detail = 0;
+    if (GTK_IS_RADIO_BUTTON(widget)) {
+        detail = "radiobutton";
+        widgetContext.gtkPaintOption(buttonRect, widget, toggleState, shadowType, detail);
+    } else {
+        detail = "checkbutton";
+        widgetContext.gtkPaintCheck(buttonRect, widget, toggleState, shadowType, detail);
+    }
+
+    if (theme->isFocused(renderObject)) {
+        IntRect focusRect(buttonRect);
+        adjustRectForFocus(widget, focusRect, true);
+        widgetContext.gtkPaintFocus(focusRect, widget, toggleState, detail);
+    }
 }
 
 void RenderThemeGtk::setCheckboxSize(RenderStyle* style) const
 {
-    setToggleSize(this, style, RadioPart);
+    setToggleSize(this, style, gtkCheckButton());
 }
 
-bool RenderThemeGtk::paintCheckbox(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintCheckbox(RenderObject* renderObject, const PaintInfo& info, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_CHECKBUTTON, object, info.context, rect, isChecked(object));
+    paintToggle(this, renderObject, info, rect, gtkCheckButton());
+    return false;
 }
 
 void RenderThemeGtk::setRadioSize(RenderStyle* style) const
 {
-    setToggleSize(this, style, RadioPart);
+    setToggleSize(this, style, gtkRadioButton());
 }
 
-bool RenderThemeGtk::paintRadio(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintRadio(RenderObject* renderObject, const PaintInfo& info, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_RADIOBUTTON, object, info.context, rect, isChecked(object));
+    paintToggle(this, renderObject, info, rect, gtkRadioButton());
+    return false;
 }
 
 bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
@@ -571,6 +620,24 @@ GtkWidget* RenderThemeGtk::gtkHScale() const
     m_gtkHScale = gtk_hscale_new(0);
     setupWidgetAndAddToContainer(m_gtkHScale, gtkContainer());
     return m_gtkHScale;
+}
+
+GtkWidget* RenderThemeGtk::gtkRadioButton() const
+{
+    if (m_gtkRadioButton)
+        return m_gtkRadioButton;
+    m_gtkRadioButton = gtk_radio_button_new(0);
+    setupWidgetAndAddToContainer(m_gtkRadioButton, gtkContainer());
+    return m_gtkRadioButton;
+}
+
+GtkWidget* RenderThemeGtk::gtkCheckButton() const
+{
+    if (m_gtkCheckButton)
+        return m_gtkCheckButton;
+    m_gtkCheckButton = gtk_check_button_new();
+    setupWidgetAndAddToContainer(m_gtkCheckButton, gtkContainer());
+    return m_gtkCheckButton;
 }
 
 GtkWidget* RenderThemeGtk::gtkScrollbar()

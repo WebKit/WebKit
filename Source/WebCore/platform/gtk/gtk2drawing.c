@@ -151,26 +151,6 @@ ensure_button_arrow_widget()
 }
 
 static gint
-ensure_checkbox_widget()
-{
-    if (!gParts->checkboxWidget) {
-        gParts->checkboxWidget = gtk_check_button_new_with_label("M");
-        setup_widget_prototype(gParts->checkboxWidget);
-    }
-    return MOZ_GTK_SUCCESS;
-}
-
-static gint
-ensure_radiobutton_widget()
-{
-    if (!gParts->radiobuttonWidget) {
-        gParts->radiobuttonWidget = gtk_radio_button_new_with_label(NULL, "M");
-        setup_widget_prototype(gParts->radiobuttonWidget);
-    }
-    return MOZ_GTK_SUCCESS;
-}
-
-static gint
 ensure_scrollbar_widget()
 {
     if (!gParts->vertScrollbarWidget) {
@@ -458,32 +438,6 @@ moz_gtk_init()
 }
 
 gint
-moz_gtk_checkbox_get_metrics(gint* indicator_size, gint* indicator_spacing)
-{
-    ensure_checkbox_widget();
-
-    gtk_widget_style_get (gParts->checkboxWidget,
-                          "indicator_size", indicator_size,
-                          "indicator_spacing", indicator_spacing,
-                          NULL);
-
-    return MOZ_GTK_SUCCESS;
-}
-
-gint
-moz_gtk_radio_get_metrics(gint* indicator_size, gint* indicator_spacing)
-{
-    ensure_radiobutton_widget();
-
-    gtk_widget_style_get (gParts->radiobuttonWidget,
-                          "indicator_size", indicator_size,
-                          "indicator_spacing", indicator_spacing,
-                          NULL);
-
-    return MOZ_GTK_SUCCESS;
-}
-
-gint
 moz_gtk_widget_get_focus(GtkWidget* widget, gboolean* interior_focus,
                          gint* focus_width, gint* focus_pad) 
 {
@@ -510,89 +464,6 @@ moz_gtk_button_get_inner_border(GtkWidget* widget, GtkBorder* inner_border)
     }
     else
         *inner_border = default_inner_border;
-
-    return MOZ_GTK_SUCCESS;
-}
-
-static gint
-moz_gtk_toggle_paint(GdkDrawable* drawable, GdkRectangle* rect,
-                     GdkRectangle* cliprect, GtkWidgetState* state,
-                     gboolean selected, gboolean inconsistent,
-                     gboolean isradio, GtkTextDirection direction)
-{
-    GtkStateType state_type = ConvertGtkState(state);
-    GtkShadowType shadow_type = (selected)?GTK_SHADOW_IN:GTK_SHADOW_OUT;
-    gint indicator_size, indicator_spacing;
-    gint x, y, width, height;
-    gint focus_x, focus_y, focus_width, focus_height;
-    GtkWidget *w;
-    GtkStyle *style;
-
-    if (isradio) {
-        moz_gtk_radio_get_metrics(&indicator_size, &indicator_spacing);
-        w = gParts->radiobuttonWidget;
-    } else {
-        moz_gtk_checkbox_get_metrics(&indicator_size, &indicator_spacing);
-        w = gParts->checkboxWidget;
-    }
-
-    // "GetMinimumWidgetSize was ignored"
-    // FIXME: This assert causes a build failure in WebKitGTK+ debug
-    // builds, because it uses 'false' in its definition. We may want
-    // to force this file to be built with g++, by renaming it.
-    // ASSERT(rect->width == indicator_size);
-
-    /*
-     * vertically center in the box, since XUL sometimes ignores our
-     * GetMinimumWidgetSize in the vertical dimension
-     */
-    x = rect->x;
-    y = rect->y + (rect->height - indicator_size) / 2;
-    width = indicator_size;
-    height = indicator_size;
-
-    focus_x = x - indicator_spacing;
-    focus_y = y - indicator_spacing;
-    focus_width = width + 2 * indicator_spacing;
-    focus_height = height + 2 * indicator_spacing;
-  
-    style = gtk_widget_get_style(w);
-    TSOffsetStyleGCs(style, x, y);
-
-    gtk_widget_set_sensitive(w, !state->disabled);
-    gtk_widget_set_direction(w, direction);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), selected);
-      
-    if (isradio) {
-        gtk_paint_option(style, drawable, state_type, shadow_type, cliprect,
-                         gParts->radiobuttonWidget, "radiobutton", x, y,
-                         width, height);
-        if (state->focused) {
-            gtk_paint_focus(style, drawable, GTK_STATE_ACTIVE, cliprect,
-                            gParts->radiobuttonWidget, "radiobutton", focus_x, focus_y,
-                            focus_width, focus_height);
-        }
-    }
-    else {
-       /*
-        * 'indeterminate' type on checkboxes. In GTK, the shadow type
-        * must also be changed for the state to be drawn.
-        */
-        if (inconsistent) {
-            gtk_toggle_button_set_inconsistent(GTK_TOGGLE_BUTTON(gParts->checkboxWidget), TRUE);
-            shadow_type = GTK_SHADOW_ETCHED_IN;
-        } else {
-            gtk_toggle_button_set_inconsistent(GTK_TOGGLE_BUTTON(gParts->checkboxWidget), FALSE);
-        }
-
-        gtk_paint_check(style, drawable, state_type, shadow_type, cliprect, 
-                        gParts->checkboxWidget, "checkbutton", x, y, width, height);
-        if (state->focused) {
-            gtk_paint_focus(style, drawable, GTK_STATE_ACTIVE, cliprect,
-                            gParts->checkboxWidget, "checkbutton", focus_x, focus_y,
-                            focus_width, focus_height);
-        }
-    }
 
     return MOZ_GTK_SUCCESS;
 }
@@ -1220,8 +1091,6 @@ moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
         w = gParts->progresWidget;
         break;
     /* These widgets have no borders, since they are not containers. */
-    case MOZ_GTK_CHECKBUTTON:
-    case MOZ_GTK_RADIOBUTTON:
     case MOZ_GTK_SCROLLBAR_BUTTON:
     case MOZ_GTK_SCROLLBAR_TRACK_HORIZONTAL:
     case MOZ_GTK_SCROLLBAR_TRACK_VERTICAL:
@@ -1279,14 +1148,6 @@ moz_gtk_widget_paint(GtkThemeWidgetType widget, GdkDrawable* drawable,
         ensure_button_widget();
         return moz_gtk_button_paint(drawable, rect, cliprect, state,
                                     (GtkReliefStyle) flags, gParts->buttonWidget,
-                                    direction);
-        break;
-    case MOZ_GTK_CHECKBUTTON:
-    case MOZ_GTK_RADIOBUTTON:
-        return moz_gtk_toggle_paint(drawable, rect, cliprect, state,
-                                    !!(flags & MOZ_GTK_WIDGET_CHECKED),
-                                    !!(flags & MOZ_GTK_WIDGET_INCONSISTENT),
-                                    (widget == MOZ_GTK_RADIOBUTTON),
                                     direction);
         break;
     case MOZ_GTK_SCROLLBAR_BUTTON:

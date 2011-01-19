@@ -195,6 +195,9 @@ private:
     GtkWidget* gtkVScale() const;
     GtkWidget* gtkHScale() const;
     GtkWidget* gtkContainer() const;
+    GtkWidget* gtkRadioButton() const;
+    GtkWidget* gtkCheckButton() const;
+
     mutable GtkWidget* m_gtkWindow;
     mutable GtkWidget* m_gtkContainer;
     mutable GtkWidget* m_gtkButton;
@@ -202,6 +205,9 @@ private:
     mutable GtkWidget* m_gtkTreeView;
     mutable GtkWidget* m_gtkVScale;
     mutable GtkWidget* m_gtkHScale;
+    mutable GtkWidget* m_gtkRadioButton;
+    mutable GtkWidget* m_gtkCheckButton;
+
     bool m_themePartsHaveRGBAColormap;
     friend class WidgetRenderingContext;
 #endif

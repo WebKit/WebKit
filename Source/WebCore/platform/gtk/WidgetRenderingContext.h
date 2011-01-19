@@ -41,6 +41,8 @@ public:
     void gtkPaintBox(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
     void gtkPaintFocus(const IntRect&, GtkWidget*, GtkStateType, const gchar*);
     void gtkPaintSlider(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*, GtkOrientation);
+    void gtkPaintCheck(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
+    void gtkPaintOption(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
 
 private:
     GraphicsContext* m_graphicsContext;
