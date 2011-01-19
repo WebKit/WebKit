@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        Artifacts when scrolling with new drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=52682
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scroll):
+        When scrolling, we want the intersection of the scroll rect and clip rect.
+
+2011-01-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
         Use a CGLayer for the backing store when possible
         https://bugs.webkit.org/show_bug.cgi?id=52679
 
