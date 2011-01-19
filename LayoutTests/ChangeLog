@@ -1,3 +1,10 @@
+2011-01-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Added fast/forms/slider-mouse-events.html to expectations to make sure
+        the new results are good on all bots.
+
+        * platform/chromium/test_expectations.txt: Tweaked expectations.
+
 2011-01-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
