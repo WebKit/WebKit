@@ -3079,19 +3079,6 @@ BUGCR69411 LINUX : svg/custom/linking-a-03-b-transform.svg = IMAGE PASS
 // New test added in r75720
 BUGCR69571 : plugins/destroy-on-setwindow.html = CRASH
 
-// Failing after r75720
-BUGCR69612 LINUX : editing/selection/extend-to-line-boundary.html = TEXT
-BUGCR69612 LINUX : fast/text/atsui-negative-spacing-features.html = IMAGE
-BUGCR69612 LINUX : fast/text/atsui-spacing-features.html = IMAGE
-BUGCR69612 LINUX : fast/text/drawBidiText.html = IMAGE
-BUGCR69612 LINUX : fast/text/international/bidi-AN-after-empty-run.html = IMAGE
-BUGCR69612 LINUX : fast/text/international/bidi-CS-after-AN.html = IMAGE
-BUGCR69612 LINUX : fast/text/international/bidi-linebreak-002.html = IMAGE
-BUGCR69612 LINUX : fast/text/international/bidi-linebreak-003.html = IMAGE
-BUGCR69612 LINUX : fast/text/international/bidi-mirror-he-ar.html = IMAGE
-BUGCR69612 LINUX : fast/text/international/bidi-neutral-run.html = IMAGE
-BUGCR69612 LINUX : fast/text/international/hebrew-vowels.html = IMAGE
-
 // Failing after r75768
 BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 

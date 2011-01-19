@@ -68,7 +68,7 @@ public:
     // setPadding sets a number of pixels to be distributed across the TextRun.
     // WebKit uses this to justify text.
     void setPadding(int);
-    void reset();
+    void reset(unsigned offset);
     // Advance to the next script run, returning false when the end of the
     // TextRun has been reached.
     bool nextScriptRun();
@@ -86,7 +86,6 @@ public:
 
     // Set the x offset for the next script run. This affects the values in
     // |xPositions|
-    void setXOffsetToZero() { m_offsetX = 0; }
     bool rtl() const { return m_run.rtl(); }
     const uint16_t* glyphs() const { return m_glyphs16; }
 
@@ -114,6 +113,9 @@ public:
     // return the number of code points in the current script run
     const unsigned numCodePoints() const { return m_numCodePoints; }
 
+    // Return the current pixel position of the controller.
+    const unsigned offsetX() const { return m_offsetX; }
+
     const FontPlatformData* fontPlatformDataForScriptRun() { return reinterpret_cast<FontPlatformData*>(m_item.font->userData); }
 
 private:
@@ -137,7 +139,6 @@ private:
     uint16_t* m_glyphs16; // A vector of 16-bit glyph ids.
     SkScalar* m_xPositions; // A vector of x positions for each glyph.
     ssize_t m_indexOfNextScriptRun; // Indexes the script run in |m_run|.
-    const unsigned m_startingX; // Offset in pixels of the first script run.
     unsigned m_offsetX; // Offset in pixels to the start of the next script run.
     unsigned m_pixelWidth; // Width (in px) of the current script run.
     unsigned m_numCodePoints; // Code points in current script run.

@@ -206,6 +206,16 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
     controller.setLetterSpacingAdjustment(letterSpacing());
     controller.setPadding(run.padding());
 
+    if (run.rtl()) {
+        // FIXME: this causes us to shape the text twice -- once to compute the width and then again
+        // below when actually rendering.  Change ComplexTextController to match platform/mac and
+        // platform/chromium/win by having it store the shaped runs, so we can reuse the results.
+        controller.reset(point.x() + controller.widthOfFullRun());
+        // We need to set the padding again because ComplexTextController layout consumed the value.
+        // Fixing the above problem would help here too.
+        controller.setPadding(run.padding());
+    }
+
     while (controller.nextScriptRun()) {
         if (fill) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
@@ -231,6 +241,7 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
     ComplexTextController controller(run, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
+    controller.setPadding(run.padding());
     return controller.widthOfFullRun();
 }
 
@@ -239,7 +250,7 @@ static int glyphIndexForXPositionInScriptRun(const ComplexTextController& contro
     // Iterate through the glyphs in logical order, seeing whether targetX falls between the previous
     // position and halfway through the current glyph.
     // FIXME: this code probably belongs in ComplexTextController.
-    int lastX = controller.rtl() ? controller.width() : 0;
+    int lastX = controller.offsetX() - (controller.rtl() ? -controller.width() : controller.width());
     for (int glyphIndex = 0; static_cast<unsigned>(glyphIndex) < controller.length(); ++glyphIndex) {
         int advance = truncateFixedPointToInteger(controller.advances()[glyphIndex]);
         int nextX = static_cast<int>(controller.xPositions()[glyphIndex]) + advance / 2;
@@ -257,53 +268,29 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
 {
     // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
     // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
-    int x = static_cast<int>(xFloat);
+    int targetX = static_cast<int>(xFloat);
 
     // (Mac code ignores includePartialGlyphs, and they don't know what it's
     // supposed to do, so we just ignore it as well.)
     ComplexTextController controller(run, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
-
-    // If this is RTL text, the first glyph from the left is actually the last
-    // code point. So we need to know how many code points there are total in
-    // order to subtract. This is different from the length of the TextRun
-    // because UTF-16 surrogate pairs are a single code point, but 32-bits long.
-    // In LTR we leave this as 0 so that we get the correct value for
-    // |basePosition|, below.
-    unsigned totalCodePoints = 0;
-    if (controller.rtl()) {
-        ssize_t offset = 0;
-        while (offset < run.length()) {
-            utf16_to_code_point(run.characters(), run.length(), &offset);
-            totalCodePoints++;
-        }
+    controller.setPadding(run.padding());
+    if (run.rtl()) {
+        // See FIXME in drawComplexText.
+        controller.reset(controller.widthOfFullRun());
+        controller.setPadding(run.padding());
     }
 
-    unsigned basePosition = totalCodePoints;
+    unsigned basePosition = 0;
 
-    // For RTL:
-    //   code-point order:  abcd efg hijkl
-    //   on screen:         lkjih gfe dcba
-    //                                ^   ^
-    //                                |   |
-    //                  basePosition--|   |
-    //                 totalCodePoints----|
-    // Since basePosition is currently the total number of code-points, the
-    // first thing we do is decrement it so that it's pointing to the start of
-    // the current script-run.
-    //
-    // For LTR, basePosition is zero so it already points to the start of the
-    // first script run.
+    int x = controller.offsetX();
     while (controller.nextScriptRun()) {
-        if (controller.rtl())
-            basePosition -= controller.numCodePoints();
+        int nextX = controller.offsetX();
 
-        if (x >= 0 && static_cast<unsigned>(x) < controller.width()) {
-            // The x value in question is within this script run. We consider
-            // each glyph in presentation order and stop when we find the one
-            // covering this position.
-            const int glyphIndex = glyphIndexForXPositionInScriptRun(controller, x);
+        if (std::min(x, nextX) <= targetX && targetX <= std::max(x, nextX)) {
+            // The x value in question is within this script run.
+            const int glyphIndex = glyphIndexForXPositionInScriptRun(controller, targetX);
 
             // Now that we have a glyph index, we have to turn that into a
             // code-point index. Because of ligatures, several code-points may
@@ -324,10 +311,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat,
             return basePosition + controller.numCodePoints() - 1;
         }
 
-        x -= controller.width();
-
-        if (!controller.rtl())
-            basePosition += controller.numCodePoints();
+        basePosition += controller.numCodePoints();
     }
 
     return basePosition;
@@ -342,27 +326,21 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
     ComplexTextController controller(run, 0, this);
     controller.setWordSpacingAdjustment(wordSpacing());
     controller.setLetterSpacingAdjustment(letterSpacing());
+    controller.setPadding(run.padding());
+    if (run.rtl()) {
+        // See FIXME in drawComplexText.
+        controller.reset(controller.widthOfFullRun());
+        controller.setPadding(run.padding());
+    }
 
-    // Base will point to the x offset for the start of the current script run. Note that, in
-    // the LTR case, width will be 0.
-    int base = controller.rtl() ? controller.widthOfFullRun() : 0;
-
-    controller.reset();
+    // Iterate through the script runs in logical order, searching for the run covering the positions of interest.
     while (controller.nextScriptRun() && (fromX == -1 || toX == -1)) {
-        // ComplexTextController will helpfully accululate the x offsets for different
-        // script runs for us. For this code, however, we always want the x offsets
-        // to start from zero so we call this before each script run.
-        controller.setXOffsetToZero();
-
-        if (controller.rtl())
-            base -= controller.width();
-
         if (fromX == -1 && from >= 0 && static_cast<unsigned>(from) < controller.numCodePoints()) {
             // |from| is within this script run. So we index the clusters log to
             // find which glyph this code-point contributed to and find its x
             // position.
             int glyph = controller.logClusters()[from];
-            fromX = base + controller.xPositions()[glyph];
+            fromX = controller.xPositions()[glyph];
             if (controller.rtl())
                 fromX += truncateFixedPointToInteger(controller.advances()[glyph]);
         } else
@@ -370,22 +348,18 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run,
 
         if (toX == -1 && to >= 0 && static_cast<unsigned>(to) < controller.numCodePoints()) {
             int glyph = controller.logClusters()[to];
-            toX = base + controller.xPositions()[glyph];
+            toX = controller.xPositions()[glyph];
             if (controller.rtl())
                 toX += truncateFixedPointToInteger(controller.advances()[glyph]);
         } else
             to -= controller.numCodePoints();
-
-        if (!controller.rtl())
-            base += controller.width();
     }
 
     // The position in question might be just after the text.
-    const int endEdge = base;
-    if (fromX == -1 && !from)
-        fromX = endEdge;
-    if (toX == -1 && !to)
-        toX = endEdge;
+    if (fromX == -1)
+        fromX = controller.offsetX();
+    if (toX == -1)
+        toX = controller.offsetX();
 
     ASSERT(fromX != -1 && toX != -1);
 

@@ -47,8 +47,6 @@ static int truncateFixedPointToInteger(HB_Fixed value)
 
 ComplexTextController::ComplexTextController(const TextRun& run, unsigned startingX, const Font* font)
     : m_font(font)
-    , m_startingX(startingX)
-    , m_offsetX(m_startingX)
     , m_run(getNormalizedTextRun(run, m_normalizedRun, m_normalizedBuffer))
     , m_wordSpacingAdjustment(0)
     , m_padding(0)
@@ -75,7 +73,7 @@ ComplexTextController::ComplexTextController(const TextRun& run, unsigned starti
     m_item.string = m_run.characters();
     m_item.stringLength = m_run.length();
 
-    reset();
+    reset(startingX);
 }
 
 ComplexTextController::~ComplexTextController()
@@ -137,10 +135,10 @@ void ComplexTextController::setPadding(int padding)
         m_padPerWordBreak = 0;
 }
 
-void ComplexTextController::reset()
+void ComplexTextController::reset(unsigned offset)
 {
     m_indexOfNextScriptRun = 0;
-    m_offsetX = m_startingX;
+    m_offsetX = offset;
 }
 
 // Advance to the next script run, returning false when the end of the
@@ -277,8 +275,7 @@ void ComplexTextController::setGlyphXPositions(bool isRTL)
     int logClustersIndex = 0;
 
     // Iterate through the glyphs in logical order, flipping for RTL where necessary.
-    // In RTL mode all variables are positive except m_xPositions, which starts from m_offsetX and runs negative.
-    // It is fixed up in a second pass below.
+    // Glyphs are positioned starting from m_offsetX; in RTL mode they go leftwards from there.
     for (size_t i = 0; i < m_item.num_glyphs; ++i) {
         while (static_cast<unsigned>(logClustersIndex) < m_item.item.length && logClusters()[logClustersIndex] < i)
             logClustersIndex++;
@@ -303,16 +300,8 @@ void ComplexTextController::setGlyphXPositions(bool isRTL)
 
         position += advance;
     }
-    const double width = position;
-
-    // Now that we've computed the total width, do another pass to fix positioning for RTL.
-    if (isRTL) {
-        for (size_t i = 0; i < m_item.num_glyphs; ++i)
-            m_xPositions[i] += width;
-    }
-
-    m_pixelWidth = std::max(width, 0.0);
-    m_offsetX += m_pixelWidth;
+    m_pixelWidth = std::max(position, 0.0);
+    m_offsetX += m_pixelWidth * rtlFlip;
 }
 
 void ComplexTextController::normalizeSpacesAndMirrorChars(const UChar* source, bool rtl, UChar* destination, int length)

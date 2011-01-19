@@ -1,3 +1,12 @@
+2011-01-18  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] simplify complex text code, fixing a handful of layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=52661
+
+        * platform/chromium/test_expectations.txt: Mark 11 tests as expected to pass.
+
 2011-01-19  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.

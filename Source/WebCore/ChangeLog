@@ -1,3 +1,29 @@
+2011-01-18  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] simplify complex text code, fixing a handful of layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=52661
+
+        Change ComplexTextControllerLinux to lay out RTL text to the left from
+        the starting point.  (Previously it always went to the right.)  This allows
+        us to map pixel offsets more directly into offsets within the text runs,
+        simplifying a few of the text-fiddling functions (they no longer need to
+        track the current position, as ComplexTextController now does it).
+
+        * platform/graphics/chromium/ComplexTextControllerLinux.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+        (WebCore::ComplexTextController::reset):
+        (WebCore::ComplexTextController::setGlyphXPositions):
+        * platform/graphics/chromium/ComplexTextControllerLinux.h:
+        (WebCore::ComplexTextController::offsetX):
+        * platform/graphics/chromium/FontLinux.cpp:
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::glyphIndexForXPositionInScriptRun):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+
 2011-01-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
