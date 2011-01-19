@@ -1,3 +1,22 @@
+2011-01-18  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r76078.
+        http://trac.webkit.org/changeset/76078
+        https://bugs.webkit.org/show_bug.cgi?id=52668
+
+        Caused crashes of fast/canvas/webgl/constants.html,
+        fast/canvas/webgl/gl-enum-tests.html, and possibly other layout
+        test crashes in Release mode. WebGL crashes were observed with
+        "run-webkit-tests fast/canvas/webgl". It was necessary to run
+        multiple tests to provoke the crash.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::markGlobals):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::markChildren):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::markChildren):
+
 2011-01-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

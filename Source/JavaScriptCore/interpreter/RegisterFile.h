@@ -131,6 +131,7 @@ namespace JSC {
 
         Register* lastGlobal() const { return m_start - m_numGlobals; }
         
+        void markGlobals(MarkStack& markStack, Heap* heap) { heap->markConservatively(markStack, lastGlobal(), m_start); }
         void markCallFrames(MarkStack& markStack, Heap* heap) { heap->markConservatively(markStack, m_start, m_end); }
 
         static size_t committedByteCount();

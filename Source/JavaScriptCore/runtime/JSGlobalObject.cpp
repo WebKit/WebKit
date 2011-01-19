@@ -349,6 +349,10 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     for (HashSet<GlobalCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->markAggregate(markStack);
 
+    RegisterFile& registerFile = globalData().interpreter->registerFile();
+    if (registerFile.globalObject() == this)
+        registerFile.markGlobals(markStack, &globalData().heap);
+
     markIfNeeded(markStack, d()->regExpConstructor);
     markIfNeeded(markStack, d()->errorConstructor);
     markIfNeeded(markStack, d()->evalErrorConstructor);
@@ -393,7 +397,12 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     // No need to mark the other structures, because their prototypes are all
     // guaranteed to be referenced elsewhere.
 
-    markStack.appendValues(d()->registers - symbolTable().size(), symbolTable().size());
+    Register* registerArray = d()->registerArray.get();
+    if (!registerArray)
+        return;
+
+    size_t size = d()->registerArraySize;
+    markStack.appendValues(reinterpret_cast<JSValue*>(registerArray), size);
 }
 
 ExecState* JSGlobalObject::globalExec()

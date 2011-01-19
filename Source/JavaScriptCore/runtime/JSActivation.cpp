@@ -53,7 +53,6 @@ void JSActivation::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
 
-    // No need to mark our registers if they're still in the RegisterFile.
     Register* registerArray = d()->registerArray.get();
     if (!registerArray)
         return;
