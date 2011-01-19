@@ -30,6 +30,8 @@
 
 # FIXME: Unify with tool/mocktool.MockExecutive.
 
+from webkitpy.common.system import executive
+
 
 class MockExecutive2(object):
     def __init__(self, output='', exit_code=0, exception=None,
@@ -48,7 +50,7 @@ class MockExecutive2(object):
     def kill_process(self, pid):
         pass
 
-    def run_command(self, arg_list, return_exit_code=False,
+    def run_command(self, arg_list, error_handler=None, return_exit_code=False,
                     decode_output=False):
         if self._exception:
             raise self._exception
@@ -56,4 +58,10 @@ class MockExecutive2(object):
             return self._exit_code
         if self._run_command_fn:
             return self._run_command_fn(arg_list)
+        if self._exit_code and error_handler:
+            script_error = executive.ScriptError(script_args=arg_list,
+                                                 exit_code=self._exit_code,
+                                                 output=self._output)
+            error_handler(script_error)
+
         return self._output

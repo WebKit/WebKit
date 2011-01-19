@@ -44,6 +44,7 @@ import tempfile
 import time
 import webbrowser
 
+from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_output
@@ -120,10 +121,18 @@ class ChromiumPort(base.Port):
 
     def check_sys_deps(self, needs_http):
         cmd = [self._path_to_driver(), '--check-layout-test-sys-deps']
-        if self._executive.run_command(cmd, return_exit_code=True):
+
+        local_error = executive.ScriptError()
+
+        def error_handler(script_error):
+            local_error.exit_code = script_error.exit_code
+
+        output = self._executive.run_command(cmd, error_handler=error_handler)
+        if local_error.exit_code:
             _log.error('System dependencies check failed.')
             _log.error('To override, invoke with --nocheck-sys-deps')
             _log.error('')
+            _log.error(output)
             return False
         return True
 

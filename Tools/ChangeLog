@@ -1,3 +1,16 @@
+2011-01-19  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [chromium] [linux] if check-sys-deps fails, output the failure reason
+        https://bugs.webkit.org/show_bug.cgi?id=52671
+
+        * Scripts/webkitpy/common/system/executive_mock.py: Add support for
+            error handler functions.
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+            output the error text from --check-sys-deps
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2011-01-19  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Andreas Kling.
