@@ -57,6 +57,10 @@ private:
     void incorporateUpdate(const UpdateInfo&);
     void sendSetSize();
 
+    // Whether we've sent a SetSize message and are now waiting for a DidSetSize message.
+    // Used to throttle SetSize messages so we don't send them faster than the Web process can handle.
+    bool m_isWaitingForDidSetSize;
+
     OwnPtr<BackingStore> m_backingStore;
 };
 

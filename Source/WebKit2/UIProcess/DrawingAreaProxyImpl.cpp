@@ -45,6 +45,7 @@ PassOwnPtr<DrawingAreaProxyImpl> DrawingAreaProxyImpl::create(WebPageProxy* webP
 
 DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     : DrawingAreaProxy(DrawingAreaInfo::Impl, webPageProxy)
+    , m_isWaitingForDidSetSize(false)
 {
 }
 
@@ -106,6 +107,12 @@ void DrawingAreaProxyImpl::update(const UpdateInfo& updateInfo)
 
 void DrawingAreaProxyImpl::didSetSize()
 {
+    ASSERT(m_isWaitingForDidSetSize);
+    m_isWaitingForDidSetSize = false;
+
+    // FIXME: Send a new SetSize message if needed.
+
+    m_backingStore = nullptr;
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
@@ -134,6 +141,10 @@ void DrawingAreaProxyImpl::sendSetSize()
     if (!m_webPageProxy->isValid())
         return;
 
+    if (m_isWaitingForDidSetSize)
+        return;
+
+    m_isWaitingForDidSetSize = true;
     m_webPageProxy->process()->send(Messages::DrawingArea::SetSize(m_size), m_webPageProxy->pageID());
 }
 

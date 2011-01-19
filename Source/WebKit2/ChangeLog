@@ -2,6 +2,27 @@
 
         Reviewed by Darin Adler.
 
+        Throttle sending of SetSize messages
+        https://bugs.webkit.org/show_bug.cgi?id=52727
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        Initialize m_isWaitingForDidSetSize to false.
+
+        (WebKit::DrawingAreaProxyImpl::didSetSize):
+        Null out the backing store.
+
+        (WebKit::DrawingAreaProxyImpl::sendSetSize):
+        If m_isWaitingForDidSetSize is true, do nothing. Otherwise, set m_isWaitingForDidSetSize
+        to true and send a SetSize message.
+
+        * UIProcess/DrawingAreaProxyImpl.h:
+        Add m_isWaitingForDidSetSize.
+
+2011-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
         Pass WebPageCreationParameters to DrawingArea::create
         https://bugs.webkit.org/show_bug.cgi?id=52726
 
