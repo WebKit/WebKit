@@ -209,7 +209,7 @@ public:
 
     void  concatCTM(const AffineTransform& transform)
     {
-        m_transform = transform * m_transform;
+        m_transform *= transform;
     }
 
     IntRect mapRect(const IntRect& rect) const

@@ -164,12 +164,10 @@ AffineTransform AffineTransform::inverse() const
     return result;
 }
 
-AffineTransform& AffineTransform::multiply(const AffineTransform& other)
-{
-    return (*this) *= other;
-}
 
-AffineTransform& AffineTransform::multLeft(const AffineTransform& other)
+// Multiplies this AffineTransform by the provided AffineTransform - i.e.
+// this = this * other;
+AffineTransform& AffineTransform::multiply(const AffineTransform& other)
 {
     AffineTransform trans;
     
@@ -192,7 +190,7 @@ AffineTransform& AffineTransform::rotate(double a)
     double sinAngle = sin(a);
     AffineTransform rot(cosAngle, sinAngle, -sinAngle, cosAngle, 0, 0);
 
-    multLeft(rot);
+    multiply(rot);
     return *this;
 }
 

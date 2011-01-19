@@ -43,7 +43,7 @@ void SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(
 
     absoluteTransform = currentContentTransformation();
     while (current) {
-        absoluteTransform.multiply(current->localToParentTransform());
+        absoluteTransform = current->localToParentTransform() * absoluteTransform;
         if (current->isSVGRoot())
             break;
         current = current->parent();
@@ -83,7 +83,7 @@ void SVGImageBufferTools::renderSubtreeToImageBuffer(ImageBuffer* image, RenderO
 
     AffineTransform& contentTransformation = currentContentTransformation();
     AffineTransform savedContentTransformation = contentTransformation;
-    contentTransformation.multiply(subtreeContentTransformation);
+    contentTransformation = subtreeContentTransformation * contentTransformation;
 
     item->layoutIfNeeded();
     item->paint(info, 0, 0);

@@ -108,7 +108,7 @@ void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace
     m_context->useQuadVertices();
 
     AffineTransform matrix(m_flipMatrix);
-    matrix.multLeft(m_state->m_ctm);
+    matrix *= m_state->m_ctm;
     matrix.translate(rect.x(), rect.y());
     matrix.scale(rect.width(), rect.height());
 
@@ -150,7 +150,7 @@ void GLES2Canvas::scale(const FloatSize& size)
 
 void GLES2Canvas::concatCTM(const AffineTransform& affine)
 {
-    m_state->m_ctm.multLeft(affine);
+    m_state->m_ctm *= affine;
 }
 
 void GLES2Canvas::save()
@@ -220,7 +220,7 @@ void GLES2Canvas::drawTexturedRectTile(Texture* texture, int tile, const FloatRe
 void GLES2Canvas::drawQuad(const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha)
 {
     AffineTransform matrix(m_flipMatrix);
-    matrix.multLeft(transform);
+    matrix *= transform;
     matrix.translate(dstRect.x(), dstRect.y());
     matrix.scale(dstRect.width(), dstRect.height());
 

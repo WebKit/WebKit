@@ -182,8 +182,8 @@ AffineTransform RenderSVGResourceContainer::transformOnNonScalingStroke(RenderOb
         return resourceTransform;
 
     SVGStyledTransformableElement* element = static_cast<SVGStyledTransformableElement*>(object->node());
-    AffineTransform transform = resourceTransform;
-    transform.multiply(element->getScreenCTM(SVGLocatable::DisallowStyleUpdate));
+    AffineTransform transform = element->getScreenCTM(SVGLocatable::DisallowStyleUpdate);
+    transform *= resourceTransform;
     return transform;
 }
 

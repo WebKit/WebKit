@@ -1,3 +1,68 @@
+2011-01-19  Shane Stephens  <shanestephens@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Make AffineTransform and TransformationMatrix do matrix multiplication in the correct order (Column Major)
+        https://bugs.webkit.org/show_bug.cgi?id=48031
+
+        Fixed reversal, renamed matrix methods to be clearer, found all examples of operator* and
+        operator*= usage and switched operand order.
+
+        No new tests as this refactor doesn't add functionality.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::baseTransform):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::transform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::concatCTM):
+        (WebCore::GLES2Canvas::drawQuad):
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::setupLayerForOpaqueCompositeLayer):
+        (WebCore::TransparencyWin::setupTransformForKeepTransform):
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::multiply):
+        (WebCore::AffineTransform::rotate):
+        * platform/graphics/transforms/AffineTransform.h:
+        (WebCore::AffineTransform::operator*=):
+        (WebCore::AffineTransform::operator*):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::concatCTM):
+        * platform/graphics/wince/SharedBitmap.cpp:
+        (WebCore::SharedBitmap::drawPattern):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::transformOnNonScalingStroke):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::clipToTextMask):
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::localToBorderBoxTransform):
+        * rendering/svg/SVGImageBufferTools.cpp:
+        (WebCore::SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem):
+        (WebCore::SVGImageBufferTools::renderSubtreeToImageBuffer):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::finalizeTransformMatrices):
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::computeCTM):
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGMatrix.h:
+        (WebCore::SVGMatrix::multiply):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::animatedLocalTransform):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::animatedLocalTransform):
+        * svg/SVGTransformList.cpp:
+        (WebCore::SVGTransformList::concatenate):
+
 2011-01-19  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Darin Adler.

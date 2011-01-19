@@ -446,8 +446,7 @@ AffineTransform HTMLCanvasElement::baseTransform() const
     AffineTransform transform;
     if (size.width() && size.height())
         transform.scaleNonUniform(size.width() / unscaledSize.width(), size.height() / unscaledSize.height());
-    transform.multiply(m_imageBuffer->baseTransform());
-    return transform;
+    return m_imageBuffer->baseTransform() * transform;
 }
 
 }

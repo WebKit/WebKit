@@ -139,7 +139,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
 
         AffineTransform patternTransform = m_attributes.patternTransform();
         if (!patternTransform.isIdentity())
-            patternData->transform.multiply(patternTransform);
+            patternData->transform = patternTransform * patternData->transform;
 
         patternData->pattern->setPatternSpaceTransform(patternData->transform);
     }

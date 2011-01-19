@@ -321,7 +321,7 @@ void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& b
             if (transform.isIdentity())
                 transform = textBoxTransformation;
             else
-                transform.multiply(textBoxTransformation);
+                transform = textBoxTransformation * transform;
         }
     }
 

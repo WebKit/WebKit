@@ -246,7 +246,7 @@ AffineTransform RenderSVGRoot::localToBorderBoxTransform() const
     float scale = svg->currentScale();
     FloatPoint translate = svg->currentTranslate();
     AffineTransform ctm(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y());
-    return svg->viewBoxToViewTransform(width() / scale, height() / scale) * ctm;
+    return ctm * svg->viewBoxToViewTransform(width() / scale, height() / scale);
 }
 
 IntSize RenderSVGRoot::parentOriginToBorderBox() const

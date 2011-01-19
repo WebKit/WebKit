@@ -445,8 +445,7 @@ void SharedBitmap::drawPattern(HDC hdc, const AffineTransform& transform, const 
         bmpHeight = tileRect.height();
     }
 
-    AffineTransform tf = transform;
-    tf *= patternTransform;
+    AffineTransform tf = patternTransform * transform;
 
     FloatRect trRect = tf.mapRect(destRect);
 

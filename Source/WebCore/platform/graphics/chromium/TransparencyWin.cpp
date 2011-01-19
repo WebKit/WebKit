@@ -252,7 +252,7 @@ void TransparencyWin::setupLayerForOpaqueCompositeLayer()
     if (m_transformMode == Untransform){ 
         // Compute the inverse mapping from the canvas space to the
         // coordinate space of our bitmap.
-        mapping = m_orgTransform.inverse() * mapping;
+        mapping *= m_orgTransform.inverse();
     }
     compositeToCopy(*m_destContext, *m_drawContext, mapping);
 
@@ -313,7 +313,7 @@ void TransparencyWin::setupTransformForKeepTransform(const IntRect& region)
         // We're making a layer, so apply the old transform to the new one
         // so it's maintained. We know the new layer has the identity
         // transform now, we we can just multiply it.
-        xform = m_orgTransform * xform;
+        xform *= m_orgTransform;
         m_drawContext->concatCTM(xform);
     }
     m_drawRect = m_sourceRect;

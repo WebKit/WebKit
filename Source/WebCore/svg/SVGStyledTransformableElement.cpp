@@ -56,7 +56,9 @@ AffineTransform SVGStyledTransformableElement::animatedLocalTransform() const
 {
     AffineTransform matrix;
     transform().concatenate(matrix);
-    return m_supplementalTransform ? *m_supplementalTransform * matrix : matrix;
+    if (m_supplementalTransform)
+        matrix *= *m_supplementalTransform;
+    return matrix;
 }
 
 AffineTransform* SVGStyledTransformableElement::supplementalTransform()

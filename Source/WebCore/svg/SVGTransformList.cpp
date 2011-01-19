@@ -56,7 +56,7 @@ bool SVGTransformList::concatenate(AffineTransform& result) const
         return false;
 
     for (unsigned i = 0; i < size; ++i)
-        result = at(i).matrix() * result;
+        result *= at(i).matrix();
 
     return true;
 }

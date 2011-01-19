@@ -502,7 +502,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
         }
     }
 
-    return transform.multLeft(viewBoxTransform);
+    return transform.multiply(viewBoxTransform);
 }
 
 RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -587,12 +587,11 @@ AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float vie
         viewBoxRect = viewBox();
 
     AffineTransform ctm = SVGFitToViewBox::viewBoxToViewTransform(viewBoxRect, preserveAspectRatio(), viewWidth, viewHeight);
+
     if (useCurrentView() && currentView()) {
         AffineTransform transform;
-        if (!currentView()->transform().concatenate(transform))
-            return ctm;
-
-        return transform * ctm;
+        if (currentView()->transform().concatenate(transform))
+            ctm *= transform;
     }
 
     return ctm;

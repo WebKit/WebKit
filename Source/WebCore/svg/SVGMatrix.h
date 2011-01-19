@@ -96,11 +96,10 @@ public:
         return static_cast<SVGMatrix>(copy);
     }
 
-    // SVGMatrix::multiply needs to call SVGMatrix::multLeft.
     SVGMatrix multiply(const SVGMatrix& other)
     {
         AffineTransform copy = *this;
-        copy.multLeft(static_cast<const AffineTransform&>(other));
+        copy *= static_cast<const AffineTransform&>(other);
         return static_cast<SVGMatrix>(copy);
     }
 

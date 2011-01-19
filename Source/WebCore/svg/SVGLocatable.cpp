@@ -91,7 +91,8 @@ AffineTransform SVGLocatable::computeCTM(const SVGElement* element, CTMScope mod
     while (current && current->isSVGElement()) {
         SVGElement* currentElement = static_cast<SVGElement*>(current);
         if (currentElement->isStyled())
-            ctm = static_cast<SVGStyledElement*>(currentElement)->localCoordinateSpaceTransform(mode).multLeft(ctm);
+            // note that this modifies the AffineTransform returned by localCoordinateSpaceTransform(mode) too.
+            ctm = static_cast<SVGStyledElement*>(currentElement)->localCoordinateSpaceTransform(mode).multiply(ctm);
 
         // For getCTM() computation, stop at the nearest viewport element
         if (currentElement == stopAtElement)
@@ -113,7 +114,7 @@ AffineTransform SVGLocatable::getTransformToElement(SVGElement* target, Exceptio
             ec = SVGException::SVG_MATRIX_NOT_INVERTABLE;
             return ctm;
         }
-        ctm *= targetCTM.inverse();
+        ctm = targetCTM.inverse() * ctm;
     }
 
     return ctm;

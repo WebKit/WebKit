@@ -537,7 +537,7 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
         return;
 
     AffineTransform transform(m11, m12, m21, m22, dx, dy);
-    AffineTransform newTransform = transform * state().m_transform;
+    AffineTransform newTransform = state().m_transform * transform;
     if (!newTransform.isInvertible()) {
         state().m_invertibleCTM = false;
         return;
@@ -562,7 +562,7 @@ void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, flo
         return;
     c->concatCTM(c->getCTM().inverse());
     c->concatCTM(canvas()->baseTransform());
-    state().m_transform.multiply(ctm.inverse());
+    state().m_transform = ctm.inverse() * state().m_transform;
     m_path.transform(ctm);
 
     state().m_invertibleCTM = true;

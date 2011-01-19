@@ -54,8 +54,7 @@ CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTran
 {
     IntRect tileRect = tileImage()->rect();
 
-    AffineTransform patternTransform = m_patternSpaceTransformation;
-    patternTransform.multiply(userSpaceTransformation);
+    AffineTransform patternTransform = userSpaceTransformation * m_patternSpaceTransformation;
     patternTransform.scaleNonUniform(1, -1);
     patternTransform.translate(0, -tileRect.height());
 
