@@ -1,3 +1,10 @@
+2011-01-19  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; build fix for chromium.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::fillPath):
+
 2011-01-18  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.

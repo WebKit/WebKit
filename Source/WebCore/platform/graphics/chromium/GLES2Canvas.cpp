@@ -543,7 +543,7 @@ void GLES2Canvas::fillPath(const Path& path, const Color& color)
     checkGLError("bindBuffer");
 
     AffineTransform matrix(m_flipMatrix);
-    matrix.multLeft(m_state->m_ctm);
+    matrix *= m_state->m_ctm;
 
     m_context->useFillSolidProgram(matrix, color);
     checkGLError("useFillSolidProgram");
