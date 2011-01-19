@@ -14,6 +14,7 @@
 # - Permanently Skipped Tests.
 # - No Support for Feature planned.
 # - Feature not supported yet.
+# - Drag and Drop Support in DRT.
 # - Failing HTTP tests.
 # - Failing xmlhttprequest tests
 # - Failing inserting tests.
@@ -102,6 +103,77 @@ fast/text/hyphens.html
 inspector/dom-breakpoints.html
 
 # =========================================================================== #
+#       Drag and Drop Support in DRT.                                         #
+# =========================================================================== #
+# Drag n drop support on DRT cannot work at the moment because Qt's drag'n'drop
+# relies on an X event getting to the main window. In the absence of being able
+# to receive this event, running windowless, DRT cannot tell what is being dropped and where.
+# Bug: https://bugs.webkit.org/show_bug.cgi?id=31332
+
+http/tests/misc/bubble-drag-events.html
+http/tests/security/drag-over-remote-content-iframe.html
+http/tests/local/drag-over-remote-content.html
+http/tests/local/fileapi
+http/tests/security/drag-drop-same-unique-origin.html
+# CONSOLE MESSAGE: line 72: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
+http/tests/local/blob/send-hybrid-blob.html
+http/tests/local/blob/send-sliced-data-blob.html
+http/tests/local/formdata
+
+editing/pasteboard/drag-image-in-about-blank-frame.html
+editing/pasteboard/files-during-page-drags.html
+editing/pasteboard/4861080.html
+editing/pasteboard/4947130.html
+editing/pasteboard/copy-standalone-image.html
+editing/pasteboard/drag-drop-dead-frame.html
+editing/pasteboard/drag-drop-input-textarea.html
+editing/pasteboard/drag-drop-iframe-refresh-crash.html
+editing/pasteboard/drag-drop-modifies-page.html
+editing/pasteboard/drag-drop-url-text.html
+editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
+editing/pasteboard/drag-selected-image-to-contenteditable.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/drop-text-without-selection.html
+editing/pasteboard/emacs-ctrl-a-k-y.html
+editing/pasteboard/emacs-ctrl-k-y-001.html
+editing/pasteboard/smart-drag-drop.html
+editing/pasteboard/subframe-dragndrop-1.html
+editing/pasteboard/get-data-text-plain-drop.html
+editing/pasteboard/drop-text-events.html
+editing/pasteboard/drop-text-events-sideeffect.html
+
+# Missing drag & drop functionality in DRT
+editing/pasteboard/drop-inputtext-acquires-style.html
+fast/css/user-drag-none.html
+fast/images/drag-svg-as-image.html
+fast/forms/slider-delete-while-dragging-thumb.html
+
+# ------- missing drag-and-drop support
+# See bug https://bugs.webkit.org/show_bug.cgi?id=31332
+fast/events/drag-parent-node.html
+fast/events/drag-and-drop.html
+fast/events/drag-and-drop-dataTransfer-types-nocrash.html
+fast/events/drag-and-drop-fire-drag-dragover.html
+fast/events/ondrop-text-html.html
+# caused by: http://trac.webkit.org/changeset/52192
+http/tests/misc/drag-over-iframe-invalid-source-crash.html
+
+# Missing eventSender.beginDragWithFiles()
+fast/dom/Window/window-postmessage-clone-frames.html
+
+# ------- missing eventSender.beginDragWithFiles
+editing/pasteboard/dataTransfer-setData-getData.html
+editing/pasteboard/file-drag-to-editable.html
+editing/pasteboard/file-input-files-access.html
+fast/dom/Window/window-postmessage-clone.html
+fast/events/drag-to-navigate.html
+fast/events/prevent-drag-to-navigate.html
+fast/forms/get-file-upload.html
+fast/forms/input-file-re-render.html
+fast/events/drag-file-crash.html
+http/tests/security/clipboard/clipboard-file-access.html
+
+# =========================================================================== #
 #       Failing HTTP tests.                                                   #
 # =========================================================================== #
 
@@ -110,45 +182,41 @@ http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
 http/tests/misc/favicon-as-image.html
 
-# drag n drop support on DRT has problems
-http/tests/misc/bubble-drag-events.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=34004
 # [Qt] http/tests/misc/slow-loading-mask.html timed out.
 http/tests/misc/slow-loading-mask.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=35824 - Doesn't apply to platforms that don't enforce the CFNetwork-style 3rd party cookie policy
+# https://bugs.webkit.org/show_bug.cgi?id=45455
 http/tests/cookies/third-party-cookie-relaxing.html
 
 # No authentication challenge handling
 http/tests/loading/basic-credentials-sent-automatically.html
 http/tests/loading/basic-auth-resend-wrong-credentials.html
 
-# Skip failing http/tests/misc tests
-# - pixel differences only?
+# This needs more attention!
 http/tests/misc/acid3.html
 
-# webkit.org/b/5499 - Page reload does not send any cache control headers.
+# Page reload does not send any cache control headers.
+# https://bugs.webkit.org/show_bug.cgi?id=45598
+# Fixed in Qt 4.8
 http/tests/misc/refresh-headers.php
 
-# Skip failing http/tests/security tests
-# - rendertext differences
+# Benign pixel differences except for:
+# +selection start: position 0 of child 5 {IMG} of body
+# +selection end:   position 1 of child 5 {IMG} of body
+# at end.
 http/tests/security/dataTransfer-set-data-file-url.html
-# - drag n' drop in DRT doesn't work well
-http/tests/security/drag-over-remote-content-iframe.html
-# - crashes
-http/tests/security/xss-DENIED-xsl-document.xml
-# fails with an unrelated whitespace difference - should create qt-specific results
+
+# Fails with a mysterious unrelated whitespace difference
+# We should find out what dumpAsText() is doing wrong
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
+
 # - FAIL: Subframe did not finish loading.
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 
 # Disabled HTTP subdirs for now, needs investigation.
 http/tests/media
 http/tests/wml
-
-# expected results need updating
-http/tests/loading/simple-subframe.html
 
 # - content sniffing - Binary data not loaded as text.
 http/tests/loading/text-content-type-with-binary-extension.html
@@ -170,12 +238,11 @@ http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
 
-# time out
+# QtWebKit has no multipart support
+# https://bugs.webkit.org/show_bug.cgi?id=47059
+# https://webkit.org/b/47060
 http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
-http/tests/misc/timer-vs-loading.html
-
-# drt prints additional output - looks harmless
 http/tests/multipart/policy-ignore-crash.php
 
 # =========================================================================== #
@@ -193,6 +260,7 @@ http/tests/xmlhttprequest/workers/shared-worker-methods.html
 
 # Caused by the way Qt caches network connections using user@hostname as the key
 # See https://bugs.webkit.org/show_bug.cgi?id=37084 and http://bugreports.qt.nokia.com/browse/QTBUG-9619
+# Fixed in Qt 4.8
 http/tests/xmlhttprequest/re-login-async.html
 http/tests/xmlhttprequest/re-login.html
 
@@ -212,6 +280,7 @@ fast/xmlhttprequest/xmlhttprequest-responsetype-text.html
 http/tests/xmlhttprequest/send-array-buffer.html
 
 # Missing DRT ability to set accept cookie policy
+# https://bugs.webkit.org/show_bug.cgi?id=45455
 http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 
 # Still fail with Qt 4.7.1
@@ -285,28 +354,6 @@ editing/pasteboard/paste-text-008.html
 editing/pasteboard/paste-xml.xhtml
 # ----- Rendertree results match but width of tabs field is suspicious.
 editing/pasteboard/paste-text-at-tabspan-001.html
-# ----- Drag and drop support.
-editing/pasteboard/drag-image-in-about-blank-frame.html
-editing/pasteboard/files-during-page-drags.html
-editing/pasteboard/4861080.html
-editing/pasteboard/4947130.html
-editing/pasteboard/copy-standalone-image.html
-editing/pasteboard/drag-drop-dead-frame.html
-editing/pasteboard/drag-drop-input-textarea.html
-editing/pasteboard/drag-drop-iframe-refresh-crash.html
-editing/pasteboard/drag-drop-modifies-page.html
-editing/pasteboard/drag-drop-url-text.html
-editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
-editing/pasteboard/drag-selected-image-to-contenteditable.html
-editing/pasteboard/drop-link.html
-editing/pasteboard/drop-text-without-selection.html
-editing/pasteboard/emacs-ctrl-a-k-y.html
-editing/pasteboard/emacs-ctrl-k-y-001.html
-editing/pasteboard/smart-drag-drop.html
-editing/pasteboard/subframe-dragndrop-1.html
-editing/pasteboard/get-data-text-plain-drop.html
-editing/pasteboard/drop-text-events.html
-editing/pasteboard/drop-text-events-sideeffect.html
 
 # =========================================================================== #
 #       Failing plugins tests.                                                #
@@ -699,9 +746,6 @@ http/tests/security/isolatedWorld/didClearWindowObject.html
 # This needs more investigation
 http/tests/security/isolatedWorld/world-reuse.html
 
-# Missing eventSender.beginDragWithFiles()
-fast/dom/Window/window-postmessage-clone-frames.html
-
 # File API is not supported yet
 fast/files
 
@@ -713,34 +757,6 @@ http/tests/misc/willCacheResponse-delegate-callback.html
 
 # Missing layoutTestController.setHandlesAuthenticationChallenges()
 http/tests/misc/authentication-sent-to-redirect.html
-
-# ------- missing eventSender.beginDragWithFiles
-editing/pasteboard/dataTransfer-setData-getData.html
-editing/pasteboard/file-drag-to-editable.html
-editing/pasteboard/file-input-files-access.html
-fast/dom/Window/window-postmessage-clone.html
-fast/events/drag-to-navigate.html
-fast/events/prevent-drag-to-navigate.html
-fast/forms/get-file-upload.html
-fast/forms/input-file-re-render.html
-fast/events/drag-file-crash.html
-http/tests/security/clipboard/clipboard-file-access.html
-
-# Missing drag & drop functionality in DRT
-editing/pasteboard/drop-inputtext-acquires-style.html
-fast/css/user-drag-none.html
-fast/images/drag-svg-as-image.html
-fast/forms/slider-delete-while-dragging-thumb.html
-
-# ------- missing drag-and-drop support
-# See bug https://bugs.webkit.org/show_bug.cgi?id=31332
-fast/events/drag-parent-node.html
-fast/events/drag-and-drop.html
-fast/events/drag-and-drop-dataTransfer-types-nocrash.html
-fast/events/drag-and-drop-fire-drag-dragover.html
-fast/events/ondrop-text-html.html
-# caused by: http://trac.webkit.org/changeset/52192
-http/tests/misc/drag-over-iframe-invalid-source-crash.html
 
 # ------- broken ICO file decoding
 fast/images/favicon-as-image.html

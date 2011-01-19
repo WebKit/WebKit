@@ -1,3 +1,17 @@
+2011-01-19  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Unskip passing http tests and annotate Skipped list
+        https://bugs.webkit.org/show_bug.cgi?id=52395
+
+        Unskip:
+        http/tests/security/xss-DENIED-xsl-document.xml
+        http/tests/loading/simple-subframe.html
+
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/loading/simple-subframe-expected.txt:
+
 2011-01-19  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline two GTK+ tests results after r76144.
