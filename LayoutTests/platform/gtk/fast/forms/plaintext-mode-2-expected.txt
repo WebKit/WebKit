@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
           RenderListMarker at (-21,0) size 16x19: "2"
           RenderText {#text} at (0,0) size 326x19
             text run at (0,0) width 326: "Success: document.execCommand(\"Paste\") == true"
-layer at (11,13) size 594x19 scrollX 24 scrollWidth 619
+layer at (11,13) size 594x19 scrollX 25 scrollWidth 619
   RenderBlock {DIV} at (3,3) size 594x19
     RenderText {#text} at (1,0) size 617x19
       text run at (1,0) width 617: "This styled text, and link will be pasted into the textfield. All richness should be stripped."
