@@ -3,73 +3,58 @@
   <script src="../http/tests/inspector/inspector-test2.js"></script>
 <script>
 
-function fib(n) {
-    return n < 2 ? 1 : fib(n - 1) + fib(n - 2);
-}
-
-function eternal_fib() {
+function pageFunction() {
     console.profile();  // Make sure we capture the current callstack.
-    for (var i = 0; i < 50; ++i) {
-        fib(20);
-    }
     console.profileEnd();
-}
-
-function run()
-{
-    eternal_fib();
-    runTest();
 }
 
 function initialize_ProfilerTests()
 {
-    InspectorTest.findDisplayedNode = function() {
-        var panel = WebInspector.panels.profiles; 
-        var tree = panel.visibleView.profileDataGridTree;
-        if (!tree) {
-            window.setTimeout(InspectorTest.findDisplayedNode, 100);
-            return;
-        }
+    InspectorTest.findPageFunctionProfileNode = function() {
+        var panel = WebInspector.panels.profiles;
+        if (!panel)
+             InspectorTest.addResult("no panel");
+        var view = panel.visibleView;
+        if (!view)
+             InspectorTest.addResult("no view");
+        var tree = view.profileDataGridTree;
+        if (!tree)
+             InspectorTest.addResult("no tree");
         var node = tree.children[0];
-        if (!node) {
-            // Profile hadn't been queried yet, re-schedule.
-            window.setTimeout(InspectorTest.findDisplayedNode, 100);
-            return;
-        }
-
-        // Iterate over displayed functions and search for a function
-        // that is called "fib" or "eternal_fib". If found, this will mean
-        // that we actually have profiled page's code.
+        if (!node)
+             InspectorTest.addResult("no node");
         while (node) {
-            if (node.functionName.indexOf("fib") !== -1) {
-                InspectorTest.addResult("found fib");
+            if (node.functionName.indexOf("pageFunction") !== -1) {
+                InspectorTest.addResult("found pageFunction");
                 break;
             }
             node = node.traverseNextNode(true, null, true);
         }
-
         InspectorTest.completeTest();
     }
 
-    InspectorTest.findVisibleView = function() {
-        var panel = WebInspector.panels.profiles; 
-        if (!panel.visibleView) {
-            setTimeout(InspectorTest.findVisibleView, 0);
-            return;
-        }
-        setTimeout(InspectorTest.findDisplayedNode, 0);
+    var oldRefresh = WebInspector.CPUProfileView.prototype.refresh;
+    WebInspector.CPUProfileView.prototype.refresh = function()
+    {
+        oldRefresh.call(this);
+        InspectorTest.findPageFunctionProfileNode();       
     }
 }
 
 function test()
 {
     WebInspector.showPanel("profiles");
-    InspectorTest.findVisibleView();
+    WebInspector.panels.profiles._enableProfiling();
+    InspectorBackend.startProfiling();
+    InspectorTest.evaluateInConsole("pageFunction()", function done()
+    {
+        InspectorBackend.stopProfiling();
+    });
 }
 
 </script>
 </head>
-<body onload="run()">
+<body onload="runTest()">
 <p>
 Tests that CPU profiling works.
 </p>
