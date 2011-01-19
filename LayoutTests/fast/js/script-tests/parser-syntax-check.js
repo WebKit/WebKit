@@ -346,4 +346,9 @@ invalid("L: L1: L2: L3: L4: L: ;");
 invalid("for(var a,b 'this shouldn\'t be allowed' false ; ) ;");
 invalid("for(var a,b '");
 
+invalid("function __proto__(){}")
+invalid("(function __proto__(){})")
+invalid("'use strict'; function __proto__(){}")
+invalid("'use strict'; (function __proto__(){})")
+
 var successfullyParsed = true;

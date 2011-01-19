@@ -1223,6 +1223,7 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
     functionScope->setIsFunction();
     if (match(IDENT)) {
         name = m_token.m_data.ident;
+        failIfTrue(*name == m_globalData->propertyNames->underscoreProto);
         next();
         if (!nameIsInContainingScope)
             failIfFalseIfStrict(functionScope->declareVariable(name));

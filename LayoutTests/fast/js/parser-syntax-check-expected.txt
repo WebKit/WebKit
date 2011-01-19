@@ -541,6 +541,14 @@ PASS Invalid: "for(var a,b 'this shouldn't be allowed' false ; ) ;"
 PASS Invalid: "function f() { for(var a,b 'this shouldn't be allowed' false ; ) ; }"
 PASS Invalid: "for(var a,b '"
 PASS Invalid: "function f() { for(var a,b ' }"
+PASS Invalid: "function __proto__(){}"
+PASS Invalid: "function f() { function __proto__(){} }"
+PASS Invalid: "(function __proto__(){})"
+PASS Invalid: "function f() { (function __proto__(){}) }"
+PASS Invalid: "'use strict'; function __proto__(){}"
+PASS Invalid: "function f() { 'use strict'; function __proto__(){} }"
+PASS Invalid: "'use strict'; (function __proto__(){})"
+PASS Invalid: "function f() { 'use strict'; (function __proto__(){}) }"
 PASS successfullyParsed is true
 
 TEST COMPLETE

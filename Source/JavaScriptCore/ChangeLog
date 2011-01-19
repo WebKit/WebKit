@@ -1,3 +1,17 @@
+2011-01-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [jsfunfuzz] Defining a function called __proto__ inside an eval triggers an assertion
+        https://bugs.webkit.org/show_bug.cgi?id=52672
+
+        Rather than coming up with a somewhat convoluted mechanism to ensure that
+        developers can override the global objects prototype with a function named
+        __proto__ and expect it to work, we just disallow it at the syntax level.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseFunctionInfo):
+
 2011-01-19  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.
