@@ -1,3 +1,19 @@
+2011-01-18  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] Minor cleanup: make 2nd argument of removeIfPresnt accept only a value type stored in the DOM map
+        https://bugs.webkit.org/show_bug.cgi?id=51683
+
+        Covered by the existing tests.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::weakNodeCallback):
+        (WebCore::DOMDataStore::IntrusiveDOMWrapperMap::removeIfPresent):
+        * bindings/v8/DOMDataStore.h:
+        * bindings/v8/V8DOMMap.h:
+        (WebCore::WeakReferenceMap::removeIfPresent):
+
 2011-01-18 MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

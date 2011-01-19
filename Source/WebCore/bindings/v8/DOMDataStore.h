@@ -190,7 +190,7 @@ namespace WebCore {
                 m_table.visit(store, visitor);
             }
 
-            virtual bool removeIfPresent(Node* key, v8::Persistent<v8::Data> value);
+            virtual bool removeIfPresent(Node*, v8::Persistent<v8::Object>);
 
             virtual void clear()
             {

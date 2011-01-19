@@ -60,7 +60,7 @@ namespace WebCore {
         virtual void set(KeyType* obj, v8::Persistent<ValueType> wrapper) = 0;
         virtual bool contains(KeyType* obj) = 0;
         virtual void visit(DOMDataStore* store, Visitor* visitor) = 0;
-        virtual bool removeIfPresent(KeyType* key, v8::Persistent<v8::Data> value) = 0;
+        virtual bool removeIfPresent(KeyType*, v8::Persistent<ValueType>) = 0;
         virtual void clear() = 0;
 
         v8::WeakReferenceCallback weakReferenceCallback() { return m_weakReferenceCallback; }
@@ -105,7 +105,7 @@ namespace WebCore {
             handle.Clear();
         }
 
-        bool removeIfPresent(KeyType* key, v8::Persistent<v8::Data> value)
+        bool removeIfPresent(KeyType* key, v8::Persistent<ValueType> value)
         {
             typename HashMap<KeyType*, ValueType*>::iterator it = m_map.find(key);
             if (it == m_map.end() || it->second != *value)

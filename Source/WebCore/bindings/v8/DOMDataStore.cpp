@@ -148,11 +148,13 @@ void DOMDataStore::weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Objec
     DOMData::handleWeakObject(DOMDataStore::ActiveDOMObjectMap, v8::Persistent<v8::Object>::Cast(v8Object), domObject);
 }
 
-void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* domObject)
+void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> value, void* domObject)
 {
     ASSERT(WTF::isMainThread());
 
     Node* node = static_cast<Node*>(domObject);
+    // Node wrappers must be JS objects.
+    v8::Persistent<v8::Object> v8Object = v8::Persistent<v8::Object>::Cast(value);
 
     WTF::MutexLocker locker(DOMDataStore::allStoresMutex());
     DOMDataList& list = DOMDataStore::allStores();
@@ -171,7 +173,7 @@ void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> v8Object, void* do
     node->deref(); // Nobody overrides Node::deref so it's safe
 }
 
-bool DOMDataStore::IntrusiveDOMWrapperMap::removeIfPresent(Node* obj, v8::Persistent<v8::Data> value)
+bool DOMDataStore::IntrusiveDOMWrapperMap::removeIfPresent(Node* obj, v8::Persistent<v8::Object> value)
 {
     ASSERT(obj);
     v8::Persistent<v8::Object>* entry = obj->wrapper();
