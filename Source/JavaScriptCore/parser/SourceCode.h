@@ -31,7 +31,6 @@
 
 #include "SourceProvider.h"
 #include <wtf/RefPtr.h>
-#include <wtf/text/TextPosition.h>
 
 namespace JSC {
 
@@ -42,34 +41,22 @@ namespace JSC {
             , m_startChar(0)
             , m_endChar(0)
             , m_firstLine(0)
-            , m_firstColumn(0)
         {
         }
 
-        SourceCode(PassRefPtr<SourceProvider> provider, int firstLine = 1, int firstColumn = 1)
+        SourceCode(PassRefPtr<SourceProvider> provider, int firstLine = 1)
             : m_provider(provider)
             , m_startChar(0)
             , m_endChar(m_provider->length())
             , m_firstLine(std::max(firstLine, 1))
-            , m_firstColumn(std::max(firstColumn, 1))
         {
         }
 
-        SourceCode(PassRefPtr<SourceProvider> provider, int start, int end, int firstLine, int firstColumn = 1)
+        SourceCode(PassRefPtr<SourceProvider> provider, int start, int end, int firstLine)
             : m_provider(provider)
             , m_startChar(start)
             , m_endChar(end)
             , m_firstLine(std::max(firstLine, 1))
-            , m_firstColumn(std::max(firstColumn, 1))
-        {
-        }
-
-        SourceCode(PassRefPtr<SourceProvider> provider, const TextPosition1& startPosition)
-            : m_provider(provider)
-            , m_startChar(0)
-            , m_endChar(m_provider->length())
-            , m_firstLine(startPosition.m_line.oneBasedInt())
-            , m_firstColumn(startPosition.m_column.oneBasedInt())
         {
         }
 
@@ -83,7 +70,6 @@ namespace JSC {
         bool isNull() const { return !m_provider; }
         SourceProvider* provider() const { return m_provider.get(); }
         int firstLine() const { return m_firstLine; }
-        int firstColumn() const { return m_firstColumn; }
         int startOffset() const { return m_startChar; }
         int endOffset() const { return m_endChar; }
         const UChar* data() const { return m_provider->data() + m_startChar; }
@@ -94,7 +80,6 @@ namespace JSC {
         int m_startChar;
         int m_endChar;
         int m_firstLine;
-        int m_firstColumn;
     };
 
     inline SourceCode makeSource(const UString& source, const UString& url = UString(), int firstLine = 1)

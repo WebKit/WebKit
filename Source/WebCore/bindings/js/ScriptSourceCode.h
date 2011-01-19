@@ -43,8 +43,8 @@ namespace WebCore {
 class ScriptSourceCode {
 public:
     ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition1& startPosition = TextPosition1::minimumPosition())
-        : m_provider(StringSourceProvider::create(source, url.isNull() ? String() : url.string()))
-        , m_code(m_provider, startPosition)
+        : m_provider(StringSourceProvider::create(source, url.isNull() ? String() : url.string(), startPosition))
+        , m_code(m_provider, startPosition.m_line.oneBasedInt())
         , m_url(url)
     {
     }

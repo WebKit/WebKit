@@ -1,3 +1,15 @@
+2011-01-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [JSC] scripts have incorrect starting line (always 1).
+        https://bugs.webkit.org/show_bug.cgi?id=52721
+
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebScriptDebugger.mm:
+        (toNSString):
+        (WebScriptDebugger::sourceParsed):
+
 2011-01-19  Levi Weintraub  <leviw@google.com>
 
         Reviewed by Ryosuke Niwa.

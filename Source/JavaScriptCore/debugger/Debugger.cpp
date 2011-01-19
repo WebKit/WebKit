@@ -94,7 +94,7 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
     // JavaScript in the inspector.
     SourceProviderMap::const_iterator end = sourceProviders.end();
     for (SourceProviderMap::const_iterator iter = sourceProviders.begin(); iter != end; ++iter)
-        sourceParsed(iter->second, SourceCode(iter->first), -1, UString());
+        sourceParsed(iter->second, iter->first, -1, UString());
 }
 
 JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)

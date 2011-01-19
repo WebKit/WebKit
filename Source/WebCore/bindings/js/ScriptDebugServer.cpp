@@ -48,7 +48,7 @@
 #include "ScrollView.h"
 #include "Widget.h"
 #include <debugger/DebuggerCallFrame.h>
-#include <parser/SourceCode.h>
+#include <parser/SourceProvider.h>
 #include <runtime/JSLock.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/MainThread.h>
@@ -282,23 +282,25 @@ void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
     listener->didContinue();
 }
 
-void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, const JSC::SourceCode& source, ScriptWorldType worldType)
+void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, ScriptWorldType worldType)
 {
-    String sourceID = ustringToString(JSC::UString::number(source.provider()->asID()));
-    String url = ustringToString(source.provider()->url());
-    String data = ustringToString(JSC::UString(source.data(), source.length()));
+    String sourceID = ustringToString(JSC::UString::number(sourceProvider->asID()));
+    String url = ustringToString(sourceProvider->url());
+    String data = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
+    int lineOffset = sourceProvider->startPosition().m_line.convertAsZeroBasedInt();
+    int columnOffset = sourceProvider->startPosition().m_column.convertAsZeroBasedInt();
 
     Vector<ScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(sourceID, url, data, source.firstLine() - 1, source.firstColumn() - 1, worldType);
+        copy[i]->didParseSource(sourceID, url, data, lineOffset, columnOffset, worldType);
 }
 
-void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, const SourceCode& source, int errorLine, const String& errorMessage)
+void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
 {
-    String url = ustringToString(source.provider()->url());
-    String data = ustringToString(JSC::UString(source.data(), source.length()));
-    int firstLine = source.firstLine();
+    String url = ustringToString(sourceProvider->url());
+    String data = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
+    int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     Vector<ScriptDebugListener*> copy;
     copyToVector(listeners, copy);
@@ -335,7 +337,7 @@ void ScriptDebugServer::detach(JSGlobalObject* globalObject)
     Debugger::detach(globalObject);
 }
 
-void ScriptDebugServer::sourceParsed(ExecState* exec, const SourceCode& source, int errorLine, const UString& errorMessage)
+void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const UString& errorMessage)
 {
     if (m_callingListeners)
         return;
@@ -353,9 +355,9 @@ void ScriptDebugServer::sourceParsed(ExecState* exec, const SourceCode& source, 
     if (ListenerSet* pageListeners = m_pageListenersMap.get(page)) {
         ASSERT(!pageListeners->isEmpty());
         if (isError)
-            dispatchFailedToParseSource(*pageListeners, source, errorLine, ustringToString(errorMessage));
+            dispatchFailedToParseSource(*pageListeners, sourceProvider, errorLine, ustringToString(errorMessage));
         else
-            dispatchDidParseSource(*pageListeners, source, worldType);
+            dispatchDidParseSource(*pageListeners, sourceProvider, worldType);
     }
 
     m_callingListeners = false;

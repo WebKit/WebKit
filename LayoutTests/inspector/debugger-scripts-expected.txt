@@ -1,0 +1,11 @@
+Tests that valid parsed script notifications are received by front-end. Bug 52721
+
+Debugger was enabled.
+script 1:
+    offset: 5:8
+    length: 1096
+script 2:
+    offset: 38:21
+    length: 50
+Debugger was disabled.
+

@@ -53,7 +53,7 @@ public:
 
     void initGlobalCallFrame(const JSC::DebuggerCallFrame&);
 
-    virtual void sourceParsed(JSC::ExecState*, const JSC::SourceCode&, int errorLine, const JSC::UString& errorMsg);
+    virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const JSC::UString& errorMsg);
     virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
     virtual void atStatement(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
     virtual void returnEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);

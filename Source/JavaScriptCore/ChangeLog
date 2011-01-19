@@ -1,3 +1,20 @@
+2011-01-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [JSC] scripts have incorrect starting line (always 1).
+        https://bugs.webkit.org/show_bug.cgi?id=52721
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions):
+        * debugger/Debugger.h:
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * parser/SourceCode.h:
+        (JSC::SourceCode::SourceCode):
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::startPosition):
+
 2011-01-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Laszlo Gombos and Tor Arne Vestbø.

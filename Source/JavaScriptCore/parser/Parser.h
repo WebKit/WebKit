@@ -119,7 +119,7 @@ namespace JSC {
         m_funcDeclarations = 0;
 
         if (debugger && !ParsedNode::scopeIsFunction)
-            debugger->sourceParsed(debuggerExecState, source, errLine, errMsg);
+            debugger->sourceParsed(debuggerExecState, source.provider(), errLine, errMsg);
         return result.release();
     }
 

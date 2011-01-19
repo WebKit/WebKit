@@ -31,7 +31,7 @@ namespace JSC {
     class JSGlobalData;
     class JSGlobalObject;
     class JSValue;
-    class SourceCode;
+    class SourceProvider;
     class UString;
 
     class Debugger {
@@ -41,7 +41,7 @@ namespace JSC {
         void attach(JSGlobalObject*);
         virtual void detach(JSGlobalObject*);
 
-        virtual void sourceParsed(ExecState*, const SourceCode&, int errorLineNumber, const UString& errorMessage) = 0;
+        virtual void sourceParsed(ExecState*, SourceProvider*, int errorLineNumber, const UString& errorMessage) = 0;
         virtual void exception(const DebuggerCallFrame&, intptr_t sourceID, int lineNumber, bool hasHandler) = 0;
         virtual void atStatement(const DebuggerCallFrame&, intptr_t sourceID, int lineNumber) = 0;
         virtual void callEvent(const DebuggerCallFrame&, intptr_t sourceID, int lineNumber) = 0;

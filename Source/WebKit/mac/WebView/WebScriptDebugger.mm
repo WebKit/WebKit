@@ -34,7 +34,7 @@
 #import "WebViewInternal.h"
 #import <JavaScriptCore/DebuggerCallFrame.h>
 #import <JavaScriptCore/JSGlobalObject.h>
-#import <JavaScriptCore/SourceCode.h>
+#import <JavaScriptCore/SourceProvider.h>
 #import <WebCore/DOMWindow.h>
 #import <WebCore/Frame.h>
 #import <WebCore/JSDOMWindow.h>
@@ -57,11 +57,11 @@ NSString *toNSString(const UString& s)
     return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s.characters()) length:s.length()];
 }
 
-static NSString *toNSString(const SourceCode& s)
+static NSString *toNSString(SourceProvider* s)
 {
-    if (!s.length())
+    if (!s->length())
         return nil;
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s.data()) length:s.length()];
+    return [NSString stringWithCharacters:reinterpret_cast<const unichar*>(s->data()) length:s->length()];
 }
 
 // convert UString to NSURL
@@ -104,15 +104,16 @@ void WebScriptDebugger::initGlobalCallFrame(const DebuggerCallFrame& debuggerCal
 }
 
 // callbacks - relay to delegate
-void WebScriptDebugger::sourceParsed(ExecState* exec, const SourceCode& source, int errorLine, const UString& errorMsg)
+void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProvider, int errorLine, const UString& errorMsg)
 {
     if (m_callingDelegate)
         return;
 
     m_callingDelegate = true;
 
-    NSString *nsSource = toNSString(source);
-    NSURL *nsURL = toNSURL(source.provider()->url());
+    NSString *nsSource = toNSString(sourceProvider);
+    NSURL *nsURL = toNSURL(sourceProvider->url());
+    int firstLine = sourceProvider->startPosition().m_line.oneBasedInt();
 
     WebFrame *webFrame = toWebFrame(exec->dynamicGlobalObject());
     WebView *webView = [webFrame webView];
@@ -121,9 +122,9 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, const SourceCode& source, 
     if (errorLine == -1) {
         if (implementations->didParseSourceFunc) {
             if (implementations->didParseSourceExpectsBaseLineNumber)
-                CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:), nsSource, source.firstLine(), nsURL, source.provider()->asID(), webFrame);
+                CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:baseLineNumber:fromURL:sourceId:forWebFrame:), nsSource, firstLine, nsURL, sourceProvider->asID(), webFrame);
             else
-                CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:fromURL:sourceId:forWebFrame:), nsSource, [nsURL absoluteString], source.provider()->asID(), webFrame);
+                CallScriptDebugDelegate(implementations->didParseSourceFunc, webView, @selector(webView:didParseSource:fromURL:sourceId:forWebFrame:), nsSource, [nsURL absoluteString], sourceProvider->asID(), webFrame);
         }
     } else {
         NSString* nsErrorMessage = toNSString(errorMsg);
@@ -131,7 +132,7 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, const SourceCode& source, 
         NSError *error = [[NSError alloc] initWithDomain:WebScriptErrorDomain code:WebScriptGeneralErrorCode userInfo:info];
 
         if (implementations->failedToParseSourceFunc)
-            CallScriptDebugDelegate(implementations->failedToParseSourceFunc, webView, @selector(webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:), nsSource, source.firstLine(), nsURL, error, webFrame);
+            CallScriptDebugDelegate(implementations->failedToParseSourceFunc, webView, @selector(webView:failedToParseSource:baseLineNumber:fromURL:withError:forWebFrame:), nsSource, firstLine, nsURL, error, webFrame);
 
         [error release];
         [info release];

@@ -1,3 +1,13 @@
+2011-01-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [JSC] scripts have incorrect starting line (always 1).
+        https://bugs.webkit.org/show_bug.cgi?id=52721
+
+        * inspector/debugger-scripts-expected.txt: Added.
+        * inspector/debugger-scripts.html: Added.
+
 2011-01-19  Jeremy Orlow  <jorlow@chromium.org>
 
         This test changed slightly, so rebaseline it.  The offsets seem off
