@@ -34,6 +34,7 @@
 #include "ChromiumBridge.h"
 #include "Font.h"
 #include "SimpleFontData.h"
+#include "TextRun.h"
 
 namespace WebCore {
 
