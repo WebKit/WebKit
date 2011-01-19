@@ -1,3 +1,20 @@
+2011-01-19  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Changing RenderText::localCaretRect to clip to its containing block's logicalLeft and
+        logicalRightLayoutOverflow instead of simply using logicalLeft and logicalRight, as this
+        resulted in the caret being placed incorrectly in overflowing editable IFrame content.
+
+        Long lines in non-white-space-pre editable documents show cursor in wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=48132
+
+        * editing/selection/caret-painting-in-overflowing-autowrap-content.html: Added.
+        * editing/selection/resources/iframe-positioning-caret-at-end.html: Added.
+        * platform/mac/editing/selection/caret-painting-in-overflowing-autowrap-content-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-painting-in-overflowing-autowrap-content-expected.png: Added.
+        * platform/mac/editing/selection/caret-painting-in-overflowing-autowrap-content-expected.txt: Added.
+
 2011-01-19  Brian Weinstein  <bweinstein@apple.com>
 
         Update Windows expected results after r76115.
