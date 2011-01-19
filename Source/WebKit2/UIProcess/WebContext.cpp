@@ -114,6 +114,9 @@ WebContext::~WebContext()
     m_geolocationManagerProxy->invalidate();
     m_geolocationManagerProxy->clearContext();
 
+    m_databaseManagerProxy->invalidate();
+    m_databaseManagerProxy->clearContext();
+
 #ifndef NDEBUG
     webContextCounter.decrement();
 #endif

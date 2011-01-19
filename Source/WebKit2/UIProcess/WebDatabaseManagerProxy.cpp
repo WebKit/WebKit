@@ -100,8 +100,6 @@ WebDatabaseManagerProxy::~WebDatabaseManagerProxy()
 void WebDatabaseManagerProxy::invalidate()
 {
     invalidateCallbackMap(m_arrayCallbacks);
-
-    m_webContext = 0;
 }
 
 void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClient* client)
@@ -112,6 +110,10 @@ void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClient* cl
 void WebDatabaseManagerProxy::getDatabasesByOrigin(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
+    if (!m_webContext->hasValidProcess()) {
+        callback->invalidate();
+        return;
+    }
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
     m_webContext->process()->send(Messages::WebDatabaseManager::GetDatabasesByOrigin(callbackID), 0);
@@ -164,6 +166,10 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
 void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
+    if (!m_webContext->hasValidProcess()) {
+        callback->invalidate();
+        return;
+    }
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
     m_webContext->process()->send(Messages::WebDatabaseManager::GetDatabaseOrigins(callbackID), 0);
@@ -188,21 +194,29 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
 
 void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin* origin)
 {
+    if (!m_webContext->hasValidProcess())
+        return;
     m_webContext->process()->send(Messages::WebDatabaseManager::DeleteDatabaseWithNameForOrigin(databaseIdentifier, origin->databaseIdentifier()), 0);
 }
 
 void WebDatabaseManagerProxy::deleteDatabasesForOrigin(WebSecurityOrigin* origin)
 {
+    if (!m_webContext->hasValidProcess())
+        return;
     m_webContext->process()->send(Messages::WebDatabaseManager::DeleteDatabasesForOrigin(origin->databaseIdentifier()), 0);
 }
 
 void WebDatabaseManagerProxy::deleteAllDatabases()
 {
+    if (!m_webContext->hasValidProcess())
+        return;
     m_webContext->process()->send(Messages::WebDatabaseManager::DeleteAllDatabases(), 0);
 }
 
 void WebDatabaseManagerProxy::setQuotaForOrigin(WebSecurityOrigin* origin, uint64_t quota)
 {
+    if (!m_webContext->hasValidProcess())
+        return;
     m_webContext->process()->send(Messages::WebDatabaseManager::SetQuotaForOrigin(origin->databaseIdentifier(), quota), 0);
 }
 

@@ -67,6 +67,7 @@ public:
 
     ProcessModel processModel() const { return m_processModel; }
     WebProcessProxy* process() const { return m_process.get(); }
+    bool hasValidProcess() const { return m_process && m_process->isValid(); }
 
     void processDidFinishLaunching(WebProcessProxy*);
     void processDidClose(WebProcessProxy*);
@@ -142,7 +143,6 @@ private:
     virtual Type type() const { return APIType; }
 
     void ensureWebProcess();
-    bool hasValidProcess() const { return m_process && m_process->isValid(); }
     void platformInitializeWebProcess(WebProcessCreationParameters&);
 
     // History client

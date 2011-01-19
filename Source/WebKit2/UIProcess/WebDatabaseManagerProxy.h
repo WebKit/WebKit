@@ -55,6 +55,7 @@ public:
     virtual ~WebDatabaseManagerProxy();
 
     void invalidate();
+    void clearContext() { m_webContext = 0; }
 
     void initializeClient(const WKDatabaseManagerClient*);
 
