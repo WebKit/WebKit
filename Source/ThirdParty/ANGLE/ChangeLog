@@ -1,3 +1,10 @@
+2011-01-18  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, release build fix. Explicitly cast away const.
+
+        * src/compiler/preprocessor/scanner.c:
+        (ScanFromString):
+
 2011-01-18  Ben Vanik  <ben.vanik@gmail.com>
 
         Reviewed by Kenneth Russell.

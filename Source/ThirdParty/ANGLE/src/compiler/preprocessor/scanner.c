@@ -176,7 +176,7 @@ int ScanFromString(const char *s)
     
     StringInputSrc *in = malloc(sizeof(StringInputSrc));
     memset(in, 0, sizeof(StringInputSrc));
-    in->p = s;
+    in->p = (char*) s;
     in->base.line = 1;
     in->base.scan = byte_scan;
     in->base.getch = (int (*)(InputSrc *, yystypepp *))str_getch;
