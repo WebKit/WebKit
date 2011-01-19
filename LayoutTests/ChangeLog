@@ -1,5 +1,18 @@
 2011-01-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Skip (and in a few cases fix) tests for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=52698
+
+        * editing/pasteboard/copy-null-characters.html: Make this test fail in a more
+        obvious way when it fails.
+        * fast/events/scroll-event-does-not-bubble.html: Make this test properly
+        handle the fact that scroll events are async. The job was half-done before.
+        * platform/mac-wk2/Skipped: Skip!
+
+2011-01-18  Maciej Stachowiak  <mjs@apple.com>
+
         Not reviewed.
 
         Revert inadvertantly committed test changes.

@@ -29,6 +29,8 @@ function runTest()
         results.innerText = "Plain text field has the wrong value (expected " +
             JSON.stringify(expectedPlainTextValue) + " but found " +
             JSON.stringify(destinationPlainText.value) + ").";
+        Markup.dump(document.body);
+        Markup.notifyDone();
         return;
     }
 
@@ -52,6 +54,8 @@ function runTest()
         results.innerText = "Plain text field has the wrong value (expected " +
             JSON.stringify(expectedPlainTextValue2) + " but found " +
             JSON.stringify(destinationPlainText.value) + ").";
+        Markup.dump(document.body);
+        Markup.notifyDone();
         return;
     }
 
