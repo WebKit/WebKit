@@ -1134,6 +1134,23 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
+void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, uint64_t callbackID)
+{
+    CoreIPC::DataReference dataReference;
+
+    RefPtr<SharedBuffer> buffer;
+    if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
+        if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
+            if (RefPtr<ArchiveResource> subresource = loader->subresource(KURL(KURL(), resourceURL))) {
+                if (buffer = subresource->data())
+                    dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+            }
+        }
+    }
+
+    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+}
+
 void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
 {
     CoreIPC::DataReference dataReference;

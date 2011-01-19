@@ -266,6 +266,7 @@ public:
 
     void getContentsAsString(PassRefPtr<StringCallback>);
     void getMainResourceDataOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
+    void getResourceDataFromFrame(WebFrameProxy*, WebURL*, PassRefPtr<DataCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<StringCallback>);
     void getSelectionOrContentsAsString(PassRefPtr<StringCallback>);
     void getSourceForFrame(WebFrameProxy*, PassRefPtr<StringCallback>);

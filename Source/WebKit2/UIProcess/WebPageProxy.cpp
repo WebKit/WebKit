@@ -965,6 +965,14 @@ void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, PassRefPtr<D
     process()->send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
+void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, WebURL* resourceURL, PassRefPtr<DataCallback> prpCallback)
+{
+    RefPtr<DataCallback> callback = prpCallback;
+    uint64_t callbackID = callback->callbackID();
+    m_dataCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::GetResourceDataFromFrame(frame->frameID(), resourceURL->string(), callbackID), m_pageID);
+}
+
 void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
 {
     RefPtr<DataCallback> callback = prpCallback;

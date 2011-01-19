@@ -68,11 +68,13 @@ WK_EXPORT bool WKFrameIsDisplayingMarkupDocument(WKFrameRef frame);
 
 WK_EXPORT bool WKFrameIsFrameSet(WKFrameRef frame);
 
-typedef void (*WKFrameGetMainResourceDataFunction)(WKDataRef data, WKErrorRef error, void* functionContext);
-WK_EXPORT void WKFrameGetMainResourceData(WKFrameRef frame, WKFrameGetMainResourceDataFunction function, void* functionContext);
+typedef void (*WKFrameGetResourceDataFunction)(WKDataRef data, WKErrorRef error, void* functionContext);
+WK_EXPORT void WKFrameGetMainResourceData(WKFrameRef frame, WKFrameGetResourceDataFunction function, void* functionContext);
+WK_EXPORT void WKFrameGetResourceData(WKFrameRef frame, WKURLRef resourceURL, WKFrameGetResourceDataFunction function, void* functionContext);
 #ifdef __BLOCKS__
-typedef void (^WKFrameGetMainResourceDataBlock)(WKDataRef data, WKErrorRef error);
-WK_EXPORT void WKFrameGetMainResourceData_b(WKFrameRef frame, WKFrameGetMainResourceDataBlock block);
+typedef void (^WKFrameGetResourceDataBlock)(WKDataRef data, WKErrorRef error);
+WK_EXPORT void WKFrameGetMainResourceData_b(WKFrameRef frame, WKFrameGetResourceDataBlock block);
+WK_EXPORT void WKFrameGetResourceData_b(WKFrameRef frame, WKURLRef resourceURL, WKFrameGetResourceDataBlock block);
 #endif
 
 typedef void (*WKFrameGetWebArchiveFunction)(WKDataRef archiveData, WKErrorRef error, void* functionContext);

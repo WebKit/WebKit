@@ -56,6 +56,7 @@ messages -> WebPage {
     # Callbacks.
     GetContentsAsString(uint64_t callbackID)
     GetMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
+    GetResourceDataFromFrame(uint64_t frameID, WTF::String resourceURL, uint64_t callbackID)
     GetRenderTreeExternalRepresentation(uint64_t callbackID)
     GetSelectionOrContentsAsString(uint64_t callbackID)
     GetSourceForFrame(uint64_t frameID, uint64_t callbackID)
