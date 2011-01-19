@@ -433,9 +433,13 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 
     if (event->type() == eventNames().clickEvent) {
         switch (m_state) {
-        case Idle:
-            if (speechInput()->startRecognition(m_listenerId, input->renderer()->absoluteBoundingBoxRect(), input->computeInheritedLanguage(), input->getAttribute(webkitgrammarAttr)))
-                setState(Recording);
+        case Idle: {
+              AtomicString language = input->computeInheritedLanguage();
+              String grammar = input->getAttribute(webkitgrammarAttr);
+              IntRect rect = input->renderer()->absoluteBoundingBoxRect();
+              if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document()->securityOrigin()))
+                  setState(Recording);
+            }
             break;
         case Recording:
             speechInput()->stopRecording(m_listenerId);

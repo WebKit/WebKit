@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class IntRect;
+class SecurityOrigin;
 class SpeechInputClient;
 class SpeechInputListener;
 
@@ -61,7 +62,7 @@ public:
     void unregisterListener(int);
 
     // Methods invoked by the input elements.
-    bool startRecognition(int listenerId, const IntRect& elementRect, const AtomicString& language, const String& grammar);
+    bool startRecognition(int listenerId, const IntRect& elementRect, const AtomicString& language, const String& grammar, SecurityOrigin*);
     void stopRecording(int);
     void cancelRecognition(int);
 

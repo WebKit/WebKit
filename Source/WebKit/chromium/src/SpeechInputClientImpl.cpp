@@ -32,7 +32,9 @@
 #include "SpeechInputClientImpl.h"
 
 #include "PlatformString.h"
+#include "SecurityOrigin.h"
 #include "SpeechInputListener.h"
+#include "WebSecurityOrigin.h"
 #include "WebSpeechInputController.h"
 #include "WebString.h"
 #include "WebViewClient.h"
@@ -62,10 +64,10 @@ void SpeechInputClientImpl::setListener(WebCore::SpeechInputListener* listener)
     m_listener = listener;
 }
 
-bool SpeechInputClientImpl::startRecognition(int requestId, const WebCore::IntRect& elementRect, const AtomicString& language, const String& grammar)
+bool SpeechInputClientImpl::startRecognition(int requestId, const WebCore::IntRect& elementRect, const AtomicString& language, const String& grammar, WebCore::SecurityOrigin* origin)
 {
     ASSERT(m_listener);
-    return m_controller->startRecognition(requestId, elementRect, language, grammar);
+    return m_controller->startRecognition(requestId, elementRect, language, grammar, WebSecurityOrigin(origin));
 }
 
 void SpeechInputClientImpl::stopRecording(int requestId)

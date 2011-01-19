@@ -1,3 +1,19 @@
+2011-01-19  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Send origin/url as part of speech input requests to the embedder.
+        https://bugs.webkit.org/show_bug.cgi?id=52718
+
+        * public/WebSpeechInputController.h:
+        (WebKit::WebSpeechInputController::startRecognition): Updated prototype.
+        * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::startRecognition): Pass up additional origin parameter.
+        * src/SpeechInputClientImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp: Updated code to pass additional parameter.
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        * src/WebSpeechInputControllerMockImpl.h: Added new variant of startRecognition method.
+
 2011-01-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: updating Chromium devtools sanity tests for downstream use.

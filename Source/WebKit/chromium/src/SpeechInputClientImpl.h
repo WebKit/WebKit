@@ -40,6 +40,7 @@
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+class SecurityOrigin;
 class SpeechInputListener;
 }
 
@@ -57,7 +58,7 @@ public:
 
     // SpeechInputClient methods.
     void setListener(WebCore::SpeechInputListener*);
-    bool startRecognition(int requestId, const WebCore::IntRect& elementRect, const AtomicString& language, const String& grammar);
+    bool startRecognition(int requestId, const WebCore::IntRect& elementRect, const AtomicString& language, const String& grammar, WebCore::SecurityOrigin*);
     void stopRecording(int);
     void cancelRecognition(int);
 

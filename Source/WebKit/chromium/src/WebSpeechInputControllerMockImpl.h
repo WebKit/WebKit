@@ -57,7 +57,7 @@ public:
     void setRecognitionResult(int requestId, const WebCore::SpeechInputResultArray& result);
 
     // WebSpeechInputController methods.
-    bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar);
+    bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar, const WebSecurityOrigin&);
     void cancelRecognition(int requestId);
     void stopRecording(int requestId);
 

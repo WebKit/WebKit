@@ -33,7 +33,7 @@
 
 #if ENABLE(INPUT_SPEECH)
 
-#include "Frame.h"
+#include "SecurityOrigin.h"
 #include "SpeechInputClient.h"
 #include "SpeechInputListener.h"
 
@@ -93,10 +93,10 @@ void SpeechInput::setRecognitionResult(int listenerId, const SpeechInputResultAr
         m_listeners.get(listenerId)->setRecognitionResult(listenerId, result);
 }
 
-bool SpeechInput::startRecognition(int listenerId, const IntRect& elementRect, const AtomicString& language, const String& grammar)
+bool SpeechInput::startRecognition(int listenerId, const IntRect& elementRect, const AtomicString& language, const String& grammar, SecurityOrigin* origin)
 {
     ASSERT(m_listeners.contains(listenerId));
-    return m_client->startRecognition(listenerId, elementRect, language, grammar);
+    return m_client->startRecognition(listenerId, elementRect, language, grammar, origin);
 }
 
 void SpeechInput::stopRecording(int listenerId)

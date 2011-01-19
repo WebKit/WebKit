@@ -54,7 +54,7 @@ public:
 
     // SpeechInputClient methods.
     void setListener(SpeechInputListener*);
-    bool startRecognition(int requestId, const IntRect& elementRect, const AtomicString& language, const String& grammar);
+    bool startRecognition(int requestId, const IntRect& elementRect, const AtomicString& language, const String& grammar, SecurityOrigin*);
     void stopRecording(int);
     void cancelRecognition(int);
 

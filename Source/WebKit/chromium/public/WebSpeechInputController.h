@@ -35,8 +35,8 @@
 
 namespace WebKit {
 
-class WebString;
 struct WebRect;
+class WebSecurityOrigin;
 class WebString;
 
 // Provides an embedder API called by WebKit.
@@ -45,6 +45,11 @@ public:
     // Starts speech recognition. Speech will get recorded until the endpointer detects silence,
     // runs to the limit or stopRecording is called. Progress indications and the recognized
     // text are returned via the listener interface.
+    virtual bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar, const WebSecurityOrigin& origin)
+    {
+        return startRecognition(requestId, elementRect, language, grammar);
+    }
+    // TODO(satish): Remove this once chromium has rolled past the above change.
     virtual bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar)
     {
         WEBKIT_ASSERT_NOT_REACHED();

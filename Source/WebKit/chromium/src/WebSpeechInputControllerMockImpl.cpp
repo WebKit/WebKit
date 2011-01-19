@@ -32,8 +32,10 @@
 #include "WebSpeechInputControllerMockImpl.h"
 
 #include "PlatformString.h"
+#include "SecurityOrigin.h"
 #include "SpeechInputClientMock.h"
 #include "WebRect.h"
+#include "WebSecurityOrigin.h"
 
 namespace WebKit {
 
@@ -80,9 +82,9 @@ void WebSpeechInputControllerMockImpl::setRecognitionResult(int requestId, const
     m_listener->setRecognitionResult(requestId, result);
 }
 
-bool WebSpeechInputControllerMockImpl::startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar)
+bool WebSpeechInputControllerMockImpl::startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar, const WebSecurityOrigin& origin)
 {
-    return m_webcoreMock->startRecognition(requestId, elementRect, language, grammar);
+    return m_webcoreMock->startRecognition(requestId, elementRect, language, grammar, origin.get());
 }
 
 void WebSpeechInputControllerMockImpl::cancelRecognition(int requestId)

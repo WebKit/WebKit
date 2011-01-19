@@ -33,6 +33,7 @@
 
 #if ENABLE(INPUT_SPEECH)
 
+#include "SecurityOrigin.h"
 #include "SpeechInputListener.h"
 
 namespace WebCore {
@@ -50,7 +51,7 @@ void SpeechInputClientMock::setListener(SpeechInputListener* listener)
     m_listener = listener;
 }
 
-bool SpeechInputClientMock::startRecognition(int requestId, const IntRect& elementRect, const AtomicString& language, const String& grammar)
+bool SpeechInputClientMock::startRecognition(int requestId, const IntRect& elementRect, const AtomicString& language, const String& grammar, SecurityOrigin* origin)
 {
     if (m_timer.isActive())
         return false;
