@@ -7,10 +7,14 @@
 
 function extension_doRequest(callback)
 {
+    var userCallbackCalled = false;
     function callbackWrapper()
     {
-        webInspector.resources.onFinished.removeListener(callbackWrapper);
-        callback();
+        if (!userCallbackCalled) {
+            userCallbackCalled = true;
+            webInspector.resources.onFinished.removeListener(callbackWrapper);
+            callback();
+        }
     }
     webInspector.resources.onFinished.addListener(callbackWrapper);
     webInspector.inspectedWindow.eval("doRequest()", function(result) {

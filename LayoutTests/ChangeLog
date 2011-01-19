@@ -1,3 +1,9 @@
+2011-01-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixed flaky inspector test.
+
+        * http/tests/inspector/extensions-resources-redirect.html:
+
 2011-01-19  Mikhail Naganov  <mnaganov@chromium.org>
 
         Revert r76114 -- added test fails on Chromium canaries.
