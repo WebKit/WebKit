@@ -55,6 +55,10 @@ $typeTransform{"FileSystem"} = {
     "header" => "InspectorFileSystemAgent.h",
     "domainAccessor" => "m_inspectorController->m_fileSystemAgent",
 };
+$typeTransform{"InjectedScript"} = {
+    "forwardHeader" => "InjectedScriptHost.h",
+    "domainAccessor" => "m_inspectorController->m_injectedScriptHost",
+};
 $typeTransform{"Inspector"} = {
     "forwardHeader" => "InspectorController.h",
     "domainAccessor" => "m_inspectorController",
@@ -87,7 +91,8 @@ $typeTransform{"Object"} = {
     "defaultValue" => "InspectorObject::create()",
     "forward" => "InspectorObject",
     "header" => "InspectorValues.h",
-    "JSONType" => "Object"
+    "JSONType" => "Object",
+    "JSType" => "object"
 };
 $typeTransform{"Array"} = {
     "param" => "PassRefPtr<InspectorArray>",
@@ -95,7 +100,8 @@ $typeTransform{"Array"} = {
     "defaultValue" => "InspectorArray::create()",
     "forward" => "InspectorArray",
     "header" => "InspectorValues.h",
-    "JSONType" => "Array"
+    "JSONType" => "Array",
+    "JSType" => "object"
 };
 $typeTransform{"Value"} = {
     "param" => "PassRefPtr<InspectorValue>",
@@ -103,7 +109,8 @@ $typeTransform{"Value"} = {
     "defaultValue" => "InspectorValue::null()",
     "forward" => "InspectorValue",
     "header" => "InspectorValues.h",
-    "JSONType" => "Value"
+    "JSONType" => "Value",
+    "JSType" => ""
 };
 $typeTransform{"String"} = {
     "param" => "const String&",
@@ -112,7 +119,8 @@ $typeTransform{"String"} = {
     "defaultValue" => "\"\"",
     "forwardHeader" => "wtf/Forward.h",
     "header" => "PlatformString.h",
-    "JSONType" => "String"
+    "JSONType" => "String",
+    "JSType" => "string"
 };
 $typeTransform{"long"} = {
     "param" => "long",
@@ -120,7 +128,8 @@ $typeTransform{"long"} = {
     "defaultValue" => "0",
     "forward" => "",
     "header" => "",
-    "JSONType" => "Number"
+    "JSONType" => "Number",
+    "JSType" => "number"
 };
 $typeTransform{"int"} = {
     "param" => "int",
@@ -129,6 +138,7 @@ $typeTransform{"int"} = {
     "forward" => "",
     "header" => "",
     "JSONType" => "Number",
+    "JSType" => "number"
 };
 $typeTransform{"unsigned long"} = {
     "param" => "unsigned long",
@@ -136,7 +146,8 @@ $typeTransform{"unsigned long"} = {
     "defaultValue" => "0u",
     "forward" => "",
     "header" => "",
-    "JSONType" => "Number"
+    "JSONType" => "Number",
+    "JSType" => "number"
 };
 $typeTransform{"unsigned int"} = {
     "param" => "unsigned int",
@@ -144,7 +155,8 @@ $typeTransform{"unsigned int"} = {
     "defaultValue" => "0u",
     "forward" => "",
     "header" => "",
-    "JSONType" => "Number"
+    "JSONType" => "Number",
+    "JSType" => "number"
 };
 $typeTransform{"double"} = {
     "param" => "double",
@@ -152,7 +164,8 @@ $typeTransform{"double"} = {
     "defaultValue" => "0.0",
     "forward" => "",
     "header" => "",
-    "JSONType" => "Number"
+    "JSONType" => "Number",
+    "JSType" => "number"
 };
 $typeTransform{"boolean"} = {
     "param" => "bool",
@@ -160,7 +173,8 @@ $typeTransform{"boolean"} = {
     "defaultValue" => "false",
     "forward" => "",
     "header" => "",
-    "JSONType" => "Boolean"
+    "JSONType" => "Boolean",
+    "JSType" => "boolean"
 };
 $typeTransform{"void"} = {
     "forward" => "",
@@ -567,7 +581,7 @@ sub generateBackendStubJS
     foreach my $function (@backendFunctions) {
         my $name = $function->signature->name;
         my $domain = $function->signature->extendedAttributes->{"domain"};
-        my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . lc($typeTransform{$_->type}->{"JSONType"}) . "\"", grep($_->direction eq "in", @{$function->parameters})));
+        my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . $typeTransform{$_->type}->{"JSType"} . "\"", grep($_->direction eq "in", @{$function->parameters})));
         push(@JSStubs, "    this._registerDelegate('{" .
             "\"seq\": 0, " .
             "\"domain\": \"$domain\", " .
@@ -625,7 +639,7 @@ InspectorBackendStub.prototype = {
                 return;
             }
             var value = args.shift();
-            if (typeof value !== request.arguments[key]) {
+            if (request.arguments[key] && typeof value !== request.arguments[key]) {
                 console.error("Protocol Error: Invalid type of argument '%s' for 'InspectorBackend.%s' call. It should be '%s' but it is '%s'.", key, request.command, request.arguments[key], typeof value);
                 return;
             }

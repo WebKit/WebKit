@@ -1,3 +1,77 @@
+2011-01-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make InjectedScriptAccess API a part of Web Inspector protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=52652
+
+        Calls served by the InjectedScript should be first class protocol
+        citizens, not dispatched via single protocol message.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::evaluateInCallFrame):
+        (WebCore::InjectedScript::evaluateOnSelf):
+        (WebCore::InjectedScript::getCompletions):
+        (WebCore::InjectedScript::getProperties):
+        (WebCore::InjectedScript::pushNodeToFrontend):
+        (WebCore::InjectedScript::resolveNode):
+        (WebCore::InjectedScript::getNodeProperties):
+        (WebCore::InjectedScript::getNodePrototypes):
+        (WebCore::InjectedScript::setPropertyValue):
+        (WebCore::InjectedScript::makeCall):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::evaluate):
+        (WebCore::InjectedScriptHost::evaluateInCallFrame):
+        (WebCore::InjectedScriptHost::evaluateOnSelf):
+        (WebCore::InjectedScriptHost::getCompletions):
+        (WebCore::InjectedScriptHost::getProperties):
+        (WebCore::InjectedScriptHost::pushNodeToFrontend):
+        (WebCore::InjectedScriptHost::resolveNode):
+        (WebCore::InjectedScriptHost::getNodeProperties):
+        (WebCore::InjectedScriptHost::getNodePrototypes):
+        (WebCore::InjectedScriptHost::setPropertyValue):
+        (WebCore::InjectedScriptHost::injectedScriptForObjectId):
+        (WebCore::InjectedScriptHost::injectedScriptForNodeId):
+        (WebCore::InjectedScriptHost::injectedScriptForMainWorld):
+        * inspector/InjectedScriptHost.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.idl:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorObject::getNumber):
+        * inspector/InspectorValues.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.evaluateInTargetWindow):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions):
+        (WebInspector.ConsoleView.prototype.doEvalInWindow):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionWatchSidebarPane.prototype.setExpression):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onEvaluateOnInspectedPage):
+        * inspector/front-end/InjectedScriptAccess.js: Removed.
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.callback):
+        (WebInspector.PropertiesSidebarPane.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.resolveNode):
+        (WebInspector.RemoteObject.prototype.getProperties):
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+        (WebInspector.RemoteObject.prototype.pushNodeToFrontend):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.doEvalInCallFrame):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-01-18  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.

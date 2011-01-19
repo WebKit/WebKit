@@ -36,10 +36,12 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class InspectorValue;
+class ScriptFunctionCall;
 
 class InjectedScript {
 public:
@@ -48,10 +50,21 @@ public:
 
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
 
-    void dispatch(const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException);
+    void evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
+    void evaluateInCallFrame(long callFrame, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
+    void evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result);
+    void getCompletions(const String& expression, bool includeInspectorCommandLineAPI, long callFrameId, RefPtr<InspectorValue>* result);
+    void getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result);
+    void pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result);
+    void resolveNode(long nodeId, RefPtr<InspectorValue>* result);
+    void getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result);
+    void getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result);
+    void setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result);
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     PassRefPtr<InspectorValue> callFrames();
 #endif
+
     PassRefPtr<InspectorValue> wrapForConsole(ScriptValue);
     void releaseWrapperObjectGroup(const String&);
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }
@@ -60,6 +73,9 @@ private:
     friend InjectedScript InjectedScriptHost::injectedScriptFor(ScriptState*);
     explicit InjectedScript(ScriptObject);
     bool canAccessInspectedWindow();
+
+    void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
+
     ScriptObject m_injectedScriptObject;
 };
 

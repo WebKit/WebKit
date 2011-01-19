@@ -65469,10 +65469,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\InjectedScriptAccess.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\inspector.css"
 					>
 				</File>

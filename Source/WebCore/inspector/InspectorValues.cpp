@@ -647,6 +647,14 @@ bool InspectorObject::getBoolean(const String& name, bool* output) const
     return value->asBoolean(output);
 }
 
+bool InspectorObject::getNumber(const String& name, long* output) const
+{
+    RefPtr<InspectorValue> value = get(name);
+    if (!value)
+        return false;
+    return value->asNumber(output);
+}
+
 bool InspectorObject::getNumber(const String& name, double* output) const
 {
     RefPtr<InspectorValue> value = get(name);

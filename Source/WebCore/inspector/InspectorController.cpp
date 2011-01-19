@@ -1157,26 +1157,6 @@ void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> br
 }
 #endif
 
-void InspectorController::dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException)
-{
-    if (!m_frontend)
-        return;
-
-    // FIXME: explicitly pass injectedScriptId along with node id to the frontend.
-    bool injectedScriptIdIsNodeId = injectedScriptId <= 0;
-
-    InjectedScript injectedScript;
-    if (injectedScriptIdIsNodeId)
-        injectedScript = injectedScriptForNodeId(-injectedScriptId);
-    else
-        injectedScript = injectedScriptHost()->injectedScriptForId(injectedScriptId);
-
-    if (injectedScript.hasNoValue())
-        return;
-
-    injectedScript.dispatch(methodName, arguments, result, hadException);
-}
-
 void InspectorController::releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup)
 {
     injectedScriptHost()->releaseWrapperObjectGroup(injectedScriptId, objectGroup);
@@ -1462,27 +1442,6 @@ void InspectorController::openInInspectedWindow(const String& url)
     newFrame->loader()->setOpener(mainFrame);
     newFrame->page()->setOpenedByDOM();
     newFrame->loader()->changeLocation(mainFrame->document()->securityOrigin(), newFrame->loader()->completeURL(url), "", false, false);
-}
-
-InjectedScript InspectorController::injectedScriptForNodeId(long id)
-{
-
-    Frame* frame = 0;
-    if (id) {
-        ASSERT(m_domAgent);
-        Node* node = m_domAgent->nodeForId(id);
-        if (node) {
-            Document* document = node->ownerDocument();
-            if (document)
-                frame = document->frame();
-        }
-    } else
-        frame = m_inspectedPage->mainFrame();
-
-    if (frame)
-        return m_injectedScriptHost->injectedScriptFor(mainWorldScriptState(frame));
-
-    return InjectedScript();
 }
 
 void InspectorController::addScriptToEvaluateOnLoad(const String& source)

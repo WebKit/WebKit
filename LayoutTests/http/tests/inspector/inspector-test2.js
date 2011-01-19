@@ -24,7 +24,7 @@ InspectorTest.evaluateInConsole = function(code, callback)
 
 InspectorTest.evaluateInPage = function(code, callback)
 {
-    InjectedScriptAccess.getDefault().evaluate(code, "console", callback || function() {});
+    InspectorBackend.evaluate(code, "console", callback || function() {});
 }
 
 InspectorTest.evaluateInPageWithTimeout = function(code, callback)

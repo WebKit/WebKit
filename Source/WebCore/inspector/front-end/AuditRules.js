@@ -65,7 +65,7 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, nee
 
 WebInspector.AuditRules.evaluateInTargetWindow = function(func, args, callback)
 {
-    InjectedScriptAccess.getDefault().evaluateOnSelf(func.toString(), args, callback);
+    InspectorBackend.evaluateOnSelf(func.toString(), args, callback);
 }
 
 
@@ -721,7 +721,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             return nodeIds;
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(pushImageNodes, null, receivedImages);
+        WebInspector.AuditRules.evaluateInTargetWindow(pushImageNodes, [], receivedImages);
     }
 }
 
@@ -797,7 +797,7 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
             return found ? urlToViolationsArray : null;
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, null, evalCallback);
+        WebInspector.AuditRules.evaluateInTargetWindow(routine, [], evalCallback);
     }
 }
 
@@ -844,7 +844,7 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
             return [ lateStyleUrls, cssBeforeInlineCount ];
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, null, evalCallback.bind(this));
+        WebInspector.AuditRules.evaluateInTargetWindow(routine, [], evalCallback.bind(this));
     }
 }
 

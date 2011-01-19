@@ -224,15 +224,10 @@ public:
     void setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints);
 #endif
 
-    void setInjectedScriptSource(const String& source);
-    void dispatchOnInjectedScript(long injectedScriptId, const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException);
-
     // Generic code called from custom implementations.
     void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
 
     void evaluateForTestInFrontend(long testCallId, const String& script);
-
-    InjectedScript injectedScriptForNodeId(long id);
 
     void addScriptToEvaluateOnLoad(const String& source);
     void removeAllScriptsToEvaluateOnLoad();
@@ -283,9 +278,7 @@ private:
     PassRefPtr<InspectorArray> buildArrayForCookies(ListHashSet<Cookie>&);
 
     void focusNode();
-
     bool isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl);
-
     void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
     Page* m_inspectedPage;

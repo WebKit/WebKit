@@ -180,6 +180,7 @@ public:
 
     const_iterator find(const String& name) const;
     bool getBoolean(const String& name, bool* output) const;
+    bool getNumber(const String& name, long* output) const;
     bool getNumber(const String& name, double* output) const;
     bool getString(const String& name, String* output) const;
     PassRefPtr<InspectorObject> getObject(const String& name) const;

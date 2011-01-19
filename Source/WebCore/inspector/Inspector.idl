@@ -36,8 +36,6 @@ module core {
         // generic Inspector's methods
         ///////////////////////////////////////////////////////////////////////
 
-        // HUGE FIXME: we need to expose InjectedScript methods here. Or document InjectedScript capabilities.
-        [domain=Inspector] void dispatchOnInjectedScript(in long injectedScriptId, in String methodName, in String arguments, out Value result, out boolean isException);
         [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
         [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
         [domain=Inspector] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
@@ -71,6 +69,21 @@ module core {
 
         [domain=Inspector] void getCookies(out Array cookies, out String cookiesString);
         [domain=Inspector] void deleteCookie(in String cookieName, in String domain);
+
+        ///////////////////////////////////////////////////////////////////////
+        // Injected Script
+        ///////////////////////////////////////////////////////////////////////
+
+        [domain=InjectedScript] void evaluate(in String expression, in String objectGroup, out Value result);
+        [domain=InjectedScript] void evaluateInCallFrame(in long injectedScriptId, in long callFrame, in String expression, in String objectGroup, out Value result);
+        [domain=InjectedScript] void evaluateOnSelf(in String functionBody, in Array argumentsArray, out Value result);
+        [domain=InjectedScript] void getCompletions(in long injectedScriptId, in String expression, in boolean includeInspectorCommandLineAPI, in long callFrameId, out Value result);
+        [domain=InjectedScript] void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
+        [domain=InjectedScript] void pushNodeToFrontend(in Object objectId, out Value result);
+        [domain=InjectedScript] void resolveNode(in long nodeId, out Value result);
+        [domain=InjectedScript] void getNodeProperties(in long nodeId, in Array propertiesArray, out Value result);
+        [domain=InjectedScript] void getNodePrototypes(in long nodeId, out Value result);
+        [domain=InjectedScript] void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
 
         ///////////////////////////////////////////////////////////////////////
         // Console API

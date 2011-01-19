@@ -17,7 +17,7 @@ function doit()
         output("=== After clear ==="); 
         dumpConsoleMessages();
     }
-    evaluateInWebInspector("InjectedScriptAccess.getDefault().evaluate('clear()', '', function() {})", callback);
+    evaluateInWebInspector("InspectorBackend.evaluate('clear()', '', function() {})", callback);
 }
 
 </script>

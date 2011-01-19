@@ -44,21 +44,86 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject)
 {
 }
 
-void InjectedScript::dispatch(const String& methodName, const String& arguments, RefPtr<InspectorValue>* result, bool* hadException) 
+void InjectedScript::evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
 {
-    ASSERT(!hasNoValue());
-    if (!canAccessInspectedWindow()) {
-        *hadException = true;
-        return;
-    }
+    ScriptFunctionCall function(m_injectedScriptObject, "evaluate");
+    function.appendArgument(expression);
+    function.appendArgument(objectGroup);
+    makeCall(function, result);
+}
 
-    ScriptFunctionCall function(m_injectedScriptObject, "dispatch");
-    function.appendArgument(methodName);
-    function.appendArgument(arguments);
-    *hadException = false;
-    ScriptValue resultValue = function.call(*hadException);
-    if (!*hadException)
-        *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
+void InjectedScript::evaluateInCallFrame(long callFrame, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "evaluateInCallFrame");
+    function.appendArgument(callFrame);
+    function.appendArgument(expression);
+    function.appendArgument(objectGroup);
+    makeCall(function, result);
+}
+
+void InjectedScript::evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "evaluateOnSelf");
+    function.appendArgument(functionBody);
+    function.appendArgument(argumentsArray->toJSONString());
+    makeCall(function, result);
+}
+
+void InjectedScript::getCompletions(const String& expression, bool includeInspectorCommandLineAPI, long callFrameId, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "getCompletions");
+    function.appendArgument(expression);
+    function.appendArgument(includeInspectorCommandLineAPI);
+    function.appendArgument(callFrameId);
+    makeCall(function, result);
+}
+
+void InjectedScript::getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "getProperties");
+    String objectIdString = objectId->toJSONString();
+    function.appendArgument(objectIdString);
+    function.appendArgument(ignoreHasOwnProperty);
+    function.appendArgument(abbreviate);
+    makeCall(function, result);
+}
+
+void InjectedScript::pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "pushNodeToFrontend");
+    function.appendArgument(objectId->toJSONString());
+    makeCall(function, result);
+}
+
+void InjectedScript::resolveNode(long nodeId, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "resolveNode");
+    function.appendArgument(nodeId);
+    makeCall(function, result);
+}
+
+void InjectedScript::getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "getNodeProperties");
+    function.appendArgument(nodeId);
+    function.appendArgument(propertiesArray->toJSONString());
+    makeCall(function, result);
+}
+
+void InjectedScript::getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "getNodePrototypes");
+    function.appendArgument(nodeId);
+    makeCall(function, result);
+}
+
+void InjectedScript::setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result)
+{
+    ScriptFunctionCall function(m_injectedScriptObject, "getNodeProperties");
+    function.appendArgument(objectId->toJSONString());
+    function.appendArgument(propertyName);
+    function.appendArgument(expression);
+    makeCall(function, result);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -91,9 +156,27 @@ void InjectedScript::releaseWrapperObjectGroup(const String& objectGroup)
     releaseFunction.appendArgument(objectGroup);
     releaseFunction.call();
 }
+
 bool InjectedScript::canAccessInspectedWindow()
 {
     return InjectedScriptHost::canAccessInspectedWindow(m_injectedScriptObject.scriptState());
+}
+
+void InjectedScript::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValue>* result)
+{
+    if (hasNoValue() || !canAccessInspectedWindow()) {
+        *result = InspectorValue::null();
+        return;
+    }
+
+    bool hadException = false;
+    ScriptValue resultValue = function.call(hadException);
+
+    ASSERT(!hadException);
+    if (!hadException)
+        *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
+    else
+        *result = InspectorValue::null();
 }
 
 } // namespace WebCore

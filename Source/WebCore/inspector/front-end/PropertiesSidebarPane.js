@@ -42,11 +42,11 @@ WebInspector.PropertiesSidebarPane.prototype = {
             return;
         }
 
-        var self = this;
-        var callback = function(prototypes) {
-            var body = self.bodyElement;
+        function callback(prototypes)
+        {
+            var body = this.bodyElement;
             body.removeChildren();
-            self.sections = [];
+            this.sections = [];
 
             // Get array of prototype user-friendly names.
             for (var i = 0; i < prototypes.length; ++i) {
@@ -55,11 +55,11 @@ WebInspector.PropertiesSidebarPane.prototype = {
                 if (title.match(/Prototype$/))
                     title = title.replace(/Prototype$/, "");
                 var section = new WebInspector.ObjectPropertiesSection(prototype, title);
-                self.sections.push(section);
+                this.sections.push(section);
                 body.appendChild(section.element);
             }
-        };
-        InjectedScriptAccess.getForNode(node).getPrototypes(node.id, callback);
+        }
+        InspectorBackend.getNodePrototypes(node.id, callback.bind(this));
     }
 }
 

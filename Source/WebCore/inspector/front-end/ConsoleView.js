@@ -355,14 +355,14 @@ WebInspector.ConsoleView.prototype = {
         // Collect comma separated object properties for the completion.
 
         var includeInspectorCommandLineAPI = (!dotNotation && !bracketNotation);
-        var callFrameId = WebInspector.panels.scripts.selectedCallFrameId();
+        var callFrameId = WebInspector.panels.scripts.selectedCallFrameId() || -1;
         var injectedScriptAccess;
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
             var selectedCallFrame = WebInspector.panels.scripts.sidebarPanes.callstack.selectedCallFrame;
-            injectedScriptAccess = InjectedScriptAccess.get(selectedCallFrame.worldId);
+            var injectedScriptId = selectedCallFrame.worldId;
         } else
-            injectedScriptAccess = InjectedScriptAccess.getDefault();
-        injectedScriptAccess.getCompletions(expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions);
+            var injectedScriptId = 0;
+        InspectorBackend.getCompletions(injectedScriptId, expressionString, includeInspectorCommandLineAPI, callFrameId, reportCompletions);
     },
 
     _reportCompletions: function(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, result, isException) {
@@ -532,8 +532,8 @@ WebInspector.ConsoleView.prototype = {
         function evalCallback(result)
         {
             callback(WebInspector.RemoteObject.fromPayload(result));
-        };
-        InjectedScriptAccess.getDefault().evaluate(expression, objectGroup, evalCallback);
+        }
+        InspectorBackend.evaluate(expression, objectGroup, evalCallback);
     },
 
     _enterKeyPressed: function(event)

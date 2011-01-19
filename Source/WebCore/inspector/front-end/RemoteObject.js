@@ -52,7 +52,7 @@ WebInspector.RemoteObject.resolveNode = function(node, callback)
     {
         callback(object ? WebInspector.RemoteObject.fromPayload(object) : null);
     }
-    InjectedScriptAccess.getForNode(node).resolveNode(node.id, mycallback);
+    InspectorBackend.resolveNode(node.id, mycallback);
 }
 
 WebInspector.RemoteObject.fromPayload = function(payload)
@@ -118,7 +118,7 @@ WebInspector.RemoteObject.prototype = {
                 properties[i].value = WebInspector.RemoteObject.fromPayload(properties[i].value);
             callback(properties);
         }
-        InjectedScriptAccess.getForObjectId(this._objectId).getProperties(this._objectId, ignoreHasOwnProperty, abbreviate, remoteObjectBinder);
+        InspectorBackend.getProperties(this._objectId, !!ignoreHasOwnProperty, abbreviate, remoteObjectBinder);
     },
 
     setPropertyValue: function(name, value, callback)
@@ -127,12 +127,12 @@ WebInspector.RemoteObject.prototype = {
             callback(false);
             return;
         }
-        InjectedScriptAccess.getForObjectId(this._objectId).setPropertyValue(this._objectId, name, value, callback);
+        InspectorBackend.setPropertyValue(this._objectId, name, value, callback);
     },
 
     pushNodeToFrontend: function(callback)
     {
-        InjectedScriptAccess.getForObjectId(this._objectId).pushNodeToFrontend(this._objectId, callback);
+        InspectorBackend.pushNodeToFrontend(this._objectId, callback);
     }
 }
 

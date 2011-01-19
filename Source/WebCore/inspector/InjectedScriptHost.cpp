@@ -30,22 +30,21 @@
 
 #include "config.h"
 #include "InjectedScriptHost.h"
-#include "InjectedScriptSource.h"
-#include "InspectorDatabaseAgent.h"
-#include "InspectorDOMStorageAgent.h"
 
 #if ENABLE(INSPECTOR)
-
 
 #include "Element.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScript.h"
+#include "InjectedScriptSource.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorDOMStorageAgent.h"
+#include "InspectorDatabaseAgent.h"
 #include "InspectorFrontend.h"
 #include "Pasteboard.h"
 
@@ -79,6 +78,76 @@ InjectedScriptHost::InjectedScriptHost(InspectorController* inspectorController)
 
 InjectedScriptHost::~InjectedScriptHost()
 {
+}
+
+void InjectedScriptHost::evaluate(const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForMainWorld();
+    if (!injectedScript.hasNoValue())
+        injectedScript.evaluate(expression, objectGroup, result);
+}
+
+void InjectedScriptHost::evaluateInCallFrame(long injectedScriptId, long callFrame, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptId ? m_idToInjectedScript.get(injectedScriptId) : injectedScriptForMainWorld();
+    if (!injectedScript.hasNoValue())
+        injectedScript.evaluateInCallFrame(callFrame, expression, objectGroup, result);
+}
+
+void InjectedScriptHost::evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForMainWorld();
+    if (!injectedScript.hasNoValue())
+        injectedScript.evaluateOnSelf(functionBody, argumentsArray, result);
+}
+
+void InjectedScriptHost::getCompletions(long injectedScriptId, const String& expression, bool includeInspectorCommandLineAPI, long callFrameId, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptId ? m_idToInjectedScript.get(injectedScriptId) : injectedScriptForMainWorld();
+    if (!injectedScript.hasNoValue())
+        injectedScript.getCompletions(expression, includeInspectorCommandLineAPI, callFrameId, result);
+}
+
+void InjectedScriptHost::getProperties(PassRefPtr<InspectorObject> objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForObjectId(objectId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.getProperties(objectId, ignoreHasOwnProperty, abbreviate, result);
+}
+
+void InjectedScriptHost::pushNodeToFrontend(PassRefPtr<InspectorObject> objectId, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForObjectId(objectId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.pushNodeToFrontend(objectId, result);
+}
+
+void InjectedScriptHost::resolveNode(long nodeId, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
+    if (!injectedScript.hasNoValue())
+        injectedScript.resolveNode(nodeId, result);
+}
+
+void InjectedScriptHost::getNodeProperties(long nodeId, PassRefPtr<InspectorArray> propertiesArray, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
+    if (!injectedScript.hasNoValue())
+        injectedScript.getNodeProperties(nodeId, propertiesArray, result);
+}
+
+void InjectedScriptHost::getNodePrototypes(long nodeId, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForNodeId(nodeId);
+    if (!injectedScript.hasNoValue())
+        injectedScript.getNodePrototypes(nodeId, result);
+}
+
+void InjectedScriptHost::setPropertyValue(PassRefPtr<InspectorObject> objectId, const String& propertyName, const String& expression, RefPtr<InspectorValue>* result)
+{
+    InjectedScript injectedScript = injectedScriptForObjectId(objectId.get());
+    if (!injectedScript.hasNoValue())
+        injectedScript.setPropertyValue(objectId, propertyName, expression, result);
 }
 
 void InjectedScriptHost::clearConsoleMessages()
@@ -213,6 +282,43 @@ void InjectedScriptHost::didDestroyWorker(long id)
         m_inspectorController->didDestroyWorker(id);
 }
 #endif // ENABLE(WORKERS)
+
+InjectedScript InjectedScriptHost::injectedScriptForObjectId(InspectorObject* objectId)
+{
+    long injectedScriptId = 0;
+    bool success = objectId->getNumber("injectedScriptId", &injectedScriptId);
+    if (success)
+        return m_idToInjectedScript.get(injectedScriptId);
+    return InjectedScript();
+}
+
+InjectedScript InjectedScriptHost::injectedScriptForNodeId(long nodeId)
+{
+    if (!m_inspectorController)
+        return InjectedScript();
+
+    Frame* frame = 0;
+    if (nodeId) {
+        ASSERT(m_inspectorController->domAgent());
+        Node* node = m_inspectorController->domAgent()->nodeForId(nodeId);
+        if (node) {
+            Document* document = node->ownerDocument();
+            if (document)
+                frame = document->frame();
+        }
+    } else
+        frame = m_inspectorController->inspectedPage()->mainFrame();
+
+    if (frame)
+        return injectedScriptFor(mainWorldScriptState(frame));
+
+    return InjectedScript();
+}
+
+InjectedScript InjectedScriptHost::injectedScriptForMainWorld()
+{
+    return injectedScriptFor(mainWorldScriptState(m_inspectorController->inspectedPage()->mainFrame()));
+}
 
 } // namespace WebCore
 

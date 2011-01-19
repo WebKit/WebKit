@@ -60,7 +60,9 @@ InjectedScript.prototype = {
                     this._objectGroups[objectGroupName] = group;
                 }
                 group.push(id);
-                objectId = this._serializeObjectId(id, objectGroupName);
+                objectId = { injectedScriptId: injectedScriptId,
+                             id: id,
+                             groupName: objectGroupName };
             }
             return InjectedScript.RemoteObject.fromObject(object, objectId, abbreviate);
         } catch (e) {
@@ -68,18 +70,9 @@ InjectedScript.prototype = {
         }
     },
 
-    _serializeObjectId: function(id, groupName)
-    {
-        return injectedScriptId + ":" + id + ":" + groupName;
-    },
-
     _parseObjectId: function(objectId)
     {
-        var tokens = objectId.split(":");
-        var parsedObjectId = {};
-        parsedObjectId.id = parseInt(tokens[1]);
-        parsedObjectId.groupName = tokens[2];
-        return parsedObjectId;
+        return eval("(" + objectId + ")");
     },
 
     releaseWrapperObjectGroup: function(objectGroupName)
@@ -103,26 +96,11 @@ InjectedScript.prototype = {
         return result;
     },
 
-    getPrototypes: function(nodeId)
-    {
-        this.releaseWrapperObjectGroup("prototypes");
-        var node = this._nodeForId(nodeId);
-        if (!node)
-            return false;
-
-        var result = [];
-        var prototype = node;
-        do {
-            result.push(this._wrapObject(prototype, "prototypes"));
-            prototype = prototype.__proto__;
-        } while (prototype)
-        return result;
-    },
-
     getProperties: function(objectId, ignoreHasOwnProperty, abbreviate)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
+
         if (!this._isDefined(object))
             return false;
         var properties = [];
@@ -214,7 +192,7 @@ InjectedScript.prototype = {
         try {
             var expressionResult;
             // Evaluate on call frame if call frame id is available.
-            if (typeof callFrameId === "number") {
+            if (callFrameId !== -1) {
                 var callFrame = this._callFrameForId(callFrameId);
                 if (!callFrame)
                     return props;
@@ -323,9 +301,9 @@ InjectedScript.prototype = {
         return InjectedScriptHost.nodeForId(nodeId);
     },
 
-    _objectForId: function(parsedObjectId)
+    _objectForId: function(objectId)
     {
-        return this._idToWrappedObject[parsedObjectId.id];
+        return this._idToWrappedObject[objectId.id];
     },
 
     resolveNode: function(nodeId)
@@ -342,9 +320,26 @@ InjectedScript.prototype = {
         var node = this._nodeForId(nodeId);
         if (!node)
             return false;
+        properties = eval("(" + properties + ")");
         var result = {};
         for (var i = 0; i < properties.length; ++i)
             result[properties[i]] = node[properties[i]];
+        return result;
+    },
+
+    getNodePrototypes: function(nodeId)
+    {
+        this.releaseWrapperObjectGroup("prototypes");
+        var node = this._nodeForId(nodeId);
+        if (!node)
+            return false;
+
+        var result = [];
+        var prototype = node;
+        do {
+            result.push(this._wrapObject(prototype, "prototypes"));
+            prototype = prototype.__proto__;
+        } while (prototype)
         return result;
     },
 
@@ -359,8 +354,8 @@ InjectedScript.prototype = {
 
     evaluateOnSelf: function(funcBody, args)
     {
-        var func = window.eval("(" + funcBody + ")");
-        return func.apply(this, args || []);
+        var func = eval("(" + funcBody + ")");
+        return func.apply(this, eval("(" + args + ")") || []);
     },
 
     _isDefined: function(object)

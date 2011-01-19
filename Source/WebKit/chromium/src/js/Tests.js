@@ -741,32 +741,6 @@ TestSuite.prototype._waitUntilScriptsAreParsed = function(expectedScripts, callb
 
 
 /**
- * Executes the 'code' with InjectedScriptAccess.getProperties overriden
- * so that all callbacks passed to InjectedScriptAccess.getProperties are
- * extended with the "hook".
- * @param {Function} hook The hook function.
- * @param {Function} code A code snippet to be executed.
- */
-TestSuite.prototype._hookGetPropertiesCallback = function(hook, code)
-{
-    var accessor = InjectedScriptAccess.prototype;
-    var orig = accessor.getProperties;
-    accessor.getProperties = function(objectProxy, ignoreHasOwnProperty, abbreviate, callback) {
-        orig.call(this, objectProxy, ignoreHasOwnProperty, abbreviate,
-            function() {
-              callback.apply(this, arguments);
-              hook();
-            });
-    };
-    try {
-        code();
-    } finally {
-        accessor.getProperties = orig;
-    }
-};
-
-
-/**
  * Key event with given key identifier.
  */
 TestSuite.createKeyEvent = function(keyIdentifier)
