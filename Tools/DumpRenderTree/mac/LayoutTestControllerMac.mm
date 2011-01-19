@@ -266,8 +266,6 @@ unsigned LayoutTestController::workerThreadCount() const
 
 void LayoutTestController::notifyDone()
 {
-    puts("notifyDone");
-
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
         dump();
     m_waitToDump = false;

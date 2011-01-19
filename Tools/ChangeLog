@@ -1,5 +1,14 @@
 2011-01-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed. Bot fix.
+
+        Remove an inadvertently committed debugging print.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::notifyDone):
+
+2011-01-18  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Sam Weinig.
 
         WebKitTestRunner should track loading more like DumpRenderTree
