@@ -243,6 +243,7 @@ http/tests/navigation/timerredirect-goback.html
 # https://webkit.org/b/47060
 http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
+http/tests/misc/timer-vs-loading.html
 http/tests/multipart/policy-ignore-crash.php
 
 # =========================================================================== #
