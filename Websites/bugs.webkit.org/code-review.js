@@ -408,6 +408,11 @@
     convertAllFileDiffs(difftype, file_diffs);
   }
 
+  function patchRevision() {
+    var revision = $('.revision');
+    return revision[0] ? revision.first().text() : null;
+  }
+
   function getWebKitSourceFile(file_name, onLoad, expand_bar) {
     function handleLoad(contents) {
       original_file_contents[file_name] = contents.split('\n');
@@ -415,8 +420,11 @@
       onLoad();
     };
 
+    var revision = patchRevision();
+    var queryParameters = revision ? '?p=' + revision : '';
+
     $.ajax({
-      url: WEBKIT_BASE_DIR + file_name,
+      url: WEBKIT_BASE_DIR + file_name + queryParameters,
       context: document.body,
       complete: function(xhr, data) {
               if (xhr.status == 0)
@@ -432,9 +440,6 @@
   }
 
   function handleLoadError(expand_bar) {
-    // FIXME: In this case, try fetching the source file at the revision the patch was created at,
-    // in case the file has bee deleted.
-    // Might need to modify webkit-patch to include that data in the diff.
     replaceExpandLinkContainers(expand_bar, "Can't expand. Is this a new or deleted file?");
   }
 

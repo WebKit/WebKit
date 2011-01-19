@@ -1,3 +1,16 @@
+2011-01-18  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        make file expansion use the file at the svn revision the diff was created at
+        https://bugs.webkit.org/show_bug.cgi?id=52650
+
+        This only works for patches created with SVN for now since the git
+        diff does not include SVN revision numbers in it.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2011-01-15  Adam Barth  <abarth@webkit.org>
 
         Rubber-stamped by Eric Seidel.

@@ -409,7 +409,7 @@ body {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=24"></script>
+<script src="code-review.js?version=25"></script>
 EOF
 
     def self.revisionOrDescription(string)
@@ -516,6 +516,11 @@ EOF
             else
                 str += @sections.collect{ |section| section.to_html }.join("<br>\n") unless @sections.nil?
             end
+
+            if @from then
+                str += "<span class='revision'>" + @from + "</span>"
+            end
+
             str += "</div>\n"
         end
 
