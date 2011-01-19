@@ -30,6 +30,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
+#include "LayerTexture.h"
 #include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
@@ -61,13 +62,11 @@ public:
 private:
     LayerTilerChromium(LayerRendererChromium* layerRenderer, const IntSize& tileSize);
 
-    class Tile {
+    class Tile : public Noncopyable {
     public:
-        explicit Tile(unsigned int textureId) : m_textureId(textureId) { }
-        ~Tile();
+        explicit Tile(PassOwnPtr<LayerTexture> tex) : m_tex(tex) {}
 
-        unsigned int textureId() const { return m_textureId; }
-        unsigned int releaseTextureId();
+        LayerTexture* texture() { return m_tex.get(); }
 
         bool dirty() const { return !m_dirtyLayerRect.isEmpty(); }
         void clearDirty() { m_dirtyLayerRect = IntRect(); }
@@ -75,7 +74,7 @@ private:
         // Layer-space dirty rectangle that needs to be repainted.
         IntRect m_dirtyLayerRect;
     private:
-        unsigned int m_textureId;
+        OwnPtr<LayerTexture> m_tex;
     };
 
     void resizeLayer(const IntSize& size);
@@ -104,6 +103,8 @@ private:
     IntSize m_layerTileSize;
     IntRect m_lastUpdateLayerRect;
     IntPoint m_layerPosition;
+
+    bool m_skipsDraw;
 
     // Logical 2D array of tiles (dimensions of m_layerTileSize)
     Vector<OwnPtr<Tile> > m_tiles;
