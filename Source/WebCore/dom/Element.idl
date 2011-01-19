@@ -153,6 +153,8 @@ module core {
         attribute [DontEnum] EventListener ondrop;
         attribute [DontEnum] EventListener onerror;
         attribute [DontEnum] EventListener onfocus;
+        attribute [DontEnum] EventListener onformchange;
+        attribute [DontEnum] EventListener onforminput;
         attribute [DontEnum] EventListener oninput;
         attribute [DontEnum] EventListener oninvalid;
         attribute [DontEnum] EventListener onkeydown;
@@ -174,8 +176,6 @@ module core {
         // attribute [DontEnum] EventListener ondurationchange;
         // attribute [DontEnum] EventListener onemptied;
         // attribute [DontEnum] EventListener onended;
-        // attribute [DontEnum] EventListener onformchange;
-        // attribute [DontEnum] EventListener onforminput;
         // attribute [DontEnum] EventListener onloadeddata;
         // attribute [DontEnum] EventListener onloadedmetadata;
         // attribute [DontEnum] EventListener onloadstart;

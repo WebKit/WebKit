@@ -265,7 +265,7 @@ bool Event::fromUserGesture()
         // other accepted events
         || type == eventNames().selectEvent || type == eventNames().changeEvent
         || type == eventNames().focusEvent || type == eventNames().blurEvent
-        || type == eventNames().submitEvent;
+        || type == eventNames().submitEvent || type == eventNames().formchangeEvent;
 }
 
 bool Event::storesResultAsString() const

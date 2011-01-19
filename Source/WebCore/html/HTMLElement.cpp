@@ -190,6 +190,10 @@ void HTMLElement::parseMappedAttribute(Attribute* attr)
         setAttributeEventListener(eventNames().focusinEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onfocusoutAttr) {
         setAttributeEventListener(eventNames().focusoutEvent, createAttributeEventListener(this, attr));
+    } else if (attr->name() == onformchangeAttr) {
+        setAttributeEventListener(eventNames().formchangeEvent, createAttributeEventListener(this, attr));
+    } else if (attr->name() == onforminputAttr) {
+        setAttributeEventListener(eventNames().forminputEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onblurAttr) {
         setAttributeEventListener(eventNames().blurEvent, createAttributeEventListener(this, attr));
     } else if (attr->name() == onkeydownAttr) {
@@ -835,6 +839,40 @@ HTMLFormElement* HTMLElement::findFormAncestor() const
 HTMLFormElement* HTMLElement::virtualForm() const
 {
     return findFormAncestor();
+}
+
+HTMLFormElement* HTMLElement::shadowAncestorOwnerForm()
+{
+    Node* ancestorNode = shadowAncestorNode();
+    if (!ancestorNode)
+        return form();
+
+    if (!ancestorNode->isHTMLElement())
+        return 0;
+    HTMLElement* ancestorHTML = static_cast<HTMLElement*>(ancestorNode);
+    if (!ancestorHTML)
+        return 0;
+    return ancestorHTML->form();
+}
+
+void HTMLElement::dispatchChangeEvents()
+{
+    RefPtr<HTMLElement> protector(this);
+    RefPtr<HTMLFormElement> ownerForm(shadowAncestorOwnerForm());
+
+    Node::dispatchChangeEvents();
+    if (ownerForm)
+        ownerForm->dispatchFormChange();
+}
+
+void HTMLElement::dispatchInputEvents()
+{
+    RefPtr<HTMLElement> protector(this);
+    RefPtr<HTMLFormElement> ownerForm(shadowAncestorOwnerForm());
+
+    Node::dispatchInputEvents();
+    if (ownerForm)
+        ownerForm->dispatchFormInput();
 }
 
 } // namespace WebCore

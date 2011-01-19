@@ -178,7 +178,12 @@ void HTMLFormControlElement::setName(const AtomicString& value)
 
 void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
-    dispatchEvent(Event::create(eventNames().changeEvent, true, false));
+    HTMLElement::dispatchChangeEvents();
+}
+
+void HTMLFormControlElement::dispatchFormControlInputEvent()
+{
+    HTMLElement::dispatchInputEvents();
 }
 
 void HTMLFormControlElement::setDisabled(bool b)

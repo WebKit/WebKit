@@ -1379,7 +1379,7 @@ void HTMLInputElement::stepUpFromRenderer(int n)
         if (m_inputType->isRangeControl())
             dispatchFormControlChangeEvent();
         else
-            dispatchEvent(Event::create(eventNames().inputEvent, true, false));
+            dispatchFormControlInputEvent();
     }
 }
 

@@ -541,6 +541,8 @@ public:
 
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
+    virtual void dispatchChangeEvents();
+    virtual void dispatchInputEvents();
 
     // Perform the default action for an event.
     virtual void defaultEventHandler(Event*);

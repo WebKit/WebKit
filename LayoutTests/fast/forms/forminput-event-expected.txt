@@ -1,0 +1,38 @@
+Test for forminput events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Change for input (type=text)
+PASS result is "Fired"
+Change for input (type=number)
+PASS result is "Fired"
+Change for input (type=radio)
+PASS result is "Not fired"
+Change for input (type=checkbox)
+PASS result is "Not fired"
+Change for textarea
+PASS result is "Fired"
+Change for select
+PASS result is "Not fired"
+form.dispatchFormInput()
+PASS result is "Fired"
+
+Is forminput delivered for?
+PASS resultInputText is "Delivered"
+PASS resultInputNumber is "Delivered"
+PASS resultInputRadio is "Delivered"
+PASS resultInputCheckbox is "Delivered"
+PASS resultTextarea is "Delivered"
+PASS resultKeygen is "Delivered"
+PASS resultObject is "Not delivered"
+PASS resultOutput is "Delivered"
+PASS resultSelect is "Delivered"
+PASS resultP is "Not delivered"
+PASS resultRemovingInput is "Delivered"
+PASS resultRemovingForm is "Delivered"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

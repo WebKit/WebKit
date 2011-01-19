@@ -114,6 +114,9 @@ public:
 
     const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
 
+    void dispatchFormInput();
+    void dispatchFormChange();
+
 private:
     HTMLFormElement(const QualifiedName&, Document*);
 
@@ -143,6 +146,8 @@ private:
     // Validates each of the controls, and stores controls of which 'invalid'
     // event was not canceled to the specified vector.
     void collectUnhandledInvalidControls(Vector<RefPtr<FormAssociatedElement> >&);
+
+    void broadcastFormEvent(const AtomicString&);
 
     friend class HTMLFormCollection;
 

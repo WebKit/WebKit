@@ -243,7 +243,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
                 input->setValue("");
                 if (!oldValue.isEmpty()) {
                     toRenderTextControl(input->renderer())->setChangedSinceLastChangeEvent(true);
-                    input->dispatchEvent(Event::create(eventNames().inputEvent, true, false));
+                    input->dispatchFormControlInputEvent();
                 }
                 input->onSearch();
                 event->setDefaultHandled();

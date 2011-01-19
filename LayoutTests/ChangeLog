@@ -1,3 +1,23 @@
+2011-01-19  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Implement onformchange and onforminput event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=26141
+
+        * fast/dom/Window/window-properties-expected.txt: Added form events.
+        * fast/dom/Window/window-property-descriptors-expected.txt: Added form events.
+        * fast/forms/formchange-event-expected.txt: Added.
+        * fast/forms/formchange-event.html: Added to test formchange events.
+        * fast/forms/forminput-event-expected.txt: Added.
+        * fast/forms/forminput-event.html: Added to test forminput events.
+        * fast/forms/script-tests/formchange-event.js: Added.
+        (sendKey):
+        (sendText):
+        * fast/forms/script-tests/forminput-event.js: Added.
+        (sendKey):
+        (sendText):
+
 2011-01-18  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

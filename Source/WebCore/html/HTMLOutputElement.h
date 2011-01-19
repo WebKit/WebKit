@@ -56,6 +56,7 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual const AtomicString& formControlType() const;
     virtual bool isEnumeratable() const { return true; }
+    virtual bool isResettable() const { return true; }
     virtual void childrenChanged(bool createdByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual void reset();
 

@@ -140,7 +140,7 @@ void InputElement::setValueFromRenderer(InputElementData& data, InputElement* in
 
     // Input event is fired by the Node::defaultEventHandler for editable controls.
     if (!inputElement->isTextField())
-        element->dispatchEvent(Event::create(eventNames().inputEvent, true, false));
+        element->dispatchInputEvents();
     notifyFormStateChanged(element);
 }
 

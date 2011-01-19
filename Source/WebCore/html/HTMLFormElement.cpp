@@ -590,6 +590,39 @@ bool HTMLFormElement::checkValidity()
     return controls.isEmpty();
 }
 
+void HTMLFormElement::broadcastFormEvent(const AtomicString& eventName)
+{
+    RefPtr<HTMLFormElement> protector(this);
+    // Copy m_associatedElements because event handlers called from
+    // formElement->dispatchEvent() might change m_associatedElements.
+    Vector<RefPtr<FormAssociatedElement> > elements;
+    elements.reserveCapacity(m_associatedElements.size());
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i) {
+        if (!m_associatedElements[i]->isResettable())
+            continue;
+        elements.append(m_associatedElements[i]);
+    }
+
+    for (unsigned i = 0; i < elements.size(); ++i) {
+        // We can assume a resettable control is always a HTMLFormControlElement.
+        // FIXME: We should handle resettable non-HTMLFormControlElements maybe in the future.
+        ASSERT(elements[i]->isFormControlElement());
+        HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(elements[i].get());
+        if (!formElement->dispatchEvent(Event::create(eventName, false, false)))
+            continue;
+    }
+}
+
+void HTMLFormElement::dispatchFormInput()
+{
+    broadcastFormEvent(eventNames().forminputEvent);
+}
+
+void HTMLFormElement::dispatchFormChange()
+{
+    broadcastFormEvent(eventNames().formchangeEvent);
+}
+
 void HTMLFormElement::collectUnhandledInvalidControls(Vector<RefPtr<FormAssociatedElement> >& unhandledInvalidControls)
 {
     RefPtr<HTMLFormElement> protector(this);

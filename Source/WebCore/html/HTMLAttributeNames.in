@@ -177,6 +177,8 @@ onerror
 onfocus
 onfocusin
 onfocusout
+onformchange
+onforminput
 onhashchange
 oninput
 oninvalid

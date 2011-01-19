@@ -1,3 +1,59 @@
+2011-01-19  Dai Mikurube  <dmikurube@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Implement onformchange and onforminput event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=26141
+
+        Tests: fast/forms/formchange-event.html
+               fast/forms/forminput-event.html
+
+        * bindings/scripts/CodeGeneratorGObject.pm: Added event names.
+        * dom/Document.h: Added event definitions.
+        * dom/Document.idl: Added event definitions.
+        * dom/Element.h: Added event definitions.
+        * dom/Element.idl: Added event definitions.
+        * dom/Event.cpp:
+        (WebCore::Event::fromUserGesture): Added a condition for a formchange event in handling user gestures.
+        * dom/EventNames.h: Added event definitions.
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::setValueFromRenderer): Replaced a direct dispatchEvent() call into dispatchInputEvents(), a virtual function which broadcasts forminput events for HTML elements.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchInputEvents): Defined basic dispatchInputEvents() described above.
+        (WebCore::Node::dispatchChangeEvents): Defined basic dispatchChangeEvents() described above.
+        (WebCore::Node::defaultEventHandler): Replaced a direct dispatchEvent() call into dispatchInputEvents().
+        * dom/Node.h:
+        * html/FormAssociatedElement.h: Added isResettable() to check the element is resettable or not.
+        * html/HTMLAttributeNames.in: Added event names.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseMappedAttribute): Added event handling.
+        (WebCore::HTMLElement::shadowAncestorOwnerForm): Added to get an ancestor <form> element from a shadow element.
+        (WebCore::HTMLElement::dispatchChangeEvents): Defined dispatchChangeEvents() for HTML elements described above.
+        (WebCore::HTMLElement::dispatchInputEvents): Defined dispatchInputEvents() for HTML elements described above.
+        * html/HTMLElement.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchFormControlChangeEvent): Added calling dispatchFormChange() to broadcast formchange events.
+        (WebCore::HTMLFormControlElement::dispatchFormControlInputEvent): Defined newly to dispatch an input event with broadcasting forminput events.
+        * html/HTMLFormControlElement.h: Added isResettable().
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::broadcastFormEvent): Added to broadcast forminput or formchange events.
+        (WebCore::HTMLFormElement::dispatchFormInput): Defined newly to broadcast forminput events.
+        (WebCore::HTMLFormElement::dispatchFormChange): Defined newly to broadcast formchange events.
+        * html/HTMLFormElement.h:
+        * html/HTMLFormElement.idl: Added dispatchFormInput() and dispatchFormChange() DOM API definitions.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepUpFromRenderer): Replaced a direct dispatchEvent() call into dispatchInputEvents().
+        * html/HTMLInputElement.h: Added isResettable().
+        * html/HTMLKeygenElement.h: Added isResettable().
+        * html/HTMLObjectElement.h: Added isResettable().
+        * html/HTMLOutputElement.h: Added isResettable().
+        * html/HTMLSelectElement.h: Added isResettable().
+        * html/HTMLTextAreaElement.h: Added isResettable().
+        * page/DOMWindow.h: Added event definitions.
+        * page/DOMWindow.idl: Added event definitions.
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler): Replaced a direct dispatchEvent() call into dispatchInputEvents().
+
 2011-01-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -263,6 +263,8 @@ module window {
         attribute EventListener onended;
         attribute EventListener onerror;
         attribute EventListener onfocus;
+        attribute EventListener onformchange;
+        attribute EventListener onforminput;
         attribute EventListener onhashchange;
         attribute EventListener oninput;
         attribute EventListener oninvalid;
@@ -307,8 +309,6 @@ module window {
         // Not implemented yet.
         // attribute EventListener onafterprint;
         // attribute EventListener onbeforeprint;
-        // attribute EventListener onformchange;
-        // attribute EventListener onforminput;
         // attribute EventListener onreadystatechange;
         // attribute EventListener onredo;
         // attribute EventListener onshow;

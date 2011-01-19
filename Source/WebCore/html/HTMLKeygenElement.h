@@ -35,6 +35,8 @@ public:
 private:
     HTMLKeygenElement(const QualifiedName&, Document*, HTMLFormElement*);
 
+    virtual bool isResettable() const { return true; }
+
     virtual const AtomicString& formControlType() const;
     virtual void parseMappedAttribute(Attribute*);
     virtual bool appendFormData(FormDataList&, bool);

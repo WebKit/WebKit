@@ -518,7 +518,7 @@ my @eventSignalNames = (
     # User Interface Event types
     "focus", "blur",
     # Basic Event types
-    "load", "unload", "abort", "error", "select", "change", "submit", "reset",
+    "load", "unload", "abort", "error", "select", "change", "formchange", "submit", "reset",
     "resize", "scroll",
     # Mouse Event types
     "click", "dblclick", "mousedown", "mouseup",
@@ -540,7 +540,7 @@ my @eventSignalNames = (
     # Animations
     "webkitanimationend", "webkitanimationstart", "webkitanimationiteration",
     # Other
-    "contextmenu", "input", "invalid", "search", "selectstart");
+    "contextmenu", "input", "forminput", "invalid", "search", "selectstart");
 
 sub GenerateProperties {
     my ($object, $interfaceName, $dataNode) = @_;

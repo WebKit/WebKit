@@ -107,6 +107,7 @@ private:
     virtual bool canStartSelection() const { return false; }
 
     virtual bool isEnumeratable() const { return true; }
+    virtual bool isResettable() const { return true; }
 
     virtual bool saveFormControlState(String& value) const;
     virtual void restoreFormControlState(const String&);
