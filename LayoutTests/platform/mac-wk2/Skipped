@@ -2352,8 +2352,11 @@ fast/dom/global-constructors.html
 compositing/tiling/huge-layer-resize.html
 
 # Unexplained plugin failures
-plugins/destroy-reentry.html
 platform/mac/plugins/testplugin-onnew-onpaint.html
-plugins/destroy-stream-twice.html
-plugins/embed-inside-object.html
 plugins/no-mime-with-valid-extension.html
+
+# Causes subsequent plugin tests to fail, time out or crash
+plugins/destroy-on-setwindow.html
+
+# Sporadically fails in WebKit2 for unknown reasons.
+fast/forms/input-align.html

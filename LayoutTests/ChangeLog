@@ -1,3 +1,18 @@
+2011-01-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Skip/fix remaining WebKit2 test failures
+        https://bugs.webkit.org/show_bug.cgi?id=52744
+
+        * platform/mac-wk2/fast/blockflow/Kusa-Makura-background-canvas-expected.txt: Added WebKit2 mac results.
+        It turns out that WebKit1 on Mac is the only port to report a scroll position other than 0, 0 for this 
+        test, so the WebKit2 results are arguably more correct.
+        * platform/mac-wk2/fast/blockflow: Added.
+        * platform/mac-wk2/fast: Added.
+        * platform/mac-wk2/Skipped: Skip a few more tests. (And unskip in some cases where the failures
+        were caused by other tests.)
+
 2011-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76152.
