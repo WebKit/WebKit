@@ -21,8 +21,8 @@
 //
 class TOutputTraverser : public TIntermTraverser {
 public:
-    TOutputTraverser(TInfoSink& i) : infoSink(i) { }
-    TInfoSink& infoSink;
+    TOutputTraverser(TInfoSinkBase& i) : sink(i) { }
+    TInfoSinkBase& sink;
 
 protected:
     void visitSymbol(TIntermSymbol*);
@@ -56,14 +56,14 @@ TString TType::getCompleteString() const
 // Helper functions for printing, not part of traversing.
 //
 
-void OutputTreeText(TInfoSink& infoSink, TIntermNode* node, const int depth)
+void OutputTreeText(TInfoSinkBase& sink, TIntermNode* node, const int depth)
 {
     int i;
 
-    infoSink.debug.location(node->getLine());
+    sink.location(node->getLine());
 
     for (i = 0; i < depth; ++i)
-        infoSink.debug << "  ";
+        sink << "  ";
 }
 
 //
@@ -77,226 +77,226 @@ void OutputTreeText(TInfoSink& infoSink, TIntermNode* node, const int depth)
 
 void TOutputTraverser::visitSymbol(TIntermSymbol* node)
 {
-    OutputTreeText(infoSink, node, depth);
+    OutputTreeText(sink, node, depth);
 
-    infoSink.debug << "'" << node->getSymbol() << "' ";
-    infoSink.debug << "(" << node->getCompleteString() << ")\n";
+    sink << "'" << node->getSymbol() << "' ";
+    sink << "(" << node->getCompleteString() << ")\n";
 }
 
 bool TOutputTraverser::visitBinary(Visit visit, TIntermBinary* node)
 {
-    TInfoSink& out = infoSink;
+    TInfoSinkBase& out = sink;
 
     OutputTreeText(out, node, depth);
 
     switch (node->getOp()) {
-        case EOpAssign:                   out.debug << "move second child to first child";           break;
-        case EOpInitialize:               out.debug << "initialize first child with second child";   break;
-        case EOpAddAssign:                out.debug << "add second child into first child";          break;
-        case EOpSubAssign:                out.debug << "subtract second child into first child";     break;
-        case EOpMulAssign:                out.debug << "multiply second child into first child";     break;
-        case EOpVectorTimesMatrixAssign:  out.debug << "matrix mult second child into first child";  break;
-        case EOpVectorTimesScalarAssign:  out.debug << "vector scale second child into first child"; break;
-        case EOpMatrixTimesScalarAssign:  out.debug << "matrix scale second child into first child"; break;
-        case EOpMatrixTimesMatrixAssign:  out.debug << "matrix mult second child into first child"; break;
-        case EOpDivAssign:                out.debug << "divide second child into first child";       break;
-        case EOpIndexDirect:   out.debug << "direct index";   break;
-        case EOpIndexIndirect: out.debug << "indirect index"; break;
-        case EOpIndexDirectStruct:   out.debug << "direct index for structure";   break;
-        case EOpVectorSwizzle: out.debug << "vector swizzle"; break;
+        case EOpAssign:                   out << "move second child to first child";           break;
+        case EOpInitialize:               out << "initialize first child with second child";   break;
+        case EOpAddAssign:                out << "add second child into first child";          break;
+        case EOpSubAssign:                out << "subtract second child into first child";     break;
+        case EOpMulAssign:                out << "multiply second child into first child";     break;
+        case EOpVectorTimesMatrixAssign:  out << "matrix mult second child into first child";  break;
+        case EOpVectorTimesScalarAssign:  out << "vector scale second child into first child"; break;
+        case EOpMatrixTimesScalarAssign:  out << "matrix scale second child into first child"; break;
+        case EOpMatrixTimesMatrixAssign:  out << "matrix mult second child into first child"; break;
+        case EOpDivAssign:                out << "divide second child into first child";       break;
+        case EOpIndexDirect:   out << "direct index";   break;
+        case EOpIndexIndirect: out << "indirect index"; break;
+        case EOpIndexDirectStruct:   out << "direct index for structure";   break;
+        case EOpVectorSwizzle: out << "vector swizzle"; break;
 
-        case EOpAdd:    out.debug << "add";                     break;
-        case EOpSub:    out.debug << "subtract";                break;
-        case EOpMul:    out.debug << "component-wise multiply"; break;
-        case EOpDiv:    out.debug << "divide";                  break;
-        case EOpEqual:            out.debug << "Compare Equal";                 break;
-        case EOpNotEqual:         out.debug << "Compare Not Equal";             break;
-        case EOpLessThan:         out.debug << "Compare Less Than";             break;
-        case EOpGreaterThan:      out.debug << "Compare Greater Than";          break;
-        case EOpLessThanEqual:    out.debug << "Compare Less Than or Equal";    break;
-        case EOpGreaterThanEqual: out.debug << "Compare Greater Than or Equal"; break;
+        case EOpAdd:    out << "add";                     break;
+        case EOpSub:    out << "subtract";                break;
+        case EOpMul:    out << "component-wise multiply"; break;
+        case EOpDiv:    out << "divide";                  break;
+        case EOpEqual:            out << "Compare Equal";                 break;
+        case EOpNotEqual:         out << "Compare Not Equal";             break;
+        case EOpLessThan:         out << "Compare Less Than";             break;
+        case EOpGreaterThan:      out << "Compare Greater Than";          break;
+        case EOpLessThanEqual:    out << "Compare Less Than or Equal";    break;
+        case EOpGreaterThanEqual: out << "Compare Greater Than or Equal"; break;
 
-        case EOpVectorTimesScalar: out.debug << "vector-scale";          break;
-        case EOpVectorTimesMatrix: out.debug << "vector-times-matrix";   break;
-        case EOpMatrixTimesVector: out.debug << "matrix-times-vector";   break;
-        case EOpMatrixTimesScalar: out.debug << "matrix-scale";          break;
-        case EOpMatrixTimesMatrix: out.debug << "matrix-multiply";       break;
+        case EOpVectorTimesScalar: out << "vector-scale";          break;
+        case EOpVectorTimesMatrix: out << "vector-times-matrix";   break;
+        case EOpMatrixTimesVector: out << "matrix-times-vector";   break;
+        case EOpMatrixTimesScalar: out << "matrix-scale";          break;
+        case EOpMatrixTimesMatrix: out << "matrix-multiply";       break;
 
-        case EOpLogicalOr:  out.debug << "logical-or";   break;
-        case EOpLogicalXor: out.debug << "logical-xor"; break;
-        case EOpLogicalAnd: out.debug << "logical-and"; break;
-        default: out.debug << "<unknown op>";
+        case EOpLogicalOr:  out << "logical-or";   break;
+        case EOpLogicalXor: out << "logical-xor"; break;
+        case EOpLogicalAnd: out << "logical-and"; break;
+        default: out << "<unknown op>";
     }
 
-    out.debug << " (" << node->getCompleteString() << ")";
+    out << " (" << node->getCompleteString() << ")";
 
-    out.debug << "\n";
+    out << "\n";
 
     return true;
 }
 
 bool TOutputTraverser::visitUnary(Visit visit, TIntermUnary* node)
 {
-    TInfoSink& out = infoSink;
+    TInfoSinkBase& out = sink;
 
     OutputTreeText(out, node, depth);
 
     switch (node->getOp()) {
-        case EOpNegative:       out.debug << "Negate value";         break;
+        case EOpNegative:       out << "Negate value";         break;
         case EOpVectorLogicalNot:
-        case EOpLogicalNot:     out.debug << "Negate conditional";   break;
+        case EOpLogicalNot:     out << "Negate conditional";   break;
 
-        case EOpPostIncrement:  out.debug << "Post-Increment";       break;
-        case EOpPostDecrement:  out.debug << "Post-Decrement";       break;
-        case EOpPreIncrement:   out.debug << "Pre-Increment";        break;
-        case EOpPreDecrement:   out.debug << "Pre-Decrement";        break;
+        case EOpPostIncrement:  out << "Post-Increment";       break;
+        case EOpPostDecrement:  out << "Post-Decrement";       break;
+        case EOpPreIncrement:   out << "Pre-Increment";        break;
+        case EOpPreDecrement:   out << "Pre-Decrement";        break;
 
-        case EOpConvIntToBool:  out.debug << "Convert int to bool";  break;
-        case EOpConvFloatToBool:out.debug << "Convert float to bool";break;
-        case EOpConvBoolToFloat:out.debug << "Convert bool to float";break;
-        case EOpConvIntToFloat: out.debug << "Convert int to float"; break;
-        case EOpConvFloatToInt: out.debug << "Convert float to int"; break;
-        case EOpConvBoolToInt:  out.debug << "Convert bool to int";  break;
+        case EOpConvIntToBool:  out << "Convert int to bool";  break;
+        case EOpConvFloatToBool:out << "Convert float to bool";break;
+        case EOpConvBoolToFloat:out << "Convert bool to float";break;
+        case EOpConvIntToFloat: out << "Convert int to float"; break;
+        case EOpConvFloatToInt: out << "Convert float to int"; break;
+        case EOpConvBoolToInt:  out << "Convert bool to int";  break;
 
-        case EOpRadians:        out.debug << "radians";              break;
-        case EOpDegrees:        out.debug << "degrees";              break;
-        case EOpSin:            out.debug << "sine";                 break;
-        case EOpCos:            out.debug << "cosine";               break;
-        case EOpTan:            out.debug << "tangent";              break;
-        case EOpAsin:           out.debug << "arc sine";             break;
-        case EOpAcos:           out.debug << "arc cosine";           break;
-        case EOpAtan:           out.debug << "arc tangent";          break;
+        case EOpRadians:        out << "radians";              break;
+        case EOpDegrees:        out << "degrees";              break;
+        case EOpSin:            out << "sine";                 break;
+        case EOpCos:            out << "cosine";               break;
+        case EOpTan:            out << "tangent";              break;
+        case EOpAsin:           out << "arc sine";             break;
+        case EOpAcos:           out << "arc cosine";           break;
+        case EOpAtan:           out << "arc tangent";          break;
 
-        case EOpExp:            out.debug << "exp";                  break;
-        case EOpLog:            out.debug << "log";                  break;
-        case EOpExp2:           out.debug << "exp2";                 break;
-        case EOpLog2:           out.debug << "log2";                 break;
-        case EOpSqrt:           out.debug << "sqrt";                 break;
-        case EOpInverseSqrt:    out.debug << "inverse sqrt";         break;
+        case EOpExp:            out << "exp";                  break;
+        case EOpLog:            out << "log";                  break;
+        case EOpExp2:           out << "exp2";                 break;
+        case EOpLog2:           out << "log2";                 break;
+        case EOpSqrt:           out << "sqrt";                 break;
+        case EOpInverseSqrt:    out << "inverse sqrt";         break;
 
-        case EOpAbs:            out.debug << "Absolute value";       break;
-        case EOpSign:           out.debug << "Sign";                 break;
-        case EOpFloor:          out.debug << "Floor";                break;
-        case EOpCeil:           out.debug << "Ceiling";              break;
-        case EOpFract:          out.debug << "Fraction";             break;
+        case EOpAbs:            out << "Absolute value";       break;
+        case EOpSign:           out << "Sign";                 break;
+        case EOpFloor:          out << "Floor";                break;
+        case EOpCeil:           out << "Ceiling";              break;
+        case EOpFract:          out << "Fraction";             break;
 
-        case EOpLength:         out.debug << "length";               break;
-        case EOpNormalize:      out.debug << "normalize";            break;
-            //	case EOpDPdx:           out.debug << "dPdx";                 break;               
-            //	case EOpDPdy:           out.debug << "dPdy";                 break;   
-            //	case EOpFwidth:         out.debug << "fwidth";               break;                   
+        case EOpLength:         out << "length";               break;
+        case EOpNormalize:      out << "normalize";            break;
+            //	case EOpDPdx:           out << "dPdx";                 break;               
+            //	case EOpDPdy:           out << "dPdy";                 break;   
+            //	case EOpFwidth:         out << "fwidth";               break;                   
 
-        case EOpAny:            out.debug << "any";                  break;
-        case EOpAll:            out.debug << "all";                  break;
+        case EOpAny:            out << "any";                  break;
+        case EOpAll:            out << "all";                  break;
 
-        default: out.debug.message(EPrefixError, "Bad unary op");
+        default: out.message(EPrefixError, "Bad unary op");
     }
 
-    out.debug << " (" << node->getCompleteString() << ")";
+    out << " (" << node->getCompleteString() << ")";
 
-    out.debug << "\n";
+    out << "\n";
 
     return true;
 }
 
 bool TOutputTraverser::visitAggregate(Visit visit, TIntermAggregate* node)
 {
-    TInfoSink& out = infoSink;
+    TInfoSinkBase& out = sink;
 
     if (node->getOp() == EOpNull) {
-        out.debug.message(EPrefixError, "node is still EOpNull!");
+        out.message(EPrefixError, "node is still EOpNull!");
         return true;
     }
 
     OutputTreeText(out, node, depth);
 
     switch (node->getOp()) {
-        case EOpSequence:      out.debug << "Sequence\n"; return true;
-        case EOpComma:         out.debug << "Comma\n"; return true;
-        case EOpFunction:      out.debug << "Function Definition: " << node->getName(); break;
-        case EOpFunctionCall:  out.debug << "Function Call: " << node->getName(); break;
-        case EOpParameters:    out.debug << "Function Parameters: ";              break;
+        case EOpSequence:      out << "Sequence\n"; return true;
+        case EOpComma:         out << "Comma\n"; return true;
+        case EOpFunction:      out << "Function Definition: " << node->getName(); break;
+        case EOpFunctionCall:  out << "Function Call: " << node->getName(); break;
+        case EOpParameters:    out << "Function Parameters: ";              break;
 
-        case EOpConstructFloat: out.debug << "Construct float"; break;
-        case EOpConstructVec2:  out.debug << "Construct vec2";  break;
-        case EOpConstructVec3:  out.debug << "Construct vec3";  break;
-        case EOpConstructVec4:  out.debug << "Construct vec4";  break;
-        case EOpConstructBool:  out.debug << "Construct bool";  break;
-        case EOpConstructBVec2: out.debug << "Construct bvec2"; break;
-        case EOpConstructBVec3: out.debug << "Construct bvec3"; break;
-        case EOpConstructBVec4: out.debug << "Construct bvec4"; break;
-        case EOpConstructInt:   out.debug << "Construct int";   break;
-        case EOpConstructIVec2: out.debug << "Construct ivec2"; break;
-        case EOpConstructIVec3: out.debug << "Construct ivec3"; break;
-        case EOpConstructIVec4: out.debug << "Construct ivec4"; break;
-        case EOpConstructMat2:  out.debug << "Construct mat2";  break;
-        case EOpConstructMat3:  out.debug << "Construct mat3";  break;
-        case EOpConstructMat4:  out.debug << "Construct mat4";  break;
-        case EOpConstructStruct:  out.debug << "Construct structure";  break;
+        case EOpConstructFloat: out << "Construct float"; break;
+        case EOpConstructVec2:  out << "Construct vec2";  break;
+        case EOpConstructVec3:  out << "Construct vec3";  break;
+        case EOpConstructVec4:  out << "Construct vec4";  break;
+        case EOpConstructBool:  out << "Construct bool";  break;
+        case EOpConstructBVec2: out << "Construct bvec2"; break;
+        case EOpConstructBVec3: out << "Construct bvec3"; break;
+        case EOpConstructBVec4: out << "Construct bvec4"; break;
+        case EOpConstructInt:   out << "Construct int";   break;
+        case EOpConstructIVec2: out << "Construct ivec2"; break;
+        case EOpConstructIVec3: out << "Construct ivec3"; break;
+        case EOpConstructIVec4: out << "Construct ivec4"; break;
+        case EOpConstructMat2:  out << "Construct mat2";  break;
+        case EOpConstructMat3:  out << "Construct mat3";  break;
+        case EOpConstructMat4:  out << "Construct mat4";  break;
+        case EOpConstructStruct:  out << "Construct structure";  break;
 
-        case EOpLessThan:         out.debug << "Compare Less Than";             break;
-        case EOpGreaterThan:      out.debug << "Compare Greater Than";          break;
-        case EOpLessThanEqual:    out.debug << "Compare Less Than or Equal";    break;
-        case EOpGreaterThanEqual: out.debug << "Compare Greater Than or Equal"; break;
-        case EOpVectorEqual:      out.debug << "Equal";                         break;
-        case EOpVectorNotEqual:   out.debug << "NotEqual";                      break;
+        case EOpLessThan:         out << "Compare Less Than";             break;
+        case EOpGreaterThan:      out << "Compare Greater Than";          break;
+        case EOpLessThanEqual:    out << "Compare Less Than or Equal";    break;
+        case EOpGreaterThanEqual: out << "Compare Greater Than or Equal"; break;
+        case EOpVectorEqual:      out << "Equal";                         break;
+        case EOpVectorNotEqual:   out << "NotEqual";                      break;
 
-        case EOpMod:           out.debug << "mod";         break;
-        case EOpPow:           out.debug << "pow";         break;
+        case EOpMod:           out << "mod";         break;
+        case EOpPow:           out << "pow";         break;
 
-        case EOpAtan:          out.debug << "arc tangent"; break;
+        case EOpAtan:          out << "arc tangent"; break;
 
-        case EOpMin:           out.debug << "min";         break;
-        case EOpMax:           out.debug << "max";         break;
-        case EOpClamp:         out.debug << "clamp";       break;
-        case EOpMix:           out.debug << "mix";         break;
-        case EOpStep:          out.debug << "step";        break;
-        case EOpSmoothStep:    out.debug << "smoothstep";  break;
+        case EOpMin:           out << "min";         break;
+        case EOpMax:           out << "max";         break;
+        case EOpClamp:         out << "clamp";       break;
+        case EOpMix:           out << "mix";         break;
+        case EOpStep:          out << "step";        break;
+        case EOpSmoothStep:    out << "smoothstep";  break;
 
-        case EOpDistance:      out.debug << "distance";                break;
-        case EOpDot:           out.debug << "dot-product";             break;
-        case EOpCross:         out.debug << "cross-product";           break;
-        case EOpFaceForward:   out.debug << "face-forward";            break;
-        case EOpReflect:       out.debug << "reflect";                 break;
-        case EOpRefract:       out.debug << "refract";                 break;
-        case EOpMul:           out.debug << "component-wise multiply"; break;
+        case EOpDistance:      out << "distance";                break;
+        case EOpDot:           out << "dot-product";             break;
+        case EOpCross:         out << "cross-product";           break;
+        case EOpFaceForward:   out << "face-forward";            break;
+        case EOpReflect:       out << "reflect";                 break;
+        case EOpRefract:       out << "refract";                 break;
+        case EOpMul:           out << "component-wise multiply"; break;
 
-        default: out.debug.message(EPrefixError, "Bad aggregation op");
+        default: out.message(EPrefixError, "Bad aggregation op");
     }
 
     if (node->getOp() != EOpSequence && node->getOp() != EOpParameters)
-        out.debug << " (" << node->getCompleteString() << ")";
+        out << " (" << node->getCompleteString() << ")";
 
-    out.debug << "\n";
+    out << "\n";
 
     return true;
 }
 
 bool TOutputTraverser::visitSelection(Visit visit, TIntermSelection* node)
 {
-    TInfoSink& out = infoSink;
+    TInfoSinkBase& out = sink;
 
     OutputTreeText(out, node, depth);
 
-    out.debug << "Test condition and select";
-    out.debug << " (" << node->getCompleteString() << ")\n";
+    out << "Test condition and select";
+    out << " (" << node->getCompleteString() << ")\n";
 
     ++depth;
 
-    OutputTreeText(infoSink, node, depth);
-    out.debug << "Condition\n";
+    OutputTreeText(sink, node, depth);
+    out << "Condition\n";
     node->getCondition()->traverse(this);
 
-    OutputTreeText(infoSink, node, depth);
+    OutputTreeText(sink, node, depth);
     if (node->getTrueBlock()) {
-        out.debug << "true case\n";
+        out << "true case\n";
         node->getTrueBlock()->traverse(this);
     } else
-        out.debug << "true case is null\n";
+        out << "true case is null\n";
 
     if (node->getFalseBlock()) {
-        OutputTreeText(infoSink, node, depth);
-        out.debug << "false case\n";
+        OutputTreeText(sink, node, depth);
+        out << "false case\n";
         node->getFalseBlock()->traverse(this);
     }
 
@@ -307,7 +307,7 @@ bool TOutputTraverser::visitSelection(Visit visit, TIntermSelection* node)
 
 void TOutputTraverser::visitConstantUnion(TIntermConstantUnion* node)
 {
-    TInfoSink& out = infoSink;
+    TInfoSinkBase& out = sink;
 
     int size = node->getType().getObjectSize();
 
@@ -316,23 +316,23 @@ void TOutputTraverser::visitConstantUnion(TIntermConstantUnion* node)
         switch (node->getUnionArrayPointer()[i].getType()) {
             case EbtBool:
                 if (node->getUnionArrayPointer()[i].getBConst())
-                    out.debug << "true";
+                    out << "true";
                 else
-                    out.debug << "false";
+                    out << "false";
 
-                out.debug << " (" << "const bool" << ")";
-                out.debug << "\n";
+                out << " (" << "const bool" << ")";
+                out << "\n";
                 break;
             case EbtFloat:
-                out.debug << node->getUnionArrayPointer()[i].getFConst();
-                out.debug << " (const float)\n";
+                out << node->getUnionArrayPointer()[i].getFConst();
+                out << " (const float)\n";
                 break;
             case EbtInt:
-                out.debug << node->getUnionArrayPointer()[i].getIConst();
-                out.debug << " (const int)\n";
+                out << node->getUnionArrayPointer()[i].getIConst();
+                out << " (const int)\n";
                 break;
             default:
-                out.info.message(EPrefixInternalError, "Unknown constant", node->getLine());
+                out.message(EPrefixInternalError, "Unknown constant", node->getLine());
                 break;
         }
     }
@@ -340,35 +340,35 @@ void TOutputTraverser::visitConstantUnion(TIntermConstantUnion* node)
 
 bool TOutputTraverser::visitLoop(Visit visit, TIntermLoop* node)
 {
-    TInfoSink& out = infoSink;
+    TInfoSinkBase& out = sink;
 
     OutputTreeText(out, node, depth);
 
-    out.debug << "Loop with condition ";
-    if (! node->testFirst())
-        out.debug << "not ";
-    out.debug << "tested first\n";
+    out << "Loop with condition ";
+    if (node->getType() == ELoopDoWhile)
+        out << "not ";
+    out << "tested first\n";
 
     ++depth;
 
-    OutputTreeText(infoSink, node, depth);
-    if (node->getTest()) {
-        out.debug << "Loop Condition\n";
-        node->getTest()->traverse(this);
+    OutputTreeText(sink, node, depth);
+    if (node->getCondition()) {
+        out << "Loop Condition\n";
+        node->getCondition()->traverse(this);
     } else
-        out.debug << "No loop condition\n";
+        out << "No loop condition\n";
 
-    OutputTreeText(infoSink, node, depth);
+    OutputTreeText(sink, node, depth);
     if (node->getBody()) {
-        out.debug << "Loop Body\n";
+        out << "Loop Body\n";
         node->getBody()->traverse(this);
     } else
-        out.debug << "No loop body\n";
+        out << "No loop body\n";
 
-    if (node->getTerminal()) {
-        OutputTreeText(infoSink, node, depth);
-        out.debug << "Loop Terminal Expression\n";
-        node->getTerminal()->traverse(this);
+    if (node->getExpression()) {
+        OutputTreeText(sink, node, depth);
+        out << "Loop Terminal Expression\n";
+        node->getExpression()->traverse(this);
     }
 
     --depth;
@@ -378,25 +378,25 @@ bool TOutputTraverser::visitLoop(Visit visit, TIntermLoop* node)
 
 bool TOutputTraverser::visitBranch(Visit visit, TIntermBranch* node)
 {
-    TInfoSink& out = infoSink;
+    TInfoSinkBase& out = sink;
 
     OutputTreeText(out, node, depth);
 
     switch (node->getFlowOp()) {
-        case EOpKill:      out.debug << "Branch: Kill";           break;
-        case EOpBreak:     out.debug << "Branch: Break";          break;
-        case EOpContinue:  out.debug << "Branch: Continue";       break;
-        case EOpReturn:    out.debug << "Branch: Return";         break;
-        default:           out.debug << "Branch: Unknown Branch"; break;
+        case EOpKill:      out << "Branch: Kill";           break;
+        case EOpBreak:     out << "Branch: Break";          break;
+        case EOpContinue:  out << "Branch: Continue";       break;
+        case EOpReturn:    out << "Branch: Return";         break;
+        default:           out << "Branch: Unknown Branch"; break;
     }
 
     if (node->getExpression()) {
-        out.debug << " with expression\n";
+        out << " with expression\n";
         ++depth;
         node->getExpression()->traverse(this);
         --depth;
     } else
-        out.debug << "\n";
+        out << "\n";
 
     return false;
 }
@@ -411,7 +411,7 @@ void TIntermediate::outputTree(TIntermNode* root)
     if (root == 0)
         return;
 
-    TOutputTraverser it(infoSink);
+    TOutputTraverser it(infoSink.info);
 
     root->traverse(&it);
 }

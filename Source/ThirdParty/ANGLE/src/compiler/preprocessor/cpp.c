@@ -191,6 +191,9 @@ static int CPPdefine(yystypepp * yylvalpp)
         if (token == '\\') {
             CPPErrorToInfoLog("The line continuation character (\\) is not part of the OpenGL ES Shading Language");
             return token;
+        } else if (token <= 0) { // EOF or error
+            CPPErrorToInfoLog("unexpected end of input in #define preprocessor directive - expected a newline");
+            return 0;
         }
         RecordToken(mac.body, token, yylvalpp);
         token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
@@ -267,9 +270,13 @@ static int CPPelse(int matchelse, yystypepp * yylvalpp)
 	
 	while (token > 0) {
         if (token != '#') {
-		    while (token != '\n')
+            while (token != '\n') {
                 token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
-            
+                if (token <= 0) { // EOF or error
+                    CPPErrorToInfoLog("unexpected end of input in #else preprocessor directive - expected a newline");
+                    return 0;
+                }
+            }
             token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
             continue;
         }
@@ -295,8 +302,13 @@ static int CPPelse(int matchelse, yystypepp * yylvalpp)
                 token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
                 if (token != '\n') {
                     CPPWarningToInfoLog("unexpected tokens following #else preprocessor directive - expected a newline");
-                    while (token != '\n')
+                    while (token != '\n') {
                         token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
+                        if (token <= 0) { // EOF or error
+                            CPPErrorToInfoLog("unexpected end of input following #else preprocessor directive - expected a newline");
+                            return 0;
+                        }
+                    }
                 } 
 				break;
 			} 
@@ -467,9 +479,14 @@ static int CPPif(yystypepp * yylvalpp) {
 	}
 	token = eval(token, MIN_PREC, &res, &err, yylvalpp);
     if (token != '\n') {
-        CPPWarningToInfoLog("unexpected tokens following the preprocessor directive - expected a newline");
-        while (token != '\n')
+        CPPWarningToInfoLog("unexpected tokens following #if preprocessor directive - expected a newline");
+        while (token != '\n') {
             token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
+            if (token <= 0) { // EOF or error
+                CPPErrorToInfoLog("unexpected end of input in #if preprocessor directive - expected a newline");
+                return 0;
+            }
+        }
     } 
     if (!res && !err) {
         token = CPPelse(1, yylvalpp);
@@ -495,8 +512,13 @@ static int CPPifdef(int defined, yystypepp * yylvalpp)
         token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
         if (token != '\n') {
             CPPWarningToInfoLog("unexpected tokens following #ifdef preprocessor directive - expected a newline");
-            while (token != '\n')
+            while (token != '\n') {
                 token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
+                if (token <= 0) { // EOF or error
+                    CPPErrorToInfoLog("unexpected end of input in #ifdef preprocessor directive - expected a newline");
+                    return 0;
+                }
+            }
         }
         if (((s && !s->details.mac.undef) ? 1 : 0) != defined)
             token = CPPelse(1, yylvalpp);
@@ -544,7 +566,10 @@ static int CPPerror(yystypepp * yylvalpp) {
     const char *message;
 	
     while (token != '\n') {
-		if (token == CPP_FLOATCONSTANT || token == CPP_INTCONSTANT){
+        if (token <= 0){
+            CPPErrorToInfoLog("unexpected end of input in #error preprocessor directive - expected a newline");
+            return 0;
+        }else if (token == CPP_FLOATCONSTANT || token == CPP_INTCONSTANT){
             StoreStr(yylvalpp->symbol_name);
 		}else if(token == CPP_IDENTIFIER || token == CPP_STRCONSTANT){
 			StoreStr(GetStringOfAtom(atable,yylvalpp->sc_ident));
@@ -670,7 +695,7 @@ static int CPPextension(yystypepp * yylvalpp)
 {
 
     int token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
-    char extensionName[80];
+    char extensionName[MAX_SYMBOL_NAME_LEN + 1];
 
     if(token=='\n'){
 		DecLineNumber();
@@ -682,7 +707,8 @@ static int CPPextension(yystypepp * yylvalpp)
     if (token != CPP_IDENTIFIER)
         CPPErrorToInfoLog("#extension");
     
-    strcpy(extensionName, GetAtomString(atable, yylvalpp->sc_ident));
+    strncpy(extensionName, GetAtomString(atable, yylvalpp->sc_ident), MAX_SYMBOL_NAME_LEN);
+    extensionName[MAX_SYMBOL_NAME_LEN] = '\0';
 	    
     token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
     if (token != ':') {
@@ -726,8 +752,13 @@ int readCPPline(yystypepp * yylvalpp)
                  token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
                  if (token != '\n') {
                      CPPWarningToInfoLog("unexpected tokens following #else preprocessor directive - expected a newline");
-                     while (token != '\n')
+                     while (token != '\n') {
                          token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
+                         if (token <= 0) { // EOF or error
+                             CPPErrorToInfoLog("unexpected end of input in #ifdef preprocessor directive - expected a newline");
+                             return 0;
+                         }
+                     }
                  }
 			     token = CPPelse(0, yylvalpp);
              }else{
@@ -743,8 +774,14 @@ int readCPPline(yystypepp * yylvalpp)
             } 
             // this token is really a dont care, but we still need to eat the tokens
             token = cpp->currentInput->scan(cpp->currentInput, yylvalpp); 
-            while (token != '\n')
+            while (token != '\n') {
                 token = cpp->currentInput->scan(cpp->currentInput, yylvalpp);
+                if (token <= 0) { // EOF or error
+                    CPPErrorToInfoLog("unexpect tokens following #elif preprocessor directive - expected a newline");
+                    cpp->CompileError = 1;
+                    break;
+                }
+            }
 		    token = CPPelse(0, yylvalpp);
         } else if (yylvalpp->sc_ident == endifAtom) {
 		     --cpp->elsetracker;

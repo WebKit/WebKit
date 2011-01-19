@@ -10,7 +10,7 @@
 #ifndef LIBGLESV2_GEOMETRY_INDEXDATAMANAGER_H_
 #define LIBGLESV2_GEOMETRY_INDEXDATAMANAGER_H_
 
-#include <bitset>
+#include <vector>
 #include <cstddef>
 
 #define GL_APICALL
@@ -21,49 +21,98 @@
 namespace gl
 {
 
-class Buffer;
-class BufferBackEnd;
-class TranslatedIndexBuffer;
-struct FormatConverter;
-
 struct TranslatedIndexData
 {
-    GLuint minIndex;
-    GLuint maxIndex;
-    GLuint count;
-    GLuint indexSize;
+    UINT minIndex;
+    UINT maxIndex;
+    UINT startIndex;
 
-    TranslatedIndexBuffer *buffer;
-    GLsizei offset;
+    IDirect3DIndexBuffer9 *indexBuffer;
+};
+
+class IndexBuffer
+{
+  public:
+    IndexBuffer(IDirect3DDevice9 *device, UINT size, D3DFORMAT format);
+    virtual ~IndexBuffer();
+
+    UINT size() const { return mBufferSize; }
+    virtual void *map(UINT requiredSpace, UINT *offset) = 0;
+    void unmap();
+    virtual void reserveSpace(UINT requiredSpace, GLenum type) = 0;
+
+    IDirect3DIndexBuffer9 *getBuffer() const;
+
+  protected:
+    IDirect3DDevice9 *const mDevice;
+
+    IDirect3DIndexBuffer9 *mIndexBuffer;
+    UINT mBufferSize;
+
+  private:
+    DISALLOW_COPY_AND_ASSIGN(IndexBuffer);
+};
+
+class StreamingIndexBuffer : public IndexBuffer
+{
+  public:
+    StreamingIndexBuffer(IDirect3DDevice9 *device, UINT initialSize, D3DFORMAT format);
+    ~StreamingIndexBuffer();
+
+    void *map(UINT requiredSpace, UINT *offset);
+    void reserveSpace(UINT requiredSpace, GLenum type);
+
+  private:
+    UINT mWritePosition;
+};
+
+class StaticIndexBuffer : public IndexBuffer
+{
+  public:
+    explicit StaticIndexBuffer(IDirect3DDevice9 *device);
+    ~StaticIndexBuffer();
+
+    void *map(UINT requiredSpace, UINT *offset);
+    void reserveSpace(UINT requiredSpace, GLenum type);
+
+    bool lookupType(GLenum type);
+    UINT lookupRange(intptr_t offset, GLsizei count, UINT *minIndex, UINT *maxIndex);   // Returns the offset into the index buffer, or -1 if not found
+    void addRange(intptr_t offset, GLsizei count, UINT minIndex, UINT maxIndex, UINT streamOffset);
+
+  private:
+    GLenum mCacheType;
+    
+    struct IndexRange
+    {
+        intptr_t offset;
+        GLsizei count;
+
+        UINT minIndex;
+        UINT maxIndex;
+        UINT streamOffset;
+    };
+
+    std::vector<IndexRange> mCache;
 };
 
 class IndexDataManager
 {
   public:
-    IndexDataManager(Context *context, BufferBackEnd *backend);
-    ~IndexDataManager();
+    IndexDataManager(Context *context, IDirect3DDevice9 *evice);
+    virtual ~IndexDataManager();
 
-    GLenum preRenderValidate(GLenum mode, GLenum type, GLsizei count, Buffer *arrayElementBuffer, const void *indices, TranslatedIndexData *translated);
-    GLenum preRenderValidateUnindexed(GLenum mode, GLsizei count, TranslatedIndexData *indexInfo);
+    GLenum prepareIndexData(GLenum type, GLsizei count, Buffer *arrayElementBuffer, const void *indices, TranslatedIndexData *translated);
 
   private:
-    std::size_t IndexDataManager::typeSize(GLenum type) const;
-    std::size_t IndexDataManager::indexSize(GLenum type) const;
-    std::size_t spaceRequired(GLenum type, GLsizei count) const;
-    TranslatedIndexBuffer *prepareIndexBuffer(GLenum type, std::size_t requiredSpace);
+    DISALLOW_COPY_AND_ASSIGN(IndexDataManager);
 
-    Context *mContext;
-    BufferBackEnd *mBackend;
+    std::size_t typeSize(GLenum type) const;
+    std::size_t indexSize(D3DFORMAT format) const;
 
-    bool mIntIndicesSupported;
+    IDirect3DDevice9 *const mDevice;
 
-    TranslatedIndexBuffer *mStreamBufferShort;
-    TranslatedIndexBuffer *mStreamBufferInt;
-
-    TranslatedIndexBuffer *mCountingBuffer;
-    GLsizei mCountingBufferSize;
-
-    TranslatedIndexBuffer *mLineLoopBuffer;
+    StreamingIndexBuffer *mStreamingBufferShort;
+    StreamingIndexBuffer *mStreamingBufferInt;
 };
 
 }

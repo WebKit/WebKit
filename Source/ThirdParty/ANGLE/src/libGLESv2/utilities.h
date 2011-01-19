@@ -36,6 +36,10 @@ bool IsCubemapTextureTarget(GLenum target);
 bool IsTextureTarget(GLenum target);
 bool CheckTextureFormatType(GLenum format, GLenum type);
 
+bool IsColorRenderable(GLenum internalformat);
+bool IsDepthRenderable(GLenum internalformat);
+bool IsStencilRenderable(GLenum internalformat);
+
 }
 
 namespace es2dx
@@ -57,11 +61,19 @@ unsigned int GetGreenSize(D3DFORMAT colorFormat);
 unsigned int GetBlueSize(D3DFORMAT colorFormat);
 unsigned int GetDepthSize(D3DFORMAT depthFormat);
 unsigned int GetStencilSize(D3DFORMAT stencilFormat);
-bool ConvertPrimitiveType(GLenum primitiveType, GLsizei primitiveCount,
+bool ConvertPrimitiveType(GLenum primitiveType, GLsizei elementCount,
                           D3DPRIMITIVETYPE *d3dPrimitiveType, int *d3dPrimitiveCount);
 D3DFORMAT ConvertRenderbufferFormat(GLenum format);
 D3DMULTISAMPLE_TYPE GetMultisampleTypeFromSamples(GLsizei samples);
 GLsizei GetSamplesFromMultisampleType(D3DMULTISAMPLE_TYPE type);
+
+}
+
+namespace dx2es
+{
+
+GLenum ConvertBackBufferFormat(D3DFORMAT format);
+GLenum ConvertDepthStencilFormat(D3DFORMAT format);
 
 }
 

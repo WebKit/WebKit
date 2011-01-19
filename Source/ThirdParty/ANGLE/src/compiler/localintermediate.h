@@ -40,11 +40,11 @@ public:
     TIntermConstantUnion* addConstantUnion(ConstantUnion*, const TType&, TSourceLoc);
     TIntermTyped* promoteConstantUnion(TBasicType, TIntermConstantUnion*) ;
     bool parseConstTree(TSourceLoc, TIntermNode*, ConstantUnion*, TOperator, TSymbolTable&, TType, bool singleConstantParam = false);        
-    TIntermNode* addLoop(TIntermNode*, TIntermNode*, TIntermTyped*, TIntermTyped*, bool testFirst, TSourceLoc);
+    TIntermNode* addLoop(TLoopType, TIntermNode*, TIntermTyped*, TIntermTyped*, TIntermNode*, TSourceLoc);
     TIntermBranch* addBranch(TOperator, TSourceLoc);
     TIntermBranch* addBranch(TOperator, TIntermTyped*, TSourceLoc);
     TIntermTyped* addSwizzle(TVectorFields&, TSourceLoc);
-    bool postProcess(TIntermNode*, EShLanguage);
+    bool postProcess(TIntermNode*);
 	void remove(TIntermNode*);
     void outputTree(TIntermNode*);
     

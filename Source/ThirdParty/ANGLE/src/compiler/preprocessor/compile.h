@@ -89,10 +89,10 @@ struct CPPStruct_Rec {
     // Globals used to communicate between PaParseStrings() and yy_input()and 
     // also across the files.(gen_glslang.cpp and scanner.c)
     //
-    int    PaWhichStr;            // which string we're parsing
-    int*   PaStrLen;              // array of lengths of the PaArgv strings
-    int    PaArgc;                // count of strings in the array
-    char** PaArgv;                // our array of strings to parse    
+    int PaWhichStr;             // which string we're parsing
+    const int* PaStrLen;        // array of lengths of the PaArgv strings
+    int PaArgc;                 // count of strings in the array
+    const char* const* PaArgv;  // our array of strings to parse    
     unsigned int tokensBeforeEOF : 1;
 };
 

@@ -7,14 +7,31 @@
 #include "compiler/TranslatorGLSL.h"
 
 #include "compiler/OutputGLSL.h"
+#include "compiler/VersionGLSL.h"
 
-TranslatorGLSL::TranslatorGLSL(EShLanguage lang, EShSpec spec)
-    : TCompiler(lang, spec) {
+static void writeVersion(ShShaderType type, TIntermNode* root,
+                         TInfoSinkBase& sink) {
+    TVersionGLSL versionGLSL(type);
+    root->traverse(&versionGLSL);
+    int version = versionGLSL.getVersion();
+    // We need to write version directive only if it is greater than 110.
+    // If there is no version directive in the shader, 110 is implied.
+    if (version > 110) {
+        sink << "#version " << version << "\n";
+    }
 }
 
-bool TranslatorGLSL::compile(TIntermNode* root) {
-    TOutputGLSL outputGLSL(infoSink.obj);
-    root->traverse(&outputGLSL);
+TranslatorGLSL::TranslatorGLSL(ShShaderType type, ShShaderSpec spec)
+    : TCompiler(type, spec) {
+}
 
-    return true;
+void TranslatorGLSL::translate(TIntermNode* root) {
+    TInfoSinkBase& sink = getInfoSink().obj;
+
+    // Write GLSL version.
+    writeVersion(getShaderType(), root, sink);
+
+    // Write translated shader.
+    TOutputGLSL outputGLSL(sink);
+    root->traverse(&outputGLSL);
 }

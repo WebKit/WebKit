@@ -17,17 +17,19 @@ class TBuiltIns {
 public:
     POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator)
 
-    void initialize(EShLanguage language, EShSpec spec, const TBuiltInResource& resources);
+    void initialize(ShShaderType type, ShShaderSpec spec,
+                    const ShBuiltInResources& resources);
     const TBuiltInStrings& getBuiltInStrings() { return builtInStrings; }
 
 protected:
     TBuiltInStrings builtInStrings;
 };
 
-void IdentifyBuiltIns(EShLanguage language, EShSpec spec, const TBuiltInResource& resources,
+void IdentifyBuiltIns(ShShaderType type, ShShaderSpec spec,
+                      const ShBuiltInResources& resources,
                       TSymbolTable& symbolTable);
 
-extern "C" int InitPreprocessor(void);
-extern "C" int FinalizePreprocessor(void);
+void InitExtensionBehavior(const ShBuiltInResources& resources,
+                           TExtensionBehavior& extensionBehavior);
 
 #endif // _INITIALIZE_INCLUDED_

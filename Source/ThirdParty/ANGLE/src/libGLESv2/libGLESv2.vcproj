@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Fence.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Framebuffer.cpp"
 				>
 			</File>
@@ -244,14 +248,6 @@
 				Name="Geometry"
 				>
 				<File
-					RelativePath=".\geometry\backend.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\geometry\dx9.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\geometry\IndexDataManager.cpp"
 					>
 				</File>
@@ -276,6 +272,10 @@
 			</File>
 			<File
 				RelativePath=".\Context.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Fence.h"
 				>
 			</File>
 			<File
@@ -333,14 +333,6 @@
 			<Filter
 				Name="Geometry"
 				>
-				<File
-					RelativePath=".\geometry\backend.h"
-					>
-				</File>
-				<File
-					RelativePath=".\geometry\dx9.h"
-					>
-				</File>
 				<File
 					RelativePath=".\geometry\IndexDataManager.h"
 					>

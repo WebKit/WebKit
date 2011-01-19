@@ -115,7 +115,7 @@ private:
 //
 class TPoolAllocator {
 public:
-    TPoolAllocator(bool global = false, int growthIncrement = 8*1024, int allocationAlignment = 16);
+    TPoolAllocator(int growthIncrement = 8*1024, int allocationAlignment = 16);
 
     //
     // Don't call the destructor just to free up the memory, call pop()
@@ -194,7 +194,6 @@ protected:
         return TAllocation::offsetAllocation(memory);
     }
 
-    bool global;            // should be true if this object is globally scoped
     size_t pageSize;        // granularity of allocation from the OS
     size_t alignment;       // all returned allocations will be aligned at 
                             // this granularity, which will be a power of 2
@@ -220,17 +219,14 @@ private:
 // different times.  But a simple use is to have a global pop
 // with everyone using the same global allocator.
 //
-typedef TPoolAllocator* PoolAllocatorPointer;
 extern TPoolAllocator& GetGlobalPoolAllocator();
+extern void SetGlobalPoolAllocator(TPoolAllocator* poolAllocator);
 #define GlobalPoolAllocator GetGlobalPoolAllocator()
-
 
 struct TThreadGlobalPools
 {
     TPoolAllocator* globalPoolAllocator;
 };
-
-void SetGlobalPoolAllocatorPtr(TPoolAllocator* poolAllocator);
 
 //
 // This STL compatible allocator is intended to be used as the allocator

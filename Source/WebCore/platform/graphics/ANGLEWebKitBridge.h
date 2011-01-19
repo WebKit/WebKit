@@ -34,8 +34,8 @@
 namespace WebCore {
 
 enum ANGLEShaderType {
-    SHADER_TYPE_VERTEX = EShLangVertex,
-    SHADER_TYPE_FRAGMENT = EShLangFragment
+    SHADER_TYPE_VERTEX = SH_VERTEX_SHADER,
+    SHADER_TYPE_FRAGMENT = SH_FRAGMENT_SHADER,
 };
 
 class ANGLEWebKitBridge {
@@ -44,18 +44,18 @@ public:
     ANGLEWebKitBridge();
     ~ANGLEWebKitBridge();
     
-    void setResources(TBuiltInResource resources) { m_resources = resources; }
+    void setResources(ShBuiltInResources resources) { m_resources = resources; }
     
     bool validateShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog);
 
 private:
 
+    bool builtCompilers;
+    
     ShHandle m_fragmentCompiler;
     ShHandle m_vertexCompiler;
 
-    bool builtCompilers;
-
-    TBuiltInResource m_resources;
+    ShBuiltInResources m_resources;
 };
 
 } // namespace WebCore

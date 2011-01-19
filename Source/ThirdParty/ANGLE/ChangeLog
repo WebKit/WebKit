@@ -1,3 +1,598 @@
+2011-01-18  Ben Vanik  <ben.vanik@gmail.com>
+
+        Reviewed by Kenneth Russell.
+
+        Updating ANGLE in WebKit to r533.
+        https://bugs.webkit.org/show_bug.cgi?id=47194
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * include/GLSLANG/ShaderLang.h:
+        * src/common/debug.cpp:
+        (gl::trace):
+        * src/common/debug.h:
+        * src/compiler/CodeGenGLSL.cpp:
+        (ConstructCompiler):
+        * src/compiler/CodeGenHLSL.cpp:
+        (ConstructCompiler):
+        * src/compiler/Common.h:
+        (EncodeSourceLoc):
+        (DecodeSourceLoc):
+        * src/compiler/Compiler.cpp: Added.
+        (TShHandleBase::TShHandleBase):
+        (TShHandleBase::~TShHandleBase):
+        (TCompiler::TCompiler):
+        (TCompiler::~TCompiler):
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::InitBuiltInSymbolTable):
+        (TCompiler::clearResults):
+        (TCompiler::validateLimitations):
+        (TCompiler::collectAttribsUniforms):
+        * src/compiler/ExtensionBehavior.h: Added.
+        * src/compiler/InfoSink.cpp:
+        (TInfoSinkBase::location):
+        * src/compiler/InfoSink.h:
+        (TInfoSinkBase::size):
+        * src/compiler/Initialize.cpp:
+        (BuiltInFunctionsCommon):
+        (BuiltInFunctionsVertex):
+        (BuiltInFunctionsFragment):
+        (StandardUniforms):
+        (DefaultPrecisionVertex):
+        (DefaultPrecisionFragment):
+        (BuiltInConstants):
+        (TBuiltIns::initialize):
+        (IdentifyBuiltIns):
+        (InitExtensionBehavior):
+        * src/compiler/Initialize.h:
+        * src/compiler/IntermTraverse.cpp:
+        (TIntermLoop::traverse):
+        * src/compiler/Intermediate.cpp:
+        (getOperatorString):
+        (TIntermediate::addBinaryMath):
+        (TIntermediate::addLoop):
+        (TIntermediate::postProcess):
+        (TIntermBinary::promote):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::visitUnary):
+        (TOutputGLSL::visitLoop):
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::OutputHLSL):
+        (sh::OutputHLSL::header):
+        (sh::OutputHLSL::visitBinary):
+        (sh::OutputHLSL::visitUnary):
+        (sh::OutputHLSL::visitAggregate):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::handleExcessiveLoop):
+        (sh::OutputHLSL::argumentString):
+        * src/compiler/OutputHLSL.h:
+        * src/compiler/ParseHelper.cpp:
+        (ReportInfo):
+        (DefineExtensionMacros):
+        (TParseContext::error):
+        (TParseContext::warning):
+        (TParseContext::reservedErrorCheck):
+        (TParseContext::constructorErrorCheck):
+        (TParseContext::arrayQualifierErrorCheck):
+        (TParseContext::extensionErrorCheck):
+        (TParseContext::areAllChildConst):
+        (PaParseStrings):
+        * src/compiler/ParseHelper.h:
+        (TParseContext::TParseContext):
+        * src/compiler/PoolAlloc.cpp:
+        (InitializeGlobalPools):
+        (FreeGlobalPools):
+        (SetGlobalPoolAllocator):
+        (TPoolAllocator::TPoolAllocator):
+        (TPoolAllocator::~TPoolAllocator):
+        (TAllocation::checkAllocList):
+        * src/compiler/PoolAlloc.h:
+        * src/compiler/SearchSymbol.cpp: Added.
+        (sh::SearchSymbol::SearchSymbol):
+        (sh::SearchSymbol::traverse):
+        (sh::SearchSymbol::visitSymbol):
+        (sh::SearchSymbol::foundMatch):
+        * src/compiler/SearchSymbol.h: Added.
+        * src/compiler/ShHandle.h:
+        (TCompiler::getAsCompiler):
+        (TCompiler::getInfoSink):
+        (TCompiler::getAttribs):
+        (TCompiler::getUniforms):
+        (TCompiler::getShaderType):
+        (TCompiler::getShaderSpec):
+        * src/compiler/ShaderLang.cpp:
+        (getVariableMaxLength):
+        (getVariableInfo):
+        (ShInitBuiltInResources):
+        (ShConstructCompiler):
+        (ShCompile):
+        (ShGetInfo):
+        (ShGetInfoLog):
+        (ShGetObjectCode):
+        (ShGetActiveAttrib):
+        (ShGetActiveUniform):
+        * src/compiler/SymbolTable.cpp:
+        (TSymbolTableLevel::relateToExtension):
+        * src/compiler/SymbolTable.h:
+        (TVariable::shareConstPointer):
+        (TFunction::relateToExtension):
+        (TFunction::getExtension):
+        (TFunction::getParamCount):
+        (TFunction::getParam):
+        (TSymbolTable::getGlobalLevel):
+        (TSymbolTable::relateToOperator):
+        (TSymbolTable::relateToExtension):
+        * src/compiler/TranslatorGLSL.cpp:
+        (writeVersion):
+        (TranslatorGLSL::TranslatorGLSL):
+        (TranslatorGLSL::translate):
+        * src/compiler/TranslatorGLSL.h:
+        * src/compiler/TranslatorHLSL.cpp:
+        (TranslatorHLSL::TranslatorHLSL):
+        (TranslatorHLSL::translate):
+        * src/compiler/TranslatorHLSL.h:
+        * src/compiler/Types.h:
+        (TType::TType):
+        * src/compiler/UnfoldSelect.cpp:
+        (sh::UnfoldSelect::visitSelection):
+        * src/compiler/UnfoldSelect.h:
+        * src/compiler/ValidateLimitations.cpp: Added.
+        (ValidateLimitations::ValidateLimitations):
+        (ValidateLimitations::visitSymbol):
+        (ValidateLimitations::visitConstantUnion):
+        (ValidateLimitations::visitBinary):
+        (ValidateLimitations::visitUnary):
+        (ValidateLimitations::visitSelection):
+        (ValidateLimitations::visitAggregate):
+        (ValidateLimitations::visitLoop):
+        (ValidateLimitations::visitBranch):
+        (ValidateLimitations::error):
+        (ValidateLimitations::withinLoopBody):
+        (ValidateLimitations::isLoopIndex):
+        (ValidateLimitations::validateLoopType):
+        (ValidateLimitations::validateForLoopHeader):
+        (ValidateLimitations::validateForLoopInit):
+        (ValidateLimitations::validateForLoopCond):
+        (ValidateLimitations::validateForLoopExpr):
+        (ValidateLimitations::validateFunctionCall):
+        (ValidateLimitations::validateOperation):
+        (ValidateLimitations::isConstExpr):
+        (ValidateLimitations::isConstIndexExpr):
+        (ValidateLimitations::validateIndexing):
+        * src/compiler/ValidateLimitations.h: Added.
+        (ValidateLimitations::numErrors):
+        * src/compiler/VariableInfo.cpp: Added.
+        (arrayBrackets):
+        (getVariableDataType):
+        (getVariableInfo):
+        (getBuiltInVariableInfo):
+        (getUserDefinedVariableInfo):
+        (CollectAttribsUniforms::CollectAttribsUniforms):
+        (CollectAttribsUniforms::visitSymbol):
+        (CollectAttribsUniforms::visitConstantUnion):
+        (CollectAttribsUniforms::visitBinary):
+        (CollectAttribsUniforms::visitUnary):
+        (CollectAttribsUniforms::visitSelection):
+        (CollectAttribsUniforms::visitAggregate):
+        (CollectAttribsUniforms::visitLoop):
+        (CollectAttribsUniforms::visitBranch):
+        * src/compiler/VariableInfo.h: Added.
+        * src/compiler/VersionGLSL.cpp: Added.
+        (TVersionGLSL::TVersionGLSL):
+        (TVersionGLSL::visitSymbol):
+        (TVersionGLSL::visitConstantUnion):
+        (TVersionGLSL::visitBinary):
+        (TVersionGLSL::visitUnary):
+        (TVersionGLSL::visitSelection):
+        (TVersionGLSL::visitAggregate):
+        (TVersionGLSL::visitLoop):
+        (TVersionGLSL::visitBranch):
+        (TVersionGLSL::updateVersion):
+        * src/compiler/VersionGLSL.h: Added.
+        (TVersionGLSL::getVersion):
+        * src/compiler/generate_glslang_lexer.sh: Added.
+        * src/compiler/generate_glslang_parser.sh: Added.
+        * src/compiler/glslang.h: Added.
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp: Added.
+        (yy_get_next_buffer):
+        (yy_get_previous_state):
+        (yy_try_NUL_trans):
+        (input):
+        (yyrestart):
+        (yy_switch_to_buffer):
+        (yy_load_buffer_state):
+        (yy_create_buffer):
+        (yy_delete_buffer):
+        (yy_init_buffer):
+        (yy_flush_buffer):
+        (yypush_buffer_state):
+        (yypop_buffer_state):
+        (yyensure_buffer_stack):
+        (yy_scan_buffer):
+        (yy_scan_string):
+        (yy_scan_bytes):
+        (yy_push_state):
+        (yy_pop_state):
+        (yy_top_state):
+        (yy_fatal_error):
+        (yyget_extra):
+        (yyget_lineno):
+        (yyget_column):
+        (yyget_in):
+        (yyget_out):
+        (yyget_leng):
+        (yyget_text):
+        (yyset_extra):
+        (yyset_lineno):
+        (yyset_column):
+        (yyset_in):
+        (yyset_out):
+        (yyget_debug):
+        (yyset_debug):
+        (yyget_lval):
+        (yyset_lval):
+        (yylex_init):
+        (yylex_init_extra):
+        (yy_init_globals):
+        (yylex_destroy):
+        (yy_flex_strncpy):
+        (yy_flex_strlen):
+        (yyalloc):
+        (yyrealloc):
+        (yyfree):
+        (string_input):
+        (check_type):
+        (reserved_word):
+        (yyerror):
+        (glslang_initialize):
+        (glslang_finalize):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp: Added.
+        (yytnamerr):
+        (yysyntax_error):
+        (glslang_parse):
+        * src/compiler/glslang_tab.h: Added.
+        * src/compiler/intermOut.cpp:
+        (TOutputTraverser::TOutputTraverser):
+        (OutputTreeText):
+        (TOutputTraverser::visitSymbol):
+        (TOutputTraverser::visitBinary):
+        (TOutputTraverser::visitUnary):
+        (TOutputTraverser::visitAggregate):
+        (TOutputTraverser::visitSelection):
+        (TOutputTraverser::visitConstantUnion):
+        (TOutputTraverser::visitLoop):
+        (TOutputTraverser::visitBranch):
+        (TIntermediate::outputTree):
+        * src/compiler/intermediate.h:
+        (TIntermLoop::TIntermLoop):
+        (TIntermLoop::getType):
+        (TIntermLoop::getInit):
+        (TIntermLoop::getCondition):
+        (TIntermLoop::getExpression):
+        (TIntermLoop::getBody):
+        * src/compiler/localintermediate.h:
+        * src/compiler/osinclude.h:
+        (OS_GetTLSValue):
+        * src/compiler/ossource_nspr.cpp: Added.
+        (OS_AllocTLSIndex):
+        (OS_SetTLSValue):
+        (OS_FreeTLSIndex):
+        * src/compiler/preprocessor/compile.h:
+        * src/compiler/preprocessor/cpp.c:
+        (CPPdefine):
+        (CPPelse):
+        (CPPif):
+        (CPPifdef):
+        (CPPerror):
+        (CPPextension):
+        (readCPPline):
+        * src/compiler/preprocessor/preprocess.h:
+        * src/compiler/preprocessor/scanner.c:
+        (str_getch):
+        (str_ungetch):
+        (ScanFromString):
+        (lFloatConst):
+        (byte_scan):
+        (yylex_CPP):
+        (check_EOF):
+        * src/compiler/preprocessor/scanner.h:
+        * src/compiler/preprocessor/tokens.c:
+        (RecordToken):
+        (ReadToken):
+        * src/compiler/tools: Removed.
+        * src/compiler/unistd.h: Removed.
+        * src/compiler/util.cpp: Added.
+        (atof_dot):
+        * src/compiler/util.h: Added.
+        * src/libEGL/Config.cpp:
+        (egl::Config::set):
+        * src/libEGL/Display.cpp:
+        (egl::Display::Display):
+        (egl::Display::initialize):
+        (egl::Display::terminate):
+        (egl::Display::createDevice):
+        (egl::Display::resetDevice):
+        (egl::Display::createContext):
+        (egl::Display::destroyContext):
+        (egl::Display::getMinSwapInterval):
+        (egl::Display::getMaxSwapInterval):
+        (egl::Display::getDevice):
+        (egl::Display::getFloatTextureSupport):
+        (egl::Display::getHalfFloatTextureSupport):
+        (egl::Display::getLuminanceTextureSupport):
+        (egl::Display::getLuminanceAlphaTextureSupport):
+        (egl::Display::getBufferPool):
+        (egl::Display::getEventQuerySupport):
+        (egl::Display::getDefaultPresentParameters):
+        * src/libEGL/Display.h:
+        * src/libEGL/Surface.cpp:
+        (egl::Surface::Surface):
+        (egl::Surface::~Surface):
+        (egl::Surface::release):
+        (egl::Surface::resetSwapChain):
+        (egl::Surface::writeRecordableFlipState):
+        (egl::Surface::restoreState):
+        (egl::SurfaceWindowProc):
+        (egl::Surface::subclassWindow):
+        (egl::Surface::unsubclassWindow):
+        (egl::Surface::checkForOutOfDateSwapChain):
+        (egl::Surface::convertInterval):
+        (egl::Surface::swap):
+        (egl::Surface::getRenderTarget):
+        (egl::Surface::setSwapInterval):
+        * src/libEGL/Surface.h:
+        * src/libEGL/libEGL.cpp:
+        * src/libGLESv2/Blit.cpp:
+        (gl::Blit::copySurfaceToTexture):
+        (gl::Blit::setCommonBlitState):
+        * src/libGLESv2/Buffer.cpp:
+        (gl::Buffer::Buffer):
+        (gl::Buffer::~Buffer):
+        (gl::Buffer::bufferData):
+        (gl::Buffer::bufferSubData):
+        (gl::Buffer::getVertexBuffer):
+        (gl::Buffer::getIndexBuffer):
+        (gl::Buffer::invalidateStaticData):
+        * src/libGLESv2/Buffer.h:
+        * src/libGLESv2/Context.cpp:
+        (gl::Context::Context):
+        (gl::Context::~Context):
+        (gl::Context::makeCurrent):
+        (gl::Context::markAllStateDirty):
+        (gl::Context::setFragmentShaderDerivativeHint):
+        (gl::Context::setEnableVertexAttribArray):
+        (gl::Context::getVertexAttribState):
+        (gl::Context::getVertexAttributes):
+        (gl::Context::createFence):
+        (gl::Context::deleteFence):
+        (gl::Context::bindTexture2D):
+        (gl::Context::bindTextureCubeMap):
+        (gl::Context::getFence):
+        (gl::Context::getTexture2D):
+        (gl::Context::getTextureCubeMap):
+        (gl::Context::getSamplerTexture):
+        (gl::Context::getBooleanv):
+        (gl::Context::getIntegerv):
+        (gl::Context::getQueryParameterInfo):
+        (gl::Context::applyRenderTarget):
+        (gl::Context::applyState):
+        (gl::Context::lookupAttributeMapping):
+        (gl::Context::applyVertexBuffer):
+        (gl::Context::applyIndexBuffer):
+        (gl::Context::readPixels):
+        (gl::Context::clear):
+        (gl::Context::drawArrays):
+        (gl::Context::drawElements):
+        (gl::Context::finish):
+        (gl::Context::drawClosingLine):
+        (gl::Context::getMaximumVaryingVectors):
+        (gl::Context::getMaximumFragmentUniformVectors):
+        (gl::Context::supportsEventQueries):
+        (gl::Context::supportsFloatTextures):
+        (gl::Context::supportsFloatLinearFilter):
+        (gl::Context::supportsFloatRenderableTextures):
+        (gl::Context::supportsHalfFloatTextures):
+        (gl::Context::supportsHalfFloatLinearFilter):
+        (gl::Context::supportsHalfFloatRenderableTextures):
+        (gl::Context::getMaximumRenderbufferDimension):
+        (gl::Context::getMaximumTextureDimension):
+        (gl::Context::getMaximumCubeTextureDimension):
+        (gl::Context::getMaximumTextureLevel):
+        (gl::Context::supportsLuminanceTextures):
+        (gl::Context::supportsLuminanceAlphaTextures):
+        (gl::Context::supports32bitIndices):
+        (gl::Context::getIncompleteTexture):
+        (gl::Context::setVertexAttrib):
+        (gl::Context::initExtensionString):
+        (gl::Context::blitFramebuffer):
+        * src/libGLESv2/Context.h:
+        (gl::VertexAttribute::VertexAttribute):
+        (gl::VertexAttribute::typeSize):
+        (gl::VertexAttribute::stride):
+        * src/libGLESv2/Fence.cpp: Added.
+        (gl::Fence::Fence):
+        (gl::Fence::~Fence):
+        (gl::Fence::isFence):
+        (gl::Fence::setFence):
+        (gl::Fence::testFence):
+        (gl::Fence::finishFence):
+        (gl::Fence::getFenceiv):
+        * src/libGLESv2/Fence.h: Added.
+        * src/libGLESv2/Framebuffer.cpp:
+        (gl::Framebuffer::completeness):
+        (gl::DefaultFramebuffer::DefaultFramebuffer):
+        (gl::DefaultFramebuffer::completeness):
+        * src/libGLESv2/Program.cpp:
+        (gl::Program::Program):
+        (gl::Program::getSamplerMapping):
+        (gl::Program::getUniformLocation):
+        (gl::Program::setUniform1iv):
+        (gl::Program::applyUniforms):
+        (gl::Program::packVaryings):
+        (gl::Program::linkVaryings):
+        (gl::Program::link):
+        (gl::Program::defineUniform):
+        (gl::Program::createUniform):
+        (gl::Program::applyUniform1iv):
+        (gl::Program::resetInfoLog):
+        (gl::Program::unlink):
+        (gl::Program::getActiveAttribute):
+        (gl::Program::getActiveUniform):
+        (gl::Program::getDxDepthRangeLocation):
+        * src/libGLESv2/Program.h:
+        * src/libGLESv2/RefCountObject.cpp:
+        (gl::RefCountObject::~RefCountObject):
+        * src/libGLESv2/Renderbuffer.cpp:
+        (gl::RenderbufferStorage::RenderbufferStorage):
+        (gl::RenderbufferStorage::isFloatingPoint):
+        (gl::Colorbuffer::Colorbuffer):
+        (gl::DepthStencilbuffer::DepthStencilbuffer):
+        * src/libGLESv2/Renderbuffer.h:
+        * src/libGLESv2/Shader.cpp:
+        (gl::Shader::Shader):
+        (gl::Shader::parseVaryings):
+        (gl::Shader::compileToHLSL):
+        (gl::VertexShader::parseAttributes):
+        * src/libGLESv2/Texture.cpp:
+        (gl::Texture::Texture):
+        (gl::Texture::isFloatingPoint):
+        (gl::Texture::isRenderableFormat):
+        (gl::Texture::selectFormat):
+        (gl::Texture::loadImageData):
+        (gl::Texture::loadAlphaFloatImageData):
+        (gl::Texture::loadAlphaHalfFloatImageData):
+        (gl::Texture::loadLuminanceImageData):
+        (gl::Texture::loadLuminanceFloatImageData):
+        (gl::Texture::loadLuminanceHalfFloatImageData):
+        (gl::Texture::loadLuminanceAlphaImageData):
+        (gl::Texture::loadLuminanceAlphaFloatImageData):
+        (gl::Texture::loadLuminanceAlphaHalfFloatImageData):
+        (gl::Texture::loadRGBFloatImageData):
+        (gl::Texture::loadRGBHalfFloatImageData):
+        (gl::Texture::loadRGBAFloatImageData):
+        (gl::Texture::loadRGBAHalfFloatImageData):
+        (gl::Texture::createSurface):
+        (gl::Texture::setImage):
+        (gl::Texture::setCompressedImage):
+        (gl::Texture::subImage):
+        (gl::Texture::subImageCompressed):
+        (gl::Texture::copyNonRenderable):
+        (gl::Texture::getD3DFormat):
+        (gl::Texture::isRenderable):
+        (gl::Texture2D::Texture2D):
+        (gl::Texture2D::~Texture2D):
+        (gl::Texture2D::redefineTexture):
+        (gl::Texture2D::setImage):
+        (gl::Texture2D::setCompressedImage):
+        (gl::Texture2D::copyImage):
+        (gl::Texture2D::copySubImage):
+        (gl::Texture2D::isComplete):
+        (gl::Texture2D::createTexture):
+        (gl::Texture2D::convertToRenderTarget):
+        (gl::Texture2D::generateMipmaps):
+        (gl::Texture2D::getColorbuffer):
+        (gl::Texture2D::getRenderTarget):
+        (gl::TextureCubeMap::TextureCubeMap):
+        (gl::TextureCubeMap::~TextureCubeMap):
+        (gl::TextureCubeMap::subImage):
+        (gl::TextureCubeMap::subImageCompressed):
+        (gl::TextureCubeMap::isComplete):
+        (gl::TextureCubeMap::createTexture):
+        (gl::TextureCubeMap::convertToRenderTarget):
+        (gl::TextureCubeMap::redefineTexture):
+        (gl::TextureCubeMap::copyImage):
+        (gl::TextureCubeMap::copySubImage):
+        (gl::TextureCubeMap::generateMipmaps):
+        (gl::TextureCubeMap::getColorbuffer):
+        (gl::TextureCubeMap::getRenderTarget):
+        (gl::Texture::TextureColorbufferProxy::TextureColorbufferProxy):
+        (gl::Texture::TextureColorbufferProxy::isFloatingPoint):
+        * src/libGLESv2/Texture.h:
+        * src/libGLESv2/geometry/IndexDataManager.cpp:
+        (gl::IndexDataManager::IndexDataManager):
+        (gl::IndexDataManager::~IndexDataManager):
+        (gl::convertIndices):
+        (gl::computeRange):
+        (gl::IndexDataManager::prepareIndexData):
+        (gl::IndexDataManager::indexSize):
+        (gl::IndexDataManager::typeSize):
+        (gl::IndexBuffer::IndexBuffer):
+        (gl::IndexBuffer::~IndexBuffer):
+        (gl::IndexBuffer::getBuffer):
+        (gl::IndexBuffer::unmap):
+        (gl::StreamingIndexBuffer::StreamingIndexBuffer):
+        (gl::StreamingIndexBuffer::~StreamingIndexBuffer):
+        (gl::StreamingIndexBuffer::map):
+        (gl::StreamingIndexBuffer::reserveSpace):
+        (gl::StaticIndexBuffer::StaticIndexBuffer):
+        (gl::StaticIndexBuffer::~StaticIndexBuffer):
+        (gl::StaticIndexBuffer::map):
+        (gl::StaticIndexBuffer::reserveSpace):
+        (gl::StaticIndexBuffer::lookupType):
+        (gl::StaticIndexBuffer::lookupRange):
+        (gl::StaticIndexBuffer::addRange):
+        * src/libGLESv2/geometry/IndexDataManager.h:
+        (gl::IndexBuffer::size):
+        * src/libGLESv2/geometry/VertexDataManager.cpp:
+        (gl::VertexDataManager::VertexDataManager):
+        (gl::VertexDataManager::~VertexDataManager):
+        (gl::VertexDataManager::writeAttributeData):
+        (gl::VertexDataManager::prepareVertexData):
+        (gl::VertexDataManager::spaceRequired):
+        (gl::VertexDataManager::checkVertexCaps):
+        (gl::VertexDataManager::typeIndex):
+        (gl::VertexDataManager::setupAttributes):
+        (gl::VertexBuffer::VertexBuffer):
+        (gl::VertexBuffer::~VertexBuffer):
+        (gl::VertexBuffer::unmap):
+        (gl::VertexBuffer::getBuffer):
+        (gl::ConstantVertexBuffer::ConstantVertexBuffer):
+        (gl::ConstantVertexBuffer::~ConstantVertexBuffer):
+        (gl::ArrayVertexBuffer::ArrayVertexBuffer):
+        (gl::ArrayVertexBuffer::~ArrayVertexBuffer):
+        (gl::ArrayVertexBuffer::addRequiredSpace):
+        (gl::ArrayVertexBuffer::addRequiredSpaceFor):
+        (gl::StreamingVertexBuffer::StreamingVertexBuffer):
+        (gl::StreamingVertexBuffer::~StreamingVertexBuffer):
+        (gl::StreamingVertexBuffer::map):
+        (gl::StreamingVertexBuffer::reserveRequiredSpace):
+        (gl::StaticVertexBuffer::StaticVertexBuffer):
+        (gl::StaticVertexBuffer::~StaticVertexBuffer):
+        (gl::StaticVertexBuffer::map):
+        (gl::StaticVertexBuffer::reserveRequiredSpace):
+        (gl::StaticVertexBuffer::lookupAttribute):
+        (gl::VertexDataManager::formatConverter):
+        * src/libGLESv2/geometry/VertexDataManager.h:
+        (gl::ArrayVertexBuffer::size):
+        (gl::VertexDataManager::dirtyCurrentValue):
+        * src/libGLESv2/geometry/backend.cpp: Removed.
+        * src/libGLESv2/geometry/backend.h: Removed.
+        * src/libGLESv2/geometry/dx9.cpp: Removed.
+        * src/libGLESv2/geometry/dx9.h: Removed.
+        * src/libGLESv2/libGLESv2.cpp:
+        * src/libGLESv2/libGLESv2.def:
+        * src/libGLESv2/libGLESv2.vcproj:
+        * src/libGLESv2/utilities.cpp:
+        (gl::UniformComponentCount):
+        (gl::UniformComponentType):
+        (gl::ComputePixelSize):
+        (gl::CheckTextureFormatType):
+        (gl::IsColorRenderable):
+        (gl::IsDepthRenderable):
+        (gl::IsStencilRenderable):
+        (es2dx::GetAlphaSize):
+        (es2dx::GetRedSize):
+        (es2dx::GetGreenSize):
+        (es2dx::GetBlueSize):
+        (es2dx::GetDepthSize):
+        (es2dx::ConvertPrimitiveType):
+        (dx2es::ConvertBackBufferFormat):
+        (dx2es::ConvertDepthStencilFormat):
+        * src/libGLESv2/utilities.h:
+
 2011-01-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

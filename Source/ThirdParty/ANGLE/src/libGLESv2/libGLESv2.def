@@ -147,7 +147,14 @@ EXPORTS
     glTexImage3DOES                 @143
     glBlitFramebufferANGLE          @149
     glRenderbufferStorageMultisampleANGLE @150
-    
+    glDeleteFencesNV                @151
+    glFinishFenceNV                 @152
+    glGenFencesNV                   @153
+    glGetFenceivNV                  @154
+    glIsFenceNV                     @155
+    glSetFenceNV                    @156
+    glTestFenceNV                   @157
+
     ; EGL dependencies
     glCreateContext                 @144 NONAME
     glDestroyContext                @145 NONAME

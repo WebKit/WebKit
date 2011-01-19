@@ -188,21 +188,15 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     
     // ANGLE initialization.
 
-    TBuiltInResource ANGLEResources;
+    ShBuiltInResources ANGLEResources;
+    ShInitBuiltInResources(&ANGLEResources);
 
-    ANGLEResources.MaxVertexAttribs = 0;
     getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
-    ANGLEResources.MaxVertexUniformVectors = 0;
     getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
-    ANGLEResources.MaxVaryingVectors = 0;
     getIntegerv(GraphicsContext3D::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
-    ANGLEResources.MaxVertexTextureImageUnits = 0;
     getIntegerv(GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
-    ANGLEResources.MaxCombinedTextureImageUnits = 0;
     getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits);
-    ANGLEResources.MaxTextureImageUnits = 0;
     getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
-    ANGLEResources.MaxFragmentUniformVectors = 0;
     getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
 
     // Always set to 1 for OpenGL ES.

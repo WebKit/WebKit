@@ -19,15 +19,14 @@
 #include "libGLESv2/Blit.h"
 #include "libGLESv2/ResourceManager.h"
 #include "libGLESv2/Buffer.h"
+#include "libGLESv2/Fence.h"
 #include "libGLESv2/FrameBuffer.h"
 #include "libGLESv2/Program.h"
 #include "libGLESv2/RenderBuffer.h"
 #include "libGLESv2/Shader.h"
 #include "libGLESv2/Texture.h"
-#include "libGLESv2/geometry/backend.h"
 #include "libGLESv2/geometry/VertexDataManager.h"
 #include "libGLESv2/geometry/IndexDataManager.h"
-#include "libGLESv2/geometry/dx9.h"
 
 #undef near
 #undef far
@@ -83,6 +82,7 @@ Context::Context(const egl::Config *config, const gl::Context *shareContext)
     mState.scissorTest = false;
     mState.dither = true;
     mState.generateMipmapHint = GL_DONT_CARE;
+    mState.fragmentShaderDerivativeHint = GL_DONT_CARE;
 
     mState.lineWidth = 1.0f;
 
@@ -120,11 +120,8 @@ Context::Context(const egl::Config *config, const gl::Context *shareContext)
     // In order that access to these initial textures not be lost, they are treated as texture
     // objects all of whose names are 0.
 
-    mTexture2DZero = new Texture2D(0);
-    mTextureCubeMapZero = new TextureCubeMap(0);
-
-    mColorbufferZero = NULL;
-    mDepthStencilbufferZero = NULL;
+    mTexture2DZero.set(new Texture2D(0));
+    mTextureCubeMapZero.set(new TextureCubeMap(0));
 
     mState.activeSampler = 0;
     bindArrayBuffer(0);
@@ -135,17 +132,11 @@ Context::Context(const egl::Config *config, const gl::Context *shareContext)
     bindDrawFramebuffer(0);
     bindRenderbuffer(0);
 
-    for (int type = 0; type < SAMPLER_TYPE_COUNT; type++)
-    {
-        mIncompleteTextures[type] = NULL;
-    }
-
     mState.currentProgram = 0;
 
     mState.packAlignment = 4;
     mState.unpackAlignment = 4;
 
-    mBufferBackEnd = NULL;
     mVertexDataManager = NULL;
     mIndexDataManager = NULL;
     mBlit = NULL;
@@ -158,6 +149,8 @@ Context::Context(const egl::Config *config, const gl::Context *shareContext)
 
     mHasBeenCurrent = false;
 
+    mSupportsCompressedTextures = false;
+    mSupportsEventQueries = false;
     mMaxSupportedSamples = 0;
     mMaskedClearSavedState = NULL;
     markAllStateDirty();
@@ -180,6 +173,11 @@ Context::~Context()
         deleteFramebuffer(mFramebufferMap.begin()->first);
     }
 
+    while (!mFenceMap.empty())
+    {
+        deleteFence(mFenceMap.begin()->first);
+    }
+
     while (!mMultiSampleSupport.empty())
     {
         delete [] mMultiSampleSupport.begin()->second;
@@ -196,7 +194,7 @@ Context::~Context()
 
     for (int type = 0; type < SAMPLER_TYPE_COUNT; type++)
     {
-        delete mIncompleteTextures[type];
+        mIncompleteTextures[type].set(NULL);
     }
 
     for (int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
@@ -206,14 +204,11 @@ Context::~Context()
 
     mState.arrayBuffer.set(NULL);
     mState.elementArrayBuffer.set(NULL);
-    mState.texture2D.set(NULL);
-    mState.textureCubeMap.set(NULL);
     mState.renderbuffer.set(NULL);
 
-    delete mTexture2DZero;
-    delete mTextureCubeMapZero;
+    mTexture2DZero.set(NULL);
+    mTextureCubeMapZero.set(NULL);
 
-    delete mBufferBackEnd;
     delete mVertexDataManager;
     delete mIndexDataManager;
     delete mBlit;
@@ -234,10 +229,19 @@ void Context::makeCurrent(egl::Display *display, egl::Surface *surface)
     {
         mDeviceCaps = display->getDeviceCaps();
 
-        mBufferBackEnd = new Dx9BackEnd(this, device);
-        mVertexDataManager = new VertexDataManager(this, mBufferBackEnd);
-        mIndexDataManager = new IndexDataManager(this, mBufferBackEnd);
+        mVertexDataManager = new VertexDataManager(this, device);
+        mIndexDataManager = new IndexDataManager(this, device);
         mBlit = new Blit(this);
+
+        mSupportsShaderModel3 = mDeviceCaps.PixelShaderVersion == D3DPS_VERSION(3, 0);
+
+        mMaxTextureDimension = std::min(std::min((int)mDeviceCaps.MaxTextureWidth, (int)mDeviceCaps.MaxTextureHeight),
+                                        (int)gl::IMPLEMENTATION_MAX_TEXTURE_SIZE);
+        mMaxCubeTextureDimension = std::min(mMaxTextureDimension, (int)gl::IMPLEMENTATION_MAX_CUBE_MAP_TEXTURE_SIZE);
+        mMaxRenderbufferDimension = mMaxTextureDimension;
+        mMaxTextureLevel = log2(mMaxTextureDimension) + 1;
+        TRACE("MaxTextureDimension=%d, MaxCubeTextureDimension=%d, MaxRenderbufferDimension=%d, MaxTextureLevel=%d",
+              mMaxTextureDimension, mMaxCubeTextureDimension, mMaxRenderbufferDimension, mMaxTextureLevel);
 
         const D3DFORMAT renderBufferFormats[] =
         {
@@ -265,7 +269,14 @@ void Context::makeCurrent(egl::Display *display, egl::Surface *surface)
 
         mMaxSupportedSamples = max;
 
+        mSupportsEventQueries = display->getEventQuerySupport();
         mSupportsCompressedTextures = display->getCompressedTextureSupport();
+        mSupportsFloatTextures = display->getFloatTextureSupport(&mSupportsFloatLinearFilter, &mSupportsFloatRenderableTextures);
+        mSupportsHalfFloatTextures = display->getHalfFloatTextureSupport(&mSupportsHalfFloatLinearFilter, &mSupportsHalfFloatRenderableTextures);
+        mSupportsLuminanceTextures = display->getLuminanceTextureSupport();
+        mSupportsLuminanceAlphaTextures = display->getLuminanceAlphaTextureSupport();
+
+        mSupports32bitIndices = mDeviceCaps.MaxVertexIndex >= (1 << 16);
 
         initExtensionString();
 
@@ -292,15 +303,16 @@ void Context::makeCurrent(egl::Display *display, egl::Surface *surface)
 
     setFramebufferZero(framebufferZero);
 
-    defaultRenderTarget->Release();
+    if (defaultRenderTarget)
+    {
+        defaultRenderTarget->Release();
+    }
 
     if (depthStencil)
     {
         depthStencil->Release();
     }
     
-    mSupportsShaderModel3 = mDeviceCaps.PixelShaderVersion == D3DPS_VERSION(3, 0);
-
     markAllStateDirty();
 }
 
@@ -309,6 +321,8 @@ void Context::markAllStateDirty()
 {
     mAppliedRenderTargetSerial = 0;
     mAppliedDepthbufferSerial = 0;
+    mAppliedStencilbufferSerial = 0;
+    mDepthStencilInitialized = false;
     mAppliedProgram = 0;
 
     mClearStateDirty = true;
@@ -322,11 +336,6 @@ void Context::markAllStateDirty()
     mSampleStateDirty = true;
     mDitherStateDirty = true;
     mFrontFaceDirty = true;
-
-    if (mBufferBackEnd != NULL)
-    {
-        mBufferBackEnd->invalidate();
-    }
 }
 
 void Context::setClearColor(float red, float green, float blue, float alpha)
@@ -650,6 +659,14 @@ void Context::setGenerateMipmapHint(GLenum hint)
     mState.generateMipmapHint = hint;
 }
 
+void Context::setFragmentShaderDerivativeHint(GLenum hint)
+{
+    mState.fragmentShaderDerivativeHint = hint;
+    // TODO: Propagate the hint to shader translator so we can write
+    // ddx, ddx_coarse, or ddx_fine depending on the hint.
+    // Ignore for now. It is valid for implementations to ignore hint.
+}
+
 void Context::setViewportParams(GLint x, GLint y, GLsizei width, GLsizei height)
 {
     mState.viewportX = x;
@@ -718,12 +735,12 @@ GLuint Context::getArrayBufferHandle() const
     return mState.arrayBuffer.id();
 }
 
-void Context::setVertexAttribEnabled(unsigned int attribNum, bool enabled)
+void Context::setEnableVertexAttribArray(unsigned int attribNum, bool enabled)
 {
-    mState.vertexAttribute[attribNum].mEnabled = enabled;
+    mState.vertexAttribute[attribNum].mArrayEnabled = enabled;
 }
 
-const AttributeState &Context::getVertexAttribState(unsigned int attribNum)
+const VertexAttribute &Context::getVertexAttribState(unsigned int attribNum)
 {
     return mState.vertexAttribute[attribNum];
 }
@@ -744,8 +761,7 @@ const void *Context::getVertexAttribPointer(unsigned int attribNum) const
     return mState.vertexAttribute[attribNum].mPointer;
 }
 
-// returns entire set of attributes as a block
-const AttributeState *Context::getVertexAttribBlock()
+const VertexAttributeArray &Context::getVertexAttributes()
 {
     return mState.vertexAttribute;
 }
@@ -810,6 +826,20 @@ GLuint Context::createFramebuffer()
     return handle;
 }
 
+GLuint Context::createFence()
+{
+    unsigned int handle = 0;
+
+    while (mFenceMap.find(handle) != mFenceMap.end())
+    {
+        handle++;
+    }
+
+    mFenceMap[handle] = new Fence;
+
+    return handle;
+}
+
 void Context::deleteBuffer(GLuint buffer)
 {
     if (mResourceManager->getBuffer(buffer))
@@ -860,6 +890,17 @@ void Context::deleteFramebuffer(GLuint framebuffer)
 
         delete framebufferObject->second;
         mFramebufferMap.erase(framebufferObject);
+    }
+}
+
+void Context::deleteFence(GLuint fence)
+{
+    FenceMap::iterator fenceObject = mFenceMap.find(fence);
+
+    if (fenceObject != mFenceMap.end())
+    {
+        delete fenceObject->second;
+        mFenceMap.erase(fenceObject);
     }
 }
 
@@ -916,18 +957,14 @@ void Context::bindTexture2D(GLuint texture)
 {
     mResourceManager->checkTextureAllocation(texture, SAMPLER_2D);
 
-    mState.texture2D.set(getTexture(texture));
-
-    mState.samplerTexture[SAMPLER_2D][mState.activeSampler].set(mState.texture2D.get());
+    mState.samplerTexture[SAMPLER_2D][mState.activeSampler].set(getTexture(texture));
 }
 
 void Context::bindTextureCubeMap(GLuint texture)
 {
     mResourceManager->checkTextureAllocation(texture, SAMPLER_CUBE);
 
-    mState.textureCubeMap.set(getTexture(texture));
-
-    mState.samplerTexture[SAMPLER_CUBE][mState.activeSampler].set(mState.textureCubeMap.get());
+    mState.samplerTexture[SAMPLER_CUBE][mState.activeSampler].set(getTexture(texture));
 }
 
 void Context::bindReadFramebuffer(GLuint framebuffer)
@@ -1005,6 +1042,20 @@ Framebuffer *Context::getFramebuffer(unsigned int handle)
     }
 }
 
+Fence *Context::getFence(unsigned int handle)
+{
+    FenceMap::iterator fence = mFenceMap.find(handle);
+
+    if (fence == mFenceMap.end())
+    {
+        return NULL;
+    }
+    else
+    {
+        return fence->second;
+    }
+}
+
 Buffer *Context::getArrayBuffer()
 {
     return mState.arrayBuffer.get();
@@ -1022,35 +1073,25 @@ Program *Context::getCurrentProgram()
 
 Texture2D *Context::getTexture2D()
 {
-    if (mState.texture2D.id() == 0)   // Special case: 0 refers to different initial textures based on the target
-    {
-        return mTexture2DZero;
-    }
-
-    return static_cast<Texture2D*>(mState.texture2D.get());
+    return static_cast<Texture2D*>(getSamplerTexture(mState.activeSampler, SAMPLER_2D));
 }
 
 TextureCubeMap *Context::getTextureCubeMap()
 {
-    if (mState.textureCubeMap.id() == 0)   // Special case: 0 refers to different initial textures based on the target
-    {
-        return mTextureCubeMapZero;
-    }
-
-    return static_cast<TextureCubeMap*>(mState.textureCubeMap.get());
+    return static_cast<TextureCubeMap*>(getSamplerTexture(mState.activeSampler, SAMPLER_CUBE));
 }
 
 Texture *Context::getSamplerTexture(unsigned int sampler, SamplerType type)
 {
     GLuint texid = mState.samplerTexture[type][sampler].id();
 
-    if (texid == 0)
+    if (texid == 0)   // Special case: 0 refers to different initial textures based on the target
     {
         switch (type)
         {
           default: UNREACHABLE();
-          case SAMPLER_2D: return mTexture2DZero;
-          case SAMPLER_CUBE: return mTextureCubeMapZero;
+          case SAMPLER_2D: return mTexture2DZero.get();
+          case SAMPLER_CUBE: return mTextureCubeMapZero.get();
         }
     }
 
@@ -1070,15 +1111,15 @@ bool Context::getBooleanv(GLenum pname, GLboolean *params)
         params[2] = mState.colorMaskBlue;
         params[3] = mState.colorMaskAlpha;
         break;
-      case GL_CULL_FACE:                *params = mState.cullFace;
-      case GL_POLYGON_OFFSET_FILL:      *params = mState.polygonOffsetFill;
-      case GL_SAMPLE_ALPHA_TO_COVERAGE: *params = mState.sampleAlphaToCoverage;
-      case GL_SAMPLE_COVERAGE:          *params = mState.sampleCoverage;
-      case GL_SCISSOR_TEST:             *params = mState.scissorTest;
-      case GL_STENCIL_TEST:             *params = mState.stencilTest;
-      case GL_DEPTH_TEST:               *params = mState.depthTest;
-      case GL_BLEND:                    *params = mState.blend;
-      case GL_DITHER:                   *params = mState.dither;
+      case GL_CULL_FACE:                *params = mState.cullFace;                  break;
+      case GL_POLYGON_OFFSET_FILL:      *params = mState.polygonOffsetFill;         break;
+      case GL_SAMPLE_ALPHA_TO_COVERAGE: *params = mState.sampleAlphaToCoverage;     break;
+      case GL_SAMPLE_COVERAGE:          *params = mState.sampleCoverage;            break;
+      case GL_SCISSOR_TEST:             *params = mState.scissorTest;               break;
+      case GL_STENCIL_TEST:             *params = mState.stencilTest;               break;
+      case GL_DEPTH_TEST:               *params = mState.depthTest;                 break;
+      case GL_BLEND:                    *params = mState.blend;                     break;
+      case GL_DITHER:                   *params = mState.dither;                    break;
       default:
         return false;
     }
@@ -1141,24 +1182,25 @@ bool Context::getIntegerv(GLenum pname, GLint *params)
     {
       case GL_MAX_VERTEX_ATTRIBS:               *params = gl::MAX_VERTEX_ATTRIBS;               break;
       case GL_MAX_VERTEX_UNIFORM_VECTORS:       *params = gl::MAX_VERTEX_UNIFORM_VECTORS;       break;
-      case GL_MAX_VARYING_VECTORS:              *params = gl::MAX_VARYING_VECTORS;              break;
+      case GL_MAX_VARYING_VECTORS:              *params = getMaximumVaryingVectors();           break;
       case GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS: *params = gl::MAX_COMBINED_TEXTURE_IMAGE_UNITS; break;
       case GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS:   *params = gl::MAX_VERTEX_TEXTURE_IMAGE_UNITS;   break;
       case GL_MAX_TEXTURE_IMAGE_UNITS:          *params = gl::MAX_TEXTURE_IMAGE_UNITS;          break;
-      case GL_MAX_FRAGMENT_UNIFORM_VECTORS:     *params = gl::MAX_FRAGMENT_UNIFORM_VECTORS;     break;
-      case GL_MAX_RENDERBUFFER_SIZE:            *params = gl::MAX_RENDERBUFFER_SIZE;            break;
+      case GL_MAX_FRAGMENT_UNIFORM_VECTORS:     *params = getMaximumFragmentUniformVectors();   break;
+      case GL_MAX_RENDERBUFFER_SIZE:            *params = getMaximumRenderbufferDimension();    break;
       case GL_NUM_SHADER_BINARY_FORMATS:        *params = 0;                                    break;
       case GL_SHADER_BINARY_FORMATS:      /* no shader binary formats are supported */          break;
       case GL_ARRAY_BUFFER_BINDING:             *params = mState.arrayBuffer.id();              break;
       case GL_ELEMENT_ARRAY_BUFFER_BINDING:     *params = mState.elementArrayBuffer.id();       break;
-      //case GL_FRAMEBUFFER_BINDING:              // now equivalent to GL_DRAW_FRAMEBUFFER_BINDING_ANGLE
-      case GL_DRAW_FRAMEBUFFER_BINDING_ANGLE:     *params = mState.drawFramebuffer;               break;
-      case GL_READ_FRAMEBUFFER_BINDING_ANGLE:     *params = mState.readFramebuffer;               break;
+      //case GL_FRAMEBUFFER_BINDING:            // now equivalent to GL_DRAW_FRAMEBUFFER_BINDING_ANGLE
+      case GL_DRAW_FRAMEBUFFER_BINDING_ANGLE:   *params = mState.drawFramebuffer;               break;
+      case GL_READ_FRAMEBUFFER_BINDING_ANGLE:   *params = mState.readFramebuffer;               break;
       case GL_RENDERBUFFER_BINDING:             *params = mState.renderbuffer.id();             break;
       case GL_CURRENT_PROGRAM:                  *params = mState.currentProgram;                break;
       case GL_PACK_ALIGNMENT:                   *params = mState.packAlignment;                 break;
       case GL_UNPACK_ALIGNMENT:                 *params = mState.unpackAlignment;               break;
       case GL_GENERATE_MIPMAP_HINT:             *params = mState.generateMipmapHint;            break;
+      case GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES: *params = mState.fragmentShaderDerivativeHint; break;
       case GL_ACTIVE_TEXTURE:                   *params = (mState.activeSampler + GL_TEXTURE0); break;
       case GL_STENCIL_FUNC:                     *params = mState.stencilFunc;                   break;
       case GL_STENCIL_REF:                      *params = mState.stencilRef;                    break;
@@ -1183,8 +1225,8 @@ bool Context::getIntegerv(GLenum pname, GLint *params)
       case GL_STENCIL_BACK_WRITEMASK:           *params = mState.stencilBackWritemask;          break;
       case GL_STENCIL_CLEAR_VALUE:              *params = mState.stencilClearValue;             break;
       case GL_SUBPIXEL_BITS:                    *params = 4;                                    break;
-      case GL_MAX_TEXTURE_SIZE:                 *params = gl::MAX_TEXTURE_SIZE;                 break;
-      case GL_MAX_CUBE_MAP_TEXTURE_SIZE:        *params = gl::MAX_CUBE_MAP_TEXTURE_SIZE;        break;
+      case GL_MAX_TEXTURE_SIZE:                 *params = getMaximumTextureDimension();         break;
+      case GL_MAX_CUBE_MAP_TEXTURE_SIZE:        *params = getMaximumCubeTextureDimension();     break;
       case GL_NUM_COMPRESSED_TEXTURE_FORMATS:   
         {
             if (supportsCompressedTextures())
@@ -1246,7 +1288,7 @@ bool Context::getIntegerv(GLenum pname, GLint *params)
       case GL_IMPLEMENTATION_COLOR_READ_FORMAT: *params = gl::IMPLEMENTATION_COLOR_READ_FORMAT; break;
       case GL_MAX_VIEWPORT_DIMS:
         {
-            int maxDimension = std::max((int)gl::MAX_RENDERBUFFER_SIZE, (int)gl::MAX_TEXTURE_SIZE);
+            int maxDimension = std::max(getMaximumRenderbufferDimension(), getMaximumTextureDimension());
             params[0] = maxDimension;
             params[1] = maxDimension;
         }
@@ -1392,6 +1434,7 @@ bool Context::getQueryParameterInfo(GLenum pname, GLenum *type, unsigned int *nu
       case GL_PACK_ALIGNMENT:
       case GL_UNPACK_ALIGNMENT:
       case GL_GENERATE_MIPMAP_HINT:
+      case GL_FRAGMENT_SHADER_DERIVATIVE_HINT_OES:
       case GL_RED_BITS:
       case GL_GREEN_BITS:
       case GL_BLUE_BITS:
@@ -1535,6 +1578,12 @@ bool Context::applyRenderTarget(bool ignoreViewport)
     }
 
     IDirect3DSurface9 *renderTarget = framebufferObject->getRenderTarget();
+
+    if (!renderTarget)
+    {
+        return false;   // Context must be lost
+    }
+
     IDirect3DSurface9 *depthStencil = NULL;
 
     unsigned int renderTargetSerial = framebufferObject->getRenderTargetSerial();
@@ -1550,25 +1599,42 @@ bool Context::applyRenderTarget(bool ignoreViewport)
     if (framebufferObject->getDepthbufferType() != GL_NONE)
     {
         depthStencil = framebufferObject->getDepthbuffer()->getDepthStencil();
+        if (!depthStencil)
+        {
+            ERR("Depth stencil pointer unexpectedly null.");
+            return false;
+        }
+        
         depthbufferSerial = framebufferObject->getDepthbuffer()->getSerial();
     }
     else if (framebufferObject->getStencilbufferType() != GL_NONE)
     {
         depthStencil = framebufferObject->getStencilbuffer()->getDepthStencil();
+        if (!depthStencil)
+        {
+            ERR("Depth stencil pointer unexpectedly null.");
+            return false;
+        }
+        
         stencilbufferSerial = framebufferObject->getStencilbuffer()->getSerial();
     }
 
     if (depthbufferSerial != mAppliedDepthbufferSerial ||
-        stencilbufferSerial != mAppliedStencilbufferSerial)
+        stencilbufferSerial != mAppliedStencilbufferSerial ||
+        !mDepthStencilInitialized)
     {
         device->SetDepthStencilSurface(depthStencil);
         mAppliedDepthbufferSerial = depthbufferSerial;
         mAppliedStencilbufferSerial = stencilbufferSerial;
+        mDepthStencilInitialized = true;
     }
 
     D3DVIEWPORT9 viewport;
     D3DSURFACE_DESC desc;
     renderTarget->GetDesc(&desc);
+
+    float zNear = clamp01(mState.zNear);
+    float zFar = clamp01(mState.zFar);
 
     if (ignoreViewport)
     {
@@ -1585,8 +1651,8 @@ bool Context::applyRenderTarget(bool ignoreViewport)
         viewport.Y = std::max(mState.viewportY, 0);
         viewport.Width = std::min(mState.viewportWidth, (int)desc.Width - (int)viewport.X);
         viewport.Height = std::min(mState.viewportHeight, (int)desc.Height - (int)viewport.Y);
-        viewport.MinZ = clamp01(mState.zNear);
-        viewport.MaxZ = clamp01(mState.zFar);
+        viewport.MinZ = zNear;
+        viewport.MaxZ = zFar;
     }
 
     if (viewport.Width <= 0 || viewport.Height <= 0)
@@ -1623,27 +1689,21 @@ bool Context::applyRenderTarget(bool ignoreViewport)
 
         GLint halfPixelSize = programObject->getDxHalfPixelSizeLocation();
         GLfloat xy[2] = {1.0f / viewport.Width, 1.0f / viewport.Height};
-        programObject->setUniform2fv(halfPixelSize, 1, (GLfloat*)&xy);
+        programObject->setUniform2fv(halfPixelSize, 1, xy);
 
-        GLint window = programObject->getDxViewportLocation();
+        GLint viewport = programObject->getDxViewportLocation();
         GLfloat whxy[4] = {mState.viewportWidth / 2.0f, mState.viewportHeight / 2.0f, 
                           (float)mState.viewportX + mState.viewportWidth / 2.0f, 
                           (float)mState.viewportY + mState.viewportHeight / 2.0f};
-        programObject->setUniform4fv(window, 1, (GLfloat*)&whxy);
+        programObject->setUniform4fv(viewport, 1, whxy);
 
         GLint depth = programObject->getDxDepthLocation();
-        GLfloat dz[2] = {(mState.zFar - mState.zNear) / 2.0f, (mState.zNear + mState.zFar) / 2.0f};
-        programObject->setUniform2fv(depth, 1, (GLfloat*)&dz);
+        GLfloat dz[2] = {(zFar - zNear) / 2.0f, (zNear + zFar) / 2.0f};
+        programObject->setUniform2fv(depth, 1, dz);
 
-        GLint near = programObject->getDepthRangeNearLocation();
-        programObject->setUniform1fv(near, 1, &mState.zNear);
-
-        GLint far = programObject->getDepthRangeFarLocation();
-        programObject->setUniform1fv(far, 1, &mState.zFar);
-
-        GLint diff = programObject->getDepthRangeDiffLocation();
-        GLfloat zDiff = mState.zFar - mState.zNear;
-        programObject->setUniform1fv(diff, 1, &zDiff);
+        GLint depthRange = programObject->getDxDepthRangeLocation();
+        GLfloat nearFarDiff[3] = {zNear, zFar, zFar - zNear};
+        programObject->setUniform3fv(depthRange, 1, nearFarDiff);
     }
 
     return true;
@@ -1830,39 +1890,46 @@ void Context::applyState(GLenum drawMode)
         mPolygonOffsetStateDirty = false;
     }
 
-    if (framebufferObject->isMultisample() && mSampleStateDirty)
+    if (mSampleStateDirty)
     {
-        if (mState.sampleAlphaToCoverage)
+        if (framebufferObject->isMultisample())
         {
-            FIXME("Sample alpha to coverage is unimplemented.");
-        }
-
-        if (mState.sampleCoverage)
-        {
-            device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-            unsigned int mask = 0;
-            if (mState.sampleCoverageValue != 0)
+            if (mState.sampleAlphaToCoverage)
             {
-                float threshold = 0.5f;
+                FIXME("Sample alpha to coverage is unimplemented.");
+            }
 
-                for (int i = 0; i < framebufferObject->getSamples(); ++i)
+            device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+            if (mState.sampleCoverage)
+            {
+                unsigned int mask = 0;
+                if (mState.sampleCoverageValue != 0)
                 {
-                    mask <<= 1;
+                    float threshold = 0.5f;
 
-                    if ((i + 1) * mState.sampleCoverageValue >= threshold)
+                    for (int i = 0; i < framebufferObject->getSamples(); ++i)
                     {
-                        threshold += 1.0f;
-                        mask |= 1;
+                        mask <<= 1;
+
+                        if ((i + 1) * mState.sampleCoverageValue >= threshold)
+                        {
+                            threshold += 1.0f;
+                            mask |= 1;
+                        }
                     }
                 }
-            }
-            
-            if (mState.sampleCoverageInvert)
-            {
-                mask = ~mask;
-            }
+                
+                if (mState.sampleCoverageInvert)
+                {
+                    mask = ~mask;
+                }
 
-            device->SetRenderState(D3DRS_MULTISAMPLEMASK, mask);
+                device->SetRenderState(D3DRS_MULTISAMPLEMASK, mask);
+            }
+            else
+            {
+                device->SetRenderState(D3DRS_MULTISAMPLEMASK, 0xFFFFFFFF);
+            }
         }
         else
         {
@@ -1887,18 +1954,18 @@ void Context::lookupAttributeMapping(TranslatedAttribute *attributes)
 {
     for (int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
     {
-        if (attributes[i].enabled)
+        if (attributes[i].active)
         {
             attributes[i].semanticIndex = getCurrentProgram()->getSemanticIndex(i);
         }
     }
 }
 
-GLenum Context::applyVertexBuffer(GLenum mode, GLint first, GLsizei count, bool *useIndexing, TranslatedIndexData *indexInfo)
+GLenum Context::applyVertexBuffer(GLint first, GLsizei count)
 {
     TranslatedAttribute translated[MAX_VERTEX_ATTRIBS];
 
-    GLenum err = mVertexDataManager->preRenderValidate(first, count, translated);
+    GLenum err = mVertexDataManager->prepareVertexData(first, count, translated);
     if (err != GL_NO_ERROR)
     {
         return err;
@@ -1906,53 +1973,20 @@ GLenum Context::applyVertexBuffer(GLenum mode, GLint first, GLsizei count, bool 
 
     lookupAttributeMapping(translated);
 
-    mBufferBackEnd->setupAttributesPreDraw(translated);
+    mVertexDataManager->setupAttributes(translated);
 
-    for (int i = 0; i < MAX_VERTEX_ATTRIBS; i++)
-    {
-        if (translated[i].enabled && translated[i].nonArray)
-        {
-            err = mIndexDataManager->preRenderValidateUnindexed(mode, count, indexInfo);
-            if (err != GL_NO_ERROR)
-            {
-                return err;
-            }
-
-            mBufferBackEnd->setupIndicesPreDraw(*indexInfo);
-
-            *useIndexing = true;
-            return GL_NO_ERROR;
-        }
-    }
-
-    *useIndexing = false;
     return GL_NO_ERROR;
-}
-
-GLenum Context::applyVertexBuffer(const TranslatedIndexData &indexInfo)
-{
-    TranslatedAttribute translated[MAX_VERTEX_ATTRIBS];
-
-    GLenum err = mVertexDataManager->preRenderValidate(indexInfo.minIndex, indexInfo.maxIndex-indexInfo.minIndex+1, translated);
-
-    if (err == GL_NO_ERROR)
-    {
-        lookupAttributeMapping(translated);
-
-        mBufferBackEnd->setupAttributesPreDraw(translated);
-    }
-
-    return err;
 }
 
 // Applies the indices and element array bindings to the Direct3D 9 device
 GLenum Context::applyIndexBuffer(const void *indices, GLsizei count, GLenum mode, GLenum type, TranslatedIndexData *indexInfo)
 {
-    GLenum err = mIndexDataManager->preRenderValidate(mode, type, count, mState.elementArrayBuffer.get(), indices, indexInfo);
+    IDirect3DDevice9 *device = getDevice();
+    GLenum err = mIndexDataManager->prepareIndexData(type, count, mState.elementArrayBuffer.get(), indices, indexInfo);
 
     if (err == GL_NO_ERROR)
     {
-        mBufferBackEnd->setupIndicesPreDraw(*indexInfo);
+        device->SetIndices(indexInfo->indexBuffer);
     }
 
     return err;
@@ -2048,6 +2082,12 @@ void Context::readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum
     }
 
     IDirect3DSurface9 *renderTarget = framebuffer->getRenderTarget();
+
+    if (!renderTarget)
+    {
+        return;   // Context must be lost, return silently
+    }
+
     IDirect3DDevice9 *device = getDevice();
 
     D3DSURFACE_DESC desc;
@@ -2141,16 +2181,6 @@ void Context::readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum
                     r = (rgb & 0xF800) * (1.0f / 0xF800);
                 }
                 break;
-              case D3DFMT_X1R5G5B5:
-                {
-                    unsigned short xrgb = *(unsigned short*)(source + 2 * i + j * lock.Pitch);
-
-                    a = 1.0f;
-                    b = (xrgb & 0x001F) * (1.0f / 0x001F);
-                    g = (xrgb & 0x03E0) * (1.0f / 0x03E0);
-                    r = (xrgb & 0x7C00) * (1.0f / 0x7C00);
-                }
-                break;
               case D3DFMT_A1R5G5B5:
                 {
                     unsigned short argb = *(unsigned short*)(source + 2 * i + j * lock.Pitch);
@@ -2189,6 +2219,28 @@ void Context::readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum
                     b = (argb & 0x000003FF) * (1.0f / 0x000003FF);
                     g = (argb & 0x000FFC00) * (1.0f / 0x000FFC00);
                     r = (argb & 0x3FF00000) * (1.0f / 0x3FF00000);
+                }
+                break;
+              case D3DFMT_A32B32G32R32F:
+                {
+                    // float formats in D3D are stored rgba, rather than the other way round
+                    r = *((float*)(source + 16 * i + j * lock.Pitch) + 0);
+                    g = *((float*)(source + 16 * i + j * lock.Pitch) + 1);
+                    b = *((float*)(source + 16 * i + j * lock.Pitch) + 2);
+                    a = *((float*)(source + 16 * i + j * lock.Pitch) + 3);
+                }
+                break;
+              case D3DFMT_A16B16G16R16F:
+                {
+                    // float formats in D3D are stored rgba, rather than the other way round
+                    float abgr[4];
+
+                    D3DXFloat16To32Array(abgr, (D3DXFLOAT16*)(source + 8 * i + j * lock.Pitch), 4);
+
+                    a = abgr[3];
+                    b = abgr[2];
+                    g = abgr[1];
+                    r = abgr[0];
                 }
                 break;
               default:
@@ -2314,6 +2366,12 @@ void Context::clear(GLbitfield mask)
         if (framebufferObject->getStencilbufferType() != GL_NONE)
         {
             IDirect3DSurface9 *depthStencil = framebufferObject->getStencilbuffer()->getDepthStencil();
+            if (!depthStencil)
+            {
+                ERR("Depth stencil pointer unexpectedly null.");
+                return;
+            }
+            
             D3DSURFACE_DESC desc;
             depthStencil->GetDesc(&desc);
 
@@ -2345,6 +2403,11 @@ void Context::clear(GLbitfield mask)
     int stencil = mState.stencilClearValue & 0x000000FF;
 
     IDirect3DSurface9 *renderTarget = framebufferObject->getRenderTarget();
+
+    if (!renderTarget)
+    {
+        return;   // Context must be lost, return silently
+    }
 
     D3DSURFACE_DESC desc;
     renderTarget->GetDesc(&desc);
@@ -2381,7 +2444,7 @@ void Context::clear(GLbitfield mask)
             device->SetPixelShader(NULL);
             device->SetVertexShader(NULL);
             device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-            device->SetStreamSourceFreq(0, 1);
+            device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 
             hr = device->EndStateBlock(&mMaskedClearSavedState);
             ASSERT(SUCCEEDED(hr) || hr == D3DERR_OUTOFVIDEOMEMORY || hr == E_OUTOFMEMORY);
@@ -2436,7 +2499,7 @@ void Context::clear(GLbitfield mask)
         device->SetPixelShader(NULL);
         device->SetVertexShader(NULL);
         device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
-        device->SetStreamSourceFreq(0, 1);
+        device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 
         struct Vertex
         {
@@ -2517,9 +2580,7 @@ void Context::drawArrays(GLenum mode, GLint first, GLsizei count)
 
     applyState(mode);
 
-    TranslatedIndexData indexInfo;
-    bool useIndexing;
-    GLenum err = applyVertexBuffer(mode, first, count, &useIndexing, &indexInfo);
+    GLenum err = applyVertexBuffer(first, count);
     if (err != GL_NO_ERROR)
     {
         return error(err);
@@ -2536,18 +2597,17 @@ void Context::drawArrays(GLenum mode, GLint first, GLsizei count)
     if (!cullSkipsDraw(mode))
     {
         display->startScene();
-        if (useIndexing)
+        
+        device->DrawPrimitive(primitiveType, 0, primitiveCount);
+
+        if (mode == GL_LINE_LOOP)   // Draw the last segment separately
         {
-            device->DrawIndexedPrimitive(primitiveType, -(INT)indexInfo.minIndex, indexInfo.minIndex, indexInfo.maxIndex-indexInfo.minIndex+1, indexInfo.offset/indexInfo.indexSize, primitiveCount);
-        }
-        else
-        {
-            device->DrawPrimitive(primitiveType, 0, primitiveCount);
+            drawClosingLine(first, first + count - 1);
         }
     }
 }
 
-void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void* indices)
+void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void *indices)
 {
     if (!mState.currentProgram)
     {
@@ -2586,7 +2646,8 @@ void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void* 
         return error(err);
     }
 
-    err = applyVertexBuffer(indexInfo);
+    GLsizei vertexCount = indexInfo.maxIndex - indexInfo.minIndex + 1;
+    err = applyVertexBuffer(indexInfo.minIndex, vertexCount);
     if (err != GL_NO_ERROR)
     {
         return error(err);
@@ -2603,7 +2664,13 @@ void Context::drawElements(GLenum mode, GLsizei count, GLenum type, const void* 
     if (!cullSkipsDraw(mode))
     {
         display->startScene();
-        device->DrawIndexedPrimitive(primitiveType, -(INT)indexInfo.minIndex, indexInfo.minIndex, indexInfo.maxIndex-indexInfo.minIndex+1, indexInfo.offset/indexInfo.indexSize, primitiveCount);
+
+        device->DrawIndexedPrimitive(primitiveType, -(INT)indexInfo.minIndex, indexInfo.minIndex, vertexCount, indexInfo.startIndex, primitiveCount);
+
+        if (mode == GL_LINE_LOOP)   // Draw the last segment separately
+        {
+            drawClosingLine(count, type, indices);
+        }
     }
 }
 
@@ -2631,7 +2698,6 @@ void Context::finish()
         ASSERT(SUCCEEDED(result));
 
         // Render something outside the render target
-        device->SetStreamSourceFreq(0, 1);
         device->SetPixelShader(NULL);
         device->SetVertexShader(NULL);
         device->SetFVF(D3DFVF_XYZRHW);
@@ -2685,6 +2751,93 @@ void Context::flush()
             error(GL_OUT_OF_MEMORY);
         }
     }
+}
+
+void Context::drawClosingLine(unsigned int first, unsigned int last)
+{
+    IDirect3DDevice9 *device = getDevice();
+    IDirect3DIndexBuffer9 *indexBuffer = NULL;
+    HRESULT result = D3DERR_INVALIDCALL;
+
+    if (supports32bitIndices())
+    {
+        result = device->CreateIndexBuffer(8, D3DUSAGE_WRITEONLY, D3DFMT_INDEX32, D3DPOOL_DEFAULT, &indexBuffer, 0);
+
+        if (SUCCEEDED(result))
+        {
+            unsigned int *data;
+            result = indexBuffer->Lock(0, 0, (void**)&data, 0);
+
+            if (SUCCEEDED(result))
+            {
+                data[0] = last;
+                data[1] = first;
+            }
+        }
+    }
+    else
+    {
+        result = device->CreateIndexBuffer(4, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &indexBuffer, 0);
+
+        if (SUCCEEDED(result))
+        {
+            unsigned short *data;
+            result = indexBuffer->Lock(0, 0, (void**)&data, 0);
+
+            if (SUCCEEDED(result))
+            {
+                data[0] = last;
+                data[1] = first;
+            }
+        }
+    }
+    
+    if (SUCCEEDED(result))
+    {
+        indexBuffer->Unlock();
+        device->SetIndices(indexBuffer);
+
+        device->DrawIndexedPrimitive(D3DPT_LINELIST, 0, 0, 2, 0, 1);
+
+        indexBuffer->Release();
+    }
+    else
+    {
+        ERR("Could not create an index buffer for closing a line loop.");
+        error(GL_OUT_OF_MEMORY);
+    }
+}
+
+void Context::drawClosingLine(GLsizei count, GLenum type, const void *indices)
+{
+    unsigned int first = 0;
+    unsigned int last = 0;
+
+    if (mState.elementArrayBuffer.get())
+    {
+        Buffer *indexBuffer = mState.elementArrayBuffer.get();
+        intptr_t offset = reinterpret_cast<intptr_t>(indices);
+        indices = static_cast<const GLubyte*>(indexBuffer->data()) + offset;
+    }
+
+    switch (type)
+    {
+      case GL_UNSIGNED_BYTE:
+        first = static_cast<const GLubyte*>(indices)[0];
+        last = static_cast<const GLubyte*>(indices)[count - 1];
+        break;
+      case GL_UNSIGNED_SHORT:
+        first = static_cast<const GLushort*>(indices)[0];
+        last = static_cast<const GLushort*>(indices)[count - 1];
+        break;
+      case GL_UNSIGNED_INT:
+        first = static_cast<const GLuint*>(indices)[0];
+        last = static_cast<const GLuint*>(indices)[count - 1];
+        break;
+      default: UNREACHABLE();
+    }
+
+    drawClosingLine(first, last);
 }
 
 void Context::recordInvalidEnum()
@@ -2759,6 +2912,16 @@ bool Context::supportsShaderModel3() const
     return mSupportsShaderModel3;
 }
 
+int Context::getMaximumVaryingVectors() const
+{
+    return mSupportsShaderModel3 ? MAX_VARYING_VECTORS_SM3 : MAX_VARYING_VECTORS_SM2;
+}
+
+int Context::getMaximumFragmentUniformVectors() const
+{
+    return mSupportsShaderModel3 ? MAX_FRAGMENT_UNIFORM_VECTORS_SM3 : MAX_FRAGMENT_UNIFORM_VECTORS_SM2;
+}
+
 int Context::getMaxSupportedSamples() const
 {
     return mMaxSupportedSamples;
@@ -2788,9 +2951,79 @@ int Context::getNearestSupportedSamples(D3DFORMAT format, int requested) const
     return -1;
 }
 
+bool Context::supportsEventQueries() const
+{
+    return mSupportsEventQueries;
+}
+
 bool Context::supportsCompressedTextures() const
 {
     return mSupportsCompressedTextures;
+}
+
+bool Context::supportsFloatTextures() const
+{
+    return mSupportsFloatTextures;
+}
+
+bool Context::supportsFloatLinearFilter() const
+{
+    return mSupportsFloatLinearFilter;
+}
+
+bool Context::supportsFloatRenderableTextures() const
+{
+    return mSupportsFloatRenderableTextures;
+}
+
+bool Context::supportsHalfFloatTextures() const
+{
+    return mSupportsHalfFloatTextures;
+}
+
+bool Context::supportsHalfFloatLinearFilter() const
+{
+    return mSupportsHalfFloatLinearFilter;
+}
+
+bool Context::supportsHalfFloatRenderableTextures() const
+{
+    return mSupportsHalfFloatRenderableTextures;
+}
+
+int Context::getMaximumRenderbufferDimension() const
+{
+    return mMaxRenderbufferDimension;
+}
+
+int Context::getMaximumTextureDimension() const
+{
+    return mMaxTextureDimension;
+}
+
+int Context::getMaximumCubeTextureDimension() const
+{
+    return mMaxCubeTextureDimension;
+}
+
+int Context::getMaximumTextureLevel() const
+{
+    return mMaxTextureLevel;
+}
+
+bool Context::supportsLuminanceTextures() const
+{
+    return mSupportsLuminanceTextures;
+}
+
+bool Context::supportsLuminanceAlphaTextures() const
+{
+    return mSupportsLuminanceAlphaTextures;
+}
+
+bool Context::supports32bitIndices() const
+{
+    return mSupports32bitIndices;
 }
 
 void Context::detachBuffer(GLuint buffer)
@@ -2903,7 +3136,7 @@ void Context::detachRenderbuffer(GLuint renderbuffer)
 
 Texture *Context::getIncompleteTexture(SamplerType type)
 {
-    Texture *t = mIncompleteTextures[type];
+    Texture *t = mIncompleteTextures[type].get();
 
     if (t == NULL)
     {
@@ -2939,7 +3172,7 @@ Texture *Context::getIncompleteTexture(SamplerType type)
             break;
         }
 
-        mIncompleteTextures[type] = t;
+        mIncompleteTextures[type].set(t);
     }
 
     return t;
@@ -2978,7 +3211,7 @@ void Context::setVertexAttrib(GLuint index, const GLfloat *values)
     mState.vertexAttribute[index].mCurrentValue[2] = values[2];
     mState.vertexAttribute[index].mCurrentValue[3] = values[3];
 
-    mVertexDataManager->dirtyCurrentValues();
+    mVertexDataManager->dirtyCurrentValue(index);
 }
 
 void Context::initExtensionString()
@@ -2988,10 +3221,36 @@ void Context::initExtensionString()
     mExtensionString += "GL_EXT_read_format_bgra ";
     mExtensionString += "GL_ANGLE_framebuffer_blit ";
     mExtensionString += "GL_OES_rgb8_rgba8 ";
+    mExtensionString += "GL_OES_standard_derivatives ";
+
+    if (supportsEventQueries())
+    {
+        mExtensionString += "GL_NV_fence ";
+    }
 
     if (supportsCompressedTextures())
     {
         mExtensionString += "GL_EXT_texture_compression_dxt1 ";
+    }
+
+    if (supportsFloatTextures())
+    {
+        mExtensionString += "GL_OES_texture_float ";
+    }
+
+    if (supportsHalfFloatTextures())
+    {
+        mExtensionString += "GL_OES_texture_half_float ";
+    }
+
+    if (supportsFloatLinearFilter())
+    {
+        mExtensionString += "GL_OES_texture_float_linear ";
+    }
+
+    if (supportsHalfFloatLinearFilter())
+    {
+        mExtensionString += "GL_OES_texture_half_float_linear ";
     }
 
     if (getMaxSupportedSamples() != 0)
@@ -2999,7 +3258,7 @@ void Context::initExtensionString()
         mExtensionString += "GL_ANGLE_framebuffer_multisample ";
     }
 
-    if (mBufferBackEnd->supportIntIndices())
+    if (supports32bitIndices())
     {
         mExtensionString += "GL_OES_element_index_uint ";
     }
@@ -3178,10 +3437,10 @@ void Context::blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1
     }
 
     bool partialBufferCopy = false;
-    if (sourceTrimmedRect.bottom - sourceTrimmedRect.top < readFramebuffer->getColorbuffer()->getHeight() ||
-        sourceTrimmedRect.right - sourceTrimmedRect.left < readFramebuffer->getColorbuffer()->getWidth() || 
-        destTrimmedRect.bottom - destTrimmedRect.top < drawFramebuffer->getColorbuffer()->getHeight() ||
-        destTrimmedRect.right - destTrimmedRect.left < drawFramebuffer->getColorbuffer()->getWidth() ||
+    if (sourceTrimmedRect.bottom - sourceTrimmedRect.top < readBufferHeight ||
+        sourceTrimmedRect.right - sourceTrimmedRect.left < readBufferWidth || 
+        destTrimmedRect.bottom - destTrimmedRect.top < drawBufferHeight ||
+        destTrimmedRect.right - destTrimmedRect.left < drawBufferWidth ||
         sourceTrimmedRect.top != 0 || destTrimmedRect.top != 0 || sourceTrimmedRect.left != 0 || destTrimmedRect.left != 0)
     {
         partialBufferCopy = true;
@@ -3189,7 +3448,11 @@ void Context::blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1
 
     if (mask & GL_COLOR_BUFFER_BIT)
     {
-        if (readFramebuffer->getColorbufferType() != drawFramebuffer->getColorbufferType() ||
+        const bool validReadType = readFramebuffer->getColorbufferType() == GL_TEXTURE_2D ||
+            readFramebuffer->getColorbufferType() == GL_RENDERBUFFER;
+        const bool validDrawType = drawFramebuffer->getColorbufferType() == GL_TEXTURE_2D ||
+            drawFramebuffer->getColorbufferType() == GL_RENDERBUFFER;
+        if (!validReadType || !validDrawType ||
             readFramebuffer->getColorbuffer()->getD3DFormat() != drawFramebuffer->getColorbuffer()->getD3DFormat())
         {
             ERR("Color buffer format conversion in BlitFramebufferANGLE not supported by this implementation");

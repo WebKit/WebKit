@@ -85,12 +85,12 @@ public:
     TType() {}
     TType(TBasicType t, TPrecision p, TQualifier q = EvqTemporary, int s = 1, bool m = false, bool a = false) :
             type(t), precision(p), qualifier(q), size(s), matrix(m), array(a), arraySize(0),
-            structure(0), structureSize(0), maxArraySize(0), arrayInformationType(0), fieldName(0), mangled(0), typeName(0)
+            maxArraySize(0), arrayInformationType(0), structure(0), structureSize(0), fieldName(0), mangled(0), typeName(0)
     {
     }
     explicit TType(const TPublicType &p) :
             type(p.type), precision(p.precision), qualifier(p.qualifier), size(p.size), matrix(p.matrix), array(p.array), arraySize(p.arraySize),
-            structure(0), structureSize(0), maxArraySize(0), arrayInformationType(0), fieldName(0), mangled(0), typeName(0)
+            maxArraySize(0), arrayInformationType(0), structure(0), structureSize(0), fieldName(0), mangled(0), typeName(0)
     {
         if (p.userDef) {
             structure = p.userDef->getStruct();
@@ -99,7 +99,7 @@ public:
     }
     TType(TTypeList* userDef, const TString& n, TPrecision p = EbpUndefined) :
             type(EbtStruct), precision(p), qualifier(EvqTemporary), size(1), matrix(false), array(false), arraySize(0),
-            structure(userDef), structureSize(0), maxArraySize(0), arrayInformationType(0), fieldName(0), mangled(0)
+            maxArraySize(0), arrayInformationType(0), structure(userDef), structureSize(0), fieldName(0), mangled(0)
     {
         typeName = NewPoolTString(n.c_str());
     }

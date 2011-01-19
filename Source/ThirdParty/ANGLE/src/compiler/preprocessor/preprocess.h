@@ -42,10 +42,10 @@ TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF
 NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 \****************************************************************************/
 
-# include "compiler/preprocessor/slglobals.h"
+#include "compiler/preprocessor/slglobals.h"
 extern CPPStruct *cpp;
 int InitCPPStruct(void);
 int InitScanner(CPPStruct *cpp);
 int InitAtomTable(AtomTable *atable, int htsize);
-int ScanFromString(char *s);
+int ScanFromString(const char *s);
 char* GetStringOfAtom(AtomTable *atable, int atom);

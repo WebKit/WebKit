@@ -1,3 +1,22 @@
+2011-01-18  Ben Vanik  <ben.vanik@gmail.com>
+
+        Reviewed by Kenneth Russell.
+
+        Updating ANGLE in WebKit to r533.
+        https://bugs.webkit.org/show_bug.cgi?id=47194
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::~ANGLEWebKitBridge):
+        (WebCore::ANGLEWebKitBridge::validateShaderSource):
+        Update to new ANGLE API for shader validation.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (WebCore::ANGLEWebKitBridge::setResources): 
+        Renaming types to new names.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        Initialize ANGLEResources with ANGLE init call to prevent uninitialized variables.
+
 2011-01-18  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Simon Fraser.

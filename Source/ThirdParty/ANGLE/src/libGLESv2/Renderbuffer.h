@@ -21,6 +21,7 @@
 
 namespace gl
 {
+    class Texture;
 
 // A class derived from RenderbufferStorage is created whenever glRenderbufferStorage
 // is called. The specific concrete type depends on whether the internal format is
@@ -42,6 +43,7 @@ class RenderbufferStorage
     virtual int getWidth() const;
     virtual int getHeight() const;
     virtual GLenum getFormat() const;
+    virtual bool isFloatingPoint() const;
     D3DFORMAT getD3DFormat() const;
     GLsizei getSamples() const;
     unsigned int getSerial() const;
@@ -53,7 +55,7 @@ class RenderbufferStorage
     GLenum mFormat;
     D3DFORMAT mD3DFormat;
     GLsizei mSamples;
-    unsigned int mSerial;
+    const unsigned int mSerial;
 
   private:
     DISALLOW_COPY_AND_ASSIGN(RenderbufferStorage);
@@ -100,6 +102,7 @@ class Colorbuffer : public RenderbufferStorage
 {
   public:
     explicit Colorbuffer(IDirect3DSurface9 *renderTarget);
+    explicit Colorbuffer(const Texture* texture);
     Colorbuffer(int width, int height, GLenum format, GLsizei samples);
 
     ~Colorbuffer();

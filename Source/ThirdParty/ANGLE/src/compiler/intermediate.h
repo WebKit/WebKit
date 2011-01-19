@@ -129,9 +129,9 @@ enum TOperator {
     EOpReflect,
     EOpRefract,
 
-    //EOpDPdx,            // Fragment only, OES_standard_derivatives extension
-    //EOpDPdy,            // Fragment only, OES_standard_derivatives extension
-    //EOpFwidth,          // Fragment only, OES_standard_derivatives extension
+    EOpDFdx,            // Fragment only, OES_standard_derivatives extension
+    EOpDFdy,            // Fragment only, OES_standard_derivatives extension
+    EOpFwidth,          // Fragment only, OES_standard_derivatives extension
 
     EOpMatrixTimesMatrix,
 
@@ -183,6 +183,8 @@ enum TOperator {
     EOpMatrixTimesMatrixAssign,
     EOpDivAssign,
 };
+
+extern const char* getOperatorString(TOperator op);
 
 class TIntermTraverser;
 class TIntermAggregate;
@@ -262,30 +264,38 @@ protected:
 //
 // Handle for, do-while, and while loops.
 //
+enum TLoopType {
+    ELoopFor,
+    ELoopWhile,
+    ELoopDoWhile,
+};
+
 class TIntermLoop : public TIntermNode {
 public:
-    TIntermLoop(TIntermNode *init, TIntermNode* aBody, TIntermTyped* aTest, TIntermTyped* aTerminal, bool testFirst) : 
-            init(init),
-            body(aBody),
-            test(aTest),
-            terminal(aTerminal),
-            first(testFirst) { }
+    TIntermLoop(TLoopType aType,
+                TIntermNode *aInit, TIntermTyped* aCond, TIntermTyped* aExpr,
+                TIntermNode* aBody) :
+            type(aType),
+            init(aInit),
+            cond(aCond),
+            expr(aExpr),
+            body(aBody) { }
 
     virtual TIntermLoop* getAsLoopNode() { return this; }
     virtual void traverse(TIntermTraverser*);
 
-    TIntermNode *getInit() { return init; }
-    TIntermNode *getBody() { return body; }
-    TIntermTyped *getTest() { return test; }
-    TIntermTyped *getTerminal() { return terminal; }
-    bool testFirst() { return first; }
+    TLoopType getType() const { return type; }
+    TIntermNode* getInit() { return init; }
+    TIntermTyped* getCondition() { return cond; }
+    TIntermTyped* getExpression() { return expr; }
+    TIntermNode* getBody() { return body; }
 
 protected:
-    TIntermNode *init;
-    TIntermNode *body;       // code to loop over
-    TIntermTyped *test;      // exit condition associated with loop, could be 0 for 'for' loops
-    TIntermTyped *terminal;  // exists for for-loops
-    bool first;              // true for while and for, not for do-while
+    TLoopType type;
+    TIntermNode* init;  // for-loop initialization
+    TIntermTyped* cond; // loop exit condition
+    TIntermTyped* expr; // for-loop expression
+    TIntermNode* body;  // loop body
 };
 
 //
@@ -404,6 +414,7 @@ protected:
 
 typedef TVector<TIntermNode*> TIntermSequence;
 typedef TVector<int> TQualifierList;
+typedef TMap<TString, TString> TPragmaTable;
 //
 // Nodes that operate on an arbitrary sized set of children.
 //
@@ -417,12 +428,13 @@ public:
     virtual void traverse(TIntermTraverser*);
 
     TIntermSequence& getSequence() { return sequence; }
+
     void setName(const TString& n) { name = n; }
     const TString& getName() const { return name; }
 
     void setUserDefined() { userDefined = true; }
     bool isUserDefined() { return userDefined; }
-    TQualifierList& getQualifier() { return qualifier; }
+
     void setOptimize(bool o) { optimize = o; }
     bool getOptimize() { return optimize; }
     void setDebug(bool d) { debug = d; }
@@ -434,9 +446,9 @@ protected:
     TIntermAggregate(const TIntermAggregate&); // disallow copy constructor
     TIntermAggregate& operator=(const TIntermAggregate&); // disallow assignment operator
     TIntermSequence sequence;
-    TQualifierList qualifier;
     TString name;
     bool userDefined; // used for user defined function names
+
     bool optimize;
     bool debug;
     TPragmaTable *pragmaTable;

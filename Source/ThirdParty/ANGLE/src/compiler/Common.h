@@ -14,9 +14,24 @@
 
 #include "compiler/PoolAlloc.h"
 
+// We need two pieces of information to report errors/warnings - string and
+// line number. We encode these into a single int so that it can be easily
+// incremented/decremented by lexer. The right SOURCE_LOC_LINE_SIZE bits store
+// line number while the rest store the string number. Since the shaders are
+// usually small, we should not run out of memory. SOURCE_LOC_LINE_SIZE
+// can be increased to alleviate this issue.
 typedef int TSourceLoc;
-const unsigned int SourceLocLineMask = 0xffff;
-const unsigned int SourceLocStringShift = 16;
+const unsigned int SOURCE_LOC_LINE_SIZE = 16;  // in bits.
+const unsigned int SOURCE_LOC_LINE_MASK = (1 << SOURCE_LOC_LINE_SIZE) - 1;
+
+inline TSourceLoc EncodeSourceLoc(int string, int line) {
+    return (string << SOURCE_LOC_LINE_SIZE) | (line & SOURCE_LOC_LINE_MASK);
+}
+
+inline void DecodeSourceLoc(TSourceLoc loc, int* string, int* line) {
+    if (string) *string = loc >> SOURCE_LOC_LINE_SIZE;
+    if (line) *line = loc & SOURCE_LOC_LINE_MASK;
+}
 
 //
 // Put POOL_ALLOCATOR_NEW_DELETE in base classes to make them use this scheme.
@@ -70,7 +85,5 @@ public:
     // use correct two-stage name lookup supported in gcc 3.4 and above
     TMap(const tAllocator& a) : std::map<K, D, CMP, tAllocator>(std::map<K, D, CMP, tAllocator>::key_compare(), a) {}
 };
-
-typedef TMap<TString, TString> TPragmaTable;
 
 #endif // _COMMON_INCLUDED_

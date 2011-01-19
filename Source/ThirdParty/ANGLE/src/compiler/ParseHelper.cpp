@@ -9,8 +9,34 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "compiler/glslang.h"
 #include "compiler/osinclude.h"
 #include "compiler/InitializeParseContext.h"
+
+extern "C" {
+extern int InitPreprocessor();
+extern int FinalizePreprocessor();
+extern void PredefineIntMacro(const char *name, int value);
+}
+
+static void ReportInfo(TInfoSinkBase& sink,
+                       TPrefixType type, TSourceLoc loc,
+                       const char* reason, const char* token, 
+                       const char* extraInfo)
+{
+    /* VC++ format: file(linenum) : error #: 'token' : extrainfo */
+    sink.prefix(type);
+    sink.location(loc);
+    sink << "'" << token <<  "' : " << reason << " " << extraInfo << "\n";
+}
+
+static void DefineExtensionMacros(const TExtensionBehavior& extBehavior)
+{
+    for (TExtensionBehavior::const_iterator iter = extBehavior.begin();
+         iter != extBehavior.end(); ++iter) {
+        PredefineIntMacro(iter->first.c_str(), 1);
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -176,24 +202,32 @@ void TParseContext::recover()
 //
 // Used by flex/bison to output all syntax and parsing errors.
 //
-void TParseContext::error(TSourceLoc nLine, const char *szReason, const char *szToken, 
-                          const char *szExtraInfoFormat, ...)
+void TParseContext::error(TSourceLoc loc,
+                          const char* reason, const char* token, 
+                          const char* extraInfoFormat, ...)
 {
-    char szExtraInfo[400];
+    char extraInfo[512];
     va_list marker;
+    va_start(marker, extraInfoFormat);
+    vsnprintf(extraInfo, sizeof(extraInfo), extraInfoFormat, marker);
 
-    va_start(marker, szExtraInfoFormat);
-
-    vsnprintf(szExtraInfo, sizeof(szExtraInfo), szExtraInfoFormat, marker);
-
-    /* VC++ format: file(linenum) : error #: 'token' : extrainfo */
-    infoSink.info.prefix(EPrefixError);
-    infoSink.info.location(nLine);
-    infoSink.info << "'" << szToken <<  "' : " << szReason << " " << szExtraInfo << "\n";
+    ReportInfo(infoSink.info, EPrefixError, loc, reason, token, extraInfo);
 
     va_end(marker);
-
     ++numErrors;
+}
+
+void TParseContext::warning(TSourceLoc loc,
+                            const char* reason, const char* token,
+                            const char* extraInfoFormat, ...) {
+    char extraInfo[512];
+    va_list marker;
+    va_start(marker, extraInfoFormat);
+    vsnprintf(extraInfo, sizeof(extraInfo), extraInfoFormat, marker);
+
+    ReportInfo(infoSink.info, EPrefixWarning, loc, reason, token, extraInfo);
+
+    va_end(marker);
 }
 
 //
@@ -415,7 +449,7 @@ bool TParseContext::reservedErrorCheck(int line, const TString& identifier)
             error(line, reservedErrMsg, "gl_", "");
             return true;
         }
-        if (spec == EShSpecWebGL) {
+        if (shaderSpec == SH_WEBGL_SPEC) {
             if (identifier.substr(0, 6) == TString("webgl_")) {
                 error(line, reservedErrMsg, "webgl_", "");
                 return true;
@@ -471,17 +505,18 @@ bool TParseContext::constructorErrorCheck(int line, TIntermNode* node, TFunction
     bool matrixInMatrix = false;
     bool arrayArg = false;
     for (int i = 0; i < function.getParamCount(); ++i) {
-        size += function[i].type->getObjectSize();
+        const TParameter& param = function.getParam(i);
+        size += param.type->getObjectSize();
         
-        if (constructingMatrix && function[i].type->isMatrix())
+        if (constructingMatrix && param.type->isMatrix())
             matrixInMatrix = true;
         if (full)
             overFull = true;
         if (op != EOpConstructStruct && !type->isArray() && size >= type->getObjectSize())
             full = true;
-        if (function[i].type->getQualifier() != EvqConst)
+        if (param.type->getQualifier() != EvqConst)
             constType = false;
-        if (function[i].type->isArray())
+        if (param.type->isArray())
             arrayArg = true;
     }
     
@@ -510,7 +545,7 @@ bool TParseContext::constructorErrorCheck(int line, TIntermNode* node, TFunction
         return true;
     }
     
-    if (op == EOpConstructStruct && !type->isArray() && type->getStruct()->size() != function.getParamCount()) {
+    if (op == EOpConstructStruct && !type->isArray() && int(type->getStruct()->size()) != function.getParamCount()) {
         error(line, "Number of constructor parameters does not match the number of structure fields", "constructor", "");
         return true;
     }
@@ -674,13 +709,10 @@ bool TParseContext::arraySizeErrorCheck(int line, TIntermTyped* expr, int& size)
 //
 bool TParseContext::arrayQualifierErrorCheck(int line, TPublicType type)
 {
-    if (type.qualifier == EvqAttribute) {
+    if ((type.qualifier == EvqAttribute) || (type.qualifier == EvqConst)) {
         error(line, "cannot declare arrays of this qualifier", TType(type).getCompleteString().c_str(), "");
         return true;
     }
-
-    if (type.qualifier == EvqConst && extensionErrorCheck(line, "GL_3DL_array_objects"))
-        return true;
 
     return false;
 }
@@ -886,15 +918,21 @@ bool TParseContext::paramErrorCheck(int line, TQualifier qualifier, TQualifier p
     return false;
 }
 
-bool TParseContext::extensionErrorCheck(int line, const char* extension)
-{       
-    if (extensionBehavior[extension] == EBhWarn) {
-        infoSink.info.message(EPrefixWarning, ("extension " + TString(extension) + " is being used").c_str(), line);
-        return false;
-    }
-    if (extensionBehavior[extension] == EBhDisable) {
-        error(line, "extension", extension, "is disabled");
+bool TParseContext::extensionErrorCheck(int line, const TString& extension)
+{
+    TExtensionBehavior::const_iterator iter = extensionBehavior.find(extension);
+    if (iter == extensionBehavior.end()) {
+        error(line, "extension", extension.c_str(), "is not supported");
         return true;
+    }
+    if (iter->second == EBhDisable) {
+        error(line, "extension", extension.c_str(), "is disabled");
+        return true;
+    }
+    if (iter->second == EBhWarn) {
+        TString msg = "extension " + extension + " is being used";
+        infoSink.info.message(EPrefixWarning, msg.c_str(), line);
+        return false;
     }
 
     return false;
@@ -1021,6 +1059,7 @@ bool TParseContext::executeInitializer(TSourceLoc line, TString& identifier, TPu
 
 bool TParseContext::areAllChildConst(TIntermAggregate* aggrNode)
 {
+    ASSERT(aggrNode != NULL);
     if (!aggrNode->isConstructor())
         return false;
 
@@ -1028,13 +1067,10 @@ bool TParseContext::areAllChildConst(TIntermAggregate* aggrNode)
 
     // check if all the child nodes are constants so that they can be inserted into 
     // the parent node
-    if (aggrNode) {
-        TIntermSequence &childSequenceVector = aggrNode->getSequence() ;
-        for (TIntermSequence::iterator p = childSequenceVector.begin(); 
-                                    p != childSequenceVector.end(); p++) {
-            if (!(*p)->getAsTyped()->getAsConstantUnion())
-                return false;
-        }
+    TIntermSequence &sequence = aggrNode->getSequence() ;
+    for (TIntermSequence::iterator p = sequence.begin(); p != sequence.end(); ++p) {
+        if (!(*p)->getAsTyped()->getAsConstantUnion())
+            return false;
     }
 
     return allConstant;
@@ -1379,16 +1415,29 @@ TIntermTyped* TParseContext::addConstStruct(TString& identifier, TIntermTyped* n
 }
 
 //
-// Initialize all supported extensions to disable
+// Parse an array of strings using yyparse.
 //
-void TParseContext::initializeExtensionBehavior()
-{
-    //
-    // example code: extensionBehavior["test"] = EBhDisable; // where "test" is the name of 
-    // supported extension
-    //
-    extensionBehavior["GL_ARB_texture_rectangle"] = EBhRequire;
-    extensionBehavior["GL_3DL_array_objects"] = EBhDisable;
+// Returns 0 for success.
+//
+int PaParseStrings(int count, const char* const string[], const int length[],
+                   TParseContext* context) {
+    if ((count == 0) || (string == NULL))
+        return 1;
+
+    // setup preprocessor.
+    if (InitPreprocessor())
+        return 1;
+    DefineExtensionMacros(context->extensionBehavior);
+
+    if (glslang_initialize(context))
+        return 1;
+
+    glslang_scan(count, string, length, context);
+    int error = glslang_parse(context);
+
+    glslang_finalize(context);
+    FinalizePreprocessor();
+    return (error == 0) && (context->numErrors == 0) ? 0 : 1;
 }
 
 OS_TLSIndex GlobalParseContextIndex = OS_INVALID_TLS_INDEX;

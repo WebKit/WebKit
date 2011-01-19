@@ -140,6 +140,22 @@ void TSymbolTableLevel::relateToOperator(const char* name, TOperator op)
     }
 }
 
+//
+// Change all function entries in the table with the non-mangled name
+// to be related to the provided built-in extension. This is a low
+// performance operation, and only intended for symbol tables that
+// live across a large number of compiles.
+//
+void TSymbolTableLevel::relateToExtension(const char* name, const TString& ext)
+{
+    for (tLevel::iterator it = level.begin(); it != level.end(); ++it) {
+        if (it->second->isFunction()) {
+            TFunction* function = static_cast<TFunction*>(it->second);
+            if (function->getName() == name)
+                function->relateToExtension(ext);
+        }
+    }
+}
 
 TSymbol::TSymbol(const TSymbol& copyOf)
 {

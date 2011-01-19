@@ -12,6 +12,7 @@
 
 #define GL_APICALL
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #define EGLAPI
 #include <EGL/egl.h>
 #include <d3d9.h>
@@ -49,19 +50,20 @@ class Stencilbuffer;
 class DepthStencilbuffer;
 class VertexDataManager;
 class IndexDataManager;
-class BufferBackEnd;
 class Blit;
+class Fence;
 
 enum
 {
-    MAX_VERTEX_ATTRIBS = 12,
-    MAX_VERTEX_UNIFORM_VECTORS = 128,
-    MAX_VARYING_VECTORS = 8,
+    MAX_VERTEX_ATTRIBS = 16,
+    MAX_VERTEX_UNIFORM_VECTORS = 256 - 2,   // 256 is the minimum for SM2, and in practice the maximum for DX9. Reserve space for dx_HalfPixelSize and dx_DepthRange.
+    MAX_VARYING_VECTORS_SM2 = 8,
+    MAX_VARYING_VECTORS_SM3 = 10,
     MAX_COMBINED_TEXTURE_IMAGE_UNITS = 16,
     MAX_VERTEX_TEXTURE_IMAGE_UNITS = 0,
     MAX_TEXTURE_IMAGE_UNITS = 16,
-    MAX_FRAGMENT_UNIFORM_VECTORS = 16,
-    MAX_RENDERBUFFER_SIZE = 4096,   // FIXME: Verify
+    MAX_FRAGMENT_UNIFORM_VECTORS_SM2 = 32 - 3,    // Reserve space for dx_Viewport, dx_Depth, and dx_DepthRange. dx_PointOrLines and dx_FrontCCW use separate bool registers.
+    MAX_FRAGMENT_UNIFORM_VECTORS_SM3 = 224 - 3,
     MAX_DRAW_BUFFERS = 1,
 
     IMPLEMENTATION_COLOR_READ_FORMAT = GL_RGB,
@@ -83,31 +85,55 @@ struct Color
 };
 
 // Helper structure describing a single vertex attribute
-class AttributeState
+class VertexAttribute
 {
   public:
-    AttributeState()
-        : mType(GL_FLOAT), mSize(0), mNormalized(false), mStride(0), mPointer(NULL), mEnabled(false)
+    VertexAttribute() : mType(GL_FLOAT), mSize(0), mNormalized(false), mStride(0), mPointer(NULL), mArrayEnabled(false)
     {
-        mCurrentValue[0] = 0;
-        mCurrentValue[1] = 0;
-        mCurrentValue[2] = 0;
-        mCurrentValue[3] = 1;
+        mCurrentValue[0] = 0.0f;
+        mCurrentValue[1] = 0.0f;
+        mCurrentValue[2] = 0.0f;
+        mCurrentValue[3] = 1.0f;
     }
 
-    // From VertexArrayPointer
+    int typeSize() const
+    {
+        switch (mType)
+        {
+          case GL_BYTE:           return mSize * sizeof(GLbyte);
+          case GL_UNSIGNED_BYTE:  return mSize * sizeof(GLubyte);
+          case GL_SHORT:          return mSize * sizeof(GLshort);
+          case GL_UNSIGNED_SHORT: return mSize * sizeof(GLushort);
+          case GL_FIXED:          return mSize * sizeof(GLfixed);
+          case GL_FLOAT:          return mSize * sizeof(GLfloat);
+          default: UNREACHABLE(); return mSize * sizeof(GLfloat);
+        }
+    }
+
+    GLsizei stride() const
+    {
+        return mStride ? mStride : typeSize();
+    }
+
+    // From glVertexAttribPointer
     GLenum mType;
     GLint mSize;
     bool mNormalized;
-    GLsizei mStride; // 0 means natural stride
-    const void *mPointer;
+    GLsizei mStride;   // 0 means natural stride
 
-    BindingPointer<Buffer> mBoundBuffer; // Captured when VertexArrayPointer is called.
+    union
+    {
+        const void *mPointer;
+        intptr_t mOffset;
+    };
 
-    bool mEnabled; // From Enable/DisableVertexAttribArray
+    BindingPointer<Buffer> mBoundBuffer;   // Captured when glVertexAttribPointer is called.
 
-    float mCurrentValue[4]; // From VertexAttrib4f
+    bool mArrayEnabled;   // From glEnable/DisableVertexAttribArray
+    float mCurrentValue[4];   // From glVertexAttrib
 };
+
+typedef VertexAttribute VertexAttributeArray[MAX_VERTEX_ATTRIBS];
 
 // Helper structure to store all raw state
 struct State
@@ -157,6 +183,7 @@ struct State
     GLfloat lineWidth;
 
     GLenum generateMipmapHint;
+    GLenum fragmentShaderDerivativeHint;
 
     GLint viewportX;
     GLint viewportY;
@@ -179,14 +206,12 @@ struct State
     int activeSampler;   // Active texture unit selector - GL_TEXTURE0
     BindingPointer<Buffer> arrayBuffer;
     BindingPointer<Buffer> elementArrayBuffer;
-    BindingPointer<Texture> texture2D;
-    BindingPointer<Texture> textureCubeMap;
     GLuint readFramebuffer;
     GLuint drawFramebuffer;
     BindingPointer<Renderbuffer> renderbuffer;
     GLuint currentProgram;
 
-    AttributeState vertexAttribute[MAX_VERTEX_ATTRIBS];
+    VertexAttribute vertexAttribute[MAX_VERTEX_ATTRIBS];
     BindingPointer<Texture> samplerTexture[SAMPLER_TYPE_COUNT][MAX_TEXTURE_IMAGE_UNITS];
 
     GLint unpackAlignment;
@@ -264,6 +289,7 @@ class Context
     void setLineWidth(GLfloat width);
 
     void setGenerateMipmapHint(GLenum hint);
+    void setFragmentShaderDerivativeHint(GLenum hint);
 
     void setViewportParams(GLint x, GLint y, GLsizei width, GLsizei height);
 
@@ -280,13 +306,13 @@ class Context
 
     GLuint getArrayBufferHandle() const;
 
-    void setVertexAttribEnabled(unsigned int attribNum, bool enabled);
-    const AttributeState &getVertexAttribState(unsigned int attribNum);
+    void setEnableVertexAttribArray(unsigned int attribNum, bool enabled);
+    const VertexAttribute &getVertexAttribState(unsigned int attribNum);
     void setVertexAttribState(unsigned int attribNum, Buffer *boundBuffer, GLint size, GLenum type,
                               bool normalized, GLsizei stride, const void *pointer);
     const void *getVertexAttribPointer(unsigned int attribNum) const;
 
-    const AttributeState *getVertexAttribBlock();
+    const VertexAttributeArray &getVertexAttributes();
 
     void setUnpackAlignment(GLint alignment);
     GLint getUnpackAlignment() const;
@@ -312,6 +338,10 @@ class Context
     GLuint createFramebuffer();
     void deleteFramebuffer(GLuint framebuffer);
 
+    // Fences are owned by the Context.
+    GLuint createFence();
+    void deleteFence(GLuint fence);
+
     void bindArrayBuffer(GLuint buffer);
     void bindElementArrayBuffer(GLuint buffer);
     void bindTexture2D(GLuint texture);
@@ -328,6 +358,7 @@ class Context
     void setVertexAttrib(GLuint index, const GLfloat *values);
 
     Buffer *getBuffer(GLuint handle);
+    Fence *getFence(GLuint handle);
     Shader *getShader(GLuint handle);
     Program *getProgram(GLuint handle);
     Texture *getTexture(GLuint handle);
@@ -351,19 +382,21 @@ class Context
 
     bool applyRenderTarget(bool ignoreViewport);
     void applyState(GLenum drawMode);
-    GLenum applyVertexBuffer(GLenum mode, GLint first, GLsizei count, bool *useIndexing, TranslatedIndexData *indexInfo);
-    GLenum applyVertexBuffer(const TranslatedIndexData &indexInfo);
+    GLenum applyVertexBuffer(GLint first, GLsizei count);
     GLenum applyIndexBuffer(const void *indices, GLsizei count, GLenum mode, GLenum type, TranslatedIndexData *indexInfo);
-    GLenum applyCountingIndexBuffer(GLenum mode, GLenum count, TranslatedIndexData *indexInfo);
     void applyShaders();
     void applyTextures();
 
     void readPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels);
     void clear(GLbitfield mask);
     void drawArrays(GLenum mode, GLint first, GLsizei count);
-    void drawElements(GLenum mode, GLsizei count, GLenum type, const void* indices);
+    void drawElements(GLenum mode, GLsizei count, GLenum type, const void *indices);
     void finish();
     void flush();
+
+	// Draw the last segment of a line loop
+    void drawClosingLine(unsigned int first, unsigned int last);
+    void drawClosingLine(GLsizei count, GLenum type, const void *indices);
 
     void recordInvalidEnum();
     void recordInvalidValue();
@@ -374,10 +407,26 @@ class Context
     GLenum getError();
 
     bool supportsShaderModel3() const;
+    int getMaximumVaryingVectors() const;
+    int getMaximumFragmentUniformVectors() const;
+    int getMaximumRenderbufferDimension() const;
+    int getMaximumTextureDimension() const;
+    int getMaximumCubeTextureDimension() const;
+    int getMaximumTextureLevel() const;
     GLsizei getMaxSupportedSamples() const;
     int getNearestSupportedSamples(D3DFORMAT format, int requested) const;
     const char *getExtensionString() const;
+    bool supportsEventQueries() const;
     bool supportsCompressedTextures() const;
+    bool supportsFloatTextures() const;
+    bool supportsFloatLinearFilter() const;
+    bool supportsFloatRenderableTextures() const;
+    bool supportsHalfFloatTextures() const;
+    bool supportsHalfFloatLinearFilter() const;
+    bool supportsHalfFloatRenderableTextures() const;
+    bool supportsLuminanceTextures() const;
+    bool supportsLuminanceAlphaTextures() const;
+    bool supports32bitIndices() const;
 
     void blitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, 
                          GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1,
@@ -406,25 +455,24 @@ class Context
 
     State   mState;
 
-    Texture2D *mTexture2DZero;
-    TextureCubeMap *mTextureCubeMapZero;
-
-    Colorbuffer *mColorbufferZero;
-    DepthStencilbuffer *mDepthStencilbufferZero;
+    BindingPointer<Texture2D> mTexture2DZero;
+    BindingPointer<TextureCubeMap> mTextureCubeMapZero;
 
     typedef std::map<GLuint, Framebuffer*> FramebufferMap;
     FramebufferMap mFramebufferMap;
 
+    typedef std::map<GLuint, Fence*> FenceMap;
+    FenceMap mFenceMap;
+
     void initExtensionString();
     std::string mExtensionString;
 
-    BufferBackEnd *mBufferBackEnd;
     VertexDataManager *mVertexDataManager;
     IndexDataManager *mIndexDataManager;
 
     Blit *mBlit;
     
-    Texture *mIncompleteTextures[SAMPLER_TYPE_COUNT];
+    BindingPointer<Texture> mIncompleteTextures[SAMPLER_TYPE_COUNT];
 
     // Recorded errors
     bool mInvalidEnum;
@@ -439,11 +487,26 @@ class Context
     unsigned int mAppliedRenderTargetSerial;
     unsigned int mAppliedDepthbufferSerial;
     unsigned int mAppliedStencilbufferSerial;
+    bool mDepthStencilInitialized;
 
     bool mSupportsShaderModel3;
+    int  mMaxRenderbufferDimension;
+    int  mMaxTextureDimension;
+    int  mMaxCubeTextureDimension;
+    int  mMaxTextureLevel;
     std::map<D3DFORMAT, bool *> mMultiSampleSupport;
     GLsizei mMaxSupportedSamples;
+    bool mSupportsEventQueries;
     bool mSupportsCompressedTextures;
+    bool mSupportsFloatTextures;
+    bool mSupportsFloatLinearFilter;
+    bool mSupportsFloatRenderableTextures;
+    bool mSupportsHalfFloatTextures;
+    bool mSupportsHalfFloatLinearFilter;
+    bool mSupportsHalfFloatRenderableTextures;
+    bool mSupportsLuminanceTextures;
+    bool mSupportsLuminanceAlphaTextures;
+    bool mSupports32bitIndices;
 
     // state caching flags
     bool mClearStateDirty;

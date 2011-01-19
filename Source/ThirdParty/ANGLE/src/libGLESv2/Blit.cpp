@@ -382,6 +382,11 @@ bool Blit::setFormatConvertShaders(GLenum destFormat)
 
 IDirect3DTexture9 *Blit::copySurfaceToTexture(IDirect3DSurface9 *surface, const RECT &sourceRect)
 {
+    if (!surface)
+    {
+        return NULL;
+    }
+
     egl::Display *display = getDisplay();
     IDirect3DDevice9 *device = getDevice();
 
@@ -408,14 +413,8 @@ IDirect3DTexture9 *Blit::copySurfaceToTexture(IDirect3DSurface9 *surface, const 
         return error(GL_OUT_OF_MEMORY, (IDirect3DTexture9*)NULL);
     }
 
-    RECT d3dSourceRect;
-    d3dSourceRect.left = sourceRect.left;
-    d3dSourceRect.right = sourceRect.right;
-    d3dSourceRect.top = sourceRect.top;
-    d3dSourceRect.bottom = sourceRect.bottom;
-
     display->endScene();
-    result = device->StretchRect(surface, &d3dSourceRect, textureSurface, NULL, D3DTEXF_NONE);
+    result = device->StretchRect(surface, &sourceRect, textureSurface, NULL, D3DTEXF_NONE);
 
     textureSurface->Release();
 
@@ -467,10 +466,8 @@ void Blit::setCommonBlitState()
     device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
     device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-    for (int i = 0; i < MAX_VERTEX_ATTRIBS+1; i++)
-    {
-        device->SetStreamSourceFreq(i, 1);
-    }
+    RECT scissorRect = {0};   // Scissoring is disabled for flipping, but we need this to capture and restore the old rectangle
+    device->SetScissorRect(&scissorRect);
 }
 
 void Blit::render()

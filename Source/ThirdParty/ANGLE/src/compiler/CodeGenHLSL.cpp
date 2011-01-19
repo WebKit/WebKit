@@ -11,9 +11,9 @@
 // compile object used by higher level code.  It returns
 // a subclass of TCompiler.
 //
-TCompiler* ConstructCompiler(EShLanguage language, EShSpec spec)
+TCompiler* ConstructCompiler(ShShaderType type, ShShaderSpec spec)
 {
-    return new TranslatorHLSL(language, spec);
+    return new TranslatorHLSL(type, spec);
 }
 
 //

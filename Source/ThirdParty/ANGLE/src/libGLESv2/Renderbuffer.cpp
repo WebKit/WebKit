@@ -11,6 +11,7 @@
 #include "libGLESv2/Renderbuffer.h"
 
 #include "libGLESv2/main.h"
+#include "libGLESv2/Texture.h"
 #include "libGLESv2/utilities.h"
 
 namespace gl
@@ -86,9 +87,13 @@ void Renderbuffer::setStorage(RenderbufferStorage *newStorage)
     mStorage = newStorage;
 }
 
-RenderbufferStorage::RenderbufferStorage()
+RenderbufferStorage::RenderbufferStorage() : mSerial(issueSerial())
 {
-    mSerial = issueSerial();
+    mWidth = 0;
+    mHeight = 0;
+    mFormat = GL_RGBA4;
+    mD3DFormat = D3DFMT_A8R8G8B8;
+    mSamples = 0;
 }
 
 RenderbufferStorage::~RenderbufferStorage()
@@ -141,6 +146,11 @@ GLenum RenderbufferStorage::getFormat() const
     return mFormat;
 }
 
+bool RenderbufferStorage::isFloatingPoint() const
+{
+    return false; // no floating point renderbuffers 
+}
+
 D3DFORMAT RenderbufferStorage::getD3DFormat() const
 {
     return mD3DFormat;
@@ -171,14 +181,17 @@ Colorbuffer::Colorbuffer(IDirect3DSurface9 *renderTarget) : mRenderTarget(render
         renderTarget->GetDesc(&description);
 
         setSize(description.Width, description.Height);
+        mFormat = dx2es::ConvertBackBufferFormat(description.Format);
         mD3DFormat = description.Format;
         mSamples = es2dx::GetSamplesFromMultisampleType(description.MultiSampleType);
     }
-    else
-    {
-        mD3DFormat = D3DFMT_UNKNOWN;
-        mSamples = 0;
-    }
+}
+
+Colorbuffer::Colorbuffer(const Texture* texture) : mRenderTarget(NULL)
+{
+    setSize(texture->getWidth(), texture->getHeight());
+    mD3DFormat = texture->getD3DFormat();
+    mSamples = 0;
 }
 
 Colorbuffer::Colorbuffer(int width, int height, GLenum format, GLsizei samples)
@@ -217,13 +230,6 @@ Colorbuffer::Colorbuffer(int width, int height, GLenum format, GLsizei samples)
         mFormat = format;
         mD3DFormat = requestedFormat;
         mSamples = supportedSamples;
-    }
-    else
-    {
-        setSize(0, 0);
-        mFormat = GL_RGBA4;
-        mD3DFormat = D3DFMT_UNKNOWN;
-        mSamples = 0;
     }
 }
 
@@ -307,14 +313,9 @@ DepthStencilbuffer::DepthStencilbuffer(IDirect3DSurface9 *depthStencil) : mDepth
         depthStencil->GetDesc(&description);
 
         setSize(description.Width, description.Height);
-        mFormat = (description.Format == D3DFMT_D16 ? GL_DEPTH_COMPONENT16 : GL_DEPTH24_STENCIL8_OES);
+        mFormat = dx2es::ConvertDepthStencilFormat(description.Format);
         mSamples = es2dx::GetSamplesFromMultisampleType(description.MultiSampleType); 
         mD3DFormat = description.Format;
-    }
-    else
-    {
-        mD3DFormat = D3DFMT_UNKNOWN; 
-        mSamples = 0;
     }
 }
 
@@ -351,13 +352,6 @@ DepthStencilbuffer::DepthStencilbuffer(int width, int height, GLsizei samples)
         mFormat = GL_DEPTH24_STENCIL8_OES;
         mD3DFormat = D3DFMT_D24S8;
         mSamples = supportedSamples;
-    }
-    else
-    {
-        setSize(0, 0);
-        mFormat = GL_RGBA4; //default format
-        mD3DFormat = D3DFMT_UNKNOWN;
-        mSamples = 0;
     }
 }
 

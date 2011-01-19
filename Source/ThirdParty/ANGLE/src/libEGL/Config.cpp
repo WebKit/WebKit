@@ -94,13 +94,6 @@ void Config::set(D3DDISPLAYMODE displayMode, EGLint minInterval, EGLint maxInter
         mBlueSize = 5;
         mAlphaSize = 0;
         break;
-      case D3DFMT_X1R5G5B5:
-        mBufferSize = 16;
-        mRedSize = 5;
-        mGreenSize = 5;
-        mBlueSize = 5;
-        mAlphaSize = 0;
-        break;
       case D3DFMT_X8R8G8B8:
         mBufferSize = 32;
         mRedSize = 8;

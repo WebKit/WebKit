@@ -94,9 +94,7 @@ class Program
     bool getUniformfv(GLint location, GLfloat *params);
     bool getUniformiv(GLint location, GLint *params);
 
-    GLint getDepthRangeDiffLocation() const;
-    GLint getDepthRangeNearLocation() const;
-    GLint getDepthRangeFarLocation() const;
+    GLint getDxDepthRangeLocation() const;
     GLint getDxDepthLocation() const;
     GLint getDxViewportLocation() const;
     GLint getDxHalfPixelSizeLocation() const;
@@ -204,9 +202,7 @@ class Program
     typedef std::vector<UniformLocation> UniformIndex;
     UniformIndex mUniformIndex;
 
-    GLint mDepthRangeDiffLocation;
-    GLint mDepthRangeNearLocation;
-    GLint mDepthRangeFarLocation;
+    GLint mDxDepthRangeLocation;
     GLint mDxDepthLocation;
     GLint mDxViewportLocation;
     GLint mDxHalfPixelSizeLocation;
@@ -220,7 +216,7 @@ class Program
 
     unsigned int mRefCount;
 
-    unsigned int mSerial;
+    const unsigned int mSerial;
 
     static unsigned int mCurrentSerial;
 

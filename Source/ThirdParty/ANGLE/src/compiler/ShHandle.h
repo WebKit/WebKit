@@ -16,20 +16,26 @@
 
 #include "GLSLANG/ShaderLang.h"
 
+#include "compiler/ExtensionBehavior.h"
 #include "compiler/InfoSink.h"
 #include "compiler/SymbolTable.h"
+#include "compiler/VariableInfo.h"
 
 class TCompiler;
-class TIntermNode;
 
 //
 // The base class used to back handles returned to the driver.
 //
 class TShHandleBase {
 public:
-    TShHandleBase() { }
-    virtual ~TShHandleBase() { }
+    TShHandleBase();
+    virtual ~TShHandleBase();
     virtual TCompiler* getAsCompiler() { return 0; }
+
+protected:
+    // Memory allocator. Allocates and tracks memory required by the compiler.
+    // Deallocates all memory when compiler is destructed.
+    TPoolAllocator allocator;
 };
 
 //
@@ -38,27 +44,49 @@ public:
 //
 class TCompiler : public TShHandleBase {
 public:
-    TCompiler(EShLanguage l, EShSpec s) : language(l), spec(s) { }
-    virtual ~TCompiler() { }
-
-    EShLanguage getLanguage() const { return language; }
-    EShSpec getSpec() const { return spec; }
-    TSymbolTable& getSymbolTable() { return symbolTable; }
-    TInfoSink& getInfoSink() { return infoSink; }
-
-    virtual bool compile(TIntermNode* root) = 0;
-
+    TCompiler(ShShaderType type, ShShaderSpec spec);
+    virtual ~TCompiler();
     virtual TCompiler* getAsCompiler() { return this; }
 
+    bool Init(const ShBuiltInResources& resources);
+    bool compile(const char* const shaderStrings[],
+                 const int numStrings,
+                 int compileOptions);
+
+    // Get results of the last compilation.
+    TInfoSink& getInfoSink() { return infoSink; }
+    const TVariableInfoList& getAttribs() const { return attribs; }
+    const TVariableInfoList& getUniforms() const { return uniforms; }
+
 protected:
-    EShLanguage language;
-    EShSpec spec;
+    ShShaderType getShaderType() const { return shaderType; }
+    ShShaderSpec getShaderSpec() const { return shaderSpec; }
+    // Initialize symbol-table with built-in symbols.
+    bool InitBuiltInSymbolTable(const ShBuiltInResources& resources);
+    // Clears the results from the previous compilation.
+    void clearResults();
+    // Returns true if the given shader does not exceed the minimum
+    // functionality mandated in GLSL 1.0 spec Appendix A.
+    bool validateLimitations(TIntermNode* root);
+    // Collect info for all attribs and uniforms.
+    void collectAttribsUniforms(TIntermNode* root);
+    // Translate to object code.
+    virtual void translate(TIntermNode* root) = 0;
+
+private:
+    ShShaderType shaderType;
+    ShShaderSpec shaderSpec;
 
     // Built-in symbol table for the given language, spec, and resources.
     // It is preserved from compile-to-compile.
     TSymbolTable symbolTable;
-    // Output sink.
-    TInfoSink infoSink;
+    // Built-in extensions with default behavior.
+    TExtensionBehavior extensionBehavior;
+
+    // Results of compilation.
+    TInfoSink infoSink;  // Output sink.
+    TVariableInfoList attribs;  // Active attributes in the compiled shader.
+    TVariableInfoList uniforms;  // Active uniforms in the compiled shader.
 };
 
 //
@@ -70,7 +98,7 @@ protected:
 // destroy the machine dependent objects, which contain the
 // above machine independent information.
 //
-TCompiler* ConstructCompiler(EShLanguage, EShSpec);
+TCompiler* ConstructCompiler(ShShaderType type, ShShaderSpec spec);
 void DeleteCompiler(TCompiler*);
 
 #endif // _SHHANDLE_INCLUDED_

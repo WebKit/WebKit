@@ -19,7 +19,7 @@ namespace gl
 }
 
 // A macro to output a trace of a function call and its arguments to the debugging log
-#ifndef NDEBUG
+#if !defined(NDEBUG) && !defined(ANGLE_DISABLE_TRACE) 
     #define TRACE(message, ...) gl::trace("trace: %s"message"\n", __FUNCTION__, __VA_ARGS__)
 #else
     #define TRACE(...) ((void)0)

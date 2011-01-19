@@ -11,17 +11,22 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifndef TRACE_OUTPUT_FILE
+#define TRACE_OUTPUT_FILE "debug.txt"
+#endif
+
 static bool trace_on = true;
 
 namespace gl
 {
 void trace(const char *format, ...)
 {
+#if !defined(ANGLE_DISABLE_TRACE) 
     if (trace_on)
     {
         if (format)
         {
-            FILE *file = fopen("debug.txt", "a");
+            FILE *file = fopen(TRACE_OUTPUT_FILE, "a");
 
             if (file)
             {
@@ -34,5 +39,6 @@ void trace(const char *format, ...)
             }
         }
     }
+#endif // !defined(ANGLE_DISABLE_TRACE)
 }
 }

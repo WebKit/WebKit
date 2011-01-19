@@ -28,29 +28,43 @@
 #if ENABLE(3D_CANVAS)
 
 #include "ANGLEWebKitBridge.h"
+#include <wtf/OwnArrayPtr.h>
 
 namespace WebCore {
 
 
 ANGLEWebKitBridge::ANGLEWebKitBridge() :
-    builtCompilers(false)
+    builtCompilers(false),
+    m_fragmentCompiler(0),
+    m_vertexCompiler(0)
 {
     ShInitialize();
 }
 
 ANGLEWebKitBridge::~ANGLEWebKitBridge()
 {
-    if (builtCompilers) {
+    if (m_fragmentCompiler)
         ShDestruct(m_fragmentCompiler);
+    m_fragmentCompiler = 0;
+    if (m_vertexCompiler)
         ShDestruct(m_vertexCompiler);
-    }
+    m_vertexCompiler = 0;
 }
 
 bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog)
 {
     if (!builtCompilers) {
-        m_fragmentCompiler = ShConstructCompiler(EShLangFragment, EShSpecWebGL, &m_resources);
-        m_vertexCompiler = ShConstructCompiler(EShLangVertex, EShSpecWebGL, &m_resources);
+        m_fragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, SH_WEBGL_SPEC, &m_resources);
+        m_vertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, SH_WEBGL_SPEC, &m_resources);
+        if (!m_fragmentCompiler || !m_vertexCompiler) {
+            if (m_fragmentCompiler)
+                ShDestruct(m_fragmentCompiler);
+            m_fragmentCompiler = 0;
+            if (m_vertexCompiler)
+                ShDestruct(m_vertexCompiler);
+            m_vertexCompiler = 0;
+            return false;
+        }
 
         builtCompilers = true;
     }
@@ -64,12 +78,31 @@ bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShad
 
     const char* const shaderSourceStrings[] = { shaderSource };
 
-    bool validateSuccess = ShCompile(compiler, shaderSourceStrings, 1, EShOptNone, EDebugOpIntermediate);
+    bool validateSuccess = ShCompile(compiler, shaderSourceStrings, 1, SH_OBJECT_CODE);
+    if (!validateSuccess) {
+        int logSize = 0;
+        ShGetInfo(compiler, SH_INFO_LOG_LENGTH, &logSize);
+        if (logSize > 1) {
+            OwnArrayPtr<char> logBuffer(new char[logSize]);
+            if (logBuffer) {
+                ShGetInfoLog(compiler, logBuffer.get());
+                shaderValidationLog = logBuffer.get();
+            }
+        }
+        return false;
+    }
 
-    translatedShaderSource = ShGetObjectCode(compiler);
-    shaderValidationLog = ShGetInfoLog(compiler);
+    int translationLength = 0;
+    ShGetInfo(compiler, SH_OBJECT_CODE_LENGTH, &translationLength);
+    if (translationLength > 1) {
+        OwnArrayPtr<char> translationBuffer(new char[translationLength]);
+        if (!translationBuffer)
+            return false;
+        ShGetObjectCode(compiler, translationBuffer.get());
+        translatedShaderSource = translationBuffer.get();
+    }
 
-    return validateSuccess;
+    return true;
 }
 
 }

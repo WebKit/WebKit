@@ -22,6 +22,8 @@
 
 namespace gl
 {
+class StaticVertexBuffer;
+class StaticIndexBuffer;
 
 class Buffer : public RefCountObject
 {
@@ -37,12 +39,19 @@ class Buffer : public RefCountObject
     size_t size() const { return mSize; }
     GLenum usage() const { return mUsage; }
 
+    StaticVertexBuffer *getVertexBuffer();
+    StaticIndexBuffer *getIndexBuffer();
+    void invalidateStaticData();
+
   private:
     DISALLOW_COPY_AND_ASSIGN(Buffer);
 
     GLubyte *mContents;
     size_t mSize;
     GLenum mUsage;
+
+    StaticVertexBuffer *mVertexBuffer;
+    StaticIndexBuffer *mIndexBuffer;
 };
 
 }

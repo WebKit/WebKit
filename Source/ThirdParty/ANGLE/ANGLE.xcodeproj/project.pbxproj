@@ -7,6 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0F912E11DCB002D4255 /* Compiler.cpp */; };
+		90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */; };
+		90D9B10412E11DCB002D4255 /* glslang_lex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */; };
+		90D9B10512E11DCB002D4255 /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */; };
+		90D9B10612E11DCB002D4255 /* glslang_tab.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FD12E11DCB002D4255 /* glslang_tab.h */; };
+		90D9B10712E11DCB002D4255 /* glslang.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B0FE12E11DCB002D4255 /* glslang.h */; };
+		90D9B10912E11DCB002D4255 /* SearchSymbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B10012E11DCB002D4255 /* SearchSymbol.cpp */; };
+		90D9B10A12E11DCB002D4255 /* SearchSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B10112E11DCB002D4255 /* SearchSymbol.h */; };
+		90D9B11312E11DD6002D4255 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B10B12E11DD6002D4255 /* util.cpp */; };
+		90D9B11412E11DD6002D4255 /* util.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B10C12E11DD6002D4255 /* util.h */; };
+		90D9B11512E11DD6002D4255 /* ValidateLimitations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B10D12E11DD6002D4255 /* ValidateLimitations.cpp */; };
+		90D9B11612E11DD6002D4255 /* ValidateLimitations.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B10E12E11DD6002D4255 /* ValidateLimitations.h */; };
+		90D9B11712E11DD6002D4255 /* VariableInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B10F12E11DD6002D4255 /* VariableInfo.cpp */; };
+		90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B11012E11DD6002D4255 /* VariableInfo.h */; };
+		90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B11112E11DD6002D4255 /* VersionGLSL.cpp */; };
+		90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B11212E11DD6002D4255 /* VersionGLSL.h */; };
 		FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */; };
 		FB39D2751200F35A00088E69 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2261200F35A00088E69 /* debug.cpp */; };
 		FB39D2791200F35A00088E69 /* InfoSink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D22A1200F35A00088E69 /* InfoSink.cpp */; };
@@ -42,6 +58,23 @@
 		5D7C59C51208C68B001C873E /* ANGLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ANGLE.xcconfig; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		90D9B0F912E11DCB002D4255 /* Compiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compiler.cpp; sourceTree = "<group>"; };
+		90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionBehavior.h; sourceTree = "<group>"; };
+		90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_lex.cpp; sourceTree = "<group>"; };
+		90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glslang_tab.cpp; sourceTree = "<group>"; };
+		90D9B0FD12E11DCB002D4255 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang_tab.h; sourceTree = "<group>"; };
+		90D9B0FE12E11DCB002D4255 /* glslang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = glslang.h; sourceTree = "<group>"; };
+		90D9B0FF12E11DCB002D4255 /* ossource_nspr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ossource_nspr.cpp; sourceTree = "<group>"; };
+		90D9B10012E11DCB002D4255 /* SearchSymbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SearchSymbol.cpp; sourceTree = "<group>"; };
+		90D9B10112E11DCB002D4255 /* SearchSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchSymbol.h; sourceTree = "<group>"; };
+		90D9B10B12E11DD6002D4255 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
+		90D9B10C12E11DD6002D4255 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		90D9B10D12E11DD6002D4255 /* ValidateLimitations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidateLimitations.cpp; sourceTree = "<group>"; };
+		90D9B10E12E11DD6002D4255 /* ValidateLimitations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateLimitations.h; sourceTree = "<group>"; };
+		90D9B10F12E11DD6002D4255 /* VariableInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VariableInfo.cpp; sourceTree = "<group>"; };
+		90D9B11012E11DD6002D4255 /* VariableInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableInfo.h; sourceTree = "<group>"; };
+		90D9B11112E11DD6002D4255 /* VersionGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VersionGLSL.cpp; sourceTree = "<group>"; };
+		90D9B11212E11DD6002D4255 /* VersionGLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionGLSL.h; sourceTree = "<group>"; };
 		FB39D0D11200F0E300088E69 /* libANGLE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libANGLE.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D1861200F26200088E69 /* BaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTypes.h; sourceTree = "<group>"; };
 		FB39D1871200F26200088E69 /* CodeGenGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGenGLSL.cpp; sourceTree = "<group>"; };
@@ -112,7 +145,6 @@
 		FB39D1D11200F26200088E69 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		FB39D1D21200F26200088E69 /* UnfoldSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldSelect.cpp; sourceTree = "<group>"; };
 		FB39D1D31200F26200088E69 /* UnfoldSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnfoldSelect.h; sourceTree = "<group>"; };
-		FB39D1D41200F26200088E69 /* unistd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unistd.h; sourceTree = "<group>"; };
 		FB39D2211200F35A00088E69 /* BaseTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = BaseTypes.h; sourceTree = "<group>"; };
 		FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CodeGenGLSL.cpp; sourceTree = "<group>"; };
 		FB39D2241200F35A00088E69 /* Common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = Common.h; sourceTree = "<group>"; };
@@ -175,7 +207,6 @@
 		FB39D26C1200F35A00088E69 /* Types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = Types.h; sourceTree = "<group>"; };
 		FB39D26D1200F35A00088E69 /* UnfoldSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldSelect.cpp; sourceTree = "<group>"; };
 		FB39D26E1200F35A00088E69 /* UnfoldSelect.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = UnfoldSelect.h; sourceTree = "<group>"; };
-		FB39D26F1200F35A00088E69 /* unistd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unistd.h; sourceTree = "<group>"; };
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
 		FB39D7201201032000088E69 /* glslang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang.cpp; path = DerivedSources/ANGLE/glslang.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB39D7211201032000088E69 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glslang_tab.h; path = DerivedSources/ANGLE/glslang_tab.h; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -297,7 +328,6 @@
 				FB39D1D11200F26200088E69 /* Types.h */,
 				FB39D1D21200F26200088E69 /* UnfoldSelect.cpp */,
 				FB39D1D31200F26200088E69 /* UnfoldSelect.h */,
-				FB39D1D41200F26200088E69 /* unistd.h */,
 			);
 			includeInIndex = 0;
 			name = compiler;
@@ -332,12 +362,19 @@
 		FB39D2201200F35A00088E69 /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				FB39D2441200F35A00088E69 /* preprocessor */,
 				FB39D2211200F35A00088E69 /* BaseTypes.h */,
 				FB39D2221200F35A00088E69 /* CodeGenGLSL.cpp */,
 				FB39D2241200F35A00088E69 /* Common.h */,
+				90D9B0F912E11DCB002D4255 /* Compiler.cpp */,
 				FB39D2251200F35A00088E69 /* ConstantUnion.h */,
 				FB39D2261200F35A00088E69 /* debug.cpp */,
 				FB39D2271200F35A00088E69 /* debug.h */,
+				90D9B0FA12E11DCB002D4255 /* ExtensionBehavior.h */,
+				90D9B0FB12E11DCB002D4255 /* glslang_lex.cpp */,
+				90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */,
+				90D9B0FD12E11DCB002D4255 /* glslang_tab.h */,
+				90D9B0FE12E11DCB002D4255 /* glslang.h */,
 				FB39D2281200F35A00088E69 /* glslang.l */,
 				FB39D2291200F35A00088E69 /* glslang.y */,
 				FB39D22A1200F35A00088E69 /* InfoSink.cpp */,
@@ -355,6 +392,7 @@
 				FB39D2361200F35A00088E69 /* localintermediate.h */,
 				FB39D2371200F35A00088E69 /* MMap.h */,
 				FB39D2381200F35A00088E69 /* osinclude.h */,
+				90D9B0FF12E11DCB002D4255 /* ossource_nspr.cpp */,
 				FB39D2391200F35A00088E69 /* ossource_posix.cpp */,
 				FB39D23A1200F35A00088E69 /* ossource_win.cpp */,
 				FB39D23B1200F35A00088E69 /* OutputGLSL.cpp */,
@@ -364,11 +402,12 @@
 				FB39D2411200F35A00088E69 /* ParseHelper.h */,
 				FB39D2421200F35A00088E69 /* PoolAlloc.cpp */,
 				FB39D2431200F35A00088E69 /* PoolAlloc.h */,
-				FB39D2441200F35A00088E69 /* preprocessor */,
 				FB39D2561200F35A00088E69 /* QualifierAlive.cpp */,
 				FB39D2571200F35A00088E69 /* QualifierAlive.h */,
 				FB39D2581200F35A00088E69 /* RemoveTree.cpp */,
 				FB39D2591200F35A00088E69 /* RemoveTree.h */,
+				90D9B10012E11DCB002D4255 /* SearchSymbol.cpp */,
+				90D9B10112E11DCB002D4255 /* SearchSymbol.h */,
 				FB39D25A1200F35A00088E69 /* ShaderLang.cpp */,
 				FB39D25B1200F35A00088E69 /* ShHandle.h */,
 				FB39D25C1200F35A00088E69 /* SymbolTable.cpp */,
@@ -378,7 +417,14 @@
 				FB39D26C1200F35A00088E69 /* Types.h */,
 				FB39D26D1200F35A00088E69 /* UnfoldSelect.cpp */,
 				FB39D26E1200F35A00088E69 /* UnfoldSelect.h */,
-				FB39D26F1200F35A00088E69 /* unistd.h */,
+				90D9B10B12E11DD6002D4255 /* util.cpp */,
+				90D9B10C12E11DD6002D4255 /* util.h */,
+				90D9B10D12E11DD6002D4255 /* ValidateLimitations.cpp */,
+				90D9B10E12E11DD6002D4255 /* ValidateLimitations.h */,
+				90D9B10F12E11DD6002D4255 /* VariableInfo.cpp */,
+				90D9B11012E11DD6002D4255 /* VariableInfo.h */,
+				90D9B11112E11DD6002D4255 /* VersionGLSL.cpp */,
+				90D9B11212E11DD6002D4255 /* VersionGLSL.h */,
 			);
 			name = compiler;
 			path = src/compiler;
@@ -425,6 +471,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */,
+				90D9B10312E11DCB002D4255 /* ExtensionBehavior.h in Headers */,
+				90D9B10612E11DCB002D4255 /* glslang_tab.h in Headers */,
+				90D9B10712E11DCB002D4255 /* glslang.h in Headers */,
+				90D9B10A12E11DCB002D4255 /* SearchSymbol.h in Headers */,
+				90D9B11412E11DD6002D4255 /* util.h in Headers */,
+				90D9B11612E11DD6002D4255 /* ValidateLimitations.h in Headers */,
+				90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */,
+				90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,6 +597,14 @@
 				FB39D2AA1200F35A00088E69 /* SymbolTable.cpp in Sources */,
 				FB39D2AC1200F35A00088E69 /* TranslatorGLSL.cpp in Sources */,
 				FB39D2B11200F35A00088E69 /* UnfoldSelect.cpp in Sources */,
+				90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */,
+				90D9B10412E11DCB002D4255 /* glslang_lex.cpp in Sources */,
+				90D9B10512E11DCB002D4255 /* glslang_tab.cpp in Sources */,
+				90D9B10912E11DCB002D4255 /* SearchSymbol.cpp in Sources */,
+				90D9B11312E11DD6002D4255 /* util.cpp in Sources */,
+				90D9B11512E11DD6002D4255 /* ValidateLimitations.cpp in Sources */,
+				90D9B11712E11DD6002D4255 /* VariableInfo.cpp in Sources */,
+				90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
