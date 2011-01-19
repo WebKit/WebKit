@@ -1,3 +1,11 @@
+2011-01-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Removed platform-specific expectations for the test that matches
+        generic baseline after http://trac.webkit.org/changeset/76147.
+
+        * platform/chromium-win/fast/forms/slider-mouse-events-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt: Removed expectation to fail.
+
 2011-01-19  Robert Hogan  <robert@webkit.org>
 
         Unreviewed fix to r76153.

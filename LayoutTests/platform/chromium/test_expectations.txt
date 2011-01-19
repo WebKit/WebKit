@@ -3085,6 +3085,3 @@ BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 // New test, added in r75852 for JSC, fails in V8
 BUGCR69736 : fast/js/js-continue-break-restrictions.html = TEXT
 BUGCR1 REBASELINE MAC : fast/events/offsetX-offsetY.html = TEXT
-
-// Waiting to rebaseline
-BUG_DGLAZKOV : fast/forms/slider-mouse-events.html = TEXT
