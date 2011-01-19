@@ -1,5 +1,7 @@
 2011-01-18 MORITA Hajime  <morrita@google.com>
 
+        Reviewed by Ryosuke Niwa.
+        
         Refactoring: EventHandler::handleTextInputEvent should accept an enum instead of bools.
         https://bugs.webkit.org/show_bug.cgi?id=52608
 
