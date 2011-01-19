@@ -1,3 +1,16 @@
+2011-01-19  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        The return value of contentEditable() function should depend on the DOM attribute
+        instead of render style userModify. The code change fixed test cases in the bug
+        and partially fixed test cases in other contentEditable bugs;
+
+        https://bugs.webkit.org/show_bug.cgi?id=52056
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::contentEditable):
+
 2011-01-19  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Adler.

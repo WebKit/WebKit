@@ -7,8 +7,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS document.getElementById("p").hasAttribute("contentEditable") is false
-FAIL document.getElementById("p").contentEditable should be inherit. Was true.
-FIXME: contentEditable attribute should be inherit if missing. https://bugs.webkit.org/show_bug.cgi?id=52056
+PASS document.getElementById("p").contentEditable is "inherit"
 PASS document.getElementById("p").isContentEditable is true
 PASS window.getComputedStyle(p, "").getPropertyValue("-webkit-user-modify") is "read-write"
 PASS successfullyParsed is true

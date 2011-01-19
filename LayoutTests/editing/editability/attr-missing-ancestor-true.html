@@ -20,7 +20,6 @@ description('When contentEditable is missing, it maps to "inherit" state and the
 
 shouldBe('document.getElementById("p").hasAttribute("contentEditable")','false');
 shouldBe('document.getElementById("p").contentEditable', '"inherit"');
-debug("FIXME: contentEditable attribute should be inherit if missing. https://bugs.webkit.org/show_bug.cgi?id=52056");
 shouldBe('document.getElementById("p").isContentEditable', 'true');
 shouldBe('window.getComputedStyle(p, "").getPropertyValue("-webkit-user-modify")', '"read-write"');
 

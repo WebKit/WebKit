@@ -689,19 +689,18 @@ bool HTMLElement::isContentRichlyEditable() const
 
 String HTMLElement::contentEditable() const 
 {
-    if (!renderer())
-        return "false";
-    
-    switch (renderer()->style()->userModify()) {
-        case READ_WRITE:
-            return "true";
-        case READ_ONLY:
-            return "false";
-        case READ_WRITE_PLAINTEXT_ONLY:
-            return "plaintext-only";
-        default:
-            return "inherit";
-    }
+    const AtomicString& value = fastGetAttribute(contenteditableAttr);
+
+    if (value.isNull())
+        return "inherit";
+    if (value.isEmpty() || equalIgnoringCase(value, "true"))
+        return "true";
+    if (equalIgnoringCase(value, "false"))
+         return "false";
+    if (equalIgnoringCase(value, "plaintext-only"))
+        return "plaintext-only";
+
+    return "inherit";
 }
 
 void HTMLElement::setContentEditable(Attribute* attr) 

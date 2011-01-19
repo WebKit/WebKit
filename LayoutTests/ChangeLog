@@ -1,3 +1,33 @@
+2011-01-19  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52056
+        1. Fixed test cases in the above bug;
+        2. Partially fixed test cases in other contentEditable bugs;
+        3. Updated expected result for fast/dom/element-attribute-js-null.html.
+           However, the test itself should be fixed later in bug 52057.
+
+        * editing/editability/attr-invalid-string-expected.txt:
+        * editing/editability/attr-invalid-string.html:
+        * editing/editability/attr-missing-ancestor-false-expected.txt:
+        * editing/editability/attr-missing-ancestor-false.html:
+        * editing/editability/attr-missing-ancestor-true-expected.txt:
+        * editing/editability/attr-missing-ancestor-true.html:
+        * editing/editability/attr-missing-parent-ancestor-missing-expected.txt:
+        * editing/editability/attr-missing-parent-ancestor-missing.html:
+        * editing/editability/attr-missing-parent-false-expected.txt:
+        * editing/editability/attr-missing-parent-false.html:
+        * editing/editability/attr-missing-parent-true-expected.txt:
+        * editing/editability/attr-missing-parent-true.html:
+        * editing/editability/set-false-expected.txt:
+        * editing/editability/set-inherit-parent-false-expected.txt:
+        * editing/editability/set-inherit-parent-true-expected.txt:
+        * editing/editability/set-invalid-value-expected.txt:
+        * editing/editability/set-true-expected.txt:
+        * editing/editability/set-value-caseinsensitive-expected.txt:
+        * fast/dom/element-attribute-js-null-expected.txt:
+
 2011-01-19  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Adler.

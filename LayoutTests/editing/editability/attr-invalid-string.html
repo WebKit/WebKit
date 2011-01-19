@@ -13,7 +13,6 @@ description('When contentEditable attribute is invalid string, element.contentEd
 
 shouldBe('document.getElementById("div").getAttribute("contentEditable")','"abc"');
 shouldBe('document.getElementById("div").contentEditable', '"inherit"');
-debug("FIXME: contentEditable attribute fails to take invalid value. https://bugs.webkit.org/show_bug.cgi?id=50636");
 shouldBe('document.getElementById("div").isContentEditable', 'false');
 shouldBe('window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify")', '"read-only"');
 

@@ -11,7 +11,7 @@ TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.dir]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.className]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.innerHTML]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLElement.innerText]
-TEST SUCCEEDED: The value was the string 'false'. [tested HTMLElement.contentEditable]
+TEST FAILED: The value should have been the string 'false' but was the string 'true'. [tested HTMLElement.contentEditable]
 
 TEST SUCCEEDED: The value was the empty string. [tested HTMLAnchorElement.accessKey]
 TEST SUCCEEDED: The value was the empty string. [tested HTMLAnchorElement.charset]
