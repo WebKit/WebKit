@@ -29,6 +29,7 @@
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
 #include "WebPage.h"
+#include "WebPageCreationParameters.h"
 #include "WebProcess.h"
 #include <WebCore/GraphicsContext.h>
 
@@ -40,17 +41,17 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<DrawingAreaImpl> DrawingAreaImpl::create(DrawingAreaInfo::Identifier identifier, WebPage* webPage)
+PassRefPtr<DrawingAreaImpl> DrawingAreaImpl::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
-    return adoptRef(new DrawingAreaImpl(identifier, webPage));
+    return adoptRef(new DrawingAreaImpl(webPage, parameters));
 }
 
 DrawingAreaImpl::~DrawingAreaImpl()
 {
 }
 
-DrawingAreaImpl::DrawingAreaImpl(DrawingAreaInfo::Identifier identifier, WebPage* webPage)
-    : DrawingArea(DrawingAreaInfo::Impl, identifier, webPage)
+DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
+    : DrawingArea(DrawingAreaInfo::Impl, parameters.drawingAreaInfo.identifier, webPage)
     , m_isWaitingForDidUpdate(false)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
 {

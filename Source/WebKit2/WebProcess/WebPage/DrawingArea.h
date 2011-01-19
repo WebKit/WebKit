@@ -40,11 +40,12 @@ namespace WebCore {
 namespace WebKit {
 
 class WebPage;
+class WebPageCreationParameters;
 
 class DrawingArea : public RefCounted<DrawingArea> {
 public:
     // FIXME: It might make sense to move this create function into a factory style class. 
-    static PassRefPtr<DrawingArea> create(DrawingAreaInfo::Type, DrawingAreaInfo::Identifier, WebPage*);
+    static PassRefPtr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
 #ifdef __APPLE__

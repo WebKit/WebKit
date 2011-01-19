@@ -40,31 +40,33 @@
 #include "TiledDrawingArea.h"
 #endif
 
+#include "WebPageCreationParameters.h"
+
 namespace WebKit {
 
-PassRefPtr<DrawingArea> DrawingArea::create(DrawingAreaInfo::Type type, DrawingAreaInfo::Identifier identifier, WebPage* webPage)
+PassRefPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreationParameters& parameters)
 {
-    switch (type) {
+    switch (parameters.drawingAreaInfo.type) {
         case DrawingAreaInfo::None:
             ASSERT_NOT_REACHED();
             break;
 
         case DrawingAreaInfo::Impl:
 #ifdef __APPLE__
-            return DrawingAreaImpl::create(identifier, webPage);
+            return DrawingAreaImpl::create(webPage, parameters);
 #else
             return 0;
 #endif
         case DrawingAreaInfo::ChunkedUpdate:
-            return adoptRef(new ChunkedUpdateDrawingArea(identifier, webPage));
+            return adoptRef(new ChunkedUpdateDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
         case DrawingAreaInfo::LayerBacked:
-            return adoptRef(new LayerBackedDrawingArea(identifier, webPage));
+            return adoptRef(new LayerBackedDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
 #endif
 #if ENABLE(TILED_BACKING_STORE)
         case DrawingAreaInfo::Tiled:
-            return adoptRef(new TiledDrawingArea(identifier, webPage));
+            return adoptRef(new TiledDrawingArea(parameters.drawingAreaInfo.identifier, webPage));
 #endif
     }
 

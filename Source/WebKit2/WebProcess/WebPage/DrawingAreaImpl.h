@@ -36,11 +36,11 @@ struct UpdateInfo;
 
 class DrawingAreaImpl : public DrawingArea {
 public:
-    static PassRefPtr<DrawingAreaImpl> create(DrawingAreaInfo::Identifier, WebPage*);
+    static PassRefPtr<DrawingAreaImpl> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingAreaImpl();
 
 private:
-    DrawingAreaImpl(DrawingAreaInfo::Identifier, WebPage*);
+    DrawingAreaImpl(WebPage*, const WebPageCreationParameters&);
 
     // DrawingArea
     virtual void setNeedsDisplay(const WebCore::IntRect&);

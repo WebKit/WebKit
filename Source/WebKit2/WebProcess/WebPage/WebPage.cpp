@@ -182,7 +182,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     platformInitialize();
     Settings::setMinDOMTimerInterval(0.004);
 
-    m_drawingArea = DrawingArea::create(parameters.drawingAreaInfo.type, parameters.drawingAreaInfo.identifier, this);
+    m_drawingArea = DrawingArea::create(this, parameters);
     m_mainFrame = WebFrame::createMainFrame(this);
 
     setDrawsBackground(parameters.drawsBackground);
@@ -322,7 +322,9 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
     if (newDrawingAreaInfo.type != drawingArea()->info().type) {
         m_drawingArea = 0;
         if (newDrawingAreaInfo.type != DrawingAreaInfo::None) {
-            m_drawingArea = DrawingArea::create(newDrawingAreaInfo.type, newDrawingAreaInfo.identifier, this);
+            WebPageCreationParameters parameters;
+            parameters.drawingAreaInfo = newDrawingAreaInfo;
+            m_drawingArea = DrawingArea::create(this, parameters);
             m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
         }
     }
