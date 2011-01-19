@@ -63,6 +63,13 @@ static String formatLocalizedString(String format, ...)
     RetainPtr<CFStringRef> result(AdoptCF, CFStringCreateWithFormatAndArguments(0, 0, formatCFString.get(), arguments));
     va_end(arguments);
     return result.get();
+#elif PLATFORM(QT)
+    va_list arguments;
+    va_start(arguments, format);
+    QString result;
+    result.vsprintf(format.latin1().data(), arguments);
+    va_end(arguments);
+    return result;
 #else
     notImplemented();
     return format;

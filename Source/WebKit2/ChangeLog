@@ -1,3 +1,12 @@
+2011-01-19  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt][WK2] Implement formatLocalizedString() for Qt.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::formatLocalizedString):
+
 2011-01-19  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
