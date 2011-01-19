@@ -1,3 +1,10 @@
+2011-01-18  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, adding pixel expectations for new test.
+
+        * platform/chromium-mac/fast/css/background-clip-values-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/background-clip-values-expected.png: Added.
+
 2011-01-18  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.
