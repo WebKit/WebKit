@@ -66,11 +66,11 @@ class TestFilesTest(unittest.TestCase):
     def test_is_test_file(self):
         port = base.Port()
         fs = port._filesystem
-        self.assertTrue(test_files._is_test_file(fs, 'foo.html'))
-        self.assertTrue(test_files._is_test_file(fs, 'foo.shtml'))
-        self.assertFalse(test_files._is_test_file(fs, 'foo.png'))
-        self.assertFalse(test_files._is_test_file(fs, 'foo-expected.html'))
-        self.assertFalse(test_files._is_test_file(fs, 'foo-expected-mismatch.html'))
+        self.assertTrue(test_files._is_test_file(fs, '', 'foo.html'))
+        self.assertTrue(test_files._is_test_file(fs, '', 'foo.shtml'))
+        self.assertFalse(test_files._is_test_file(fs, '', 'foo.png'))
+        self.assertFalse(test_files._is_test_file(fs, '', 'foo-expected.html'))
+        self.assertFalse(test_files._is_test_file(fs, '', 'foo-expected-mismatch.html'))
 
 
 if __name__ == '__main__':

@@ -34,8 +34,6 @@ list of test files is constrained to those found under the paths passed in,
 i.e. calling find(["LayoutTests/fast"]) will only return files
 under that directory."""
 
-import glob
-import os
 import time
 
 from webkitpy.common.system import logutils
@@ -61,6 +59,7 @@ def find(port, paths):
     fs = port._filesystem
     gather_start_time = time.time()
     paths_to_walk = set()
+
     # if paths is empty, provide a pre-defined list.
     if paths:
         _log.debug("Gathering tests from: %s relative to %s" % (paths, port.layout_tests_dir()))
@@ -76,30 +75,12 @@ def find(port, paths):
         _log.debug("Gathering tests from: %s" % port.layout_tests_dir())
         paths_to_walk.add(port.layout_tests_dir())
 
-    # Now walk all the paths passed in on the command line and get filenames
+    # FIXME: I'm not sure there's much point in this being a set. A list would
+    # probably be faster.
     test_files = set()
     for path in paths_to_walk:
-        if fs.isfile(path) and _is_test_file(fs, path):
-            test_files.add(fs.normpath(path))
-            continue
-
-        for root, dirs, files in os.walk(path):
-            # Don't walk skipped directories or their sub-directories.
-            if os.path.basename(root) in _skipped_directories:
-                del dirs[:]
-                continue
-            # This copy and for-in is slightly inefficient, but
-            # the extra walk avoidance consistently shaves .5 seconds
-            # off of total walk() time on my MacBook Pro.
-            for directory in dirs[:]:
-                if directory in _skipped_directories:
-                    dirs.remove(directory)
-
-            for filename in files:
-                if _is_test_file(fs, filename):
-                    filename = fs.join(root, filename)
-                    filename = fs.normpath(filename)
-                    test_files.add(filename)
+        files = fs.files_under(path, _skipped_directories, _is_test_file)
+        test_files.update(set(files))
 
     gather_time = time.time() - gather_start_time
     _log.debug("Test gathering took %f seconds" % gather_time)
@@ -123,7 +104,7 @@ def _is_reference_html_file(filename):
     return False
 
 
-def _is_test_file(fs, filename):
+def _is_test_file(fs, dirname, filename):
     """Return true if the filename points to a test file."""
     return (_has_supported_extension(fs, filename) and
             not _is_reference_html_file(filename))

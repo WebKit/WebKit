@@ -62,11 +62,39 @@ class FileSystem(object):
         """Return whether the path exists in the filesystem."""
         return os.path.exists(path)
 
-    def files_under(self, path):
-        """Return the list of all files under the given path."""
-        return [self.join(path_to_file, filename)
-            for (path_to_file, _, filenames) in os.walk(path)
-            for filename in filenames]
+    def files_under(self, path, dirs_to_skip=[], file_filter=None):
+        """Return the list of all files under the given path in topdown order.
+
+        Args:
+            dirs_to_skip: a list of directories to skip over during the
+                traversal (e.g., .svn, resources, etc.)
+            file_filter: if not None, the filter will be invoked
+                with the filesystem object and the dirname and basename of
+                each file found. The file is included in the result if the
+                callback returns True.
+        """
+        def filter_all(fs, dirpath, basename):
+            return True
+
+        file_filter = file_filter or filter_all
+        files = []
+        if self.isfile(path):
+            if file_filter(self, self.dirname(path), self.basename(path)):
+                files.append(path)
+            return files
+
+        if self.basename(path) in dirs_to_skip:
+            return []
+
+        for (dirpath, dirnames, filenames) in os.walk(path):
+            for d in dirs_to_skip:
+                if d in dirnames:
+                    dirnames.remove(d)
+
+            for filename in filenames:
+                if file_filter(self, dirpath, filename):
+                    files.append(self.join(dirpath, filename))
+        return files
 
     def glob(self, path):
         """Wraps glob.glob()."""

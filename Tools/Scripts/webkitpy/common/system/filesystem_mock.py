@@ -71,10 +71,37 @@ class MockFileSystem(object):
     def exists(self, path):
         return self.isfile(path) or self.isdir(path)
 
-    def files_under(self, path):
+    def files_under(self, path, dirs_to_skip=[], file_filter=None):
+        def filter_all(fs, dirpath, basename):
+            return True
+
+        file_filter = file_filter or filter_all
+        files = []
+        if self.isfile(path):
+            if file_filter(self, self.dirname(path), self.basename(path)):
+                files.append(path)
+            return files
+
+        if self.basename(path) in dirs_to_skip:
+            return []
+
         if not path.endswith('/'):
             path += '/'
-        return [file for file in self.files if file.startswith(path)]
+
+        dir_substrings = ['/' + d + '/' for d in dirs_to_skip]
+        for filename in self.files:
+            if not filename.startswith(path):
+                continue
+
+            suffix = filename[len(path) - 1:]
+            if any(dir_substring in suffix for dir_substring in dir_substrings):
+                continue
+
+            dirpath, basename = self._split(filename)
+            if file_filter(self, dirpath, basename):
+                files.append(filename)
+
+        return files
 
     def glob(self, path):
         # FIXME: This only handles a wildcard '*' at the end of the path.
