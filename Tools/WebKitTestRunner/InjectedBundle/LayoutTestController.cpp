@@ -132,8 +132,9 @@ void LayoutTestController::notifyDone()
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
-    if (m_waitToDump && !InjectedBundle::shared().page()->isLoading())
+    if (m_waitToDump && !InjectedBundle::shared().topLoadingFrame())
         InjectedBundle::shared().page()->dump();
+
     m_waitToDump = false;
 }
 

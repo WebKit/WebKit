@@ -51,6 +51,7 @@
     function startTransition()
     {
       var box = document.getElementById('box');
+      box.addEventListener("webkitTransitionEnd", function() { alert("end"); }, false);
       box.className = 'animated';
       window.setTimeout(function() {
         box.style.opacity = '0.5';

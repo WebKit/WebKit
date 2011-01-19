@@ -47,6 +47,7 @@ InjectedBundle& InjectedBundle::shared()
 
 InjectedBundle::InjectedBundle()
     : m_bundle(0)
+    , m_topLoadingFrame(0)
     , m_state(Idle)
 {
 }
@@ -161,6 +162,7 @@ void InjectedBundle::done()
     m_state = Stopping;
 
     page()->stopLoading();
+    setTopLoadingFrame(0);
 
     WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));
     WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithUTF8CString(m_outputStream.str().c_str()));

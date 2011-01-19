@@ -386,6 +386,8 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKContextRef
 
 void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
+    if (!m_currentInvocation)
+        return;
     m_currentInvocation->didReceiveMessageFromInjectedBundle(messageName, messageBody);
 }
 

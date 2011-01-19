@@ -65,6 +65,9 @@ public:
 
     bool isTestRunning() { return m_state == Testing; }
 
+    WKBundleFrameRef topLoadingFrame() { return m_topLoadingFrame; }
+    void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
+
 private:
     InjectedBundle();
     ~InjectedBundle();
@@ -88,6 +91,8 @@ private:
     RefPtr<LayoutTestController> m_layoutTestController;
     RefPtr<GCController> m_gcController;
     RefPtr<EventSendingController> m_eventSendingController;
+
+    WKBundleFrameRef m_topLoadingFrame;
 
     std::ostringstream m_outputStream;
     

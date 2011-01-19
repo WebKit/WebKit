@@ -1082,6 +1082,11 @@ void WebPageProxy::didCreateSubframe(uint64_t frameID, uint64_t parentFrameID)
     parentFrame->appendChild(subFrame.get());
 }
 
+static bool isDisconnectedFrame(WebFrameProxy* frame)
+{
+    return !frame->page() || !frame->page()->mainFrame() || !frame->isDescendantOf(frame->page()->mainFrame());
+}
+
 void WebPageProxy::didSaveFrameToPageCache(uint64_t frameID)
 {
     MESSAGE_CHECK(m_mainFrame);
@@ -1089,7 +1094,7 @@ void WebPageProxy::didSaveFrameToPageCache(uint64_t frameID)
     WebFrameProxy* subframe = process()->webFrame(frameID);
     MESSAGE_CHECK(subframe);
 
-    if (!subframe->parentFrame())
+    if (isDisconnectedFrame(subframe))
         return;
 
     MESSAGE_CHECK(subframe->isDescendantOf(m_mainFrame.get()));

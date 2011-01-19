@@ -41,7 +41,6 @@ public:
     void dump();
 
     void stopLoading();
-    bool isLoading() { return m_isLoading; }
 
     void reset();
 
@@ -124,7 +123,6 @@ private:
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
     WKRetainPtr<WKBundleBackForwardListItemRef> m_previousTestBackForwardListItem;
-    bool m_isLoading;
 };
 
 } // namespace WTR

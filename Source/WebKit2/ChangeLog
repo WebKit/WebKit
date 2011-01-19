@@ -1,3 +1,17 @@
+2011-01-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner should track loading more like DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=52692
+        
+        Relax the message check in didSaveFrameToPageCache a bit more, since
+        layout tests were still hitting the old one.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::isDisconnectedFrame):
+        (WebKit::WebPageProxy::didSaveFrameToPageCache):
+
 2011-01-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.
