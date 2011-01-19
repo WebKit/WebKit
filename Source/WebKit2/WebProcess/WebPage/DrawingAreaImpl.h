@@ -55,6 +55,8 @@ private:
     // CoreIPC message handlers.
     virtual void setSize(const WebCore::IntSize&);
     virtual void didUpdate();
+    virtual void suspendPainting();
+    virtual void resumePainting();
 
     void scheduleDisplay();
     void display();
@@ -67,7 +69,11 @@ private:
     // Whether we're waiting for a DidUpdate message. Used for throttling paints so that the 
     // web process won't paint more frequent than the UI process can handle.
     bool m_isWaitingForDidUpdate;
-    
+
+    // Whether painting is suspended. We'll still keep track of the dirty region but we 
+    // won't paint until painting has resumed again.
+    bool m_isPaintingSuspended;
+
     RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
 };
 

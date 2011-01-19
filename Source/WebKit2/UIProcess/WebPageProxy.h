@@ -185,6 +185,7 @@ public:
     void viewStateDidChange(ViewStateFlags flags);
 
     WebCore::IntSize viewSize() const;
+    bool isViewVisible() const { return m_isVisible; }
 
     void executeEditCommand(const String& commandName);
     void validateMenuItem(const String& commandName);

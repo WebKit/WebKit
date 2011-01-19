@@ -1,3 +1,47 @@
+2011-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Suspend/resume painting as the WKView visibility changes
+        https://bugs.webkit.org/show_bug.cgi?id=52738
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::visibilityDidChange):
+        Add new member function. It should really be pure virtual once setPageIsVisible
+        is removed.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::visibilityDidChange):
+        Send SuspendPainting/ResumePainting messages based on whether the view is visible or not.
+
+        (WebKit::DrawingAreaProxyImpl::setPageIsVisible):
+        Make this a stub; it should really be removed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+        Call visibilityDidChange.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isViewVisible):
+        Add new getter.
+
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Add SuspendPainting and ResumePainting messages.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        Initialize m_isPaintingSuspended.
+
+        (WebKit::DrawingAreaImpl::suspendPainting):
+        Set m_isPaintingSuspended to true and stop the display timer.
+
+        (WebKit::DrawingAreaImpl::resumePainting):
+        Set m_isPaintingSuspended to false.
+
+        (WebKit::DrawingAreaImpl::scheduleDisplay):
+        (WebKit::DrawingAreaImpl::display):
+        Bail if m_isPaintingSuspended is true.
+
 2011-01-19  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Simon Hausmann.

@@ -497,6 +497,7 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
         bool isVisible = m_pageClient->isViewVisible();
         if (isVisible != m_isVisible) {
             m_isVisible = isVisible;
+            m_drawingArea->visibilityDidChange();
             m_drawingArea->setPageIsVisible(isVisible);
         }
     }

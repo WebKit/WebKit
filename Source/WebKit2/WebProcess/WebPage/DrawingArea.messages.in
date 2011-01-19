@@ -22,5 +22,7 @@
 
 messages -> DrawingArea {
     SetSize(WebCore::IntSize size)
-    DidUpdate()    
+    DidUpdate()
+    SuspendPainting()
+    ResumePainting()
 }

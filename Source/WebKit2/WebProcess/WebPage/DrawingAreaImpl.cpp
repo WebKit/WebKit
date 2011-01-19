@@ -53,6 +53,7 @@ DrawingAreaImpl::~DrawingAreaImpl()
 DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParameters& parameters)
     : DrawingArea(DrawingAreaInfo::Impl, parameters.drawingAreaInfo.identifier, webPage)
     , m_isWaitingForDidUpdate(false)
+    , m_isPaintingSuspended(!parameters.isVisible)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
 {
 }
@@ -156,9 +157,29 @@ void DrawingAreaImpl::didUpdate()
     display();
 }
 
+void DrawingAreaImpl::suspendPainting()
+{
+    ASSERT(!m_isPaintingSuspended);
+
+    m_isPaintingSuspended = true;
+    m_displayTimer.stop();
+}
+
+void DrawingAreaImpl::resumePainting()
+{
+    ASSERT(m_isPaintingSuspended);
+
+    m_isPaintingSuspended = false;
+
+    // FIXME: Repaint if needed.
+}
+
 void DrawingAreaImpl::scheduleDisplay()
 {
     if (m_isWaitingForDidUpdate)
+        return;
+
+    if (m_isPaintingSuspended)
         return;
 
     if (m_dirtyRegion.isEmpty())
@@ -172,6 +193,11 @@ void DrawingAreaImpl::scheduleDisplay()
 
 void DrawingAreaImpl::display()
 {
+    ASSERT(!m_isWaitingForDidUpdate);
+
+    if (m_isPaintingSuspended)
+        return;
+
     if (m_dirtyRegion.isEmpty())
         return;
 

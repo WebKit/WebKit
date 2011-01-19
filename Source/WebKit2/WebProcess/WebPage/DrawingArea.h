@@ -82,6 +82,8 @@ private:
     // FIXME: These should be pure virtual.
     virtual void setSize(const WebCore::IntSize&) { }
     virtual void didUpdate() { }
+    virtual void suspendPainting() { }
+    virtual void resumePainting() { }
 };
 
 } // namespace WebKit

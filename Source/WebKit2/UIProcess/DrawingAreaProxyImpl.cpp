@@ -82,9 +82,20 @@ void DrawingAreaProxyImpl::sizeDidChange()
     sendSetSize();
 }
 
-void DrawingAreaProxyImpl::setPageIsVisible(bool pageIsVisible)
+void DrawingAreaProxyImpl::visibilityDidChange()
 {
-    // FIXME: Implement.
+    if (!m_webPageProxy->isViewVisible()) {
+        // Suspend painting.
+        m_webPageProxy->process()->send(Messages::DrawingArea::SuspendPainting(), m_webPageProxy->pageID());
+        return;
+    }
+
+    // Resume painting.
+    m_webPageProxy->process()->send(Messages::DrawingArea::ResumePainting(), m_webPageProxy->pageID());
+}
+
+void DrawingAreaProxyImpl::setPageIsVisible(bool)
+{
 }
 
 void DrawingAreaProxyImpl::attachCompositingContext(uint32_t contextID)
