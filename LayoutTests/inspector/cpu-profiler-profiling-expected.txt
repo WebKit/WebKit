@@ -1,4 +1,0 @@
-Tests that CPU profiling works.
-
-found pageFunction
-
