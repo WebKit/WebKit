@@ -1,3 +1,14 @@
+2011-01-18  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] NRWT looking for DRT binary in the wrong path on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=52678
+        
+        Update path now that WebKit is inside Source.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+
 2011-01-18  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.
