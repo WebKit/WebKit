@@ -1,3 +1,18 @@
+2011-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        [CSS Gradients] Crash due to out-of-memory with repeating-linear-gradient and latter stop positioned before former
+        https://bugs.webkit.org/show_bug.cgi?id=52732
+        
+        When repeating gradient stops, make sure that the first and last stops are not at the same
+        place, otherwise we'll add stops indefinitely and run out of memory.
+
+        Test: fast/gradients/zero-range-repeating-gradient-hang.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+
 2011-01-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

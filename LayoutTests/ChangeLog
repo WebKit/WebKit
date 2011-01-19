@@ -1,3 +1,17 @@
+2011-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        [CSS Gradients] Crash due to out-of-memory with repeating-linear-gradient and latter stop positioned before former
+        https://bugs.webkit.org/show_bug.cgi?id=52732
+        
+        Test for repeating gradient with zero range.
+
+        * fast/gradients/zero-range-repeating-gradient-hang-expected.checksum: Added.
+        * fast/gradients/zero-range-repeating-gradient-hang-expected.png: Added.
+        * fast/gradients/zero-range-repeating-gradient-hang-expected.txt: Added.
+        * fast/gradients/zero-range-repeating-gradient-hang.html: Added.
+
 2011-01-19  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Simon Hausmann.

@@ -230,58 +230,68 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
     // We can't just push this logic down into the platform-specific Gradient code,
     // because we have to know the extent of the gradient, and possible move the end points.
     if (m_repeating && numStops > 1) {
-        float maxExtent = 1;
+        // If the difference in the positions of the first and last color-stops is 0,
+        // the gradient defines a solid-color image with the color of the last color-stop in the rule.
+        float gradientRange = stops[numStops - 1].offset - stops[0].offset;
+        if (!gradientRange) {
+            stops.first().offset = 0;
+            stops.first().color = stops.last().color;
+            stops.shrink(1);
+            numStops = 1;
+        } else {
+            float maxExtent = 1;
 
-        // Radial gradients may need to extend further than the endpoints, because they have
-        // to repeat out to the corners of the box.
-        if (isRadialGradient()) {
-            if (!computedGradientLength) {
-                FloatSize gradientSize(gradientStart - gradientEnd);
-                gradientLength = gradientSize.diagonalLength();
+            // Radial gradients may need to extend further than the endpoints, because they have
+            // to repeat out to the corners of the box.
+            if (isRadialGradient()) {
+                if (!computedGradientLength) {
+                    FloatSize gradientSize(gradientStart - gradientEnd);
+                    gradientLength = gradientSize.diagonalLength();
+                }
+                
+                if (maxLengthForRepeat > gradientLength)
+                    maxExtent = maxLengthForRepeat / gradientLength;
+            }
+
+            size_t originalNumStops = numStops;
+            size_t originalFirstStopIndex = 0;
+
+            // Work backwards from the first, adding stops until we get one before 0.
+            float firstOffset = stops[0].offset;
+            if (firstOffset > 0) {
+                float currOffset = firstOffset;
+                size_t srcStopOrdinal = originalNumStops - 1;
+                
+                while (true) {
+                    GradientStop newStop = stops[originalFirstStopIndex + srcStopOrdinal];
+                    newStop.offset = currOffset;
+                    stops.prepend(newStop);
+                    ++originalFirstStopIndex;
+                    if (currOffset < 0)
+                        break;
+
+                    if (srcStopOrdinal)
+                        currOffset -= stops[originalFirstStopIndex + srcStopOrdinal].offset - stops[originalFirstStopIndex + srcStopOrdinal - 1].offset;
+                    srcStopOrdinal = (srcStopOrdinal + originalNumStops - 1) % originalNumStops;
+                }
             }
             
-            if (maxLengthForRepeat > gradientLength)
-                maxExtent = maxLengthForRepeat / gradientLength;
-        }
+            // Work forwards from the end, adding stops until we get one after 1.
+            float lastOffset = stops[stops.size() - 1].offset;
+            if (lastOffset < maxExtent) {
+                float currOffset = lastOffset;
+                size_t srcStopOrdinal = 0;
 
-        size_t originalNumStops = numStops;
-        size_t originalFirstStopIndex = 0;
-
-        // Work backwards from the first, adding stops until we get one before 0.
-        float firstOffset = stops[0].offset;
-        if (firstOffset > 0) {
-            float currOffset = firstOffset;
-            size_t srcStopOrdinal = originalNumStops - 1;
-            
-            while (true) {
-                GradientStop newStop = stops[originalFirstStopIndex + srcStopOrdinal];
-                newStop.offset = currOffset;
-                stops.prepend(newStop);
-                ++originalFirstStopIndex;
-                if (currOffset < 0)
-                    break;
-
-                if (srcStopOrdinal)
-                    currOffset -= stops[originalFirstStopIndex + srcStopOrdinal].offset - stops[originalFirstStopIndex + srcStopOrdinal - 1].offset;
-                srcStopOrdinal = (srcStopOrdinal + originalNumStops - 1) % originalNumStops;
-            }
-        }
-        
-        // Work forwards from the end, adding stops until we get one after 1.
-        float lastOffset = stops[stops.size() - 1].offset;
-        if (lastOffset < maxExtent) {
-            float currOffset = lastOffset;
-            size_t srcStopOrdinal = 0;
-
-            while (true) {
-                GradientStop newStop = stops[srcStopOrdinal];
-                newStop.offset = currOffset;
-                stops.append(newStop);
-                if (currOffset > maxExtent)
-                    break;
-                if (srcStopOrdinal < originalNumStops - 1)
-                    currOffset += stops[originalFirstStopIndex + srcStopOrdinal + 1].offset - stops[originalFirstStopIndex + srcStopOrdinal].offset;
-                srcStopOrdinal = (srcStopOrdinal + 1) % originalNumStops;
+                while (true) {
+                    GradientStop newStop = stops[srcStopOrdinal];
+                    newStop.offset = currOffset;
+                    stops.append(newStop);
+                    if (currOffset > maxExtent)
+                        break;
+                    if (srcStopOrdinal < originalNumStops - 1)
+                        currOffset += stops[originalFirstStopIndex + srcStopOrdinal + 1].offset - stops[originalFirstStopIndex + srcStopOrdinal].offset;
+                    srcStopOrdinal = (srcStopOrdinal + 1) % originalNumStops;
+                }
             }
         }
     }
