@@ -1,3 +1,9 @@
+2011-01-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip a test now that the 32-bit debug bot has the 2.4 series of FreeType.
+
+        * platform/gtk/Skipped: Unskip a test.
+
 2011-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76166.

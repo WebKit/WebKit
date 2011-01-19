@@ -5056,9 +5056,6 @@ svg/custom/gradient-with-1d-boundingbox.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 
-# This test shows a 1 pixel difference, but only the 32-bit debug bot.
-fast/text/emphasis.html
-
 # New test needs enhanced frameloader delegate logging in DRT
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
 fast/loader/recursive-before-unload-crash.html 
