@@ -1,3 +1,13 @@
+2011-01-19  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Don't return void from void function String::split
+        https://bugs.webkit.org/show_bug.cgi?id=52684
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::split):
+
 2011-01-18  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r76078.
