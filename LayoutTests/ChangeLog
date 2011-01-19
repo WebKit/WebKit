@@ -1,3 +1,9 @@
+2011-01-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Update Windows expected results after r76115.
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+
 2011-01-18  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
