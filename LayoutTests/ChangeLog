@@ -1,3 +1,12 @@
+2011-01-19  Jeremy Orlow  <jorlow@chromium.org>
+
+        This test changed slightly, so rebaseline it.  The offsets seem off
+        but they have been for as long as the files have been upstream so it's
+        likely a known issue.
+
+        * platform/chromium-win/fast/events/offsetX-offsetY-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-19  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.
