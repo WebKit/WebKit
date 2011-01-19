@@ -1,5 +1,13 @@
 2011-01-18  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed, Leopard build fix. Remove flex/bison targets for GLSL
+        grammar because the generated sources are already checked in.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * src/build_angle.xcodeproj/project.pbxproj:
+
+2011-01-18  Kenneth Russell  <kbr@google.com>
+
         Unreviewed, release build fix. Explicitly cast away const.
 
         * src/compiler/preprocessor/scanner.c:

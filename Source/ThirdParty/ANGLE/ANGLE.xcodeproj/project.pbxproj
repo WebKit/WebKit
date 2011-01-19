@@ -49,8 +49,6 @@
 		FB39D2AA1200F35A00088E69 /* SymbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D25C1200F35A00088E69 /* SymbolTable.cpp */; };
 		FB39D2AC1200F35A00088E69 /* TranslatorGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D2681200F35A00088E69 /* TranslatorGLSL.cpp */; };
 		FB39D2B11200F35A00088E69 /* UnfoldSelect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D26D1200F35A00088E69 /* UnfoldSelect.cpp */; };
-		FB39D7231201032000088E69 /* glslang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D7201201032000088E69 /* glslang.cpp */; };
-		FB39D7241201032000088E69 /* glslang_tab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FB39D7221201032000088E69 /* glslang_tab.cpp */; };
 		FB39D76E120110FC00088E69 /* ShaderLang.h in Headers */ = {isa = PBXBuildFile; fileRef = FB39D2BF1200F3E600088E69 /* ShaderLang.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -83,8 +81,6 @@
 		FB39D18A1200F26200088E69 /* ConstantUnion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantUnion.h; sourceTree = "<group>"; };
 		FB39D18B1200F26200088E69 /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
 		FB39D18C1200F26200088E69 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
-		FB39D18D1200F26200088E69 /* glslang.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; path = glslang.l; sourceTree = "<group>"; };
-		FB39D18E1200F26200088E69 /* glslang.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = glslang.y; sourceTree = "<group>"; };
 		FB39D18F1200F26200088E69 /* InfoSink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = InfoSink.cpp; sourceTree = "<group>"; };
 		FB39D1901200F26200088E69 /* InfoSink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoSink.h; sourceTree = "<group>"; };
 		FB39D1911200F26200088E69 /* Initialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.cpp.cpp; path = Initialize.cpp; sourceTree = "<group>"; };
@@ -151,8 +147,6 @@
 		FB39D2251200F35A00088E69 /* ConstantUnion.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ConstantUnion.h; sourceTree = "<group>"; };
 		FB39D2261200F35A00088E69 /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
 		FB39D2271200F35A00088E69 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
-		FB39D2281200F35A00088E69 /* glslang.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; path = glslang.l; sourceTree = "<group>"; };
-		FB39D2291200F35A00088E69 /* glslang.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = glslang.y; sourceTree = "<group>"; };
 		FB39D22A1200F35A00088E69 /* InfoSink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InfoSink.cpp; sourceTree = "<group>"; };
 		FB39D22B1200F35A00088E69 /* InfoSink.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = InfoSink.h; sourceTree = "<group>"; };
 		FB39D22C1200F35A00088E69 /* Initialize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Initialize.cpp; sourceTree = "<group>"; };
@@ -208,9 +202,6 @@
 		FB39D26D1200F35A00088E69 /* UnfoldSelect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnfoldSelect.cpp; sourceTree = "<group>"; };
 		FB39D26E1200F35A00088E69 /* UnfoldSelect.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = UnfoldSelect.h; sourceTree = "<group>"; };
 		FB39D2BF1200F3E600088E69 /* ShaderLang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = ShaderLang.h; sourceTree = "<group>"; };
-		FB39D7201201032000088E69 /* glslang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang.cpp; path = DerivedSources/ANGLE/glslang.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
-		FB39D7211201032000088E69 /* glslang_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glslang_tab.h; path = DerivedSources/ANGLE/glslang_tab.h; sourceTree = BUILT_PRODUCTS_DIR; };
-		FB39D7221201032000088E69 /* glslang_tab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glslang_tab.cpp; path = DerivedSources/ANGLE/glslang_tab.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,7 +230,6 @@
 			children = (
 				FB39D2201200F35A00088E69 /* compiler */,
 				FB39D0841200EDEB00088E69 /* Source */,
-				FB39D0CB1200EF9400088E69 /* Intermediates */,
 				5D7C59C41208C68B001C873E /* Configurations */,
 				FB39D0CC1200EF9B00088E69 /* Products */,
 			);
@@ -252,16 +242,6 @@
 				FB39D1851200F26200088E69 /* compiler */,
 			);
 			name = Source;
-			sourceTree = "<group>";
-		};
-		FB39D0CB1200EF9400088E69 /* Intermediates */ = {
-			isa = PBXGroup;
-			children = (
-				FB39D7201201032000088E69 /* glslang.cpp */,
-				FB39D7211201032000088E69 /* glslang_tab.h */,
-				FB39D7221201032000088E69 /* glslang_tab.cpp */,
-			);
-			name = Intermediates;
 			sourceTree = "<group>";
 		};
 		FB39D0CC1200EF9B00088E69 /* Products */ = {
@@ -282,8 +262,6 @@
 				FB39D18A1200F26200088E69 /* ConstantUnion.h */,
 				FB39D18B1200F26200088E69 /* debug.cpp */,
 				FB39D18C1200F26200088E69 /* debug.h */,
-				FB39D18D1200F26200088E69 /* glslang.l */,
-				FB39D18E1200F26200088E69 /* glslang.y */,
 				FB39D18F1200F26200088E69 /* InfoSink.cpp */,
 				FB39D1901200F26200088E69 /* InfoSink.h */,
 				FB39D1911200F26200088E69 /* Initialize.cpp */,
@@ -375,8 +353,6 @@
 				90D9B0FC12E11DCB002D4255 /* glslang_tab.cpp */,
 				90D9B0FD12E11DCB002D4255 /* glslang_tab.h */,
 				90D9B0FE12E11DCB002D4255 /* glslang.h */,
-				FB39D2281200F35A00088E69 /* glslang.l */,
-				FB39D2291200F35A00088E69 /* glslang.y */,
 				FB39D22A1200F35A00088E69 /* InfoSink.cpp */,
 				FB39D22B1200F35A00088E69 /* InfoSink.h */,
 				FB39D22C1200F35A00088E69 /* Initialize.cpp */,
@@ -490,8 +466,6 @@
 			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "ANGLE" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
-				FB39D0DE1200F19100088E69 /* Generate glslang lexer */,
-				FB39D31C1200F69200088E69 /* Generate glslang parser */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
 			);
@@ -511,7 +485,6 @@
 			isa = PBXProject;
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "ANGLE" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -528,49 +501,11 @@
 		};
 /* End PBXProject section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		FB39D0DE1200F19100088E69 /* Generate glslang lexer */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/src/compiler/glslang.l",
-			);
-			name = "Generate glslang lexer";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/glslang.cpp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}\"\nflex --noline --nounistd \"--outfile=${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/glslang.cpp\" \"${SRCROOT}/src/compiler/glslang.l\"\n";
-		};
-		FB39D31C1200F69200088E69 /* Generate glslang parser */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/src/compiler/glslang.y",
-			);
-			name = "Generate glslang parser";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/glslang_tab.cpp",
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/$(PROJECT_NAME)/glslang_tab.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}\"\nbison --no-lines \"--defines=${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/glslang_tab.h\" \"--skeleton=yacc.c\" \"--output=${BUILT_PRODUCTS_DIR}/DerivedSources/${PROJECT_NAME}/glslang_tab.cpp\" \"${SRCROOT}/src/compiler/glslang.y\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		FB39D0CE1200F0E300088E69 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB39D7231201032000088E69 /* glslang.cpp in Sources */,
-				FB39D7241201032000088E69 /* glslang_tab.cpp in Sources */,
 				FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */,
 				FB39D2751200F35A00088E69 /* debug.cpp in Sources */,
 				FB39D2791200F35A00088E69 /* InfoSink.cpp in Sources */,
