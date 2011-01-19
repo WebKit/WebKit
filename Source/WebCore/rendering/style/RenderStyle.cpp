@@ -744,7 +744,19 @@ void RenderStyle::setBoxShadow(ShadowData* shadowData, bool add)
     rareData->m_boxShadow.set(shadowData);
 }
 
-static void constrainCornerRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight)
+static RoundedIntRect::Radii calcRadiiFor(const BorderData& border, int width, int height)
+{
+    return RoundedIntRect::Radii(IntSize(border.topLeft().width().calcValue(width), 
+                                         border.topLeft().height().calcValue(height)),
+                                 IntSize(border.topRight().width().calcValue(width),
+                                         border.topRight().height().calcValue(height)),
+                                 IntSize(border.bottomLeft().width().calcValue(width), 
+                                         border.bottomLeft().height().calcValue(height)),
+                                 IntSize(border.bottomRight().width().calcValue(width), 
+                                         border.bottomRight().height().calcValue(height)));
+}
+
+static float calcConstraintScaleFor(const IntRect& rect, const RoundedIntRect::Radii& radii)
 {
     // Constrain corner radii using CSS3 rules:
     // http://www.w3.org/TR/css3-background/#the-border-radius
@@ -753,75 +765,43 @@ static void constrainCornerRadiiForRect(const IntRect& r, IntSize& topLeft, IntS
     unsigned radiiSum;
 
     // top
-    radiiSum = static_cast<unsigned>(topLeft.width()) + static_cast<unsigned>(topRight.width()); // Casts to avoid integer overflow.
-    if (radiiSum > static_cast<unsigned>(r.width()))
-        factor = min(static_cast<float>(r.width()) / radiiSum, factor);
+    radiiSum = static_cast<unsigned>(radii.topLeft().width()) + static_cast<unsigned>(radii.topRight().width()); // Casts to avoid integer overflow.
+    if (radiiSum > static_cast<unsigned>(rect.width()))
+        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
 
     // bottom
-    radiiSum = static_cast<unsigned>(bottomLeft.width()) + static_cast<unsigned>(bottomRight.width());
-    if (radiiSum > static_cast<unsigned>(r.width()))
-        factor = min(static_cast<float>(r.width()) / radiiSum, factor);
+    radiiSum = static_cast<unsigned>(radii.bottomLeft().width()) + static_cast<unsigned>(radii.bottomRight().width());
+    if (radiiSum > static_cast<unsigned>(rect.width()))
+        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
     
     // left
-    radiiSum = static_cast<unsigned>(topLeft.height()) + static_cast<unsigned>(bottomLeft.height());
-    if (radiiSum > static_cast<unsigned>(r.height()))
-        factor = min(static_cast<float>(r.height()) / radiiSum, factor);
+    radiiSum = static_cast<unsigned>(radii.topLeft().height()) + static_cast<unsigned>(radii.bottomLeft().height());
+    if (radiiSum > static_cast<unsigned>(rect.height()))
+        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
     
     // right
-    radiiSum = static_cast<unsigned>(topRight.height()) + static_cast<unsigned>(bottomRight.height());
-    if (radiiSum > static_cast<unsigned>(r.height()))
-        factor = min(static_cast<float>(r.height()) / radiiSum, factor);
+    radiiSum = static_cast<unsigned>(radii.topRight().height()) + static_cast<unsigned>(radii.bottomRight().height());
+    if (radiiSum > static_cast<unsigned>(rect.height()))
+        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
     
-    // Scale all radii by f if necessary.
-    if (factor < 1) {
-        // If either radius on a corner becomes zero, reset both radii on that corner.
-        topLeft.scale(factor);
-        if (!topLeft.width() || !topLeft.height())
-            topLeft = IntSize();
-        topRight.scale(factor);
-        if (!topRight.width() || !topRight.height())
-            topRight = IntSize();
-        bottomLeft.scale(factor);
-        if (!bottomLeft.width() || !bottomLeft.height())
-            bottomLeft = IntSize();
-        bottomRight.scale(factor);
-        if (!bottomRight.width() || !bottomRight.height())
-            bottomRight = IntSize();
-    }
+    ASSERT(factor <= 1);
+    return factor;
 }
 
-void RenderStyle::getBorderRadiiForRect(const IntRect& r, IntSize& topLeft, IntSize& topRight, IntSize& bottomLeft, IntSize& bottomRight) const
+RoundedIntRect RenderStyle::getRoundedBorderFor(const IntRect& rect) const
 {
-    topLeft = IntSize(surround->border.topLeft().width().calcValue(r.width()), surround->border.topLeft().height().calcValue(r.height()));
-    topRight = IntSize(surround->border.topRight().width().calcValue(r.width()), surround->border.topRight().height().calcValue(r.height()));
-    
-    bottomLeft = IntSize(surround->border.bottomLeft().width().calcValue(r.width()), surround->border.bottomLeft().height().calcValue(r.height()));
-    bottomRight = IntSize(surround->border.bottomRight().width().calcValue(r.width()), surround->border.bottomRight().height().calcValue(r.height()));
-
-    constrainCornerRadiiForRect(r, topLeft, topRight, bottomLeft, bottomRight);
+    RoundedIntRect::Radii radii = calcRadiiFor(surround->border, rect.width(), rect.height());
+    radii.scale(calcConstraintScaleFor(rect, radii));
+    return RoundedIntRect(rect, radii);
 }
 
-void RenderStyle::getInnerBorderRadiiForRectWithBorderWidths(const IntRect& innerRect, unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth, IntSize& innerTopLeft, IntSize& innerTopRight, IntSize& innerBottomLeft, IntSize& innerBottomRight) const
+RoundedIntRect RenderStyle::getRoundedInnerBorderWithBorderWidths(const IntRect& innerRect, unsigned short topWidth, 
+                                                                  unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const
 {
-    innerTopLeft = IntSize(surround->border.topLeft().width().calcValue(innerRect.width()), surround->border.topLeft().height().calcValue(innerRect.height()));
-    innerTopRight = IntSize(surround->border.topRight().width().calcValue(innerRect.width()), surround->border.topRight().height().calcValue(innerRect.height()));
-    innerBottomLeft = IntSize(surround->border.bottomLeft().width().calcValue(innerRect.width()), surround->border.bottomLeft().height().calcValue(innerRect.height()));
-    innerBottomRight = IntSize(surround->border.bottomRight().width().calcValue(innerRect.width()), surround->border.bottomRight().height().calcValue(innerRect.height()));
-
-
-    innerTopLeft.setWidth(max(0, innerTopLeft.width() - leftWidth));
-    innerTopLeft.setHeight(max(0, innerTopLeft.height() - topWidth));
-
-    innerTopRight.setWidth(max(0, innerTopRight.width() - rightWidth));
-    innerTopRight.setHeight(max(0, innerTopRight.height() - topWidth));
-
-    innerBottomLeft.setWidth(max(0, innerBottomLeft.width() - leftWidth));
-    innerBottomLeft.setHeight(max(0, innerBottomLeft.height() - bottomWidth));
-
-    innerBottomRight.setWidth(max(0, innerBottomRight.width() - rightWidth));
-    innerBottomRight.setHeight(max(0, innerBottomRight.height() - bottomWidth));
-
-    constrainCornerRadiiForRect(innerRect, innerTopLeft, innerTopRight, innerBottomLeft, innerBottomRight);
+    RoundedIntRect::Radii radii = calcRadiiFor(surround->border, innerRect.width(), innerRect.height());
+    radii.shrink(topWidth, bottomWidth, leftWidth, rightWidth);
+    radii.scale(calcConstraintScaleFor(innerRect, radii));
+    return RoundedIntRect(innerRect, radii);
 }
 
 const CounterDirectiveMap* RenderStyle::counterDirectives() const

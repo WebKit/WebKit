@@ -134,8 +134,8 @@ private:
 
     IntSize calculateFillTileSize(const FillLayer*, IntSize scaledSize) const;
 
-    void clipBorderSidePolygon(GraphicsContext*, const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft,
-                               const IntSize& bottomRight, const BoxSide side, bool firstEdgeMatches, bool secondEdgeMatches, const RenderStyle* style,
+    void clipBorderSidePolygon(GraphicsContext*, const RoundedIntRect& border,
+                               const BoxSide, bool firstEdgeMatches, bool secondEdgeMatches, const RenderStyle*,
                                bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
 
     friend class RenderView;

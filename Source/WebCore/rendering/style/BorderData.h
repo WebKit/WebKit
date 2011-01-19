@@ -26,6 +26,7 @@
 #define BorderData_h
 
 #include "BorderValue.h"
+#include "IntRect.h"
 #include "LengthSize.h"
 #include "NinePieceImage.h"
 
@@ -109,7 +110,7 @@ public:
     const LengthSize& topRight() const { return m_topRight; }
     const LengthSize& bottomLeft() const { return m_bottomLeft; }
     const LengthSize& bottomRight() const { return m_bottomRight; }
-    
+
 private:
     BorderValue m_left;
     BorderValue m_right;

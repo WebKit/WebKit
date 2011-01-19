@@ -2942,6 +2942,8 @@
             'platform/graphics/PathTraversalState.h',
             'platform/graphics/Pattern.cpp',
             'platform/graphics/Pattern.h',
+            'platform/graphics/RoundedIntRect.cpp',
+            'platform/graphics/RoundedIntRect.h',
             'platform/graphics/SegmentedFontData.cpp',
             'platform/graphics/SegmentedFontData.h',
             'platform/graphics/SimpleFontData.cpp',

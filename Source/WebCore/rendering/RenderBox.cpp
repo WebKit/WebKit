@@ -1067,14 +1067,8 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
     }
     IntRect clipRect(isControlClip ? controlClipRect(tx, ty) : overflowClipRect(tx, ty));
     paintInfo.context->save();
-    if (style()->hasBorderRadius()) {
-        IntSize topLeft, topRight, bottomLeft, bottomRight;
-        IntRect borderRect = IntRect(tx, ty, width(), height());
-        style()->getBorderRadiiForRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
-
-        paintInfo.context->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
-    }
-    
+    if (style()->hasBorderRadius())
+        paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(IntRect(tx, ty, width(), height())));
     paintInfo.context->clip(clipRect);
     return true;
 }

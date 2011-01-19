@@ -1,3 +1,183 @@
+2011-01-18  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Refactoring: Extract RoundedIntRect class
+        https://bugs.webkit.org/show_bug.cgi?id=51664
+
+        RoundedIntRect is a pair of rect and four IntSize objects which represent
+        corner radii of the rectangle. IntSize is grouped into RoundedIntRect::Radii.
+        Now RenderStyle::getRoundedBorderFor() and RenderStyle::getRoundedInnerBorderWithBorderWidths()
+        return RoundedIntRect and GraphicsContext::addRoundedRectClip(), GraphicsContext::fillRoundedRect()
+        and other functions accept RoundedIntRect as an argument.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/RoundedIntRect.cpp: Added.
+        (WebCore::RoundedIntRect::Radii::isZero):
+        (WebCore::RoundedIntRect::Radii::scale):
+        (WebCore::RoundedIntRect::Radii::expand):
+        (WebCore::RoundedIntRect::Radii::includeLogicalEdges):
+        (WebCore::RoundedIntRect::Radii::excludeLogicalEdges):
+        (WebCore::RoundedIntRect::RoundedIntRect):
+        (WebCore::RoundedIntRect::includeLogicalEdges):
+        (WebCore::RoundedIntRect::excludeLogicalEdges):
+        * platform/graphics/RoundedIntRect.h: Added.
+        (WebCore::RoundedIntRect::Radii::Radii):
+        (WebCore::RoundedIntRect::Radii::setTopLeft):
+        (WebCore::RoundedIntRect::Radii::setTopRight):
+        (WebCore::RoundedIntRect::Radii::setBottomLeft):
+        (WebCore::RoundedIntRect::Radii::setBottomRight):
+        (WebCore::RoundedIntRect::Radii::topLeft):
+        (WebCore::RoundedIntRect::Radii::topRight):
+        (WebCore::RoundedIntRect::Radii::bottomLeft):
+        (WebCore::RoundedIntRect::Radii::bottomRight):
+        (WebCore::RoundedIntRect::Radii::expand):
+        (WebCore::RoundedIntRect::Radii::shrink):
+        (WebCore::RoundedIntRect::rect):
+        (WebCore::RoundedIntRect::radii):
+        (WebCore::RoundedIntRect::isRounded):
+        (WebCore::RoundedIntRect::isEmpty):
+        (WebCore::RoundedIntRect::setRect):
+        (WebCore::RoundedIntRect::setRadii):
+        (WebCore::RoundedIntRect::move):
+        (WebCore::RoundedIntRect::inflate):
+        (WebCore::RoundedIntRect::inflateWithRadii):
+        (WebCore::RoundedIntRect::expandRadii):
+        (WebCore::RoundedIntRect::shrinkRadii):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBoxSideFromPath):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::paintSearchFieldCancelButton):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/style/BorderData.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcRadiiFor):
+        (WebCore::calcConstraintScaleFor):
+        (WebCore::RenderStyle::getRoundedBorderFor):
+        (WebCore::RenderStyle::getRoundedInnerBorderWithBorderWidths):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setBorderRadius):
+
+2011-01-18  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Refactoring: Extract RoundedIntRect class
+        https://bugs.webkit.org/show_bug.cgi?id=51664
+
+        RoundedIntRect is a pair of rect and four IntSize objects which represent
+        corner radii of the rectangle. IntSize is grouped into RoundedIntRect::Radii.
+        Now RenderStyle::getRoundedBorderFor() and RenderStyle::getRoundedInnerBorderWithBorderWidths()
+        return RoundedIntRect and GraphicsContext::addRoundedRectClip(), GraphicsContext::fillRoundedRect()
+        and other functions accept RoundedIntRect as an argument.
+
+        No new tests. No behavioral change.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::clipOutRoundedRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/RoundedIntRect.cpp: Added.
+        (WebCore::RoundedIntRect::Radii::isZero):
+        (WebCore::RoundedIntRect::Radii::scale):
+        (WebCore::RoundedIntRect::Radii::expand):
+        (WebCore::RoundedIntRect::Radii::includeLogicalEdges):
+        (WebCore::RoundedIntRect::Radii::excludeLogicalEdges):
+        (WebCore::RoundedIntRect::RoundedIntRect):
+        (WebCore::RoundedIntRect::includeLogicalEdges):
+        (WebCore::RoundedIntRect::excludeLogicalEdges):
+        * platform/graphics/RoundedIntRect.h: Added.
+        (WebCore::RoundedIntRect::Radii::Radii):
+        (WebCore::RoundedIntRect::Radii::setTopLeft):
+        (WebCore::RoundedIntRect::Radii::setTopRight):
+        (WebCore::RoundedIntRect::Radii::setBottomLeft):
+        (WebCore::RoundedIntRect::Radii::setBottomRight):
+        (WebCore::RoundedIntRect::Radii::topLeft):
+        (WebCore::RoundedIntRect::Radii::topRight):
+        (WebCore::RoundedIntRect::Radii::bottomLeft):
+        (WebCore::RoundedIntRect::Radii::bottomRight):
+        (WebCore::RoundedIntRect::Radii::expand):
+        (WebCore::RoundedIntRect::Radii::shrink):
+        (WebCore::RoundedIntRect::rect):
+        (WebCore::RoundedIntRect::radii):
+        (WebCore::RoundedIntRect::isRounded):
+        (WebCore::RoundedIntRect::isEmpty):
+        (WebCore::RoundedIntRect::setRect):
+        (WebCore::RoundedIntRect::setRadii):
+        (WebCore::RoundedIntRect::move):
+        (WebCore::RoundedIntRect::inflate):
+        (WebCore::RoundedIntRect::inflateWithRadii):
+        (WebCore::RoundedIntRect::expandRadii):
+        (WebCore::RoundedIntRect::shrinkRadii):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawBoxSideFromPath):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintMenuListButtonGradients):
+        (WebCore::RenderThemeSafari::paintSliderTrack):
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::paintSearchFieldCancelButton):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/style/BorderData.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcRadiiFor):
+        (WebCore::calcConstraintScaleFor):
+        (WebCore::RenderStyle::getRoundedBorderFor):
+        (WebCore::RenderStyle::getRoundedInnerBorderWithBorderWidths):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setBorderRadius):
+
 2011-01-18  Victoria Kirst  <vrk@chromium.org>
 
         Reviewed by Kenneth Russell.
