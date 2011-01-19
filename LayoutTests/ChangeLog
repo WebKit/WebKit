@@ -1,3 +1,10 @@
+2011-01-19  Jeremy Orlow  <jorlow@chromium.org>
+
+        Move pixel test results to the proper place.
+
+        * platform/mac/svg/custom/use-inherit-style-expected.checksum: Renamed from LayoutTests/svg/custom/use-inherit-style-expected.checksum.
+        * platform/mac/svg/custom/use-inherit-style-expected.png: Renamed from LayoutTests/svg/custom/use-inherit-style-expected.png.
+
 2011-01-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixed flaky inspector test.
