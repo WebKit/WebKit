@@ -88,4 +88,4 @@ JavaScriptCore.JSVALUE64.exp: JavaScriptCore.exp JavaScriptCore.JSVALUE64only.ex
 # header detection
 
 HeaderDetection.h : DerivedSources.make
-	if [ -f $SDKROOT/System/Library/Frameworks/System.framework/PrivateHeaders/pthread_machdep.h ]; then echo "#define HAVE_PTHREAD_MACHDEP_H 1" > $@; else echo > $@; fi
+	if [ -f $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders/pthread_machdep.h ]; then echo "#define HAVE_PTHREAD_MACHDEP_H 1" > $@; else echo > $@; fi
