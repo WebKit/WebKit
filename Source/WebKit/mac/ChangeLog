@@ -1,3 +1,14 @@
+2011-01-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Shift-tab doesn't cycle through fields in http authentication panel
+        https://bugs.webkit.org/show_bug.cgi?id=52850
+
+        * Panels/English.lproj/WebAuthenticationPanel.nib/designable.nib:
+        * Panels/English.lproj/WebAuthenticationPanel.nib/keyedobjects.nib:
+        Re-wired the key loop so that there aren't two views with the same nextKeyView.
+
 2011-01-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoffrey Garen.
