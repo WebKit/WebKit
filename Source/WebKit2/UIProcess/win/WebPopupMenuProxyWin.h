@@ -60,11 +60,15 @@ private:
 
     // ScrollBarClient
     virtual int scrollSize(WebCore::ScrollbarOrientation orientation) const;
-    virtual void setScrollOffsetFromAnimation(const WebCore::IntPoint&);
-    virtual void valueChanged(WebCore::Scrollbar*);
+    virtual int scrollPosition(WebCore::Scrollbar*) const;
+    virtual void setScrollOffset(const WebCore::IntPoint&);
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
     virtual bool isActive() const { return true; }
     virtual bool scrollbarCornerPresent() const { return false; }
+    virtual WebCore::Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
+
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    void scrollTo(int offset);
 
     static bool registerWindowClass();
     static LRESULT CALLBACK WebPopupMenuProxyWndProc(HWND, UINT, WPARAM, LPARAM);

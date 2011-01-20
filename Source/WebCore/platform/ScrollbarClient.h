@@ -26,13 +26,14 @@
 #ifndef ScrollbarClient_h
 #define ScrollbarClient_h
 
-#include "IntPoint.h"
 #include "IntRect.h"
 #include "Scrollbar.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class FloatPoint;
+class PlatformWheelEvent;
 class ScrollAnimator;
 
 class ScrollbarClient {
@@ -40,17 +41,23 @@ public:
     ScrollbarClient();
     virtual ~ScrollbarClient();
 
-    bool scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier);
-    void setScrollPositionAndStopAnimation(ScrollbarOrientation orientation, float pos);
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
+    void scrollToOffsetWithoutAnimation(const FloatPoint&);
+    void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);
+    void scrollToXOffsetWithoutAnimation(float x);
+    void scrollToYOffsetWithoutAnimation(float x);
 
-    virtual int scrollSize(ScrollbarOrientation orientation) const = 0;
-    virtual void setScrollOffsetFromAnimation(const IntPoint&) = 0;
-    virtual void valueChanged(Scrollbar*) = 0;
+    virtual int scrollSize(ScrollbarOrientation) const = 0;
+    virtual int scrollPosition(Scrollbar*) const = 0;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) = 0;
     virtual bool isActive() const = 0;
     virtual bool scrollbarCornerPresent() const = 0;
-
     virtual void getTickmarks(Vector<IntRect>&) const { }
+
+    // This function should be overriden by subclasses to perform the actual
+    // scroll of the content.
+    virtual void setScrollOffset(const IntPoint&) = 0;
+
 
     // Convert points and rects between the scrollbar and its containing view.
     // The client needs to implement these in order to be aware of layout effects
@@ -72,9 +79,17 @@ public:
         return scrollbar->Widget::convertFromContainingView(parentPoint);
     }
 
+    virtual Scrollbar* horizontalScrollbar() const { return 0; }
+    virtual Scrollbar* verticalScrollbar() const { return 0; }
+
 private:
+    // NOTE: Only called from the ScrollAnimator.
+    friend class ScrollAnimator;
+    void setScrollOffsetFromAnimation(const IntPoint&);
+
     OwnPtr<ScrollAnimator> m_scrollAnimator;
 };
 
-}
-#endif
+} // namespace WebCore
+
+#endif // ScrollbarClient_h

@@ -60,10 +60,12 @@ public:
 
     // ScrollbarClient functions.  FrameView overrides the others.
     virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual void setScrollOffsetFromAnimation(const IntPoint&);
-    virtual void valueChanged(Scrollbar*);
-    virtual void valueChanged(const IntSize&);
+    virtual int scrollPosition(Scrollbar*) const;
+    virtual void setScrollOffset(const IntPoint&);
     
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    virtual void scrollTo(const IntSize& newOffset);
+
     // The window thats hosts the ScrollView. The ScrollView will communicate scrolls and repaints to the
     // host window in the window's coordinate space.
     virtual HostWindow* hostWindow() const = 0;
@@ -78,8 +80,8 @@ public:
     
     // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars. These functions
     // can be used to obtain those scrollbars.
-    Scrollbar* horizontalScrollbar() const { return m_horizontalScrollbar.get(); }
-    Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }
+    virtual Scrollbar* horizontalScrollbar() const { return m_horizontalScrollbar.get(); }
+    virtual Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }
     bool isScrollViewScrollbar(const Widget* child) const { return horizontalScrollbar() == child || verticalScrollbar() == child; }
 
     // Functions for setting and retrieving the scrolling mode in each axis (horizontal/vertical). The mode has values of

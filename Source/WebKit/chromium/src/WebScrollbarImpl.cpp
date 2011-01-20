@@ -62,6 +62,7 @@ int WebScrollbar::defaultThickness()
 
 WebScrollbarImpl::WebScrollbarImpl(WebScrollbarClient* client, Orientation orientation)
     : m_client(client)
+    , m_scrollOffset(0)
 {
     m_scrollbar = Scrollbar::createNativeScrollbar(
         static_cast<ScrollbarClient*>(this),
@@ -89,12 +90,12 @@ void WebScrollbarImpl::setLocation(const WebRect& rect)
 
 int WebScrollbarImpl::value() const
 {
-    return m_scrollbar->value();
+    return m_scrollOffset;
 }
 
 void WebScrollbarImpl::setValue(int position)
 {
-    m_scrollbar->setValue(position, Scrollbar::NotFromScrollAnimator);
+    WebCore::ScrollbarClient::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), position);
 }
 
 void WebScrollbarImpl::setDocumentSize(int size)
@@ -112,7 +113,8 @@ void WebScrollbarImpl::scroll(ScrollDirection direction, ScrollGranularity granu
         dir = horizontal ? ScrollRight : ScrollDown;
     else
         dir = horizontal ? ScrollLeft : ScrollUp;
-    m_scrollbar->scroll(dir, static_cast<WebCore::ScrollGranularity>(granularity), multiplier);
+
+    WebCore::ScrollbarClient::scroll(dir, static_cast<WebCore::ScrollGranularity>(granularity), multiplier);
 }
 
 void WebScrollbarImpl::paint(WebCanvas* canvas, const WebRect& rect)
@@ -167,11 +169,11 @@ bool WebScrollbarImpl::onMouseDown(const WebInputEvent& event)
     if (!m_scrollbar->frameRect().contains(mousedown.x, mousedown.y))
         return false;
 
-            mousedown.x -= m_scrollbar->x();
-            mousedown.y -= m_scrollbar->y();
-            m_scrollbar->mouseDown(PlatformMouseEventBuilder(m_scrollbar.get(), mousedown));
-            return true;
-        }
+    mousedown.x -= m_scrollbar->x();
+    mousedown.y -= m_scrollbar->y();
+    m_scrollbar->mouseDown(PlatformMouseEventBuilder(m_scrollbar.get(), mousedown));
+    return true;
+}
 
 bool WebScrollbarImpl::onMouseUp(const WebInputEvent& event)
 {
@@ -183,16 +185,16 @@ bool WebScrollbarImpl::onMouseUp(const WebInputEvent& event)
 
 bool WebScrollbarImpl::onMouseMove(const WebInputEvent& event)
 {
-        WebMouseEvent mousemove = *static_cast<const WebMouseEvent*>(&event);
-        if (m_scrollbar->frameRect().contains(mousemove.x, mousemove.y)
-            || m_scrollbar->pressedPart() != NoPart) {
-            mousemove.x -= m_scrollbar->x();
-            mousemove.y -= m_scrollbar->y();
-            return m_scrollbar->mouseMoved(PlatformMouseEventBuilder(m_scrollbar.get(), mousemove));
-        }
+    WebMouseEvent mousemove = *static_cast<const WebMouseEvent*>(&event);
+    if (m_scrollbar->frameRect().contains(mousemove.x, mousemove.y)
+        || m_scrollbar->pressedPart() != NoPart) {
+        mousemove.x -= m_scrollbar->x();
+        mousemove.y -= m_scrollbar->y();
+        return m_scrollbar->mouseMoved(PlatformMouseEventBuilder(m_scrollbar.get(), mousemove));
+    }
 
-        if (m_scrollbar->hoveredPart() != NoPart)
-            m_scrollbar->mouseExited();
+    if (m_scrollbar->hoveredPart() != NoPart)
+        m_scrollbar->mouseExited();
     return false;
 }
 
@@ -206,59 +208,59 @@ bool WebScrollbarImpl::onMouseLeave(const WebInputEvent& event)
 
 bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
 {
-        // Same logic as in Scrollview.cpp.  If we can move at all, we'll accept the event.
-        WebMouseWheelEvent mousewheel = *static_cast<const WebMouseWheelEvent*>(&event);
-        int maxScrollDelta = m_scrollbar->maximum() - m_scrollbar->value();
-        float delta = m_scrollbar->orientation() == HorizontalScrollbar ? mousewheel.deltaX : mousewheel.deltaY;
-        if ((delta < 0 && maxScrollDelta > 0) || (delta > 0 && m_scrollbar->value() > 0)) {
-            if (mousewheel.scrollByPage) {
-                ASSERT(m_scrollbar->orientation() == VerticalScrollbar);
-                bool negative = delta < 0;
-                delta = max(max(static_cast<float>(m_scrollbar->visibleSize()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollbar->visibleSize() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
-                if (negative)
-                    delta *= -1;
-            }
-            m_scrollbar->scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
-            return true;
+    // Same logic as in Scrollview.cpp.  If we can move at all, we'll accept the event.
+    WebMouseWheelEvent mousewheel = *static_cast<const WebMouseWheelEvent*>(&event);
+    int maxScrollDelta = m_scrollbar->maximum() - m_scrollbar->value();
+    float delta = m_scrollbar->orientation() == HorizontalScrollbar ? mousewheel.deltaX : mousewheel.deltaY;
+    if ((delta < 0 && maxScrollDelta > 0) || (delta > 0 && m_scrollbar->value() > 0)) {
+        if (mousewheel.scrollByPage) {
+            ASSERT(m_scrollbar->orientation() == VerticalScrollbar);
+            bool negative = delta < 0;
+            delta = max(max(static_cast<float>(m_scrollbar->visibleSize()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollbar->visibleSize() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
+            if (negative)
+                delta *= -1;
         }
+        WebCore::ScrollbarClient::scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
+        return true;
+    }
 
     return false;
     }
 
 bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)
 {
-        WebKeyboardEvent keyboard = *static_cast<const WebKeyboardEvent*>(&event);
-        int keyCode;
-        // We have to duplicate this logic from WebViewImpl because there it uses
-        // Char and RawKeyDown events, which don't exist at this point.
-        if (keyboard.windowsKeyCode == VKEY_SPACE)
-            keyCode = ((keyboard.modifiers & WebInputEvent::ShiftKey) ? VKEY_PRIOR : VKEY_NEXT);
-        else {
-            if (keyboard.modifiers == WebInputEvent::ControlKey) {
-                // Match FF behavior in the sense that Ctrl+home/end are the only Ctrl
-                // key combinations which affect scrolling. Safari is buggy in the
-                // sense that it scrolls the page for all Ctrl+scrolling key
-                // combinations. For e.g. Ctrl+pgup/pgdn/up/down, etc.
-                switch (keyboard.windowsKeyCode) {
-                case VKEY_HOME:
-                case VKEY_END:
-                    break;
-                default:
-                    return false;
-                }
-            }
-
-            if (keyboard.isSystemKey || (keyboard.modifiers & WebInputEvent::ShiftKey))
+    WebKeyboardEvent keyboard = *static_cast<const WebKeyboardEvent*>(&event);
+    int keyCode;
+    // We have to duplicate this logic from WebViewImpl because there it uses
+    // Char and RawKeyDown events, which don't exist at this point.
+    if (keyboard.windowsKeyCode == VKEY_SPACE)
+        keyCode = ((keyboard.modifiers & WebInputEvent::ShiftKey) ? VKEY_PRIOR : VKEY_NEXT);
+    else {
+        if (keyboard.modifiers == WebInputEvent::ControlKey) {
+            // Match FF behavior in the sense that Ctrl+home/end are the only Ctrl
+            // key combinations which affect scrolling. Safari is buggy in the
+            // sense that it scrolls the page for all Ctrl+scrolling key
+            // combinations. For e.g. Ctrl+pgup/pgdn/up/down, etc.
+            switch (keyboard.windowsKeyCode) {
+            case VKEY_HOME:
+            case VKEY_END:
+                break;
+            default:
                 return false;
+            }
+        }
 
-            keyCode = keyboard.windowsKeyCode;
-        }
-        WebCore::ScrollDirection scrollDirection;
-        WebCore::ScrollGranularity scrollGranularity;
-        if (WebViewImpl::mapKeyCodeForScroll(keyCode, &scrollDirection, &scrollGranularity)) {
-            // Will return false if scroll direction wasn't compatible with this scrollbar.
-            return m_scrollbar->scroll(scrollDirection, scrollGranularity);
-        }
+        if (keyboard.isSystemKey || (keyboard.modifiers & WebInputEvent::ShiftKey))
+            return false;
+
+        keyCode = keyboard.windowsKeyCode;
+    }
+    WebCore::ScrollDirection scrollDirection;
+    WebCore::ScrollGranularity scrollGranularity;
+    if (WebViewImpl::mapKeyCodeForScroll(keyCode, &scrollDirection, &scrollGranularity)) {
+        // Will return false if scroll direction wasn't compatible with this scrollbar.
+        return WebCore::ScrollbarClient::scroll(scrollDirection, scrollGranularity);
+    }
     return false;
 }
 
@@ -267,13 +269,18 @@ int WebScrollbarImpl::scrollSize(WebCore::ScrollbarOrientation orientation) cons
     return (orientation == m_scrollbar->orientation()) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
 }
 
-void WebScrollbarImpl::setScrollOffsetFromAnimation(const WebCore::IntPoint& offset)
+int WebScrollbarImpl::scrollPosition(WebCore::Scrollbar*) const
 {
-    m_scrollbar->setValue((m_scrollbar->orientation() == HorizontalScrollbar) ? offset.x() : offset.y(), Scrollbar::FromScrollAnimator);
+    return m_scrollOffset;
 }
 
-void WebScrollbarImpl::valueChanged(WebCore::Scrollbar*)
+void WebScrollbarImpl::setScrollOffset(const WebCore::IntPoint& offset)
 {
+    if (m_scrollbar->orientation() == HorizontalScrollbar)
+        m_scrollOffset = offset.x();
+    else
+        m_scrollOffset = offset.y();
+
     m_client->valueChanged(this);
 }
 

@@ -320,25 +320,20 @@ int ScrollView::scrollSize(ScrollbarOrientation orientation) const
     return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
 }
 
-void ScrollView::setScrollOffsetFromAnimation(const IntPoint& offset)
+void ScrollView::setScrollOffset(const IntPoint& offset)
 {
-    if (m_horizontalScrollbar)
-        m_horizontalScrollbar->setValue(offset.x(), Scrollbar::FromScrollAnimator);
-    if (m_verticalScrollbar)
-        m_verticalScrollbar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
+    int horizontalOffset = std::max(std::min(offset.x(), contentsWidth() - visibleWidth()), 0);
+    int verticalOffset = std::max(std::min(offset.y(), contentsHeight() - visibleHeight()), 0);
+
+    IntSize newOffset = m_scrollOffset;
+    newOffset.setWidth(horizontalOffset - m_scrollOrigin.x());
+    newOffset.setHeight(verticalOffset - m_scrollOrigin.y());
+
+    scrollTo(newOffset);
 }
 
-void ScrollView::valueChanged(Scrollbar* scrollbar)
+void ScrollView::scrollTo(const IntSize& newOffset)
 {
-    // Figure out if we really moved.
-    IntSize newOffset = m_scrollOffset;
-    if (scrollbar) {
-        if (scrollbar->orientation() == HorizontalScrollbar)
-            newOffset.setWidth(scrollbar->value() - m_scrollOrigin.x());
-        else if (scrollbar->orientation() == VerticalScrollbar)
-            newOffset.setHeight(scrollbar->value() - m_scrollOrigin.y());
-    }
-
     IntSize scrollDelta = newOffset - m_scrollOffset;
     if (scrollDelta == IntSize())
         return;
@@ -351,13 +346,13 @@ void ScrollView::valueChanged(Scrollbar* scrollbar)
     scrollContents(scrollDelta);
 }
 
-void ScrollView::valueChanged(const IntSize& scrollDelta)
+int ScrollView::scrollPosition(Scrollbar* scrollbar) const
 {
-    if (scrollbarsSuppressed())
-        return;
-
-    repaintFixedElementsAfterScrolling();
-    scrollContents(scrollDelta);
+    if (scrollbar->orientation() == HorizontalScrollbar)
+        return scrollPosition().x();
+    if (scrollbar->orientation() == VerticalScrollbar)
+        return scrollPosition().y();
+    return 0;
 }
 
 void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
@@ -391,15 +386,8 @@ bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity
 {
     if (platformWidget())
         return platformScroll(direction, granularity);
-    
-    if (direction == ScrollUp || direction == ScrollDown) {
-        if (m_verticalScrollbar)
-            return m_verticalScrollbar->scroll(direction, granularity);
-    } else {
-        if (m_horizontalScrollbar)
-            return m_horizontalScrollbar->scroll(direction, granularity);
-    }
-    return false;
+
+    return ScrollbarClient::scroll(direction, granularity);
 }
 
 bool ScrollView::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity)
@@ -530,7 +518,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_horizontalScrollbar->setSuppressInvalidation(true);
         m_horizontalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_horizontalScrollbar->setProportion(clientWidth, contentsWidth());
-        m_horizontalScrollbar->setValue(scroll.width() + m_scrollOrigin.x(), Scrollbar::NotFromScrollAnimator);
         if (m_scrollbarsSuppressed)
             m_horizontalScrollbar->setSuppressInvalidation(false); 
     } 
@@ -552,7 +539,6 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
             m_verticalScrollbar->setSuppressInvalidation(true);
         m_verticalScrollbar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_verticalScrollbar->setProportion(clientHeight, contentsHeight());
-        m_verticalScrollbar->setValue(scroll.height() + m_scrollOrigin.y(), Scrollbar::NotFromScrollAnimator);
         if (m_scrollbarsSuppressed)
             m_verticalScrollbar->setSuppressInvalidation(false);
     }
@@ -562,15 +548,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         updateScrollCorner();
     }
 
-    // See if our offset has changed in a situation where we might not have scrollbars.
-    // This can happen when editing a body with overflow:hidden and scrolling to reveal selection.
-    // It can also happen when maximizing a window that has scrollbars (but the new maximized result
-    // does not).
-    IntSize scrollDelta = scroll - m_scrollOffset;
-    if (scrollDelta != IntSize()) {
-       m_scrollOffset = scroll;
-       valueChanged(scrollDelta);
-    }
+    ScrollbarClient::scrollToOffsetWithoutAnimation(FloatPoint(scroll.width(), scroll.height()));
 
     m_inUpdateScrollbars = false;
 }
@@ -757,6 +735,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
     // scroll any further.
     float deltaX = m_horizontalScrollbar ? e.deltaX() : 0;
     float deltaY = m_verticalScrollbar ? e.deltaY() : 0;
+    
     IntSize maxForwardScrollDelta = maximumScrollPosition() - scrollPosition();
     IntSize maxBackwardScrollDelta = scrollPosition() - minimumScrollPosition();
     if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
@@ -773,9 +752,9 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         }
 
         if (deltaY)
-            m_verticalScrollbar->scroll(ScrollUp, ScrollByPixel, deltaY);
+            ScrollbarClient::scroll(ScrollUp, ScrollByPixel, deltaY);
         if (deltaX)
-            m_horizontalScrollbar->scroll(ScrollLeft, ScrollByPixel, deltaX);
+            ScrollbarClient::scroll(ScrollLeft, ScrollByPixel, deltaX);
     }
 }
 

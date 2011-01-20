@@ -439,20 +439,22 @@ int WebPopupMenuProxyWin::scrollSize(ScrollbarOrientation orientation) const
     return ((orientation == VerticalScrollbar) && m_scrollbar) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
 }
 
-void WebPopupMenuProxyWin::setScrollOffsetFromAnimation(const IntPoint& offset)
+int WebPopupMenuProxyWin::scrollPosition(Scrollbar*) const
 {
-    if (m_scrollbar)
-        m_scrollbar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
+    return m_scrollOffset;
 }
 
-void WebPopupMenuProxyWin::valueChanged(Scrollbar* scrollBar)
+void WebPopupMenuProxyWin::setScrollOffset(const IntPoint& offset)
+{
+    scrollTo(offset.y());
+}
+
+void WebPopupMenuProxyWin::scrollTo(int offset)
 {
     ASSERT(m_scrollbar);
 
     if (!m_popup)
         return;
-
-    int offset = scrollBar->value();
 
     if (m_scrollOffset == offset)
         return;
@@ -720,7 +722,8 @@ LRESULT WebPopupMenuProxyWin::onMouseWheel(HWND hWnd, UINT message, WPARAM wPara
         else
             --i;
     }
-    scrollbar()->scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
+
+    ScrollbarClient::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
     return 0;
 }
 
@@ -922,12 +925,12 @@ bool WebPopupMenuProxyWin::scrollToRevealSelection()
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        m_scrollbar->setValue(index, Scrollbar::NotFromScrollAnimator);
+        ScrollbarClient::scrollToYOffsetWithoutAnimation(index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        m_scrollbar->setValue(index - visibleItems() + 1, Scrollbar::NotFromScrollAnimator);
+        ScrollbarClient::scrollToYOffsetWithoutAnimation(index - visibleItems() + 1);
         return true;
     }
 

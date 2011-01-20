@@ -1306,23 +1306,36 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
     }
 }
 
-void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
+void RenderLayer::scrollToOffset(int x, int y)
+{
+    ScrollbarClient::scrollToOffsetWithoutAnimation(IntPoint(x, y));
+}
+
+void RenderLayer::scrollTo(int x, int y)
 {
     RenderBox* box = renderBox();
     if (!box)
         return;
 
     if (box->style()->overflowX() != OMARQUEE) {
-        if (x < 0) x = 0;
-        if (y < 0) y = 0;
+        if (x < 0)
+            x = 0;
+        if (y < 0)
+            y = 0;
     
         // Call the scrollWidth/Height functions so that the dimensions will be computed if they need
         // to be (for overflow:hidden blocks).
         int maxX = scrollWidth() - box->clientWidth();
+        if (maxX < 0)
+            maxX = 0;
         int maxY = scrollHeight() - box->clientHeight();
-        
-        if (x > maxX) x = maxX;
-        if (y > maxY) y = maxY;
+        if (maxY < 0)
+            maxY = 0;
+
+        if (x > maxX)
+            x = maxX;
+        if (y > maxY)
+            y = maxY;
     }
     
     // FIXME: Eventually, we will want to perform a blit.  For now never
@@ -1386,15 +1399,8 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     }
 
     // Just schedule a full repaint of our object.
-    if (view && repaint)
+    if (view)
         renderer()->repaintUsingContainer(repaintContainer, rectForRepaint);
-
-    if (updateScrollbars) {
-        if (m_hBar)
-            m_hBar->setValue(scrollXOffset(), Scrollbar::NotFromScrollAnimator);
-        if (m_vBar)
-            m_vBar->setValue(m_scrollY, Scrollbar::NotFromScrollAnimator);
-    }
 
     // Schedule the scroll DOM event.
     renderer()->node()->document()->eventQueue()->enqueueScrollEvent(renderer()->node(), EventQueue::ScrollEventElementTarget);
@@ -1649,36 +1655,18 @@ int RenderLayer::scrollSize(ScrollbarOrientation orientation) const
     return scrollbar ? (scrollbar->totalSize() - scrollbar->visibleSize()) : 0;
 }
 
-void RenderLayer::setScrollOffsetFromAnimation(const IntPoint& offset)
+void RenderLayer::setScrollOffset(const IntPoint& offset)
 {
-    if (m_hBar)
-        m_hBar->setValue(offset.x(), Scrollbar::FromScrollAnimator);
-    if (m_vBar)
-        m_vBar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
+    scrollTo(offset.x(), offset.y());
 }
 
-void RenderLayer::valueChanged(Scrollbar*)
+int RenderLayer::scrollPosition(Scrollbar* scrollbar) const
 {
-    // Update scroll position from scrollbars.
-
-    bool needUpdate = false;
-    int newX = scrollXOffset();
-    int newY = m_scrollY;
-    
-    if (m_hBar) {
-        newX = m_hBar->value();
-        if (newX != scrollXOffset())
-           needUpdate = true;
-    }
-
-    if (m_vBar) {
-        newY = m_vBar->value();
-        if (newY != m_scrollY)
-           needUpdate = true;
-    }
-
-    if (needUpdate)
-        scrollToOffset(newX, newY, false);
+    if (scrollbar->orientation() == HorizontalScrollbar)
+        return scrollXOffset();
+    if (scrollbar->orientation() == VerticalScrollbar)
+        return m_scrollY;
+    return 0;
 }
 
 bool RenderLayer::isActive() const
@@ -1686,7 +1674,6 @@ bool RenderLayer::isActive() const
     Page* page = renderer()->frame()->page();
     return page && page->focusController()->isActive();
 }
-
 
 static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
 {
@@ -2031,8 +2018,7 @@ void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOve
     }
 }
 
-void
-RenderLayer::updateScrollInfoAfterLayout()
+void RenderLayer::updateScrollInfoAfterLayout()
 {
     RenderBox* box = renderBox();
     if (!box)
@@ -2124,27 +2110,15 @@ RenderLayer::updateScrollInfoAfterLayout()
         int pageStep = max(max<int>(clientWidth * Scrollbar::minFractionToStepWhenPaging(), clientWidth - Scrollbar::maxOverlapBetweenPages()), 1);
         m_hBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_hBar->setProportion(clientWidth, m_scrollWidth);
-        // Explicitly set the horizontal scroll value.  This ensures that when a
-        // right-to-left scrollable area's width (or content width) changes, the
-        // top right corner of the content doesn't shift with respect to the top
-        // right corner of the area. Conceptually, right-to-left areas have
-        // their origin at the top-right, but RenderLayer is top-left oriented,
-        // so this is needed to keep everything working.
-        m_hBar->setValue(scrollXOffset(), Scrollbar::NotFromScrollAnimator);
     }
     if (m_vBar) {
         int clientHeight = box->clientHeight();
         int pageStep = max(max<int>(clientHeight * Scrollbar::minFractionToStepWhenPaging(), clientHeight - Scrollbar::maxOverlapBetweenPages()), 1);
         m_vBar->setSteps(Scrollbar::pixelsPerLineStep(), pageStep);
         m_vBar->setProportion(clientHeight, m_scrollHeight);
-        // Explicitly set the vertical scroll value.  This ensures that when a
-        // right-to-left vertical writing-mode scrollable area's height (or content height) changes, the
-        // bottom right corner of the content doesn't shift with respect to the bottom
-        // right corner of the area. Conceptually, right-to-left vertical writing-mode areas have
-        // their origin at the bottom-right, but RenderLayer is top-left oriented,
-        // so this is needed to keep everything working.
-        m_vBar->setValue(scrollYOffset(), Scrollbar::NotFromScrollAnimator);
     }
+ 
+    scrollToOffset(scrollXOffset(), scrollYOffset());
  
     if (renderer()->node() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
@@ -2300,15 +2274,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
 
 bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
-    bool didHorizontalScroll = false;
-    bool didVerticalScroll = false;
-
-    if (m_hBar)
-        didHorizontalScroll = m_hBar->scroll(direction, granularity, multiplier);
-    if (m_vBar)
-        didVerticalScroll = m_vBar->scroll(direction, granularity, multiplier);
-
-    return (didHorizontalScroll || didVerticalScroll);
+    return ScrollbarClient::scroll(direction, granularity, multiplier);
 }
 
 void RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, PaintBehavior paintBehavior, RenderObject *paintingRoot)

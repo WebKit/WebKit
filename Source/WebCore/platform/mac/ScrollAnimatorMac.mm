@@ -27,6 +27,7 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
+#include "FloatPoint.h"
 #include "ScrollAnimatorMac.h"
 #include "ScrollbarClient.h"
 
@@ -161,23 +162,17 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
     return true;
 }
 
-void ScrollAnimatorMac::setScrollPositionAndStopAnimation(ScrollbarOrientation orientation, float pos)
+void ScrollAnimatorMac::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
     [m_scrollAnimationHelper.get() _stopRun];
-    ScrollAnimator::setScrollPositionAndStopAnimation(orientation, pos);
-}
-
-FloatPoint ScrollAnimatorMac::currentPosition() const
-{
-    return FloatPoint(m_currentPosX, m_currentPosY);
+    ScrollAnimator::scrollToOffsetWithoutAnimation(offset);
 }
 
 void ScrollAnimatorMac::immediateScrollToPoint(const FloatPoint& newPosition)
 {
     m_currentPosX = newPosition.x();
     m_currentPosY = newPosition.y();
-
-    m_client->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
+    notityPositionChanged();
 }
 
 } // namespace WebCore

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "ScrollAnimator.h"
 
+#include "FloatPoint.h"
 #include "ScrollbarClient.h"
 #include <algorithm>
 
@@ -61,16 +62,27 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity,
     if (*currentPos == newPos)
         return false;
     *currentPos = newPos;
-    m_client->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
+
+    notityPositionChanged();
+
     return true;
 }
 
-void ScrollAnimator::setScrollPositionAndStopAnimation(ScrollbarOrientation orientation, float pos)
+void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    if (orientation == HorizontalScrollbar)
-        m_currentPosX = pos;
-    else
-        m_currentPosY = pos;
+    m_currentPosX = offset.x();
+    m_currentPosY = offset.y();
+    notityPositionChanged();
+}
+
+FloatPoint ScrollAnimator::currentPosition() const
+{
+    return FloatPoint(m_currentPosX, m_currentPosY);
+}
+
+void ScrollAnimator::notityPositionChanged()
+{
+    m_client->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
 }
 
 } // namespace WebCore

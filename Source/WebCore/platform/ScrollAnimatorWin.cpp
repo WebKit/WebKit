@@ -34,6 +34,7 @@
 
 #include "ScrollAnimatorWin.h"
 
+#include "FloatPoint.h"
 #include "ScrollbarClient.h"
 #include "ScrollbarTheme.h"
 #include <algorithm>
@@ -177,17 +178,24 @@ bool ScrollAnimatorWin::scroll(ScrollbarOrientation orientation, ScrollGranulari
     return true;
 }
 
-void ScrollAnimatorWin::setScrollPositionAndStopAnimation(ScrollbarOrientation orientation, float pos)
+void ScrollAnimatorWin::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    PerAxisData* data = (orientation == HorizontalScrollbar) ? &m_horizontalData : &m_verticalData;
-    stopAnimationTimerIfNeeded(data);
-    *data->m_currentPos = pos;
-    data->m_desiredPos = pos;
-    data->m_currentVelocity = 0;
-    data->m_desiredVelocity = 0;
+    stopAnimationTimerIfNeeded(&m_horizontalData);
+    stopAnimationTimerIfNeeded(&m_verticalData);
+
+    *m_horizontalData.m_currentPos = offset.x();
+    m_horizontalData.m_desiredPos = offset.x();
+    m_horizontalData.m_currentVelocity = 0;
+    m_horizontalData.m_desiredVelocity = 0;
+
+    *m_verticalData.m_currentPos = offset.y();
+    m_verticalData.m_desiredPos = offset.y();
+    m_verticalData.m_currentVelocity = 0;
+    m_verticalData.m_desiredVelocity = 0;
+
+    notityPositionChanged();
 }
 
-// static
 double ScrollAnimatorWin::accelerationTime()
 {
     // We elect to use ScrollbarTheme::nativeTheme()->autoscrollTimerDelay() as
@@ -293,7 +301,8 @@ void ScrollAnimatorWin::animateScroll(PerAxisData* data)
         data->m_animationTimer.startOneShot(animationTimerDelay);
         data->m_lastAnimationTime = WTF::currentTime();
     }
-    m_client->setScrollOffsetFromAnimation(IntPoint(*m_horizontalData.m_currentPos, *m_verticalData.m_currentPos));
+
+    notityPositionChanged();
 }
 
 } // namespace WebCore

@@ -1,3 +1,132 @@
+2011-01-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Cleanup Scrollbar/ScrollbarClient relationship
+        https://bugs.webkit.org/show_bug.cgi?id=52779
+
+        Pipe all scrolling through the ScrollbarClient/ScrollAnimator
+        rather than through the Scrollbar. The Scrollbar now is just
+        a "view" on the scroll position of the scrollable area it is
+        attached to.
+
+        There are now two ways to scroll a scrollable area:
+        - ScrollbarClient::scroll()
+        - ScrollbarClient::scrollToOffsetWithoutAnimation()
+
+        Both of these go through the ScrollAnimator (updating its state
+        or starting an animation). The ScrollAnimator, in turn, now calls
+        ScrollbarClient::setScrollOffsetFromAnimation, which tells the
+        Scrollbars to pull a new offset (via Scrollbar::offsetDidChange)
+        and tells the class that derives from ScrollbarClient to scroll
+        its contents (via ScrollbarClient::setScrollOffset).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Move Scrollbar.cpp to the right place.
+
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::setValue):
+        Initiate the scroll through the scrollbar client, rather than the
+        scrollbar itself.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollTo):
+        * page/FrameView.h:
+        Condense the two valueChanged overrides to a single override of the
+        scrollTo function.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimator::currentPosition):
+        (WebCore::ScrollAnimator::notityPositionChanged):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollAnimatorWin.cpp:
+        (WebCore::ScrollAnimatorWin::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorWin::animateScroll):
+        * platform/ScrollAnimatorWin.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorMac::immediateScrollToPoint):
+        Change setScrollPositionAndStopAnimation to scrollToOffsetWithoutAnimation
+        and bottleneck all client notification of changed position through a new
+        notityPositionChanged() function.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::setScrollOffset):
+        (WebCore::ScrollView::scrollTo):
+        (WebCore::ScrollView::scrollPosition):
+        (WebCore::ScrollView::scroll):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::horizontalScrollbar):
+        (WebCore::ScrollView::verticalScrollbar):
+        Update to scroll via the ScrollbarClient rather than the Scrollbar.
+
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::offsetDidChange):
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::moveThumb):
+        (WebCore::Scrollbar::mouseMoved):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::setPressedPos):
+        Change the scrollbar to only updates its offset in response to
+        an offsetDidChange call.
+
+        * platform/ScrollbarClient.cpp:
+        (WebCore::ScrollbarClient::scroll):
+        (WebCore::ScrollbarClient::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollbarClient::scrollToXOffsetWithoutAnimation):
+        (WebCore::ScrollbarClient::scrollToYOffsetWithoutAnimation):
+        (WebCore::ScrollbarClient::setScrollOffsetFromAnimation):
+        * platform/ScrollbarClient.h:
+        (WebCore::ScrollbarClient::horizontalScrollbar):
+        (WebCore::ScrollbarClient::verticalScrollbar):
+        Make the increasingly misnamed ScrollbarClient responsible for
+        scrolling.
+
+        * platform/efl/ScrollbarEfl.cpp:
+        (scrollbarEflEdjeMessage):
+        * platform/gtk/MainFrameScrollbarGtk.cpp:
+        (MainFrameScrollbarGtk::gtkValueChanged):
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::contextMenu):
+        Update to move scrolling through the client.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::scrollToRevealSelection):
+        (WebCore::PopupMenuWin::scrollPosition):
+        (WebCore::PopupMenuWin::setScrollOffset):
+        (WebCore::PopupMenuWin::scrollTo):
+        (WebCore::PopupMenuWin::wndProc):
+        * platform/win/PopupMenuWin.h:
+        (WebCore::PopupMenuWin::verticalScrollbar):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::setScrollOffset):
+        (WebCore::RenderLayer::scrollPosition):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        (WebCore::RenderLayer::scroll):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollToRevealElementAtListIndex):
+        (WebCore::RenderListBox::scroll):
+        (WebCore::RenderListBox::logicalScroll):
+        (WebCore::RenderListBox::scrollPosition):
+        (WebCore::RenderListBox::setScrollOffset):
+        (WebCore::RenderListBox::scrollTo):
+        (WebCore::RenderListBox::setScrollTop):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::verticalScrollbar):
+        Update to scroll via the ScrollbarClient rather than the Scrollbar.
+
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::start):
+        Simplify initial paint to just do an immediate scroll to the position.
+
 2011-01-20  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r76170.

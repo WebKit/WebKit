@@ -96,8 +96,8 @@ private:
 
     // ScrollbarClient interface.
     virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual void setScrollOffsetFromAnimation(const IntPoint&);
-    virtual void valueChanged(Scrollbar*);
+    virtual int scrollPosition(Scrollbar*) const;
+    virtual void setScrollOffset(const IntPoint&);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;
     virtual bool scrollbarCornerPresent() const { return false; } // We don't support resize on list boxes yet.  If we did this would have to change.
@@ -105,6 +105,10 @@ private:
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
+    virtual Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
+
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    void scrollTo(int newOffset);
 
     void setHasVerticalScrollbar(bool hasScrollbar);
     PassRefPtr<Scrollbar> createScrollbar();

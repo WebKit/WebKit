@@ -25,6 +25,7 @@
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "IntRect.h"
+#include "ScrollbarClient.h"
 #include <gtk/gtk.h>
 
 using namespace WebCore;
@@ -108,7 +109,7 @@ void MainFrameScrollbarGtk::updateThumbProportion()
 
 void MainFrameScrollbarGtk::gtkValueChanged(GtkAdjustment*, MainFrameScrollbarGtk* that)
 {
-    that->setValue(static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get())), NotFromScrollAnimator);
+    that->client()->scrollToOffsetWithoutAnimation(that->orientation(), static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get())));
 }
 
 void MainFrameScrollbarGtk::paint(GraphicsContext* context, const IntRect& rect)

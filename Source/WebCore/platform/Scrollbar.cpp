@@ -104,13 +104,19 @@ Scrollbar::~Scrollbar()
     m_theme->unregisterScrollbar(this);
 }
 
-bool Scrollbar::setValue(int v, ScrollSource source)
+void Scrollbar::offsetDidChange()
 {
-    v = max(min(v, m_totalSize - m_visibleSize), 0);
-    if (value() == v)
-        return false; // Our value stayed the same.
-    setCurrentPos(v, source);
-    return true;
+    ASSERT(m_client);
+
+    float position = static_cast<float>(m_client->scrollPosition(this));
+    if (position == m_currentPos)
+        return;
+
+    int oldThumbPosition = theme()->thumbPosition(this);
+    m_currentPos = position;
+    updateThumbPosition();
+    if (m_pressedPart == ThumbPart)
+        setPressedPos(m_pressedPos + theme()->thumbPosition(this) - oldThumbPosition);    
 }
 
 void Scrollbar::setProportion(int visibleSize, int totalSize)
@@ -129,31 +135,6 @@ void Scrollbar::setSteps(int lineStep, int pageStep, int pixelsPerStep)
     m_lineStep = lineStep;
     m_pageStep = pageStep;
     m_pixelStep = 1.0f / pixelsPerStep;
-}
-
-bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
-{
-#if HAVE(ACCESSIBILITY)
-    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
-        axObjectCache()->postNotification(axObjectCache()->getOrCreate(this), 0, AXObjectCache::AXValueChanged, true);
-#endif
-
-    // Ignore perpendicular scrolls.
-    if ((m_orientation == HorizontalScrollbar) ? (direction == ScrollUp || direction == ScrollDown) : (direction == ScrollLeft || direction == ScrollRight))
-        return false;
-    float step = 0;
-    switch (granularity) {
-    case ScrollByLine:     step = m_lineStep;  break;
-    case ScrollByPage:     step = m_pageStep;  break;
-    case ScrollByDocument: step = m_totalSize; break;
-    case ScrollByPixel:    step = m_pixelStep; break;
-    }
-    if (direction == ScrollUp || direction == ScrollLeft)
-        multiplier = -multiplier;
-    if (client())
-        return client()->scroll(m_orientation, granularity, step, multiplier);
-
-    return setCurrentPos(max(min(m_currentPos + (step * multiplier), static_cast<float>(m_totalSize - m_visibleSize)), 0.0f), NotFromScrollAnimator);
 }
 
 void Scrollbar::updateThumb()
@@ -215,7 +196,7 @@ void Scrollbar::autoscrollPressedPart(double delay)
     }
 
     // Handle the arrows and track.
-    if (scroll(pressedPartScrollDirection(), pressedPartScrollGranularity()))
+    if (client()->scroll(pressedPartScrollDirection(), pressedPartScrollGranularity()))
         startTimerIfNeeded(delay);
 }
 
@@ -284,28 +265,11 @@ void Scrollbar::moveThumb(int pos)
         delta = min(maxPos - thumbPos, delta);
     else if (delta < 0)
         delta = max(-thumbPos, delta);
-    if (delta)
-        setCurrentPos(static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen), NotFromScrollAnimator);
-}
-
-bool Scrollbar::setCurrentPos(float pos, ScrollSource source)
-{
-    if ((source != FromScrollAnimator) && client())
-        client()->setScrollPositionAndStopAnimation(m_orientation, pos);
-
-    if (pos == m_currentPos)
-        return false;
-
-    int oldValue = value();
-    int oldThumbPos = theme()->thumbPosition(this);
-    m_currentPos = pos;
-    updateThumbPosition();
-    if (m_pressedPart == ThumbPart)
-        setPressedPos(m_pressedPos + theme()->thumbPosition(this) - oldThumbPos);
-
-    if (value() != oldValue && client())
-        client()->valueChanged(this);
-    return true;
+    
+    if (delta) {
+        float newPosition = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);
+        client()->scrollToOffsetWithoutAnimation(m_orientation, newPosition);
+    }
 }
 
 void Scrollbar::setHoveredPart(ScrollbarPart part)
@@ -337,7 +301,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
         if (theme()->shouldSnapBackToDragOrigin(this, evt))
-            setCurrentPos(m_dragOrigin, NotFromScrollAnimator);
+            client()->scrollToOffsetWithoutAnimation(m_orientation, m_dragOrigin);
         else {
             moveThumb(m_orientation == HorizontalScrollbar ? 
                       convertFromContainingWindow(evt.pos()).x() :
@@ -521,4 +485,4 @@ IntPoint Scrollbar::convertFromContainingView(const IntPoint& parentPoint) const
     return Widget::convertFromContainingView(parentPoint);
 }
 
-}
+} // namespace WebCore

@@ -78,7 +78,6 @@ private:
     void setWasClicked(bool b = true) { m_wasClicked = b; }
     bool wasClicked() const { return m_wasClicked; }
 
-    void setScrollOffset(int offset) { m_scrollOffset = offset; }
     int scrollOffset() const { return m_scrollOffset; }
 
     bool scrollToRevealSelection();
@@ -92,11 +91,15 @@ private:
 
     // ScrollBarClient
     virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual void setScrollOffsetFromAnimation(const IntPoint&);
-    virtual void valueChanged(Scrollbar*);
+    virtual int scrollPosition(Scrollbar*) const;
+    virtual void setScrollOffset(const IntPoint&);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const { return true; }
     virtual bool scrollbarCornerPresent() const { return false; }
+    virtual Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
+
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    void scrollTo(int offset);
 
     void calculatePositionAndSize(const IntRect&, FrameView*);
     void invalidateItem(int index);

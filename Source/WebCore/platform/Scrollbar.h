@@ -52,6 +52,9 @@ public:
     // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
     static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size);
 
+    // Called by the ScrollbarClient when the scroll offset changes.
+    void offsetDidChange();
+
     static int pixelsPerLineStep() { return 40; }
     static float minFractionToStepWhenPaging() { return 0.875f; }
     static int maxOverlapBetweenPages();
@@ -61,7 +64,7 @@ public:
 
     virtual bool isCustomScrollbar() const { return false; }
     ScrollbarOrientation orientation() const { return m_orientation; }
-    
+
     int value() const { return lroundf(m_currentPos); }
     float currentPos() const { return m_currentPos; }
     int pressedPos() const { return m_pressedPos; }
@@ -73,18 +76,15 @@ public:
     int lineStep() const { return m_lineStep; }
     int pageStep() const { return m_pageStep; }
     float pixelStep() const { return m_pixelStep; }
-    
+
     ScrollbarPart pressedPart() const { return m_pressedPart; }
     ScrollbarPart hoveredPart() const { return m_hoveredPart; }
     virtual void setHoveredPart(ScrollbarPart);
     virtual void setPressedPart(ScrollbarPart);
 
     void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
-    bool setValue(int, ScrollSource source);
     void setProportion(int visibleSize, int totalSize);
     void setPressedPos(int p) { m_pressedPos = p; }
-
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
 
@@ -172,10 +172,8 @@ protected:
 private:
     virtual bool isScrollbar() const { return true; }
     virtual AXObjectCache* axObjectCache() const;
-
-    bool setCurrentPos(float pos, ScrollSource source);
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // Scrollbar_h

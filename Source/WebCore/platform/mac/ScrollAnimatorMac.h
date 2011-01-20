@@ -28,7 +28,6 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
-#include "FloatPoint.h"
 #include "ScrollAnimator.h"
 #include <wtf/RetainPtr.h>
 
@@ -46,10 +45,9 @@ public:
     virtual ~ScrollAnimatorMac();
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
-    virtual void setScrollPositionAndStopAnimation(ScrollbarOrientation, float position);
+    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
     // Called by the ScrollAnimationHelperDelegate.
-    FloatPoint currentPosition() const;
     void immediateScrollToPoint(const FloatPoint& newPosition);
 
 private:

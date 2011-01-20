@@ -171,9 +171,9 @@ void RenderMarquee::start()
 
     if (!m_suspended && !m_stopped) {
         if (isHorizontal())
-            m_layer->scrollToOffset(m_start, 0, false, false);
+            m_layer->scrollToOffset(m_start, 0);
         else
-            m_layer->scrollToOffset(0, m_start, false, false);
+            m_layer->scrollToOffset(0, m_start);
     }
     else {
         m_suspended = false;

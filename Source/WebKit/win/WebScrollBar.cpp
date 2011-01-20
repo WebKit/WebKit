@@ -42,6 +42,7 @@ using namespace WebCore;
 WebScrollBar::WebScrollBar()
     : m_refCount(0)
     , m_containingWindow(0)
+    , m_currentPosition(0)
 {
     gClassCount++;
     gClassNameCount.add("WebScrollBar");
@@ -143,7 +144,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::setRect(
 HRESULT STDMETHODCALLTYPE WebScrollBar::setValue( 
     /* [in] */ int value)
 {
-    m_scrollBar->setValue(value, Scrollbar::NotFromScrollAnimator);
+    m_currentPosition = value;
     return S_OK;
 }
 
@@ -152,7 +153,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::value(
 {
     if (!value)
         return E_POINTER;
-    *value = m_scrollBar->value();
+    *value = m_currentPosition;
     return S_OK;
 }
 
@@ -247,7 +248,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::scroll(
 {
     ScrollDirection webCoreScrollDirection = (ScrollDirection) direction;
     ScrollGranularity webCoreGranularity = (ScrollGranularity) granularity;
-    m_scrollBar->scroll(webCoreScrollDirection, webCoreGranularity, multiplier);
+    ScrollbarClient::scroll(webCoreScrollDirection, webCoreGranularity, multiplier);
     return S_OK;
 }
 
@@ -257,17 +258,14 @@ int WebScrollBar::scrollSize(ScrollbarOrientation orientation) const
     return (orientation == m_scrollBar->orientation()) ? (m_scrollBar->totalSize() - m_scrollBar->visibleSize()) : 0; 
 }
 
-void WebScrollBar::setScrollOffsetFromAnimation(const IntPoint& offset)
+int WebScrollBar::scrollPosition(Scrollbar*) const
 {
-    m_scrollBar->setValue((m_scrollBar->orientation() == HorizontalScrollbar) ? offset.x() : offset.y(), Scrollbar::FromScrollAnimator);
+    return m_currentPosition;
 }
 
-void WebScrollBar::valueChanged(Scrollbar* scrollBar)
+void WebScrollBar::setScrollOffset(const IntPoint& offset)
 {
-    if (m_scrollBar != scrollBar) {
-        ASSERT(false);  // shouldn't happen
-        return;
-    }
+    m_currentPosition = (m_scrollBar->orientation() == HorizontalScrollbar) ? offset.x() : offset.y();
     m_delegate->valueChanged(this);
 }
 

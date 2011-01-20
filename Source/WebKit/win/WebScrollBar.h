@@ -117,8 +117,8 @@ public:
 protected:
     // ScrollbarClient
     virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual void setScrollOffsetFromAnimation(const IntPoint&);
-    virtual void valueChanged(Scrollbar*);
+    virtual int scrollPosition(Scrollbar*) const;
+    virtual void setScrollOffset(const IntPoint&);
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
 
     // FIXME: We should provide a way to set this value.
@@ -128,6 +128,7 @@ protected:
 
     ULONG m_refCount;
     HWND m_containingWindow;
+    int m_currentPosition;
     RefPtr<WebCore::Scrollbar> m_scrollBar;
     COMPtr<IWebScrollBarDelegatePrivate> m_delegate;
 };

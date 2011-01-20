@@ -11415,7 +11415,7 @@
 		BCA8CA5D11E4E6D100812FB7 /* BackForwardListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackForwardListImpl.cpp; sourceTree = "<group>"; };
 		BCA8CA5E11E4E6D100812FB7 /* BackForwardListImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackForwardListImpl.h; sourceTree = "<group>"; };
 		BCA979161215D055005C485C /* ImageBufferData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBufferData.h; sourceTree = "<group>"; };
-		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Scrollbar.cpp; path = platform/Scrollbar.cpp; sourceTree = SOURCE_ROOT; };
+		BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Scrollbar.cpp; sourceTree = "<group>"; };
 		BCACF3BA1072921A00C0C8A3 /* UserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentURLPattern.cpp; sourceTree = "<group>"; };
 		BCACF3BB1072921A00C0C8A3 /* UserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentURLPattern.h; sourceTree = "<group>"; };
 		BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollAnimatorMac.h; sourceTree = "<group>"; };
@@ -13890,7 +13890,6 @@
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
-				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
 				BCEF869E0E844E9D00A85CD5 /* ScrollbarThemeMac.mm */,
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
@@ -18278,6 +18277,7 @@
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
 				CA3BF67B10D99BAE00E6CE53 /* ScrollAnimator.cpp */,
 				CA3BF67D10D99BAE00E6CE53 /* ScrollAnimator.h */,
+				BCAA90C20A7EBA60008B1229 /* Scrollbar.cpp */,
 				BC7B2AF80450824100A8000F /* Scrollbar.h */,
 				BC9BC64B0E7C4889008B9849 /* ScrollbarClient.cpp */,
 				BC9BC64C0E7C4889008B9849 /* ScrollbarClient.h */,

@@ -1,3 +1,13 @@
+2011-01-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        Cleanup Scrollbar/ScrollbarClient relationship
+        https://bugs.webkit.org/show_bug.cgi?id=52779
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setScrollBarValue):
+
 2011-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

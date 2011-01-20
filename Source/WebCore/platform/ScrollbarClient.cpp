@@ -31,6 +31,8 @@
 #include "config.h"
 #include "ScrollbarClient.h"
 
+#include "FloatPoint.h"
+#include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 
 namespace WebCore {
@@ -44,14 +46,76 @@ ScrollbarClient::~ScrollbarClient()
 {
 }
 
-bool ScrollbarClient::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
+bool ScrollbarClient::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
+    ScrollbarOrientation orientation;
+    Scrollbar* scrollbar;
+    if (direction == ScrollUp || direction == ScrollDown) {
+        orientation = VerticalScrollbar;
+        scrollbar = verticalScrollbar();
+    } else {
+        orientation = HorizontalScrollbar;
+        scrollbar = horizontalScrollbar();
+    }
+
+    if (!scrollbar)
+        return false;
+
+    float step = 0;
+    switch (granularity) {
+    case ScrollByLine:
+        step = scrollbar->lineStep();
+        break;
+    case ScrollByPage:
+        step = scrollbar->pageStep();
+        break;
+    case ScrollByDocument:
+        step = scrollbar->totalSize();
+        break;
+    case ScrollByPixel:
+        step = scrollbar->pixelStep();
+        break;
+    }
+
+    if (direction == ScrollUp || direction == ScrollLeft)
+        multiplier = -multiplier;
+
     return m_scrollAnimator->scroll(orientation, granularity, step, multiplier);
 }
 
-void ScrollbarClient::setScrollPositionAndStopAnimation(ScrollbarOrientation orientation, float pos)
+void ScrollbarClient::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    m_scrollAnimator->setScrollPositionAndStopAnimation(orientation, pos);
+    m_scrollAnimator->scrollToOffsetWithoutAnimation(offset);
+}
+
+void ScrollbarClient::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
+{
+    if (orientation == HorizontalScrollbar)
+        scrollToXOffsetWithoutAnimation(offset);
+    else
+        scrollToYOffsetWithoutAnimation(offset);
+}
+
+void ScrollbarClient::scrollToXOffsetWithoutAnimation(float x)
+{
+    scrollToOffsetWithoutAnimation(FloatPoint(x, m_scrollAnimator->currentPosition().y()));
+}
+
+void ScrollbarClient::scrollToYOffsetWithoutAnimation(float y)
+{
+    scrollToOffsetWithoutAnimation(FloatPoint(m_scrollAnimator->currentPosition().x(), y));
+}
+
+void ScrollbarClient::setScrollOffsetFromAnimation(const IntPoint& offset)
+{
+    // Tell the derived class to scroll its contents.
+    setScrollOffset(offset);
+
+    // Tell the scrollbars to update their thumb postions.
+    if (Scrollbar* horizontalScrollbar = this->horizontalScrollbar())
+        horizontalScrollbar->offsetDidChange();
+    if (Scrollbar* verticalScrollbar = this->verticalScrollbar())
+        verticalScrollbar->offsetDidChange();
 }
 
 } // namespace WebCore

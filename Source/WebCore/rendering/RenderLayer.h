@@ -239,7 +239,7 @@ public:
     int scrollXOffset() const { return m_scrollX + m_scrollOrigin.x(); }
     int scrollYOffset() const { return m_scrollY + m_scrollOrigin.y(); }
 
-    void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
+    void scrollToOffset(int x, int y);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY + m_scrollOrigin.y()); }
     void scrollToYOffset(int y) { scrollToOffset(m_scrollX + m_scrollOrigin.x(), y); }
     void scrollRectToVisible(const IntRect&, bool scrollToAnchor = false, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
@@ -515,8 +515,8 @@ private:
 
     // ScrollBarClient interface
     virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual void setScrollOffsetFromAnimation(const IntPoint&);
-    virtual void valueChanged(Scrollbar*);
+    virtual void setScrollOffset(const IntPoint&);
+    virtual int scrollPosition(Scrollbar*) const;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;
     virtual bool scrollbarCornerPresent() const;
@@ -524,7 +524,10 @@ private:
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
-    
+
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    void scrollTo(int x, int y);
+
     IntSize scrollbarOffset(const Scrollbar*) const;
     
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);

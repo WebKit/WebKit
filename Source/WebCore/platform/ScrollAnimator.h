@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class FloatPoint;
 class ScrollbarClient;
 
 class ScrollAnimator {
@@ -50,16 +51,18 @@ public:
     // The base class implementation always scrolls immediately, never animates.
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
 
-    // Stops any animation in the given direction and updates the ScrollAnimator
-    // with the current scroll position.  This does not cause a callback to the
-    // ScrollbarClient.
-    virtual void setScrollPositionAndStopAnimation(ScrollbarOrientation, float);
+    virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
+
+    FloatPoint currentPosition() const;
 
 protected:
+    void notityPositionChanged();
+
     ScrollbarClient* m_client;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
     float m_currentPosY; // subclass code complexity.
 };
 
 } // namespace WebCore
-#endif
+
+#endif // ScrollAnimator_h

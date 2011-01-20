@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile Inc.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -532,12 +532,12 @@ bool PopupMenuWin::scrollToRevealSelection()
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        m_scrollbar->setValue(index, Scrollbar::NotFromScrollAnimator);
+        ScrollbarClient::scrollToYOffsetWithoutAnimation(index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        m_scrollbar->setValue(index - visibleItems() + 1, Scrollbar::NotFromScrollAnimator);
+        ScrollbarClient::scrollToYOffsetWithoutAnimation(index - visibleItems() + 1);
         return true;
     }
 
@@ -670,20 +670,22 @@ int PopupMenuWin::scrollSize(ScrollbarOrientation orientation) const
     return ((orientation == VerticalScrollbar) && m_scrollbar) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
 }
 
-void PopupMenuWin::setScrollOffsetFromAnimation(const IntPoint& offset)
+int PopupMenuWin::scrollPosition(Scrollbar*) const
 {
-    if (m_scrollbar)
-        m_scrollbar->setValue(offset.y(), Scrollbar::FromScrollAnimator);
+    return m_scrollOffset;
 }
 
-void PopupMenuWin::valueChanged(Scrollbar* scrollBar)
+void PopupMenuWin::setScrollOffset(const IntPoint& offset)
+{
+    scrollTo(offset.y());
+}
+
+void PopupMenuWin::scrollTo(int offset)
 {
     ASSERT(m_scrollbar);
 
     if (!m_popup)
         return;
-
-    int offset = scrollBar->value();
 
     if (m_scrollOffset == offset)
         return;
@@ -991,7 +993,8 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                 else
                     --i;
             }
-            scrollbar()->scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
+
+            ScrollbarClient::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
             break;
         }
 

@@ -1956,20 +1956,12 @@ bool FrameView::isActive() const
     return page && page->focusController()->isActive();
 }
 
-void FrameView::valueChanged(Scrollbar* bar)
+void FrameView::scrollTo(const IntSize& newOffset)
 {
-    // Figure out if we really moved.
     IntSize offset = scrollOffset();
-    ScrollView::valueChanged(bar);
+    ScrollView::scrollTo(newOffset);
     if (offset != scrollOffset())
         scrollPositionChanged();
-    frame()->loader()->client()->didChangeScrollOffset();
-}
-
-void FrameView::valueChanged(const IntSize& scrollDelta)
-{
-    ScrollView::valueChanged(scrollDelta);
-    frame()->eventHandler()->sendScrollEvent();
     frame()->loader()->client()->didChangeScrollOffset();
 }
 

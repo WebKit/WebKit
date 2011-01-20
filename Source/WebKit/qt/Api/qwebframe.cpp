@@ -1071,7 +1071,7 @@ void QWebFrame::setScrollBarValue(Qt::Orientation orientation, int value)
             value = 0;
         else if (value > scrollBarMaximum(orientation))
             value = scrollBarMaximum(orientation);
-        sb->setValue(value, Scrollbar::NotFromScrollAnimator);
+        ScrollbarClient::scrollToOffsetWithoutAnimation(orientation == Qt::Horizontal ? HorizontalScrollbar : VerticalScrollbar, position);
     }
 }
 
