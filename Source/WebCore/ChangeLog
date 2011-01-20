@@ -1,3 +1,36 @@
+2011-01-19  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Make <keygen> no longer appear to be a <select> element to script.
+        https://bugs.webkit.org/show_bug.cgi?id=52557
+
+        The intent is to put <keygen> options into shadow DOM. This change
+        takes the first step by hiding the <select> element from
+        JavaScript.
+
+        Test: fast/dom/HTMLKeygenElement/keygen.html
+
+        * CMakeLists.txt: Adds new IDL-derived wrapper.
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/gobject/GNUmakefile.am:
+        * bindings/gobject/WebKitHTMLElementWrapperFactory.cpp:
+        (WebKit::createKeygenWrapper):
+        (WebKit::createHTMLElementWrapper):
+        * bindings/objc/DOM.mm:
+        (WebCore::createElementClassMap): Keygen no longer DOMHTMLSelectElement
+        * html/HTMLKeygenElement.h:
+        (WebCore::HTMLKeygenElement::willValidate): Now public.
+        * html/HTMLKeygenElement.idl: Added.
+        * html/HTMLTagNames.in: Keygen's wrapper is HTMLKeygenElement.
+        * page/DOMWindow.idl: Add HTMLKeygenElement constructor.
+
 2011-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76203.

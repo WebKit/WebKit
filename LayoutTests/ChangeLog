@@ -1,3 +1,25 @@
+2011-01-19  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Make <keygen> no longer appear to be a <select> element to script.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52557
+
+        * fast/dom/HTMLKeygenElement/keygen-expected.txt: Added.
+        * fast/dom/HTMLKeygenElement/keygen-option-select-expected.txt: Removed.
+        * fast/dom/HTMLKeygenElement/keygen-option-select.html: Removed.
+        * fast/dom/HTMLKeygenElement/keygen.html: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/dom/wrapper-classes-expected.txt:
+        * fast/dom/wrapper-classes.html:
+        * fast/js/global-constructors-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc-expected.txt:
+        * platform/mac/fast/dom/wrapper-classes-objc.html:
+
 2011-01-19  Helder Correia  <helder@sencha.com>
 
         Reviewed by Andreas Kling.

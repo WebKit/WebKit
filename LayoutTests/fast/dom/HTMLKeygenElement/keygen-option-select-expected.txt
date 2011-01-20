@@ -1,6 +1,0 @@
-
-This test verifies that list-box-style select form control for keygen works properly when selecting from option element.
-
-You should see the word "SUCCESS" below
-
-SUCCESS

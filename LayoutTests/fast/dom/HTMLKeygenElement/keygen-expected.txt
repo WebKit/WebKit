@@ -1,0 +1,8 @@
+
+Tests the keygen element.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.getElementById("keys").options is undefined
+

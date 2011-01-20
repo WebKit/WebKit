@@ -438,6 +438,7 @@ module window {
         attribute HTMLImageElementConstructor HTMLImageElement;
         attribute HTMLInputElementConstructor HTMLInputElement;
         attribute HTMLIsIndexElementConstructor HTMLIsIndexElement;
+        attribute HTMLKeygenElementConstructor HTMLKeygenElement;
         attribute HTMLLIElementConstructor HTMLLIElement;
         attribute HTMLLabelElementConstructor HTMLLabelElement;
         attribute HTMLLegendElementConstructor HTMLLegendElement;

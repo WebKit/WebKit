@@ -237,6 +237,7 @@ SET(WebCore_IDL_FILES
     html/HTMLImageElement.idl
     html/HTMLInputElement.idl
     html/HTMLIsIndexElement.idl
+    html/HTMLKeygenElement.idl
     html/HTMLLabelElement.idl
     html/HTMLLegendElement.idl
     html/HTMLLIElement.idl

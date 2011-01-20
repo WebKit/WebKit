@@ -160,6 +160,7 @@
             'html/HTMLImageElement.idl',
             'html/HTMLInputElement.idl',
             'html/HTMLIsIndexElement.idl',
+            'html/HTMLKeygenElement.idl',
             'html/HTMLLIElement.idl',
             'html/HTMLLabelElement.idl',
             'html/HTMLLegendElement.idl',

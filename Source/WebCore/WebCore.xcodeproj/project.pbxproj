@@ -3159,6 +3159,11 @@
 		A59E3C1F11580F510072928E /* KeyEventIPhone.mm in Sources */ = {isa = PBXBuildFile; fileRef = A59E3C1D11580F510072928E /* KeyEventIPhone.mm */; };
 		A5AFB34F115151A700B045CB /* StepRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5AFB34D115151A700B045CB /* StepRange.cpp */; };
 		A5AFB350115151A700B045CB /* StepRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A5AFB34E115151A700B045CB /* StepRange.h */; };
+		A6148A6212E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A6148A6112E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h */; };
+		A6148A6712E41D940044A784 /* DOMHTMLKeygenElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A6148A6512E41D940044A784 /* DOMHTMLKeygenElement.h */; };
+		A6148A6812E41D940044A784 /* DOMHTMLKeygenElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = A6148A6612E41D940044A784 /* DOMHTMLKeygenElement.mm */; };
+		A6148A7812E41E3B0044A784 /* JSHTMLKeygenElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6148A7612E41E3B0044A784 /* JSHTMLKeygenElement.cpp */; };
+		A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A6148A7712E41E3B0044A784 /* JSHTMLKeygenElement.h */; };
 		A622A8FB122C44A600A785B3 /* BindingSecurity.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F5122C44A600A785B3 /* BindingSecurity.h */; };
 		A622A8FC122C44A600A785B3 /* BindingSecurityBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */; };
 		A622A8FD122C44A600A785B3 /* BindingSecurityBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */; };
@@ -9533,6 +9538,12 @@
 		A5AFB34E115151A700B045CB /* StepRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StepRange.h; sourceTree = "<group>"; };
 		A5C974CF11485FF10066F2AB /* KeyEventCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCocoa.h; path = cocoa/KeyEventCocoa.h; sourceTree = "<group>"; };
 		A5C974D011485FF10066F2AB /* KeyEventCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KeyEventCocoa.mm; path = cocoa/KeyEventCocoa.mm; sourceTree = "<group>"; };
+		A6148A6112E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLKeygenElementInternal.h; path = DOMHTMLKeygenElementInternal.h; sourceTree = "<group>"; };
+		A6148A6512E41D940044A784 /* DOMHTMLKeygenElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMHTMLKeygenElement.h; path = DOMHTMLKeygenElement.h; sourceTree = "<group>"; };
+		A6148A6612E41D940044A784 /* DOMHTMLKeygenElement.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMHTMLKeygenElement.mm; path = DOMHTMLKeygenElement.mm; sourceTree = "<group>"; };
+		A6148A7612E41E3B0044A784 /* JSHTMLKeygenElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSHTMLKeygenElement.cpp; path = JSHTMLKeygenElement.cpp; sourceTree = "<group>"; };
+		A6148A7712E41E3B0044A784 /* JSHTMLKeygenElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSHTMLKeygenElement.h; path = JSHTMLKeygenElement.h; sourceTree = "<group>"; };
+		A6148A7F12E41ED10044A784 /* HTMLKeygenElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLKeygenElement.idl; sourceTree = "<group>"; };
 		A622A8F5122C44A600A785B3 /* BindingSecurity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurity.h; path = generic/BindingSecurity.h; sourceTree = "<group>"; };
 		A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BindingSecurityBase.cpp; path = generic/BindingSecurityBase.cpp; sourceTree = "<group>"; };
 		A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurityBase.h; path = generic/BindingSecurityBase.h; sourceTree = "<group>"; };
@@ -14840,6 +14851,8 @@
 				1CCA732110ADD43E00FD440D /* DOMHTMLInputElementPrivate.h */,
 				859A9C410AA5E3BD00B694B2 /* DOMHTMLIsIndexElement.h */,
 				859A9C420AA5E3BD00B694B2 /* DOMHTMLIsIndexElement.mm */,
+				A6148A6512E41D940044A784 /* DOMHTMLKeygenElement.h */,
+				A6148A6612E41D940044A784 /* DOMHTMLKeygenElement.mm */,
 				85BA4CD90AA6861B0088052D /* DOMHTMLLabelElement.h */,
 				85BA4CDA0AA6861B0088052D /* DOMHTMLLabelElement.mm */,
 				85BA4CDB0AA6861B0088052D /* DOMHTMLLegendElement.h */,
@@ -14975,6 +14988,7 @@
 				85E711630AC5D5350053270F /* DOMHTMLImageElementInternal.h */,
 				85E711640AC5D5350053270F /* DOMHTMLInputElementInternal.h */,
 				85E711650AC5D5350053270F /* DOMHTMLIsIndexElementInternal.h */,
+				A6148A6112E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h */,
 				85E711660AC5D5350053270F /* DOMHTMLLabelElementInternal.h */,
 				85E711670AC5D5350053270F /* DOMHTMLLegendElementInternal.h */,
 				85E711680AC5D5350053270F /* DOMHTMLLIElementInternal.h */,
@@ -15588,6 +15602,7 @@
 				1AE2AA850A1CDCCE00B42B25 /* HTMLIsIndexElement.idl */,
 				A81369C9097374F600D74463 /* HTMLKeygenElement.cpp */,
 				A81369C8097374F500D74463 /* HTMLKeygenElement.h */,
+				A6148A7F12E41ED10044A784 /* HTMLKeygenElement.idl */,
 				A81369C7097374F500D74463 /* HTMLLabelElement.cpp */,
 				A81369C6097374F500D74463 /* HTMLLabelElement.h */,
 				1AE2AABE0A1CDD8300B42B25 /* HTMLLabelElement.idl */,
@@ -16094,6 +16109,8 @@
 				A80E7E8D0A1A83E3007FB8C5 /* JSHTMLInputElement.h */,
 				1AE2AA950A1CDD2D00B42B25 /* JSHTMLIsIndexElement.cpp */,
 				1AE2AA960A1CDD2D00B42B25 /* JSHTMLIsIndexElement.h */,
+				A6148A7612E41E3B0044A784 /* JSHTMLKeygenElement.cpp */,
+				A6148A7712E41E3B0044A784 /* JSHTMLKeygenElement.h */,
 				1AE2AB170A1CE63B00B42B25 /* JSHTMLLabelElement.cpp */,
 				1AE2AB180A1CE63B00B42B25 /* JSHTMLLabelElement.h */,
 				1AE2AB190A1CE63B00B42B25 /* JSHTMLLegendElement.cpp */,
@@ -22374,6 +22391,9 @@
 				7A5640C012DF9E5E00F4536D /* InspectorSettings.h in Headers */,
 				F3D4C47912E07663003DA150 /* InspectorBrowserDebuggerAgent.h in Headers */,
 				7AF11A5A12E727490061F23C /* InspectorRuntimeAgent.h in Headers */,
+				A6148A6212E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h in Headers */,
+				A6148A6712E41D940044A784 /* DOMHTMLKeygenElement.h in Headers */,
+				A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25064,6 +25084,8 @@
 				7A5640BF12DF9E5E00F4536D /* InspectorSettings.cpp in Sources */,
 				F3D4C47812E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp in Sources */,
 				7AA365EE12E7265400DCA242 /* InspectorRuntimeAgent.cpp in Sources */,
+				A6148A6812E41D940044A784 /* DOMHTMLKeygenElement.mm in Sources */,
+				A6148A7812E41E3B0044A784 /* JSHTMLKeygenElement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

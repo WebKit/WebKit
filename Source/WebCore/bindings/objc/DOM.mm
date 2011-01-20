@@ -131,7 +131,6 @@ static void createElementClassMap()
     addElementClass(HTMLNames::preTag, [DOMHTMLPreElement class]);
     addElementClass(HTMLNames::qTag, [DOMHTMLQuoteElement class]);
     addElementClass(HTMLNames::scriptTag, [DOMHTMLScriptElement class]);
-    addElementClass(HTMLNames::keygenTag, [DOMHTMLSelectElement class]);
     addElementClass(HTMLNames::selectTag, [DOMHTMLSelectElement class]);
     addElementClass(HTMLNames::styleTag, [DOMHTMLStyleElement class]);
     addElementClass(HTMLNames::tableTag, [DOMHTMLTableElement class]);

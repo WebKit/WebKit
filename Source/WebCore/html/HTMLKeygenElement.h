@@ -32,6 +32,8 @@ class HTMLKeygenElement : public HTMLSelectElement {
 public:
     static PassRefPtr<HTMLKeygenElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
+    virtual bool willValidate() const { return false; }
+
 private:
     HTMLKeygenElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -40,8 +42,6 @@ private:
     virtual const AtomicString& formControlType() const;
     virtual void parseMappedAttribute(Attribute*);
     virtual bool appendFormData(FormDataList&, bool);
-
-    virtual bool willValidate() const { return false; }
     virtual bool isOptionalFormControl() const { return false; }
 
     AtomicString m_challenge;

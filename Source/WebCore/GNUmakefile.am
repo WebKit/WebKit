@@ -354,6 +354,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLInputElement.h \
 	DerivedSources/WebCore/JSHTMLIsIndexElement.cpp \
 	DerivedSources/WebCore/JSHTMLIsIndexElement.h \
+	DerivedSources/WebCore/JSHTMLKeygenElement.cpp \
+	DerivedSources/WebCore/JSHTMLKeygenElement.h \
 	DerivedSources/WebCore/JSHTMLLabelElement.cpp \
 	DerivedSources/WebCore/JSHTMLLabelElement.h \
 	DerivedSources/WebCore/JSHTMLLegendElement.cpp \

@@ -71,7 +71,7 @@ input constructorNeedsFormElement
 ins interfaceName=HTMLModElement
 isindex interfaceName=HTMLIsIndexElement, constructorNeedsFormElement
 kbd interfaceName=HTMLElement
-keygen JSInterfaceName=HTMLSelectElement, constructorNeedsFormElement
+keygen constructorNeedsFormElement
 label
 layer interfaceName=HTMLElement
 legend constructorNeedsFormElement

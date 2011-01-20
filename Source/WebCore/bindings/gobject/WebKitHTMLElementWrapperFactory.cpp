@@ -62,6 +62,7 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLIsIndexElement.h"
+#include "HTMLKeygenElement.h"
 #include "HTMLLIElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLLegendElement.h"
@@ -121,6 +122,7 @@
 #include "webkit/WebKitDOMHTMLImageElementPrivate.h"
 #include "webkit/WebKitDOMHTMLInputElementPrivate.h"
 #include "webkit/WebKitDOMHTMLIsIndexElementPrivate.h"
+#include "webkit/WebKitDOMHTMLKeygenElementPrivate.h"
 #include "webkit/WebKitDOMHTMLLIElementPrivate.h"
 #include "webkit/WebKitDOMHTMLLabelElementPrivate.h"
 #include "webkit/WebKitDOMHTMLLegendElementPrivate.h"
@@ -320,6 +322,11 @@ static gpointer createInputWrapper(PassRefPtr<HTMLElement> element)
 static gpointer createIsIndexWrapper(PassRefPtr<HTMLElement> element)
 {
     return wrapHTMLIsIndexElement(static_cast<HTMLIsIndexElement*>(element.get()));
+}
+
+static gpointer createKeygenWrapper(PassRefPtr<HTMLElement> element)
+{
+    return wrapHTMLKeygenElement(static_cast<HTMLKeygenElement*>(element.get()));
 }
 
 static gpointer createLabelWrapper(PassRefPtr<HTMLElement> element)
@@ -523,7 +530,7 @@ gpointer createHTMLElementWrapper(PassRefPtr<WebCore::HTMLElement> element)
        map.set(h6Tag.localName().impl(), createHeadingWrapper);
        map.set(imageTag.localName().impl(), createImageWrapper);
        map.set(insTag.localName().impl(), createModWrapper);
-       map.set(keygenTag.localName().impl(), createSelectWrapper);
+       map.set(keygenTag.localName().impl(), createKeygenWrapper);
        map.set(listingTag.localName().impl(), createPreWrapper);
        map.set(tfootTag.localName().impl(), createTableSectionWrapper);
        map.set(thTag.localName().impl(), createTableCellWrapper);

@@ -1,0 +1,27 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<keygen id="keys" />
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function test(elementId)
+{
+    description('Tests the keygen element.');
+
+    shouldBe('document.getElementById("keys").options', 'undefined');    
+}
+
+test("keys");
+</script>
+
+</body>
+</html>
