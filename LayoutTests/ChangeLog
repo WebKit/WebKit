@@ -1,3 +1,10 @@
+2011-01-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, new GTK baselines for 2 new tests.
+
+        * platform/gtk/fast/block/float/float-overflow-hidden-containing-block-width-expected.txt: Added.
+        * platform/gtk/svg/css/text-gradient-shadow-expected.txt: Added.
+
 2011-01-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.
