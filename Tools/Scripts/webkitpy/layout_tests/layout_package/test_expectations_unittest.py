@@ -29,8 +29,6 @@
 
 """Unit tests for test_expectations.py."""
 
-import os
-import sys
 import unittest
 
 from webkitpy.layout_tests import port
@@ -82,11 +80,12 @@ class FunctionsTest(unittest.TestCase):
 class Base(unittest.TestCase):
     def __init__(self, testFunc, setUp=None, tearDown=None, description=None):
         self._port = port.get('test', None)
+        self._fs = self._port._filesystem
         self._exp = None
         unittest.TestCase.__init__(self, testFunc)
 
     def get_test(self, test_name):
-        return os.path.join(self._port.layout_tests_dir(), test_name)
+        return self._fs.join(self._port.layout_tests_dir(), test_name)
 
     def get_basic_tests(self):
         return [self.get_test('failures/expected/text.html'),

@@ -29,7 +29,6 @@
 
 """Classes for failures that occur during tests."""
 
-import os
 import test_expectations
 
 import cPickle
@@ -121,7 +120,10 @@ class TestFailure(object):
         Return:
           The relative windows path to the output filename
         """
-        return os.path.splitext(filename)[0] + modifier
+        # FIXME: technically this breaks if files don't use ".ext" to indicate
+        # the extension, but passing in a Filesystem object here is a huge
+        # hassle.
+        return filename[filename.rfind('.')] + modifier
 
 
 class FailureWithType(TestFailure):

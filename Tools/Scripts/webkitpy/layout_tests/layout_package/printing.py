@@ -31,8 +31,6 @@
 
 import logging
 import optparse
-import os
-import pdb
 
 from webkitpy.layout_tests.layout_package import metered_stream
 from webkitpy.layout_tests.layout_package import test_expectations
@@ -411,7 +409,7 @@ class Printer(object):
             return
 
         next_test = test_list[self._current_test_number]
-        next_dir = os.path.dirname(
+        next_dir = self._port._filesystem.dirname(
             self._port.relative_test_filename(next_test))
         if self._current_progress_str == "":
             self._current_progress_str = "%s: " % (next_dir)
@@ -437,7 +435,7 @@ class Printer(object):
                 break
 
             next_test = test_list[self._current_test_number]
-            next_dir = os.path.dirname(
+            next_dir = self._port._filesystem.dirname(
                 self._port.relative_test_filename(next_test))
 
         if result_summary.remaining:

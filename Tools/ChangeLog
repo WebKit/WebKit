@@ -1,3 +1,18 @@
+2011-01-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        nrwt: remove fs refs from printing, test_failures, test_expectations, text_diff
+
+        https://bugs.webkit.org/show_bug.cgi?id=52756
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/test_types/text_diff.py:
+
 2011-01-20  Mansi Mithal  <mansi.mithal@nokia.com>
 
         Reviewed by Antonio Gomes.

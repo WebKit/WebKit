@@ -33,12 +33,8 @@ If the output doesn't match, returns FailureTextMismatch and outputs the diff
 files into the layout test results directory.
 """
 
-from __future__ import with_statement
-
-import codecs
 import errno
 import logging
-import os.path
 
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests.test_types import test_type_base

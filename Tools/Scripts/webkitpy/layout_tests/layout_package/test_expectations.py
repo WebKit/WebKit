@@ -32,9 +32,7 @@ for layout tests.
 """
 
 import logging
-import os
 import re
-import sys
 
 import webkitpy.thirdparty.simplejson as simplejson
 
@@ -322,6 +320,7 @@ class TestExpectationsFile:
         """
 
         self._port = port
+        self._fs = port._filesystem
         self._expectations = expectations
         self._full_test_list = full_test_list
         self._test_platform_name = test_platform_name
@@ -690,9 +689,9 @@ class TestExpectationsFile:
                     'indefinitely, then it should be just timeout.',
                     test_list_path)
 
-            full_path = os.path.join(self._port.layout_tests_dir(),
-                                     test_list_path)
-            full_path = os.path.normpath(full_path)
+            full_path = self._fs.join(self._port.layout_tests_dir(),
+                                      test_list_path)
+            full_path = self._fs.normpath(full_path)
             # WebKit's way of skipping tests is to add a -disabled suffix.
             # So we should consider the path existing if the path or the
             # -disabled version exists.
@@ -736,11 +735,11 @@ class TestExpectationsFile:
         # lists to represent the tree of tests, leaves being test
         # files and nodes being categories.
 
-        path = os.path.join(self._port.layout_tests_dir(), test_list_path)
-        path = os.path.normpath(path)
-        if self._port.path_isdir(path):
+        path = self._fs.join(self._port.layout_tests_dir(), test_list_path)
+        path = self._fs.normpath(path)
+        if self._fs.isdir(path):
             # this is a test category, return all the tests of the category.
-            path = os.path.join(path, '')
+            path = self._fs.join(path, '')
 
             return [test for test in self._full_test_list if test.startswith(path)]
 
@@ -817,7 +816,7 @@ class TestExpectationsFile:
             self._remove_from_sets(test, self._timeline_to_tests)
             self._remove_from_sets(test, self._result_type_to_tests)
 
-        self._test_list_paths[test] = os.path.normpath(test_list_path)
+        self._test_list_paths[test] = self._fs.normpath(test_list_path)
 
     def _remove_from_sets(self, test, dict):
         """Removes the given test from the sets in the dictionary.
@@ -838,7 +837,7 @@ class TestExpectationsFile:
             return False
 
         prev_base_path = self._test_list_paths[test]
-        if (prev_base_path == os.path.normpath(test_list_path)):
+        if (prev_base_path == self._fs.normpath(test_list_path)):
             if (not allow_overrides or test in self._overridding_tests):
                 if allow_overrides:
                     expectation_source = "override"
@@ -854,7 +853,7 @@ class TestExpectationsFile:
                 return False
 
         # Check if we've already seen a more precise path.
-        return prev_base_path.startswith(os.path.normpath(test_list_path))
+        return prev_base_path.startswith(self._fs.normpath(test_list_path))
 
     def _add_error(self, lineno, msg, path):
         """Reports an error that will prevent running the tests. Does not
