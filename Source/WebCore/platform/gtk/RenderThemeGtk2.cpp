@@ -45,10 +45,6 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
-#if ENABLE(PROGRESS_TAG)
-#include "RenderProgress.h"
-#endif
-
 namespace WebCore {
 
 // This is not a static method, because we want to avoid having GTK+ headers in RenderThemeGtk.h.
@@ -67,6 +63,7 @@ void RenderThemeGtk::platformInit()
     m_gtkHScale = 0;
     m_gtkRadioButton = 0;
     m_gtkCheckButton = 0;
+    m_gtkProgressBar = 0;
 
     memset(&m_themeParts, 0, sizeof(GtkThemeParts));
     GdkColormap* colormap = gdk_screen_get_rgba_colormap(gdk_screen_get_default());
@@ -477,45 +474,25 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
 }
 
 #if ENABLE(PROGRESS_TAG)
-double RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress*) const
-{
-    // FIXME: It doesn't look like there is a good way yet to support animated
-    // progress bars with the Mozilla theme drawing code.
-    return 0;
-}
-
-double RenderThemeGtk::animationDurationForProgressBar(RenderProgress*) const
-{
-    // FIXME: It doesn't look like there is a good way yet to support animated
-    // progress bars with the Mozilla theme drawing code.
-    return 0;
-}
-
 bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderObject->isProgress())
-        return true;
+    GtkWidget* widget = gtkProgressBar();
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
 
-    GtkWidget* progressBarWidget = moz_gtk_get_progress_widget();
-    if (!progressBarWidget)
-        return true;
+    WidgetRenderingContext widgetContext(paintInfo.context, rect);
+    IntRect fullProgressBarRect(IntPoint(), rect.size());
+    widgetContext.gtkPaintBox(fullProgressBarRect, widget, GTK_STATE_NORMAL, GTK_SHADOW_IN, "trough");
 
-    if (paintRenderObject(MOZ_GTK_PROGRESSBAR, renderObject, paintInfo.context, rect))
-        return true;
+    GtkStyle* style = gtk_widget_get_style(widget);
+    IntRect progressRect(fullProgressBarRect);
+    progressRect.inflateX(-style->xthickness);
+    progressRect.inflateY(-style->ythickness);
+    progressRect = RenderThemeGtk::calculateProgressRect(renderObject, progressRect);
 
-    IntRect chunkRect(rect);
-    RenderProgress* renderProgress = toRenderProgress(renderObject);
+    if (!progressRect.isEmpty())
+        widgetContext.gtkPaintBox(progressRect, widget, GTK_STATE_PRELIGHT, GTK_SHADOW_OUT, "bar");
 
-    GtkStyle* style = gtk_widget_get_style(progressBarWidget);
-    chunkRect.setHeight(chunkRect.height() - (2 * style->ythickness));
-    chunkRect.setY(chunkRect.y() + style->ythickness);
-    chunkRect.setWidth((chunkRect.width() - (2 * style->xthickness)) * renderProgress->position());
-    if (renderObject->style()->direction() == RTL)
-        chunkRect.setX(rect.x() + rect.width() - chunkRect.width() - style->xthickness);
-    else
-        chunkRect.setX(chunkRect.x() + style->xthickness);
-
-    return paintRenderObject(MOZ_GTK_PROGRESS_CHUNK, renderObject, paintInfo.context, chunkRect);
+    return false;
 }
 #endif
 
@@ -685,6 +662,16 @@ GtkWidget* RenderThemeGtk::gtkCheckButton() const
     setupWidgetAndAddToContainer(m_gtkCheckButton, gtkContainer());
     return m_gtkCheckButton;
 }
+
+GtkWidget* RenderThemeGtk::gtkProgressBar() const
+{
+    if (m_gtkProgressBar)
+        return m_gtkProgressBar;
+    m_gtkProgressBar = gtk_progress_bar_new();
+    setupWidgetAndAddToContainer(m_gtkProgressBar, gtkContainer());
+    return m_gtkProgressBar;
+}
+
 
 GtkWidget* RenderThemeGtk::gtkScrollbar()
 {

@@ -41,10 +41,6 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
-#if ENABLE(PROGRESS_TAG)
-#include "RenderProgress.h"
-#endif
-
 namespace WebCore {
 
 // This is the default value defined by GTK+, where it was defined as MIN_ARROW_SIZE in gtkarrow.c.
@@ -690,20 +686,6 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* renderObject) const
 }
 
 #if ENABLE(PROGRESS_TAG)
-// These values have been copied from RenderThemeChromiumSkia.cpp
-static const int progressActivityBlocks = 5;
-static const int progressAnimationFrames = 10;
-static const double progressAnimationInterval = 0.125;
-double RenderThemeGtk::animationRepeatIntervalForProgressBar(RenderProgress*) const
-{
-    return progressAnimationInterval;
-}
-
-double RenderThemeGtk::animationDurationForProgressBar(RenderProgress*) const
-{
-    return progressAnimationInterval * progressAnimationFrames * 2; // "2" for back and forth;
-}
-
 bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
     if (!renderObject->isProgress())
@@ -722,34 +704,18 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
     gtk_style_context_save(context);
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_PROGRESSBAR);
 
-    RenderProgress* renderProgress = toRenderProgress(renderObject);
 
     GtkBorder padding;
     gtk_style_context_get_padding(context, static_cast<GtkStateFlags>(0), &padding);
     IntRect progressRect(rect.x() + padding.left, rect.y() + padding.top,
                          rect.width() - (padding.left + padding.right),
                          rect.height() - (padding.top + padding.bottom));
-
-    if (renderProgress->isDeterminate()) {
-        progressRect.setWidth(progressRect.width() * renderProgress->position());
-        if (renderObject->style()->direction() == RTL)
-            progressRect.setX(rect.x() + rect.width() - progressRect.width() - padding.right);
-    } else {
-        double animationProgress = renderProgress->animationProgress();
-
-        progressRect.setWidth(max(2, progressRect.width() / progressActivityBlocks));
-        int movableWidth = rect.width() - progressRect.width();
-        if (animationProgress < 0.5)
-            progressRect.setX(progressRect.x() + (animationProgress * 2 * movableWidth));
-        else
-            progressRect.setX(progressRect.x() + ((1.0 - animationProgress) * 2 * movableWidth));
-    }
+    progressRect = RenderThemeGtk::calculateProgressRect(renderObject, progressRect);
 
     if (!progressRect.isEmpty())
         gtk_render_activity(context, paintInfo.context->platformContext(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
 
     gtk_style_context_restore(context);
-
     return false;
 }
 #endif

@@ -99,7 +99,6 @@ typedef struct _GtkThemeParts {
     GtkWidget* comboBoxEntryTextareaWidget;
     GtkWidget* comboBoxEntryButtonWidget;
     GtkWidget* comboBoxEntryArrowWidget;
-    GtkWidget* progresWidget;
     GtkWidget* scrolledWindowWidget;
 } GtkThemeParts;
 
@@ -136,10 +135,6 @@ typedef enum {
   MOZ_GTK_SCROLLED_WINDOW,
   /* Paints a GtkOptionMenu. */
   MOZ_GTK_DROPDOWN,
-  /* Paints a GtkProgressBar. */
-  MOZ_GTK_PROGRESSBAR,
-  /* Paints a progress chunk of a GtkProgressBar. */
-  MOZ_GTK_PROGRESS_CHUNK
 } GtkThemeWidgetType;
 
 /*** General library functions ***/
@@ -241,12 +236,6 @@ moz_gtk_get_scrollbar_metrics(MozGtkScrollbarMetrics* metrics);
  * be modified.
  */
 GtkWidget* moz_gtk_get_scrollbar_widget(void);
-
-/**
- * Retrieve an actual GTK progress bar widget for style analysis. It will not
- * be modified.
- */
-GtkWidget* moz_gtk_get_progress_widget(void);
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,35 @@
+2011-01-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] Move progress bar painting out of gtk2drawing.c
+        https://bugs.webkit.org/show_bug.cgi?id=52385
+
+        Move progress bar painting to RenderThemeGtk2 and share some animation
+        logic between the GTK+ 2.x and GTK+ 3.x port.
+
+        No new tests. This should not change functionality.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::animationRepeatIntervalForProgressBar): Moved from RenderThemeGtk3.
+        (WebCore::RenderThemeGtk::animationDurationForProgressBar): Ditto.
+        (WebCore::RenderThemeGtk::calculateProgressRect): Calculate the proper rectangle for the
+        progress indicator given the rect for the maximum size of the indicator.
+        * platform/gtk/RenderThemeGtk.h: Added calculateProgressRect declaration and
+        a new widget member for GTK+ 2.x
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::platformInit): Added initialization for the new widget member.
+        (WebCore::RenderThemeGtk::paintProgressBar): Paint the progress bar manually instead of
+        calling the old Mozilla code.
+        (WebCore::RenderThemeGtk::gtkProgressBar): Added.
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::paintProgressBar): Call calculateProgressRect now to get
+        the area of the progress indicator.
+        * platform/gtk/gtk2drawing.c: Remove unused code.
+        (moz_gtk_get_widget_border):
+        (moz_gtk_widget_paint):
+        * platform/gtk/gtkdrawing.h: Ditto.
+
 2011-01-19  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Not reviewed, reverts the following changes:

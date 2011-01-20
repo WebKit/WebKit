@@ -268,16 +268,6 @@ ensure_combo_box_widgets()
 }
 
 static gint
-ensure_progress_widget()
-{
-    if (!gParts->progresWidget) {
-        gParts->progresWidget = gtk_progress_bar_new();
-        setup_widget_prototype(gParts->progresWidget);
-    }
-    return MOZ_GTK_SUCCESS;
-}
-
-static gint
 ensure_scrolled_window_widget()
 {
     if (!gParts->scrolledWindowWidget) {
@@ -848,44 +838,6 @@ moz_gtk_combo_box_paint(GdkDrawable* drawable, GdkRectangle* rect,
     return MOZ_GTK_SUCCESS;
 }
 
-static gint
-moz_gtk_progressbar_paint(GdkDrawable* drawable, GdkRectangle* rect,
-                          GdkRectangle* cliprect, GtkTextDirection direction)
-{
-    GtkStyle* style;
-
-    ensure_progress_widget();
-    gtk_widget_set_direction(gParts->progresWidget, direction);
-
-    style = gtk_widget_get_style(gParts->progresWidget);
-
-    TSOffsetStyleGCs(style, rect->x, rect->y);
-    gtk_paint_box(style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_IN,
-                  cliprect, gParts->progresWidget, "trough", rect->x, rect->y,
-                  rect->width, rect->height);
-
-    return MOZ_GTK_SUCCESS;
-}
-
-static gint
-moz_gtk_progress_chunk_paint(GdkDrawable* drawable, GdkRectangle* rect,
-                             GdkRectangle* cliprect, GtkTextDirection direction)
-{
-    GtkStyle* style;
-
-    ensure_progress_widget();
-    gtk_widget_set_direction(gParts->progresWidget, direction);
-
-    style = gtk_widget_get_style(gParts->progresWidget);
-
-    TSOffsetStyleGCs(style, rect->x, rect->y);
-    gtk_paint_box(style, drawable, GTK_STATE_PRELIGHT, GTK_SHADOW_OUT,
-                  cliprect, gParts->progresWidget, "bar", rect->x, rect->y,
-                  rect->width, rect->height);
-
-    return MOZ_GTK_SUCCESS;
-}
-
 gint
 moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
                           gint* right, gint* bottom, GtkTextDirection direction,
@@ -971,17 +923,12 @@ moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
 
             return MOZ_GTK_SUCCESS;
         }
-    case MOZ_GTK_PROGRESSBAR:
-        ensure_progress_widget();
-        w = gParts->progresWidget;
-        break;
     /* These widgets have no borders, since they are not containers. */
     case MOZ_GTK_SCROLLBAR_BUTTON:
     case MOZ_GTK_SCROLLBAR_TRACK_HORIZONTAL:
     case MOZ_GTK_SCROLLBAR_TRACK_VERTICAL:
     case MOZ_GTK_SCROLLBAR_THUMB_HORIZONTAL:
     case MOZ_GTK_SCROLLBAR_THUMB_VERTICAL:
-    case MOZ_GTK_PROGRESS_CHUNK:
         *left = *top = *right = *bottom = 0;
         return MOZ_GTK_SUCCESS;
     default:
@@ -1057,13 +1004,6 @@ moz_gtk_widget_paint(GtkThemeWidgetType widget, GdkDrawable* drawable,
         return moz_gtk_combo_box_paint(drawable, rect, cliprect, state,
                                        (gboolean) flags, direction);
         break;
-    case MOZ_GTK_PROGRESSBAR:
-        return moz_gtk_progressbar_paint(drawable, rect, cliprect, direction);
-        break;
-    case MOZ_GTK_PROGRESS_CHUNK:
-        return moz_gtk_progress_chunk_paint(drawable, rect, cliprect,
-                                            direction);
-        break;
     default:
         g_warning("Unknown widget type: %d", widget);
     }
@@ -1100,14 +1040,6 @@ void moz_gtk_destroy_theme_parts_widgets(GtkThemeParts* parts)
         gtk_widget_destroy(parts->protoWindow);
         parts->protoWindow = NULL;
     }
-}
-
-GtkWidget* moz_gtk_get_progress_widget()
-{
-    if (!is_initialized)
-        return NULL;
-    ensure_progress_widget();
-    return gParts->progresWidget;
 }
 
 #endif // GTK_API_VERSION_2

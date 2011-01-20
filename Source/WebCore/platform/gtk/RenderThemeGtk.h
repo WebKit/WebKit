@@ -171,11 +171,16 @@ protected:
 
 private:
     void platformInit();
+    static void setTextInputBorders(RenderStyle*);
+    GRefPtr<GdkPixbuf> getStockIcon(GType, const char* iconName, gint direction, gint state, gint iconSize);
+
 #if ENABLE(VIDEO)
     bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
 #endif
-    static void setTextInputBorders(RenderStyle*);
-    GRefPtr<GdkPixbuf> getStockIcon(GType, const char* iconName, gint direction, gint state, gint iconSize);
+
+#if ENABLE(PROGRESS_TAG)
+    static IntRect calculateProgressRect(RenderObject*, const IntRect&);
+#endif
 
     mutable Color m_panelColor;
     mutable Color m_sliderColor;
@@ -197,6 +202,7 @@ private:
     GtkWidget* gtkContainer() const;
     GtkWidget* gtkRadioButton() const;
     GtkWidget* gtkCheckButton() const;
+    GtkWidget* gtkProgressBar() const;
 
     mutable GtkWidget* m_gtkWindow;
     mutable GtkWidget* m_gtkContainer;
@@ -207,6 +213,7 @@ private:
     mutable GtkWidget* m_gtkHScale;
     mutable GtkWidget* m_gtkRadioButton;
     mutable GtkWidget* m_gtkCheckButton;
+    mutable GtkWidget* m_gtkProgressBar;
 
     bool m_themePartsHaveRGBAColormap;
     friend class WidgetRenderingContext;
