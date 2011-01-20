@@ -56,6 +56,7 @@ public:
     // Additional DOM Operations
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds() const;
+    WebCore::IntRect renderRect(bool*) const;
     void setHTMLInputElementValueForUser(const String&);
     bool isHTMLInputElementAutofilled() const;
     void setHTMLInputElementAutofilled(bool);

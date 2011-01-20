@@ -40,6 +40,8 @@ WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef context, J
 /* Additional DOM Operations */
 
 WK_EXPORT WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef nodeHandle);
+WK_EXPORT WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandle, bool* isReplaced);
+
 
 /* HTMLInputElement Specific Operations */
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandle, WKStringRef value);

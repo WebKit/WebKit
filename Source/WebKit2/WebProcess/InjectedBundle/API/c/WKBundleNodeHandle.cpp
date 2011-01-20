@@ -49,6 +49,11 @@ WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef nodeHandleRef)
     return toAPI(toImpl(nodeHandleRef)->elementBounds());
 }
 
+WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandleRef, bool* isReplaced)
+{
+    return toAPI(toImpl(nodeHandleRef)->renderRect(isReplaced));
+}
+
 void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandleRef, WKStringRef valueRef)
 {
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(toWTFString(valueRef));

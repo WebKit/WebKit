@@ -1,3 +1,17 @@
+2011-01-20  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/8880689> need a way to obtain the rendered rectangle for box elements
+        https://bugs.webkit.org/show_bug.cgi?id=52823
+        
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleGetRenderRect): Added new method that will return a rendered rectangle for box elements
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h: Ditto.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp: Ditto.
+        (WebKit::InjectedBundleNodeHandle::renderRect): Ditto.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h: Ditto.
+
 2011-01-20  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Andreas Kling.

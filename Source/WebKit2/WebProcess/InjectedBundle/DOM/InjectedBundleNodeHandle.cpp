@@ -104,6 +104,11 @@ IntRect InjectedBundleNodeHandle::elementBounds() const
 
     return static_cast<Element*>(m_node.get())->boundsInWindowSpace();
 }
+    
+IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced) const
+{
+    return m_node.get()->renderRect(isReplaced);
+}
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)
 {
