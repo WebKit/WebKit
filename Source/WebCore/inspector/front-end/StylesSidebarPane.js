@@ -1727,7 +1727,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     editingCancelled: function(element, context)
     {
-        this.editingEnded(context);
         if ("originalPropertyText" in this)
             this.applyStyleText(this.originalPropertyText, true);
         else {
@@ -1736,6 +1735,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
             else
                 this.updateTitle();
         }
+
+        // This should happen last, as it clears the info necessary to restore the property value after [Page]Up/Down changes.
+        this.editingEnded(context);
     },
 
     editingCommitted: function(element, userInput, previousContent, context, moveDirection)

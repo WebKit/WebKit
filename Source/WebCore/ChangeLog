@@ -1,3 +1,13 @@
+2011-01-20  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] Canceling of CSS numeric values increment/decrement is broken
+        https://bugs.webkit.org/show_bug.cgi?id=52816
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2011-01-20  Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Andreas Kling.
