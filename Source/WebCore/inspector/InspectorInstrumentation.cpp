@@ -93,17 +93,17 @@ void InspectorInstrumentation::inspectedPageDestroyedImpl(InspectorController* i
 void InspectorInstrumentation::willInsertDOMNodeImpl(InspectorController* inspectorController, Node* node, Node* parent)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->browserDebuggerAgent())
         browserDebuggerAgent->willInsertDOMNode(node, parent);
 #endif
 }
 
 void InspectorInstrumentation::didInsertDOMNodeImpl(InspectorController* inspectorController, Node* node)
 {
-    if (InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get())
+    if (InspectorDOMAgent* domAgent = inspectorController->domAgent())
         domAgent->didInsertDOMNode(node);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->browserDebuggerAgent())
         browserDebuggerAgent->didInsertDOMNode(node);
 #endif
 }
@@ -111,7 +111,7 @@ void InspectorInstrumentation::didInsertDOMNodeImpl(InspectorController* inspect
 void InspectorInstrumentation::willRemoveDOMNodeImpl(InspectorController* inspectorController, Node* node)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->browserDebuggerAgent())
         browserDebuggerAgent->willRemoveDOMNode(node);
 #endif
 }
@@ -119,24 +119,24 @@ void InspectorInstrumentation::willRemoveDOMNodeImpl(InspectorController* inspec
 void InspectorInstrumentation::didRemoveDOMNodeImpl(InspectorController* inspectorController, Node* node)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->browserDebuggerAgent())
         browserDebuggerAgent->didRemoveDOMNode(node);
 #endif
-    if (InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get())
+    if (InspectorDOMAgent* domAgent = inspectorController->domAgent())
         domAgent->didRemoveDOMNode(node);
 }
 
 void InspectorInstrumentation::willModifyDOMAttrImpl(InspectorController* inspectorController, Element* element)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->browserDebuggerAgent())
         browserDebuggerAgent->willModifyDOMAttr(element);
 #endif
 }
 
 void InspectorInstrumentation::didModifyDOMAttrImpl(InspectorController* inspectorController, Element* element)
 {
-    if (InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get())
+    if (InspectorDOMAgent* domAgent = inspectorController->domAgent())
         domAgent->didModifyDOMAttr(element);
 }
 
@@ -152,14 +152,14 @@ bool InspectorInstrumentation::handleMousePressImpl(InspectorController* inspect
 
 void InspectorInstrumentation::characterDataModifiedImpl(InspectorController* inspectorController, CharacterData* characterData)
 {
-    if (InspectorDOMAgent* domAgent = inspectorController->m_domAgent.get())
+    if (InspectorDOMAgent* domAgent = inspectorController->domAgent())
         domAgent->characterDataModified(characterData);
 }
 
 void InspectorInstrumentation::willSendXMLHttpRequestImpl(InspectorController* inspectorController, const String& url)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->browserDebuggerAgent())
         browserDebuggerAgent->willSendXMLHttpRequest(url);
 #endif
 }
@@ -433,7 +433,7 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
     InspectorController* ic = cookie.first;
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
         resourceAgent->didReceiveResponse(identifier, loader, response);
-    ic->m_consoleAgent->didReceiveResponse(identifier, response);
+    ic->consoleAgent()->didReceiveResponse(identifier, response);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didReceiveResourceResponse();
 }
@@ -454,7 +454,7 @@ void InspectorInstrumentation::didFinishLoadingImpl(InspectorController* ic, uns
 
 void InspectorInstrumentation::didFailLoadingImpl(InspectorController* ic, unsigned long identifier, const ResourceError& error)
 {
-    ic->m_consoleAgent->didFailLoading(identifier, error);
+    ic->consoleAgent()->didFailLoading(identifier, error);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(ic))
         timelineAgent->didFinishLoadingResource(identifier, true, 0);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
@@ -463,7 +463,7 @@ void InspectorInstrumentation::didFailLoadingImpl(InspectorController* ic, unsig
 
 void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorController* ic, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
-    ic->m_consoleAgent->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
+    ic->consoleAgent()->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(ic))
         resourceAgent->setInitialContent(identifier, sourceString, "XHR");
 }
@@ -549,7 +549,7 @@ void InspectorInstrumentation::consoleMarkTimelineImpl(InspectorController* insp
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorInstrumentation::addStartProfilingMessageToConsoleImpl(InspectorController* inspectorController, const String& title, unsigned lineNumber, const String& sourceURL)
 {
-    if (InspectorProfilerAgent* profilerAgent = inspectorController->m_profilerAgent.get())
+    if (InspectorProfilerAgent* profilerAgent = inspectorController->profilerAgent())
         profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
 #endif
@@ -624,7 +624,7 @@ bool InspectorInstrumentation::hasFrontend(InspectorController* inspectorControl
 void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InspectorController* inspectorController, const String& categoryType, const String& eventName, bool synchronous)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->m_browserDebuggerAgent.get())
+    if (InspectorBrowserDebuggerAgent* browserDebuggerAgent = inspectorController->browserDebuggerAgent())
         browserDebuggerAgent->pauseOnNativeEventIfNeeded(categoryType, eventName, synchronous);
 #endif
 }
@@ -632,14 +632,14 @@ void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InspectorController* i
 void InspectorInstrumentation::cancelPauseOnNativeEvent(InspectorController* inspectorController)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get())
+    if (InspectorDebuggerAgent* debuggerAgent = inspectorController->debuggerAgent())
         debuggerAgent->cancelPauseOnNextStatement();
 #endif
 }
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(InspectorController* inspectorController)
 {
-    return inspectorController->m_timelineAgent.get();
+    return inspectorController->timelineAgent();
 }
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const InspectorInstrumentationCookie& cookie)
@@ -652,7 +652,7 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
 
 InspectorResourceAgent* InspectorInstrumentation::retrieveResourceAgent(InspectorController* ic)
 {
-    return ic->m_resourceAgent.get();
+    return ic->resourceAgent();
 }
 
 } // namespace WebCore

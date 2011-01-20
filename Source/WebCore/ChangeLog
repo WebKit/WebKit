@@ -1,3 +1,50 @@
+2011-01-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: cleanup InspectorController's friends list.
+        We have a plan to extract InspectorAgent from InspectorController.
+        InspectorAgent will be accessible only from InspectorController.
+        As result we can simply made some methods public and remove long
+        friends list.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52806
+
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::databaseForId):
+        (WebCore::InjectedScriptHost::selectDatabase):
+        (WebCore::InjectedScriptHost::selectDOMStorage):
+        (WebCore::InjectedScriptHost::inspectorDOMAgent):
+        (WebCore::InjectedScriptHost::frontend):
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorBrowserDebuggerAgent::willSendXMLHttpRequest):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::frontend):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didInsertDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::didRemoveDOMNodeImpl):
+        (WebCore::InspectorInstrumentation::willModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::didModifyDOMAttrImpl):
+        (WebCore::InspectorInstrumentation::characterDataModifiedImpl):
+        (WebCore::InspectorInstrumentation::willSendXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didFailLoadingImpl):
+        (WebCore::InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::addStartProfilingMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorInstrumentation::cancelPauseOnNativeEvent):
+        (WebCore::InspectorInstrumentation::retrieveTimelineAgent):
+        (WebCore::InspectorInstrumentation::retrieveResourceAgent):
+
 2011-01-19  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

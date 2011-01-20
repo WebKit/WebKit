@@ -144,6 +144,7 @@ public:
     void connectFrontend();
     void reuseFrontend();
     void disconnectFrontend();
+    InspectorFrontend* frontend() const { return m_frontend.get(); }
 
     InspectorController* inspectorAgent() { return this; }
     InspectorConsoleAgent* consoleAgent() const { return m_consoleAgent.get(); }
@@ -259,18 +260,19 @@ public:
     InspectorState* state() { return m_state.get(); }
     InspectorSettings* settings() { return m_settings.get(); }
 
-private:
-    friend class InspectorBackend;
-    friend class InspectorBackendDispatcher;
-    friend class InspectorBrowserDebuggerAgent;
-    friend class InspectorInstrumentation;
-    friend class InjectedScriptHost;
+    // InspectorAgent API
+    void getInspectorState(RefPtr<InspectorObject>* state);
+    void setMonitoringXHREnabled(bool enabled, bool* newState);
+    void populateScriptObjects();
+    // Following are used from InspectorBackend and internally.
+    void setSearchingForNode(bool enabled, bool* newState);
+    void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
+    // InspectorInstrumentation API
+    void ensureSettingsLoaded();
     void willSendRequest(ResourceRequest&);
 
-    void ensureSettingsLoaded();
-
-    void populateScriptObjects();
+private:
     void pushDataCollectedOffline();
     void restoreDebugger();
     enum ProfilerRestoreAction {
@@ -280,9 +282,6 @@ private:
     void restoreProfiler(ProfilerRestoreAction action);
     void unbindAllResources();
     void setSearchingForNode(bool enabled);
-
-    // Following are used from InspectorBackend and internally.
-    void setSearchingForNode(bool enabled, bool* newState);
 
     void releaseFrontendLifetimeAgents();
 
@@ -297,7 +296,6 @@ private:
 
     void focusNode();
     bool isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl);
-    void didEvaluateForTestInFrontend(long callId, const String& jsonResult);
 
     Page* m_inspectedPage;
     InspectorClient* m_client;
