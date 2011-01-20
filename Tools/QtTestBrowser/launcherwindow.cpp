@@ -259,16 +259,6 @@ void LauncherWindow::createChrome()
 
     toolsMenu->addSeparator();
 
-    QAction* toggleInterruptingJavaScripteEnabled = toolsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
-    toggleInterruptingJavaScripteEnabled->setCheckable(true);
-    toggleInterruptingJavaScripteEnabled->setChecked(false);
-
-    QAction* toggleJavascriptCanOpenWindows = toolsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
-    toggleJavascriptCanOpenWindows->setCheckable(true);
-    toggleJavascriptCanOpenWindows->setChecked(false);
-
-    toolsMenu->addSeparator();
-
     QAction* userAgentAction = toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
     userAgentAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
 
@@ -374,6 +364,17 @@ void LauncherWindow::createChrome()
     showFPS->setEnabled(isGraphicsBased());
     showFPS->connect(toggleGraphicsView, SIGNAL(toggled(bool)), SLOT(setEnabled(bool)));
     showFPS->setChecked(m_windowOptions.showFrameRate);
+
+    QMenu* settingsMenu = menuBar()->addMenu("&Settings");
+
+    QAction* toggleInterruptingJavaScripteEnabled = settingsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
+    toggleInterruptingJavaScripteEnabled->setCheckable(true);
+    toggleInterruptingJavaScripteEnabled->setChecked(false);
+
+    QAction* toggleJavascriptCanOpenWindows = settingsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
+    toggleJavascriptCanOpenWindows->setCheckable(true);
+    toggleJavascriptCanOpenWindows->setChecked(false);
+
 #endif
 }
 

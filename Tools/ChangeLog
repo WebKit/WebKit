@@ -1,3 +1,16 @@
+2011-01-20  Mansi Mithal  <mansi.mithal@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        QtTestBrowser should have a seperate menu for Settings
+        https://bugs.webkit.org/show_bug.cgi?id=52817
+        
+        Added a new menu item named "Settings"
+        and moved the "Enable interrupting js scripts" and "Enable js pop up windows" under the "Settings" menu 
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+
 2011-01-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.
