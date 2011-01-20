@@ -60,6 +60,7 @@ public:
 
 #include "OwnHandle.h"
 #include <v8.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

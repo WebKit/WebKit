@@ -1,3 +1,9 @@
+2011-01-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][V8] Unreviewed buildfix after r76248.
+
+        * bindings/v8/ScriptCachedFrameData.h: Add missing include.
+
 2011-01-20  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
