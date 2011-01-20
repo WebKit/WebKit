@@ -1,3 +1,11 @@
+2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed; Another Chromium rebaseline for r76236.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.checksum: Added.
+
 2011-01-20  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
