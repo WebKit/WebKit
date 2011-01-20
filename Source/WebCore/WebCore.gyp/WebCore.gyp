@@ -185,7 +185,6 @@
       '../svg/graphics',
       '../svg/graphics/filters',
       '../svg/properties',
-      '../thirdparty/glu',
       '../webaudio',
       '../websockets',
       '../workers',
@@ -1118,8 +1117,6 @@
 
         # Use LinkHashChromium.cpp instead
         ['exclude', 'platform/LinkHash\\.cpp$'],
-
-        ['include', 'thirdparty/glu/libtess/'],
       ],
       'conditions': [
         ['OS=="linux" or OS=="freebsd"', {

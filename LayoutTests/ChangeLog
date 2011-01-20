@@ -1,3 +1,17 @@
+2011-01-19  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, reverts the following changes:
+        http://trac.webkit.org/changeset/76164 (build fix)
+        http://trac.webkit.org/changeset/76159 (main change)
+
+        The change broke Chromium Linux-shlib build.
+
+        Original issue:
+        Accelerated canvas2D has bad clipping performance.
+        https://bugs.webkit.org/show_bug.cgi?id=52627
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-19  Levi Weintraub  <leviw@google.com>
 
         Reviewed by Darin Adler.

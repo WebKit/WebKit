@@ -42,7 +42,4 @@ typedef unsigned int GLenum;
 typedef float GLfloat;
 typedef void GLvoid;
 
-#undef MIN
-#undef MAX
-
 #endif  // GLUOS_H_

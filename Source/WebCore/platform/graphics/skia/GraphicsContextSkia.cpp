@@ -386,9 +386,6 @@ void GraphicsContext::canvasClip(const Path& path)
     if (paintingDisabled())
         return;
 
-    if (platformContext()->useGPU())
-        platformContext()->gpuCanvas()->clipPath(path);
-
     const SkPath& p = *path.platformPath();
     if (!isPathSkiaSafe(getCTM(), p))
         return;
@@ -413,9 +410,6 @@ void GraphicsContext::clipOut(const Path& p)
     if (paintingDisabled())
         return;
 
-    if (platformContext()->useGPU())
-        platformContext()->gpuCanvas()->clipOut(p);
-
     const SkPath& path = *p.platformPath();
     if (!isPathSkiaSafe(getCTM(), path))
         return;
@@ -427,9 +421,6 @@ void GraphicsContext::clipPath(const Path& pathToClip, WindRule clipRule)
 {
     if (paintingDisabled())
         return;
-
-    if (platformContext()->useGPU())
-        platformContext()->gpuCanvas()->clipPath(pathToClip);
 
     // FIXME: Be smarter about this.
     beginPath();
@@ -741,12 +732,6 @@ void GraphicsContext::fillPath(const Path& pathToFill)
     // FIXME: Be smarter about this.
     beginPath();
     addPath(pathToFill);
-
-    if (platformContext()->useGPU() && platformContext()->canAccelerate()) {
-        platformContext()->prepareForHardwareDraw();
-        platformContext()->gpuCanvas()->fillPath(pathToFill);
-        return;
-    }
 
     SkPath path = platformContext()->currentPathInLocalCoordinates();
     if (!isPathSkiaSafe(getCTM(), path))

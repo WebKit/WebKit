@@ -1,3 +1,56 @@
+2011-01-19  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, reverts the following changes:
+        http://trac.webkit.org/changeset/76164 (build fix)
+        http://trac.webkit.org/changeset/76159 (main change)
+
+        The change broke Chromium Linux-shlib build.
+
+        Original issue:
+        Accelerated canvas2D has bad clipping performance.
+        https://bugs.webkit.org/show_bug.cgi?id=52627
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::reset):
+        (WebCore::CanvasRenderingContext2D::platformLayer):
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::State::State):
+        (WebCore::GLES2Canvas::clearRect):
+        (WebCore::GLES2Canvas::fillRect):
+        (WebCore::GLES2Canvas::restore):
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::clear):
+        (WebCore::DrawingBuffer::createSecondaryBuffers):
+        (WebCore::DrawingBuffer::reset):
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::fillPath):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::canAccelerate):
+        (WebCore::PlatformContextSkia::uploadSoftwareToHardware):
+        * thirdparty/glu/README.webkit:
+        * thirdparty/glu/gluos.h:
+        * thirdparty/glu/libtess/geom.c:
+        * thirdparty/glu/libtess/priorityq.c:
+        * thirdparty/glu/libtess/render.c:
+        * thirdparty/glu/libtess/sweep.c:
+        (IsWindingInside):
+        (DoneEdgeDict):
+
 2011-01-19  Levi Weintraub  <leviw@google.com>
 
         Reviewed by Darin Adler.

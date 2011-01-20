@@ -253,7 +253,6 @@ static GLboolean IsWindingInside( GLUtesselator *tess, int n )
   /*LINTED*/
   assert( FALSE );
   /*NOTREACHED*/
-  return 0;
 }
 
 
@@ -1174,9 +1173,7 @@ static void InitEdgeDict( GLUtesselator *tess )
 static void DoneEdgeDict( GLUtesselator *tess )
 {
   ActiveRegion *reg;
-#ifndef NDEBUG
   int fixedEdges = 0;
-#endif
 
   /* __GL_DICTLISTKEY */ /* __GL_DICTLISTMIN */
   while( (reg = (ActiveRegion *)dictKey( dictMin( tess->dict ))) != NULL ) {
