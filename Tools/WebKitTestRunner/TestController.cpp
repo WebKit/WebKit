@@ -335,8 +335,11 @@ bool TestController::resetStateToConsistentValues()
 
 bool TestController::runTest(const char* test)
 {
-    if (!resetStateToConsistentValues())
+    if (!resetStateToConsistentValues()) {
+        fputs("#CRASHED - WebProcess\n", stderr);
+        fflush(stderr);
         return false;
+    }
 
     m_state = RunningTest;
     m_currentInvocation.set(new TestInvocation(test));
