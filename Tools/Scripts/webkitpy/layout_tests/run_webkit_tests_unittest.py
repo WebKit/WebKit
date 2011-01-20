@@ -98,7 +98,7 @@ def passing_run(extra_args=None, port_obj=None, record_results=False,
     return res == 0
 
 
-def logging_run(extra_args=None, port_obj=None, tests_included=False):
+def logging_run(extra_args=None, port_obj=None, tests_included=False, filesystem=None):
     options, parsed_args = parse_args(extra_args=extra_args,
                                       record_results=False,
                                       tests_included=tests_included,
@@ -106,7 +106,7 @@ def logging_run(extra_args=None, port_obj=None, tests_included=False):
     user = MockUser()
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
-                            user=user)
+                            user=user, filesystem=filesystem)
 
     res, buildbot_output, regular_output = run_and_capture(port_obj, options,
                                                            parsed_args)
@@ -127,7 +127,7 @@ def run_and_capture(port_obj, options, parsed_args):
     return (res, buildbot_output, regular_output)
 
 
-def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
+def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False, filesystem=None):
     extra_args = extra_args or []
     if not tests_included:
         # Not including http tests since they get run out of order (that
@@ -163,7 +163,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
         def create_driver(self, worker_number):
             return RecordingTestDriver(self, worker_number)
 
-    recording_port = RecordingTestPort(options=options, user=user)
+    recording_port = RecordingTestPort(options=options, user=user, filesystem=filesystem)
     run_and_capture(recording_port, options, parsed_args)
 
     if flatten_batches:
@@ -324,24 +324,22 @@ class MainTest(unittest.TestCase):
         self.assertEquals([], tests_run)
 
     def test_test_list(self):
-        filename = tempfile.mktemp()
-        tmpfile = file(filename, mode='w+')
-        tmpfile.write('passes/text.html')
-        tmpfile.close()
-        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True)
+        fs = port.unit_test_filesystem()
+        filename = '/tmp/foo.txt'
+        fs.write_text_file(filename, 'passes/text.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, filesystem=fs)
         self.assertEquals(['passes/text.html'], tests_run)
-        os.remove(filename)
+        fs.remove(filename)
         res, out, err, user = logging_run(['--test-list=%s' % filename],
-                                          tests_included=True)
+                                          tests_included=True, filesystem=fs)
         self.assertEqual(res, -1)
         self.assertFalse(err.empty())
 
     def test_test_list_with_prefix(self):
-        filename = tempfile.mktemp()
-        tmpfile = file(filename, mode='w+')
-        tmpfile.write('LayoutTests/passes/text.html')
-        tmpfile.close()
-        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True)
+        fs = port.unit_test_filesystem()
+        filename = '/tmp/foo.txt'
+        fs.write_text_file(filename, 'passes/text.html')
+        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, filesystem=fs)
         self.assertEquals(['passes/text.html'], tests_run)
 
     def test_unexpected_failures(self):

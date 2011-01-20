@@ -1,3 +1,16 @@
+2011-01-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        remove fs refs from test_runner, dump_render_tree_thread
+
+        https://bugs.webkit.org/show_bug.cgi?id=52753
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-01-19  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

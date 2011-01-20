@@ -35,13 +35,9 @@ objects to the TestRunner.  The TestRunner then aggregates the TestFailures to
 create a final report.
 """
 
-from __future__ import with_statement
-
-import codecs
 import errno
 import logging
 import math
-import os
 import Queue
 import random
 import shutil
@@ -67,8 +63,6 @@ _log = logging.getLogger("webkitpy.layout_tests.run_webkit_tests")
 
 # Builder base URL where we have the archived test results.
 BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
-
-LAYOUT_TESTS_DIRECTORY = "LayoutTests" + os.sep
 
 TestExpectationsFile = test_expectations.TestExpectationsFile
 
@@ -160,8 +154,6 @@ class TestRunner:
     """A class for managing running a series of tests on a series of layout
     test files."""
 
-    HTTP_SUBDIR = os.sep.join(['', 'http', ''])
-    WEBSOCKET_SUBDIR = os.sep.join(['', 'websocket', ''])
 
     # The per-test timeout in milliseconds, if no --time-out-ms option was
     # given to run_webkit_tests. This should correspond to the default timeout
@@ -177,9 +169,15 @@ class TestRunner:
           printer: a Printer object to record updates to.
         """
         self._port = port
+        self._fs = port._filesystem
         self._options = options
         self._printer = printer
         self._message_broker = None
+
+        self.HTTP_SUBDIR = self._fs.join('', 'http', '')
+        self.WEBSOCKET_SUBDIR = self._fs.join('', 'websocket', '')
+        self.LAYOUT_TESTS_DIRECTORY = "LayoutTests" + self._fs.sep
+
 
         # disable wss server. need to install pyOpenSSL on buildbots.
         # self._websocket_secure_server = websocket_server.PyWebSocket(
@@ -202,15 +200,15 @@ class TestRunner:
         paths = self._strip_test_dir_prefixes(args)
         paths += last_unexpected_results
         if self._options.test_list:
-            paths += self._strip_test_dir_prefixes(read_test_files(self._options.test_list))
+            paths += self._strip_test_dir_prefixes(read_test_files(self._fs, self._options.test_list))
         self._test_files = self._port.tests(paths)
 
     def _strip_test_dir_prefixes(self, paths):
         return [self._strip_test_dir_prefix(path) for path in paths if path]
 
     def _strip_test_dir_prefix(self, path):
-        if path.startswith(LAYOUT_TESTS_DIRECTORY):
-            return path[len(LAYOUT_TESTS_DIRECTORY):]
+        if path.startswith(self.LAYOUT_TESTS_DIRECTORY):
+            return path[len(self.LAYOUT_TESTS_DIRECTORY):]
         return path
 
     def lint(self):
@@ -342,10 +340,9 @@ class TestRunner:
                 self._printer.print_expected(extra_msg)
                 tests_run_msg += "\n" + extra_msg
                 files.extend(test_files[0:extra])
-            tests_run_filename = os.path.join(self._options.results_directory,
+            tests_run_filename = self._fs.join(self._options.results_directory,
                                               "tests_run.txt")
-            with codecs.open(tests_run_filename, "w", "utf-8") as file:
-                file.write(tests_run_msg + "\n")
+            self._fs.write_text_file(tests_run_filename, tests_run_msg)
 
             len_skip_chunk = int(len(files) * len(skipped) /
                                  float(len(self._test_files)))
@@ -403,10 +400,10 @@ class TestRunner:
     def _get_dir_for_test_file(self, test_file):
         """Returns the highest-level directory by which to shard the given
         test file."""
-        index = test_file.rfind(os.sep + LAYOUT_TESTS_DIRECTORY)
+        index = test_file.rfind(self._fs.sep + self.LAYOUT_TESTS_DIRECTORY)
 
-        test_file = test_file[index + len(LAYOUT_TESTS_DIRECTORY):]
-        test_file_parts = test_file.split(os.sep, 1)
+        test_file = test_file[index + len(self.LAYOUT_TESTS_DIRECTORY):]
+        test_file_parts = test_file.split(self._fs.sep, 1)
         directory = test_file_parts[0]
         test_file = test_file_parts[1]
 
@@ -416,10 +413,10 @@ class TestRunner:
         # what made them stable on linux/mac.
         return_value = directory
         while ((directory != 'http' or sys.platform in ('darwin', 'linux2'))
-                and test_file.find(os.sep) >= 0):
-            test_file_parts = test_file.split(os.sep, 1)
+                and test_file.find(self._fs.sep) >= 0):
+            test_file_parts = test_file.split(self._fs.sep, 1)
             directory = test_file_parts[0]
-            return_value = os.path.join(return_value, directory)
+            return_value = self._fs.join(return_value, directory)
             test_file = test_file_parts[1]
 
         return return_value
@@ -435,7 +432,7 @@ class TestRunner:
     def _test_requires_lock(self, test_file):
         """Return True if the test needs to be locked when
         running multiple copies of NRWTs."""
-        split_path = test_file.split(os.sep)
+        split_path = test_file.split(self._port._filesystem.sep)
         return 'http' in split_path or 'websocket' in split_path
 
     def _test_is_slow(self, test_file):
@@ -765,10 +762,9 @@ class TestRunner:
         layout_tests_dir = self._port.layout_tests_dir()
         possible_dirs = self._port.test_dirs()
         for dirname in possible_dirs:
-            if os.path.isdir(os.path.join(layout_tests_dir, dirname)):
-                shutil.rmtree(os.path.join(self._options.results_directory,
-                                           dirname),
-                              ignore_errors=True)
+            if self._fs.isdir(self._fs.join(layout_tests_dir, dirname)):
+                self._fs.rmtree(self._fs.join(self._options.results_directory,
+                                              dirname))
 
     def _get_failures(self, result_summary, include_crashes):
         """Filters a dict of results and returns only the failures.
@@ -811,17 +807,17 @@ class TestRunner:
         """
         results_directory = self._options.results_directory
         _log.debug("Writing JSON files in %s." % results_directory)
-        unexpected_json_path = os.path.join(results_directory, "unexpected_results.json")
-        with codecs.open(unexpected_json_path, "w", "utf-8") as file:
+        unexpected_json_path = self._fs.join(results_directory, "unexpected_results.json")
+        with self._fs.open_text_file_for_writing(unexpected_json_path) as file:
             simplejson.dump(unexpected_results, file, sort_keys=True, indent=2)
 
         # Write a json file of the test_expectations.txt file for the layout
         # tests dashboard.
-        expectations_path = os.path.join(results_directory, "expectations.json")
+        expectations_path = self._fs.join(results_directory, "expectations.json")
         expectations_json = \
             self._expectations.get_expectations_json_for_all_platforms()
-        with codecs.open(expectations_path, "w", "utf-8") as file:
-            file.write(u"ADD_EXPECTATIONS(%s);" % expectations_json)
+        self._fs.write_text_file(expectations_path,
+                                 u"ADD_EXPECTATIONS(%s);" % expectations_json)
 
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
@@ -1192,9 +1188,9 @@ class TestRunner:
         if not len(test_files):
             return False
 
-        out_filename = os.path.join(self._options.results_directory,
-                                    "results.html")
-        with codecs.open(out_filename, "w", "utf-8") as results_file:
+        out_filename = self._fs.join(self._options.results_directory,
+                                     "results.html")
+        with self._fs.open_text_file_for_writing(out_filename) as results_file:
             html = self._results_html(test_files, result_summary.failures, results_title)
             results_file.write(html)
 
@@ -1202,21 +1198,20 @@ class TestRunner:
 
     def _show_results_html_file(self):
         """Shows the results.html page."""
-        results_filename = os.path.join(self._options.results_directory,
-                                        "results.html")
+        results_filename = self._fs.join(self._options.results_directory,
+                                         "results.html")
         self._port.show_results_html_file(results_filename)
 
 
-def read_test_files(files):
+def read_test_files(fs, files):
     tests = []
     for file in files:
         try:
-            with codecs.open(file, 'r', 'utf-8') as file_contents:
-                # FIXME: This could be cleaner using a list comprehension.
-                for line in file_contents:
-                    line = test_expectations.strip_comments(line)
-                    if line:
-                        tests.append(line)
+            file_contents = fs.read_text_file(file).split('\n')
+            for line in file_contents:
+                line = test_expectations.strip_comments(line)
+                if line:
+                    tests.append(line)
         except IOError, e:
             if e.errno == errno.ENOENT:
                 _log.critical('')

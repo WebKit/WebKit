@@ -36,9 +36,6 @@ the output.  When there are no more URLs to process in the shared queue, the
 thread exits.
 """
 
-from __future__ import with_statement
-
-import codecs
 import copy
 import logging
 import os
@@ -387,7 +384,7 @@ class TestShellThread(WatchableThread):
         # This is created in run_webkit_tests.py:_PrepareListsAndPrintOutput.
         tests_run_filename = self._port._filesystem.join(self._options.results_directory,
                                           "tests_run.txt")
-        tests_run_file = codecs.open(tests_run_filename, "a", "utf-8")
+        tests_run_file = self._port._filesystem.open_text_file_for_writing(tests_run_filename, append=True)
 
         while True:
             if self._canceled:

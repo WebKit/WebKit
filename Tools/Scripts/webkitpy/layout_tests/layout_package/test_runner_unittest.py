@@ -32,6 +32,7 @@
 
 import unittest
 
+from webkitpy.common.system import filesystem_mock
 from webkitpy.thirdparty.mock import Mock
 
 import test_runner
@@ -45,6 +46,7 @@ class TestRunnerWrapper(test_runner.TestRunner):
 class TestRunnerTest(unittest.TestCase):
     def test_results_html(self):
         mock_port = Mock()
+        mock_port._filesystem = filesystem_mock.MockFileSystem()
         mock_port.relative_test_filename = lambda name: name
         mock_port.filename_to_uri = lambda name: name
 
@@ -66,7 +68,9 @@ class TestRunnerTest(unittest.TestCase):
     def test_shard_tests(self):
         # Test that _shard_tests in test_runner.TestRunner really
         # put the http tests first in the queue.
-        runner = TestRunnerWrapper(port=Mock(), options=Mock(),
+        port = Mock()
+        port._filesystem = filesystem_mock.MockFileSystem()
+        runner = TestRunnerWrapper(port=port, options=Mock(),
             printer=Mock())
 
         test_list = [
