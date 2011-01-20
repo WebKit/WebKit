@@ -1,3 +1,10 @@
+2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium rebaseline for r76236.
+
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+
 2011-01-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, remove GTK result for window-onerror2 as it's the same
