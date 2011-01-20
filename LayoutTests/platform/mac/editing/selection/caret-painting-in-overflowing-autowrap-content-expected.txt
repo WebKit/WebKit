@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x102
+        RenderPartObject {IFRAME} at (0,0) size 302x102 [border: (1px solid #000000)]
+          layer at (0,0) size 569x85
+            RenderView at (0,0) size 300x85
+          layer at (0,0) size 300x85
+            RenderBlock {HTML} at (0,0) size 300x85
+              RenderBody {BODY} at (8,8) size 284x69
+                RenderText {#text} at (0,0) size 561x18
+                  text run at (0,0) width 561: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXXX"
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,118) size 784x18
+        RenderText {#text} at (0,0) size 558x18
+          text run at (0,0) width 558: "The caret should be able to be positioned at the end of the editable content in the IFrame."

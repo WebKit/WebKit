@@ -1,0 +1,11 @@
+<html><head></head>
+<script>
+  function runTest() {
+    document.designMode = 'on';
+    var selection = window.getSelection();
+    selection.setPosition(document.body, 1);
+    window.scrollTo(1000, 0);
+  };
+</script>
+<body onLoad="runTest();">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaXXX</body>
+</html>
