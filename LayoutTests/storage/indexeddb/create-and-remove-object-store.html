@@ -76,12 +76,15 @@ function cleaned()
     }
     trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
     req = evalAndLog("trans.objectStore('tmp').get(0)");
-    req.onsuccess = unexpectedSuccessCallback;
-    req.onerror = tryOnceMore;
+    req.onsuccess = tryOnceMore;
+    req.onerror = unexpectedErrorCallback;
 }
 
 function tryOnceMore()
 {
+    verifySuccessEvent(event);
+    shouldBe("event.result", "undefined");
+
     testCreateAndRemove();
 
     done();

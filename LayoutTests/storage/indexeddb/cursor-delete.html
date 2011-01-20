@@ -115,13 +115,14 @@ function deleteObject()
     shouldBeNonNull(event.result);
     evalAndLog("event.result.delete()");
     result = evalAndLog("objectStore.get('myKey1')");
-    result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = verifyObjectDeleted;
+    result.onsuccess = verifyObjectDeleted;
+    result.onerror = unexpectedErrorCallback;
 }
 
 function verifyObjectDeleted()
 {
-    verifyErrorEvent(event);
+    verifySuccessEvent(event);
+    shouldBe("event.result", "undefined");
     done();
 }
 

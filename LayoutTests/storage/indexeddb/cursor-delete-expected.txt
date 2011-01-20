@@ -115,10 +115,10 @@ PASS event.target.readyState is event.target.DONE
 PASS [object IDBCursor] is non-null.
 event.result.delete()
 objectStore.get('myKey1')
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
 PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
@@ -126,6 +126,7 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
+PASS event.result is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -50,6 +50,18 @@ Adding 'tmp' again
 PASS code is webkitIDBDatabaseException.CONSTRAINT_ERR
 trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})
 trans.objectStore('tmp').get(0)
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.result is undefined
 Trying create
 PASS code is webkitIDBDatabaseException.NOT_ALLOWED_ERR
 Trying remove

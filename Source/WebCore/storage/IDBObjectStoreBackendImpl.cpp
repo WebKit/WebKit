@@ -110,7 +110,7 @@ void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<
 
     bindWhereClause(query, objectStore->id(), key.get());
     if (query.step() != SQLResultRow) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the object store."));
+        callbacks->onSuccess(SerializedScriptValue::undefinedValue());
         return;
     }
 

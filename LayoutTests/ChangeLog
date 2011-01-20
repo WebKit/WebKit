@@ -1,3 +1,20 @@
+2011-01-20  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: IDBObjectStore.get should fire onsuccess rather than onerror
+        https://bugs.webkit.org/show_bug.cgi?id=52725
+
+        Update layout tests to expect the onsuccess handler to be fired
+        when looking up non-existing objects.
+
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/create-and-remove-object-store.html:
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-delete.html:
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/objectstore-removeobjectstore.html:
+
 2010-12-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

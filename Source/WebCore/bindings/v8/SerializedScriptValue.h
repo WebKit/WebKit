@@ -52,8 +52,9 @@ public:
     static PassRefPtr<SerializedScriptValue> createFromWire(String data);
     static PassRefPtr<SerializedScriptValue> create(String data);
     static PassRefPtr<SerializedScriptValue> create();
-    
-    static SerializedScriptValue* nullValue();    
+
+    static SerializedScriptValue* nullValue();
+    static SerializedScriptValue* undefinedValue();
 
     PassRefPtr<SerializedScriptValue> release();
 

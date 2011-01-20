@@ -1129,10 +1129,16 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create()
     return adoptRef(new SerializedScriptValue());
 }
 
-SerializedScriptValue* SerializedScriptValue::nullValue() 
+SerializedScriptValue* SerializedScriptValue::nullValue()
 {
     DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, nullValue, (SerializedScriptValue::create()));
     return nullValue.get();
+}
+
+SerializedScriptValue* SerializedScriptValue::undefinedValue()
+{
+    DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, undefinedValue, (SerializedScriptValue::create(v8::Undefined())));
+    return undefinedValue.get();
 }
 
 PassRefPtr<SerializedScriptValue> SerializedScriptValue::release()

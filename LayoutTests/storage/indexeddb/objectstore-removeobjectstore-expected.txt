@@ -110,10 +110,10 @@ PASS 'onerror' in result is true
 PASS 'readyState' in result is true
 An event should fire shortly...
 
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
 PASS 'source' in event is true
 PASS event.source != null is true
 PASS 'onsuccess' in event.target is true
@@ -121,7 +121,7 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-PASS event.code is webkitIDBDatabaseException.NOT_FOUND_ERR
+PASS event.result is undefined
 PASS event.source.indexNames.contains('indexName') is false
 PASS successfullyParsed is true
 
