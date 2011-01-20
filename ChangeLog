@@ -1,3 +1,14 @@
+2011-01-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Andreas Kling.
+
+        [GTK] Fix typo in the webkit2 section of the configure.ac file
+        https://bugs.webkit.org/show_bug.cgi?id=52801
+
+        Fixed typo in the GTK WebKit2 compilation.
+
+        * configure.ac:
+
 2011-01-19  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Andreas Kling.
