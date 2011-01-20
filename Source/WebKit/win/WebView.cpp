@@ -6522,7 +6522,7 @@ void WebView::syncCompositingState()
     if (m_backingLayer)
         m_backingLayer->syncCompositingStateForThisLayerOnly();
 
-    view->syncCompositingStateRecursive();
+    view->syncCompositingStateIncludingSubframes();
 }
 
 #endif

@@ -562,10 +562,19 @@ void FrameView::updateCompositingLayers()
 #endif
 }
 
-void FrameView::syncCompositingStateForThisFrame()
+bool FrameView::syncCompositingStateForThisFrame()
 {
-    if (RenderView* view = m_frame->contentRenderer())
-        view->compositor()->flushPendingLayerChanges();
+    ASSERT(m_frame->view() == this);
+    RenderView* view = m_frame->contentRenderer();
+    if (!view)
+        return true; // We don't want to keep trying to update layers if we have no renderer.
+
+    // If we sync compositing layers when a layout is pending, we may cause painting of compositing
+    // layer content to occur before layout has happened, which will cause paintContents() to bail.
+    if (needsLayout())
+        return false;
+
+    view->compositor()->flushPendingLayerChanges();
 
 #if ENABLE(FULLSCREEN_API)
     // The fullScreenRenderer's graphicsLayer  has been re-parented, and the above recursive syncCompositingState
@@ -577,7 +586,8 @@ void FrameView::syncCompositingStateForThisFrame()
         if (GraphicsLayer* fullScreenLayer = backing->graphicsLayer())
             fullScreenLayer->syncCompositingState();
     }
-#endif    
+#endif
+    return true;
 }
 
 void FrameView::setNeedsOneShotDrawingSynchronization()
@@ -656,32 +666,16 @@ bool FrameView::isEnclosedInCompositingLayer() const
     return false;
 }
     
-bool FrameView::syncCompositingStateRecursive()
+bool FrameView::syncCompositingStateIncludingSubframes()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    ASSERT(m_frame->view() == this);
-    RenderView* contentRenderer = m_frame->contentRenderer();
-    if (!contentRenderer)
-        return true;    // We don't want to keep trying to update layers if we have no renderer.
-
-    // If we sync compositing layers when a layout is pending, we may cause painting of compositing
-    // layer content to occur before layout has happened, which will cause paintContents() to bail.
-    if (needsLayout())
-        return false;
+    bool allFramesSynced = syncCompositingStateForThisFrame();
     
-    syncCompositingStateForThisFrame();
-    
-    bool allSubframesSynced = true;
-    const HashSet<RefPtr<Widget> >* viewChildren = children();
-    HashSet<RefPtr<Widget> >::const_iterator end = viewChildren->end();
-    for (HashSet<RefPtr<Widget> >::const_iterator current = viewChildren->begin(); current != end; ++current) {
-        Widget* widget = (*current).get();
-        if (widget->isFrameView()) {
-            bool synced = static_cast<FrameView*>(widget)->syncCompositingStateRecursive();
-            allSubframesSynced &= synced;
-        }
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->traverseNext(m_frame.get())) {
+        bool synced = child->view()->syncCompositingStateForThisFrame();
+        allFramesSynced &= synced;
     }
-    return allSubframesSynced;
+    return allFramesSynced;
 #else // USE(ACCELERATED_COMPOSITING)
     return true;
 #endif

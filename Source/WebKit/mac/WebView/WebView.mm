@@ -5956,7 +5956,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 {
     Frame* frame = [self _mainCoreFrame];
     if (frame && frame->view())
-        return frame->view()->syncCompositingStateRecursive();
+        return frame->view()->syncCompositingStateIncludingSubframes();
 
     return YES;
 }

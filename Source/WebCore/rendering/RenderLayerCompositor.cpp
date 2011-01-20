@@ -102,6 +102,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_compositingDependsOnGeometry(false)
     , m_compositing(false)
     , m_compositingLayersNeedRebuild(false)
+    , m_flushingLayers(false)
     , m_rootLayerAttachment(RootLayerUnattached)
 #if PROFILE_LAYER_REBUILD
     , m_rootLayerUpdateCount(0)
@@ -182,12 +183,32 @@ void RenderLayerCompositor::scheduleLayerFlush()
 
 void RenderLayerCompositor::flushPendingLayerChanges()
 {
+    ASSERT(!m_flushingLayers);
+    m_flushingLayers = true;
+
     // FIXME: FrameView::syncCompositingStateRecursive() calls this for each
     // frame, so when compositing layers are connected between frames, we'll
     // end up syncing subframe's layers multiple times.
     // https://bugs.webkit.org/show_bug.cgi?id=52489
     if (GraphicsLayer* rootLayer = rootPlatformLayer())
         rootLayer->syncCompositingState();
+
+    ASSERT(m_flushingLayers);
+    m_flushingLayers = false;
+}
+
+RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers() const
+{
+    if (!m_renderView->frameView())
+        return 0;
+
+    for (Frame* frame = m_renderView->frameView()->frame(); frame; frame = frame->tree()->parent()) {
+        RenderLayerCompositor* compositor = frame->contentRenderer() ? frame->contentRenderer()->compositor() : 0;
+        if (compositor->isFlushingLayers())
+            return compositor;
+    }
+    
+    return 0;
 }
 
 void RenderLayerCompositor::scheduleCompositingLayerUpdate()

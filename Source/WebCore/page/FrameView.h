@@ -106,7 +106,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     void updateCompositingLayers();
-    void syncCompositingStateForThisFrame();
+    bool syncCompositingStateForThisFrame();
 
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
     // content rendered via the normal painting path.
@@ -121,7 +121,7 @@ public:
 
     // Only used with accelerated compositing, but outside the #ifdef to make linkage easier.
     // Returns true if the sync was completed.
-    bool syncCompositingStateRecursive();
+    bool syncCompositingStateIncludingSubframes();
 
     // Returns true when a paint with the PaintBehaviorFlattenCompositingLayers flag set gives
     // a faithful representation of the content.

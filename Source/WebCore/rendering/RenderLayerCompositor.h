@@ -88,6 +88,11 @@ public:
     // at specific times.
     void scheduleLayerFlush();
     void flushPendingLayerChanges();
+    bool isFlushingLayers() const { return m_flushingLayers; }
+    
+    // flushPendingLayerChanges() flushes the entire GraphicsLayer tree, which can cross frame boundaries.
+    // This call returns the rootmost compositor that is being flushed (including self).
+    RenderLayerCompositor* enclosingCompositorFlushingLayers() const;
     
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(CompositingUpdateType = CompositingUpdateAfterLayoutOrStyleChange, RenderLayer* updateRoot = 0);
@@ -266,6 +271,7 @@ private:
 
     bool m_compositing;
     bool m_compositingLayersNeedRebuild;
+    bool m_flushingLayers;
 
     RootLayerAttachment m_rootLayerAttachment;
 

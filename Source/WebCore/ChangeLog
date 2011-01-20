@@ -1,3 +1,37 @@
+2011-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        GraphicsLayers in subframes can get sync'd multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=52489
+
+        Some cleanup that will work towards fixing this bug.
+        
+        Tested by existing iframe compositing tests.
+
+        * WebCore.exp.in: syncCompositingStateRecursive()
+        was renamed to syncCompositingStateIncludingSubframes().
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::syncCompositingStateForThisFrame): Some
+        code cleanup: do all the word we need to do for this frame,
+        including the needsLayout() check.
+        (WebCore::FrameView::syncCompositingStateIncludingSubframes):
+        This is no longer recursive; instead, it iterates over descendant
+        frames via the frame tree, calling syncCompositingStateForThisFrame()
+        on each Frame's view.
+
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::isFlushingLayers): Getter for the flag.
+        * rendering/RenderLayerCompositor.cpp: 
+        (WebCore::RenderLayerCompositor::RenderLayerCompositor):
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): Maintain
+        a flag to say if we're flushing, which allows us to assert on re-entrant flushes.
+        (WebCore::RenderLayerCompositor::enclosingCompositorFlushingLayers):
+        Add the ability to get the rootmost compositor that is in the middle
+        of a flush.
+
 2011-01-19  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

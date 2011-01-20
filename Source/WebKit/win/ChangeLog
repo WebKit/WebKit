@@ -1,3 +1,14 @@
+2011-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        GraphicsLayers in subframes can get sync'd multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=52489
+
+        * WebView.cpp:
+        (WebView::syncCompositingState): syncCompositingStateRecursive()
+        was renamed to syncCompositingStateIncludingSubframes().
+
 2011-01-17  Adam Roben  <aroben@apple.com>
 
         Update for WKCACFLayerRenderer changes

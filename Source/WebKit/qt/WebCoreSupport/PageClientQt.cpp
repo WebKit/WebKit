@@ -170,7 +170,7 @@ void PageClientQWidget::markForSync(bool scheduleSync)
 
 void PageClientQWidget::syncLayers(Timer<PageClientQWidget>*)
 {
-    QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateRecursive();
+    QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
 }
 #endif
 
@@ -321,7 +321,7 @@ void PageClientQGraphicsWidget::createOrDeleteOverlay()
 void PageClientQGraphicsWidget::syncLayers()
 {
     if (shouldSync) {
-        QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateRecursive();
+        QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
         shouldSync = false;
     }
 }
@@ -342,7 +342,7 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsObject* layer)
     if (rootGraphicsLayer) {
         rootGraphicsLayer.data()->setParentItem(0);
         view->scene()->removeItem(rootGraphicsLayer.data());
-        QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateRecursive();
+        QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateIncludingSubframes();
     }
 
     rootGraphicsLayer = layer;
