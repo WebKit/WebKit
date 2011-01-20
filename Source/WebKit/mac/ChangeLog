@@ -1,3 +1,33 @@
+2011-01-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Would like script debugging protocol method to differentiate between caught and uncaught exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=52104
+        rdar://problem/8704226
+
+        * WebView/WebDelegateImplementationCaching.h:
+        Fix type of second integer in CallScriptDebugDelegate function overload
+        to be int to match the actual Objective-C method. Added a new overload
+        that includes a BOOL in the right place. Added a boolean named
+        exceptionWasRaisedExpectsHasHandlerFlag.
+
+        * WebView/WebDelegateImplementationCaching.mm:
+        (CallDelegate): Added overloads as above.
+        (CallScriptDebugDelegate): Ditto.
+
+        * WebView/WebScriptDebugDelegate.h: Added new method with the additional
+        boolean argument. Marked the old method informally deprecated.
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::exception): Added code to call with or without the
+        boolean depending on exceptionWasRaisedExpectsHasHandlerFlag.
+
+        * WebView/WebView.mm:
+        (-[WebView _cacheScriptDebugDelegateImplementations]): Set up the
+        exceptionWasRaisedExpectsHasHandlerFlag. Also fixed old code that was not
+        guaranteed to set didParseSourceExpectsBaseLineNumber to NO.
+
 2011-01-19  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Mihai Parparita.
