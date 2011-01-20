@@ -163,6 +163,7 @@ SET(JavaScriptCore_SOURCES
     runtime/StringConstructor.cpp
     runtime/StringObject.cpp
     runtime/StringPrototype.cpp
+    runtime/StringRecursionChecker.cpp
     runtime/Structure.cpp
     runtime/StructureChain.cpp
     runtime/TimeoutChecker.cpp

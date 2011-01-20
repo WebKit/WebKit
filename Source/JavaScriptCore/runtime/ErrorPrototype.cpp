@@ -26,6 +26,7 @@
 #include "JSStringBuilder.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"
+#include "StringRecursionChecker.h"
 #include "UString.h"
 
 namespace JSC {
@@ -47,6 +48,11 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, No
 EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 {
     JSObject* thisObj = exec->hostThisValue().toThisObject(exec);
+
+    StringRecursionChecker checker(exec, thisObj);
+    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
+        return earlyReturnValue;
+
     JSValue name = thisObj->get(exec, exec->propertyNames().name);
     JSValue message = thisObj->get(exec, exec->propertyNames().message);
 

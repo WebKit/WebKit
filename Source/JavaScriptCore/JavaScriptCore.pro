@@ -205,6 +205,7 @@ SOURCES += \
     runtime/StringConstructor.cpp \
     runtime/StringObject.cpp \
     runtime/StringPrototype.cpp \
+    runtime/StringRecursionChecker.cpp \
     runtime/StructureChain.cpp \
     runtime/Structure.cpp \
     runtime/TimeoutChecker.cpp \

@@ -1,3 +1,37 @@
+2011-01-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Stack overflow when converting an Error object to string
+        https://bugs.webkit.org/show_bug.cgi?id=46410
+
+        * Android.mk: Added StringRecursionChecker.cpp and
+        StringRecursionChecker.h.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * JavaScriptCore.gypi: Ditto.
+        * JavaScriptCore.pro: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString): Use StringRecursionChecker instead
+        of the older hand-written code to do the same thing.
+        (JSC::arrayProtoFuncToLocaleString): Ditto.
+        (JSC::arrayProtoFuncJoin): Ditto.
+
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString): Use StringRecursionChecker.
+
+        * runtime/JSGlobalData.h: Renamed arrayVisitedElements to
+        stringRecursionCheckVisitedObjects.
+
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString): Use StringRecursionChecker.
+
+        * runtime/StringRecursionChecker.cpp: Added.
+        * runtime/StringRecursionChecker.h: Added.
+
 2011-01-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

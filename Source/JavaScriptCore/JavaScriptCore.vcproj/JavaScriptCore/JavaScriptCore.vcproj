@@ -1246,6 +1246,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\StringRecursionChecker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\StringRecursionChecker.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\Structure.cpp"
 				>
 			</File>

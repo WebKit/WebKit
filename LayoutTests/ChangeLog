@@ -1,3 +1,14 @@
+2011-01-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Stack overflow when converting an Error object to string
+        https://bugs.webkit.org/show_bug.cgi?id=46410
+
+        * fast/js/script-tests/toString-recursion.js: Added.
+        * fast/js/toString-recursion-expected.txt: Added.
+        * fast/js/toString-recursion.html: Added.
+
 2011-01-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

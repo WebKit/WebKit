@@ -34,6 +34,7 @@
 #include "RegExpObject.h"
 #include "RegExp.h"
 #include "RegExpCache.h"
+#include "StringRecursionChecker.h"
 #include "UStringConcatenate.h"
 
 namespace JSC {
@@ -111,15 +112,21 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
         return throwVMTypeError(exec);
     }
 
+    RegExpObject* thisObject = asRegExpObject(thisValue);
+
+    StringRecursionChecker checker(exec, thisObject);
+    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
+        return earlyReturnValue;
+
     char postfix[5] = { '/', 0, 0, 0, 0 };
     int index = 1;
-    if (asRegExpObject(thisValue)->get(exec, exec->propertyNames().global).toBoolean(exec))
+    if (thisObject->get(exec, exec->propertyNames().global).toBoolean(exec))
         postfix[index++] = 'g';
-    if (asRegExpObject(thisValue)->get(exec, exec->propertyNames().ignoreCase).toBoolean(exec))
+    if (thisObject->get(exec, exec->propertyNames().ignoreCase).toBoolean(exec))
         postfix[index++] = 'i';
-    if (asRegExpObject(thisValue)->get(exec, exec->propertyNames().multiline).toBoolean(exec))
+    if (thisObject->get(exec, exec->propertyNames().multiline).toBoolean(exec))
         postfix[index] = 'm';
-    UString source = asRegExpObject(thisValue)->get(exec, exec->propertyNames().source).toString(exec);
+    UString source = thisObject->get(exec, exec->propertyNames().source).toString(exec);
     // If source is empty, use "/(?:)/" to avoid colliding with comment syntax
     return JSValue::encode(jsMakeNontrivialString(exec, "/", source.length() ? source : UString("(?:)"), postfix));
 }

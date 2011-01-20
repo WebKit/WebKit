@@ -214,7 +214,7 @@ namespace JSC {
         JSGlobalObject* head;
         JSGlobalObject* dynamicGlobalObject;
 
-        HashSet<JSObject*> arrayVisitedElements;
+        HashSet<JSObject*> stringRecursionCheckVisitedObjects;
 
         Stringifier* firstStringifierToMark;
 

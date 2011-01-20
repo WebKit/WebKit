@@ -337,6 +337,8 @@
             'runtime/StringObjectThatMasqueradesAsUndefined.h',
             'runtime/StringPrototype.cpp',
             'runtime/StringPrototype.h',
+            'runtime/StringRecursionChecker.cpp',
+            'runtime/StringRecursionChecker.h',
             'runtime/Structure.cpp',
             'runtime/Structure.h',
             'runtime/StructureChain.cpp',

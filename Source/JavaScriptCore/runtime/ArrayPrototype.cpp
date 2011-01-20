@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -32,6 +32,7 @@
 #include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
+#include "StringRecursionChecker.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
@@ -168,15 +169,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         return throwVMTypeError(exec);
     JSArray* thisObj = asArray(thisValue);
     
-    HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
-    if (arrayVisitedElements.size() >= MaxSmallThreadReentryDepth) {
-        if (arrayVisitedElements.size() >= exec->globalData().maxReentryDepth)
-            return throwVMError(exec, createStackOverflowError(exec));
-    }
-
-    bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
-    if (alreadyVisited)
-        return JSValue::encode(jsEmptyString(exec)); // return an empty string, avoiding infinite recursion.
+    StringRecursionChecker checker(exec, thisObj);
+    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
+        return earlyReturnValue;
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     unsigned totalSize = length ? length - 1 : 0;
@@ -209,7 +204,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
         if (exec->hadException())
             break;
     }
-    arrayVisitedElements.remove(thisObj);
     if (!totalSize)
         return JSValue::encode(jsEmptyString(exec));
     Vector<UChar> buffer;
@@ -234,15 +228,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         return throwVMTypeError(exec);
     JSObject* thisObj = asArray(thisValue);
 
-    HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
-    if (arrayVisitedElements.size() >= MaxSmallThreadReentryDepth) {
-        if (arrayVisitedElements.size() >= exec->globalData().maxReentryDepth)
-            return throwVMError(exec, createStackOverflowError(exec));
-    }
-
-    bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
-    if (alreadyVisited)
-        return JSValue::encode(jsEmptyString(exec)); // return an empty string, avoding infinite recursion.
+    StringRecursionChecker checker(exec, thisObj);
+    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
+        return earlyReturnValue;
 
     JSStringBuilder strBuffer;
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
@@ -264,7 +252,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
             strBuffer.append(str);
         }
     }
-    arrayVisitedElements.remove(thisObj);
+
     return JSValue::encode(strBuffer.build(exec));
 }
 
@@ -272,15 +260,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 {
     JSObject* thisObj = exec->hostThisValue().toThisObject(exec);
 
-    HashSet<JSObject*>& arrayVisitedElements = exec->globalData().arrayVisitedElements;
-    if (arrayVisitedElements.size() >= MaxSmallThreadReentryDepth) {
-        if (arrayVisitedElements.size() >= exec->globalData().maxReentryDepth)
-            return throwVMError(exec, createStackOverflowError(exec));
-    }
-
-    bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
-    if (alreadyVisited)
-        return JSValue::encode(jsEmptyString(exec)); // return an empty string, avoding infinite recursion.
+    StringRecursionChecker checker(exec, thisObj);
+    if (EncodedJSValue earlyReturnValue = checker.earlyReturnValue())
+        return earlyReturnValue;
 
     JSStringBuilder strBuffer;
 
@@ -335,7 +317,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
         if (!element.isUndefinedOrNull())
             strBuffer.append(element.toString(exec));
     }
-    arrayVisitedElements.remove(thisObj);
+
     return JSValue::encode(strBuffer.build(exec));
 }
 

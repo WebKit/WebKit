@@ -404,6 +404,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/StringObjectThatMasqueradesAsUndefined.h \
 	Source/JavaScriptCore/runtime/StringPrototype.cpp \
 	Source/JavaScriptCore/runtime/StringPrototype.h \
+	Source/JavaScriptCore/runtime/StringRecursionChecker.cpp \
+	Source/JavaScriptCore/runtime/StringRecursionChecker.h \
 	Source/JavaScriptCore/runtime/StructureChain.cpp \
 	Source/JavaScriptCore/runtime/StructureChain.h \
 	Source/JavaScriptCore/runtime/Structure.cpp \
