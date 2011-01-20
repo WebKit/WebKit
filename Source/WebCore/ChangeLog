@@ -1,3 +1,15 @@
+2011-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r76187.
+        http://trac.webkit.org/changeset/76187
+        https://bugs.webkit.org/show_bug.cgi?id=52778
+
+        Broke caret-showing tests on SnowLeopard and Chromium
+        (Requested by dimich on #webkit).
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+
 2011-01-19  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Kent Tamura.

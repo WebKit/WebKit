@@ -1,3 +1,18 @@
+2011-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r76187.
+        http://trac.webkit.org/changeset/76187
+        https://bugs.webkit.org/show_bug.cgi?id=52778
+
+        Broke caret-showing tests on SnowLeopard and Chromium
+        (Requested by dimich on #webkit).
+
+        * editing/selection/caret-painting-in-overflowing-autowrap-content.html: Removed.
+        * editing/selection/resources/iframe-positioning-caret-at-end.html: Removed.
+        * platform/mac/editing/selection/caret-painting-in-overflowing-autowrap-content-expected.checksum: Removed.
+        * platform/mac/editing/selection/caret-painting-in-overflowing-autowrap-content-expected.png: Removed.
+        * platform/mac/editing/selection/caret-painting-in-overflowing-autowrap-content-expected.txt: Removed.
+
 2011-01-19  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Kent Tamura.

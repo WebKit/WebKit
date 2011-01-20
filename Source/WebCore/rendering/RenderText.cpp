@@ -510,11 +510,11 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     int leftEdge;
     int rightEdge;
     if (style()->autoWrap()) {
-        leftEdge = cb->logicalLeftLayoutOverflow();
-        rightEdge = cb->logicalRightLayoutOverflow();
+        leftEdge = cb->logicalLeft();
+        rightEdge = cb->logicalRight();
     } else {
-        leftEdge = min(cb->logicalLeftLayoutOverflow(), rootLeft);
-        rightEdge = max(cb->logicalRightLayoutOverflow(), rootRight);
+        leftEdge = min(cb->logicalLeft(), rootLeft);
+        rightEdge = max(cb->logicalRight(), rootRight);
     }
 
     bool rightAligned = false;
