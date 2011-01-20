@@ -157,6 +157,9 @@ public:
 #if ENABLE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const IntSize&) { }
 #endif
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    virtual void scheduleAnimation() { }
+#endif
 
     virtual IntPoint screenToWindow(const IntPoint& p) const { return p; }
     virtual IntRect windowToScreen(const IntRect& r) const { return r; }

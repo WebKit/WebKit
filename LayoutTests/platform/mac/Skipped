@@ -280,3 +280,7 @@ animations/stop-animation-on-suspend.html
 
 # DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html
+
+# Request ENABLE(REQUEST_ANIMATION_FRAME) support
+fast/animation
+

@@ -5582,6 +5582,9 @@ fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 http/tests/local/link-stylesheet-load-order.html
 http/tests/local/link-stylesheet-load-order-preload.html
 
+# Request ENABLE(REQUEST_ANIMATION_FRAME) support
+fast/animation
+
 # https://bugs.webkit.org/show_bug.cgi?id=51380
 http/tests/inspector/console-websocket-error.html
 

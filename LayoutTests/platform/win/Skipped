@@ -1114,3 +1114,7 @@ editing/selection/caret-mode-paragraph-keys-navigation.html
 
 # DRT does not obey addURLToRedirect
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
+
+# Request ENABLE(REQUEST_ANIMATION_FRAME) support
+fast/animation
+

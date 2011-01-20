@@ -527,6 +527,13 @@ void ChromeClientImpl::invalidateContentsForSlowScroll(const IntRect& updateRect
     invalidateContentsAndWindow(updateRect, immediate);
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+void ChromeClientImpl::scheduleAnimation()
+{
+    m_webView->client()->scheduleAnimation();
+}
+#endif
+
 void ChromeClientImpl::scroll(
     const IntSize& scrollDelta, const IntRect& scrollRect,
     const IntRect& clipRect)
