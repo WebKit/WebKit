@@ -72,7 +72,7 @@ QImage* ShadowBuffer::scratchImage(const QSize& size)
     // keep too many allocated pixels for too long.
     if (!image.isNull() && (image.width() > width) && (image.height() > height))
         if (((2 * width) > image.width()) && ((2 * height) > image.height())) {
-            image.fill(Qt::transparent);
+            image.fill(0);
             return &image;
         }
 
@@ -82,7 +82,7 @@ QImage* ShadowBuffer::scratchImage(const QSize& size)
     height = (1 + (height >> 5)) << 5;
 
     image = QImage(width, height, QImage::Format_ARGB32_Premultiplied);
-    image.fill(Qt::transparent);
+    image.fill(0);
     return &image;
 }
 

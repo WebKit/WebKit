@@ -1,3 +1,16 @@
+2011-01-20  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Fill shadow scratch buffer with proper transparent pixels
+
+        QImage::fill() has no Qt::GlobalColor overload in Qt 4.7 (coming in 4.8)
+        so doing QImage::fill(Qt::transparent) will actually fill all pixels with
+        the RGBA value 0x00000013.
+
+        * platform/graphics/qt/ContextShadowQt.cpp:
+        (WebCore::ShadowBuffer::scratchImage):
+
 2011-01-19  Adam Roben  <aroben@apple.com>
 
         Remove WKCACFContextFlusher
