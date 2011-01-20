@@ -1,3 +1,18 @@
+2011-01-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Web Inspector: enable debugger-pause-on-breakpoint test (fixed by r76129).
+        https://bugs.webkit.org/show_bug.cgi?id=45291
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.setBreakpointInVisibleView):
+        * inspector/debugger-breakpoints-not-activated-on-reload.html:
+        * inspector/debugger-pause-on-breakpoint.html:
+        * platform/gtk/Skipped:
+        * platform/mac-leopard/Skipped:
+        * platform/win/Skipped:
+
 2011-01-20  Philippe Normand  <pnormand@igalia.com>
 
         Skip failing tests due to missing trailing white space

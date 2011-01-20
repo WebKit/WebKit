@@ -192,6 +192,3 @@ svg/batik/text/smallFonts.svg
 # fast/text/font-size-zero.html failing on leopard debug bot
 # https://bugs.webkit.org/show_bug.cgi?id=50468
 fast/text/font-size-zero.html
-
-# inspector flake
-inspector/debugger-pause-on-breakpoint.html

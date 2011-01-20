@@ -90,11 +90,9 @@ InspectorTest.captureStackTrace = function(callFrames)
     }
 };
 
-InspectorTest.setBreakpoint = function(url, lineNumber, enabled, condition, callback)
+InspectorTest.setBreakpointInVisibleView = function(lineNumber, enabled, condition)
 {
-    var scripts = WebInspector.debuggerModel.scriptsForURL(url);
-    for (var i = 0; i < scripts.length; ++i)
-        WebInspector.debuggerModel.setBreakpoint(scripts[i].sourceID, lineNumber, enabled, condition);
+    WebInspector.currentPanel.visibleView.sourceFrame._setBreakpoint(lineNumber, enabled, condition);
 }
 
 InspectorTest._pausedScript = function(details)
