@@ -2941,7 +2941,7 @@ BUGCR66085 LINUX : http/tests/media/video-cancel-load.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 BUGCR66085 LINUX : media/constructors.html = PASS TIMEOUT
 BUGCR66085 : media/remove-from-document.html = PASS TIMEOUT
-BUGCR66085 : media/video-display-toggle.html = PASS TIMEOUT
+BUGCR66085 MAC : media/video-display-toggle.html = PASS TIMEOUT
 BUGCR66085 : media/video-play-pause-exception.html = PASS TIMEOUT
 BUGCR66085 : media/video-source.html = PASS TIMEOUT
 BUGCR66085 : media/video-source-moved.html = PASS TIMEOUT
@@ -3102,10 +3102,6 @@ BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 BUGJAMESR : fast/animation = TEXT PASS
 
 BUGTHAKIS LINUX WIN : media/video-display-toggle.html = IMAGE
-
-BUGDIMICH : fast/js/toString-recursion.html = PASS TEXT
-BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = PASS TEXT
-BUGDIMICH : fast/regex/cross-frame-callable.html = PASS TEXT
 
 // New test that was non-deterministic.
 BUGYURYS : userscripts/window-onerror-for-isolated-world-1.html = PASS TEXT

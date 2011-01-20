@@ -1,3 +1,9 @@
+2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectations fix.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-20  Tony Chang  <tony@chromium.org>
 
         Unreviewed, another attempt at making the chromium gpu tests go green.
