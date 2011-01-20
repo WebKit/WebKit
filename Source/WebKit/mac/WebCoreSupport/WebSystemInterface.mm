@@ -123,6 +123,8 @@ void InitWebCoreSystemInterface(void)
     INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
     INIT(IOSurfaceContextCreate);
     INIT(IOSurfaceContextCreateImage);
+    INIT(MakeScrollbarPainter);
+    INIT(ScrollbarPainterPaint);
 #endif
 
     didInit = true;

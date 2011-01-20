@@ -1,3 +1,21 @@
+2011-01-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/8890255>
+
+        Allow WebKitSystemInterface to draw scrollbars 
+        when appropriate.
+        * WebCore.exp.in:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::scrollbarMap):
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::unregisterScrollbar):
+        (WebCore::ScrollbarThemeMac::paint):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-01-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt.

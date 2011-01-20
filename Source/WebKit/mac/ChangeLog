@@ -1,3 +1,14 @@
+2011-01-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for <rdar://problem/8890255>
+
+        Allow WebKitSystemInterface to draw scrollbars 
+        when appropriate.
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

@@ -27,18 +27,39 @@
 #include "ScrollbarThemeMac.h"
 
 #include "ImageBuffer.h"
+#include "LocalCurrentGraphicsContext.h"
 #include "PlatformMouseEvent.h"
 #include "ScrollView.h"
+#include "WebCoreSystemInterface.h"
 #include <Carbon/Carbon.h>
+#include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#define USE_WK_SCROLLBAR_PAINTER
+#endif
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
 using namespace std;
 using namespace WebCore;
 
-static HashSet<Scrollbar*>* gScrollbars;
+namespace WebCore {
+
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+typedef HashMap<Scrollbar*, RetainPtr<WKScrollbarPainterRef> > ScrollbarPainterMap;
+#else
+typedef HashSet<Scrollbar*> ScrollbarPainterMap;
+#endif
+
+static ScrollbarPainterMap* scrollbarMap()
+{
+    static ScrollbarPainterMap* map = new ScrollbarPainterMap;
+    return map;
+}
+    
+}
 
 @interface ScrollbarPrefsObserver : NSObject
 {
@@ -58,12 +79,17 @@ static HashSet<Scrollbar*>* gScrollbars;
     UNUSED_PARAM(unusedNotification);
 
     static_cast<ScrollbarThemeMac*>(ScrollbarTheme::nativeTheme())->preferencesChanged();
-    if (!gScrollbars)
+    if (scrollbarMap()->isEmpty())
         return;
-    HashSet<Scrollbar*>::iterator end = gScrollbars->end();
-    for (HashSet<Scrollbar*>::iterator it = gScrollbars->begin(); it != end; ++it) {
+    ScrollbarPainterMap::iterator end = scrollbarMap()->end();
+    for (ScrollbarPainterMap::iterator it = scrollbarMap()->begin(); it != end; ++it) {
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+        it->first->styleChanged();
+        it->first->invalidate();
+#else
         (*it)->styleChanged();
         (*it)->invalidate();
+#endif
     }
 }
 
@@ -122,18 +148,18 @@ static void updateArrowPlacement()
 
 void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
 {
-    if (!gScrollbars)
-        gScrollbars = new HashSet<Scrollbar*>;
-    gScrollbars->add(scrollbar);
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+    WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(),
+        scrollbar->orientation() == HorizontalScrollbar);
+    scrollbarMap()->add(scrollbar, scrollbarPainter);
+#else
+    scrollbarMap()->add(scrollbar);
+#endif
 }
 
 void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
 {
-    gScrollbars->remove(scrollbar);
-    if (gScrollbars->isEmpty()) {
-        delete gScrollbars;
-        gScrollbars = 0;
-    }
+    scrollbarMap()->remove(scrollbar);
 }
 
 ScrollbarThemeMac::ScrollbarThemeMac()
@@ -361,6 +387,20 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
 
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+    context->save();
+    context->clip(damageRect);
+    context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
+    LocalCurrentGraphicsContext localContext(context);
+    wkScrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(),
+                            scrollbar->enabled(),
+                            scrollbar->currentPos() / scrollbar->maximum(),
+                            static_cast<CGFloat>(scrollbar->visibleSize()) / scrollbar->totalSize(),
+                            scrollbar->frameRect());
+    context->restore();
+    return true;
+#endif
+
     HIThemeTrackDrawInfo trackInfo;
     trackInfo.version = 0;
     trackInfo.kind = scrollbar->controlSize() == RegularScrollbar ? kThemeMediumScrollBar : kThemeSmallScrollBar;

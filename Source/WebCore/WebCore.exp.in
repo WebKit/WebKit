@@ -1288,6 +1288,8 @@ _wkSignalCFReadStreamHasBytes
 _wkCreateCTTypesetterWithUniCharProviderAndOptions
 _wkIOSurfaceContextCreate
 _wkIOSurfaceContextCreateImage
+_wkMakeScrollbarPainter
+_wkScrollbarPainterPaint
 #endif
 
 #if ENABLE(3D_RENDERING)

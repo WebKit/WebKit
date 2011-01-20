@@ -186,6 +186,10 @@ extern CTTypesetterRef (*wkCreateCTTypesetterWithUniCharProviderAndOptions)(cons
 
 extern CGContextRef (*wkIOSurfaceContextCreate)(IOSurfaceRef surface, unsigned width, unsigned height, CGColorSpaceRef colorSpace);
 extern CGImageRef (*wkIOSurfaceContextCreateImage)(CGContextRef context);
+
+typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
+extern WKScrollbarPainterRef (*wkMakeScrollbarPainter)(int controlSize, bool isHorizontal);
+extern void (*wkScrollbarPainterPaint)(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
 #endif
 
 }

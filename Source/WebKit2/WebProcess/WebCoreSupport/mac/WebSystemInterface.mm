@@ -93,6 +93,8 @@ void InitWebCoreSystemInterface(void)
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
         INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
+        INIT(MakeScrollbarPainter);
+        INIT(ScrollbarPainterPaint);
 #else
         INIT(GetHyphenationLocationBeforeIndex);
 #endif
