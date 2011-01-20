@@ -33,6 +33,7 @@ namespace WebCore {
 class ElementRareData : public NodeRareData {
 public:
     ElementRareData();
+    virtual ~ElementRareData();
 
     void resetComputedStyle();
 
@@ -41,7 +42,7 @@ public:
 
     IntSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
-    RefPtr<Node> m_shadowRoot;
+    Node* m_shadowRoot;
 
     OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
     OwnPtr<ClassList> m_classList;
@@ -54,7 +55,13 @@ inline IntSize defaultMinimumSizeForResizing()
 
 inline ElementRareData::ElementRareData()
     : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
+    , m_shadowRoot(0)
 {
+}
+
+inline ElementRareData::~ElementRareData()
+{
+    ASSERT(!m_shadowRoot);
 }
 
 inline void ElementRareData::resetComputedStyle()

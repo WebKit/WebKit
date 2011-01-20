@@ -75,6 +75,7 @@ PassRefPtr<Element> Element::create(const QualifiedName& tagName, Document* docu
 
 Element::~Element()
 {
+    removeShadowRoot();
     if (m_attributeMap)
         m_attributeMap->detachFromElement();
 }
@@ -1084,7 +1085,7 @@ void Element::recalcStyle(StyleChange change)
 
 Node* Element::shadowRoot()
 {
-    return hasRareData() ? rareData()->m_shadowRoot.get() : 0;
+    return hasRareData() ? rareData()->m_shadowRoot : 0;
 }
 
 void Element::setShadowRoot(PassRefPtr<Node> node)
@@ -1093,11 +1094,12 @@ void Element::setShadowRoot(PassRefPtr<Node> node)
     // about compromising DOM tree integrity (eg. node being a parent of this). However,
     // once we implement XBL2, we will have to add integrity checks here.
     removeShadowRoot();
+
     RefPtr<Node> newRoot = node;
     if (!newRoot)
         return;
 
-    ensureRareData()->m_shadowRoot = newRoot;
+    ensureRareData()->m_shadowRoot = newRoot.get();
     newRoot->setShadowHost(this);
 }
 
@@ -1106,7 +1108,9 @@ void Element::removeShadowRoot()
     if (!hasRareData())
         return;
 
-    if (RefPtr<Node> oldRoot = rareData()->m_shadowRoot.release()) {
+    ElementRareData* data = rareData();
+    if (RefPtr<Node> oldRoot = data->m_shadowRoot) {
+        data->m_shadowRoot = 0;
         document()->removeFocusedNodeOfSubtree(oldRoot.get());
         oldRoot->setShadowHost(0);
         if (oldRoot->inDocument())

@@ -1,3 +1,38 @@
+2011-01-18 MORITA Hajime <morrita@google.com>
+
+        Reviewed by David Levin.
+
+        ElementRareData::m_shadowRoot should not be RefPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=51914
+
+        Makes ElementRareData::m_shadowRoot a raw pointer because
+        ElementRareData::m_shadowRoot should be like a
+        ContaineNode::m_firstChild, which is also a raw pointer.
+        pointer. Which also means that both the shadow root and the shadow
+        host reference each other as a parent-and-child relationship, via
+        a raw pointer.
+        
+        Note that it is safe not to manipulate the ref-count of
+        m_shadowRoot because Node::m_parent of the shadow root points its
+        shadow host, and the object isn't deleted even if the refcount is
+        zero, as long as the node has non-null m_parent. (See TreeShared.)
+        
+        The shadow root node is finally destroyed inside
+        removeShadowRoot(), where we store the root node into a local
+        RefPtr, then make the node's m_parent null, which results the
+        destroy the node, at the end of the function, by RefPtr::~RefPtr.
+        
+        No new tests. No behavioral change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::shadowRoot):
+        (WebCore::Element::setShadowRoot):
+        (WebCore::Element::removeShadowRoot):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::~ElementRareData):
+
 2011-01-12  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
