@@ -28,13 +28,13 @@
 #include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/Deque.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebKitAPITest {
 
 class Test;
 
-class TestsController : public Noncopyable {
+class TestsController {
+    WTF_MAKE_NONCOPYABLE(TestsController);
 public:
     static TestsController& shared();
 

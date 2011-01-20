@@ -34,7 +34,9 @@
 #include <runtime/WeakGCPtr.h>
 #include <wtf/HashMap.h>
 
-struct StaticValueEntry : FastAllocBase {
+struct StaticValueEntry {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     StaticValueEntry(JSObjectGetPropertyCallback _getProperty, JSObjectSetPropertyCallback _setProperty, JSPropertyAttributes _attributes)
         : getProperty(_getProperty), setProperty(_setProperty), attributes(_attributes)
     {
@@ -45,7 +47,9 @@ struct StaticValueEntry : FastAllocBase {
     JSPropertyAttributes attributes;
 };
 
-struct StaticFunctionEntry : FastAllocBase {
+struct StaticFunctionEntry {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     StaticFunctionEntry(JSObjectCallAsFunctionCallback _callAsFunction, JSPropertyAttributes _attributes)
         : callAsFunction(_callAsFunction), attributes(_attributes)
     {
@@ -62,7 +66,9 @@ struct OpaqueJSClass;
 
 // An OpaqueJSClass (JSClass) is created without a context, so it can be used with any context, even across context groups.
 // This structure holds data members that vary across context groups.
-struct OpaqueJSClassContextData : Noncopyable {
+struct OpaqueJSClassContextData {
+    WTF_MAKE_NONCOPYABLE(OpaqueJSClassContextData); WTF_MAKE_FAST_ALLOCATED;
+public:
     OpaqueJSClassContextData(OpaqueJSClass*);
     ~OpaqueJSClassContextData();
 

@@ -149,7 +149,8 @@ namespace WebCore {
     // This class doesn't manage the lifetime of the store.  The data store
     // lifetime is managed by subclasses.
     //
-    class DOMDataStore : public Noncopyable {
+    class DOMDataStore {
+        WTF_MAKE_NONCOPYABLE(DOMDataStore);
     public:
         enum DOMWrapperMapType {
             DOMNodeMap,

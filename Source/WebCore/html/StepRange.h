@@ -28,7 +28,8 @@ namespace WebCore {
 
 class HTMLInputElement;
 
-class StepRange : public Noncopyable {
+class StepRange {
+    WTF_MAKE_NONCOPYABLE(StepRange);
 public:
     bool hasStep;
     double step;

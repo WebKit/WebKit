@@ -52,7 +52,8 @@ static inline bool isEqual(LPCWSTR s1, LPCWSTR s2)
     return !wcscmp(s1, s2);
 }
 
-class DatabaseDetailsPropertyBag : public IPropertyBag, public Noncopyable {
+class DatabaseDetailsPropertyBag : public IPropertyBag {
+    WTF_MAKE_NONCOPYABLE(DatabaseDetailsPropertyBag);
 public:
     static DatabaseDetailsPropertyBag* createInstance(const DatabaseDetails&);
 
@@ -328,7 +329,8 @@ HRESULT STDMETHODCALLTYPE WebDatabaseManager::deleteDatabase(
     return S_OK;
 }
 
-class DidModifyOriginData : public Noncopyable {
+class DidModifyOriginData {
+    WTF_MAKE_NONCOPYABLE(DidModifyOriginData);
 public:
     static void dispatchToMainThread(WebDatabaseManager* databaseManager, SecurityOrigin* origin)
     {

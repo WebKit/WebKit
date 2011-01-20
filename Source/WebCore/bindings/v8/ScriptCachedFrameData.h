@@ -60,14 +60,14 @@ public:
 
 #include "OwnHandle.h"
 #include <v8.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class Frame;
 class DOMWindow;
 
-class ScriptCachedFrameData  : public Noncopyable {
+class ScriptCachedFrameData  {
+    WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData);
 public:
     ScriptCachedFrameData(Frame*);
     ~ScriptCachedFrameData() { }

@@ -34,7 +34,8 @@ namespace WebCore {
 class Frame;
 class Node;
 
-class UserTypingGestureIndicator : public Noncopyable {
+class UserTypingGestureIndicator {
+    WTF_MAKE_NONCOPYABLE(UserTypingGestureIndicator);
 public:
     static bool processingUserTypingGesture();
     static Node* focusedElementAtGestureStart();

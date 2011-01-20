@@ -4691,7 +4691,9 @@ void Document::addMessage(MessageSource source, MessageType type, MessageLevel l
         window->console()->addMessage(source, type, level, message, lineNumber, sourceURL, callStack);
 }
 
-struct PerformTaskContext : Noncopyable {
+struct PerformTaskContext {
+    WTF_MAKE_NONCOPYABLE(PerformTaskContext); WTF_MAKE_FAST_ALLOCATED;
+public:
     PerformTaskContext(PassRefPtr<DocumentWeakReference> documentReference, PassOwnPtr<ScriptExecutionContext::Task> task)
         : documentReference(documentReference)
         , task(task)

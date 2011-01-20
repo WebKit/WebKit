@@ -95,7 +95,8 @@ namespace WebCore {
         PluginStatusLoadedSuccessfully
     };
 
-    class PluginRequest : public Noncopyable {
+    class PluginRequest {
+        WTF_MAKE_NONCOPYABLE(PluginRequest); WTF_MAKE_FAST_ALLOCATED;
     public:
         PluginRequest(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData, bool shouldAllowPopups)
             : m_frameLoadRequest(frameLoadRequest)

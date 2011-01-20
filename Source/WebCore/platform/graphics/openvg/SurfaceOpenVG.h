@@ -42,7 +42,8 @@ class IntSize;
  * of #ifdefs and should make it easy to add different surface/context
  * implementations than EGL.
  */
-class SurfaceOpenVG : public Noncopyable {
+class SurfaceOpenVG {
+    WTF_MAKE_NONCOPYABLE(SurfaceOpenVG);
 public:
     enum MakeCurrentMode {
         ApplyPainterStateOnSurfaceSwitch,

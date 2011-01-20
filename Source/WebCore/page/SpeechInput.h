@@ -36,7 +36,6 @@
 #include "SpeechInputListener.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -48,7 +47,8 @@ class SpeechInputListener;
 // This class connects the input elements requiring speech input with the platform specific
 // speech recognition engine. It provides methods for the input elements to activate speech
 // recognition and methods for the speech recognition engine to return back the results.
-class SpeechInput : public Noncopyable, public SpeechInputListener {
+class SpeechInput : public SpeechInputListener {
+    WTF_MAKE_NONCOPYABLE(SpeechInput);
 public:
     SpeechInput(SpeechInputClient*);
     virtual ~SpeechInput();

@@ -57,7 +57,8 @@ template<> struct ValueCheck<WebCore::ImageLoader*> {
 
 namespace WebCore {
 
-class ImageEventSender : public Noncopyable {
+class ImageEventSender {
+    WTF_MAKE_NONCOPYABLE(ImageEventSender); WTF_MAKE_FAST_ALLOCATED;
 public:
     ImageEventSender(const AtomicString& eventType);
 

@@ -69,8 +69,8 @@ struct WebMemoryStatistics
     Vector<size_t> values;
 };
     
-class WebMemorySampler : public Noncopyable {
-
+class WebMemorySampler {
+    WTF_MAKE_NONCOPYABLE(WebMemorySampler);
 public:
     static WebMemorySampler* shared();
     void start(const double interval=0);

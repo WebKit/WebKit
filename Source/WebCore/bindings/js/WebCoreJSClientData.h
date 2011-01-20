@@ -24,17 +24,18 @@
 
 #include "DOMWrapperWorld.h"
 #include "DOMObjectHashTableMap.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WebCoreJSClientData : public JSC::JSGlobalData::ClientData, public Noncopyable {
+class WebCoreJSClientData : public JSC::JSGlobalData::ClientData {
+    WTF_MAKE_NONCOPYABLE(WebCoreJSClientData); WTF_MAKE_FAST_ALLOCATED;
     friend class JSGlobalDataWorldIterator;
     friend void initNormalWorldClientData(JSC::JSGlobalData*);
 
 public:
+    WebCoreJSClientData() { }
     virtual ~WebCoreJSClientData()
     {
         ASSERT(m_worldSet.contains(m_normalWorld.get()));

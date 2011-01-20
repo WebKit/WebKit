@@ -299,7 +299,8 @@ struct ByteTerm {
     }
 };
 
-class ByteDisjunction : public FastAllocBase {
+class ByteDisjunction {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ByteDisjunction(unsigned numSubpatterns, unsigned frameSize)
         : m_numSubpatterns(numSubpatterns)
@@ -312,7 +313,9 @@ public:
     unsigned m_frameSize;
 };
 
-struct BytecodePattern : FastAllocBase {
+struct BytecodePattern {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     BytecodePattern(PassOwnPtr<ByteDisjunction> body, Vector<ByteDisjunction*> allParenthesesInfo, YarrPattern& pattern, BumpPointerAllocator* allocator)
         : m_body(body)
         , m_ignoreCase(pattern.m_ignoreCase)

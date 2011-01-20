@@ -42,7 +42,8 @@ public:
     virtual void geolocationServiceErrorOccurred(GeolocationService*) = 0;
 };
 
-class GeolocationService : public Noncopyable {
+class GeolocationService {
+    WTF_MAKE_NONCOPYABLE(GeolocationService);
 public:
     static GeolocationService* create(GeolocationServiceClient*);
     virtual ~GeolocationService() { }

@@ -41,7 +41,8 @@ namespace WebCore {
     * time interval, either once or repeatedly. Used for window.setTimeout()
     * and window.setInterval()
     */
-    class ScheduledAction : public Noncopyable {
+    class ScheduledAction {
+        WTF_MAKE_NONCOPYABLE(ScheduledAction); WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassOwnPtr<ScheduledAction> create(JSC::ExecState*, DOMWrapperWorld* isolatedWorld);
 

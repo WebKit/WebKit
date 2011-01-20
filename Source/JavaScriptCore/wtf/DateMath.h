@@ -44,6 +44,7 @@
 #define DateMath_h
 
 #include <math.h>
+#include <stdint.h>
 #include <string.h>
 #include <time.h>
 #include <wtf/CurrentTime.h>
@@ -120,7 +121,9 @@ double parseDateFromNullTerminatedCharacters(ExecState*, const char* dateString)
 
 // Intentionally overridding the default tm of the system.
 // The members of tm differ on various operating systems.
-struct GregorianDateTime : Noncopyable {
+struct GregorianDateTime {
+    WTF_MAKE_NONCOPYABLE(GregorianDateTime);
+public:
     GregorianDateTime()
         : second(0)
         , minute(0)

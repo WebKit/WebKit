@@ -29,7 +29,8 @@
 
 namespace WebCore {
 
-class CSSProperty : public FastAllocBase {
+class CSSProperty {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSProperty(int propID, PassRefPtr<CSSValue> value, bool important = false, int shorthandID = 0, bool implicit = false)
         : m_id(propID)

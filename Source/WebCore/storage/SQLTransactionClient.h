@@ -33,6 +33,7 @@
 
 #if ENABLE(DATABASE)
 
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -41,8 +42,10 @@ class AbstractDatabase;
 
 // A client to the SQLTransaction class. Allows SQLTransaction to notify interested
 // parties that certain things have happened in a transaction.
-class SQLTransactionClient : public Noncopyable {
+class SQLTransactionClient {
+    WTF_MAKE_NONCOPYABLE(SQLTransactionClient); WTF_MAKE_FAST_ALLOCATED;
 public:
+    SQLTransactionClient() { }
     void didCommitWriteTransaction(AbstractDatabase*);
     void didExecuteStatement(AbstractDatabase*);
     bool didExceedQuota(AbstractDatabase*);

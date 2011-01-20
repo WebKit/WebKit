@@ -22,7 +22,6 @@
 #define WTF_OwnPtr_h
 
 #include "Assertions.h"
-#include "Noncopyable.h"
 #include "NullPtr.h"
 #include "OwnPtrCommon.h"
 #include "TypeTraits.h"
@@ -39,7 +38,7 @@ namespace WTF {
     template<typename T> class PassOwnPtr;
     template<typename T> PassOwnPtr<T> adoptPtr(T*);
 
-    template<typename T> class OwnPtr : public Noncopyable {
+    template<typename T> class OwnPtr {
     public:
         typedef typename RemovePointer<T>::Type ValueType;
         typedef ValueType* PtrType;

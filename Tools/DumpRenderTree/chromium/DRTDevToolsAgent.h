@@ -49,8 +49,8 @@ struct WebDevToolsMessageData;
 
 class DRTDevToolsClient;
 
-class DRTDevToolsAgent : public WebKit::WebDevToolsAgentClient
-                       , public Noncopyable {
+class DRTDevToolsAgent : public WebKit::WebDevToolsAgentClient {
+    WTF_MAKE_NONCOPYABLE(DRTDevToolsAgent);
 public:
     DRTDevToolsAgent();
     virtual ~DRTDevToolsAgent() {}

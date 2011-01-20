@@ -340,7 +340,8 @@ namespace WebCore {
     int cssPropertyID(const String&);
     int cssValueKeywordID(const CSSParserString&);
 
-    class ShorthandScope : public FastAllocBase {
+    class ShorthandScope {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ShorthandScope(CSSParser* parser, int propId) : m_parser(parser)
         {

@@ -52,7 +52,8 @@ namespace JSC {
 
 typedef HashMap<const char*, RefPtr<StringImpl>, PtrHash<const char*> > LiteralIdentifierTable;
 
-class IdentifierTable : public FastAllocBase {
+class IdentifierTable {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     ~IdentifierTable();
 
@@ -85,7 +86,8 @@ class AtomicStringTable;
 
 typedef void (*AtomicStringTableDestructor)(AtomicStringTable*);
 
-class WTFThreadData : public Noncopyable {
+class WTFThreadData {
+    WTF_MAKE_NONCOPYABLE(WTFThreadData);
 public:
     WTFThreadData();
     ~WTFThreadData();

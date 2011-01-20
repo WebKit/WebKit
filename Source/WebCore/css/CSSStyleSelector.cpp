@@ -352,7 +352,8 @@ if (id == propID) { \
     return; \
 }
 
-class CSSRuleData : public Noncopyable {
+class CSSRuleData {
+    WTF_MAKE_NONCOPYABLE(CSSRuleData);
 public:
     CSSRuleData(unsigned pos, CSSStyleRule* r, CSSSelector* sel, CSSRuleData* prev = 0)
         : m_position(pos)
@@ -380,7 +381,8 @@ private:
     CSSRuleData* m_next;
 };
 
-class CSSRuleDataList : public Noncopyable {
+class CSSRuleDataList {
+    WTF_MAKE_NONCOPYABLE(CSSRuleDataList);
 public:
     CSSRuleDataList(unsigned pos, CSSStyleRule* rule, CSSSelector* sel)
         : m_first(new CSSRuleData(pos, rule, sel))
@@ -410,7 +412,8 @@ private:
     CSSRuleData* m_last;
 };
 
-class CSSRuleSet : public Noncopyable {
+class CSSRuleSet {
+    WTF_MAKE_NONCOPYABLE(CSSRuleSet);
 public:
     CSSRuleSet();
     ~CSSRuleSet();

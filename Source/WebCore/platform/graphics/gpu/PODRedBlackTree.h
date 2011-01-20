@@ -198,7 +198,8 @@ protected:
     // The base Node class which is stored in the tree. Nodes are only
     // an internal concept; users of the tree deal only with the data
     // they store in it.
-    class Node : public Noncopyable {
+    class Node {
+        WTF_MAKE_NONCOPYABLE(Node);
     public:
         // Constructor. Newly-created nodes are colored red.
         explicit Node(const T& data)
@@ -659,7 +660,8 @@ private:
     // Helper class for size()
 
     // A Visitor which simply counts the number of visited elements.
-    class Counter : public Visitor, public Noncopyable {
+    class Counter : public Visitor {
+        WTF_MAKE_NONCOPYABLE(Counter);
     public:
         Counter()
             : m_count(0) { }

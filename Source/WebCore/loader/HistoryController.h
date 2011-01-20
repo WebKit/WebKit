@@ -41,7 +41,8 @@ class Frame;
 class HistoryItem;
 class SerializedScriptValue;
 
-class HistoryController : public Noncopyable {
+class HistoryController {
+    WTF_MAKE_NONCOPYABLE(HistoryController);
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 

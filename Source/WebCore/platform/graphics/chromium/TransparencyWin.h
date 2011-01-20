@@ -54,7 +54,8 @@ class TransparencyWin_OpaqueCompositeLayer_Test;
 // that is composited later manually. This is to get around Windows' inability
 // to handle the alpha channel, semitransparent text, and transformed form
 // controls.
-class TransparencyWin : public Noncopyable {
+class TransparencyWin {
+    WTF_MAKE_NONCOPYABLE(TransparencyWin);
 public:
     enum LayerMode {
         // No extra layer is created. Drawing will happen to the source.

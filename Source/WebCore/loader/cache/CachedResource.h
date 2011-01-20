@@ -50,7 +50,8 @@ class PurgeableBuffer;
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
 // This class also does the actual communication with the loader to obtain the resource from the network.
-class CachedResource : public Noncopyable {
+class CachedResource {
+    WTF_MAKE_NONCOPYABLE(CachedResource); WTF_MAKE_FAST_ALLOCATED;
     friend class MemoryCache;
     friend class InspectorResource;
     

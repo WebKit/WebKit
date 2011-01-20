@@ -30,12 +30,12 @@
 #define RegisterID_h
 
 #include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/VectorTraits.h>
 
 namespace JSC {
 
-    class RegisterID : public Noncopyable {
+    class RegisterID {
+        WTF_MAKE_NONCOPYABLE(RegisterID);
     public:
         RegisterID()
             : m_refCount(0)

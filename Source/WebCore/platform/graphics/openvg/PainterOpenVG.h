@@ -41,7 +41,8 @@ class TiledImageOpenVG;
 
 struct PlatformPainterState;
 
-class PainterOpenVG : public Noncopyable {
+class PainterOpenVG {
+    WTF_MAKE_NONCOPYABLE(PainterOpenVG);
 public:
     friend class SurfaceOpenVG;
     friend struct PlatformPainterState;

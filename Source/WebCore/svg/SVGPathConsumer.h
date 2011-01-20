@@ -26,6 +26,7 @@
 
 #if ENABLE(SVG)
 #include "FloatPoint.h"
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -40,8 +41,10 @@ enum PathParsingMode {
     UnalteredParsing
 };
 
-class SVGPathConsumer : public Noncopyable {
+class SVGPathConsumer {
+    WTF_MAKE_NONCOPYABLE(SVGPathConsumer); WTF_MAKE_FAST_ALLOCATED;
 public:
+    SVGPathConsumer() { }
     virtual void incrementPathSegmentCount() = 0;
     virtual bool continueConsuming() = 0;
     virtual void cleanup() = 0;

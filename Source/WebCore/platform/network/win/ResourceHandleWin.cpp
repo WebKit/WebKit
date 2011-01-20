@@ -76,7 +76,8 @@ static String queryHTTPHeader(HINTERNET requestHandle, DWORD infoLevel)
 }
 
 
-class WebCoreSynchronousLoader : public ResourceHandleClient, public Noncopyable {
+class WebCoreSynchronousLoader : public ResourceHandleClient {
+    WTF_MAKE_NONCOPYABLE(WebCoreSynchronousLoader);
 public:
     WebCoreSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&, const String& userAgent);
     ~WebCoreSynchronousLoader();

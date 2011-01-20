@@ -43,7 +43,8 @@ namespace WebCore {
 
 // Can be used to wait until DatabaseTask is completed.
 // Has to be passed into DatabaseTask::create to be associated with the task.
-class DatabaseTaskSynchronizer : public Noncopyable {
+class DatabaseTaskSynchronizer {
+    WTF_MAKE_NONCOPYABLE(DatabaseTaskSynchronizer);
 public:
     DatabaseTaskSynchronizer();
 
@@ -67,7 +68,8 @@ private:
 #endif
 };
 
-class DatabaseTask : public Noncopyable {
+class DatabaseTask {
+    WTF_MAKE_NONCOPYABLE(DatabaseTask); WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DatabaseTask();
 

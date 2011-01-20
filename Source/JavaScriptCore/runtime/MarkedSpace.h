@@ -63,7 +63,8 @@ namespace JSC {
         }
     };
 
-    class MarkedSpace : public Noncopyable {
+    class MarkedSpace {
+        WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
         MarkedSpace(JSGlobalData*);
         void destroy(ProtectCountSet&);

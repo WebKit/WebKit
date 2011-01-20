@@ -360,7 +360,9 @@ private:
         bool everHadLayout;
     };
 
-    struct FloatingObject : Noncopyable {
+    struct FloatingObject {
+        WTF_MAKE_NONCOPYABLE(FloatingObject); WTF_MAKE_FAST_ALLOCATED;
+    public:
         // Note that Type uses bits so you can use FloatBoth as a mask to query for both left and right.
         enum Type { FloatLeft = 1, FloatRight = 2, FloatBoth = 3 };
 
@@ -678,7 +680,9 @@ private:
     PositionedObjectsListHashSet* m_positionedObjects;
 
     // Allocated only when some of these fields have non-default values
-    struct RenderBlockRareData : Noncopyable {
+    struct RenderBlockRareData {
+        WTF_MAKE_NONCOPYABLE(RenderBlockRareData); WTF_MAKE_FAST_ALLOCATED;
+    public:
         RenderBlockRareData(const RenderBlock* block) 
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_paginationStrut(0)

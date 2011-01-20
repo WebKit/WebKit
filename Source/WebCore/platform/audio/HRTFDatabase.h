@@ -43,7 +43,8 @@ namespace WebCore {
 
 class HRTFKernel;
 
-class HRTFDatabase : public Noncopyable {
+class HRTFDatabase {
+    WTF_MAKE_NONCOPYABLE(HRTFDatabase);
 public:
     static PassOwnPtr<HRTFDatabase> create(double sampleRate);
 

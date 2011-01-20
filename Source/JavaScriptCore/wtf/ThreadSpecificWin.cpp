@@ -21,7 +21,6 @@
 #include "config.h"
 
 #include "ThreadSpecific.h"
-#include <wtf/Noncopyable.h>
 
 #if USE(PTHREADS)
 #error This file should not be compiled by ports that do not use Windows native ThreadSpecific implementation.

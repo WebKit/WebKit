@@ -41,6 +41,7 @@ class WCDataObject;
 
 // State available during IE's events for drag and drop and copy/paste
 class ClipboardWin : public Clipboard, public CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<ClipboardWin> create(ClipboardType clipboardType, IDataObject* dataObject, ClipboardAccessPolicy policy, Frame* frame)
     {

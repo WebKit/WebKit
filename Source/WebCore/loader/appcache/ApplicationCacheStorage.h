@@ -44,7 +44,8 @@ template <class T>
 class StorageIDJournal;
 class SecurityOrigin;
 
-class ApplicationCacheStorage : public Noncopyable {
+class ApplicationCacheStorage {
+    WTF_MAKE_NONCOPYABLE(ApplicationCacheStorage); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum FailureReason {
         OriginQuotaReached,

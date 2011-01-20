@@ -63,7 +63,8 @@ union UppParam {
 static Vector<CFStringRef>* gSupportedTypes = 0;
 static SInt32 quickTimeVersion = 0;
 
-class QTMoviePrivate : public Noncopyable, public QTMovieTaskClient {
+class QTMoviePrivate : public QTMovieTaskClient {
+    WTF_MAKE_NONCOPYABLE(QTMoviePrivate);
 public:
     QTMoviePrivate();
     ~QTMoviePrivate();

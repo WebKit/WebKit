@@ -25,8 +25,10 @@
 
 namespace WebCore {
 
-class SVGPathSource : public Noncopyable {
+class SVGPathSource {
+    WTF_MAKE_NONCOPYABLE(SVGPathSource); WTF_MAKE_FAST_ALLOCATED;
 public:
+    SVGPathSource() { }
     virtual ~SVGPathSource() { }
 
     virtual bool hasMoreData() const = 0;

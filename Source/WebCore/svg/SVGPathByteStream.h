@@ -43,7 +43,8 @@ typedef union {
     unsigned char bytes[sizeof(unsigned short)];
 } UnsignedShortByte;
 
-class SVGPathByteStream : public Noncopyable {
+class SVGPathByteStream {
+    WTF_MAKE_NONCOPYABLE(SVGPathByteStream); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<SVGPathByteStream> create()
     {

@@ -37,13 +37,13 @@
 #include "PlatformString.h"
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
     class ScriptExecutionContext;
 
-    class WebSocketHandshake : public Noncopyable {
+    class WebSocketHandshake {
+        WTF_MAKE_NONCOPYABLE(WebSocketHandshake);
     public:
         enum Mode {
             Incomplete, Normal, Failed, Connected

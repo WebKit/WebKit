@@ -39,7 +39,8 @@ class Document;
 class PendingScript;
 class ScriptElement;
     
-class AsyncScriptRunner : public Noncopyable {
+class AsyncScriptRunner {
+    WTF_MAKE_NONCOPYABLE(AsyncScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<AsyncScriptRunner> create(Document* document) { return new AsyncScriptRunner(document); }
     ~AsyncScriptRunner();

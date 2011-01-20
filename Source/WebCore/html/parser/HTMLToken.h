@@ -27,13 +27,13 @@
 #define HTMLToken_h
 
 #include "NamedNodeMap.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class HTMLToken : public Noncopyable {
+class HTMLToken {
+    WTF_MAKE_NONCOPYABLE(HTMLToken); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Type {
         Uninitialized,
@@ -313,7 +313,8 @@ private:
     // want to end up with a cleaner interface between the two classes.
     friend class AtomicHTMLToken;
 
-    class DoctypeData : public Noncopyable {
+    class DoctypeData {
+        WTF_MAKE_NONCOPYABLE(DoctypeData);
     public:
         DoctypeData()
             : m_hasPublicIdentifier(false)
@@ -352,7 +353,8 @@ private:
 
 // FIXME: This class should eventually be named HTMLToken once we move the
 // exiting HTMLToken to be internal to the HTMLTokenizer.
-class AtomicHTMLToken : public Noncopyable {
+class AtomicHTMLToken {
+    WTF_MAKE_NONCOPYABLE(AtomicHTMLToken);
 public:
     AtomicHTMLToken(HTMLToken& token)
         : m_type(token.type())

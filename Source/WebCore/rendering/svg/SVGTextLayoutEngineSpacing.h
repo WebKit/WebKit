@@ -30,7 +30,8 @@ class SVGRenderStyle;
 class SVGElement;
 
 // Helper class used by SVGTextLayoutEngine to handle 'kerning' / 'letter-spacing' and 'word-spacing'.
-class SVGTextLayoutEngineSpacing : public Noncopyable {
+class SVGTextLayoutEngineSpacing {
+    WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngineSpacing);
 public:
     SVGTextLayoutEngineSpacing(const Font&);
 

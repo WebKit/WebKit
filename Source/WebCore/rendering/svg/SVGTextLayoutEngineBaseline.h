@@ -33,7 +33,8 @@ class SVGRenderStyle;
 class SVGTextMetrics;
 
 // Helper class used by SVGTextLayoutEngine to handle 'alignment-baseline' / 'dominant-baseline' and 'baseline-shift'.
-class SVGTextLayoutEngineBaseline : public Noncopyable {
+class SVGTextLayoutEngineBaseline {
+    WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngineBaseline);
 public:
     SVGTextLayoutEngineBaseline(const Font&);
 

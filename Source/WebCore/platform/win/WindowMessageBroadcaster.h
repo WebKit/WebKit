@@ -31,13 +31,13 @@
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
     class WindowMessageListener;
 
-    class WindowMessageBroadcaster : public Noncopyable {
+    class WindowMessageBroadcaster {
+        WTF_MAKE_NONCOPYABLE(WindowMessageBroadcaster);
     public:
         static void addListener(HWND, WindowMessageListener*);
         static void removeListener(HWND, WindowMessageListener*);

@@ -27,7 +27,8 @@
 #include "HTMLMediaElement.h"
 #include <wtf/RefPtr.h>
 
-class FullscreenVideoController : public Noncopyable {
+class FullscreenVideoController {
+    WTF_MAKE_NONCOPYABLE(FullscreenVideoController);
 public:
     FullscreenVideoController();
     virtual ~FullscreenVideoController();

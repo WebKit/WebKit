@@ -40,7 +40,8 @@ class AtomicHTMLToken;
 class Document;
 class Element;
 
-class HTMLConstructionSite : public Noncopyable {
+class HTMLConstructionSite {
+    WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
 public:
     HTMLConstructionSite(Document*, FragmentScriptingPermission, bool isParsingFragment);
     ~HTMLConstructionSite();
@@ -89,7 +90,8 @@ public:
     HTMLFormElement* form() const { return m_form.get(); }
     PassRefPtr<HTMLFormElement> takeForm();
 
-    class RedirectToFosterParentGuard : public Noncopyable {
+    class RedirectToFosterParentGuard {
+        WTF_MAKE_NONCOPYABLE(RedirectToFosterParentGuard);
     public:
         RedirectToFosterParentGuard(HTMLConstructionSite& tree)
             : m_tree(tree)

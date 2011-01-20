@@ -264,7 +264,8 @@ void toRenderView(const RenderView*);
 
 
 // Stack-based class to assist with LayoutState push/pop
-class LayoutStateMaintainer : public Noncopyable {
+class LayoutStateMaintainer {
+    WTF_MAKE_NONCOPYABLE(LayoutStateMaintainer);
 public:
     // ctor to push now
     LayoutStateMaintainer(RenderView* view, RenderBox* root, IntSize offset, bool disableState = false, int pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)

@@ -32,6 +32,7 @@ class StyleCachedImage;
 class StyleImage;
 
 class CSSImageValue : public CSSPrimitiveValue, private CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<CSSImageValue> create() { return adoptRef(new CSSImageValue); }
     static PassRefPtr<CSSImageValue> create(const String& url) { return adoptRef(new CSSImageValue(url)); }

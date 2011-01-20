@@ -38,7 +38,8 @@
 namespace WebCore {
 class CSSParserValueList;
 
-class MediaQueryExp : public FastAllocBase {
+class MediaQueryExp {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<MediaQueryExp> create(const AtomicString& mediaFeature, CSSParserValueList* values);
     ~MediaQueryExp();

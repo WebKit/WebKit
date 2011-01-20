@@ -25,7 +25,8 @@
 
 namespace WebCore {
 
-class SVGFontData : public Noncopyable {
+class SVGFontData {
+    WTF_MAKE_NONCOPYABLE(SVGFontData); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGFontData(SVGFontFaceElement*);
     virtual ~SVGFontData() { }

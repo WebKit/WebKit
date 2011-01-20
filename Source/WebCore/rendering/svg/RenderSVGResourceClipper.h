@@ -35,7 +35,9 @@
 
 namespace WebCore {
 
-struct ClipperData : FastAllocBase {
+struct ClipperData {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     OwnPtr<ImageBuffer> clipMaskImage;
 };
 

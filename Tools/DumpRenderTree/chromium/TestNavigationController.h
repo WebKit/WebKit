@@ -111,7 +111,8 @@ public:
 
 // Test shell's NavigationController. The goal is to be as close to the Chrome
 // version as possible.
-class TestNavigationController: public Noncopyable {
+class TestNavigationController {
+    WTF_MAKE_NONCOPYABLE(TestNavigationController);
 public:
     TestNavigationController(NavigationHost*);
     ~TestNavigationController();

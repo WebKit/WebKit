@@ -54,7 +54,9 @@ namespace JSC {
     class StructureChain;
 
     // Structure used by op_get_by_id_self_list and op_get_by_id_proto_list instruction to hold data off the main opcode stream.
-    struct PolymorphicAccessStructureList : FastAllocBase {
+    struct PolymorphicAccessStructureList {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         struct PolymorphicStubInfo {
             bool isChain;
             PolymorphicAccessStructureListStubRoutineType stubRoutine;

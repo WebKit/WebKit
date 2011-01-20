@@ -214,8 +214,10 @@ public:
 #endif
 };
 
-class EmptyFrameLoaderClient : public FrameLoaderClient, public Noncopyable {
+class EmptyFrameLoaderClient : public FrameLoaderClient {
+    WTF_MAKE_NONCOPYABLE(EmptyFrameLoaderClient); WTF_MAKE_FAST_ALLOCATED;
 public:
+    EmptyFrameLoaderClient() { }
     virtual ~EmptyFrameLoaderClient() {  }
     virtual void frameLoaderDestroyed() { }
 
@@ -387,8 +389,10 @@ public:
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext() { return PassRefPtr<FrameNetworkingContext>(); }
 };
 
-class EmptyEditorClient : public EditorClient, public Noncopyable {
+class EmptyEditorClient : public EditorClient {
+    WTF_MAKE_NONCOPYABLE(EmptyEditorClient); WTF_MAKE_FAST_ALLOCATED;
 public:
+    EmptyEditorClient() { }
     virtual ~EmptyEditorClient() { }
     virtual void pageDestroyed() { }
 
@@ -501,8 +505,10 @@ public:
 };
 
 #if ENABLE(CONTEXT_MENUS)
-class EmptyContextMenuClient : public ContextMenuClient, public Noncopyable {
+class EmptyContextMenuClient : public ContextMenuClient {
+    WTF_MAKE_NONCOPYABLE(EmptyContextMenuClient); WTF_MAKE_FAST_ALLOCATED;
 public:
+    EmptyContextMenuClient() { }
     virtual ~EmptyContextMenuClient() {  }
     virtual void contextMenuDestroyed() { }
 
@@ -528,8 +534,10 @@ public:
 #endif // ENABLE(CONTEXT_MENUS)
 
 #if ENABLE(DRAG_SUPPORT)
-class EmptyDragClient : public DragClient, public Noncopyable {
+class EmptyDragClient : public DragClient {
+    WTF_MAKE_NONCOPYABLE(EmptyDragClient); WTF_MAKE_FAST_ALLOCATED;
 public:
+    EmptyDragClient() { }
     virtual ~EmptyDragClient() {}
     virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*) { }
     virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*) { }
@@ -541,8 +549,10 @@ public:
 };
 #endif // ENABLE(DRAG_SUPPORT)
 
-class EmptyInspectorClient : public InspectorClient, public Noncopyable {
+class EmptyInspectorClient : public InspectorClient {
+    WTF_MAKE_NONCOPYABLE(EmptyInspectorClient); WTF_MAKE_FAST_ALLOCATED;
 public:
+    EmptyInspectorClient() { }
     virtual ~EmptyInspectorClient() { }
 
     virtual void inspectorDestroyed() { }

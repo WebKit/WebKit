@@ -37,7 +37,9 @@ namespace WebCore {
         virtual void unregisterFont(const String& fontName) = 0;
     };
 
-    struct FontCustomPlatformData : Noncopyable {
+    struct FontCustomPlatformData {
+        WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
+    public:
         FontCustomPlatformData(const String& name)
             : m_name(name)
         {

@@ -69,7 +69,8 @@ namespace WebCore {
     // * HTMLDocumentParser::shouldLoadExternalScriptFromSrc - used to load external JavaScript scripts.
     // * SubframeLoader::requestObject - used to load <object>/<embed> elements.
     //
-    class XSSAuditor : public Noncopyable {
+    class XSSAuditor {
+        WTF_MAKE_NONCOPYABLE(XSSAuditor); WTF_MAKE_FAST_ALLOCATED;
     public:
         XSSAuditor(Frame*);
         ~XSSAuditor();

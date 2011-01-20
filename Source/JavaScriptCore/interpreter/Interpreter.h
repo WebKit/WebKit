@@ -30,7 +30,6 @@
 #define Interpreter_h
 
 #include "ArgList.h"
-#include "FastAllocBase.h"
 #include "JSCell.h"
 #include "JSValue.h"
 #include "JSObject.h"
@@ -65,7 +64,8 @@ namespace JSC {
 
     enum { MaxLargeThreadReentryDepth = 256, MaxSmallThreadReentryDepth = 32 };
 
-    class Interpreter : public FastAllocBase {
+    class Interpreter {
+        WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
         friend class CachedCall;
     public:

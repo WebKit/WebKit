@@ -30,7 +30,8 @@
 
 namespace WebCore {
 
-    class EventLoop : public Noncopyable {
+    class EventLoop {
+        WTF_MAKE_NONCOPYABLE(EventLoop);
     public:
         EventLoop()
             : m_ended(false)

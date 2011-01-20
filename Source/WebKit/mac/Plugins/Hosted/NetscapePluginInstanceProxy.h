@@ -313,7 +313,8 @@ private:
     bool demarshalValueFromArray(JSC::ExecState*, NSArray *array, NSUInteger& index, JSC::JSValue& result);
     void demarshalValues(JSC::ExecState*, data_t valuesData, mach_msg_type_number_t valuesLength, JSC::MarkedArgumentBuffer& result);
 
-    class LocalObjectMap : Noncopyable {
+    class LocalObjectMap {
+        WTF_MAKE_NONCOPYABLE(LocalObjectMap);
     public:
         LocalObjectMap();
         ~LocalObjectMap();

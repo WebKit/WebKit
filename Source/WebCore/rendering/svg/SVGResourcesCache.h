@@ -31,7 +31,8 @@ class RenderStyle;
 class RenderSVGResourceContainer;
 class SVGResources;
 
-class SVGResourcesCache : public Noncopyable {
+class SVGResourcesCache {
+    WTF_MAKE_NONCOPYABLE(SVGResourcesCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGResourcesCache();
     ~SVGResourcesCache();

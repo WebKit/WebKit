@@ -33,6 +33,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -114,8 +115,10 @@ namespace WebCore {
         void ref() { refScriptExecutionContext(); }
         void deref() { derefScriptExecutionContext(); }
 
-        class Task : public Noncopyable {
+        class Task {
+            WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;
         public:
+            Task() { }
             virtual ~Task();
             virtual void performTask(ScriptExecutionContext*) = 0;
             // Certain tasks get marked specially so that they aren't discarded, and are executed, when the context is shutting down its message queue.

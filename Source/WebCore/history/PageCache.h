@@ -39,7 +39,8 @@ namespace WebCore {
     class HistoryItem;
     class Page;
     
-    class PageCache : public Noncopyable {
+    class PageCache {
+        WTF_MAKE_NONCOPYABLE(PageCache); WTF_MAKE_FAST_ALLOCATED;
     public:
         friend PageCache* pageCache();
         

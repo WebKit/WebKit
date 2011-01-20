@@ -36,7 +36,9 @@ namespace WebCore {
 class FontPlatformData;
 class SharedBuffer;
 
-struct FontCustomPlatformData : Noncopyable {
+struct FontCustomPlatformData {
+    WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
+public:
     FontCustomPlatformData(ATSFontContainerRef container, CGFontRef cgFont)
         : m_atsContainer(container)
         , m_cgFont(cgFont)

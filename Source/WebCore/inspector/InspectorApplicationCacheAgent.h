@@ -41,7 +41,8 @@ class InspectorObject;
 class InspectorValue;
 class ResourceResponse;
 
-class InspectorApplicationCacheAgent : public Noncopyable {
+class InspectorApplicationCacheAgent {
+    WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorApplicationCacheAgent(InspectorController* inspectorController, InspectorFrontend* frontend);
     ~InspectorApplicationCacheAgent() { }

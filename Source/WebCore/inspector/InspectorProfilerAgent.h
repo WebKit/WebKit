@@ -47,7 +47,8 @@ class InspectorObject;
 class ScriptHeapSnapshot;
 class ScriptProfile;
 
-class InspectorProfilerAgent : public Noncopyable {
+class InspectorProfilerAgent {
+    WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorProfilerAgent> create(InspectorController*);
     virtual ~InspectorProfilerAgent();

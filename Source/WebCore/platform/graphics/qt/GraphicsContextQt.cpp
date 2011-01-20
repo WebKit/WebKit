@@ -174,7 +174,8 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
     return Qt::OddEvenFill;
 }
 
-class GraphicsContextPlatformPrivate : public Noncopyable {
+class GraphicsContextPlatformPrivate {
+    WTF_MAKE_NONCOPYABLE(GraphicsContextPlatformPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
     GraphicsContextPlatformPrivate(QPainter*, const QColor& initialSolidColor);
     ~GraphicsContextPlatformPrivate();

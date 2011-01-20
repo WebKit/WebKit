@@ -21,7 +21,7 @@
 #ifndef ScopeChain_h
 #define ScopeChain_h
 
-#include "FastAllocBase.h"
+#include <wtf/FastAllocBase.h>
 
 namespace JSC {
 
@@ -31,7 +31,8 @@ namespace JSC {
     class MarkStack;
     class ScopeChainIterator;
     
-    class ScopeChainNode : public FastAllocBase {
+    class ScopeChainNode {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ScopeChainNode(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
             : next(next)

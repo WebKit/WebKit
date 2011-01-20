@@ -41,7 +41,8 @@ class ResourceResponse;
 struct CrossThreadResourceResponseData;
 
 // Do not use this class directly, use the class ResponseResponse instead
-class ResourceResponseBase : public FastAllocBase {
+class ResourceResponseBase {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<ResourceResponse> adopt(PassOwnPtr<CrossThreadResourceResponseData>);
 
@@ -175,7 +176,10 @@ private:
 inline bool operator==(const ResourceResponse& a, const ResourceResponse& b) { return ResourceResponseBase::compare(a, b); }
 inline bool operator!=(const ResourceResponse& a, const ResourceResponse& b) { return !(a == b); }
 
-struct CrossThreadResourceResponseDataBase : Noncopyable {
+struct CrossThreadResourceResponseDataBase {
+    WTF_MAKE_NONCOPYABLE(CrossThreadResourceResponseDataBase);
+public:
+    CrossThreadResourceResponseDataBase() { }
     KURL m_url;
     String m_mimeType;
     long long m_expectedContentLength;

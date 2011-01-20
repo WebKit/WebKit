@@ -36,7 +36,8 @@ namespace WebCore {
 class HTMLTokenizer;
 class TextCodec;
 
-class HTMLMetaCharsetParser : public Noncopyable {
+class HTMLMetaCharsetParser {
+    WTF_MAKE_NONCOPYABLE(HTMLMetaCharsetParser);
 public:
     static PassOwnPtr<HTMLMetaCharsetParser> create() { return adoptPtr(new HTMLMetaCharsetParser()); }
 

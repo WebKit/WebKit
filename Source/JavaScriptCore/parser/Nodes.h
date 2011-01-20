@@ -1376,7 +1376,9 @@ namespace JSC {
         ParameterNode* m_next;
     };
 
-    struct ScopeNodeData : FastAllocBase {
+    struct ScopeNodeData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
@@ -1472,6 +1474,7 @@ namespace JSC {
     };
 
     class FunctionParameters : public Vector<Identifier>, public RefCounted<FunctionParameters> {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<FunctionParameters> create(ParameterNode* firstParameter) { return adoptRef(new FunctionParameters(firstParameter)); }
 

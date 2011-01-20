@@ -128,7 +128,8 @@ private:
 
 // Writer is responsible for serializing primitive types and storing
 // information used to reconstruct composite types.
-class Writer : Noncopyable {
+class Writer {
+    WTF_MAKE_NONCOPYABLE(Writer);
 public:
     Writer()
         : m_position(0)
@@ -377,7 +378,8 @@ public:
     }
 
 private:
-    class StateBase : public Noncopyable {
+    class StateBase {
+        WTF_MAKE_NONCOPYABLE(StateBase);
     public:
         virtual ~StateBase() { }
 

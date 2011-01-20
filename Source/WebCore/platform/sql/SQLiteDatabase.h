@@ -50,7 +50,8 @@ extern const int SQLResultSchema;
 extern const int SQLResultFull;
 extern const int SQLResultInterrupt;
 
-class SQLiteDatabase : public Noncopyable {
+class SQLiteDatabase {
+    WTF_MAKE_NONCOPYABLE(SQLiteDatabase);
     friend class SQLiteTransaction;
 public:
     SQLiteDatabase();

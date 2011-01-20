@@ -44,7 +44,8 @@ namespace JSC {
     class UString;
     struct CallIdentifier;    
 
-    class Profiler : public FastAllocBase {
+    class Profiler {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static Profiler** enabledProfilerReference()
         {

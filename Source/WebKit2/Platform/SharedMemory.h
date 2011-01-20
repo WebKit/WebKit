@@ -52,7 +52,8 @@ public:
         ReadWrite
     };
 
-    class Handle : Noncopyable {
+    class Handle {
+        WTF_MAKE_NONCOPYABLE(Handle);
     public:
         Handle();
         ~Handle();

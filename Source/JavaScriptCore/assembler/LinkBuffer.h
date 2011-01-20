@@ -50,7 +50,8 @@ namespace JSC {
 //   * The address of a Label pointing into the code may be resolved.
 //   * The value referenced by a DataLabel may be set.
 //
-class LinkBuffer : public Noncopyable {
+class LinkBuffer {
+    WTF_MAKE_NONCOPYABLE(LinkBuffer);
     typedef MacroAssemblerCodeRef CodeRef;
     typedef MacroAssemblerCodePtr CodePtr;
     typedef MacroAssembler::Label Label;

@@ -480,7 +480,9 @@ JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size
     return result;
 }
 
-struct OpaqueJSPropertyNameArray : FastAllocBase {
+struct OpaqueJSPropertyNameArray {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     OpaqueJSPropertyNameArray(JSGlobalData* globalData)
         : refCount(0)
         , globalData(globalData)

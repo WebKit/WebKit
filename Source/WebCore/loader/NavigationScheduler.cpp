@@ -53,7 +53,8 @@ namespace WebCore {
 
 unsigned NavigationDisablerForBeforeUnload::s_navigationDisableCount = 0;
 
-class ScheduledNavigation : public Noncopyable {
+class ScheduledNavigation {
+    WTF_MAKE_NONCOPYABLE(ScheduledNavigation); WTF_MAKE_FAST_ALLOCATED;
 public:
     ScheduledNavigation(double delay, bool lockHistory, bool lockBackForwardList, bool wasDuringLoad, bool isLocationChange)
         : m_delay(delay)

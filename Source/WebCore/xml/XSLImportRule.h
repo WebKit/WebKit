@@ -35,6 +35,7 @@ namespace WebCore {
 class CachedXSLStyleSheet;
 
 class XSLImportRule : public StyleBase, private CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<XSLImportRule> create(XSLStyleSheet* parentSheet, const String& href)
     {

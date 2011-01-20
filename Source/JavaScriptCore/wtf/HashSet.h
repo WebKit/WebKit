@@ -35,7 +35,8 @@ namespace WTF {
     template<typename T> struct IdentityExtractor;
 
     template<typename ValueArg, typename HashArg = typename DefaultHash<ValueArg>::Hash,
-        typename TraitsArg = HashTraits<ValueArg> > class HashSet : public FastAllocBase {
+        typename TraitsArg = HashTraits<ValueArg> > class HashSet {
+        WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef HashArg HashFunctions;
         typedef TraitsArg ValueTraits;

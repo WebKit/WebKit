@@ -33,7 +33,9 @@ namespace WebCore {
 class FontPlatformData;
 class SharedBuffer;
 
-struct FontCustomPlatformData : Noncopyable {
+struct FontCustomPlatformData {
+    WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
+public:
     FontCustomPlatformData(cairo_font_face_t* fontFace)
         : m_fontFace(fontFace)
     {

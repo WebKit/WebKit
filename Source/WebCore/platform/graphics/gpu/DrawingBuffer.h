@@ -82,8 +82,10 @@ public:
 #endif
 
 #if PLATFORM(CHROMIUM)
-    class WillPublishCallback : public Noncopyable {
+    class WillPublishCallback {
+        WTF_MAKE_NONCOPYABLE(WillPublishCallback);
     public:
+        WillPublishCallback() { }
         virtual ~WillPublishCallback() { }
         
         virtual void willPublish() = 0;

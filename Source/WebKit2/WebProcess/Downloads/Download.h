@@ -63,7 +63,6 @@ class WebPage;
 
 class Download : public CoreIPC::MessageSender<Download> {
     WTF_MAKE_NONCOPYABLE(Download);
-
 public:
     static PassOwnPtr<Download> create(uint64_t downloadID, const WebCore::ResourceRequest&);
     ~Download();

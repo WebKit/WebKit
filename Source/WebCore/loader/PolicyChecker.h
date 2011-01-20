@@ -45,7 +45,8 @@ class NavigationAction;
 class ResourceError;
 class ResourceResponse;
 
-class PolicyChecker : public Noncopyable {
+class PolicyChecker {
+    WTF_MAKE_NONCOPYABLE(PolicyChecker);
 public:
     PolicyChecker(Frame*);
 

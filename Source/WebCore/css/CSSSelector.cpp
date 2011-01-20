@@ -37,8 +37,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-class CSSSelectorBag : public Noncopyable {
+class CSSSelectorBag {
+    WTF_MAKE_NONCOPYABLE(CSSSelectorBag);
 public:
+    CSSSelectorBag() { }
     ~CSSSelectorBag()
     {
         ASSERT(isEmpty());

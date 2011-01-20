@@ -180,7 +180,8 @@ namespace WebCore {
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
-    class EventNames : public Noncopyable {
+    class EventNames {
+        WTF_MAKE_NONCOPYABLE(EventNames); WTF_MAKE_FAST_ALLOCATED;
         int dummy; // Needed to make initialization macro work.
         // Private to prevent accidental call to EventNames() instead of eventNames()
         EventNames();

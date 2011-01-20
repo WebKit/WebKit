@@ -65,7 +65,8 @@ namespace WebCore {
 
     // Useful for doing loader operations from any thread (not threadsafe, 
     // just able to run on threads other than the main thread).
-    class ThreadableLoader : public Noncopyable {
+    class ThreadableLoader {
+        WTF_MAKE_NONCOPYABLE(ThreadableLoader);
     public:
         static void loadResourceSynchronously(ScriptExecutionContext*, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
         static PassRefPtr<ThreadableLoader> create(ScriptExecutionContext*, ThreadableLoaderClient*, const ResourceRequest&, const ThreadableLoaderOptions&);
@@ -75,6 +76,7 @@ namespace WebCore {
         void deref() { derefThreadableLoader(); }
 
     protected:
+        ThreadableLoader() { }
         virtual ~ThreadableLoader() { }
         virtual void refThreadableLoader() = 0;
         virtual void derefThreadableLoader() = 0;

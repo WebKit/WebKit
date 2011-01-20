@@ -86,7 +86,8 @@ struct WindowFeatures;
 
 bool isBackForwardLoadType(FrameLoadType);
 
-class FrameLoader : public Noncopyable {
+class FrameLoader {
+    WTF_MAKE_NONCOPYABLE(FrameLoader);
 public:
     FrameLoader(Frame*, FrameLoaderClient*);
     ~FrameLoader();

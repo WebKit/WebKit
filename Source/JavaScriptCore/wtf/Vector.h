@@ -277,7 +277,8 @@ namespace WTF {
     };
 
     template<typename T>
-    class VectorBufferBase : public Noncopyable {
+    class VectorBufferBase {
+        WTF_MAKE_NONCOPYABLE(VectorBufferBase);
     public:
         void allocateBuffer(size_t newCapacity)
         {
@@ -488,7 +489,8 @@ namespace WTF {
     };
 
     template<typename T, size_t inlineCapacity = 0>
-    class Vector : public FastAllocBase {
+    class Vector {
+        WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef VectorBuffer<T, inlineCapacity> Buffer;
         typedef VectorTypeOperations<T> TypeOperations;

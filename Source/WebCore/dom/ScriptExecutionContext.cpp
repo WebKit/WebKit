@@ -66,7 +66,8 @@ public:
     }
 };
 
-class ScriptExecutionContext::PendingException : public Noncopyable {
+class ScriptExecutionContext::PendingException {
+    WTF_MAKE_NONCOPYABLE(PendingException);
 public:
     PendingException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
         : m_errorMessage(errorMessage)

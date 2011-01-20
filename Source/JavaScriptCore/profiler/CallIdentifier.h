@@ -28,13 +28,14 @@
 #define CallIdentifier_h
 
 #include <runtime/UString.h>
-#include "FastAllocBase.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC {
 
-    struct CallIdentifier : public FastAllocBase {
+    struct CallIdentifier {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         UString m_name;
         UString m_url;
         unsigned m_lineNumber;

@@ -27,11 +27,11 @@
 #define CSSSelectorList_h
 
 #include "CSSSelector.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
     
-class CSSSelectorList : public Noncopyable {
+class CSSSelectorList {
+    WTF_MAKE_NONCOPYABLE(CSSSelectorList); WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSSelectorList() : m_selectorArray(0) { }
     ~CSSSelectorList();

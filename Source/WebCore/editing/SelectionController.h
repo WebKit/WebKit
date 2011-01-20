@@ -48,7 +48,8 @@ class VisiblePosition;
 
 enum DirectionalityPolicy { MakeNonDirectionalSelection, MakeDirectionalSelection };
 
-class SelectionController : public Noncopyable {
+class SelectionController {
+    WTF_MAKE_NONCOPYABLE(SelectionController); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum EAlteration { AlterationMove, AlterationExtend };
     enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,

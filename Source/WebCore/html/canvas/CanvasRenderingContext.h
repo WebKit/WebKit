@@ -41,7 +41,8 @@ class HTMLVideoElement;
 class KURL;
 class WebGLObject;
 
-class CanvasRenderingContext : public Noncopyable {
+class CanvasRenderingContext {
+    WTF_MAKE_NONCOPYABLE(CanvasRenderingContext); WTF_MAKE_FAST_ALLOCATED;
 public:
     CanvasRenderingContext(HTMLCanvasElement*);
     virtual ~CanvasRenderingContext() { }

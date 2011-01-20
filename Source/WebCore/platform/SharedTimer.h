@@ -26,6 +26,7 @@
 #ifndef SharedTimer_h
 #define SharedTimer_h
 
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -33,8 +34,10 @@ namespace WebCore {
     // Each thread has its own single instance of shared timer, which implements this interface.
     // This instance is shared by all timers in the thread.
     // Not intended to be used directly; use the Timer class instead.
-    class SharedTimer : public Noncopyable {
+    class SharedTimer {
+        WTF_MAKE_NONCOPYABLE(SharedTimer); WTF_MAKE_FAST_ALLOCATED;
     public:
+        SharedTimer() { }
         virtual ~SharedTimer() {}
         virtual void setFiredFunction(void (*)()) = 0;
 

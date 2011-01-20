@@ -50,7 +50,8 @@ class FontDescription;
 class FontSelector;
 class SimpleFontData;
 
-class FontCache : public Noncopyable {
+class FontCache {
+    WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     friend FontCache* fontCache();
 

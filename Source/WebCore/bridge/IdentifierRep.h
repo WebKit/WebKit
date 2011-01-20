@@ -33,7 +33,8 @@
 
 namespace WebCore {
     
-class IdentifierRep : public FastAllocBase {
+class IdentifierRep {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static IdentifierRep* get(int);
     static IdentifierRep* get(const char*);

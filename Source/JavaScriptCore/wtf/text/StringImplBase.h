@@ -26,12 +26,12 @@
 #ifndef StringImplBase_h
 #define StringImplBase_h
 
-#include <wtf/Noncopyable.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WTF {
 
-class StringImplBase : public Noncopyable {
+class StringImplBase {
+    WTF_MAKE_NONCOPYABLE(StringImplBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     bool isStringImpl() { return (m_refCountAndFlags & s_refCountInvalidForStringImpl) != s_refCountInvalidForStringImpl; }
     unsigned length() const { return m_length; }
@@ -44,9 +44,6 @@ protected:
         BufferSubstring,
         BufferShared,
     };
-
-    using Noncopyable::operator new;
-    void* operator new(size_t, void* inPlace) { ASSERT(inPlace); return inPlace; }
 
     // For SmallStringStorage, which allocates an array and uses an in-place new.
     StringImplBase() { }

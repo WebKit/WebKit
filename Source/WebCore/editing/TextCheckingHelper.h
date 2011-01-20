@@ -72,7 +72,8 @@ private:
     mutable int m_checkingLength;
 };
 
-class TextCheckingHelper : public Noncopyable {
+class TextCheckingHelper {
+    WTF_MAKE_NONCOPYABLE(TextCheckingHelper);
 public:
     TextCheckingHelper(EditorClient*, PassRefPtr<Range>);
     ~TextCheckingHelper();

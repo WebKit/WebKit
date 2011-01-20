@@ -39,7 +39,8 @@ class Element;
 class Frame;
 class HTMLToken;
 
-class HTMLTokenizer : public Noncopyable {
+class HTMLTokenizer {
+    WTF_MAKE_NONCOPYABLE(HTMLTokenizer); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State {
         DataState,
@@ -172,7 +173,8 @@ public:
 
 private:
     // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
-    class InputStreamPreprocessor : public Noncopyable {
+    class InputStreamPreprocessor {
+        WTF_MAKE_NONCOPYABLE(InputStreamPreprocessor);
     public:
         InputStreamPreprocessor(HTMLTokenizer* tokenizer)
             : m_tokenizer(tokenizer)

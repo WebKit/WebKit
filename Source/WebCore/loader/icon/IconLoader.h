@@ -37,7 +37,8 @@ class Frame;
 class KURL;
 class SharedBuffer;
 
-class IconLoader : private SubresourceLoaderClient, public Noncopyable {
+class IconLoader : private SubresourceLoaderClient {
+    WTF_MAKE_NONCOPYABLE(IconLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<IconLoader> create(Frame*);
     ~IconLoader();

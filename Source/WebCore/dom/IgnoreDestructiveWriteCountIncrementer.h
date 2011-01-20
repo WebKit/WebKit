@@ -27,11 +27,11 @@
 #define IgnoreDestructiveWriteCountIncrementer_h
 
 #include "Document.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class IgnoreDestructiveWriteCountIncrementer : public Noncopyable {
+class IgnoreDestructiveWriteCountIncrementer {
+    WTF_MAKE_NONCOPYABLE(IgnoreDestructiveWriteCountIncrementer);
 public:
     explicit IgnoreDestructiveWriteCountIncrementer(Document* document)
         : m_count(document ? &document->m_ignoreDestructiveWriteCount : 0)

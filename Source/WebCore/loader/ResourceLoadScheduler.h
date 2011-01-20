@@ -44,7 +44,8 @@ class ResourceRequest;
 class SubresourceLoader;
 class SubresourceLoaderClient;
 
-class ResourceLoadScheduler : public Noncopyable {
+class ResourceLoadScheduler {
+    WTF_MAKE_NONCOPYABLE(ResourceLoadScheduler);
 public:
     friend ResourceLoadScheduler* resourceLoadScheduler();
 
@@ -69,7 +70,8 @@ private:
     void scheduleServePendingRequests();
     void requestTimerFired(Timer<ResourceLoadScheduler>*);
 
-    class HostInformation : public Noncopyable {
+    class HostInformation {
+        WTF_MAKE_NONCOPYABLE(HostInformation);
     public:
         HostInformation(const String&, unsigned);
         ~HostInformation();

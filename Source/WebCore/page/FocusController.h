@@ -40,7 +40,8 @@ class KeyboardEvent;
 class Node;
 class Page;
 
-class FocusController : public Noncopyable {
+class FocusController {
+    WTF_MAKE_NONCOPYABLE(FocusController); WTF_MAKE_FAST_ALLOCATED;
 public:
     FocusController(Page*);
 

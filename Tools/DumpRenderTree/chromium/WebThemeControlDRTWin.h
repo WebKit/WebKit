@@ -46,7 +46,8 @@
 // Skia forward declarations
 struct SkIRect;
 
-class WebThemeControlDRTWin : public Noncopyable {
+class WebThemeControlDRTWin {
+    WTF_MAKE_NONCOPYABLE(WebThemeControlDRTWin);
 public:
     // This list of states mostly mirrors the list in WebCore/platform/ThemeTypes.h
     // but is maintained separately since that isn't public and also to minimize

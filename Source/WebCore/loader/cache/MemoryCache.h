@@ -70,7 +70,8 @@ class KURL;
 // its member variables) are allocated in non-purgeable TC-malloc'd memory so we would see slightly
 // more memory use due to this.
 
-class MemoryCache : public Noncopyable {
+class MemoryCache {
+    WTF_MAKE_NONCOPYABLE(MemoryCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     friend MemoryCache* memoryCache();
 

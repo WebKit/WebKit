@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-class LocalWindowsContext : public Noncopyable {
+class LocalWindowsContext {
+    WTF_MAKE_NONCOPYABLE(LocalWindowsContext);
 public:
     LocalWindowsContext(GraphicsContext* graphicsContext, const IntRect& rect, bool supportAlphaBlend = true, bool mayCreateBitmap = true)
         : m_graphicsContext(graphicsContext)

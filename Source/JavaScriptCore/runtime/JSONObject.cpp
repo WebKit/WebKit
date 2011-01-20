@@ -70,7 +70,8 @@ private:
     mutable JSValue m_value;
 };
 
-class Stringifier : public Noncopyable {
+class Stringifier {
+    WTF_MAKE_NONCOPYABLE(Stringifier);
 public:
     Stringifier(ExecState*, JSValue replacer, JSValue space);
     ~Stringifier();

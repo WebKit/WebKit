@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-class AnimationList : public FastAllocBase {
+class AnimationList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     AnimationList() { }
     AnimationList(const AnimationList&);

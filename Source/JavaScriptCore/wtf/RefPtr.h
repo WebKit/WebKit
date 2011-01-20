@@ -36,7 +36,8 @@ namespace WTF {
 
     enum HashTableDeletedValueType { HashTableDeletedValue };
 
-    template<typename T> class RefPtr : public FastAllocBase {
+    template<typename T> class RefPtr {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ALWAYS_INLINE RefPtr() : m_ptr(0) { }
         ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }

@@ -55,7 +55,8 @@
 
 namespace WebCore {
 
-class SVGImageChromeClient : public EmptyChromeClient, public Noncopyable {
+class SVGImageChromeClient : public EmptyChromeClient {
+    WTF_MAKE_NONCOPYABLE(SVGImageChromeClient); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGImageChromeClient(SVGImage* image)
         : m_image(image)

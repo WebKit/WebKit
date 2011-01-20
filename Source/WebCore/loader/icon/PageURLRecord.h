@@ -51,7 +51,8 @@ public:
     String iconURL;
 };
 
-class PageURLRecord : public Noncopyable {
+class PageURLRecord {
+    WTF_MAKE_NONCOPYABLE(PageURLRecord); WTF_MAKE_FAST_ALLOCATED;
 public:
     PageURLRecord(const String& pageURL);
     ~PageURLRecord();

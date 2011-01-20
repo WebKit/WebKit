@@ -23,11 +23,11 @@
 #define OwnFastMallocPtr_h
 
 #include "FastMalloc.h"
-#include "Noncopyable.h"
 
 namespace WTF {
 
-    template<class T> class OwnFastMallocPtr : public Noncopyable {
+    template<class T> class OwnFastMallocPtr {
+        WTF_MAKE_NONCOPYABLE(OwnFastMallocPtr);
     public:
         explicit OwnFastMallocPtr(T* ptr) : m_ptr(ptr)
         {

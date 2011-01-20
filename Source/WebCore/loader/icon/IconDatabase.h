@@ -62,8 +62,8 @@ enum IconLoadDecision {
     IconLoadUnknown
 };
 
-class IconDatabase : public Noncopyable {
-
+class IconDatabase {
+    WTF_MAKE_NONCOPYABLE(IconDatabase); WTF_MAKE_FAST_ALLOCATED;
 // *** Main Thread Only ***
 public:
     void setClient(IconDatabaseClient*);

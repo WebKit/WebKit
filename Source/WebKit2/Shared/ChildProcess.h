@@ -27,13 +27,11 @@
 #define ChildProcess_h
 
 #include "Connection.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
 class ChildProcess : protected CoreIPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(ChildProcess);
-
 protected:
     ChildProcess();
     ~ChildProcess();

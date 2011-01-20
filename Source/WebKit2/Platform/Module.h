@@ -39,7 +39,8 @@
 
 namespace WebKit {
 
-class Module : public Noncopyable {
+class Module {
+    WTF_MAKE_NONCOPYABLE(Module);
 public:
     Module(const String& path);
     ~Module();

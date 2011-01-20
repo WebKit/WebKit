@@ -31,13 +31,13 @@
 #include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
 class WebContext;
     
-class VisitedLinkProvider : Noncopyable {
+class VisitedLinkProvider {
+    WTF_MAKE_NONCOPYABLE(VisitedLinkProvider);
 public:
     explicit VisitedLinkProvider(WebContext*);
 

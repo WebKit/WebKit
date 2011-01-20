@@ -41,7 +41,8 @@ class InspectorController;
 class InspectorFrontendHost;
 class Page;
 
-class InspectorFrontendClientLocal : public InspectorFrontendClient, public Noncopyable {
+class InspectorFrontendClientLocal : public InspectorFrontendClient {
+    WTF_MAKE_NONCOPYABLE(InspectorFrontendClientLocal); WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorFrontendClientLocal(InspectorController*, Page*);
     virtual ~InspectorFrontendClientLocal();

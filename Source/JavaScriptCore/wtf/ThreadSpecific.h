@@ -61,7 +61,8 @@ namespace WTF {
 void ThreadSpecificThreadExit();
 #endif
 
-template<typename T> class ThreadSpecific : public Noncopyable {
+template<typename T> class ThreadSpecific {
+    WTF_MAKE_NONCOPYABLE(ThreadSpecific);
 public:
     ThreadSpecific();
     T* operator->();
@@ -84,7 +85,9 @@ private:
     void static destroy(void* ptr);
 
 #if USE(PTHREADS) || PLATFORM(QT) || PLATFORM(GTK) || OS(WINDOWS)
-    struct Data : Noncopyable {
+    struct Data {
+        WTF_MAKE_NONCOPYABLE(Data);
+    public:
         Data(T* value, ThreadSpecific<T>* owner) : value(value), owner(owner) {}
 #if PLATFORM(QT)
         ~Data() { owner->destroy(this); }

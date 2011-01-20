@@ -32,11 +32,11 @@
 #include "ScriptProfile.h"
 #include "ScriptState.h"
 
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class ScriptProfiler : public Noncopyable {
+class ScriptProfiler {
+    WTF_MAKE_NONCOPYABLE(ScriptProfiler);
 public:
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);

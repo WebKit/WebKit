@@ -61,7 +61,8 @@ using namespace HTMLNames;
 // Case folding is also done if the CaseInsensitive option is specified.
 // Matches are further filtered if the AtWordStarts option is specified, although some
 // matches inside a word are permitted if TreatMedialCapitalAsWordStart is specified as well.
-class SearchBuffer : public Noncopyable {
+class SearchBuffer {
+    WTF_MAKE_NONCOPYABLE(SearchBuffer);
 public:
     SearchBuffer(const String& target, FindOptions);
     ~SearchBuffer();

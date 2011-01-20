@@ -49,7 +49,8 @@ class ImageLoader;
 class KURL;
 
 // The CachedResourceLoader manages the loading of scripts/images/stylesheets for a single document.
-class CachedResourceLoader : public Noncopyable {
+class CachedResourceLoader {
+    WTF_MAKE_NONCOPYABLE(CachedResourceLoader); WTF_MAKE_FAST_ALLOCATED;
 friend class ImageLoader;
 
 public:

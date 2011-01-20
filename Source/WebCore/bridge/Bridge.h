@@ -28,14 +28,15 @@
 #define Bridge_h
 
 #include "BridgeJSC.h"
-#include <wtf/Noncopyable.h>
 
 namespace JSC  {
 
 namespace Bindings {
 
-class Method : public Noncopyable {
+class Method {
+    WTF_MAKE_NONCOPYABLE(Method); WTF_MAKE_FAST_ALLOCATED;
 public:
+    Method() { }
     virtual int numParameters() const = 0;
 
     virtual ~Method() { }

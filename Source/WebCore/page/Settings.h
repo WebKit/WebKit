@@ -50,7 +50,8 @@ namespace WebCore {
         TextDirectionSubmenuAlwaysIncluded
     };
 
-    class Settings : public Noncopyable {
+    class Settings {
+        WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
     public:
         Settings(Page*);
 

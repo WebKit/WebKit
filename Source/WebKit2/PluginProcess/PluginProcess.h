@@ -40,6 +40,7 @@ class WebProcessConnection;
 struct PluginProcessCreationParameters;
         
 class PluginProcess : ChildProcess {
+    WTF_MAKE_NONCOPYABLE(PluginProcess);
 public:
     static PluginProcess& shared();
 

@@ -24,6 +24,7 @@
 
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
+#include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -32,7 +33,10 @@ namespace WebCore {
 class FontPlatformData;
 class SharedBuffer;
 
-struct FontCustomPlatformData : Noncopyable {
+struct FontCustomPlatformData {
+    WTF_MAKE_NONCOPYABLE(FontCustomPlatformData); WTF_MAKE_FAST_ALLOCATED;
+public:
+    FontCustomPlatformData() { }
     ~FontCustomPlatformData();
 
     // for use with QFontDatabase::addApplicationFont/removeApplicationFont

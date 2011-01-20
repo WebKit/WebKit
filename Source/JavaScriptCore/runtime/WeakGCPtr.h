@@ -28,12 +28,12 @@
 
 #include "Heap.h"
 #include "GCHandle.h"
-#include <wtf/Noncopyable.h>
 
 namespace JSC {
 
 // A smart pointer whose get() function returns 0 for cells awaiting destruction.
-template <typename T> class WeakGCPtr : Noncopyable {
+template <typename T> class WeakGCPtr {
+    WTF_MAKE_NONCOPYABLE(WeakGCPtr);
 public:
     WeakGCPtr()
         : m_ptr(0)

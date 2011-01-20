@@ -81,7 +81,8 @@ class Node;
 class Range;
 class ArchiveResource;
     
-class Pasteboard : public Noncopyable {
+class Pasteboard {
+    WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
 #if PLATFORM(MAC)
     //Helper functions to allow Clipboard to share code

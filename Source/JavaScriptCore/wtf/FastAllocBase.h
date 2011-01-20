@@ -32,8 +32,8 @@
 // Provides customizable overrides of fastMalloc/fastFree and operator new/delete
 //
 // Provided functionality:
+//    Macro: WTF_MAKE_FAST_ALLOCATED
 //    namespace WTF {
-//        class FastAllocBase;
 //
 //        T*    fastNew<T>();
 //        T*    fastNew<T>(arg);
@@ -48,7 +48,16 @@
 // FastDelete assumes that the underlying
 //
 // Example usage:
-//    class Widget : public FastAllocBase { ... };
+//    class Widget {
+//        WTF_MAKE_FAST_ALLOCATED
+//    ...
+//    };
+//
+//    struct Data {
+//        WTF_MAKE_FAST_ALLOCATED
+//    public:
+//    ...
+//    };
 //
 //    char* charPtr = fastNew<char>();
 //    fastDelete(charPtr);
@@ -83,8 +92,6 @@
 #include "FastMalloc.h"
 #include "TypeTraits.h"
 
-namespace WTF {
-
 #define WTF_MAKE_FAST_ALLOCATED \
 public: \
     void* operator new(size_t, void* p) { return p; } \
@@ -115,11 +122,10 @@ public: \
          ::WTF::fastMallocMatchValidateFree(p, ::WTF::Internal::AllocTypeClassNewArray); \
          ::WTF::fastFree(p); \
     } \
-private:
+private: \
+typedef int ThisIsHereToForceASemicolonAfterThisMacro
 
-class FastAllocBase {
-    WTF_MAKE_FAST_ALLOCATED  
-};
+namespace WTF {
 
     // fastNew / fastDelete
 
@@ -410,7 +416,6 @@ class FastAllocBase {
 
 } // namespace WTF
 
-using WTF::FastAllocBase;
 using WTF::fastDeleteSkippingDestructor;
 
 #endif // FastAllocBase_h

@@ -414,7 +414,10 @@ static void mult(BigInt& aRef, const BigInt& bRef)
     aRef = c;
 }
 
-struct P5Node : Noncopyable {
+struct P5Node {
+    WTF_MAKE_NONCOPYABLE(P5Node); WTF_MAKE_FAST_ALLOCATED;
+public:
+    P5Node() { }
     BigInt val;
     P5Node* next;
 };

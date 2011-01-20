@@ -32,7 +32,8 @@ template<typename T> class TreeShared;
 template<typename T> void adopted(TreeShared<T>*);
 #endif
 
-template<typename T> class TreeShared : public Noncopyable {
+template<typename T> class TreeShared {
+    WTF_MAKE_NONCOPYABLE(TreeShared);
 public:
     TreeShared()
         : m_refCount(1)

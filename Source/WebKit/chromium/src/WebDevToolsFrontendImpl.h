@@ -55,8 +55,8 @@ struct WebDevToolsMessageData;
 
 using WTF::String;
 
-class WebDevToolsFrontendImpl : public WebKit::WebDevToolsFrontend
-                              , public Noncopyable {
+class WebDevToolsFrontendImpl : public WebKit::WebDevToolsFrontend {
+    WTF_MAKE_NONCOPYABLE(WebDevToolsFrontendImpl);
 public:
     WebDevToolsFrontendImpl(
         WebKit::WebViewImpl* webViewImpl,

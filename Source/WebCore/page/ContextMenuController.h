@@ -41,7 +41,8 @@ namespace WebCore {
     class Event;
     class Page;
 
-    class ContextMenuController : public Noncopyable {
+    class ContextMenuController {
+        WTF_MAKE_NONCOPYABLE(ContextMenuController); WTF_MAKE_FAST_ALLOCATED;
     public:
         ContextMenuController(Page*, ContextMenuClient*);
         ~ContextMenuController();

@@ -80,7 +80,8 @@ class NSURLConnection;
 namespace WebCore {
     class ResourceHandleClient;
 
-    class ResourceHandleInternal : public Noncopyable {
+    class ResourceHandleInternal {
+        WTF_MAKE_NONCOPYABLE(ResourceHandleInternal); WTF_MAKE_FAST_ALLOCATED;
     public:
         ResourceHandleInternal(ResourceHandle* loader, const ResourceRequest& request, ResourceHandleClient* c, bool defersLoading, bool shouldContentSniff)
             : m_client(c)

@@ -33,7 +33,8 @@ namespace WebCore {
 
 template <class T> class DeprecatedPtrListIterator;
 
-template <class T> class DeprecatedPtrList : public FastAllocBase {
+template <class T> class DeprecatedPtrList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     DeprecatedPtrList() : impl(deleteFunc), del_item(false) { }
     ~DeprecatedPtrList() { impl.clear(del_item); }

@@ -31,14 +31,14 @@
 #ifndef ThreadIdentifierDataPthreads_h
 #define ThreadIdentifierDataPthreads_h
 
-#include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
 
 // Holds ThreadIdentifier in the thread-specific storage and employs pthreads-specific 2-pass destruction to reliably remove
 // ThreadIdentifier from threadMap. It assumes regular ThreadSpecific types don't use multiple-pass destruction.
-class ThreadIdentifierData : public Noncopyable {
+class ThreadIdentifierData {
+    WTF_MAKE_NONCOPYABLE(ThreadIdentifierData);
 public:
     ~ThreadIdentifierData();
 

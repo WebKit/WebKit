@@ -58,7 +58,8 @@ namespace WebCore {
     class ApplicationCacheStorage;
 #endif
 
-    class ApplicationCacheHost : public Noncopyable {
+    class ApplicationCacheHost {
+        WTF_MAKE_NONCOPYABLE(ApplicationCacheHost); WTF_MAKE_FAST_ALLOCATED;
     public:
         // The Status numeric values are specified in the HTML5 spec.
         enum Status {

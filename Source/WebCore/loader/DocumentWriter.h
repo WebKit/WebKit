@@ -39,7 +39,8 @@ class Frame;
 class SecurityOrigin;
 class TextResourceDecoder;
 
-class DocumentWriter : public Noncopyable {
+class DocumentWriter {
+    WTF_MAKE_NONCOPYABLE(DocumentWriter);
 public:
     DocumentWriter(Frame*);
 

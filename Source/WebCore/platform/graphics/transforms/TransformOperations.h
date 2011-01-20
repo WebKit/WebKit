@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-class TransformOperations : public FastAllocBase {
+class TransformOperations {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     TransformOperations(bool makeIdentity = false);
     

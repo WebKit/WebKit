@@ -35,7 +35,8 @@
 
 namespace WebCore {
 
-class UserStyleSheet : public Noncopyable {
+class UserStyleSheet {
+    WTF_MAKE_NONCOPYABLE(UserStyleSheet); WTF_MAKE_FAST_ALLOCATED;
 public:
     UserStyleSheet(const String& source, const KURL& url,
                    PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,

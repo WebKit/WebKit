@@ -284,7 +284,8 @@ WebPluginContainerImpl* WebFrameImpl::pluginContainerFromFrame(Frame* frame)
 
 // Simple class to override some of PrintContext behavior. Some of the methods
 // made virtual so that they can be overriden by ChromePluginPrintContext.
-class ChromePrintContext : public PrintContext, public Noncopyable {
+class ChromePrintContext : public PrintContext {
+    WTF_MAKE_NONCOPYABLE(ChromePrintContext);
 public:
     ChromePrintContext(Frame* frame)
         : PrintContext(frame)

@@ -36,7 +36,8 @@ class BackForwardList;
 class HistoryItem;
 class Page;
 
-class BackForwardController : public Noncopyable {
+class BackForwardController {
+    WTF_MAKE_NONCOPYABLE(BackForwardController); WTF_MAKE_FAST_ALLOCATED;
 public:
     BackForwardController(Page*, PassRefPtr<BackForwardList>);
     ~BackForwardController();

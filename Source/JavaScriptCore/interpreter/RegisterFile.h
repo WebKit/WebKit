@@ -89,7 +89,8 @@ namespace JSC {
 
     class JSGlobalObject;
 
-    class RegisterFile : public Noncopyable {
+    class RegisterFile {
+        WTF_MAKE_NONCOPYABLE(RegisterFile);
         friend class JIT;
     public:
         enum CallFrameHeaderEntry {

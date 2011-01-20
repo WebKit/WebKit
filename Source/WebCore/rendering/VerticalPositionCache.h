@@ -38,7 +38,8 @@ const int PositionTop = -0x7fffffff;
 const int PositionBottom = 0x7fffffff;
 const int PositionUndefined = 0x80000000;
 
-class VerticalPositionCache : public Noncopyable {
+class VerticalPositionCache {
+    WTF_MAKE_NONCOPYABLE(VerticalPositionCache);
 public:
     VerticalPositionCache()
     { }

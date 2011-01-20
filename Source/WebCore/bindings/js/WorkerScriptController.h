@@ -31,7 +31,6 @@
 
 #include <runtime/Protect.h>
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
 namespace JSC {
@@ -45,7 +44,8 @@ namespace WebCore {
     class ScriptValue;
     class WorkerContext;
 
-    class WorkerScriptController : public Noncopyable {
+    class WorkerScriptController {
+        WTF_MAKE_NONCOPYABLE(WorkerScriptController); WTF_MAKE_FAST_ALLOCATED;
     public:
         WorkerScriptController(WorkerContext*);
         ~WorkerScriptController();

@@ -145,6 +145,7 @@ private:
 typedef Vector<BlobDataItem> BlobDataItemList;
 
 class BlobData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<BlobData> create();
 

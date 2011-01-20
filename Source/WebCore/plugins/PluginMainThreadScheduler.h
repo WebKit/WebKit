@@ -36,7 +36,8 @@ typedef NPP_t* NPP;
 
 namespace WebCore {
 
-class PluginMainThreadScheduler : public Noncopyable {
+class PluginMainThreadScheduler {
+    WTF_MAKE_NONCOPYABLE(PluginMainThreadScheduler); WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef void MainThreadFunction(void*);
 

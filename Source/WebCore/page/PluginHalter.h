@@ -35,7 +35,8 @@ namespace WebCore {
 
 class HaltablePlugin;
 
-class PluginHalter : public Noncopyable {
+class PluginHalter {
+    WTF_MAKE_NONCOPYABLE(PluginHalter); WTF_MAKE_FAST_ALLOCATED;
 public:
     PluginHalter(PluginHalterClient*);
 

@@ -46,7 +46,8 @@ class InjectedScriptHost;
 class InspectorObject;
 class InspectorValue;
 
-class InspectorRuntimeAgent : public Noncopyable {
+class InspectorRuntimeAgent {
+    WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
     static PassOwnPtr<InspectorRuntimeAgent> create(InjectedScriptHost* injectedScriptHost)
     {

@@ -60,7 +60,8 @@ struct TextMarkerData {
 
 enum PostType { PostSynchronously, PostAsynchronously };
 
-class AXObjectCache : public Noncopyable {
+class AXObjectCache {
+    WTF_MAKE_NONCOPYABLE(AXObjectCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     AXObjectCache(const Document*);
     ~AXObjectCache();

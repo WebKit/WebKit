@@ -41,7 +41,8 @@ namespace WebKit {
 class PluginProcessProxy;
 class WebProcessProxy;
 
-class PluginProcessManager : Noncopyable  {
+class PluginProcessManager {
+    WTF_MAKE_NONCOPYABLE(PluginProcessManager);
 public:
     static PluginProcessManager& shared();
 

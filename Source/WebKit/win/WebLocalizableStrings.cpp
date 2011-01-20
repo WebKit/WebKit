@@ -72,7 +72,8 @@ static LocalizedStringMap frameworkLocStrings()
     return map;
 }
 
-class LocalizedString : public Noncopyable {
+class LocalizedString {
+    WTF_MAKE_NONCOPYABLE(LocalizedString);
 public:
     LocalizedString(CFStringRef string)
         : m_cfString(string)

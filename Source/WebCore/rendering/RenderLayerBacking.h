@@ -53,7 +53,8 @@ enum CompositingLayerType {
 // 
 // There is one RenderLayerBacking for each RenderLayer that is composited.
 
-class RenderLayerBacking : public GraphicsLayerClient, public Noncopyable {
+class RenderLayerBacking : public GraphicsLayerClient {
+    WTF_MAKE_NONCOPYABLE(RenderLayerBacking); WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderLayerBacking(RenderLayer*);
     ~RenderLayerBacking();

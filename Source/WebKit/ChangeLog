@@ -1,3 +1,14 @@
+2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Refactoring of the custom allocation framework
+        https://bugs.webkit.org/show_bug.cgi?id=49897
+
+        Inheriting from FastAllocBase can result in objects getting larger (bug #33896, #46589).
+        The modification replaces Noncopyable and FastAllocBase classes and these inherits with their
+        equivalent macro implementation at the necessary places.
+
 2011-01-17  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

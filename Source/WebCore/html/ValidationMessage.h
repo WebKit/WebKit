@@ -42,7 +42,8 @@ namespace WebCore {
 class FormAssociatedElement;
 class HTMLElement;
 
-class ValidationMessage : public Noncopyable {
+class ValidationMessage {
+    WTF_MAKE_NONCOPYABLE(ValidationMessage);
 public:
     static PassOwnPtr<ValidationMessage> create(FormAssociatedElement*);
     ~ValidationMessage();

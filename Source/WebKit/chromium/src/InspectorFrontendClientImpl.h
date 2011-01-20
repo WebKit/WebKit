@@ -44,8 +44,8 @@ namespace WebKit {
 class WebDevToolsFrontendClient;
 class WebDevToolsFrontendImpl;
 
-class InspectorFrontendClientImpl : public WebCore::InspectorFrontendClient
-                                  , public Noncopyable  {
+class InspectorFrontendClientImpl : public WebCore::InspectorFrontendClient {
+    WTF_MAKE_NONCOPYABLE(InspectorFrontendClientImpl);
 public:
     InspectorFrontendClientImpl(WebCore::Page*, WebDevToolsFrontendClient*, WebDevToolsFrontendImpl*);
     virtual ~InspectorFrontendClientImpl();

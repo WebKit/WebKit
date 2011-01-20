@@ -63,7 +63,8 @@ class WebViewImpl;
 // would expect some actions from the handler. If there is no appropriate
 // debugger agent to handle such messages the manager will perform the action
 // itself, otherwise v8 may hang waiting for the action.
-class DebuggerAgentManager : public Noncopyable {
+class DebuggerAgentManager {
+    WTF_MAKE_NONCOPYABLE(DebuggerAgentManager);
 public:
     static void debugAttach(DebuggerAgentImpl* debuggerAgent);
     static void debugDetach(DebuggerAgentImpl* debuggerAgent);

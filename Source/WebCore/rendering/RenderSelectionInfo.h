@@ -30,7 +30,8 @@
 
 namespace WebCore {
 
-class RenderSelectionInfoBase : public Noncopyable {
+class RenderSelectionInfoBase {
+    WTF_MAKE_NONCOPYABLE(RenderSelectionInfoBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderSelectionInfoBase()
         : m_object(0)

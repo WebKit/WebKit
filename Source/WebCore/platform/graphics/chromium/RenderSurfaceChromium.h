@@ -41,7 +41,8 @@ class LayerChromium;
 class LayerRendererChromium;
 class LayerTexture;
 
-class RenderSurfaceChromium : public Noncopyable {
+class RenderSurfaceChromium {
+    WTF_MAKE_NONCOPYABLE(RenderSurfaceChromium);
     friend class LayerRendererChromium;
 public:
     explicit RenderSurfaceChromium(LayerChromium*);

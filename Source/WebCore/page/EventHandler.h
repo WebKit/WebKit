@@ -81,7 +81,8 @@ extern const int GeneralDragHysteresis;
 
 enum HitTestScrollbars { ShouldHitTestScrollbars, DontHitTestScrollbars };
 
-class EventHandler : public Noncopyable {
+class EventHandler {
+    WTF_MAKE_NONCOPYABLE(EventHandler);
 public:
     EventHandler(Frame*);
     ~EventHandler();
@@ -224,7 +225,10 @@ private:
         PerformDragAndDrop
     };
 
-    struct EventHandlerDragState : Noncopyable {
+    struct EventHandlerDragState {
+        WTF_MAKE_NONCOPYABLE(EventHandlerDragState); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        EventHandlerDragState() { }
         RefPtr<Node> m_dragSrc; // element that may be a drag source, for the current mouse gesture
         bool m_dragSrcIsLink;
         bool m_dragSrcIsImage;

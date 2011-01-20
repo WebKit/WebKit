@@ -35,7 +35,8 @@ namespace WebCore {
 class Element;
 typedef int ExceptionCode;
 
-class DOMStringMap : public Noncopyable {
+class DOMStringMap {
+    WTF_MAKE_NONCOPYABLE(DOMStringMap); WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~DOMStringMap();
 

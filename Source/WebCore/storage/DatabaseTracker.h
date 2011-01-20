@@ -56,7 +56,8 @@ class DatabaseTrackerClient;
 struct SecurityOriginTraits;
 #endif // !PLATFORM(CHROMIUM)
 
-class DatabaseTracker : public Noncopyable {
+class DatabaseTracker {
+    WTF_MAKE_NONCOPYABLE(DatabaseTracker); WTF_MAKE_FAST_ALLOCATED;
 public:
     static void initializeTracker(const String& databasePath);
     static DatabaseTracker& tracker();

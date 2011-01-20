@@ -90,12 +90,15 @@ namespace WebCore {
 
     enum FindDirection { FindDirectionForward, FindDirectionBackward };
 
-    class Page : public Noncopyable {
+    class Page {
+        WTF_MAKE_NONCOPYABLE(Page);
     public:
         static void scheduleForcedStyleRecalcForAllPages();
 
         // It is up to the platform to ensure that non-null clients are provided where required.
-        struct PageClients : Noncopyable {
+        struct PageClients {
+            WTF_MAKE_NONCOPYABLE(PageClients); WTF_MAKE_FAST_ALLOCATED;
+        public:
             PageClients();
             ~PageClients();
 

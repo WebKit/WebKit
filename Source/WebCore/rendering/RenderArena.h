@@ -36,13 +36,15 @@
 #define RenderArena_h
 
 #include "Arena.h"
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 static const size_t gMaxRecycledSize = 400;
 
-class RenderArena : public Noncopyable {
+class RenderArena {
+    WTF_MAKE_NONCOPYABLE(RenderArena); WTF_MAKE_FAST_ALLOCATED;
 public:
     RenderArena(unsigned arenaSize = 4096);
     ~RenderArena();

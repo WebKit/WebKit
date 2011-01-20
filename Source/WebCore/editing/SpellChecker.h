@@ -54,7 +54,8 @@ private:
     int m_length;
 };
 
-class SpellChecker : public Noncopyable {
+class SpellChecker {
+    WTF_MAKE_NONCOPYABLE(SpellChecker);
 public:
     explicit SpellChecker(Frame*, EditorClient*);
     ~SpellChecker();

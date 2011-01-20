@@ -40,7 +40,8 @@ static inline bool isMarked(JSString* string)
     return string && Heap::isCellMarked(string);
 }
 
-class SmallStringsStorage : public Noncopyable {
+class SmallStringsStorage {
+    WTF_MAKE_NONCOPYABLE(SmallStringsStorage); WTF_MAKE_FAST_ALLOCATED;
 public:
     SmallStringsStorage();
 

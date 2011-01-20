@@ -38,7 +38,8 @@ class RenderSVGResourceMasker;
 class SVGRenderStyle;
 
 // Holds a set of resources associated with a RenderObject
-class SVGResources : public Noncopyable {
+class SVGResources {
+    WTF_MAKE_NONCOPYABLE(SVGResources); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGResources();
 

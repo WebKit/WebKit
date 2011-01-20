@@ -34,6 +34,7 @@
 #include "Platform.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/FastAllocBase.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
@@ -96,7 +97,8 @@ typedef void* PlatformReadWriteLock;
 typedef void* PlatformCondition;
 #endif
     
-class Mutex : public Noncopyable {
+class Mutex {
+    WTF_MAKE_NONCOPYABLE(Mutex); WTF_MAKE_FAST_ALLOCATED;
 public:
     Mutex();
     ~Mutex();
@@ -113,7 +115,8 @@ private:
 
 typedef Locker<Mutex> MutexLocker;
 
-class ReadWriteLock : public Noncopyable {
+class ReadWriteLock {
+    WTF_MAKE_NONCOPYABLE(ReadWriteLock);
 public:
     ReadWriteLock();
     ~ReadWriteLock();
@@ -130,7 +133,8 @@ private:
     PlatformReadWriteLock m_readWriteLock;
 };
 
-class ThreadCondition : public Noncopyable {
+class ThreadCondition {
+    WTF_MAKE_NONCOPYABLE(ThreadCondition);
 public:
     ThreadCondition();
     ~ThreadCondition();

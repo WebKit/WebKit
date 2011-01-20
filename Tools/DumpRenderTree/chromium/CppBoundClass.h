@@ -58,7 +58,8 @@ typedef Vector<CppVariant> CppArgumentList;
 
 // CppBoundClass lets you map Javascript method calls and property accesses
 // directly to C++ method calls and CppVariant* variable access.
-class CppBoundClass : public Noncopyable {
+class CppBoundClass {
+    WTF_MAKE_NONCOPYABLE(CppBoundClass);
 public:
     class PropertyCallback {
     public:

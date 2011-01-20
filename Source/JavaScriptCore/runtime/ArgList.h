@@ -25,14 +25,14 @@
 #include "CallFrame.h"
 #include "Register.h"
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
 
     class MarkStack;
 
-    class MarkedArgumentBuffer : public Noncopyable {
+    class MarkedArgumentBuffer {
+        WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);
     private:
         static const unsigned inlineCapacity = 8;
         typedef Vector<Register, inlineCapacity> VectorType;

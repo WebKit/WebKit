@@ -158,7 +158,8 @@ private:
     }
 
     // Manages a chunk of memory and individual allocations out of it.
-    class Chunk : public Noncopyable {
+    class Chunk {
+        WTF_MAKE_NONCOPYABLE(Chunk);
     public:
         // Allocates a block of memory of the given size from the passed
         // Allocator.

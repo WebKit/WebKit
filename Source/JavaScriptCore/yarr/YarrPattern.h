@@ -63,7 +63,9 @@ private:
     }
 };
 
-struct CharacterClass : FastAllocBase {
+struct CharacterClass {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     // All CharacterClass instances have to have the full set of matches and ranges,
     // they may have an optional table for faster lookups (which must match the
     // specified matches and ranges)
@@ -204,7 +206,9 @@ struct PatternTerm {
     }
 };
 
-struct PatternAlternative : FastAllocBase {
+struct PatternAlternative {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     PatternAlternative(PatternDisjunction* disjunction)
         : m_parent(disjunction)
         , m_onceThrough(false)
@@ -245,7 +249,9 @@ struct PatternAlternative : FastAllocBase {
     bool m_containsBOL : 1;
 };
 
-struct PatternDisjunction : FastAllocBase {
+struct PatternDisjunction {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     PatternDisjunction(PatternAlternative* parent = 0)
         : m_parent(parent)
         , m_hasFixedSize(false)

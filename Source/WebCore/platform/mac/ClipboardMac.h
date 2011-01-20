@@ -44,6 +44,7 @@ class Frame;
 class FileList;
 
 class ClipboardMac : public Clipboard, public CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<ClipboardMac> create(ClipboardType clipboardType, NSPasteboard *pasteboard, ClipboardAccessPolicy policy, Frame* frame)
     {

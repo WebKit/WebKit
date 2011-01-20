@@ -27,13 +27,13 @@
 #define HTMLParserQuirks_h
 
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class Node;
 
-class HTMLParserQuirks : public Noncopyable {
+class HTMLParserQuirks {
+    WTF_MAKE_NONCOPYABLE(HTMLParserQuirks);
 public:
     HTMLParserQuirks() { }
     virtual ~HTMLParserQuirks() { }

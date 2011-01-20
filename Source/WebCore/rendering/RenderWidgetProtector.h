@@ -30,7 +30,8 @@
 
 namespace WebCore {
 
-class RenderWidgetProtector : private Noncopyable {
+class RenderWidgetProtector {
+    WTF_MAKE_NONCOPYABLE(RenderWidgetProtector);
 public:
     RenderWidgetProtector(RenderWidget* object)
         : m_object(object)

@@ -84,7 +84,8 @@
 
 namespace JSC {
 
-    class CommonIdentifiers : public Noncopyable {
+    class CommonIdentifiers {
+        WTF_MAKE_NONCOPYABLE(CommonIdentifiers); WTF_MAKE_FAST_ALLOCATED;
     private:
         CommonIdentifiers(JSGlobalData*);
         friend class JSGlobalData;

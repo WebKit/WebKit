@@ -47,7 +47,8 @@ namespace WebCore {
     class Range;
     class SelectionController;
     
-    class DragController : public Noncopyable {
+    class DragController {
+        WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
     public:
         DragController(Page*, DragClient*);
         ~DragController();

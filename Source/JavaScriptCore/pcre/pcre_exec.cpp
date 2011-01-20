@@ -112,7 +112,9 @@ struct BracketChainNode {
     const UChar* bracketStart;
 };
 
-struct MatchFrame : FastAllocBase {
+struct MatchFrame {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     ReturnLocation returnLocation;
     struct MatchFrame* previousFrame;
     

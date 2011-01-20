@@ -45,8 +45,8 @@ namespace WebCore {
      * inherit from this class and overload one of the 3 functions
      *
      */
-    class CachedResourceClient : public FastAllocBase
-    {
+    class CachedResourceClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~CachedResourceClient() { }
 

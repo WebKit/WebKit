@@ -37,7 +37,8 @@ class RenderArena;
 class RenderBox;
 class RenderObject;
 
-class LayoutState : public Noncopyable {
+class LayoutState {
+    WTF_MAKE_NONCOPYABLE(LayoutState);
 public:
     LayoutState()
         : m_clipped(false)

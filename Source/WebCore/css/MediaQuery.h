@@ -37,7 +37,8 @@
 namespace WebCore {
 class MediaQueryExp;
 
-class MediaQuery : public Noncopyable {
+class MediaQuery {
+    WTF_MAKE_NONCOPYABLE(MediaQuery); WTF_MAKE_FAST_ALLOCATED;
 public:
     enum Restrictor {
         Only, Not, None

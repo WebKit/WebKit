@@ -56,6 +56,7 @@ struct WebRect;
 class WebPopupMenuImpl : public WebPopupMenu,
                          public WebCore::FramelessScrollViewClient,
                          public RefCounted<WebPopupMenuImpl> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // WebWidget
     virtual void close();

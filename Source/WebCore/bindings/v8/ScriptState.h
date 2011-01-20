@@ -42,7 +42,8 @@ class Frame;
 class Node;
 class Page;
 
-class ScriptState : public Noncopyable {
+class ScriptState {
+    WTF_MAKE_NONCOPYABLE(ScriptState);
 public:
     bool hadException() { return !m_exception.IsEmpty(); }
     void setException(v8::Local<v8::Value> exception)
@@ -79,7 +80,8 @@ public:
     ~EmptyScriptState() { }
 };
 
-class ScriptStateProtectedPtr : public Noncopyable {
+class ScriptStateProtectedPtr {
+    WTF_MAKE_NONCOPYABLE(ScriptStateProtectedPtr);
 public:
     ScriptStateProtectedPtr() : m_scriptState(0) { }
     ScriptStateProtectedPtr(ScriptState* scriptState) : m_scriptState(scriptState)

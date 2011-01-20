@@ -38,7 +38,8 @@ namespace WebCore {
 class FloatRect;
 class IntRect;
 
-class TilingData : public Noncopyable {
+class TilingData {
+    WTF_MAKE_NONCOPYABLE(TilingData);
 public:
     TilingData(int maxTextureSize, int totalSizeX, int totalSizeY, bool hasBorderTexels);
     int maxTextureSize() const { return m_maxTextureSize; }

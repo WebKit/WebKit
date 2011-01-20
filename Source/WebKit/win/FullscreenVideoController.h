@@ -102,7 +102,8 @@ private:
     int m_dragStartOffset;
 };
 
-class FullscreenVideoController : WebCore::MediaPlayerPrivateFullscreenClient, public Noncopyable {
+class FullscreenVideoController : WebCore::MediaPlayerPrivateFullscreenClient {
+    WTF_MAKE_NONCOPYABLE(FullscreenVideoController);
 public:
     FullscreenVideoController();
     virtual ~FullscreenVideoController();

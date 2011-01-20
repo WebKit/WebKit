@@ -48,8 +48,8 @@ class WebView;
 
 class DRTDevToolsAgent;
 
-class DRTDevToolsClient : public WebKit::WebDevToolsFrontendClient
-                        , public Noncopyable {
+class DRTDevToolsClient : public WebKit::WebDevToolsFrontendClient {
+    WTF_MAKE_NONCOPYABLE(DRTDevToolsClient);
 public:
     DRTDevToolsClient(DRTDevToolsAgent*, WebKit::WebView*);
     virtual ~DRTDevToolsClient();

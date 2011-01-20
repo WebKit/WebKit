@@ -32,7 +32,8 @@ class FloatSize;
 class GraphicsContext;
 class RenderObject;
 
-class SVGImageBufferTools : public Noncopyable {
+class SVGImageBufferTools {
+    WTF_MAKE_NONCOPYABLE(SVGImageBufferTools);
 public:
     static bool createImageBuffer(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ColorSpace);
     static void renderSubtreeToImageBuffer(ImageBuffer*, RenderObject*, const AffineTransform&);

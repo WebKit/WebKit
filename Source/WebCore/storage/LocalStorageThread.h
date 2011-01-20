@@ -40,7 +40,8 @@ namespace WebCore {
     class LocalStorageTask;
 
     // FIXME: Rename this class to StorageThread
-    class LocalStorageThread : public Noncopyable {
+    class LocalStorageThread {
+        WTF_MAKE_NONCOPYABLE(LocalStorageThread); WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassOwnPtr<LocalStorageThread> create();
         ~LocalStorageThread();

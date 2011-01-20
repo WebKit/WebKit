@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class KillRing {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     void append(const String&);
     void prepend(const String&);

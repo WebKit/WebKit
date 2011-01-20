@@ -27,12 +27,12 @@
 #ifndef BatchedTransitionOptimizer_h
 #define BatchedTransitionOptimizer_h
 
-#include <wtf/Noncopyable.h>
 #include "JSObject.h"
 
 namespace JSC {
 
-    class BatchedTransitionOptimizer : public Noncopyable {
+    class BatchedTransitionOptimizer {
+        WTF_MAKE_NONCOPYABLE(BatchedTransitionOptimizer);
     public:
         BatchedTransitionOptimizer(JSObject* object)
             : m_object(object)

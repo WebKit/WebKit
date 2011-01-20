@@ -44,7 +44,8 @@ class SVGRenderStyle;
 // RenderSVGInlineText renderers to compute the final positions for each character
 // which are stored in the SVGInlineTextBox objects.
 
-class SVGTextLayoutEngine : public Noncopyable {
+class SVGTextLayoutEngine {
+    WTF_MAKE_NONCOPYABLE(SVGTextLayoutEngine);
 public:
     SVGTextLayoutEngine();
     SVGTextChunkBuilder& chunkLayoutBuilder() { return m_chunkLayoutBuilder; }

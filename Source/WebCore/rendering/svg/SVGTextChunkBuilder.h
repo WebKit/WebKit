@@ -35,7 +35,8 @@ struct SVGTextFragment;
 // Phase two performed the actual per-character layout, computing the final positions for each character, stored in the SVGInlineTextBox objects (SVGTextFragment).
 // Phase three performs all modifications that have to be applied to each individual text chunk (text-anchor & textLength).
 
-class SVGTextChunkBuilder : public Noncopyable {
+class SVGTextChunkBuilder {
+    WTF_MAKE_NONCOPYABLE(SVGTextChunkBuilder);
 public:
     SVGTextChunkBuilder();
 

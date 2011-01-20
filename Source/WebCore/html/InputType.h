@@ -33,6 +33,7 @@
 #define InputType_h
 
 #include <wtf/Forward.h>
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -56,17 +57,18 @@ class WheelEvent;
 typedef int ExceptionCode;
 
 struct ClickHandlingState {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     bool checked;
     bool indeterminate;
     RefPtr<HTMLInputElement> checkedRadioButton;
-
-    WTF_MAKE_FAST_ALLOCATED
 };
 
 // An InputType object represents the type-specific part of an HTMLInputElement.
 // Do not expose instances of InputType and classes derived from it to classes
 // other than HTMLInputElement.
-class InputType : public Noncopyable {
+class InputType {
+    WTF_MAKE_NONCOPYABLE(InputType); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*, const String&);
     static PassOwnPtr<InputType> createText(HTMLInputElement*);

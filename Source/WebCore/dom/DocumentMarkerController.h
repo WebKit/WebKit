@@ -38,8 +38,10 @@ class IntRect;
 class Node;
 class Range;
 
-class DocumentMarkerController : public Noncopyable {
+class DocumentMarkerController {
+    WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
 public:
+    DocumentMarkerController() { }
     ~DocumentMarkerController() { detach(); }
 
     void detach();

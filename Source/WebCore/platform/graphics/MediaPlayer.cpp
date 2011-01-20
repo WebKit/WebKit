@@ -147,7 +147,9 @@ static MediaPlayerPrivateInterface* createNullMediaPlayer(MediaPlayer* player)
 
 // engine support
 
-struct MediaPlayerFactory : Noncopyable {
+struct MediaPlayerFactory {
+    WTF_MAKE_NONCOPYABLE(MediaPlayerFactory); WTF_MAKE_FAST_ALLOCATED;
+public:
     MediaPlayerFactory(CreateMediaEnginePlayer constructor, MediaEngineSupportedTypes getSupportedTypes, MediaEngineSupportsType supportsTypeAndCodecs) 
         : constructor(constructor)
         , getSupportedTypes(getSupportedTypes)

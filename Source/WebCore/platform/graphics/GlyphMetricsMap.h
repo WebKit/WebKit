@@ -40,7 +40,8 @@ typedef unsigned short Glyph;
 
 const float cGlyphSizeUnknown = -1;
 
-template<class T> class GlyphMetricsMap : public Noncopyable {
+template<class T> class GlyphMetricsMap {
+    WTF_MAKE_NONCOPYABLE(GlyphMetricsMap);
 public:
     GlyphMetricsMap() : m_filledPrimaryPage(false) { }
     ~GlyphMetricsMap()

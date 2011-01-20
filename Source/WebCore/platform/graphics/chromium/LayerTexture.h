@@ -28,6 +28,7 @@
 #include "IntSize.h"
 #include "TextureManager.h"
 
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -37,7 +38,8 @@ namespace WebCore {
 class GraphicsContext3D;
 class TextureManager;
 
-class LayerTexture : public Noncopyable {
+class LayerTexture {
+    WTF_MAKE_NONCOPYABLE(LayerTexture); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<LayerTexture> create(GraphicsContext3D* context, TextureManager* manager)
     {

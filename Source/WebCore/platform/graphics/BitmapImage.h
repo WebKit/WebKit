@@ -68,7 +68,9 @@ template <typename T> class Timer;
 // FrameData Class
 // ================================================
 
-struct FrameData : Noncopyable {
+struct FrameData {
+    WTF_MAKE_NONCOPYABLE(FrameData);
+public:
     FrameData()
         : m_frame(0)
         , m_haveMetadata(false)

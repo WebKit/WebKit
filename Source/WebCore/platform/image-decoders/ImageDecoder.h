@@ -221,7 +221,8 @@ namespace WebCore {
     // setMaxNumPixels() to specify the biggest size that decoded images can
     // have. Image decoders will deflate those images that are bigger than
     // m_maxNumPixels. (Not supported by all image decoders yet)
-    class ImageDecoder : public Noncopyable {
+    class ImageDecoder {
+        WTF_MAKE_NONCOPYABLE(ImageDecoder); WTF_MAKE_FAST_ALLOCATED;
     public:
         ImageDecoder(ImageSource::AlphaOption alphaOption, ImageSource::GammaAndColorProfileOption gammaAndColorProfileOption)
             : m_scaled(false)

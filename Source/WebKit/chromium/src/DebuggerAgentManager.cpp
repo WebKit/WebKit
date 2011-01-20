@@ -55,7 +55,8 @@ bool DebuggerAgentManager::s_exposeV8DebuggerProtocol = false;
 
 namespace {
 
-class CallerIdWrapper : public v8::Debug::ClientData, public Noncopyable {
+class CallerIdWrapper : public v8::Debug::ClientData {
+    WTF_MAKE_NONCOPYABLE(CallerIdWrapper);
 public:
     CallerIdWrapper() : m_callerIsMananager(true), m_callerId(0) { }
     explicit CallerIdWrapper(int callerId)

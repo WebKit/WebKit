@@ -35,7 +35,8 @@ namespace WebCore {
 class Element;
 
 // This may end up merged into HTMLElementStack.
-class HTMLFormattingElementList : public Noncopyable {
+class HTMLFormattingElementList {
+    WTF_MAKE_NONCOPYABLE(HTMLFormattingElementList);
 public:
     HTMLFormattingElementList();
     ~HTMLFormattingElementList();

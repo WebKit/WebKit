@@ -49,6 +49,7 @@ namespace WebCore {
     class WebSocketChannelClient;
 
     class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol) { return adoptRef(new WebSocketChannel(context, client, url, protocol)); }
         virtual ~WebSocketChannel();

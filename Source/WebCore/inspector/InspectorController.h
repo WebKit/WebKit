@@ -105,7 +105,8 @@ class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
 
-class InspectorController : public Noncopyable {
+class InspectorController {
+    WTF_MAKE_NONCOPYABLE(InspectorController); WTF_MAKE_FAST_ALLOCATED;
 public:
     static const char* const ConsolePanel;
     static const char* const ElementsPanel;

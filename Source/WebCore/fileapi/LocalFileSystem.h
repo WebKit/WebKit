@@ -45,7 +45,8 @@ class FileSystemCallback;
 class ScriptExecutionContext;
 
 // Keeps per-process information and provides an entry point to open a file system.
-class LocalFileSystem : public Noncopyable {
+class LocalFileSystem {
+    WTF_MAKE_NONCOPYABLE(LocalFileSystem);
 public:
     // Returns a per-process instance of LocalFileSystem.
     // Note that LocalFileSystem::initializeLocalFileSystem must be called before

@@ -52,7 +52,8 @@ class Page;
 // For now, the separation is purely by convention.
 typedef JSC::ExecState ScriptState;
 
-class ScriptStateProtectedPtr : public Noncopyable {
+class ScriptStateProtectedPtr {
+    WTF_MAKE_NONCOPYABLE(ScriptStateProtectedPtr);
 public:
     explicit ScriptStateProtectedPtr(ScriptState*);
     ~ScriptStateProtectedPtr();

@@ -28,7 +28,8 @@
 
 namespace WebCore {
 
-    class SpaceSplitStringData : public Noncopyable {
+    class SpaceSplitStringData {
+        WTF_MAKE_NONCOPYABLE(SpaceSplitStringData); WTF_MAKE_FAST_ALLOCATED;
     public:
         SpaceSplitStringData(const String& string, bool shouldFoldCase)
             : m_string(string), m_shouldFoldCase(shouldFoldCase), m_createdVector(false)

@@ -35,7 +35,9 @@ const int intMinForLength = (-0x7ffffff - 1); // min value for a 28-bit int
 
 enum LengthType { Auto, Relative, Percent, Fixed, Static, Intrinsic, MinIntrinsic };
 
-struct Length : FastAllocBase {
+struct Length {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     Length()
         : m_value(0)
     {

@@ -43,7 +43,8 @@ class ResourceLoader;
 class ResourceResponse;
 class ResourceRequest;
 
-class ResourceLoadNotifier : public Noncopyable {
+class ResourceLoadNotifier {
+    WTF_MAKE_NONCOPYABLE(ResourceLoadNotifier);
 public:
     ResourceLoadNotifier(Frame*);
 

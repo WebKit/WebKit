@@ -58,7 +58,8 @@ namespace WebCore {
             Token(int t, EqTestOp::Opcode v): type(t), eqop(v) {}
         };
 
-        class Parser : public Noncopyable {
+        class Parser {
+            WTF_MAKE_NONCOPYABLE(Parser);
         public:
             Parser();
             ~Parser();

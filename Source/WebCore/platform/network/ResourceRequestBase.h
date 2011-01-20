@@ -49,7 +49,8 @@ namespace WebCore {
     struct CrossThreadResourceRequestData;
 
     // Do not use this type directly.  Use ResourceRequest instead.
-    class ResourceRequestBase : public FastAllocBase {
+    class ResourceRequestBase {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         // The type of this ResourceRequest, based on how the resource will be used.
         enum TargetType {
@@ -207,7 +208,10 @@ namespace WebCore {
     inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::compare(a, b); }
     inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
 
-    struct CrossThreadResourceRequestDataBase : Noncopyable {
+    struct CrossThreadResourceRequestDataBase {
+        WTF_MAKE_NONCOPYABLE(CrossThreadResourceRequestDataBase); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        CrossThreadResourceRequestDataBase() { }
         KURL m_url;
 
         ResourceRequestCachePolicy m_cachePolicy;

@@ -34,7 +34,8 @@ namespace JSC {
     class Heap;
     class MarkStack;
 
-    class MachineStackMarker : public Noncopyable {
+    class MachineStackMarker {
+        WTF_MAKE_NONCOPYABLE(MachineStackMarker);
     public:
         MachineStackMarker(Heap*);
         ~MachineStackMarker();

@@ -53,7 +53,8 @@ namespace JSC {
     typedef PropertySlot::GetValueFunc GetFunction;
     typedef void (*PutFunction)(ExecState*, JSObject* baseObject, JSValue value);
 
-    class HashEntry : public FastAllocBase {
+    class HashEntry {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         void initialize(StringImpl* key, unsigned char attributes, intptr_t v1, intptr_t v2
 #if ENABLE(JIT)

@@ -23,11 +23,11 @@
 #if ENABLE(SVG)
 #include "SVGPathConsumer.h"
 #include "SVGPathSource.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class SVGPathBlender : public Noncopyable {
+class SVGPathBlender {
+    WTF_MAKE_NONCOPYABLE(SVGPathBlender); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGPathBlender();
 

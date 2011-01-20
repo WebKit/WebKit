@@ -37,7 +37,8 @@ namespace JSC {
     
     enum MarkSetProperties { MayContainNullValues, NoNullValues };
     
-    class MarkStack : Noncopyable {
+    class MarkStack {
+        WTF_MAKE_NONCOPYABLE(MarkStack);
     public:
         MarkStack(void* jsArrayVPtr)
             : m_jsArrayVPtr(jsArrayVPtr)

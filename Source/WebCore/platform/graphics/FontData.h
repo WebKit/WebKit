@@ -26,6 +26,7 @@
 #ifndef FontData_h
 #define FontData_h
 
+#include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/unicode/Unicode.h>
@@ -34,7 +35,8 @@ namespace WebCore {
 
 class SimpleFontData;
 
-class FontData : public Noncopyable {
+class FontData {
+    WTF_MAKE_NONCOPYABLE(FontData); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontData()
         : m_maxGlyphPageTreeLevel(0)

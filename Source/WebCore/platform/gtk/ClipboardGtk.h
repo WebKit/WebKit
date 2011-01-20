@@ -39,6 +39,7 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     // Created from the EventHandlerGtk to be used by the dom
     class ClipboardGtk : public Clipboard, public CachedResourceClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, GtkClipboard* clipboard, Frame* frame)
         {

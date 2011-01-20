@@ -24,14 +24,14 @@
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
     class FontPlatformData;
     class SharedBuffer;
 
-    struct FontCustomPlatformData : Noncopyable {
+    struct FontCustomPlatformData {
+        WTF_MAKE_NONCOPYABLE(FontCustomPlatformData);
     public:
         FontCustomPlatformData() { }
         ~FontCustomPlatformData();

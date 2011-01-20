@@ -32,8 +32,8 @@ namespace WebCore {
 class SVGElement;
 
 class SVGViewSpec : public SVGFitToViewBox,
-                    public SVGZoomAndPan,
-                    public Noncopyable {
+                    public SVGZoomAndPan {
+    WTF_MAKE_NONCOPYABLE(SVGViewSpec);
 public:
     SVGViewSpec(SVGElement*);
 

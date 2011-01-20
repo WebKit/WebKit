@@ -31,7 +31,8 @@ class SVGCursorElement;
 class SVGElement;
 class SVGElementInstance;
 
-class SVGElementRareData : public Noncopyable {
+class SVGElementRareData {
+    WTF_MAKE_NONCOPYABLE(SVGElementRareData); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGElementRareData()
         : m_cursorElement(0)

@@ -41,7 +41,8 @@ namespace WebCore {
     class Page;
     class StorageNamespace;
 
-    class PageGroup : public Noncopyable {
+    class PageGroup {
+        WTF_MAKE_NONCOPYABLE(PageGroup); WTF_MAKE_FAST_ALLOCATED;
     public:
         PageGroup(const String& name);
         PageGroup(Page*);

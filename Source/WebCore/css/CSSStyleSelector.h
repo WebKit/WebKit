@@ -69,7 +69,8 @@ class StyledElement;
 class WebKitCSSKeyframeRule;
 class WebKitCSSKeyframesRule;
 
-class MediaQueryResult : public Noncopyable {
+class MediaQueryResult {
+    WTF_MAKE_NONCOPYABLE(MediaQueryResult); WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaQueryResult(const MediaQueryExp& expr, bool result)
         : m_expression(expr)
@@ -82,7 +83,8 @@ public:
 };
 
     // This class selects a RenderStyle for a given element based on a collection of stylesheets.
-    class CSSStyleSelector : public Noncopyable {
+    class CSSStyleSelector {
+        WTF_MAKE_NONCOPYABLE(CSSStyleSelector); WTF_MAKE_FAST_ALLOCATED;
     public:
         CSSStyleSelector(Document*, StyleSheetList* authorSheets, CSSStyleSheet* mappedElementSheet,
                          CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets,
@@ -214,7 +216,8 @@ public:
     public:
         static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
 
-        class SelectorChecker : public Noncopyable {
+        class SelectorChecker {
+            WTF_MAKE_NONCOPYABLE(SelectorChecker);
         public:
             SelectorChecker(Document*, bool strictParsing);
 

@@ -29,7 +29,8 @@
 
 namespace WebCore {
 
-class ValidityState : public Noncopyable {
+class ValidityState {
+    WTF_MAKE_NONCOPYABLE(ValidityState); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<ValidityState> create(FormAssociatedElement* control)
     {

@@ -59,7 +59,8 @@ struct FillSize {
     LengthSize size;
 };
 
-class FillLayer : public FastAllocBase {
+class FillLayer {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     FillLayer(EFillLayerType);
     ~FillLayer();

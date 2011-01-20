@@ -35,7 +35,8 @@ namespace WebCore {
 
 // Encapsulates a state machine for FrameLoader. Note that this is different from FrameState,
 // which stores the state of the current load that FrameLoader is executing.
-class FrameLoaderStateMachine : public Noncopyable {
+class FrameLoaderStateMachine {
+    WTF_MAKE_NONCOPYABLE(FrameLoaderStateMachine);
 public:
     FrameLoaderStateMachine();
 

@@ -39,12 +39,14 @@ class QualifiedName;
 
 // NOTE: The HTML5 spec uses a backwards (grows downward) stack.  We're using
 // more standard (grows upwards) stack terminology here.
-class HTMLElementStack : public Noncopyable {
+class HTMLElementStack {
+    WTF_MAKE_NONCOPYABLE(HTMLElementStack); WTF_MAKE_FAST_ALLOCATED;
 public:
     HTMLElementStack();
     ~HTMLElementStack();
 
-    class ElementRecord : public Noncopyable {
+    class ElementRecord {
+        WTF_MAKE_NONCOPYABLE(ElementRecord);
     public:
         ~ElementRecord(); // Public for ~PassOwnPtr()
     

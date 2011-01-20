@@ -35,7 +35,8 @@
 #include "COMVariantSetter.h"
 
 template<typename ValueType, typename KeyType = typename WTF::String, typename HashType = typename WTF::StringHash>
-class COMPropertyBag : public IPropertyBag, public IPropertyBag2, Noncopyable {
+class COMPropertyBag : public IPropertyBag, public IPropertyBag2 {
+    WTF_MAKE_NONCOPYABLE(COMPropertyBag);
 public:
     typedef HashMap<KeyType, ValueType, HashType> HashMapType;
 

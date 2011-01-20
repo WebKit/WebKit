@@ -108,7 +108,10 @@ double FrameView::s_deferredRepaintDelayIncrementDuringLoading = 0;
 // The maximum number of updateWidgets iterations that should be done before returning.
 static const unsigned maxUpdateWidgetsIterations = 2;
 
-struct ScheduledEvent : Noncopyable {
+struct ScheduledEvent {
+    WTF_MAKE_NONCOPYABLE(ScheduledEvent); WTF_MAKE_FAST_ALLOCATED;
+public:
+    ScheduledEvent() { }
     RefPtr<Event> m_event;
     RefPtr<Node> m_eventTarget;
 };

@@ -223,7 +223,8 @@ namespace WebCore {
     typedef void* PlatformMenuItemDescription;
 #endif
 
-    class ContextMenuItem : public FastAllocBase {
+    class ContextMenuItem {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, ContextMenu* subMenu = 0);
         ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool enabled, bool checked);

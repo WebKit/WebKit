@@ -31,7 +31,8 @@
 
 namespace WTR {
 
-class TestInvocation : public Noncopyable {
+class TestInvocation {
+    WTF_MAKE_NONCOPYABLE(TestInvocation);
 public:
     TestInvocation(const char*);
     ~TestInvocation();

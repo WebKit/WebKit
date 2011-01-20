@@ -48,7 +48,8 @@ namespace WTF {
     // when messages are fetched from the queue.
     // Essentially, MessageQueue acts as a queue of OwnPtr<DataType>.
     template<typename DataType>
-    class MessageQueue : public Noncopyable {
+    class MessageQueue {
+        WTF_MAKE_NONCOPYABLE(MessageQueue);
     public:
         MessageQueue() : m_killed(false) { }
         ~MessageQueue();

@@ -31,14 +31,14 @@
 #include "FloatQuad.h"
 #include "IntSize.h"
 #include "TransformationMatrix.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class TransformState : public Noncopyable {
+class TransformState {
+    WTF_MAKE_NONCOPYABLE(TransformState);
 public:
     enum TransformDirection { ApplyTransformDirection, UnapplyInverseTransformDirection };
     enum TransformAccumulation { FlattenTransform, AccumulateTransform };

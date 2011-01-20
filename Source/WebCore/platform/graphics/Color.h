@@ -78,7 +78,8 @@ inline int greenChannel(RGBA32 color) { return (color >> 8) & 0xFF; }
 inline int blueChannel(RGBA32 color) { return color & 0xFF; }
 inline int alphaChannel(RGBA32 color) { return (color >> 24) & 0xFF; }
 
-class Color : public FastAllocBase {
+class Color {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     Color() : m_color(0), m_valid(false) { }
     Color(RGBA32 col) : m_color(col), m_valid(true) { }

@@ -465,7 +465,8 @@ namespace JSC {
         return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), values);
     }
 
-    class DynamicGlobalObjectScope : public Noncopyable {
+    class DynamicGlobalObjectScope {
+        WTF_MAKE_NONCOPYABLE(DynamicGlobalObjectScope);
     public:
         DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject);
 

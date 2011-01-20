@@ -26,15 +26,16 @@
 #ifndef HostWindow_h
 #define HostWindow_h
 
-#include <wtf/Noncopyable.h>
 #include "Widget.h"
 
 namespace WebCore {
 
 class Cursor;
 
-class HostWindow : public Noncopyable {
+class HostWindow {
+    WTF_MAKE_NONCOPYABLE(HostWindow); WTF_MAKE_FAST_ALLOCATED;
 public:
+    HostWindow() { }
     virtual ~HostWindow() { }
 
     // Requests the host invalidate the window, not the contents.  If immediate is true do so synchronously, otherwise async.

@@ -30,11 +30,11 @@
 #ifndef NDEBUG
 #include <wtf/MainThread.h>
 #endif
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class JSMainThreadExecState : public Noncopyable {
+class JSMainThreadExecState {
+    WTF_MAKE_NONCOPYABLE(JSMainThreadExecState);
 public:
     static JSC::ExecState* currentState()
     { 

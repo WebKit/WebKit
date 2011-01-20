@@ -51,7 +51,8 @@ class GraphicsContext3D;
 class Path;
 class SharedGraphicsContext3D;
 
-class GLES2Canvas : public Noncopyable {
+class GLES2Canvas {
+    WTF_MAKE_NONCOPYABLE(GLES2Canvas);
 public:
     GLES2Canvas(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
     ~GLES2Canvas();

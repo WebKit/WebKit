@@ -43,8 +43,10 @@ class KURL;
 class ScriptExecutionContext;
 class WebSocketChannelClient;
 
-class ThreadableWebSocketChannel : public Noncopyable {
+class ThreadableWebSocketChannel {
+    WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
 public:
+    ThreadableWebSocketChannel() { }
     static PassRefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String& protocol);
 
     virtual void connect() = 0;

@@ -29,6 +29,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 
+#include <wtf/FastAllocBase.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 
@@ -36,7 +37,8 @@ namespace WebCore {
 
 typedef int TextureToken;
 
-class TextureManager : public Noncopyable {
+class TextureManager {
+    WTF_MAKE_NONCOPYABLE(TextureManager);
 public:
     static PassOwnPtr<TextureManager> create(GraphicsContext3D* context, size_t memoryLimitBytes, int maxTextureSize)
     {

@@ -41,23 +41,4 @@
             ClassName& operator=(const ClassName&)
 #endif
 
-// We don't want argument-dependent lookup to pull in everything from the WTF
-// namespace when you use Noncopyable, so put it in its own namespace.
-
-#include "FastAllocBase.h"
-
-namespace WTFNoncopyable {
-
-    class Noncopyable : public FastAllocBase {
-        Noncopyable(const Noncopyable&);
-        Noncopyable& operator=(const Noncopyable&);
-    protected:
-        Noncopyable() { }
-        ~Noncopyable() { }
-    };
-
-} // namespace WTFNoncopyable
-
-using WTFNoncopyable::Noncopyable;
-
 #endif // WTF_Noncopyable_h

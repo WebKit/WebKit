@@ -41,7 +41,8 @@ template<> void freeOwnedGPtr<GPatternSpec>(GPatternSpec*);
 template<> void freeOwnedGPtr<GDir>(GDir*);
 template<> void freeOwnedGPtr<GFile>(GFile*);
 
-template <typename T> class GOwnPtr : public Noncopyable {
+template <typename T> class GOwnPtr {
+    WTF_MAKE_NONCOPYABLE(GOwnPtr);
 public:
     explicit GOwnPtr(T* ptr = 0) : m_ptr(ptr) { }
     ~GOwnPtr() { freeOwnedGPtr(m_ptr); }

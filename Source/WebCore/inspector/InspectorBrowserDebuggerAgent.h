@@ -48,7 +48,8 @@ class InspectorController;
 class InspectorObject;
 class Node;
 
-class InspectorBrowserDebuggerAgent : public Noncopyable {
+class InspectorBrowserDebuggerAgent {
+    WTF_MAKE_NONCOPYABLE(InspectorBrowserDebuggerAgent);
 public:
     static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorController* inspectorController)
     {

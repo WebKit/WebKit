@@ -36,7 +36,8 @@ enum ProcessingUserGestureState {
     DefinitelyNotProcessingUserGesture
 };
 
-class UserGestureIndicator : public Noncopyable {
+class UserGestureIndicator {
+    WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
 public:
     static bool processingUserGesture() { return s_processingUserGesture == DefinitelyProcessingUserGesture; }
     static ProcessingUserGestureState getUserGestureState() { return s_processingUserGesture; }

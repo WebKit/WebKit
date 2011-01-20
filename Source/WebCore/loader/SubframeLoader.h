@@ -54,7 +54,8 @@ class Node;
 class Widget;
 
 // This is a slight misnomer. It handles the higher level logic of loading both subframes and plugins.
-class SubframeLoader : public Noncopyable {
+class SubframeLoader {
+    WTF_MAKE_NONCOPYABLE(SubframeLoader);
 public:
     SubframeLoader(Frame*);
 

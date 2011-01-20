@@ -149,7 +149,8 @@ public:
 #endif
 };
 
-class MediaPlayer : public Noncopyable {
+class MediaPlayer {
+    WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
 
     static PassOwnPtr<MediaPlayer> create(MediaPlayerClient* client)

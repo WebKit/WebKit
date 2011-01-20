@@ -59,7 +59,8 @@ struct CSSParserValue {
     PassRefPtr<CSSValue> createCSSValue();
 };
 
-class CSSParserValueList : public FastAllocBase {
+class CSSParserValueList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSParserValueList()
         : m_current(0)
@@ -83,7 +84,9 @@ private:
     Vector<CSSParserValue, 4> m_values;
 };
 
-struct CSSParserFunction : FastAllocBase {
+struct CSSParserFunction {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     CSSParserString name;
     OwnPtr<CSSParserValueList> args;
 };

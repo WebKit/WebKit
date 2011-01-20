@@ -34,7 +34,8 @@ namespace WebCore {
 
 class SQLValue;
 
-class SQLiteStatement : public Noncopyable {
+class SQLiteStatement {
+    WTF_MAKE_NONCOPYABLE(SQLiteStatement); WTF_MAKE_FAST_ALLOCATED;
 public:
     SQLiteStatement(SQLiteDatabase&, const String&);
     ~SQLiteStatement();

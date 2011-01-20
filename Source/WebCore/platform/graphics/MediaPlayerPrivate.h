@@ -36,8 +36,10 @@ namespace WebCore {
 class IntRect;
 class IntSize;
 
-class MediaPlayerPrivateInterface : public Noncopyable {
+class MediaPlayerPrivateInterface {
+    WTF_MAKE_NONCOPYABLE(MediaPlayerPrivateInterface); WTF_MAKE_FAST_ALLOCATED;
 public:
+    MediaPlayerPrivateInterface() { }
     virtual ~MediaPlayerPrivateInterface() { }
 
     virtual void load(const String& url) = 0;

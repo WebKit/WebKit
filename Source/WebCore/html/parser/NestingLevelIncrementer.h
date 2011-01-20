@@ -28,7 +28,8 @@
 
 namespace WebCore {
 
-class NestingLevelIncrementer : public Noncopyable {
+class NestingLevelIncrementer {
+    WTF_MAKE_NONCOPYABLE(NestingLevelIncrementer);
 public:
     explicit NestingLevelIncrementer(unsigned& nestingLevel)
         : m_nestingLevel(&nestingLevel)

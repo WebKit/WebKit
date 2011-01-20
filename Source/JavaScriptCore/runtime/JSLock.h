@@ -53,7 +53,8 @@ namespace JSC {
 
     enum JSLockBehavior { SilenceAssertionsOnly, LockForReal };
 
-    class JSLock : public Noncopyable {
+    class JSLock {
+        WTF_MAKE_NONCOPYABLE(JSLock);
     public:
         JSLock(ExecState*);
         JSLock(JSGlobalData*);
@@ -89,7 +90,8 @@ namespace JSC {
 
         JSLockBehavior m_lockBehavior;
 
-        class DropAllLocks : public Noncopyable {
+        class DropAllLocks {
+            WTF_MAKE_NONCOPYABLE(DropAllLocks);
         public:
             DropAllLocks(ExecState* exec);
             DropAllLocks(JSLockBehavior);

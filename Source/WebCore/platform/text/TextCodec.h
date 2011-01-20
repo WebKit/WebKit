@@ -57,8 +57,10 @@ namespace WebCore {
 
     typedef char UnencodableReplacementArray[32];
 
-    class TextCodec : public Noncopyable {
+    class TextCodec {
+        WTF_MAKE_NONCOPYABLE(TextCodec); WTF_MAKE_FAST_ALLOCATED;
     public:
+        TextCodec() { }
         virtual ~TextCodec();
 
         String decode(const char* str, size_t length, bool flush = false)

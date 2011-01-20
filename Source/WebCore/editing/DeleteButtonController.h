@@ -36,7 +36,8 @@ class HTMLElement;
 class RenderObject;
 class VisibleSelection;
 
-class DeleteButtonController : public Noncopyable {
+class DeleteButtonController {
+    WTF_MAKE_NONCOPYABLE(DeleteButtonController); WTF_MAKE_FAST_ALLOCATED;
 public:
     DeleteButtonController(Frame*);
 

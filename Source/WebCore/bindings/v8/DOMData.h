@@ -43,7 +43,8 @@ namespace WebCore {
     // thread.  The DOMData for the main thread and the DOMData for child threads
     // use different subclasses.
     //
-    class DOMData : public Noncopyable {
+    class DOMData {
+        WTF_MAKE_NONCOPYABLE(DOMData);
     public:
         DOMData();
         virtual ~DOMData();

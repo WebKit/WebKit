@@ -37,7 +37,8 @@ namespace WebCore {
 //     - wrappers being deleted without being removed from the cache
 //     - wrappers being cached twice
 
-class JSDebugWrapperSet : public Noncopyable {
+class JSDebugWrapperSet {
+    WTF_MAKE_NONCOPYABLE(JSDebugWrapperSet);
     friend class WTF::ThreadSpecific<JSDebugWrapperSet>;
 public:
     static JSDebugWrapperSet& shared();

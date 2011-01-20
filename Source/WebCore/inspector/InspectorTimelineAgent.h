@@ -70,7 +70,8 @@ enum TimelineRecordType {
     ScheduleResourceRequestTimelineRecordType = 20
 };
 
-class InspectorTimelineAgent : ScriptGCEventListener, public Noncopyable {
+class InspectorTimelineAgent : ScriptGCEventListener {
+    WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     InspectorTimelineAgent(InspectorFrontend* frontend);
     ~InspectorTimelineAgent();

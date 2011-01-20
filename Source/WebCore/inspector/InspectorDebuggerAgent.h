@@ -53,7 +53,8 @@ enum DebuggerEventType {
     NativeBreakpointDebuggerEventType
 };
 
-class InspectorDebuggerAgent : public ScriptDebugListener, public Noncopyable {
+class InspectorDebuggerAgent : public ScriptDebugListener {
+    WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<InspectorDebuggerAgent> create(InspectorController*, InspectorFrontend*);
     virtual ~InspectorDebuggerAgent();

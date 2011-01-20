@@ -29,6 +29,7 @@
 #ifndef WTF_Collator_h
 #define WTF_Collator_h
 
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/unicode/Unicode.h>
@@ -39,7 +40,8 @@ struct UCollator;
 
 namespace WTF {
 
-    class Collator : public Noncopyable {
+    class Collator {
+        WTF_MAKE_NONCOPYABLE(Collator); WTF_MAKE_FAST_ALLOCATED;
     public:
         enum Result { Equal = 0, Greater = 1, Less = -1 };
 

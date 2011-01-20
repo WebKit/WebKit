@@ -77,7 +77,8 @@ NSEvent *EventHandler::currentNSEvent()
     return currentNSEventSlot().get();
 }
 
-class CurrentEventScope : public Noncopyable {
+class CurrentEventScope {
+     WTF_MAKE_NONCOPYABLE(CurrentEventScope);
 public:
     CurrentEventScope(NSEvent *);
     ~CurrentEventScope();

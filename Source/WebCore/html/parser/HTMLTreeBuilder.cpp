@@ -241,7 +241,8 @@ HTMLFormElement* closestFormAncestor(Element* element)
 
 } // namespace
 
-class HTMLTreeBuilder::ExternalCharacterTokenBuffer : public Noncopyable {
+class HTMLTreeBuilder::ExternalCharacterTokenBuffer {
+    WTF_MAKE_NONCOPYABLE(ExternalCharacterTokenBuffer);
 public:
     explicit ExternalCharacterTokenBuffer(AtomicHTMLToken& token)
         : m_current(token.characters().data())
@@ -2342,7 +2343,8 @@ void HTMLTreeBuilder::reprocessEndTag(AtomicHTMLToken& token)
     processEndTag(token);
 }
 
-class HTMLTreeBuilder::FakeInsertionMode : public Noncopyable {
+class HTMLTreeBuilder::FakeInsertionMode {
+    WTF_MAKE_NONCOPYABLE(FakeInsertionMode);
 public:
     FakeInsertionMode(HTMLTreeBuilder* treeBuilder, InsertionMode mode)
         : m_treeBuilder(treeBuilder)

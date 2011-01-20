@@ -23,14 +23,14 @@
 
 #include "PlatformString.h"
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class Document;
 class TextEncoding;
 
-class FormDataBuilder : public Noncopyable {
+class FormDataBuilder {
+    WTF_MAKE_NONCOPYABLE(FormDataBuilder);
 public:
     static TextEncoding encodingFromAcceptCharset(const String& acceptCharset, Document* document);
 

@@ -34,7 +34,8 @@
 
 class WebView;
 
-class WebInspector : public IWebInspector, public IWebInspectorPrivate, public Noncopyable {
+class WebInspector : public IWebInspector, public IWebInspectorPrivate {
+    WTF_MAKE_NONCOPYABLE(WebInspector);
 public:
     static WebInspector* createInstance(WebView*);
 

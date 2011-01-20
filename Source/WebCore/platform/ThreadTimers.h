@@ -37,7 +37,8 @@ namespace WebCore {
     class TimerBase;
 
     // A collection of timers per thread. Kept in ThreadGlobalData.
-    class ThreadTimers : public Noncopyable {
+    class ThreadTimers {
+        WTF_MAKE_NONCOPYABLE(ThreadTimers); WTF_MAKE_FAST_ALLOCATED;
     public:
         ThreadTimers();
 

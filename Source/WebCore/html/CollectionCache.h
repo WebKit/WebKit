@@ -29,7 +29,9 @@ namespace WebCore {
 
 class Element;
 
-struct CollectionCache : FastAllocBase {
+struct CollectionCache {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     CollectionCache();
     CollectionCache(const CollectionCache&);
     CollectionCache& operator=(const CollectionCache& other)

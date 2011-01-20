@@ -30,15 +30,16 @@
 #define RunLoopTimer_h
 
 #include "SchedulePair.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
 // Time intervals are all in seconds.
 
-class RunLoopTimerBase : public Noncopyable {
+class RunLoopTimerBase {
+    WTF_MAKE_NONCOPYABLE(RunLoopTimerBase);
 public:
+    RunLoopTimerBase() { }
     virtual ~RunLoopTimerBase();
 
     void schedule(const SchedulePair*);

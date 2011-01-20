@@ -45,7 +45,8 @@ namespace JSC {
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
 
-    class Heap : public Noncopyable {
+    class Heap {
+        WTF_MAKE_NONCOPYABLE(Heap);
     public:
         void destroy();
 

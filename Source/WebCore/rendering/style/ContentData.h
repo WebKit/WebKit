@@ -33,7 +33,8 @@ namespace WebCore {
 
 class StyleImage;
 
-struct ContentData : Noncopyable {
+struct ContentData {
+    WTF_MAKE_NONCOPYABLE(ContentData); WTF_MAKE_FAST_ALLOCATED;
 public:
     ContentData()
         : m_type(CONTENT_NONE)

@@ -31,7 +31,8 @@
 
 using namespace std;
 
-class QTTrackPrivate : public Noncopyable {
+class QTTrackPrivate {
+    WTF_MAKE_NONCOPYABLE(QTTrackPrivate);
 public:
     QTTrackPrivate();
     ~QTTrackPrivate();

@@ -62,12 +62,12 @@
 #include "Platform.h"
 
 #include <wtf/Atomics.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
 
-class ThreadSafeSharedBase : public Noncopyable {
+class ThreadSafeSharedBase {
+    WTF_MAKE_NONCOPYABLE(ThreadSafeSharedBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     ThreadSafeSharedBase(int initialRefCount = 1)
         : m_refCount(initialRefCount)

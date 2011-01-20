@@ -46,7 +46,8 @@ class ScriptCallFrame;
 class ScriptCallStack;
 class ScriptValue;
 
-class ConsoleMessage : public Noncopyable {
+class ConsoleMessage {
+    WTF_MAKE_NONCOPYABLE(ConsoleMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);

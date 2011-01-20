@@ -40,7 +40,8 @@ namespace WebCore {
     class DOMWindow;
     class DOMWrapperWorld;
 
-    class ScriptCachedFrameData  : public Noncopyable {
+    class ScriptCachedFrameData {
+        WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData); WTF_MAKE_FAST_ALLOCATED;
         typedef HashMap< RefPtr<DOMWrapperWorld>, JSC::ProtectedPtr<JSDOMWindow> > JSDOMWindowSet;
 
     public:

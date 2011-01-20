@@ -37,7 +37,8 @@ namespace WebCore {
     class LocalStorageThread;
 
     // FIXME: Rename this class to StorageTask
-    class LocalStorageTask : public Noncopyable {
+    class LocalStorageTask {
+        WTF_MAKE_NONCOPYABLE(LocalStorageTask); WTF_MAKE_FAST_ALLOCATED;
     public:
         enum Type { AreaImport, AreaSync, DeleteEmptyDatabase, TerminateThread };
 

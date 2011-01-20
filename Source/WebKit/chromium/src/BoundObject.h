@@ -39,7 +39,8 @@ namespace WebKit {
 // BoundObject is a helper class that lets you map JavaScript method calls
 // directly to C++ method calls. It should be destroyed once JS object is
 // built.
-class BoundObject : public Noncopyable {
+class BoundObject {
+    WTF_MAKE_NONCOPYABLE(BoundObject);
 public:
     BoundObject(v8::Handle<v8::Context> context, void* v8This, const char* objectName);
     virtual ~BoundObject();

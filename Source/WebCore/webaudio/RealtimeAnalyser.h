@@ -39,7 +39,8 @@ class Float32Array;
 class Uint8Array;
 #endif
 
-class RealtimeAnalyser : public Noncopyable {
+class RealtimeAnalyser {
+    WTF_MAKE_NONCOPYABLE(RealtimeAnalyser);
 public:
     RealtimeAnalyser();
     virtual ~RealtimeAnalyser();

@@ -52,7 +52,8 @@ namespace WTF {
     template<typename ValueArg, size_t inlineCapacity> struct ListHashSetNodeAllocator;
     template<typename ValueArg, size_t inlineCapacity, typename HashArg> struct ListHashSetNodeHashFunctions;
 
-    template<typename ValueArg, size_t inlineCapacity = 256, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet : public FastAllocBase {
+    template<typename ValueArg, size_t inlineCapacity = 256, typename HashArg = typename DefaultHash<ValueArg>::Hash> class ListHashSet {
+        WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef ListHashSetNode<ValueArg, inlineCapacity> Node;
         typedef ListHashSetNodeAllocator<ValueArg, inlineCapacity> NodeAllocator;

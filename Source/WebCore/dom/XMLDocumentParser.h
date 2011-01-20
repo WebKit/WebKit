@@ -71,6 +71,7 @@ namespace WebCore {
 #endif
 
     class XMLDocumentParser : public ScriptableDocumentParser, public CachedResourceClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<XMLDocumentParser> create(Document* document, FrameView* view)
         {

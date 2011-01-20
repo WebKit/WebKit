@@ -27,13 +27,13 @@
 #define PurgeableBuffer_h
 
 #include "PurgePriority.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
     
-    class PurgeableBuffer : public Noncopyable {
+    class PurgeableBuffer {
+        WTF_MAKE_NONCOPYABLE(PurgeableBuffer);
     public:
         static PassOwnPtr<PurgeableBuffer> create(const char* data, size_t);
         

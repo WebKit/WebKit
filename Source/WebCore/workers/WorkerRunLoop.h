@@ -65,7 +65,8 @@ namespace WebCore {
 
         static String defaultMode();
 
-        class Task : public Noncopyable {
+        class Task {
+            WTF_MAKE_NONCOPYABLE(Task); WTF_MAKE_FAST_ALLOCATED;
         public:
             static PassOwnPtr<Task> create(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode);
             ~Task() { }

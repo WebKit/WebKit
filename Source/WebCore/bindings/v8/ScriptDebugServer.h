@@ -48,7 +48,8 @@ namespace WebCore {
 class Page;
 class ScriptDebugListener;
 
-class ScriptDebugServer : public Noncopyable {
+class ScriptDebugServer {
+    WTF_MAKE_NONCOPYABLE(ScriptDebugServer);
 public:
     static ScriptDebugServer& shared();
 

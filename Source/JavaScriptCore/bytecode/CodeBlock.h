@@ -242,7 +242,8 @@ namespace JSC {
     }
 #endif
 
-    class CodeBlock : public FastAllocBase {
+    class CodeBlock {
+        WTF_MAKE_FAST_ALLOCATED;
         friend class JIT;
     protected:
         CodeBlock(ScriptExecutable* ownerExecutable, CodeType, JSGlobalObject*, PassRefPtr<SourceProvider>, unsigned sourceOffset, SymbolTable* symbolTable, bool isConstructor);
@@ -578,7 +579,9 @@ namespace JSC {
 
         SymbolTable* m_symbolTable;
 
-        struct RareData : FastAllocBase {
+        struct RareData {
+           WTF_MAKE_FAST_ALLOCATED;
+        public:
             Vector<HandlerInfo> m_exceptionHandlers;
 
             // Rare Constants
@@ -599,6 +602,9 @@ namespace JSC {
             Vector<CallReturnOffsetToBytecodeOffset> m_callReturnIndexVector;
 #endif
         };
+#if PLATFORM(WIN)
+        friend void WTF::deleteOwnedPtr<RareData>(RareData*);
+#endif
         OwnPtr<RareData> m_rareData;
     };
 

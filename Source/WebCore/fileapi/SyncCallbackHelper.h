@@ -58,7 +58,8 @@ class FileEntrySync;
 
 // A helper template for FileSystemSync implementation.
 template <typename SuccessCallback, typename ObserverType, typename CallbackArg, typename ResultType>
-class SyncCallbackHelper : public Noncopyable {
+class SyncCallbackHelper {
+    WTF_MAKE_NONCOPYABLE(SyncCallbackHelper);
 public:
     typedef SyncCallbackHelper<SuccessCallback, ObserverType, CallbackArg, ResultType> HelperType;
     SyncCallbackHelper(ObserverType* observer = 0)

@@ -32,7 +32,8 @@ struct QualifiedNameComponents {
     StringImpl* m_namespace;
 };
 
-class QualifiedName : public FastAllocBase {
+class QualifiedName {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     class QualifiedNameImpl : public RefCounted<QualifiedNameImpl> {
     public:

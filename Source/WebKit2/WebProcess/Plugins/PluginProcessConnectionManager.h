@@ -38,7 +38,8 @@ namespace WebKit {
 
 class PluginProcessConnection;
         
-class PluginProcessConnectionManager : Noncopyable {
+class PluginProcessConnectionManager {
+    WTF_MAKE_NONCOPYABLE(PluginProcessConnectionManager);
 public:
     static PluginProcessConnectionManager& shared();
 

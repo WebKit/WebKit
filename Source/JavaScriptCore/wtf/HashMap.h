@@ -29,7 +29,8 @@ namespace WTF {
 
     template<typename KeyArg, typename MappedArg, typename HashArg = typename DefaultHash<KeyArg>::Hash,
         typename KeyTraitsArg = HashTraits<KeyArg>, typename MappedTraitsArg = HashTraits<MappedArg> >
-    class HashMap : public FastAllocBase {
+    class HashMap {
+        WTF_MAKE_FAST_ALLOCATED;
     private:
         typedef KeyTraitsArg KeyTraits;
         typedef MappedTraitsArg MappedTraits;

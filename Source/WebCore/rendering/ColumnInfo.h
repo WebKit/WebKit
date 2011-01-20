@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-class ColumnInfo : public Noncopyable {
+class ColumnInfo {
+    WTF_MAKE_NONCOPYABLE(ColumnInfo); WTF_MAKE_FAST_ALLOCATED;
 public:
     ColumnInfo()
         : m_desiredColumnWidth(0)

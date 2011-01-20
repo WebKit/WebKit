@@ -59,8 +59,10 @@ public:
     virtual ~Field() { }
 };
 
-class Class : public Noncopyable {
+class Class {
+    WTF_MAKE_NONCOPYABLE(Class); WTF_MAKE_FAST_ALLOCATED;
 public:
+    Class() { }
     virtual MethodList methodsNamed(const Identifier&, Instance*) const = 0;
     virtual Field* fieldNamed(const Identifier&, Instance*) const = 0;
     virtual JSValue fallbackObject(ExecState*, Instance*, const Identifier&) { return jsUndefined(); }
@@ -125,7 +127,8 @@ private:
     WeakGCPtr<RuntimeObject> m_runtimeObject;
 };
 
-class Array : public Noncopyable {
+class Array {
+    WTF_MAKE_NONCOPYABLE(Array);
 public:
     Array(PassRefPtr<RootObject>);
     virtual ~Array();

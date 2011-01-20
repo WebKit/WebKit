@@ -100,7 +100,8 @@ namespace WebCore {
 
     typedef void (*PathApplierFunction)(void* info, const PathElement*);
 
-    class Path : public FastAllocBase {
+    class Path {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         Path();
         ~Path();

@@ -35,7 +35,8 @@
 
 namespace WebCore {
 
-class UserScript : public Noncopyable {
+class UserScript {
+    WTF_MAKE_NONCOPYABLE(UserScript); WTF_MAKE_FAST_ALLOCATED;
 public:
     UserScript(const String& source, const KURL& url,
                PassOwnPtr<Vector<String> > whitelist, PassOwnPtr<Vector<String> > blacklist,

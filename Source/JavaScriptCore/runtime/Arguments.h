@@ -33,7 +33,10 @@
 
 namespace JSC {
 
-    struct ArgumentsData : Noncopyable {
+    struct ArgumentsData {
+        WTF_MAKE_NONCOPYABLE(ArgumentsData); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        ArgumentsData() { }
         JSActivation* activation;
 
         unsigned numParameters;

@@ -32,7 +32,8 @@
 
 namespace WebCore {
 
-class FontPlatformDataPrivate : public Noncopyable {
+class FontPlatformDataPrivate {
+    WTF_MAKE_NONCOPYABLE(FontPlatformDataPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
     FontPlatformDataPrivate()
         : refCount(1)
@@ -62,8 +63,10 @@ public:
 
 
 
-class FontPlatformData : public FastAllocBase {
+class FontPlatformData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    FontPlatformData() { }
     FontPlatformData(float size, bool bold, bool oblique);
     FontPlatformData(const FontPlatformData &);
     FontPlatformData(const FontDescription&, const AtomicString& familyName, int wordSpacing = 0, int letterSpacing = 0);

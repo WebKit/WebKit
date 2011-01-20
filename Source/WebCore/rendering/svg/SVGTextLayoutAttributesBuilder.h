@@ -38,7 +38,8 @@ class RenderSVGText;
 // to create the InlineBox tree based on text chunk boundaries & BiDi information.
 // The second layout phase is carried out by SVGTextLayoutEngine.
 
-class SVGTextLayoutAttributesBuilder : public Noncopyable {
+class SVGTextLayoutAttributesBuilder {
+    WTF_MAKE_NONCOPYABLE(SVGTextLayoutAttributesBuilder);
 public:
     SVGTextLayoutAttributesBuilder();
     void buildLayoutAttributesForTextSubtree(RenderSVGText*);

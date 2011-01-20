@@ -39,7 +39,8 @@
 
 namespace WebCore {
 
-class ArchiveResourceCollection : public Noncopyable {
+class ArchiveResourceCollection {
+    WTF_MAKE_NONCOPYABLE(ArchiveResourceCollection); WTF_MAKE_FAST_ALLOCATED;
 public:
     ArchiveResourceCollection();
 

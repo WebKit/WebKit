@@ -63,7 +63,8 @@ typedef HashMap<LastPaintSizeMapKey, IntSize> LastPaintSizeMap;
 typedef HashMap<const RenderBoxModelObject*, RenderBoxModelObject*> ContinuationMap;
 static ContinuationMap* continuationMap = 0;
 
-class ImageQualityController : public Noncopyable {
+class ImageQualityController {
+    WTF_MAKE_NONCOPYABLE(ImageQualityController); WTF_MAKE_FAST_ALLOCATED;
 public:
     ImageQualityController();
     bool shouldPaintAtLowQuality(GraphicsContext*, RenderBoxModelObject*, Image*, const void* layer, const IntSize&);

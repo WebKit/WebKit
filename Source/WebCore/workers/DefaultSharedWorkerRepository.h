@@ -53,7 +53,8 @@ namespace WebCore {
     class SharedWorkerProxy;
 
     // Platform-specific implementation of the SharedWorkerRepository static interface.
-    class DefaultSharedWorkerRepository : public Noncopyable {
+    class DefaultSharedWorkerRepository {
+        WTF_MAKE_NONCOPYABLE(DefaultSharedWorkerRepository); WTF_MAKE_FAST_ALLOCATED;
     public:
         // Invoked once the worker script has been loaded to fire up the worker thread.
         void workerScriptLoaded(SharedWorkerProxy&, const String& userAgent, const String& workerScript, PassOwnPtr<MessagePortChannel>);

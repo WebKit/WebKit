@@ -29,13 +29,13 @@
 #include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class RenderObject;
 
-class RenderImageResource : public Noncopyable {
+class RenderImageResource {
+    WTF_MAKE_NONCOPYABLE(RenderImageResource); WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~RenderImageResource();
 

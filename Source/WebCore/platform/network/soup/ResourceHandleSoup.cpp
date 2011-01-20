@@ -60,7 +60,8 @@ namespace WebCore {
 
 #define READ_BUFFER_SIZE 8192
 
-class WebCoreSynchronousLoader : public ResourceHandleClient, public Noncopyable {
+class WebCoreSynchronousLoader : public ResourceHandleClient {
+    WTF_MAKE_NONCOPYABLE(WebCoreSynchronousLoader);
 public:
     WebCoreSynchronousLoader(ResourceError&, ResourceResponse &, Vector<char>&);
     ~WebCoreSynchronousLoader();

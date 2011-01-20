@@ -50,7 +50,8 @@ class ResourceResponse;
 // to allow the load to live long enough to ensure the message was actually sent.
 // Therefore, as soon as a callback is received from the ResourceHandle, this class 
 // will cancel the load and delete itself.
-class PingLoader : private ResourceHandleClient, public Noncopyable {
+class PingLoader : private ResourceHandleClient {
+    WTF_MAKE_NONCOPYABLE(PingLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
     static void loadImage(Frame*, const KURL& url);
     static void sendPing(Frame*, const KURL& pingURL, const KURL& destinationURL);

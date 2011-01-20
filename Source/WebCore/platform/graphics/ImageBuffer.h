@@ -63,7 +63,8 @@ namespace WebCore {
         Accelerated
     };
 
-    class ImageBuffer : public Noncopyable {
+    class ImageBuffer {
+        WTF_MAKE_NONCOPYABLE(ImageBuffer); WTF_MAKE_FAST_ALLOCATED;
     public:
         // Will return a null pointer on allocation failure.
         static PassOwnPtr<ImageBuffer> create(const IntSize& size, ColorSpace colorSpace = ColorSpaceDeviceRGB, RenderingMode renderingMode = Unaccelerated)

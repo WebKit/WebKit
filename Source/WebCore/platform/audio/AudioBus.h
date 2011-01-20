@@ -39,7 +39,8 @@ namespace WebCore {
 // An AudioBus represents a collection of one or more AudioChannels.
 // The data layout is "planar" as opposed to "interleaved".
 // An AudioBus with one channel is mono, an AudioBus with two channels is stereo, etc.
-class AudioBus  : public Noncopyable {
+class AudioBus {
+    WTF_MAKE_NONCOPYABLE(AudioBus);
 public:
     enum {
         ChannelLeft = 0,

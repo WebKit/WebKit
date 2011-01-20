@@ -29,7 +29,6 @@
 #include "PendingScript.h"
 #include <wtf/Deque.h>
 #include <wtf/text/TextPosition.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -42,7 +41,8 @@ class Frame;
 class HTMLScriptRunnerHost;
 class ScriptSourceCode;
 
-class HTMLScriptRunner : public Noncopyable {
+class HTMLScriptRunner {
+    WTF_MAKE_NONCOPYABLE(HTMLScriptRunner); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<HTMLScriptRunner> create(Document* document, HTMLScriptRunnerHost* host)
     {

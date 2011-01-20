@@ -30,19 +30,20 @@
 #include "FloatPoint3D.h"
 #include "LoopBlinnConstants.h"
 #include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 // Performs a localized triangulation of the triangle mesh
 // corresponding to the four control point vertices of a cubic curve
 // segment.
-class LoopBlinnLocalTriangulator : public Noncopyable {
+class LoopBlinnLocalTriangulator {
+    WTF_MAKE_NONCOPYABLE(LoopBlinnLocalTriangulator);
 public:
     // The vertices that the triangulator operates upon, containing both
     // the position information as well as the cubic texture
     // coordinates.
-    class Vertex : public Noncopyable {
+    class Vertex {
+        WTF_MAKE_NONCOPYABLE(Vertex);
     public:
         Vertex()
         {

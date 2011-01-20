@@ -33,7 +33,8 @@ namespace WebCore {
 
 class PageGroup;
 
-class GroupSettings : public Noncopyable {
+class GroupSettings {
+    WTF_MAKE_NONCOPYABLE(GroupSettings); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<GroupSettings> create()
     {

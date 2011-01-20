@@ -30,13 +30,13 @@
 #define StringBuffer_h
 
 #include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/unicode/Unicode.h>
 #include <limits>
 
 namespace WTF {
 
-class StringBuffer : public Noncopyable {
+class StringBuffer {
+    WTF_MAKE_NONCOPYABLE(StringBuffer);
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)

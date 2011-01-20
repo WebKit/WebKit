@@ -75,8 +75,10 @@ using namespace std;
 
 namespace WebCore {
 
-class PendingCallbacks : public Noncopyable {
+class PendingCallbacks {
+    WTF_MAKE_NONCOPYABLE(PendingCallbacks);
 public:
+    PendingCallbacks() { }
     ~PendingCallbacks()
     {
         deleteAllValues(m_callbacks);

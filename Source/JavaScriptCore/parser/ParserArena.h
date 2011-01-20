@@ -34,7 +34,8 @@ namespace JSC {
     class ParserArenaDeletable;
     class ParserArenaRefCounted;
 
-    class IdentifierArena : public FastAllocBase {
+    class IdentifierArena {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ALWAYS_INLINE const Identifier& makeIdentifier(JSGlobalData*, const UChar* characters, size_t length);
         const Identifier& makeNumericIdentifier(JSGlobalData*, double number);
@@ -59,7 +60,8 @@ namespace JSC {
         return m_identifiers.last();
     }
 
-    class ParserArena : Noncopyable {
+    class ParserArena {
+        WTF_MAKE_NONCOPYABLE(ParserArena);
     public:
         ParserArena();
         ~ParserArena();

@@ -43,7 +43,8 @@ public:
     virtual void paint(GraphicsContext& context, const IntRect& contentRect) = 0;
 };
 
-class LayerTilerChromium : public Noncopyable {
+class LayerTilerChromium {
+    WTF_MAKE_NONCOPYABLE(LayerTilerChromium);
 public:
     static PassOwnPtr<LayerTilerChromium> create(LayerRendererChromium* layerRenderer, const IntSize& tileSize);
 
@@ -62,7 +63,8 @@ public:
 private:
     LayerTilerChromium(LayerRendererChromium* layerRenderer, const IntSize& tileSize);
 
-    class Tile : public Noncopyable {
+    class Tile {
+        WTF_MAKE_NONCOPYABLE(Tile);
     public:
         explicit Tile(PassOwnPtr<LayerTexture> tex) : m_tex(tex) {}
 

@@ -253,7 +253,8 @@ Vector<String> PluginInfoStore::pluginsDirectories()
     return directories;
 }
 
-class PathWalker : public Noncopyable {
+class PathWalker {
+    WTF_MAKE_NONCOPYABLE(PathWalker);
 public:
     PathWalker(const String& directory)
     {

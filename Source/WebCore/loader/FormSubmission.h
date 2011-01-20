@@ -47,7 +47,8 @@ class FormSubmission : public RefCounted<FormSubmission> {
 public:
     enum Method { GetMethod, PostMethod };
 
-    class Attributes : public Noncopyable {
+    class Attributes {
+        WTF_MAKE_NONCOPYABLE(Attributes);
     public:
         Attributes()
             : m_method(GetMethod)

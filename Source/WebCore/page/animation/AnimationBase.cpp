@@ -223,7 +223,8 @@ class PropertyWrapperBase;
 static void addShorthandProperties();
 static PropertyWrapperBase* wrapperForProperty(int propertyID);
 
-class PropertyWrapperBase : public Noncopyable {
+class PropertyWrapperBase {
+    WTF_MAKE_NONCOPYABLE(PropertyWrapperBase); WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperBase(int prop)
         : m_prop(prop)
@@ -446,7 +447,8 @@ public:
 };
 
 template <typename T>
-class FillLayerPropertyWrapperGetter : public FillLayerPropertyWrapperBase, public Noncopyable {
+class FillLayerPropertyWrapperGetter : public FillLayerPropertyWrapperBase {
+    WTF_MAKE_NONCOPYABLE(FillLayerPropertyWrapperGetter);
 public:
     FillLayerPropertyWrapperGetter(T (FillLayer::*getter)() const)
         : m_getter(getter)

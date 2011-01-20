@@ -37,7 +37,8 @@ namespace WebCore {
 
     namespace XPath {
 
-        class NodeSet : public FastAllocBase {
+        class NodeSet {
+            WTF_MAKE_FAST_ALLOCATED;
         public:
             NodeSet() : m_isSorted(true), m_subtreesAreDisjoint(false) { }
             

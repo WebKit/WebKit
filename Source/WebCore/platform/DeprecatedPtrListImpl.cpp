@@ -29,12 +29,13 @@
 #include <cstddef>
 #include <algorithm>
 #include <wtf/Assertions.h>
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
-class DeprecatedListNode : public Noncopyable
-{
+class DeprecatedListNode {
+    WTF_MAKE_NONCOPYABLE(DeprecatedListNode); WTF_MAKE_FAST_ALLOCATED;
 public:
     DeprecatedListNode(void *d) : data(d), next(0), prev(0) { }
 

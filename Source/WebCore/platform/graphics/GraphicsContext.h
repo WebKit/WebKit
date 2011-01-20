@@ -206,7 +206,8 @@ namespace WebCore {
         bool shadowsIgnoreTransforms : 1;
     };
 
-    class GraphicsContext : public Noncopyable {
+    class GraphicsContext {
+        WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
     public:
         GraphicsContext(PlatformGraphicsContext*);
         ~GraphicsContext();
@@ -424,7 +425,8 @@ namespace WebCore {
         void setShouldIncludeChildWindows(bool);
         bool shouldIncludeChildWindows() const;
 
-        class WindowsBitmap : public Noncopyable {
+        class WindowsBitmap {
+            WTF_MAKE_NONCOPYABLE(WindowsBitmap);
         public:
             WindowsBitmap(HDC, IntSize);
             ~WindowsBitmap();

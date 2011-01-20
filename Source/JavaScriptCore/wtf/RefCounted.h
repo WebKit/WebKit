@@ -22,6 +22,7 @@
 #define RefCounted_h
 
 #include "Assertions.h"
+#include "FastAllocBase.h"
 #include "Noncopyable.h"
 
 namespace WTF {
@@ -131,7 +132,8 @@ inline void adopted(RefCountedBase* object)
 
 #endif
 
-template<typename T> class RefCounted : public RefCountedBase, public Noncopyable {
+template<typename T> class RefCounted : public RefCountedBase {
+    WTF_MAKE_NONCOPYABLE(RefCounted); WTF_MAKE_FAST_ALLOCATED;
 public:
     void deref()
     {
@@ -140,6 +142,7 @@ public:
     }
 
 protected:
+    RefCounted() { }
     ~RefCounted()
     {
     }

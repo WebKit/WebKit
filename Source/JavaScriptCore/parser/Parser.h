@@ -45,8 +45,10 @@ namespace JSC {
 
     template <typename T> struct ParserArenaData : ParserArenaDeletable { T data; };
 
-    class Parser : public Noncopyable {
+    class Parser {
+        WTF_MAKE_NONCOPYABLE(Parser); WTF_MAKE_FAST_ALLOCATED;
     public:
+        Parser() { }
         template <class ParsedNode>
         PassRefPtr<ParsedNode> parse(JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, const SourceCode& source, FunctionParameters*, JSParserStrictness strictness, JSObject** exception);
 

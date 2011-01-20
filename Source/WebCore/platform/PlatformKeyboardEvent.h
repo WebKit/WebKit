@@ -75,7 +75,8 @@ typedef unsigned long int uint32;
 
 namespace WebCore {
 
-    class PlatformKeyboardEvent : public FastAllocBase {
+    class PlatformKeyboardEvent {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         enum Type {
             // KeyDown is sent by platforms such as Mac OS X, gtk and Qt, and has information about both physical pressed key, and its translation.

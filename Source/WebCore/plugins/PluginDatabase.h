@@ -44,7 +44,8 @@ namespace WebCore {
 
     typedef HashSet<RefPtr<PluginPackage>, PluginPackageHash> PluginSet;
 
-    class PluginDatabase : public Noncopyable {
+    class PluginDatabase {
+        WTF_MAKE_NONCOPYABLE(PluginDatabase); WTF_MAKE_FAST_ALLOCATED;
     public:
         PluginDatabase();
 

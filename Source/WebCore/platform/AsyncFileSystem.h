@@ -44,7 +44,8 @@ class AsyncFileSystemCallbacks;
 class AsyncFileWriterClient;
 
 // This class provides async interface for platform-specific file system implementation.  Note that all the methods take platform paths.
-class AsyncFileSystem : public Noncopyable {
+class AsyncFileSystem {
+    WTF_MAKE_NONCOPYABLE(AsyncFileSystem);
 public:
     virtual ~AsyncFileSystem() { }
 

@@ -49,7 +49,8 @@ class Node;
 class RenderObject;
 class RenderStyle;
 
-class AnimationControllerPrivate : public Noncopyable {
+class AnimationControllerPrivate {
+    WTF_MAKE_NONCOPYABLE(AnimationControllerPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
     AnimationControllerPrivate(Frame*);
     ~AnimationControllerPrivate();

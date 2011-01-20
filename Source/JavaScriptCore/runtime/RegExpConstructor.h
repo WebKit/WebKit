@@ -31,7 +31,9 @@ namespace JSC {
     class RegExpPrototype;
     struct RegExpConstructorPrivate;
 
-    struct RegExpConstructorPrivate : FastAllocBase {
+    struct RegExpConstructorPrivate {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
         // Global search cache / settings
         RegExpConstructorPrivate()
             : lastNumSubPatterns(0)

@@ -56,7 +56,8 @@ class PageGroup;
 class ScriptDebugListener;
 class JavaScriptCallFrame;
 
-class ScriptDebugServer : JSC::Debugger, public Noncopyable {
+class ScriptDebugServer : JSC::Debugger {
+    WTF_MAKE_NONCOPYABLE(ScriptDebugServer); WTF_MAKE_FAST_ALLOCATED;
 public:
     static ScriptDebugServer& shared();
 

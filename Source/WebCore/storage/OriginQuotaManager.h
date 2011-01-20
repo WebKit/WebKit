@@ -41,7 +41,8 @@ namespace WebCore {
 class AbstractDatabase;
 class OriginUsageRecord;
 
-class OriginQuotaManager : public Noncopyable {
+class OriginQuotaManager {
+    WTF_MAKE_NONCOPYABLE(OriginQuotaManager); WTF_MAKE_FAST_ALLOCATED;
 public:
     OriginQuotaManager();
 

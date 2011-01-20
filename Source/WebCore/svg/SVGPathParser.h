@@ -29,12 +29,12 @@
 #include "SVGPathConsumer.h"
 #include "SVGPathSeg.h"
 #include "SVGPathSource.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-class SVGPathParser : public Noncopyable {
+class SVGPathParser {
+    WTF_MAKE_NONCOPYABLE(SVGPathParser); WTF_MAKE_FAST_ALLOCATED;
 public:
     SVGPathParser();
 

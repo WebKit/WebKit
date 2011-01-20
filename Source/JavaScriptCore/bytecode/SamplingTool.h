@@ -142,7 +142,8 @@ namespace JSC {
         friend class HostCallRecord;
         
 #if ENABLE(OPCODE_SAMPLING)
-        class CallRecord : public Noncopyable {
+        class CallRecord {
+            WTF_MAKE_NONCOPYABLE(CallRecord);
         public:
             CallRecord(SamplingTool* samplingTool)
                 : m_samplingTool(samplingTool)
@@ -172,7 +173,8 @@ namespace JSC {
             }
         };
 #else
-        class CallRecord : public Noncopyable {
+        class CallRecord {
+            WTF_MAKE_NONCOPYABLE(CallRecord);
         public:
             CallRecord(SamplingTool*)
             {

@@ -37,7 +37,8 @@ namespace JSC {
     class MarkStack;
     class SmallStringsStorage;
 
-    class SmallStrings : public Noncopyable {
+    class SmallStrings {
+        WTF_MAKE_NONCOPYABLE(SmallStrings); WTF_MAKE_FAST_ALLOCATED;
     public:
         SmallStrings();
         ~SmallStrings();

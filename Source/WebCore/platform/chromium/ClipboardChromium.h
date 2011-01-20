@@ -42,6 +42,7 @@ namespace WebCore {
     class IntPoint;
 
     class ClipboardChromium : public Clipboard, public CachedResourceClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         ~ClipboardChromium() {}
 

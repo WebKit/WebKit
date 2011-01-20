@@ -27,15 +27,16 @@
 
 #include "ExceptionCode.h"
 #include <wtf/text/AtomicString.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Element;
 
-class DOMTokenList : public Noncopyable {
+class DOMTokenList {
+    WTF_MAKE_NONCOPYABLE(DOMTokenList); WTF_MAKE_FAST_ALLOCATED;
 public:
+    DOMTokenList() { }
     virtual ~DOMTokenList() {};
 
     virtual void ref() = 0;

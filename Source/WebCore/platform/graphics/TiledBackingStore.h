@@ -36,7 +36,8 @@ namespace WebCore {
 class GraphicsContext;
 class TiledBackingStoreClient;
 
-class TiledBackingStore : public Noncopyable {
+class TiledBackingStore {
+    WTF_MAKE_NONCOPYABLE(TiledBackingStore); WTF_MAKE_FAST_ALLOCATED;
 public:
     TiledBackingStore(TiledBackingStoreClient*);
     ~TiledBackingStore();

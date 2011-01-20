@@ -38,7 +38,8 @@ class SVGStyledElement;
 class SVGSMILElement;
 class SVGSVGElement;
 
-class SVGDocumentExtensions : public Noncopyable {
+class SVGDocumentExtensions {
+    WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef HashSet<RefPtr<SVGStyledElement> > SVGPendingElements;
     SVGDocumentExtensions(Document*);
@@ -67,9 +68,6 @@ private:
     HashMap<AtomicString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomicString, SVGPendingElements*> m_pendingResources;
     OwnPtr<SVGResourcesCache> m_resourcesCache;
-
-    SVGDocumentExtensions(const SVGDocumentExtensions&);
-    SVGDocumentExtensions& operator=(const SVGDocumentExtensions&);
 
 public:
     // This HashMap contains a list of pending resources. Pending resources, are such

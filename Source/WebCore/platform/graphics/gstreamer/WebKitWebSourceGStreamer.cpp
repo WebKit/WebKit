@@ -36,7 +36,8 @@
 
 using namespace WebCore;
 
-class StreamingClient : public Noncopyable, public ResourceHandleClient {
+class StreamingClient : public ResourceHandleClient {
+    WTF_MAKE_NONCOPYABLE(StreamingClient);
     public:
         StreamingClient(WebKitWebSrc*);
         virtual ~StreamingClient();

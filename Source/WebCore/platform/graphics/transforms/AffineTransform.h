@@ -55,7 +55,8 @@ class IntPoint;
 class IntRect;
 class TransformationMatrix;
 
-class AffineTransform : public FastAllocBase {
+class AffineTransform {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef double Transform[6];
 

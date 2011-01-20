@@ -46,7 +46,8 @@ class ScriptArguments;
 class ScriptCallStack;
 class ScriptProfile;
 
-class InspectorConsoleAgent : public Noncopyable {
+class InspectorConsoleAgent {
+    WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
     InspectorConsoleAgent(InspectorController*);
     ~InspectorConsoleAgent();

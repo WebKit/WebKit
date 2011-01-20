@@ -40,7 +40,8 @@ namespace WebCore {
 class FontDescription;
 class TextEncoding;
 
-class FontTranscoder : public Noncopyable {
+class FontTranscoder {
+    WTF_MAKE_NONCOPYABLE(FontTranscoder); WTF_MAKE_FAST_ALLOCATED;
 public:
     void convert(String& text, const FontDescription&, const TextEncoding* = 0) const;
     bool needsTranscoding(const FontDescription&, const TextEncoding* = 0) const;

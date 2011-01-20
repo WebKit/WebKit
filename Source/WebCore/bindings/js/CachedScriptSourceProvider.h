@@ -36,6 +36,7 @@
 namespace WebCore {
 
     class CachedScriptSourceProvider : public ScriptSourceProvider, public CachedResourceClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<CachedScriptSourceProvider> create(CachedScript* cachedScript) { return adoptRef(new CachedScriptSourceProvider(cachedScript)); }
 

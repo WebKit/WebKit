@@ -55,7 +55,8 @@ namespace WebCore {
 
     // MessagePortChannel is a platform-independent interface to the remote side of a message channel.
     // It acts as a wrapper around the platform-dependent PlatformMessagePortChannel implementation which ensures that the platform-dependent close() method is invoked before destruction.
-    class MessagePortChannel : public Noncopyable {
+    class MessagePortChannel {
+        WTF_MAKE_NONCOPYABLE(MessagePortChannel); WTF_MAKE_FAST_ALLOCATED;
     public:
         static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
 
@@ -78,7 +79,8 @@ namespace WebCore {
         // Returns true if the proxy currently contains messages for this port.
         bool hasPendingActivity();
 
-        class EventData : public Noncopyable {
+        class EventData {
+            WTF_MAKE_NONCOPYABLE(EventData); WTF_MAKE_FAST_ALLOCATED;
         public:
             static PassOwnPtr<EventData> create(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
 

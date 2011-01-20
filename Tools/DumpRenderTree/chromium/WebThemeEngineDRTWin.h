@@ -50,7 +50,8 @@
 #include "win/WebThemeEngine.h"
 #include <wtf/Noncopyable.h>
 
-class WebThemeEngineDRTWin : public WebKit::WebThemeEngine, public Noncopyable {
+class WebThemeEngineDRTWin : public WebKit::WebThemeEngine {
+    WTF_MAKE_NONCOPYABLE(WebThemeEngineDRTWin);
 public:
     WebThemeEngineDRTWin() {}
 

@@ -122,6 +122,7 @@ namespace JSC {
     typedef HashMap<RefPtr<StringImpl>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<StringImpl> >, SymbolTableIndexHashTraits> SymbolTable;
 
     class SharedSymbolTable : public SymbolTable, public RefCounted<SharedSymbolTable> {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<SharedSymbolTable> create() { return adoptRef(new SharedSymbolTable); }
     private:

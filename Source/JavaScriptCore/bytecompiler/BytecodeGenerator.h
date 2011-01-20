@@ -40,7 +40,6 @@
 #include "SymbolTable.h"
 #include "Debugger.h"
 #include "Nodes.h"
-#include <wtf/FastAllocBase.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
@@ -85,7 +84,8 @@ namespace JSC {
         RefPtr<RegisterID> propertyRegister;
     };
 
-    class BytecodeGenerator : public FastAllocBase {
+    class BytecodeGenerator {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;

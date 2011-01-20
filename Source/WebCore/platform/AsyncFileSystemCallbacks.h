@@ -41,8 +41,11 @@ class AsyncFileSystem;
 class AsyncFileWriter;
 struct FileMetadata;
 
-class AsyncFileSystemCallbacks : public Noncopyable {
+class AsyncFileSystemCallbacks {
+    WTF_MAKE_NONCOPYABLE(AsyncFileSystemCallbacks);
 public:
+    AsyncFileSystemCallbacks() { }    
+
     // Called when a requested operation is completed successfully.
     virtual void didSucceed() = 0;
 

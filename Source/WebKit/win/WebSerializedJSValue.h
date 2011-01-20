@@ -34,7 +34,8 @@ namespace WebCore {
     class SerializedScriptValue;
 }
 
-class WebSerializedJSValue : public Noncopyable, public IWebSerializedJSValue, public IWebSerializedJSValuePrivate {
+class WebSerializedJSValue : public IWebSerializedJSValue, public IWebSerializedJSValuePrivate {
+    WTF_MAKE_NONCOPYABLE(WebSerializedJSValue);
 public:
     static COMPtr<WebSerializedJSValue> createInstance();
 

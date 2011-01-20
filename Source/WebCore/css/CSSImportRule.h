@@ -34,6 +34,7 @@ class CachedCSSStyleSheet;
 class MediaList;
 
 class CSSImportRule : public CSSRule, private CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<CSSImportRule> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)
     {

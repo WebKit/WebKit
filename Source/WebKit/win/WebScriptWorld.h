@@ -31,7 +31,8 @@ namespace WebCore {
     class DOMWrapperWorld;
 }
 
-class WebScriptWorld : public Noncopyable, public IWebScriptWorld {
+class WebScriptWorld : public IWebScriptWorld {
+    WTF_MAKE_NONCOPYABLE(WebScriptWorld);
 public:
     static WebScriptWorld* standardWorld();
     static COMPtr<WebScriptWorld> createInstance();

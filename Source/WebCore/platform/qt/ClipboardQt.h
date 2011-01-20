@@ -39,6 +39,7 @@ namespace WebCore {
 
     // State available during IE's events for drag and drop and copy/paste
     class ClipboardQt : public Clipboard, public CachedResourceClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, const QMimeData* readableClipboard)
         {

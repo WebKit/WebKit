@@ -43,8 +43,10 @@ namespace WebCore {
 
     class SQLTransaction;
 
-    class SQLTransactionCoordinator : public Noncopyable {
+    class SQLTransactionCoordinator {
+        WTF_MAKE_NONCOPYABLE(SQLTransactionCoordinator); WTF_MAKE_FAST_ALLOCATED;
     public:
+        SQLTransactionCoordinator() { }
         void acquireLock(SQLTransaction*);
         void releaseLock(SQLTransaction*);
         void shutdown();

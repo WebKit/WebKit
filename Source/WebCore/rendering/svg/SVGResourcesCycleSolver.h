@@ -29,7 +29,8 @@ class RenderObject;
 class RenderSVGResourceContainer;
 class SVGResources;
 
-class SVGResourcesCycleSolver : public Noncopyable {
+class SVGResourcesCycleSolver {
+    WTF_MAKE_NONCOPYABLE(SVGResourcesCycleSolver);
 public:
     SVGResourcesCycleSolver(RenderObject*, SVGResources*);
     ~SVGResourcesCycleSolver();

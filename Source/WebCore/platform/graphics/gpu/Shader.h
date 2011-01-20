@@ -40,7 +40,8 @@ class AffineTransform;
 class GraphicsContext3D;
 class Color;
 
-class Shader : public Noncopyable {
+class Shader {
+    WTF_MAKE_NONCOPYABLE(Shader);
 protected:
     Shader(GraphicsContext3D*, unsigned program);
     ~Shader();

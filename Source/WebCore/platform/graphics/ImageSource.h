@@ -117,7 +117,8 @@ const int cAnimationLoopOnce = 0;
 const int cAnimationLoopInfinite = -1;
 const int cAnimationNone = -2;
 
-class ImageSource : public Noncopyable {
+class ImageSource {
+    WTF_MAKE_NONCOPYABLE(ImageSource);
 public:
     enum AlphaOption {
         AlphaPremultiplied,

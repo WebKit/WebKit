@@ -35,7 +35,8 @@ namespace WebCore {
 class Document;
 class HTMLToken;
 
-class CSSPreloadScanner : public Noncopyable {
+class CSSPreloadScanner {
+    WTF_MAKE_NONCOPYABLE(CSSPreloadScanner);
 public:
     CSSPreloadScanner(Document*);
 

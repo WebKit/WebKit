@@ -60,7 +60,8 @@ public:
 // FIXME: Currently there is a WKCACFLayerRenderer for each WebView and each
 // has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.
 // (https://bugs.webkit.org/show_bug.cgi?id=31855)
-class WKCACFLayerRenderer : public Noncopyable {
+class WKCACFLayerRenderer {
+    WTF_MAKE_NONCOPYABLE(WKCACFLayerRenderer);
     friend PlatformCALayer;
 
 public:

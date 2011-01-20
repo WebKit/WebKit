@@ -50,6 +50,7 @@ class ScriptController;
 class ScriptSourceCode;
 
 class HTMLDocumentParser :  public ScriptableDocumentParser, HTMLScriptRunnerHost, CachedResourceClient {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassRefPtr<HTMLDocumentParser> create(HTMLDocument* document, bool reportErrors)
     {

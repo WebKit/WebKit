@@ -54,7 +54,8 @@ public:
     bool start();
     void stop();
 
-    class Task : public Noncopyable {
+    class Task {
+        WTF_MAKE_NONCOPYABLE(Task);
     public:
         virtual ~Task() { }
         virtual void performTask() = 0;

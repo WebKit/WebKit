@@ -34,7 +34,9 @@
 
 namespace WebCore {
 
-struct NodeListsNodeData : Noncopyable {
+struct NodeListsNodeData {
+    WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
+public:
     typedef HashSet<DynamicNodeList*> NodeListSet;
     NodeListSet m_listsWithCaches;
     
@@ -67,7 +69,8 @@ private:
     }
 };
     
-class NodeRareData : public Noncopyable {
+class NodeRareData {
+    WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
     NodeRareData()
         : m_tabIndex(0)

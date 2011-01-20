@@ -36,7 +36,8 @@ struct WKCACFContext;
 
 namespace WebCore {
 
-class WKCACFContextFlusher : public Noncopyable {
+class WKCACFContextFlusher {
+    WTF_MAKE_NONCOPYABLE(WKCACFContextFlusher);
 public:
     static WKCACFContextFlusher& shared();
 

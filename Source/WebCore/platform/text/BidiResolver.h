@@ -126,7 +126,8 @@ struct BidiCharacterRun {
     BidiCharacterRun* m_next;
 };
 
-template <class Iterator, class Run> class BidiResolver : public Noncopyable {
+template <class Iterator, class Run> class BidiResolver {
+    WTF_MAKE_NONCOPYABLE(BidiResolver);
 public :
     BidiResolver()
         : m_direction(WTF::Unicode::OtherNeutral)

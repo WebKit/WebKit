@@ -28,14 +28,14 @@
 
 #include "Timer.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class HTMLDocumentParser;
 
-class HTMLParserScheduler :  public Noncopyable {
+class HTMLParserScheduler {
+    WTF_MAKE_NONCOPYABLE(HTMLParserScheduler); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<HTMLParserScheduler> create(HTMLDocumentParser* parser)
     {

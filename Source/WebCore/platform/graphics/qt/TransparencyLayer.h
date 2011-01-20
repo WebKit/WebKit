@@ -42,7 +42,9 @@
 
 namespace WebCore {
 
-struct TransparencyLayer : FastAllocBase {
+struct TransparencyLayer {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     TransparencyLayer(const QPainter* p, const QRect &rect, qreal opacity, QPixmap& alphaMask)
         : pixmap(rect.width(), rect.height())
         , opacity(opacity)

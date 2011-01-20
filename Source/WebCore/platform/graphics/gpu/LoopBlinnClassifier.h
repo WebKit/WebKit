@@ -30,14 +30,14 @@
 #ifndef LoopBlinnClassifier_h
 #define LoopBlinnClassifier_h
 
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class FloatPoint;
 
 // Classifies cubic curves into specific types.
-class LoopBlinnClassifier : public Noncopyable {
+class LoopBlinnClassifier {
+    WTF_MAKE_NONCOPYABLE(LoopBlinnClassifier);
 public:
     // The types of cubic curves.
     enum CurveType {

@@ -30,7 +30,8 @@
 
 namespace WebKitAPITest {
 
-class HostWindow : public Noncopyable {
+class HostWindow {
+    WTF_MAKE_NONCOPYABLE(HostWindow);
 public:
     HostWindow();
     ~HostWindow();

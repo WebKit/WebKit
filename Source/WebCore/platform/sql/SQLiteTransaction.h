@@ -26,14 +26,15 @@
 #ifndef SQLiteTransaction_h
 #define SQLiteTransaction_h
 
+#include <wtf/FastAllocBase.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class SQLiteDatabase;
 
-class SQLiteTransaction : public Noncopyable
-{
+class SQLiteTransaction {
+    WTF_MAKE_NONCOPYABLE(SQLiteTransaction); WTF_MAKE_FAST_ALLOCATED;
 public:
     SQLiteTransaction(SQLiteDatabase& db, bool readOnly = false);
     ~SQLiteTransaction();

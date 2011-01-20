@@ -61,7 +61,8 @@ unsigned WorkerThread::workerThreadCount()
     return m_threadCount;
 }
 
-struct WorkerThreadStartupData : Noncopyable {
+struct WorkerThreadStartupData {
+    WTF_MAKE_NONCOPYABLE(WorkerThreadStartupData); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<WorkerThreadStartupData> create(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
     {

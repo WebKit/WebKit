@@ -105,7 +105,8 @@ namespace WebCore {
             virtual Value::Type resultType() const { return Value::NodeSetValue; }
         };
 
-        class Predicate : public Noncopyable {
+        class Predicate {
+            WTF_MAKE_NONCOPYABLE(Predicate); WTF_MAKE_FAST_ALLOCATED;
         public:
             Predicate(Expression*);
             ~Predicate();

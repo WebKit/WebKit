@@ -31,14 +31,14 @@
 #ifndef ThreadableLoaderClient_h
 #define ThreadableLoaderClient_h
 
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
     class ResourceError;
     class ResourceResponse;
 
-    class ThreadableLoaderClient : public Noncopyable {
+    class ThreadableLoaderClient {
+        WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
@@ -51,6 +51,7 @@ namespace WebCore {
         virtual void didReceiveAuthenticationCancellation(const ResourceResponse&) { }
 
     protected:
+        ThreadableLoaderClient() { }
         virtual ~ThreadableLoaderClient() { }
     };
 

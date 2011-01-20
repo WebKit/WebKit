@@ -51,7 +51,8 @@ class HTMLDocument;
 class Node;
 class HTMLDocumentParser;
 
-class HTMLTreeBuilder : public Noncopyable {
+class HTMLTreeBuilder {
+    WTF_MAKE_NONCOPYABLE(HTMLTreeBuilder); WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, HTMLDocument* document, bool reportErrors, bool usePreHTML5ParserQuirks)
     {
@@ -204,7 +205,8 @@ private:
     void processForeignContentUsingInBodyModeAndResetMode(AtomicHTMLToken& token);
     void resetForeignInsertionMode();
 
-    class FragmentParsingContext : public Noncopyable {
+    class FragmentParsingContext {
+        WTF_MAKE_NONCOPYABLE(FragmentParsingContext);
     public:
         FragmentParsingContext();
         FragmentParsingContext(DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
