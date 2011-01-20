@@ -555,10 +555,12 @@ void GraphicsContext::strokePath(const Path& path)
                 shadow->endShadowLayer(this);
             }
         } else {
-            QPen shadowPen(pen);
-            shadowPen.setColor(m_data->shadow.m_color);
             QPointF offset = shadow->offset();
             p->translate(offset);
+            QColor shadowColor = shadow->m_color;
+            shadowColor.setAlphaF(shadowColor.alphaF() * pen.color().alphaF());
+            QPen shadowPen(pen);
+            shadowPen.setColor(shadowColor);
             p->strokePath(platformPath, shadowPen);
             p->translate(-offset);
         }
