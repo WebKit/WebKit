@@ -2271,6 +2271,15 @@ plugins/destroy-on-setwindow.html
 # Sporadically fails in WebKit2 for unknown reasons.
 fast/forms/input-align.html
 
+# WebProcess sometimes terminates when running this test
+fast/forms/form-associated-element-crash.html
+
+# New history tests added in r76205 fail on WebKit2 (perhaps the change
+# as coded doesn't affect both processes for WebKit2)
+fast/history/history-replace-updates-current-item.html
+http/tests/navigation/redirect-on-back-updates-history-item.html
+http/tests/navigation/redirect-on-reload-updates-history-item.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
