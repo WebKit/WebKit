@@ -125,11 +125,14 @@ void DrawingAreaProxyImpl::didSetSize(const UpdateInfo& updateInfo)
         sendSetSize();
 
     m_backingStore = nullptr;
+
+    incorporateUpdate(updateInfo);
 }
 
 void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
 {
-    // FIXME: Check for the update bounds being empty here.
+    if (updateInfo.updateRectBounds.isEmpty())
+        return;
 
     if (!m_backingStore)
         m_backingStore = BackingStore::create(updateInfo.viewSize, m_webPageProxy);

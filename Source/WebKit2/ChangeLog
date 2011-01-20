@@ -1,3 +1,26 @@
+2011-01-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        When resizing, the web process should repaint the page
+        https://bugs.webkit.org/show_bug.cgi?id=52764
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didSetSize):
+        Incorporate the update.
+
+        (WebKit::DrawingAreaProxyImpl::incorporateUpdate):
+        Return early if the update bounds rect is empty. This can happen if painting is
+        disabled and we get a DidSetSize message.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setSize):
+        If painting is disabled, just send back an empty UpdateInfo struct. Otherwise,
+        paint and fill in the UpdateInfo struct.
+
+        (WebKit::DrawingAreaImpl::display):
+        Assert that painting is not disabled.
+
 2011-01-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

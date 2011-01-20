@@ -142,9 +142,11 @@ void DrawingAreaImpl::setSize(const IntSize& size)
     m_webPage->layoutIfNeeded();
 
     UpdateInfo updateInfo;
-    updateInfo.viewSize = m_webPage->size();
 
-    // FIXME: Repaint.
+    if (m_isPaintingSuspended)
+        updateInfo.viewSize = m_webPage->size();
+    else
+        display(updateInfo);
 
     m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(updateInfo));
 }
@@ -231,6 +233,8 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& 
 
 void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 {
+    ASSERT(!m_isPaintingSuspended);
+
     // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
     if (m_webPage->mainFrameHasCustomRepresentation())
         return;
