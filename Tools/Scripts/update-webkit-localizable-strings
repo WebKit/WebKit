@@ -34,9 +34,9 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my @directoriesToScan = ("WebKit/mac", "WebKit/win", "-Source/WebCore/icu", "-WebKit/mac/icu");
-my $fileToUpdate = "WebKit/English.lproj/Localizable.strings";
-my $exceptionsFile = "WebKit/StringsNotToBeLocalized.txt";
+my @directoriesToScan = ("Source/WebKit/mac", "Source/WebKit/win", "-Source/WebCore/icu", "-Source/WebKit/mac/icu");
+my $fileToUpdate = "Source/WebKit/English.lproj/Localizable.strings";
+my $exceptionsFile = "Source/WebKit/StringsNotToBeLocalized.txt";
 
 @ARGV == 0 or die "Usage: " . basename($0) . "\n";
 

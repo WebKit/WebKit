@@ -1,3 +1,11 @@
+2011-01-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        Update update-webkit-localizable-strings with new path to WebKit.
+
+        * Scripts/update-webkit-localizable-strings:
+
 2011-01-20  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
