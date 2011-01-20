@@ -1,3 +1,15 @@
+2011-01-19  Adam Roben  <aroben@apple.com>
+
+        Add a test that scrolls composited content that has already been painted
+
+        Test for <http://webkit.org/b/52720> REGRESSION (r75987): Assertion failure in
+        WebView::scrollBackingStore when scrolling page with composited content
+
+        Reviewed by Anders Carlsson.
+
+        * compositing/scroll-painted-composited-content.html: Added.
+        * compositing/scroll-painted-composited-content-expected.txt: Added.
+
 2011-01-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

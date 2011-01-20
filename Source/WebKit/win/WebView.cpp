@@ -819,7 +819,12 @@ void WebView::addToDirtyRegion(HRGN newRegion)
 void WebView::scrollBackingStore(FrameView* frameView, int dx, int dy, const IntRect& scrollViewRect, const IntRect& clipRect)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    ASSERT(!isAcceleratedCompositing());
+    if (isAcceleratedCompositing()) {
+        // FIXME: We should be doing something smarter here, like moving tiles around and painting
+        // any newly-exposed tiles. <http://webkit.org/b/52714>
+        m_backingLayer->setNeedsDisplayInRect(scrollViewRect);
+        return;
+    }
 #endif
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);

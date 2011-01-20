@@ -1,3 +1,21 @@
+2011-01-19  Adam Roben  <aroben@apple.com>
+
+        Teach WebView::scrollBackingStore about compositing mode
+
+        Test:
+            compositing/scroll-painted-composited-content.html
+
+        Fixes <http://webkit.org/b/52720> REGRESSION (r75987): Assertion failure in
+        WebView::scrollBackingStore when scrolling page with composited content
+
+        Reviewed by Anders Carlsson.
+
+        * WebView.cpp:
+        (WebView::scrollBackingStore): Do something sensible (though naive) when in compositing
+        mode, rather than incorrectly asserting that this function is never called in that case. For
+        now we just repaint the entire scrolled region; someday hopefully we can avoid having to
+        repaint the areas that have just been moved.
+
 2011-01-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

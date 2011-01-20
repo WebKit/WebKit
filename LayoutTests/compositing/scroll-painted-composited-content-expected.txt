@@ -1,0 +1,3 @@
+Test for Bug 52720 - REGRESSION (r75987): Assertion failure in WebView::scrollBackingStore when scrolling page with composited content. The test passes if it doesn't assert in Debug builds.
+
+
