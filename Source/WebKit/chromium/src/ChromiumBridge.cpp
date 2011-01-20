@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "PlatformBridge.h"
+#include "ChromiumBridge.h"
 
 #include <googleurl/src/url_util.h>
 
@@ -145,14 +145,14 @@ static WebCookieJar* getCookieJar(const Document* document)
 
 // Cache ----------------------------------------------------------------------
 
-void PlatformBridge::cacheMetadata(const KURL& url, double responseTime, const Vector<char>& data)
+void ChromiumBridge::cacheMetadata(const KURL& url, double responseTime, const Vector<char>& data)
 {
     webKitClient()->cacheMetadata(url, responseTime, data.data(), data.size());
 }
 
 // Clipboard ------------------------------------------------------------------
 
-bool PlatformBridge::clipboardIsFormatAvailable(
+bool ChromiumBridge::clipboardIsFormatAvailable(
     PasteboardPrivate::ClipboardFormat format,
     PasteboardPrivate::ClipboardBuffer buffer)
 {
@@ -161,14 +161,14 @@ bool PlatformBridge::clipboardIsFormatAvailable(
         static_cast<WebClipboard::Buffer>(buffer));
 }
 
-String PlatformBridge::clipboardReadPlainText(
+String ChromiumBridge::clipboardReadPlainText(
     PasteboardPrivate::ClipboardBuffer buffer)
 {
     return webKitClient()->clipboard()->readPlainText(
         static_cast<WebClipboard::Buffer>(buffer));
 }
 
-void PlatformBridge::clipboardReadHTML(
+void ChromiumBridge::clipboardReadHTML(
     PasteboardPrivate::ClipboardBuffer buffer,
     String* htmlText, KURL* sourceURL)
 {
@@ -178,7 +178,7 @@ void PlatformBridge::clipboardReadHTML(
     *sourceURL = url;
 }
 
-void PlatformBridge::clipboardWriteSelection(const String& htmlText,
+void ChromiumBridge::clipboardWriteSelection(const String& htmlText,
                                              const KURL& sourceURL,
                                              const String& plainText,
                                              bool writeSmartPaste)
@@ -187,17 +187,17 @@ void PlatformBridge::clipboardWriteSelection(const String& htmlText,
         htmlText, sourceURL, plainText, writeSmartPaste);
 }
 
-void PlatformBridge::clipboardWritePlainText(const String& plainText)
+void ChromiumBridge::clipboardWritePlainText(const String& plainText)
 {
     webKitClient()->clipboard()->writePlainText(plainText);
 }
 
-void PlatformBridge::clipboardWriteURL(const KURL& url, const String& title)
+void ChromiumBridge::clipboardWriteURL(const KURL& url, const String& title)
 {
     webKitClient()->clipboard()->writeURL(url, title);
 }
 
-void PlatformBridge::clipboardWriteImage(NativeImagePtr image,
+void ChromiumBridge::clipboardWriteImage(NativeImagePtr image,
                                          const KURL& sourceURL,
                                          const String& title)
 {
@@ -209,14 +209,14 @@ void PlatformBridge::clipboardWriteImage(NativeImagePtr image,
     webKitClient()->clipboard()->writeImage(webImage, sourceURL, title);
 }
 
-void PlatformBridge::clipboardWriteData(const String& type,
+void ChromiumBridge::clipboardWriteData(const String& type,
                                         const String& data,
                                         const String& metadata)
 {
     webKitClient()->clipboard()->writeData(type, data, metadata);
 }
 
-HashSet<String> PlatformBridge::clipboardReadAvailableTypes(
+HashSet<String> ChromiumBridge::clipboardReadAvailableTypes(
     PasteboardPrivate::ClipboardBuffer buffer, bool* containsFilenames)
 {
     WebVector<WebString> result = webKitClient()->clipboard()->readAvailableTypes(
@@ -227,7 +227,7 @@ HashSet<String> PlatformBridge::clipboardReadAvailableTypes(
     return types;
 }
 
-bool PlatformBridge::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer,
+bool ChromiumBridge::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer,
                                        const String& type, String& data, String& metadata)
 {
     WebString resultData;
@@ -241,7 +241,7 @@ bool PlatformBridge::clipboardReadData(PasteboardPrivate::ClipboardBuffer buffer
     return succeeded;
 }
 
-Vector<String> PlatformBridge::clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer buffer)
+Vector<String> ChromiumBridge::clipboardReadFilenames(PasteboardPrivate::ClipboardBuffer buffer)
 {
     WebVector<WebString> result = webKitClient()->clipboard()->readFilenames(
         static_cast<WebClipboard::Buffer>(buffer));
@@ -253,7 +253,7 @@ Vector<String> PlatformBridge::clipboardReadFilenames(PasteboardPrivate::Clipboa
 
 // Cookies --------------------------------------------------------------------
 
-void PlatformBridge::setCookies(const Document* document, const KURL& url,
+void ChromiumBridge::setCookies(const Document* document, const KURL& url,
                                 const String& value)
 {
     WebCookieJar* cookieJar = getCookieJar(document);
@@ -261,7 +261,7 @@ void PlatformBridge::setCookies(const Document* document, const KURL& url,
         cookieJar->setCookie(url, document->firstPartyForCookies(), value);
 }
 
-String PlatformBridge::cookies(const Document* document, const KURL& url)
+String ChromiumBridge::cookies(const Document* document, const KURL& url)
 {
     String result;
     WebCookieJar* cookieJar = getCookieJar(document);
@@ -270,7 +270,7 @@ String PlatformBridge::cookies(const Document* document, const KURL& url)
     return result;
 }
 
-String PlatformBridge::cookieRequestHeaderFieldValue(const Document* document,
+String ChromiumBridge::cookieRequestHeaderFieldValue(const Document* document,
                                                      const KURL& url)
 {
     String result;
@@ -280,7 +280,7 @@ String PlatformBridge::cookieRequestHeaderFieldValue(const Document* document,
     return result;
 }
 
-bool PlatformBridge::rawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
+bool ChromiumBridge::rawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
     WebVector<WebCookie> webCookies;
@@ -304,14 +304,14 @@ bool PlatformBridge::rawCookies(const Document* document, const KURL& url, Vecto
     return true;
 }
 
-void PlatformBridge::deleteCookie(const Document* document, const KURL& url, const String& cookieName)
+void ChromiumBridge::deleteCookie(const Document* document, const KURL& url, const String& cookieName)
 {
     WebCookieJar* cookieJar = getCookieJar(document);
     if (cookieJar)
         cookieJar->deleteCookie(url, cookieName);
 }
 
-bool PlatformBridge::cookiesEnabled(const Document* document)
+bool ChromiumBridge::cookiesEnabled(const Document* document)
 {
     bool result = false;
     WebCookieJar* cookieJar = getCookieJar(document);
@@ -322,39 +322,39 @@ bool PlatformBridge::cookiesEnabled(const Document* document)
 
 // DNS ------------------------------------------------------------------------
 
-void PlatformBridge::prefetchDNS(const String& hostname)
+void ChromiumBridge::prefetchDNS(const String& hostname)
 {
     webKitClient()->prefetchHostName(hostname);
 }
 
 // File ------------------------------------------------------------------------
 
-bool PlatformBridge::fileExists(const String& path)
+bool ChromiumBridge::fileExists(const String& path)
 {
     return webKitClient()->fileUtilities()->fileExists(path);
 }
 
-bool PlatformBridge::deleteFile(const String& path)
+bool ChromiumBridge::deleteFile(const String& path)
 {
     return webKitClient()->fileUtilities()->deleteFile(path);
 }
 
-bool PlatformBridge::deleteEmptyDirectory(const String& path)
+bool ChromiumBridge::deleteEmptyDirectory(const String& path)
 {
     return webKitClient()->fileUtilities()->deleteEmptyDirectory(path);
 }
 
-bool PlatformBridge::getFileSize(const String& path, long long& result)
+bool ChromiumBridge::getFileSize(const String& path, long long& result)
 {
     return webKitClient()->fileUtilities()->getFileSize(path, result);
 }
 
-void PlatformBridge::revealFolderInOS(const String& path)
+void ChromiumBridge::revealFolderInOS(const String& path)
 {
     webKitClient()->fileUtilities()->revealFolderInOS(path);
 }
 
-bool PlatformBridge::getFileModificationTime(const String& path, time_t& result)
+bool ChromiumBridge::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;
     if (!webKitClient()->fileUtilities()->getFileModificationTime(path, modificationTime))
@@ -363,62 +363,62 @@ bool PlatformBridge::getFileModificationTime(const String& path, time_t& result)
     return true;
 }
 
-String PlatformBridge::directoryName(const String& path)
+String ChromiumBridge::directoryName(const String& path)
 {
     return webKitClient()->fileUtilities()->directoryName(path);
 }
 
-String PlatformBridge::pathByAppendingComponent(const String& path, const String& component)
+String ChromiumBridge::pathByAppendingComponent(const String& path, const String& component)
 {
     return webKitClient()->fileUtilities()->pathByAppendingComponent(path, component);
 }
 
-bool PlatformBridge::makeAllDirectories(const String& path)
+bool ChromiumBridge::makeAllDirectories(const String& path)
 {
     return webKitClient()->fileUtilities()->makeAllDirectories(path);
 }
 
-String PlatformBridge::getAbsolutePath(const String& path)
+String ChromiumBridge::getAbsolutePath(const String& path)
 {
     return webKitClient()->fileUtilities()->getAbsolutePath(path);
 }
 
-bool PlatformBridge::isDirectory(const String& path)
+bool ChromiumBridge::isDirectory(const String& path)
 {
     return webKitClient()->fileUtilities()->isDirectory(path);
 }
 
-KURL PlatformBridge::filePathToURL(const String& path)
+KURL ChromiumBridge::filePathToURL(const String& path)
 {
     return webKitClient()->fileUtilities()->filePathToURL(path);
 }
 
-PlatformFileHandle PlatformBridge::openFile(const String& path, FileOpenMode mode)
+PlatformFileHandle ChromiumBridge::openFile(const String& path, FileOpenMode mode)
 {
     return webKitClient()->fileUtilities()->openFile(path, mode);
 }
 
-void PlatformBridge::closeFile(PlatformFileHandle& handle)
+void ChromiumBridge::closeFile(PlatformFileHandle& handle)
 {
     webKitClient()->fileUtilities()->closeFile(handle);
 }
 
-long long PlatformBridge::seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
+long long ChromiumBridge::seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
     return webKitClient()->fileUtilities()->seekFile(handle, offset, origin);
 }
 
-bool PlatformBridge::truncateFile(PlatformFileHandle handle, long long offset)
+bool ChromiumBridge::truncateFile(PlatformFileHandle handle, long long offset)
 {
     return webKitClient()->fileUtilities()->truncateFile(handle, offset);
 }
 
-int PlatformBridge::readFromFile(PlatformFileHandle handle, char* data, int length)
+int ChromiumBridge::readFromFile(PlatformFileHandle handle, char* data, int length)
 {
     return webKitClient()->fileUtilities()->readFromFile(handle, data, length);
 }
 
-int PlatformBridge::writeToFile(PlatformFileHandle handle, const char* data, int length)
+int ChromiumBridge::writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     return webKitClient()->fileUtilities()->writeToFile(handle, data, length);
 }
@@ -426,7 +426,7 @@ int PlatformBridge::writeToFile(PlatformFileHandle handle, const char* data, int
 // Font -----------------------------------------------------------------------
 
 #if OS(WINDOWS)
-bool PlatformBridge::ensureFontLoaded(HFONT font)
+bool ChromiumBridge::ensureFontLoaded(HFONT font)
 {
     WebSandboxSupport* ss = webKitClient()->sandboxSupport();
 
@@ -437,7 +437,7 @@ bool PlatformBridge::ensureFontLoaded(HFONT font)
 #endif
 
 #if OS(LINUX) || OS(FREEBSD)
-String PlatformBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters)
+String ChromiumBridge::getFontFamilyForCharacters(const UChar* characters, size_t numCharacters)
 {
     if (webKitClient()->sandboxSupport())
         return webKitClient()->sandboxSupport()->getFontFamilyForCharacters(characters, numCharacters);
@@ -449,7 +449,7 @@ String PlatformBridge::getFontFamilyForCharacters(const UChar* characters, size_
     return WebString();
 }
 
-void PlatformBridge::getRenderStyleForStrike(const char* font, int sizeAndStyle, FontRenderStyle* result)
+void ChromiumBridge::getRenderStyleForStrike(const char* font, int sizeAndStyle, FontRenderStyle* result)
 {
     WebFontRenderStyle style;
 
@@ -463,7 +463,7 @@ void PlatformBridge::getRenderStyleForStrike(const char* font, int sizeAndStyle,
 #endif
 
 #if OS(DARWIN)
-bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
+bool ChromiumBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
 {
     WebSandboxSupport* ss = webKitClient()->sandboxSupport();
     if (ss)
@@ -480,42 +480,42 @@ bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
 
 // Databases ------------------------------------------------------------------
 
-PlatformFileHandle PlatformBridge::databaseOpenFile(const String& vfsFileName, int desiredFlags)
+PlatformFileHandle ChromiumBridge::databaseOpenFile(const String& vfsFileName, int desiredFlags)
 {
     return webKitClient()->databaseOpenFile(WebString(vfsFileName), desiredFlags);
 }
 
-int PlatformBridge::databaseDeleteFile(const String& vfsFileName, bool syncDir)
+int ChromiumBridge::databaseDeleteFile(const String& vfsFileName, bool syncDir)
 {
     return webKitClient()->databaseDeleteFile(WebString(vfsFileName), syncDir);
 }
 
-long PlatformBridge::databaseGetFileAttributes(const String& vfsFileName)
+long ChromiumBridge::databaseGetFileAttributes(const String& vfsFileName)
 {
     return webKitClient()->databaseGetFileAttributes(WebString(vfsFileName));
 }
 
-long long PlatformBridge::databaseGetFileSize(const String& vfsFileName)
+long long ChromiumBridge::databaseGetFileSize(const String& vfsFileName)
 {
     return webKitClient()->databaseGetFileSize(WebString(vfsFileName));
 }
 
 // Indexed Database -----------------------------------------------------------
 
-PassRefPtr<IDBFactoryBackendInterface> PlatformBridge::idbFactory()
+PassRefPtr<IDBFactoryBackendInterface> ChromiumBridge::idbFactory()
 {
     // There's no reason why we need to allocate a new proxy each time, but
     // there's also no strong reason not to.
     return IDBFactoryBackendProxy::create();
 }
 
-void PlatformBridge::idbShutdown()
+void ChromiumBridge::idbShutdown()
 {
     // In the browser process, this shuts down the utility process. In the renderer process, it does nothing.
     webKitClient()->idbShutdown();
 }
 
-void PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys)
+void ChromiumBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys)
 {
     WebVector<WebSerializedScriptValue> webValues = values;
     WebVector<WebIDBKey> webKeys;
@@ -529,7 +529,7 @@ void PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<Re
 
 // Keygen ---------------------------------------------------------------------
 
-String PlatformBridge::signedPublicKeyAndChallengeString(
+String ChromiumBridge::signedPublicKeyAndChallengeString(
     unsigned keySizeIndex, const String& challenge, const KURL& url)
 {
     return webKitClient()->signedPublicKeyAndChallengeString(keySizeIndex,
@@ -539,63 +539,63 @@ String PlatformBridge::signedPublicKeyAndChallengeString(
 
 // Language -------------------------------------------------------------------
 
-String PlatformBridge::computedDefaultLanguage()
+String ChromiumBridge::computedDefaultLanguage()
 {
     return webKitClient()->defaultLocale();
 }
 
 // LayoutTestMode -------------------------------------------------------------
 
-bool PlatformBridge::layoutTestMode()
+bool ChromiumBridge::layoutTestMode()
 {
     return WebKit::layoutTestMode();
 }
 
 // MimeType -------------------------------------------------------------------
 
-bool PlatformBridge::isSupportedImageMIMEType(const String& mimeType)
+bool ChromiumBridge::isSupportedImageMIMEType(const String& mimeType)
 {
     return webKitClient()->mimeRegistry()->supportsImageMIMEType(mimeType)
         != WebMimeRegistry::IsNotSupported;
 }
 
-bool PlatformBridge::isSupportedJavaScriptMIMEType(const String& mimeType)
+bool ChromiumBridge::isSupportedJavaScriptMIMEType(const String& mimeType)
 {
     return webKitClient()->mimeRegistry()->supportsJavaScriptMIMEType(mimeType)
         != WebMimeRegistry::IsNotSupported;
 }
 
-bool PlatformBridge::isSupportedNonImageMIMEType(const String& mimeType)
+bool ChromiumBridge::isSupportedNonImageMIMEType(const String& mimeType)
 {
     return webKitClient()->mimeRegistry()->supportsNonImageMIMEType(mimeType)
         != WebMimeRegistry::IsNotSupported;
 }
 
-String PlatformBridge::mimeTypeForExtension(const String& extension)
+String ChromiumBridge::mimeTypeForExtension(const String& extension)
 {
     return webKitClient()->mimeRegistry()->mimeTypeForExtension(extension);
 }
 
-String PlatformBridge::mimeTypeFromFile(const String& path)
+String ChromiumBridge::mimeTypeFromFile(const String& path)
 {
     return webKitClient()->mimeRegistry()->mimeTypeFromFile(path);
 }
 
-String PlatformBridge::preferredExtensionForMIMEType(const String& mimeType)
+String ChromiumBridge::preferredExtensionForMIMEType(const String& mimeType)
 {
     return webKitClient()->mimeRegistry()->preferredExtensionForMIMEType(mimeType);
 }
 
 // Plugin ---------------------------------------------------------------------
 
-bool PlatformBridge::plugins(bool refresh, Vector<PluginInfo>* results)
+bool ChromiumBridge::plugins(bool refresh, Vector<PluginInfo>* results)
 {
     WebPluginListBuilderImpl builder(results);
     webKitClient()->getPluginList(refresh, &builder);
     return true;  // FIXME: There is no need for this function to return a value.
 }
 
-NPObject* PlatformBridge::pluginScriptableObject(Widget* widget)
+NPObject* ChromiumBridge::pluginScriptableObject(Widget* widget)
 {
     if (!widget || !widget->isPluginContainer())
         return 0;
@@ -605,7 +605,7 @@ NPObject* PlatformBridge::pluginScriptableObject(Widget* widget)
 
 // Resources ------------------------------------------------------------------
 
-PassRefPtr<Image> PlatformBridge::loadPlatformImageResource(const char* name)
+PassRefPtr<Image> ChromiumBridge::loadPlatformImageResource(const char* name)
 {
     const WebData& resource = webKitClient()->loadResource(name);
     if (resource.isEmpty())
@@ -618,7 +618,7 @@ PassRefPtr<Image> PlatformBridge::loadPlatformImageResource(const char* name)
 
 #if ENABLE(WEB_AUDIO)
 
-PassOwnPtr<AudioBus> PlatformBridge::loadPlatformAudioResource(const char* name, double sampleRate)
+PassOwnPtr<AudioBus> ChromiumBridge::loadPlatformAudioResource(const char* name, double sampleRate)
 {
     const WebData& resource = webKitClient()->loadResource(name);
     if (resource.isEmpty())
@@ -627,7 +627,7 @@ PassOwnPtr<AudioBus> PlatformBridge::loadPlatformAudioResource(const char* name,
     return decodeAudioFileData(resource.data(), resource.size(), sampleRate);
 }
 
-PassOwnPtr<AudioBus> PlatformBridge::decodeAudioFileData(const char* data, size_t size, double sampleRate)
+PassOwnPtr<AudioBus> ChromiumBridge::decodeAudioFileData(const char* data, size_t size, double sampleRate)
 {
     WebAudioBus webAudioBus;
     if (webKitClient()->loadAudioResource(&webAudioBus, data, size, sampleRate))
@@ -639,60 +639,60 @@ PassOwnPtr<AudioBus> PlatformBridge::decodeAudioFileData(const char* data, size_
 
 // Sandbox --------------------------------------------------------------------
 
-bool PlatformBridge::sandboxEnabled()
+bool ChromiumBridge::sandboxEnabled()
 {
     return webKitClient()->sandboxEnabled();
 }
 
 // SharedTimers ---------------------------------------------------------------
 
-void PlatformBridge::setSharedTimerFiredFunction(void (*func)())
+void ChromiumBridge::setSharedTimerFiredFunction(void (*func)())
 {
     webKitClient()->setSharedTimerFiredFunction(func);
 }
 
-void PlatformBridge::setSharedTimerFireTime(double fireTime)
+void ChromiumBridge::setSharedTimerFireTime(double fireTime)
 {
     webKitClient()->setSharedTimerFireTime(fireTime);
 }
 
-void PlatformBridge::stopSharedTimer()
+void ChromiumBridge::stopSharedTimer()
 {
     webKitClient()->stopSharedTimer();
 }
 
 // StatsCounters --------------------------------------------------------------
 
-void PlatformBridge::decrementStatsCounter(const char* name)
+void ChromiumBridge::decrementStatsCounter(const char* name)
 {
     webKitClient()->decrementStatsCounter(name);
 }
 
-void PlatformBridge::incrementStatsCounter(const char* name)
+void ChromiumBridge::incrementStatsCounter(const char* name)
 {
     webKitClient()->incrementStatsCounter(name);
 }
 
-void PlatformBridge::histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount)
+void ChromiumBridge::histogramCustomCounts(const char* name, int sample, int min, int max, int bucketCount)
 {
     webKitClient()->histogramCustomCounts(name, sample, min, max, bucketCount);
 }
 
-void PlatformBridge::histogramEnumeration(const char* name, int sample, int boundaryValue)
+void ChromiumBridge::histogramEnumeration(const char* name, int sample, int boundaryValue)
 {
     webKitClient()->histogramEnumeration(name, sample, boundaryValue);
 }
 
 // Sudden Termination ---------------------------------------------------------
 
-void PlatformBridge::suddenTerminationChanged(bool enabled)
+void ChromiumBridge::suddenTerminationChanged(bool enabled)
 {
     webKitClient()->suddenTerminationChanged(enabled);
 }
 
 // SystemTime -----------------------------------------------------------------
 
-double PlatformBridge::currentTime()
+double ChromiumBridge::currentTime()
 {
     return webKitClient()->currentTime();
 }
@@ -701,7 +701,7 @@ double PlatformBridge::currentTime()
 
 #if OS(WINDOWS)
 
-void PlatformBridge::paintButton(
+void ChromiumBridge::paintButton(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
@@ -709,7 +709,7 @@ void PlatformBridge::paintButton(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
-void PlatformBridge::paintMenuList(
+void ChromiumBridge::paintMenuList(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
@@ -717,7 +717,7 @@ void PlatformBridge::paintMenuList(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
-void PlatformBridge::paintScrollbarArrow(
+void ChromiumBridge::paintScrollbarArrow(
     GraphicsContext* gc, int state, int classicState,
     const IntRect& rect)
 {
@@ -725,7 +725,7 @@ void PlatformBridge::paintScrollbarArrow(
         gc->platformContext()->canvas(), state, classicState, rect);
 }
 
-void PlatformBridge::paintScrollbarThumb(
+void ChromiumBridge::paintScrollbarThumb(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
@@ -733,7 +733,7 @@ void PlatformBridge::paintScrollbarThumb(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
-void PlatformBridge::paintScrollbarTrack(
+void ChromiumBridge::paintScrollbarTrack(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect, const IntRect& alignRect)
 {
@@ -742,7 +742,7 @@ void PlatformBridge::paintScrollbarTrack(
         alignRect);
 }
 
-void PlatformBridge::paintSpinButton(
+void ChromiumBridge::paintSpinButton(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
@@ -750,7 +750,7 @@ void PlatformBridge::paintSpinButton(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
-void PlatformBridge::paintTextField(
+void ChromiumBridge::paintTextField(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect, const Color& color, bool fillContentArea,
     bool drawEdges)
@@ -763,7 +763,7 @@ void PlatformBridge::paintTextField(
         backgroundColor, fillContentArea, drawEdges);
 }
 
-void PlatformBridge::paintTrackbar(
+void ChromiumBridge::paintTrackbar(
     GraphicsContext* gc, int part, int state, int classicState,
     const IntRect& rect)
 {
@@ -771,7 +771,7 @@ void PlatformBridge::paintTrackbar(
         gc->platformContext()->canvas(), part, state, classicState, rect);
 }
 
-void PlatformBridge::paintProgressBar(
+void ChromiumBridge::paintProgressBar(
     GraphicsContext* gc, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds)
 {
     webKitClient()->themeEngine()->paintProgressBar(
@@ -780,37 +780,37 @@ void PlatformBridge::paintProgressBar(
 
 #elif OS(LINUX)
 
-static WebThemeEngine::Part WebThemePart(PlatformBridge::ThemePart part)
+static WebThemeEngine::Part WebThemePart(ChromiumBridge::ThemePart part)
 {
     switch (part) {
-    case PlatformBridge::PartScrollbarDownArrow: return WebThemeEngine::PartScrollbarDownArrow;
-    case PlatformBridge::PartScrollbarLeftArrow: return WebThemeEngine::PartScrollbarLeftArrow;
-    case PlatformBridge::PartScrollbarRightArrow: return WebThemeEngine::PartScrollbarRightArrow;
-    case PlatformBridge::PartScrollbarUpArrow: return WebThemeEngine::PartScrollbarUpArrow;
-    case PlatformBridge::PartScrollbarHorizontalThumb: return WebThemeEngine::PartScrollbarHorizontalThumb;
-    case PlatformBridge::PartScrollbarVerticalThumb: return WebThemeEngine::PartScrollbarVerticalThumb;
-    case PlatformBridge::PartScrollbarHorizontalTrack: return WebThemeEngine::PartScrollbarHorizontalTrack;
-    case PlatformBridge::PartScrollbarVerticalTrack: return WebThemeEngine::PartScrollbarVerticalTrack;
+    case ChromiumBridge::PartScrollbarDownArrow: return WebThemeEngine::PartScrollbarDownArrow;
+    case ChromiumBridge::PartScrollbarLeftArrow: return WebThemeEngine::PartScrollbarLeftArrow;
+    case ChromiumBridge::PartScrollbarRightArrow: return WebThemeEngine::PartScrollbarRightArrow;
+    case ChromiumBridge::PartScrollbarUpArrow: return WebThemeEngine::PartScrollbarUpArrow;
+    case ChromiumBridge::PartScrollbarHorizontalThumb: return WebThemeEngine::PartScrollbarHorizontalThumb;
+    case ChromiumBridge::PartScrollbarVerticalThumb: return WebThemeEngine::PartScrollbarVerticalThumb;
+    case ChromiumBridge::PartScrollbarHorizontalTrack: return WebThemeEngine::PartScrollbarHorizontalTrack;
+    case ChromiumBridge::PartScrollbarVerticalTrack: return WebThemeEngine::PartScrollbarVerticalTrack;
     }
     ASSERT_NOT_REACHED();
     return WebThemeEngine::PartScrollbarDownArrow;
 }
 
-static WebThemeEngine::State WebThemeState(PlatformBridge::ThemePaintState state)
+static WebThemeEngine::State WebThemeState(ChromiumBridge::ThemePaintState state)
 {
     switch (state) {
-    case PlatformBridge::StateDisabled: return WebThemeEngine::StateDisabled;
-    case PlatformBridge::StateHover: return WebThemeEngine::StateHover;
-    case PlatformBridge::StateNormal: return WebThemeEngine::StateNormal;
-    case PlatformBridge::StatePressed: return WebThemeEngine::StatePressed;
+    case ChromiumBridge::StateDisabled: return WebThemeEngine::StateDisabled;
+    case ChromiumBridge::StateHover: return WebThemeEngine::StateHover;
+    case ChromiumBridge::StateNormal: return WebThemeEngine::StateNormal;
+    case ChromiumBridge::StatePressed: return WebThemeEngine::StatePressed;
     }
     ASSERT_NOT_REACHED();
     return WebThemeEngine::StateDisabled;
 }
 
-static void GetWebThemeExtraParams(PlatformBridge::ThemePart part, PlatformBridge::ThemePaintState state, const PlatformBridge::ThemePaintExtraParams* extraParams, WebThemeEngine::ExtraParams* webThemeExtraParams)
+static void GetWebThemeExtraParams(ChromiumBridge::ThemePart part, ChromiumBridge::ThemePaintState state, const ChromiumBridge::ThemePaintExtraParams* extraParams, WebThemeEngine::ExtraParams* webThemeExtraParams)
 {
-    if (part == PlatformBridge::PartScrollbarHorizontalTrack || part == PlatformBridge::PartScrollbarVerticalTrack) {
+    if (part == ChromiumBridge::PartScrollbarHorizontalTrack || part == ChromiumBridge::PartScrollbarVerticalTrack) {
         webThemeExtraParams->scrollbarTrack.trackX = extraParams->scrollbarTrack.trackX;
         webThemeExtraParams->scrollbarTrack.trackY = extraParams->scrollbarTrack.trackY;
         webThemeExtraParams->scrollbarTrack.trackWidth = extraParams->scrollbarTrack.trackWidth;
@@ -818,12 +818,12 @@ static void GetWebThemeExtraParams(PlatformBridge::ThemePart part, PlatformBridg
     }
 }
 
-IntSize PlatformBridge::getThemePartSize(ThemePart part)
+IntSize ChromiumBridge::getThemePartSize(ThemePart part)
 {
      return webKitClient()->themeEngine()->getSize(WebThemePart(part));
 }
 
-void PlatformBridge::paintThemePart(
+void ChromiumBridge::paintThemePart(
     GraphicsContext* gc, ThemePart part, ThemePaintState state, const IntRect& rect, const ThemePaintExtraParams* extraParams)
 {
     WebThemeEngine::ExtraParams webThemeExtraParams;
@@ -834,7 +834,7 @@ void PlatformBridge::paintThemePart(
 
 #elif OS(DARWIN)
 
-void PlatformBridge::paintScrollbarThumb(
+void ChromiumBridge::paintScrollbarThumb(
     GraphicsContext* gc, ThemePaintState state, ThemePaintSize size, const IntRect& rect, const ThemePaintScrollbarInfo& scrollbarInfo)
 {
     WebThemeEngine::ScrollbarInfo webThemeScrollbarInfo;
@@ -858,19 +858,19 @@ void PlatformBridge::paintScrollbarThumb(
 
 // Trace Event ----------------------------------------------------------------
 
-void PlatformBridge::traceEventBegin(const char* name, void* id, const char* extra)
+void ChromiumBridge::traceEventBegin(const char* name, void* id, const char* extra)
 {
     webKitClient()->traceEventBegin(name, id, extra);
 }
 
-void PlatformBridge::traceEventEnd(const char* name, void* id, const char* extra)
+void ChromiumBridge::traceEventEnd(const char* name, void* id, const char* extra)
 {
     webKitClient()->traceEventEnd(name, id, extra);
 }
 
 // Visited Links --------------------------------------------------------------
 
-LinkHash PlatformBridge::visitedLinkHash(const UChar* url, unsigned length)
+LinkHash ChromiumBridge::visitedLinkHash(const UChar* url, unsigned length)
 {
     url_canon::RawCanonOutput<2048> buffer;
     url_parse::Parsed parsed;
@@ -879,7 +879,7 @@ LinkHash PlatformBridge::visitedLinkHash(const UChar* url, unsigned length)
     return webKitClient()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
-LinkHash PlatformBridge::visitedLinkHash(const KURL& base,
+LinkHash ChromiumBridge::visitedLinkHash(const KURL& base,
                                          const AtomicString& attributeURL)
 {
     // Resolve the relative URL using googleurl and pass the absolute URL up to
@@ -913,7 +913,7 @@ LinkHash PlatformBridge::visitedLinkHash(const KURL& base,
     return webKitClient()->visitedLinkHash(buffer.data(), buffer.length());
 }
 
-bool PlatformBridge::isLinkVisited(LinkHash visitedLinkHash)
+bool ChromiumBridge::isLinkVisited(LinkHash visitedLinkHash)
 {
     return webKitClient()->isLinkVisited(visitedLinkHash);
 }
@@ -922,7 +922,7 @@ bool PlatformBridge::isLinkVisited(LinkHash visitedLinkHash)
 // Glue layer. Once the Glue layer moves entirely into the WebKit layer, these
 // methods will be deleted.
 
-void PlatformBridge::notifyJSOutOfMemory(Frame* frame)
+void ChromiumBridge::notifyJSOutOfMemory(Frame* frame)
 {
     if (!frame)
         return;
@@ -933,17 +933,17 @@ void PlatformBridge::notifyJSOutOfMemory(Frame* frame)
     webFrame->client()->didExhaustMemoryAvailableForScript(webFrame);
 }
 
-int PlatformBridge::memoryUsageMB()
+int ChromiumBridge::memoryUsageMB()
 {
     return static_cast<int>(webKitClient()->memoryUsageMB());
 }
 
-int PlatformBridge::actualMemoryUsageMB()
+int ChromiumBridge::actualMemoryUsageMB()
 {
     return static_cast<int>(webKitClient()->actualMemoryUsageMB());
 }
 
-int PlatformBridge::screenDepth(Widget* widget)
+int ChromiumBridge::screenDepth(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);
     if (!client)
@@ -951,7 +951,7 @@ int PlatformBridge::screenDepth(Widget* widget)
     return client->screenInfo().depth;
 }
 
-int PlatformBridge::screenDepthPerComponent(Widget* widget)
+int ChromiumBridge::screenDepthPerComponent(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);
     if (!client)
@@ -959,7 +959,7 @@ int PlatformBridge::screenDepthPerComponent(Widget* widget)
     return client->screenInfo().depthPerComponent;
 }
 
-bool PlatformBridge::screenIsMonochrome(Widget* widget)
+bool ChromiumBridge::screenIsMonochrome(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);
     if (!client)
@@ -967,7 +967,7 @@ bool PlatformBridge::screenIsMonochrome(Widget* widget)
     return client->screenInfo().isMonochrome;
 }
 
-IntRect PlatformBridge::screenRect(Widget* widget)
+IntRect ChromiumBridge::screenRect(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);
     if (!client)
@@ -975,7 +975,7 @@ IntRect PlatformBridge::screenRect(Widget* widget)
     return client->screenInfo().rect;
 }
 
-IntRect PlatformBridge::screenAvailableRect(Widget* widget)
+IntRect ChromiumBridge::screenAvailableRect(Widget* widget)
 {
     WebWidgetClient* client = toWebWidgetClient(widget);
     if (!client)
@@ -983,7 +983,7 @@ IntRect PlatformBridge::screenAvailableRect(Widget* widget)
     return client->screenInfo().availableRect;
 }
 
-bool PlatformBridge::popupsAllowed(NPP npp)
+bool ChromiumBridge::popupsAllowed(NPP npp)
 {
     // FIXME: Give the embedder a way to control this.
     return false;

@@ -1,3 +1,114 @@
+2011-01-19  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Unreviewed, build fix.
+
+        During revert of 76203, sheriffbot did not revert "rename+change" correctly.
+
+        * src/ChromiumBridge.cpp: Renamed from Source/WebKit/chromium/src/PlatformBridge.cpp.
+        (WebCore::toChromeClientImpl):
+        (WebCore::toWebWidgetClient):
+        (WebCore::getCookieJar):
+        (WebCore::ChromiumBridge::cacheMetadata):
+        (WebCore::ChromiumBridge::clipboardIsFormatAvailable):
+        (WebCore::ChromiumBridge::clipboardReadPlainText):
+        (WebCore::ChromiumBridge::clipboardReadHTML):
+        (WebCore::ChromiumBridge::clipboardWriteSelection):
+        (WebCore::ChromiumBridge::clipboardWritePlainText):
+        (WebCore::ChromiumBridge::clipboardWriteURL):
+        (WebCore::ChromiumBridge::clipboardWriteImage):
+        (WebCore::ChromiumBridge::clipboardWriteData):
+        (WebCore::ChromiumBridge::clipboardReadAvailableTypes):
+        (WebCore::ChromiumBridge::clipboardReadData):
+        (WebCore::ChromiumBridge::clipboardReadFilenames):
+        (WebCore::ChromiumBridge::setCookies):
+        (WebCore::ChromiumBridge::cookies):
+        (WebCore::ChromiumBridge::cookieRequestHeaderFieldValue):
+        (WebCore::ChromiumBridge::rawCookies):
+        (WebCore::ChromiumBridge::deleteCookie):
+        (WebCore::ChromiumBridge::cookiesEnabled):
+        (WebCore::ChromiumBridge::prefetchDNS):
+        (WebCore::ChromiumBridge::fileExists):
+        (WebCore::ChromiumBridge::deleteFile):
+        (WebCore::ChromiumBridge::deleteEmptyDirectory):
+        (WebCore::ChromiumBridge::getFileSize):
+        (WebCore::ChromiumBridge::revealFolderInOS):
+        (WebCore::ChromiumBridge::getFileModificationTime):
+        (WebCore::ChromiumBridge::directoryName):
+        (WebCore::ChromiumBridge::pathByAppendingComponent):
+        (WebCore::ChromiumBridge::makeAllDirectories):
+        (WebCore::ChromiumBridge::getAbsolutePath):
+        (WebCore::ChromiumBridge::isDirectory):
+        (WebCore::ChromiumBridge::filePathToURL):
+        (WebCore::ChromiumBridge::openFile):
+        (WebCore::ChromiumBridge::closeFile):
+        (WebCore::ChromiumBridge::seekFile):
+        (WebCore::ChromiumBridge::truncateFile):
+        (WebCore::ChromiumBridge::readFromFile):
+        (WebCore::ChromiumBridge::writeToFile):
+        (WebCore::ChromiumBridge::ensureFontLoaded):
+        (WebCore::ChromiumBridge::getFontFamilyForCharacters):
+        (WebCore::ChromiumBridge::getRenderStyleForStrike):
+        (WebCore::ChromiumBridge::loadFont):
+        (WebCore::ChromiumBridge::databaseOpenFile):
+        (WebCore::ChromiumBridge::databaseDeleteFile):
+        (WebCore::ChromiumBridge::databaseGetFileAttributes):
+        (WebCore::ChromiumBridge::databaseGetFileSize):
+        (WebCore::ChromiumBridge::idbFactory):
+        (WebCore::ChromiumBridge::idbShutdown):
+        (WebCore::ChromiumBridge::createIDBKeysFromSerializedValuesAndKeyPath):
+        (WebCore::ChromiumBridge::signedPublicKeyAndChallengeString):
+        (WebCore::ChromiumBridge::computedDefaultLanguage):
+        (WebCore::ChromiumBridge::layoutTestMode):
+        (WebCore::ChromiumBridge::isSupportedImageMIMEType):
+        (WebCore::ChromiumBridge::isSupportedJavaScriptMIMEType):
+        (WebCore::ChromiumBridge::isSupportedNonImageMIMEType):
+        (WebCore::ChromiumBridge::mimeTypeForExtension):
+        (WebCore::ChromiumBridge::mimeTypeFromFile):
+        (WebCore::ChromiumBridge::preferredExtensionForMIMEType):
+        (WebCore::ChromiumBridge::plugins):
+        (WebCore::ChromiumBridge::pluginScriptableObject):
+        (WebCore::ChromiumBridge::loadPlatformImageResource):
+        (WebCore::ChromiumBridge::loadPlatformAudioResource):
+        (WebCore::ChromiumBridge::decodeAudioFileData):
+        (WebCore::ChromiumBridge::sandboxEnabled):
+        (WebCore::ChromiumBridge::setSharedTimerFiredFunction):
+        (WebCore::ChromiumBridge::setSharedTimerFireTime):
+        (WebCore::ChromiumBridge::stopSharedTimer):
+        (WebCore::ChromiumBridge::decrementStatsCounter):
+        (WebCore::ChromiumBridge::incrementStatsCounter):
+        (WebCore::ChromiumBridge::histogramCustomCounts):
+        (WebCore::ChromiumBridge::histogramEnumeration):
+        (WebCore::ChromiumBridge::suddenTerminationChanged):
+        (WebCore::ChromiumBridge::currentTime):
+        (WebCore::ChromiumBridge::paintButton):
+        (WebCore::ChromiumBridge::paintMenuList):
+        (WebCore::ChromiumBridge::paintScrollbarArrow):
+        (WebCore::ChromiumBridge::paintScrollbarThumb):
+        (WebCore::ChromiumBridge::paintScrollbarTrack):
+        (WebCore::ChromiumBridge::paintSpinButton):
+        (WebCore::ChromiumBridge::paintTextField):
+        (WebCore::ChromiumBridge::paintTrackbar):
+        (WebCore::ChromiumBridge::paintProgressBar):
+        (WebCore::WebThemePart):
+        (WebCore::WebThemeState):
+        (WebCore::GetWebThemeExtraParams):
+        (WebCore::ChromiumBridge::getThemePartSize):
+        (WebCore::ChromiumBridge::paintThemePart):
+        (WebCore::ChromiumBridge::traceEventBegin):
+        (WebCore::ChromiumBridge::traceEventEnd):
+        (WebCore::ChromiumBridge::visitedLinkHash):
+        (WebCore::ChromiumBridge::isLinkVisited):
+        (WebCore::ChromiumBridge::notifyJSOutOfMemory):
+        (WebCore::ChromiumBridge::memoryUsageMB):
+        (WebCore::ChromiumBridge::actualMemoryUsageMB):
+        (WebCore::ChromiumBridge::screenDepth):
+        (WebCore::ChromiumBridge::screenDepthPerComponent):
+        (WebCore::ChromiumBridge::screenIsMonochrome):
+        (WebCore::ChromiumBridge::screenRect):
+        (WebCore::ChromiumBridge::screenAvailableRect):
+        (WebCore::ChromiumBridge::popupsAllowed):
+        (WebCore::WorkerContextProxy::create):
+
 2011-01-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76203.
