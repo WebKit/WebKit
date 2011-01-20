@@ -1,3 +1,53 @@
+2011-01-20  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Clean up the Media Controls CSS for Qt
+        https://bugs.webkit.org/show_bug.cgi?id=52822
+
+        Split the audio::-webkit-media-xxx and video::-webkit-media-xxx rules 
+        in mediaControlsQt.css, and remove the duplicate audio::-webkit-media-xxx
+        rules from mediaControlsQtFullscreen.css.
+
+        * css/mediaControlsQt.css:
+        (audio::-webkit-media-controls-panel):
+        (video::-webkit-media-controls-panel):
+        (audio::-webkit-media-controls-mute-button):
+        (video::-webkit-media-controls-mute-button):
+        (audio::-webkit-media-controls-play-button):
+        (video::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-timeline-container):
+        (video::-webkit-media-controls-timeline-container):
+        (audio::-webkit-media-controls-current-time-display):
+        (video::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-time-remaining-display):
+        (video::-webkit-media-controls-time-remaining-display):
+        (audio::-webkit-media-controls-timeline):
+        (video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-volume-slider-container):
+        (video::-webkit-media-controls-volume-slider-container):
+        (audio::-webkit-media-controls-volume-slider):
+        (video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-seek-back-button):
+        (video::-webkit-media-controls-seek-back-button):
+        (audio::-webkit-media-controls-seek-forward-button):
+        (video::-webkit-media-controls-seek-forward-button):
+        (audio::-webkit-media-controls-fullscreen-button):
+        (video::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-rewind-button):
+        (video::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-return-to-realtime-button):
+        (video::-webkit-media-controls-return-to-realtime-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button):
+        (video::-webkit-media-controls-toggle-closed-captions-button):
+        * css/mediaControlsQtFullscreen.css:
+        (video::-webkit-media-controls-time-remaining-display):
+        (video::-webkit-media-controls-seek-back-button):
+        (video::-webkit-media-controls-seek-forward-button):
+        (video::-webkit-media-controls-rewind-button):
+        (video::-webkit-media-controls-return-to-realtime-button):
+        (video::-webkit-media-controls-toggle-closed-captions-button):
+
 2011-01-20  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

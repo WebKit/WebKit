@@ -21,26 +21,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-audio {
-    height: 34px;
-    width: 400px;
-}
-
-audio::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: end;
-    -webkit-user-select: none;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    z-index: 0;
-    overflow: visible;
-    height: 100%;
-    text-align: right;
-}
-
 video::-webkit-media-controls-panel {
 /*  The control panel is only play button for full screen */
     display: -webkit-box;
@@ -54,22 +34,8 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
     display: none;
 }
 
-audio::-webkit-media-controls-mute-button {
-    width: 12px;
-    height: 12px;
-    padding: 6px;
-    margin: 5px 5px 5px 3px;
-}
-
 video::-webkit-media-controls-mute-button {
     display: none;
-}
-
-audio::-webkit-media-controls-play-button {
-    width: 9px;
-    height: 12px;
-    padding: 6px 12px 6px 11px;
-    margin: 5px 3px 5px 5px;
 }
 
 video::-webkit-media-controls-play-button {
@@ -81,30 +47,8 @@ video::-webkit-media-controls-play-button {
     padding: 20px;
 }
 
-audio::-webkit-media-controls-timeline-container {
-    height: 34px;
-}
-
 video::-webkit-media-controls-timeline-container {
     display: none;
-}
-
-audio::-webkit-media-controls-current-time-display {
-    -webkit-appearance: media-current-time-display;
-    -webkit-user-select: none;
-    display: inline-block;
-    height: 12px;
-    padding: 6px;
-    margin: 5px 3px;
-
-    overflow: hidden;
-    cursor: default;
-
-    text-align: center;
-    font-size: 10px;
-    font-family: Verdana;
-    font-weight: bold;
-    color: white;
 }
 
 video::-webkit-media-controls-current-time-display {
@@ -113,25 +57,12 @@ video::-webkit-media-controls-current-time-display {
     display: none;
 }
 
-audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
+video::-webkit-media-controls-time-remaining-display {
     display: none;
-}
-
-audio::-webkit-media-controls-timeline {
-    height: 12px;
-    padding: 6px 8px;
-    margin: 5px 3px;
 }
 
 video::-webkit-media-controls-timeline {
     display: none;
-}
-
-audio::-webkit-media-controls-volume-slider-container {
-    -webkit-appearance: media-volume-slider-container;
-    position: absolute;
-    height: 103px;
-    width: 24px;
 }
 
 video::-webkit-media-controls-volume-slider-container {
@@ -139,52 +70,32 @@ video::-webkit-media-controls-volume-slider-container {
     display: none;
 }
 
-audio::-webkit-media-controls-volume-slider {
-    -webkit-appearance: media-volume-slider;
-    display: inline;
-    position: absolute;
-
-    width: 12px;
-    padding: 6px;
-    height: 88px;
-    margin: 0 0 3px 0;
-}
-
 video::-webkit-media-controls-volume-slider {
     -webkit-appearance: media-volume-slider;
     display: none;
 }
 
-audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
+video::-webkit-media-controls-seek-back-button {
     display: none;
 }
 
-audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
+video::-webkit-media-controls-seek-forward-button {
     display: none;
-}
-
-audio::-webkit-media-controls-fullscreen-button {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 12px;
-    height: 12px;
-    padding: 6px;
-    margin: 5px 5px 5px 3px;
 }
 
 video::-webkit-media-controls-fullscreen-button {
     display: none;
 }
 
-audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button {
+video::-webkit-media-controls-rewind-button {
     display: none;
 }
 
-audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button {
+video::-webkit-media-controls-return-to-realtime-button {
     display: none;
 }
 
-audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
+video::-webkit-media-controls-toggle-closed-captions-button {
     display: none;
 }
+
