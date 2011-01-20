@@ -39,16 +39,12 @@ class ShadowElement : public BaseElement {
 protected:
     ShadowElement(const QualifiedName& name, HTMLElement* shadowParent)
         : BaseElement(name, shadowParent->document())
-        , m_shadowParent(shadowParent)
     {
         BaseElement::setShadowHost(shadowParent);
     }
 
 public:
     virtual void detach();
-
-private:
-    RefPtr<HTMLElement> m_shadowParent;
 };
 
 template<class BaseElement>
