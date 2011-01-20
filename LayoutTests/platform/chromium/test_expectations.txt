@@ -3097,3 +3097,19 @@ BUGDIMICH : fast/js/toString-recursion.html = TEXT
 // need to investigate
 BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
+
+BUGTHAKIS LINUX WIN : media/video-display-toggle.html = IMAGE
+
+BUGDIMICH : fast/js/toString-recursion.html = PASS TEXT
+BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = PASS TEXT
+BUGDIMICH : fast/regex/cross-frame-callable.html = PASS TEXT
+
+// New test that was non-deterministic.
+BUGYURYS : userscripts/window-onerror-for-isolated-world-1.html = PASS TEXT
+BUGYURYS MAC : userscripts/window-onerror-for-isolated-world-2.html = PASS TEXT
+BUGYURYS WIN LINUX : userscripts/window-onerror-for-isolated-world-2.html = PASS TEXT TIMEOUT
+BUGYURYS : http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html = PASS TEXT
+BUGYURYS : http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html = PASS TEXT
+BUGYURYS : http/tests/security/xss-DENIED-frame-name.html = PASS TEXT
+
+BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS

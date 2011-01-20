@@ -1,3 +1,12 @@
+2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium test expectation update.
+
+        Merged test_expectations.txt in the Chromium tree and
+        added slow to fast/text/large-text-composed-char-dos.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-20  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating gpu expectations.
