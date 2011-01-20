@@ -1,5 +1,11 @@
 2011-01-20  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, update window-onerror2.html baselines as follow-up of r76216.
+
+        * platform/gtk/fast/events/window-onerror2-expected.txt:
+
+2011-01-20  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, new GTK baselines for 2 new tests.
 
         * platform/gtk/fast/block/float/float-overflow-hidden-containing-block-width-expected.txt: Added.
