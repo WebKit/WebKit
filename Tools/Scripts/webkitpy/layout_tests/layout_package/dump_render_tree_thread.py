@@ -384,8 +384,7 @@ class TestShellThread(WatchableThread):
         # This is created in run_webkit_tests.py:_PrepareListsAndPrintOutput.
         tests_run_filename = self._port._filesystem.join(self._options.results_directory,
                                           "tests_run.txt")
-        tests_run_file = self._port._filesystem.open_text_file_for_writing(tests_run_filename, append=True)
-
+        tests_run_file = self._port._filesystem.open_text_file_for_writing(tests_run_filename, append=False)
         while True:
             if self._canceled:
                 _log.debug('Testing cancelled')

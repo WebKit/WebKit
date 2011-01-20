@@ -185,7 +185,7 @@ class FileSystem(object):
         """Returns a file handle suitable for writing to."""
         mode = 'w'
         if append:
-            mode = 'wa'
+            mode = 'a'
         return codecs.open(path, mode, 'utf8')
 
     def read_binary_file(self, path):
