@@ -1,5 +1,18 @@
 2011-01-19  Adam Roben  <aroben@apple.com>
 
+        Only flush our own context when we get resized
+
+        Fixes <http://webkit.org/b/52751> All WKCACFContexts with uncommitted
+        changes get flushed whenever any composited page is resized
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::resize): Just flush our own context, not all contexts
+        WKCACFContextFlusher knows about. After all, ours is the only one that just got resized!
+
+2011-01-19  Adam Roben  <aroben@apple.com>
+
         Make WKCACFLayerRenderer ref-counted
 
         This will be needed to handle cases where the client might release its reference to us while

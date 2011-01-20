@@ -365,7 +365,7 @@ void WKCACFLayerRenderer::resize()
 
     if (m_rootLayer) {
         m_rootLayer->setBounds(bounds());
-        WKCACFContextFlusher::shared().flushAllContexts();
+        wkCACFContextFlush(m_context);
     }
 }
 
