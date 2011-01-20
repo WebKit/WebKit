@@ -1,3 +1,20 @@
+2011-01-20  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] CPU Profiles are cleared when navigating back and forth.
+
+        Profiles are now not cleared unless renderer instance was changed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52807
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::restoreProfiler):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::resetState):
+        (WebCore::InspectorProfilerAgent::resetFrontendProfiles):
+        * inspector/InspectorProfilerAgent.h:
+
 2011-01-20  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, add new JS file refs missing from r76116.

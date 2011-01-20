@@ -595,7 +595,7 @@ void InspectorController::restoreProfiler(ProfilerRestoreAction action)
     if (!ScriptProfiler::isProfilerAlwaysEnabled() && m_settings->getBoolean(InspectorSettings::ProfilerAlwaysEnabled))
         enableProfiler();
     if (action == ProfilerRestoreResetAgent)
-        m_profilerAgent->resetState();
+        m_profilerAgent->resetFrontendProfiles();
 #endif
 }
 
