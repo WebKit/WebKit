@@ -1,5 +1,12 @@
 2011-01-20  Sam Weinig  <sam@webkit.org>
 
+        Fix build.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::setScrollBarValue):
+
+2011-01-20  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         Cleanup Scrollbar/ScrollbarClient relationship
