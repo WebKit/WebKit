@@ -1,3 +1,18 @@
+2011-01-20  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] Call malloc and memcpy directly instead of
+        of strdup in convertV8ObjectToNPVariant() when
+        converting strings. If there is a null character
+        in the string, our use of strdup causes us to allocate
+        too little memory, leading to out of bounds reads.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52631
+
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertV8ObjectToNPVariant):
+
 2011-01-20  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Ariya Hidayat.
