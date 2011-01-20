@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
 
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.layout_package import test_expectations
@@ -66,12 +65,11 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
               results.
         """
         super(JSONLayoutResultsGenerator, self).__init__(
-            builder_name, build_name, build_number, results_file_base_path,
+            port, builder_name, build_name, build_number, results_file_base_path,
             builder_base_url, {}, port.test_repository_paths(),
             generate_incremental_results, test_results_server,
             test_type, master_name)
 
-        self._port = port
         self._expectations = expectations
 
         # We want relative paths to LayoutTest root for JSON output.
@@ -181,9 +179,9 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
             test, test_name, tests)
 
         # Remove tests that don't exist anymore.
-        full_path = os.path.join(self._port.layout_tests_dir(), test_name)
-        full_path = os.path.normpath(full_path)
-        if not os.path.exists(full_path):
+        full_path = self._fs.join(self._port.layout_tests_dir(), test_name)
+        full_path = self._fs.normpath(full_path)
+        if not self._fs.exists(full_path):
             del tests[test_name]
 
     def _get_failure_summary_entry(self, timeline):

@@ -26,11 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
-import codecs
 import logging
-import os
 import subprocess
 import sys
 import time
@@ -118,7 +114,7 @@ class JSONResultsGeneratorBase(object):
     URL_FOR_TEST_LIST_JSON = \
         "http://%s/testfile?builder=%s&name=%s&testlistjson=1&testtype=%s"
 
-    def __init__(self, builder_name, build_name, build_number,
+    def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
         test_results_map, svn_repositories=None,
         generate_incremental_results=False,
@@ -129,6 +125,7 @@ class JSONResultsGeneratorBase(object):
         if it is not found locally.
 
         Args
+          port: port-specific wrapper
           builder_name: the builder name (e.g. Webkit).
           build_name: the build name (e.g. webkit-rel).
           build_number: the build number.
@@ -146,14 +143,16 @@ class JSONResultsGeneratorBase(object):
           test_type: test type string (e.g. 'layout-tests').
           master_name: the name of the buildbot master.
         """
+        self._port = port
+        self._fs = port._filesystem
         self._builder_name = builder_name
         self._build_name = build_name
         self._build_number = build_number
         self._builder_base_url = builder_base_url
         self._results_directory = results_file_base_path
-        self._results_file_path = os.path.join(results_file_base_path,
+        self._results_file_path = self._fs.join(results_file_base_path,
             self.RESULTS_FILENAME)
-        self._incremental_results_file_path = os.path.join(
+        self._incremental_results_file_path = self._fs.join(
             results_file_base_path, self.INCREMENTAL_RESULTS_FILENAME)
 
         self._test_results_map = test_results_map
@@ -254,7 +253,7 @@ class JSONResultsGeneratorBase(object):
                  ("testtype", self._test_type),
                  ("master", self._master_name)]
 
-        files = [(file, os.path.join(self._results_directory, file))
+        files = [(file, self._fs.join(self._results_directory, file))
             for file in json_files]
 
         uploader = test_results_uploader.TestResultsUploader(
@@ -273,10 +272,7 @@ class JSONResultsGeneratorBase(object):
         # Specify separators in order to get compact encoding.
         json_data = simplejson.dumps(json, separators=(',', ':'))
         json_string = self.JSON_PREFIX + json_data + self.JSON_SUFFIX
-
-        results_file = codecs.open(file_path, "w", "utf-8")
-        results_file.write(json_string)
-        results_file.close()
+        self._fs.write_text_file(file_path, json_string)
 
     def _get_test_timing(self, test_name):
         """Returns test timing data (elapsed time) in second
@@ -330,7 +326,7 @@ class JSONResultsGeneratorBase(object):
         Args:
           in_directory: The directory where svn is to be run.
         """
-        if os.path.exists(os.path.join(in_directory, '.svn')):
+        if self._fs.exists(self._fs.join(in_directory, '.svn')):
             # Note: Not thread safe: http://bugs.python.org/issue2320
             output = subprocess.Popen(["svn", "info", "--xml"],
                                       cwd=in_directory,
@@ -358,9 +354,8 @@ class JSONResultsGeneratorBase(object):
         old_results = None
         error = None
 
-        if os.path.exists(self._results_file_path) and not for_incremental:
-            with codecs.open(self._results_file_path, "r", "utf-8") as file:
-                old_results = file.read()
+        if self._fs.exists(self._results_file_path) and not for_incremental:
+            old_results = self._fs.read_text_file(self._results_file_path)
         elif self._builder_base_url or for_incremental:
             if for_incremental:
                 if not self._test_results_server:

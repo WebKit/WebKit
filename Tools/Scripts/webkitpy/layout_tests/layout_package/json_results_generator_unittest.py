@@ -31,11 +31,11 @@
 import unittest
 import optparse
 import random
-import shutil
-import tempfile
 
+from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.layout_package import test_expectations
+from webkitpy.thirdparty.mock import Mock
 
 
 class JSONGeneratorTest(unittest.TestCase):
@@ -83,7 +83,9 @@ class JSONGeneratorTest(unittest.TestCase):
                 failed=(test in failed_tests),
                 elapsed_time=test_timings[test])
 
-        generator = json_results_generator.JSONResultsGeneratorBase(
+        port = Mock()
+        port._filesystem = filesystem_mock.MockFileSystem()
+        generator = json_results_generator.JSONResultsGeneratorBase(port,
             self.builder_name, self.build_name, self.build_number,
             '',
             None,   # don't fetch past json results archive

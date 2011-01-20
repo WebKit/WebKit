@@ -1,5 +1,21 @@
 2011-01-19  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, build fix - I pulled this patch in to fix an issue
+        revealed by r76195 running on some new bots). Also fix a couple
+        of other issues revealed in testing.
+
+        nrwt: remove fs refs from layout_package/json*
+
+        https://bugs.webkit.org/show_bug.cgi?id=52754
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
+2011-01-19  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, build fix.
 
         Fix a couple of minor bugs discovered while bringing up new bots

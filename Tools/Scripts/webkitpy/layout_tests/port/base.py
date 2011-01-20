@@ -117,7 +117,10 @@ class Port(object):
 
         self._pretty_patch_path = self.path_from_webkit_base("Websites",
             "bugs.webkit.org", "PrettyPatch", "prettify.rb")
-        self._pretty_patch_available = True
+        # If we're running on a mocked-out filesystem, this file almost
+        # certainly won't be available, so it's a good test to keep us
+        # from erroring out later.
+        self._pretty_patch_available = self._filesystem.exists(self._pretty_patch_path)
         self.set_option_default('configuration', None)
         if self._options.configuration is None:
             self._options.configuration = self.default_configuration()
