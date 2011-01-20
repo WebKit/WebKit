@@ -20,15 +20,18 @@
 #ifndef ImageBufferData_h
 #define ImageBufferData_h
 
+#include "SharedBitmap.h"
+
 namespace WebCore {
 
-    class IntSize;
-    class ImageBufferData {
-    public:
-        ImageBufferData(const IntSize& size);
-        RefPtr<SharedBitmap> m_bitmap;
-    };
+class IntSize;
 
-}  // namespace WebCore
+class ImageBufferData {
+public:
+    ImageBufferData(const IntSize&);
+    RefPtr<SharedBitmap> m_bitmap;
+};
 
-#endif  // ImageBufferData_h
+} // namespace WebCore
+
+#endif // ImageBufferData_h

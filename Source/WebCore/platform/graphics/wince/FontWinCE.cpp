@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "TextRun.h"
 #include "WidthIterator.h"
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>

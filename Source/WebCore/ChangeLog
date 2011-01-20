@@ -1,3 +1,10 @@
+2011-01-20  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r76170.
+
+        * platform/graphics/wince/FontWinCE.cpp: Added a missing include.
+        * platform/graphics/wince/ImageBufferData.h: Added a missing include and fixed style.
+
 2011-01-20  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
