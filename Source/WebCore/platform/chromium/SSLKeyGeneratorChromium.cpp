@@ -31,7 +31,7 @@
 #include "config.h"
 #include "SSLKeyGenerator.h"
 
-#include "PlatformBridge.h"
+#include "ChromiumBridge.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -51,7 +51,7 @@ String signedPublicKeyAndChallengeString(unsigned keySizeIndex,
                                          const String& challengeString,
                                          const KURL& url)
 {
-    return PlatformBridge::signedPublicKeyAndChallengeString(keySizeIndex,
+    return ChromiumBridge::signedPublicKeyAndChallengeString(keySizeIndex,
                                                              challengeString,
                                                              url);
 }

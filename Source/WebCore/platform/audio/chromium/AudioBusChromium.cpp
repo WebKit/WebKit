@@ -29,7 +29,7 @@
 #include "AudioBus.h"
 
 #include "AudioFileReader.h"
-#include "PlatformBridge.h"
+#include "ChromiumBridge.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -38,12 +38,12 @@ namespace WebCore {
 
 // PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sampleRate)
 // {
-//     return PlatformBridge::loadPlatformAudioResource(name, sampleRate);
+//     return ChromiumBridge::loadPlatformAudioResource(name, sampleRate);
 // }
 
 PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, double sampleRate)
 {
-    OwnPtr<AudioBus> audioBus = PlatformBridge::decodeAudioFileData(static_cast<const char*>(data), dataSize, sampleRate);
+    OwnPtr<AudioBus> audioBus = ChromiumBridge::decodeAudioFileData(static_cast<const char*>(data), dataSize, sampleRate);
     if (audioBus->numberOfChannels() == 2 && mixToMono) {
         OwnPtr<AudioBus> monoAudioBus = adoptPtr(new AudioBus(1, audioBus->length()));
 

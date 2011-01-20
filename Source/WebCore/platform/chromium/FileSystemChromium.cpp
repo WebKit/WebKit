@@ -31,85 +31,85 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include "ChromiumBridge.h"
 #include "NotImplemented.h"
-#include "PlatformBridge.h"
 #include "PlatformString.h"
 
 namespace WebCore {
 
 bool deleteFile(const String& path)
 {
-    return PlatformBridge::deleteFile(path);
+    return ChromiumBridge::deleteFile(path);
 }
 
 bool deleteEmptyDirectory(const String& path)
 {
-    return PlatformBridge::deleteEmptyDirectory(path);
+    return ChromiumBridge::deleteEmptyDirectory(path);
 }
 
 bool getFileSize(const String& path, long long& result)
 {
-    return PlatformBridge::getFileSize(path, result);
+    return ChromiumBridge::getFileSize(path, result);
 }
 
 bool getFileModificationTime(const String& path, time_t& result)
 {
-    return PlatformBridge::getFileModificationTime(path, result);
+    return ChromiumBridge::getFileModificationTime(path, result);
 }
 
 void revealFolderInOS(const String& path)
 {
-    PlatformBridge::revealFolderInOS(path);
+    ChromiumBridge::revealFolderInOS(path);
 }
 
 String directoryName(const String& path)
 {
-    return PlatformBridge::directoryName(path);
+    return ChromiumBridge::directoryName(path);
 }
 
 String pathByAppendingComponent(const String& path, const String& component)
 {
-    return PlatformBridge::pathByAppendingComponent(path, component);
+    return ChromiumBridge::pathByAppendingComponent(path, component);
 }
 
 bool makeAllDirectories(const String& path)
 {
-    return PlatformBridge::makeAllDirectories(path);
+    return ChromiumBridge::makeAllDirectories(path);
 }
 
 bool fileExists(const String& path)
 {
-    return PlatformBridge::fileExists(path);
+    return ChromiumBridge::fileExists(path);
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)
 {
-    return PlatformBridge::openFile(path, mode);
+    return ChromiumBridge::openFile(path, mode);
 }
 
 void closeFile(PlatformFileHandle& handle)
 {
-    return PlatformBridge::closeFile(handle);
+    return ChromiumBridge::closeFile(handle);
 }
 
 long long seekFile(PlatformFileHandle handle, long long offset, FileSeekOrigin origin)
 {
-    return PlatformBridge::seekFile(handle, offset, origin);
+    return ChromiumBridge::seekFile(handle, offset, origin);
 }
 
 bool truncateFile(PlatformFileHandle handle, long long offset)
 {
-    return PlatformBridge::truncateFile(handle, offset);
+    return ChromiumBridge::truncateFile(handle, offset);
 }
 
 int readFromFile(PlatformFileHandle handle, char* data, int length)
 {
-    return PlatformBridge::readFromFile(handle, data, length);
+    return ChromiumBridge::readFromFile(handle, data, length);
 }
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    return PlatformBridge::writeToFile(handle, data, length);
+    return ChromiumBridge::writeToFile(handle, data, length);
 }
 
 } // namespace WebCore

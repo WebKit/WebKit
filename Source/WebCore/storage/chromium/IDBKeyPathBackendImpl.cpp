@@ -28,13 +28,13 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "PlatformBridge.h"
+#include "ChromiumBridge.h"
 
 namespace WebCore {
 
 void IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue>, 0>& values,  const String& keyPath, Vector<RefPtr<IDBKey>, 0>& keys)
 {
-    PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(values, keyPath, keys);
+    ChromiumBridge::createIDBKeysFromSerializedValuesAndKeyPath(values, keyPath, keys);
 }
 
 } // namespace WebCore

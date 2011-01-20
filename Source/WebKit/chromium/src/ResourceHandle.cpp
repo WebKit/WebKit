@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ResourceHandle.h"
 
-#include "PlatformBridge.h"
+#include "ChromiumBridge.h"
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
@@ -330,7 +330,7 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
 // static
 void ResourceHandle::cacheMetadata(const ResourceResponse& response, const Vector<char>& data)
 {
-    PlatformBridge::cacheMetadata(response.url(), response.responseTime(), data);
+    ChromiumBridge::cacheMetadata(response.url(), response.responseTime(), data);
 }
 
 } // namespace WebCore

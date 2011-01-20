@@ -74,6 +74,7 @@
 #include "AssociatedURLLoader.h"
 #include "BackForwardController.h"
 #include "Chrome.h"
+#include "ChromiumBridge.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Console.h"
 #include "DOMUtilitiesPrivate.h"
@@ -102,7 +103,6 @@
 #include "InspectorController.h"
 #include "Page.h"
 #include "Performance.h"
-#include "PlatformBridge.h"
 #include "PlatformContextSkia.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
@@ -1820,13 +1820,13 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_animationController(this)
     , m_identifier(generateFrameIdentifier())
 {
-    PlatformBridge::incrementStatsCounter(webFrameActiveCount);
+    ChromiumBridge::incrementStatsCounter(webFrameActiveCount);
     frameCount++;
 }
 
 WebFrameImpl::~WebFrameImpl()
 {
-    PlatformBridge::decrementStatsCounter(webFrameActiveCount);
+    ChromiumBridge::decrementStatsCounter(webFrameActiveCount);
     frameCount--;
 
     cancelPendingScopingEffort();

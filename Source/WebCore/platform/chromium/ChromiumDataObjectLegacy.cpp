@@ -31,9 +31,9 @@
 #include "config.h"
 #include "ChromiumDataObjectLegacy.h"
 
+#include "ChromiumBridge.h"
 #include "ClipboardMimeTypes.h"
 #include "Pasteboard.h"
-#include "PlatformBridge.h"
 
 namespace WebCore {
 
@@ -132,7 +132,7 @@ String ChromiumDataObjectLegacy::getData(const String& type, bool& success)
                 Pasteboard::generalPasteboard()->isSelectionMode() ?
                 PasteboardPrivate::SelectionBuffer :
                 PasteboardPrivate::StandardBuffer;
-            String text = PlatformBridge::clipboardReadPlainText(buffer);
+            String text = ChromiumBridge::clipboardReadPlainText(buffer);
             success = !text.isEmpty();
             return text;
         }
@@ -158,7 +158,7 @@ String ChromiumDataObjectLegacy::getData(const String& type, bool& success)
                 PasteboardPrivate::StandardBuffer;
             String htmlText;
             KURL sourceURL;
-            PlatformBridge::clipboardReadHTML(buffer, &htmlText, &sourceURL);
+            ChromiumBridge::clipboardReadHTML(buffer, &htmlText, &sourceURL);
             success = !htmlText.isEmpty();
             return htmlText;
         }

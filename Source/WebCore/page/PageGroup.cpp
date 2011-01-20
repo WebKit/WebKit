@@ -37,7 +37,7 @@
 #include "StorageNamespace.h"
 
 #if PLATFORM(CHROMIUM)
-#include "PlatformBridge.h"
+#include "ChromiumBridge.h"
 #endif
 
 namespace WebCore {
@@ -128,7 +128,7 @@ bool PageGroup::isLinkVisited(LinkHash visitedLinkHash)
 {
 #if PLATFORM(CHROMIUM)
     // Use Chromium's built-in visited link database.
-    return PlatformBridge::isLinkVisited(visitedLinkHash);
+    return ChromiumBridge::isLinkVisited(visitedLinkHash);
 #else
     if (!m_visitedLinksPopulated) {
         m_visitedLinksPopulated = true;

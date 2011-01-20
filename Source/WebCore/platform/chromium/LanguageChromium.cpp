@@ -31,7 +31,7 @@
 #include "config.h"
 #include "Language.h"
 
-#include "PlatformBridge.h"
+#include "ChromiumBridge.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -40,7 +40,7 @@ String platformDefaultLanguage()
 {
     static String computedDefaultLanguage;
     if (computedDefaultLanguage.isEmpty())
-        computedDefaultLanguage = PlatformBridge::computedDefaultLanguage();
+        computedDefaultLanguage = ChromiumBridge::computedDefaultLanguage();
     return computedDefaultLanguage;
 }
 
