@@ -39,8 +39,6 @@
 #include "HTMLOptionElement.h"
 #include "Node.h"
 
-#include "WebInputElement.h"
-
 using namespace WebCore;
 
 namespace {
@@ -77,11 +75,6 @@ HTMLMetaElement* toHTMLMetaElement(Node* node)
 HTMLOptionElement* toHTMLOptionElement(Node* node)
 {
     return toHTMLElement<HTMLOptionElement>(node, HTMLNames::optionTag);
-}
-
-String nameOfInputElement(HTMLInputElement* element)
-{
-    return WebInputElement(element).nameForAutofill();
 }
 
 bool elementHasLegalLinkAttribute(const Element* element,

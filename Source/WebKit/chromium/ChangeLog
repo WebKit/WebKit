@@ -1,3 +1,13 @@
+2011-01-20  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        [chromium] Remove deprecated WebKit::nameOfInputElement function
+        https://bugs.webkit.org/show_bug.cgi?id=52824
+
+        * src/DOMUtilitiesPrivate.cpp:
+        * src/DOMUtilitiesPrivate.h:
+
 2011-01-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt.
