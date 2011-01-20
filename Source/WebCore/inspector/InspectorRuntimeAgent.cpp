@@ -73,6 +73,11 @@ void InspectorRuntimeAgent::setPropertyValue(PassRefPtr<InspectorObject> objectI
         injectedScript.setPropertyValue(objectId, propertyName, expression, result);
 }
 
+void InspectorRuntimeAgent::releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup)
+{
+    m_injectedScriptHost->releaseWrapperObjectGroup(injectedScriptId, objectGroup);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

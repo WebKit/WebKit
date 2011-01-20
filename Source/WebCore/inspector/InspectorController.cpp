@@ -1149,11 +1149,6 @@ void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> br
 }
 #endif
 
-void InspectorController::releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup)
-{
-    injectedScriptHost()->releaseWrapperObjectGroup(injectedScriptId, objectGroup);
-}
-
 void InspectorController::evaluateForTestInFrontend(long callId, const String& script)
 {
     if (m_frontend)

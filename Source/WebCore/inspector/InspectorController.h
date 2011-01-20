@@ -245,8 +245,6 @@ public:
 #endif
 
     // Generic code called from custom implementations.
-    void releaseWrapperObjectGroup(long injectedScriptId, const String& objectGroup);
-
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
     void addScriptToEvaluateOnLoad(const String& source);

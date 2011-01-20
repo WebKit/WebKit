@@ -38,7 +38,6 @@ module core {
 
         [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
         [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
-        [domain=Inspector] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
         [domain=Inspector] void reloadPage();
         [domain=Inspector] void populateScriptObjects();
 
@@ -76,6 +75,7 @@ module core {
         [domain=Runtime] void getCompletions(in String expression, in boolean includeInspectorCommandLineAPI, out Value result);
         [domain=Runtime] void getProperties(in Object objectId, in boolean ignoreHasOwnProperty, in boolean abbreviate, out Value result);
         [domain=Runtime] void setPropertyValue(in Object objectId, in String propertyName, in String expression, out Value result);
+        [domain=Runtime] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
 
         ///////////////////////////////////////////////////////////////////////
         // Injected Script
@@ -268,7 +268,7 @@ module core {
         [domain=Debugger] void pause();
         [notify, domain=Debugger] void pausedScript(out Object details);
         [domain=Debugger] void resume();
-        [notify, domain=Debugger] void resumedScript(); // FIXME: Make this out parameter fo resume if possible.
+        [notify, domain=Debugger] void resumedScript(); // FIXME: Make this out parameter of resume if possible.
 
         [domain=Debugger] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
         [domain=Debugger] void getScriptSource(in String sourceID, out String scriptSource);
@@ -289,7 +289,7 @@ module core {
         // Profiler API
         ///////////////////////////////////////////////////////////////////////
 
-        [domain=Inspector] void enableProfiler(in boolean always); // FIXME: preferrable with Inspector domain, dispatched on backend.
+        [domain=Inspector] void enableProfiler(in boolean always);
         [domain=Inspector] void disableProfiler(in boolean always);
         [notify, domain=Profiler] void profilerWasEnabled();
         [notify, domain=Profiler] void profilerWasDisabled();
