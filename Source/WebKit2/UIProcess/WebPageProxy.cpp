@@ -617,6 +617,24 @@ void WebPageProxy::didPerformDragControllerAction(uint64_t resultOperation)
     m_currentDragOperation = static_cast<DragOperation>(resultOperation);
 }
 
+#if PLATFORM(MAC)
+void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const IntSize& imageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag)
+{
+    RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(imageSize, dragImageHandle);
+    if (!dragImage)
+        return;
+    
+    m_pageClient->setDragImage(clientPosition, imageSize, dragImage.release(), isLinkDrag);
+}
+#endif
+
+void WebPageProxy::dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t operation)
+{
+    if (!isValid())
+        return;
+    process()->send(Messages::WebPage::DragEnded(clientPosition, globalPosition, operation), m_pageID);
+}
+
 void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
 {
     if (!isValid())

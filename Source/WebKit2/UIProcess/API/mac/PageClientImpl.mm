@@ -37,6 +37,7 @@
 #import <WebCore/Cursor.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FoundationExtras.h>
+#import <WebCore/GraphicsContext.h>
 #import <WebCore/KeyboardEvent.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/text/CString.h>
@@ -278,6 +279,14 @@ void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vect
     [m_wkView _getTextInputState:selectionStart selectionEnd:selectionEnd underlines:underlines];
 }
 
+void PageClientImpl::setDragImage(const IntPoint& clientPosition, const IntSize& imageSize, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
+{
+    OwnPtr<GraphicsContext> graphicsContext = dragImage->createGraphicsContext();
+    RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:CGBitmapContextCreateImage(graphicsContext->platformContext()) size:imageSize]);
+    [dragNSImage.get() setFlipped:YES];
+    [m_wkView _setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
+}
+    
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
     return [m_wkView _convertToDeviceSpace:rect];

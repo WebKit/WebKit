@@ -189,4 +189,7 @@ messages -> WebPageProxy {
     
     # Drag and drop.
     DidPerformDragControllerAction(uint64_t resultOperation)
+#if PLATFORM(MAC)
+    SetDragImage(WebCore::IntPoint clientPosition, WebCore::IntSize imageSize, WebKit::SharedMemory::Handle dragImageHandle, bool linkDrag)
+#endif
 }

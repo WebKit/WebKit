@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebDragClient_h
-#define WebDragClient_h
-
-#include <WebCore/DragClient.h>
+#ifndef PasteboardTypes_h
+#define PasteboardTypes_h
 
 namespace WebKit {
 
-class WebPage;
-
-class WebDragClient : public WebCore::DragClient {
+class PasteboardTypes {
 public:
-    WebDragClient(WebPage* page)
-        : m_page(page)
-    {
-    }
-
-private:
-    virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, WebCore::DragData*);
-    virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::Clipboard*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(WebCore::DragData*);
-    virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint);
-
-    virtual void startDrag(WebCore::DragImageRef dragImage, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, WebCore::Clipboard*, WebCore::Frame*, bool linkDrag = false);
-    virtual WebCore::DragImageRef createDragImageForLink(WebCore::KURL&, const String& label, WebCore::Frame*);
-
-#if PLATFORM(MAC)
-    virtual void declareAndWriteDragImage(NSPasteboard*, DOMElement*, NSURL*, NSString*, WebCore::Frame*);
-#endif
-    virtual void dragControllerDestroyed();
-
-    WebPage* m_page;
+    static NSString * const WebArchivePboardType;
+    static NSString * const WebURLsWithTitlesPboardType;
+    static NSString * const WebURLPboardType;
+    static NSString * const WebURLNamePboardType;
+    
+    static NSArray *forEditing();
+    static NSArray *forURL();
+    static NSArray *forImages();
+    static NSArray *forImagesWithArchive();
 };
 
 } // namespace WebKit
 
-#endif // WebDragClient_h
+#endif // PasteboardTypes_h

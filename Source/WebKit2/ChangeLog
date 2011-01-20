@@ -1,3 +1,64 @@
+2011-01-19  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: add support for drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=52343
+        <rdar://problem/7660558>
+        
+        This patch contains the remaining work to support drag and drop on Mac.
+        I've added a PasteboardTypes class to encapsulate all the pasteboard formats
+        supported for drag and drop.
+        In this implementation we don't support the promised types, since I could not
+        find an efficient way to do this across processes.
+        The bulk of the patch consists in creating a shareable bitmap for the drag image,
+        pass its handle to the UI process and create a new NSImage from it to be given to
+        AppKit for dragging.
+        I've added the missing implementation of the methods in the drag client to hook
+        up the placement of the data in the pasteboard.
+        
+        * Shared/mac/PasteboardTypes.h: Added.
+        * Shared/mac/PasteboardTypes.mm: Added.
+        (WebKit::PasteboardTypes::forEditing):
+        (WebKit::PasteboardTypes::forURL):
+        (WebKit::PasteboardTypes::forImages):
+        (WebKit::PasteboardTypes::forImagesWithArchive):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setDragImage): Added.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _registerDraggedTypes]): Refactored to use the new PasteboardTypes class.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        (-[WKView _setMouseDownEvent:]):
+        (-[WKView _mouseHandler:]):
+        (-[WKView mouseDown:]):
+        (-[WKView mouseUp:]):
+        (-[WKView mouseDragged:]):
+        (-[WKView draggedImage:endedAt:operation:]):
+        (-[WKView draggingEntered:]):
+        (-[WKView _setDragImage:at:linkDrag:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setDragImage):
+        (WebKit::WebPageProxy::dragEnded):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm: Added.
+        (WebKit::fontFromNSFont):
+        (WebKit::WebDragClient::startDrag): Added implementation.
+        (WebKit::WebDragClient::createDragImageForLink): Ditto.
+        (WebKit::writeURL): Helper function.
+        (WebKit::writeImage): Helper function.
+        (WebKit::WebDragClient::declareAndWriteDragImage): Added implementation.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::dragEnded):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-01-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

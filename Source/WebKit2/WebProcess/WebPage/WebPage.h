@@ -300,6 +300,7 @@ public:
 
     void replaceSelectionWithText(WebCore::Frame*, const String&);
     void performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const WTF::String& dragStorageName, uint32_t flags);
+    void dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation);
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();

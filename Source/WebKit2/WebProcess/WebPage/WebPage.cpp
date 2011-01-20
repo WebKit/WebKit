@@ -1309,6 +1309,20 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
     }
 }
 
+void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t operation)
+{
+    IntPoint adjustedClientPosition(clientPosition.x() + m_page->dragController()->dragOffset().x(), clientPosition.y() + m_page->dragController()->dragOffset().y());
+    IntPoint adjustedGlobalPosition(globalPosition.x() + m_page->dragController()->dragOffset().x(), globalPosition.y() + m_page->dragController()->dragOffset().y());
+    
+    m_page->dragController()->dragEnded();
+    FrameView* view = m_page->mainFrame()->view();
+    if (!view)
+        return;
+    // FIXME: These are fake modifier keys here, but they should be real ones instead.
+    PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
+    m_page->mainFrame()->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
+}
+
 WebEditCommand* WebPage::webEditCommand(uint64_t commandID)
 {
     return m_editCommandMap.get(commandID).get();

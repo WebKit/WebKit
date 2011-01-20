@@ -62,5 +62,6 @@ namespace WebKit {
 - (void)_didFinishLoadingDataForCustomRepresentation:(const CoreIPC::DataReference&)dataReference;
 - (double)_customRepresentationZoomFactor;
 - (void)_setCustomRepresentationZoomFactor:(double)zoomFactor;
+- (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
 
 @end
