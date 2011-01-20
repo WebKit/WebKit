@@ -1,3 +1,10 @@
+2011-01-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip a test which requires the textInputController, which
+        the GTK+ DRT does not have.
+
+        * platform/gtk/Skipped: Skip new test.
+
 2011-01-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76172.
