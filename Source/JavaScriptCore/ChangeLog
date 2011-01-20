@@ -1,3 +1,17 @@
+2011-01-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rolled back in r76078, with crash fixed.
+        https://bugs.webkit.org/show_bug.cgi?id=52668
+        
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::markChildren): Account for the fact that the global
+        object moves its variables into and out of the register file. While out
+        of the register file, the symbol table's size is not an accurate count
+        for the size of the register array, since the BytecodeGenerator might
+        be compiling, adding items to the symbol table.
+        
 2011-01-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoffrey Garen.

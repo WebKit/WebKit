@@ -349,10 +349,6 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     for (HashSet<GlobalCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->markAggregate(markStack);
 
-    RegisterFile& registerFile = globalData().interpreter->registerFile();
-    if (registerFile.globalObject() == this)
-        registerFile.markGlobals(markStack, &globalData().heap);
-
     markIfNeeded(markStack, d()->regExpConstructor);
     markIfNeeded(markStack, d()->errorConstructor);
     markIfNeeded(markStack, d()->evalErrorConstructor);
@@ -397,12 +393,16 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     // No need to mark the other structures, because their prototypes are all
     // guaranteed to be referenced elsewhere.
 
-    Register* registerArray = d()->registerArray.get();
-    if (!registerArray)
-        return;
-
-    size_t size = d()->registerArraySize;
-    markStack.appendValues(reinterpret_cast<JSValue*>(registerArray), size);
+    if (d()->registerArray) {
+        // Outside the execution of global code, when our variables are torn off,
+        // we can mark the torn-off array.
+        markStack.appendValues(d()->registerArray.get(), d()->registerArraySize);
+    } else if (d()->registers) {
+        // During execution of global code, when our variables are in the register file,
+        // the symbol table tells us how many variables there are, and registers
+        // points to where they end, and the registers used for execution begin.
+        markStack.appendValues(d()->registers - symbolTable().size(), symbolTable().size());
+    }
 }
 
 ExecState* JSGlobalObject::globalExec()
