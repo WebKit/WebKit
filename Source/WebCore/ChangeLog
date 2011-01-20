@@ -1,3 +1,36 @@
+2011-01-19  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Re-initialize the HistoryItem fully when navigating to a HistoryItem,
+        or replacing a HistoryItem, results in a different URL.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49654
+
+        This patch also forces all HistoryItems to record the post-redirect
+        URL.  Previously, frames would remember the pre-redirect URL.  This is
+        problematic since other members of the HistoryItem correspond to the
+        post-redirect URL.
+
+        Tests: fast/history/history-replace-updates-current-item.html
+               http/tests/navigation/redirect-on-back-updates-history-item.html
+               http/tests/navigation/redirect-on-reload-updates-history-item.html
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::reset):
+        * history/HistoryItem.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForBackForwardNavigation):
+        (WebCore::HistoryController::updateForReload):
+        (WebCore::HistoryController::updateForStandardLoad):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        (WebCore::HistoryController::initializeItem):
+        (WebCore::HistoryController::createItem):
+        (WebCore::HistoryController::createItemTree):
+        (WebCore::HistoryController::updateCurrentItem):
+        * loader/HistoryController.h:
+
 2011-01-19  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Darin Fisher.

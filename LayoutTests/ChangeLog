@@ -1,3 +1,53 @@
+2011-01-14  Darin Fisher  <darin@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Update expectations for existing tests that expect us to record pre-redirect
+        URLs for frames.  We are now recording post-redirect URLs in HistoryItems.
+
+        Add new tests to confirm that we re-initialize the current HistoryItem properly
+        in the following cases:
+
+        1- Navigating back in history to an URL that redirects someplace else this time.
+        2- Reloading an URL that redirects someplace else this time.
+        3- Replacing the current history item with a different URL.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49654
+
+        * fast/history/history-replace-updates-current-item-expected.txt: Added.
+        * fast/history/history-replace-updates-current-item.html: Added.
+        * fast/history/resources/history-replace-updates-current-item-done.html: Added.
+        * fast/history/resources/history-replace-updates-current-item-goback.html: Added.
+        * http/tests/navigation/postredirect-frames-expected.txt: Added.
+        * http/tests/navigation/postredirect-frames-goback1-expected.txt:
+        * http/tests/navigation/postredirect-frames.html:
+        * http/tests/navigation/redirect-on-back-updates-history-item-expected.txt: Added.
+        * http/tests/navigation/redirect-on-back-updates-history-item.html: Added.
+        * http/tests/navigation/redirect-on-reload-updates-history-item-expected.txt: Added.
+        * http/tests/navigation/redirect-on-reload-updates-history-item.html: Added.
+        * http/tests/navigation/redirect302-frames-expected.txt:
+        * http/tests/navigation/redirect302-subframeload-expected.txt:
+        * http/tests/navigation/resources/redirect-on-back-updates-history-item-goback.html: Added.
+        * http/tests/navigation/resources/redirect-on-back-updates-history-item.php: Added.
+        * http/tests/navigation/resources/redirect-on-reload-updates-history-item-goback.html: Added.
+        * http/tests/navigation/resources/redirect-on-reload-updates-history-item.php: Added.
+        * http/tests/navigation/resources/redirect-to-cookie.php: Added.
+        * http/tests/navigation/resources/redirect-updates-history-item-done.html: Added.
+        * http/tests/navigation/resources/redirect-updates-history-item.js: Added.
+        (clearLocationCookie):
+        (setLocationCookie):
+        (log):
+        (onpopstate):
+        * platform/chromium-linux/http/tests/navigation/postredirect-frames-expected.checksum: Removed.
+        * platform/chromium-linux/http/tests/navigation/postredirect-frames-expected.png: Removed.
+        * platform/chromium-win/http/tests/navigation/postredirect-frames-expected.checksum: Removed.
+        * platform/chromium-win/http/tests/navigation/postredirect-frames-expected.png: Removed.
+        * platform/chromium-win/http/tests/navigation/postredirect-frames-expected.txt: Removed.
+        * platform/mac/http/tests/navigation/postredirect-frames-expected.checksum: Removed.
+        * platform/mac/http/tests/navigation/postredirect-frames-expected.png: Removed.
+        * platform/mac/http/tests/navigation/postredirect-frames-expected.txt: Removed.
+        * platform/qt/http/tests/navigation/postredirect-frames-expected.txt: Removed.
+
 2011-01-19  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Unreviewed, update of test expectations.

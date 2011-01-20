@@ -84,7 +84,8 @@ public:
     void replaceState(PassRefPtr<SerializedScriptValue>, const String& title, const String& url);
 
 private:
-    PassRefPtr<HistoryItem> createItem(bool useOriginal);
+    void initializeItem(HistoryItem*);
+    PassRefPtr<HistoryItem> createItem();
     PassRefPtr<HistoryItem> createItemTree(Frame* targetFrame, bool clipAtTarget);
 
     void recursiveSetProvisionalItem(HistoryItem*, HistoryItem*, FrameLoadType);
@@ -93,6 +94,7 @@ private:
     bool itemsAreClones(HistoryItem*, HistoryItem*) const;
     bool currentFramesMatchItem(HistoryItem*) const;
     void updateBackForwardListClippedAtTarget(bool doClip);
+    void updateCurrentItem();
 
     Frame* m_frame;
 

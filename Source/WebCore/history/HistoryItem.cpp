@@ -65,6 +65,8 @@ HistoryItem::HistoryItem()
     , m_visitCount(0)
     , m_itemSequenceNumber(generateSequenceNumber())
     , m_documentSequenceNumber(generateSequenceNumber())
+    , m_next(0)
+    , m_prev(0)
 {
 }
 
@@ -80,6 +82,8 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
     , m_visitCount(0)
     , m_itemSequenceNumber(generateSequenceNumber())
     , m_documentSequenceNumber(generateSequenceNumber())
+    , m_next(0)
+    , m_prev(0)
 {    
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
@@ -97,6 +101,8 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_visitCount(0)
     , m_itemSequenceNumber(generateSequenceNumber())
     , m_documentSequenceNumber(generateSequenceNumber())
+    , m_next(0)
+    , m_prev(0)
 {
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
@@ -115,6 +121,8 @@ HistoryItem::HistoryItem(const KURL& url, const String& target, const String& pa
     , m_visitCount(0)
     , m_itemSequenceNumber(generateSequenceNumber())
     , m_documentSequenceNumber(generateSequenceNumber())
+    , m_next(0)
+    , m_prev(0)
 {    
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
@@ -166,6 +174,38 @@ inline HistoryItem::HistoryItem(const HistoryItem& item)
 PassRefPtr<HistoryItem> HistoryItem::copy() const
 {
     return adoptRef(new HistoryItem(*this));
+}
+
+void HistoryItem::reset()
+{
+    iconDatabase()->releaseIconForPageURL(m_urlString);
+
+    m_urlString = String();
+    m_originalURLString = String();
+    m_referrer = String();
+    m_target = String();
+    m_parent = String();
+    m_title = String();
+    m_displayTitle = String();
+
+    m_lastVisitedTime = 0;
+    m_lastVisitWasHTTPNonGet = false;
+
+    m_lastVisitWasFailure = false;
+    m_isTargetItem = false;
+    m_visitCount = 0;
+    m_dailyVisitCounts.clear();
+    m_weeklyVisitCounts.clear();
+
+    m_redirectURLs.clear();
+
+    m_itemSequenceNumber = generateSequenceNumber();
+
+    m_stateObject = 0;
+    m_documentSequenceNumber = generateSequenceNumber();
+
+    m_formData = 0;
+    m_formContentType = String();
 }
 
 const String& HistoryItem::urlString() const
