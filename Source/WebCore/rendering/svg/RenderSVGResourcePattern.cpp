@@ -228,7 +228,7 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
     if (patternBoundaries.width() <= 0 || patternBoundaries.height() <= 0)
         return false;
 
-    AffineTransform viewBoxCTM = patternElement->viewBoxToViewTransform(patternElement->viewBox(), patternElement->preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height());
+    AffineTransform viewBoxCTM = patternElement->viewBoxToViewTransform(attributes.viewBox(), patternElement->preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height());
 
     // Apply viewBox/objectBoundingBox transformations.
     if (!viewBoxCTM.isIdentity())

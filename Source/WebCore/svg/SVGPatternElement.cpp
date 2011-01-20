@@ -228,6 +228,9 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
         if (!attributes.hasHeight() && current->hasAttribute(SVGNames::heightAttr))
             attributes.setHeight(current->height());
 
+        if (!attributes.hasViewBox() && current->hasAttribute(SVGNames::viewBoxAttr))
+            attributes.setViewBox(current->viewBox());
+
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::patternUnitsAttr))
             attributes.setBoundingBoxMode(current->patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 

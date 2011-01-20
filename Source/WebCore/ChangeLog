@@ -1,3 +1,27 @@
+2011-01-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        SVG Pattern doesn't take the viewBox of a referenced Pattern
+        https://bugs.webkit.org/show_bug.cgi?id=52804
+        
+        SVGPattern element didn't use the viewBox of another SVGPattern element, referenced
+        by xlink:href. Modified PatternAttributes, to take the value of the viewBox of the
+        SVGPattern element as well, if the attribute was set.
+        This gets checked by a W3C SVG test case.        
+
+        Test: svg/W3C-SVG-1.1-SE/pservers-pattern-04-f.svg
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
+        * svg/PatternAttributes.h:
+        (WebCore::PatternAttributes::PatternAttributes):
+        (WebCore::PatternAttributes::viewBox):
+        (WebCore::PatternAttributes::setViewBox):
+        (WebCore::PatternAttributes::hasViewBox):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+
 2011-01-19  Stephen White  <senorblanco@chromium.org>
 
         [Re-land of r76159 with a compile fix for the Chromium linux shlib

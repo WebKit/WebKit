@@ -27,12 +27,15 @@ namespace WebCore {
 
 class SVGPatternElement;
 
+// FIXME: We need to add PreserveAspectRatio as well.
+// see https://bugs.webkit.org/show_bug.cgi?id=52802
 struct PatternAttributes {
     PatternAttributes()
         : m_x()
         , m_y()
         , m_width()
         , m_height()
+        , m_viewBox()
         , m_boundingBoxMode(true)
         , m_boundingBoxModeContent(false)
         , m_patternContentElement(0)
@@ -44,6 +47,7 @@ struct PatternAttributes {
         , m_boundingBoxModeContentSet(false)
         , m_patternTransformSet(false)
         , m_patternContentElementSet(false)
+        , m_viewBoxSet(false)
     {
     }
 
@@ -51,6 +55,7 @@ struct PatternAttributes {
     SVGLength y() const { return m_y; }
     SVGLength width() const { return m_width; }
     SVGLength height() const { return m_height; }
+    FloatRect viewBox() const { return m_viewBox; }
     bool boundingBoxMode() const { return m_boundingBoxMode; }
     bool boundingBoxModeContent() const { return m_boundingBoxModeContent; }
     AffineTransform patternTransform() const { return m_patternTransform; }
@@ -78,6 +83,12 @@ struct PatternAttributes {
     {
         m_height = value;
         m_heightSet = true;
+    }
+    
+    void setViewBox(const FloatRect& value)
+    {
+        m_viewBox = value;
+        m_viewBoxSet = true;
     }
 
     void setBoundingBoxMode(bool value)
@@ -108,6 +119,7 @@ struct PatternAttributes {
     bool hasY() const { return m_ySet; }
     bool hasWidth() const { return m_widthSet; }
     bool hasHeight() const { return m_heightSet; }
+    bool hasViewBox() const { return m_viewBoxSet; }
     bool hasBoundingBoxMode() const { return m_boundingBoxModeSet; }
     bool hasBoundingBoxModeContent() const { return m_boundingBoxModeContentSet; }
     bool hasPatternTransform() const { return m_patternTransformSet; }
@@ -119,6 +131,7 @@ private:
     SVGLength m_y;
     SVGLength m_width;
     SVGLength m_height;
+    FloatRect m_viewBox;
     bool m_boundingBoxMode;
     bool m_boundingBoxModeContent;
     AffineTransform m_patternTransform;
@@ -133,6 +146,7 @@ private:
     bool m_boundingBoxModeContentSet : 1;
     bool m_patternTransformSet : 1;
     bool m_patternContentElementSet : 1;
+    bool m_viewBoxSet : 1;
 };
 
 } // namespace WebCore
