@@ -145,8 +145,32 @@ public:
     void reuseFrontend();
     void disconnectFrontend();
 
+    InspectorController* inspectorAgent() { return this; }
     InspectorConsoleAgent* consoleAgent() const { return m_consoleAgent.get(); }
+    InspectorCSSAgent* cssAgent() const { return m_cssAgent.get(); }
     InspectorDOMAgent* domAgent() const { return m_domAgent.get(); }
+    InjectedScriptHost* injectedScriptAgent() const { return m_injectedScriptHost.get(); }
+    InspectorResourceAgent* resourceAgent() const { return m_resourceAgent.get(); }
+    InspectorRuntimeAgent* runtimeAgent() const { return m_runtimeAgent.get(); }
+    InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
+#if ENABLE(DATABASE)
+    InspectorDatabaseAgent* databaseAgent() const { return m_databaseAgent.get(); }
+#endif
+#if ENABLE(DOM_STORAGE)
+    InspectorDOMStorageAgent* domStorageAgent() const { return m_domStorageAgent.get(); }
+#endif
+#if ENABLE(FILE_SYSTEM)
+    InspectorFileSystemAgent* fileSystemAgent() const { return m_fileSystemAgent.get(); }
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    InspectorBrowserDebuggerAgent* browserDebuggerAgent() const { return m_browserDebuggerAgent.get(); }
+    InspectorDebuggerAgent* debuggerAgent() const { return m_debuggerAgent.get(); }
+    InspectorProfilerAgent* profilerAgent() const { return m_profilerAgent.get(); }
+#endif
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
+#endif
+
 
     bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
@@ -163,14 +187,9 @@ public:
 
     void startTimelineProfiler();
     void stopTimelineProfiler();
-    InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 
     void getCookies(RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
     void deleteCookie(const String& cookieName, const String& domain);
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
-#endif
 
     void mainResourceFiredLoadEvent(DocumentLoader*, const KURL&);
     void mainResourceFiredDOMContentEvent(DocumentLoader*, const KURL&);
@@ -336,7 +355,6 @@ private:
     bool m_attachDebuggerWhenShown;
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
     OwnPtr<InspectorBrowserDebuggerAgent> m_browserDebuggerAgent;
-
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
     OwnPtr<HTTPHeaderMap> m_extraHeaders;

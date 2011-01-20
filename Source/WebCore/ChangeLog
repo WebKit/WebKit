@@ -1,3 +1,26 @@
+2011-01-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: prepare for extracting InspectorAgent from InspectorController.
+        https://bugs.webkit.org/show_bug.cgi?id=52797
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorAgent):
+        (WebCore::InspectorController::cssAgent):
+        (WebCore::InspectorController::injectedScriptAgent):
+        (WebCore::InspectorController::resourceAgent):
+        (WebCore::InspectorController::runtimeAgent):
+        (WebCore::InspectorController::timelineAgent):
+        (WebCore::InspectorController::databaseAgent):
+        (WebCore::InspectorController::domStorageAgent):
+        (WebCore::InspectorController::fileSystemAgent):
+        (WebCore::InspectorController::browserDebuggerAgent):
+        (WebCore::InspectorController::debuggerAgent):
+        (WebCore::InspectorController::profilerAgent):
+        (WebCore::InspectorController::applicationCacheAgent):
+
 2011-01-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76215.
