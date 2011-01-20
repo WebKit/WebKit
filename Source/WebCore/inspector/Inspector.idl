@@ -102,8 +102,8 @@ module core {
 
         [domain=Network] void cachedResources(out Object resources);
         [domain=Network] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
-        [notify, domain=Network] void frameDetachedFromParent(out unsigned long frameId);
 
+        [notify, domain=Network] void frameDetachedFromParent(out unsigned long frameId);
         [notify, domain=Network] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out Value callStack);
         [notify, domain=Network] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
         [notify, domain=Network] void markResourceAsCached(out long identifier);
@@ -125,10 +125,11 @@ module core {
         // Database API
         ///////////////////////////////////////////////////////////////////////
 
-        [notify, domain=Database] void addDatabase(out Object database);
-        [notify, domain=Database] void selectDatabase(out int databaseId);
         [domain=Database] void getDatabaseTableNames(in long databaseId, out Array tableNames);
         [domain=Database] void executeSQL(in long databaseId, in String query, out boolean success, out long transactionId);
+
+        [notify, domain=Database] void addDatabase(out Object database);
+        [notify, domain=Database] void selectDatabase(out int databaseId);
         [notify, domain=Database] void sqlTransactionSucceeded(out long transactionId, out Value columnNames, out Value values);
         [notify, domain=Database] void sqlTransactionFailed(out long transactionId, out Value sqlError);
 #endif

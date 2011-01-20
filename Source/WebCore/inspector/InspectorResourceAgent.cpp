@@ -45,6 +45,7 @@
 #include "HTMLNames.h"
 #include "HTTPHeaderMap.h"
 #include "InspectorFrontend.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "KURL.h"
 #include "Page.h"
@@ -65,6 +66,13 @@
 #include <wtf/text/StringBuffer.h>
 
 namespace WebCore {
+
+PassRefPtr<InspectorResourceAgent> InspectorResourceAgent::restore(Page* page, InspectorState* state, InspectorFrontend* frontend)
+{
+    if (state->getBoolean(InspectorState::resourceAgentEnabled))
+        return create(page, state, frontend);
+    return 0;
+}
 
 bool InspectorResourceAgent::resourceContent(Frame* frame, const KURL& url, String* result)
 {
@@ -281,6 +289,7 @@ static void populateObjectWithFrameResources(Frame* frame, PassRefPtr<InspectorO
 
 InspectorResourceAgent::~InspectorResourceAgent()
 {
+    m_state->setBoolean(InspectorState::resourceAgentEnabled, false);
 }
 
 void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifier, const KURL& url, DocumentLoader* loader)
@@ -476,10 +485,12 @@ void InspectorResourceAgent::resourceContent(unsigned long id, const String& url
     }
 }
 
-InspectorResourceAgent::InspectorResourceAgent(Page* page, InspectorFrontend* frontend)
+InspectorResourceAgent::InspectorResourceAgent(Page* page, InspectorState* state, InspectorFrontend* frontend)
     : m_page(page)
+    , m_state(state)
     , m_frontend(frontend)
 {
+    m_state->setBoolean(InspectorState::resourceAgentEnabled, true);
 }
 
 } // namespace WebCore

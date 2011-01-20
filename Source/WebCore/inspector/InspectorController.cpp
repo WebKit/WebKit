@@ -227,6 +227,8 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
         pushDataCollectedOffline();
     }
 
+    m_resourceAgent = InspectorResourceAgent::restore(m_inspectedPage, m_state.get(), m_frontend.get());
+
     if (m_state->getBoolean(InspectorState::timelineProfilerEnabled))
         startTimelineProfiler();
 
@@ -380,9 +382,7 @@ void InspectorController::connectFrontend()
     releaseFrontendLifetimeAgents();
     m_frontend = new InspectorFrontend(m_client);
     m_domAgent = InspectorDOMAgent::create(m_injectedScriptHost.get(), m_frontend.get());
-    m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_frontend.get());
     m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptHost.get());
-
     m_cssAgent->setDOMAgent(m_domAgent.get());
 
 #if ENABLE(DATABASE)
@@ -486,6 +486,13 @@ void InspectorController::disconnectFrontend()
     releaseFrontendLifetimeAgents();
     m_timelineAgent.clear();
     m_extraHeaders.clear();
+}
+
+InspectorResourceAgent* InspectorController::resourceAgent()
+{
+    if (!m_resourceAgent && m_frontend)
+        m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_state.get(), m_frontend.get());
+    return m_resourceAgent.get();
 }
 
 void InspectorController::releaseFrontendLifetimeAgents()

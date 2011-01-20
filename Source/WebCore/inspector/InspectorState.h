@@ -50,6 +50,7 @@ public:
         consoleMessagesEnabled,
         userInitiatedProfiling,
         stickyBreakpoints,
+        resourceAgentEnabled,
         lastPropertyId
     };
 

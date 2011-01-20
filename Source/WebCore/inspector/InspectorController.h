@@ -147,22 +147,23 @@ public:
     void disconnectFrontend();
     InspectorFrontend* frontend() const { return m_frontend.get(); }
 
+    InspectorResourceAgent* resourceAgent();
+
     InspectorController* inspectorAgent() { return this; }
-    InspectorConsoleAgent* consoleAgent() const { return m_consoleAgent.get(); }
-    InspectorCSSAgent* cssAgent() const { return m_cssAgent.get(); }
-    InspectorDOMAgent* domAgent() const { return m_domAgent.get(); }
-    InjectedScriptHost* injectedScriptAgent() const { return m_injectedScriptHost.get(); }
-    InspectorResourceAgent* resourceAgent() const { return m_resourceAgent.get(); }
-    InspectorRuntimeAgent* runtimeAgent() const { return m_runtimeAgent.get(); }
+    InspectorConsoleAgent* consoleAgent() { return m_consoleAgent.get(); }
+    InspectorCSSAgent* cssAgent() { return m_cssAgent.get(); }
+    InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
+    InjectedScriptHost* injectedScriptAgent() { return m_injectedScriptHost.get(); }
+    InspectorRuntimeAgent* runtimeAgent() { return m_runtimeAgent.get(); }
     InspectorTimelineAgent* timelineAgent() { return m_timelineAgent.get(); }
 #if ENABLE(DATABASE)
-    InspectorDatabaseAgent* databaseAgent() const { return m_databaseAgent.get(); }
+    InspectorDatabaseAgent* databaseAgent() { return m_databaseAgent.get(); }
 #endif
 #if ENABLE(DOM_STORAGE)
-    InspectorDOMStorageAgent* domStorageAgent() const { return m_domStorageAgent.get(); }
+    InspectorDOMStorageAgent* domStorageAgent() { return m_domStorageAgent.get(); }
 #endif
 #if ENABLE(FILE_SYSTEM)
-    InspectorFileSystemAgent* fileSystemAgent() const { return m_fileSystemAgent.get(); }
+    InspectorFileSystemAgent* fileSystemAgent() { return m_fileSystemAgent.get(); }
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorBrowserDebuggerAgent* browserDebuggerAgent() const { return m_browserDebuggerAgent.get(); }

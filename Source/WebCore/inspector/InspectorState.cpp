@@ -45,6 +45,7 @@ InspectorState::InspectorState(InspectorClient* client)
     registerObject(stickyBreakpoints);
     registerBoolean(consoleMessagesEnabled, false);
     registerBoolean(monitoringXHR, false);
+    registerBoolean(resourceAgentEnabled, false);
 }
 
 void InspectorState::restoreFromInspectorCookie(const String& json)

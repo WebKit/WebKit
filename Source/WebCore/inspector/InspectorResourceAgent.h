@@ -49,8 +49,9 @@ class Document;
 class DocumentLoader;
 class Frame;
 class InspectorArray;
-class InspectorObject;
 class InspectorFrontend;
+class InspectorObject;
+class InspectorState;
 class KURL;
 class Page;
 class ResourceError;
@@ -65,10 +66,12 @@ class WebSocketHandshakeResponse;
 
 class InspectorResourceAgent : public RefCounted<InspectorResourceAgent> {
 public:
-    static PassRefPtr<InspectorResourceAgent> create(Page* page, InspectorFrontend* frontend)
+    static PassRefPtr<InspectorResourceAgent> create(Page* page, InspectorState* state, InspectorFrontend* frontend)
     {
-        return adoptRef(new InspectorResourceAgent(page, frontend));
+        return adoptRef(new InspectorResourceAgent(page, state, frontend));
     }
+
+    static PassRefPtr<InspectorResourceAgent> restore(Page*, InspectorState*, InspectorFrontend*);
 
     static bool resourceContent(Frame*, const KURL&, String* result);
     static bool resourceContentBase64(Frame*, const KURL&, String* result);
@@ -103,9 +106,10 @@ public:
     void resourceContent(unsigned long frameID, const String& url, bool base64Encode, String* content);
 
 private:
-    InspectorResourceAgent(Page* page, InspectorFrontend* frontend);
+    InspectorResourceAgent(Page* page, InspectorState*, InspectorFrontend* frontend);
 
     Page* m_page;
+    InspectorState* m_state;
     InspectorFrontend* m_frontend;
 };
 
