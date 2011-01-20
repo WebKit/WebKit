@@ -142,7 +142,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_state(new InspectorState(client))
     , m_inspectorBackendDispatcher(new InspectorBackendDispatcher(this))
     , m_injectedScriptHost(InjectedScriptHost::create(this))
-    , m_consoleAgent(new InspectorConsoleAgent(this, m_state.get()))
+    , m_consoleAgent(new InspectorConsoleAgent(this))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_attachDebuggerWhenShown(false)
     , m_profilerAgent(InspectorProfilerAgent::create(this))
@@ -213,11 +213,6 @@ long InspectorController::inspectorAttachedHeight() const
 bool InspectorController::searchingForNodeInPage() const
 {
     return m_state->getBoolean(InspectorState::searchingForNode);
-}
-
-void InspectorController::getInspectorState(RefPtr<InspectorObject>* state)
-{
-    *state = m_state->generateStateObjectForFrontend();
 }
 
 void InspectorController::restoreInspectorStateFromCookie(const String& inspectorStateCookie)
@@ -377,13 +372,6 @@ void InspectorController::setSearchingForNode(bool enabled, bool* newState)
 {
     *newState = enabled;
     setSearchingForNode(enabled);
-}
-
-void InspectorController::setMonitoringXHREnabled(bool enabled, bool* newState)
-{
-    *newState = enabled;
-    m_state->setBoolean(InspectorState::monitoringXHR, enabled);
-    m_settings->setBoolean(InspectorSettings::MonitoringXHREnabled, enabled);
 }
 
 void InspectorController::connectFrontend()

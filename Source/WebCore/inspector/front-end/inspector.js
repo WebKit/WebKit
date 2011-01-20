@@ -601,12 +601,6 @@ WebInspector.doLoadedDone = function()
 
     this.extensionServer.initExtensions();
 
-    function populateInspectorState(inspectorState)
-    {
-        WebInspector.monitoringXHREnabled = inspectorState.monitoringXHREnabled;
-    }
-    InspectorBackend.getInspectorState(populateInspectorState);
-
     function onPopulateScriptObjects()
     {
         if (!WebInspector.currentPanel)

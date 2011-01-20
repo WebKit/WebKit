@@ -1,3 +1,41 @@
+2011-01-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: further simplify InspectorState.
+        https://bugs.webkit.org/show_bug.cgi?id=52731
+
+        This change moves XHR logging flag into console agent,
+        removes InspectorState pushing to the front-end.
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorConsoleAgent::setMonitoringXHREnabled):
+        (WebCore::InspectorConsoleAgent::setConsoleMessagesEnabled):
+        (WebCore::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::state):
+        (WebCore::InspectorController::settings):
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        (WebCore::InspectorState::registerBoolean):
+        (WebCore::InspectorState::registerString):
+        (WebCore::InspectorState::registerLong):
+        (WebCore::InspectorState::registerObject):
+        (WebCore::InspectorState::Property::create):
+        * inspector/InspectorState.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.consoleMessagesCleared):
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.monitoringXHRStateChanged):
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+        * inspector/front-end/inspector.js:
+
 2011-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix.

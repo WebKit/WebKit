@@ -48,7 +48,7 @@ class ScriptProfile;
 
 class InspectorConsoleAgent : public Noncopyable {
 public:
-    InspectorConsoleAgent(InspectorController*, InspectorState*);
+    InspectorConsoleAgent(InspectorController*);
     ~InspectorConsoleAgent();
 
     void setConsoleMessagesEnabled(bool enabled, bool* newState);
@@ -70,13 +70,13 @@ public:
     void addProfileFinishedMessageToConsole(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
 #endif
+    void setMonitoringXHREnabled(bool enabled);
 
 private:
     void setConsoleMessagesEnabled(bool);
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
     InspectorController* m_inspectorController;
-    InspectorState* m_state;
     InspectorFrontend* m_frontend;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;

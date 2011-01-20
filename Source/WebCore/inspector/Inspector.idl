@@ -39,8 +39,6 @@ module core {
         [domain=Inspector] void addScriptToEvaluateOnLoad(in String scriptSource);
         [domain=Inspector] void removeAllScriptsToEvaluateOnLoad();
         [domain=Inspector] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
-        [domain=Inspector] void getInspectorState(out Object state);
-        [domain=Inspector] void setMonitoringXHREnabled(in boolean enable, out boolean newState);
         [domain=Inspector] void reloadPage();
         [domain=Inspector] void populateScriptObjects();
 
@@ -95,6 +93,8 @@ module core {
         [notify, domain=Console] void updateConsoleMessageRepeatCount(out unsigned long count);
         [domain=Console] void clearConsoleMessages();
         [notify, domain=Console] void consoleMessagesCleared();
+        [domain=Console] void setMonitoringXHREnabled(in boolean enabled);
+        [notify, domain=Console] void monitoringXHRStateChanged(out boolean enabled);
 
         ///////////////////////////////////////////////////////////////////////
         // Network API

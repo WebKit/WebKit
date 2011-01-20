@@ -39,15 +39,12 @@ InspectorState::InspectorState(InspectorClient* client)
     : m_client(client)
 {
     // Pure reload state
-    registerBoolean(userInitiatedProfiling, false, String());
-    registerBoolean(timelineProfilerEnabled, false, String());
-    registerBoolean(searchingForNode, false, String());
-    registerObject(stickyBreakpoints, String());
-
-    // Should go away
-    registerBoolean(consoleMessagesEnabled, false, "consoleMessagesEnabled");
-    registerBoolean(monitoringXHR, false, "monitoringXHREnabled");
-    registerLong(pauseOnExceptionsState, 0, "pauseOnExceptionsState");
+    registerBoolean(userInitiatedProfiling, false);
+    registerBoolean(timelineProfilerEnabled, false);
+    registerBoolean(searchingForNode, false);
+    registerObject(stickyBreakpoints);
+    registerBoolean(consoleMessagesEnabled, false);
+    registerBoolean(monitoringXHR, false);
 }
 
 void InspectorState::restoreFromInspectorCookie(const String& json)
@@ -68,16 +65,6 @@ void InspectorState::restoreFromInspectorCookie(const String& json)
         ASSERT(j->second.m_value->type() == i->second->type());
         j->second.m_value = i->second;
     }
-}
-
-PassRefPtr<InspectorObject> InspectorState::generateStateObjectForFrontend()
-{
-    RefPtr<InspectorObject> stateObject = InspectorObject::create();
-    for (PropertyMap::iterator i = m_properties.begin(); i != m_properties.end(); ++i) {
-        if (i->second.m_frontendAlias.length())
-            stateObject->setValue(i->second.m_frontendAlias, i->second.m_value);
-    }
-    return stateObject.release();
 }
 
 void InspectorState::updateCookie()
@@ -139,31 +126,30 @@ void InspectorState::setObject(InspectorPropertyId id, PassRefPtr<InspectorObjec
     updateCookie();
 }
 
-void InspectorState::registerBoolean(InspectorPropertyId propertyId, bool value, const String& frontendAlias)
+void InspectorState::registerBoolean(InspectorPropertyId propertyId, bool value)
 {
-    m_properties.set(propertyId, Property::create(InspectorBasicValue::create(value), frontendAlias));
+    m_properties.set(propertyId, Property::create(InspectorBasicValue::create(value)));
 }
 
-void InspectorState::registerString(InspectorPropertyId propertyId, const String& value, const String& frontendAlias)
+void InspectorState::registerString(InspectorPropertyId propertyId, const String& value)
 {
-    m_properties.set(propertyId, Property::create(InspectorString::create(value), frontendAlias));
+    m_properties.set(propertyId, Property::create(InspectorString::create(value)));
 }
 
-void InspectorState::registerLong(InspectorPropertyId propertyId, long value, const String& frontendAlias)
+void InspectorState::registerLong(InspectorPropertyId propertyId, long value)
 {
-    m_properties.set(propertyId, Property::create(InspectorBasicValue::create((double)value), frontendAlias));
+    m_properties.set(propertyId, Property::create(InspectorBasicValue::create((double)value)));
 }
 
-void InspectorState::registerObject(InspectorPropertyId propertyId, const String& frontendAlias)
+void InspectorState::registerObject(InspectorPropertyId propertyId)
 {
-    m_properties.set(propertyId, Property::create(InspectorObject::create(), frontendAlias));
+    m_properties.set(propertyId, Property::create(InspectorObject::create()));
 }
 
-InspectorState::Property InspectorState::Property::create(PassRefPtr<InspectorValue> value, const String& frontendAlias)
+InspectorState::Property InspectorState::Property::create(PassRefPtr<InspectorValue> value)
 {
     Property property;
     property.m_value = value;
-    property.m_frontendAlias = frontendAlias;
     return property;
 }
 

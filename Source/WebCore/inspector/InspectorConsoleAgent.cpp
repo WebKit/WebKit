@@ -33,6 +33,7 @@
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
+#include "InspectorSettings.h"
 #include "InspectorState.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
@@ -49,9 +50,8 @@ namespace WebCore {
 static const unsigned maximumConsoleMessages = 1000;
 static const unsigned expireConsoleMessagesStep = 100;
 
-InspectorConsoleAgent::InspectorConsoleAgent(InspectorController* inspectorController, InspectorState* state)
+InspectorConsoleAgent::InspectorConsoleAgent(InspectorController* inspectorController)
     : m_inspectorController(inspectorController)
-    , m_state(state)
     , m_frontend(0)
     , m_previousMessage(0)
     , m_expiredConsoleMessageCount(0)
@@ -165,7 +165,7 @@ void InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest(const String& url,
 {
     if (!m_inspectorController->enabled())
         return;
-    if (m_state->getBoolean(InspectorState::monitoringXHR))
+    if (m_inspectorController->state()->getBoolean(InspectorState::monitoringXHR))
         addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
 }
 
@@ -191,11 +191,21 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
     addConsoleMessage(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), identifier));
 }
 
+void InspectorConsoleAgent::setMonitoringXHREnabled(bool enabled)
+{
+    m_inspectorController->state()->setBoolean(InspectorState::monitoringXHR, enabled);
+    m_inspectorController->settings()->setBoolean(InspectorSettings::MonitoringXHREnabled, enabled);
+    if (m_frontend)
+        m_frontend->monitoringXHRStateChanged(enabled);
+}
+
 void InspectorConsoleAgent::setConsoleMessagesEnabled(bool enabled)
 {
-    m_state->setBoolean(InspectorState::consoleMessagesEnabled, enabled);
-    if (!m_inspectorController->enabled())
+    m_inspectorController->state()->setBoolean(InspectorState::consoleMessagesEnabled, enabled);
+    if (!enabled || !m_frontend)
         return;
+
+    m_frontend->monitoringXHRStateChanged(m_inspectorController->state()->getBoolean(InspectorState::monitoringXHR));
     if (m_expiredConsoleMessageCount)
         m_frontend->updateConsoleMessageExpiredCount(m_expiredConsoleMessageCount);
     unsigned messageCount = m_consoleMessages.size();
@@ -210,12 +220,12 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
 
     if (m_previousMessage && m_previousMessage->isEqual(consoleMessage.get())) {
         m_previousMessage->incrementCount();
-        if (m_state->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
+        if (m_inspectorController->state()->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
             m_previousMessage->updateRepeatCountInConsole(m_frontend);
     } else {
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
-        if (m_state->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
+        if (m_inspectorController->state()->getBoolean(InspectorState::consoleMessagesEnabled) && m_frontend)
             m_previousMessage->addToFrontend(m_frontend, m_inspectorController->injectedScriptHost());
     }
 

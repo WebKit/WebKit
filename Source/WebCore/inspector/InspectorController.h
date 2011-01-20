@@ -258,6 +258,9 @@ public:
     void setInspectorAttachedHeight(long height);
     long inspectorAttachedHeight() const;
 
+    InspectorState* state() { return m_state.get(); }
+    InspectorSettings* settings() { return m_settings.get(); }
+
 private:
     friend class InspectorBackend;
     friend class InspectorBackendDispatcher;
@@ -268,8 +271,6 @@ private:
     void willSendRequest(ResourceRequest&);
 
     void ensureSettingsLoaded();
-
-    void getInspectorState(RefPtr<InspectorObject>* state);
 
     void populateScriptObjects();
     void pushDataCollectedOffline();
@@ -285,7 +286,6 @@ private:
     // Following are used from InspectorBackend and internally.
     void setSearchingForNode(bool enabled, bool* newState);
 
-    void setMonitoringXHREnabled(bool enabled, bool* newState);
     void releaseFrontendLifetimeAgents();
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
