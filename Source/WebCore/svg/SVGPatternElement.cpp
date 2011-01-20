@@ -231,6 +231,9 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
         if (!attributes.hasViewBox() && current->hasAttribute(SVGNames::viewBoxAttr))
             attributes.setViewBox(current->viewBox());
 
+        if (!attributes.hasPreserveAspectRatio() && current->hasAttribute(SVGNames::preserveAspectRatioAttr))
+            attributes.setPreserveAspectRatio(current->preserveAspectRatio());
+
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::patternUnitsAttr))
             attributes.setBoundingBoxMode(current->patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 

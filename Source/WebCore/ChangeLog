@@ -1,3 +1,25 @@
+2011-01-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Rob Buis.
+
+        SVG Pattern doesn't take preserveAspectRatio of references Pattern
+        https://bugs.webkit.org/show_bug.cgi?id=52802
+
+        SVGPattern didn't take preserveAspectRatio of a referenced SVGPattern into account. Store preserveAspectRatio
+        in PatternAttributes as well, if the attribute was set on the referenced SVGPattern element.
+
+        Test: svg/custom/pattern-referencing-preserve-aspect-ratio.svg
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildTileImageTransform):
+        * svg/PatternAttributes.h:
+        (WebCore::PatternAttributes::PatternAttributes):
+        (WebCore::PatternAttributes::preserveAspectRatio):
+        (WebCore::PatternAttributes::setPreserveAspectRatio):
+        (WebCore::PatternAttributes::hasPreserveAspectRatio):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+
 2011-01-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

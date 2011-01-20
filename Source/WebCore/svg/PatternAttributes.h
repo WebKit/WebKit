@@ -22,13 +22,12 @@
 
 #if ENABLE(SVG)
 #include "SVGLength.h"
+#include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 
 class SVGPatternElement;
 
-// FIXME: We need to add PreserveAspectRatio as well.
-// see https://bugs.webkit.org/show_bug.cgi?id=52802
 struct PatternAttributes {
     PatternAttributes()
         : m_x()
@@ -36,6 +35,7 @@ struct PatternAttributes {
         , m_width()
         , m_height()
         , m_viewBox()
+        , m_preserveAspectRatio()
         , m_boundingBoxMode(true)
         , m_boundingBoxModeContent(false)
         , m_patternContentElement(0)
@@ -43,11 +43,12 @@ struct PatternAttributes {
         , m_ySet(false)
         , m_widthSet(false)
         , m_heightSet(false)
+        , m_viewBoxSet(false)
+        , m_preserveAspectRatioSet(false)
         , m_boundingBoxModeSet(false)
         , m_boundingBoxModeContentSet(false)
         , m_patternTransformSet(false)
         , m_patternContentElementSet(false)
-        , m_viewBoxSet(false)
     {
     }
 
@@ -56,6 +57,7 @@ struct PatternAttributes {
     SVGLength width() const { return m_width; }
     SVGLength height() const { return m_height; }
     FloatRect viewBox() const { return m_viewBox; }
+    SVGPreserveAspectRatio preserveAspectRatio() const { return m_preserveAspectRatio; }
     bool boundingBoxMode() const { return m_boundingBoxMode; }
     bool boundingBoxModeContent() const { return m_boundingBoxModeContent; }
     AffineTransform patternTransform() const { return m_patternTransform; }
@@ -91,6 +93,12 @@ struct PatternAttributes {
         m_viewBoxSet = true;
     }
 
+    void setPreserveAspectRatio(const SVGPreserveAspectRatio& value)
+    {
+        m_preserveAspectRatio = value;
+        m_preserveAspectRatioSet = true;
+    }
+
     void setBoundingBoxMode(bool value)
     {
         m_boundingBoxMode = value;
@@ -120,6 +128,7 @@ struct PatternAttributes {
     bool hasWidth() const { return m_widthSet; }
     bool hasHeight() const { return m_heightSet; }
     bool hasViewBox() const { return m_viewBoxSet; }
+    bool hasPreserveAspectRatio() const { return m_preserveAspectRatioSet; }
     bool hasBoundingBoxMode() const { return m_boundingBoxModeSet; }
     bool hasBoundingBoxModeContent() const { return m_boundingBoxModeContentSet; }
     bool hasPatternTransform() const { return m_patternTransformSet; }
@@ -132,6 +141,7 @@ private:
     SVGLength m_width;
     SVGLength m_height;
     FloatRect m_viewBox;
+    SVGPreserveAspectRatio m_preserveAspectRatio;
     bool m_boundingBoxMode;
     bool m_boundingBoxModeContent;
     AffineTransform m_patternTransform;
@@ -142,11 +152,12 @@ private:
     bool m_ySet : 1;
     bool m_widthSet : 1;
     bool m_heightSet : 1;
+    bool m_viewBoxSet : 1;
+    bool m_preserveAspectRatioSet : 1;
     bool m_boundingBoxModeSet : 1;
     bool m_boundingBoxModeContentSet : 1;
     bool m_patternTransformSet : 1;
     bool m_patternContentElementSet : 1;
-    bool m_viewBoxSet : 1;
 };
 
 } // namespace WebCore
