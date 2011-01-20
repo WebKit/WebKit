@@ -256,6 +256,10 @@ EOF
 
                 $self->_includeHeaders(\%contentsIncludes, $function->signature->type, $function->signature);
 
+                if ($function->signature->extendedAttributes->{"PassContext"}) {
+                    push(@parameters, "context");
+                }
+
                 foreach my $i (0..$#specifiedParameters) {
                     my $parameter = $specifiedParameters[$i];
 

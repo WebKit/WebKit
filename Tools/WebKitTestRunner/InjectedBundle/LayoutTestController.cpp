@@ -37,6 +37,7 @@
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
+#include <wtf/HashMap.h>
 
 namespace WTR {
 
@@ -306,6 +307,46 @@ void LayoutTestController::clearBackForwardList()
 void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     setProperty(context, windowObject, "layoutTestController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
+}
+
+typedef WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef> > WorldMap;
+static WorldMap& worldMap()
+{
+    static WorldMap& map = *new WorldMap;
+    return map;
+}
+
+unsigned LayoutTestController::worldIDForWorld(WKBundleScriptWorldRef world)
+{
+    WorldMap::const_iterator end = worldMap().end();
+    for (WorldMap::const_iterator it = worldMap().begin(); it != end; ++it) {
+        if (it->second == world)
+            return it->first;
+    }
+
+    return 0;
+}
+
+void LayoutTestController::evaluateScriptInIsolatedWorld(JSContextRef context, unsigned worldID, JSStringRef script)
+{
+    // A worldID of 0 always corresponds to a new world. Any other worldID corresponds to a world
+    // that is created once and cached forever.
+    WKRetainPtr<WKBundleScriptWorldRef> world;
+    if (!worldID)
+        world.adopt(WKBundleScriptWorldCreateWorld());
+    else {
+        WKRetainPtr<WKBundleScriptWorldRef>& worldSlot = worldMap().add(worldID, 0).first->second;
+        if (!worldSlot)
+            worldSlot.adopt(WKBundleScriptWorldCreateWorld());
+        world = worldSlot;
+    }
+
+    WKBundleFrameRef frame = WKBundleFrameForJavaScriptContext(context);
+    if (!frame)
+        frame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+
+    JSGlobalContextRef jsContext = WKBundleFrameGetJavaScriptContextForWorld(frame, world.get());
+    JSEvaluateScript(jsContext, script, 0, 0, 0, 0); 
 }
 
 } // namespace WTR

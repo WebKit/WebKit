@@ -85,6 +85,11 @@ JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
     return toImpl(frameRef)->jsContext();
 }
 
+WKBundleFrameRef WKBundleFrameForJavaScriptContext(JSContextRef context)
+{
+    return toAPI(WebFrame::frameForContext(context));
+}
+
 JSGlobalContextRef WKBundleFrameGetJavaScriptContextForWorld(WKBundleFrameRef frameRef, WKBundleScriptWorldRef worldRef)
 {
     return toImpl(frameRef)->jsContextForWorld(toImpl(worldRef));

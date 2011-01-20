@@ -90,6 +90,8 @@ public:
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
 
+    static WebFrame* frameForContext(JSContextRef);
+
     JSValueRef jsWrapperForWorld(InjectedBundleNodeHandle*, InjectedBundleScriptWorld*);
     JSValueRef jsWrapperForWorld(InjectedBundleRangeHandle*, InjectedBundleScriptWorld*);
 

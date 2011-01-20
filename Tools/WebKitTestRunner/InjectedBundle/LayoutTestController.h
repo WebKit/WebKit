@@ -28,6 +28,7 @@
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <WebKit2/WKBundleScriptWorld.h>
 #include <string>
 #include <wtf/PassRefPtr.h>
 
@@ -121,6 +122,9 @@ public:
     bool shouldAllowEditing() const { return m_shouldAllowEditing; }
 
     bool shouldCloseExtraWindowsAfterRunningTest() const { return m_shouldCloseExtraWindows; }
+
+    void evaluateScriptInIsolatedWorld(JSContextRef, unsigned worldID, JSStringRef script);
+    static unsigned worldIDForWorld(WKBundleScriptWorldRef);
 
 private:
     static const double waitToDumpWatchdogTimerInterval;

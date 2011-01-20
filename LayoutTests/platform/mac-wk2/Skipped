@@ -56,6 +56,8 @@ compositing/iframes/iframe-src-change.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
+http/tests/security/isolatedWorld/events.html
+http/tests/security/isolatedWorld/userGestureEvents.html
 http/tests/misc/isindex-with-no-form-base-href.html
 plugins/clicking-missing-plugin-fires-delegate.html
 editing/deleting/delete-by-word-001.html
@@ -1283,36 +1285,6 @@ webarchive/test-script-src.html
 webarchive/test-table-background.html
 webarchive/test-td-background.html
 webarchive/test-xml-stylesheet.xml
-
-# WebKitTestRunner needs to support layoutTestController.evaluateScriptInIsolatedWorld
-# <https://bugs.webkit.org/show_bug.cgi?id=42327>
-http/tests/security/isolatedWorld/all-window-properties.html
-http/tests/security/isolatedWorld/all-window-prototypes.html
-http/tests/security/isolatedWorld/body-properties.html
-http/tests/security/isolatedWorld/body-prototype.html
-http/tests/security/isolatedWorld/click-event.html
-http/tests/security/isolatedWorld/didClearWindowObject.html
-http/tests/security/isolatedWorld/dispatchEvent.html
-http/tests/security/isolatedWorld/document-open.html
-http/tests/security/isolatedWorld/document-properties.html
-http/tests/security/isolatedWorld/document-prototype.html
-http/tests/security/isolatedWorld/events.html
-http/tests/security/isolatedWorld/global-variables.html
-http/tests/security/isolatedWorld/image-properties.html
-http/tests/security/isolatedWorld/image-prototype.html
-http/tests/security/isolatedWorld/location-properties.html
-http/tests/security/isolatedWorld/location-prototype.html
-http/tests/security/isolatedWorld/number-prototype.html
-http/tests/security/isolatedWorld/object-prototype.html
-http/tests/security/isolatedWorld/storage-properties.html
-http/tests/security/isolatedWorld/storage-prototype.html
-http/tests/security/isolatedWorld/string-prototype.html
-http/tests/security/isolatedWorld/top-properties.html
-http/tests/security/isolatedWorld/userGestureEvents.html
-http/tests/security/isolatedWorld/window-properties.html
-http/tests/security/isolatedWorld/window-setTimeout-function.html
-http/tests/security/isolatedWorld/window-setTimeout-string.html
-http/tests/security/isolatedWorld/world-reuse.html
 
 # WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42328>

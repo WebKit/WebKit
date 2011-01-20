@@ -34,6 +34,7 @@
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <WebCore/AnimationController.h>
@@ -453,6 +454,17 @@ JSGlobalContextRef WebFrame::jsContext()
 JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 {
     return toGlobalRef(m_coreFrame->script()->globalObject(world->coreWorld())->globalExec());
+}
+
+WebFrame* WebFrame::frameForContext(JSContextRef context)
+{
+    JSObjectRef globalObjectRef = JSContextGetGlobalObject(context);
+    JSC::JSObject* globalObjectObj = toJS(globalObjectRef);
+    if (strcmp(globalObjectObj->classInfo()->className, "JSDOMWindowShell") != 0)
+        return 0;
+
+    Frame* coreFrame = static_cast<JSDOMWindowShell*>(globalObjectObj)->window()->impl()->frame();
+    return static_cast<WebFrameLoaderClient*>(coreFrame->loader()->client())->webFrame();
 }
 
 JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleNodeHandle* nodeHandle, InjectedBundleScriptWorld* world)

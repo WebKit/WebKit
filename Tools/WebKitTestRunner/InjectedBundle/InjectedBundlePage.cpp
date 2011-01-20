@@ -526,11 +526,13 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     if (!InjectedBundle::shared().isTestRunning())
         return;
 
-    if (WKBundleScriptWorldNormalWorld() != world)
-        return;
-
     JSGlobalContextRef context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
     JSObjectRef window = JSContextGetGlobalObject(context);
+
+    if (WKBundleScriptWorldNormalWorld() != world) {
+        JSObjectSetProperty(context, window, toJS("__worldID").get(), JSValueMakeNumber(context, LayoutTestController::worldIDForWorld(world)), kJSPropertyAttributeReadOnly, 0);
+        return;
+    }
 
     JSValueRef exception = 0;
     InjectedBundle::shared().layoutTestController()->makeWindowObject(context, window, &exception);

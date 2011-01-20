@@ -76,6 +76,9 @@ module WTR {
 
         // Text search testing.
         boolean findString(in DOMString target, in object optionsArray);
+
+        // Evaluating script in a special context
+        [PassContext] void evaluateScriptInIsolatedWorld(in unsigned long worldID, in DOMString script)
     };
 
 }

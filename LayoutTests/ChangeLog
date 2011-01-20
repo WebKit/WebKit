@@ -1,3 +1,12 @@
+2011-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKitTestRunner needs to support layoutTestController.evaluateScriptInIsolatedWorld
+        https://bugs.webkit.org/show_bug.cgi?id=42327
+
+        * platform/mac-wk2/Skipped: Unskip the tests that needed this.
+
 2011-01-19  Adam Roben  <aroben@apple.com>
 
         Add a test that scrolls composited content that has already been painted

@@ -1,3 +1,21 @@
+2011-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKitTestRunner needs to support layoutTestController.evaluateScriptInIsolatedWorld
+        https://bugs.webkit.org/show_bug.cgi?id=42327
+        
+        Added a new API call, WKBundleFrameForJavaScriptContext, that gets the WKBundleFrameRef
+        that corresponds to a JSContextRef (or null if none).
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameForJavaScriptContext): Simple wrapper, defers to a WebFrame
+        static method.
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::frameForContext): Follow the maze of twisty pointers.
+        * WebProcess/WebPage/WebFrame.h:
+
 2011-01-20  Alejandro G. Castro  <alex@igalia.com>
 
         Fix compilation error in GTK WebKit2.
