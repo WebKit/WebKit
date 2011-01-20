@@ -1,3 +1,13 @@
+2011-01-20  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Geoffrey Garen.
+
+        [Symbian] Fix StackBounds::initialize()
+        https://bugs.webkit.org/show_bug.cgi?id=52842
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize): Use TThreadStackInfo.iLimit for stack limit
+
 2011-01-20  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

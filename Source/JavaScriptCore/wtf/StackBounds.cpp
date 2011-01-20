@@ -60,12 +60,12 @@ namespace WTF {
 // Bug 26276 - Need a mechanism to determine stack extent
 //
 // These platforms should now be working correctly:
-//     DARWIN, QNX, UNIX
+//     DARWIN, QNX, UNIX, SYMBIAN
 // These platforms are not:
-//     WINDOWS, SOLARIS, OPENBSD, SYMBIAN, HAIKU, WINCE
+//     WINDOWS, SOLARIS, OPENBSD, HAIKU, WINCE
 //
 // FIXME: remove this! - this code unsafely guesses at stack sizes!
-#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD) || OS(SYMBIAN) || OS(HAIKU)
+#if OS(WINDOWS) || OS(SOLARIS) || OS(OPENBSD) || OS(HAIKU)
 // Based on the current limit used by the JSC parser, guess the stack size.
 static const ptrdiff_t estimatedStackSize = 128 * sizeof(void*) * 1024;
 // This method assumes the stack is growing downwards.
@@ -139,7 +139,7 @@ void StackBounds::initialize()
     RThread thread;
     thread.StackInfo(info);
     m_origin = (void*)info.iBase;
-    m_bound = estimateStackBound(m_origin);
+    m_bound = (void*)info.iLimit;
 }
 
 #elif OS(HAIKU)
