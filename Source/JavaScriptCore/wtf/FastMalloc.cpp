@@ -453,6 +453,10 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 
 #if HAVE(PTHREAD_MACHDEP_H)
 #include <System/pthread_machdep.h>
+
+#if defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
+#define WTF_USE_PTHREAD_GETSPECIFIC_DIRECT 1
+#endif
 #endif
 
 #ifndef PRIuS
@@ -463,9 +467,14 @@ extern "C" const int jscore_fastmalloc_introspection = 0;
 // call to the function on Mac OS X, and it's used in performance-critical code. So we
 // use a function pointer. But that's not necessarily faster on other platforms, and we had
 // problems with this technique on Windows, so we'll do this only on Mac OS X.
-#if OS(DARWIN) && !defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
+#if OS(DARWIN)
+#if !USE(PTHREAD_GETSPECIFIC_DIRECT)
 static void* (*pthread_getspecific_function_pointer)(pthread_key_t) = pthread_getspecific;
 #define pthread_getspecific(key) pthread_getspecific_function_pointer(key)
+#else
+#define pthread_getspecific(key) _pthread_getspecific_direct(key)
+#define pthread_setspecific(key, val) _pthread_setspecific_direct(key, (val))
+#endif
 #endif
 
 #define DEFINE_VARIABLE(type, name, value, meaning) \
@@ -2519,25 +2528,30 @@ static __thread TCMalloc_ThreadCache *threadlocal_heap;
 // Therefore, we use TSD keys only after tsd_inited is set to true.
 // Until then, we use a slow path to get the heap object.
 static bool tsd_inited = false;
+#if USE(PTHREAD_GETSPECIFIC_DIRECT)
+static const pthread_key_t heap_key = __PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0;
+#else
 static pthread_key_t heap_key;
+#endif
 #if OS(WINDOWS)
 DWORD tlsIndex = TLS_OUT_OF_INDEXES;
 #endif
 
 static ALWAYS_INLINE void setThreadHeap(TCMalloc_ThreadCache* heap)
 {
+#if USE(PTHREAD_GETSPECIFIC_DIRECT)
+    // Can't have two libraries both doing this in the same process,
+    // so check and make this crash right away.
+    if (pthread_getspecific(heap_key))
+        CRASH();
+#endif
+
     // Still do pthread_setspecific even if there's an alternate form
     // of thread-local storage in use, to benefit from the delete callback.
     pthread_setspecific(heap_key, heap);
 
 #if OS(WINDOWS)
     TlsSetValue(tlsIndex, heap);
-#elif defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
-    // Can't have two libraries both doing this in the same process,
-    // so check and make this crash right away.
-    if (_pthread_getspecific_direct(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0))
-        CRASH();
-    _pthread_setspecific_direct(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0, heap);
 #endif
 }
 
@@ -3049,8 +3063,6 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetThreadHeap() {
     return threadlocal_heap;
 #elif OS(WINDOWS)
     return static_cast<TCMalloc_ThreadCache*>(TlsGetValue(tlsIndex));
-#elif defined(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0)
-    return static_cast<TCMalloc_ThreadCache*>(_pthread_getspecific_direct(__PTK_FRAMEWORK_JAVASCRIPTCORE_KEY0));
 #else
     return static_cast<TCMalloc_ThreadCache*>(pthread_getspecific(heap_key));
 #endif
@@ -3078,7 +3090,11 @@ inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::GetCacheIfPresent() {
 
 void TCMalloc_ThreadCache::InitTSD() {
   ASSERT(!tsd_inited);
+#if USE(PTHREAD_GETSPECIFIC_DIRECT)
+  pthread_key_init_np(heap_key, DestroyThreadCache);
+#else
   pthread_key_create(&heap_key, DestroyThreadCache);
+#endif
 #if OS(WINDOWS)
   tlsIndex = TlsAlloc();
 #endif
