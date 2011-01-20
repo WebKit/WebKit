@@ -1,3 +1,15 @@
+2011-01-19  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Update test expectations for QT now that keygen is a HTMLKeygenElement.
+        https://bugs.webkit.org/show_bug.cgi?id=52787
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2011-01-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

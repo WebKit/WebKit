@@ -173,6 +173,8 @@ PASS inner.HTMLInputElement.isInner is true
 PASS inner.HTMLInputElement.constructor.isInner is true
 PASS inner.HTMLIsIndexElement.isInner is true
 PASS inner.HTMLIsIndexElement.constructor.isInner is true
+PASS inner.HTMLKeygenElement.isInner is true
+PASS inner.HTMLKeygenElement.constructor.isInner is true
 PASS inner.HTMLLIElement.isInner is true
 PASS inner.HTMLLIElement.constructor.isInner is true
 PASS inner.HTMLLabelElement.isInner is true
