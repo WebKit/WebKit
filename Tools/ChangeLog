@@ -1,5 +1,11 @@
 2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
 
+        [Win] Unreviewed build fix after r76248.
+
+        * DumpRenderTree/ForwardingHeaders/wtf/FastAllocBase.h: Added.
+
+2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
+
         Reviewed by Csaba Osztrogonác.
 
         Refactoring of the custom allocation framework
