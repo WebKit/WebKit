@@ -1,3 +1,13 @@
+2011-01-19  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Fix for Bug 52279 - WebCore::RenderBlock::updateFirstLetter crashes for anonymous blocks
+        https://bugs.webkit.org/show_bug.cgi?id=52279
+
+        * fast/css/first-letter-anonymous-block-crash-expected.txt: Added.
+        * fast/css/first-letter-anonymous-block-crash.html: Added.
+
 2011-01-19  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r76194.
