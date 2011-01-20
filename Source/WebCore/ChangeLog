@@ -1,3 +1,29 @@
+2010-12-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Get rid of delayed exception reporting in V8ConsoleMessage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=51044
+
+        * WebCore.gypi:
+        * bindings/v8/V8ConsoleMessage.cpp: Removed.
+        * bindings/v8/V8ConsoleMessage.h: Removed.
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::v8UncaughtExceptionHandler):
+        (WebCore::reportUnsafeJavaScriptAccess):
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::addMessageToConsole):
+        (WebCore::logInfo):
+        (WebCore::V8Proxy::reportUnsafeAccessTo):
+        (WebCore::V8Proxy::runScript):
+        (WebCore::V8Proxy::callFunction):
+        (WebCore::V8Proxy::newInstance):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        * bindings/v8/specialization/V8BindingState.cpp:
+        (WebCore::::immediatelyReportUnsafeAccessTo):
+
 2011-01-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Eric Seidel.

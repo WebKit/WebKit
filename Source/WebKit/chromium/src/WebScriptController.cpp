@@ -54,7 +54,7 @@ void WebScriptController::enableV8SingleThreadMode()
 
 void WebScriptController::flushConsoleMessages()
 {
-    WebCore::V8Proxy::processConsoleMessages();
+    // FIXME: remove this method after all it's usages are gone.
 }
 
 } // namespace WebKit

@@ -81,7 +81,7 @@ Frame* State<V8Binding>::firstFrame()
 
 void State<V8Binding>::immediatelyReportUnsafeAccessTo(Frame* target)
 {
-    V8Proxy::reportUnsafeAccessTo(target, V8Proxy::ReportNow);
+    V8Proxy::reportUnsafeAccessTo(target);
 }
 
 bool State<V8Binding>::processingUserGesture()

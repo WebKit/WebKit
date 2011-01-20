@@ -39,12 +39,13 @@
 #include "FrameLoaderClient.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptController.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"
 #include "V8BindingState.h"
 #include "V8Collection.h"
-#include "V8ConsoleMessage.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
 #include "V8Document.h"
@@ -90,6 +91,30 @@ static void reportFatalErrorInV8(const char* location, const char* message)
     handleFatalErrorInV8();
 }
 
+static void v8UncaughtExceptionHandler(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
+{
+    // Use the frame where JavaScript is called from.
+    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!frame)
+        return;
+
+    v8::Handle<v8::String> errorMessageString = message->Get();
+    ASSERT(!errorMessageString.IsEmpty());
+    String errorMessage = toWebCoreString(errorMessageString);
+
+    v8::Handle<v8::StackTrace> stackTrace = message->GetStackTrace();
+    RefPtr<ScriptCallStack> callStack;
+    // Currently stack trace is only collected when inspector is open.
+    if (!stackTrace.IsEmpty() && stackTrace->GetFrameCount() > 0)
+        callStack = createScriptCallStack(stackTrace, ScriptCallStack::maxCallStackSizeToCapture);
+
+    v8::Handle<v8::Value> resourceName = message->GetScriptResourceName();
+    bool useURL = resourceName.IsEmpty() || !resourceName->IsString();
+    Document* document = frame->document();
+    String resourceNameString = useURL ? document->url() : toWebCoreString(resourceName);
+    document->reportException(errorMessage, message->GetLineNumber(), resourceNameString, callStack);
+}
+
 // Returns the owner frame pointer of a DOM wrapper object. It only works for
 // these DOM objects requiring cross-domain access check.
 static Frame* getTargetFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
@@ -117,7 +142,7 @@ static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessT
 {
     Frame* target = getTargetFrame(host, data);
     if (target)
-        V8Proxy::reportUnsafeAccessTo(target, V8Proxy::ReportLater);
+        V8Proxy::reportUnsafeAccessTo(target);
 }
 
 PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
@@ -262,7 +287,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
         v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
         v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
 
-        v8::V8::AddMessageListener(&V8ConsoleMessage::handler);
+        v8::V8::AddMessageListener(&v8UncaughtExceptionHandler);
 
         v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
 

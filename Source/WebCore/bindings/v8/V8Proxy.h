@@ -132,12 +132,6 @@ namespace WebCore {
             GeneralError
         };
 
-        // When to report errors.
-        enum DelayReporting {
-            ReportLater,
-            ReportNow
-        };
-
         explicit V8Proxy(Frame*);
 
         ~V8Proxy();
@@ -263,9 +257,6 @@ namespace WebCore {
         template <typename T>
         static v8::Handle<v8::Value> constructDOMObjectWithScriptExecutionContext(const v8::Arguments&, WrapperTypeInfo*);
 
-        // Process any pending JavaScript console messages.
-        static void processConsoleMessages();
-
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> mainWorldContext();
 
@@ -286,7 +277,7 @@ namespace WebCore {
         static const V8Extensions& extensions() { return m_extensions; }
 
         // Report an unsafe attempt to access the given frame on the console.
-        static void reportUnsafeAccessTo(Frame* target, DelayReporting delay);
+        static void reportUnsafeAccessTo(Frame* target);
 
     private:
         void didLeaveScriptContext();

@@ -1,3 +1,15 @@
+2010-12-14  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Get rid of delayed exception reporting in V8ConsoleMessage.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=51044
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::runJavaScriptAlert):
+        * src/WebScriptController.cpp:
+        (WebKit::WebScriptController::flushConsoleMessages):
+
 2010-12-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -436,11 +436,6 @@ void ChromeClientImpl::closeWindowSoon()
 void ChromeClientImpl::runJavaScriptAlert(Frame* frame, const String& message)
 {
     if (m_webView->client()) {
-#if USE(V8)
-        // Before showing the JavaScript dialog, we give the proxy implementation
-        // a chance to process any pending console messages.
-        V8Proxy::processConsoleMessages();
-#endif
         m_webView->client()->runModalAlertDialog(
             WebFrameImpl::fromFrame(frame), message);
     }
