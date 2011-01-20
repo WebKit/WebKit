@@ -1,5 +1,26 @@
 2011-01-19  Adam Roben  <aroben@apple.com>
 
+        Remove WKCACFContextFlusher
+
+        It wasn't doing anything.
+
+        Fixes <http://webkit.org/b/52752> WKCACFContextFlusher is unused
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.vcproj/WebCore.vcproj: Removed WKCACFContextFlusher. Also let VS have its way with
+        the file.
+
+        * platform/graphics/win/WKCACFContextFlusher.cpp: Removed.
+        * platform/graphics/win/WKCACFContextFlusher.h: Removed.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::~WKCACFLayerRenderer):
+        (WebCore::WKCACFLayerRenderer::layerTreeDidChange):
+        Stop telling WKCACFContextFlusher about our context, since it never did anything with it.
+
+2011-01-19  Adam Roben  <aroben@apple.com>
+
         Only flush our own context when we get resized
 
         Fixes <http://webkit.org/b/52751> All WKCACFContexts with uncommitted

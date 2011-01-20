@@ -558,6 +558,10 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\InjectedScriptSource.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\InspectorBackendDispatcher.cpp"
 				>
 			</File>
@@ -571,10 +575,6 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\InspectorFrontend.h"
-				>
-			</File>
-			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\InjectedScriptSource.h"
 				>
 			</File>
 			<File
@@ -24898,10 +24898,6 @@
 			Name="loader"
 			>
 			<File
-				RelativePath="..\loader\ResourceLoadScheduler.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\CrossOriginAccessControl.cpp"
 				>
 			</File>
@@ -25127,6 +25123,10 @@
 			</File>
 			<File
 				RelativePath="..\loader\ResourceLoadScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\ResourceLoadScheduler.h"
 				>
 			</File>
 			<File
@@ -25477,7 +25477,7 @@
 				RelativePath="..\platform\ContentType.h"
 				>
 			</File>
-            <File
+			<File
 				RelativePath="..\platform\ContextMenu.cpp"
 				>
 			</File>
@@ -25485,7 +25485,7 @@
 				RelativePath="..\platform\ContextMenu.h"
 				>
 			</File>
-            <File
+			<File
 				RelativePath="..\platform\ContextMenuItem.cpp"
 				>
 			</File>
@@ -27396,46 +27396,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\WKCACFContextFlusher.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\WKCACFContextFlusher.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\WKCACFLayerRenderer.cpp"
 						>
 						<FileConfiguration
@@ -28952,7 +28912,7 @@
 						</File>
 					</Filter>
 				</Filter>
-            </Filter>
+			</Filter>
 			<Filter
 				Name="network"
 				>
@@ -38528,88 +38488,88 @@
 				>
 			</File>
 			<Filter
-			    Name="mathml"
-			    >
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLBlock.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLBlock.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLFenced.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLFenced.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLFraction.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLFraction.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLMath.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLMath.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLOperator.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLOperator.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLRoot.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLRoot.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLRow.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLRow.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLSquareRoot.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLSquareRoot.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLSubSup.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLSubSup.h"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLUnderOver.cpp"
-				    >
-			    </File>
-			    <File
-				    RelativePath="..\rendering\mathml\RenderMathMLUnderOver.h"
-				    >
-			    </File>
+				Name="mathml"
+				>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLBlock.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLBlock.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLFenced.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLFenced.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLFraction.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLFraction.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLMath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLMath.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLOperator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLOperator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLRoot.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLRoot.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLRow.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLRow.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLSquareRoot.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLSquareRoot.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLSubSup.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLSubSup.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLUnderOver.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\mathml\RenderMathMLUnderOver.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="style"
@@ -43697,6 +43657,14 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug_Cairo_CFLite|Win32"
 					ExcludedFromBuild="true"
 					>
@@ -43720,21 +43688,13 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_LTCG|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\EventNames.h"
 				>
 			</File>
 			<File
-				RelativePath="..\dom\EventTarget.cpp"
+				RelativePath="..\dom\EventQueue.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -43769,7 +43729,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug_All|Win32"
+					Name="Release_LTCG|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -43789,8 +43749,8 @@
 				RelativePath="..\dom\EventTarget.h"
 				>
 			</File>
-		  <File
-				RelativePath="..\dom\EventQueue.cpp"
+			<File
+				RelativePath="..\dom\EventTarget.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

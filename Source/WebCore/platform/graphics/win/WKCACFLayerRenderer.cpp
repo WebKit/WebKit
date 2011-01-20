@@ -34,7 +34,6 @@
 #include "WKCACFLayerRenderer.h"
 
 #include "PlatformCALayer.h"
-#include "WKCACFContextFlusher.h"
 #include "WebCoreInstanceHandle.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <limits.h>
@@ -224,7 +223,6 @@ WKCACFLayerRenderer::WKCACFLayerRenderer()
 WKCACFLayerRenderer::~WKCACFLayerRenderer()
 {
     setHostWindow(0);
-    WKCACFContextFlusher::shared().removeContext(m_context);
     wkCACFContextDestroy(m_context);
 }
 
@@ -262,7 +260,6 @@ void WKCACFLayerRenderer::setRootChildLayer(PlatformCALayer* layer)
    
 void WKCACFLayerRenderer::layerTreeDidChange()
 {
-    WKCACFContextFlusher::shared().addContext(m_context);
     renderSoon();
 }
 
