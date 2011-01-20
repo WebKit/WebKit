@@ -1,3 +1,15 @@
+2011-01-20  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Add a test for a render surface that the uses alpha channel.
+        https://bugs.webkit.org/show_bug.cgi?id=52766
+
+        * platform/chromium-gpu/platform/chromium/compositing/render-surface-alpha-blending-expected.checksum: Added.
+        * platform/chromium-gpu/platform/chromium/compositing/render-surface-alpha-blending-expected.png: Added.
+        * platform/chromium-gpu/platform/chromium/compositing/render-surface-alpha-blending-expected.txt: Added.
+        * platform/chromium/compositing/render-surface-alpha-blending.html: Added.
+
 2011-01-14  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

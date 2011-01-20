@@ -263,6 +263,9 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
 
     updateAndDrawRootLayer(tilePaint, scrollbarPaint, visibleRect, contentRect);
 
+    // Re-enable color writes to layers, which may be partially transparent.
+    m_context->colorMask(true, true, true, true);
+
     // Set the root visible/content rects --- used by subsequent drawLayers calls.
     m_rootVisibleRect = visibleRect;
     m_rootContentRect = contentRect;
