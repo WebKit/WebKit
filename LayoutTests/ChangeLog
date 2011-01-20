@@ -1,3 +1,15 @@
+2011-01-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Make fast/events/window-onerror2.html throw exception in deterministic order
+        https://bugs.webkit.org/show_bug.cgi?id=52813
+
+        * fast/events/window-onerror2-expected.txt:
+        * fast/events/window-onerror2.html: call setTimeout from onload handler to make sure exception
+        in the onload handler will be processed before the one in the setTimeout callback
+        * platform/chromium/fast/events/window-onerror2-expected.txt:
+
 2011-01-20  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, new GTK svg test baselines as follow-up of r76236.
