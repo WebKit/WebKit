@@ -119,7 +119,8 @@ public:
 
     template<typename T> bool send(const T& message, uint64_t destinationID);
     template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = NoTimeout);
-    
+    template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
+
     PassOwnPtr<ArgumentEncoder> createSyncMessageArgumentEncoder(uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(MessageID, PassOwnPtr<ArgumentEncoder>);
     bool sendSyncReply(PassOwnPtr<ArgumentEncoder>);
@@ -321,6 +322,17 @@ template<typename T> bool Connection::sendSync(const T& message, const typename 
 
     // Decode the reply.
     return replyDecoder->decode(const_cast<typename T::Reply&>(reply));
+}
+
+template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, double timeout)
+{
+    OwnPtr<ArgumentDecoder> decoder = waitForMessage(MessageID(T::messageID), destinationID, timeout);
+    if (!decoder)
+        return false;
+
+    ASSERT(decoder->destinationID() == destinationID);
+    m_client->didReceiveMessage(this, MessageID(T::messageID), decoder.get());
+    return true;
 }
 
 // These three member functions are all deprecated.

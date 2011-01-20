@@ -1,3 +1,13 @@
+2011-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Add Connection::waitForAndDispatchImmediately
+        https://bugs.webkit.org/show_bug.cgi?id=52841
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::waitForAndDispatchImmediately):
+
 2011-01-20  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Anders Carlsson.
