@@ -1,7 +1,8 @@
 function doTest(childRegExp)
 {
     re = childRegExp;
-    shouldBe("re('a')", "['a']");
+    shouldThrow("re('a')");
+    shouldBe("re.exec('a')", "['a']");
 }
 
 var iframe = document.createElement('iframe');

@@ -58,8 +58,6 @@ namespace JSC {
     private:
         bool match(ExecState*);
 
-        virtual CallType getCallData(CallData&);
-
         struct RegExpObjectData : FastAllocBase {
             RegExpObjectData(NonNullPassRefPtr<RegExp> regExp, double lastIndex)
                 : regExp(regExp)

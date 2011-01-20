@@ -1,3 +1,22 @@
+2011-01-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove non-spec support for callable RegExp
+        https://bugs.webkit.org/show_bug.cgi?id=28285
+
+        Update test results for new behaviour.
+
+        * fast/js/sputnik/Conformance/11_Expressions/11.4_Unary_Operators/11.4.3_The_typeof_Operator/S11.4.3_A3.6-expected.txt:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.7/S15.10.7_A1_T1-expected.txt:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.7/S15.10.7_A1_T2-expected.txt:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.7/S15.10.7_A3_T1-expected.txt:
+        * fast/js/sputnik/Conformance/15_Native_Objects/15.10_RegExp/15.10.7/S15.10.7_A3_T2-expected.txt:
+        * fast/loader/stateobjects/pushstate-object-types-expected.txt:
+        * fast/regex/cross-frame-callable-expected.txt:
+        * fast/regex/script-tests/cross-frame-callable.js:
+        (doTest):
+
 2011-01-11  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

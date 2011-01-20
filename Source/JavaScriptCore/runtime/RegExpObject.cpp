@@ -128,17 +128,6 @@ JSValue RegExpObject::exec(ExecState* exec)
     return jsNull();
 }
 
-static EncodedJSValue JSC_HOST_CALL callRegExpObject(ExecState* exec)
-{
-    return JSValue::encode(asRegExpObject(exec->callee())->exec(exec));
-}
-
-CallType RegExpObject::getCallData(CallData& callData)
-{
-    callData.native.function = callRegExpObject;
-    return CallTypeHost;
-}
-
 // Shared implementation used by test and exec.
 bool RegExpObject::match(ExecState* exec)
 {

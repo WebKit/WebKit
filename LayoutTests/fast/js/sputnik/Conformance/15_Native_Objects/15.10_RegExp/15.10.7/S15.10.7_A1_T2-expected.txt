@@ -1,6 +1,6 @@
 S15.10.7_A1_T2
 
-FAIL SputnikError: #1.2: RegExp("a|b","g")() throw TypeError. Actual: Error: No input to /a|b/g.
+PASS 
 
 TEST COMPLETE
 
