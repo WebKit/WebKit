@@ -143,9 +143,10 @@ void DrawingAreaImpl::setSize(const IntSize& size)
 
     UpdateInfo updateInfo;
 
-    if (m_isPaintingSuspended)
+    if (m_isPaintingSuspended) {
+        updateInfo.timestamp = currentTime();
         updateInfo.viewSize = m_webPage->size();
-    else
+    } else
         display(updateInfo);
 
     m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(updateInfo));
@@ -262,6 +263,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 
     m_webPage->layoutIfNeeded();
     
+    updateInfo.timestamp = currentTime();
     updateInfo.viewSize = m_webPage->size();
     updateInfo.updateRectBounds = bounds;
 
