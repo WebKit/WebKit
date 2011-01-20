@@ -1,3 +1,69 @@
+2011-01-19  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement mozilla's requestAnimationFrame API
+        https://bugs.webkit.org/show_bug.cgi?id=51218
+
+        This implements mozilla's proposed requestAnimationFrame API.  The idea with this API is that
+        an author driving an animation from script could use window.requestAnimationFrame(callback)
+        instead of window.setTimeout(callback, 0) to schedule their update logic and let the browser
+        decide when to update the animations.  This avoids doing unnecessary work when the page content
+        is offscreen or is being displayed at a different framerate than what the page author expects.
+
+        Mozilla's proposal is here: https://developer.mozilla.org/en/DOM/window.mozRequestAnimationFrame
+        This implements window.mozRequestAnimationFrame as window.webkitRequestAnimationFrame with the
+        following changes:
+        *) Only the callback syntax is supported, there is no before paint event
+        *) webkitRequestAnimationFrame supports a second parameter Element to let the author indicate
+            what content they intend to animate.  That way if the page is being displayed but the element
+            in question is offscreen, we can avoid invoking the callback.
+        *) No timestamp is provided to the caller and there is no window.animationStartTime property
+            (see https://bugs.webkit.org/show_bug.cgi?id=51952 for discussion of this property)
+        *) window.webkitRequestAnimationFrame returns a numerical id that can be used to cancel the callback
+            using window.cancelWebkitRequestAnimationFrame, to parallel window.setTimeout()/window.clearTime().
+
+        The implementation depends on the embedder scheduling the callbacks since the callback invocation
+        depends on the page's visibility and the embedder's paint scheduling, neither of which are exposed
+        to WebCore.  The expectation for the embedder is that at some point Chrome::scheduleAnimation() is
+        called FrameView::serviceScriptedAnimations() should be called for the associated Page's main frame.
+        Ideally serviceScriptedAnimations() would be called prior to rendering - although in practice the
+        embedder has to rate limit callbacks and may not be able to tie the callback directly to the
+        rendering loop.
+
+        Tests: fast/animation/request-animation-frame-cancel.html
+               fast/animation/request-animation-frame-cancel2.html
+               fast/animation/request-animation-frame-display.html
+               fast/animation/request-animation-frame-within-callback.html
+               fast/animation/request-animation-frame.html
+
+        * WebCore.gypi:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::webkitRequestAnimationFrame):
+        (WebCore::Document::webkitCancelRequestAnimationFrame):
+        (WebCore::Document::serviceScriptedAnimations):
+        * dom/Document.h:
+        * dom/RequestAnimationFrameCallback.h: Added.
+        (WebCore::RequestAnimationFrameCallback::~RequestAnimationFrameCallback):
+        * dom/RequestAnimationFrameCallback.idl: Added.
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::scheduleAnimation):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::scheduleAnimation):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::webkitRequestAnimationFrame):
+        (WebCore::DOMWindow::webkitCancelRequestAnimationFrame):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleAnimation):
+        (WebCore::FrameView::serviceScriptedAnimations):
+        * page/FrameView.h:
+        * platform/HostWindow.h:
+
 2011-01-13  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Daniel Bates.

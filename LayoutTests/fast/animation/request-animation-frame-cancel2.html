@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<span id="e">PASS</span>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var e = document.getElementById("e");
+var secondCallbackId;
+
+window.webkitRequestAnimationFrame(function() {
+    window.webkitCancelRequestAnimationFrame(secondCallbackId);
+}, e);
+
+secondCallbackId = window.webkitRequestAnimationFrame(function() {
+    e.innerHTML =  "FAIL";
+}, e);
+
+if (window.layoutTestController)
+    layoutTestController.display();
+</script>

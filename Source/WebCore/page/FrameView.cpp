@@ -342,6 +342,14 @@ void FrameView::setFrameRect(const IntRect& newRect)
 #endif
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+void FrameView::scheduleAnimation()
+{
+    if (hostWindow())
+        hostWindow()->scheduleAnimation();
+}
+#endif
+
 void FrameView::setMarginWidth(int w)
 {
     // make it update the rendering area when set
@@ -1643,6 +1651,14 @@ void FrameView::unscheduleRelayout()
     m_layoutTimer.stop();
     m_delayedLayout = false;
 }
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+void FrameView::serviceScriptedAnimations()
+{
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext())
+        frame->document()->serviceScriptedAnimations();
+}
+#endif
 
 bool FrameView::isTransparent() const
 {

@@ -66,6 +66,10 @@ public:
 
     // Request that the cursor change.
     virtual void setCursor(const Cursor&) = 0;
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    virtual void scheduleAnimation() = 0;
+#endif
 };
 
 } // namespace WebCore

@@ -56,6 +56,10 @@ public:
     // Called to resize the WebWidget.
     virtual void resize(const WebSize&) = 0;
 
+    // Called to update imperative animation state.  This should be called before
+    // paint, although the client can rate-limit these calls.
+    virtual void animate() = 0;
+
     // Called to layout the WebWidget.  This MUST be called before Paint,
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
     virtual void layout() = 0;

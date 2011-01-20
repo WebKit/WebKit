@@ -445,6 +445,13 @@ void Chrome::setCursor(const Cursor& cursor)
     m_client->setCursor(cursor);
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+void Chrome::scheduleAnimation()
+{
+    m_client->scheduleAnimation();
+}
+#endif
+
 #if ENABLE(NOTIFICATIONS)
 NotificationPresenter* Chrome::notificationPresenter() const
 {

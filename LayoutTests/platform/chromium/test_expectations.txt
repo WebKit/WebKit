@@ -3059,6 +3059,9 @@ BUGWK52061 DEBUG : transitions/change-values-during-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/interrupted-accelerated-transition.html = PASS TEXT
 BUGWK52061 DEBUG : transitions/transition-timing-function.html = PASS TEXT
 
+// These will fail on the canaries until a chromium-side features_overrides.gypi change lands
+BUG_JAMESR : fast/animation = TEXT
+
 // Failing since creation in http://trac.webkit.org/changeset/75308
 BUG_ABARTH : svg/text/caret-in-svg-text.xhtml = TEXT
 

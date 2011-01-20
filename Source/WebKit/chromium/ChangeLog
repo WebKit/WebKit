@@ -1,3 +1,27 @@
+2011-01-19  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement mozilla's requestAnimationFrame API
+        https://bugs.webkit.org/show_bug.cgi?id=51218
+
+        Chromium WebKit API support for window.webkitRequestAnimationFrame()
+
+        * features.gypi:
+        * public/WebWidget.h:
+        * public/WebWidgetClient.h:
+        (WebKit::WebWidgetClient::scheduleAnimation):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::scheduleAnimation):
+        * src/ChromeClientImpl.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::animate):
+        (WebKit::WebPopupMenuImpl::scheduleAnimation):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        * src/WebViewImpl.h:
+
 2011-01-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed, roll chromium deps to pick up fixes for the linux build.

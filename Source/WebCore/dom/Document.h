@@ -146,6 +146,10 @@ class Touch;
 class TouchList;
 #endif
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+class RequestAnimationFrameCallback;
+#endif
+
 typedef int ExceptionCode;
 
 class FormElementKey {
@@ -1072,6 +1076,12 @@ public:
 
     const DocumentTiming* timing() const { return &m_documentTiming; }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    int webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>, Element*);
+    void webkitCancelRequestAnimationFrame(int id);
+    void serviceScriptedAnimations();
+#endif
+
     bool mayCauseFlashOfUnstyledContent() const;
 
     void initDNSPrefetch();
@@ -1391,6 +1401,12 @@ private:
 
     DocumentTiming m_documentTiming;
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    typedef Vector<RefPtr<RequestAnimationFrameCallback> > RequestAnimationFrameCallbackList;
+    OwnPtr<RequestAnimationFrameCallbackList> m_requestAnimationFrameCallbacks;
+    int m_nextRequestAnimationFrameCallbackId;
+#endif
 };
 
 inline bool Document::DocumentOrderedMap::contains(AtomicStringImpl* id) const

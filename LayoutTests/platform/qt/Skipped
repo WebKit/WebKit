@@ -5087,6 +5087,9 @@ editing/selection/caret-bidi-first-and-last-letters.html
 # https://bugs.webkit.org/show_bug.cgi?id=52155
 fast/text/emphasis-avoid-ruby.html
 
+# Requires requestAnimationFrame support
+fast/animation/
+
 # https://bugs.webkit.org/show_bug.cgi?id=42578
 # [Qt] DRT sideeffect revealed by r63657 and r75305
 fast/tokenizer/flush-characters-in-document-write-evil.html

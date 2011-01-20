@@ -62,6 +62,9 @@ public:
     
     virtual void invalidateRect(const IntRect&);
     virtual void setFrameRect(const IntRect&);
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    void scheduleAnimation();
+#endif
 
     Frame* frame() const { return m_frame.get(); }
     void clearFrame();
@@ -96,6 +99,10 @@ public:
     void setNeedsLayout();
 
     bool needsFullRepaint() const { return m_doFullRepaint; }
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    void serviceScriptedAnimations();
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     void updateCompositingLayers();

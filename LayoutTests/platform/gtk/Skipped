@@ -5588,6 +5588,9 @@ http/tests/inspector/console-websocket-error.html
 http/tests/xmlhttprequest/basic-auth-nouser.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html
 
+# Requires requestAnimationFrame support
+fast/animation/
+
 # https://bugs.webkit.org/show_bug.cgi?id=52297
 editing/input/page-up-down-scrolls.html
 

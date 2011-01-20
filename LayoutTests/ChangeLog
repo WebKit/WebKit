@@ -1,3 +1,34 @@
+2011-01-19  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Implement mozilla's requestAnimationFrame API
+        https://bugs.webkit.org/show_bug.cgi?id=51218
+
+        Tests for window.webkitRequestAnimationFrame().  The new tests
+        are in the Skipped lists for platforms that do not set
+        ENABLE(REQUEST_ANIMATION_FRAME) - which is currently all but chromium.
+
+        * fast/animation/request-animation-frame-cancel-expected.txt: Added.
+        * fast/animation/request-animation-frame-cancel.html: Added.
+            Tests cancelling a callback within a webkitRequestAnimationFrame() callback.
+        * fast/animation/request-animation-frame-cancel2-expected.txt: Added.
+        * fast/animation/request-animation-frame-cancel2.html: Added.
+            Tests interactions between multiple webkitRequestAnimationFrame() callbacks.
+        * fast/animation/request-animation-frame-display-expected.txt: Added.
+        * fast/animation/request-animation-frame-display.html: Added.
+            Tests changing the display: property of an element within a callback.
+        * fast/animation/request-animation-frame-expected.txt: Added.
+        * fast/animation/request-animation-frame.html: Added.
+            Tests the basic use of window.webkitRequestAnimationFrame().
+        * fast/animation/request-animation-frame-within-callback-expected.txt: Added.
+        * fast/animation/request-animation-frame-within-callback.html: Added.
+            Tests setting one webkit.webkitRequestAnimationFrame() callback within another.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-01-19  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Not reviewed, reverts the following changes:
