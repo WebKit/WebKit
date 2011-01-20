@@ -95,6 +95,11 @@ WKArrayRef WKFrameCopyChildFrames(WKFrameRef frameRef)
     return toAPI(toImpl(frameRef)->childFrames().releaseRef());
 }
 
+WKFrameRef WKFrameGetParentFrame(WKFrameRef frameRef)
+{
+    return toAPI(toImpl(frameRef)->parentFrame());
+}
+
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->certificateInfo());

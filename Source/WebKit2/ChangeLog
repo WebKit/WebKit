@@ -1,3 +1,16 @@
+2011-01-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Need API to get the parent frame of a frame
+        https://bugs.webkit.org/show_bug.cgi?id=52774
+        
+        Add the API to get the parent frame of a frame.
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameGetParentFrame):
+        * UIProcess/API/C/WKFrame.h:
+
 2011-01-19  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
