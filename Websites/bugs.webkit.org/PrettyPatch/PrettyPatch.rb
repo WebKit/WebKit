@@ -138,20 +138,8 @@ h1 :hover {
     float: right;
 }
 
-.DiffLinks a {
-    border: 0;
-    font-family: sans-serif;
-    font-size: small;
-    font-style: normal;
-}
-
-.FileDiff .DiffLinks {
-    float: none;
-    width: 100%;
-    height: 0;
-}
-
 .FileDiffLinkContainer {
+    opacity: 0;
     display: table-cell;
     padding-right: 0.5em;
     white-space: nowrap;
@@ -161,6 +149,10 @@ h1 :hover {
     background-color: white;
     border: solid #ddd;
     border-width: 1px 0px;
+}
+
+.ExpansionLine, .LineContainer {
+    white-space: nowrap;
 }
 
 .sidebyside .DiffBlockPart.add:first-child {
@@ -327,13 +319,25 @@ body {
   border-right-color: #69F;
 }
 
-.ExpandArea, .ExpandLinkContainer {
+.ExpandLinkContainer {
+  opacity: 0;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.ExpandArea {
   margin: 0;
-  white-space: pre-wrap;
 }
 
 .ExpandText {
   margin-left: 0.67em;
+}
+
+.LinkContainer {
+  font-family: sans-serif;
+  font-size: small;
+  font-style: normal;
+  -webkit-transition: opacity 0.5s;
 }
 
 .LinkContainer a {

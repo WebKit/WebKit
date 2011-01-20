@@ -312,15 +312,43 @@
     });
   }
 
+  function firstLine(file_diff) {
+    var container = $('.LineContainer:not(.context)', file_diff)[0];
+    var from = fromLineNumber(container);
+    var to = toLineNumber(container);
+    return from || to;
+  }
+
   function crawlDiff() {
     $('.Line').each(idify).each(hoverify);
     $('.FileDiff').each(function() {
-      var file_name = $(this).children('h1').text();
+      var header = $(this).children('h1');
+      var url_hash = '#L' + firstLine(this);
+
+      var file_link = $('a', header)[0];
+      file_link.target = "_blank";
+      file_link.href += url_hash;
+
+      var file_name = header.text();
       files[file_name] = this;
+
       addExpandLinks(file_name);
-      $('h1', this).after('<div class="FileDiffLinkContainer">' + diffLinksHtml() + '</div>');
-      updateDiffLinkVisibility(this);
+      addFileDiffLinks(file_name, url_hash);
     });
+  }
+
+  function addFileDiffLinks(file_name, url_hash) {
+    var diff_links = $('<div class="FileDiffLinkContainer LinkContainer">' +
+        diffLinksHtml() +
+        '</div>');
+
+    var trac_links = $('<a target="_blank">annotate</a><a target="_blank">revision log</a>');
+    trac_links[0].href = 'http://trac.webkit.org/browser/trunk/' + file_name + '?annotate=blame' + url_hash;
+    trac_links[1].href = 'http://trac.webkit.org/log/trunk/' + file_name;
+    diff_links.append(trac_links);
+
+    $('h1', files[file_name]).after(diff_links);
+    updateDiffLinkVisibility(files[file_name]);
   }
 
   function addExpandLinks(file_name) {
@@ -528,16 +556,18 @@
       end_line_num = below_first_line_num;
     }
 
+    var lines = expansionLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num);
+
     var expansion_area;
     // Filling in all the remaining lines. Overwrite the expand links.
     if (start_line_num == above_last_line_num && end_line_num == below_first_line_num) {
-      expansion_area = expand_bar.querySelector('.ExpandLinkContainer');
-      expansion_area.innerHTML = '';
+      $('.ExpandLinkContainer', expand_bar).detach();
+      below_expansion.insertBefore(lines, below_expansion.firstChild);
+    } else if (direction == ABOVE) {
+      above_expansion.appendChild(lines);
     } else {
-      expansion_area = direction == ABOVE ? above_expansion : below_expansion;
+      below_expansion.insertBefore(lines, below_expansion.firstChild);
     }
-
-    insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num);
   }
 
   function unifiedLine(from, to, contents, is_expansion_line, opt_className, opt_attributes) {
@@ -593,7 +623,7 @@
     return line_side;
   }
 
-  function insertLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num) {
+  function expansionLines(file_name, expansion_area, direction, start_line_num, end_line_num, start_from_line_num) {
     var fragment = document.createDocumentFragment();
     var is_side_by_side = isDiffSideBySide(files[file_name]);
 
@@ -606,10 +636,7 @@
       fragment.appendChild(line[0]);
     }
 
-    if (direction == BELOW)
-      expansion_area.insertBefore(fragment, expansion_area.firstChild);
-    else
-      expansion_area.appendChild(fragment);
+    return fragment;
   }
 
   function hunkStartingLine(patched_file, context, prev_line, hunk_num) {
@@ -735,12 +762,9 @@
     $('#toolbar').toggleClass('anchored', has_scrollbar);
   }
 
-  function diffLinksHtml(opt_containerClassName) {
-    var containerClassName = opt_containerClassName || '';
-    return '<div class="DiffLinks ' + containerClassName + '">' +
-      '<a href="javascript:" class="unify-link">unified</a>' +
-      '<a href="javascript:" class="side-by-side-link">side-by-side</a>' +
-    '</div>';
+  function diffLinksHtml() {
+    return '<a href="javascript:" class="unify-link">unified</a>' +
+      '<a href="javascript:" class="side-by-side-link">side-by-side</a>';
   }
 
   $(document).ready(function() {
@@ -748,7 +772,7 @@
     fetchHistory();
     $(document.body).prepend('<div id="message">' +
         '<div class="help">Select line numbers to add a comment.' +
-          diffLinksHtml('LinkContainer') +
+          '<div class="DiffLinks LinkContainer">' + diffLinksHtml() + '</div>' +
         '</div>' +
         '<div class="commentStatus"></div>' +
         '</div>');
@@ -957,6 +981,16 @@
     $(this).remove();
   }
 
+  function showFileDiffLinks() {
+    $('.LinkContainer', this).each(function() { this.style.opacity = 1; });
+  }
+
+  function hideFileDiffLinks() {
+    $('.LinkContainer', this).each(function() { this.style.opacity = 0; });
+  }
+
+  $('.FileDiff').live('mouseenter', showFileDiffLinks);
+  $('.FileDiff').live('mouseleave', hideFileDiffLinks);
   $('.side-by-side-link').live('click', handleSideBySideLinkClick);
   $('.unify-link').live('click', handleUnifyLinkClick);
   $('.ExpandLink').live('click', handleExpandLinkClick);
