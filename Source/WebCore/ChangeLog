@@ -1,3 +1,26 @@
+2011-01-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Move text field painting out of gtk2drawing.c
+        https://bugs.webkit.org/show_bug.cgi?id=52327
+
+        No new tests. This should not change behavior.
+
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::paintButton): Use the setWidgetHasFocus helper.
+        (WebCore::RenderThemeGtk::paintTextField): Do this manually now instead
+        of calling into the Mozilla code.
+        * platform/gtk/WidgetRenderingContext.cpp: Added a couple more wrappers
+        for GTK+ theme functions.
+        (WebCore::WidgetRenderingContext::gtkPaintFlatBox):
+        (WebCore::WidgetRenderingContext::gtkPaintShadow):
+        * platform/gtk/WidgetRenderingContext.h: Added new method declarations.
+        * platform/gtk/gtk2drawing.c: Remove unused code.
+        (moz_gtk_get_widget_border):
+        (moz_gtk_widget_paint):
+        * platform/gtk/gtkdrawing.h:
+
 2011-01-19  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.

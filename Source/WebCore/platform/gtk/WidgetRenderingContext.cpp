@@ -159,6 +159,13 @@ void WidgetRenderingContext::gtkPaintBox(const IntRect& rect, GtkWidget* widget,
                   widget, detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
 }
 
+void WidgetRenderingContext::gtkPaintFlatBox(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_flat_box(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect,
+                       widget, detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+}
+
 void WidgetRenderingContext::gtkPaintFocus(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, const gchar* detail)
 {
     GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
@@ -186,6 +193,14 @@ void WidgetRenderingContext::gtkPaintOption(const IntRect& rect, GtkWidget* widg
     gtk_paint_option(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget,
                      detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
 }
+
+void WidgetRenderingContext::gtkPaintShadow(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_shadow(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget,
+                     detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+}
+
 
 }
 

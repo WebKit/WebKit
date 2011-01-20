@@ -164,16 +164,6 @@ ensure_scrollbar_widget()
     return MOZ_GTK_SUCCESS;
 }
 
-static gint
-ensure_entry_widget()
-{
-    if (!gParts->entryWidget) {
-        gParts->entryWidget = gtk_entry_new();
-        setup_widget_prototype(gParts->entryWidget);
-    }
-    return MOZ_GTK_SUCCESS;
-}
-
 /* We need to have pointers to the inner widgets (button, separator, arrow)
  * of the ComboBox to get the correct rendering from theme engines which
  * special cases their look. Since the inner layout can change, we ask GTK
@@ -778,107 +768,6 @@ moz_gtk_scrollbar_thumb_paint(GtkThemeWidgetType widget,
 }
 
 static gint
-moz_gtk_entry_paint(GdkDrawable* drawable, GdkRectangle* rect,
-                    GdkRectangle* cliprect, GtkWidgetState* state,
-                    GtkWidget* widget, GtkTextDirection direction)
-{
-    GtkStateType bg_state = state->disabled ?
-                                GTK_STATE_INSENSITIVE : GTK_STATE_NORMAL;
-    gint x, y, width = rect->width, height = rect->height;
-    GtkStyle* style;
-    gboolean interior_focus;
-    gboolean theme_honors_transparency = FALSE;
-    gint focus_width;
-
-    gtk_widget_set_direction(widget, direction);
-
-    style = gtk_widget_get_style(widget);
-
-    gtk_widget_style_get(widget,
-                         "interior-focus", &interior_focus,
-                         "focus-line-width", &focus_width,
-                         "honors-transparent-bg-hint", &theme_honors_transparency,
-                         NULL);
-
-    /* gtkentry.c uses two windows, one for the entire widget and one for the
-     * text area inside it. The background of both windows is set to the "base"
-     * color of the new state in gtk_entry_state_changed, but only the inner
-     * textarea window uses gtk_paint_flat_box when exposed */
-
-    TSOffsetStyleGCs(style, rect->x, rect->y);
-
-    /* This gets us a lovely greyish disabledish look */
-    gtk_widget_set_sensitive(widget, !state->disabled);
-
-    /* GTK fills the outer widget window with the base color before drawing the widget.
-     * Some older themes rely on this behavior, but many themes nowadays use rounded
-     * corners on their widgets. While most GTK apps are blissfully unaware of this
-     * problem due to their use of the default window background, we render widgets on
-     * many kinds of backgrounds on the web.
-     * If the theme is able to cope with transparency, then we can skip pre-filling
-     * and notify the theme it will paint directly on the canvas. */
-    if (theme_honors_transparency) {
-        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
-    } else {
-        gdk_draw_rectangle(drawable, style->base_gc[bg_state], TRUE,
-                           cliprect->x, cliprect->y, cliprect->width, cliprect->height);
-        g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(FALSE));
-    }
-
-    /* Get the position of the inner window, see _gtk_entry_get_borders */
-    x = XTHICKNESS(style);
-    y = YTHICKNESS(style);
-
-    if (!interior_focus) {
-        x += focus_width;
-        y += focus_width;
-    }
-
-    /* Simulate an expose of the inner window */
-    gtk_paint_flat_box(style, drawable, bg_state, GTK_SHADOW_NONE,
-                       cliprect, widget, "entry_bg",  rect->x + x,
-                       rect->y + y, rect->width - 2*x, rect->height - 2*y);
-
-    /* Now paint the shadow and focus border.
-     * We do like in gtk_entry_draw_frame, we first draw the shadow, a tad
-     * smaller when focused if the focus is not interior, then the focus. */
-    x = rect->x;
-    y = rect->y;
-
-    if (state->focused && !state->disabled) {
-        /* This will get us the lit borders that focused textboxes enjoy on
-         * some themes. */
-        GTK_WIDGET_SET_FLAGS(widget, GTK_HAS_FOCUS);
-
-        if (!interior_focus) {
-            /* Indent the border a little bit if we have exterior focus 
-               (this is what GTK does to draw native entries) */
-            x += focus_width;
-            y += focus_width;
-            width -= 2 * focus_width;
-            height -= 2 * focus_width;
-        }
-    }
-
-    gtk_paint_shadow(style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_IN,
-                     cliprect, widget, "entry", x, y, width, height);
-
-    if (state->focused && !state->disabled) {
-        if (!interior_focus) {
-            gtk_paint_focus(style, drawable,  GTK_STATE_NORMAL, cliprect,
-                            widget, "entry",
-                            rect->x, rect->y, rect->width, rect->height);
-        }
-
-        /* Now unset the focus flag. We don't want other entries to look
-         * like they're focused too! */
-        GTK_WIDGET_UNSET_FLAGS(widget, GTK_HAS_FOCUS);
-    }
-
-    return MOZ_GTK_SUCCESS;
-}
-
-static gint
 moz_gtk_combo_box_paint(GdkDrawable* drawable, GdkRectangle* rect,
                         GdkRectangle* cliprect, GtkWidgetState* state,
                         gboolean ishtml, GtkTextDirection direction)
@@ -1034,10 +923,6 @@ moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
             *bottom += style->ythickness;
             return MOZ_GTK_SUCCESS;
         }
-    case MOZ_GTK_ENTRY:
-        ensure_entry_widget();
-        w = gParts->entryWidget;
-        break;
     case MOZ_GTK_DROPDOWN:
         {
             /* We need to account for the arrow on the dropdown, so text
@@ -1167,11 +1052,6 @@ moz_gtk_widget_paint(GtkThemeWidgetType widget, GdkDrawable* drawable,
         break;
     case MOZ_GTK_SCROLLED_WINDOW:
         return moz_gtk_scrolled_window_paint(drawable, rect, cliprect, state);
-        break;
-    case MOZ_GTK_ENTRY:
-        ensure_entry_widget();
-        return moz_gtk_entry_paint(drawable, rect, cliprect, state,
-                                   gParts->entryWidget, direction);
         break;
     case MOZ_GTK_DROPDOWN:
         return moz_gtk_combo_box_paint(drawable, rect, cliprect, state,

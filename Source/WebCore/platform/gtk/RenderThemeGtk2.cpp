@@ -27,6 +27,10 @@
 
 #ifdef GTK_API_VERSION_2
 
+// We need this to allow building while using GTK_WIDGET_SET_FLAGS. It's deprecated
+// but some theme engines require it to ensure proper rendering of focus indicators.
+#undef GTK_DISABLE_DEPRECATED
+
 #include "CSSValueKeywords.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
@@ -243,6 +247,18 @@ bool RenderThemeGtk::paintRadio(RenderObject* renderObject, const PaintInfo& inf
     return false;
 }
 
+static void setWidgetHasFocus(GtkWidget* widget, gboolean hasFocus)
+{
+    g_object_set(widget, "has-focus", hasFocus, NULL);
+
+    // These functions are deprecated in GTK+ 2.22, yet theme engines still look
+    // at these flags when determining if a widget has focus, so we must use them.
+    if (hasFocus)
+        GTK_WIDGET_SET_FLAGS(widget, GTK_HAS_FOCUS);
+    else
+        GTK_WIDGET_UNSET_FLAGS(widget, GTK_HAS_FOCUS);
+}
+
 bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     if (info.context->paintingDisabled())
@@ -257,12 +273,7 @@ bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, co
     gtk_widget_set_direction(widget, gtkTextDirection(object->style()->direction()));
 
     if (isFocused(object)) {
-        if (isEnabled(object)) {
-#if !GTK_CHECK_VERSION(2, 22, 0)
-            GTK_WIDGET_SET_FLAGS(widget, GTK_HAS_FOCUS);
-#endif
-            g_object_set(widget, "has-focus", TRUE, NULL);
-        }
+        setWidgetHasFocus(widget, TRUE);
 
         gboolean interiorFocus = 0, focusWidth = 0, focusPadding = 0;
         gtk_widget_style_get(widget,
@@ -288,10 +299,7 @@ bool RenderThemeGtk::paintButton(RenderObject* object, const PaintInfo& info, co
     if (isFocused(object))
         widgetContext.gtkPaintFocus(focusRect, widget, state, "button");
 
-#if !GTK_CHECK_VERSION(2, 22, 0)
-    GTK_WIDGET_UNSET_FLAGS(widget, GTK_HAS_FOCUS);
-#endif
-    g_object_set(widget, "has-focus", FALSE, NULL);
+    setWidgetHasFocus(widget, FALSE);
     return false;
 }
 
@@ -338,9 +346,47 @@ bool RenderThemeGtk::paintMenuList(RenderObject* object, const PaintInfo& info, 
     return paintRenderObject(MOZ_GTK_DROPDOWN, object, info.context, rect);
 }
 
-bool RenderThemeGtk::paintTextField(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo& info, const IntRect& rect)
 {
-    return paintRenderObject(MOZ_GTK_ENTRY, object, info.context, rect);
+    GtkWidget* widget = gtkEntry();
+
+    bool enabled = isEnabled(renderObject) && !isReadOnlyControl(renderObject);
+    GtkStateType backgroundState = enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE;
+    gtk_widget_set_sensitive(widget, enabled);
+    gtk_widget_set_direction(widget, gtkTextDirection(renderObject->style()->direction()));
+    setWidgetHasFocus(widget, isFocused(renderObject));
+
+    WidgetRenderingContext widgetContext(info.context, rect);
+    IntRect textFieldRect(IntPoint(), rect.size());
+
+    // The entry background is only painted over the interior part of the GTK+ entry, not
+    // the entire frame. This happens in the Mozilla theme drawing code as well.
+    IntRect interiorRect(textFieldRect);
+    GtkStyle* style = gtk_widget_get_style(widget);
+    interiorRect.inflateX(-style->xthickness);
+    interiorRect.inflateY(-style->ythickness);
+    widgetContext.gtkPaintFlatBox(interiorRect, widget, backgroundState, GTK_SHADOW_NONE, "entry_bg");
+
+    // This is responsible for drawing the actual frame.
+    widgetContext.gtkPaintShadow(textFieldRect, widget, GTK_STATE_NORMAL, GTK_SHADOW_IN, "entry");
+
+    gboolean interiorFocus;
+    gint focusWidth;
+    gtk_widget_style_get(widget,
+                         "interior-focus", &interiorFocus,
+                         "focus-line-width", &focusWidth,  NULL);
+    if (isFocused(renderObject) && !interiorFocus) {
+        // When GTK+ paints a text entry with focus, it shrinks the size of the frame area by the
+        // focus width and paints over the previously unfocused text entry. We need to emulate that
+        // by drawing both the unfocused frame above and the focused frame here.
+        IntRect shadowRect(textFieldRect);
+        shadowRect.inflate(-focusWidth);
+        widgetContext.gtkPaintShadow(shadowRect, widget, GTK_STATE_NORMAL, GTK_SHADOW_IN, "entry");
+
+        widgetContext.gtkPaintFocus(textFieldRect, widget, GTK_STATE_NORMAL, "entry");
+    }
+
+    return false;
 }
 
 bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)

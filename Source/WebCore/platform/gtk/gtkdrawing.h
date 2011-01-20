@@ -48,6 +48,8 @@
 #ifndef _GTK_DRAWING_H_
 #define _GTK_DRAWING_H_
 
+#undef GTK_DISABLE_DEPRECATED
+
 #include <gtk/gtk.h>
 
 #ifdef __cplusplus
@@ -89,7 +91,6 @@ typedef struct _GtkThemeParts {
     GtkWidget* buttonArrowWidget;
     GtkWidget* horizScrollbarWidget;
     GtkWidget* vertScrollbarWidget;
-    GtkWidget* entryWidget;
     GtkWidget* comboBoxWidget;
     GtkWidget* comboBoxButtonWidget;
     GtkWidget* comboBoxArrowWidget;
@@ -133,7 +134,6 @@ typedef enum {
   MOZ_GTK_SCROLLBAR_THUMB_VERTICAL,
   /* Paints the background of a scrolled window */
   MOZ_GTK_SCROLLED_WINDOW,
-  MOZ_GTK_ENTRY,
   /* Paints a GtkOptionMenu. */
   MOZ_GTK_DROPDOWN,
   /* Paints a GtkProgressBar. */
