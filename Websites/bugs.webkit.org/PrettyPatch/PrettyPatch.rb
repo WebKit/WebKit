@@ -408,12 +408,16 @@ body {
   top: -11%;
 }
 
+.revision {
+  display: none;
+}
+
 .clear_float {
     clear: both;
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=25"></script>
+<script src="code-review.js?version=26"></script>
 EOF
 
     def self.revisionOrDescription(string)

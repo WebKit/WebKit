@@ -369,18 +369,18 @@
 
     var expand_bar_index = 0;
     if (!$(first_line).hasClass('add') && !$(first_line).hasClass('remove'))
-      $('h1', file_diff).after(expandBarHtml(file_name, BELOW))
+      $('h1', file_diff).after(expandBarHtml(BELOW))
 
-    $('br').replaceWith(expandBarHtml(file_name));
+    $('br', file_diff).replaceWith(expandBarHtml());
 
     var last_line = file_diff.querySelector('.LineContainer:last-of-type');
     // Some patches for new files somehow end up with an empty context line at the end
     // with a from line number of 0. Don't show expand links in that case either.
     if (!$(last_line).hasClass('add') && !$(last_line).hasClass('remove') && fromLineNumber(last_line) != 0)
-      $(file_diff).append(expandBarHtml(file_name, ABOVE));
+      $('.revision', file_diff).before(expandBarHtml(ABOVE));
   }
 
-  function expandBarHtml(file_name, opt_direction) {
+  function expandBarHtml(opt_direction) {
     var html = '<div class="ExpandBar">' +
         '<div class="ExpandArea Expand' + ABOVE + '"></div>' +
         '<div class="ExpandLinkContainer LinkContainer"><span class="ExpandText">expand: </span>';
