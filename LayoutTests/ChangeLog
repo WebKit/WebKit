@@ -1,3 +1,9 @@
+2011-01-20  James Robinson  <jamesr@chromium.org>
+
+        Update expectations for tests that need chromium-side changes.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium test expectation update.

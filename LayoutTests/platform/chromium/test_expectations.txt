@@ -3098,6 +3098,9 @@ BUGDIMICH : fast/js/toString-recursion.html = TEXT
 BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
+// Will fail on canaries until a change to features_overrides.gypi is checked in upstream
+BUGJAMESR : fast/animation = TEXT PASS
+
 BUGTHAKIS LINUX WIN : media/video-display-toggle.html = IMAGE
 
 BUGDIMICH : fast/js/toString-recursion.html = PASS TEXT
