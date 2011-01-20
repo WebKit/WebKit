@@ -65,4 +65,5 @@ GetOptions(
 print "Updating chromium port dependencies using gclient...\n";
 my @gclientArgs = ($gclientPath, "sync");
 push @gclientArgs, "--force" if $force;
+push @gclientArgs, "--delete_unversioned_trees" if $force;
 system(@gclientArgs) == 0 or die $!;

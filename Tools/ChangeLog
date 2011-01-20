@@ -1,3 +1,17 @@
+2011-01-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Chromium builders don't delete unversioned directories when DEPS change
+        https://bugs.webkit.org/show_bug.cgi?id=52745
+
+        If we pass this option to gclient sync, gclient will delete directories
+        that are no longer part of DEPS instead of leaving them around to
+        confuse us later.  Apparently, the downstream buildbots use this option
+        already.
+
+        * Scripts/update-webkit-chromium:
+
 2011-01-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix - I pulled this patch in to fix an issue
