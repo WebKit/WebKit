@@ -1,3 +1,10 @@
+2011-01-20  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaselined inspector tests.
+
+        * http/tests/inspector/console-xhr-logging.html:
+        * inspector/report-API-errors-expected.txt:
+
 2011-01-20  Jeremy Orlow  <jorlow@chromium.org>
 
         [Chromium] Update baselines and add exception.
