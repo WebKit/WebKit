@@ -390,7 +390,6 @@ v8 {
         bindings/v8/V8AbstractEventListener.cpp \
         bindings/v8/V8Binding.cpp \
         bindings/v8/V8Collection.cpp \
-        bindings/v8/V8ConsoleMessage.cpp \
         bindings/v8/V8DOMMap.cpp \
         bindings/v8/V8DOMWrapper.cpp \
         bindings/v8/V8DataGridDataSource.cpp \
@@ -1466,7 +1465,6 @@ v8 {
         bindings/v8/V8AbstractEventListener.h \
         bindings/v8/V8Binding.h \
         bindings/v8/V8Collection.h \
-        bindings/v8/V8ConsoleMessage.h \
         bindings/v8/V8DataGridDataSource.h \
         bindings/v8/V8DOMMap.h \
         bindings/v8/V8DOMWindowShell.h \
