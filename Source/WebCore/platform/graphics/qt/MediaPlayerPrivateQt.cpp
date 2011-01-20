@@ -20,7 +20,6 @@
 #include "config.h"
 #include "MediaPlayerPrivateQt.h"
 
-#include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HTMLMediaElement.h"
@@ -205,10 +204,10 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
 
         // Grab the frame and network manager
         Frame* frame = document ? document->frame() : 0;
-        QNetworkAccessManager* manager = frame ? frame->loader()->networkingContext()->networkAccessManager() : 0;
-        FrameLoaderClientQt* frameLoader =  frame ? static_cast<FrameLoaderClientQt*>(frame->loader()->client()) : 0;
+        FrameLoader* frameLoader = frame ? frame->loader() : 0;
+        QNetworkAccessManager* manager = frameLoader ? frameLoader->networkingContext()->networkAccessManager() : 0;
 
-        if (document && manager) {
+        if (manager) {
             // Set the cookies
             QtNAMThreadSafeProxy managerProxy(manager);
             QList<QNetworkCookie> cookies = managerProxy.cookiesForUrl(rUrl);

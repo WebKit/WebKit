@@ -1,3 +1,15 @@
+2011-01-20  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix Layering violation in MediaPlayerPrivateQt.
+        https://bugs.webkit.org/show_bug.cgi?id=52733
+
+        No new tests. no behavioral change.
+
+       * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::commitLoad):
+
 2011-01-20  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.
