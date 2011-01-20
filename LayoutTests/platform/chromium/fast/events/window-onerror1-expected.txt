@@ -1,0 +1,3 @@
+This page tests setting onerror handlers through the DOM. If it passes, you will see "PASS" messages below.Bug 8519.
+
+PASS: caught global error: Uncaught ReferenceError: hahaha_good_luck_finding_me is not defined at window-onerror1.html:25

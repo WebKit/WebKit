@@ -638,6 +638,7 @@ SET(WebCore_SOURCES
     bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDocumentCustom.cpp
     bindings/js/JSElementCustom.cpp
+    bindings/js/JSErrorHandler.cpp
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
     bindings/js/JSEventSourceCustom.cpp
@@ -706,7 +707,6 @@ SET(WebCore_SOURCES
     bindings/js/JSWebSocketCustom.cpp
     bindings/js/JSWorkerContextBase.cpp
     bindings/js/JSWorkerContextCustom.cpp
-    bindings/js/JSWorkerContextErrorHandler.cpp
     bindings/js/JSWorkerCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXMLHttpRequestUploadCustom.cpp

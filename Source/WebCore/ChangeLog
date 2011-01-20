@@ -1,3 +1,112 @@
+2010-12-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebCore doesn't fire window.onerror event when uncaught JavaScript exceptions are thrown
+        https://bugs.webkit.org/show_bug.cgi?id=8519
+
+        Uncaught exceptions are propagated to window.onerror hander if one is present.
+        The handler is expected to be a function accepting three arguments: error message,
+        resource url and line number where the exception occured.
+
+        It was decided to dispatch ErrorEvent to all listeners/handlers no matter if they
+        were created in the same isolated world where the exception occured or not.
+
+        Tests: fast/events/window-onerror1.html
+               fast/events/window-onerror10.html
+               fast/events/window-onerror11.html
+               fast/events/window-onerror12.html
+               fast/events/window-onerror2.html
+               fast/events/window-onerror3.html
+               fast/events/window-onerror4.html
+               fast/events/window-onerror5.html
+               fast/events/window-onerror6.html
+               fast/events/window-onerror7.html
+               fast/events/window-onerror8.html
+               fast/events/window-onerror9.html
+               http/tests/security/window-onerror-exception-in-iframe.html
+               userscripts/window-onerror-for-isolated-world-1.html
+               userscripts/window-onerror-for-isolated-world-2.html
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * bindings/js/JSErrorHandler.cpp: Renamed from WebCore/bindings/js/JSWorkerContextErrorHandler.cpp.
+        (WebCore::JSErrorHandler::JSErrorHandler):
+        (WebCore::JSErrorHandler::~JSErrorHandler):
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSErrorHandler.h: Copied from WebCore/bindings/js/JSWorkerContextErrorHandler.h.
+        (WebCore::JSErrorHandler::create):
+        (WebCore::createJSErrorHandler):
+        * bindings/js/JSEventListener.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/V8ConsoleMessage.cpp:
+        (WebCore::V8ConsoleMessage::dispatchNow):
+        (WebCore::V8ConsoleMessage::handler): the method was changed to use generic WebCore exception
+        reporting mechanism which is also used by JSC bindings.
+        * bindings/v8/V8ConsoleMessage.h:
+        * bindings/v8/V8EventListener.h:
+        * bindings/v8/V8WindowErrorHandler.cpp: Renamed from WebCore/bindings/js/JSWorkerContextErrorHandler.h.
+        (WebCore::V8WindowErrorHandler::V8WindowErrorHandler):
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/V8WindowErrorHandler.h: Copied from WebCore/dom/ErrorEvent.cpp.
+        (WebCore::V8WindowErrorHandler::create):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::v8MessageHandler):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * dom/Document.cpp:
+        (WebCore::Document::errorEventTarget):
+        (WebCore::Document::logExceptionToConsole):
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        * dom/ErrorEvent.cpp:
+        * dom/ErrorEvent.h:
+        * dom/Event.cpp:
+        (WebCore::Event::isErrorEvent):
+        * dom/Event.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::PendingException::PendingException):
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::reportException): this method is not virtual anymore to
+        ensure that error event dispatching algorithm is the same in WorkerContext and in Document.
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent):
+        * dom/ScriptExecutionContext.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::didFail):
+        (WebCore::WebSocketChannel::appendToBuffer):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::readStatusLine):
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+        (WebCore::WebSocketHandshake::checkResponseHeaders):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::postExceptionTask):
+        (WebCore::postConsoleMessageTask):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::errorEventTarget):
+        (WebCore::WorkerContext::logExceptionToConsole):
+        (WebCore::WorkerContext::addMessage):
+        * workers/WorkerContext.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerExceptionTask::performTask):
+        (WebCore::postConsoleMessageTask):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::reportUnsafeUsage):
+
 2011-01-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

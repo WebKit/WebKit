@@ -204,12 +204,10 @@ bool Event::isIDBSuccessEvent() const
 }
 #endif
 
-#if ENABLE(WORKERS)
 bool Event::isErrorEvent() const
 {
     return false;
 }
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 bool Event::isTouchEvent() const

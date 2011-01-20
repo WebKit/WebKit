@@ -102,6 +102,7 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSDeviceOrientationEventCustom.cpp \
 	bindings/js/JSDocumentCustom.cpp \
 	bindings/js/JSElementCustom.cpp \
+	bindings/js/JSErrorHandler.cpp \
 	bindings/js/JSEventCustom.cpp \
 	bindings/js/JSEventListener.cpp \
 	bindings/js/JSEventTarget.cpp \
@@ -170,7 +171,6 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSWebKitPointCustom.cpp \
 	bindings/js/JSWorkerContextBase.cpp \
 	bindings/js/JSWorkerContextCustom.cpp \
-	bindings/js/JSWorkerContextErrorHandler.cpp \
 	bindings/js/JSWorkerCustom.cpp \
 	bindings/js/JSXMLHttpRequestCustom.cpp \
 	bindings/js/JSXMLHttpRequestUploadCustom.cpp \

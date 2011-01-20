@@ -1,3 +1,65 @@
+2010-12-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebCore doesn't fire window.onerror event when uncaught JavaScript exceptions are thrown
+        https://bugs.webkit.org/show_bug.cgi?id=8519
+
+        Uncaught exceptions are propagated to window.onerror hander if one is present.
+        The handler is expected to be a function accepting three arguments: error message,
+        resource url and line number where the exception occured.
+
+        * fast/events/resources/window-onerror.js: Added.
+        (throwException):
+        * fast/events/window-onerror1-expected.txt: Added.
+        * fast/events/window-onerror1.html: Added.
+        * fast/events/window-onerror10-expected.txt: Added.
+        * fast/events/window-onerror10.html: Added.
+        * fast/events/window-onerror11-expected.txt: Added.
+        * fast/events/window-onerror11.html: Added.
+        * fast/events/window-onerror12-expected.txt: Added.
+        * fast/events/window-onerror12.html: Added.
+        * fast/events/window-onerror2-expected.txt: Added.
+        * fast/events/window-onerror2.html: Added.
+        * fast/events/window-onerror3-expected.txt: Added.
+        * fast/events/window-onerror3.html: Added.
+        * fast/events/window-onerror4-expected.txt: Added.
+        * fast/events/window-onerror4.html: Added.
+        * fast/events/window-onerror5-expected.txt: Added.
+        * fast/events/window-onerror5.html: Added.
+        * fast/events/window-onerror6-expected.txt: Added.
+        * fast/events/window-onerror6.html: Added.
+        * fast/events/window-onerror7-expected.txt: Added.
+        * fast/events/window-onerror7.html: Added.
+        * fast/events/window-onerror8-expected.txt: Added.
+        * fast/events/window-onerror8.html: Added.
+        * fast/events/window-onerror9-expected.txt: Added.
+        * fast/events/window-onerror9.html: Added.
+        * fast/workers/worker-script-error-expected.txt:
+        * http/tests/security/resources/onerror-iframe.html: Added.
+        * http/tests/security/window-onerror-exception-in-iframe-expected.txt: Added.
+        * http/tests/security/window-onerror-exception-in-iframe.html: Added.
+        * platform/chromium-win/fast/workers/worker-script-error-expected.txt:
+        * platform/chromium/fast/events/window-onerror1-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror10-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror11-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror2-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror3-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror4-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror5-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror6-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror7-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror8-expected.txt: Added.
+        * platform/chromium/fast/events/window-onerror9-expected.txt: Added.
+        * platform/chromium/http/tests/security/window-onerror-exception-in-iframe-expected.txt: Added.
+        * platform/chromium/userscripts/window-onerror-for-isolated-world-1-expected.txt: Added.
+        * platform/chromium/userscripts/window-onerror-for-isolated-world-2-expected.txt: Added.
+        * platform/gtk/Skipped:
+        * userscripts/window-onerror-for-isolated-world-1-expected.txt: Added.
+        * userscripts/window-onerror-for-isolated-world-1.html: Added.
+        * userscripts/window-onerror-for-isolated-world-2-expected.txt: Added.
+        * userscripts/window-onerror-for-isolated-world-2.html: Added.
+
 2011-01-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

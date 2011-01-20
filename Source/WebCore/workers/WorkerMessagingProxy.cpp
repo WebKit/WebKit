@@ -39,6 +39,7 @@
 #include "ErrorEvent.h"
 #include "ExceptionCode.h"
 #include "MessageEvent.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
 
@@ -130,7 +131,7 @@ private:
 
         bool errorHandled = !workerObject->dispatchEvent(ErrorEvent::create(m_errorMessage, m_sourceURL, m_lineNumber));
         if (!errorHandled)
-            context->reportException(m_errorMessage, m_lineNumber, m_sourceURL);
+            context->reportException(m_errorMessage, m_lineNumber, m_sourceURL, 0);
     }
 
     String m_errorMessage;
@@ -282,7 +283,7 @@ static void postConsoleMessageTask(ScriptExecutionContext* context, WorkerMessag
 {
     if (messagingProxy->askedToTerminate())
         return;
-    context->addMessage(source, type, level, message, lineNumber, sourceURL);
+    context->addMessage(source, type, level, message, lineNumber, sourceURL, 0);
 }
 
 void WorkerMessagingProxy::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)

@@ -1,3 +1,39 @@
+2010-12-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebCore doesn't fire window.onerror event when uncaught JavaScript exceptions are thrown
+        https://bugs.webkit.org/show_bug.cgi?id=8519
+
+        Uncaught exceptions are propagated to window.onerror hander if one is present.
+        The handler is expected to be a function accepting three arguments: error message,
+        resource url and line number where the exception occured.
+
+        It was decided to dispatch ErrorEvent to all listeners/handlers no matter if they
+        were created in the same isolated world where the exception occured or not.
+
+        Tests: fast/events/window-onerror1.html
+               fast/events/window-onerror10.html
+               fast/events/window-onerror11.html
+               fast/events/window-onerror12.html
+               fast/events/window-onerror2.html
+               fast/events/window-onerror3.html
+               fast/events/window-onerror4.html
+               fast/events/window-onerror5.html
+               fast/events/window-onerror6.html
+               fast/events/window-onerror7.html
+               fast/events/window-onerror8.html
+               fast/events/window-onerror9.html
+               http/tests/security/window-onerror-exception-in-iframe.html
+               userscripts/window-onerror-for-isolated-world-1.html
+               userscripts/window-onerror-for-isolated-world-2.html
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObjectTask):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask):
+
 2011-01-19  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Unreviewed, build fix.

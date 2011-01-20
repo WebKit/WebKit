@@ -33,14 +33,19 @@
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
+#include "ErrorEvent.h"
+#include "EventListener.h"
+#include "EventTarget.h"
 #include "FileThread.h"
 #include "MessagePort.h"
+#include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"
 #include "WorkerContext.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 #if USE(JSC)
 #include "JSDOMWindow.h"
@@ -61,9 +66,25 @@ public:
     }
 };
 
+class ScriptExecutionContext::PendingException : public Noncopyable {
+public:
+    PendingException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
+        : m_errorMessage(errorMessage)
+        , m_lineNumber(lineNumber)
+        , m_sourceURL(sourceURL)
+        , m_callStack(callStack)
+    {
+    }
+    String m_errorMessage;
+    int m_lineNumber;
+    String m_sourceURL;
+    RefPtr<ScriptCallStack> m_callStack;
+};
+
 ScriptExecutionContext::ScriptExecutionContext()
+    : m_inDispatchErrorEvent(false)
 #if ENABLE(DATABASE)
-    : m_hasOpenDatabases(false)
+    , m_hasOpenDatabases(false)
 #endif
 {
 }
@@ -241,6 +262,43 @@ void ScriptExecutionContext::closeMessagePorts() {
 void ScriptExecutionContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigin)
 {
     m_securityOrigin = securityOrigin;
+}
+
+void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
+{
+    if (m_inDispatchErrorEvent) {
+        if (!m_pendingExceptions)
+            m_pendingExceptions = adoptPtr(new Vector<OwnPtr<PendingException> >());
+        m_pendingExceptions->append(adoptPtr(new PendingException(errorMessage, lineNumber, sourceURL, callStack)));
+        return;
+    }
+
+    // First report the original exception and only then all the nested ones.
+    if (!dispatchErrorEvent(errorMessage, lineNumber, sourceURL))
+        logExceptionToConsole(errorMessage, lineNumber, sourceURL, callStack);
+
+    if (!m_pendingExceptions)
+        return;
+
+    for (size_t i = 0; i < m_pendingExceptions->size(); i++) {
+        PendingException* e = m_pendingExceptions->at(i).get();
+        logExceptionToConsole(e->m_errorMessage, e->m_lineNumber, e->m_sourceURL, e->m_callStack);
+    }
+    m_pendingExceptions.clear();
+}
+
+bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, const String& sourceURL)
+{
+    EventTarget* target = errorEventTarget();
+    if (!target)
+        return false;
+
+    ASSERT(!m_inDispatchErrorEvent);
+    m_inDispatchErrorEvent = true;
+    RefPtr<ErrorEvent> errorEvent = ErrorEvent::create(errorMessage, sourceURL, lineNumber);
+    target->dispatchEvent(errorEvent);
+    m_inDispatchErrorEvent = false;
+    return errorEvent->defaultPrevented();
 }
 
 void ScriptExecutionContext::addTimeout(int timeoutId, DOMTimer* timer)

@@ -119,6 +119,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
 #include "ScriptEventListener.h"
@@ -2296,6 +2297,17 @@ const KURL& Document::virtualURL() const
 KURL Document::virtualCompleteURL(const String& url) const
 {
     return completeURL(url);
+}
+
+EventTarget* Document::errorEventTarget()
+{
+    return domWindow();
+}
+
+void Document::logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
+{
+    MessageType messageType = callStack ? UncaughtExceptionMessageType : LogMessageType;
+    addMessage(JSMessageSource, messageType, ErrorMessageLevel, errorMessage, lineNumber, sourceURL, callStack);
 }
 
 void Document::setURL(const KURL& url)
@@ -4673,15 +4685,10 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
     m_haveExplicitlyDisabledDNSPrefetch = true;
 }
 
-void Document::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
-{
-    addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, errorMessage, lineNumber, sourceURL);
-}
-
-void Document::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+void Document::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack> callStack)
 {
     if (DOMWindow* window = domWindow())
-        window->console()->addMessage(source, type, level, message, lineNumber, sourceURL);
+        window->console()->addMessage(source, type, level, message, lineNumber, sourceURL, callStack);
 }
 
 struct PerformTaskContext : Noncopyable {

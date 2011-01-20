@@ -1721,9 +1721,9 @@ sub GenerateImplementation
                                 push(@implContent, "    JSDOMGlobalObject* globalObject = castedThis->globalObject();\n");
                             }
                             push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(static_cast<$className*>(thisObject)->impl());\n");
-                            if ($interfaceName eq "WorkerContext" and $name eq "onerror") {
-                                $implIncludes{"JSWorkerContextErrorHandler.h"} = 1;
-                                push(@implContent, "    imp->set$implSetterFunctionName(createJSWorkerContextErrorHandler(exec, value, thisObject));\n");
+                            if ((($interfaceName eq "DOMWindow") or ($interfaceName eq "WorkerContext")) and $name eq "onerror") {
+                                $implIncludes{"JSErrorHandler.h"} = 1;
+                                push(@implContent, "    imp->set$implSetterFunctionName(createJSErrorHandler(exec, value, thisObject));\n");
                             } else {
                                 push(@implContent, GenerateAttributeEventListenerCall($className, $implSetterFunctionName, $windowEventListener));
                             }

@@ -47,6 +47,7 @@
 #include "KURL.h"
 #include "MessagePort.h"
 #include "NotImplemented.h"
+#include "ScriptCallStack.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
@@ -103,7 +104,6 @@ WorkerContext::WorkerContext(const KURL& url, const String& userAgent, WorkerThr
     , m_script(new WorkerScriptController(this))
     , m_thread(thread)
     , m_closing(false)
-    , m_reportingException(false)
 {
     setSecurityOrigin(SecurityOrigin::create(url));
 }
@@ -257,23 +257,17 @@ void WorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
     }
 }
 
-void WorkerContext::reportException(const String& errorMessage, int lineNumber, const String& sourceURL)
+EventTarget* WorkerContext::errorEventTarget()
 {
-    bool errorHandled = false;
-    if (!m_reportingException) {
-        if (onerror()) {
-            m_reportingException = true;
-            RefPtr<ErrorEvent> errorEvent(ErrorEvent::create(errorMessage, sourceURL, lineNumber));
-            onerror()->handleEvent(this, errorEvent.get());
-            errorHandled = errorEvent->defaultPrevented();
-            m_reportingException = false;
-        }
-    }
-    if (!errorHandled)
-        thread()->workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
+    return this;
 }
 
-void WorkerContext::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
+void WorkerContext::logExceptionToConsole(const String& errorMessage, int lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>)
+{
+    thread()->workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
+}
+
+void WorkerContext::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL, PassRefPtr<ScriptCallStack>)
 {
     thread()->workerReportingProxy().postConsoleMessageToWorkerObject(source, type, level, message, lineNumber, sourceURL);
 }

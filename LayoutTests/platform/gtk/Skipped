@@ -4711,6 +4711,8 @@ userscripts/user-script-plugin-document.html
 userscripts/user-script-top-frame-only.html
 userscripts/user-script-video-document.html
 userscripts/user-style-top-frame-only.html
+userscripts/window-onerror-for-isolated-world-1.html
+userscripts/window-onerror-for-isolated-world-2.html
 
 # XHR sends sometimes yield null bytes sent instead of 0.
 http/tests/xmlhttprequest/workers/shared-worker-methods.html

@@ -30,9 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
-
-#include "JSWorkerContextErrorHandler.h"
+#include "JSErrorHandler.h"
 
 #include "ErrorEvent.h"
 #include "Event.h"
@@ -43,20 +41,25 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSWorkerContextErrorHandler::JSWorkerContextErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
+JSErrorHandler::JSErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
     : JSEventListener(function, wrapper, isAttribute, isolatedWorld)
 {
 }
 
-JSWorkerContextErrorHandler::~JSWorkerContextErrorHandler()
+JSErrorHandler::~JSErrorHandler()
 {
 }
 
-void JSWorkerContextErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
+void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
 {
+    if (!event->isErrorEvent())
+        return JSEventListener::handleEvent(scriptExecutionContext, event);
+
     ASSERT(scriptExecutionContext);
     if (!scriptExecutionContext)
         return;
+
+    ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
 
     JSLock lock(SilenceAssertionsOnly);
 
@@ -74,14 +77,10 @@ void JSWorkerContextErrorHandler::handleEvent(ScriptExecutionContext* scriptExec
     CallType callType = jsFunction->getCallData(callData);
 
     if (callType != CallTypeNone) {
-
-        ref();
+        RefPtr<JSErrorHandler> protectedctor(this);
 
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);
-
-        ASSERT(event->isErrorEvent());
-        ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
 
         MarkedArgumentBuffer args;
         args.append(jsString(exec, errorEvent->message()));
@@ -106,11 +105,7 @@ void JSWorkerContextErrorHandler::handleEvent(ScriptExecutionContext* scriptExec
             if (returnValue.getBoolean(retvalbool) && !retvalbool)
                 event->preventDefault();
         }
-
-        deref();
     }
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(WORKERS)

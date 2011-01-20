@@ -28,37 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSWorkerContextErrorHandler_h
-#define JSWorkerContextErrorHandler_h
+#include "config.h"
 
-#include "JSEventListener.h"
+#include "V8WindowErrorHandler.h"
+
+#include "ErrorEvent.h"
+#include "V8Binding.h"
 
 namespace WebCore {
 
-class JSWorkerContextErrorHandler : public JSEventListener {
-public:
-    static PassRefPtr<JSWorkerContextErrorHandler> create(JSC::JSObject* listener, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld)
-    {
-        return adoptRef(new JSWorkerContextErrorHandler(listener, wrapper, isAttribute, isolatedWorld));
-    }
-
-    virtual ~JSWorkerContextErrorHandler();
-
-private:
-    JSWorkerContextErrorHandler(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld);
-    virtual void handleEvent(ScriptExecutionContext*, Event*);
-};
-
-// Creates a JS EventListener for "onerror" event handler in worker context. It has custom implementation because
-// unlike other event listeners it accepts three parameters.
-inline PassRefPtr<JSWorkerContextErrorHandler> createJSWorkerContextErrorHandler(JSC::ExecState* exec, JSC::JSValue listener, JSC::JSObject* wrapper)
+V8WindowErrorHandler::V8WindowErrorHandler(v8::Local<v8::Object> listener, bool isInline, const WorldContextHandle& worldContext)
+    : V8EventListener(listener, isInline, worldContext)
 {
-    if (!listener.isObject())
-        return 0;
+}
 
-    return JSWorkerContextErrorHandler::create(asObject(listener), wrapper, true, currentWorld(exec));
+v8::Local<v8::Value> V8WindowErrorHandler::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
+{
+    if (!event->isErrorEvent())
+        return V8EventListener::callListenerFunction(context, jsEvent, event);
+    
+    ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
+    v8::Local<v8::Object> listener = getListenerObject(context);
+    v8::Local<v8::Value> returnValue;
+    if (!listener.IsEmpty() && listener->IsFunction()) {
+        v8::Local<v8::Function> callFunction = v8::Local<v8::Function>::Cast(listener);
+        v8::Local<v8::Object> thisValue = v8::Context::GetCurrent()->Global();
+        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), v8::Integer::New(errorEvent->lineno()) };
+        returnValue = callFunction->Call(thisValue, 3, parameters);
+        if (!returnValue.IsEmpty() && returnValue->IsBoolean() && !returnValue->BooleanValue())
+            event->preventDefault();
+    }
+    return returnValue;
 }
 
 } // namespace WebCore
-
-#endif // JSWorkerContextErrorHandler_h

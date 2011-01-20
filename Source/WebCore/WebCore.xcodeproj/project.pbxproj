@@ -5619,8 +5619,8 @@
 		F392249D126F11AE00A926D9 /* ScriptCallStackFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */; };
 		F39BE95B12673BF400E0A674 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F39BE95912673BF400E0A674 /* ScriptArguments.cpp */; };
 		F39BE95C12673BF400E0A674 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = F39BE95A12673BF400E0A674 /* ScriptArguments.h */; };
-		F3D461481161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3D461461161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp */; };
-		F3D461491161D53200CA0D09 /* JSWorkerContextErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */; };
+		F3D461481161D53200CA0D09 /* JSErrorHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3D461461161D53200CA0D09 /* JSErrorHandler.cpp */; };
+		F3D461491161D53200CA0D09 /* JSErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D461471161D53200CA0D09 /* JSErrorHandler.h */; };
 		F3D4C47812E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3D4C47612E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp */; };
 		F3D4C47912E07663003DA150 /* InspectorBrowserDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D4C47712E07663003DA150 /* InspectorBrowserDebuggerAgent.h */; };
 		F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */; };
@@ -11974,8 +11974,8 @@
 		F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStackFactory.h; sourceTree = "<group>"; };
 		F39BE95912673BF400E0A674 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
 		F39BE95A12673BF400E0A674 /* ScriptArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArguments.h; sourceTree = "<group>"; };
-		F3D461461161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextErrorHandler.cpp; sourceTree = "<group>"; };
-		F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextErrorHandler.h; sourceTree = "<group>"; };
+		F3D461461161D53200CA0D09 /* JSErrorHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSErrorHandler.cpp; sourceTree = "<group>"; };
+		F3D461471161D53200CA0D09 /* JSErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSErrorHandler.h; sourceTree = "<group>"; };
 		F3D4C47612E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBrowserDebuggerAgent.cpp; sourceTree = "<group>"; };
 		F3D4C47712E07663003DA150 /* InspectorBrowserDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBrowserDebuggerAgent.h; sourceTree = "<group>"; };
 		F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpenTypeSanitizer.cpp; path = opentype/OpenTypeSanitizer.cpp; sourceTree = "<group>"; };
@@ -17706,6 +17706,8 @@
 				BCBFB53B0DCD29CF0019B3E5 /* JSDOMWindowShell.h */,
 				BC53DAC611433064000D817E /* JSDOMWrapper.cpp */,
 				65E0E9431133C89F00B4CB10 /* JSDOMWrapper.h */,
+				F3D461461161D53200CA0D09 /* JSErrorHandler.cpp */,
+				F3D461471161D53200CA0D09 /* JSErrorHandler.h */,
 				BC60901E0E91B8EC000C68B5 /* JSEventTarget.cpp */,
 				BC60901D0E91B8EC000C68B5 /* JSEventTarget.h */,
 				3314ACE910892086000F0E56 /* JSExceptionBase.cpp */,
@@ -17717,8 +17719,6 @@
 				14CD8D81106B529000A46D23 /* JSSharedWorkerCustom.cpp */,
 				E1C36D320EB0A094007410BC /* JSWorkerContextBase.cpp */,
 				E1C36D330EB0A094007410BC /* JSWorkerContextBase.h */,
-				F3D461461161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp */,
-				F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
 				41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */,
@@ -21384,7 +21384,7 @@
 				E1CAA5C60E8BD23600A73ECA /* JSWorker.h in Headers */,
 				E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */,
 				E1C36D350EB0A094007410BC /* JSWorkerContextBase.h in Headers */,
-				F3D461491161D53200CA0D09 /* JSWorkerContextErrorHandler.h in Headers */,
+				F3D461491161D53200CA0D09 /* JSErrorHandler.h in Headers */,
 				E1C362EF0EAF2AA9007410BC /* JSWorkerLocation.h in Headers */,
 				E1271A580EEECDE400F61213 /* JSWorkerNavigator.h in Headers */,
 				BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */,
@@ -24227,7 +24227,7 @@
 				E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */,
 				E1C36D340EB0A094007410BC /* JSWorkerContextBase.cpp in Sources */,
 				E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */,
-				F3D461481161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp in Sources */,
+				F3D461481161D53200CA0D09 /* JSErrorHandler.cpp in Sources */,
 				E1CA5CBC0E8CDCAF00E8EF90 /* JSWorkerCustom.cpp in Sources */,
 				E1C362F00EAF2AA9007410BC /* JSWorkerLocation.cpp in Sources */,
 				E1271A590EEECDE400F61213 /* JSWorkerNavigator.cpp in Sources */,

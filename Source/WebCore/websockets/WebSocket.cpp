@@ -41,6 +41,7 @@
 #include "EventNames.h"
 #include "Logging.h"
 #include "MessageEvent.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
@@ -116,32 +117,32 @@ void WebSocket::connect(const KURL& url, const String& protocol, ExceptionCode& 
     m_protocol = protocol;
 
     if (!m_url.isValid()) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
 
     if (!m_url.protocolIs("ws") && !m_url.protocolIs("wss")) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong url scheme for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong url scheme for WebSocket " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (m_url.hasFragmentIdentifier()) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "URL has fragment component " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "URL has fragment component " + url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (!isValidProtocolString(m_protocol)) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket '" + encodeProtocolString(m_protocol) + "'", 0, scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket '" + encodeProtocolString(m_protocol) + "'", 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (!portAllowed(url)) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, makeString("WebSocket port ", String::number(url.port()), " blocked"), 0, scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, makeString("WebSocket port ", String::number(url.port()), " blocked"), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SECURITY_ERR;
         return;

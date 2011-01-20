@@ -3,8 +3,8 @@ Test Worker script error handling functionality. Should print a series of PASS m
 PASS: onerror invoked for a script that has invalid syntax.
 PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 1.
 PASS: event listener invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 1.
-PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: bar is not defined' at line 3.
 PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
+PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: bar is not defined' at line 3.
 PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
 PASS: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.
 PASS: message received from WorkerGlobalScope.onerror: onerror invoked for a script that has script error 'Uncaught ReferenceError: foo is not defined' at line 7.

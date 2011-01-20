@@ -777,6 +777,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSEventSourceCustom.cpp \
 	Source/WebCore/bindings/js/JSEventTarget.cpp \
 	Source/WebCore/bindings/js/JSEventTarget.h \
+	Source/WebCore/bindings/js/JSErrorHandler.cpp \
+	Source/WebCore/bindings/js/JSErrorHandler.h \
 	Source/WebCore/bindings/js/JSExceptionBase.cpp \
 	Source/WebCore/bindings/js/JSExceptionBase.h \
 	Source/WebCore/bindings/js/JSFileReaderCustom.cpp \
@@ -868,8 +870,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSWorkerContextBase.cpp \
 	Source/WebCore/bindings/js/JSWorkerContextBase.h \
 	Source/WebCore/bindings/js/JSWorkerContextCustom.cpp \
-	Source/WebCore/bindings/js/JSWorkerContextErrorHandler.cpp \
-	Source/WebCore/bindings/js/JSWorkerContextErrorHandler.h \
 	Source/WebCore/bindings/js/JSWorkerCustom.cpp \
 	Source/WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
 	Source/WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \

@@ -59,11 +59,11 @@ namespace WebCore {
         virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;
         virtual void markJSFunction(JSC::MarkStack&);
         virtual void invalidateJSFunction(JSC::JSObject*);
-        virtual void handleEvent(ScriptExecutionContext*, Event*);
         virtual bool virtualisAttribute() const;
 
     protected:
         JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld* isolatedWorld);
+        virtual void handleEvent(ScriptExecutionContext*, Event*);
 
     private:
         mutable JSC::JSObject* m_jsFunction;

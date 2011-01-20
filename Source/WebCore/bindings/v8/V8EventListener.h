@@ -54,8 +54,7 @@ namespace WebCore {
 
         v8::Local<v8::Function> getListenerFunction(ScriptExecutionContext*);
 
-    private:
-      virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
+        virtual v8::Local<v8::Value> callListenerFunction(ScriptExecutionContext*, v8::Handle<v8::Value> jsEvent, Event*);
      };
 
 } // namespace WebCore
