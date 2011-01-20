@@ -32,8 +32,10 @@ import StringIO
 
 from webkitpy.common.system import logtesting
 from webkitpy.common.system import executive_mock
+from webkitpy.common.system import filesystem_mock
 from webkitpy.tool import mocktool
 from webkitpy.thirdparty.mock import Mock
+
 
 import chromium
 import chromium_linux
@@ -100,7 +102,8 @@ class ChromiumPortTest(unittest.TestCase):
         def __init__(self, options):
             chromium_linux.ChromiumLinuxPort.__init__(self,
                                                       port_name='test-port',
-                                                      options=options)
+                                                      options=options,
+                                                      filesystem=filesystem_mock.MockFileSystem())
 
         def default_configuration(self):
             self.default_configuration_called = True

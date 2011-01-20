@@ -43,7 +43,9 @@ class MockFileSystem(object):
                 not exist.
         """
         self.files = files or {}
-        self._current_tmpno = 0
+        self.written_files = {}
+        self.sep = '/'
+        self.current_tmpno = 0
 
     def _raise_not_found(self, path):
         raise IOError(errno.ENOENT, path, os.strerror(errno.ENOENT))
@@ -51,6 +53,9 @@ class MockFileSystem(object):
     def _split(self, path):
         idx = path.rfind('/')
         return (path[0:idx], path[idx + 1:])
+
+    def abspath(self, path):
+        return path
 
     def basename(self, path):
         return self._split(path)[1]
@@ -111,6 +116,9 @@ class MockFileSystem(object):
         else:
             return [f for f in self.files if f == path]
 
+    def isabs(self, path):
+        return path.startswith('/')
+
     def isfile(self, path):
         return path in self.files and self.files[path] is not None
 
@@ -119,7 +127,12 @@ class MockFileSystem(object):
             return False
         if not path.endswith('/'):
             path += '/'
-        return any(f.startswith(path) for f in self.files)
+
+        # We need to use a copy of the keys here in order to avoid switching
+        # to a different thread and potentially modifying the dict in
+        # mid-iteration.
+        files = self.files.keys()[:]
+        return any(f.startswith(path) for f in files)
 
     def join(self, *comps):
         return re.sub(re.escape(os.path.sep), '/', os.path.join(*comps))
@@ -143,6 +156,11 @@ class MockFileSystem(object):
                 else:
                     files.append(remaining)
         return dirs + files
+
+    def mtime(self, path):
+        if self.exists(path):
+            return 0
+        self._raise_not_found(path)
 
     def _mktemp(self, suffix='', prefix='tmp', dir=None, **kwargs):
         if dir is None:
@@ -170,7 +188,7 @@ class MockFileSystem(object):
 
                 # FIXME: Should we delete non-empty directories?
                 if self._filesystem.exists(self._directory_path):
-                    self._filesystem.rmdir(self._directory_path)
+                    self._filesystem.rmtree(self._directory_path)
 
         return TemporaryDirectory(fs=self, **kwargs)
 
@@ -191,14 +209,17 @@ class MockFileSystem(object):
         path = self._mktemp(suffix)
         return WritableFileObject(self, path), path
 
+    def open_text_file_for_writing(self, path, append=False):
+        return WritableFileObject(self, path, append)
+
     def read_text_file(self, path):
         return self.read_binary_file(path)
 
     def read_binary_file(self, path):
-        if path in self.files:
-            if self.files[path] is None:
-                self._raise_not_found(path)
-            return self.files[path]
+        # Intentionally raises KeyError if we don't recognize the path.
+        if self.files[path] is None:
+            self._raise_not_found(path)
+        return self.files[path]
 
     def remove(self, path):
         if self.files[path] is None:
@@ -224,12 +245,13 @@ class MockFileSystem(object):
 
     def write_binary_file(self, path, contents):
         self.files[path] = contents
+        self.written_files[path] = contents
 
 
 class WritableFileObject(object):
     def __init__(self, fs, path, append=False, encoding=None):
         self.fs = fs
-        self.name = name
+        self.path = path
         self.closed = False
         if path not in self.fs.files or not append:
             self.fs.files[path] = ""
@@ -244,5 +266,5 @@ class WritableFileObject(object):
         self.closed = True
 
     def write(self, str):
-        self.fs.files[self.name] += str
-        self.fs.written_files[self.name] = self.fs.files[self.name]
+        self.fs.files[self.path] += str
+        self.fs.written_files[self.path] = self.fs.files[self.path]

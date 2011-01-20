@@ -1,3 +1,29 @@
+2011-01-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        add a .sep property, abspath(), isabs(), mtime(), and
+        open_text_file_for_writing() to filesystem modules. Some of
+        these properties are not needed in this patch but will be needed
+        in subsequent patches (I'm doing this to avoid having to track
+        multiple versions of a single file).
+
+        Also, change most of the port/* modules to use the filesystem
+        objects instead of referencing the filesystem directly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52748
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/test_files_unittest.py:
+
 2011-01-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -44,6 +44,11 @@ class FileSystem(object):
 
     Unless otherwise noted, all paths are allowed to be either absolute
     or relative."""
+    def __init__(self):
+        self.sep = os.sep
+
+    def abspath(self, path):
+        return os.path.abspath(path)
 
     def basename(self, path):
         """Wraps os.path.basename()."""
@@ -99,6 +104,10 @@ class FileSystem(object):
     def glob(self, path):
         """Wraps glob.glob()."""
         return glob.glob(path)
+
+    def isabs(self, path):
+        """Return whether the path is an absolute path."""
+        return os.path.isabs(path)
 
     def isfile(self, path):
         """Return whether the path refers to a file."""
@@ -159,6 +168,9 @@ class FileSystem(object):
     def move(self, src, dest):
         shutil.move(src, dest)
 
+    def mtime(self, path):
+        return os.stat(path).st_mtime
+
     def normpath(self, path):
         """Wraps os.path.normpath()."""
         return os.path.normpath(path)
@@ -168,6 +180,13 @@ class FileSystem(object):
         temp_fd, temp_name = tempfile.mkstemp(suffix)
         f = os.fdopen(temp_fd, 'wb')
         return f, temp_name
+
+    def open_text_file_for_writing(self, path, append=False):
+        """Returns a file handle suitable for writing to."""
+        mode = 'w'
+        if append:
+            mode = 'wa'
+        return codecs.open(path, mode, 'utf8')
 
     def read_binary_file(self, path):
         """Return the contents of the file at the given path as a byte string."""

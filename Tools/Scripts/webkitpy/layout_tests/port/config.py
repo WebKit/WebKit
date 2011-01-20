@@ -32,8 +32,6 @@
 # FIXME: This file needs to be unified with common/checkout/scm.py and
 # common/config/ports.py .
 
-import os
-
 from webkitpy.common.system import logutils
 from webkitpy.common.system import executive
 
@@ -131,7 +129,7 @@ class Config(object):
         #
         # This code will also work if there is no SCM system at all.
         if not self._webkit_base_dir:
-            abspath = os.path.abspath(__file__)
+            abspath = self._filesystem.abspath(__file__)
             self._webkit_base_dir = abspath[0:abspath.find('Tools') - 1]
         return self._webkit_base_dir
 

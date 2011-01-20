@@ -146,10 +146,10 @@ LAYOUT_TEST_DIR = '/test.checkout/LayoutTests'
 # in order to fully control the test output and to demonstrate that
 # we don't need a real filesystem to run the tests.
 
-def unit_test_filesystem(test_list=None):
+def unit_test_filesystem(files=None):
     """Return the FileSystem object used by the unit tests."""
-    test_list = test_list or unit_test_list()
-    files = {}
+    test_list = unit_test_list()
+    files = files or {}
 
     def add_file(files, test, suffix, contents):
         dirname = test.name[0:test.name.rfind('/')]
@@ -184,16 +184,32 @@ WONTFIX SKIP : failures/expected/keyboard.html = CRASH
 WONTFIX SKIP : failures/expected/exception.html = CRASH
 """
 
-    return filesystem_mock.MockFileSystem(files)
+    fs = filesystem_mock.MockFileSystem(files)
+    fs._tests = test_list
+    return fs
 
 
 class TestPort(base.Port):
     """Test implementation of the Port interface."""
 
     def __init__(self, **kwargs):
-        self._tests = unit_test_list()
-        if 'filesystem' not in kwargs:
-            kwargs['filesystem'] = unit_test_filesystem(self._tests)
+        # FIXME: what happens if we're not passed in the test filesystem
+        # and the tests don't match what's in the filesystem?
+        #
+        # We'll leave as is for now to avoid unnecessary dependencies while
+        # converting all of the unit tests over to using
+        # unit_test_filesystem(). If things get out of sync the tests should
+        # fail in fairly obvious ways. Eventually we want to just do:
+        #
+        # assert kwargs['filesystem']._tests
+        # self._tests = kwargs['filesystem']._tests
+
+        if 'filesystem' not in kwargs or kwargs['filesystem'] is None:
+            kwargs['filesystem'] = unit_test_filesystem()
+            self._tests = kwargs['filesystem']._tests
+        else:
+            self._tests = unit_test_list()
+
         kwargs.setdefault('port_name', 'test')
         base.Port.__init__(self, **kwargs)
 

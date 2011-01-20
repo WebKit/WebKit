@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import optparse
-import os
 import sys
 import tempfile
 import unittest
@@ -194,7 +193,7 @@ class PortTest(unittest.TestCase):
     def test_filename_to_uri(self):
         port = base.Port()
         layout_test_dir = port.layout_tests_dir()
-        test_file = os.path.join(layout_test_dir, "foo", "bar.html")
+        test_file = port._filesystem.join(layout_test_dir, "foo", "bar.html")
 
         # On Windows, absolute paths are of the form "c:\foo.txt". However,
         # all current browsers (except for Opera) normalize file URLs by

@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import unittest
 
 import base
@@ -37,8 +36,8 @@ class TestFilesTest(unittest.TestCase):
     def test_find_no_paths_specified(self):
         port = base.Port()
         layout_tests_dir = port.layout_tests_dir()
-        port.layout_tests_dir = lambda: os.path.join(layout_tests_dir,
-                                                     'fast', 'html')
+        port.layout_tests_dir = lambda: port._filesystem.join(layout_tests_dir,
+                                                              'fast', 'html')
         tests = test_files.find(port, [])
         self.assertNotEqual(tests, 0)
 

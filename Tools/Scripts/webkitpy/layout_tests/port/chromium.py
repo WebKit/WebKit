@@ -29,18 +29,12 @@
 
 """Chromium implementations of the Port interface."""
 
-from __future__ import with_statement
-
-import codecs
 import errno
 import logging
-import os
 import re
-import shutil
 import signal
 import subprocess
 import sys
-import tempfile
 import time
 import webbrowser
 
@@ -71,7 +65,7 @@ def check_file_exists(path_to_file, file_description, override_step=None,
             you're looking for (e.g., "HTTP Server"). Used for error logging.
         override_step: An optional string to be logged if the check fails.
         logging: Whether or not log the error messages."""
-    if not os.path.exists(path_to_file):
+    if not self._filesystem.exists(path_to_file):
         if logging:
             _log.error('Unable to find %s' % file_description)
             _log.error('    at %s' % path_to_file)
@@ -145,13 +139,11 @@ class ChromiumPort(base.Port):
                    diff_filename=None):
         executable = self._path_to_image_diff()
 
-        tempdir = tempfile.mkdtemp()
-        expected_filename = os.path.join(tempdir, "expected.png")
-        with open(expected_filename, 'w+b') as file:
-            file.write(expected_contents)
-        actual_filename = os.path.join(tempdir, "actual.png")
-        with open(actual_filename, 'w+b') as file:
-            file.write(actual_contents)
+        tempdir = self._filesystem.mkdtemp()
+        expected_filename = self._filesystem.join(str(tempdir), "expected.png")
+        self._filesystem.write_binary_file(expected_filename, expected_contents)
+        actual_filename = self._filesystem.join(str(tempdir), "actual.png")
+        self._filesystem.write_binary_file(actual_filename, actual_contents)
 
         if diff_filename:
             cmd = [executable, '--diff', expected_filename,
@@ -180,7 +172,7 @@ class ChromiumPort(base.Port):
             else:
                 raise e
         finally:
-            shutil.rmtree(tempdir, ignore_errors=True)
+            self._filesystem.rmtree(str(tempdir))
         return result
 
     def driver_name(self):
@@ -192,15 +184,15 @@ class ChromiumPort(base.Port):
         """Returns the full path to path made by joining the top of the
         Chromium source tree and the list of path components in |*comps|."""
         if not self._chromium_base_dir:
-            abspath = os.path.abspath(__file__)
+            abspath = self._filesystem.abspath(__file__)
             offset = abspath.find('third_party')
             if offset == -1:
-                self._chromium_base_dir = os.path.join(
+                self._chromium_base_dir = self._filesystem.join(
                     abspath[0:abspath.find('Tools')],
                     'WebKit', 'chromium')
             else:
                 self._chromium_base_dir = abspath[0:offset]
-        return os.path.join(self._chromium_base_dir, *comps)
+        return self._filesystem.join(self._chromium_base_dir, *comps)
 
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',
@@ -218,10 +210,10 @@ class ChromiumPort(base.Port):
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
         dump_render_tree_binary_path = self._path_to_driver()
-        cachedir = os.path.split(dump_render_tree_binary_path)[0]
-        cachedir = os.path.join(cachedir, "cache")
-        if os.path.exists(cachedir):
-            shutil.rmtree(cachedir)
+        cachedir = self._filesystem.dirname(dump_render_tree_binary_path)
+        cachedir = self._filesystem.join(cachedir, "cache")
+        if self._filesystem.exists(cachedir):
+            self._filesystem.rmtree(cachedir)
 
     def create_driver(self, worker_number):
         """Starts a new Driver and returns a handle to it."""
@@ -258,8 +250,7 @@ class ChromiumPort(base.Port):
         Basically this string should contain the equivalent of a
         test_expectations file. See test_expectations.py for more details."""
         expectations_path = self.path_to_test_expectations_file()
-        with codecs.open(expectations_path, "r", "utf-8") as file:
-            return file.read()
+        return self._filesystem.read_text_file(expectations_path)
 
     def test_expectations_overrides(self):
         try:
@@ -267,10 +258,9 @@ class ChromiumPort(base.Port):
                 'layout_tests', 'test_expectations.txt')
         except AssertionError:
             return None
-        if not os.path.exists(overrides_path):
+        if not self._filesystem.exists(overrides_path):
             return None
-        with codecs.open(overrides_path, "r", "utf-8") as file:
-            return file.read()
+        return self._filesystem.read_text_file(overrides_path)
 
     def skipped_layout_tests(self, extra_test_files=None):
         expectations_str = self.test_expectations()
@@ -319,8 +309,8 @@ class ChromiumPort(base.Port):
                 debug_path = self._path_to_driver('Debug')
                 release_path = self._path_to_driver('Release')
 
-                debug_mtime = os.stat(debug_path).st_mtime
-                release_mtime = os.stat(release_path).st_mtime
+                debug_mtime = self._filesystem.mtime(debug_path)
+                release_mtime = self._filesystem.mtime(release_path)
 
                 if (debug_mtime > release_mtime and configuration == 'Release' or
                     release_mtime > debug_mtime and configuration == 'Debug'):
@@ -363,7 +353,7 @@ class ChromiumDriver(base.Driver):
         self._worker_number = worker_number
         self._image_path = None
         if self._port.get_option('pixel_tests'):
-            self._image_path = os.path.join(
+            self._image_path = self._filesystem.join(
                 self._port.get_option('results_directory'),
                 'png_result%s.png' % self._worker_number)
 
@@ -455,9 +445,8 @@ class ChromiumDriver(base.Driver):
     def _output_image(self):
         """Returns the image output which driver generated."""
         png_path = self._image_path
-        if png_path and os.path.isfile(png_path):
-            with open(png_path, 'rb') as image_file:
-                return image_file.read()
+        if png_path and self._filesystem.isfile(png_path):
+            return self._filesystem.read_binary_file(png_path)
         else:
             return None
 
