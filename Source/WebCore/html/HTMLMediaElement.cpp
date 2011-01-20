@@ -540,6 +540,7 @@ void HTMLMediaElement::prepareForLoad()
         refreshCachedTime();
         m_paused = true;
         m_seeking = false;
+        invalidateCachedTime();
         scheduleEvent(eventNames().emptiedEvent);
     }
 
@@ -991,6 +992,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
         if (m_autoplaying && m_paused && autoplay()) {
             m_paused = false;
+            invalidateCachedTime();
             scheduleEvent(eventNames().playEvent);
             scheduleEvent(eventNames().playingEvent);
         }
@@ -1300,6 +1302,7 @@ void HTMLMediaElement::setPlaybackRate(float rate)
 
     if (m_playbackRate != rate) {
         m_playbackRate = rate;
+        invalidateCachedTime();
         scheduleEvent(eventNames().ratechangeEvent);
     }
     if (m_player && potentiallyPlaying() && m_player->rate() != rate)
@@ -1404,6 +1407,7 @@ void HTMLMediaElement::playInternal()
     
     if (m_paused) {
         m_paused = false;
+        invalidateCachedTime();
         scheduleEvent(eventNames().playEvent);
 
         if (m_readyState <= HAVE_CURRENT_DATA)
@@ -1891,6 +1895,7 @@ void HTMLMediaElement::mediaPlayerRateChanged(MediaPlayer*)
     // Stash the rate in case the one we tried to set isn't what the engine is
     // using (eg. it can't handle the rate we set)
     m_playbackRate = m_player->rate();
+    invalidateCachedTime();
     endProcessingMediaPlayerCallback();
 }
 

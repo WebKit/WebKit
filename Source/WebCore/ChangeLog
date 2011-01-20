@@ -1,3 +1,21 @@
+2011-01-14  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSION (r71842): Compass video is not playing in Safari welcome page
+        https://bugs.webkit.org/show_bug.cgi?id=52506
+
+        New test: LayoutTests/media/video-currentTime-delay.html
+
+        Call invalidateCachedTime() every time one of the cached property dependencies changes,
+        i.e. m_paused and m_playbackRate.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::setPlaybackRate):
+        (WebCore::HTMLMediaElement::mediaPlayerRateChanged):
+
 2011-01-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoffrey Garen.

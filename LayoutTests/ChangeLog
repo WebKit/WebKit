@@ -1,3 +1,15 @@
+2011-01-14  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSION (r71842): Compass video is not playing in Safari welcome page
+        https://bugs.webkit.org/show_bug.cgi?id=52506
+        
+        Test that a delay between loading and playing video does not break playback. 
+
+        * media/video-currentTime-delay-expected.txt: Added.
+        * media/video-currentTime-delay.html: Added.
+
 2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium test expectations fix.
