@@ -349,6 +349,8 @@ void InspectorCSSAgent::addRule2(const long contextNodeId, const String& selecto
         return;
 
     InspectorStyleSheet* inspectorStyleSheet = viaInspectorStyleSheet(node->document(), true);
+    if (!inspectorStyleSheet)
+        return;
     CSSStyleRule* newRule = inspectorStyleSheet->addRule(selector);
     if (!newRule)
         return;
@@ -447,8 +449,17 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
     RefPtr<Element> styleElement = document->createElement("style", ec);
     if (!ec)
         styleElement->setAttribute("type", "text/css", ec);
-    if (!ec)
-        document->head()->appendChild(styleElement, ec);
+    if (!ec) {
+        ContainerNode* targetNode;
+        // HEAD is absent in ImageDocuments, for example.
+        if (document->head())
+            targetNode = document->head();
+        else if (document->body())
+            targetNode = document->body();
+        else
+            return 0;
+        targetNode->appendChild(styleElement, ec);
+    }
     if (ec)
         return 0;
     StyleSheetList* styleSheets = document->styleSheets();
