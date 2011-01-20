@@ -23,6 +23,7 @@
     <file>CookieParser.js</file>
     <file>CookiesTable.js</file>
     <file>CSSCompletions.js</file>
+    <file>CSSKeywordCompletions.js</file>
     <file>CSSStyleModel.js</file>
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>

@@ -65409,6 +65409,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CSSCompletions.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\CSSKeywordCompletions.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CSSStyleModel.js"
 					>
 				</File>

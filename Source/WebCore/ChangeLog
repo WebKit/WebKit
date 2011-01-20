@@ -1,5 +1,13 @@
 2011-01-20  Alexander Pavlov  <apavlov@chromium.org>
 
+        Unreviewed, add new JS file refs missing from r76116.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/WebKit.qrc:
+
+2011-01-20  Alexander Pavlov  <apavlov@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: Crash when adding a rule for an ImageDocument
