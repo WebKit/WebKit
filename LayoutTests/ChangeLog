@@ -1,3 +1,13 @@
+2011-01-19  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Flaky Test: http/tests/inspector/extensions-resources-redirect.html
+        https://bugs.webkit.org/show_bug.cgi?id=52709
+
+        * http/tests/inspector/extensions-resources-redirect-expected.txt:
+        * http/tests/inspector/extensions-resources-redirect.html:
+
 2011-01-19  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Kent Tamura.

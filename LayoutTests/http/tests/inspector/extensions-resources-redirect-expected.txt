@@ -8,8 +8,8 @@ RUNNING TEST: extension_testGetRedirectResourceContent
 
 content: undefined, encoding: undefined
 RUNNING TEST: extension_testRedirectResourceFinished
-Finished resource: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true
 Finished resource: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?status=302
+Finished resource: http://127.0.0.1:8000/loading/resources/redirect-methods-result.php?redirected=true
 RUNNING TEST: extension_testRedirectResourcesInHAR
 Resources in HAR:
 http://127.0.0.1:8000/inspector/extensions-resources-redirect.html

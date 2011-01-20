@@ -5,28 +5,28 @@
 <script src="extensions-test.js"></script>
 <script type="text/javascript">
 
-function extension_doRequest(callback)
+function extension_doRequest(force, callback, nextTest)
 {
-    var userCallbackCalled = false;
-    function callbackWrapper()
+    function callbackWrapper(resource)
     {
-        if (!userCallbackCalled) {
-            userCallbackCalled = true;
+        var lastCallback = !resource || /\?redirected=true$/.test(resource.request.url);
+        if (lastCallback)
             webInspector.resources.onFinished.removeListener(callbackWrapper);
-            callback();
-        }
+        callback(resource, lastCallback);
     }
     webInspector.resources.onFinished.addListener(callbackWrapper);
-    webInspector.inspectedWindow.eval("doRequest()", function(result) {
+    webInspector.inspectedWindow.eval("doRequest(" + force + ")", function(result) {
         if (result)
-            callbackWrapper();
+            callbackWrapper(null);
     });
 }
 
 function extension_testGetRedirectResourceContent(nextTest)
 {
-    function onFinished()
+    function onFinished(resource, lastCallback)
     {
+        if (!lastCallback)
+            return;
         extension_getResourceByUrl([ /redirect-methods-result.php\?status=302$/ ], function(resource) {
             resource.getContent(onContent)
         });
@@ -36,14 +36,15 @@ function extension_testGetRedirectResourceContent(nextTest)
         output("content: " + content + ", encoding: " + encoding);
         nextTest();
     }
-    extension_doRequest(onFinished);
+    extension_doRequest(false, onFinished);
 }
 
 function extension_testRedirectResourcesInHAR(nextTest)
 {
-    function onFinished()
+    function onFinished(resource, lastCallback)
     {
-        webInspector.resources.getHAR(onHAR);
+        if (lastCallback)
+            webInspector.resources.getHAR(onHAR);
     }
     function onHAR(har)
     {
@@ -59,22 +60,18 @@ function extension_testRedirectResourcesInHAR(nextTest)
         output("Resources in HAR:\n" + urls.join("\n"));
         nextTest();
     }
-    extension_doRequest(onFinished);
+    extension_doRequest(false, onFinished);
 }
 
 function extension_testRedirectResourceFinished(nextTest)
 {
-    var finishedCount = 0;
-    function onFinished(resource)
+    function onFinished(resource, lastCallback)
     {
         output("Finished resource: " + resource.request.url);
-        if (++finishedCount === 2) {
-            webInspector.resources.onFinished.removeListener(onFinished);
+        if (lastCallback)
             nextTest();
-        }
     }
-    webInspector.resources.onFinished.addListener(onFinished);
-    webInspector.inspectedWindow.eval("doRequest(true)");
+    extension_doRequest(true, onFinished);
 }
 
 var requestDone = false;
