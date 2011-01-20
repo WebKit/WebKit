@@ -1,3 +1,26 @@
+2011-01-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/8765498> REGRESSION (r72141): Cannot order prints with Aperture 3.1
+
+        <rdar://problem/8884648> REGRESSION (r72141): Safari hangs when visiting a page on www.bfmtv.com
+        https://bugs.webkit.org/show_bug.cgi?id=52765
+
+        <rdar://problem/8890909> REGRESSION (r72141): Very Slow Rendering With Certain Markup
+        https://bugs.webkit.org/show_bug.cgi?id=52265
+
+        Test: fast/block/line-layout/negative-max-height.html
+
+        Integer overflow detection led to a block having a huge height. This manifested as broken layout
+        in the first bug and as extreme slowness in the latter bugs because of
+        https://bugs.webkit.org/show_bug.cgi?id=52832
+
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection): Clamp maxHeight to 0 so the next line
+        cannot start above this line. The negative maxHeight also caused the integer overflow detection
+        logic to give the block a huge height.
+
 2011-01-20  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Eric Carlson.

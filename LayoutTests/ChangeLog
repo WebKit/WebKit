@@ -1,3 +1,21 @@
+2011-01-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/8765498> REGRESSION (r72141): Cannot order prints with Aperture 3.1
+
+        <rdar://problem/8884648> REGRESSION (r72141): Safari hangs when visiting a page on www.bfmtv.com
+        https://bugs.webkit.org/show_bug.cgi?id=52765
+
+        <rdar://problem/8890909> REGRESSION (r72141): Very Slow Rendering With Certain Markup
+        https://bugs.webkit.org/show_bug.cgi?id=52265
+
+        * fast/block/line-layout: Added.
+        * fast/block/line-layout/negative-max-height-expected.checksum: Added.
+        * fast/block/line-layout/negative-max-height-expected.png: Added.
+        * fast/block/line-layout/negative-max-height-expected.txt: Added.
+        * fast/block/line-layout/negative-max-height.html: Added.
+
 2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed Chromium rebaseline for r76236.
