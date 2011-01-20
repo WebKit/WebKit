@@ -1,3 +1,25 @@
+2011-01-20  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Remove null ptr deref that happens when reattaching to
+        a new web process.
+
+        Implement didRelaunchProcess that sets the drawing area size
+        after the drawing area is re-instantiated.
+
+        [Qt][WK2] Null ptr deref in UI process after web process has crashed
+        https://bugs.webkit.org/show_bug.cgi?id=52796
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::QGraphicsWKView):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPagePrivate::init):
+        (QWKPagePrivate::createDrawingAreaProxy):
+        (QWKPagePrivate::didRelaunchProcess): Reset drawing area size after crash.
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2011-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Roben.

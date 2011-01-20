@@ -66,24 +66,14 @@ QGraphicsWKView::QGraphicsWKView(QWKContext* context, BackingStoreType backingSt
     setFocusPolicy(Qt::StrongFocus);
     setAcceptHoverEvents(true);
 
-    PassOwnPtr<DrawingAreaProxy> drawingAreaProxy;
+
+#if ENABLE(TILED_BACKING_STORE)
+    if (backingStoreType == Tiled)
+        connect(this, SIGNAL(scaleChanged()), this, SLOT(onScaleChanged()));
+#endif
 
     d->page = new QWKPage(context);
-
-    switch (backingStoreType) {
-#if ENABLE(TILED_BACKING_STORE)
-    case Tiled:
-        drawingAreaProxy = TiledDrawingAreaProxy::create(this, toImpl(page()->pageRef()));
-        connect(this, SIGNAL(scaleChanged()), this, SLOT(onScaleChanged()));
-        break;
-#endif
-    case Simple:
-    default:
-        drawingAreaProxy = ChunkedUpdateDrawingAreaProxy::create(this, toImpl(page()->pageRef()));
-        break;
-    }
-
-    d->page->d->init(this, drawingAreaProxy);
+    d->page->d->init(this, backingStoreType);
     connect(d->page, SIGNAL(titleChanged(QString)), this, SIGNAL(titleChanged(QString)));
     connect(d->page, SIGNAL(loadStarted()), this, SIGNAL(loadStarted()));
     connect(d->page, SIGNAL(loadFinished(bool)), this, SIGNAL(loadFinished(bool)));

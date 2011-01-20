@@ -88,6 +88,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c)
     , context(c)
     , preferences(0)
     , createNewPageFn(0)
+    , backingStoreType(QGraphicsWKView::Simple)
 {
     memset(actions, 0, sizeof(actions));
     page = context->d->context->createWebPage(this, 0);
@@ -100,10 +101,10 @@ QWKPagePrivate::~QWKPagePrivate()
     delete history;
 }
 
-void QWKPagePrivate::init(QGraphicsItem* view, PassOwnPtr<DrawingAreaProxy> proxy)
+void QWKPagePrivate::init(QGraphicsItem* view, QGraphicsWKView::BackingStoreType backingStoreType)
 {
     this->view = view;
-    page->setDrawingArea(proxy);
+    this->backingStoreType = backingStoreType;
     page->initializeWebPage();
 }
 
@@ -131,7 +132,7 @@ PassOwnPtr<DrawingAreaProxy> QWKPagePrivate::createDrawingAreaProxy()
     QGraphicsWKView* wkView = static_cast<QGraphicsWKView*>(view);
 
 #if ENABLE(TILED_BACKING_STORE)
-    if (page->drawingArea()->info().type == DrawingAreaInfo::Tiled)
+    if (backingStoreType == QGraphicsWKView::Tiled)
         return TiledDrawingAreaProxy::create(wkView, page.get());
 #endif
     return ChunkedUpdateDrawingAreaProxy::create(wkView, page.get());
@@ -383,6 +384,13 @@ void QWKPagePrivate::touchEvent(QTouchEvent* event)
 #else
     event->ignore();
 #endif
+}
+
+void QWKPagePrivate::didRelaunchProcess()
+{
+    QGraphicsWKView* wkView = static_cast<QGraphicsWKView*>(view);
+    if (wkView)
+        q->setViewportSize(wkView->size().toSize());
 }
 
 QWKPage::QWKPage(QWKContext* context)
