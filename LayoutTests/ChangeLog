@@ -1,3 +1,10 @@
+2011-01-20  Philippe Normand  <pnormand@igalia.com>
+
+        Skip failing tests due to missing trailing white space
+        https://bugs.webkit.org/show_bug.cgi?id=52798
+
+        * platform/gtk/Skipped: Skip 5 http/tests/security tests.
+
 2011-01-20  Martin Robinson  <mrobinson@igalia.com>
 
         Skip a test which requires the textInputController, which
