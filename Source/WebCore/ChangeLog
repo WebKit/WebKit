@@ -1,5 +1,16 @@
 2011-01-20  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: move releaseObjectGroup to the new Runtime agent.
+        https://bugs.webkit.org/show_bug.cgi?id=52803
+        (accedentally landed as r76231)
+
+        * inspector/InspectorContorller.h:
+        * inspector/InspectorContorller.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+
+2011-01-20  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: build fix.
 
         * inspector/InspectorState.h:
