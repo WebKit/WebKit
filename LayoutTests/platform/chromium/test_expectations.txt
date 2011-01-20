@@ -2761,6 +2761,8 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT
+BUGCR63921 LINUX WIN : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT
+BUGCR63921 LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux release
 BUGCR64129 MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS

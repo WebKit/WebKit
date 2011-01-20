@@ -1,3 +1,17 @@
+2011-01-20  Jeremy Orlow  <jorlow@chromium.org>
+
+        [Chromium] Update baselines and add exception.
+
+        * platform/chromium-mac/fast/dom/wrapper-classes-expected.txt:
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium-mac/http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * platform/chromium-win/fast/dom/wrapper-classes-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium-win/http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76215.

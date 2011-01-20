@@ -323,9 +323,9 @@ FAIL tagJSWrapperConstructorClass('isindex') should be HTMLIsIndexElementConstru
 PASS tagJSWrapperClass('kbd') is 'HTMLElement'
 FAIL tagJSWrapperPrototypeClass('kbd') should be HTMLElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('kbd') should be HTMLElementConstructor. Was Function.
-PASS tagJSWrapperClass('keygen') is 'HTMLSelectElement'
-FAIL tagJSWrapperPrototypeClass('keygen') should be HTMLSelectElementPrototype. Was Object.
-FAIL tagJSWrapperConstructorClass('keygen') should be HTMLSelectElementConstructor. Was Function.
+PASS tagJSWrapperClass('keygen') is 'HTMLKeygenElement'
+FAIL tagJSWrapperPrototypeClass('keygen') should be HTMLKeygenElementPrototype. Was Object.
+FAIL tagJSWrapperConstructorClass('keygen') should be HTMLKeygenElementConstructor. Was Function.
 PASS tagJSWrapperClass('label') is 'HTMLLabelElement'
 FAIL tagJSWrapperPrototypeClass('label') should be HTMLLabelElementPrototype. Was Object.
 FAIL tagJSWrapperConstructorClass('label') should be HTMLLabelElementConstructor. Was Function.
