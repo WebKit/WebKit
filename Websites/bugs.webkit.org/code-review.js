@@ -1057,11 +1057,11 @@
     });
   }
 
-  var in_drag_select = false;
+  var drag_select_start_index = -1;
 
   function stopDragSelect() {
     $('.selected').removeClass('selected');
-    in_drag_select = false;
+    drag_select_start_index = -1;
   }
 
   function lineOffsetFrom(line, offset) {
@@ -1084,33 +1084,39 @@
     if (line.hasClass('commentContext'))
       trimCommentContextToBefore(previousLineFor(line), line.attr('data-comment-base-line'));
   }).live('mousedown', function() {
-    in_drag_select = true;
-    lineFromLineDescendant($(this)).addClass('selected');
+    var line = lineFromLineDescendant($(this));
+    drag_select_start_index = numberFrom(line.attr('id'));
+    line.addClass('selected');
     event.preventDefault();
   });
 
-  $('.LineContainer').live('mouseenter', function() {
-    if (!in_drag_select)
-      return;
-
-    var line = lineFromLineContainer(this);
-    line.addClass('selected');
-  }).live('mouseup', function() {
-    if (!in_drag_select)
-      return;
-
-    var selected = $('.selected');
-
-    // Select all the lines between the first and last selected lines
-    // in case we didn't get mouseenter events for any of them.
-    var current_index = numberFrom(selected.first().attr('id'));
-    var last_index = numberFrom(selected.last().attr('id'));
-    while (current_index != last_index) {
+  function selectTo(focus_index) {
+    var selected = $('.selected').removeClass('selected');
+    var is_backward = drag_select_start_index > focus_index;
+    var current_index = is_backward ? focus_index : drag_select_start_index;
+    var last_index = is_backward ? drag_select_start_index : focus_index;
+    while (current_index <= last_index) {
       $('#line' + current_index).addClass('selected')
       current_index++;
     }
+  }
 
-    selected = $('.selected');
+  function selectToLineContainer(line_container) {
+    var line = lineFromLineContainer(line_container);
+    selectTo(numberFrom(line.attr('id')));
+  }
+
+  $('.LineContainer').live('mouseenter', function() {
+    if (drag_select_start_index == -1)
+      return;
+    selectToLineContainer(this);
+  }).live('mouseup', function() {
+    if (drag_select_start_index == -1)
+      return;
+
+    selectToLineContainer(this);
+
+    var selected = $('.selected');
     var already_has_comment = selected.last().hasClass('commentContext');
     selected.addClass('commentContext');
 
