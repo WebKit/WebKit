@@ -37,7 +37,6 @@ WebInspector.Breakpoint = function(debuggerModel, breakpointId, sourceID, url, l
     this.sourceID = sourceID;
     this._enabled = enabled;
     this._condition = condition || "";
-    this._hit = false;
     this._debuggerModel = debuggerModel;
 }
 
@@ -60,52 +59,14 @@ WebInspector.Breakpoint.prototype = {
         return this._condition;
     },
 
-    get hit()
+    get data()
     {
-        return this._hit;
-    },
-
-    set hit(hit)
-    {
-        this._hit = hit;
-        this.dispatchEventToListeners("hit-state-changed");
-    },
-
-    click: function(event)
-    {
-        WebInspector.panels.scripts.showSourceLine(this.url, this.line);
-    },
-
-    compareTo: function(other)
-    {
-        if (this.url != other.url)
-            return this.url < other.url ? -1 : 1;
-        if (this.line != other.line)
-            return this.line < other.line ? -1 : 1;
-        return 0;
-    },
-
-    populateLabelElement: function(element)
-    {
-        function didGetSourceLine(text)
-        {
-            var displayName = this.url ? WebInspector.displayNameForURL(this.url) : WebInspector.UIString("(program)");
-            var labelElement = document.createTextNode(displayName + ":" + this.line);
-            element.appendChild(labelElement);
-
-            var sourceTextElement = document.createElement("div");
-            sourceTextElement.textContent = text;
-            sourceTextElement.className = "source-text monospace";
-            element.appendChild(sourceTextElement);
-        }
-        var script = this._debuggerModel.scriptForSourceID(this.sourceID);
-        script.sourceLine(this.line, didGetSourceLine.bind(this));
+        return { id: this.id, url: this.url, sourceID: this.sourceID, lineNumber: this.line, condition: this.condition };
     },
 
     remove: function()
     {
         this._debuggerModel.removeBreakpoint(this.id);
-        this.dispatchEventToListeners("removed");
         this.removeAllListeners();
         delete this._debuggerModel;
     }

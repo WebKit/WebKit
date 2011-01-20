@@ -1,3 +1,46 @@
+2011-01-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement JavaScriptBreakpointsSidebarPane based on events from debugger model.
+        https://bugs.webkit.org/show_bug.cgi?id=52723
+
+        Extract all breakpoints-related presentation code from debugger model to JavaScriptBreakpointSidebarPane.
+
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.get data):
+        (WebInspector.Breakpoint.prototype.remove):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.JavaScriptBreakpointsSidebarPane):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointAdded):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointRemoved):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointItemCheckboxClicked):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._contextMenuEventFired):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._debuggerPaused):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._debuggerResumed):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._addListElement):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._removeListElement):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._projectChanged):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._compare):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._compareBreakpoints):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._setupBreakpointElement.didGetSourceLine):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._setupBreakpointElement):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._breakpointIdForDebuggerPausedEvent):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._setBreakpointEnabled):
+        (WebInspector.JavaScriptBreakpointsSidebarPane.prototype._removeBreakpoint):
+        (WebInspector.NativeBreakpointsSidebarPane):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype.addBreakpointItem):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerModel.prototype.breakpointForId):
+        (WebInspector.DebuggerModel.prototype._pausedScript):
+        (WebInspector.DebuggerModel.prototype._resumedScript):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        * inspector/front-end/inspector.js:
+
 2011-01-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Andreas Kling.

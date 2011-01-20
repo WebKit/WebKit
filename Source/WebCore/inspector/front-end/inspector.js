@@ -185,20 +185,9 @@ var WebInspector = {
         }
     },
 
-    createJSBreakpointsSidebarPane: function()
-    {
-        var pane = new WebInspector.BreakpointsSidebarPane(WebInspector.UIString("Breakpoints"));
-        function breakpointAdded(event)
-        {
-            pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
-        }
-        WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpointAdded);
-        return pane;
-    },
-
     createDOMBreakpointsSidebarPane: function()
     {
-        var pane = new WebInspector.BreakpointsSidebarPane(WebInspector.UIString("DOM Breakpoints"));
+        var pane = new WebInspector.NativeBreakpointsSidebarPane(WebInspector.UIString("DOM Breakpoints"));
         function breakpointAdded(event)
         {
             pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));

@@ -84,6 +84,7 @@ WebInspector.DebuggerModel.prototype = {
         delete this._breakpoints[breakpointId];
         delete this._sourceIDAndLineToBreakpointId[this._encodeSourceIDAndLine(breakpoint.sourceID, breakpoint.line)];
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointRemoved, breakpointId);
+        breakpoint.dispatchEventToListeners("removed");
     },
 
     _breakpointSetOnBackend: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, restored)
@@ -101,6 +102,11 @@ WebInspector.DebuggerModel.prototype = {
         this._breakpoints[breakpointId] = breakpoint;
         this._sourceIDAndLineToBreakpointId[sourceIDAndLine] = breakpointId;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpoint);
+    },
+
+    breakpointForId: function(breakpointId)
+    {
+        return this._breakpoints[breakpointId];
     },
 
     queryBreakpoints: function(filter)
@@ -164,26 +170,12 @@ WebInspector.DebuggerModel.prototype = {
             delete this._continueToLineBreakpointId;
         }
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, details);
-
-        if (details.eventType === WebInspector.DebuggerEventTypes.JavaScriptPause || details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint)
-            return;
-
-        var breakpoint = this.findBreakpoint(details.callFrames[0].sourceID, details.callFrames[0].line);
-        if (!breakpoint)
-            return;
-        breakpoint.hit = true;
-        this._lastHitBreakpoint = breakpoint;
     },
 
     _resumedScript: function()
     {
         this._paused = false;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
-
-        if (!this._lastHitBreakpoint)
-            return;
-        this._lastHitBreakpoint.hit = false;
-        delete this._lastHitBreakpoint;
     },
 
     _parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)
