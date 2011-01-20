@@ -83,6 +83,14 @@ WebDOMTestCallback::~WebDOMTestCallback()
     m_impl = 0;
 }
 
+bool WebDOMTestCallback::callbackWithNoParam()
+{
+    if (!impl())
+        return false;
+
+    return impl()->callbackWithNoParam();
+}
+
 bool WebDOMTestCallback::callbackWithClass1Param(const WebDOMClass1& class1Param)
 {
     if (!impl())

@@ -260,7 +260,7 @@ static v8::Handle<v8::Value> reflectedUnsignedIntegralAttrAttrGetter(v8::Local<v
 {
     INC_STATS("DOM.TestObj.reflectedUnsignedIntegralAttr._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    return v8::Integer::NewFromUnsigned(imp->getUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr));
+    return v8::Integer::NewFromUnsigned(std::max(0, imp->getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
 }
 
 static void reflectedUnsignedIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

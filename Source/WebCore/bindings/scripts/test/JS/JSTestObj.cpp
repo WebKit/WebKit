@@ -607,6 +607,7 @@ JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, const Identifier
     JSTestObj* domObject = static_cast<JSTestObj*>(asObject(slotBase));
     return JSTestObj::getConstructor(exec, domObject->globalObject());
 }
+
 void JSTestObj::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
     lookupPut<JSTestObj, Base>(exec, propertyName, value, &JSTestObjTable, this, slot);

@@ -38,8 +38,9 @@
 #include "webkit/WebKitDOMSerializedScriptValuePrivate.h"
 #include "webkit/WebKitDOMTestObj.h"
 #include "webkit/WebKitDOMTestObjPrivate.h"
+#include "webkitdefines.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
-#include "webkitprivate.h"
 
 namespace WebKit {
     

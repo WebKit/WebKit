@@ -39,8 +39,9 @@
 #include "webkit/WebKitDOMClass3Private.h"
 #include "webkit/WebKitDOMTestCallback.h"
 #include "webkit/WebKitDOMTestCallbackPrivate.h"
+#include "webkitdefines.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
-#include "webkitprivate.h"
 
 namespace WebKit {
     
@@ -55,6 +56,16 @@ WebKitDOMTestCallback* kit(WebCore::TestCallback* obj)
 }
     
 } // namespace WebKit //
+
+gboolean
+webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    gboolean res = item->callbackWithNoParam();
+    return res;
+}
 
 gboolean
 webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1param)

@@ -47,6 +47,9 @@ WEBKIT_API GType
 webkit_dom_test_callback_get_type (void);
 
 WEBKIT_API gboolean
+webkit_dom_test_callback_callback_with_no_param(WebKitDOMTestCallback* self);
+
+WEBKIT_API gboolean
 webkit_dom_test_callback_callback_with_class1param(WebKitDOMTestCallback* self, WebKitDOMClass1* class1param);
 
 WEBKIT_API gboolean

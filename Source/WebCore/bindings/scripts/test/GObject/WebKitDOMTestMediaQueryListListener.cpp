@@ -31,8 +31,9 @@
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMTestMediaQueryListListener.h"
 #include "webkit/WebKitDOMTestMediaQueryListListenerPrivate.h"
+#include "webkitdefines.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
-#include "webkitprivate.h"
 
 namespace WebKit {
     

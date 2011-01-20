@@ -2401,9 +2401,13 @@ END
                 push(@args, "        ${paramName}Handle");
             }
 
-            push(@implContent, "\n    v8::Handle<v8::Value> argv[] = {\n");
-            push(@implContent, join(",\n", @args));
-            push(@implContent, "\n    };\n\n");
+            if (scalar(@args) > 0) {
+                push(@implContent, "\n    v8::Handle<v8::Value> argv[] = {\n");
+                push(@implContent, join(",\n", @args));
+                push(@implContent, "\n    };\n\n");
+            } else {
+                push(@implContent, "\n    v8::Handle<v8::Value> *argv = 0;\n\n");
+            }
             push(@implContent, "    bool callbackReturnValue = false;\n");
             push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
             push(@implContent, "}\n");

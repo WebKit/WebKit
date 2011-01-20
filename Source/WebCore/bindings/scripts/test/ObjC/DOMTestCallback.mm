@@ -79,6 +79,12 @@
     [super finalize];
 }
 
+- (BOOL)callbackWithNoParam
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->callbackWithNoParam();
+}
+
 - (BOOL)callbackWithClass1Param:(DOMClass1 *)class1Param
 {
     WebCore::JSMainThreadNullState state;

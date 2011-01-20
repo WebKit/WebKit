@@ -56,6 +56,23 @@ JSTestCallback::~JSTestCallback()
 
 // Functions
 
+bool JSTestCallback::callbackWithNoParam()
+{
+    if (!canInvokeCallback())
+        return true;
+
+    RefPtr<JSTestCallback> protect(this);
+
+    JSLock lock(SilenceAssertionsOnly);
+
+    ExecState* exec = m_data->globalObject()->globalExec();
+    MarkedArgumentBuffer args;
+
+    bool raisedException = false;
+    m_data->invokeCallback(args, &raisedException);
+    return !raisedException;
+}
+
 bool JSTestCallback::callbackWithClass1Param(Class1* class1Param)
 {
     if (!canInvokeCallback())

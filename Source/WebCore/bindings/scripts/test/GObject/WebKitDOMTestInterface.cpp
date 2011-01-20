@@ -33,8 +33,9 @@
 #include "gobject/ConvertToUTF8String.h"
 #include "webkit/WebKitDOMTestInterface.h"
 #include "webkit/WebKitDOMTestInterfacePrivate.h"
+#include "webkitdefines.h"
+#include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
-#include "webkitprivate.h"
 
 namespace WebKit {
     

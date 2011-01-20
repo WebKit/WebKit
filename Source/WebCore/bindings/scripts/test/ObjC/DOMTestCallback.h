@@ -36,6 +36,7 @@
 @class NSString;
 
 @interface DOMTestCallback : DOMObject
+- (BOOL)callbackWithNoParam;
 - (BOOL)callbackWithClass1Param:(DOMClass1 *)class1Param;
 - (BOOL)callbackWithClass2Param:(DOMClass2 *)class2Param strArg:(NSString *)strArg;
 - (int)callbackWithNonBoolReturnType:(DOMClass3 *)class3Param;

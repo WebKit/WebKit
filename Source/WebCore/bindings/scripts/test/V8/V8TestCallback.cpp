@@ -48,6 +48,26 @@ V8TestCallback::~V8TestCallback()
 
 // Functions
 
+bool V8TestCallback::callbackWithNoParam()
+{
+    if (!canInvokeCallback())
+        return true;
+
+    v8::HandleScope handleScope;
+
+    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);
+    if (v8Context.IsEmpty())
+        return true;
+
+    v8::Context::Scope scope(v8Context);
+
+
+    v8::Handle<v8::Value> *argv = 0;
+
+    bool callbackReturnValue = false;
+    return !invokeCallback(m_callback, 0, argv, callbackReturnValue, scriptExecutionContext());
+}
+
 bool V8TestCallback::callbackWithClass1Param(Class1* class1Param)
 {
     if (!canInvokeCallback())

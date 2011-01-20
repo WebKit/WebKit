@@ -40,6 +40,7 @@ public:
     virtual ~JSTestCallback();
 
     // Functions
+    virtual bool callbackWithNoParam();
     virtual bool callbackWithClass1Param(Class1* class1Param);
     virtual bool callbackWithClass2Param(Class2* class2Param, const String& strArg);
     COMPILE_ASSERT(false)    virtual int callbackWithNonBoolReturnType(Class3* class3Param);

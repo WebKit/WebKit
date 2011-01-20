@@ -166,6 +166,7 @@ JSValue jsTestInterfaceConstructor(ExecState* exec, JSValue slotBase, const Iden
     JSTestInterface* domObject = static_cast<JSTestInterface*>(asObject(slotBase));
     return JSTestInterface::getConstructor(exec, domObject->globalObject());
 }
+
 JSValue JSTestInterface::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestInterfaceConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));

@@ -162,6 +162,7 @@ JSValue jsTestMediaQueryListListenerConstructor(ExecState* exec, JSValue slotBas
     JSTestMediaQueryListListener* domObject = static_cast<JSTestMediaQueryListListener*>(asObject(slotBase));
     return JSTestMediaQueryListListener::getConstructor(exec, domObject->globalObject());
 }
+
 JSValue JSTestMediaQueryListListener::getConstructor(ExecState* exec, JSGlobalObject* globalObject)
 {
     return getDOMConstructor<JSTestMediaQueryListListenerConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));

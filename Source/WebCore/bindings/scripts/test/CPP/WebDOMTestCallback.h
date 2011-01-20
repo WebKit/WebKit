@@ -46,6 +46,7 @@ public:
     WebDOMTestCallback& operator=(const WebDOMTestCallback&);
     virtual ~WebDOMTestCallback();
 
+    bool callbackWithNoParam();
     bool callbackWithClass1Param(const WebDOMClass1& class1Param);
     bool callbackWithClass2Param(const WebDOMClass2& class2Param, const WebDOMString& strArg);
     int callbackWithNonBoolReturnType(const WebDOMClass3& class3Param);
