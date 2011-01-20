@@ -31,20 +31,20 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
-#include "ChromiumBridge.h"
 #include "MediaPlayer.h"
+#include "PlatformBridge.h"
 #include "PluginDataChromium.h"
 #include <wtf/text/CString.h>
 
 // NOTE: Unlike other ports, we don't use the shared implementation bits in
 // MIMETypeRegistry.cpp.  Instead, we need to route most functions via the
-// ChromiumBridge to the embedder.
+// PlatformBridge to the embedder.
 
 namespace WebCore {
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
-    return ChromiumBridge::mimeTypeForExtension(ext);
+    return PlatformBridge::mimeTypeForExtension(ext);
 }
 
 // Returns the file extension if one is found.  Does not include the dot in the
@@ -55,7 +55,7 @@ String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& type)
     // FIXME: Is this really necessary??
     String mimeType = type.substring(0, static_cast<unsigned>(type.find(';')));
 
-    String ext = ChromiumBridge::preferredExtensionForMIMEType(type);
+    String ext = PlatformBridge::preferredExtensionForMIMEType(type);
     if (!ext.isEmpty() && ext[0] == '.')
         ext = ext.substring(1);
 
@@ -81,7 +81,7 @@ String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 
 bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 { 
-    return ChromiumBridge::isSupportedImageMIMEType(mimeType);
+    return PlatformBridge::isSupportedImageMIMEType(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedImageResourceMIMEType(const String& mimeType)
@@ -96,12 +96,12 @@ bool MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(const String& mimeTyp
 
 bool MIMETypeRegistry::isSupportedJavaScriptMIMEType(const String& mimeType)
 {
-    return ChromiumBridge::isSupportedJavaScriptMIMEType(mimeType);
+    return PlatformBridge::isSupportedJavaScriptMIMEType(mimeType);
 }
     
 bool MIMETypeRegistry::isSupportedNonImageMIMEType(const String& mimeType)
 {
-    return ChromiumBridge::isSupportedNonImageMIMEType(mimeType);
+    return PlatformBridge::isSupportedNonImageMIMEType(mimeType);
 }
 
 bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)

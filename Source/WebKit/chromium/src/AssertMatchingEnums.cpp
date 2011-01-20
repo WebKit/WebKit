@@ -80,7 +80,7 @@
 #include <wtf/text/StringImpl.h>
 
 #if OS(DARWIN)
-#include "ChromiumBridge.h"
+#include "PlatformBridge.h"
 #include "mac/WebThemeEngine.h"
 #endif
 
@@ -398,17 +398,17 @@ COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPermissionDenied, Geoloca
 COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPositionUnavailable, GeolocationError::PositionUnavailable);
 
 #if OS(DARWIN)
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateDisabled, ChromiumBridge::StateDisabled);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateInactive, ChromiumBridge::StateInactive);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateActive, ChromiumBridge::StateActive);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StatePressed, ChromiumBridge::StatePressed);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateDisabled, PlatformBridge::StateDisabled);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateInactive, PlatformBridge::StateInactive);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateActive, PlatformBridge::StateActive);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StatePressed, PlatformBridge::StatePressed);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeRegular, ChromiumBridge::SizeRegular);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeSmall, ChromiumBridge::SizeSmall);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeRegular, PlatformBridge::SizeRegular);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::SizeSmall, PlatformBridge::SizeSmall);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationHorizontal, ChromiumBridge::ScrollbarOrientationHorizontal);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationVertical, ChromiumBridge::ScrollbarOrientationVertical);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationHorizontal, PlatformBridge::ScrollbarOrientationHorizontal);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarOrientationVertical, PlatformBridge::ScrollbarOrientationVertical);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentScrollView, ChromiumBridge::ScrollbarParentScrollView);
-COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentRenderLayer, ChromiumBridge::ScrollbarParentRenderLayer);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentScrollView, PlatformBridge::ScrollbarParentScrollView);
+COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::ScrollbarParentRenderLayer, PlatformBridge::ScrollbarParentRenderLayer);
 #endif

@@ -32,10 +32,10 @@
 #include "config.h"
 #include "Font.h"
 
-#include "ChromiumBridge.h"
 #include "FontFallbackList.h"
 #include "GlyphBuffer.h"
 #include "NotImplemented.h"
+#include "PlatformBridge.h"
 #include "PlatformContextSkia.h"
 #include "SimpleFontData.h"
 #include "SkiaFontWin.h"
@@ -424,7 +424,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext,
             success = painter.drawGlyphs(curLen, &glyphs[0], &advances[0], curAdvance);
             if (!success && executions == 0) {
                 // Ask the browser to load the font for us and retry.
-                ChromiumBridge::ensureFontLoaded(font->platformData().hfont());
+                PlatformBridge::ensureFontLoaded(font->platformData().hfont());
                 continue;
             }
             break;

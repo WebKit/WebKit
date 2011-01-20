@@ -32,11 +32,11 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "ChromiumBridge.h"
 #include "Font.h"
 #include "FontUtilsChromiumWin.h"
 #include "HashMap.h"
 #include "HashSet.h"
+#include "PlatformBridge.h"
 #include "SimpleFontData.h"
 #include <unicode/uniset.h>
 #include <wtf/text/StringHash.h>
@@ -288,9 +288,9 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     HDC hdc = GetDC(0);
     HGDIOBJ oldFont = static_cast<HFONT>(SelectObject(hdc, hfont));
     int count = GetFontUnicodeRanges(hdc, 0);
-    if (count == 0 && ChromiumBridge::ensureFontLoaded(hfont))
+    if (!count && PlatformBridge::ensureFontLoaded(hfont))
         count = GetFontUnicodeRanges(hdc, 0);
-    if (count == 0) {
+    if (!count) {
         LOG_ERROR("Unable to get the font unicode range after second attempt");
         SelectObject(hdc, oldFont);
         ReleaseDC(0, hdc);
@@ -362,7 +362,7 @@ static void FillLogFont(const FontDescription& fontDescription, LOGFONT* winfont
     winfont->lfStrikeOut = false;
     winfont->lfCharSet = DEFAULT_CHARSET;
     winfont->lfOutPrecision = OUT_TT_ONLY_PRECIS;
-    winfont->lfQuality = ChromiumBridge::layoutTestMode() ? NONANTIALIASED_QUALITY : DEFAULT_QUALITY; // Honor user's desktop settings.
+    winfont->lfQuality = PlatformBridge::layoutTestMode() ? NONANTIALIASED_QUALITY : DEFAULT_QUALITY; // Honor user's desktop settings.
     winfont->lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     winfont->lfItalic = fontDescription.italic();
     winfont->lfWeight = toGDIFontWeight(fontDescription.weight());

@@ -31,9 +31,9 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
-#include "ChromiumBridge.h"
 #include "HarfbuzzSkia.h"
 #include "NotImplemented.h"
+#include "PlatformBridge.h"
 #include "PlatformString.h"
 
 #include "SkPaint.h"
@@ -229,7 +229,7 @@ void FontPlatformData::querySystemForRenderStyle()
         return;
     }
 
-    ChromiumBridge::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
+    PlatformBridge::getRenderStyleForStrike(m_family.data(), (((int)m_textSize) << 2) | (m_typeface->style() & 3), &m_style);
 }
 
 }  // namespace WebCore

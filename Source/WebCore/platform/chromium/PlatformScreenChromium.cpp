@@ -31,34 +31,34 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
-#include "ChromiumBridge.h"
 #include "IntRect.h"
+#include "PlatformBridge.h"
 
 namespace WebCore {
 
 int screenDepth(Widget* widget)
 {
-    return ChromiumBridge::screenDepth(widget);
+    return PlatformBridge::screenDepth(widget);
 }
 
 int screenDepthPerComponent(Widget* widget)
 {
-    return ChromiumBridge::screenDepthPerComponent(widget);
+    return PlatformBridge::screenDepthPerComponent(widget);
 }
 
 bool screenIsMonochrome(Widget* widget)
 {
-    return ChromiumBridge::screenIsMonochrome(widget);
+    return PlatformBridge::screenIsMonochrome(widget);
 }
 
 FloatRect screenRect(Widget* widget)
 {
-    return ChromiumBridge::screenRect(widget);
+    return PlatformBridge::screenRect(widget);
 }
 
 FloatRect screenAvailableRect(Widget* widget)
 {
-    return ChromiumBridge::screenAvailableRect(widget);
+    return PlatformBridge::screenAvailableRect(widget);
 }
 
 } // namespace WebCore

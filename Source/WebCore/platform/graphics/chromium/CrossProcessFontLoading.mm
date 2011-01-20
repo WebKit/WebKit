@@ -30,7 +30,7 @@
 #import "CrossProcessFontLoading.h"
 
 #import "../graphics/cocoa/FontPlatformData.h"
-#import "ChromiumBridge.h"
+#import "PlatformBridge.h"
 #import <AppKit/NSFont.h>
 #import <wtf/HashMap.h>
 
@@ -87,7 +87,7 @@ PassRefPtr<MemoryActivatedFont> loadFontFromBrowserProcess(NSFont* nsFont)
 {
     ATSFontContainerRef container;
     // Send cross-process request to load font.
-    if (!ChromiumBridge::loadFont(nsFont, &container))
+    if (!PlatformBridge::loadFont(nsFont, &container))
         return 0;
     
     ATSFontContainerRef srcFontContainerRef = fontContainerRefFromNSFont(nsFont);

@@ -31,15 +31,15 @@
 #include "config.h"
 #include "SystemTime.h"
 
-#include "ChromiumBridge.h"
 #include "NotImplemented.h"
+#include "PlatformBridge.h"
 
 namespace WebCore {
 
 // Get the current time in seconds since epoch.
 double currentTime()
 {
-    return ChromiumBridge::currentTime();
+    return PlatformBridge::currentTime();
 }
 
 float userIdleTime()

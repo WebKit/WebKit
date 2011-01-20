@@ -30,8 +30,8 @@
 #include <windows.h>
 #include <vsstyle.h>
 
-#include "ChromiumBridge.h"
 #include "GraphicsContext.h"
+#include "PlatformBridge.h"
 #include "PlatformContextSkia.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
@@ -61,7 +61,7 @@ int ScrollbarThemeChromiumWin::scrollbarThickness(ScrollbarControlSize controlSi
 {
     static int thickness;
     if (!thickness) {
-        if (ChromiumBridge::layoutTestMode())
+        if (PlatformBridge::layoutTestMode())
             return kMacScrollbarSize[controlSize];
         thickness = GetSystemMetrics(SM_CXVSCROLL);
     }
@@ -104,7 +104,7 @@ void ScrollbarThemeChromiumWin::paintTrackPiece(GraphicsContext* gc, Scrollbar* 
     IntRect alignRect = trackRect(scrollbar, false);
 
     // Draw the track area before/after the thumb on the scroll bar.
-    ChromiumBridge::paintScrollbarTrack(
+    PlatformBridge::paintScrollbarTrack(
         gc,
         partId,
         getThemeState(scrollbar, partType),
@@ -124,7 +124,7 @@ void ScrollbarThemeChromiumWin::paintButton(GraphicsContext* gc, Scrollbar* scro
         partId = horz ? DFCS_SCROLLRIGHT : DFCS_SCROLLDOWN;
 
     // Draw the thumb (the box you drag in the scroll bar to scroll).
-    ChromiumBridge::paintScrollbarArrow(
+    PlatformBridge::paintScrollbarArrow(
         gc,
         getThemeArrowState(scrollbar, part),
         partId | getClassicThemeState(scrollbar, part),
@@ -136,7 +136,7 @@ void ScrollbarThemeChromiumWin::paintThumb(GraphicsContext* gc, Scrollbar* scrol
     bool horz = scrollbar->orientation() == HorizontalScrollbar;
 
     // Draw the thumb (the box you drag in the scroll bar to scroll).
-    ChromiumBridge::paintScrollbarThumb(
+    PlatformBridge::paintScrollbarThumb(
         gc,
         horz ? SBP_THUMBBTNHORZ : SBP_THUMBBTNVERT,
         getThemeState(scrollbar, ThumbPart),
@@ -144,7 +144,7 @@ void ScrollbarThemeChromiumWin::paintThumb(GraphicsContext* gc, Scrollbar* scrol
         rect);
 
     // Draw the gripper (the three little lines on the thumb).
-    ChromiumBridge::paintScrollbarThumb(
+    PlatformBridge::paintScrollbarThumb(
         gc,
         horz ? SBP_GRIPPERHORZ : SBP_GRIPPERVERT,
         getThemeState(scrollbar, ThumbPart),
@@ -256,7 +256,7 @@ IntSize ScrollbarThemeChromiumWin::buttonSize(Scrollbar* scrollbar)
     // test mode so that should be enough to result in repeatable results, but
     // preserving this hack avoids having to rebaseline pixel tests.
     const int kLayoutTestModeGirth = 17;
-    int girth = ChromiumBridge::layoutTestMode() ? kLayoutTestModeGirth : thickness;
+    int girth = PlatformBridge::layoutTestMode() ? kLayoutTestModeGirth : thickness;
 
     if (scrollbar->orientation() == HorizontalScrollbar) {
         int width = scrollbar->width() < 2 * girth ? scrollbar->width() / 2 : girth;

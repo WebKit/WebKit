@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderThemeChromiumSkia.h"
 
-#include "ChromiumBridge.h"
 #include "CSSValueKeywords.h"
 #include "CurrentTime.h"
 #include "GraphicsContext.h"
@@ -33,6 +32,7 @@
 #include "Image.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
+#include "PlatformBridge.h"
 #include "PlatformContextSkia.h"
 #include "RenderBox.h"
 #include "RenderMediaControlsChromium.h"
@@ -185,7 +185,7 @@ double RenderThemeChromiumSkia::caretBlinkInterval() const
 {
     // Disable the blinking caret in layout test mode, as it introduces
     // a race condition for the pixel tests. http://b/1198440
-    if (ChromiumBridge::layoutTestMode())
+    if (PlatformBridge::layoutTestMode())
         return 0;
 
     return caretBlinkIntervalInternal();

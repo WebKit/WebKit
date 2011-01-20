@@ -32,9 +32,9 @@
 #include <windows.h>
 #include <vector>
 
-#include "ChromiumBridge.h"
 #include "Font.h"
 #include "GlyphPageTreeNode.h"
+#include "PlatformBridge.h"
 #include "SimpleFontData.h"
 #include "UniscribeHelperTextRun.h"
 #include "WindowsVersion.h"
@@ -80,12 +80,11 @@ static bool fillBMPGlyphs(unsigned offset,
         ReleaseDC(0, dc);
 
         if (recurse) {
-            if (ChromiumBridge::ensureFontLoaded(fontData->platformData().hfont()))
+            if (PlatformBridge::ensureFontLoaded(fontData->platformData().hfont()))
                 return fillBMPGlyphs(offset, length, buffer, page, fontData, false);
-            else {
-                fillEmptyGlyphs(page);
-                return false;
-            }
+
+            fillEmptyGlyphs(page);
+            return false;
         } else {
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401
