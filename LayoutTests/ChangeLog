@@ -1,3 +1,9 @@
+2011-01-20  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, another attempt at making the chromium gpu tests go green.
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2011-01-20  James Robinson  <jamesr@chromium.org>
 
         Update expectations for tests that need chromium-side changes.
