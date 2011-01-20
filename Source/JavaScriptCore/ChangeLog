@@ -1,3 +1,14 @@
+2011-01-20  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] WebKit2 enabled build fails to link
+
+        Work around undefined reference linking issues until the buildsystem gets redesigned.
+        These issues first occured in minimal builds (see BUG 50519).
+
+        * JavaScriptCore.pri: link as whole-archive for WebKit2 builds
+
 2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
