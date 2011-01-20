@@ -93,9 +93,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return os.path.join(base, 'out', *comps)
 
     def _check_apache_install(self):
-        result = chromium.check_file_exists(self._path_to_apache(),
+        result = self._check_file_exists(self._path_to_apache(),
             "apache2")
-        result = chromium.check_file_exists(self._path_to_apache_config_file(),
+        result = self._check_file_exists(self._path_to_apache_config_file(),
             "apache2 config file") and result
         if not result:
             _log.error('    Please install using: "sudo apt-get install '
@@ -104,11 +104,11 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return result
 
     def _check_lighttpd_install(self):
-        result = chromium.check_file_exists(
+        result = self._check_file_exists(
             self._path_to_lighttpd(), "LigHTTPd executable")
-        result = chromium.check_file_exists(self._path_to_lighttpd_php(),
+        result = self._check_file_exists(self._path_to_lighttpd_php(),
             "PHP CGI executable") and result
-        result = chromium.check_file_exists(self._path_to_lighttpd_modules(),
+        result = self._check_file_exists(self._path_to_lighttpd_modules(),
             "LigHTTPd modules") and result
         if not result:
             _log.error('    Please install using: "sudo apt-get install '
@@ -117,7 +117,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         return result
 
     def _check_wdiff_install(self):
-        result = chromium.check_file_exists(self._path_to_wdiff(), 'wdiff')
+        result = self._check_file_exists(self._path_to_wdiff(), 'wdiff')
         if not result:
             _log.error('    Please install using: "sudo apt-get install '
                        'wdiff"')

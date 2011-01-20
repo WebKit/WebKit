@@ -56,32 +56,32 @@ _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 
 
 # FIXME: This function doesn't belong in this package.
-def check_file_exists(path_to_file, file_description, override_step=None,
-                      logging=True):
-    """Verify the file is present where expected or log an error.
-
-    Args:
-        file_name: The (human friendly) name or description of the file
-            you're looking for (e.g., "HTTP Server"). Used for error logging.
-        override_step: An optional string to be logged if the check fails.
-        logging: Whether or not log the error messages."""
-    if not self._filesystem.exists(path_to_file):
-        if logging:
-            _log.error('Unable to find %s' % file_description)
-            _log.error('    at %s' % path_to_file)
-            if override_step:
-                _log.error('    %s' % override_step)
-                _log.error('')
-        return False
-    return True
-
-
 class ChromiumPort(base.Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
     def __init__(self, **kwargs):
         base.Port.__init__(self, **kwargs)
         self._chromium_base_dir = None
+
+    def _check_file_exists(self, path_to_file, file_description,
+                           override_step=None, logging=True):
+        """Verify the file is present where expected or log an error.
+
+        Args:
+            file_name: The (human friendly) name or description of the file
+                you're looking for (e.g., "HTTP Server"). Used for error logging.
+            override_step: An optional string to be logged if the check fails.
+            logging: Whether or not log the error messages."""
+        if not self._filesystem.exists(path_to_file):
+            if logging:
+                _log.error('Unable to find %s' % file_description)
+                _log.error('    at %s' % path_to_file)
+                if override_step:
+                    _log.error('    %s' % override_step)
+                    _log.error('')
+            return False
+        return True
+
 
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)
@@ -90,8 +90,8 @@ class ChromiumPort(base.Port):
         result = True
 
         dump_render_tree_binary_path = self._path_to_driver()
-        result = check_file_exists(dump_render_tree_binary_path,
-                                    'test driver') and result
+        result = self._check_file_exists(dump_render_tree_binary_path,
+                                         'test driver') and result
         if result and self.get_option('build'):
             result = self._check_driver_build_up_to_date(
                 self.get_option('configuration'))
@@ -100,8 +100,8 @@ class ChromiumPort(base.Port):
 
         helper_path = self._path_to_helper()
         if helper_path:
-            result = check_file_exists(helper_path,
-                                       'layout test helper') and result
+            result = self._check_file_exists(helper_path,
+                                             'layout test helper') and result
 
         if self.get_option('pixel_tests'):
             result = self.check_image_diff(
@@ -132,8 +132,8 @@ class ChromiumPort(base.Port):
 
     def check_image_diff(self, override_step=None, logging=True):
         image_diff_path = self._path_to_image_diff()
-        return check_file_exists(image_diff_path, 'image diff exe',
-                                 override_step, logging)
+        return self._check_file_exists(image_diff_path, 'image diff exe',
+                                       override_step, logging)
 
     def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None):
@@ -353,7 +353,7 @@ class ChromiumDriver(base.Driver):
         self._worker_number = worker_number
         self._image_path = None
         if self._port.get_option('pixel_tests'):
-            self._image_path = self._filesystem.join(
+            self._image_path = self._port._filesystem.join(
                 self._port.get_option('results_directory'),
                 'png_result%s.png' % self._worker_number)
 
@@ -445,8 +445,8 @@ class ChromiumDriver(base.Driver):
     def _output_image(self):
         """Returns the image output which driver generated."""
         png_path = self._image_path
-        if png_path and self._filesystem.isfile(png_path):
-            return self._filesystem.read_binary_file(png_path)
+        if png_path and self._port._filesystem.isfile(png_path):
+            return self._port._filesystem.read_binary_file(png_path)
         else:
             return None
 
