@@ -702,8 +702,7 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
 bool PlatformContextSkia::canAccelerate() const
 {
     return !m_state->m_fillShader // Can't accelerate with a fill gradient or pattern.
-        && !m_state->m_looper // Can't accelerate with a shadow.
-        && !m_state->m_canvasClipApplied; // Can't accelerate with a clip to path applied.
+        && !m_state->m_looper; // Can't accelerate with a shadow.
 }
 
 bool PlatformContextSkia::canvasClipApplied() const
@@ -848,7 +847,7 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
 
     m_uploadTexture->updateSubRect(bitmap.getPixels(), m_softwareDirtyRect);
     AffineTransform identity;
-    gpuCanvas()->drawTexturedRect(m_uploadTexture.get(), m_softwareDirtyRect, m_softwareDirtyRect, identity, 1.0, ColorSpaceDeviceRGB, op);
+    gpuCanvas()->drawTexturedRect(m_uploadTexture.get(), m_softwareDirtyRect, m_softwareDirtyRect, identity, 1.0, ColorSpaceDeviceRGB, op, false);
     // Clear out the region of the software canvas we just uploaded.
     m_canvas->save();
     m_canvas->resetMatrix();

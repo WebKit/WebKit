@@ -388,3 +388,7 @@ BUGWK51989 WIN LINUX : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
 
 // Started failing after r75648 on everything except Snow Leopard
 BUGWK52341 : fast/canvas/canvas-large-dimensions.html = TEXT
+
+// These will need to rebaselined after the new path drawing lands. 
+BUG_SENORBLANCO WIN LINUX : fast/canvas/canvas-composite.html = IMAGE 
+BUG_SENORBLANCO WIN LINUX : fast/canvas/canvas-transform-skewed.html = IMAGE 

@@ -34,12 +34,16 @@
 
 #include "DrawingBuffer.h"
 #include "FloatRect.h"
+#include "FloatSize.h"
 #include "GraphicsContext3D.h"
+#include "internal_glu.h"
 #include "IntRect.h"
+#include "Path.h"
 #include "PlatformString.h"
 #include "SharedGraphicsContext3D.h"
-#include "SolidFillShader.h"
-#include "TexShader.h"
+#if PLATFORM(SKIA)
+#include "SkPath.h"
+#endif
 #include "Texture.h"
 
 #define _USE_MATH_DEFINES
@@ -50,17 +54,99 @@
 
 namespace WebCore {
 
+// Number of line segments used to approximate bezier curves.
+const int pathTesselation = 30;
+typedef void (GLAPIENTRY *TESSCB)();
+typedef WTF::Vector<float> FloatVector;
+typedef WTF::Vector<double> DoubleVector;
+
 struct GLES2Canvas::State {
     State()
         : m_fillColor(0, 0, 0, 255)
         , m_alpha(1.0f)
         , m_compositeOp(CompositeSourceOver)
+        , m_clippingEnabled(false)
+    {
+    }
+    State(const State& other)
+        : m_fillColor(other.m_fillColor)
+        , m_alpha(other.m_alpha)
+        , m_compositeOp(other.m_compositeOp)
+        , m_ctm(other.m_ctm)
+        , m_clippingPaths() // Don't copy; clipping paths are tracked per-state.
+        , m_clippingEnabled(other.m_clippingEnabled)
     {
     }
     Color m_fillColor;
     float m_alpha;
     CompositeOperator m_compositeOp;
     AffineTransform m_ctm;
+    WTF::Vector<Path> m_clippingPaths;
+    bool m_clippingEnabled;
+};
+
+static inline FloatPoint operator*(const FloatPoint& f, float scale)
+{
+    return FloatPoint(f.x() * scale, f.y() * scale);
+}
+
+static inline FloatPoint operator*(float scale, const FloatPoint& f)
+{
+    return FloatPoint(f.x() * scale, f.y() * scale);
+}
+
+static inline FloatSize operator*(const FloatSize& f, float scale)
+{
+    return FloatSize(f.width() * scale, f.height() * scale);
+}
+
+static inline FloatSize operator*(float scale, const FloatSize& f)
+{
+    return FloatSize(f.width() * scale, f.height() * scale);
+}
+
+class Quadratic {
+  public:
+    Quadratic(FloatPoint a, FloatPoint b, FloatPoint c) :
+        m_a(a), m_b(b), m_c(c)
+    {
+    }
+    static Quadratic fromBezier(FloatPoint p0, FloatPoint p1, FloatPoint p2)
+    {
+        FloatSize p1s(p1.x(), p1.y());
+        FloatSize p2s(p2.x(), p2.y());
+        FloatPoint b = -2.0f * p0 + 2.0f * p1s;
+        FloatPoint c =         p0 - 2.0f * p1s + p2s;
+        return Quadratic(p0, b, c);
+    }
+    inline FloatPoint evaluate(float t)
+    {
+        return m_a + t * (m_b + t * m_c);
+    }
+    FloatPoint m_a, m_b, m_c, m_d;
+};
+
+class Cubic {
+  public:
+    Cubic(FloatPoint a, FloatPoint b, FloatPoint c, FloatPoint d) :
+        m_a(a), m_b(b), m_c(c), m_d(d) 
+    {
+    }
+    static Cubic fromBezier(FloatPoint p0, FloatPoint p1, FloatPoint p2, FloatPoint p3)
+    {
+        FloatSize p1s(p1.x(), p1.y());
+        FloatSize p2s(p2.x(), p2.y());
+        FloatSize p3s(p3.x(), p3.y());
+        FloatPoint b = -3.0f * p0 + 3.0f * p1s;
+        FloatPoint c =  3.0f * p0 - 6.0f * p1s + 3.0f * p2s;
+        FloatPoint d = -1.0f * p0 + 3.0f * p1s - 3.0f * p2s + p3s;
+        return Cubic(p0, b, c, d);
+    }
+    FloatPoint evaluate(float t)
+    {
+        return m_a + t * (m_b + t * (m_c + t * m_d));
+    }
+    FloatPoint m_a, m_b, m_c, m_d;
 };
 
 GLES2Canvas::GLES2Canvas(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const IntSize& size)
@@ -88,7 +174,7 @@ void GLES2Canvas::bindFramebuffer()
 void GLES2Canvas::clearRect(const FloatRect& rect)
 {
     bindFramebuffer();
-    if (m_state->m_ctm.isIdentity()) {
+    if (m_state->m_ctm.isIdentity() && !m_state->m_clippingEnabled) {
         m_context->scissor(rect);
         m_context->enable(GraphicsContext3D::SCISSOR_TEST);
         m_context->clearColor(Color(RGBA32(0)));
@@ -102,9 +188,17 @@ void GLES2Canvas::clearRect(const FloatRect& rect)
     }
 }
 
+void GLES2Canvas::fillPath(const Path& path)
+{
+    m_context->applyCompositeOperator(m_state->m_compositeOp);
+    applyClipping(m_state->m_clippingEnabled);
+    fillPath(path, m_state->m_fillColor);
+}
+
 void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {
     m_context->applyCompositeOperator(m_state->m_compositeOp);
+    applyClipping(m_state->m_clippingEnabled);
     m_context->useQuadVertices();
 
     AffineTransform matrix(m_flipMatrix);
@@ -153,6 +247,23 @@ void GLES2Canvas::concatCTM(const AffineTransform& affine)
     m_state->m_ctm *= affine;
 }
 
+void GLES2Canvas::clipPath(const Path& path)
+{
+    bindFramebuffer();
+    checkGLError("bindFramebuffer");
+    beginStencilDraw();
+    // Red is used so we can see it if it ends up in the color buffer.
+    Color red(255, 0, 0, 255);
+    fillPath(path, red);
+    m_state->m_clippingPaths.append(path);
+    m_state->m_clippingEnabled = true;
+}
+
+void GLES2Canvas::clipOut(const Path& path)
+{
+    ASSERT(!"clipOut is unsupported in GLES2Canvas.\n");
+}
+
 void GLES2Canvas::save()
 {
     m_stateStack.append(State(m_stateStack.last()));
@@ -162,13 +273,30 @@ void GLES2Canvas::save()
 void GLES2Canvas::restore()
 {
     ASSERT(!m_stateStack.isEmpty());
+    bool hadClippingPaths = !m_state->m_clippingPaths.isEmpty();
     m_stateStack.removeLast();
     m_state = &m_stateStack.last();
+    if (hadClippingPaths) {
+        m_context->clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
+        beginStencilDraw();
+        StateVector::const_iterator iter;
+        for (iter = m_stateStack.begin(); iter < m_stateStack.end(); ++iter) {
+            const State& state = *iter;
+            const Vector<Path>& clippingPaths = state.m_clippingPaths;
+            Vector<Path>::const_iterator pathIter;
+            for (pathIter = clippingPaths.begin(); pathIter < clippingPaths.end(); ++pathIter) {
+                // Red is used so we can see it if it ends up in the color buffer.
+                Color red(255, 0, 0, 255);
+                fillPath(*pathIter, red);
+            }
+        }
+    }
 }
 
 void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
     m_context->applyCompositeOperator(compositeOp);
+    applyClipping(false);
 
     m_context->useQuadVertices();
     m_context->setActiveTexture(GraphicsContext3D::TEXTURE0);
@@ -180,13 +308,14 @@ void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize,
 
 void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
-    drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp);
+    drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp, m_state->m_clippingEnabled);
 }
 
 
-void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp)
+void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp, bool clip)
 {
     m_context->applyCompositeOperator(compositeOp);
+    applyClipping(clip);
     const TilingData& tiles = texture->tiles();
     IntRect tileIdxRect = tiles.overlappedTileIndices(srcRect);
 
@@ -251,6 +380,214 @@ Texture* GLES2Canvas::getTexture(NativeImagePtr ptr)
     return m_context->getTexture(ptr);
 }
 
+#if PLATFORM(SKIA)
+// This is actually cross-platform code, but since its only caller is inside a
+// PLATFORM(SKIA), it will cause a warning-as-error on Chrome/Mac.
+static void interpolateQuadratic(DoubleVector* vertices, const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
+{
+    float tIncrement = 1.0f / pathTesselation, t = tIncrement;
+    Quadratic c = Quadratic::fromBezier(p0, p1, p2);
+    for (int i = 0; i < pathTesselation; ++i, t += tIncrement) {
+        FloatPoint p = c.evaluate(t);
+        vertices->append(p.x());
+        vertices->append(p.y());
+        vertices->append(1.0);
+    }
+}
+
+static void interpolateCubic(DoubleVector* vertices, const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3)
+{
+    float tIncrement = 1.0f / pathTesselation, t = tIncrement;
+    Cubic c = Cubic::fromBezier(p0, p1, p2, p3);
+    for (int i = 0; i < pathTesselation; ++i, t += tIncrement) {
+        FloatPoint p = c.evaluate(t);
+        vertices->append(p.x());
+        vertices->append(p.y());
+        vertices->append(1.0);
+    }
+}
+#endif
+
+struct PolygonData {
+    PolygonData(FloatVector* vertices, WTF::Vector<short>* indices)
+      : m_vertices(vertices)
+      , m_indices(indices)
+    {
+    }
+    FloatVector* m_vertices;
+    WTF::Vector<short>* m_indices;
+};
+
+static void beginData(GLenum type, void* data)
+{
+    ASSERT(type == GL_TRIANGLES);
+}
+
+static void edgeFlagData(GLboolean flag, void* data)
+{
+}
+
+static void vertexData(void* vertexData, void* data)
+{
+    static_cast<PolygonData*>(data)->m_indices->append(reinterpret_cast<long>(vertexData));
+}
+
+static void endData(void* data)
+{
+}
+
+static void combineData(GLdouble coords[3], void* vertexData[4],
+                                 GLfloat weight[4], void **outData, void* data)
+{
+    PolygonData* polygonData = static_cast<PolygonData*>(data);
+    int index = polygonData->m_vertices->size() / 3;
+    polygonData->m_vertices->append(static_cast<float>(coords[0]));
+    polygonData->m_vertices->append(static_cast<float>(coords[1]));
+    polygonData->m_vertices->append(1.0f);
+    *outData = reinterpret_cast<void*>(index);
+}
+
+typedef void (*TESSCB)();
+
+void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsigned* vertexBuffer, unsigned* indexBuffer)
+{
+    *vertexBuffer = m_context->graphicsContext3D()->createBuffer();
+    checkGLError("createVertexBufferFromPath, createBuffer");
+    *indexBuffer = m_context->graphicsContext3D()->createBuffer();
+    checkGLError("createVertexBufferFromPath, createBuffer");
+    DoubleVector inVertices;
+    WTF::Vector<size_t> contours;
+#if PLATFORM(SKIA)
+    const SkPath* skPath = path.platformPath();
+    SkPoint pts[4];
+    SkPath::Iter iter(*skPath, true);
+    SkPath::Verb verb;
+    while ((verb = iter.next(pts)) != SkPath::kDone_Verb) {
+        switch (verb) {
+        case SkPath::kMove_Verb:
+            inVertices.append(pts[0].fX);
+            inVertices.append(pts[0].fY);
+            inVertices.append(1.0);
+            break;
+        case SkPath::kLine_Verb:
+            inVertices.append(pts[1].fX);
+            inVertices.append(pts[1].fY);
+            inVertices.append(1.0);
+            break;
+        case SkPath::kQuad_Verb:
+            interpolateQuadratic(&inVertices, pts[0], pts[1], pts[2]);
+            break;
+        case SkPath::kCubic_Verb:
+            interpolateCubic(&inVertices, pts[0], pts[1], pts[2], pts[3]);
+            break;
+        case SkPath::kClose_Verb:
+            contours.append(inVertices.size() / 3);
+            break;
+        case SkPath::kDone_Verb:
+            break;
+        }
+    }
+#else
+    ASSERT(!"Path extraction not implemented on this platform.");
+#endif
+
+    GLUtesselator* tess = internal_gluNewTess();
+    internal_gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
+    internal_gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (TESSCB) &beginData);
+    internal_gluTessCallback(tess, GLU_TESS_VERTEX_DATA, (TESSCB) &vertexData);
+    internal_gluTessCallback(tess, GLU_TESS_END_DATA, (TESSCB) &endData);
+    internal_gluTessCallback(tess, GLU_TESS_EDGE_FLAG_DATA, (TESSCB) &edgeFlagData);
+    internal_gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (TESSCB) &combineData);
+    WTF::Vector<short> indices;
+    FloatVector vertices;
+    vertices.reserveInitialCapacity(inVertices.size());
+    PolygonData data(&vertices, &indices);
+    internal_gluTessBeginPolygon(tess, &data);
+    WTF::Vector<size_t>::const_iterator contour;
+    size_t i = 0;
+    for (contour = contours.begin(); contour != contours.end(); ++contour) {
+        internal_gluTessBeginContour(tess);
+        for (; i < *contour; ++i) {
+            vertices.append(inVertices[i * 3]);
+            vertices.append(inVertices[i * 3 + 1]);
+            vertices.append(1.0f);
+            internal_gluTessVertex(tess, &inVertices[i * 3], reinterpret_cast<void*>(i));
+        }
+        internal_gluTessEndContour(tess);
+    }
+    internal_gluTessEndPolygon(tess);
+    internal_gluDeleteTess(tess);
+
+    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, *vertexBuffer);
+    checkGLError("createVertexBufferFromPath, bindBuffer ARRAY_BUFFER");
+    m_context->graphicsContext3D()->bufferData(GraphicsContext3D::ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GraphicsContext3D::STREAM_DRAW);
+    checkGLError("createVertexBufferFromPath, bufferData ARRAY_BUFFER");
+
+    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, *indexBuffer);
+    checkGLError("createVertexBufferFromPath, bindBuffer ELEMENT_ARRAY_BUFFER");
+    m_context->graphicsContext3D()->bufferData(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(short), indices.data(), GraphicsContext3D::STREAM_DRAW);
+    checkGLError("createVertexBufferFromPath, bufferData ELEMENT_ARRAY_BUFFER");
+    *count = indices.size();
+}
+
+void GLES2Canvas::fillPath(const Path& path, const Color& color)
+{
+    int count;
+    unsigned vertexBuffer, indexBuffer;
+    createVertexBufferFromPath(path, &count, &vertexBuffer, &indexBuffer);
+    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, vertexBuffer);
+    checkGLError("bindBuffer");
+    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, indexBuffer);
+    checkGLError("bindBuffer");
+
+    AffineTransform matrix(m_flipMatrix);
+    matrix *= m_state->m_ctm;
+
+    m_context->useFillSolidProgram(matrix, color);
+    checkGLError("useFillSolidProgram");
+
+    m_context->graphicsContext3D()->drawElements(GraphicsContext3D::TRIANGLES, count, GraphicsContext3D::UNSIGNED_SHORT, 0);
+    checkGLError("drawArrays");
+
+    m_context->graphicsContext3D()->deleteBuffer(vertexBuffer);
+    checkGLError("deleteBuffer");
+
+    m_context->graphicsContext3D()->deleteBuffer(indexBuffer);
+    checkGLError("deleteBuffer");
+}
+
+void GLES2Canvas::beginStencilDraw()
+{
+    // Turn on stencil test.
+    m_context->enableStencil(true);
+    checkGLError("enable STENCIL_TEST");
+
+    // Stencil test never passes, so colorbuffer is not drawn.
+    m_context->graphicsContext3D()->stencilFunc(GraphicsContext3D::NEVER, 1, 1);
+    checkGLError("stencilFunc");
+
+    // All writes incremement the stencil buffer.
+    m_context->graphicsContext3D()->stencilOp(GraphicsContext3D::INCR,
+                                              GraphicsContext3D::INCR,
+                                              GraphicsContext3D::INCR);
+    checkGLError("stencilOp");
+}
+
+void GLES2Canvas::applyClipping(bool enable)
+{
+    m_context->enableStencil(enable);
+    if (enable) {
+        // Enable drawing only where stencil is non-zero.
+        m_context->graphicsContext3D()->stencilFunc(GraphicsContext3D::EQUAL, m_state->m_clippingPaths.size() % 256, 1);
+        checkGLError("stencilFunc");
+        // Keep all stencil values the same.
+        m_context->graphicsContext3D()->stencilOp(GraphicsContext3D::KEEP,
+                                                  GraphicsContext3D::KEEP,
+                                                  GraphicsContext3D::KEEP);
+        checkGLError("stencilOp");
+    }
+}
+
 void GLES2Canvas::checkGLError(const char* header)
 {
 #ifndef NDEBUG
@@ -283,4 +620,3 @@ void GLES2Canvas::checkGLError(const char* header)
 }
 
 }
-

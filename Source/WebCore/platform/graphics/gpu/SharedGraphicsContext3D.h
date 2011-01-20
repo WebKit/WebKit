@@ -90,6 +90,7 @@ public:
 
     // Shared logic for canvas 2d
     void applyCompositeOperator(CompositeOperator);
+    void enableStencil(bool enable);
     void useQuadVertices();
 
     void useFillSolidProgram(const AffineTransform&, const Color&);
