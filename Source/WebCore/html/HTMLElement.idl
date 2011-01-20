@@ -59,7 +59,8 @@ module html {
 
         readonly attribute HTMLCollection children;
 
-                 attribute [ConvertNullToNullString] DOMString contentEditable;
+                 attribute [ConvertNullToNullString] DOMString contentEditable
+                     setter raises(DOMException);
         readonly attribute boolean isContentEditable;
 
                  attribute boolean spellcheck;

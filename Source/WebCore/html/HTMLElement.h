@@ -61,7 +61,7 @@ public:
     virtual bool isContentRichlyEditable() const;
 
     String contentEditable() const;
-    void setContentEditable(const String&);
+    void setContentEditable(const String&, ExceptionCode&);
 
     virtual bool draggable() const;
     void setDraggable(bool);

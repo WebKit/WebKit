@@ -11,18 +11,14 @@
 <script>
 description('When contentEditable is set to invalid string, SYNTAX_ERR exception (code: 12) must be raised.')
 
-exceptionThrown = false;
+shouldThrow("document.getElementById('div').contentEditable = 'abc'", '"Error: SYNTAX_ERR: DOM Exception 12"');
+shouldBe('document.getElementById("div").getAttribute("contentEditable")','"true"');
+shouldBe('document.getElementById("div").contentEditable', '"true"');
+shouldBe('document.getElementById("div").isContentEditable', 'true');
+shouldBe('window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify")', '"read-write"');
 
-try {
-    document.getElementById("div").contentEditable = "abc";
-} catch (e) {
-    if (e.code == 12)
-        exceptionThrown = true;
-}
-
-shouldBe('exceptionThrown', 'true');
-debug("FIXME: setContentEditable with invalid string should throw exception. https://bugs.webkit.org/show_bug.cgi?id=52057");
-shouldBe('document.getElementById("div").getAttribute("contentEditable")','"abc"');
+shouldThrow("document.getElementById('div').contentEditable = ''", '"Error: SYNTAX_ERR: DOM Exception 12"');
+shouldBe('document.getElementById("div").getAttribute("contentEditable")','"true"');
 shouldBe('document.getElementById("div").contentEditable', '"true"');
 shouldBe('document.getElementById("div").isContentEditable', 'true');
 shouldBe('window.getComputedStyle(div, "").getPropertyValue("-webkit-user-modify")', '"read-write"');

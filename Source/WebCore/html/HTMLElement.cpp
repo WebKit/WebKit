@@ -729,14 +729,16 @@ void HTMLElement::setContentEditable(Attribute* attr)
     }
 }
 
-void HTMLElement::setContentEditable(const String &enabled)
+void HTMLElement::setContentEditable(const String& enabled, ExceptionCode& ec)
 {
-    if (enabled == "inherit") {
-        ExceptionCode ec;
+    if (equalIgnoringCase(enabled, "true"))
+        setAttribute(contenteditableAttr, "true", ec);
+    else if (equalIgnoringCase(enabled, "false"))
+        setAttribute(contenteditableAttr, "false", ec);
+    else if (equalIgnoringCase(enabled, "inherit"))
         removeAttribute(contenteditableAttr, ec);
-    }
     else
-        setAttribute(contenteditableAttr, enabled.isEmpty() ? "true" : enabled);
+        ec = SYNTAX_ERR;
 }
 
 bool HTMLElement::draggable() const

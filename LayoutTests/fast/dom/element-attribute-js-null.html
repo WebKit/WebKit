@@ -26,14 +26,26 @@
 
         function nullTestElementAttribute(elementType, element, attr, expected)
         {
-            element[attr] = null;
-
+            var exceptionThrown;
+            try {
+                element[attr] = null;
+            } catch (ec) {
+                exceptionThrown = ec;
+            }
             var result;
-            if (element[attr] === expected)
-                result = "<span class='pass'>TEST SUCCEEDED:</span> The value was " + resultStringifier(expected) + ".";
-            else
-                result = "<span class='fail'>TEST FAILED:</span> The value should have been " + resultStringifier(expected) + " but was " + resultStringifier(element[attr]) + ".";
-
+            if (exceptionThrown) {
+                if (expected === 'exception')
+                    result = "<span class='pass'>TEST SUCCEEDED:</span> Exception (" + exceptionThrown + ") was thrown as expected.";
+                else
+                    result = "<span class='fail'>TEST FAILED:</span> An exception was thrown unexpectedly.";
+            } else {
+                if (expected === 'exception')
+                    result = "<span class='fail'>TEST FAILED:</span> An exception should have been thrown.";
+                else if (element[attr] === expected)
+                    result = "<span class='pass'>TEST SUCCEEDED:</span> The value was " + resultStringifier(expected) + ".";
+                else
+                    result = "<span class='fail'>TEST FAILED:</span> The value should have been " + resultStringifier(expected) + " but was " + resultStringifier(element[attr]) + ".";
+            }
             result += " [tested " + elementType + "." + attr + "]";
             printOut(result);
         }
@@ -57,7 +69,7 @@
                     attributes: [
                         {name: 'nodeValue', expectedNull: null},
                          // 'prefix' only works because this is an HTMLElement type node, if it were an
-                         // XML node (created using createElementNS()) this would throw an excection. We
+                         // XML node (created using createElementNS()) this would throw an exception. We
                          // should test this further as Firefox has a different behavior.
                         {name: 'prefix', expectedNull: null},
                         {name: 'textContent', expectedNull: ''}
@@ -77,7 +89,7 @@
                         // FIXME: TEST THESE
                         // {name: 'outerHTML', expectedNull: ''},
                         // {name: 'outerText', expectedNull: ''},
-                        {name: 'contentEditable', expectedNull: 'false'}
+                        {name: 'contentEditable', expectedNull: 'exception'}
                     ]
                 },
                 {
