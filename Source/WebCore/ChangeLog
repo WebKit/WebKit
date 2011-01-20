@@ -1,3 +1,25 @@
+2011-01-19  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Cache function offsets to speed up javascript parsing
+        https://bugs.webkit.org/show_bug.cgi?id=52622
+        
+        Use cache to save function offsets and some other info.
+        This avoids quite a bit of work when reparsing the source.
+
+        * bindings/js/CachedScriptSourceProvider.h:
+        (WebCore::CachedScriptSourceProvider::cache):
+        (WebCore::CachedScriptSourceProvider::cacheSizeChanged):
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/js/ScriptSourceProvider.h:
+        (WebCore::ScriptSourceProvider::ScriptSourceProvider):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::destroyDecodedData):
+        (WebCore::CachedScript::sourceProviderCache):
+        (WebCore::CachedScript::sourceProviderCacheSizeChanged):
+        * loader/cache/CachedScript.h:
+
 2011-01-11  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

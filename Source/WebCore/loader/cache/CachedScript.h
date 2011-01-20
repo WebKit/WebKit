@@ -29,6 +29,12 @@
 #include "CachedResource.h"
 #include "Timer.h"
 
+#if USE(JSC)
+namespace JSC {
+    class SourceProviderCache;
+}
+#endif
+
 namespace WebCore {
 
     class CachedResourceLoader;
@@ -51,7 +57,11 @@ namespace WebCore {
         void checkNotify();
 
         virtual void destroyDecodedData();
-
+#if USE(JSC)        
+        // Allows JSC to cache additional information about the source.
+        JSC::SourceProviderCache* sourceProviderCache() const;
+        void sourceProviderCacheSizeChanged(int delta);
+#endif
     private:
         void decodedDataDeletionTimerFired(Timer<CachedScript>*);
         virtual PurgePriority purgePriority() const { return PurgeLast; }
@@ -59,6 +69,9 @@ namespace WebCore {
         String m_script;
         RefPtr<TextResourceDecoder> m_decoder;
         Timer<CachedScript> m_decodedDataDeletionTimer;
+#if USE(JSC)        
+        mutable OwnPtr<JSC::SourceProviderCache> m_sourceProviderCache;
+#endif
     };
 }
 

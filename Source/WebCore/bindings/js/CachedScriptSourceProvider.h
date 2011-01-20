@@ -49,9 +49,14 @@ namespace WebCore {
         int length() const { return m_cachedScript->script().length(); }
         const String& source() const { return m_cachedScript->script(); }
 
+        virtual void cacheSizeChanged(int delta) 
+        { 
+            m_cachedScript->sourceProviderCacheSizeChanged(delta);
+        }
+
     private:
         CachedScriptSourceProvider(CachedScript* cachedScript)
-            : ScriptSourceProvider(stringToUString(cachedScript->url()))
+            : ScriptSourceProvider(stringToUString(cachedScript->url()), cachedScript->sourceProviderCache())
             , m_cachedScript(cachedScript)
         {
             m_cachedScript->addClient(this);

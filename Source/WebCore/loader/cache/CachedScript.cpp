@@ -34,6 +34,10 @@
 #include "TextResourceDecoder.h"
 #include <wtf/Vector.h>
 
+#if USE(JSC)  
+#include <parser/SourceProvider.h>
+#endif
+
 namespace WebCore {
 
 CachedScript::CachedScript(const String& url, const String& charset)
@@ -111,7 +115,12 @@ void CachedScript::error(CachedResource::Status status)
 void CachedScript::destroyDecodedData()
 {
     m_script = String();
-    setDecodedSize(0);
+    unsigned extraSize = 0;
+#if USE(JSC)
+    // FIXME: SourceInfoCache should be wiped out too but not this easily.
+    extraSize = m_sourceProviderCache ? m_sourceProviderCache->byteSize() : 0;
+#endif
+    setDecodedSize(extraSize);
     if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
         makePurgeable(true);
 }
@@ -120,5 +129,19 @@ void CachedScript::decodedDataDeletionTimerFired(Timer<CachedScript>*)
 {
     destroyDecodedData();
 }
+
+#if USE(JSC)
+JSC::SourceProviderCache* CachedScript::sourceProviderCache() const
+{   
+    if (!m_sourceProviderCache) 
+        m_sourceProviderCache = adoptPtr(new JSC::SourceProviderCache); 
+    return m_sourceProviderCache.get(); 
+}
+
+void CachedScript::sourceProviderCacheSizeChanged(int delta)
+{
+    setDecodedSize(decodedSize() + delta);
+}
+#endif
 
 } // namespace WebCore

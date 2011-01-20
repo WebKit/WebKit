@@ -30,19 +30,45 @@
 #define SourceProvider_h
 
 #include "UString.h"
+#include <wtf/HashMap.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/text/TextPosition.h>
+
 
 namespace JSC {
 
+    class SourceProviderCache {
+    public:
+        struct Item {};
+
+        SourceProviderCache() : m_contentByteSize(0) {}
+        ~SourceProviderCache() { deleteAllValues(m_map); }
+        
+        unsigned byteSize() const { return m_contentByteSize + sizeof(*this) + m_map.capacity() * sizeof(Item*); } 
+        void add(int sourcePosition, PassOwnPtr<Item> item, unsigned size) { m_map.add(sourcePosition, item.leakPtr()); m_contentByteSize += size; }
+        const Item* get(int sourcePosition) const { return m_map.get(sourcePosition); }
+
+    private:
+        HashMap<int, Item*> m_map;
+        unsigned m_contentByteSize;
+    };
+
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
-        SourceProvider(const UString& url)
+        SourceProvider(const UString& url, SourceProviderCache* cache = 0)
             : m_url(url)
             , m_validated(false)
+            , m_cache(cache ? cache : new SourceProviderCache)
+            , m_cacheOwned(!cache)
         {
         }
-        virtual ~SourceProvider() { }
+        virtual ~SourceProvider()
+        {
+            if (m_cacheOwned)
+                delete m_cache;
+        }
 
         virtual UString getRange(int start, int end) const = 0;
         virtual const UChar* data() const = 0;
@@ -55,9 +81,16 @@ namespace JSC {
         bool isValid() const { return m_validated; }
         void setValid() { m_validated = true; }
 
+        SourceProviderCache* cache() const { return m_cache; }
+        void notifyCacheSizeChanged(int delta) { if (!m_cacheOwned) cacheSizeChanged(delta); }
+        
     private:
+        virtual void cacheSizeChanged(int delta) { UNUSED_PARAM(delta); }
+
         UString m_url;
         bool m_validated;
+        SourceProviderCache* m_cache;
+        bool m_cacheOwned;
     };
 
     class UStringSourceProvider : public SourceProvider {

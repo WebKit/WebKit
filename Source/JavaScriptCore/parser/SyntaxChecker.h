@@ -112,6 +112,7 @@ public:
     
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
+    static const bool CanUseFunctionCache = true;
 
     int createSourceElements() { return 1; }
     ExpressionType makeFunctionCallNode(int, int, int, int, int) { return CallExpr; }

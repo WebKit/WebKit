@@ -33,6 +33,7 @@ using namespace JSC;
 #include "JSGlobalData.h"
 #include "NodeInfo.h"
 #include "ASTBuilder.h"
+#include "SourceProvider.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/WTFThreadData.h>
 #include <utility>
@@ -93,6 +94,39 @@ private:
         }
         StringImpl* m_ident;
         bool m_isLoop;
+    };
+    
+    struct CachedFunctionInfo : public SourceProviderCache::Item {
+        CachedFunctionInfo(int closeBraceLine, int closeBracePos)
+            : closeBraceLine(closeBraceLine) 
+            , closeBracePos(closeBracePos)
+        {
+        }
+        unsigned approximateByteSize() const
+        {
+            // The identifiers are uniqued strings so most likely there are few names that actually use any additional memory.
+            static const unsigned assummedAverageIdentifierSize = sizeof(RefPtr<StringImpl>) + 2;
+            unsigned size = sizeof(*this);
+            size += usedVariables.size() * assummedAverageIdentifierSize;
+            size += writtenVariables.size() * assummedAverageIdentifierSize;
+            return size;
+        }
+        JSToken closeBraceToken() const 
+        {
+            JSToken token;
+            token.m_type = CLOSEBRACE;
+            token.m_data.intValue = closeBracePos;
+            token.m_info.startOffset = closeBracePos;
+            token.m_info.endOffset = closeBracePos + 1;
+            token.m_info.line = closeBraceLine; 
+            return token;
+        }
+
+        int closeBraceLine;
+        int closeBracePos;
+        bool usesEval;
+        Vector<RefPtr<StringImpl> > usedVariables;
+        Vector<RefPtr<StringImpl> > writtenVariables;
     };
 
     void next(Lexer::LexType lexType = Lexer::IdentifyReservedWords)
@@ -417,6 +451,37 @@ private:
         bool strictMode() const { return m_strictMode; }
         bool isValidStrictMode() const { return m_isValidStrictMode; }
         bool shadowsArguments() const { return m_shadowsArguments; }
+        
+        void copyCapturedVariablesToVector(const IdentifierSet& capturedVariables, Vector<RefPtr<StringImpl> >& vector)
+        {
+            IdentifierSet::iterator end = capturedVariables.end();
+            for (IdentifierSet::iterator it = capturedVariables.begin(); it != end; ++it) {
+                if (m_declaredVariables.contains(*it))
+                    continue;
+                vector.append(*it);
+            }
+            vector.shrinkToFit();
+        }
+
+        void saveFunctionInfo(CachedFunctionInfo* info)
+        {
+            ASSERT(m_isFunction);
+            info->usesEval = m_usesEval;
+            copyCapturedVariablesToVector(m_writtenVariables, info->writtenVariables);
+            copyCapturedVariablesToVector(m_usedVariables, info->usedVariables);
+        }
+
+        void restoreFunctionInfo(const CachedFunctionInfo* info)
+        {
+            ASSERT(m_isFunction);
+            m_usesEval = info->usesEval;
+            unsigned size = info->usedVariables.size();
+            for (unsigned i = 0; i < size; ++i)
+                m_usedVariables.add(info->usedVariables[i]);
+            size = info->writtenVariables.size();
+            for (unsigned i = 0; i < size; ++i)
+                m_writtenVariables.add(info->writtenVariables[i]);
+        }
 
     private:
         JSGlobalData* m_globalData;
@@ -543,6 +608,13 @@ private:
     }
 
     ScopeStack m_scopeStack;
+
+    const CachedFunctionInfo* findCachedFunctionInfo(int openBracePos) 
+    {
+        return m_functionCache ? static_cast<const CachedFunctionInfo*>(m_functionCache->get(openBracePos)) : 0;
+    }
+
+    SourceProviderCache* m_functionCache;
 };
 
 const char* jsParse(JSGlobalData* globalData, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, const SourceCode* source)
@@ -566,6 +638,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     , m_statementDepth(0)
     , m_nonTrivialExpressionCount(0)
     , m_lastIdentifier(0)
+    , m_functionCache(m_lexer->sourceProvider()->cache())
 {
     ScopeRef scope = pushScope();
     if (isFunction)
@@ -582,6 +655,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
 
 const char* JSParser::parseProgram()
 {
+    unsigned oldFunctionCacheSize = m_functionCache ? m_functionCache->byteSize() : 0;
     ASTBuilder context(m_globalData, m_lexer);
     if (m_lexer->isReparsing())
         m_statementDepth--;
@@ -596,6 +670,10 @@ const char* JSParser::parseProgram()
         features |= StrictModeFeature;
     if (scope->shadowsArguments())
         features |= ShadowsArgumentsFeature;
+    
+    unsigned functionCacheSize = m_functionCache ? m_functionCache->byteSize() : 0;
+    if (functionCacheSize != oldFunctionCacheSize)
+        m_lexer->sourceProvider()->notifyCacheSizeChanged(functionCacheSize - oldFunctionCacheSize);
 
     m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
                                            m_lastLine, context.numConstants(), capturedVariables);
@@ -1239,6 +1317,23 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
 
     openBracePos = m_token.m_data.intValue;
     bodyStartLine = tokenLine();
+
+    if (const CachedFunctionInfo* cachedInfo = TreeBuilder::CanUseFunctionCache ? findCachedFunctionInfo(openBracePos) : 0) {
+        // If we know about this function already, we can use the cached info and skip the parser to the end of the function.
+        body = context.createFunctionBody(strictMode());
+
+        functionScope->restoreFunctionInfo(cachedInfo);
+        failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
+
+        closeBracePos = cachedInfo->closeBracePos;
+        m_token = cachedInfo->closeBraceToken();
+        m_lexer->setOffset(m_token.m_info.endOffset);
+        m_lexer->setLineNumber(m_token.m_info.line);
+
+        next();
+        return true;
+    }
+
     next();
 
     body = parseFunctionBody(context);
@@ -1247,9 +1342,24 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
         failIfTrue(m_globalData->propertyNames->arguments == *name);
         failIfTrue(m_globalData->propertyNames->eval == *name);
     }
+    closeBracePos = m_token.m_data.intValue;
+    
+    // Cache the tokenizer state and the function scope the first time the function is parsed.
+    // Any future reparsing can then skip the function.
+    static const int minimumFunctionLengthToCache = 64;
+    OwnPtr<CachedFunctionInfo> newInfo;
+    int functionLength = closeBracePos - openBracePos;
+    if (TreeBuilder::CanUseFunctionCache && m_functionCache && functionLength > minimumFunctionLengthToCache) {
+        newInfo = adoptPtr(new CachedFunctionInfo(m_token.m_info.line, closeBracePos));
+        functionScope->saveFunctionInfo(newInfo.get());
+    }
+    
     failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
     matchOrFail(CLOSEBRACE);
-    closeBracePos = m_token.m_data.intValue;
+
+    if (newInfo)
+        m_functionCache->add(openBracePos, newInfo.release(), newInfo->approximateByteSize());
+
     next();
     return true;
 }

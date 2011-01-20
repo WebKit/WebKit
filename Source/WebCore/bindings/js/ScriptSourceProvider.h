@@ -34,8 +34,8 @@ namespace WebCore {
 
     class ScriptSourceProvider : public JSC::SourceProvider {
     public:
-        ScriptSourceProvider(const JSC::UString& url)
-            : SourceProvider(url)
+        ScriptSourceProvider(const JSC::UString& url, JSC::SourceProviderCache* cache = 0)
+            : SourceProvider(url, cache)
         {
         }
 
