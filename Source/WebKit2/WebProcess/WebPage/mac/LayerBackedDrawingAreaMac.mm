@@ -118,7 +118,7 @@ void LayerBackedDrawingArea::syncCompositingLayers()
     m_hostingLayer->syncCompositingStateForThisLayerOnly();
     m_backingLayer->syncCompositingStateForThisLayerOnly();
 
-    bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateRecursive();
+    bool didSync = m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
     if (!didSync) {
     
     }

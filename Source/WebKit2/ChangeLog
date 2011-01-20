@@ -1,3 +1,10 @@
+2011-01-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the WebKit2 build.
+
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::syncCompositingLayers):
+
 2011-01-19  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.
