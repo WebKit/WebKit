@@ -38,6 +38,7 @@ use Term::ReadKey;
 use VCSUtils;
 use webkitdirs;
 
+sub fixEnvironment();
 sub normalizeLineEndings($$);
 sub removeLongestCommonPrefixEndingInDoubleNewline(\%);
 sub isCommitLogEditor($);
@@ -58,6 +59,8 @@ my $log = $ARGV[0];
 if (!$log) {
     usage();
 }
+
+fixEnvironment();
 
 my $baseDir = baseProductDir();
 
@@ -281,6 +284,21 @@ if ($foundComment) {
 }
 
 unlink "$log.edit";
+
+sub fixEnvironment()
+{
+    return unless isMsys() && isGit();
+
+    # When this script gets run from inside git commit, msys-style paths in the
+    # environment will have been turned into Windows-style paths with forward
+    # slashes. This screws up functions like File::Spec->rel2abs, which seem to
+    # rely on $PWD having an msys-style path. We convert the paths back to
+    # msys-style here by transforming "c:/foo" to "/c/foo" (e.g.). See
+    # <http://webkit.org/b/48527>.
+    foreach my $key (keys %ENV) {
+        $ENV{$key} =~ s#^([[:alpha:]]):/#/$1/#;
+    }
+}
 
 sub normalizeLineEndings($$)
 {

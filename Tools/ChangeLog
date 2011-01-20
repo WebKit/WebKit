@@ -1,3 +1,21 @@
+2011-01-19  Adam Roben  <aroben@apple.com>
+
+        Convert paths in environment variables back to msys-style inside commit-log-editor
+
+        When this script gets run from inside git commit, msys-style paths in the environment will
+        have been turned into Windows-style paths with forward slashes. This screws up functions
+        like File::Spec->rel2abs, which seem to rely on $PWD having an msys-style path. We convert
+        the paths back to msys-style before doing anything else.
+
+        Fixes <http://webkit.org/b/48527> commit-log-editor uses full paths for section headers when
+        using msysgit's Perl and multiple ChangeLogs have been edited
+
+        Reviewed by David Kilzer.
+
+        * Scripts/commit-log-editor: Call fixEnvironment before doing anything else.
+        (fixEnvironment): Added. When run in msys in conjunction with git (i.e., when invoked from
+        inside git commit), convert Windows-style paths in the environment back to msys-style paths.
+
 2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
 
         [Win] Unreviewed build fix after r76248.
