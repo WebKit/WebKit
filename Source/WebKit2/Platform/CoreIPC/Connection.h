@@ -115,23 +115,21 @@ public:
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
 
-    // FIXME: This variant of send is deprecated, all clients should move to the overload that takes a message.
-    template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
+    static const unsigned long long NoTimeout = 10000000000ULL;
 
     template<typename T> bool send(const T& message, uint64_t destinationID);
-
-    static const unsigned long long NoTimeout = 10000000000ULL;
-    // FIXME: This variant of sendSync is deprecated, all clients should move to the overload that takes a message.
-    template<typename E, typename T, typename U> bool sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout = NoTimeout);
-
     template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = NoTimeout);
     
-    template<typename E> PassOwnPtr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);
-
     PassOwnPtr<ArgumentEncoder> createSyncMessageArgumentEncoder(uint64_t destinationID, uint64_t& syncRequestID);
     bool sendMessage(MessageID, PassOwnPtr<ArgumentEncoder>);
     bool sendSyncReply(PassOwnPtr<ArgumentEncoder>);
 
+    // FIXME: These variants of senc, sendSync and waitFor are all deprecated.
+    // All clients should move to the overloads that take a message type.
+    template<typename E, typename T> bool send(E messageID, uint64_t destinationID, const T& arguments);
+    template<typename E, typename T, typename U> bool sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout = NoTimeout);
+    template<typename E> PassOwnPtr<ArgumentDecoder> waitFor(E messageID, uint64_t destinationID, double timeout);
+    
 private:
     template<typename T> class Message {
     public:
@@ -300,15 +298,6 @@ private:
 #endif
 };
 
-template<typename E, typename T>
-bool Connection::send(E messageID, uint64_t destinationID, const T& arguments)
-{
-    OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(destinationID);
-    argumentEncoder->encode(arguments);
-
-    return sendMessage(MessageID(messageID), argumentEncoder.release());
-}
-
 template<typename T> bool Connection::send(const T& message, uint64_t destinationID)
 {
     OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(destinationID);
@@ -316,6 +305,25 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
     
     return sendMessage(MessageID(T::messageID), argumentEncoder.release());
 }
+
+template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout)
+{
+    uint64_t syncRequestID = 0;
+    OwnPtr<ArgumentEncoder> argumentEncoder = createSyncMessageArgumentEncoder(destinationID, syncRequestID);
+    
+    // Encode the rest of the input arguments.
+    argumentEncoder->encode(message);
+
+    // Now send the message and wait for a reply.
+    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(T::messageID, MessageID::SyncMessage), syncRequestID, argumentEncoder.release(), timeout);
+    if (!replyDecoder)
+        return false;
+
+    // Decode the reply.
+    return replyDecoder->decode(const_cast<typename T::Reply&>(reply));
+}
+
+// These three member functions are all deprecated.
 
 template<typename E, typename T, typename U>
 inline bool Connection::sendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout)
@@ -335,21 +343,13 @@ inline bool Connection::sendSync(E messageID, uint64_t destinationID, const T& a
     return replyDecoder->decode(const_cast<U&>(reply));
 }
 
-template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout)
+template<typename E, typename T>
+bool Connection::send(E messageID, uint64_t destinationID, const T& arguments)
 {
-    uint64_t syncRequestID = 0;
-    OwnPtr<ArgumentEncoder> argumentEncoder = createSyncMessageArgumentEncoder(destinationID, syncRequestID);
-    
-    // Encode the rest of the input arguments.
-    argumentEncoder->encode(message);
+    OwnPtr<ArgumentEncoder> argumentEncoder = ArgumentEncoder::create(destinationID);
+    argumentEncoder->encode(arguments);
 
-    // Now send the message and wait for a reply.
-    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(T::messageID, MessageID::SyncMessage), syncRequestID, argumentEncoder.release(), timeout);
-    if (!replyDecoder)
-        return false;
-
-    // Decode the reply.
-    return replyDecoder->decode(const_cast<typename T::Reply&>(reply));
+    return sendMessage(MessageID(messageID), argumentEncoder.release());
 }
 
 template<typename E> inline PassOwnPtr<ArgumentDecoder> Connection::waitFor(E messageID, uint64_t destinationID, double timeout)

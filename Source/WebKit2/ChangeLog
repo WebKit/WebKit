@@ -1,5 +1,16 @@
 2011-01-19  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Put the deprecated Connection member functions next to eachother
+        https://bugs.webkit.org/show_bug.cgi?id=52767
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::sendSync):
+        (CoreIPC::Connection::send):
+
+2011-01-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         When resizing, the web process should repaint the page
