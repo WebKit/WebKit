@@ -1,3 +1,18 @@
+2011-01-20  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/8890203> [RegexFuzz] Crash in generated code (52773)
+        https://bugs.webkit.org/show_bug.cgi?id=52773
+
+        Fixed case where an existing DataLabelPtr is overwritten.  The
+        replacing DataLabelPtr is now resolved immediately in
+        linkDataLabelToBacktrackIfExists().  Cleanup - eliminated bool
+        return value for the routine as it was never used.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::TermGenerationState::linkDataLabelToBacktrackIfExists):
+
 2011-01-20  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
