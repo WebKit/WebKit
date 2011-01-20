@@ -1,3 +1,11 @@
+2011-01-20  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix compilation error in GTK WebKit2.
+
+        * Platform/CoreIPC/gtk/ConnectionGtk.cpp:
+        (CoreIPC::readBytesFromSocket):
+        (CoreIPC::writeBytesToSocket):
+
 2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

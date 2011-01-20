@@ -41,7 +41,7 @@ static const size_t initialMessageBufferSize = 4096;
 static int readBytesFromSocket(int fileDescriptor, uint8_t* ptr, size_t length)
 {
     ASSERT(fileDescriptor > 0);
-    ASSERT(buffer);
+    ASSERT(ptr);
     ASSERT(length > 0);
 
     ssize_t numberOfBytesRead = 0;
@@ -69,7 +69,7 @@ static int readBytesFromSocket(int fileDescriptor, uint8_t* ptr, size_t length)
 static bool writeBytesToSocket(int fileDescriptor, uint8_t* ptr, size_t length)
 {
     ASSERT(fileDescriptor > 0);
-    ASSERT(buffer);
+    ASSERT(ptr);
     ASSERT(length > 0);
 
     ssize_t numberOfBytesWritten = 0;
