@@ -165,7 +165,7 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
         return available;
     }
 
-    OwnPtr<WKCACFLayerRenderer> testLayerRenderer = WKCACFLayerRenderer::create(0);
+    RefPtr<WKCACFLayerRenderer> testLayerRenderer = WKCACFLayerRenderer::create();
     testLayerRenderer->setHostWindow(testWindow);
     available = testLayerRenderer->createRenderer();
     ::DestroyWindow(testWindow);
@@ -173,15 +173,15 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
     return available;
 }
 
-PassOwnPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create(WKCACFLayerRendererClient* client)
+PassRefPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create()
 {
     if (!acceleratedCompositingAvailable())
         return 0;
-    return new WKCACFLayerRenderer(client);
+    return adoptRef(new WKCACFLayerRenderer());
 }
 
-WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
-    : m_client(client)
+WKCACFLayerRenderer::WKCACFLayerRenderer()
+    : m_client(0)
     , m_mightBeAbleToCreateDeviceLater(true)
     , m_rootLayer(PlatformCALayer::create(PlatformCALayer::LayerTypeRootLayer, 0))
     , m_context(wkCACFContextCreate())

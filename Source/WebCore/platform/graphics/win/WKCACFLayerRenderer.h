@@ -32,9 +32,8 @@
 #include "Timer.h"
 
 #include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -60,15 +59,16 @@ public:
 // FIXME: Currently there is a WKCACFLayerRenderer for each WebView and each
 // has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.
 // (https://bugs.webkit.org/show_bug.cgi?id=31855)
-class WKCACFLayerRenderer {
-    WTF_MAKE_NONCOPYABLE(WKCACFLayerRenderer);
+class WKCACFLayerRenderer : public RefCounted<WKCACFLayerRenderer> {
     friend PlatformCALayer;
 
 public:
-    static PassOwnPtr<WKCACFLayerRenderer> create(WKCACFLayerRendererClient*);
+    static PassRefPtr<WKCACFLayerRenderer> create();
     ~WKCACFLayerRenderer();
 
     static bool acceleratedCompositingAvailable();
+
+    void setClient(WKCACFLayerRendererClient* client) { m_client = client; }
 
     void setRootChildLayer(PlatformCALayer*);
     void layerTreeDidChange();
@@ -82,7 +82,7 @@ protected:
     void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>);
 
 private:
-    WKCACFLayerRenderer(WKCACFLayerRendererClient*);
+    WKCACFLayerRenderer();
 
     bool createRenderer();
     void destroyRenderer();

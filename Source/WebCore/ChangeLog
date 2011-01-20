@@ -1,3 +1,36 @@
+2011-01-19  Adam Roben  <aroben@apple.com>
+
+        Make WKCACFLayerRenderer ref-counted
+
+        This will be needed to handle cases where the client might release its reference to us while
+        we're calling out to it.
+
+        WKCACFLayerRenderer now has a setClient function, which is used rather than passing the
+        client to create(). This allows clients to null out the client pointer when they're done
+        with the renderer.
+
+        Fixes <http://webkit.org/b/52749> WKCACFLayerRenderer should be
+        ref-counted
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        (WebCore::MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow):
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        Updated for WKCACFLayerRenderer changes.
+
+        * platform/graphics/win/WKCACFLayerRenderer.cpp:
+        (WebCore::WKCACFLayerRenderer::acceleratedCompositingAvailable): Updated for changes to
+        create().
+        (WebCore::WKCACFLayerRenderer::create): No longer takes a WKCACFLayerRendererClient. Now
+        returns a PassOwnPtr.
+        (WebCore::WKCACFLayerRenderer::WKCACFLayerRenderer): No longer takes a
+        WKCACFLayerRendererClient.
+
+        * platform/graphics/win/WKCACFLayerRenderer.h: Made WKCACFLayerRenderer inherit from
+        RefCounted.
+        (WebCore::WKCACFLayerRenderer::setClient): Added this simple setter.
+
 2011-01-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][V8] Unreviewed buildfix after r76248.

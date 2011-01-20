@@ -387,6 +387,11 @@ WebView::~WebView()
     ASSERT(!m_preferences);
     ASSERT(!m_viewWindow);
 
+#if USE(ACCELERATED_COMPOSITING)
+    ASSERT(!m_layerRenderer);
+    ASSERT(!m_backingLayer);
+#endif
+
     WebViewCount--;
     gClassCount--;
     gClassNameCount.remove("WebView");
@@ -6280,11 +6285,11 @@ void WebView::setAcceleratedCompositing(bool accelerated)
         return;
 
     if (accelerated) {
-        m_layerRenderer = WKCACFLayerRenderer::create(this);
+        m_layerRenderer = WKCACFLayerRenderer::create();
         if (m_layerRenderer) {
             m_isAcceleratedCompositing = true;
 
-            // Create the root layer
+            m_layerRenderer->setClient(this);
             ASSERT(m_viewWindow);
             m_layerRenderer->setHostWindow(m_viewWindow);
 
@@ -6307,6 +6312,8 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             deleteBackingStoreSoon();
         }
     } else {
+        ASSERT(m_layerRenderer);
+        m_layerRenderer->setClient(0);
         m_layerRenderer = 0;
         m_backingLayer = 0;
         m_isAcceleratedCompositing = false;

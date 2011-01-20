@@ -1,5 +1,24 @@
 2011-01-19  Adam Roben  <aroben@apple.com>
 
+        Update for WKCACFLayerRenderer changes
+
+        Fixes <http://webkit.org/b/52749> WKCACFLayerRenderer should be
+        ref-counted
+
+        Reviewed by Simon Fraser.
+
+        * WebView.cpp:
+        (WebView::~WebView): Added some assertions to make sure we've gotten rid of our
+        compositing-related members. My biggest concern was making sure that m_layerRenderer was
+        gone, which would also mean we had nulled out its client pointer.
+        (WebView::setAcceleratedCompositing): Changed to call WKCACFLayerRenderer::setClient instead
+        of passing the client into create(), and to clear out the client before nulling out
+        m_layerRenderer.
+
+        * WebView.h: Changed m_layerRenderer from an OwnPtr to a RefPtr.
+
+2011-01-19  Adam Roben  <aroben@apple.com>
+
         Teach WebView::scrollBackingStore about compositing mode
 
         Test:

@@ -30,7 +30,6 @@
 #include "PlatformCALayer.h"
 #include "WKCACFLayerRenderer.h"
 #endif
-#include <wtf/OwnPtr.h>
 
 typedef unsigned WPARAM;
 typedef long LPARAM;
@@ -71,7 +70,7 @@ private:
 
     MediaPlayerPrivateFullscreenClient* m_client;
 #if USE(ACCELERATED_COMPOSITING)
-    OwnPtr<WKCACFLayerRenderer> m_layerRenderer;
+    RefPtr<WKCACFLayerRenderer> m_layerRenderer;
     RefPtr<PlatformCALayer> m_rootChild;
 #endif
     HWND m_hwnd;

@@ -40,7 +40,7 @@ MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow(MediaPlay
     : m_client(client)
     , m_hwnd(0)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_layerRenderer(WKCACFLayerRenderer::create(0))
+    , m_layerRenderer(WKCACFLayerRenderer::create())
 #endif
 {
 }

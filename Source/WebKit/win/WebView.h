@@ -1056,7 +1056,7 @@ protected:
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
     void setAcceleratedCompositing(bool);
 
-    OwnPtr<WebCore::WKCACFLayerRenderer> m_layerRenderer;
+    RefPtr<WebCore::WKCACFLayerRenderer> m_layerRenderer;
     OwnPtr<WebCore::GraphicsLayer> m_backingLayer;
     bool m_isAcceleratedCompositing;
 #endif
