@@ -1,3 +1,10 @@
+2011-01-20  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, remove GTK result for window-onerror2 as it's the same
+        as the generic results file.
+
+        * platform/gtk/fast/events/window-onerror2-expected.txt: Removed.
+
 2011-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Roben.
