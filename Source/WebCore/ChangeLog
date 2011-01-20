@@ -1,5 +1,14 @@
 2011-01-20  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: build fix.
+
+        * inspector/InspectorState.h:
+        (WebCore::InspectorState::setBoolean):
+        (WebCore::InspectorState::setString):
+        (WebCore::InspectorState::setLong):
+
+2011-01-20  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: further simplify InspectorState.

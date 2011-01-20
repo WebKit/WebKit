@@ -62,9 +62,9 @@ public:
     long getLong(InspectorPropertyId);
     PassRefPtr<InspectorObject> getObject(InspectorPropertyId);
 
-    void setBoolean(InspectorPropertyId, bool value) { setValue(propertyId, InspectorBasicValue::create(value)); }
-    void setString(InspectorPropertyId, const String& value) { setValue(propertyId, InspectorString::create(value)); }
-    void setLong(InspectorPropertyId, long value) { setValue(propertyId, InspectorBasicValue::create((double)value)); }
+    void setBoolean(InspectorPropertyId propertyId, bool value) { setValue(propertyId, InspectorBasicValue::create(value)); }
+    void setString(InspectorPropertyId propertyId, const String& value) { setValue(propertyId, InspectorString::create(value)); }
+    void setLong(InspectorPropertyId propertyId, long value) { setValue(propertyId, InspectorBasicValue::create((double)value)); }
     void setObject(InspectorPropertyId, PassRefPtr<InspectorObject> value);
 
 private:
