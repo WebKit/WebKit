@@ -1,5 +1,11 @@
 2011-01-20  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, new GTK svg test baselines as follow-up of r76236.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt: Added.
+
+2011-01-20  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, update window-onerror2.html baselines as follow-up of r76216.
 
         * platform/gtk/fast/events/window-onerror2-expected.txt:
