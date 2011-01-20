@@ -64,10 +64,6 @@ namespace WebCore {
     class StyleMedia;
     class WebKitPoint;
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    class RequestAnimationFrameCallback;
-#endif
-
     struct WindowFeatures;
 
     typedef int ExceptionCode;
@@ -240,12 +236,6 @@ namespace WebCore {
         void clearTimeout(int timeoutId);
         int setInterval(PassOwnPtr<ScheduledAction>, int timeout, ExceptionCode&);
         void clearInterval(int timeoutId);
-
-        // WebKit animation extensions
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-        int webkitRequestAnimationFrame(PassRefPtr<RequestAnimationFrameCallback>, Element*);
-        void webkitCancelRequestAnimationFrame(int id);
-#endif
 
         // Events
         // EventTarget API

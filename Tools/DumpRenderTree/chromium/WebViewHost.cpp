@@ -624,19 +624,6 @@ void WebViewHost::scheduleComposite()
     didInvalidateRect(clientRect);
 }
 
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-static void invokeScheduleComposite(void* context)
-{
-    WebViewHost* wvh = static_cast<WebViewHost*>(context);
-    wvh->scheduleComposite();
-}
-
-void WebViewHost::scheduleAnimation()
-{
-    webkit_support::PostDelayedTask(invokeScheduleComposite, this, 0);
-}
-#endif
-
 void WebViewHost::didFocus()
 {
     m_shell->setFocus(webWidget(), true);
@@ -1451,9 +1438,6 @@ void WebViewHost::paintRect(const WebRect& rect)
 
 void WebViewHost::paintInvalidatedRegion()
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    webWidget()->animate();
-#endif
     webWidget()->layout();
     WebSize widgetSize = webWidget()->size();
     WebRect clientRect(0, 0, widgetSize.width, widgetSize.height);

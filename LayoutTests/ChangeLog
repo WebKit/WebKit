@@ -1,5 +1,30 @@
 2011-01-19  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed, rolling out r76194.
+        http://trac.webkit.org/changeset/76194
+        https://bugs.webkit.org/show_bug.cgi?id=51218
+
+        Caused mysterious compile failure on the chromium win
+        build.webkit.org bots
+
+        * fast/animation/request-animation-frame-cancel-expected.txt: Removed.
+        * fast/animation/request-animation-frame-cancel.html: Removed.
+        * fast/animation/request-animation-frame-cancel2-expected.txt: Removed.
+        * fast/animation/request-animation-frame-cancel2.html: Removed.
+        * fast/animation/request-animation-frame-display-expected.txt: Removed.
+        * fast/animation/request-animation-frame-display.html: Removed.
+        * fast/animation/request-animation-frame-expected.txt: Removed.
+        * fast/animation/request-animation-frame-within-callback-expected.txt: Removed.
+        * fast/animation/request-animation-frame-within-callback.html: Removed.
+        * fast/animation/request-animation-frame.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2011-01-19  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Implement mozilla's requestAnimationFrame API

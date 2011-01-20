@@ -147,9 +147,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didInvalidateRect(const WebKit::WebRect&);
     virtual void didScrollRect(int dx, int dy, const WebKit::WebRect&);
     virtual void scheduleComposite();
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    virtual void scheduleAnimation();
-#endif
     virtual void didFocus();
     virtual void didBlur();
     virtual void didChangeCursor(const WebKit::WebCursorInfo&);

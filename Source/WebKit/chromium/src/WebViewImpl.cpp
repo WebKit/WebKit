@@ -972,18 +972,6 @@ void WebViewImpl::resize(const WebSize& newSize)
 #endif
 }
 
-void WebViewImpl::animate()
-{
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    WebFrameImpl* webframe = mainFrameImpl();
-    if (webframe) {
-        FrameView* view = webframe->frameView();
-        if (view)
-            view->serviceScriptedAnimations();
-    }
-#endif
-}
-
 void WebViewImpl::layout()
 {
     WebFrameImpl* webframe = mainFrameImpl();

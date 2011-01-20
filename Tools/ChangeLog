@@ -1,3 +1,16 @@
+2011-01-19  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r76194.
+        http://trac.webkit.org/changeset/76194
+        https://bugs.webkit.org/show_bug.cgi?id=51218
+
+        Caused mysterious compile failure on the chromium win
+        build.webkit.org bots
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintInvalidatedRegion):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-01-19  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.

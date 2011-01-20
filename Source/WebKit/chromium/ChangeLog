@@ -1,5 +1,24 @@
 2011-01-19  James Robinson  <jamesr@chromium.org>
 
+        Unreviewed, rolling out r76194.
+        http://trac.webkit.org/changeset/76194
+        https://bugs.webkit.org/show_bug.cgi?id=51218
+
+        Caused mysterious compile failure on the chromium win
+        build.webkit.org bots
+
+        * features.gypi:
+        * public/WebWidget.h:
+        * public/WebWidgetClient.h:
+        * src/ChromeClientImpl.cpp:
+        * src/ChromeClientImpl.h:
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+
+2011-01-19  James Robinson  <jamesr@chromium.org>
+
         Reviewed by Darin Fisher.
 
         Implement mozilla's requestAnimationFrame API

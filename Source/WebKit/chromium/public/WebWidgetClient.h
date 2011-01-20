@@ -56,9 +56,6 @@ public:
     // Called when a call to WebWidget::composite is required
     virtual void scheduleComposite() { }
 
-    // Called when a call to WebWidget::animate is required
-    virtual void scheduleAnimation() { }
-
     // Called when the widget acquires or loses focus, respectively.
     virtual void didFocus() { }
     virtual void didBlur() { }

@@ -151,10 +151,6 @@ void WebPopupMenuImpl::resize(const WebSize& newSize)
     }
 }
 
-void WebPopupMenuImpl::animate()
-{
-}
-
 void WebPopupMenuImpl::layout()
 {
 }
@@ -301,10 +297,6 @@ void WebPopupMenuImpl::invalidateContentsAndWindow(const IntRect& paintRect, boo
 void WebPopupMenuImpl::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
     invalidateContentsAndWindow(updateRect, immediate);
-}
-
-void WebPopupMenuImpl::scheduleAnimation()
-{
 }
 
 void WebPopupMenuImpl::scroll(const IntSize& scrollDelta,
