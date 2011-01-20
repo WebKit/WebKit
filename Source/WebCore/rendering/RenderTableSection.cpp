@@ -1083,6 +1083,13 @@ void RenderTableSection::recalcCells()
     setNeedsLayout(true);
 }
 
+void RenderTableSection::setNeedsCellRecalc()
+{
+    m_needsCellRecalc = true;
+    if (RenderTable* t = table())
+        t->setNeedsSectionRecalc();
+}
+
 void RenderTableSection::clearGrid()
 {
     int rows = m_gridRows;

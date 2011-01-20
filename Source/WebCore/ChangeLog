@@ -1,3 +1,19 @@
+2011-01-20  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Eric "Baller" Seidel.
+
+        RenderTableSection's setNeedsCellRecalc needs to null check table()
+        https://bugs.webkit.org/show_bug.cgi?id=52770
+
+        Null checks table() before deferencing it in RenderTableSection::setNeedsCellRecalc.
+        This can be null during detach().  Test constructed by Eric Seidel.
+
+        Test: fast/css-generated-content/table-with-scrollbar-corner.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setNeedsCellRecalc):
+        * rendering/RenderTableSection.h:
+
 2011-01-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Rob Buis.

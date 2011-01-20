@@ -114,11 +114,7 @@ public:
     }
 
     bool needsCellRecalc() const { return m_needsCellRecalc; }
-    void setNeedsCellRecalc()
-    {
-        m_needsCellRecalc = true;
-        table()->setNeedsSectionRecalc();
-    }
+    void setNeedsCellRecalc();
 
     int getBaseline(int row) { return m_grid[row].baseline; }
 
