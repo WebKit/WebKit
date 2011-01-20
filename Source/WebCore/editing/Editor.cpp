@@ -1173,7 +1173,12 @@ bool Editor::insertText(const String& text, Event* triggeringEvent)
     return m_frame->eventHandler()->handleTextInputEvent(text, triggeringEvent);
 }
 
-bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, Event* triggeringEvent)
+bool Editor::insertTextForConfirmedComposition(const String& text)
+{
+    return m_frame->eventHandler()->handleTextInputEvent(text, 0, TextEventInputComposition);
+}
+
+bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectInsertedText, TextEvent* triggeringEvent)
 {
     if (text.isEmpty())
         return false;
@@ -1195,7 +1200,8 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             RefPtr<Document> document = selectionStart->document();
             
             // Insert the text
-            TypingCommand::insertText(document.get(), text, selection, selectInsertedText);
+            TypingCommand::insertText(document.get(), text, selection, selectInsertedText, 
+                                      triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionConfirm : TypingCommand::TextCompositionNone);
 
             // Reveal the current selection 
             if (Frame* editedFrame = document->frame())
@@ -1618,7 +1624,7 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
 
-    insertText(text, 0);
+    insertTextForConfirmedComposition(text);
 
     if (preserveSelection) {
         m_frame->selection()->setSelection(oldSelection, false, false);
@@ -1687,7 +1693,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     m_customCompositionUnderlines.clear();
 
     if (!text.isEmpty()) {
-        TypingCommand::insertText(m_frame->document(), text, true, true);
+        TypingCommand::insertText(m_frame->document(), text, true, TypingCommand::TextCompositionUpdate);
 
         // Find out what node has the composition now.
         Position base = m_frame->selection()->base().downstream();

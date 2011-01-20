@@ -1,3 +1,44 @@
+2011-01-19  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Space and tab characters "sent" by an input method give totally different results than typing them directly
+        https://bugs.webkit.org/show_bug.cgi?id=5241
+        
+        * Introduced TextEvent::InputTypeComposition and TypingCommand::TextCompositionType to 
+          distinguish text input which is originated by composition.
+        * Generalized rebalanceWhitespaceAt() to rebalanceWhitespaceOnTextSubstring() to rebalancing 
+          range of string on text node, instead of surrounding part of that.
+
+        Test: editing/inserting/insert-composition-whitespace.html
+
+        * dom/TextEvent.h:
+        (WebCore::TextEvent::isComposition):
+        * dom/TextEventInputType.h: Added TextEventInputComposition as a member of TextEvent::InputType
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::containsOnlyWhitespace):
+        (WebCore::CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor):
+        (WebCore::CompositeEditCommand::canRebalance):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring): Added: A generalized version of rebalanceWhitespaceAt(), which takes a range inside Text string.
+        * editing/CompositeEditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextForConfirmedComposition): Added.
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::confirmComposition): Now uses insertTextForConfirmedComposition().
+        (WebCore::Editor::setComposition):
+        * editing/Editor.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/InsertTextCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        * editing/TypingCommand.h: Added TypingCommand::m_compositionType and TypingCommand::TextCompositionType
+        (WebCore::TypingCommand::setCompositionType): Added.
+        (WebCore::TypingCommand::create):
+
 2011-01-19  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Kent Tamura.

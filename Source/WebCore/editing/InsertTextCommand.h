@@ -32,14 +32,20 @@ namespace WebCore {
 
 class InsertTextCommand : public CompositeEditCommand {
 public:
+    enum RebalanceType {
+        RebalanceLeadingAndTrailingWhitespaces,
+        RebalanceAllWhitespaces
+    };
+
     static PassRefPtr<InsertTextCommand> create(Document* document)
     {
         return adoptRef(new InsertTextCommand(document));
     }
 
-    void input(const String& text, bool selectInsertedText = false);
+    void input(const String& text, bool selectInsertedText = false, RebalanceType = RebalanceLeadingAndTrailingWhitespaces);
 
 private:
+
     InsertTextCommand(Document*);
 
     void deleteCharacter();

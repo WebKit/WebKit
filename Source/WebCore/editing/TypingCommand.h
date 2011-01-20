@@ -42,11 +42,17 @@ public:
         InsertParagraphSeparatorInQuotedContent
     };
 
+    enum TextCompositionType {
+        TextCompositionNone,
+        TextCompositionUpdate,
+        TextCompositionConfirm
+    };
+
     static void deleteSelection(Document*, bool smartDelete = false);
     static void deleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity, bool killRing = false);
     static void forwardDeleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity, bool killRing = false);
-    static void insertText(Document*, const String&, bool selectInsertedText = false, bool insertedTextIsComposition = false);
-    static void insertText(Document*, const String&, const VisibleSelection&, bool selectInsertedText = false, bool insertedTextIsComposition = false);
+    static void insertText(Document*, const String&, bool selectInsertedText = false, TextCompositionType = TextCompositionNone);
+    static void insertText(Document*, const String&, const VisibleSelection&, bool selectInsertedText = false, TextCompositionType = TextCompositionNone);
     static void insertLineBreak(Document*);
     static void insertParagraphSeparator(Document*);
     static void insertParagraphSeparatorInQuotedContent(Document*);
@@ -64,14 +70,20 @@ public:
     void deleteKeyPressed(TextGranularity, bool killRing);
     void forwardDeleteKeyPressed(TextGranularity, bool killRing);
     void deleteSelection(bool smartDelete);
+    void setCompositionType(TextCompositionType type) { m_compositionType = type; }
 
 private:
     static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text = "", bool selectInsertedText = false, TextGranularity granularity = CharacterGranularity, bool killRing = false)
     {
-        return adoptRef(new TypingCommand(document, command, text, selectInsertedText, granularity, killRing));
+        return adoptRef(new TypingCommand(document, command, text, selectInsertedText, granularity, TextCompositionNone, killRing));
     }
 
-    TypingCommand(Document*, ETypingCommand, const String& text, bool selectInsertedText, TextGranularity, bool killRing);
+    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text, bool selectInsertedText, TextCompositionType compositionType)
+    {
+        return adoptRef(new TypingCommand(document, command, text, selectInsertedText, CharacterGranularity, compositionType, false));
+    }
+
+    TypingCommand(Document*, ETypingCommand, const String& text, bool selectInsertedText, TextGranularity, TextCompositionType, bool killRing);
 
     bool smartDelete() const { return m_smartDelete; }
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
@@ -94,6 +106,7 @@ private:
     bool m_selectInsertedText;
     bool m_smartDelete;
     TextGranularity m_granularity;
+    TextCompositionType m_compositionType;
     bool m_killRing;
     bool m_preservesTypingStyle;
     

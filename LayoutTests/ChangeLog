@@ -1,3 +1,15 @@
+2011-01-19  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Space and tab characters "sent" by an input method give totally different results than typing them directly.
+        https://bugs.webkit.org/show_bug.cgi?id=5241
+        
+        Added a test that exercises continous whitespace characters and tabs inserted by IME.
+
+        * editing/inserting/insert-composition-whitespace-expected.txt: Added.
+        * editing/inserting/insert-composition-whitespace.html: Added.
+
 2011-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.
