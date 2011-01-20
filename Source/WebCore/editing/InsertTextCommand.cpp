@@ -106,7 +106,7 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     return true;
 }
 
-void InsertTextCommand::input(const String& text, bool selectInsertedText, RebalanceType whitespaceRebalance)
+void InsertTextCommand::input(const String& text, bool selectInsertedText)
 {
     
     ASSERT(text.find('\n') == notFound);
@@ -172,17 +172,11 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
         insertTextIntoNode(textNode, offset, text);
         endPosition = Position(textNode, offset + text.length());
 
-        if (whitespaceRebalance == RebalanceLeadingAndTrailingWhitespaces) {
-            // The insertion may require adjusting adjacent whitespace, if it is present.
-            rebalanceWhitespaceAt(endPosition);
-            // Rebalancing on both sides isn't necessary if we've inserted only spaces.
-            if (!shouldRebalanceLeadingWhitespaceFor(text))
-                rebalanceWhitespaceAt(startPosition);
-        } else {
-            ASSERT(whitespaceRebalance == RebalanceAllWhitespaces);
-            if (canRebalance(startPosition) && canRebalance(endPosition))
-                rebalanceWhitespaceOnTextSubstring(textNode, startPosition.deprecatedEditingOffset(), endPosition.deprecatedEditingOffset());
-        }
+        // The insertion may require adjusting adjacent whitespace, if it is present.
+        rebalanceWhitespaceAt(endPosition);
+        // Rebalancing on both sides isn't necessary if we've inserted a space.
+        if (text != " ") 
+            rebalanceWhitespaceAt(startPosition);
     }
 
     // We could have inserted a part of composed character sequence,

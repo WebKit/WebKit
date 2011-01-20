@@ -1,3 +1,32 @@
+2011-01-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r76215.
+        http://trac.webkit.org/changeset/76215
+        https://bugs.webkit.org/show_bug.cgi?id=52799
+
+        Caused regressions in Chromium; morrita is going to look at it
+        tomrorow (Requested by jorlow on #webkit).
+
+        * dom/TextEvent.h:
+        * dom/TextEventInputType.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        * editing/CompositeEditCommand.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::confirmComposition):
+        (WebCore::Editor::setComposition):
+        * editing/Editor.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input):
+        * editing/InsertTextCommand.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::create):
+
 2010-12-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.

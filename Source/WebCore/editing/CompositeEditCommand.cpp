@@ -395,84 +395,52 @@ static inline bool isWhitespace(UChar c)
     return c == noBreakSpace || c == ' ' || c == '\n' || c == '\t';
 }
 
-static inline bool containsOnlyWhitespace(const String& text)
-{
-    for (unsigned i = 0; i < text.length(); ++i) {
-        if (!isWhitespace(text.characters()[i]))
-            return false;
-    }
-    
-    return true;
-}
-
-bool CompositeEditCommand::shouldRebalanceLeadingWhitespaceFor(const String& text) const
-{
-    return containsOnlyWhitespace(text);
-}
-
-bool CompositeEditCommand::canRebalance(const Position& position) const
-{
-    Node* node = position.containerNode();
-    if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())
-        return false;
-
-    Text* textNode = static_cast<Text*>(node);
-    if (textNode->length() == 0)
-        return false;
-
-    RenderObject* renderer = textNode->renderer();
-    if (renderer && !renderer->style()->collapseWhiteSpace())
-        return false;
-
-    return true;
-}
-
 // FIXME: Doesn't go into text nodes that contribute adjacent text (siblings, cousins, etc).
 void CompositeEditCommand::rebalanceWhitespaceAt(const Position& position)
 {
     Node* node = position.containerNode();
-    if (!canRebalance(position))
+    if (position.anchorType() != Position::PositionIsOffsetInAnchor || !node || !node->isTextNode())
+        return;
+    Text* textNode = static_cast<Text*>(node);
+
+    if (textNode->length() == 0)
+        return;
+    RenderObject* renderer = textNode->renderer();
+    if (renderer && !renderer->style()->collapseWhiteSpace())
         return;
 
-    // If the rebalance is for the single offset, and neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
+    String text = textNode->data();
+    ASSERT(!text.isEmpty());
+
     int offset = position.deprecatedEditingOffset();
-    String text = static_cast<Text*>(node)->data();
+    // If neither text[offset] nor text[offset - 1] are some form of whitespace, do nothing.
     if (!isWhitespace(text[offset])) {
         offset--;
         if (offset < 0 || !isWhitespace(text[offset]))
             return;
     }
-
-    rebalanceWhitespaceOnTextSubstring(static_cast<Text*>(node), position.offsetInContainerNode(), position.offsetInContainerNode());
-}
-
-void CompositeEditCommand::rebalanceWhitespaceOnTextSubstring(RefPtr<Text> textNode, int startOffset, int endOffset)
-{
-    String text = textNode->data();
-    ASSERT(!text.isEmpty());
-
+    
     // Set upstream and downstream to define the extent of the whitespace surrounding text[offset].
-    int upstream = startOffset;
+    int upstream = offset;
     while (upstream > 0 && isWhitespace(text[upstream - 1]))
         upstream--;
     
-    int downstream = endOffset;
-    while ((unsigned)downstream < text.length() && isWhitespace(text[downstream]))
+    int downstream = offset;
+    while ((unsigned)downstream + 1 < text.length() && isWhitespace(text[downstream + 1]))
         downstream++;
     
-    int length = downstream - upstream;
-    if (!length)
-        return;
-
-    VisiblePosition visibleUpstreamPos(Position(textNode, upstream, Position::PositionIsOffsetInAnchor));
-    VisiblePosition visibleDownstreamPos(Position(textNode, downstream, Position::PositionIsOffsetInAnchor));
+    int length = downstream - upstream + 1;
+    ASSERT(length > 0);
+    
+    VisiblePosition visibleUpstreamPos(Position(position.containerNode(), upstream, Position::PositionIsOffsetInAnchor));
+    VisiblePosition visibleDownstreamPos(Position(position.containerNode(), downstream + 1, Position::PositionIsOffsetInAnchor));
     
     String string = text.substring(upstream, length);
     String rebalancedString = stringWithRebalancedWhitespace(string,
     // FIXME: Because of the problem mentioned at the top of this function, we must also use nbsps at the start/end of the string because
     // this function doesn't get all surrounding whitespace, just the whitespace in the current text node.
                                                              isStartOfParagraph(visibleUpstreamPos) || upstream == 0, 
-                                                             isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length());
+                                                             isEndOfParagraph(visibleDownstreamPos) || (unsigned)downstream == text.length() - 1);
     
     if (string != rebalancedString)
         replaceTextInNode(textNode, upstream, length, rebalancedString);
