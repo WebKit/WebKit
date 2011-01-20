@@ -3084,7 +3084,14 @@ BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 
 // New test, added in r75852 for JSC, fails in V8
 BUGCR69736 : fast/js/js-continue-break-restrictions.html = TEXT
-BUGCR1 REBASELINE MAC : fast/events/offsetX-offsetY.html = TEXT
 
 // Waiting to rebaseline
 BUG_DGLAZKOV : fast/forms/slider-mouse-events.html = TEXT
+
+// New test added in http://trac.webkit.org/changeset/76185
+BUGDIMICH : fast/js/toString-recursion.html = TEXT
+
+// Behavior changed in http://trac.webkit.org/changeset/76180,
+// need to investigate
+BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
+BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
