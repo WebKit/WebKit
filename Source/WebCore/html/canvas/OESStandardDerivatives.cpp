@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DOpenGL_h
-#define Extensions3DOpenGL_h
+#include "config.h"
 
-#include "Extensions3D.h"
+#if ENABLE(3D_CANVAS)
 
-#include "GraphicsContext3D.h"
-#include <wtf/HashSet.h>
-#include <wtf/text/StringHash.h>
+#include "OESStandardDerivatives.h"
 
 namespace WebCore {
 
-class Extensions3DOpenGL : public Extensions3D {
-public:
-    virtual ~Extensions3DOpenGL();
+OESStandardDerivatives::OESStandardDerivatives() : WebGLExtension()
+{
+}
 
-    // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);    
+OESStandardDerivatives::~OESStandardDerivatives()
+{
+}
 
-private:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DOpenGL(GraphicsContext3D*);
+WebGLExtension::ExtensionName OESStandardDerivatives::getName() const
+{
+    return OESStandardDerivativesName;
+}
 
-    bool m_initializedAvailableExtensions;
-    HashSet<String> m_availableExtensions;
-    
-    // Weak pointer back to GraphicsContext3D
-    GraphicsContext3D* m_context;
-};
+PassRefPtr<OESStandardDerivatives> OESStandardDerivatives::create()
+{
+    return adoptRef(new OESStandardDerivatives);
+}
 
 } // namespace WebCore
 
-#endif // Extensions3DOpenGL_h
+#endif // ENABLE(3D_CANVAS)

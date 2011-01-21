@@ -482,6 +482,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSNotificationCenter.h \
 	DerivedSources/WebCore/JSNotification.cpp \
 	DerivedSources/WebCore/JSNotification.h \
+	DerivedSources/WebCore/JSOESStandardDerivatives.cpp \
+	DerivedSources/WebCore/JSOESStandardDerivatives.h \
 	DerivedSources/WebCore/JSOESTextureFloat.cpp \
 	DerivedSources/WebCore/JSOESTextureFloat.h \
 	DerivedSources/WebCore/JSOverflowEvent.cpp \
@@ -1582,6 +1584,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/Int8Array.cpp \
 	Source/WebCore/html/canvas/Int8Array.h \
 	Source/WebCore/html/canvas/IntegralTypedArrayBase.h \
+	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \
+	Source/WebCore/html/canvas/OESStandardDerivatives.h \
 	Source/WebCore/html/canvas/OESTextureFloat.cpp \
 	Source/WebCore/html/canvas/OESTextureFloat.h \
 	Source/WebCore/html/canvas/TypedArrayBase.h \

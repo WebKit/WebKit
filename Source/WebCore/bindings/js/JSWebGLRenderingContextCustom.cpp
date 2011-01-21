@@ -37,6 +37,7 @@
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
+#include "JSOESStandardDerivatives.h"
 #include "JSOESTextureFloat.h"
 #include "JSWebGLBuffer.h"
 #include "JSFloat32Array.h"
@@ -50,6 +51,7 @@
 #include "JSUint8Array.h"
 #include "JSWebKitCSSMatrix.h"
 #include "NotImplemented.h"
+#include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "WebGLBuffer.h"
 #include "Float32Array.h"
@@ -173,6 +175,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     switch (extension->getName()) {
     case WebGLExtension::WebKitLoseContextName:
         return toJS(exec, globalObject, static_cast<WebKitLoseContext*>(extension));
+    case WebGLExtension::OESStandardDerivativesName:
+        return toJS(exec, globalObject, static_cast<OESStandardDerivatives*>(extension));
     case WebGLExtension::OESTextureFloatName:
         return toJS(exec, globalObject, static_cast<OESTextureFloat*>(extension));
     }

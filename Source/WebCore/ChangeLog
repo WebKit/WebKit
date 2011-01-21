@@ -1,3 +1,70 @@
+2011-01-20  Ben Vanik  <ben.vanik@gmail.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implementation of the OES_standard_derivatives WebGL extension.
+        https://bugs.webkit.org/show_bug.cgi?id=51678
+
+        Changes are modeled off of the existing OESTextureFloat extension. New files,
+        extension retrieval, etc all match the existing code.
+
+        Changed ANGLEWebKitBridge to allow for multiple sets of the ANGLE shader compiler
+        options. This supports the enabling of the standard derivatives flag when the
+        extension is enabled. Refactored the cleanup code to make the destruction of the
+        compilers (if they had been created) cleaner.
+
+        Tested with the WebGL conformance test:
+        https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/sdk/tests/conformance/oes-standard-derivatives.html
+        Passes on WebKit/OSX, Chromium/OSX, and Chromium/Windows.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        * html/canvas/OESStandardDerivatives.cpp: Added.
+        (WebCore::OESStandardDerivatives::OESStandardDerivatives):
+        (WebCore::OESStandardDerivatives::~OESStandardDerivatives):
+        (WebCore::OESStandardDerivatives::getName):
+        (WebCore::OESStandardDerivatives::create):
+        * html/canvas/OESStandardDerivatives.h: Added.
+        * html/canvas/OESStandardDerivatives.idl: Added.
+        * html/canvas/WebGLExtension.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getExtension): Enable and return the new extension.
+        (WebCore::WebGLRenderingContext::getParameter): Support extension enum when enabled.
+        (WebCore::WebGLRenderingContext::getSupportedExtensions): 
+        (WebCore::WebGLRenderingContext::hint): Validate extension enum when enabled.
+        (WebCore::WebGLRenderingContext::getNumberOfExtensions):
+        (WebCore::WebGLRenderingContext::getExtensionNumber):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::~ANGLEWebKitBridge): Cleaned up compiler cleanup.
+        (WebCore::ANGLEWebKitBridge::cleanupCompilers): Destruct compilers.
+        (WebCore::ANGLEWebKitBridge::setResources): Cleanup existing compilers when changing
+        ANGLE settings.
+        (WebCore::ANGLEWebKitBridge::validateShaderSource): Cleaned up compiler cleanup on error.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        (WebCore::ANGLEWebKitBridge::getResources):
+        * platform/graphics/Extensions3D.h: Added enumeration for the extension.
+        * platform/graphics/GraphicsContext3D.h: lumbing for GraphicsContext3D.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::Extensions3DOpenGL): Plumbed through a pointer to the
+        GraphicsContext3D to handle resetting the shader compilers.
+        (WebCore::Extensions3DOpenGL::supports): Desktop GL always supports this extension,
+        so always return true.
+        (WebCore::Extensions3DOpenGL::ensureEnabled): Reset shader compilers as required.
+        * platform/graphics/opengl/Extensions3DOpenGL.h: Plumbing for GraphicsContext3D.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getExtensions): Plumbing for GraphicsContext3D to
+        Extensions3DOpenGL.
+
 2011-01-20  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.

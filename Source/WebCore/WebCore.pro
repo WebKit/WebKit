@@ -3810,6 +3810,7 @@ contains(DEFINES, ENABLE_3D_CANVAS=1) {
         html/canvas/WebGLRenderbuffer.h \
         html/canvas/WebGLRenderingContext.h \
         html/canvas/WebGLShader.h \
+        html/canvas/OESStandardDerivatives.h \
         html/canvas/OESTextureFloat.h \
         html/canvas/WebGLTexture.h \
         html/canvas/WebGLUniformLocation.h \
@@ -3834,6 +3835,7 @@ contains(DEFINES, ENABLE_3D_CANVAS=1) {
         html/canvas/WebGLRenderbuffer.cpp \
         html/canvas/WebGLRenderingContext.cpp \
         html/canvas/WebGLShader.cpp \
+        html/canvas/OESStandardDerivatives.cpp \
         html/canvas/OESTextureFloat.cpp \
         html/canvas/WebGLTexture.cpp \
         html/canvas/WebGLUniformLocation.cpp \

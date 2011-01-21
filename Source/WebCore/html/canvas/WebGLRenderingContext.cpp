@@ -44,6 +44,7 @@
 #include "ImageData.h"
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
@@ -1757,6 +1758,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
     if (isContextLost())
         return 0;
 
+    if (equalIgnoringCase(name, "OES_standard_derivatives")
+        && m_context->getExtensions()->supports("GL_OES_standard_derivatives")) {
+        if (!m_oesStandardDerivatives) {
+            m_context->getExtensions()->ensureEnabled("GL_OES_standard_derivatives");
+            m_oesStandardDerivatives = OESStandardDerivatives::create();
+        }
+        return m_oesStandardDerivatives.get();
+    }
     if (equalIgnoringCase(name, "OES_texture_float")
         && m_context->getExtensions()->supports("GL_OES_texture_float")) {
         if (!m_oesTextureFloat) {
@@ -1764,7 +1773,8 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_oesTextureFloat = OESTextureFloat::create();
         }
         return m_oesTextureFloat.get();
-    } else if (equalIgnoringCase(name, "WEBKIT_lose_context")) {
+    }
+    if (equalIgnoringCase(name, "WEBKIT_lose_context")) {
         if (!m_webkitLoseContext)
             m_webkitLoseContext = WebKitLoseContext::create(this);
         return m_webkitLoseContext.get();
@@ -2006,6 +2016,11 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
         return WebGLGetInfo("WebGL 1.0 (" + m_context->getString(GraphicsContext3D::VERSION) + ")");
     case GraphicsContext3D::VIEWPORT:
         return getWebGLIntArrayParameter(pname);
+    case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
+        if (m_oesStandardDerivatives)
+            return getUnsignedLongParameter(Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES);
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return WebGLGetInfo();
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
@@ -2173,6 +2188,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     Vector<String> result;
     if (m_context->getExtensions()->supports("GL_OES_texture_float"))
         result.append("OES_texture_float");
+    if (m_context->getExtensions()->supports("GL_OES_standard_derivatives"))
+        result.append("OES_standard_derivatives");
     result.append("WEBKIT_lose_context");
     return result;
 }
@@ -2417,7 +2434,17 @@ void WebGLRenderingContext::hint(GC3Denum target, GC3Denum mode)
 {
     if (isContextLost())
         return;
-    if (target != GraphicsContext3D::GENERATE_MIPMAP_HINT) {
+    bool isValid = false;
+    switch (target) {
+    case GraphicsContext3D::GENERATE_MIPMAP_HINT:
+        isValid = true;
+        break;
+    case Extensions3D::FRAGMENT_SHADER_DERIVATIVE_HINT_OES: // OES_standard_derivatives
+        if (m_oesStandardDerivatives)
+            isValid = true;
+        break;
+    }
+    if (!isValid) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return;
     }
@@ -4536,11 +4563,16 @@ void WebGLRenderingContext::restoreStatesAfterVertexAttrib0Simulation()
 
 int WebGLRenderingContext::getNumberOfExtensions()
 {
-    return (m_webkitLoseContext ? 1 : 0) + (m_oesTextureFloat ? 1 : 0);
+    return (m_oesStandardDerivatives ? 1 : 0) + (m_webkitLoseContext ? 1 : 0) + (m_oesTextureFloat ? 1 : 0);
 }
 
 WebGLExtension* WebGLRenderingContext::getExtensionNumber(int i)
 {
+    if (m_oesStandardDerivatives) {
+        if (!i)
+            return m_oesStandardDerivatives.get();
+        --i;
+    }
     if (m_webkitLoseContext) {
         if (!i)
             return m_webkitLoseContext.get();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Extensions3DOpenGL_h
-#define Extensions3DOpenGL_h
+#ifndef OESStandardDerivatives_h
+#define OESStandardDerivatives_h
 
-#include "Extensions3D.h"
-
-#include "GraphicsContext3D.h"
-#include <wtf/HashSet.h>
-#include <wtf/text/StringHash.h>
+#include "WebGLExtension.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class Extensions3DOpenGL : public Extensions3D {
+class OESStandardDerivatives : public WebGLExtension {
 public:
-    virtual ~Extensions3DOpenGL();
+    static PassRefPtr<OESStandardDerivatives> create();
 
-    // Extensions3D methods.
-    virtual bool supports(const String&);
-    virtual void ensureEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
-    virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
-    virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);    
+    virtual ~OESStandardDerivatives();
+    virtual ExtensionName getName() const;
 
 private:
-    // This class only needs to be instantiated by GraphicsContext3D implementations.
-    friend class GraphicsContext3D;
-    Extensions3DOpenGL(GraphicsContext3D*);
-
-    bool m_initializedAvailableExtensions;
-    HashSet<String> m_availableExtensions;
-    
-    // Weak pointer back to GraphicsContext3D
-    GraphicsContext3D* m_context;
+    OESStandardDerivatives();
 };
 
 } // namespace WebCore
 
-#endif // Extensions3DOpenGL_h
+#endif // OESStandardDerivatives_h

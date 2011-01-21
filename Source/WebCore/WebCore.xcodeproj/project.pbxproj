@@ -2760,6 +2760,11 @@
 		8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6756191288B17B0047ACA3 /* EventQueue.h */; };
 		8F67561C1288B17B0047ACA3 /* EventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F67561A1288B17B0047ACA3 /* EventQueue.cpp */; };
 		8FAC774D119872CB0015AE94 /* JSMainThreadExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */; };
+		9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001773D12E0347800648462 /* OESStandardDerivatives.cpp */; };
+		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
+		9001774212E0347800648462 /* OESStandardDerivatives.idl in Resources */ = {isa = PBXBuildFile; fileRef = 9001773F12E0347800648462 /* OESStandardDerivatives.idl */; };
+		9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */; };
+		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9147,6 +9152,11 @@
 		8F67561A1288B17B0047ACA3 /* EventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventQueue.cpp; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
 		8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMainThreadExecState.cpp; sourceTree = "<group>"; };
+		9001773D12E0347800648462 /* OESStandardDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESStandardDerivatives.cpp; path = canvas/OESStandardDerivatives.cpp; sourceTree = "<group>"; };
+		9001773E12E0347800648462 /* OESStandardDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESStandardDerivatives.h; path = canvas/OESStandardDerivatives.h; sourceTree = "<group>"; };
+		9001773F12E0347800648462 /* OESStandardDerivatives.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESStandardDerivatives.idl; path = canvas/OESStandardDerivatives.idl; sourceTree = "<group>"; };
+		9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESStandardDerivatives.cpp; sourceTree = "<group>"; };
+		9001787F12E0370700648462 /* JSOESStandardDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESStandardDerivatives.h; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -13290,6 +13300,9 @@
 				49C7B9AC1042D32E0009D447 /* Int8Array.h */,
 				49C7B9AD1042D32E0009D447 /* Int8Array.idl */,
 				6E96BB1A11986EE1007D94CD /* IntegralTypedArrayBase.h */,
+				9001773D12E0347800648462 /* OESStandardDerivatives.cpp */,
+				9001773E12E0347800648462 /* OESStandardDerivatives.h */,
+				9001773F12E0347800648462 /* OESStandardDerivatives.idl */,
 				6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */,
 				6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */,
 				6EBF0E4712A8926100DB1709 /* OESTextureFloat.idl */,
@@ -16192,6 +16205,8 @@
 				49C7B9831042D2D30009D447 /* JSInt8Array.h */,
 				E44614100CD6826900FADA75 /* JSMediaError.cpp */,
 				E44614110CD6826900FADA75 /* JSMediaError.h */,
+				9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */,
+				9001787F12E0370700648462 /* JSOESStandardDerivatives.h */,
 				6EBF0E7412A9868800DB1709 /* JSOESTextureFloat.cpp */,
 				6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */,
 				BCEF45F30E687B5C001C1287 /* JSTextMetrics.cpp */,
@@ -22394,6 +22409,8 @@
 				A6148A6212E41D3A0044A784 /* DOMHTMLKeygenElementInternal.h in Headers */,
 				A6148A6712E41D940044A784 /* DOMHTMLKeygenElement.h in Headers */,
 				A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */,
+				9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */,
+				9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22516,6 +22533,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				9001774212E0347800648462 /* OESStandardDerivatives.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25086,6 +25104,8 @@
 				7AA365EE12E7265400DCA242 /* InspectorRuntimeAgent.cpp in Sources */,
 				A6148A6812E41D940044A784 /* DOMHTMLKeygenElement.mm in Sources */,
 				A6148A7812E41E3B0044A784 /* JSHTMLKeygenElement.cpp in Sources */,
+				9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */,
+				9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

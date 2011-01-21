@@ -51,6 +51,7 @@ public:
     //   GL_EXT_packed_depth_stencil / GL_OES_packed_depth_stencil
     //   GL_ANGLE_framebuffer_blit / GL_ANGLE_framebuffer_multisample
     //   GL_OES_texture_float
+    //   GL_OES_standard_derivatives
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -82,7 +83,10 @@ public:
         // GL_ANGLE_framebuffer_multisample names
         RENDERBUFFER_SAMPLES = 0x8CAB,
         FRAMEBUFFER_INCOMPLETE_MULTISAMPLE = 0x8D56,
-        MAX_SAMPLES = 0x8D57
+        MAX_SAMPLES = 0x8D57,
+
+        // GL_OES_standard_derivatives names
+        FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B,
     };
 
     // GL_ARB_robustness

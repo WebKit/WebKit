@@ -292,6 +292,7 @@ SET(WebCore_IDL_FILES
     html/canvas/Int16Array.idl
     html/canvas/Int32Array.idl
     html/canvas/Int8Array.idl
+    html/canvas/OESStandardDerivatives.idl
     html/canvas/OESTextureFloat.idl
     html/canvas/Uint16Array.idl
     html/canvas/Uint32Array.idl

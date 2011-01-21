@@ -1467,7 +1467,7 @@ void GraphicsContext3D::synthesizeGLError(GC3Denum error)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
-        m_extensions = adoptPtr(new Extensions3DOpenGL);
+        m_extensions = adoptPtr(new Extensions3DOpenGL(this));
     return m_extensions.get();
 }
 

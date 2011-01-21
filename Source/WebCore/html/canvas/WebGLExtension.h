@@ -36,6 +36,7 @@ public:
     enum ExtensionName {
         WebKitLoseContextName,
         OESTextureFloatName,
+        OESStandardDerivativesName,
     };
 
     virtual ~WebGLExtension();

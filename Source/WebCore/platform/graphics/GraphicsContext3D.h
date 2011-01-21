@@ -883,6 +883,7 @@ public:
     } ShaderSourceEntry;
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
+    friend class Extensions3DOpenGL;
     ANGLEWebKitBridge m_compiler;
 
     OwnPtr<Extensions3DOpenGL> m_extensions;

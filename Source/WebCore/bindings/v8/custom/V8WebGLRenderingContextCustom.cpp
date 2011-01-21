@@ -48,6 +48,7 @@
 #include "V8Int16Array.h"
 #include "V8Int32Array.h"
 #include "V8Int8Array.h"
+#include "V8OESStandardDerivatives.h"
 #include "V8OESTextureFloat.h"
 #include "V8Proxy.h"
 #include "V8Uint16Array.h"
@@ -159,6 +160,9 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     switch (extension->getName()) {
     case WebGLExtension::WebKitLoseContextName:
         extensionObject = toV8(static_cast<WebKitLoseContext*>(extension));
+        break;
+    case WebGLExtension::OESStandardDerivativesName:
+        extensionObject = toV8(static_cast<OESStandardDerivatives*>(extension));
         break;
     case WebGLExtension::OESTextureFloatName:
         extensionObject = toV8(static_cast<OESTextureFloat*>(extension));

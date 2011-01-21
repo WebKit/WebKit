@@ -43,12 +43,27 @@ ANGLEWebKitBridge::ANGLEWebKitBridge() :
 
 ANGLEWebKitBridge::~ANGLEWebKitBridge()
 {
+    cleanupCompilers();
+}
+
+void ANGLEWebKitBridge::cleanupCompilers()
+{
     if (m_fragmentCompiler)
         ShDestruct(m_fragmentCompiler);
     m_fragmentCompiler = 0;
     if (m_vertexCompiler)
         ShDestruct(m_vertexCompiler);
     m_vertexCompiler = 0;
+
+    builtCompilers = false;
+}
+    
+void ANGLEWebKitBridge::setResources(ShBuiltInResources resources)
+{
+    // Resources are (possibly) changing - cleanup compilers if we had them already
+    cleanupCompilers();
+    
+    m_resources = resources;
 }
 
 bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog)
@@ -57,12 +72,7 @@ bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShad
         m_fragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, SH_WEBGL_SPEC, &m_resources);
         m_vertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, SH_WEBGL_SPEC, &m_resources);
         if (!m_fragmentCompiler || !m_vertexCompiler) {
-            if (m_fragmentCompiler)
-                ShDestruct(m_fragmentCompiler);
-            m_fragmentCompiler = 0;
-            if (m_vertexCompiler)
-                ShDestruct(m_vertexCompiler);
-            m_vertexCompiler = 0;
+            cleanupCompilers();
             return false;
         }
 

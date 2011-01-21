@@ -57,6 +57,7 @@ class HTMLVideoElement;
 class ImageBuffer;
 class ImageData;
 class IntSize;
+class OESStandardDerivatives;
 class OESTextureFloat;
 
 class WebGLRenderingContext : public CanvasRenderingContext {
@@ -452,6 +453,7 @@ public:
 
     // Enabled extension objects.
     RefPtr<OESTextureFloat> m_oesTextureFloat;
+    RefPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     RefPtr<WebKitLoseContext> m_webkitLoseContext;
 
     // Helpers for getParameter and others

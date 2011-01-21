@@ -44,11 +44,14 @@ public:
     ANGLEWebKitBridge();
     ~ANGLEWebKitBridge();
     
-    void setResources(ShBuiltInResources resources) { m_resources = resources; }
+    ShBuiltInResources getResources() { return m_resources; }
+    void setResources(ShBuiltInResources);
     
     bool validateShaderSource(const char* shaderSource, ANGLEShaderType shaderType, String& translatedShaderSource, String& shaderValidationLog);
 
 private:
+
+    void cleanupCompilers();
 
     bool builtCompilers;
     

@@ -33,13 +33,15 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
+#include "ANGLE/ShaderLang.h"
 #include <OpenGL/gl.h>
 #endif
 
 namespace WebCore {
 
-Extensions3DOpenGL::Extensions3DOpenGL()
+Extensions3DOpenGL::Extensions3DOpenGL(GraphicsContext3D* context)
     : m_initializedAvailableExtensions(false)
+    , m_context(context)
 {
 }
 
@@ -82,12 +84,28 @@ bool Extensions3DOpenGL::supports(const String& name)
     if (name == "GL_OES_texture_float" || name == "GL_OES_texture_half_float")
         return m_availableExtensions.contains("GL_ARB_texture_float");
 
+    // Desktop GL always supports the standard derivative functions
+    if (name == "GL_OES_standard_derivatives")
+        return true;
+
     return m_availableExtensions.contains(name);
 }
 
 void Extensions3DOpenGL::ensureEnabled(const String& name)
 {
+#if PLATFORM(MAC)
+    if (name == "GL_OES_standard_derivatives") {
+        // Enable support in ANGLE (if not enabled already)
+        ANGLEWebKitBridge& compiler = m_context->m_compiler;
+        ShBuiltInResources ANGLEResources = compiler.getResources();
+        if (!ANGLEResources.OES_standard_derivatives) {
+            ANGLEResources.OES_standard_derivatives = 1;
+            compiler.setResources(ANGLEResources);
+        }
+    }
+#else
     ASSERT_UNUSED(name, supports(name));
+#endif
 }
 
 int Extensions3DOpenGL::getGraphicsResetStatusARB()
