@@ -51,6 +51,8 @@ WK_EXPORT WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frame);
 WK_EXPORT WKURLRef WKFrameCopyURL(WKFrameRef frame);
 WK_EXPORT WKURLRef WKFrameCopyUnreachableURL(WKFrameRef frame);
 
+WK_EXPORT void WKFrameStopLoading(WKFrameRef frame);
+
 WK_EXPORT WKStringRef WKFrameCopyMIMEType(WKFrameRef frame);
 WK_EXPORT WKStringRef WKFrameCopyTitle(WKFrameRef frame);
 

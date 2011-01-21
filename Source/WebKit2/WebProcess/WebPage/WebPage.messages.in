@@ -46,6 +46,8 @@ messages -> WebPage {
     LoadURLRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     Reload(bool reloadFromOrigin)
     StopLoading()
+
+    StopLoadingFrame(uint64_t frameID)
     
     RestoreSessionAndNavigateToCurrentItem(WebKit::SessionState state)
 

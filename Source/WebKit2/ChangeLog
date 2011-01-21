@@ -1,3 +1,22 @@
+2011-01-21  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Need API to stop loading a WKFrame
+        https://bugs.webkit.org/show_bug.cgi?id=52925
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameStopLoading): Call through to WebFrameProxy::stopLoading.
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::stopLoading): Send a message to the WebProcess to stop loading the frame
+            with the passed in ID.
+        * UIProcess/WebFrameProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::stopLoadingFrame): Call stopForUserCancel on the passed-in frame.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add StopLoadingFrame.
+
 2011-01-21  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben.

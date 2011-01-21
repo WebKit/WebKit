@@ -75,6 +75,11 @@ WKURLRef WKFrameCopyUnreachableURL(WKFrameRef frameRef)
     return toCopiedURLAPI(toImpl(frameRef)->unreachableURL());
 }
 
+void WKFrameStopLoading(WKFrameRef frameRef)
+{
+    toImpl(frameRef)->stopLoading();
+}
+
 WKStringRef WKFrameCopyMIMEType(WKFrameRef frameRef)
 {
     return toCopiedAPI(toImpl(frameRef)->mimeType());

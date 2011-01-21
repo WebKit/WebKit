@@ -439,6 +439,15 @@ void WebPage::loadPlainTextString(const String& string)
     loadData(sharedBuffer, "text/plain", "utf-16", blankURL(), KURL());
 }
 
+void WebPage::stopLoadingFrame(uint64_t frameID)
+{
+    WebFrame* frame = WebProcess::shared().webFrame(frameID);
+    if (!frame)
+        return;
+
+    frame->coreFrame()->loader()->stopForUserCancel();
+}
+
 void WebPage::stopLoading()
 {
     m_mainFrame->coreFrame()->loader()->stopForUserCancel();

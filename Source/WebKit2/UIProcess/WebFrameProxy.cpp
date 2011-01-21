@@ -29,6 +29,7 @@
 #include "WebContext.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include <WebCore/DOMImplementation.h>
 #include <WebCore/Image.h>
@@ -81,6 +82,17 @@ bool WebFrameProxy::isMainFrame() const
     return this == m_page->mainFrame();
 }
 
+void WebFrameProxy::stopLoading() const
+{
+    if (!m_page)
+        return;
+
+    if (!m_page->isValid())
+        return;
+
+    m_page->process()->send(Messages::WebPage::StopLoadingFrame(m_frameID), m_page->pageID());
+}
+    
 bool WebFrameProxy::canProvideSource() const
 {
     return isDisplayingMarkupDocument();

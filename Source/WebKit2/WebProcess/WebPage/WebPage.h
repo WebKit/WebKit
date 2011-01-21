@@ -200,6 +200,7 @@ public:
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
 
     void stopLoading();
+    void stopLoadingFrame(uint64_t frameID);
     void setDefersLoading(bool deferLoading);
 
 #if USE(ACCELERATED_COMPOSITING)
