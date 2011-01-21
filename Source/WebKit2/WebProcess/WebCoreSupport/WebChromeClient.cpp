@@ -466,9 +466,10 @@ void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
     m_page->send(Messages::WebPageProxy::SetToolTip(m_cachedToolTip));
 }
 
-void WebChromeClient::print(Frame*)
+void WebChromeClient::print(Frame* frame)
 {
-    notImplemented();
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    m_page->sendSync(Messages::WebPageProxy::PrintFrame(webFrame->frameID()), Messages::WebPageProxy::PrintFrame::Reply());
 }
 
 #if ENABLE(DATABASE)

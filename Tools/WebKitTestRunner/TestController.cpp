@@ -150,6 +150,7 @@ static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModi
         0, // footerHeight
         0, // drawHeader
         0, // drawFooter
+        0, // printFrame
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -259,6 +260,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // footerHeight
         0, // drawHeader
         0, // drawFooter
+        0, // printFrame
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

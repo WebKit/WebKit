@@ -92,6 +92,7 @@ public:
     float footerHeight(WebPageProxy*, WebFrameProxy*);
     void drawHeader(WebPageProxy*, WebFrameProxy*, const WebCore::FloatRect&);
     void drawFooter(WebPageProxy*, WebFrameProxy*, const WebCore::FloatRect&);
+    void printFrame(WebPageProxy*, WebFrameProxy*);
 };
 
 } // namespace WebKit

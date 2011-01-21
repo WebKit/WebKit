@@ -1672,6 +1672,14 @@ void WebPageProxy::runOpenPanel(uint64_t frameID, const WebOpenPanelParameters::
         didCancelForOpenPanel();
 }
 
+void WebPageProxy::printFrame(uint64_t frameID)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+
+    m_uiClient.printFrame(this, frame);
+}
+
 #if PLATFORM(QT)
 void WebPageProxy::didChangeContentsSize(const WebCore::IntSize& size)
 {

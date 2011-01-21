@@ -305,4 +305,12 @@ void WebUIClient::drawFooter(WebPageProxy* page, WebFrameProxy* frame, const Web
     m_client.drawFooter(toAPI(page), toAPI(frame), toAPI(rect), m_client.clientInfo);
 }
 
+void WebUIClient::printFrame(WebPageProxy* page, WebFrameProxy* frame)
+{
+    if (!m_client.printFrame)
+        return;
+
+    m_client.printFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+}
+
 } // namespace WebKit

@@ -457,7 +457,8 @@ QWKPage::QWKPage(QWKContext* context)
         0,  /* headerHeight */
         0,  /* footerHeight */
         0,  /* drawHeader */
-        0   /* drawFooter */
+        0,  /* drawFooter */
+        0   /* printFrame */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }
