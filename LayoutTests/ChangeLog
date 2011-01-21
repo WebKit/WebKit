@@ -1,3 +1,18 @@
+2011-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed Chromium rebaselines for 76319.
+
+        * platform/chromium-linux/fast/dom/52776-expected.checksum: Added.
+        * platform/chromium-linux/fast/dom/52776-expected.png: Added.
+        * platform/chromium-linux/fast/dom/52776-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/52776-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/52776-expected.png: Added.
+        * platform/chromium-mac/fast/dom/52776-expected.txt: Added.
+        * platform/chromium-win/fast/dom/52776-expected.checksum: Added.
+        * platform/chromium-win/fast/dom/52776-expected.png: Added.
+        * platform/chromium-win/fast/dom/52776-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-01-21  Tony Chang  <tony@chromium.org>
 
         Unreviewed, these tests were fixed in r76330.  Still one unknown
