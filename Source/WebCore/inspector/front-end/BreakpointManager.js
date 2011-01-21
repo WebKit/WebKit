@@ -34,7 +34,7 @@ WebInspector.BreakpointManager = function()
     var breakpoints = WebInspector.settings.findSettingForAllProjects("nativeBreakpoints");
     for (var projectId in breakpoints)
         this._stickyBreakpoints[projectId] = this._validateBreakpoints(breakpoints[projectId]);
-    InspectorBackend.setStickyBreakpoints(this._stickyBreakpoints);
+    InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
 
     this._breakpoints = {};
     this._domBreakpointsRestored = false;
@@ -303,7 +303,7 @@ WebInspector.BreakpointManager.prototype = {
         WebInspector.settings.nativeBreakpoints = breakpoints;
 
         this._stickyBreakpoints[WebInspector.settings.projectId] = breakpoints;
-        InspectorBackend.setStickyBreakpoints(this._stickyBreakpoints);
+        InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
     },
 
     _validateBreakpoints: function(persistentBreakpoints)

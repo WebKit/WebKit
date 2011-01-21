@@ -71,9 +71,71 @@ InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent()
 {
 }
 
+void InspectorBrowserDebuggerAgent::inspectedURLChanged(const KURL& url)
+{
+    m_eventListenerBreakpoints.clear();
+    m_XHRBreakpoints.clear();
+    m_hasXHRBreakpointWithEmptyURL = false;
+
+    RefPtr<InspectorObject> allBreakpoints = m_inspectorController->state()->getObject(InspectorState::browserBreakpoints);
+    KURL urlCopy = url;
+    urlCopy.removeFragmentIdentifier();
+    RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(urlCopy);
+    if (!breakpoints)
+        return;
+    for (unsigned i = 0; i < breakpoints->length(); ++i)
+        restoreStickyBreakpoint(breakpoints->get(i)->asObject());
+}
+
+void InspectorBrowserDebuggerAgent::restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint)
+{
+    DEFINE_STATIC_LOCAL(String, eventListenerBreakpointType, ("EventListener"));
+    DEFINE_STATIC_LOCAL(String, javaScriptBreakpointType, ("JS"));
+    DEFINE_STATIC_LOCAL(String, xhrBreakpointType, ("XHR"));
+
+    if (!breakpoint)
+        return;
+    String type;
+    if (!breakpoint->getString("type", &type))
+        return;
+    bool enabled;
+    if (!breakpoint->getBoolean("enabled", &enabled))
+        return;
+    RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
+    if (!condition)
+        return;
+
+    if (type == eventListenerBreakpointType) {
+        if (!enabled)
+            return;
+        String eventName;
+        if (!condition->getString("eventName", &eventName))
+            return;
+        setEventListenerBreakpoint(eventName);
+    } else if (type == javaScriptBreakpointType && m_inspectorController->debuggerAgent()) {
+        String url;
+        if (!condition->getString("url", &url))
+            return;
+        double lineNumber;
+        if (!condition->getNumber("lineNumber", &lineNumber))
+            return;
+        String javaScriptCondition;
+        if (!condition->getString("condition", &javaScriptCondition))
+            return;
+        m_inspectorController->debuggerAgent()->setStickyBreakpoint(url, static_cast<unsigned>(lineNumber), javaScriptCondition, enabled);
+    } else if (type == xhrBreakpointType) {
+        if (!enabled)
+            return;
+        String url;
+        if (!condition->getString("url", &url))
+            return;
+        setXHRBreakpoint(url);
+    }
+}
+
 void InspectorBrowserDebuggerAgent::discardBindings()
 {
-    m_breakpoints.clear();
+    m_domBreakpoints.clear();
 }
 
 void InspectorBrowserDebuggerAgent::setEventListenerBreakpoint(const String& eventName)
@@ -88,8 +150,8 @@ void InspectorBrowserDebuggerAgent::removeEventListenerBreakpoint(const String& 
 
 void InspectorBrowserDebuggerAgent::didInsertDOMNode(Node* node)
 {
-    if (m_breakpoints.size()) {
-        uint32_t mask = m_breakpoints.get(InspectorDOMAgent::innerParentNode(node));
+    if (m_domBreakpoints.size()) {
+        uint32_t mask = m_domBreakpoints.get(InspectorDOMAgent::innerParentNode(node));
         uint32_t inheritableTypesMask = (mask | (mask >> domBreakpointDerivedTypeShift)) & inheritableDOMBreakpointTypesMask;
         if (inheritableTypesMask)
             updateSubtreeBreakpoints(node, inheritableTypesMask, true);
@@ -98,16 +160,16 @@ void InspectorBrowserDebuggerAgent::didInsertDOMNode(Node* node)
 
 void InspectorBrowserDebuggerAgent::didRemoveDOMNode(Node* node)
 {
-    if (m_breakpoints.size()) {
+    if (m_domBreakpoints.size()) {
         // Remove subtree breakpoints.
-        m_breakpoints.remove(node);
+        m_domBreakpoints.remove(node);
         Vector<Node*> stack(1, InspectorDOMAgent::innerFirstChild(node));
         do {
             Node* node = stack.last();
             stack.removeLast();
             if (!node)
                 continue;
-            m_breakpoints.remove(node);
+            m_domBreakpoints.remove(node);
             stack.append(InspectorDOMAgent::innerFirstChild(node));
             stack.append(InspectorDOMAgent::innerNextSibling(node));
         } while (!stack.isEmpty());
@@ -121,7 +183,7 @@ void InspectorBrowserDebuggerAgent::setDOMBreakpoint(long nodeId, long type)
         return;
 
     uint32_t rootBit = 1 << type;
-    m_breakpoints.set(node, m_breakpoints.get(node) | rootBit);
+    m_domBreakpoints.set(node, m_domBreakpoints.get(node) | rootBit);
     if (rootBit & inheritableDOMBreakpointTypesMask) {
         for (Node* child = InspectorDOMAgent::innerFirstChild(node); child; child = InspectorDOMAgent::innerNextSibling(child))
             updateSubtreeBreakpoints(child, rootBit, true);
@@ -135,11 +197,11 @@ void InspectorBrowserDebuggerAgent::removeDOMBreakpoint(long nodeId, long type)
         return;
 
     uint32_t rootBit = 1 << type;
-    uint32_t mask = m_breakpoints.get(node) & ~rootBit;
+    uint32_t mask = m_domBreakpoints.get(node) & ~rootBit;
     if (mask)
-        m_breakpoints.set(node, mask);
+        m_domBreakpoints.set(node, mask);
     else
-        m_breakpoints.remove(node);
+        m_domBreakpoints.remove(node);
 
     if ((rootBit & inheritableDOMBreakpointTypesMask) && !(mask & (rootBit << domBreakpointDerivedTypeShift))) {
         for (Node* child = InspectorDOMAgent::innerFirstChild(node); child; child = InspectorDOMAgent::innerNextSibling(child))
@@ -210,7 +272,7 @@ void InspectorBrowserDebuggerAgent::descriptionForDOMEvent(Node* target, long br
         if (!insertion)
             breakpointOwner = InspectorDOMAgent::innerParentNode(target);
         ASSERT(breakpointOwner);
-        while (!(m_breakpoints.get(breakpointOwner) & (1 << breakpointType))) {
+        while (!(m_domBreakpoints.get(breakpointOwner) & (1 << breakpointType))) {
             breakpointOwner = InspectorDOMAgent::innerParentNode(breakpointOwner);
             ASSERT(breakpointOwner);
         }
@@ -229,18 +291,18 @@ bool InspectorBrowserDebuggerAgent::hasBreakpoint(Node* node, long type)
 {
     uint32_t rootBit = 1 << type;
     uint32_t derivedBit = rootBit << domBreakpointDerivedTypeShift;
-    return m_breakpoints.get(node) & (rootBit | derivedBit);
+    return m_domBreakpoints.get(node) & (rootBit | derivedBit);
 }
 
 void InspectorBrowserDebuggerAgent::updateSubtreeBreakpoints(Node* node, uint32_t rootMask, bool set)
 {
-    uint32_t oldMask = m_breakpoints.get(node);
+    uint32_t oldMask = m_domBreakpoints.get(node);
     uint32_t derivedMask = rootMask << domBreakpointDerivedTypeShift;
     uint32_t newMask = set ? oldMask | derivedMask : oldMask & ~derivedMask;
     if (newMask)
-        m_breakpoints.set(node, newMask);
+        m_domBreakpoints.set(node, newMask);
     else
-        m_breakpoints.remove(node);
+        m_domBreakpoints.remove(node);
 
     uint32_t newRootMask = rootMask & ~newMask;
     if (!newRootMask)
@@ -311,13 +373,6 @@ void InspectorBrowserDebuggerAgent::willSendXMLHttpRequest(const String& url)
     eventData->setString("breakpointURL", breakpointURL);
     eventData->setString("url", url);
     debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData.release());
-}
-
-void InspectorBrowserDebuggerAgent::clearForPageNavigation()
-{
-    m_eventListenerBreakpoints.clear();
-    m_XHRBreakpoints.clear();
-    m_hasXHRBreakpointWithEmptyURL = false;
 }
 
 } // namespace WebCore

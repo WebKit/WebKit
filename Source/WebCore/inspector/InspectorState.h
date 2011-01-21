@@ -49,7 +49,7 @@ public:
         searchingForNode,
         consoleMessagesEnabled,
         userInitiatedProfiling,
-        stickyBreakpoints,
+        browserBreakpoints,
         resourceAgentEnabled,
         lastPropertyId
     };

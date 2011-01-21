@@ -222,7 +222,7 @@ void InspectorController::restoreInspectorStateFromCookie(const String& inspecto
     if (!m_frontend) {
         connectFrontend();
         m_frontend->frontendReused();
-        m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
+        m_frontend->inspectedURLChanged(inspectedURL().string());
         m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
         pushDataCollectedOffline();
     }
@@ -399,7 +399,7 @@ void InspectorController::connectFrontend()
     m_consoleAgent->setFrontend(m_frontend.get());
 
     // Initialize Web Inspector title.
-    m_frontend->inspectedURLChanged(m_inspectedPage->mainFrame()->loader()->url().string());
+    m_frontend->inspectedURLChanged(inspectedURL().string());
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent = new InspectorApplicationCacheAgent(this, m_frontend.get());
@@ -643,8 +643,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         if (m_debuggerAgent) {
             m_debuggerAgent->clearForPageNavigation();
             if (m_browserDebuggerAgent)
-                m_browserDebuggerAgent->clearForPageNavigation();
-            restoreStickyBreakpoints();
+                m_browserDebuggerAgent->inspectedURLChanged(inspectedURL());
         }
 #endif
 
@@ -1050,7 +1049,7 @@ void InspectorController::enableDebugger(bool always)
 
     m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get());
     m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this);
-    restoreStickyBreakpoints();
+    m_browserDebuggerAgent->inspectedURLChanged(inspectedURL());
 
     m_frontend->debuggerWasEnabled();
 }
@@ -1080,67 +1079,9 @@ void InspectorController::resume()
         m_debuggerAgent->resume();
 }
 
-void InspectorController::setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints)
+void InspectorController::setAllBrowserBreakpoints(PassRefPtr<InspectorObject> breakpoints)
 {
-    m_state->setObject(InspectorState::stickyBreakpoints, breakpoints);
-}
-
-void InspectorController::restoreStickyBreakpoints()
-{
-    RefPtr<InspectorObject> allBreakpoints = m_state->getObject(InspectorState::stickyBreakpoints);
-    KURL url = m_inspectedPage->mainFrame()->loader()->url();
-    url.removeFragmentIdentifier();
-    RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(url);
-    if (!breakpoints)
-        return;
-    for (unsigned i = 0; i < breakpoints->length(); ++i)
-        restoreStickyBreakpoint(breakpoints->get(i)->asObject());
-}
-
-void InspectorController::restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint)
-{
-    DEFINE_STATIC_LOCAL(String, eventListenerBreakpointType, ("EventListener"));
-    DEFINE_STATIC_LOCAL(String, javaScriptBreakpointType, ("JS"));
-    DEFINE_STATIC_LOCAL(String, xhrBreakpointType, ("XHR"));
-
-    if (!breakpoint)
-        return;
-    String type;
-    if (!breakpoint->getString("type", &type))
-        return;
-    bool enabled;
-    if (!breakpoint->getBoolean("enabled", &enabled))
-        return;
-    RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
-    if (!condition)
-        return;
-
-    if (type == eventListenerBreakpointType && m_browserDebuggerAgent) {
-        if (!enabled)
-            return;
-        String eventName;
-        if (!condition->getString("eventName", &eventName))
-            return;
-        m_browserDebuggerAgent->setEventListenerBreakpoint(eventName);
-    } else if (type == javaScriptBreakpointType && m_debuggerAgent) {
-        String url;
-        if (!condition->getString("url", &url))
-            return;
-        double lineNumber;
-        if (!condition->getNumber("lineNumber", &lineNumber))
-            return;
-        String javaScriptCondition;
-        if (!condition->getString("condition", &javaScriptCondition))
-            return;
-        m_debuggerAgent->setStickyBreakpoint(url, static_cast<unsigned>(lineNumber), javaScriptCondition, enabled);
-    } else if (type == xhrBreakpointType && m_browserDebuggerAgent) {
-        if (!enabled)
-            return;
-        String url;
-        if (!condition->getString("url", &url))
-            return;
-        m_browserDebuggerAgent->setXHRBreakpoint(url);
-    }
+    m_state->setObject(InspectorState::browserBreakpoints, breakpoints);
 }
 #endif
 
@@ -1439,6 +1380,11 @@ void InspectorController::removeAllScriptsToEvaluateOnLoad()
 void InspectorController::setInspectorExtensionAPI(const String& source)
 {
     m_inspectorExtensionAPI = source;
+}
+
+KURL InspectorController::inspectedURL() const
+{
+    return m_inspectedPage->mainFrame()->loader()->url();
 }
 
 void InspectorController::reloadPage()

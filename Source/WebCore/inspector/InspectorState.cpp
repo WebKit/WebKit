@@ -42,7 +42,7 @@ InspectorState::InspectorState(InspectorClient* client)
     registerBoolean(userInitiatedProfiling, false);
     registerBoolean(timelineProfilerEnabled, false);
     registerBoolean(searchingForNode, false);
-    registerObject(stickyBreakpoints);
+    registerObject(browserBreakpoints);
     registerBoolean(consoleMessagesEnabled, false);
     registerBoolean(monitoringXHR, false);
     registerBoolean(resourceAgentEnabled, false);

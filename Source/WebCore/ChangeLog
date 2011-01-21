@@ -1,3 +1,43 @@
+2011-01-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move sticky breakpoints management from InspectorController to InspectorBrowserDebuggerAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=52874
+
+        This is the first step of debugger api refactoring (see bug 52879).
+        JavaScript breakpoints are still in the same list as native breakpoints and are restored by InspectorBrowserDebuggerAgent.
+        The second step will be to move sticky JavaScript breakpoints to InspectorDebuggerAgent.
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints):
+        (WebCore::InspectorBrowserDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorBrowserDebuggerAgent::restoreStickyBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::discardBindings):
+        (WebCore::InspectorBrowserDebuggerAgent::didInsertDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::didRemoveDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorBrowserDebuggerAgent::hasBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::updateSubtreeBreakpoints):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::restoreInspectorStateFromCookie):
+        (WebCore::InspectorController::connectFrontend):
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::enableDebugger):
+        (WebCore::InspectorController::resume):
+        (WebCore::InspectorController::inspectedURL):
+        * inspector/InspectorController.h:
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        * inspector/InspectorState.h:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype._saveBreakpoints):
+
 2011-01-21  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Jeremy Orlow.

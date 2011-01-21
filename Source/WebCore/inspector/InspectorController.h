@@ -125,6 +125,7 @@ public:
     bool enabled() const;
 
     Page* inspectedPage() const { return m_inspectedPage; }
+    KURL inspectedURL() const;
     void reloadPage();
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
@@ -242,7 +243,7 @@ public:
     bool debuggerEnabled() const { return m_debuggerAgent; }
     void resume();
 
-    void setStickyBreakpoints(PassRefPtr<InspectorObject> breakpoints);
+    void setAllBrowserBreakpoints(PassRefPtr<InspectorObject>);
 #endif
 
     // Generic code called from custom implementations.
@@ -287,8 +288,6 @@ private:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void toggleRecordButton(bool);
-    void restoreStickyBreakpoints();
-    void restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint);
 #endif
 
     PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie&);

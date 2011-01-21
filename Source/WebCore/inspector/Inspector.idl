@@ -242,7 +242,7 @@ module core {
         [domain=Inspector] void enableDebugger(in boolean always);
         [domain=Inspector] void disableDebugger(in boolean always);
 
-        [domain=Inspector] void setStickyBreakpoints(in Object breakpoints);
+        [domain=Inspector] void setAllBrowserBreakpoints(in Object breakpoints);
 
         [notify, domain=Debugger] void debuggerWasEnabled();
         [notify, domain=Debugger] void debuggerWasDisabled();
