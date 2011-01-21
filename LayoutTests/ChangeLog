@@ -1,3 +1,12 @@
+2011-01-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial fix.
+
+        FrameLoader::checkLoadCompleteForThisFrame uses wrong history item
+        https://bugs.webkit.org/show_bug.cgi?id=48812
+
+        * platform/qt/http/tests/navigation/forward-and-cancel-expected.txt: Updated after r76357.
+
 2011-01-21  Jessie Berlin  <jberlin@apple.com>
 
         Skip transitions/transition-end-event-destroy-iframe.html on Windows in order to get the
