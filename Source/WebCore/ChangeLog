@@ -1,3 +1,18 @@
+2011-01-21  Patrick Gansterer  <paroga@paroga.com>
+
+        Original patch from François Sausset  <sausset@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Code cleaning in rendering/mathml/RenderMathMLFraction.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=52201
+
+        Replace unneeded doubles by floats and remove unneeded casts.
+
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::paint):
+        * rendering/mathml/RenderMathMLFraction.h:
+
 2011-01-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

@@ -39,12 +39,12 @@ namespace WebCore {
     
 using namespace MathMLNames;
 
-static const double gHorizontalPad = 0.2;
-static const double gLineThin = 0.33;
-static const double gLineMedium = 1.;
-static const double gLineThick = 3.;
-static const double gFractionBarWidth = 0.05;
-static const double gDenominatorPad = 0.1;
+static const float gHorizontalPad = 0.2f;
+static const float gLineThin = 0.33f;
+static const float gLineMedium = 1.f;
+static const float gLineThick = 3.f;
+static const float gFractionBarWidth = 0.05f;
+static const float gDenominatorPad = 0.1f;
 
 RenderMathMLFraction::RenderMathMLFraction(Element* fraction) 
     : RenderMathMLBlock(fraction)
@@ -158,7 +158,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     
     info.context->save();
     
-    info.context->setStrokeThickness(static_cast<float>(m_lineThickness));
+    info.context->setStrokeThickness(m_lineThickness);
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
     
