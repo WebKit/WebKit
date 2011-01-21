@@ -325,30 +325,34 @@
       var header = $(this).children('h1');
       var url_hash = '#L' + firstLine(this);
 
-      var file_link = $('a', header)[0];
-      file_link.target = "_blank";
-      file_link.href += url_hash;
-
       var file_name = header.text();
       files[file_name] = this;
 
       addExpandLinks(file_name);
-      addFileDiffLinks(file_name, url_hash);
+
+      var diff_links = $('<div class="FileDiffLinkContainer LinkContainer">' +
+          diffLinksHtml() +
+          '</div>');
+
+      var file_link = $('a', header)[0];
+      // If the base directory in the file path does not match a WebKit top level directory,
+      // then PrettyPatch.rb doesn't linkify the header.
+      if (file_link) {
+        file_link.target = "_blank";
+        file_link.href += url_hash;
+        diff_links.append(tracLinks(file_name, url_hash));
+      }
+
+      $('h1', this).after(diff_links);
+      updateDiffLinkVisibility(this);
     });
   }
 
-  function addFileDiffLinks(file_name, url_hash) {
-    var diff_links = $('<div class="FileDiffLinkContainer LinkContainer">' +
-        diffLinksHtml() +
-        '</div>');
-
+  function tracLinks(file_name, url_hash) {
     var trac_links = $('<a target="_blank">annotate</a><a target="_blank">revision log</a>');
     trac_links[0].href = 'http://trac.webkit.org/browser/trunk/' + file_name + '?annotate=blame' + url_hash;
     trac_links[1].href = 'http://trac.webkit.org/log/trunk/' + file_name;
-    diff_links.append(trac_links);
-
-    $('h1', files[file_name]).after(diff_links);
-    updateDiffLinkVisibility(files[file_name]);
+    return trac_links;
   }
 
   function addExpandLinks(file_name) {

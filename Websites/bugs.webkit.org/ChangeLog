@@ -2,6 +2,15 @@
 
         Reviewed by Adam Barth.
 
+        handle cases where PrettyPatch.rb doesn't linkify filenames
+        https://bugs.webkit.org/show_bug.cgi?id=52834
+
+        * code-review.js:
+
+2011-01-20  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Adam Barth.
+
         fix goofup in http://trac.webkit.org/changeset/76082
         https://bugs.webkit.org/show_bug.cgi?id=52830
 
