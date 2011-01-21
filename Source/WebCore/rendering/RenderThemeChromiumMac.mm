@@ -20,8 +20,8 @@
 
 #import "config.h"
 #import "RenderThemeChromiumMac.h"
-#import "ChromiumBridge.h"
 #import "PaintInfo.h"
+#import "PlatformBridge.h"
 #import "RenderMediaControlsChromium.h"
 #import "UserAgentStyleSheets.h"
 #import <Carbon/Carbon.h>
@@ -71,7 +71,7 @@ PassRefPtr<RenderTheme> RenderThemeChromiumMac::create()
 
 bool RenderThemeChromiumMac::usesTestModeFocusRingColor() const
 {
-    return ChromiumBridge::layoutTestMode();
+    return PlatformBridge::layoutTestMode();
 }
 
 NSView* RenderThemeChromiumMac::documentViewFor(RenderObject*) const

@@ -86,7 +86,7 @@ class Widget;
 
 // An interface to the embedding layer, which has the ability to answer
 // questions about the system and so on...
-// This is very similar to ChromiumBridge and the two are likely to converge
+// This is very similar to chromium/PlatformBridge and the two are likely to converge
 // in the future.
 class PlatformBridge {
 public:

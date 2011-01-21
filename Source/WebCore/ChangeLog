@@ -1,3 +1,170 @@
+2011-01-21  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Rename ChromiumBridge to PlatformBridge
+        https://bugs.webkit.org/show_bug.cgi?id=52471
+
+        No tests added as this is a rename; no change in behavior.
+
+        * WebCore.gypi:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::reportFatalErrorInV8):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::isLinkVisited):
+        * platform/android/PlatformBridge.h:
+        * platform/audio/chromium/AudioBusChromium.cpp:
+        (WebCore::createBusFromInMemoryAudioFile):
+        * platform/chromium/ChromiumBridge.h: Removed.
+        * platform/chromium/ChromiumDataObjectLegacy.cpp:
+        (WebCore::ChromiumDataObjectLegacy::getData):
+        * platform/chromium/DragDataChromium.cpp:
+        (WebCore::DragData::asURL):
+        * platform/chromium/FileSystemChromium.cpp:
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::getFileSize):
+        (WebCore::getFileModificationTime):
+        (WebCore::revealFolderInOS):
+        (WebCore::directoryName):
+        (WebCore::pathByAppendingComponent):
+        (WebCore::makeAllDirectories):
+        (WebCore::fileExists):
+        (WebCore::openFile):
+        (WebCore::closeFile):
+        (WebCore::seekFile):
+        (WebCore::truncateFile):
+        (WebCore::readFromFile):
+        (WebCore::writeToFile):
+        * platform/chromium/LanguageChromium.cpp:
+        (WebCore::platformDefaultLanguage):
+        * platform/chromium/LinkHashChromium.cpp:
+        (WebCore::visitedLinkHash):
+        * platform/chromium/MIMETypeRegistryChromium.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType):
+        (WebCore::MIMETypeRegistry::isSupportedNonImageMIMEType):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writePlainText):
+        (WebCore::Pasteboard::writeURL):
+        (WebCore::Pasteboard::writeImage):
+        (WebCore::Pasteboard::canSmartReplace):
+        (WebCore::Pasteboard::plainText):
+        (WebCore::Pasteboard::documentFragment):
+        * platform/chromium/PlatformBridge.h:
+        * platform/chromium/PlatformScreenChromium.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/chromium/ReadableDataObject.cpp:
+        (WebCore::ReadableDataObject::getData):
+        (WebCore::ReadableDataObject::urlTitle):
+        (WebCore::ReadableDataObject::htmlBaseUrl):
+        (WebCore::ReadableDataObject::filenames):
+        (WebCore::ReadableDataObject::ensureTypeCacheInitialized):
+        * platform/chromium/SSLKeyGeneratorChromium.cpp:
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp:
+        (WebCore::ScrollbarThemeChromiumLinux::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumLinux::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumLinux::paintButton):
+        (WebCore::ScrollbarThemeChromiumLinux::paintThumb):
+        (WebCore::ScrollbarThemeChromiumLinux::buttonSize):
+        (WebCore::ScrollbarThemeChromiumLinux::minimumThumbLength):
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::scrollbarStateToThemeState):
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromiumWin::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumWin::paintButton):
+        (WebCore::ScrollbarThemeChromiumWin::paintThumb):
+        (WebCore::ScrollbarThemeChromiumWin::buttonSize):
+        * platform/chromium/SharedTimerChromium.cpp:
+        (WebCore::setSharedTimerFiredFunction):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+        * platform/chromium/SuddenTerminationChromium.cpp:
+        (WebCore::disableSuddenTermination):
+        (WebCore::enableSuddenTermination):
+        * platform/chromium/SystemTimeChromium.cpp:
+        (WebCore::currentTime):
+        * platform/chromium/WritableDataObject.cpp:
+        (WebCore::WritableDataObject::setData):
+        * platform/graphics/chromium/CrossProcessFontLoading.mm:
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::fontContainsCharacter):
+        (WebCore::FillLogFont):
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::FontPlatformData::scriptFontProperties):
+        * platform/graphics/chromium/FontPlatformDataLinux.cpp:
+        (WebCore::FontPlatformData::querySystemForRenderStyle):
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::fillBMPGlyphs):
+        * platform/graphics/chromium/ImageChromium.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/chromium/ImageChromiumMac.mm:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp:
+        (WebCore::UniscribeHelperTextRun::tryToPreloadFont):
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/network/chromium/CookieJarChromium.cpp:
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        * platform/network/chromium/DNSChromium.cpp:
+        (WebCore::prefetchDNS):
+        * platform/qt/PlatformBridge.h:
+        * platform/sql/chromium/SQLiteFileSystemChromium.cpp:
+        (WebCore::SQLiteFileSystem::deleteDatabaseFile):
+        (WebCore::SQLiteFileSystem::getDatabaseFileSize):
+        * platform/sql/chromium/SQLiteFileSystemChromiumPosix.cpp:
+        (chromiumOpen):
+        (chromiumDelete):
+        (chromiumAccess):
+        * platform/sql/chromium/SQLiteFileSystemChromiumWin.cpp:
+        * plugins/chromium/PluginDataChromium.cpp:
+        (WebCore::PluginCache::plugins):
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::usesTestModeFocusRingColor):
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::caretBlinkInterval):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumWin::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumWin::systemColor):
+        (WebCore::RenderThemeChromiumWin::paintButton):
+        (WebCore::RenderThemeChromiumWin::paintSliderTrack):
+        (WebCore::menuListButtonWidth):
+        (WebCore::RenderThemeChromiumWin::paintMenuList):
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        (WebCore::RenderThemeChromiumWin::paintInnerSpinButton):
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+        * storage/chromium/IDBFactoryBackendInterface.cpp:
+        (WebCore::IDBFactoryBackendInterface::create):
+        (WebCore::IDBFactoryBackendInterface::~IDBFactoryBackendInterface):
+        * storage/chromium/IDBKeyPathBackendImpl.cpp:
+        (WebCore::IDBKeyPathBackendImpl::createIDBKeysFromSerializedValuesAndKeyPath):
+
 2011-01-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76335.

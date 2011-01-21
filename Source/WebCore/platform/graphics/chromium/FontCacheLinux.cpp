@@ -31,12 +31,12 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "ChromiumBridge.h"
 #include "Font.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "Logging.h"
 #include "NotImplemented.h"
+#include "PlatformBridge.h"
 #include "SimpleFontData.h"
 
 #include "SkPaint.h"
@@ -57,7 +57,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
                                                           const UChar* characters,
                                                           int length)
 {
-    String family = ChromiumBridge::getFontFamilyForCharacters(characters, length);
+    String family = PlatformBridge::getFontFamilyForCharacters(characters, length);
     if (family.isEmpty())
         return 0;
 

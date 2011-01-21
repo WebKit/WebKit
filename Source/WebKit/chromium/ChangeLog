@@ -1,3 +1,124 @@
+2011-01-21  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Rename ChromiumBridge to PlatformBridge
+        https://bugs.webkit.org/show_bug.cgi?id=52471
+
+        * WebKit.gyp:
+        * src/AssertMatchingEnums.cpp:
+        * src/PlatformBridge.cpp:
+        (WebCore::toChromeClientImpl):
+        (WebCore::toWebWidgetClient):
+        (WebCore::getCookieJar):
+        (WebCore::PlatformBridge::cacheMetadata):
+        (WebCore::PlatformBridge::clipboardIsFormatAvailable):
+        (WebCore::PlatformBridge::clipboardReadPlainText):
+        (WebCore::PlatformBridge::clipboardReadHTML):
+        (WebCore::PlatformBridge::clipboardWriteSelection):
+        (WebCore::PlatformBridge::clipboardWritePlainText):
+        (WebCore::PlatformBridge::clipboardWriteURL):
+        (WebCore::PlatformBridge::clipboardWriteImage):
+        (WebCore::PlatformBridge::clipboardWriteData):
+        (WebCore::PlatformBridge::clipboardReadAvailableTypes):
+        (WebCore::PlatformBridge::clipboardReadData):
+        (WebCore::PlatformBridge::clipboardReadFilenames):
+        (WebCore::PlatformBridge::setCookies):
+        (WebCore::PlatformBridge::cookies):
+        (WebCore::PlatformBridge::cookieRequestHeaderFieldValue):
+        (WebCore::PlatformBridge::rawCookies):
+        (WebCore::PlatformBridge::deleteCookie):
+        (WebCore::PlatformBridge::cookiesEnabled):
+        (WebCore::PlatformBridge::prefetchDNS):
+        (WebCore::PlatformBridge::fileExists):
+        (WebCore::PlatformBridge::deleteFile):
+        (WebCore::PlatformBridge::deleteEmptyDirectory):
+        (WebCore::PlatformBridge::getFileSize):
+        (WebCore::PlatformBridge::revealFolderInOS):
+        (WebCore::PlatformBridge::getFileModificationTime):
+        (WebCore::PlatformBridge::directoryName):
+        (WebCore::PlatformBridge::pathByAppendingComponent):
+        (WebCore::PlatformBridge::makeAllDirectories):
+        (WebCore::PlatformBridge::getAbsolutePath):
+        (WebCore::PlatformBridge::isDirectory):
+        (WebCore::PlatformBridge::filePathToURL):
+        (WebCore::PlatformBridge::openFile):
+        (WebCore::PlatformBridge::closeFile):
+        (WebCore::PlatformBridge::seekFile):
+        (WebCore::PlatformBridge::truncateFile):
+        (WebCore::PlatformBridge::readFromFile):
+        (WebCore::PlatformBridge::writeToFile):
+        (WebCore::PlatformBridge::ensureFontLoaded):
+        (WebCore::PlatformBridge::getFontFamilyForCharacters):
+        (WebCore::PlatformBridge::getRenderStyleForStrike):
+        (WebCore::PlatformBridge::loadFont):
+        (WebCore::PlatformBridge::databaseOpenFile):
+        (WebCore::PlatformBridge::databaseDeleteFile):
+        (WebCore::PlatformBridge::databaseGetFileAttributes):
+        (WebCore::PlatformBridge::databaseGetFileSize):
+        (WebCore::PlatformBridge::idbFactory):
+        (WebCore::PlatformBridge::idbShutdown):
+        (WebCore::PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath):
+        (WebCore::PlatformBridge::signedPublicKeyAndChallengeString):
+        (WebCore::PlatformBridge::computedDefaultLanguage):
+        (WebCore::PlatformBridge::layoutTestMode):
+        (WebCore::PlatformBridge::isSupportedImageMIMEType):
+        (WebCore::PlatformBridge::isSupportedJavaScriptMIMEType):
+        (WebCore::PlatformBridge::isSupportedNonImageMIMEType):
+        (WebCore::PlatformBridge::mimeTypeForExtension):
+        (WebCore::PlatformBridge::mimeTypeFromFile):
+        (WebCore::PlatformBridge::preferredExtensionForMIMEType):
+        (WebCore::PlatformBridge::plugins):
+        (WebCore::PlatformBridge::pluginScriptableObject):
+        (WebCore::PlatformBridge::loadPlatformImageResource):
+        (WebCore::PlatformBridge::loadPlatformAudioResource):
+        (WebCore::PlatformBridge::decodeAudioFileData):
+        (WebCore::PlatformBridge::sandboxEnabled):
+        (WebCore::PlatformBridge::setSharedTimerFiredFunction):
+        (WebCore::PlatformBridge::setSharedTimerFireTime):
+        (WebCore::PlatformBridge::stopSharedTimer):
+        (WebCore::PlatformBridge::decrementStatsCounter):
+        (WebCore::PlatformBridge::incrementStatsCounter):
+        (WebCore::PlatformBridge::histogramCustomCounts):
+        (WebCore::PlatformBridge::histogramEnumeration):
+        (WebCore::PlatformBridge::suddenTerminationChanged):
+        (WebCore::PlatformBridge::currentTime):
+        (WebCore::PlatformBridge::paintButton):
+        (WebCore::PlatformBridge::paintMenuList):
+        (WebCore::PlatformBridge::paintScrollbarArrow):
+        (WebCore::PlatformBridge::paintScrollbarThumb):
+        (WebCore::PlatformBridge::paintScrollbarTrack):
+        (WebCore::PlatformBridge::paintSpinButton):
+        (WebCore::PlatformBridge::paintTextField):
+        (WebCore::PlatformBridge::paintTrackbar):
+        (WebCore::PlatformBridge::paintProgressBar):
+        (WebCore::WebThemePart):
+        (WebCore::WebThemeState):
+        (WebCore::GetWebThemeExtraParams):
+        (WebCore::PlatformBridge::getThemePartSize):
+        (WebCore::PlatformBridge::paintThemePart):
+        (WebCore::PlatformBridge::traceEventBegin):
+        (WebCore::PlatformBridge::traceEventEnd):
+        (WebCore::PlatformBridge::visitedLinkHash):
+        (WebCore::PlatformBridge::isLinkVisited):
+        (WebCore::PlatformBridge::notifyJSOutOfMemory):
+        (WebCore::PlatformBridge::memoryUsageMB):
+        (WebCore::PlatformBridge::actualMemoryUsageMB):
+        (WebCore::PlatformBridge::screenDepth):
+        (WebCore::PlatformBridge::screenDepthPerComponent):
+        (WebCore::PlatformBridge::screenIsMonochrome):
+        (WebCore::PlatformBridge::screenRect):
+        (WebCore::PlatformBridge::screenAvailableRect):
+        (WebCore::PlatformBridge::popupsAllowed):
+        (WebCore::WorkerContextProxy::create):
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::cacheMetadata):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::WebFrameImpl):
+        (WebKit::WebFrameImpl::~WebFrameImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-01-20  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Andreas Kling.

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "PluginDataChromium.h"
 
-#include "ChromiumBridge.h"
+#include "PlatformBridge.h"
 
 namespace WebCore {
 
@@ -50,7 +50,7 @@ public:
     const Vector<PluginInfo>& plugins()
     {
         if (!m_loaded) {
-            ChromiumBridge::plugins(m_refresh, &m_plugins);
+            PlatformBridge::plugins(m_refresh, &m_plugins);
             m_loaded = true;
             m_refresh = false;
         }

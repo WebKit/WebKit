@@ -34,23 +34,22 @@
 #include "AutoFillPopupMenuClient.h"
 #include "AXObjectCache.h"
 #include "BackForwardListChromium.h"
+#include "CSSStyleSelector.h"
+#include "CSSValueKeywords.h"
 #include "Chrome.h"
-#include "ChromiumBridge.h"
 #include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
-#include "CSSStyleSelector.h"
-#include "CSSValueKeywords.h"
 #include "Cursor.h"
+#include "DOMUtilitiesPrivate.h"
 #include "DeviceOrientationClientProxy.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "DOMUtilitiesPrivate.h"
 #include "DragController.h"
-#include "DragScrollTimer.h"
 #include "DragData.h"
+#include "DragScrollTimer.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "Extensions3D.h"
@@ -65,8 +64,8 @@
 #include "GraphicsContext3DInternal.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
-#include "HitTestResult.h"
 #include "HTMLNames.h"
+#include "HitTestResult.h"
 #include "Image.h"
 #include "ImageBuffer.h"
 #include "InspectorController.h"
@@ -78,6 +77,7 @@
 #include "PageGroup.h"
 #include "PageGroupLoadDeferrer.h"
 #include "Pasteboard.h"
+#include "PlatformBridge.h"
 #include "PlatformContextSkia.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -98,8 +98,8 @@
 #include "Vector.h"
 #include "WebAccessibilityObject.h"
 #include "WebAutoFillClient.h"
-#include "WebDevToolsAgentPrivate.h"
 #include "WebDevToolsAgentImpl.h"
+#include "WebDevToolsAgentPrivate.h"
 #include "WebDragData.h"
 #include "WebFrameImpl.h"
 #include "WebImage.h"
@@ -2299,7 +2299,7 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
 
 void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 {
-    ChromiumBridge::histogramEnumeration("GPU.setIsAcceleratedCompositingActive", active * 2 + m_isAcceleratedCompositingActive, 4);
+    PlatformBridge::histogramEnumeration("GPU.setIsAcceleratedCompositingActive", active * 2 + m_isAcceleratedCompositingActive, 4);
 
     if (m_isAcceleratedCompositingActive == active)
         return;

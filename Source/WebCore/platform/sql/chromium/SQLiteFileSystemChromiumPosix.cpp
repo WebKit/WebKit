@@ -31,7 +31,7 @@
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
-#include "ChromiumBridge.h"
+#include "PlatformBridge.h"
 #include <sqlite3.h>
 
 #include <errno.h>
@@ -996,10 +996,10 @@ static int chromiumOpen(sqlite3_vfs* vfs, const char* fileName,
     }
 
     if (fd < 0) {
-        fd = ChromiumBridge::databaseOpenFile(fileName, desiredFlags);
+        fd = PlatformBridge::databaseOpenFile(fileName, desiredFlags);
         if ((fd < 0) && (desiredFlags & SQLITE_OPEN_READWRITE)) {
             int newFlags = (desiredFlags & ~(SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE)) | SQLITE_OPEN_READONLY;
-            fd = ChromiumBridge::databaseOpenFile(fileName, newFlags);
+            fd = PlatformBridge::databaseOpenFile(fileName, newFlags);
         }
     }
     if (fd < 0) {
@@ -1031,7 +1031,7 @@ static int chromiumOpen(sqlite3_vfs* vfs, const char* fileName,
 //           should be synched after the file is deleted.
 static int chromiumDelete(sqlite3_vfs*, const char* fileName, int syncDir)
 {
-    return ChromiumBridge::databaseDeleteFile(fileName, syncDir);
+    return PlatformBridge::databaseDeleteFile(fileName, syncDir);
 }
 
 // Check the existance and status of the given file.
@@ -1042,7 +1042,7 @@ static int chromiumDelete(sqlite3_vfs*, const char* fileName, int syncDir)
 // res - the result.
 static int chromiumAccess(sqlite3_vfs*, const char* fileName, int flag, int* res)
 {
-    int attr = static_cast<int>(ChromiumBridge::databaseGetFileAttributes(fileName));
+    int attr = static_cast<int>(PlatformBridge::databaseGetFileAttributes(fileName));
     if (attr < 0) {
         *res = 0;
         return SQLITE_OK;

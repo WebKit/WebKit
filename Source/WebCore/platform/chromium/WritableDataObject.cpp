@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WritableDataObject.h"
 
-#include "ChromiumBridge.h"
 #include "ClipboardMimeTypes.h"
+#include "PlatformBridge.h"
 
 namespace WebCore {
 
@@ -80,7 +80,7 @@ bool WritableDataObject::setData(const String& type, const String& data)
         // FIXME: This is currently unimplemented on the Chromium-side. This is
         // "okay" for now since the original implementation didn't support it
         // anyway. Going forward, this is something we'll need to fix though.
-        ChromiumBridge::clipboardWriteData(type, data, "");
+        PlatformBridge::clipboardWriteData(type, data, "");
         return true;
     }
     m_dataMap.set(type, data);

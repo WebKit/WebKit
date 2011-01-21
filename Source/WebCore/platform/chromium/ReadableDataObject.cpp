@@ -31,10 +31,10 @@
 #include "config.h"
 #include "ReadableDataObject.h"
 
-#include "ChromiumBridge.h"
 #include "ClipboardMimeTypes.h"
 #include "Pasteboard.h"
 #include "PasteboardPrivate.h"
+#include "PlatformBridge.h"
 
 namespace WebCore {
 
@@ -80,19 +80,19 @@ String ReadableDataObject::getData(const String& type, bool& succeeded) const
                 Pasteboard::generalPasteboard()->isSelectionMode() ?
                 PasteboardPrivate::SelectionBuffer :
                 PasteboardPrivate::StandardBuffer;
-            data = ChromiumBridge::clipboardReadPlainText(buffer);
+            data = PlatformBridge::clipboardReadPlainText(buffer);
         } else if (type == mimeTypeTextHTML) {
             PasteboardPrivate::ClipboardBuffer buffer =
                 Pasteboard::generalPasteboard()->isSelectionMode() ?
                 PasteboardPrivate::SelectionBuffer :
                 PasteboardPrivate::StandardBuffer;
             KURL ignoredSourceURL;
-            ChromiumBridge::clipboardReadHTML(buffer, &data, &ignoredSourceURL);
+            PlatformBridge::clipboardReadHTML(buffer, &data, &ignoredSourceURL);
         }
         succeeded = !data.isEmpty();
         return data;
     }
-    succeeded = ChromiumBridge::clipboardReadData(
+    succeeded = PlatformBridge::clipboardReadData(
         clipboardBuffer(m_clipboardType), type, data, ignoredMetadata);
     return data;
 }
@@ -101,7 +101,7 @@ String ReadableDataObject::urlTitle() const
 {
     String ignoredData;
     String urlTitle;
-    ChromiumBridge::clipboardReadData(
+    PlatformBridge::clipboardReadData(
         clipboardBuffer(m_clipboardType), mimeTypeTextURIList, ignoredData, urlTitle);
     return urlTitle;
 }
@@ -110,7 +110,7 @@ KURL ReadableDataObject::htmlBaseUrl() const
 {
     String ignoredData;
     String htmlBaseUrl;
-    ChromiumBridge::clipboardReadData(
+    PlatformBridge::clipboardReadData(
         clipboardBuffer(m_clipboardType), mimeTypeTextHTML, ignoredData, htmlBaseUrl);
     return KURL(ParsedURLString, htmlBaseUrl);
 }
@@ -123,7 +123,7 @@ bool ReadableDataObject::containsFilenames() const
 
 Vector<String> ReadableDataObject::filenames() const
 {
-    return ChromiumBridge::clipboardReadFilenames(clipboardBuffer(m_clipboardType));
+    return PlatformBridge::clipboardReadFilenames(clipboardBuffer(m_clipboardType));
 }
 
 void ReadableDataObject::ensureTypeCacheInitialized() const
@@ -131,7 +131,7 @@ void ReadableDataObject::ensureTypeCacheInitialized() const
     if (m_isTypeCacheInitialized)
         return;
 
-    m_types = ChromiumBridge::clipboardReadAvailableTypes(
+    m_types = PlatformBridge::clipboardReadAvailableTypes(
         clipboardBuffer(m_clipboardType), &m_containsFilenames);
     m_isTypeCacheInitialized = true;
 }

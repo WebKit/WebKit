@@ -30,16 +30,16 @@
 #include "config.h"
 #include "DragData.h"
 
-#include "ChromiumBridge.h"
 #include "ChromiumDataObject.h"
 #include "ClipboardMimeTypes.h"
 #include "DocumentFragment.h"
 #include "FileSystem.h"
 #include "Frame.h"
 #include "KURL.h"
-#include "markup.h"
 #include "NotImplemented.h"
+#include "PlatformBridge.h"
 #include "PlatformString.h"
+#include "markup.h"
 
 namespace WebCore {
 
@@ -63,7 +63,7 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* 
         if (title)
             *title = m_platformDragData->urlTitle();
     } else if (filenamePolicy == ConvertFilenames && containsFiles()) {
-        url = ChromiumBridge::filePathToURL(ChromiumBridge::getAbsolutePath(m_platformDragData->filenames()[0]));
+        url = PlatformBridge::filePathToURL(PlatformBridge::getAbsolutePath(m_platformDragData->filenames()[0]));
     }
     return url;
 }

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumLinux.h"
 
-#include "ChromiumBridge.h"
+#include "PlatformBridge.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
 
@@ -46,22 +46,22 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 int ScrollbarThemeChromiumLinux::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     // Horiz and Vert scrollbars are the same thickness.
-    IntSize scrollbarSize = ChromiumBridge::getThemePartSize(ChromiumBridge::PartScrollbarVerticalTrack);
+    IntSize scrollbarSize = PlatformBridge::getThemePartSize(PlatformBridge::PartScrollbarVerticalTrack);
     return scrollbarSize.width();
 }
 
 void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart partType)
 {
-    ChromiumBridge::ThemePaintState state = scrollbar->hoveredPart() == partType ? ChromiumBridge::StateHover : ChromiumBridge::StateNormal;
+    PlatformBridge::ThemePaintState state = scrollbar->hoveredPart() == partType ? PlatformBridge::StateHover : PlatformBridge::StateNormal;
     IntRect alignRect = trackRect(scrollbar, false);
-    ChromiumBridge::ThemePaintExtraParams extraParams;
+    PlatformBridge::ThemePaintExtraParams extraParams;
     extraParams.scrollbarTrack.trackX = alignRect.x();
     extraParams.scrollbarTrack.trackY = alignRect.y();
     extraParams.scrollbarTrack.trackWidth = alignRect.width();
     extraParams.scrollbarTrack.trackHeight = alignRect.height();
-    ChromiumBridge::paintThemePart(
+    PlatformBridge::paintThemePart(
         gc,
-        scrollbar->orientation() == HorizontalScrollbar ? ChromiumBridge::PartScrollbarHorizontalTrack : ChromiumBridge::PartScrollbarVerticalTrack,
+        scrollbar->orientation() == HorizontalScrollbar ? PlatformBridge::PartScrollbarHorizontalTrack : PlatformBridge::PartScrollbarVerticalTrack,
         state,
         rect,
         &extraParams);
@@ -69,52 +69,52 @@ void ScrollbarThemeChromiumLinux::paintTrackPiece(GraphicsContext* gc, Scrollbar
 
 void ScrollbarThemeChromiumLinux::paintButton(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect, ScrollbarPart part)
 {
-    ChromiumBridge::ThemePart paintPart;
-    ChromiumBridge::ThemePaintState state = ChromiumBridge::StateNormal;
+    PlatformBridge::ThemePart paintPart;
+    PlatformBridge::ThemePaintState state = PlatformBridge::StateNormal;
     bool checkMin = false;
     bool checkMax = false;
     if (scrollbar->orientation() == HorizontalScrollbar) {
         if (part == BackButtonStartPart) {
-            paintPart = ChromiumBridge::PartScrollbarLeftArrow;
+            paintPart = PlatformBridge::PartScrollbarLeftArrow;
             checkMin = true;
         } else {
-            paintPart = ChromiumBridge::PartScrollbarRightArrow;
+            paintPart = PlatformBridge::PartScrollbarRightArrow;
             checkMax = true;
         }
     } else {
         if (part == BackButtonStartPart) {
-            paintPart = ChromiumBridge::PartScrollbarUpArrow;
+            paintPart = PlatformBridge::PartScrollbarUpArrow;
             checkMin = true;
         } else {
-            paintPart = ChromiumBridge::PartScrollbarDownArrow;
+            paintPart = PlatformBridge::PartScrollbarDownArrow;
             checkMax = true;
         }
     }
     if ((checkMin && (scrollbar->currentPos() <= 0))
         || (checkMax && scrollbar->currentPos() == scrollbar->maximum())) {
-        state = ChromiumBridge::StateDisabled;
+        state = PlatformBridge::StateDisabled;
     } else {
         if (part == scrollbar->pressedPart())
-            state = ChromiumBridge::StatePressed;
+            state = PlatformBridge::StatePressed;
         else if (part == scrollbar->hoveredPart())
-            state = ChromiumBridge::StateHover;
+            state = PlatformBridge::StateHover;
     }
-    ChromiumBridge::paintThemePart(gc, paintPart, state, rect, 0);
+    PlatformBridge::paintThemePart(gc, paintPart, state, rect, 0);
 }
 
 void ScrollbarThemeChromiumLinux::paintThumb(GraphicsContext* gc, Scrollbar* scrollbar, const IntRect& rect)
 {
-    ChromiumBridge::ThemePaintState state;
+    PlatformBridge::ThemePaintState state;
 
     if (scrollbar->pressedPart() == ThumbPart)
-        state = ChromiumBridge::StatePressed;
+        state = PlatformBridge::StatePressed;
     else if (scrollbar->hoveredPart() == ThumbPart)
-        state = ChromiumBridge::StateHover;
+        state = PlatformBridge::StateHover;
     else
-        state = ChromiumBridge::StateNormal;
-    ChromiumBridge::paintThemePart(
+        state = PlatformBridge::StateNormal;
+    PlatformBridge::paintThemePart(
         gc,
-        scrollbar->orientation() == HorizontalScrollbar ? ChromiumBridge::PartScrollbarHorizontalThumb : ChromiumBridge::PartScrollbarVerticalThumb,
+        scrollbar->orientation() == HorizontalScrollbar ? PlatformBridge::PartScrollbarHorizontalThumb : PlatformBridge::PartScrollbarVerticalThumb,
         state,
         rect,
         0);
@@ -128,23 +128,23 @@ bool ScrollbarThemeChromiumLinux::shouldCenterOnThumb(Scrollbar*, const Platform
 IntSize ScrollbarThemeChromiumLinux::buttonSize(Scrollbar* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar) {
-        IntSize size = ChromiumBridge::getThemePartSize(ChromiumBridge::PartScrollbarUpArrow);
+        IntSize size = PlatformBridge::getThemePartSize(PlatformBridge::PartScrollbarUpArrow);
         return IntSize(size.width(), scrollbar->height() < 2 * size.height() ? scrollbar->height() / 2 : size.height());
     }
 
     // HorizontalScrollbar
-    IntSize size = ChromiumBridge::getThemePartSize(ChromiumBridge::PartScrollbarLeftArrow);
+    IntSize size = PlatformBridge::getThemePartSize(PlatformBridge::PartScrollbarLeftArrow);
     return IntSize(scrollbar->width() < 2 * size.width() ? scrollbar->width() / 2 : size.width(), size.height());
 }
 
 int ScrollbarThemeChromiumLinux::minimumThumbLength(Scrollbar* scrollbar)
 {
     if (scrollbar->orientation() == VerticalScrollbar) {
-        IntSize size = ChromiumBridge::getThemePartSize(ChromiumBridge::PartScrollbarVerticalThumb);
+        IntSize size = PlatformBridge::getThemePartSize(PlatformBridge::PartScrollbarVerticalThumb);
         return size.height();
     }
 
-    IntSize size = ChromiumBridge::getThemePartSize(ChromiumBridge::PartScrollbarHorizontalThumb);
+    IntSize size = PlatformBridge::getThemePartSize(PlatformBridge::PartScrollbarHorizontalThumb);
     return size.width();
 }
 

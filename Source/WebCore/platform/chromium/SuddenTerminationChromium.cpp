@@ -31,18 +31,18 @@
 #include "config.h"
 #include "SuddenTermination.h"
 
-#include "ChromiumBridge.h"
+#include "PlatformBridge.h"
 
 namespace WebCore {
 
 void disableSuddenTermination()
 {
-    ChromiumBridge::suddenTerminationChanged(false);
+    PlatformBridge::suddenTerminationChanged(false);
 }
 
 void enableSuddenTermination()
 {
-    ChromiumBridge::suddenTerminationChanged(true);
+    PlatformBridge::suddenTerminationChanged(true);
 }
 
 } // namespace WebCore

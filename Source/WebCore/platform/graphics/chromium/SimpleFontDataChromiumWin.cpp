@@ -32,11 +32,11 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
-#include "ChromiumBridge.h"
+#include "FloatRect.h"
 #include "Font.h"
 #include "FontCache.h"
-#include "FloatRect.h"
 #include "FontDescription.h"
+#include "PlatformBridge.h"
 #include <wtf/MathExtras.h>
 
 #include <unicode/uchar.h>
@@ -70,7 +70,7 @@ void SimpleFontData::platformInit()
 
     TEXTMETRIC textMetric = {0};
     if (!GetTextMetrics(dc, &textMetric)) {
-        if (ChromiumBridge::ensureFontLoaded(m_platformData.hfont())) {
+        if (PlatformBridge::ensureFontLoaded(m_platformData.hfont())) {
             // Retry GetTextMetrics.
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
@@ -159,7 +159,7 @@ void SimpleFontData::determinePitch()
     // is *not* fixed pitch.  Unbelievable but true.
     TEXTMETRIC textMetric = {0};
     if (!GetTextMetrics(dc, &textMetric)) {
-        if (ChromiumBridge::ensureFontLoaded(m_platformData.hfont())) {
+        if (PlatformBridge::ensureFontLoaded(m_platformData.hfont())) {
             // Retry GetTextMetrics.
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
@@ -190,7 +190,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     int width = 0;
     if (!GetCharWidthI(dc, glyph, 1, 0, &width)) {
         // Ask the browser to preload the font and retry.
-        if (ChromiumBridge::ensureFontLoaded(m_platformData.hfont())) {
+        if (PlatformBridge::ensureFontLoaded(m_platformData.hfont())) {
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
             if (!GetCharWidthI(dc, glyph, 1, 0, &width))

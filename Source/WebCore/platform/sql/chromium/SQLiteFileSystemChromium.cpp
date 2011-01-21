@@ -31,7 +31,7 @@
 #include "config.h"
 #include "SQLiteFileSystem.h"
 
-#include "ChromiumBridge.h"
+#include "PlatformBridge.h"
 #include "SQLiteDatabase.h"
 #include <sqlite3.h>
 #include <wtf/text/CString.h>
@@ -92,12 +92,12 @@ bool SQLiteFileSystem::deleteEmptyDatabaseDirectory(const String&)
 
 bool SQLiteFileSystem::deleteDatabaseFile(const String& fileName)
 {
-    return (ChromiumBridge::databaseDeleteFile(fileName) == SQLITE_OK);
+    return (PlatformBridge::databaseDeleteFile(fileName) == SQLITE_OK);
 }
 
 long long SQLiteFileSystem::getDatabaseFileSize(const String& fileName)
 {
-    return ChromiumBridge::databaseGetFileSize(fileName);
+    return PlatformBridge::databaseGetFileSize(fileName);
 }
 
 } // namespace WebCore

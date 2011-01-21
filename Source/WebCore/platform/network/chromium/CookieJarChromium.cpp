@@ -32,39 +32,39 @@
 #include "CookieJar.h"
 
 #include "Cookie.h"
-#include "ChromiumBridge.h"
 #include "Document.h"
+#include "PlatformBridge.h"
 
 namespace WebCore {
 
 void setCookies(Document* document, const KURL& url, const String& value)
 {
-    ChromiumBridge::setCookies(document, url, value);
+    PlatformBridge::setCookies(document, url, value);
 }
 
 String cookies(const Document* document, const KURL& url)
 {
-    return ChromiumBridge::cookies(document, url);
+    return PlatformBridge::cookies(document, url);
 }
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
 {
-    return ChromiumBridge::cookieRequestHeaderFieldValue(document, url);
+    return PlatformBridge::cookieRequestHeaderFieldValue(document, url);
 }
 
 bool cookiesEnabled(const Document* document)
 {
-    return ChromiumBridge::cookiesEnabled(document);
+    return PlatformBridge::cookiesEnabled(document);
 }
 
 bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
 {
-    return ChromiumBridge::rawCookies(document, url, rawCookies);
+    return PlatformBridge::rawCookies(document, url, rawCookies);
 }
 
 void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
 {
-    return ChromiumBridge::deleteCookie(document, url, cookieName);
+    return PlatformBridge::deleteCookie(document, url, cookieName);
 }
 
 } // namespace WebCore
