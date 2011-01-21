@@ -1,3 +1,11 @@
+2011-01-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Added OwnPtrCommon.h because OwnArrayPtr::set calls deleteOwnedPtr.
+
+        * wtf/OwnArrayPtr.h:
+
 2011-01-20  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -24,6 +24,7 @@
 #include "Assertions.h"
 #include "Noncopyable.h"
 #include "NullPtr.h"
+#include "OwnPtrCommon.h"
 #include "OwnArrayPtrCommon.h"
 #include <algorithm>
 
