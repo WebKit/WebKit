@@ -82,6 +82,8 @@ namespace WebCore {
         int width() const { return m_size.width(); }
         int height() const { return m_size.height(); }
         
+        size_t dataSize() const;
+        
         GraphicsContext* context() const;
 
         bool drawsUsingCopy() const; // If the image buffer has to render using a copied image, it will return true.

@@ -43,7 +43,7 @@ void JSFloat32Array::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSVa
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Float32Array* object)
 {
-    return getDOMObjectWrapper<JSFloat32Array>(exec, globalObject, object);
+    return toJSArrayBufferView<JSFloat32Array>(exec, globalObject, object);
 }
 
 JSC::JSValue JSFloat32Array::set(JSC::ExecState* exec)

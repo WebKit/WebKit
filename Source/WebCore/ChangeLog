@@ -1,3 +1,59 @@
+2011-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Report the sized used by canvases and types arrays
+        https://bugs.webkit.org/show_bug.cgi?id=52856
+
+        Report the memory cost associated with canvas elements,
+        and typed arrays to JavaScript as extraCost, so that it
+        can figure this into its GC behavior.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::toJSArrayBufferView): New templatized function, similar
+        to getDOMObjectWrapper() but calls reportExtraMemoryCost() with
+        the byteLength of the array.
+        
+        * bindings/js/JSFloat32ArrayCustom.cpp:
+        (WebCore::toJS): Use toJSArrayBufferView.
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        (WebCore::toJS): Use toJSArrayBufferView.
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        (WebCore::toJS): Use toJSArrayBufferView.
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        (WebCore::toJS): Use toJSArrayBufferView.
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        (WebCore::toJS): Use toJSArrayBufferView.
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        (WebCore::toJS): Use toJSArrayBufferView.
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        (WebCore::toJS): Use toJSArrayBufferView.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer): Call heap.reportExtraMemoryCost()
+        with the size of the canvas backing store.
+        
+        * html/canvas/TypedArrayBase.h:
+        (WebCore::TypedArrayBase::byteLength): byteLength needs to
+        be public.
+        
+        * platform/graphics/ImageBuffer.h: Add dataSize() method.
+        
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::dataSize): Implement dataSize().
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::dataSize): Implement dataSize().
+        * platform/graphics/haiku/ImageBufferHaiku.cpp:
+        (WebCore::ImageBuffer::dataSize): Implement dataSize().
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::dataSize): Implement dataSize().
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::dataSize): Implement dataSize().
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::ImageBuffer::dataSize): Implement dataSize().
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::dataSize): Implement dataSize().
+
 2011-01-21  Adam Roben  <aroben@apple.com>
 
         Rename WKCACFLayerRenderer[Client] to CACFLayerTreeHost[Client]

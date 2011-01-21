@@ -406,6 +406,11 @@ void HTMLCanvasElement::createImageBuffer() const
     m_imageBuffer->context()->scale(FloatSize(size.width() / unscaledSize.width(), size.height() / unscaledSize.height()));
     m_imageBuffer->context()->setShadowsIgnoreTransforms(true);
     m_imageBuffer->context()->setImageInterpolationQuality(DefaultInterpolationQuality);
+
+#if USE(JSC)
+    if (hasCachedDOMNodeWrapperUnchecked(document(), const_cast<HTMLCanvasElement*>(this)))
+        scriptExecutionContext()->globalData()->heap.reportExtraMemoryCost(m_imageBuffer->dataSize());
+#endif
 }
 
 GraphicsContext* HTMLCanvasElement::drawingContext() const

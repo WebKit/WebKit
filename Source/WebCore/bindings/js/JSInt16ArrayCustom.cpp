@@ -43,7 +43,7 @@ void JSInt16Array::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValu
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Int16Array* object)
 {
-    return getDOMObjectWrapper<JSInt16Array>(exec, globalObject, object);
+    return toJSArrayBufferView<JSInt16Array>(exec, globalObject, object);
 }
 
 JSC::JSValue JSInt16Array::set(JSC::ExecState* exec)

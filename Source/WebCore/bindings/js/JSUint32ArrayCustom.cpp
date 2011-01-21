@@ -43,7 +43,7 @@ void JSUint32Array::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSVal
 
 JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Uint32Array* object)
 {
-    return getDOMObjectWrapper<JSUint32Array>(exec, globalObject, object);
+    return toJSArrayBufferView<JSUint32Array>(exec, globalObject, object);
 }
 
 JSC::JSValue JSUint32Array::set(JSC::ExecState* exec)

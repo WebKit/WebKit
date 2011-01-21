@@ -88,6 +88,11 @@ ImageBuffer::~ImageBuffer()
 {
 }
 
+size_t ImageBuffer::dataSize() const
+{
+    return m_size.width() * m_size.height() * 4;
+}
+
 GraphicsContext* ImageBuffer::context() const
 {
     return m_context.get();

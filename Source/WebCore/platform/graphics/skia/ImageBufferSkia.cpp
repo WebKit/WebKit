@@ -91,6 +91,11 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
+size_t ImageBuffer::dataSize() const
+{
+    return m_size.width() * m_size.height() * 4;
+}
+
 bool ImageBuffer::drawsUsingCopy() const
 {
     return false;

@@ -173,6 +173,11 @@ ImageBuffer::~ImageBuffer()
 {
 }
 
+size_t ImageBuffer::dataSize() const
+{
+    return m_size.height() * m_data.m_bytesPerRow;
+}
+
 GraphicsContext* ImageBuffer::context() const
 {
     return m_context.get();

@@ -60,7 +60,12 @@ class TypedArrayBase : public ArrayBufferView {
         return m_length;
     }
 
- protected:
+    virtual unsigned byteLength() const
+    {
+        return m_length * sizeof(T);
+    }
+
+protected:
     TypedArrayBase(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
         : ArrayBufferView(buffer, byteOffset)
         , m_length(length)
@@ -110,13 +115,6 @@ class TypedArrayBase : public ArrayBufferView {
     // We do not want to have to access this via a virtual function in subclasses,
     // which is why it is protected rather than private.
     unsigned m_length;
-
-  private:
-    // Overridden from ArrayBufferView.
-    virtual unsigned byteLength() const
-    {
-        return m_length * sizeof(T);
-    }
 };
 
 } // namespace WebCore
