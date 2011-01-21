@@ -392,6 +392,9 @@ accessibility/iframe-bastardization.html
 # Spews a console message into the next test under Aero http://webkit.org/b/49945
 svg/custom/clip-path-referencing-use2.svg
 
+# Assertion failure http://webkit.org/b/52913
+transitions/transition-end-event-destroy-iframe.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

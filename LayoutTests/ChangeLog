@@ -1,3 +1,11 @@
+2011-01-21  Jessie Berlin  <jberlin@apple.com>
+
+        Skip transitions/transition-end-event-destroy-iframe.html on Windows in order to get the
+        Windows 7 Release bots green. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=52913
+
+        * platform/win/Skipped:
+
 2011-01-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.
