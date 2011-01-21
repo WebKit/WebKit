@@ -1,3 +1,13 @@
+2011-01-20  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [chromium] Updating test expectations after fixing the bug:
+        https://bugs.webkit.org/show_bug.cgi?id=52062
+
+        * platform/chromium/test_expectations.txt:
+        iframe-reparenting-plugins.html is now passing on Windows.
+
 2011-01-20  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rebaseline a test added in
