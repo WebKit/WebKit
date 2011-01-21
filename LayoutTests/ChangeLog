@@ -1,5 +1,16 @@
 2011-01-21  Jessie Berlin  <jberlin@apple.com>
 
+        Modify the Windows-specific results after http://trac.webkit.org/changeset/76208 in order to
+        get the bots green. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=52557
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
+2011-01-21  Jessie Berlin  <jberlin@apple.com>
+
         Add Windows-specific results for fast/dom/52776.html to get the bot green. Unreviewed.
         https://bugs.webkit.org/show_bug.cgi?id=52776
 
