@@ -37,6 +37,7 @@
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
 #import "PrintInfo.h"
+#import "Region.h"
 #import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
@@ -1274,8 +1275,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
             NSInteger numRectsBeingDrawn;
             [self getRectsBeingDrawn:&rectsBeingDrawn count:&numRectsBeingDrawn];
             for (NSInteger i = 0; i < numRectsBeingDrawn; ++i) {
+                Region unpaintedRegion;
                 IntRect rect = enclosingIntRect(rectsBeingDrawn[i]);
-                drawingArea->paint(context, rect);
+                drawingArea->paint(context, rect, unpaintedRegion);
             }
         } else if (_data->_page->drawsBackground()) {
             [_data->_page->drawsTransparentBackground() ? [NSColor clearColor] : [NSColor whiteColor] set];

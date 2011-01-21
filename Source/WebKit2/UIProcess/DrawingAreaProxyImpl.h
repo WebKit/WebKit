@@ -31,12 +31,14 @@
 
 namespace WebKit {
 
+class Region;
+
 class DrawingAreaProxyImpl : public DrawingAreaProxy {
 public:
     static PassOwnPtr<DrawingAreaProxyImpl> create(WebPageProxy*);
     virtual ~DrawingAreaProxyImpl();
 
-    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&);
+    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, Region& unpaintedRegion);
 
 private:
     explicit DrawingAreaProxyImpl(WebPageProxy*);

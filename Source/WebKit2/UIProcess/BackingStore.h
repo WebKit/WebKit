@@ -51,6 +51,8 @@ public:
     static PassOwnPtr<BackingStore> create(const WebCore::IntSize&, WebPageProxy*);
     ~BackingStore();
 
+    const WebCore::IntSize& size() const { return m_size; }
+
 #if PLATFORM(MAC)
     typedef CGContextRef PlatformGraphicsContext;
 #endif

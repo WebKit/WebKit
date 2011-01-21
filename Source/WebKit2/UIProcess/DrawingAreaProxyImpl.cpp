@@ -26,6 +26,7 @@
 #include "DrawingAreaProxyImpl.h"
 
 #include "DrawingAreaMessages.h"
+#include "Region.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -53,12 +54,15 @@ DrawingAreaProxyImpl::~DrawingAreaProxyImpl()
 {
 }
 
-void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect)
+void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)
 {
+    unpaintedRegion = rect;
+
     if (!m_backingStore)
         return;
 
     m_backingStore->paint(context, rect);
+    unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
 }
 
 void DrawingAreaProxyImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
