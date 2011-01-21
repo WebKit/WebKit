@@ -30,18 +30,19 @@ namespace WebCore {
 
 class MainFrameScrollbarGtk : public Scrollbar {
 public:
+    static PassRefPtr<MainFrameScrollbarGtk> create(ScrollableArea*, ScrollbarOrientation, GtkAdjustment*);
+
     ~MainFrameScrollbarGtk();
     virtual void paint(GraphicsContext*, const IntRect&);
     void detachAdjustment();
     void attachAdjustment(GtkAdjustment*);
-    static PassRefPtr<MainFrameScrollbarGtk> create(ScrollbarClient*, ScrollbarOrientation, GtkAdjustment*);
 
 protected:
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
 
 private:
-    MainFrameScrollbarGtk(ScrollbarClient*, ScrollbarOrientation, GtkAdjustment*);
+    MainFrameScrollbarGtk(ScrollableArea*, ScrollbarOrientation, GtkAdjustment*);
     static void gtkValueChanged(GtkAdjustment*, MainFrameScrollbarGtk*);
 
     GRefPtr<GtkAdjustment> m_adjustment;

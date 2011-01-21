@@ -29,8 +29,8 @@
 
 #include "PlatformBridge.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollableArea.h"
 #include "Scrollbar.h"
-#include "ScrollbarClient.h"
 #include "ScrollbarThemeComposite.h"
 
 // -----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void ScrollbarThemeChromium::paintTickmarks(GraphicsContext* context, Scrollbar*
 
     // Get the tickmarks for the frameview.
     Vector<IntRect> tickmarks;
-    scrollbar->client()->getTickmarks(tickmarks);
+    scrollbar->scrollableArea()->getTickmarks(tickmarks);
     if (!tickmarks.size())
         return;
 

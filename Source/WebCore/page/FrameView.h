@@ -294,7 +294,7 @@ private:
     virtual IntPoint convertToContainingView(const IntPoint&) const;
     virtual IntPoint convertFromContainingView(const IntPoint&) const;
 
-    // ScrollBarClient interface
+    // ScrollableArea interface
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
     virtual bool isActive() const;
     virtual void getTickmarks(Vector<IntRect>&) const;

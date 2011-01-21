@@ -495,7 +495,7 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
     else
         newOffset = index - numVisibleItems() + 1;
 
-    ScrollbarClient::scrollToYOffsetWithoutAnimation(newOffset);
+    ScrollableArea::scrollToYOffsetWithoutAnimation(newOffset);
 
     return true;
 }
@@ -507,12 +507,12 @@ bool RenderListBox::listIndexIsVisible(int index)
 
 bool RenderListBox::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Node**)
 {
-    return ScrollbarClient::scroll(direction, granularity, multiplier);
+    return ScrollableArea::scroll(direction, granularity, multiplier);
 }
 
 bool RenderListBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node**)
 {
-    return ScrollbarClient::scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier);
+    return ScrollableArea::scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier);
 }
 
 void RenderListBox::valueChanged(unsigned listIndex)
@@ -592,7 +592,7 @@ void RenderListBox::setScrollTop(int newTop)
     if (index < 0 || index >= numItems() || index == m_indexOffset)
         return;
     
-    ScrollbarClient::scrollToYOffsetWithoutAnimation(index);
+    ScrollableArea::scrollToYOffsetWithoutAnimation(index);
 }
 
 bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
@@ -714,7 +714,7 @@ void RenderListBox::destroyScrollbar()
         return;
     
     m_vBar->removeFromParent();
-    m_vBar->setClient(0);
+    m_vBar->disconnectFromScrollableArea();
     m_vBar = 0;
 }
 

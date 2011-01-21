@@ -31,7 +31,7 @@
 #ifndef WebScrollbarImpl_h
 #define WebScrollbarImpl_h
 
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include "WebScrollbar.h"
 
 #include <wtf/RefPtr.h>
@@ -43,7 +43,7 @@ class Scrollbar;
 namespace WebKit {
 
 class WebScrollbarImpl : public WebScrollbar,
-                         public WebCore::ScrollbarClient {
+                         public WebCore::ScrollableArea {
 public:
     WebScrollbarImpl(WebScrollbarClient*, Orientation orientation);
     ~WebScrollbarImpl();
@@ -57,7 +57,7 @@ public:
     virtual void paint(WebCanvas*, const WebRect&);
     virtual bool handleInputEvent(const WebInputEvent&);
 
-    // WebCore::ScrollbarClient methods
+    // WebCore::ScrollableArea methods
     virtual int scrollSize(WebCore::ScrollbarOrientation) const;
     virtual int scrollPosition(WebCore::Scrollbar*) const;
     virtual void setScrollOffset(const WebCore::IntPoint&);

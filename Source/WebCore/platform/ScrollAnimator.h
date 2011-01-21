@@ -32,17 +32,17 @@
 #define ScrollAnimator_h
 
 #include "ScrollTypes.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class FloatPoint;
-class ScrollbarClient;
+class ScrollableArea;
 
 class ScrollAnimator {
 public:
-    static ScrollAnimator* create(ScrollbarClient*);
+    static PassOwnPtr<ScrollAnimator> create(ScrollableArea*);
 
-    ScrollAnimator(ScrollbarClient* client);
     virtual ~ScrollAnimator();
 
     // Computes a scroll destination for the given parameters.  Returns false if
@@ -56,9 +56,11 @@ public:
     FloatPoint currentPosition() const;
 
 protected:
+    ScrollAnimator(ScrollableArea*);
+
     void notityPositionChanged();
 
-    ScrollbarClient* m_client;
+    ScrollableArea* m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
     float m_currentPosY; // subclass code complexity.
 };

@@ -27,9 +27,11 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
-#include "FloatPoint.h"
 #include "ScrollAnimatorMac.h"
-#include "ScrollbarClient.h"
+
+#include "FloatPoint.h"
+#include "ScrollableArea.h"
+#include <wtf/PassOwnPtr.h>
 
 @interface NSObject (NSScrollAnimationHelperDetails)
 - (id)initWithDelegate:(id)delegate;
@@ -122,13 +124,13 @@ static NSSize abs(NSSize size)
 
 namespace WebCore {
 
-ScrollAnimator* ScrollAnimator::create(ScrollbarClient* client)
+PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
-    return new ScrollAnimatorMac(client);
+    return adoptPtr(new ScrollAnimatorMac(scrollableArea));
 }
 
-ScrollAnimatorMac::ScrollAnimatorMac(ScrollbarClient* client)
-    : ScrollAnimator(client)
+ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
+    : ScrollAnimator(scrollableArea)
 {
     m_scrollAnimationHelperDelegate.adoptNS([[ScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
     m_scrollAnimationHelper.adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
@@ -147,7 +149,7 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
     float currentPos = orientation == HorizontalScrollbar ? m_currentPosX : m_currentPosY;
-    float newPos = std::max<float>(std::min<float>(currentPos + (step * multiplier), static_cast<float>(m_client->scrollSize(orientation))), 0);
+    float newPos = std::max<float>(std::min<float>(currentPos + (step * multiplier), static_cast<float>(m_scrollableArea->scrollSize(orientation))), 0);
     if (currentPos == newPos)
         return false;
 

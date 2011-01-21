@@ -25754,19 +25754,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ScrollableArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollableArea.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Scrollbar.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\Scrollbar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\ScrollbarClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\ScrollbarClient.h"
 				>
 			</File>
 			<File

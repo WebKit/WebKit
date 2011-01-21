@@ -32,8 +32,8 @@
 #include "IntRect.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollableArea.h"
 #include "Scrollbar.h"
-#include "ScrollbarClient.h"
 #include "ScrollbarThemeWin.h"
 #include "Settings.h"
 #include "SoftLinking.h"
@@ -209,7 +209,7 @@ void ScrollbarThemeSafari::paintTrackBackground(GraphicsContext* graphicsContext
         return;
     NSControlSize size = scrollbar->controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
     ThemeControlState state = 0;
-    if (scrollbar->client()->isActive())
+    if (scrollbar->scrollableArea()->isActive())
         state |= ActiveState;
     if (hasButtons(scrollbar))
         state |= EnabledState;
@@ -222,7 +222,7 @@ void ScrollbarThemeSafari::paintButton(GraphicsContext* graphicsContext, Scrollb
         return;
     NSControlSize size = scrollbar->controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
     ThemeControlState state = 0;
-    if (scrollbar->client()->isActive())
+    if (scrollbar->scrollableArea()->isActive())
         state |= ActiveState;
     if (hasButtons(scrollbar))
         state |= EnabledState;
@@ -242,7 +242,7 @@ void ScrollbarThemeSafari::paintThumb(GraphicsContext* graphicsContext, Scrollba
         return;
     NSControlSize size = scrollbar->controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
     ThemeControlState state = 0;
-    if (scrollbar->client()->isActive())
+    if (scrollbar->scrollableArea()->isActive())
         state |= ActiveState;
     if (hasThumb(scrollbar))
         state |= EnabledState;

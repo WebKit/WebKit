@@ -32,20 +32,21 @@
 #include "ScrollAnimator.h"
 
 #include "FloatPoint.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include <algorithm>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 #if !ENABLE(SMOOTH_SCROLLING)
-ScrollAnimator* ScrollAnimator::create(ScrollbarClient* client)
+PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
-    return new ScrollAnimator(client);
+    return adoptPtr(new ScrollAnimator(scrollableArea));
 }
 #endif
 
-ScrollAnimator::ScrollAnimator(ScrollbarClient* client)
-    : m_client(client)
+ScrollAnimator::ScrollAnimator(ScrollableArea* scrollableArea)
+    : m_scrollableArea(scrollableArea)
     , m_currentPosX(0)
     , m_currentPosY(0)
 {
@@ -58,7 +59,7 @@ ScrollAnimator::~ScrollAnimator()
 bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity, float step, float multiplier)
 {
     float* currentPos = (orientation == HorizontalScrollbar) ? &m_currentPosX : &m_currentPosY;
-    float newPos = std::max(std::min(*currentPos + (step * multiplier), static_cast<float>(m_client->scrollSize(orientation))), 0.0f);
+    float newPos = std::max(std::min(*currentPos + (step * multiplier), static_cast<float>(m_scrollableArea->scrollSize(orientation))), 0.0f);
     if (*currentPos == newPos)
         return false;
     *currentPos = newPos;
@@ -82,7 +83,7 @@ FloatPoint ScrollAnimator::currentPosition() const
 
 void ScrollAnimator::notityPositionChanged()
 {
-    m_client->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
+    m_scrollableArea->setScrollOffsetFromAnimation(IntPoint(m_currentPosX, m_currentPosY));
 }
 
 } // namespace WebCore

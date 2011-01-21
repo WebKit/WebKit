@@ -1308,7 +1308,7 @@ void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
 
 void RenderLayer::scrollToOffset(int x, int y)
 {
-    ScrollbarClient::scrollToOffsetWithoutAnimation(IntPoint(x, y));
+    ScrollableArea::scrollToOffsetWithoutAnimation(IntPoint(x, y));
 }
 
 void RenderLayer::scrollTo(int x, int y)
@@ -1820,7 +1820,7 @@ void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
             static_cast<RenderScrollbar*>(scrollbar.get())->clearOwningRenderer();
 
         scrollbar->removeFromParent();
-        scrollbar->setClient(0);
+        scrollbar->disconnectFromScrollableArea();
         scrollbar = 0;
     }
 }
@@ -2274,7 +2274,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
 
 bool RenderLayer::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
-    return ScrollbarClient::scroll(direction, granularity, multiplier);
+    return ScrollableArea::scroll(direction, granularity, multiplier);
 }
 
 void RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, PaintBehavior paintBehavior, RenderObject *paintingRoot)

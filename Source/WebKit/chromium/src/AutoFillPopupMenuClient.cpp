@@ -254,11 +254,11 @@ HostWindow* AutoFillPopupMenuClient::hostWindow() const
 }
 
 PassRefPtr<Scrollbar> AutoFillPopupMenuClient::createScrollbar(
-    ScrollbarClient* client,
+    ScrollableArea* scrollableArea,
     ScrollbarOrientation orientation,
     ScrollbarControlSize size)
 {
-    return Scrollbar::createNativeScrollbar(client, orientation, size);
+    return Scrollbar::createNativeScrollbar(scrollableArea, orientation, size);
 }
 
 void AutoFillPopupMenuClient::initialize(

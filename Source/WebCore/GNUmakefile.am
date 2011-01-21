@@ -2574,8 +2574,8 @@ webcore_sources += \
 	Source/WebCore/platform/SchemeRegistry.h \
 	Source/WebCore/platform/ScrollAnimator.cpp \
 	Source/WebCore/platform/ScrollAnimator.h \
-	Source/WebCore/platform/ScrollbarClient.cpp \
-	Source/WebCore/platform/ScrollbarClient.h \
+	Source/WebCore/platform/ScrollableArea.cpp \
+	Source/WebCore/platform/ScrollableArea.h \
 	Source/WebCore/platform/Scrollbar.cpp \
 	Source/WebCore/platform/Scrollbar.h \
 	Source/WebCore/platform/ScrollbarThemeComposite.cpp \

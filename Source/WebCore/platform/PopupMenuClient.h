@@ -32,7 +32,7 @@ class Color;
 class FontSelector;
 class HostWindow;
 class Scrollbar;
-class ScrollbarClient;
+class ScrollableArea;
 
 class PopupMenuClient {
 public:
@@ -66,7 +66,7 @@ public:
     virtual FontSelector* fontSelector() const = 0;
     virtual HostWindow* hostWindow() const = 0;
 
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) = 0;
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) = 0;
 };
 
 #if ENABLE(NO_LISTBOX_RENDERING)

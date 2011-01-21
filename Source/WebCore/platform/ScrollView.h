@@ -29,7 +29,7 @@
 
 #include "IntRect.h"
 #include "Scrollbar.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include "ScrollTypes.h"
 #include "Widget.h"
 
@@ -54,16 +54,16 @@ class HostWindow;
 class PlatformWheelEvent;
 class Scrollbar;
 
-class ScrollView : public Widget, public ScrollbarClient {
+class ScrollView : public Widget, public ScrollableArea {
 public:
     ~ScrollView();
 
-    // ScrollbarClient functions.  FrameView overrides the others.
+    // ScrollableArea functions.  FrameView overrides the others.
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual int scrollPosition(Scrollbar*) const;
     virtual void setScrollOffset(const IntPoint&);
     
-    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     virtual void scrollTo(const IntSize& newOffset);
 
     // The window thats hosts the ScrollView. The ScrollView will communicate scrolls and repaints to the

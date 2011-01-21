@@ -39,11 +39,11 @@ class RenderStyle;
 
 class RenderScrollbar : public Scrollbar {
 protected:
-    RenderScrollbar(ScrollbarClient*, ScrollbarOrientation, RenderBox*, Frame*);
+    RenderScrollbar(ScrollableArea*, ScrollbarOrientation, RenderBox*, Frame*);
 
 public:
     friend class Scrollbar;
-    static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollbarClient*, ScrollbarOrientation, RenderBox*, Frame* owningFrame = 0);
+    static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, RenderBox*, Frame* owningFrame = 0);
     virtual ~RenderScrollbar();
 
     static ScrollbarPart partForStyleResolve();

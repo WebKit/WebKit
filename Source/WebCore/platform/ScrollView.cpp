@@ -387,7 +387,7 @@ bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity
     if (platformWidget())
         return platformScroll(direction, granularity);
 
-    return ScrollbarClient::scroll(direction, granularity);
+    return ScrollableArea::scroll(direction, granularity);
 }
 
 bool ScrollView::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity)
@@ -548,7 +548,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         updateScrollCorner();
     }
 
-    ScrollbarClient::scrollToOffsetWithoutAnimation(FloatPoint(scroll.width() + m_scrollOrigin.x(), scroll.height() + m_scrollOrigin.y()));
+    ScrollableArea::scrollToOffsetWithoutAnimation(FloatPoint(scroll.width() + m_scrollOrigin.x(), scroll.height() + m_scrollOrigin.y()));
 
     m_inUpdateScrollbars = false;
 }
@@ -752,9 +752,9 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         }
 
         if (deltaY)
-            ScrollbarClient::scroll(ScrollUp, ScrollByPixel, deltaY);
+            ScrollableArea::scroll(ScrollUp, ScrollByPixel, deltaY);
         if (deltaX)
-            ScrollbarClient::scroll(ScrollLeft, ScrollByPixel, deltaX);
+            ScrollableArea::scroll(ScrollLeft, ScrollByPixel, deltaX);
     }
 }
 

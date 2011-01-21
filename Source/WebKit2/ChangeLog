@@ -1,3 +1,17 @@
+2011-01-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Part 2 of "Cleanup Scrollbar/ScrollbarClient relationship"
+        https://bugs.webkit.org/show_bug.cgi?id=52779
+
+        Rename ScrollbarClient -> ScrollableArea.
+
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::onMouseWheel):
+        (WebKit::WebPopupMenuProxyWin::scrollToRevealSelection):
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+
 2011-01-21  Adam Roben  <aroben@apple.com>
 
         Update for WKCACFLayerRenderer -> CACFLayerView rename

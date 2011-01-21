@@ -248,11 +248,12 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::scroll(
 {
     ScrollDirection webCoreScrollDirection = (ScrollDirection) direction;
     ScrollGranularity webCoreGranularity = (ScrollGranularity) granularity;
-    ScrollbarClient::scroll(webCoreScrollDirection, webCoreGranularity, multiplier);
+    ScrollableArea::scroll(webCoreScrollDirection, webCoreGranularity, multiplier);
     return S_OK;
 }
 
-// ScrollbarClient -------------------------------------------------------
+// ScrollableArea -------------------------------------------------------
+
 int WebScrollBar::scrollSize(ScrollbarOrientation orientation) const
 {
     return (orientation == m_scrollBar->orientation()) ? (m_scrollBar->totalSize() - m_scrollBar->visibleSize()) : 0; 

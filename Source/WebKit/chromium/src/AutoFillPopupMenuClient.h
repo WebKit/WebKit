@@ -97,7 +97,7 @@ public:
     virtual WebCore::FontSelector* fontSelector() const;
     virtual WebCore::HostWindow* hostWindow() const;
     virtual PassRefPtr<WebCore::Scrollbar> createScrollbar(
-        WebCore::ScrollbarClient* client,
+        WebCore::ScrollableArea* client,
         WebCore::ScrollbarOrientation orientation,
         WebCore::ScrollbarControlSize size);
 

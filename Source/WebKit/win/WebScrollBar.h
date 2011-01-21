@@ -34,17 +34,14 @@
 #pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
 #include <WebCore/Scrollbar.h>
-#include <WebCore/ScrollbarClient.h>
+#include <WebCore/ScrollableArea.h>
 #pragma warning(pop)
 
 namespace WebCore {
 class Scrollbar;
 }
 
-using namespace WebCore;
-
-class WebScrollBar : public IWebScrollBarPrivate, ScrollbarClient
-{
+class WebScrollBar : public IWebScrollBarPrivate, WebCore::ScrollableArea {
 public:
     static WebScrollBar* createInstance();
 protected:
@@ -115,7 +112,7 @@ public:
         /* [in] */ float multiplier);
 
 protected:
-    // ScrollbarClient
+    // ScrollableArea
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual int scrollPosition(Scrollbar*) const;
     virtual void setScrollOffset(const IntPoint&);

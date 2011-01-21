@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-PassRefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, RenderBox* renderer, Frame* owningFrame)
+PassRefPtr<Scrollbar> RenderScrollbar::createCustomScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, RenderBox* renderer, Frame* owningFrame)
 {
-    return adoptRef(new RenderScrollbar(client, orientation, renderer, owningFrame));
+    return adoptRef(new RenderScrollbar(scrollableArea, orientation, renderer, owningFrame));
 }
 
-RenderScrollbar::RenderScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, RenderBox* renderer, Frame* owningFrame)
-    : Scrollbar(client, orientation, RegularScrollbar, RenderScrollbarTheme::renderScrollbarTheme())
+RenderScrollbar::RenderScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, RenderBox* renderer, Frame* owningFrame)
+    : Scrollbar(scrollableArea, orientation, RegularScrollbar, RenderScrollbarTheme::renderScrollbarTheme())
     , m_owner(renderer)
     , m_owningFrame(owningFrame)
 {

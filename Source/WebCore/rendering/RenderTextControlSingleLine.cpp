@@ -1079,14 +1079,14 @@ bool RenderTextControlSingleLine::logicalScroll(ScrollLogicalDirection direction
     return RenderBlock::logicalScroll(direction, granularity, multiplier, stopNode);
 }
 
-PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+PassRefPtr<Scrollbar> RenderTextControlSingleLine::createScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
 {
     RefPtr<Scrollbar> widget;
     bool hasCustomScrollbarStyle = style()->hasPseudoStyle(SCROLLBAR);
     if (hasCustomScrollbarStyle)
-        widget = RenderScrollbar::createCustomScrollbar(client, orientation, this);
+        widget = RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, this);
     else
-        widget = Scrollbar::createNativeScrollbar(client, orientation, controlSize);
+        widget = Scrollbar::createNativeScrollbar(scrollableArea, orientation, controlSize);
     return widget.release();
 }
 

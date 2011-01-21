@@ -52,7 +52,7 @@ public:
     virtual void paint(GraphicsContext* context, const IntRect& damageRect);
 
 protected:
-    ScrollbarEfl(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    ScrollbarEfl(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
     virtual void updateThumbPositionAndProportion();
     virtual void updateThumbPosition();

@@ -1255,9 +1255,9 @@ SOURCES += \
     platform/network/ResourceResponseBase.cpp \
     platform/text/RegularExpression.cpp \
     platform/SchemeRegistry.cpp \
+    platform/ScrollableArea.cpp \
     platform/ScrollAnimator.cpp \
     platform/Scrollbar.cpp \
-    platform/ScrollbarClient.cpp \
     platform/ScrollbarThemeComposite.cpp \
     platform/ScrollView.cpp \
     platform/text/SegmentedString.cpp \
@@ -2194,9 +2194,9 @@ HEADERS += \
     platform/qt/QtStyleOptionWebComboBox.h \
     platform/qt/RenderThemeQt.h \
     platform/qt/ScrollbarThemeQt.h \
+    platform/ScrollableArea.h \
     platform/ScrollAnimator.h \
     platform/Scrollbar.h \
-    platform/ScrollbarClient.h \
     platform/ScrollbarThemeComposite.h \
     platform/ScrollView.h \
     platform/SearchPopupMenu.h \

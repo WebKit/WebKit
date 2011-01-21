@@ -29,8 +29,8 @@
 #include "HostWindow.h"
 #include "NotImplemented.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollableArea.h"
 #include "Scrollbar.h"
-#include "ScrollbarClient.h"
 #include "scrollbar_render.h"
 #include "ScrollbarThemeComposite.h"
 #include "ScrollView.h"
@@ -185,7 +185,7 @@ bool ScrollbarThemeWx::paint(Scrollbar* scrollbar, GraphicsContext* context, con
 {
     wxOrientation orientation = (scrollbar->orientation() == HorizontalScrollbar) ? wxHORIZONTAL : wxVERTICAL;
     int flags = 0;
-    if (scrollbar->client()->isActive())
+    if (scrollbar->scrollableArea()->isActive())
         flags |= wxCONTROL_FOCUSED;
     
     if (!scrollbar->enabled())

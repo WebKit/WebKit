@@ -61,7 +61,7 @@ namespace WebCore {
         virtual bool handleWheelEvent(const PlatformWheelEvent&) = 0;
         virtual bool handleKeyEvent(const PlatformKeyboardEvent&) = 0;
 
-        // ScrollbarClient public methods:
+        // ScrollableArea public methods:
         virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
         virtual bool isActive() const;
 

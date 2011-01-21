@@ -40,7 +40,7 @@ namespace WebCore {
 
 class ScrollAnimatorWin : public ScrollAnimator {
 public:
-    ScrollAnimatorWin(ScrollbarClient*);
+    ScrollAnimatorWin(ScrollableArea*);
     virtual ~ScrollAnimatorWin();
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);

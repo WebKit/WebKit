@@ -30,14 +30,14 @@
 
 #include "HTMLDataGridElement.h"
 #include "RenderBlock.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include "StyleImage.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class RenderDataGrid : public RenderBlock, private ScrollbarClient {
+class RenderDataGrid : public RenderBlock, private ScrollableArea {
 public:
     RenderDataGrid(Element*);
     ~RenderDataGrid();
@@ -66,7 +66,7 @@ private:
 
     HTMLDataGridElement* gridElement() const { return static_cast<HTMLDataGridElement*>(node()); }
 
-    // ScrollbarClient interface.
+    // ScrollableArea interface.
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual void setScrollOffsetFromAnimation(const IntPoint&);
     virtual void valueChanged(Scrollbar*);

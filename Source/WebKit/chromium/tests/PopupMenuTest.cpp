@@ -96,7 +96,7 @@ public:
     virtual FontSelector* fontSelector() const { return 0; }
     virtual HostWindow* hostWindow() const { return 0; }
     
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize) { return 0; }
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) { return 0; }
 
 private:
     unsigned m_selectIndex;

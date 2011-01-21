@@ -1,3 +1,16 @@
+2011-01-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Part 2 of "Cleanup Scrollbar/ScrollbarClient relationship"
+        https://bugs.webkit.org/show_bug.cgi?id=52779
+
+        Rename ScrollbarClient -> ScrollableArea.
+
+        * WebScrollBar.cpp:
+        (WebScrollBar::scroll):
+        * WebScrollBar.h:
+
 2011-01-20  Adam Roben  <aroben@apple.com>
 
         Update for CACFLayerTreeHost changes

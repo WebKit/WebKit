@@ -1,3 +1,125 @@
+2011-01-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Part 2 of "Cleanup Scrollbar/ScrollbarClient relationship"
+        https://bugs.webkit.org/show_bug.cgi?id=52779
+
+        Rename ScrollbarClient -> ScrollableArea.
+
+        - Also replaces Scrollbar::setClient with Scrollbar::disconnectFromScrollableArea
+          since that was its only use case.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::setValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        * page/FrameView.h:
+        * platform/PopupMenuClient.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        (WebCore::ScrollAnimator::scroll):
+        (WebCore::ScrollAnimator::notityPositionChanged):
+        * platform/ScrollAnimator.h:
+        * platform/ScrollAnimatorWin.cpp:
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorWin::ScrollAnimatorWin):
+        (WebCore::ScrollAnimatorWin::scroll):
+        * platform/ScrollAnimatorWin.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scroll):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp: Copied from WebCore/platform/ScrollbarClient.cpp.
+        (WebCore::ScrollableArea::ScrollableArea):
+        (WebCore::ScrollableArea::~ScrollableArea):
+        (WebCore::ScrollableArea::scroll):
+        (WebCore::ScrollableArea::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollableArea::scrollToXOffsetWithoutAnimation):
+        (WebCore::ScrollableArea::scrollToYOffsetWithoutAnimation):
+        (WebCore::ScrollableArea::setScrollOffsetFromAnimation):
+        * platform/ScrollableArea.h: Copied from WebCore/platform/ScrollbarClient.h.
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::createNativeScrollbar):
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::offsetDidChange):
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::moveThumb):
+        (WebCore::Scrollbar::mouseMoved):
+        (WebCore::Scrollbar::isWindowActive):
+        (WebCore::Scrollbar::invalidateRect):
+        (WebCore::Scrollbar::convertToContainingView):
+        (WebCore::Scrollbar::convertFromContainingView):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::disconnectFromScrollableArea):
+        (WebCore::Scrollbar::scrollableArea):
+        * platform/ScrollbarClient.cpp: Removed.
+        * platform/ScrollbarClient.h: Removed.
+        * platform/ScrollbarThemeComposite.cpp:
+        * platform/chromium/FramelessScrollView.h:
+        * platform/chromium/ScrollbarThemeChromium.cpp:
+        (WebCore::ScrollbarThemeChromium::paintTickmarks):
+        * platform/efl/ScrollbarEfl.cpp:
+        (Scrollbar::createNativeScrollbar):
+        (ScrollbarEfl::ScrollbarEfl):
+        (scrollbarEflEdjeMessage):
+        * platform/efl/ScrollbarEfl.h:
+        * platform/gtk/MainFrameScrollbarGtk.cpp:
+        (MainFrameScrollbarGtk::create):
+        (MainFrameScrollbarGtk::MainFrameScrollbarGtk):
+        (MainFrameScrollbarGtk::gtkValueChanged):
+        * platform/gtk/MainFrameScrollbarGtk.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::scroll):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        * platform/qt/ScrollbarQt.cpp:
+        (WebCore::Scrollbar::contextMenu):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::scrollToRevealSelection):
+        (WebCore::PopupMenuWin::wndProc):
+        * platform/win/PopupMenuWin.h:
+        * platform/win/ScrollbarThemeSafari.cpp:
+        (WebCore::ScrollbarThemeSafari::paintTrackBackground):
+        (WebCore::ScrollbarThemeSafari::paintButton):
+        (WebCore::ScrollbarThemeSafari::paintThumb):
+        * platform/wx/ScrollbarThemeWx.cpp:
+        (WebCore::ScrollbarThemeWx::paint):
+        * rendering/RenderDataGrid.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::destroyScrollbar):
+        (WebCore::RenderLayer::scroll):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollToRevealElementAtListIndex):
+        (WebCore::RenderListBox::scroll):
+        (WebCore::RenderListBox::logicalScroll):
+        (WebCore::RenderListBox::setScrollTop):
+        (WebCore::RenderListBox::destroyScrollbar):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::createScrollbar):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderScrollbar.cpp:
+        (WebCore::RenderScrollbar::createCustomScrollbar):
+        (WebCore::RenderScrollbar::RenderScrollbar):
+        * rendering/RenderScrollbar.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::createScrollbar):
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-01-21  Darin Adler  <darin@apple.com>
 
         Fix Leopard build.

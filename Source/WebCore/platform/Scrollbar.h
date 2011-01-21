@@ -36,31 +36,26 @@ namespace WebCore {
 
 class GraphicsContext;
 class IntRect;
-class ScrollbarClient;
-class ScrollbarTheme;
 class PlatformMouseEvent;
+class ScrollableArea;
+class ScrollbarTheme;
 
 class Scrollbar : public Widget {
 public:
-    enum ScrollSource {
-        FromScrollAnimator,
-        NotFromScrollAnimator,
-    };
+    // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
+    static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollableArea*, ScrollbarOrientation orientation, ScrollbarControlSize size);
 
     virtual ~Scrollbar();
 
-    // Must be implemented by platforms that can't simply use the Scrollbar base class.  Right now the only platform that is not using the base class is GTK.
-    static PassRefPtr<Scrollbar> createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size);
-
-    // Called by the ScrollbarClient when the scroll offset changes.
+    // Called by the ScrollableArea when the scroll offset changes.
     void offsetDidChange();
 
     static int pixelsPerLineStep() { return 40; }
     static float minFractionToStepWhenPaging() { return 0.875f; }
     static int maxOverlapBetweenPages();
 
-    void setClient(ScrollbarClient* client) { m_client = client; }
-    ScrollbarClient* client() const { return m_client; }
+    void disconnectFromScrollableArea() { m_scrollableArea = 0; }
+    ScrollableArea* scrollableArea() const { return m_scrollableArea; }
 
     virtual bool isCustomScrollbar() const { return false; }
     ScrollbarOrientation orientation() const { return m_orientation; }
@@ -130,7 +125,7 @@ public:
     virtual IntPoint convertFromContainingView(const IntPoint&) const;
 
 protected:
-    Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
+    Scrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
 
     void updateThumb();
     virtual void updateThumbPosition();
@@ -145,7 +140,7 @@ protected:
     
     void moveThumb(int pos);
 
-    ScrollbarClient* m_client;
+    ScrollableArea* m_scrollableArea;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;
     ScrollbarTheme* m_theme;

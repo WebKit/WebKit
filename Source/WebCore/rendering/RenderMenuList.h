@@ -107,7 +107,7 @@ private:
     virtual void selectionCleared() {}
     virtual FontSelector* fontSelector() const;
     virtual HostWindow* hostWindow() const;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
 #if ENABLE(NO_LISTBOX_RENDERING)
     virtual void listBoxSelectItem(int listIndex, bool allowMultiplySelections, bool shift, bool fireOnChangeNow = true);

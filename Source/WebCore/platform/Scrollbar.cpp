@@ -26,14 +26,14 @@
 #include "config.h"
 #include "Scrollbar.h"
 
-#include "AccessibilityScrollbar.h"
 #include "AXObjectCache.h"
+#include "AccessibilityScrollbar.h"
 #include "EventHandler.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "PlatformMouseEvent.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 
 #include <algorithm>
@@ -49,9 +49,9 @@ using namespace std;
 namespace WebCore {
 
 #if !PLATFORM(EFL)
-PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
+PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
 {
-    return adoptRef(new Scrollbar(client, orientation, size));
+    return adoptRef(new Scrollbar(scrollableArea, orientation, size));
 }
 #endif
 
@@ -61,9 +61,9 @@ int Scrollbar::maxOverlapBetweenPages()
     return maxOverlapBetweenPages;
 }
 
-Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize,
+Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize,
                      ScrollbarTheme* theme)
-    : m_client(client)
+    : m_scrollableArea(scrollableArea)
     , m_orientation(orientation)
     , m_controlSize(controlSize)
     , m_theme(theme)
@@ -106,9 +106,9 @@ Scrollbar::~Scrollbar()
 
 void Scrollbar::offsetDidChange()
 {
-    ASSERT(m_client);
+    ASSERT(m_scrollableArea);
 
-    float position = static_cast<float>(m_client->scrollPosition(this));
+    float position = static_cast<float>(m_scrollableArea->scrollPosition(this));
     if (position == m_currentPos)
         return;
 
@@ -196,7 +196,7 @@ void Scrollbar::autoscrollPressedPart(double delay)
     }
 
     // Handle the arrows and track.
-    if (client()->scroll(pressedPartScrollDirection(), pressedPartScrollGranularity()))
+    if (scrollableArea()->scroll(pressedPartScrollDirection(), pressedPartScrollGranularity()))
         startTimerIfNeeded(delay);
 }
 
@@ -268,7 +268,7 @@ void Scrollbar::moveThumb(int pos)
     
     if (delta) {
         float newPosition = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);
-        client()->scrollToOffsetWithoutAnimation(m_orientation, newPosition);
+        scrollableArea()->scrollToOffsetWithoutAnimation(m_orientation, newPosition);
     }
 }
 
@@ -301,7 +301,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
         if (theme()->shouldSnapBackToDragOrigin(this, evt))
-            client()->scrollToOffsetWithoutAnimation(m_orientation, m_dragOrigin);
+            scrollableArea()->scrollToOffsetWithoutAnimation(m_orientation, m_dragOrigin);
         else {
             moveThumb(m_orientation == HorizontalScrollbar ? 
                       convertFromContainingWindow(evt.pos()).x() :
@@ -433,7 +433,7 @@ void Scrollbar::setEnabled(bool e)
 
 bool Scrollbar::isWindowActive() const
 {
-    return m_client && m_client->isActive();
+    return m_scrollableArea && m_scrollableArea->isActive();
 }
     
 AXObjectCache* Scrollbar::axObjectCache() const
@@ -449,38 +449,38 @@ void Scrollbar::invalidateRect(const IntRect& rect)
 {
     if (suppressInvalidation())
         return;
-    if (m_client)
-        m_client->invalidateScrollbarRect(this, rect);
+    if (m_scrollableArea)
+        m_scrollableArea->invalidateScrollbarRect(this, rect);
 }
 
 IntRect Scrollbar::convertToContainingView(const IntRect& localRect) const
 {
-    if (m_client)
-        return m_client->convertFromScrollbarToContainingView(this, localRect);
+    if (m_scrollableArea)
+        return m_scrollableArea->convertFromScrollbarToContainingView(this, localRect);
 
     return Widget::convertToContainingView(localRect);
 }
 
 IntRect Scrollbar::convertFromContainingView(const IntRect& parentRect) const
 {
-    if (m_client)
-        return m_client->convertFromContainingViewToScrollbar(this, parentRect);
+    if (m_scrollableArea)
+        return m_scrollableArea->convertFromContainingViewToScrollbar(this, parentRect);
 
     return Widget::convertFromContainingView(parentRect);
 }
 
 IntPoint Scrollbar::convertToContainingView(const IntPoint& localPoint) const
 {
-    if (m_client)
-        return m_client->convertFromScrollbarToContainingView(this, localPoint);
+    if (m_scrollableArea)
+        return m_scrollableArea->convertFromScrollbarToContainingView(this, localPoint);
 
     return Widget::convertToContainingView(localPoint);
 }
 
 IntPoint Scrollbar::convertFromContainingView(const IntPoint& parentPoint) const
 {
-    if (m_client)
-        return m_client->convertFromContainingViewToScrollbar(this, parentPoint);
+    if (m_scrollableArea)
+        return m_scrollableArea->convertFromContainingViewToScrollbar(this, parentPoint);
 
     return Widget::convertFromContainingView(parentPoint);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2011 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarClient_h
-#define ScrollbarClient_h
+#ifndef ScrollableArea_h
+#define ScrollableArea_h
 
 #include "IntRect.h"
 #include "Scrollbar.h"
@@ -36,10 +36,10 @@ class FloatPoint;
 class PlatformWheelEvent;
 class ScrollAnimator;
 
-class ScrollbarClient {
+class ScrollableArea {
 public:
-    ScrollbarClient();
-    virtual ~ScrollbarClient();
+    ScrollableArea();
+    virtual ~ScrollableArea();
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1);
     void scrollToOffsetWithoutAnimation(const FloatPoint&);
@@ -92,4 +92,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ScrollbarClient_h
+#endif // ScrollableArea_h

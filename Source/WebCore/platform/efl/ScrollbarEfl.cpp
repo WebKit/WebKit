@@ -42,13 +42,13 @@
 using namespace std;
 using namespace WebCore;
 
-PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
+PassRefPtr<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
 {
-    return adoptRef(new ScrollbarEfl(client, orientation, size));
+    return adoptRef(new ScrollbarEfl(scrollableArea, orientation, size));
 }
 
-ScrollbarEfl::ScrollbarEfl(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
-    : Scrollbar(client, orientation, controlSize)
+ScrollbarEfl::ScrollbarEfl(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+    : Scrollbar(scrollableArea, orientation, controlSize)
     , m_lastPos(0)
     , m_lastTotalSize(0)
     , m_lastVisibleSize(0)
@@ -84,7 +84,7 @@ static void scrollbarEflEdjeMessage(void* data, Evas_Object* o, Edje_Message_Typ
 
     m = static_cast<Edje_Message_Float*>(msg);
     v = m->val * (that->totalSize() - that->visibleSize());
-    that->client()->scrollToOffsetWithoutAnimation(that->orientation(), v);
+    that->scrollableArea()->scrollToOffsetWithoutAnimation(that->orientation(), v);
 }
 
 void ScrollbarEfl::setParent(ScrollView* view)

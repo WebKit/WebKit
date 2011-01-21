@@ -47,7 +47,7 @@
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "ScrollBehavior.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -154,7 +154,7 @@ private:
     bool m_fixed : 1;
 };
 
-class RenderLayer : public ScrollbarClient {
+class RenderLayer : public ScrollableArea {
 public:
     friend class RenderReplica;
 
@@ -513,7 +513,7 @@ private:
 
     bool shouldBeNormalFlowOnly() const; 
 
-    // ScrollBarClient interface
+    // ScrollableArea interface
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual void setScrollOffset(const IntPoint&);
     virtual int scrollPosition(Scrollbar*) const;
@@ -525,7 +525,7 @@ private:
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
 
-    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int x, int y);
 
     IntSize scrollbarOffset(const Scrollbar*) const;

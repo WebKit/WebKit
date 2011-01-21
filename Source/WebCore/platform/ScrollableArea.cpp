@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2011 Apple Inc. All Rights Reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,24 +30,25 @@
  */
 
 #include "config.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 
 #include "FloatPoint.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-ScrollbarClient::ScrollbarClient()
+ScrollableArea::ScrollableArea()
     : m_scrollAnimator(ScrollAnimator::create(this))
 {
 }
 
-ScrollbarClient::~ScrollbarClient()
+ScrollableArea::~ScrollableArea()
 {
 }
 
-bool ScrollbarClient::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
+bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier)
 {
     ScrollbarOrientation orientation;
     Scrollbar* scrollbar;
@@ -83,12 +85,12 @@ bool ScrollbarClient::scroll(ScrollDirection direction, ScrollGranularity granul
     return m_scrollAnimator->scroll(orientation, granularity, step, multiplier);
 }
 
-void ScrollbarClient::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
+void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
     m_scrollAnimator->scrollToOffsetWithoutAnimation(offset);
 }
 
-void ScrollbarClient::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
+void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
 {
     if (orientation == HorizontalScrollbar)
         scrollToXOffsetWithoutAnimation(offset);
@@ -96,17 +98,17 @@ void ScrollbarClient::scrollToOffsetWithoutAnimation(ScrollbarOrientation orient
         scrollToYOffsetWithoutAnimation(offset);
 }
 
-void ScrollbarClient::scrollToXOffsetWithoutAnimation(float x)
+void ScrollableArea::scrollToXOffsetWithoutAnimation(float x)
 {
     scrollToOffsetWithoutAnimation(FloatPoint(x, m_scrollAnimator->currentPosition().y()));
 }
 
-void ScrollbarClient::scrollToYOffsetWithoutAnimation(float y)
+void ScrollableArea::scrollToYOffsetWithoutAnimation(float y)
 {
     scrollToOffsetWithoutAnimation(FloatPoint(m_scrollAnimator->currentPosition().x(), y));
 }
 
-void ScrollbarClient::setScrollOffsetFromAnimation(const IntPoint& offset)
+void ScrollableArea::setScrollOffsetFromAnimation(const IntPoint& offset)
 {
     // Tell the derived class to scroll its contents.
     setScrollOffset(offset);

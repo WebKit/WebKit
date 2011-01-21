@@ -35,17 +35,17 @@
 #include "ScrollAnimatorWin.h"
 
 #include "FloatPoint.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-// static
-ScrollAnimator* ScrollAnimator::create(ScrollbarClient* client)
+PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
-    return new ScrollAnimatorWin(client);
+    return adoptPtr(new ScrollAnimatorWin(scrollableArea));
 }
 
 const double ScrollAnimatorWin::animationTimerDelay = 0.01;
@@ -61,8 +61,8 @@ ScrollAnimatorWin::PerAxisData::PerAxisData(ScrollAnimatorWin* parent, float* cu
 }
 
 
-ScrollAnimatorWin::ScrollAnimatorWin(ScrollbarClient* client)
-    : ScrollAnimator(client)
+ScrollAnimatorWin::ScrollAnimatorWin(ScrollableArea* scrollableArea)
+    : ScrollAnimator(scrollableArea)
     , m_horizontalData(this, &m_currentPosX)
     , m_verticalData(this, &m_currentPosY)
 {
@@ -82,7 +82,7 @@ bool ScrollAnimatorWin::scroll(ScrollbarOrientation orientation, ScrollGranulari
 
     // This is an animatable scroll.  Calculate the scroll delta.
     PerAxisData* data = (orientation == VerticalScrollbar) ? &m_verticalData : &m_horizontalData;
-    float newPos = std::max(std::min(data->m_desiredPos + (step * multiplier), static_cast<float>(m_client->scrollSize(orientation))), 0.0f);
+    float newPos = std::max(std::min(data->m_desiredPos + (step * multiplier), static_cast<float>(m_scrollableArea->scrollSize(orientation))), 0.0f);
     if (newPos == data->m_desiredPos)
         return false;
     data->m_desiredPos = newPos;

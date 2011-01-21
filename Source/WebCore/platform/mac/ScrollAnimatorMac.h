@@ -41,7 +41,7 @@ namespace WebCore {
 
 class ScrollAnimatorMac : public ScrollAnimator {
 public:
-    ScrollAnimatorMac(ScrollbarClient*);
+    ScrollAnimatorMac(ScrollableArea*);
     virtual ~ScrollAnimatorMac();
 
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);

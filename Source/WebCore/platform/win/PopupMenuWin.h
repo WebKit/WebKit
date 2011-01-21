@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -23,8 +24,8 @@
 #include "IntRect.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
+#include "ScrollableArea.h"
 #include "Scrollbar.h"
-#include "ScrollbarClient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -38,7 +39,7 @@ namespace WebCore {
 class FrameView;
 class Scrollbar;
 
-class PopupMenuWin : public PopupMenu, private ScrollbarClient {
+class PopupMenuWin : public PopupMenu, private ScrollableArea {
 public:
     PopupMenuWin(PopupMenuClient*);
     ~PopupMenuWin();
@@ -89,7 +90,7 @@ private:
     bool scrollbarCapturingMouse() const { return m_scrollbarCapturingMouse; }
     void setScrollbarCapturingMouse(bool b) { m_scrollbarCapturingMouse = b; }
 
-    // ScrollBarClient
+    // ScrollableArea
     virtual int scrollSize(ScrollbarOrientation orientation) const;
     virtual int scrollPosition(Scrollbar*) const;
     virtual void setScrollOffset(const IntPoint&);
@@ -98,7 +99,7 @@ private:
     virtual bool scrollbarCornerPresent() const { return false; }
     virtual Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
 
-    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);
 
     void calculatePositionAndSize(const IntRect&, FrameView*);
@@ -123,6 +124,6 @@ private:
     bool m_showPopup;
 };
 
-}
+} // namespace WebCore
 
 #endif // PopupMenuWin_h

@@ -65,7 +65,7 @@ WebScrollbarImpl::WebScrollbarImpl(WebScrollbarClient* client, Orientation orien
     , m_scrollOffset(0)
 {
     m_scrollbar = Scrollbar::createNativeScrollbar(
-        static_cast<ScrollbarClient*>(this),
+        static_cast<ScrollableArea*>(this),
         static_cast<ScrollbarOrientation>(orientation),
         RegularScrollbar);
 }
@@ -114,7 +114,7 @@ void WebScrollbarImpl::scroll(ScrollDirection direction, ScrollGranularity granu
     else
         dir = horizontal ? ScrollLeft : ScrollUp;
 
-    WebCore::ScrollbarClient::scroll(dir, static_cast<WebCore::ScrollGranularity>(granularity), multiplier);
+    WebCore::ScrollableArea::scroll(dir, static_cast<WebCore::ScrollGranularity>(granularity), multiplier);
 }
 
 void WebScrollbarImpl::paint(WebCanvas* canvas, const WebRect& rect)
@@ -220,7 +220,7 @@ bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
             if (negative)
                 delta *= -1;
         }
-        WebCore::ScrollbarClient::scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
+        WebCore::ScrollableArea::scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
         return true;
     }
 
@@ -259,7 +259,7 @@ bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)
     WebCore::ScrollGranularity scrollGranularity;
     if (WebViewImpl::mapKeyCodeForScroll(keyCode, &scrollDirection, &scrollGranularity)) {
         // Will return false if scroll direction wasn't compatible with this scrollbar.
-        return WebCore::ScrollbarClient::scroll(scrollDirection, scrollGranularity);
+        return WebCore::ScrollableArea::scroll(scrollDirection, scrollGranularity);
     }
     return false;
 }

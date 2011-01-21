@@ -432,8 +432,6 @@ void WebPopupMenuProxyWin::invalidateItem(int index)
     ::InvalidateRect(m_popup, &r, TRUE);
 }
 
-// ScrollbarClient
-
 int WebPopupMenuProxyWin::scrollSize(ScrollbarOrientation orientation) const
 {
     return ((orientation == VerticalScrollbar) && m_scrollbar) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
@@ -723,7 +721,7 @@ LRESULT WebPopupMenuProxyWin::onMouseWheel(HWND hWnd, UINT message, WPARAM wPara
             --i;
     }
 
-    ScrollbarClient::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
+    ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
     return 0;
 }
 
@@ -925,12 +923,12 @@ bool WebPopupMenuProxyWin::scrollToRevealSelection()
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        ScrollbarClient::scrollToYOffsetWithoutAnimation(index);
+        ScrollableArea::scrollToYOffsetWithoutAnimation(index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        ScrollbarClient::scrollToYOffsetWithoutAnimation(index - visibleItems() + 1);
+        ScrollableArea::scrollToYOffsetWithoutAnimation(index - visibleItems() + 1);
         return true;
     }
 

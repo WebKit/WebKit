@@ -140,7 +140,7 @@ private:
     virtual void setTextFromItem(unsigned listIndex);
     virtual FontSelector* fontSelector() const;
     virtual HostWindow* hostWindow() const;
-    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize);
 
     InputElement* inputElement() const;
 

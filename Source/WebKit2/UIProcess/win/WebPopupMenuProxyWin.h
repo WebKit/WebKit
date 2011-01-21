@@ -30,7 +30,7 @@
 #include "WebPopupItem.h"
 #include "WebPopupMenuProxy.h"
 #include <WebCore/Scrollbar.h>
-#include <WebCore/ScrollbarClient.h>
+#include <WebCore/ScrollableArea.h>
 
 typedef struct HWND__* HWND;
 typedef struct HDC__* HDC;
@@ -40,7 +40,7 @@ namespace WebKit {
 
 class WebView;
 
-class WebPopupMenuProxyWin : public WebPopupMenuProxy, private WebCore::ScrollbarClient  {
+class WebPopupMenuProxyWin : public WebPopupMenuProxy, private WebCore::ScrollableArea  {
 public:
     static PassRefPtr<WebPopupMenuProxyWin> create(WebView* webView, WebPopupMenuProxy::Client* client)
     {
@@ -58,8 +58,8 @@ private:
 
     WebCore::Scrollbar* scrollbar() const { return m_scrollbar.get(); }
 
-    // ScrollBarClient
-    virtual int scrollSize(WebCore::ScrollbarOrientation orientation) const;
+    // ScrollableArea
+    virtual int scrollSize(WebCore::ScrollbarOrientation) const;
     virtual int scrollPosition(WebCore::Scrollbar*) const;
     virtual void setScrollOffset(const WebCore::IntPoint&);
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
@@ -67,7 +67,7 @@ private:
     virtual bool scrollbarCornerPresent() const { return false; }
     virtual WebCore::Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
 
-    // NOTE: This should only be called by the overriden setScrollOffset from ScrollbarClient.
+    // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);
 
     static bool registerWindowClass();

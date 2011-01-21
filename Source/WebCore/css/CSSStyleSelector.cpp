@@ -2867,7 +2867,7 @@ bool CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass(CSSSelector* s
             return false;
         }
         case CSSSelector::PseudoCornerPresent:
-            return scrollbar->client()->scrollbarCornerPresent();
+            return scrollbar->scrollableArea()->scrollbarCornerPresent();
         default:
             return false;
     }

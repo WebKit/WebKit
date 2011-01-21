@@ -25,14 +25,14 @@
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "IntRect.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include <gtk/gtk.h>
 
 using namespace WebCore;
 
-PassRefPtr<MainFrameScrollbarGtk> MainFrameScrollbarGtk::create(ScrollbarClient* client, ScrollbarOrientation orientation, GtkAdjustment* adj)
+PassRefPtr<MainFrameScrollbarGtk> MainFrameScrollbarGtk::create(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, GtkAdjustment* adj)
 {
-    return adoptRef(new MainFrameScrollbarGtk(client, orientation, adj));
+    return adoptRef(new MainFrameScrollbarGtk(scrollableArea, orientation, adj));
 }
 
 // Main frame scrollbars are slaves to a GtkAdjustment. If a main frame
@@ -42,8 +42,8 @@ PassRefPtr<MainFrameScrollbarGtk> MainFrameScrollbarGtk::create(ScrollbarClient*
 // state. These scrollbars are never painted, as the container takes care of
 // that. They exist only to shuttle data from the GtkWidget container into
 // WebCore and vice-versa.
-MainFrameScrollbarGtk::MainFrameScrollbarGtk(ScrollbarClient* client, ScrollbarOrientation orientation, GtkAdjustment* adjustment)
-    : Scrollbar(client, orientation, RegularScrollbar)
+MainFrameScrollbarGtk::MainFrameScrollbarGtk(ScrollableArea* scrollableArea, ScrollbarOrientation orientation, GtkAdjustment* adjustment)
+    : Scrollbar(scrollableArea, orientation, RegularScrollbar)
     , m_adjustment(0)
 {
     attachAdjustment(adjustment);
@@ -109,7 +109,7 @@ void MainFrameScrollbarGtk::updateThumbProportion()
 
 void MainFrameScrollbarGtk::gtkValueChanged(GtkAdjustment*, MainFrameScrollbarGtk* that)
 {
-    that->client()->scrollToOffsetWithoutAnimation(that->orientation(), static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get())));
+    that->scrollableArea()->scrollToOffsetWithoutAnimation(that->orientation(), static_cast<int>(gtk_adjustment_get_value(that->m_adjustment.get())));
 }
 
 void MainFrameScrollbarGtk::paint(GraphicsContext* context, const IntRect& rect)

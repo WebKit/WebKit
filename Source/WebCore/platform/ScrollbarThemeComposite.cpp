@@ -34,7 +34,7 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
-#include "ScrollbarClient.h"
+#include "ScrollableArea.h"
 #include "Settings.h"
 
 namespace WebCore {

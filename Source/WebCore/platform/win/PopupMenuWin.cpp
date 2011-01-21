@@ -532,12 +532,12 @@ bool PopupMenuWin::scrollToRevealSelection()
     int index = focusedIndex();
 
     if (index < m_scrollOffset) {
-        ScrollbarClient::scrollToYOffsetWithoutAnimation(index);
+        ScrollableArea::scrollToYOffsetWithoutAnimation(index);
         return true;
     }
 
     if (index >= m_scrollOffset + visibleItems()) {
-        ScrollbarClient::scrollToYOffsetWithoutAnimation(index - visibleItems() + 1);
+        ScrollableArea::scrollToYOffsetWithoutAnimation(index - visibleItems() + 1);
         return true;
     }
 
@@ -994,7 +994,7 @@ LRESULT PopupMenuWin::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
                     --i;
             }
 
-            ScrollbarClient::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
+            ScrollableArea::scroll(i > 0 ? ScrollUp : ScrollDown, ScrollByLine, abs(i));
             break;
         }
 
