@@ -1,3 +1,50 @@
+2011-01-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Menulist text often collides with separator
+        https://bugs.webkit.org/show_bug.cgi?id=51155
+
+        Move menulist rendering to RenderThemeGtk and correct padding code
+        for separators in menulists.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk): Initialize new widget members.
+        (WebCore::RenderThemeGtk::getComboBoxSeparatorWidth): Added.
+        (WebCore::RenderThemeGtk::comboBoxArrowSize): Added.
+        (WebCore::getButtonInnerBorder): Added.
+        (WebCore::RenderThemeGtk::getComboBoxPadding): Do this manually instead of using
+        Mozilla code.
+        (WebCore::RenderThemeGtk::paintMenuList): Ditto.
+        (WebCore::setupWidget): Abstracted this part of the setupWidgetAndAddToContainer
+        out to handle child widgets of comboboxes.
+        (WebCore::RenderThemeGtk::setupWidgetAndAddToContainer): Abstracted out setupWidget.
+        (WebCore::RenderThemeGtk::gtkContainer): Added.
+        (WebCore::getGtkComboBoxButton): Added.
+        (WebCore::getGtkComboBoxPieces): Added.
+        (WebCore::RenderThemeGtk::gtkComboBox): Call setupWidget here.
+        (WebCore::RenderThemeGtk::refreshComboBoxChildren): Added.
+        (WebCore::RenderThemeGtk::gtkComboBoxButton): Added.
+        (WebCore::RenderThemeGtk::gtkComboBoxArrow): Added.
+        (WebCore::RenderThemeGtk::gtkComboBoxSeparator): Added.
+        * platform/gtk/RenderThemeGtk.h: Added new members and methods.
+        * platform/gtk/WidgetRenderingContext.h: Added new members and methods.
+        * platform/gtk/WidgetRenderingContextGtk2.cpp:
+        (WebCore::WidgetRenderingContext::gtkPaintArrow):
+        (WebCore::WidgetRenderingContext::gtkPaintVLine):
+        * platform/gtk/WidgetRenderingContextGtk3.cpp:
+        (WebCore::WidgetRenderingContext::gtkPaintArrow):
+        (WebCore::WidgetRenderingContext::gtkPaintVLine):
+        * platform/gtk/gtk2drawing.c: Removed code for drawing menulists and buttons.
+        (moz_gtk_init):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_widget_paint):
+        * platform/gtk/gtk3drawing.c:
+        (moz_gtk_init):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_widget_paint):
+        * platform/gtk/gtkdrawing.h:
+
 2011-01-21  Sam Weinig  <sam@webkit.org>
 
         Fix chromium mac build.

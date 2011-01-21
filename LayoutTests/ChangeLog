@@ -1,3 +1,121 @@
+2011-01-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Menulist text often collides with separator
+        https://bugs.webkit.org/show_bug.cgi?id=51155
+
+        Rebaseline tests that have different affected by the metrics of
+        the menulist.
+
+        * platform/gtk/fast/forms/001-expected.checksum:
+        * platform/gtk/fast/forms/001-expected.png:
+        * platform/gtk/fast/forms/001-expected.txt:
+        * platform/gtk/fast/forms/003-expected.checksum:
+        * platform/gtk/fast/forms/003-expected.png:
+        * platform/gtk/fast/forms/003-expected.txt:
+        * platform/gtk/fast/forms/004-expected.checksum:
+        * platform/gtk/fast/forms/004-expected.png:
+        * platform/gtk/fast/forms/004-expected.txt:
+        * platform/gtk/fast/forms/HTMLOptionElement_label01-expected.checksum:
+        * platform/gtk/fast/forms/HTMLOptionElement_label01-expected.png:
+        * platform/gtk/fast/forms/HTMLOptionElement_label01-expected.txt:
+        * platform/gtk/fast/forms/HTMLOptionElement_label02-expected.checksum:
+        * platform/gtk/fast/forms/HTMLOptionElement_label02-expected.png:
+        * platform/gtk/fast/forms/HTMLOptionElement_label02-expected.txt:
+        * platform/gtk/fast/forms/HTMLOptionElement_label03-expected.checksum:
+        * platform/gtk/fast/forms/HTMLOptionElement_label03-expected.png:
+        * platform/gtk/fast/forms/HTMLOptionElement_label03-expected.txt:
+        * platform/gtk/fast/forms/HTMLOptionElement_label04-expected.checksum:
+        * platform/gtk/fast/forms/HTMLOptionElement_label04-expected.png:
+        * platform/gtk/fast/forms/HTMLOptionElement_label04-expected.txt:
+        * platform/gtk/fast/forms/HTMLOptionElement_label06-expected.checksum:
+        * platform/gtk/fast/forms/HTMLOptionElement_label06-expected.png:
+        * platform/gtk/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/gtk/fast/forms/HTMLOptionElement_label07-expected.checksum:
+        * platform/gtk/fast/forms/HTMLOptionElement_label07-expected.png:
+        * platform/gtk/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/gtk/fast/forms/control-clip-overflow-expected.checksum:
+        * platform/gtk/fast/forms/control-clip-overflow-expected.png:
+        * platform/gtk/fast/forms/control-clip-overflow-expected.txt:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.checksum:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.png:
+        * platform/gtk/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/disabled-select-change-index-expected.checksum:
+        * platform/gtk/fast/forms/disabled-select-change-index-expected.png:
+        * platform/gtk/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/gtk/fast/forms/form-element-geometry-expected.checksum:
+        * platform/gtk/fast/forms/form-element-geometry-expected.png:
+        * platform/gtk/fast/forms/form-element-geometry-expected.txt:
+        * platform/gtk/fast/forms/input-file-re-render-expected.checksum: Added.
+        * platform/gtk/fast/forms/input-file-re-render-expected.png: Added.
+        * platform/gtk/fast/forms/menulist-deselect-update-expected.checksum:
+        * platform/gtk/fast/forms/menulist-deselect-update-expected.png:
+        * platform/gtk/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/gtk/fast/forms/menulist-narrow-width-expected.checksum:
+        * platform/gtk/fast/forms/menulist-narrow-width-expected.png:
+        * platform/gtk/fast/forms/menulist-narrow-width-expected.txt:
+        * platform/gtk/fast/forms/menulist-no-overflow-expected.checksum:
+        * platform/gtk/fast/forms/menulist-no-overflow-expected.png:
+        * platform/gtk/fast/forms/menulist-no-overflow-expected.txt:
+        * platform/gtk/fast/forms/menulist-restrict-line-height-expected.checksum:
+        * platform/gtk/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/gtk/fast/forms/menulist-restrict-line-height-expected.txt:
+        * platform/gtk/fast/forms/menulist-separator-painting-expected.checksum:
+        * platform/gtk/fast/forms/menulist-separator-painting-expected.png:
+        * platform/gtk/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/gtk/fast/forms/menulist-style-color-expected.checksum:
+        * platform/gtk/fast/forms/menulist-style-color-expected.png:
+        * platform/gtk/fast/forms/menulist-style-color-expected.txt:
+        * platform/gtk/fast/forms/menulist-width-change-expected.checksum:
+        * platform/gtk/fast/forms/menulist-width-change-expected.png:
+        * platform/gtk/fast/forms/menulist-width-change-expected.txt:
+        * platform/gtk/fast/forms/option-script-expected.checksum:
+        * platform/gtk/fast/forms/option-script-expected.png:
+        * platform/gtk/fast/forms/option-script-expected.txt:
+        * platform/gtk/fast/forms/option-strip-whitespace-expected.checksum:
+        * platform/gtk/fast/forms/option-strip-whitespace-expected.png:
+        * platform/gtk/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/gtk/fast/forms/option-text-clip-expected.checksum:
+        * platform/gtk/fast/forms/option-text-clip-expected.png:
+        * platform/gtk/fast/forms/option-text-clip-expected.txt:
+        * platform/gtk/fast/forms/select-align-expected.checksum:
+        * platform/gtk/fast/forms/select-align-expected.png:
+        * platform/gtk/fast/forms/select-align-expected.txt:
+        * platform/gtk/fast/forms/select-baseline-expected.checksum:
+        * platform/gtk/fast/forms/select-baseline-expected.png:
+        * platform/gtk/fast/forms/select-baseline-expected.txt:
+        * platform/gtk/fast/forms/select-change-listbox-to-popup-expected.checksum:
+        * platform/gtk/fast/forms/select-change-listbox-to-popup-expected.png:
+        * platform/gtk/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/gtk/fast/forms/select-dirty-parent-pref-widths-expected.checksum:
+        * platform/gtk/fast/forms/select-dirty-parent-pref-widths-expected.png:
+        * platform/gtk/fast/forms/select-dirty-parent-pref-widths-expected.txt:
+        * platform/gtk/fast/forms/select-disabled-appearance-expected.checksum:
+        * platform/gtk/fast/forms/select-disabled-appearance-expected.png:
+        * platform/gtk/fast/forms/select-disabled-appearance-expected.txt:
+        * platform/gtk/fast/forms/select-initial-position-expected.checksum:
+        * platform/gtk/fast/forms/select-initial-position-expected.png:
+        * platform/gtk/fast/forms/select-initial-position-expected.txt:
+        * platform/gtk/fast/forms/select-selected-expected.checksum:
+        * platform/gtk/fast/forms/select-selected-expected.png:
+        * platform/gtk/fast/forms/select-selected-expected.txt:
+        * platform/gtk/fast/forms/select-size-expected.checksum:
+        * platform/gtk/fast/forms/select-size-expected.png:
+        * platform/gtk/fast/forms/select-size-expected.txt:
+        * platform/gtk/fast/forms/select-style-expected.checksum:
+        * platform/gtk/fast/forms/select-style-expected.png:
+        * platform/gtk/fast/forms/select-style-expected.txt:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.checksum:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.png:
+        * platform/gtk/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.checksum:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.png:
+        * platform/gtk/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/gtk/fast/forms/stuff-on-my-optgroup-expected.checksum:
+        * platform/gtk/fast/forms/stuff-on-my-optgroup-expected.png:
+        * platform/gtk/fast/forms/stuff-on-my-optgroup-expected.txt:
+
 2011-01-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial fix.

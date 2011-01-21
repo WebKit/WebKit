@@ -352,7 +352,7 @@ double RenderThemeGtk::caretBlinkInterval() const
     return time / 2000.;
 }
 
-static double getScreenDPI()
+double RenderThemeGtk::getScreenDPI()
 {
     // FIXME: Really this should be the widget's screen.
     GdkScreen* screen = gdk_screen_get_default();

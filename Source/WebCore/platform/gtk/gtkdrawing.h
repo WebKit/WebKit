@@ -86,19 +86,8 @@ typedef struct _GtkThemeParts {
     GdkColormap* colormap;
     GtkWidget* protoWindow;
     GtkWidget* protoLayout;
-    GtkWidget* buttonWidget;
-    GtkWidget* toggleButtonWidget;
-    GtkWidget* buttonArrowWidget;
     GtkWidget* horizScrollbarWidget;
     GtkWidget* vertScrollbarWidget;
-    GtkWidget* comboBoxWidget;
-    GtkWidget* comboBoxButtonWidget;
-    GtkWidget* comboBoxArrowWidget;
-    GtkWidget* comboBoxSeparatorWidget;
-    GtkWidget* comboBoxEntryWidget;
-    GtkWidget* comboBoxEntryTextareaWidget;
-    GtkWidget* comboBoxEntryButtonWidget;
-    GtkWidget* comboBoxEntryArrowWidget;
     GtkWidget* scrolledWindowWidget;
 } GtkThemeParts;
 
@@ -133,8 +122,6 @@ typedef enum {
   MOZ_GTK_SCROLLBAR_THUMB_VERTICAL,
   /* Paints the background of a scrolled window */
   MOZ_GTK_SCROLLED_WINDOW,
-  /* Paints a GtkOptionMenu. */
-  MOZ_GTK_DROPDOWN,
 } GtkThemeWidgetType;
 
 /*** General library functions ***/
@@ -208,20 +195,6 @@ moz_gtk_widget_paint(GtkThemeWidgetType widget, GdkDrawable* drawable,
 gint moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top, 
                                gint* right, gint* bottom, GtkTextDirection direction,
                                gboolean inhtml);
-
-/** Get the focus metrics for a treeheadercell, button, checkbox, or radio button.
- * widget:             [IN]  the widget to get the focus metrics for    
- * interior_focus:     [OUT] whether the focus is drawn around the
- *                           label (TRUE) or around the whole container (FALSE)
- * focus_width:        [OUT] the width of the focus line
- * focus_pad:          [OUT] the padding between the focus line and children
- *
- * returns:    MOZ_GTK_SUCCESS if there was no error, an error code otherwise
- */
-gint
-moz_gtk_widget_get_focus(GtkWidget* widget, gboolean* interior_focus,
-                         gint* focus_width, gint* focus_pad);
-
 /**
  * Get the desired metrics for a GtkScrollbar
  * metrics:          [IN]  struct which will contain the metrics

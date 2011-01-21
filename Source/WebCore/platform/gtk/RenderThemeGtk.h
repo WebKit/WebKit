@@ -175,6 +175,7 @@ private:
     void platformInit();
     static void setTextInputBorders(RenderStyle*);
     GRefPtr<GdkPixbuf> getStockIcon(GType, const char* iconName, gint direction, gint state, gint iconSize);
+    static double getScreenDPI();
 
 #if ENABLE(VIDEO)
     bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
@@ -195,7 +196,12 @@ private:
 #ifdef GTK_API_VERSION_2
     void setupWidgetAndAddToContainer(GtkWidget*, GtkWidget*) const;
     bool paintRenderObject(GtkThemeWidgetType, RenderObject*, GraphicsContext*, const IntRect&, int flags = 0);
+    void refreshComboBoxChildren() const;
+    void getComboBoxPadding(RenderStyle*, int& left, int& top, int& right, int& bottom) const;
+    int getComboBoxSeparatorWidth() const;
+    int comboBoxArrowSize(RenderStyle*) const;
     GtkThemeParts m_themeParts;
+
     GtkWidget* gtkButton() const;
     GtkWidget* gtkEntry() const;
     GtkWidget* gtkTreeView() const;
@@ -205,6 +211,10 @@ private:
     GtkWidget* gtkRadioButton() const;
     GtkWidget* gtkCheckButton() const;
     GtkWidget* gtkProgressBar() const;
+    GtkWidget* gtkComboBox() const;
+    GtkWidget* gtkComboBoxButton() const;
+    GtkWidget* gtkComboBoxArrow() const;
+    GtkWidget* gtkComboBoxSeparator() const;
 
     mutable GtkWidget* m_gtkWindow;
     mutable GtkWidget* m_gtkContainer;
@@ -216,7 +226,10 @@ private:
     mutable GtkWidget* m_gtkRadioButton;
     mutable GtkWidget* m_gtkCheckButton;
     mutable GtkWidget* m_gtkProgressBar;
-
+    mutable GtkWidget* m_gtkComboBox;
+    mutable GtkWidget* m_gtkComboBoxButton;
+    mutable GtkWidget* m_gtkComboBoxArrow;
+    mutable GtkWidget* m_gtkComboBoxSeparator;
     bool m_themePartsHaveRGBAColormap;
     friend class WidgetRenderingContext;
 #endif

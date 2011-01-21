@@ -201,6 +201,20 @@ void WidgetRenderingContext::gtkPaintShadow(const IntRect& rect, GtkWidget* widg
                      detail, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
 }
 
+void WidgetRenderingContext::gtkPaintArrow(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, GtkShadowType shadowType, int arrowDirection, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_arrow(gtk_widget_get_style(widget), m_target, stateType, shadowType, &paintRect, widget, detail,
+                    static_cast<GtkArrowType>(arrowDirection), TRUE, paintRect.x, paintRect.y, paintRect.width, paintRect.height);
+}
+
+void WidgetRenderingContext::gtkPaintVLine(const IntRect& rect, GtkWidget* widget, GtkStateType stateType, const gchar* detail)
+{
+    GdkRectangle paintRect = { m_paintRect.x + rect.x(), m_paintRect.y + rect.y(), rect.width(), rect.height() };
+    gtk_paint_vline(gtk_widget_get_style(widget), m_target, stateType, &paintRect, widget, detail,
+                    paintRect.y, paintRect.y + paintRect.height, paintRect.x);
+
+}
 
 }
 

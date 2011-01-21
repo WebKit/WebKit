@@ -45,6 +45,8 @@ public:
     void gtkPaintCheck(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
     void gtkPaintOption(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
     void gtkPaintShadow(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, const gchar*);
+    void gtkPaintArrow(const IntRect&, GtkWidget*, GtkStateType, GtkShadowType, int arrowDirection, const gchar*);
+    void gtkPaintVLine(const IntRect&, GtkWidget*, GtkStateType, const gchar*);
 
 private:
     GraphicsContext* m_graphicsContext;
