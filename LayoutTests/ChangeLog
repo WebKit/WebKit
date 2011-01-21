@@ -1,3 +1,14 @@
+2011-01-21  Helder Correia  <helder@sencha.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] svg/css/text-gradient-shadow.svg needs expected results
+        https://bugs.webkit.org/show_bug.cgi?id=52724
+
+        * platform/qt/svg/css/text-gradient-shadow-expected.checksum: Added.
+        * platform/qt/svg/css/text-gradient-shadow-expected.png: Added.
+        * platform/qt/svg/css/text-gradient-shadow-expected.txt: Added.
+
 2011-01-21  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
