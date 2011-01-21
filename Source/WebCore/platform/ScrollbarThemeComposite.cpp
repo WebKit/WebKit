@@ -104,7 +104,7 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
             float proportion = static_cast<float>(scrollbar->visibleSize()) / scrollbar->totalSize();
             float value = scrollbar->currentPos() / static_cast<float>(scrollbar->maximum());
             ScrollbarControlState s = 0;
-            if (scrollbar->client()->isActive())
+            if (scrollbar->scrollableArea()->isActive())
                 s |= ActiveScrollbarState;
             if (scrollbar->enabled())
                 s |= EnabledScrollbarState;
