@@ -62,16 +62,16 @@ _log = logging.getLogger("webkitpy.layout_tests."
 
 BASELINE_SUFFIXES = ['.txt', '.png', '.checksum']
 REBASELINE_PLATFORM_ORDER = ['mac', 'win', 'win-xp', 'win-vista', 'linux']
-ARCHIVE_DIR_NAME_DICT = {'win': 'Webkit_Win',
+ARCHIVE_DIR_NAME_DICT = {'win': 'Webkit_Win__deps_',
                          'win-vista': 'webkit-dbg-vista',
-                         'win-xp': 'Webkit_Win',
-                         'mac': 'Webkit_Mac10_5',
-                         'linux': 'webkit-rel-linux64',
-                         'win-canary': 'webkit-rel-webkit-org',
+                         'win-xp': 'Webkit_Win__deps_',
+                         'mac': 'Webkit_Mac10_5__deps_',
+                         'linux': 'Webkit_Linux__deps_',
+                         'win-canary': 'Webkit_Win',
                          'win-vista-canary': 'webkit-dbg-vista',
-                         'win-xp-canary': 'webkit-rel-webkit-org',
-                         'mac-canary': 'webkit-rel-mac-webkit-org',
-                         'linux-canary': 'webkit-rel-linux-webkit-org'}
+                         'win-xp-canary': 'Webkit_Win',
+                         'mac-canary': 'Webkit_Mac10_5',
+                         'linux-canary': 'Webkit_Linux'}
 
 
 def log_dashed_string(text, platform, logging_level=logging.INFO):

@@ -1,3 +1,15 @@
+2011-01-20  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] fix the paths used for the rebaseline tool
+        https://bugs.webkit.org/show_bug.cgi?id=52857
+
+        Some of the bots were renamed so the path to grab the results zip
+        file has changed.
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2011-01-20  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
