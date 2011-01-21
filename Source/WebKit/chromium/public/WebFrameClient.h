@@ -109,6 +109,9 @@ public:
     // Controls whether images are allowed for this frame.
     virtual bool allowImages(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
 
+    // Notifies the client that continuous spell checking has been enabled or
+    // disabled.
+    virtual void didToggleContinuousSpellChecking(WebFrame*) { }
 
     // Load commands -------------------------------------------------------
 

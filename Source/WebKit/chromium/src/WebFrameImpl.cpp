@@ -1199,6 +1199,9 @@ void WebFrameImpl::enableContinuousSpellChecking(bool enable)
 {
     if (enable == isContinuousSpellCheckingEnabled())
         return;
+    // Note, the editor will will notify the client that the continuous spell
+    // checking state has changed by calling
+    // WebFrameClient::didToggleContinuousSpellChecking().
     frame()->editor()->toggleContinuousSpellChecking();
 }
 

@@ -45,6 +45,7 @@
 #include "WebAutoFillClient.h"
 #include "WebEditingAction.h"
 #include "WebElement.h"
+#include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebInputElement.h"
@@ -161,6 +162,11 @@ void EditorClientImpl::toggleContinuousSpellChecking()
         m_spellCheckThisFieldStatus = SpellCheckForcedOff;
     else
         m_spellCheckThisFieldStatus = SpellCheckForcedOn;
+
+    WebFrameImpl* webframe = WebFrameImpl::fromFrame(
+        m_webView->focusedWebCoreFrame());
+    if (webframe)
+        webframe->client()->didToggleContinuousSpellChecking(webframe);
 }
 
 bool EditorClientImpl::isGrammarCheckingEnabled()
