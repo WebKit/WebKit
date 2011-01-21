@@ -233,8 +233,10 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
 #define EXCEPTION_OFFSET                 0x54
 #define ENABLE_PROFILER_REFERENCE_OFFSET 0x58
 
-#elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
+#elif (COMPILER(GCC) || COMPILER(MSVC) || COMPILER(RVCT)) && CPU(ARM_TRADITIONAL)
 
+// Also update the MSVC section (defined at DEFINE_STUB_FUNCTION)
+// when changing one of the following values.
 #define THUNK_RETURN_ADDRESS_OFFSET 64
 #define PRESERVEDR4_OFFSET          68
 
@@ -297,12 +299,6 @@ extern "C" {
         }
     }
 }
-
-#elif COMPILER(MSVC) && CPU(ARM_TRADITIONAL)
-
-#define THUNK_RETURN_ADDRESS_OFFSET 64
-#define PRESERVEDR4_OFFSET          68
-// See DEFINE_STUB_FUNCTION for more information.
 
 #elif CPU(MIPS)
 
@@ -532,12 +528,6 @@ extern "C" {
          }
      }
 }
-
-#elif COMPILER(MSVC) && CPU(ARM_TRADITIONAL)
-
-#define THUNK_RETURN_ADDRESS_OFFSET 32
-#define PRESERVEDR4_OFFSET          36
-// See DEFINE_STUB_FUNCTION for more information.
 
 #else
     #error "JIT not supported on this platform."
@@ -1270,13 +1260,13 @@ MSVC_BEGIN()
 MSVC_BEGIN(ctiTrampoline PROC)
 MSVC_BEGIN(    stmdb sp!, {r1-r3})
 MSVC_BEGIN(    stmdb sp!, {r4-r8, lr})
-MSVC_BEGIN(    sub sp, sp, # THUNK_RETURN_ADDRESS_OFFSET + 4)
+MSVC_BEGIN(    sub sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
 MSVC_BEGIN(    mov r4, r2)
 MSVC_BEGIN(    mov r5, #512)
 MSVC_BEGIN(    ; r0 contains the code)
 MSVC_BEGIN(    mov lr, pc)
 MSVC_BEGIN(    bx r0)
-MSVC_BEGIN(    add sp, sp, # THUNK_RETURN_ADDRESS_OFFSET + 4)
+MSVC_BEGIN(    add sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
 MSVC_BEGIN(    ldmia sp!, {r4-r8, lr})
 MSVC_BEGIN(    add sp, sp, #12)
 MSVC_BEGIN(    bx lr)
@@ -1287,7 +1277,7 @@ MSVC_BEGIN(    mov r0, sp)
 MSVC_BEGIN(    mov lr, pc)
 MSVC_BEGIN(    bl cti_vm_throw)
 MSVC_BEGIN(ctiOpThrowNotCaught)
-MSVC_BEGIN(    add sp, sp, # THUNK_RETURN_ADDRESS_OFFSET + 4)
+MSVC_BEGIN(    add sp, sp, #68 ; sync with PRESERVEDR4_OFFSET)
 MSVC_BEGIN(    ldmia sp!, {r4-r8, lr})
 MSVC_BEGIN(    add sp, sp, #12)
 MSVC_BEGIN(    bx lr)
@@ -1297,9 +1287,9 @@ MSVC_BEGIN()
 MSVC(    EXPORT cti_#op#)
 MSVC(    IMPORT JITStubThunked_#op#)
 MSVC(cti_#op# PROC)
-MSVC(    str lr, [sp, # THUNK_RETURN_ADDRESS_OFFSET])
+MSVC(    str lr, [sp, #64] ; sync with THUNK_RETURN_ADDRESS_OFFSET)
 MSVC(    bl JITStubThunked_#op#)
-MSVC(    ldr lr, [sp, # THUNK_RETURN_ADDRESS_OFFSET])
+MSVC(    ldr lr, [sp, #64] ; sync with THUNK_RETURN_ADDRESS_OFFSET)
 MSVC(    bx lr)
 MSVC(cti_#op# ENDP)
 MSVC()
