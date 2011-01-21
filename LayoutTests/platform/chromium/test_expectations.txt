@@ -3113,11 +3113,4 @@ BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 
 // Seems to be caused by http://trac.webkit.org/changeset/76291 . Needs
 // investigation.
-BUGTONY : fast/dom/horizontal-scrollbar-in-rtl.html = TEXT
-BUGTONY : fast/dom/horizontal-scrollbar-when-dir-change.html = TEXT
-BUGTONY : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
-BUGTONY : fast/dom/vertical-scrollbar-when-dir-change.html = TEXT
-BUGTONY : fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html = TEXT
-BUGTONY : fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html = TEXT
-BUGTONY : fast/block/basic/truncation-rtl.html = IMAGE
 BUGTONY : fast/overflow/overflow-rtl-vertical.html = IMAGE
