@@ -1180,9 +1180,7 @@
             ['include', 'platform/(graphics/)?mac/[^/]*Font[^/]*\\.(cpp|mm?)$'],
             ['include', 'platform/graphics/mac/ComplexText[^/]*\\.(cpp|h)$'],
 
-            # AudioBusMac is necessary for web audio API bringup on Chrome.
-            # It will later be replaced with chromium-specific code.
-            ['include', 'platform/audio/mac/AudioBusMac\\.mm$'],
+            # We can use this for the fast Accelerate.framework FFT.
             ['include', 'platform/audio/mac/FFTFrameMac\\.cpp$'],
 
             # Cherry-pick some files that can't be included by broader regexps.
