@@ -606,9 +606,9 @@ class YarrGenerator : private MacroAssembler {
                 m_nextBacktrack->setLabel(label);
         }
 
-        void copyBacktrackToLabel(BacktrackDestination& rhs)
+        void propagateBacktrackToLabel(const BacktrackDestination& rhs)
         {
-            if (rhs.m_backtrackToLabel)
+            if (!m_backtrackToLabel && rhs.m_backtrackToLabel)
                 m_backtrackToLabel = rhs.m_backtrackToLabel;
         }
 
@@ -1661,7 +1661,7 @@ class YarrGenerator : private MacroAssembler {
             BacktrackDestination& stateBacktrack = state.getBacktrackDestination();
 
             state.propagateBacktrackingFrom(this, parenthesesBacktrack);
-            stateBacktrack.copyBacktrackToLabel(parenthesesBacktrack);
+            stateBacktrack.propagateBacktrackToLabel(parenthesesBacktrack);
 
             m_expressionState.decrementParenNestingLevel();
         } else {

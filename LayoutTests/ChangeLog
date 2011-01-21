@@ -1,3 +1,16 @@
+2011-01-21  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        [RegexFuzz] Hang with forward assertion
+        https://bugs.webkit.org/show_bug.cgi?id=52825
+        <rdar://problem/8894332>
+
+        New tests to check for functionality and future regression.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2011-01-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele Peterson.

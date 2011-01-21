@@ -202,6 +202,12 @@ shouldBe("regexp44.exec('SSS')", "['',undefined]");
 var regexp45 = /((?!(?:|)v{2,}|))/;
 shouldBeNull("regexp45.exec('vt')");
 
+var regexp46 = /(w)(?:5{3}|())|pk/;
+shouldBeNull("regexp46.exec('5')");
+shouldBe("regexp46.exec('pk')", "['pk',undefined,undefined]");
+shouldBe("regexp46.exec('Xw555')", "['w555','w',undefined]");
+shouldBe("regexp46.exec('Xw55pk5')", "['w','w','']");
+
 shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
 
 var successfullyParsed = true;

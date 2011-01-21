@@ -1,3 +1,21 @@
+2011-01-21  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        [RegexFuzz] Hang with forward assertion
+        https://bugs.webkit.org/show_bug.cgi?id=52825
+        <rdar://problem/8894332>
+
+        The backtrackTo label from the first term in a list of terms is
+        being overwritten by processing of subsequent terms.  Changed
+        copyBacktrackToLabel() to check for an existing bcaktrackTo label
+        before copying and renamed it to propagateBacktrackToLabel() since
+        it no longer copies.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::BacktrackDestination::propagateBacktrackToLabel):
+        (JSC::Yarr::YarrGenerator::generateParenthesesSingle):
+
 2011-01-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

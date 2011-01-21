@@ -75,6 +75,10 @@ PASS /(?!(?=r{0}){2,})|((z)?)?/gi.test('') is true
 PASS regexp43.exec('SSS') is ['']
 PASS regexp44.exec('SSS') is ['',undefined]
 PASS regexp45.exec('vt') is null
+PASS regexp46.exec('5') is null
+PASS regexp46.exec('pk') is ['pk',undefined,undefined]
+PASS regexp46.exec('Xw555') is ['w555','w',undefined]
+PASS regexp46.exec('Xw55pk5') is ['w','w','']
 PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
 PASS successfullyParsed is true
 
