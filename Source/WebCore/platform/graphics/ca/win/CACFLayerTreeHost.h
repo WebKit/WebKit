@@ -52,7 +52,6 @@ class PlatformCALayer;
 class CACFLayerTreeHostClient {
 public:
     virtual ~CACFLayerTreeHostClient() { }
-    virtual bool shouldRender() const = 0;
     virtual void flushPendingGraphicsLayerChanges() { }
 };
 
@@ -76,6 +75,7 @@ public:
     void paint();
     void resize();
     void flushPendingGraphicsLayerChangesSoon();
+    void flushPendingLayerChangesNow();
 
 protected:
     PlatformCALayer* rootLayer() const;
@@ -111,6 +111,7 @@ private:
     Timer<CACFLayerTreeHost> m_renderTimer;
     bool m_mustResetLostDeviceBeforeRendering;
     bool m_shouldFlushPendingGraphicsLayerChanges;
+    bool m_isFlushingLayerChanges;
     HashSet<RefPtr<PlatformCALayer> > m_pendingAnimatedLayers;
 
 #ifndef NDEBUG

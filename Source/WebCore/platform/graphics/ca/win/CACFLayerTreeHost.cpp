@@ -24,15 +24,11 @@
  */
 
 #include "config.h"
+#include "CACFLayerTreeHost.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#ifndef NDEBUG
-#define D3D_DEBUG_INFO
-#endif
-
-#include "CACFLayerTreeHost.h"
-
+#include "LayerChangesFlusher.h"
 #include "PlatformCALayer.h"
 #include "WebCoreInstanceHandle.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
@@ -43,6 +39,11 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/StdLibExtras.h>
+
+#ifndef NDEBUG
+#define D3D_DEBUG_INFO
+#endif
+
 #include <d3d9.h>
 #include <d3dx9.h>
 
@@ -188,6 +189,7 @@ CACFLayerTreeHost::CACFLayerTreeHost()
     , m_renderTimer(this, &CACFLayerTreeHost::renderTimerFired)
     , m_mustResetLostDeviceBeforeRendering(false)
     , m_shouldFlushPendingGraphicsLayerChanges(false)
+    , m_isFlushingLayerChanges(false)
 {
     // Point the CACFContext to this
     wkCACFContextSetUserData(m_context, this);
@@ -260,7 +262,17 @@ void CACFLayerTreeHost::setRootChildLayer(PlatformCALayer* layer)
    
 void CACFLayerTreeHost::layerTreeDidChange()
 {
-    renderSoon();
+    if (m_isFlushingLayerChanges) {
+        // The layer tree is changing as a result of flushing GraphicsLayer changes to their
+        // underlying PlatformCALayers. We'll flush those changes to the context as part of that
+        // process, so there's no need to schedule another flush here.
+        return;
+    }
+
+    // The layer tree is changing as a result of someone modifying a PlatformCALayer that doesn't
+    // have a corresponding GraphicsLayer. Schedule a flush since we won't schedule one through the
+    // normal GraphicsLayer mechanisms.
+    LayerChangesFlusher::shared().flushPendingLayerChangesSoon(this);
 }
 
 bool CACFLayerTreeHost::createRenderer()
@@ -337,7 +349,9 @@ bool CACFLayerTreeHost::createRenderer()
 
 void CACFLayerTreeHost::destroyRenderer()
 {
-    wkCACFContextSetLayer(m_context, m_rootLayer->platformLayer());
+    LayerChangesFlusher::shared().cancelPendingFlush(this);
+
+    wkCACFContextSetLayer(m_context, 0);
 
     wkCACFContextSetD3DDevice(m_context, 0);
     m_d3dDevice = 0;
@@ -424,19 +438,6 @@ void CACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
         renderSoon();
         return;
     }
-
-    if (m_client && !m_client->shouldRender()) {
-        renderSoon();
-        return;
-    }
-
-    if (m_shouldFlushPendingGraphicsLayerChanges) {
-        m_client->flushPendingGraphicsLayerChanges();
-        m_shouldFlushPendingGraphicsLayerChanges = false;
-    }
-
-    // Flush the root layer to the render tree.
-    wkCACFContextFlush(m_context);
 
     // All pending animations will have been started with the flush. Fire the animationStarted calls
     double currentTime = WTF::currentTime();
@@ -526,7 +527,29 @@ void CACFLayerTreeHost::renderSoon()
 void CACFLayerTreeHost::flushPendingGraphicsLayerChangesSoon()
 {
     m_shouldFlushPendingGraphicsLayerChanges = true;
+    LayerChangesFlusher::shared().flushPendingLayerChangesSoon(this);
+}
+
+void CACFLayerTreeHost::flushPendingLayerChangesNow()
+{
+    // Calling out to the client could cause our last reference to go away.
+    RefPtr<CACFLayerTreeHost> protector(this);
+
+    m_isFlushingLayerChanges = true;
+
+    // Flush changes stored up in GraphicsLayers to their underlying PlatformCALayers, if
+    // requested.
+    if (m_client && m_shouldFlushPendingGraphicsLayerChanges) {
+        m_shouldFlushPendingGraphicsLayerChanges = false;
+        m_client->flushPendingGraphicsLayerChanges();
+    }
+
+    // Flush changes stored up in PlatformCALayers to the context so they will be rendered.
+    wkCACFContextFlush(m_context);
+
     renderSoon();
+
+    m_isFlushingLayerChanges = false;
 }
 
 CGRect CACFLayerTreeHost::bounds() const

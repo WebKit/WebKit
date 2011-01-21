@@ -1,3 +1,99 @@
+2011-01-21  Adam Roben  <aroben@apple.com>
+
+        Separate flushing layer changes from rendering in CACFLayerTreeHost
+
+        Old model:
+          1) A change is made to a GraphicsLayer.
+          2) CACFLayerTreeHost::flushPendingGraphicsLayerChangesSoon is called, which schedules the
+             render timer.
+          3) The timer fires, which calls through to CACFLayerTreeHost::render, which performs the
+             flush and then renders.
+
+        New model:
+          1) A change is made to a GraphicsLayer.
+          2) CACFLayerTreeHost::flushPendingGraphicsLayerChangesSoon is called, which tells the new
+             LayerChangesFlusher singleton that this host has changes that need to be flushed.
+          3) LayerChangesFlusher sets up a Windows hook that will get called on the next iteration
+             of the message loop.
+          4) LayerChangesFlusher's hook is called, which calls through to
+             CACFLayerTreeHost::flushPendingLayerChangesNow.
+          5) CACFLayerTreeHost::flushPendingLayerChangesNow schedules the render timer so the changes
+             that were just flushed to the context will be rendered.
+
+        When a change is made to a PlatformCALayer that doesn't have a corresponding GraphicsLayer
+        (e.g., for rendering <video>), CACFLayerTreeHost::layerTreeDidChange takes care of
+        scheduling the flush.
+
+        This change has three advantages:
+          1) Whenever we flush layer changes, we first update layout. This can cause the page to
+             leave compositing mode, which in turn can cause all references to the CACFLayerTreeHost
+             to be dropped. By separating flushing (and thus updating layout) from rendering, we no
+             longer have to worry about this happen during rendering.
+          2) The new model is much more similar to how things work on the Mac, so will hopefully
+             reduce the number of platform-specific bugs.
+          3) CACFLayerTreeHost::shouldRender, which was used to make sure we didn't render while a
+             layout was pending, is no longer needed. It actually hasn't been needed since at least
+             r75987, but removing it before now would have resulted in a crash whenever a page came
+             out of compositing mode due to (1).
+
+        Fixes <http://webkit.org/b/52852> Flushing layer changes and rendering are intertwined in
+        CACFLayerTreeHost, but shouldn't be
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.vcproj/WebCore.vcproj: Added LayerChangesFlusher.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp: Added new #include, sorted existing
+        #includes.
+        (WebCore::CACFLayerTreeHost::CACFLayerTreeHost): Initialize new member.
+        (WebCore::CACFLayerTreeHost::layerTreeDidChange): If we aren't already flushing changes,
+        schedule a flush. Removed the call to renderSoon(), which now happens when the flush is
+        finished.
+        (WebCore::CACFLayerTreeHost::destroyRenderer): Cancel any pending flush we had scheduled. Also
+        fixed a bug where we'd fail to clear the context's layer.
+        (WebCore::CACFLayerTreeHost::render): Removed code to ask the client if we should render, which
+        is no longer needed. Moved code to flush layer changes from here to
+        flushPendingLayerChangesNow, which is called via the above-described mechanism.
+        (WebCore::CACFLayerTreeHost::flushPendingGraphicsLayerChangesSoon): Schedule a flush. Removed
+        code to schedule a render, which now happens after we've flushed.
+        (WebCore::CACFLayerTreeHost::flushPendingLayerChangesNow): Added. Some of this code came from
+        render(). First we flush GraphicsLayer changes from GraphicsLayers to their underlying
+        PlatformCALayers, then we flush changes from PlatformCALayers to the context, then we
+        schedule a render so that the changes will be rendered to the screen.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Removed
+        CACFLayerTreeHostClient::shouldRender. Added flushPendingLayerChangesNow and
+        m_isFlushingLayerChanges.
+
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp: Added.
+        (WebCore::LayerChangesFlusher::shared):
+        (WebCore::LayerChangesFlusher::LayerChangesFlusher):
+        (WebCore::LayerChangesFlusher::flushPendingLayerChangesSoon):
+        (WebCore::LayerChangesFlusher::cancelPendingFlush):
+        (WebCore::LayerChangesFlusher::hookCallback):
+        (WebCore::LayerChangesFlusher::hookFired):
+        (WebCore::LayerChangesFlusher::setHook):
+        (WebCore::LayerChangesFlusher::removeHook):
+
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp: Added.
+        (WebCore::LayerChangesFlusher::shared): Returns the singleton.
+        (WebCore::LayerChangesFlusher::LayerChangesFlusher): Initialize our members.
+        (WebCore::LayerChangesFlusher::flushPendingLayerChangesSoon): Add the host to the set of
+        hosts with changes that need to be flushed, and set up our hook if we haven't already.
+        (WebCore::LayerChangesFlusher::cancelPendingFlush): Remove the host from the set of hosts
+        with changes that need to be flushed. If we have no more such hosts, remove our hook, unless
+        we're currently in the process of calling out to our hosts, in which case we'll take care of
+        the hook once we're done calling out.
+        (WebCore::LayerChangesFlusher::hookCallback): This is the function that Windows calls when
+        our hook fires. Just calls through to hookFired on the singleton.
+        (WebCore::LayerChangesFlusher::hookFired): Tell all the hosts with changes that needed to be
+        flushed that it's time to flush. If no hosts re-added themselves to our set during this
+        process, remove our hook.
+        (WebCore::LayerChangesFlusher::setHook): Calls through to ::SetWindowsHookExW.
+        (WebCore::LayerChangesFlusher::removeHook): Calls through to ::UnhookWindowsHookEx.
+
+        * platform/graphics/ca/win/LayerChangesFlusher.h: Added.
+
 2011-01-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

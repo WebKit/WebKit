@@ -1,3 +1,18 @@
+2011-01-20  Adam Roben  <aroben@apple.com>
+
+        Update for CACFLayerTreeHost changes
+
+        Fixes <http://webkit.org/b/52852> Flushing layer changes and rendering are intertwined in
+        CACFLayerTreeHost, but shouldn't be
+
+        Reviewed by Simon Fraser.
+
+        * WebView.cpp:
+        (WebView::paint): Changed to flush layer changes via CACFLayerTreeHost, which will call back
+        to our own flushing function if needed.
+
+        * WebView.h: Removed shouldRender, which is no longer used or needed.
+
 2011-01-21  Adam Roben  <aroben@apple.com>
 
         Update for WKCACFLayerRenderer -> CACFLayerTreeHost rename

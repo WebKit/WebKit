@@ -990,7 +990,7 @@ void WebView::paint(HDC dc, LPARAM options)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (isAcceleratedCompositing()) {
-        flushPendingGraphicsLayerChanges();
+        m_layerTreeHost->flushPendingLayerChangesNow();
         // Flushing might have taken us out of compositing mode.
         if (isAcceleratedCompositing()) {
             // FIXME: We need to paint into dc (if provided). <http://webkit.org/b/52578>
@@ -6504,18 +6504,6 @@ bool WebView::showDebugBorders() const
 bool WebView::showRepaintCounter() const
 {
     return m_page->settings()->showRepaintCounter();
-}
-
-bool WebView::shouldRender() const
-{
-    Frame* coreFrame = core(m_mainFrame);
-    if (!coreFrame)
-        return true;
-    FrameView* frameView = coreFrame->view();
-    if (!frameView)
-        return true;
-
-    return !frameView->layoutPending();
 }
 
 void WebView::flushPendingGraphicsLayerChanges()

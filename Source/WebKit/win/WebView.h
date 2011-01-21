@@ -948,7 +948,6 @@ private:
     virtual bool showRepaintCounter() const;
 
     // CACFLayerTreeHostClient
-    virtual bool shouldRender() const;
     virtual void flushPendingGraphicsLayerChanges();
 #endif
 
