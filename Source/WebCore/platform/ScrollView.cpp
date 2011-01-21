@@ -349,9 +349,9 @@ void ScrollView::scrollTo(const IntSize& newOffset)
 int ScrollView::scrollPosition(Scrollbar* scrollbar) const
 {
     if (scrollbar->orientation() == HorizontalScrollbar)
-        return scrollPosition().x();
+        return scrollPosition().x() + m_scrollOrigin.x();
     if (scrollbar->orientation() == VerticalScrollbar)
-        return scrollPosition().y();
+        return scrollPosition().y() + m_scrollOrigin.y();
     return 0;
 }
 
@@ -548,7 +548,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         updateScrollCorner();
     }
 
-    ScrollbarClient::scrollToOffsetWithoutAnimation(FloatPoint(scroll.width(), scroll.height()));
+    ScrollbarClient::scrollToOffsetWithoutAnimation(FloatPoint(scroll.width() + m_scrollOrigin.x(), scroll.height() + m_scrollOrigin.y()));
 
     m_inUpdateScrollbars = false;
 }

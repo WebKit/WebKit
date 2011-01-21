@@ -1,3 +1,14 @@
+2011-01-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Fix failing tests from r76291.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollPosition):
+        (WebCore::ScrollView::updateScrollbars):
+        Take the scroll origin into account in more places.
+
 2011-01-20  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, sorting an Xcode project file.
