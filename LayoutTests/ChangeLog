@@ -1,5 +1,11 @@
 2011-01-20  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, mark some rtl scrolling tests as failing to green the chromium bots.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-20  Tony Chang  <tony@chromium.org>
+
         Unreviewed, chromium test expectation updates.
 
         * platform/chromium-gpu/test_expectations.txt:
