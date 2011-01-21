@@ -29,23 +29,22 @@
 #include "WebPreferences.h"
 
 #include "COMPtr.h"
+#include "WebLocalizableStrings.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferenceKeysPrivate.h"
 
-#include <wtf/text/StringHash.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/CACFLayerTreeHost.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/Font.h>
 #include <WebCore/PlatformString.h>
-#include <WebCore/WKCACFLayerRenderer.h>
-#include "WebLocalizableStrings.h"
-
-#include <CoreFoundation/CoreFoundation.h>
 #include <limits>
 #include <shlobj.h>
 #include <tchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -1446,7 +1445,7 @@ HRESULT WebPreferences::setAcceleratedCompositingEnabled(BOOL enabled)
 HRESULT WebPreferences::acceleratedCompositingEnabled(BOOL* enabled)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    *enabled = WKCACFLayerRenderer::acceleratedCompositingAvailable() && boolValueForKey(CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey));
+    *enabled = CACFLayerTreeHost::acceleratedCompositingAvailable() && boolValueForKey(CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey));
 #else
     *enabled = FALSE;
 #endif

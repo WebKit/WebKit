@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(DXSDK_DIR)\Include&quot;"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\platform\graphics\ca\win&quot;;&quot;$(DXSDK_DIR)\Include&quot;"
 		PreprocessorDefinitions="QUARTZCORE_DLL"
 	/>
 </VisualStudioPropertySheet>

@@ -40,7 +40,7 @@ MediaPlayerPrivateFullscreenWindow::MediaPlayerPrivateFullscreenWindow(MediaPlay
     : m_client(client)
     , m_hwnd(0)
 #if USE(ACCELERATED_COMPOSITING)
-    , m_layerRenderer(WKCACFLayerRenderer::create())
+    , m_layerTreeHost(CACFLayerTreeHost::create())
 #endif
 {
 }
@@ -81,7 +81,7 @@ void MediaPlayerPrivateFullscreenWindow::createWindow(HWND parentHwnd)
     ASSERT(IsWindow(m_hwnd));
 
 #if USE(ACCELERATED_COMPOSITING)
-    m_layerRenderer->setHostWindow(m_hwnd);
+    m_layerTreeHost->setWindow(m_hwnd);
 #endif
 
     ::SetFocus(m_hwnd);
@@ -107,7 +107,7 @@ void MediaPlayerPrivateFullscreenWindow::setRootChildLayer(PassRefPtr<PlatformCA
     if (!m_rootChild)
         return;
 
-    m_layerRenderer->setRootChildLayer(m_rootChild.get());
+    m_layerTreeHost->setRootChildLayer(m_rootChild.get());
     PlatformCALayer* rootLayer = m_rootChild->rootLayer();
     CGRect rootBounds = m_rootChild->rootLayer()->bounds();
     m_rootChild->setFrame(rootBounds);
@@ -147,7 +147,7 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
     case WM_DESTROY:
         m_hwnd = 0;
 #if USE(ACCELERATED_COMPOSITING)
-        m_layerRenderer->setHostWindow(0);
+        m_layerTreeHost->setWindow(0);
 #endif
         break;
     case WM_WINDOWPOSCHANGED:
@@ -156,7 +156,7 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
             if (wp->flags & SWP_NOSIZE)
                 break;
 #if USE(ACCELERATED_COMPOSITING)
-            m_layerRenderer->resize();
+            m_layerTreeHost->resize();
             PlatformCALayer* rootLayer = m_rootChild->rootLayer();
             CGRect rootBounds = m_rootChild->rootLayer()->bounds();
             m_rootChild->setFrame(rootBounds);
@@ -166,7 +166,7 @@ LRESULT MediaPlayerPrivateFullscreenWindow::wndProc(HWND hWnd, UINT message, WPA
         break;
     case WM_PAINT:
 #if USE(ACCELERATED_COMPOSITING)
-        m_layerRenderer->paint();
+        m_layerTreeHost->paint();
         ::ValidateRect(m_hwnd, 0);
 #endif
         break;

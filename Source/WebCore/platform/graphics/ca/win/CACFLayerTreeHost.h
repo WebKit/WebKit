@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WKCACFLayerRenderer_h
-#define WKCACFLayerRenderer_h
+#ifndef CACFLayerTreeHost_h
+#define CACFLayerTreeHost_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -49,30 +49,30 @@ namespace WebCore {
 
 class PlatformCALayer;
 
-class WKCACFLayerRendererClient {
+class CACFLayerTreeHostClient {
 public:
-    virtual ~WKCACFLayerRendererClient() { }
+    virtual ~CACFLayerTreeHostClient() { }
     virtual bool shouldRender() const = 0;
     virtual void flushPendingGraphicsLayerChanges() { }
 };
 
-// FIXME: Currently there is a WKCACFLayerRenderer for each WebView and each
+// FIXME: Currently there is a CACFLayerTreeHost for each WebView and each
 // has its own CARenderOGLContext and Direct3DDevice9, which is inefficient.
 // (https://bugs.webkit.org/show_bug.cgi?id=31855)
-class WKCACFLayerRenderer : public RefCounted<WKCACFLayerRenderer> {
+class CACFLayerTreeHost : public RefCounted<CACFLayerTreeHost> {
     friend PlatformCALayer;
 
 public:
-    static PassRefPtr<WKCACFLayerRenderer> create();
-    ~WKCACFLayerRenderer();
+    static PassRefPtr<CACFLayerTreeHost> create();
+    ~CACFLayerTreeHost();
 
     static bool acceleratedCompositingAvailable();
 
-    void setClient(WKCACFLayerRendererClient* client) { m_client = client; }
+    void setClient(CACFLayerTreeHostClient* client) { m_client = client; }
 
     void setRootChildLayer(PlatformCALayer*);
     void layerTreeDidChange();
-    void setHostWindow(HWND);
+    void setWindow(HWND);
     void paint();
     void resize();
     void flushPendingGraphicsLayerChangesSoon();
@@ -82,12 +82,12 @@ protected:
     void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>);
 
 private:
-    WKCACFLayerRenderer();
+    CACFLayerTreeHost();
 
     bool createRenderer();
     void destroyRenderer();
     void renderSoon();
-    void renderTimerFired(Timer<WKCACFLayerRenderer>*);
+    void renderTimerFired(Timer<CACFLayerTreeHost>*);
 
     CGRect bounds() const;
 
@@ -101,14 +101,14 @@ private:
 
     void render(const Vector<CGRect>& dirtyRects = Vector<CGRect>());
 
-    WKCACFLayerRendererClient* m_client;
+    CACFLayerTreeHostClient* m_client;
     bool m_mightBeAbleToCreateDeviceLater;
     COMPtr<IDirect3DDevice9> m_d3dDevice;
     RefPtr<PlatformCALayer> m_rootLayer;
     RefPtr<PlatformCALayer> m_rootChildLayer;
     WKCACFContext* m_context;
-    HWND m_hostWindow;
-    Timer<WKCACFLayerRenderer> m_renderTimer;
+    HWND m_window;
+    Timer<CACFLayerTreeHost> m_renderTimer;
     bool m_mustResetLostDeviceBeforeRendering;
     bool m_shouldFlushPendingGraphicsLayerChanges;
     HashSet<RefPtr<PlatformCALayer> > m_pendingAnimatedLayers;
@@ -122,4 +122,4 @@ private:
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // WKCACFLayerRenderer_h
+#endif // CACFLayerTreeHost_h

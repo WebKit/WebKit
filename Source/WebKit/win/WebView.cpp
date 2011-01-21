@@ -388,7 +388,7 @@ WebView::~WebView()
     ASSERT(!m_viewWindow);
 
 #if USE(ACCELERATED_COMPOSITING)
-    ASSERT(!m_layerRenderer);
+    ASSERT(!m_layerTreeHost);
     ASSERT(!m_backingLayer);
 #endif
 
@@ -883,8 +883,8 @@ void WebView::sizeChanged(const IntSize& newSize)
         coreFrame->view()->resize(newSize);
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_layerRenderer)
-        m_layerRenderer->resize();
+    if (m_layerTreeHost)
+        m_layerTreeHost->resize();
     if (m_backingLayer) {
         m_backingLayer->setSize(newSize);
         m_backingLayer->setNeedsDisplay();
@@ -994,7 +994,7 @@ void WebView::paint(HDC dc, LPARAM options)
         // Flushing might have taken us out of compositing mode.
         if (isAcceleratedCompositing()) {
             // FIXME: We need to paint into dc (if provided). <http://webkit.org/b/52578>
-            m_layerRenderer->paint();
+            m_layerTreeHost->paint();
             ::ValidateRect(m_viewWindow, 0);
             return;
         }
@@ -6274,24 +6274,24 @@ void WebView::setRootChildLayer(GraphicsLayer* layer)
 
 void WebView::flushPendingGraphicsLayerChangesSoon()
 {
-    if (!m_layerRenderer)
+    if (!m_layerTreeHost)
         return;
-    m_layerRenderer->flushPendingGraphicsLayerChangesSoon();
+    m_layerTreeHost->flushPendingGraphicsLayerChangesSoon();
 }
 
 void WebView::setAcceleratedCompositing(bool accelerated)
 {
-    if (m_isAcceleratedCompositing == accelerated || !WKCACFLayerRenderer::acceleratedCompositingAvailable())
+    if (m_isAcceleratedCompositing == accelerated || !CACFLayerTreeHost::acceleratedCompositingAvailable())
         return;
 
     if (accelerated) {
-        m_layerRenderer = WKCACFLayerRenderer::create();
-        if (m_layerRenderer) {
+        m_layerTreeHost = CACFLayerTreeHost::create();
+        if (m_layerTreeHost) {
             m_isAcceleratedCompositing = true;
 
-            m_layerRenderer->setClient(this);
+            m_layerTreeHost->setClient(this);
             ASSERT(m_viewWindow);
-            m_layerRenderer->setHostWindow(m_viewWindow);
+            m_layerTreeHost->setWindow(m_viewWindow);
 
             // FIXME: We could perhaps get better performance by never allowing this layer to
             // become tiled (or choosing a higher-than-normal tiling threshold).
@@ -6304,7 +6304,7 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             m_backingLayer->setSize(IntRect(clientRect).size());
             m_backingLayer->setNeedsDisplay();
 
-            m_layerRenderer->setRootChildLayer(PlatformCALayer::platformCALayer(m_backingLayer->platformLayer()));
+            m_layerTreeHost->setRootChildLayer(PlatformCALayer::platformCALayer(m_backingLayer->platformLayer()));
 
             // We aren't going to be using our backing store while we're in accelerated compositing
             // mode. But don't delete it immediately, in case we switch out of accelerated
@@ -6312,9 +6312,10 @@ void WebView::setAcceleratedCompositing(bool accelerated)
             deleteBackingStoreSoon();
         }
     } else {
-        ASSERT(m_layerRenderer);
-        m_layerRenderer->setClient(0);
-        m_layerRenderer = 0;
+        ASSERT(m_layerTreeHost);
+        m_layerTreeHost->setClient(0);
+        m_layerTreeHost->setWindow(0);
+        m_layerTreeHost = 0;
         m_backingLayer = 0;
         m_isAcceleratedCompositing = false;
     }

@@ -31,7 +31,7 @@
 #define D3D_DEBUG_INFO
 #endif
 
-#include "WKCACFLayerRenderer.h"
+#include "CACFLayerTreeHost.h"
 
 #include "PlatformCALayer.h"
 #include "WebCoreInstanceHandle.h"
@@ -116,7 +116,7 @@ static bool hardwareCapabilitiesIndicateCoreAnimationSupport(const D3DCAPS9& cap
     return true;
 }
 
-bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
+bool CACFLayerTreeHost::acceleratedCompositingAvailable()
 {
     static bool available;
     static bool tested;
@@ -164,28 +164,28 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
         return available;
     }
 
-    RefPtr<WKCACFLayerRenderer> testLayerRenderer = WKCACFLayerRenderer::create();
-    testLayerRenderer->setHostWindow(testWindow);
-    available = testLayerRenderer->createRenderer();
+    RefPtr<CACFLayerTreeHost> host = CACFLayerTreeHost::create();
+    host->setWindow(testWindow);
+    available = host->createRenderer();
     ::DestroyWindow(testWindow);
 
     return available;
 }
 
-PassRefPtr<WKCACFLayerRenderer> WKCACFLayerRenderer::create()
+PassRefPtr<CACFLayerTreeHost> CACFLayerTreeHost::create()
 {
     if (!acceleratedCompositingAvailable())
         return 0;
-    return adoptRef(new WKCACFLayerRenderer());
+    return adoptRef(new CACFLayerTreeHost());
 }
 
-WKCACFLayerRenderer::WKCACFLayerRenderer()
+CACFLayerTreeHost::CACFLayerTreeHost()
     : m_client(0)
     , m_mightBeAbleToCreateDeviceLater(true)
     , m_rootLayer(PlatformCALayer::create(PlatformCALayer::LayerTypeRootLayer, 0))
     , m_context(wkCACFContextCreate())
-    , m_hostWindow(0)
-    , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
+    , m_window(0)
+    , m_renderTimer(this, &CACFLayerTreeHost::renderTimerFired)
     , m_mustResetLostDeviceBeforeRendering(false)
     , m_shouldFlushPendingGraphicsLayerChanges(false)
 {
@@ -201,7 +201,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer()
     // cause any repositioning.
     // Scrolling will affect only the position of the scroll layer without affecting the bounds.
 
-    m_rootLayer->setName("WKCACFLayerRenderer rootLayer");
+    m_rootLayer->setName("CACFLayerTreeHost rootLayer");
     m_rootLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
     m_rootLayer->setGeometryFlipped(true);
 
@@ -220,37 +220,37 @@ WKCACFLayerRenderer::WKCACFLayerRenderer()
 #endif
 }
 
-WKCACFLayerRenderer::~WKCACFLayerRenderer()
+CACFLayerTreeHost::~CACFLayerTreeHost()
 {
-    setHostWindow(0);
+    setWindow(0);
     wkCACFContextDestroy(m_context);
 }
 
-void WKCACFLayerRenderer::setHostWindow(HWND window)
+void CACFLayerTreeHost::setWindow(HWND window)
 {
-    if (window == m_hostWindow)
+    if (window == m_window)
         return;
 
-    if (m_hostWindow)
+    if (m_window)
         destroyRenderer();
 
-    m_hostWindow = window;
+    m_window = window;
 
-    if (m_hostWindow)
+    if (m_window)
         createRenderer();
 }
 
-PlatformCALayer* WKCACFLayerRenderer::rootLayer() const
+PlatformCALayer* CACFLayerTreeHost::rootLayer() const
 {
     return m_rootLayer.get();
 }
 
-void WKCACFLayerRenderer::addPendingAnimatedLayer(PassRefPtr<PlatformCALayer> layer)
+void CACFLayerTreeHost::addPendingAnimatedLayer(PassRefPtr<PlatformCALayer> layer)
 {
     m_pendingAnimatedLayers.add(layer);
 }
 
-void WKCACFLayerRenderer::setRootChildLayer(PlatformCALayer* layer)
+void CACFLayerTreeHost::setRootChildLayer(PlatformCALayer* layer)
 {
     m_rootLayer->removeAllSublayers();
     m_rootChildLayer = layer;
@@ -258,12 +258,12 @@ void WKCACFLayerRenderer::setRootChildLayer(PlatformCALayer* layer)
         m_rootLayer->appendSublayer(m_rootChildLayer.get());
 }
    
-void WKCACFLayerRenderer::layerTreeDidChange()
+void CACFLayerTreeHost::layerTreeDidChange()
 {
     renderSoon();
 }
 
-bool WKCACFLayerRenderer::createRenderer()
+bool CACFLayerTreeHost::createRenderer()
 {
     if (m_d3dDevice || !m_mightBeAbleToCreateDeviceLater)
         return m_d3dDevice;
@@ -271,14 +271,14 @@ bool WKCACFLayerRenderer::createRenderer()
     m_mightBeAbleToCreateDeviceLater = false;
     D3DPRESENT_PARAMETERS parameters = initialPresentationParameters();
 
-    if (!d3d() || !::IsWindow(m_hostWindow))
+    if (!d3d() || !::IsWindow(m_window))
         return false;
 
     // D3D doesn't like to make back buffers for 0 size windows. We skirt this problem if we make the
     // passed backbuffer width and height non-zero. The window will necessarily get set to a non-zero
     // size eventually, and then the backbuffer size will get reset.
     RECT rect;
-    GetClientRect(m_hostWindow, &rect);
+    GetClientRect(m_window, &rect);
 
     if (rect.left-rect.right == 0 || rect.bottom-rect.top == 0) {
         parameters.BackBufferWidth = 1;
@@ -296,7 +296,7 @@ bool WKCACFLayerRenderer::createRenderer()
         behaviorFlags |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
 
     COMPtr<IDirect3DDevice9> device;
-    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hostWindow, behaviorFlags, &parameters, &device))) {
+    if (FAILED(d3d()->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_window, behaviorFlags, &parameters, &device))) {
         // In certain situations (e.g., shortly after waking from sleep), Direct3DCreate9() will
         // return an IDirect3D9 for which IDirect3D9::CreateDevice will always fail. In case we
         // have one of these bad IDirect3D9s, get rid of it so we'll fetch a new one the next time
@@ -329,13 +329,13 @@ bool WKCACFLayerRenderer::createRenderer()
 
     wkCACFContextSetD3DDevice(m_context, m_d3dDevice.get());
 
-    if (IsWindow(m_hostWindow))
+    if (IsWindow(m_window))
         m_rootLayer->setBounds(bounds());
 
     return true;
 }
 
-void WKCACFLayerRenderer::destroyRenderer()
+void CACFLayerTreeHost::destroyRenderer()
 {
     wkCACFContextSetLayer(m_context, m_rootLayer->platformLayer());
 
@@ -351,7 +351,7 @@ void WKCACFLayerRenderer::destroyRenderer()
     m_mightBeAbleToCreateDeviceLater = true;
 }
 
-void WKCACFLayerRenderer::resize()
+void CACFLayerTreeHost::resize()
 {
     if (!m_d3dDevice)
         return;
@@ -396,12 +396,12 @@ static void getDirtyRects(HWND window, Vector<CGRect>& outRects)
         outRects[i] = winRectToCGRect(*rect, clientRect);
 }
 
-void WKCACFLayerRenderer::renderTimerFired(Timer<WKCACFLayerRenderer>*)
+void CACFLayerTreeHost::renderTimerFired(Timer<CACFLayerTreeHost>*)
 {
     paint();
 }
 
-void WKCACFLayerRenderer::paint()
+void CACFLayerTreeHost::paint()
 {
     createRenderer();
     if (!m_d3dDevice) {
@@ -411,11 +411,11 @@ void WKCACFLayerRenderer::paint()
     }
 
     Vector<CGRect> dirtyRects;
-    getDirtyRects(m_hostWindow, dirtyRects);
+    getDirtyRects(m_window, dirtyRects);
     render(dirtyRects);
 }
 
-void WKCACFLayerRenderer::render(const Vector<CGRect>& windowDirtyRects)
+void CACFLayerTreeHost::render(const Vector<CGRect>& windowDirtyRects)
 {
     ASSERT(m_d3dDevice);
 
@@ -517,27 +517,27 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& windowDirtyRects)
         renderSoon();
 }
 
-void WKCACFLayerRenderer::renderSoon()
+void CACFLayerTreeHost::renderSoon()
 {
     if (!m_renderTimer.isActive())
         m_renderTimer.startOneShot(0);
 }
 
-void WKCACFLayerRenderer::flushPendingGraphicsLayerChangesSoon()
+void CACFLayerTreeHost::flushPendingGraphicsLayerChangesSoon()
 {
     m_shouldFlushPendingGraphicsLayerChanges = true;
     renderSoon();
 }
 
-CGRect WKCACFLayerRenderer::bounds() const
+CGRect CACFLayerTreeHost::bounds() const
 {
     RECT clientRect;
-    GetClientRect(m_hostWindow, &clientRect);
+    GetClientRect(m_window, &clientRect);
 
     return winRectToCGRect(clientRect);
 }
 
-void WKCACFLayerRenderer::initD3DGeometry()
+void CACFLayerTreeHost::initD3DGeometry()
 {
     ASSERT(m_d3dDevice);
 
@@ -554,7 +554,7 @@ void WKCACFLayerRenderer::initD3DGeometry()
     m_d3dDevice->SetTransform(D3DTS_PROJECTION, &projection);
 }
 
-bool WKCACFLayerRenderer::resetDevice(ResetReason reason)
+bool CACFLayerTreeHost::resetDevice(ResetReason reason)
 {
     ASSERT(m_d3dDevice);
     ASSERT(m_context);

@@ -27,8 +27,8 @@
 #define MediaPlayerPrivateFullscreenWindow_h
 
 #if USE(ACCELERATED_COMPOSITING)
+#include "CACFLayerTreeHost.h"
 #include "PlatformCALayer.h"
-#include "WKCACFLayerRenderer.h"
 #endif
 
 typedef unsigned WPARAM;
@@ -58,7 +58,7 @@ public:
     HWND hwnd() const { return m_hwnd; }
 
 #if USE(ACCELERATED_COMPOSITING)
-    WKCACFLayerRenderer* layerRenderer() const { return m_layerRenderer.get(); }
+    CACFLayerTreeHost* layerView() const { return m_layerTreeHost.get(); }
 
     PlatformCALayer* rootChildLayer() const { return m_rootChild.get(); }
     void setRootChildLayer(PassRefPtr<PlatformCALayer>);
@@ -70,7 +70,7 @@ private:
 
     MediaPlayerPrivateFullscreenClient* m_client;
 #if USE(ACCELERATED_COMPOSITING)
-    RefPtr<WKCACFLayerRenderer> m_layerRenderer;
+    RefPtr<CACFLayerTreeHost> m_layerTreeHost;
     RefPtr<PlatformCALayer> m_rootChild;
 #endif
     HWND m_hwnd;

@@ -40,8 +40,8 @@
 #include <wtf/RefPtr.h>
 
 #if USE(ACCELERATED_COMPOSITING)
+#include <WebCore/CACFLayerTreeHost.h>
 #include <WebCore/PlatformCALayer.h>
-#include <WebCore/WKCACFLayerRenderer.h>
 #endif
 
 class FullscreenVideoController;
@@ -71,7 +71,7 @@ class WebView
     , WebCore::WindowMessageListener
 #if USE(ACCELERATED_COMPOSITING)
     , WebCore::GraphicsLayerClient
-    , WebCore::WKCACFLayerRendererClient
+    , WebCore::CACFLayerTreeHostClient
 #endif
 {
 public:
@@ -947,7 +947,7 @@ private:
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
-    // WKCACFLayerRendererClient
+    // CACFLayerTreeHostClient
     virtual bool shouldRender() const;
     virtual void flushPendingGraphicsLayerChanges();
 #endif
@@ -1056,7 +1056,7 @@ protected:
     bool isAcceleratedCompositing() const { return m_isAcceleratedCompositing; }
     void setAcceleratedCompositing(bool);
 
-    RefPtr<WebCore::WKCACFLayerRenderer> m_layerRenderer;
+    RefPtr<WebCore::CACFLayerTreeHost> m_layerTreeHost;
     OwnPtr<WebCore::GraphicsLayer> m_backingLayer;
     bool m_isAcceleratedCompositing;
 #endif

@@ -1,3 +1,14 @@
+2011-01-21  Adam Roben  <aroben@apple.com>
+
+        Update for WKCACFLayerRenderer -> CACFLayerView rename
+
+        Fixes <http://webkit.org/b/52898> WKCACFLayerRenderer sounds like a render object, but isn't
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/win/LayerBackedDrawingAreaWin.cpp: Just removed all the unnecessary
+        #includes.
+
 2011-01-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

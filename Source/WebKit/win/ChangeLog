@@ -1,5 +1,21 @@
 2011-01-21  Adam Roben  <aroben@apple.com>
 
+        Update for WKCACFLayerRenderer -> CACFLayerTreeHost rename
+
+        Also renamed WebView::m_layerRenderer to WebView::m_layerTreeHost to match.
+
+        Fixes <http://webkit.org/b/52898> WKCACFLayerRenderer sounds like a render object, but isn't
+
+        Reviewed by Simon Fraser.
+
+        * WebPreferences.cpp:
+        * WebView.cpp:
+        (WebView::setAcceleratedCompositing): Also made sure to remove our HWND from the layer tree
+        host before we get rid of the layer tree host itself.
+        * WebView.h:
+
+2011-01-21  Adam Roben  <aroben@apple.com>
+
         Replace some "sync compositing state" terminology with "flush pending GraphicsLayer changes"
 
         This seems to be the direction in which our code is moving. I chose "GraphicsLayer" as

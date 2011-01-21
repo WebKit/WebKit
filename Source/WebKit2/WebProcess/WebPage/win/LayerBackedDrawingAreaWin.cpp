@@ -27,16 +27,6 @@
 
 #include "LayerBackedDrawingArea.h"
 
-#include "DrawingAreaProxyMessageKinds.h"
-#include "WebPage.h"
-#include "WebProcess.h"
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/GraphicsLayer.h>
-#include <WebCore/Page.h>
-#include <WebCore/WKCACFLayerRenderer.h>
-#include <WebCore/WebCoreInstanceHandle.h>
-
 using namespace WebCore;
 
 namespace WebKit {

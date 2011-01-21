@@ -1,3 +1,28 @@
+2011-01-21  Adam Roben  <aroben@apple.com>
+
+        Rename WKCACFLayerRenderer[Client] to CACFLayerTreeHost[Client]
+
+        Also renamed a few functions and data members to match.
+
+        Fixes <http://webkit.org/b/52898> WKCACFLayerRenderer sounds like a render object, but isn't
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.vcproj/WebCore.vcproj: Updated files' names and paths.
+
+        * WebCore.vcproj/WebCoreQuartzCore.vsprops: Added platform/graphics/ca/win to the include
+        path.
+
+        * WebCore.vcproj/copyForwardingHeaders.cmd: Copy headers from platform/graphics/ca/win, too.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.cpp: Renamed from Source/WebCore/platform/graphics/win/WKCACFLayerRenderer.cpp.
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Renamed from Source/WebCore/platform/graphics/win/WKCACFLayerRenderer.h.
+
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.cpp:
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        Updated for renames.
+
 2011-01-21  Patrick Gansterer  <paroga@paroga.com>
 
         Original patch from François Sausset  <sausset@gmail.com>
