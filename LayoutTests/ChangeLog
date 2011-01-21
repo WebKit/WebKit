@@ -1,3 +1,13 @@
+2011-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Skip some tests that are failing on the WebKit2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=52858
+
+        * platform/mac-wk2/Skipped: skip or re-skip some tests that fail
+        on the bot for various reasons.
+
 2011-01-20  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Qt Skipped list update.

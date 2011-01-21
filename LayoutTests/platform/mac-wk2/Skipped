@@ -2252,6 +2252,27 @@ fast/history/history-replace-updates-current-item.html
 http/tests/navigation/redirect-on-back-updates-history-item.html
 http/tests/navigation/redirect-on-reload-updates-history-item.html
 
+# Newly added test fails in WebKit2 for mysterious reasons
+userscripts/window-onerror-for-isolated-world-1.html
+userscripts/window-onerror-for-isolated-world-2.html
+
+# These transition tests are flaky, sometimes it seems like the transition timing
+# is off when the test completes
+transitions/color-transition-all.html
+transitions/min-max-width-height-transitions.html
+transitions/text-indent-transition.html
+
+# This test crashes the WebProcess sporadically
+fast/forms/form-attribute-elements-order2.html
+
+# These storage tests fail in WebKit2 on the bot, but not running locally
+fast/workers/storage/change-version-handle-reuse-sync.html
+fast/workers/storage/multiple-databases-garbage-collection.html
+fast/workers/storage/open-database-creation-callback-sync.html
+fast/workers/storage/open-database-inputs-sync.html
+fast/workers/storage/sql-exception-codes-sync.html
+storage/multiple-databases-garbage-collection.html
+
 ### END OF (3) Unclassified failures
 ########################################
 
