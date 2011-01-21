@@ -125,7 +125,7 @@ void RenderMathMLFraction::layout()
 
     // Adjust the fraction line thickness for the zoom
     if (lastChild() && lastChild()->isRenderBlock())
-        m_lineThickness *= ceil(gFractionBarWidth * style()->fontSize());
+        m_lineThickness *= ceilf(gFractionBarWidth * style()->fontSize());
 
     RenderBlock::layout();
 
