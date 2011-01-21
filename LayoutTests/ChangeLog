@@ -1,3 +1,13 @@
+2011-01-21  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [v8] Properly deal with the case when conversion to string throws an exception for HTMLCollection accessors
+        https://bugs.webkit.org/show_bug.cgi?id=52901
+
+        * fast/dom/htmlcollection-conversion-throws-exception-expected.txt: Added.
+        * fast/dom/htmlcollection-conversion-throws-exception.html: Added.
+
 2011-01-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

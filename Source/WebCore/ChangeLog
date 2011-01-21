@@ -1,3 +1,15 @@
+2011-01-21  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [v8] Properly deal with the case when conversion to string throws an exception for HTMLCollection accessors
+        https://bugs.webkit.org/show_bug.cgi?id=52901
+
+        Test: fast/dom/htmlcollection-conversion-throws-exception.html
+
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::getItem):
+
 2011-01-21  Adam Roben  <aroben@apple.com>
 
         Separate flushing layer changes from rendering in CACFLayerTreeHost
