@@ -113,10 +113,10 @@ public:
 
 protected:
     // ScrollableArea
-    virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual int scrollPosition(Scrollbar*) const;
-    virtual void setScrollOffset(const IntPoint&);
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
+    virtual int scrollSize(WebCore::ScrollbarOrientation) const;
+    virtual int scrollPosition(WebCore::Scrollbar*) const;
+    virtual void setScrollOffset(const WebCore::IntPoint&);
+    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
 
     // FIXME: We should provide a way to set this value.
     virtual bool isActive() const { return true; }
