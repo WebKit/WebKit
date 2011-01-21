@@ -30,14 +30,13 @@
 
 """Unit tests for run_webkit_tests."""
 
+from __future__ import with_statement
+
 import codecs
 import itertools
 import logging
-import os
 import Queue
-import shutil
 import sys
-import tempfile
 import thread
 import time
 import threading
@@ -45,6 +44,7 @@ import unittest
 
 from webkitpy.common import array_stream
 from webkitpy.common.system import outputcapture
+from webkitpy.common.system import filesystem_mock
 from webkitpy.common.system import user
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
@@ -88,12 +88,12 @@ def parse_args(extra_args=None, record_results=False, tests_included=False,
 
 
 def passing_run(extra_args=None, port_obj=None, record_results=False,
-                tests_included=False):
+                tests_included=False, filesystem=None):
     options, parsed_args = parse_args(extra_args, record_results,
                                       tests_included)
     if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
-                            user=MockUser())
+                            user=MockUser(), filesystem=filesystem)
     res = run_webkit_tests.run(port_obj, options, parsed_args)
     return res == 0
 
@@ -239,9 +239,10 @@ class MainTest(unittest.TestCase):
             ['failures/expected/keyboard.html'], tests_included=True)
 
     def test_last_results(self):
-        passing_run(['--clobber-old-results'], record_results=True)
+        fs = port.unit_test_filesystem()
+        passing_run(['--clobber-old-results'], record_results=True, filesystem=fs)
         (res, buildbot_output, regular_output, user) = logging_run(
-            ['--print-last-failures'])
+            ['--print-last-failures'], filesystem=fs)
         self.assertEqual(regular_output.get(), ['\n\n'])
         self.assertEqual(buildbot_output.get(), [])
 
@@ -338,7 +339,7 @@ class MainTest(unittest.TestCase):
     def test_test_list_with_prefix(self):
         fs = port.unit_test_filesystem()
         filename = '/tmp/foo.txt'
-        fs.write_text_file(filename, 'passes/text.html')
+        fs.write_text_file(filename, 'LayoutTests/passes/text.html')
         tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, filesystem=fs)
         self.assertEquals(['passes/text.html'], tests_run)
 
@@ -407,11 +408,11 @@ class MainTest(unittest.TestCase):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
 
-        tmpdir = tempfile.mkdtemp()
-        res, out, err, user = logging_run(['--results-directory=' + tmpdir],
-                                          tests_included=True)
-        self.assertEqual(user.url, os.path.join(tmpdir, 'results.html'))
-        shutil.rmtree(tmpdir, ignore_errors=True)
+        fs = port.unit_test_filesystem()
+        with fs.mkdtemp() as tmpdir:
+            res, out, err, user = logging_run(['--results-directory=' + str(tmpdir)],
+                                              tests_included=True, filesystem=fs)
+            self.assertEqual(user.url, fs.join(tmpdir, 'results.html'))
 
     def test_results_directory_default(self):
         # We run a configuration that should fail, to generate output, then
@@ -468,18 +469,6 @@ class MainTest(unittest.TestCase):
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 
 
-
-def _mocked_open(original_open, file_list):
-    def _wrapper(name, mode, encoding):
-        if name.find("-expected.") != -1 and mode.find("w") != -1:
-            # we don't want to actually write new baselines, so stub these out
-            name.replace('\\', '/')
-            file_list.append(name)
-            return original_open(os.devnull, mode, encoding)
-        return original_open(name, mode, encoding)
-    return _wrapper
-
-
 class RebaselineTest(unittest.TestCase):
     def assertBaselines(self, file_list, file):
         "assert that the file_list contains the baselines."""
@@ -490,49 +479,39 @@ class RebaselineTest(unittest.TestCase):
     # FIXME: Add tests to ensure that we're *not* writing baselines when we're not
     # supposed to be.
 
-    def disabled_test_reset_results(self):
-        # FIXME: This test is disabled until we can rewrite it to use a
-        # mock filesystem.
-        #
+    def test_reset_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        file_list = []
+        fs = port.unit_test_filesystem()
         passing_run(['--pixel-tests',
                         '--reset-results',
                         'passes/image.html',
                         'failures/expected/missing_image.html'],
-                        tests_included=True)
+                        tests_included=True, filesystem=fs)
+        file_list = fs.written_files.keys()
+        file_list.remove('/tmp/layout-test-results/tests_run.txt')
         self.assertEqual(len(file_list), 6)
         self.assertBaselines(file_list,
-            "data/passes/image")
+            "/passes/image")
         self.assertBaselines(file_list,
-            "data/failures/expected/missing_image")
+            "/failures/expected/missing_image")
 
-    def disabled_test_new_baseline(self):
-        # FIXME: This test is disabled until we can rewrite it to use a
-        # mock filesystem.
-        #
+    def test_new_baseline(self):
         # Test that we update the platform expectations. If the expectation
         # is mssing, then create a new expectation in the platform dir.
-        file_list = []
-        original_open = codecs.open
-        try:
-            # Test that we update the platform expectations. If the expectation
-            # is mssing, then create a new expectation in the platform dir.
-            file_list = []
-            codecs.open = _mocked_open(original_open, file_list)
-            passing_run(['--pixel-tests',
-                         '--new-baseline',
-                         'passes/image.html',
-                         'failures/expected/missing_image.html'],
-                        tests_included=True)
-            self.assertEqual(len(file_list), 6)
-            self.assertBaselines(file_list,
-                "data/platform/test/passes/image")
-            self.assertBaselines(file_list,
-                "data/platform/test/failures/expected/missing_image")
-        finally:
-            codecs.open = original_open
+        fs = port.unit_test_filesystem()
+        passing_run(['--pixel-tests',
+                        '--new-baseline',
+                        'passes/image.html',
+                        'failures/expected/missing_image.html'],
+                    tests_included=True, filesystem=fs)
+        file_list = fs.written_files.keys()
+        file_list.remove('/tmp/layout-test-results/tests_run.txt')
+        self.assertEqual(len(file_list), 6)
+        self.assertBaselines(file_list,
+            "/platform/test/passes/image")
+        self.assertBaselines(file_list,
+            "/platform/test/failures/expected/missing_image")
 
 
 class DryrunTest(unittest.TestCase):

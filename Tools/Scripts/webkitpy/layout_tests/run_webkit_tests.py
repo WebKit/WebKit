@@ -32,7 +32,6 @@
 
 from __future__ import with_statement
 
-import codecs
 import errno
 import logging
 import optparse
@@ -80,7 +79,7 @@ def run(port, options, args, regular_output=sys.stderr,
         printer.cleanup()
         return 0
 
-    last_unexpected_results = _gather_unexpected_results(port, options)
+    last_unexpected_results = _gather_unexpected_results(port._filesystem, options)
     if options.print_last_failures:
         printer.write("\n".join(last_unexpected_results) + "\n")
         printer.cleanup()
@@ -146,7 +145,7 @@ def _set_up_derived_options(port_obj, options):
     if not options.use_apache:
         options.use_apache = sys.platform in ('darwin', 'linux2')
 
-    if not os.path.isabs(options.results_directory):
+    if not port_obj._filesystem.isabs(options.results_directory):
         # This normalizes the path to the build dir.
         # FIXME: how this happens is not at all obvious; this is a dumb
         # interface and should be cleaned up.
@@ -162,15 +161,15 @@ def _set_up_derived_options(port_obj, options):
     return warnings
 
 
-def _gather_unexpected_results(port, options):
+def _gather_unexpected_results(filesystem, options):
     """Returns the unexpected results from the previous run, if any."""
     last_unexpected_results = []
     if options.print_last_failures or options.retest_last_failures:
-        unexpected_results_filename = os.path.join(
-        options.results_directory, "unexpected_results.json")
-        if port._filesystem.exists(unexpected_results_filename):
-            file = port._filesystem.read_text_file(unexpected_results.json)
-            results = simplejson.load(file)
+        unexpected_results_filename = filesystem.join(
+            options.results_directory, "unexpected_results.json")
+        if filesystem.exists(unexpected_results_filename):
+            content = filesystem.read_text_file(unexpected_results_filename)
+            results = simplejson.loads(content)
             last_unexpected_results = results['tests'].keys()
     return last_unexpected_results
 

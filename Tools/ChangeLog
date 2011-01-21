@@ -1,3 +1,14 @@
+2011-01-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        remove fs refs from run_webkit_tests, rebaseline_chromium_webkit_tests
+
+        https://bugs.webkit.org/show_bug.cgi?id=52762
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-01-20  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.
