@@ -3112,3 +3112,7 @@ BUGYURYS : http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-
 BUGYURYS : http/tests/security/xss-DENIED-frame-name.html = PASS TEXT
 
 BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
+
+// New test added in http://trac.webkit.org/changeset/76274, probably just
+// needs to be rebaselined.
+BUGTONY WIN LINUX : svg/custom/pattern-referencing-preserve-aspect-ratio.svg = IMAGE+TEXT

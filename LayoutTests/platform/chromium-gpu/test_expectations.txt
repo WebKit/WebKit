@@ -367,7 +367,7 @@ BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT T
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT TIMEOUT
 BUGCR63921 LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT TIMEOUT
 BUGCR63921 LINUX WIN : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT TIMEOUT
-BUGCR63921 LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT
+BUGCR63921 LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT TIMEOUT
 
 // Unknown reason. Was introduced at r72588
 BUG_LOISLO WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
