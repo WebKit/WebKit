@@ -50,7 +50,7 @@ class PortTestCase(unittest.TestCase):
             return
         self.assertTrue(len(port.driver_cmd_line()))
 
-    def test_http_server(self):
+    def disabled_test_http_server(self):
         port = self.make_port()
         if not port:
             return
@@ -82,7 +82,7 @@ class PortTestCase(unittest.TestCase):
 
         port._filesystem.remove(tmpfile)
 
-    def test_websocket_server(self):
+    def disabled_test_websocket_server(self):
         port = self.make_port()
         if not port:
             return

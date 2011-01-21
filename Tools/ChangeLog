@@ -1,5 +1,17 @@
 2011-01-20  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Disable the tests that start and stop the http server and web
+        server, so that we don't have to worry about port collisions on
+        the bots.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52861
+
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+
+2011-01-20  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         nrwt: rewrite google_chrome_unittest to use mock filesystem.
