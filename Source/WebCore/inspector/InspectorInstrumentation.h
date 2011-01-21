@@ -139,6 +139,9 @@ public:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsole(Page*, const String& title, unsigned lineNumber, const String& sourceURL);
+    static void addProfile(Page*, RefPtr<ScriptProfile>, ScriptCallStack*);
+    static bool profilerEnabled(Page*);
+    static String getCurrentUserInitiatedProfileName(Page*, bool incrementProfileNumber);
 #endif
 
 #if ENABLE(DATABASE)
@@ -246,6 +249,9 @@ private:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsoleImpl(InspectorController*, const String& title, unsigned lineNumber, const String& sourceURL);
+    static void addProfileImpl(InspectorController*, RefPtr<ScriptProfile>, ScriptCallStack*);
+    static bool profilerEnabledImpl(InspectorController*);
+    static String getCurrentUserInitiatedProfileNameImpl(InspectorController*, bool incrementProfileNumber);
 #endif
 
 #if ENABLE(DATABASE)
@@ -881,6 +887,32 @@ inline void InspectorInstrumentation::addStartProfilingMessageToConsole(Page* pa
         addStartProfilingMessageToConsoleImpl(inspectorController, title, lineNumber, sourceURL);
 #endif
 }
+
+inline void InspectorInstrumentation::addProfile(Page* page, RefPtr<ScriptProfile> profile, ScriptCallStack* callStack)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForPage(page))
+        addProfileImpl(inspectorController, profile, callStack);
+#endif
+}
+
+inline bool InspectorInstrumentation::profilerEnabled(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForPage(page))
+        return profilerEnabledImpl(inspectorController);
+#endif
+    return false;
+}
+
+inline String InspectorInstrumentation::getCurrentUserInitiatedProfileName(Page* page, bool incrementProfileNumber)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForPage(page))
+        return InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(inspectorController, incrementProfileNumber);
+#endif
+    return "";
+}
 #endif
 
 #if ENABLE(INSPECTOR)
@@ -936,6 +968,7 @@ inline InspectorController* InspectorInstrumentation::inspectorControllerWithFro
     }
     return 0;
 }
+
 #endif
 
 } // namespace WebCore

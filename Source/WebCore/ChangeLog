@@ -1,3 +1,29 @@
+2011-01-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: switch page/Console implementation from InspectorController to InspectorInstrumentation.
+
+        There are some places in WebCore where we still using direct InspectorController calls.
+        The idea is to pass all the Inspector related calls via InspectorInstrumentaion which is the
+        Inspector facade for WebCore.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52869
+
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::addProfileImpl):
+        (WebCore::InspectorInstrumentation::profilerEnabledImpl):
+        (WebCore::InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addProfile):
+        (WebCore::InspectorInstrumentation::profilerEnabled):
+        (WebCore::InspectorInstrumentation::getCurrentUserInitiatedProfileName):
+        * page/Console.cpp:
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd):
+
 2011-01-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Gavin Barraclough.

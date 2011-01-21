@@ -552,6 +552,33 @@ void InspectorInstrumentation::addStartProfilingMessageToConsoleImpl(InspectorCo
     if (InspectorProfilerAgent* profilerAgent = inspectorController->profilerAgent())
         profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
+
+void InspectorInstrumentation::addProfileImpl(InspectorController* inspectorController, RefPtr<ScriptProfile> profile, ScriptCallStack* callStack)
+{
+    if (InspectorProfilerAgent* profilerAgent = inspectorController->profilerAgent()) {
+        const ScriptCallFrame& lastCaller = callStack->at(0);
+        profilerAgent->addProfile(profile, lastCaller.lineNumber(), lastCaller.sourceURL());
+    }
+}
+
+bool InspectorInstrumentation::profilerEnabledImpl(InspectorController* inspectorController)
+{
+    if (inspectorController->enabled())
+        return false;
+
+    InspectorProfilerAgent* profilerAgent = inspectorController->profilerAgent();
+    if (!profilerAgent)
+        return false;
+
+    return profilerAgent->enabled();
+}
+
+String InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(InspectorController* inspectorController, bool incrementProfileNumber)
+{
+    if (InspectorProfilerAgent* profilerAgent = inspectorController->profilerAgent())
+        return profilerAgent->getCurrentUserInitiatedProfileName(incrementProfileNumber);
+    return "";
+}
 #endif
 
 #if ENABLE(DATABASE)
