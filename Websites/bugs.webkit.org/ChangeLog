@@ -1,5 +1,12 @@
 2011-01-20  Ojan Vafai  <ojan@chromium.org>
 
+        Fix the review tool for image diffs. We would get a javascript error
+        because image diffs don't have line numbers.
+
+        * code-review.js:
+
+2011-01-20  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Oliver Hunt.
 
         Could review tool include style failure info?

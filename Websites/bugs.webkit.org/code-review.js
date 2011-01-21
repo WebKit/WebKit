@@ -346,6 +346,9 @@
 
   function firstLine(file_diff) {
     var container = $('.LineContainer:not(.context)', file_diff)[0];
+    if (!container)
+      return 0;
+
     var from = fromLineNumber(container);
     var to = toLineNumber(container);
     return from || to;
