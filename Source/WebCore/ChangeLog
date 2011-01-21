@@ -1,3 +1,14 @@
+2011-01-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Follow-on for <rdar://problem/8890255>
+
+        This fixes a painting error with ScrollbarPainter scrollers
+        and the new drawing area code path.
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::updateArrowPlacement):
+
 2011-01-20  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed.

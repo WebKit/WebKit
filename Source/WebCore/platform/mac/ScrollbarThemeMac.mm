@@ -135,6 +135,9 @@ static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
 static void updateArrowPlacement()
 {
+#if defined(USE_WK_SCROLLBAR_PAINTER)
+    gButtonPlacement = ScrollbarButtonsNone;
+#else
     NSString *buttonPlacement = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleScrollBarVariant"];
     if ([buttonPlacement isEqualToString:@"Single"])
         gButtonPlacement = ScrollbarButtonsSingle;
@@ -144,6 +147,7 @@ static void updateArrowPlacement()
         gButtonPlacement = ScrollbarButtonsDoubleBoth;
     else
         gButtonPlacement = ScrollbarButtonsDoubleEnd; // The default is ScrollbarButtonsDoubleEnd.
+#endif
 }
 
 void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
