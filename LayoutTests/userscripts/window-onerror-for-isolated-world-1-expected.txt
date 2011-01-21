@@ -4,11 +4,11 @@ Main world window.onerror: Error: Error in main world inline script. at window-o
 Main world error event listener: Error: Error in main world inline script. at window-onerror-for-isolated-world-1.html:54
 Main world window.onerror: Error: Error in user script inline script. at undefined:11
 Main world error event listener: Error: Error in user script inline script. at undefined:11
-Main world window.onerror: Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:46
-Main world error event listener: Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:46
-Main world window.onerror: Error: Error in user script load handler. at undefined:3
-Main world error event listener: Error: Error in user script load handler. at undefined:3
-Main world window.onerror: Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:51
-Main world error event listener: Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:51
-Main world window.onerror: Error: Error in user script setTimeout callback. at undefined:8
-Main world error event listener: Error: Error in user script setTimeout callback. at undefined:8
+Main world window.onerror: Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:50
+Main world error event listener: Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:50
+Main world window.onerror: Error: Error in user script load handler. at undefined:7
+Main world error event listener: Error: Error in user script load handler. at undefined:7
+Main world window.onerror: Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:48
+Main world error event listener: Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:48
+Main world window.onerror: Error: Error in user script setTimeout callback. at undefined:5
+Main world error event listener: Error: Error in user script setTimeout callback. at undefined:5

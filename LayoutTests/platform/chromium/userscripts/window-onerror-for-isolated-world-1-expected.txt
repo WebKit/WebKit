@@ -4,11 +4,11 @@ Main world window.onerror: Uncaught Error: Error in main world inline script. at
 Main world error event listener: Uncaught Error: Error in main world inline script. at window-onerror-for-isolated-world-1.html:54
 Main world window.onerror: Uncaught Error: Error in user script inline script. at :12
 Main world error event listener: Uncaught Error: Error in user script inline script. at :12
-Main world window.onerror: Uncaught Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:46
-Main world error event listener: Uncaught Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:46
-Main world window.onerror: Uncaught Error: Error in user script load handler. at :4
-Main world error event listener: Uncaught Error: Error in user script load handler. at :4
-Main world window.onerror: Uncaught Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:51
-Main world error event listener: Uncaught Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:51
-Main world window.onerror: Uncaught Error: Error in user script setTimeout callback. at :9
-Main world error event listener: Uncaught Error: Error in user script setTimeout callback. at :9
+Main world window.onerror: Uncaught Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:50
+Main world error event listener: Uncaught Error: Error in main world load handler. at window-onerror-for-isolated-world-1.html:50
+Main world window.onerror: Uncaught Error: Error in user script load handler. at :8
+Main world error event listener: Uncaught Error: Error in user script load handler. at :8
+Main world window.onerror: Uncaught Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:48
+Main world error event listener: Uncaught Error: Error in main world setTimeout callback. at window-onerror-for-isolated-world-1.html:48
+Main world window.onerror: Uncaught Error: Error in user script setTimeout callback. at :6
+Main world error event listener: Uncaught Error: Error in user script setTimeout callback. at :6

@@ -1,3 +1,20 @@
+2011-01-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Make userscripts/window-onerror-for-isolated-world-*.html give consistent output
+        https://bugs.webkit.org/show_bug.cgi?id=52870
+
+        Call setTimeout from "load" event listener to make sure exception in the setTimeout
+        callback happens after the one in the listener.
+
+        * platform/chromium/userscripts/window-onerror-for-isolated-world-1-expected.txt:
+        * platform/chromium/userscripts/window-onerror-for-isolated-world-2-expected.txt:
+        * userscripts/window-onerror-for-isolated-world-1-expected.txt:
+        * userscripts/window-onerror-for-isolated-world-1.html:
+        * userscripts/window-onerror-for-isolated-world-2-expected.txt:
+        * userscripts/window-onerror-for-isolated-world-2.html:
+
 2011-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

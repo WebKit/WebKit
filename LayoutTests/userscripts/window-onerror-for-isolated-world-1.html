@@ -43,13 +43,13 @@ window.addEventListener("error", function(e)
 var exceptions = function(isolatedWorld)
 {
     window.addEventListener("load", function(e) {
+        // Do the following call from load listener to make sure error in the setTimeout callback always happens after the error in this listener.
+        setTimeout(function() {
+            throw new Error("Error in " + isolatedWorld + " setTimeout callback.");
+        }, 0);
         throw new Error("Error in " + isolatedWorld + " load handler.");
     }, false);
 
-
-    setTimeout(function() {
-        throw new Error("Error in " + isolatedWorld + " setTimeout callback.");
-    }, 0);
 
     throw new Error("Error in "+ isolatedWorld + " inline script.");
 }
