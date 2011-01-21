@@ -114,6 +114,7 @@ class TestUtilityFunctions(unittest.TestCase):
 class  Testprinter(unittest.TestCase):
     def get_printer(self, args=None, single_threaded=False,
                    is_fully_parallel=False):
+        args = args or []
         printing_options = printing.print_options()
         option_parser = optparse.OptionParser(option_list=printing_options)
         options, args = option_parser.parse_args(args)

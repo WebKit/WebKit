@@ -1,3 +1,20 @@
+2011-01-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Suppress a few remaining integration tests so that none of the
+        layout_test unit tests ever read from the filesystem or launch
+        subprocesses that aren't part of the unit tests.
+
+        Also fix a minor bug in the printing unit tests that was
+        incorrectly relying on sys.argv.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52863
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-01-21  Darin Adler  <darin@apple.com>
 
        Fix Mac build.

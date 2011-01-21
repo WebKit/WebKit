@@ -98,9 +98,9 @@ def passing_run(extra_args=None, port_obj=None, record_results=False,
     return res == 0
 
 
-def logging_run(extra_args=None, port_obj=None, tests_included=False, filesystem=None):
+def logging_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, filesystem=None):
     options, parsed_args = parse_args(extra_args=extra_args,
-                                      record_results=False,
+                                      record_results=record_results,
                                       tests_included=tests_included,
                                       print_nothing=False)
     user = MockUser()
@@ -240,7 +240,9 @@ class MainTest(unittest.TestCase):
 
     def test_last_results(self):
         fs = port.unit_test_filesystem()
-        passing_run(['--clobber-old-results'], record_results=True, filesystem=fs)
+        # We do a logging run here instead of a passing run in order to
+        # suppress the output from the json generator.
+        (res, buildbot_output, regular_output, user) = logging_run(['--clobber-old-results'], record_results=True, filesystem=fs)
         (res, buildbot_output, regular_output, user) = logging_run(
             ['--print-last-failures'], filesystem=fs)
         self.assertEqual(regular_output.get(), ['\n\n'])
@@ -519,15 +521,14 @@ class DryrunTest(unittest.TestCase):
     # chromium platforms require a chromium checkout, and the mac platform
     # requires fcntl, so it can't be tested on win32, etc. There is
     # probably a better way of handling this.
-    def test_darwin(self):
+    def disabled_test_darwin(self):
         if sys.platform != "darwin":
             return
 
-        self.assertTrue(passing_run(['--platform', 'test']))
-        self.assertTrue(passing_run(['--platform', 'dryrun',
-                                     'fast/html']))
-        self.assertTrue(passing_run(['--platform', 'dryrun-mac',
-                                     'fast/html']))
+        self.assertTrue(passing_run(['--platform', 'dryrun', 'fast/html'],
+                        tests_included=True))
+        self.assertTrue(passing_run(['--platform', 'dryrun-mac', 'fast/html'],
+                        tests_included=True))
 
     def test_test(self):
         self.assertTrue(passing_run(['--platform', 'dryrun-test',

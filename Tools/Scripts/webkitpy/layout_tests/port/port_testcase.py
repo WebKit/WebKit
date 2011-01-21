@@ -57,7 +57,7 @@ class PortTestCase(unittest.TestCase):
         port.start_http_server()
         port.stop_http_server()
 
-    def test_image_diff(self):
+    def disabled_test_image_diff(self):
         port = self.make_port()
         if not port:
             return
