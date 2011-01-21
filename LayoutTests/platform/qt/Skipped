@@ -1657,6 +1657,9 @@ editing/selection/select-all-005.html
 editing/selection/select-all-006.html
 editing/selection/select-box.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=52883
+editing/selection/rtl-move-selection-right-left.html
+
 # [Qt] editing tests fails after r54980
 # https://bugs.webkit.org/show_bug.cgi?id=35145
 editing/selection/extend-after-mouse-selection.html
