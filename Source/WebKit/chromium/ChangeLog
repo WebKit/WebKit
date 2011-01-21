@@ -1,3 +1,9 @@
+2011-01-21  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, updating chromium DEPS so we can pull in linux theme changes.
+
+        * DEPS:
+
 2011-01-21  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Eric Seidel.
