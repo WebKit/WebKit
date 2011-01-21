@@ -1,3 +1,15 @@
+2011-01-21  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Use WebThemeEngine for relevant RenderTheme parts for chromium/linux.
+        https://bugs.webkit.org/show_bug.cgi?id=52826
+
+        * WebKit.gyp:
+        * src/ChromiumBridge.cpp:
+        (WebCore::WebThemePart):
+        (WebCore::GetWebThemeExtraParams):
+
 2011-01-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

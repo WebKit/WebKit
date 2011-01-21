@@ -1,3 +1,33 @@
+2011-01-21  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Use WebThemeEngine for relevant RenderTheme parts for chromium/linux.
+        https://bugs.webkit.org/show_bug.cgi?id=52826
+
+        * platform/chromium/ChromiumBridge.h:
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::getWebThemeState):
+        (WebCore::RenderThemeChromiumLinux::adjustSliderThumbSize):
+        (WebCore::RenderThemeChromiumLinux::paintCheckbox):
+        (WebCore::RenderThemeChromiumLinux::setCheckboxSize):
+        (WebCore::RenderThemeChromiumLinux::paintRadio):
+        (WebCore::RenderThemeChromiumLinux::setRadioSize):
+        (WebCore::RenderThemeChromiumLinux::paintButton):
+        (WebCore::RenderThemeChromiumLinux::paintTextField):
+        (WebCore::RenderThemeChromiumLinux::paintMenuList):
+        (WebCore::RenderThemeChromiumLinux::paintSliderTrack):
+        (WebCore::RenderThemeChromiumLinux::paintSliderThumb):
+        (WebCore::RenderThemeChromiumLinux::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeChromiumLinux::paintInnerSpinButton):
+        (WebCore::RenderThemeChromiumLinux::paintProgressBar):
+        * rendering/RenderThemeChromiumLinux.h:
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::setCheckboxSize):
+        (WebCore::RenderThemeChromiumSkia::setSizeIfAuto):
+        (WebCore::RenderThemeChromiumSkia::indeterminateProgressValueRectFor):
+        * rendering/RenderThemeChromiumSkia.h:
+
 2011-01-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

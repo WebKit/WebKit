@@ -952,6 +952,7 @@
                             'variables': {
                                 'repack_path': '<(chromium_src_dir)/tools/data_pack/repack.py',
                                 'pak_inputs': [
+                                    '<(SHARED_INTERMEDIATE_DIR)/gfx/gfx_resources.pak',
                                     '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
                                     '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
                                     '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',

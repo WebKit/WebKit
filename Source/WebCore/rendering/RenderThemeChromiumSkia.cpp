@@ -68,38 +68,6 @@ static const float minSearchFieldResultsDecorationSize = 9;
 static const float maxSearchFieldResultsDecorationSize = 30;
 static const float defaultSearchFieldResultsButtonWidth = 18;
 
-static void setSizeIfAuto(RenderStyle* style, const IntSize& size)
-{
-    if (style->width().isIntrinsicOrAuto())
-        style->setWidth(Length(size.width(), Fixed));
-    if (style->height().isAuto())
-        style->setHeight(Length(size.height(), Fixed));
-}
-
-static void drawVertLine(SkCanvas* canvas, int x, int y1, int y2, const SkPaint& paint)
-{
-    SkIRect skrect;
-    skrect.set(x, y1, x + 1, y2 + 1);
-    canvas->drawIRect(skrect, paint);
-}
-
-static void drawHorizLine(SkCanvas* canvas, int x1, int x2, int y, const SkPaint& paint)
-{
-    SkIRect skrect;
-    skrect.set(x1, y, x2 + 1, y + 1);
-    canvas->drawIRect(skrect, paint);
-}
-
-static void drawBox(SkCanvas* canvas, const IntRect& rect, const SkPaint& paint)
-{
-    const int right = rect.x() + rect.width() - 1;
-    const int bottom = rect.y() + rect.height() - 1;
-    drawHorizLine(canvas, rect.x(), right, rect.y(), paint);
-    drawVertLine(canvas, right, rect.y(), bottom, paint);
-    drawHorizLine(canvas, rect.x(), right, bottom, paint);
-    drawVertLine(canvas, rect.x(), rect.y(), bottom, paint);
-}
-
 // We aim to match IE here.
 // -IE uses a font based on the encoding as the default font for form controls.
 // -Gecko uses MS Shell Dlg (actually calls GetStockObject(DEFAULT_GUI_FONT),
@@ -237,28 +205,6 @@ IntRect center(const IntRect& original, int width, int height)
     return IntRect(x, y, width, height);
 }
 
-bool RenderThemeChromiumSkia::paintCheckbox(RenderObject* o, const PaintInfo& i, const IntRect& rect)
-{
-    static Image* const checkedImage = Image::loadPlatformResource("linuxCheckboxOn").releaseRef();
-    static Image* const uncheckedImage = Image::loadPlatformResource("linuxCheckboxOff").releaseRef();
-    static Image* const indeterminateImage = Image::loadPlatformResource("linuxCheckboxIndeterminate").releaseRef();
-    static Image* const disabledCheckedImage = Image::loadPlatformResource("linuxCheckboxDisabledOn").releaseRef();
-    static Image* const disabledUncheckedImage = Image::loadPlatformResource("linuxCheckboxDisabledOff").releaseRef();
-    static Image* const disabledIndeterminateImage = Image::loadPlatformResource("linuxCheckboxDisabledIndeterminate").releaseRef();
-
-    Image* image;
-
-    if (isIndeterminate(o))
-        image = isEnabled(o) ? indeterminateImage : disabledIndeterminateImage;
-    else if (isChecked(o))
-        image = isEnabled(o) ? checkedImage : disabledCheckedImage;
-    else
-        image = isEnabled(o) ? uncheckedImage : disabledUncheckedImage;
-
-    i.context->drawImage(image, o->style()->colorSpace(), center(rect, widgetStandardHeight, widgetStandardWidth));
-    return false;
-}
-
 void RenderThemeChromiumSkia::setCheckboxSize(RenderStyle* style) const
 {
     // If the width and height are both specified, then we have nothing to do.
@@ -270,25 +216,8 @@ void RenderThemeChromiumSkia::setCheckboxSize(RenderStyle* style) const
     // querying the theme gives you a larger size that accounts for the higher
     // DPI.  Until our entire engine honors a DPI setting other than 96, we
     // can't rely on the theme's metrics.
-    const IntSize size(widgetStandardHeight, widgetStandardWidth);
+    const IntSize size(widgetStandardWidth, widgetStandardHeight);
     setSizeIfAuto(style, size);
-}
-
-bool RenderThemeChromiumSkia::paintRadio(RenderObject* o, const PaintInfo& i, const IntRect& rect)
-{
-    static Image* const checkedImage = Image::loadPlatformResource("linuxRadioOn").releaseRef();
-    static Image* const uncheckedImage = Image::loadPlatformResource("linuxRadioOff").releaseRef();
-    static Image* const disabledCheckedImage = Image::loadPlatformResource("linuxRadioDisabledOn").releaseRef();
-    static Image* const disabledUncheckedImage = Image::loadPlatformResource("linuxRadioDisabledOff").releaseRef();
-
-    Image* image;
-    if (this->isEnabled(o))
-        image = this->isChecked(o) ? checkedImage : uncheckedImage;
-    else
-        image = this->isChecked(o) ? disabledCheckedImage : disabledUncheckedImage;
-
-    i.context->drawImage(image, o->style()->colorSpace(), center(rect, widgetStandardHeight, widgetStandardWidth));
-    return false;
 }
 
 void RenderThemeChromiumSkia::setRadioSize(RenderStyle* style) const
@@ -297,93 +226,12 @@ void RenderThemeChromiumSkia::setRadioSize(RenderStyle* style) const
     setCheckboxSize(style);
 }
 
-static SkColor brightenColor(double h, double s, double l, float brightenAmount)
-{
-    l += brightenAmount;
-    if (l > 1.0)
-        l = 1.0;
-    if (l < 0.0)
-        l = 0.0;
-
-    return makeRGBAFromHSLA(h, s, l, 1.0);
-}
-
-static void paintButtonLike(RenderTheme* theme, RenderObject* o, const PaintInfo& i, const IntRect& rect)
-{
-    SkCanvas* const canvas = i.context->platformContext()->canvas();
-    SkPaint paint;
-    SkRect skrect;
-    const int right = rect.x() + rect.width();
-    const int bottom = rect.y() + rect.height();
-    SkColor baseColor = SkColorSetARGB(0xff, 0xdd, 0xdd, 0xdd);
-    if (o->hasBackground())
-        baseColor = o->style()->visitedDependentColor(CSSPropertyBackgroundColor).rgb();
-    double h, s, l;
-    Color(baseColor).getHSL(h, s, l);
-    // Our standard gradient is from 0xdd to 0xf8. This is the amount of
-    // increased luminance between those values.
-    SkColor lightColor(brightenColor(h, s, l, 0.105));
-
-    // If the button is too small, fallback to drawing a single, solid color
-    if (rect.width() < 5 || rect.height() < 5) {
-        paint.setColor(baseColor);
-        skrect.set(rect.x(), rect.y(), right, bottom);
-        canvas->drawRect(skrect, paint);
-        return;
-    }
-
-    const int borderAlpha = theme->isHovered(o) ? 0x80 : 0x55;
-    paint.setARGB(borderAlpha, 0, 0, 0);
-    canvas->drawLine(rect.x() + 1, rect.y(), right - 1, rect.y(), paint);
-    canvas->drawLine(right - 1, rect.y() + 1, right - 1, bottom - 1, paint);
-    canvas->drawLine(rect.x() + 1, bottom - 1, right - 1, bottom - 1, paint);
-    canvas->drawLine(rect.x(), rect.y() + 1, rect.x(), bottom - 1, paint);
-
-    paint.setColor(SK_ColorBLACK);
-    SkPoint p[2];
-    const int lightEnd = theme->isPressed(o) ? 1 : 0;
-    const int darkEnd = !lightEnd;
-    p[lightEnd].set(SkIntToScalar(rect.x()), SkIntToScalar(rect.y()));
-    p[darkEnd].set(SkIntToScalar(rect.x()), SkIntToScalar(bottom - 1));
-    SkColor colors[2];
-    colors[0] = lightColor;
-    colors[1] = baseColor;
-
-    SkShader* shader = SkGradientShader::CreateLinear(
-        p, colors, NULL, 2, SkShader::kClamp_TileMode, NULL);
-    paint.setStyle(SkPaint::kFill_Style);
-    paint.setShader(shader);
-    shader->unref();
-
-    skrect.set(rect.x() + 1, rect.y() + 1, right - 1, bottom - 1);
-    canvas->drawRect(skrect, paint);
-
-    paint.setShader(NULL);
-    paint.setColor(brightenColor(h, s, l, -0.0588));
-    canvas->drawPoint(rect.x() + 1, rect.y() + 1, paint);
-    canvas->drawPoint(right - 2, rect.y() + 1, paint);
-    canvas->drawPoint(rect.x() + 1, bottom - 2, paint);
-    canvas->drawPoint(right - 2, bottom - 2, paint);
-}
-
-bool RenderThemeChromiumSkia::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
-{
-    paintButtonLike(this, o, i, rect);
-    return false;
-}
-
 void RenderThemeChromiumSkia::adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     if (style->appearance() == PushButtonPart) {
         // Ignore line-height.
         style->setLineHeight(RenderStyle::initialLineHeight());
     }
-}
-
-
-bool RenderThemeChromiumSkia::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& rect)
-{
-    return true;
 }
 
 bool RenderThemeChromiumSkia::paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
@@ -622,30 +470,6 @@ void RenderThemeChromiumSkia::adjustMenuListStyle(CSSStyleSelector* selector, Re
     style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
-bool RenderThemeChromiumSkia::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& rect)
-{
-    SkCanvas* const canvas = i.context->platformContext()->canvas();
-    const int right = rect.x() + rect.width();
-    const int middle = rect.y() + rect.height() / 2;
-
-    paintButtonLike(this, o, i, rect);
-
-    SkPaint paint;
-    paint.setColor(SK_ColorBLACK);
-    paint.setAntiAlias(true);
-    paint.setStyle(SkPaint::kFill_Style);
-
-    int arrowXPosition = (o->style()->direction() == RTL) ? rect.x() + 7 : right - 13;
-    SkPath path;
-    path.moveTo(arrowXPosition, middle - 3);
-    path.rLineTo(6, 0);
-    path.rLineTo(-3, 6);
-    path.close();
-    canvas->drawPath(path, paint);
-
-    return false;
-}
-
 void RenderThemeChromiumSkia::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
 {
     adjustMenuListStyle(selector, style, e);
@@ -655,69 +479,6 @@ void RenderThemeChromiumSkia::adjustMenuListButtonStyle(CSSStyleSelector* select
 bool RenderThemeChromiumSkia::paintMenuListButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
     return paintMenuList(o, i, rect);
-}
-
-bool RenderThemeChromiumSkia::paintSliderTrack(RenderObject*, const PaintInfo& i, const IntRect& rect)
-{
-    // Just paint a grey box for now (matches the color of a scrollbar background.
-    SkCanvas* const canvas = i.context->platformContext()->canvas();
-    int verticalCenter = rect.y() + rect.height() / 2;
-    int top = std::max(rect.y(), verticalCenter - 2);
-    int bottom = std::min(rect.y() + rect.height(), verticalCenter + 2);
-
-    SkPaint paint;
-    const SkColor grey = SkColorSetARGB(0xff, 0xe3, 0xdd, 0xd8);
-    paint.setColor(grey);
-
-    SkRect skrect;
-    skrect.set(rect.x(), top, rect.x() + rect.width(), bottom);
-    canvas->drawRect(skrect, paint);
-
-    return false;
-}
-
-bool RenderThemeChromiumSkia::paintSliderThumb(RenderObject* o, const PaintInfo& i, const IntRect& rect)
-{
-    // Make a thumb similar to the scrollbar thumb.
-    const bool hovered = isHovered(o) || toRenderSlider(o->parent())->inDragMode();
-    const int midx = rect.x() + rect.width() / 2;
-    const int midy = rect.y() + rect.height() / 2;
-    const bool vertical = (o->style()->appearance() == SliderThumbVerticalPart);
-    SkCanvas* const canvas = i.context->platformContext()->canvas();
-
-    const SkColor thumbLightGrey = SkColorSetARGB(0xff, 0xf4, 0xf2, 0xef);
-    const SkColor thumbDarkGrey = SkColorSetARGB(0xff, 0xea, 0xe5, 0xe0);
-    SkPaint paint;
-    paint.setColor(hovered ? SK_ColorWHITE : thumbLightGrey);
-
-    SkIRect skrect;
-    if (vertical)
-        skrect.set(rect.x(), rect.y(), midx + 1, rect.bottom());
-    else
-        skrect.set(rect.x(), rect.y(), rect.right(), midy + 1);
-
-    canvas->drawIRect(skrect, paint);
-
-    paint.setColor(hovered ? thumbLightGrey : thumbDarkGrey);
-
-    if (vertical)
-        skrect.set(midx + 1, rect.y(), rect.right(), rect.bottom());
-    else
-        skrect.set(rect.x(), midy + 1, rect.right(), rect.bottom());
-
-    canvas->drawIRect(skrect, paint);
-
-    const SkColor borderDarkGrey = SkColorSetARGB(0xff, 0x9d, 0x96, 0x8e);
-    paint.setColor(borderDarkGrey);
-    drawBox(canvas, rect, paint);
-
-    if (rect.height() > 10 && rect.width() > 10) {
-        drawHorizLine(canvas, midx - 2, midx + 2, midy, paint);
-        drawHorizLine(canvas, midx - 2, midx + 2, midy - 3, paint);
-        drawHorizLine(canvas, midx - 2, midx + 2, midy + 3, paint);
-    }
-
-    return false;
 }
 
 int RenderThemeChromiumSkia::popupInternalPaddingLeft(RenderStyle* style) const
@@ -756,6 +517,15 @@ void RenderThemeChromiumSkia::setDefaultFontSize(int fontSize)
 double RenderThemeChromiumSkia::caretBlinkIntervalInternal() const
 {
     return RenderTheme::caretBlinkInterval();
+}
+
+// static
+void RenderThemeChromiumSkia::setSizeIfAuto(RenderStyle* style, const IntSize& size)
+{
+    if (style->width().isIntrinsicOrAuto())
+        style->setWidth(Length(size.width(), Fixed));
+    if (style->height().isAuto())
+        style->setHeight(Length(size.height(), Fixed));
 }
 
 int RenderThemeChromiumSkia::menuListInternalPadding(RenderStyle* style, int paddingType) const
@@ -801,7 +571,7 @@ IntRect RenderThemeChromiumSkia::indeterminateProgressValueRectFor(RenderProgres
     int movableWidth = rect.width() - valueWidth;
     if (movableWidth <= 0)
         return IntRect();
-    
+
     double progress = renderProgress->animationProgress();
     if (progress < 0.5)
         return IntRect(rect.x() + progress * 2 * movableWidth, rect.y(), valueWidth, rect.height());
@@ -817,67 +587,6 @@ double RenderThemeChromiumSkia::animationDurationForProgressBar(RenderProgress* 
 {
     return progressAnimationInterval * progressAnimationFrmaes * 2; // "2" for back and forth
 }
-
-bool RenderThemeChromiumSkia::paintProgressBar(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    static Image* barImage = Image::loadPlatformResource("linuxProgressBar").releaseRef();
-    static Image* valueImage = Image::loadPlatformResource("linuxProgressValue").releaseRef();
-    static Image* leftBorderImage = Image::loadPlatformResource("linuxProgressBorderLeft").releaseRef();
-    static Image* rightBorderImage = Image::loadPlatformResource("linuxProgressBorderRight").releaseRef();
-    ASSERT(barImage->height() == valueImage->height());
-
-    if (!renderObject->isProgress())
-        return true;
-
-    paintInfo.context->platformContext()->setImageResamplingHint(barImage->size(), rect.size());
-
-    RenderProgress* renderProgress = toRenderProgress(renderObject);
-    double tileScale = static_cast<double>(rect.height()) / barImage->height();
-    IntSize barTileSize(static_cast<int>(barImage->width() * tileScale), rect.height());
-    ColorSpace colorSpace = renderObject->style()->colorSpace();
-
-    paintInfo.context->drawTiledImage(barImage, colorSpace, rect, IntPoint(0, 0), barTileSize);
-
-    IntRect valueRect = progressValueRectFor(renderProgress, rect);
-    if (valueRect.width()) {
-
-        IntSize valueTileSize(std::max(1, static_cast<int>(valueImage->width() * tileScale)), valueRect.height());
-
-        int leftOffset = valueRect.x() - rect.x();
-        int roundedLeftOffset= (leftOffset / valueTileSize.width()) * valueTileSize.width();
-        int dstLeftValueWidth = roundedLeftOffset - leftOffset + (leftOffset % valueImage->width()) ? valueTileSize.width() : 0;
-
-        IntRect dstLeftValueRect(valueRect.x(), valueRect.y(), dstLeftValueWidth, valueRect.height());
-        int srcLeftValueWidth = dstLeftValueWidth / tileScale;
-        IntRect srcLeftValueRect(valueImage->width() - srcLeftValueWidth, 0, srcLeftValueWidth, valueImage->height());
-        paintInfo.context->drawImage(valueImage, colorSpace, dstLeftValueRect, srcLeftValueRect);
-
-        int rightOffset = valueRect.right() - rect.x();
-        int roundedRightOffset = (rightOffset / valueTileSize.width()) * valueTileSize.width();
-        int dstRightValueWidth = rightOffset - roundedRightOffset;
-        IntRect dstRightValueRect(rect.x() + roundedRightOffset, valueRect.y(), dstRightValueWidth, valueTileSize.height());
-        int srcRightValueWidth = dstRightValueWidth / tileScale;
-        IntRect srcRightValueRect(0, 0, srcRightValueWidth, valueImage->height());
-        paintInfo.context->drawImage(valueImage, colorSpace, dstRightValueRect, srcRightValueRect);
-        
-        IntRect alignedValueRect(dstLeftValueRect.right(), dstLeftValueRect.y(), 
-                                 dstRightValueRect.x() - dstLeftValueRect.right(), dstLeftValueRect.height());
-        paintInfo.context->drawTiledImage(valueImage, colorSpace, alignedValueRect, IntPoint(0, 0), valueTileSize);
-    }
-
-    int dstLeftBorderWidth = leftBorderImage->width() * tileScale;
-    IntRect dstLeftBorderRect(rect.x(), rect.y(), dstLeftBorderWidth, rect.height());
-    paintInfo.context->drawImage(leftBorderImage, colorSpace, dstLeftBorderRect, leftBorderImage->rect());
-
-    int dstRightBorderWidth = rightBorderImage->width() * tileScale;
-    IntRect dstRightBorderRect(rect.right() - dstRightBorderWidth, rect.y(), dstRightBorderWidth, rect.height());
-    paintInfo.context->drawImage(rightBorderImage, colorSpace, dstRightBorderRect, rightBorderImage->rect());
-
-    paintInfo.context->platformContext()->clearImageResamplingHint();
-
-    return false;
-}
-
 
 IntRect RenderThemeChromiumSkia::progressValueRectFor(RenderProgress* renderProgress, const IntRect& rect) const
 {

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class RenderProgress;
 
-    class RenderThemeChromiumSkia : public RenderTheme {
+class RenderThemeChromiumSkia : public RenderTheme {
     public:
         RenderThemeChromiumSkia();
         virtual ~RenderThemeChromiumSkia();
@@ -66,16 +66,11 @@ class RenderProgress;
 
         virtual int minimumMenuListSize(RenderStyle*) const;
 
-        virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
         virtual void setCheckboxSize(RenderStyle*) const;
 
-        virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
         virtual void setRadioSize(RenderStyle*) const;
 
-        virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
         virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-
-        virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
         virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
 
@@ -112,17 +107,12 @@ class RenderProgress;
         // codepath. We never go down both. And in both cases, they render the
         // entire menulist.
         virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-        virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
         virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
         virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
-
-        virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
 #if ENABLE(PROGRESS_TAG)
         virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
         virtual double animationDurationForProgressBar(RenderProgress*) const;
-        virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
         // These methods define the padding for the MenuList's inner block.
@@ -152,6 +142,8 @@ class RenderProgress;
         static float defaultFontSize;
 
         virtual double caretBlinkIntervalInternal() const;
+
+        static void setSizeIfAuto(RenderStyle*, const IntSize&);
 
 #if ENABLE(PROGRESS_TAG)
         IntRect determinateProgressValueRectFor(RenderProgress*, const IntRect&) const;

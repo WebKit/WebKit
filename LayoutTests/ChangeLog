@@ -1,3 +1,82 @@
+2011-01-21  Xiyuan Xia  <xiyuan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Update chromium/linux baselines after drawing code moved into
+        WebThemeEngine.
+        https://bugs.webkit.org/show_bug.cgi?id=52826
+
+        * platform/chromium-linux/css1/box_properties/acid_test-expected.checksum:
+        * platform/chromium-linux/css1/box_properties/acid_test-expected.png:
+        * platform/chromium-linux/css2.1/t09-c5526c-display-00-e-expected.checksum:
+        * platform/chromium-linux/css2.1/t09-c5526c-display-00-e-expected.png:
+        * platform/chromium-linux/fast/block/basic/011-expected.checksum:
+        * platform/chromium-linux/fast/block/basic/011-expected.png:
+        * platform/chromium-linux/fast/block/margin-collapse/103-expected.checksum:
+        * platform/chromium-linux/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-linux/fast/css/non-standard-checkbox-size-expected.checksum:
+        * platform/chromium-linux/fast/css/non-standard-checkbox-size-expected.png:
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-element-expected.checksum:
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/chromium-linux/fast/forms/basic-inputs-expected.checksum:
+        * platform/chromium-linux/fast/forms/basic-inputs-expected.png:
+        * platform/chromium-linux/fast/forms/basic-selects-expected.checksum:
+        * platform/chromium-linux/fast/forms/basic-selects-expected.png:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.checksum:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-linux/fast/forms/checkbox-radio-onchange-expected.checksum:
+        * platform/chromium-linux/fast/forms/checkbox-radio-onchange-expected.png:
+        * platform/chromium-linux/fast/forms/file-input-disabled-expected.checksum:
+        * platform/chromium-linux/fast/forms/file-input-disabled-expected.png:
+        * platform/chromium-linux/fast/forms/form-element-geometry-expected.checksum:
+        * platform/chromium-linux/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-linux/fast/forms/formmove-expected.checksum:
+        * platform/chromium-linux/fast/forms/formmove-expected.png:
+        * platform/chromium-linux/fast/forms/formmove2-expected.checksum:
+        * platform/chromium-linux/fast/forms/formmove2-expected.png:
+        * platform/chromium-linux/fast/forms/indeterminate-expected.checksum:
+        * platform/chromium-linux/fast/forms/indeterminate-expected.png:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.checksum:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-linux/fast/forms/input-value-expected.checksum:
+        * platform/chromium-linux/fast/forms/input-value-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-restrict-line-height-expected.checksum:
+        * platform/chromium-linux/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-linux/fast/forms/menulist-style-color-expected.checksum:
+        * platform/chromium-linux/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.checksum:
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png: Added property svn:mime-type.
+        * platform/chromium-linux/fast/forms/radio-attr-order-expected.checksum:
+        * platform/chromium-linux/fast/forms/radio-attr-order-expected.png:
+        * platform/chromium-linux/fast/forms/radio-nested-labels-expected.checksum:
+        * platform/chromium-linux/fast/forms/radio-nested-labels-expected.png:
+        * platform/chromium-linux/fast/forms/radio_checked-expected.checksum:
+        * platform/chromium-linux/fast/forms/radio_checked-expected.png:
+        * platform/chromium-linux/fast/forms/radio_checked_dynamic-expected.checksum:
+        * platform/chromium-linux/fast/forms/radio_checked_dynamic-expected.png:
+        * platform/chromium-linux/fast/forms/select-baseline-expected.checksum:
+        * platform/chromium-linux/fast/forms/select-baseline-expected.png:
+        * platform/chromium-linux/fast/inline/positionedLifetime-expected.checksum:
+        * platform/chromium-linux/fast/inline/positionedLifetime-expected.png:
+        * platform/chromium-linux/fast/parser/bad-xml-slash-expected.checksum:
+        * platform/chromium-linux/fast/parser/bad-xml-slash-expected.png:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-expected.checksum:
+        * platform/chromium-linux/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-linux/fast/replaced/width100percent-checkbox-expected.checksum:
+        * platform/chromium-linux/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-linux/fast/text/textIteratorNilRenderer-expected.checksum:
+        * platform/chromium-linux/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-linux/fast/text/whitespace/normal-after-nowrap-breaking-expected.checksum:
+        * platform/chromium-linux/fast/text/whitespace/normal-after-nowrap-breaking-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-linux/tables/mozilla/bugs/bug4527-expected.png: Added property svn:mime-type.
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions1-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions2-expected.checksum:
+        * platform/chromium-linux/tables/mozilla_expected_failures/core/captions2-expected.png:
+
 2011-01-21  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Nate Chapin.

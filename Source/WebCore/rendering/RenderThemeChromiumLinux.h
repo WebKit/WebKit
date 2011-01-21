@@ -59,8 +59,24 @@ namespace WebCore {
         static void setCaretBlinkInterval(double interval);
         virtual double caretBlinkIntervalInternal() const;
 
+        virtual bool paintCheckbox(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual void setCheckboxSize(RenderStyle*) const;
+
+        virtual bool paintRadio(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual void setRadioSize(RenderStyle*) const;
+
+        virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+        virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+
         virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
         virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+
+#if ENABLE(PROGRESS_TAG)
+        virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
 
         static void setSelectionColors(unsigned activeBackgroundColor,
                                        unsigned activeForegroundColor,

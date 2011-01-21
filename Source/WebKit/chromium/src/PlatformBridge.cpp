@@ -791,6 +791,15 @@ static WebThemeEngine::Part WebThemePart(PlatformBridge::ThemePart part)
     case PlatformBridge::PartScrollbarVerticalThumb: return WebThemeEngine::PartScrollbarVerticalThumb;
     case PlatformBridge::PartScrollbarHorizontalTrack: return WebThemeEngine::PartScrollbarHorizontalTrack;
     case PlatformBridge::PartScrollbarVerticalTrack: return WebThemeEngine::PartScrollbarVerticalTrack;
+    case PlatformBridge::PartCheckbox: return WebThemeEngine::PartCheckbox;
+    case PlatformBridge::PartRadio: return WebThemeEngine::PartRadio;
+    case PlatformBridge::PartButton: return WebThemeEngine::PartButton;
+    case PlatformBridge::PartTextField: return WebThemeEngine::PartTextField;
+    case PlatformBridge::PartMenuList: return WebThemeEngine::PartMenuList;
+    case PlatformBridge::PartSliderTrack: return WebThemeEngine::PartSliderTrack;
+    case PlatformBridge::PartSliderThumb: return WebThemeEngine::PartSliderThumb;
+    case PlatformBridge::PartInnerSpinButton: return WebThemeEngine::PartInnerSpinButton;
+    case PlatformBridge::PartProgressBar: return WebThemeEngine::PartProgressBar;
     }
     ASSERT_NOT_REACHED();
     return WebThemeEngine::PartScrollbarDownArrow;
@@ -810,11 +819,53 @@ static WebThemeEngine::State WebThemeState(PlatformBridge::ThemePaintState state
 
 static void GetWebThemeExtraParams(PlatformBridge::ThemePart part, PlatformBridge::ThemePaintState state, const PlatformBridge::ThemePaintExtraParams* extraParams, WebThemeEngine::ExtraParams* webThemeExtraParams)
 {
-    if (part == PlatformBridge::PartScrollbarHorizontalTrack || part == PlatformBridge::PartScrollbarVerticalTrack) {
+    switch (part) {
+    case PlatformBridge::PartScrollbarHorizontalTrack:
+    case PlatformBridge::PartScrollbarVerticalTrack:
         webThemeExtraParams->scrollbarTrack.trackX = extraParams->scrollbarTrack.trackX;
         webThemeExtraParams->scrollbarTrack.trackY = extraParams->scrollbarTrack.trackY;
         webThemeExtraParams->scrollbarTrack.trackWidth = extraParams->scrollbarTrack.trackWidth;
         webThemeExtraParams->scrollbarTrack.trackHeight = extraParams->scrollbarTrack.trackHeight;
+        break;
+    case PlatformBridge::PartCheckbox:
+        webThemeExtraParams->button.checked = extraParams->button.checked;
+        webThemeExtraParams->button.indeterminate = extraParams->button.indeterminate;
+        break;
+    case PlatformBridge::PartRadio:
+        webThemeExtraParams->button.checked = extraParams->button.checked;
+        break;
+    case PlatformBridge::PartButton:
+        webThemeExtraParams->button.isDefault = extraParams->button.isDefault;
+        webThemeExtraParams->button.backgroundColor = extraParams->button.backgroundColor;
+        break;
+    case PlatformBridge::PartTextField:
+        webThemeExtraParams->textField.isTextArea = extraParams->textField.isTextArea;
+        webThemeExtraParams->textField.isListbox = extraParams->textField.isListbox;
+        webThemeExtraParams->textField.backgroundColor = extraParams->textField.backgroundColor;
+        break;
+    case PlatformBridge::PartMenuList:
+        webThemeExtraParams->menuList.arrowX = extraParams->menuList.arrowX;
+        webThemeExtraParams->menuList.arrowY = extraParams->menuList.arrowY;
+        webThemeExtraParams->menuList.backgroundColor = extraParams->menuList.backgroundColor;
+        break;
+    case PlatformBridge::PartSliderTrack:
+    case PlatformBridge::PartSliderThumb:
+        webThemeExtraParams->slider.vertical = extraParams->slider.vertical;
+        webThemeExtraParams->slider.inDrag = extraParams->slider.inDrag;
+        break;
+    case PlatformBridge::PartInnerSpinButton:
+        webThemeExtraParams->innerSpin.spinUp = extraParams->innerSpin.spinUp;
+        webThemeExtraParams->innerSpin.readOnly = extraParams->innerSpin.readOnly;
+        break;
+    case PlatformBridge::PartProgressBar:
+        webThemeExtraParams->progressBar.determinate = extraParams->progressBar.determinate;
+        webThemeExtraParams->progressBar.valueRectX = extraParams->progressBar.valueRectX;
+        webThemeExtraParams->progressBar.valueRectY = extraParams->progressBar.valueRectY;
+        webThemeExtraParams->progressBar.valueRectWidth = extraParams->progressBar.valueRectWidth;
+        webThemeExtraParams->progressBar.valueRectHeight = extraParams->progressBar.valueRectHeight;
+        break;
+    default:
+        break; // Parts that have no extra params get here.
     }
 }
 

@@ -267,6 +267,7 @@ public:
 #elif OS(LINUX)
     // The UI part which is being accessed.
     enum ThemePart {
+        // ScrollbarTheme parts
         PartScrollbarDownArrow,
         PartScrollbarLeftArrow,
         PartScrollbarRightArrow,
@@ -275,6 +276,17 @@ public:
         PartScrollbarVerticalThumb,
         PartScrollbarHorizontalTrack,
         PartScrollbarVerticalTrack,
+
+        // RenderTheme parts
+        PartCheckbox,
+        PartRadio,
+        PartButton,
+        PartTextField,
+        PartMenuList,
+        PartSliderTrack,
+        PartSliderThumb,
+        PartInnerSpinButton,
+        PartProgressBar
     };
 
     // The current state of the associated Part.
@@ -282,7 +294,7 @@ public:
         StateDisabled,
         StateHover,
         StateNormal,
-        StatePressed,
+        StatePressed
     };
 
     struct ScrollbarTrackExtraParams {
@@ -293,8 +305,51 @@ public:
         int trackHeight;
     };
 
+    struct ButtonExtraParams {
+        bool checked;
+        bool indeterminate; // Whether the button state is indeterminate.
+        bool isDefault; // Whether the button is default button.
+        unsigned backgroundColor;
+    };
+
+    struct TextFieldExtraParams {
+        bool isTextArea;
+        bool isListbox;
+        unsigned backgroundColor;
+    };
+
+    struct MenuListExtraParams {
+        int arrowX;
+        int arrowY;
+        unsigned backgroundColor;
+    };
+
+    struct SliderExtraParams {
+        bool vertical;
+        bool inDrag;
+    };
+
+    struct InnerSpinButtonExtraParams {
+        bool spinUp;
+        bool readOnly;
+    };
+
+    struct ProgressBarExtraParams {
+        bool determinate;
+        int valueRectX;
+        int valueRectY;
+        int valueRectWidth;
+        int valueRectHeight;
+    };
+
     union ThemePaintExtraParams {
         ScrollbarTrackExtraParams scrollbarTrack;
+        ButtonExtraParams button;
+        TextFieldExtraParams textField;
+        MenuListExtraParams menuList;
+        SliderExtraParams slider;
+        InnerSpinButtonExtraParams innerSpin;
+        ProgressBarExtraParams progressBar;
     };
 
     // Gets the size of the given theme part. For variable sized items
