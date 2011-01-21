@@ -65,10 +65,12 @@ linux-g++* {
     isEqual(QT_ARCH,x86_64)|isEqual(QT_ARCH,i386): QMAKE_CXXFLAGS += -Werror
 }
 
-# Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
 symbian|*-armcc {
+    # Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
     RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293
     RVCT_COMMON_CXXFLAGS = $$RVCT_COMMON_CFLAGS --no_parse_templates
+    # Make debug symbols leaner in RVCT4.x. Ignored by compiler for release builds
+    QMAKE_CXXFLAGS.ARMCC_4_0 += --remove_unneeded_entities 
 }
 
 *-armcc {
