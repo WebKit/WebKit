@@ -1,3 +1,16 @@
+2011-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Show caps lock indicator in password fields
+        https://bugs.webkit.org/show_bug.cgi?id=52878
+
+        Test: manual-tests/password-caps-lock.html
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_key_release_event): Call
+        capsLockStateMayHaveChanged() when caps lock key is pressed.
+
 2011-01-19  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Andreas Kling.

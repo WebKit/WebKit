@@ -583,8 +583,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 
 bool PlatformKeyboardEvent::currentCapsLockState()
 {
-    notImplemented();
-    return false;
+    return gdk_keymap_get_caps_lock_state(gdk_keymap_get_default());
 }
 
 void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKey, bool& altKey, bool& metaKey)

@@ -1,3 +1,20 @@
+2011-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Show caps lock indicator in password fields
+        https://bugs.webkit.org/show_bug.cgi?id=52878
+
+        Test: manual-tests/password-caps-lock.html
+
+        * platform/gtk/KeyEventGtk.cpp:
+        (WebCore::PlatformKeyboardEvent::currentCapsLockState): Implement
+        currentCapsLockState() using GDK API.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::paintCapsLockIndicator): Paint an icon
+        in the password field when the caps lock modifier is locked.
+        * platform/gtk/RenderThemeGtk.h:
+
 2011-01-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

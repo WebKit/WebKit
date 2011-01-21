@@ -309,6 +309,24 @@ bool RenderThemeGtk::paintSearchField(RenderObject* o, const PaintInfo& i, const
     return paintTextField(o, i, rect);
 }
 
+bool RenderThemeGtk::paintCapsLockIndicator(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    // The other paint methods don't need to check whether painting is disabled because RenderTheme already checks it
+    // before calling them, but paintCapsLockIndicator() is called by RenderTextControlSingleLine which doesn't check it.
+    if (paintInfo.context->paintingDisabled())
+        return true;
+
+    GRefPtr<GdkPixbuf> icon = getStockIcon(GTK_TYPE_ENTRY, GTK_STOCK_CAPS_LOCK_WARNING,
+                                           gtkTextDirection(renderObject->style()->direction()),
+                                           gtkIconState(this, renderObject), GTK_ICON_SIZE_MENU);
+
+    // GTK+ locates the icon right aligned in the entry. The given rectangle is already
+    // centered vertically by RenderTextControlSingleLine.
+    IntPoint iconPosition(rect.x() + rect.width() - gdk_pixbuf_get_width(icon.get()), rect.y());
+    paintGdkPixbuf(paintInfo.context, icon.get(), iconPosition);
+    return true;
+}
+
 void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
     style->setBoxShadow(0);

@@ -790,6 +790,9 @@ static gboolean webkit_web_view_key_release_event(GtkWidget* widget, GdkEventKey
     if (!frame->view())
         return FALSE;
 
+    if (event->keyval == GDK_Caps_Lock)
+        frame->eventHandler()->capsLockStateMayHaveChanged();
+
     PlatformKeyboardEvent keyboardEvent(event);
     if (frame->eventHandler()->keyEvent(keyboardEvent))
         return TRUE;

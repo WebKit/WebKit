@@ -169,6 +169,8 @@ protected:
     virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
+    virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&);
+
 private:
     void platformInit();
     static void setTextInputBorders(RenderStyle*);
