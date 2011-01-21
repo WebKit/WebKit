@@ -3115,3 +3115,5 @@ BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 // investigation.
 BUGTONY : fast/overflow/overflow-rtl-vertical.html = IMAGE
 
+// This test failure needs to be ignored until the next WebKit roll.
+BUGRNIWA : fast/dom/52776.html = IMAGE TEXT
