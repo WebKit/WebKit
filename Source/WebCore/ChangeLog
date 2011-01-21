@@ -1,3 +1,27 @@
+2011-01-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r73618): Clicking on a search input causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=52905
+
+        The problem is caused by TextControlInnerElement being used both as
+        shadow root and an element in a shadow subtree. The code assumed it is
+        only used as a shadow root.
+
+        Since this code is all just workaround for in-progress conversion to
+        new shadow DOM, I am just adding a check. This code will disappear
+        completely once bug 52788 is fixed.
+
+        Test: fast/dom/search-shadow-host-crash.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::setShadowHost): Added an ASSERT for early detection
+            of attempting to stomp on the parentNode.
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::detach): Added a check to only
+            clear shadow host if we have one.
+
 2011-01-21  Adam Roben  <aroben@apple.com>
 
         Replace some "sync compositing state" terminology with "flush pending GraphicsLayer changes"

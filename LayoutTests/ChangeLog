@@ -1,5 +1,15 @@
 2011-01-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        REGRESSION(r73618): Clicking on a search input causes a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=52905
+
+        * fast/dom/search-shadow-host-crash-expected.txt: Added.
+        * fast/dom/search-shadow-host-crash.html: Added.
+
+2011-01-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Updated slider expectations after r76147.
 
         * platform/chromium/test_expectations.txt: Removed test that will start passing.

@@ -119,7 +119,8 @@ void TextControlInnerElement::detach()
 {
     HTMLDivElement::detach();
     // FIXME: Remove once shadow DOM uses Element::setShadowRoot().
-    setShadowHost(0);
+    if (shadowHost())
+        setShadowHost(0);
 }
 
 // ----------------------------

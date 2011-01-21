@@ -492,6 +492,7 @@ Element* Node::shadowHost() const
 
 void Node::setShadowHost(Element* host)
 {
+    ASSERT(!parentNode());
     if (host)
         setFlag(IsShadowRootFlag);
     else
