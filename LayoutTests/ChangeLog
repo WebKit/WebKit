@@ -1,3 +1,11 @@
+2011-01-20  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed Qt Skipped list update.
+
+        Skip the test added in r76296 for platform/qt/.
+
+        * platform/qt/Skipped:
+
 2011-01-20  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Dan Bernstein.

@@ -5121,3 +5121,7 @@ fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 # [Qt] Fix LoadHTMLStringItem::invoke() after r75966
 # https://bugs.webkit.org/show_bug.cgi?id=52614
 http/tests/navigation/go-back-to-error-page.html
+
+# [Qt] LayoutTests/media/video-currentTime-delay.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=52859
+media/video-currentTime-delay.html
