@@ -1,3 +1,12 @@
+2011-01-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Skip some newly added tests that use DRT APIs that are not yet available for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=52924
+
+        * platform/mac-wk2/Skipped:
+
 2011-01-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
