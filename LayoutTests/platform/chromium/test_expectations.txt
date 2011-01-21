@@ -3088,7 +3088,8 @@ BUGCR69736 : fast/js/js-continue-break-restrictions.html = TEXT
 BUG_DGLAZKOV : fast/forms/slider-mouse-events.html = TEXT
 
 // New test added in http://trac.webkit.org/changeset/76185
-BUGDIMICH : fast/js/toString-recursion.html = TEXT
+// Fails in V8, perhaps needs a V8-specific fix.
+BUGCR70334 : fast/js/toString-recursion.html = TEXT
 
 // Behavior changed in http://trac.webkit.org/changeset/76180,
 // need to investigate

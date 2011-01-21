@@ -1,3 +1,9 @@
+2011-01-20  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, add a bug number to disabled test.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.
