@@ -36,7 +36,7 @@ namespace WebCore {
 
 PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sampleRate)
 {
-    return ChromiumBridge::loadPlatformAudioResource(name, sampleRate);
+    return PlatformBridge::loadPlatformAudioResource(name, sampleRate);
 }
 
 PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, double sampleRate)
