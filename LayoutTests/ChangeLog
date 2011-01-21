@@ -1,3 +1,10 @@
+2011-01-21  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Updated slider expectations after r76147.
+
+        * platform/chromium/test_expectations.txt: Removed test that will start passing.
+        * platform/chromium-win/fast/forms/slider-mouse-events-expected.txt: Updated expectation.
+
 2011-01-21  Xiaomei Ji  <xji@chromium.org>
 
         Unreviewed.
