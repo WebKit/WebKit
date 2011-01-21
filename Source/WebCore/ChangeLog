@@ -1,5 +1,13 @@
 2011-01-21  Sam Weinig  <sam@webkit.org>
 
+        Fix chromium mac build.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::scrollbarStateToThemeState):
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+
+2011-01-21  Sam Weinig  <sam@webkit.org>
+
         Fix the windows build.
 
         * platform/ScrollbarThemeComposite.cpp:

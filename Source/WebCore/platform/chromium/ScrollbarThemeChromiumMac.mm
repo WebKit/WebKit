@@ -373,7 +373,7 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
 static PlatformBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar) {
     if (!scrollbar->enabled())
         return PlatformBridge::StateDisabled;
-    if (!scrollbar->client()->isActive())
+    if (!scrollbar->scrollableArea()->isActive())
         return PlatformBridge::StateInactive;
     if (scrollbar->pressedPart() == ThumbPart)
         return PlatformBridge::StatePressed;
@@ -398,7 +398,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     if (!scrollbar->enabled())
         trackInfo.enableState = kThemeTrackDisabled;
     else
-        trackInfo.enableState = scrollbar->client()->isActive() ? kThemeTrackActive : kThemeTrackInactive;
+        trackInfo.enableState = scrollbar->scrollableArea()->isActive() ? kThemeTrackActive : kThemeTrackInactive;
 
     if (!hasButtons(scrollbar))
         trackInfo.enableState = kThemeTrackNothingToScroll;
@@ -428,7 +428,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     HIThemeDrawTrack(&trackInfo, 0, drawingContext->platformContext(), kHIThemeOrientationNormal);
 
     Vector<IntRect> tickmarks;
-    scrollbar->client()->getTickmarks(tickmarks);
+    scrollbar->scrollableArea()->getTickmarks(tickmarks);
     if (scrollbar->orientation() == VerticalScrollbar && tickmarks.size()) {
         drawingContext->save();
         drawingContext->setShouldAntialias(false);
