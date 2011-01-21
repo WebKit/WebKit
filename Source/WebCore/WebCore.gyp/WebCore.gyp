@@ -1136,6 +1136,10 @@
             '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
         }],
+        ['OS=="linux" and target_arch=="arm"', {
+          # Due to a bug in gcc arm, we get warnings about uninitialized timesNewRoman.unstatic.3258
+          'cflags': ['-Wno-uninitialized'],
+        }],
         ['OS=="mac"', {
           # Necessary for Mac .mm stuff.
           'include_dirs': [

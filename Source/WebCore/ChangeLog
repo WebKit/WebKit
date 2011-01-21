@@ -1,3 +1,14 @@
+2011-01-21  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Turn off uninitialized errors for ARM linux build.
+        https://bugs.webkit.org/show_bug.cgi?id=52893
+
+        Fix ARM compiler breakage.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-01-21  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
