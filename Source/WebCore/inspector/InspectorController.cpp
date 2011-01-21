@@ -158,10 +158,6 @@ InspectorController::~InspectorController()
     ASSERT(!m_client);
     ASSERT(!m_inspectedPage);
     ASSERT(!m_highlightedNode);
-
-    releaseFrontendLifetimeAgents();
-
-    m_injectedScriptHost->disconnectController();
 }
 
 void InspectorController::inspectedPageDestroyed()
@@ -178,6 +174,9 @@ void InspectorController::inspectedPageDestroyed()
 
     ASSERT(m_inspectedPage);
     m_inspectedPage = 0;
+
+    releaseFrontendLifetimeAgents();
+    m_injectedScriptHost->disconnectController();
 
     m_client->inspectorDestroyed();
     m_client = 0;
