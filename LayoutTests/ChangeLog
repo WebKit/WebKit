@@ -1,3 +1,14 @@
+2011-01-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed.
+
+        [GTK] http/tests/security/drag-drop-same-unique-origin.html fails on bots.
+        https://bugs.webkit.org/show_bug.cgi?id=52882
+
+        Skipping http/tests/security/drag-drop-same-unique-origin.html for gtk.
+
+        * platform/gtk/Skipped:
+
 2011-01-21  Helder Correia  <helder@sencha.com>
 
         Reviewed by Andreas Kling.

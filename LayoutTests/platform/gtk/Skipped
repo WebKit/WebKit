@@ -5337,6 +5337,9 @@ http/tests/misc/bubble-drag-events.html
 fast/events/content-changed-during-drop.html
 editing/pasteboard/drop-link.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=52882
+http/tests/security/drag-drop-same-unique-origin.html
+
 # [Soup] ResourceHandleSoup does not ever call didSendData for file uploads
 # https://bugs.webkit.org/show_bug.cgi?id=52090
 http/tests/local/formdata/upload-events.html
