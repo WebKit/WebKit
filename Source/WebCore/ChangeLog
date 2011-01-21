@@ -1,3 +1,9 @@
+2011-01-20  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, sorting an Xcode project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-01-20  Ben Vanik  <ben.vanik@gmail.com>
 
         Reviewed by Kenneth Russell.
