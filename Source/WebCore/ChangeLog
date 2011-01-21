@@ -1,3 +1,30 @@
+2011-01-21  Adam Roben  <aroben@apple.com>
+
+        Clean up PlatformCAAnimationWin
+
+        Fixes <http://webkit.org/b/52904> PlatformCAAnimationWin is leaky and inefficient
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/ca/win/PlatformCAAnimationWin.cpp:
+        (toCACFFillModeType):
+        (fromCACFFillModeType):
+        (toCACFValueFunctionType):
+        (fromCACFValueFunctionType):
+        Changed to take and return CFStringRefs. There's no need to convert to WebCore::String just
+        so we can later convert back to CFStringRef.
+
+        (toCACFTimingFunction): Fixed leaks by changing this to return a RetainPtr and adopting the
+        results of CACFTimingFunctionCreate.
+        (PlatformCAAnimation::PlatformCAAnimation): Changed not to needlessly roundtrip through
+        WebCore::String. Also changed an ASSERT(0) to ASSERT_NOT_REACHED().
+
+        (PlatformCAAnimation::setFillMode):
+        (PlatformCAAnimation::setTimingFunction):
+        (PlatformCAAnimation::setValueFunction):
+        (PlatformCAAnimation::setTimingFunctions):
+        Updated for changes to the above conversion functions.
+
 2011-01-21  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Fisher.

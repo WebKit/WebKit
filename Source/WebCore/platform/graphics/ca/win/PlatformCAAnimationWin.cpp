@@ -41,7 +41,7 @@
 
 using namespace WebCore;
 
-static String toCACFFillModeType(PlatformCAAnimation::FillModeType type)
+static CFStringRef toCACFFillModeType(PlatformCAAnimation::FillModeType type)
 {
     switch (type) {
     case PlatformCAAnimation::NoFillMode:
@@ -49,10 +49,11 @@ static String toCACFFillModeType(PlatformCAAnimation::FillModeType type)
     case PlatformCAAnimation::Backwards: return kCACFFillModeBackwards;
     case PlatformCAAnimation::Both: return kCACFFillModeBoth;
     }
-    return "";
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-static PlatformCAAnimation::FillModeType fromCACFFillModeType(const String& string)
+static PlatformCAAnimation::FillModeType fromCACFFillModeType(CFStringRef string)
 {
     if (string == kCACFFillModeBackwards)
         return PlatformCAAnimation::Backwards;
@@ -63,10 +64,10 @@ static PlatformCAAnimation::FillModeType fromCACFFillModeType(const String& stri
     return PlatformCAAnimation::Forwards;
 }
 
-static String toCACFValueFunctionType(PlatformCAAnimation::ValueFunctionType type)
+static CFStringRef toCACFValueFunctionType(PlatformCAAnimation::ValueFunctionType type)
 {
     switch (type) {
-    case PlatformCAAnimation::NoValueFunction: return "";
+    case PlatformCAAnimation::NoValueFunction: return 0;
     case PlatformCAAnimation::RotateX: return kCACFValueFunctionRotateX;
     case PlatformCAAnimation::RotateY: return kCACFValueFunctionRotateY;
     case PlatformCAAnimation::RotateZ: return kCACFValueFunctionRotateZ;
@@ -79,10 +80,11 @@ static String toCACFValueFunctionType(PlatformCAAnimation::ValueFunctionType typ
     case PlatformCAAnimation::TranslateZ: return kCACFValueFunctionTranslateZ;
     case PlatformCAAnimation::Translate: return kCACFValueFunctionTranslate;
     }
-    return "";
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-static PlatformCAAnimation::ValueFunctionType fromCACFValueFunctionType(const String string)
+static PlatformCAAnimation::ValueFunctionType fromCACFValueFunctionType(CFStringRef string)
 {
     if (string == kCACFValueFunctionRotateX)
         return PlatformCAAnimation::RotateX;
@@ -120,14 +122,14 @@ static PlatformCAAnimation::ValueFunctionType fromCACFValueFunctionType(const St
     return PlatformCAAnimation::NoValueFunction;
 }
 
-static CACFTimingFunctionRef toCACFTimingFunction(const TimingFunction* timingFunction)
+static RetainPtr<CACFTimingFunctionRef> toCACFTimingFunction(const TimingFunction* timingFunction)
 {
     if (!timingFunction)
-        return CACFTimingFunctionCreate(0.25f, 0.1f, 0.25f, 0.1f);
+        return RetainPtr<CACFTimingFunctionRef>(AdoptCF, CACFTimingFunctionCreate(0.25f, 0.1f, 0.25f, 0.1f));
             
     if (timingFunction->isCubicBezierTimingFunction()) {
         const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
-        return CACFTimingFunctionCreate(static_cast<float>(ctf->x1()), static_cast<float>(ctf->y1()), static_cast<float>(ctf->x2()), static_cast<float>(ctf->y2()));
+        return RetainPtr<CACFTimingFunctionRef>(AdoptCF, CACFTimingFunctionCreate(static_cast<float>(ctf->x1()), static_cast<float>(ctf->y1()), static_cast<float>(ctf->x2()), static_cast<float>(ctf->y2())));
     }
     
     return CACFTimingFunctionGetFunctionWithName(kCACFTimingFunctionLinear);
@@ -162,12 +164,12 @@ PlatformCAAnimation::PlatformCAAnimation(AnimationType type, const String& keyPa
 
 PlatformCAAnimation::PlatformCAAnimation(PlatformAnimationRef animation)
 {
-    if (String(CACFAnimationGetClass(animation)) == kCACFBasicAnimation)
+    if (CACFAnimationGetClass(animation) == kCACFBasicAnimation)
         m_type = Basic;
-    else if (String(CACFAnimationGetClass(animation)) == kCACFKeyframeAnimation)
+    else if (CACFAnimationGetClass(animation) == kCACFKeyframeAnimation)
         m_type = Keyframe;
     else {
-        ASSERT(0);
+        ASSERT_NOT_REACHED();
         return;
     }
     
@@ -289,13 +291,12 @@ PlatformCAAnimation::FillModeType PlatformCAAnimation::fillMode() const
 
 void PlatformCAAnimation::setFillMode(FillModeType value)
 {
-    RetainPtr<CFStringRef> keyPath(AdoptCF, toCACFFillModeType(value).createCFString());
-    CACFAnimationSetFillMode(m_animation.get(), keyPath.get());
+    CACFAnimationSetFillMode(m_animation.get(), toCACFFillModeType(value));
 }
 
 void PlatformCAAnimation::setTimingFunction(const TimingFunction* value)
 {
-    CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(value));
+    CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(value).get());
 }
 
 void PlatformCAAnimation::copyTimingFunctionFrom(const PlatformCAAnimation* value)
@@ -330,8 +331,7 @@ PlatformCAAnimation::ValueFunctionType PlatformCAAnimation::valueFunction() cons
 
 void PlatformCAAnimation::setValueFunction(ValueFunctionType value)
 {
-    RetainPtr<CFStringRef> keyPath(AdoptCF, toCACFValueFunctionType(value).createCFString());
-    CACFAnimationSetValueFunction(m_animation.get(), CACFValueFunctionGetFunctionWithName(keyPath.get()));
+    CACFAnimationSetValueFunction(m_animation.get(), CACFValueFunctionGetFunctionWithName(toCACFValueFunctionType(value)));
 }
 
 void PlatformCAAnimation::setFromValue(float value)
@@ -524,7 +524,7 @@ void PlatformCAAnimation::setTimingFunctions(const Vector<const TimingFunction*>
     RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
     for (size_t i = 0; i < value.size(); ++i) {
         RetainPtr<CFNumberRef> v(AdoptCF, CFNumberCreate(0, kCFNumberFloatType, &value[i]));
-        CFArrayAppendValue(array.get(), toCACFTimingFunction(value[i]));
+        CFArrayAppendValue(array.get(), toCACFTimingFunction(value[i]).get());
     }
 
     CACFAnimationSetTimingFunctions(m_animation.get(), array.get());
