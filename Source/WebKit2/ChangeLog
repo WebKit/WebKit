@@ -1,3 +1,13 @@
+2011-01-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein and Maciej Stachowiak.
+
+        Fix for <rdar://problem/8896057>
+
+        Give the Web Process access to the PubSub agent.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-01-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

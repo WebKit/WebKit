@@ -124,6 +124,10 @@
 (allow process-fork)
 (allow process-exec (literal "/System/Library/Frameworks/QTKit.framework/Versions/A/Resources/QTKitServer") (with no-sandbox))
 
+;; FIXME: Once <rdar://problem/8900275> has been fixed, these rules can be removed.
+(allow mach-lookup (global-name "com.apple.pubsub.ipc"))
+(allow network-outbound (regex #"^/private/tmp/launch-[^/]+/Render"))
+
 ;; FIXME: Investigate these.
 (allow appleevent-send (appleevent-destination "com.apple.WebProcess"))
 (allow mach-lookup (global-name-regex #"^EPPC-"))
