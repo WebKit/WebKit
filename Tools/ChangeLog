@@ -1,3 +1,13 @@
+2011-01-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Sean Garen and Mark Rowe.
+
+        WebKitTestRunner needs the HOME environment variable to be set.
+        <rdar://problem/8896573>
+
+        * Scripts/old-run-webkit-tests: Set the HOME environment variable if
+        it exists.
+
 2011-01-21  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

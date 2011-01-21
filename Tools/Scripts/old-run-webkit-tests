@@ -1465,6 +1465,9 @@ sub openDumpTool()
         if (defined $ENV{'DYLD_LIBRARY_PATH'}) {
             $CLEAN_ENV{DYLD_LIBRARY_PATH} = $ENV{'DYLD_LIBRARY_PATH'};
         }
+        if (defined $ENV{'HOME'}) {
+            $CLEAN_ENV{HOME} = $ENV{'HOME'};
+        }
 
         $CLEAN_ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $CLEAN_ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
