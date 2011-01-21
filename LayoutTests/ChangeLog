@@ -1,3 +1,10 @@
+2011-01-21  Jessie Berlin  <jberlin@apple.com>
+
+        Add Windows-specific results for fast/dom/52776.html to get the bot green. Unreviewed.
+        https://bugs.webkit.org/show_bug.cgi?id=52776
+
+        * platform/win/fast/dom/52776-expected.txt: Added.
+
 2011-01-21  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
