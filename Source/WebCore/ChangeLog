@@ -1,3 +1,22 @@
+2011-01-21  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] Let QPainter decide whether a composition mode is supported or not
+
+        Lacking Porter-Duff support in the paint engine shouldn't exclude the
+        Source and Source-Over modes (and has nothing to do with the blend
+        and raster-op modes.)
+
+        Delegate this decision to QPainter instead (this will cause warnings
+        if an unsupported mode is used, but that's a good thing.)
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/qt/TransparencyLayer.h:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+
 2011-01-21  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

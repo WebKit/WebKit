@@ -61,8 +61,7 @@ public:
         painter.setTransform(p->transform(), true);
         painter.setOpacity(p->opacity());
         painter.setFont(p->font());
-        if (painter.paintEngine()->hasFeature(QPaintEngine::PorterDuff))
-            painter.setCompositionMode(p->compositionMode());
+        painter.setCompositionMode(p->compositionMode());
     }
 
     TransparencyLayer()

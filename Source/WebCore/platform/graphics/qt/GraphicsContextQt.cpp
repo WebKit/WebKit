@@ -991,11 +991,9 @@ void GraphicsContext::clearRect(const FloatRect& rect)
 
     QPainter* p = m_data->p();
     QPainter::CompositionMode currentCompositionMode = p->compositionMode();
-    if (p->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
-        p->setCompositionMode(QPainter::CompositionMode_Source);
+    p->setCompositionMode(QPainter::CompositionMode_Source);
     p->fillRect(rect, Qt::transparent);
-    if (p->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
-        p->setCompositionMode(currentCompositionMode);
+    p->setCompositionMode(currentCompositionMode);
 }
 
 void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
@@ -1085,12 +1083,7 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
     if (paintingDisabled())
         return;
 
-    QPainter* painter = m_data->p();
-
-    if (!painter->paintEngine()->hasFeature(QPaintEngine::PorterDuff))
-        return;
-
-    painter->setCompositionMode(toQtCompositionMode(op));
+    m_data->p()->setCompositionMode(toQtCompositionMode(op));
 }
 
 void GraphicsContext::clip(const Path& path)
