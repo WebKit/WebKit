@@ -1,3 +1,15 @@
+2011-01-20  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix regression(r71566): PDF in RTL block might messes up text directionality.
+        https://bugs.webkit.org/show_bug.cgi?id=52776
+
+        * fast/dom/52776.html: Added.
+        * platform/mac/fast/dom/52776-expected.checksum: Added.
+        * platform/mac/fast/dom/52776-expected.png: Added.
+        * platform/mac/fast/dom/52776-expected.txt: Added.
+
 2011-01-20  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

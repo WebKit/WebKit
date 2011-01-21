@@ -1,3 +1,18 @@
+2011-01-20  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix regression(r71566): PDF in RTL block might messes up text directionality.
+        https://bugs.webkit.org/show_bug.cgi?id=52776
+
+        Test: fast/dom/52776.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::checkDirectionInLowerRaiseEmbeddingLevel):
+        (WebCore::::lowerExplicitEmbeddingLevel):
+        (WebCore::::raiseExplicitEmbeddingLevel):
+        (WebCore::::createBidiRunsForLine):
+
 2011-01-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.

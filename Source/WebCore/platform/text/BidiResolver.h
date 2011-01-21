@@ -315,23 +315,13 @@ void BidiResolver<Iterator, Run>::checkDirectionInLowerRaiseEmbeddingLevel()
     using namespace WTF::Unicode;
 
     ASSERT(m_status.eor != OtherNeutral || eor.atEnd());
-    // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
-    // Bidi control characters are included into BidiRun, so last direction
-    // could be one of the bidi embeddings when there are nested embeddings.
-    // For example:  "&#x202a;&#x202b;....."
-    ASSERT(m_status.last == EuropeanNumberSeparator
-        || m_status.last == EuropeanNumberTerminator
-        || m_status.last == CommonNumberSeparator
-        || m_status.last == BoundaryNeutral
-        || m_status.last == BlockSeparator
-        || m_status.last == SegmentSeparator
-        || m_status.last == WhiteSpaceNeutral
-        || m_status.last == OtherNeutral
-        || m_status.last == RightToLeftEmbedding
-        || m_status.last == LeftToRightEmbedding
-        || m_status.last == RightToLeftOverride
-        || m_status.last == LeftToRightOverride
-        || m_status.last == PopDirectionalFormat);
+    ASSERT(m_status.last != NonSpacingMark
+        && m_status.last != BoundaryNeutral
+        && m_status.last != RightToLeftEmbedding
+        && m_status.last != LeftToRightEmbedding
+        && m_status.last != RightToLeftOverride 
+        && m_status.last != LeftToRightOverride 
+        && m_status.last != PopDirectionalFormat);
     if (m_direction == OtherNeutral)
         m_direction = m_status.lastStrong == LeftToRight ? LeftToRight : RightToLeft;
 }
@@ -343,6 +333,7 @@ void BidiResolver<Iterator, Run>::lowerExplicitEmbeddingLevel(WTF::Unicode::Dire
 
     if (!emptyRun && eor != last) {
         checkDirectionInLowerRaiseEmbeddingLevel();
+        // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
         if (from == LeftToRight) {
             // bidi.sor ... bidi.eor ... bidi.last L
             if (m_status.eor == EuropeanNumber) {
@@ -378,6 +369,7 @@ void BidiResolver<Iterator, Run>::raiseExplicitEmbeddingLevel(WTF::Unicode::Dire
 
     if (!emptyRun && eor != last) {
         checkDirectionInLowerRaiseEmbeddingLevel();
+        // bidi.sor ... bidi.eor ... bidi.last eor; need to append the bidi.sor-bidi.eor run or extend it through bidi.last
         if (to == LeftToRight) {
             // bidi.sor ... bidi.eor ... bidi.last L
             if (m_status.eor == EuropeanNumber) {
@@ -867,6 +859,11 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, boo
                 break;
             case NonSpacingMark:
             case BoundaryNeutral:
+            case RightToLeftEmbedding: 
+            case LeftToRightEmbedding: 
+            case RightToLeftOverride: 
+            case LeftToRightOverride: 
+            case PopDirectionalFormat:
                 // ignore these
                 break;
             case EuropeanNumber:
