@@ -1,3 +1,17 @@
+2011-01-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Split Host object off from WebKitPatch for easier re-use
+        https://bugs.webkit.org/show_bug.cgi?id=52284
+
+        new-run-webkit-tests and other tools are eventually going to want one of these.
+        Basically you need to inherit from this class if you want to pretend to be a
+        self.tool object for Steps/Commands.
+
+        * Scripts/webkitpy/common/host.py: Added.
+        * Scripts/webkitpy/tool/main.py:
+
 2011-01-20  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

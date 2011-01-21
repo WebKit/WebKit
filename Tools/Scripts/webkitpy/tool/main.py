@@ -36,6 +36,7 @@ import threading
 from webkitpy.common.checkout.api import Checkout
 from webkitpy.common.checkout.scm import default_scm
 from webkitpy.common.config.ports import WebKitPort
+from webkitpy.common.host import Host
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.irc.ircproxy import IRCProxy
@@ -46,7 +47,7 @@ from webkitpy.tool.multicommandtool import MultiCommandTool
 import webkitpy.tool.commands as commands
 
 
-class WebKitPatch(MultiCommandTool):
+class WebKitPatch(MultiCommandTool, Host):
     global_options = [
         make_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="enable all logging"),
         make_option("-d", "--directory", action="append", dest="patch_directories", default=[], help="Directory to look at for changed files"),
@@ -59,57 +60,13 @@ class WebKitPatch(MultiCommandTool):
 
     def __init__(self, path):
         MultiCommandTool.__init__(self)
+        Host.__init__(self)
 
         self._path = path
         self.wakeup_event = threading.Event()
-        # FIXME: All of these shared objects should move off onto a
-        # separate "Tool" object.  WebKitPatch should inherit from
-        # "Tool" and all these objects should use getters/setters instead of
-        # manual getter functions (e.g. scm()).
-        self.bugs = Bugzilla()
-        self.buildbot = BuildBot()
-        self.executive = executive.Executive()
-        self._irc = None
-        self.filesystem = filesystem.FileSystem()
-        self.workspace = workspace.Workspace(self.filesystem, self.executive)
-        self._port = None
-        self.user = user.User()
-        self._scm = None
-        self._checkout = None
-        self.status_server = StatusServer()
-        self.port_factory = port.factory
-        self.platform = platforminfo.PlatformInfo()
-
-    def scm(self):
-        # Lazily initialize SCM to not error-out before command line parsing (or when running non-scm commands).
-        if not self._scm:
-            self._scm = default_scm(self._options.patch_directories)
-        return self._scm
-
-    def checkout(self):
-        if not self._checkout:
-            self._checkout = Checkout(self.scm())
-        return self._checkout
-
-    def port(self):
-        return self._port
-
-    def ensure_irc_connected(self, irc_delegate):
-        if not self._irc:
-            self._irc = IRCProxy(irc_delegate)
-
-    def irc(self):
-        # We don't automatically construct IRCProxy here because constructing
-        # IRCProxy actually connects to IRC.  We want clients to explicitly
-        # connect to IRC.
-        return self._irc
 
     def path(self):
         return self._path
-
-    def command_completed(self):
-        if self._irc:
-            self._irc.disconnect()
 
     def should_show_in_main_help(self, command):
         if not command.show_in_main_help:
@@ -120,7 +77,7 @@ class WebKitPatch(MultiCommandTool):
 
     # FIXME: This may be unnecessary since we pass global options to all commands during execute() as well.
     def handle_global_options(self, options):
-        self._options = options
+        self._initialize_scm(options.patch_directories)
         if options.dry_run:
             self.scm().dryrun = True
             self.bugs.dryrun = True
