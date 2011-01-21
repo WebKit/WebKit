@@ -1,5 +1,17 @@
 2011-01-20  Ojan Vafai  <ojan@chromium.org>
 
+        Reviewed by Oliver Hunt.
+
+        Could review tool include style failure info?
+        https://bugs.webkit.org/show_bug.cgi?id=49049
+
+        This does not handle patches that have old paths (e.g. without the Source prefix).
+        Although that would be fairly straightforward to workaround.
+
+        * code-review.js:
+
+2011-01-20  Ojan Vafai  <ojan@chromium.org>
+
         Reviewed by Adam Barth.
 
         handle cases where PrettyPatch.rb doesn't linkify filenames

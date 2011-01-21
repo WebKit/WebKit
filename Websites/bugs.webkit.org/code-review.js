@@ -201,6 +201,33 @@
     $('#message .commentStatus').text('This patch has ' + descriptor + '.  Scroll through them with the "n" and "p" keys. ' + help_text);
   }
 
+  function scanForStyleQueueComments(text) {
+    var comments = []
+    var lines = text.split('\n');
+    for (var i = 0; i < lines.length; ++i) {
+      var parts = lines[i].match(/^([^:]+):(-?\d+):(.*)$/);
+      if (!parts)
+        continue;
+
+      var file_name = parts[1];
+      var line_number = parts[2];
+      var comment_text = parts[3].trim();
+
+      if (!file_name in files) {
+        console.log('Filename in style queue output is not in the patch: ' + file_name);
+        continue;
+      }
+
+      comments.push({
+        'author': 'StyleQueue',
+        'file_name': file_name,
+        'line_number': line_number,
+        'comment_text': comment_text
+      });
+    }
+    return comments;
+  }
+
   function scanForComments(author, text) {
     var comments = []
     var lines = text.split('\n');
@@ -290,9 +317,14 @@
         $(data).find('.bz_comment').each(function() {
           var author = $(this).find('.email').text();
           var text = $(this).find('.bz_comment_text').text();
+
           var comment_marker = '(From update of attachment ' + attachment_id + ' .details.)';
           if (text.match(comment_marker))
             $.merge(comments, scanForComments(author, text));
+
+          var style_queue_comment_marker = 'Attachment ' + attachment_id + ' .details. did not pass style-queue.'
+          if (text.match(style_queue_comment_marker))
+            $.merge(comments, scanForStyleQueueComments(text));
         });
         displayPreviousComments(comments);
       });
