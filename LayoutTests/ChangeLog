@@ -1,3 +1,13 @@
+2011-01-20  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=52769.
+
+        * fast/dom/Window/Location/resources/set-location-after-close-new-window.html: Added.
+        * fast/dom/Window/Location/set-location-after-close-expected.txt: Added.
+        * fast/dom/Window/Location/set-location-after-close.html: Added.
+
 2011-01-20  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Darin Adler.

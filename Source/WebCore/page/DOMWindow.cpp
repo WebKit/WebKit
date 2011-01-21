@@ -1617,6 +1617,9 @@ EventTargetData* DOMWindow::ensureEventTargetData()
 
 void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DOMWindow* firstWindow, SetLocationLocking locking)
 {
+    if (!m_frame)
+        return;
+
     Frame* activeFrame = activeWindow->frame();
     if (!activeFrame)
         return;
