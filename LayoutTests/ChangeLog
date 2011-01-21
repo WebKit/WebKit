@@ -1,3 +1,11 @@
+2011-01-21  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline for leopard after r76319.
+
+        * platform/mac-leopard/fast/dom/52776-expected.txt: Added.
+
 2011-01-21  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.
