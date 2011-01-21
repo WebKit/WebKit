@@ -148,7 +148,7 @@ private:
 // Used to store a series of values in a keyframe list. Values will all be of the same type,
 // which can be inferred from the property.
 class KeyframeValueList {
-    WTF_MAKE_NONCOPYABLE(KeyframeValueList);
+    WTF_MAKE_NONCOPYABLE(KeyframeValueList); WTF_MAKE_FAST_ALLOCATED;
 public:
 
     KeyframeValueList(AnimatedPropertyID property)
@@ -180,8 +180,8 @@ protected:
 // which may have associated transformation and animations.
 
 class GraphicsLayer {
+    WTF_MAKE_NONCOPYABLE(GraphicsLayer); WTF_MAKE_FAST_ALLOCATED;
 public:
-
     static PassOwnPtr<GraphicsLayer> create(GraphicsLayerClient*);
     
     virtual ~GraphicsLayer();

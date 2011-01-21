@@ -110,6 +110,18 @@
 
         Reviewed by Sam Weinig.
 
+        GraphicsLayer should be non-copyable
+        https://bugs.webkit.org/show_bug.cgi?id=52909
+
+        Use WTF_MAKE_NONCOPYABLE on GraphicsLayer, and WTF_MAKE_FAST_ALLOCATED
+        on that and KeyframeValueList.
+        
+        * platform/graphics/GraphicsLayer.h:
+
+2011-01-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Report the sized used by canvases and types arrays
         https://bugs.webkit.org/show_bug.cgi?id=52856
 
