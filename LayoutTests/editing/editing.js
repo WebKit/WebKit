@@ -39,6 +39,66 @@ function transposeCharactersCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execMoveSelectionLeftByCharacterCommand() {
+    selection.modify("move", "left", "character");
+}
+function moveSelectionLeftByCharacterCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionLeftByCharacterCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionLeftByCharacterCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execMoveSelectionRightByCharacterCommand() {
+    selection.modify("move", "Right", "character");
+}
+function moveSelectionRightByCharacterCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execMoveSelectionRightByCharacterCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execMoveSelectionRightByCharacterCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionLeftByCharacterCommand() {
+    selection.modify("extend", "left", "character");
+}
+function extendSelectionLeftByCharacterCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionLeftByCharacterCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionLeftByCharacterCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execExtendSelectionRightByCharacterCommand() {
+    selection.modify("extend", "Right", "character");
+}
+function extendSelectionRightByCharacterCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionRightByCharacterCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionRightByCharacterCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execMoveSelectionForwardByCharacterCommand() {
     selection.modify("move", "forward", "character");
 }

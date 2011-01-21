@@ -1,3 +1,22 @@
+2011-01-20  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        RTL: Caret goes to the opposite direction when pressing an arrow key after selection is made
+        https://bugs.webkit.org/show_bug.cgi?id=49511
+
+        Test: editing/selection/rtl-move-selection-right-left.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::willBeModified):
+        Respecting the direction of the containing block when switching selection base and extent in
+        RTL content.
+
+        (WebCore::SelectionController::modifyMovingRight):
+        (WebCore::SelectionController::modifyMovingLeft):
+        Using directionOfEnclosingBlock when deciding to use the selection start or end to do the
+        correct thing for RTL.
+
 2011-01-20  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.

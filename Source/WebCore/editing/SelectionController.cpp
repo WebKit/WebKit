@@ -313,31 +313,44 @@ void SelectionController::willBeModified(EAlteration alter, SelectionDirection d
     Position start = m_selection.start();
     Position end = m_selection.end();
 
+    bool baseIsStart;
+
     if (m_isDirectional) {
         // Make base and extent match start and end so we extend the user-visible selection.
         // This only matters for cases where base and extend point to different positions than
         // start and end (e.g. after a double-click to select a word).
-        if (m_selection.isBaseFirst()) {
-            m_selection.setBase(start);
-            m_selection.setExtent(end);            
-        } else {
-            m_selection.setBase(end);
-            m_selection.setExtent(start);
-        }
+        if (m_selection.isBaseFirst())
+            baseIsStart = true;
+        else
+            baseIsStart = false;
     } else {
-        // FIXME: This is probably not correct for right and left when the direction is RTL.
         switch (direction) {
         case DirectionRight:
+            if (directionOfEnclosingBlock() == LTR)
+                baseIsStart = true;
+            else
+                baseIsStart = false;
+            break;
         case DirectionForward:
-            m_selection.setBase(start);
-            m_selection.setExtent(end);
+            baseIsStart = true;
             break;
         case DirectionLeft:
+            if (directionOfEnclosingBlock() == LTR)
+                baseIsStart = false;
+            else
+                baseIsStart = true;
+            break;
         case DirectionBackward:
-            m_selection.setBase(end);
-            m_selection.setExtent(start);
+            baseIsStart = false;
             break;
         }
+    }
+    if (baseIsStart) {
+        m_selection.setBase(start);
+        m_selection.setExtent(end);
+    } else {
+        m_selection.setBase(end);
+        m_selection.setExtent(start);
     }
 }
 
@@ -455,9 +468,12 @@ VisiblePosition SelectionController::modifyMovingRight(TextGranularity granulari
     VisiblePosition pos;
     switch (granularity) {
     case CharacterGranularity:
-        if (isRange())
-            pos = VisiblePosition(m_selection.end(), m_selection.affinity());
-        else
+        if (isRange()) {
+            if (directionOfEnclosingBlock() == LTR)
+                pos = VisiblePosition(m_selection.end(), m_selection.affinity());
+            else
+                pos = VisiblePosition(m_selection.start(), m_selection.affinity());
+        } else
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).right(true);
         break;
     case WordGranularity:
@@ -609,7 +625,10 @@ VisiblePosition SelectionController::modifyMovingLeft(TextGranularity granularit
     switch (granularity) {
     case CharacterGranularity:
         if (isRange())
-            pos = VisiblePosition(m_selection.start(), m_selection.affinity());
+            if (directionOfEnclosingBlock() == LTR)
+                pos = VisiblePosition(m_selection.start(), m_selection.affinity());
+            else
+                pos = VisiblePosition(m_selection.end(), m_selection.affinity());
         else
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).left(true);
         break;
