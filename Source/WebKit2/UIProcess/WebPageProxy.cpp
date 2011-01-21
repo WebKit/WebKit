@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2278,7 +2278,6 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.isFocused = m_pageClient->isViewFocused();
     parameters.isVisible = m_pageClient->isViewVisible();
     parameters.isInWindow = m_pageClient->isViewInWindow();
-
     parameters.drawingAreaInfo = m_drawingArea->info();
     parameters.store = m_pageGroup->preferences()->store();
     parameters.pageGroupData = m_pageGroup->data();
@@ -2289,6 +2288,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.userAgent = userAgent();
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
+    parameters.canRunModal = m_uiClient.canRunModal();
 
 #if PLATFORM(MAC)
     parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;

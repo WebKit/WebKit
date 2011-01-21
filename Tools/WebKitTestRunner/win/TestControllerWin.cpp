@@ -152,4 +152,9 @@ void TestController::platformInitializeContext()
     WKContextSetShouldPaintNativeControls(m_context.get(), false);
 }
 
+void TestController::runModal(PlatformWebView*)
+{
+    // FIXME: Need to implement this to test showModalDialog.
+}
+
 } // namespace WTR

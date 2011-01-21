@@ -37,6 +37,7 @@
 #include "PluginProxy.h"
 #include "PluginView.h"
 #include "PrintInfo.h"
+#include "RunLoop.h"
 #include "SessionState.h"
 #include "ShareableBitmap.h"
 #include "WebBackForwardList.h"
@@ -149,6 +150,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_findController(this)
     , m_geolocationPermissionRequestManager(this)
     , m_pageID(pageID)
+    , m_canRunModal(parameters.canRunModal)
+    , m_isRunningModal(false)
 {
     ASSERT(m_pageID);
 
@@ -377,6 +380,11 @@ void WebPage::close()
     m_drawingArea.clear();
 
     WebProcess::shared().removeWebPage(m_pageID);
+
+    if (m_isRunningModal) {
+        m_isRunningModal = false;
+        WebProcess::shared().runLoop()->stop();
+    }
 }
 
 void WebPage::tryClose()
@@ -1792,5 +1800,18 @@ void WebPage::drawRectToPDF(uint64_t frameID, const WebCore::IntRect& rect, Vect
     CFDataGetBytes(pdfPageData.get(), CFRangeMake(0, pdfData.size()), pdfData.data());
 }
 #endif
+
+void WebPage::runModal()
+{
+    if (m_isClosed)
+        return;
+    if (m_isRunningModal)
+        return;
+
+    m_isRunningModal = true;
+    send(Messages::WebPageProxy::RunModal());
+    RunLoop::run();
+    ASSERT(!m_isRunningModal);
+}
 
 } // namespace WebKit

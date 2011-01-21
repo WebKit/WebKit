@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -93,6 +93,9 @@ public:
     void drawHeader(WebPageProxy*, WebFrameProxy*, const WebCore::FloatRect&);
     void drawFooter(WebPageProxy*, WebFrameProxy*, const WebCore::FloatRect&);
     void printFrame(WebPageProxy*, WebFrameProxy*);
+
+    bool canRunModal() const;
+    void runModal(WebPageProxy*);
 };
 
 } // namespace WebKit

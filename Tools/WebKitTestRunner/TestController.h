@@ -85,6 +85,10 @@ private:
     static void processDidCrash(WKPageRef, const void* clientInfo);
     void processDidCrash(WKPageRef);
 
+    static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*);
+
+    static void runModal(WKPageRef, const void* clientInfo);
+    static void runModal(PlatformWebView*);
 
     OwnPtr<TestInvocation> m_currentInvocation;
 

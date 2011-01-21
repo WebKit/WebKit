@@ -311,6 +311,9 @@ public:
 
     bool mainFrameHasCustomRepresentation() const;
 
+    bool canRunModal() const { return m_canRunModal; }
+    void runModal();
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -494,6 +497,9 @@ private:
 
     SandboxExtensionTracker m_sandboxExtensionTracker;
     uint64_t m_pageID;
+
+    bool m_canRunModal;
+    bool m_isRunningModal;
 };
 
 } // namespace WebKit

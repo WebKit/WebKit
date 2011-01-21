@@ -1,3 +1,31 @@
+2011-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Implement showModalDialog
+        https://bugs.webkit.org/show_bug.cgi?id=52855
+
+        This fixes WebKitTestRunner to compile, but more work is probably
+        needed to get it to pass the tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::runModal): Added. Calls through to the
+        platform-specific version of runModal.
+        (WTR::TestController::createOtherPage): Changed to be a private
+        static member function so it can refer to runModal, which is
+        a private static member function.
+        (WTR::TestController::initialize): Pass 0 for the runModal
+        function since we don't need to run the main window modal.
+        I suspect this is wrong and will need to change.
+        * WebKitTestRunner/TestController.h: Added declarations for
+        the functions added above.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::runModal): Added. Untested implementation.
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::runModal): Added.
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::runModal): Added.
+
 2011-01-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

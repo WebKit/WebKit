@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -311,6 +311,19 @@ void WebUIClient::printFrame(WebPageProxy* page, WebFrameProxy* frame)
         return;
 
     m_client.printFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+}
+
+bool WebUIClient::canRunModal() const
+{
+    return m_client.runModal;
+}
+
+void WebUIClient::runModal(WebPageProxy* page)
+{
+    if (!m_client.runModal)
+        return;
+
+    m_client.runModal(toAPI(page), m_client.clientInfo);
 }
 
 } // namespace WebKit

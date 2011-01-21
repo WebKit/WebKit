@@ -1,3 +1,52 @@
+2011-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Implement showModalDialog
+        https://bugs.webkit.org/show_bug.cgi?id=52855
+
+        * Shared/WebPageCreationParameters.h: Added canRunModal.
+
+        * UIProcess/API/C/WKPage.h: Added a runModal function pointer to
+        WKPageUIClient. Also removed a lot of redundant typedefs and added
+        a new one, WKPageCallback, for callbacks without arguments or return
+        values.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage): Added a runModal function pointer of 0.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters): Set canRunModal
+        based on return value of WebUIClient::canRunModal.
+
+        * UIProcess/WebPageProxy.h: Added runModal.
+        Calls WebUIClient::runModal.
+
+        * UIProcess/WebPageProxy.messages.in: Added RunModal message.
+        Also removed the periods from the phrases in the comments
+        as Maciej requested a while back.
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::canRunModal): Added. Returns true or false
+        based on whether a runModal function was supplied in the
+        WKPageUIClient structure.
+        (WebKit::WebUIClient::runModal): Added. Calls the runModal
+        function from the WKPageUIClient structure.
+        * UIProcess/WebUIClient.h: Declared the above functions.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::canRunModal): Call through to WebPage.
+        (WebKit::WebChromeClient::runModal): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize m_canRunModal based on the
+        creation parameters. Initialize m_isRunningModal to false.
+        (WebKit::WebPage::close): Stop the nested run loop if we are running modal.
+        (WebKit::WebPage::runModal): Send a message to ask the UI process to run
+        modal and then start a nested run loop. It gets stopped when the page is closed.
+        * WebProcess/WebPage/WebPage.h: Defined the canRunModal function
+        and declared the runModal function.
+
 2011-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

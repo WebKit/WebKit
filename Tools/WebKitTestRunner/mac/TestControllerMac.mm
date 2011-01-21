@@ -25,6 +25,7 @@
 
 #include "TestController.h"
 
+#include "PlatformWebView.h"
 #include <WebKit2/WKStringCF.h>
 #include <mach-o/dyld.h> 
 
@@ -60,6 +61,14 @@ void TestController::platformRunUntil(bool& done, double timeout)
 
 void TestController::platformInitializeContext()
 {
+}
+
+void TestController::runModal(PlatformWebView* view)
+{
+    NSWindow *window = [view->platformView() window];
+    if (!window)
+        return;
+    [NSApp runModalForWindow:window];
 }
 
 } // namespace WTR

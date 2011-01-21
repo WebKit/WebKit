@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -173,13 +173,12 @@ void WebChromeClient::show()
 
 bool WebChromeClient::canRunModal()
 {
-    notImplemented();
-    return false;
+    return m_page->canRunModal();
 }
 
 void WebChromeClient::runModal()
 {
-    notImplemented();
+    m_page->runModal();
 }
 
 void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)

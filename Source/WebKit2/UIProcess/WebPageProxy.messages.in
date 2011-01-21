@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebPageProxy {
-    # UI messages.
+    # UI messages
     CreateNewPage(WebCore::WindowFeatures windowFeatures, uint32_t modifiers, int32_t mouseButton) -> (uint64_t newPageID, WebKit::WebPageCreationParameters newPageParameters)
     ShowPage()
     ClosePage()
@@ -54,6 +54,7 @@ messages -> WebPageProxy {
     PageDidScroll()
     RunOpenPanel(uint64_t frameID, WebKit::WebOpenPanelParameters::Data parameters)
     PrintFrame(uint64_t frameID) -> ()
+    RunModal()
 
 #if ENABLE(TILED_BACKING_STORE)
     PageDidRequestScroll(WebCore::IntSize delta)
@@ -63,23 +64,23 @@ messages -> WebPageProxy {
     DidFindZoomableArea(WebCore::IntRect area)
 #endif
 
-    # Policy messages.
+    # Policy messages
     DecidePolicyForMIMEType(uint64_t frameID, WTF::String MIMEType, WTF::String url, uint64_t listenerID) -> (bool receivedPolicyAction, uint64_t policyAction, uint64_t downloadID)
     DecidePolicyForNavigationAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WTF::String url, uint64_t listenerID)
     DecidePolicyForNewWindowAction(uint64_t frameID, uint32_t navigationType, uint32_t modifiers, int32_t mouseButton, WTF::String url, uint64_t listenerID)
 
-    # Progress messages.
+    # Progress messages
     DidChangeProgress(double value)
     DidFinishProgress()
     DidStartProgress()
 
-    # Frame lifetime messages.
+    # Frame lifetime messages
     DidCreateMainFrame(uint64_t frameID)
     DidCreateSubframe(uint64_t frameID, uint64_t parentFrameID)
     DidSaveFrameToPageCache(uint64_t frameID);
     DidRestoreFrameFromPageCache(uint64_t frameID, uint64_t parentFrameID);
 
-    # Frame load messages.
+    # Frame load messages
     DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, bool hasCustomRepresentation, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFailProvisionalLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
@@ -97,7 +98,7 @@ messages -> WebPageProxy {
 
     FrameDidBecomeFrameSet(uint64_t frameID, bool value)
 
-    # Resource load messages.
+    # Resource load messages
     DidInitiateLoadForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceRequest request)
     DidSendRequestForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidReceiveResponseForResource(uint64_t frameID, uint64_t resourceIdentifier, WebCore::ResourceResponse response)
@@ -108,21 +109,21 @@ messages -> WebPageProxy {
     # Custom representations
     DidFinishLoadingDataForCustomRepresentation(CoreIPC::DataReference data)
 
-    # Forms messages.
+    # Forms messages
     WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WebKit::StringPairVector textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)
 
-    # Callback messages.
+    # Callback messages
     DataCallback(CoreIPC::DataReference resultData, uint64_t callbackID)
     StringCallback(WTF::String resultString, uint64_t callbackID)
 
     DidReceiveAccessibilityPageToken(CoreIPC::DataReference data)
 
 #if PLATFORM(MAC)
-    # Keyboard support messages.
+    # Keyboard support messages
     InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline> underlines)
 #endif
     
-    # BackForward messages.
+    # BackForward messages
     BackForwardAddItem(uint64_t itemID)
     BackForwardGoToItem(uint64_t itemID)
     BackForwardItemAtIndex(int32_t itemIndex) -> (uint64_t itemID)
@@ -130,67 +131,67 @@ messages -> WebPageProxy {
     BackForwardForwardListCount() -> (int32_t count)
     BackForwardClear()
 
-    # Undo/Redo messages.
+    # Undo/Redo messages
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)
     ClearAllEditCommands()
     
-    # Selection messages.
+    # Selection messages
     SelectionStateChanged(WebKit::SelectionState selectionState)
 
 #if PLATFORM(WIN)
     DidChangeCompositionSelection(bool hasChanged)
 #endif
 
-    # Find messages.
+    # Find messages
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)
     DidFindString(WTF::String string, uint32_t matchCount)
     DidFailToFindString(WTF::String string)
 
-    # PopupMenu messages.
+    # PopupMenu messages
     ShowPopupMenu(WebCore::IntRect rect, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)
     HidePopupMenu()
     
-    # ContextMenu messages.
+    # ContextMenu messages
     ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::ContextMenuState state, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
 
 #if USE(ACCELERATED_COMPOSITING)
-    # Accelerated compositing messages.
+    # Accelerated compositing messages
     DidChangeAcceleratedCompositing(bool compositing) -> (WebKit::DrawingAreaInfo newDrawingArea)
 #endif
 
-    # Authentication messages.
+    # Authentication messages
     CanAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, WebCore::ProtectionSpace protectionSpace) -> (bool canAuthenticate)
     DidReceiveAuthenticationChallenge(uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
-    # Database messages.
+    # Database messages
     ExceededDatabaseQuota(uint64_t frameID, WTF::String originIdentifier, WTF::String databaseName, WTF::String databaseDisplayName, uint64_t currentQuota, uint64_t currentUsage, uint64_t expectedUsage) -> (uint64_t newQuota)
 
-    # Geolocation messages.
+    # Geolocation messages
     RequestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, WTF::String originIdentifier)
 
-    # Plug-in complex text input support messages.
 #if PLATFORM(MAC)
+    # Plug-in complex text input support messages
     SetComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
 #endif
 
-    # Speech messages.
 #if PLATFORM(MAC)
+    # Speech messages
     GetIsSpeaking() -> (bool isSpeaking)
     Speak(WTF::String string)
     StopSpeaking()
 #endif
 
-    # Spelling and grammar.
+    # Spelling and grammar messages
     CheckTextOfParagraph(WTF::String text, uint64_t checkingTypes) -> (Vector<WebCore::TextCheckingResult> results)
     UpdateSpellingUIWithMisspelledWord(WTF::String misspelledWord)
     GetGuessesForWord(WTF::String word, WTF::String context) -> (Vector<WTF::String> guesses)
     LearnWord(WTF::String word);
     IgnoreWord(WTF::String word);
     
-    # Drag and drop.
+    # Drag and drop messages
     DidPerformDragControllerAction(uint64_t resultOperation)
 #if PLATFORM(MAC)
-    SetDragImage(WebCore::IntPoint clientPosition, WebCore::IntSize imageSize, WebKit::SharedMemory::Handle dragImageHandle, bool linkDrag)
+    SetDragImage(WebCore::IntPoint clientPosition, WebCore::IntSize imageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)
 #endif
 }
