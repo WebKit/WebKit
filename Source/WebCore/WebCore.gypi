@@ -2405,6 +2405,7 @@
             'platform/audio/FFTConvolver.cpp',
             'platform/audio/FFTFrame.h',
             'platform/audio/FFTFrame.cpp',
+            'platform/audio/FFTFrameStub.cpp',
             'platform/audio/HRTFDatabase.h',
             'platform/audio/HRTFDatabase.cpp',
             'platform/audio/HRTFDatabaseLoader.h',
