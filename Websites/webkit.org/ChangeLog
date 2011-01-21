@@ -1,3 +1,21 @@
+2011-01-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Proposal: Require cross-organizational seconds for reviewer nominations
+        https://bugs.webkit.org/show_bug.cgi?id=47597
+
+        This changes the committer/reviewer policy to require an additional
+        reviewer supporting a reviewer nomination to work for a different
+        company and different project affiliation from the nominee.
+
+        This means reviewer nominations would require four supporting reviewers,
+        one of which knows the reviewer through the community (irc, email, bugs)
+        ensuring that the nominee has the open-source collaboration skills
+        we so highly value here in WebKit.
+
+        * coding/commit-review-policy.html:
+
 2011-01-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
