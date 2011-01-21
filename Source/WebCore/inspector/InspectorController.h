@@ -227,7 +227,9 @@ public:
     void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
+    void addProfile(PassRefPtr<ScriptProfile>, unsigned lineNumber, const String& sourceURL);
     bool isRecordingUserInitiatedProfile() const;
+    String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
     void startProfiling() { startUserInitiatedProfiling(); }
     void startUserInitiatedProfiling();
     void stopProfiling() { stopUserInitiatedProfiling(); }
