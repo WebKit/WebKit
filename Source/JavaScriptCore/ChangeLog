@@ -1,3 +1,15 @@
+2011-01-21  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r76177): All JavaScriptCore tests fail on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=52814
+
+        Get the approximateByteSize value before releasing the OwnPtr.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseFunctionInfo):
+
 2011-01-21  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

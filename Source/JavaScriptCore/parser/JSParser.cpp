@@ -1357,8 +1357,10 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
     failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
     matchOrFail(CLOSEBRACE);
 
-    if (newInfo)
-        m_functionCache->add(openBracePos, newInfo.release(), newInfo->approximateByteSize());
+    if (newInfo) {
+        unsigned approximateByteSize = newInfo->approximateByteSize();
+        m_functionCache->add(openBracePos, newInfo.release(), approximateByteSize);
+    }
 
     next();
     return true;
