@@ -22,6 +22,7 @@
 #ifndef Heap_h
 #define Heap_h
 
+#include "MarkStack.h"
 #include "MarkedSpace.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -131,6 +132,7 @@ namespace JSC {
         JSGlobalData* m_globalData;
         
         MachineStackMarker m_machineStackMarker;
+        MarkStack m_markStack;
         
         size_t m_extraCost;
     };

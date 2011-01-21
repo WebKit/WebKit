@@ -143,7 +143,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , head(0)
     , dynamicGlobalObject(0)
     , firstStringifierToMark(0)
-    , markStack(jsArrayVPtr)
     , cachedUTCOffset(NaN)
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
     , m_regExpCache(new RegExpCache(this))

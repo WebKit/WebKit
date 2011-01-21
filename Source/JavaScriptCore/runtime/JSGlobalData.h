@@ -35,7 +35,6 @@
 #include "ExecutableAllocator.h"
 #include "JITStubs.h"
 #include "JSValue.h"
-#include "MarkStack.h"
 #include "NumericStrings.h"
 #include "SmallStrings.h"
 #include "Terminator.h"
@@ -217,8 +216,6 @@ namespace JSC {
         HashSet<JSObject*> stringRecursionCheckVisitedObjects;
 
         Stringifier* firstStringifierToMark;
-
-        MarkStack markStack;
 
         double cachedUTCOffset;
         DSTOffsetCache dstOffsetCache;

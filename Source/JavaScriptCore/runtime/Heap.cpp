@@ -41,7 +41,8 @@ Heap::Heap(JSGlobalData* globalData)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_globalData(globalData)
-    , m_machineStackMarker(&globalData->heap)
+    , m_machineStackMarker(this)
+    , m_markStack(globalData->jsArrayVPtr)
     , m_extraCost(0)
 {
     (*m_activityCallback)();
@@ -262,7 +263,7 @@ void Heap::markRoots()
     // Reset mark bits.
     m_markedSpace.clearMarkBits();
 
-    MarkStack& markStack = m_globalData->markStack;
+    MarkStack& markStack = m_markStack;
     conservativeSet.mark(markStack);
     markStack.drain();
 
