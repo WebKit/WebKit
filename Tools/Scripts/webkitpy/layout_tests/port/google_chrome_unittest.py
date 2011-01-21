@@ -24,11 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import codecs
-import os
 import unittest
 
-from webkitpy.common import newstringio
+from webkitpy.common.system import filesystem_mock
 
 import factory
 import google_chrome
@@ -58,45 +56,27 @@ class GetGoogleChromePortTest(unittest.TestCase):
         # be able to control the contents better.
 
         chromium_port = factory.get("chromium-mac")
-        chromium_overrides = chromium_port.test_expectations_overrides()
+        chromium_base = chromium_port.path_from_chromium_base()
+        fs = filesystem_mock.MockFileSystem()
         port = google_chrome.GetGoogleChromePort(port_name=port_name,
-                                                 options=None)
+                                                 options=None, filesystem=fs)
 
-        orig_exists = os.path.exists
-        orig_open = codecs.open
-        expected_string = "// hello, world\n"
+        expected_chromium_overrides = '// chromium overrides\n'
+        expected_chrome_overrides = '// chrome overrides\n'
+        chromium_path = fs.join(chromium_base, 'webkit', 'tools',
+                                'layout_tests', 'test_expectations.txt')
+        chrome_path = fs.join(chromium_base, 'webkit', 'tools',
+                              'layout_tests', 'test_expectations_chrome.txt')
 
-        def mock_exists_chrome_not_found(path):
-            if 'test_expectations_chrome.txt' in path:
-                return False
-            return orig_exists(path)
+        fs.files[chromium_path] = expected_chromium_overrides
+        fs.files[chrome_path] = None
+        actual_chrome_overrides = port.test_expectations_overrides()
+        self.assertEqual(expected_chromium_overrides, actual_chrome_overrides)
 
-        def mock_exists_chrome_found(path):
-            if 'test_expectations_chrome.txt' in path:
-                return True
-            return orig_exists(path)
-
-        def mock_open(path, mode, encoding):
-            if 'test_expectations_chrome.txt' in path:
-                return newstringio.StringIO(expected_string)
-            return orig_open(path, mode, encoding)
-
-        try:
-            os.path.exists = mock_exists_chrome_not_found
-            chrome_overrides = port.test_expectations_overrides()
-            self.assertEqual(chromium_overrides, chrome_overrides)
-
-            os.path.exists = mock_exists_chrome_found
-            codecs.open = mock_open
-            chrome_overrides = port.test_expectations_overrides()
-            if chromium_overrides:
-                self.assertEqual(chrome_overrides,
-                                 chromium_overrides + expected_string)
-            else:
-                self.assertEqual(chrome_overrides, expected_string)
-        finally:
-            os.path.exists = orig_exists
-            codecs.open = orig_open
+        fs.files[chrome_path] = expected_chrome_overrides
+        actual_chrome_overrides = port.test_expectations_overrides()
+        self.assertEqual(actual_chrome_overrides,
+                         expected_chromium_overrides + expected_chrome_overrides)
 
 
 if __name__ == '__main__':
