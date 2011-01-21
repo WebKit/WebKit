@@ -108,8 +108,6 @@ NEVER_INLINE CollectorBlock* MarkedSpace::allocateBlock()
 
 NEVER_INLINE void MarkedSpace::freeBlock(size_t block)
 {
-    m_heap.didShrink = true;
-
     ObjectIterator it(m_heap, block);
     ObjectIterator end(m_heap, block + 1);
     for ( ; it != end; ++it)
@@ -162,8 +160,6 @@ void* MarkedSpace::allocate(size_t s)
 
 void MarkedSpace::resizeBlocks()
 {
-    m_heap.didShrink = false;
-
     size_t usedCellCount = markedCells();
     size_t minCellCount = usedCellCount + max(ALLOCATIONS_PER_COLLECTION, usedCellCount);
     size_t minBlockCount = (minCellCount + HeapConstants::cellsPerBlock - 1) / HeapConstants::cellsPerBlock;
@@ -222,7 +218,7 @@ static inline bool isPossibleCell(void* p)
     return isCellAligned(p) && p;
 }
 
-void MarkedSpace::markConservatively(MarkStack& markStack, void* start, void* end)
+void MarkedSpace::markConservatively(ConservativeSet& conservativeSet, void* start, void* end)
 {
 #if OS(WINCE)
     if (start > end) {
@@ -244,7 +240,6 @@ void MarkedSpace::markConservatively(MarkStack& markStack, void* start, void* en
     while (p != e) {
         char* x = *p++;
         if (isPossibleCell(x)) {
-            size_t usedBlocks;
             uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
             xAsBits &= CELL_ALIGN_MASK;
 
@@ -254,11 +249,30 @@ void MarkedSpace::markConservatively(MarkStack& markStack, void* start, void* en
                 continue;
 
             CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(xAsBits - offset);
-            usedBlocks = m_heap.usedBlocks;
+            size_t usedBlocks = m_heap.usedBlocks;
             for (size_t block = 0; block < usedBlocks; block++) {
                 if (m_heap.collectorBlock(block) != blockAddr)
                     continue;
-                markStack.append(reinterpret_cast<JSCell*>(xAsBits));
+
+                // x is a pointer into the heap. Now, verify that the cell it
+                // points to is live. (If the cell is dead, we must not mark it,
+                // since that would revive it in a zombie state.)
+                if (block < m_heap.nextBlock) {
+                    conservativeSet.add(reinterpret_cast<JSCell*>(xAsBits));
+                    break;
+                }
+                
+                size_t cellOffset = offset / CELL_SIZE;
+                
+                if (block == m_heap.nextBlock && cellOffset < m_heap.nextCell) {
+                    conservativeSet.add(reinterpret_cast<JSCell*>(xAsBits));
+                    break;
+                }
+                
+                if (blockAddr->marked.get(cellOffset)) {
+                    conservativeSet.add(reinterpret_cast<JSCell*>(xAsBits));
+                    break;
+                }
             }
         }
     }

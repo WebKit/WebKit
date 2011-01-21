@@ -1,3 +1,56 @@
+2011-01-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        When marking conservatively, guard against reviving dead objects.
+        https://bugs.webkit.org/show_bug.cgi?id=52840
+        
+        SunSpider and v8 say no change.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::markCallFrames): Updated to use the ConservativeSet API.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::recordExtraCost): No need to guard against conservative
+        marking reviving dead objects anymore, since the conservative marking
+        mechanism guards against this now.
+
+        (JSC::Heap::markConservatively):
+        (JSC::Heap::markProtectedObjects):
+        (JSC::Heap::markTempSortVectors): Don't drain the mark stack inside a
+        marking function. We want to establish a separation of concerns between
+        visiting roots and draining the mark stack.
+
+        (JSC::Heap::markRoots): Gather the set of conservative references before
+        clearning mark bits, because conservative marking now uses the mark bits
+        to determine if a reference is valid, and avoid reviving dead objects.
+
+        (JSC::Heap::collectAllGarbage): No need to guard against conservative
+        marking reviving dead objects anymore, since the conservative marking
+        mechanism guards against this now.
+
+        * runtime/Heap.h: Updated to use the ConservativeSet API.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::MachineStackMarker::markCurrentThreadConservativelyInternal):
+        (JSC::MachineStackMarker::markCurrentThreadConservatively):
+        (JSC::MachineStackMarker::markOtherThreadConservatively):
+        (JSC::MachineStackMarker::markMachineStackConservatively):
+        * runtime/MachineStackMarker.h: Ditto.
+
+        * runtime/MarkStack.h:
+        (JSC::ConservativeSet::add):
+        (JSC::ConservativeSet::mark): Added ConservativeSet, for gathering the
+        set of conservative references. This is different from MarkStack, since
+        we don't mark the set until it is completely gathered.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeBlock):
+        (JSC::MarkedSpace::resizeBlocks):
+        (JSC::MarkedSpace::markConservatively):
+        * runtime/MarkedSpace.h: When marking conservatively, guard against
+        reviving dead objects.
+
 2011-01-20  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Geoffrey Garen.

@@ -194,10 +194,9 @@ void MachineStackMarker::unregisterThread()
 
 #endif
 
-void NEVER_INLINE MachineStackMarker::markCurrentThreadConservativelyInternal(MarkStack& markStack)
+void NEVER_INLINE MachineStackMarker::markCurrentThreadConservativelyInternal(ConservativeSet& conservativeSet)
 {
-    m_heap->markConservatively(markStack, m_heap->globalData()->stack().current(), m_heap->globalData()->stack().origin());
-    markStack.drain();
+    m_heap->markConservatively(conservativeSet, m_heap->globalData()->stack().current(), m_heap->globalData()->stack().origin());
 }
 
 #if COMPILER(GCC)
@@ -206,7 +205,7 @@ void NEVER_INLINE MachineStackMarker::markCurrentThreadConservativelyInternal(Ma
 #define REGISTER_BUFFER_ALIGNMENT
 #endif
 
-void MachineStackMarker::markCurrentThreadConservatively(MarkStack& markStack)
+void MachineStackMarker::markCurrentThreadConservatively(ConservativeSet& conservativeSet)
 {
     // setjmp forces volatile registers onto the stack
     jmp_buf registers REGISTER_BUFFER_ALIGNMENT;
@@ -219,7 +218,7 @@ void MachineStackMarker::markCurrentThreadConservatively(MarkStack& markStack)
 #pragma warning(pop)
 #endif
 
-    markCurrentThreadConservativelyInternal(markStack);
+    markCurrentThreadConservativelyInternal(conservativeSet);
 }
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -351,7 +350,7 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 #endif
 }
 
-void MachineStackMarker::markOtherThreadConservatively(MarkStack& markStack, Thread* thread)
+void MachineStackMarker::markOtherThreadConservatively(ConservativeSet& conservativeSet, Thread* thread)
 {
     suspendThread(thread->platformThread);
 
@@ -359,21 +358,19 @@ void MachineStackMarker::markOtherThreadConservatively(MarkStack& markStack, Thr
     size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
 
     // mark the thread's registers
-    m_heap->markConservatively(markStack, static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
-    markStack.drain();
+    m_heap->markConservatively(conservativeSet, static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
 
     void* stackPointer = otherThreadStackPointer(regs);
-    m_heap->markConservatively(markStack, stackPointer, thread->stackBase);
-    markStack.drain();
+    m_heap->markConservatively(conservativeSet, stackPointer, thread->stackBase);
 
     resumeThread(thread->platformThread);
 }
 
 #endif
 
-void MachineStackMarker::markMachineStackConservatively(MarkStack& markStack)
+void MachineStackMarker::markMachineStackConservatively(ConservativeSet& conservativeSet)
 {
-    markCurrentThreadConservatively(markStack);
+    markCurrentThreadConservatively(conservativeSet);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
 
@@ -391,7 +388,7 @@ void MachineStackMarker::markMachineStackConservatively(MarkStack& markStack)
         // and since this is a shared heap, they are real locks.
         for (Thread* thread = m_registeredThreads; thread; thread = thread->next) {
             if (!pthread_equal(thread->posixThread, pthread_self()))
-                markOtherThreadConservatively(markStack, thread);
+                markOtherThreadConservatively(conservativeSet, thread);
         }
 #ifndef NDEBUG
         fastMallocAllow();

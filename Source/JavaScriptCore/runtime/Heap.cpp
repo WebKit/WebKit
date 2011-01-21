@@ -93,12 +93,6 @@ void Heap::recordExtraCost(size_t cost)
     if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.size() / 2) {
         JAVASCRIPTCORE_GC_BEGIN();
 
-        // If the last iteration through the heap deallocated blocks, we need
-        // to clean up remaining garbage before marking. Otherwise, the conservative
-        // marking mechanism might follow a pointer to unmapped memory.
-        if (m_markedSpace.didShrink())
-            m_markedSpace.sweep();
-
         markRoots();
 
         JAVASCRIPTCORE_GC_MARKED();
@@ -152,9 +146,9 @@ void* Heap::allocate(size_t s)
     return result;
 }
 
-void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
+void Heap::markConservatively(ConservativeSet& conservativeSet, void* start, void* end)
 {
-    m_markedSpace.markConservatively(markStack, start, end);
+    m_markedSpace.markConservatively(conservativeSet, start, end);
 }
 
 void Heap::updateWeakGCHandles()
@@ -212,10 +206,8 @@ bool Heap::unprotect(JSValue k)
 void Heap::markProtectedObjects(MarkStack& markStack)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
-    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it) {
+    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
         markStack.append(it->first);
-        markStack.drain();
-    }
 }
 
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
@@ -238,10 +230,10 @@ void Heap::markTempSortVectors(MarkStack& markStack)
         Vector<ValueStringPair>* tempSortingVector = *it;
 
         Vector<ValueStringPair>::iterator vectorEnd = tempSortingVector->end();
-        for (Vector<ValueStringPair>::iterator vectorIt = tempSortingVector->begin(); vectorIt != vectorEnd; ++vectorIt)
+        for (Vector<ValueStringPair>::iterator vectorIt = tempSortingVector->begin(); vectorIt != vectorEnd; ++vectorIt) {
             if (vectorIt->first)
                 markStack.append(vectorIt->first);
-        markStack.drain();
+        }
     }
 }
     
@@ -260,20 +252,27 @@ void Heap::markRoots()
 
     m_operationInProgress = Collection;
 
-    MarkStack& markStack = m_globalData->markStack;
+    // We gather the conservative set before clearing mark bits, because
+    // conservative gathering uses the mark bits from our last mark pass to
+    // determine whether a reference is valid.
+    ConservativeSet conservativeSet;
+    m_machineStackMarker.markMachineStackConservatively(conservativeSet);
+    m_globalData->interpreter->registerFile().markCallFrames(conservativeSet, this);
 
     // Reset mark bits.
     m_markedSpace.clearMarkBits();
 
-    // Mark stack roots.
-    m_machineStackMarker.markMachineStackConservatively(markStack);
-    m_globalData->interpreter->registerFile().markCallFrames(markStack, this);
+    MarkStack& markStack = m_globalData->markStack;
+    conservativeSet.mark(markStack);
+    markStack.drain();
 
     // Mark explicitly registered roots.
     markProtectedObjects(markStack);
+    markStack.drain();
     
     // Mark temporary vector for Array sorting
     markTempSortVectors(markStack);
+    markStack.drain();
 
     // Mark misc. other roots.
     if (m_markListSet && m_markListSet->size())
@@ -282,6 +281,7 @@ void Heap::markRoots()
         markStack.append(m_globalData->exception);
     if (m_globalData->firstStringifierToMark)
         JSONObject::markStringifiers(markStack, m_globalData->firstStringifierToMark);
+    markStack.drain();
 
     // Mark the small strings cache last, since it will clear itself if nothing
     // else has marked it.
@@ -391,12 +391,6 @@ void Heap::collectAllGarbage()
 {
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     JAVASCRIPTCORE_GC_BEGIN();
-
-    // If the last iteration through the heap deallocated blocks, we need
-    // to clean up remaining garbage before marking. Otherwise, the conservative
-    // marking mechanism might follow a pointer to unmapped memory.
-    if (m_markedSpace.didShrink())
-        m_markedSpace.sweep();
 
     markRoots();
 

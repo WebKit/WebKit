@@ -87,7 +87,7 @@ namespace JSC {
 
         WeakGCHandle* addWeakGCHandle(JSCell*);
 
-        void markConservatively(MarkStack&, void* start, void* end);
+        void markConservatively(ConservativeSet&, void* start, void* end);
 
         void pushTempSortVector(WTF::Vector<ValueStringPair>*);
         void popTempSortVector(WTF::Vector<ValueStringPair>*);        
