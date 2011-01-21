@@ -1,3 +1,17 @@
+2011-01-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Fix bug introduced in r72688 / bug 52768 that broke the
+        generation of the output filename links in the results.html
+        output. Apparently none of the unit tests actually checked to
+        make sure the generated links were correct :(
+
+        https://bugs.webkit.org/show_bug.cgi?id=52854
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_failures_unittest.py:
+
 2011-01-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

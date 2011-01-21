@@ -123,7 +123,7 @@ class TestFailure(object):
         # FIXME: technically this breaks if files don't use ".ext" to indicate
         # the extension, but passing in a Filesystem object here is a huge
         # hassle.
-        return filename[filename.rfind('.')] + modifier
+        return filename[:filename.rfind('.')] + modifier
 
 
 class FailureWithType(TestFailure):

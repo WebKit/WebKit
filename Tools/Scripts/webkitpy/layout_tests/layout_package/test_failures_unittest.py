@@ -89,6 +89,12 @@ class Test(unittest.TestCase):
         crash_set = set([FailureCrash(), "FailureCrash"])
         self.assertEqual(len(crash_set), 2)
 
+    def test_relative_output_filename(self):
+        # This could be any Failure* object, since we're testing a method
+        # on the base class.
+        failure_obj = FailureTextMismatch()
+        actual_filename = failure_obj.relative_output_filename("fast/html/article-element.html", "-actual.txt")
+        self.assertEquals(actual_filename, "fast/html/article-element-actual.txt")
 
 if __name__ == '__main__':
     unittest.main()
