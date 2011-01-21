@@ -71,9 +71,11 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity,
 
 void ScrollAnimator::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    m_currentPosX = offset.x();
-    m_currentPosY = offset.y();
-    notityPositionChanged();
+    if (m_currentPosX != offset.x() || m_currentPosY != offset.y()) {
+        m_currentPosX = offset.x();
+        m_currentPosY = offset.y();
+        notityPositionChanged();
+    }
 }
 
 FloatPoint ScrollAnimator::currentPosition() const
