@@ -884,6 +884,17 @@ void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
     RefPtr<HistoryItem> historyItem = PassRefPtr<HistoryItem>(item);
     ASSERT(historyItem.get());
 
+    // Sanity check for http://webkit.org/b/52819.  It appears that some child
+    // items of this item might be null.  Try validating just the first set of
+    // children in an attempt to catch it early.
+    const HistoryItemVector& childItems = historyItem->children();
+    int size = childItems.size();
+    for (int i = 0; i < size; ++i) {
+      RefPtr<HistoryItem> childItem = childItems[i].get();
+      if (!childItem.get())
+        CRASH();
+    }
+
     // If there is no currentItem, which happens when we are navigating in
     // session history after a crash, we need to manufacture one otherwise WebKit
     // hoarks. This is probably the wrong thing to do, but it seems to work.

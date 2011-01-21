@@ -1,3 +1,14 @@
+2011-01-21  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Crash in WebCore::HistoryController::itemsAreClones
+        https://bugs.webkit.org/show_bug.cgi?id=52819
+
+        Adds sanity checks to help diagnose the crash.
+
+        * loader/HistoryController.cpp:
+
 2011-01-21  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Ariya Hidayat.

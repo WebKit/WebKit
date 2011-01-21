@@ -658,6 +658,14 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
 
 bool HistoryController::itemsAreClones(HistoryItem* item1, HistoryItem* item2) const
 {
+    // It appears that one of the items can be null in release builds, leading
+    // to the crashes seen in http://webkit.org/b/52819.  For now, try to
+    // narrow it down with a more specific crash.
+    if (!item1)
+        CRASH();
+    if (!item2)
+        CRASH();
+
     // If the item we're going to is a clone of the item we're at, then we do
     // not need to load it again.  The current frame tree and the frame tree
     // snapshot in the item have to match.
