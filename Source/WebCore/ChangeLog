@@ -1,5 +1,14 @@
 2011-01-20  Levi Weintraub  <leviw@chromium.org>
 
+        Unreviewed.
+
+        Fixing build breakage.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::willBeModified):
+
+2011-01-20  Levi Weintraub  <leviw@chromium.org>
+
         Reviewed by Ryosuke Niwa.
 
         RTL: Caret goes to the opposite direction when pressing an arrow key after selection is made

@@ -313,7 +313,7 @@ void SelectionController::willBeModified(EAlteration alter, SelectionDirection d
     Position start = m_selection.start();
     Position end = m_selection.end();
 
-    bool baseIsStart;
+    bool baseIsStart = true;
 
     if (m_isDirectional) {
         // Make base and extent match start and end so we extend the user-visible selection.
