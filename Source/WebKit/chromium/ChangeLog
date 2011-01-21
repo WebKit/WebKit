@@ -1,5 +1,14 @@
 2011-01-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; another Chromium build fix attempt for r76378.
+
+        * src/WebScrollbarImpl.cpp:
+        (WebKit::WebScrollbar::create):
+        (WebKit::WebScrollbarImpl::WebScrollbarImpl):
+        (WebKit::WebScrollbarImpl::setValue):
+
+2011-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium build fix attempt for r76378.
 
         * src/WebScrollbarImpl.cpp:

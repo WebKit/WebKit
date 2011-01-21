@@ -41,7 +41,7 @@
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebRect.h"
-#include "ScrollableArea.h"
+#include "WebScrollbarClient.h"
 #include "WebVector.h"
 #include "WebViewImpl.h"
 
@@ -50,7 +50,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebScrollbar* WebScrollbar::create(ScrollableArea* client, Orientation orientation)
+WebScrollbar* WebScrollbar::create(WebScrollbarClient* client, Orientation orientation)
 {
     return new WebScrollbarImpl(client, orientation);
 }
@@ -60,7 +60,7 @@ int WebScrollbar::defaultThickness()
     return ScrollbarTheme::nativeTheme()->scrollbarThickness();
 }
 
-WebScrollbarImpl::WebScrollbarImpl(ScrollableArea* client, Orientation orientation)
+WebScrollbarImpl::WebScrollbarImpl(WebScrollbarClient* client, Orientation orientation)
     : m_client(client)
     , m_scrollOffset(0)
 {
@@ -95,7 +95,7 @@ int WebScrollbarImpl::value() const
 
 void WebScrollbarImpl::setValue(int position)
 {
-    WebCore::ScrollbarClient::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), position);
+    WebCore::ScrollableArea::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), position);
 }
 
 void WebScrollbarImpl::setDocumentSize(int size)
