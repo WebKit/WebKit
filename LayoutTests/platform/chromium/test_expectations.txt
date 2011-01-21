@@ -3114,6 +3114,3 @@ BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 // Seems to be caused by http://trac.webkit.org/changeset/76291 . Needs
 // investigation.
 BUGTONY : fast/overflow/overflow-rtl-vertical.html = IMAGE
-
-// This test failure needs to be ignored until the next WebKit roll.
-BUGRNIWA : fast/dom/52776.html = IMAGE TEXT

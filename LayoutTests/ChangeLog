@@ -1,5 +1,11 @@
 2011-01-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed; Reverted the last change to the text expectation.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed Chromium test expectation update.
 
         * platform/chromium/test_expectations.txt:
