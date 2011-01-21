@@ -26,7 +26,7 @@
 #define RealtimeAnalyser_h
 
 #include "AudioArray.h"
-#include <wtf/NonCopyable.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
