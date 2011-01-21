@@ -1,3 +1,22 @@
+2011-01-21  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        FrameLoader::checkLoadCompleteForThisFrame uses wrong history item
+        https://bugs.webkit.org/show_bug.cgi?id=48812
+
+        Most calls to stopAllLoaders now clear the history's provisional item(s).
+        We can now avoid resetting the back/forward state if a new navigation
+        is in progress.
+
+        Test: http/tests/navigation/back-twice-without-commit.html
+        Test: http/tests/navigation/forward-and-cancel.html
+
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        * WebCore.exp.in: Update stopAllLoaders signature.
+
 2011-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

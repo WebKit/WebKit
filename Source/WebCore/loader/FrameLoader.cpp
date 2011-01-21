@@ -1682,13 +1682,13 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     return false;
 }
 
-void FrameLoader::stopLoadingSubframes()
+void FrameLoader::stopLoadingSubframes(DatabasePolicy databasePolicy, ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     for (RefPtr<Frame> child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->loader()->stopAllLoaders();
+        child->loader()->stopAllLoaders(databasePolicy, clearProvisionalItemPolicy);
 }
 
-void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy)
+void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy, ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     ASSERT(!m_frame->document() || !m_frame->document()->inPageCache());
     if (m_pageDismissalEventBeingDispatched)
@@ -1702,7 +1702,12 @@ void FrameLoader::stopAllLoaders(DatabasePolicy databasePolicy)
 
     policyChecker()->stopCheck();
 
-    stopLoadingSubframes();
+    // If no new load is in progress, we should clear the provisional item from history
+    // before we call stopLoading.
+    if (clearProvisionalItemPolicy == ShouldClearProvisionalItem)
+        history()->setProvisionalItem(0);
+
+    stopLoadingSubframes(databasePolicy, clearProvisionalItemPolicy);
     if (m_provisionalDocumentLoader)
         m_provisionalDocumentLoader->stopLoading(databasePolicy);
     if (m_documentLoader)
@@ -2353,7 +2358,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                     // Reset the back forward list to the last committed history item at the top level.
                     item = page->mainFrame()->loader()->history()->currentItem();
                 
-            bool shouldReset = true;
+            // Only reset if we aren't already going to a new provisional item.
+            bool shouldReset = !history()->provisionalItem();
             if (!(pdl->isLoadingInAPISense() && !pdl->isStopping())) {
                 m_delegateIsHandlingProvisionalLoadError = true;
                 m_client->dispatchDidFailProvisionalLoad(error);
@@ -2362,7 +2368,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 // FIXME: can stopping loading here possibly have any effect, if isLoading is false,
                 // which it must be to be in this branch of the if? And is it OK to just do a full-on
                 // stopAllLoaders instead of stopLoadingSubframes?
-                stopLoadingSubframes();
+                stopLoadingSubframes(DatabasePolicyStop, ShouldNotClearProvisionalItem);
                 pdl->stopLoading();
 
                 // If we're in the middle of loading multipart data, we need to restore the document loader.
@@ -2964,7 +2970,8 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
     }
 
     FrameLoadType type = policyChecker()->loadType();
-    stopAllLoaders();
+    // A new navigation is in progress, so don't clear the history's provisional item.
+    stopAllLoaders(DatabasePolicyStop, ShouldNotClearProvisionalItem);
     
     // <rdar://problem/6250856> - In certain circumstances on pages with multiple frames, stopAllLoaders()
     // might detach the current FrameLoader, in which case we should bail on this newly defunct load. 

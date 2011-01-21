@@ -7,9 +7,10 @@
 //    Important to use about:blank, which can commit immediately while walking the tree.
 // 5. Go forward to slow URL, but stop before the navigation commits.
 //    Important to cancel the load and ensure the history is not corrupted.
-// 6. Go back to start page with no frames.
-//    Important for testing that subframes can be removed.
+// 6. Go forward and let slow URL load.
+//    Important for testing that navigation state is reset after stopping.
 if (window.layoutTestController) {
+    layoutTestController.clearBackForwardList();
     layoutTestController.dumpBackForwardList();
     layoutTestController.dumpAsText();
     layoutTestController.queueLoad("resources/forward-and-cancel-frames-container.html");
@@ -21,7 +22,8 @@ if (window.layoutTestController) {
     layoutTestController.queueNonLoadingScript("setTimeout('history.forward();',0); setTimeout('window.stop();',10);");
 
     // Now go back to make sure the backForwardList is not corrupted.
-    layoutTestController.queueNonLoadingScript("setTimeout('history.back();',50);");
+    layoutTestController.queueNonLoadingScript("setTimeout('history.forward();',50);");
+    layoutTestController.queueNonLoadingScript("setTimeout('layoutTestController.notifyDone();',100);");
 
     // Wait until we get back to this page.
     layoutTestController.queueLoadingScript("layoutTestController.waitUntilDone();");
@@ -29,15 +31,3 @@ if (window.layoutTestController) {
 </script>
 <p>This test checks that the backForward list is not corrupted when a frame load is canceled.
 <p>If testing manually, <a href="resources/forward-and-cancel-frames-container.html">click here</a>.
-
-<script>
-if (window.layoutTestController) {
-    // Only notify done when we return to this page a second time.
-    if (!window.localStorage.started) {
-        window.localStorage.started = true;
-    } else {
-        delete window.localStorage.started;
-        layoutTestController.notifyDone();
-    }
-}
-</script>

@@ -128,7 +128,7 @@ public:
     bool canHandleRequest(const ResourceRequest&);
 
     // Also not cool.
-    void stopAllLoaders(DatabasePolicy = DatabasePolicyStop);
+    void stopAllLoaders(DatabasePolicy = DatabasePolicyStop, ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
     void stopForUserCancel(bool deferCheckLoadComplete = false);
 
     bool isLoadingMainResource() const { return m_isLoadingMainResource; }
@@ -355,7 +355,7 @@ private:
     void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType loadType, bool isMainResource, bool cookiePolicyURLFromRequest);
 
     // Also not cool.
-    void stopLoadingSubframes();
+    void stopLoadingSubframes(DatabasePolicy, ClearProvisionalItemPolicy);
 
     void clearProvisionalLoad();
     void markLoadComplete();

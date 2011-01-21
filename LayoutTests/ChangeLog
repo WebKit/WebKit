@@ -1,3 +1,22 @@
+2011-01-21  Charlie Reis  <creis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        FrameLoader::checkLoadCompleteForThisFrame uses wrong history item
+        https://bugs.webkit.org/show_bug.cgi?id=48812
+
+        Test that we avoid updating back/forward list on a canceled navigation
+        if a new navigation is already in process.  Also update forward-and-cancel
+        to go forward, ensuring back/forward state is reset if user clicks stop.
+
+        * http/tests/navigation/back-twice-without-commit-expected.txt: Added.
+        * http/tests/navigation/back-twice-without-commit.html: Added.
+        * http/tests/navigation/forward-and-cancel-expected.txt:
+        * http/tests/navigation/forward-and-cancel.html: Go forward after stop, not back.
+        * http/tests/navigation/resources/back-twice-page-2.html: Added.
+        * http/tests/navigation/resources/back-twice-page-3.html: Added.
+        * http/tests/navigation/resources/forward-and-cancel-frames.html: Reduced delay.
+
 2011-01-20  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Eric Seidel.

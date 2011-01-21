@@ -73,6 +73,11 @@ namespace WebCore {
         DatabasePolicyStop,    // The database thread should be stopped and database connections closed.
         DatabasePolicyContinue
     };
+    
+    enum ClearProvisionalItemPolicy {
+        ShouldClearProvisionalItem,
+        ShouldNotClearProvisionalItem
+    };
 
     enum ObjectContentType {
         ObjectContentNone,
