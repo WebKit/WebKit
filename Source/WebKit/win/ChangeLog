@@ -1,3 +1,27 @@
+2011-01-21  Adam Roben  <aroben@apple.com>
+
+        Replace some "sync compositing state" terminology with "flush pending GraphicsLayer changes"
+
+        This seems to be the direction in which our code is moving. I chose "GraphicsLayer" as
+        opposed to just "layer" because there are cases where we flush changes to CACFLayers that
+        don't have a corresponding GraphicsLayer.
+
+        Fixes <http://webkit.org/b/52894> "Sync compositing state" terminology in
+        WKCACFLayerRenderer and friends is confusing
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::scheduleCompositingLayerSync): Updated for WebView changes.
+
+        * WebView.cpp:
+        (WebView::paint): Updated for rename.
+        (WebView::flushPendingGraphicsLayerChangesSoon): Renamed from scheduleCompositingLayerSync.
+        (WebView::notifySyncRequired): Updated for rename.
+        (WebView::flushPendingGraphicsLayerChanges): Renamed from syncCompositingState.
+
+        * WebView.h: Did the renames.
+
 2011-01-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt.

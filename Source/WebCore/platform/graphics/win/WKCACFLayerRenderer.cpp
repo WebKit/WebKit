@@ -187,7 +187,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer()
     , m_hostWindow(0)
     , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
     , m_mustResetLostDeviceBeforeRendering(false)
-    , m_syncLayerChanges(false)
+    , m_shouldFlushPendingGraphicsLayerChanges(false)
 {
     // Point the CACFContext to this
     wkCACFContextSetUserData(m_context, this);
@@ -430,10 +430,9 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& windowDirtyRects)
         return;
     }
 
-    // Sync the layer if needed
-    if (m_syncLayerChanges) {
-        m_client->syncCompositingState();
-        m_syncLayerChanges = false;
+    if (m_shouldFlushPendingGraphicsLayerChanges) {
+        m_client->flushPendingGraphicsLayerChanges();
+        m_shouldFlushPendingGraphicsLayerChanges = false;
     }
 
     // Flush the root layer to the render tree.
@@ -524,9 +523,9 @@ void WKCACFLayerRenderer::renderSoon()
         m_renderTimer.startOneShot(0);
 }
 
-void WKCACFLayerRenderer::syncCompositingStateSoon()
+void WKCACFLayerRenderer::flushPendingGraphicsLayerChangesSoon()
 {
-    m_syncLayerChanges = true;
+    m_shouldFlushPendingGraphicsLayerChanges = true;
     renderSoon();
 }
 

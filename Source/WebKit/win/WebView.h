@@ -905,7 +905,7 @@ public:
     void downloadURL(const WebCore::KURL&);
 
 #if USE(ACCELERATED_COMPOSITING)
-    void scheduleCompositingLayerSync();
+    void flushPendingGraphicsLayerChangesSoon();
     void setRootChildLayer(WebCore::GraphicsLayer*);
 #endif
 
@@ -949,7 +949,7 @@ private:
 
     // WKCACFLayerRendererClient
     virtual bool shouldRender() const;
-    virtual void syncCompositingState();
+    virtual void flushPendingGraphicsLayerChanges();
 #endif
 
 protected:

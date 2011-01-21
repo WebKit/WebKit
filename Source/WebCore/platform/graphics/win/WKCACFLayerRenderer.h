@@ -53,7 +53,7 @@ class WKCACFLayerRendererClient {
 public:
     virtual ~WKCACFLayerRendererClient() { }
     virtual bool shouldRender() const = 0;
-    virtual void syncCompositingState() { }
+    virtual void flushPendingGraphicsLayerChanges() { }
 };
 
 // FIXME: Currently there is a WKCACFLayerRenderer for each WebView and each
@@ -75,7 +75,7 @@ public:
     void setHostWindow(HWND);
     void paint();
     void resize();
-    void syncCompositingStateSoon();
+    void flushPendingGraphicsLayerChangesSoon();
 
 protected:
     PlatformCALayer* rootLayer() const;
@@ -110,7 +110,7 @@ private:
     HWND m_hostWindow;
     Timer<WKCACFLayerRenderer> m_renderTimer;
     bool m_mustResetLostDeviceBeforeRendering;
-    bool m_syncLayerChanges;
+    bool m_shouldFlushPendingGraphicsLayerChanges;
     HashSet<RefPtr<PlatformCALayer> > m_pendingAnimatedLayers;
 
 #ifndef NDEBUG

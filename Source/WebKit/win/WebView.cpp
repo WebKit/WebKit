@@ -990,8 +990,8 @@ void WebView::paint(HDC dc, LPARAM options)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (isAcceleratedCompositing()) {
-        syncCompositingState();
-        // Syncing might have taken us out of compositing mode.
+        flushPendingGraphicsLayerChanges();
+        // Flushing might have taken us out of compositing mode.
         if (isAcceleratedCompositing()) {
             // FIXME: We need to paint into dc (if provided). <http://webkit.org/b/52578>
             m_layerRenderer->paint();
@@ -6272,11 +6272,11 @@ void WebView::setRootChildLayer(GraphicsLayer* layer)
     m_backingLayer->addChild(layer);
 }
 
-void WebView::scheduleCompositingLayerSync()
+void WebView::flushPendingGraphicsLayerChangesSoon()
 {
     if (!m_layerRenderer)
         return;
-    m_layerRenderer->syncCompositingStateSoon();
+    m_layerRenderer->flushPendingGraphicsLayerChangesSoon();
 }
 
 void WebView::setAcceleratedCompositing(bool accelerated)
@@ -6480,7 +6480,7 @@ void WebView::notifyAnimationStarted(const GraphicsLayer*, double)
 
 void WebView::notifySyncRequired(const GraphicsLayer*)
 {
-    scheduleCompositingLayerSync();
+    flushPendingGraphicsLayerChangesSoon();
 }
 
 void WebView::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& inClip)
@@ -6517,7 +6517,7 @@ bool WebView::shouldRender() const
     return !frameView->layoutPending();
 }
 
-void WebView::syncCompositingState()
+void WebView::flushPendingGraphicsLayerChanges()
 {
     Frame* coreFrame = core(m_mainFrame);
     if (!coreFrame)
