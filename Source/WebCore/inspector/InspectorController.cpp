@@ -983,21 +983,9 @@ void InspectorController::didCloseWebSocket(unsigned long identifier)
 #endif // ENABLE(WEB_SOCKETS)
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-void InspectorController::addProfile(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL)
-{
-    if (!enabled())
-        return;
-    m_profilerAgent->addProfile(prpProfile, lineNumber, sourceURL);
-}
-
 bool InspectorController::isRecordingUserInitiatedProfile() const
 {
     return m_profilerAgent->isRecordingUserInitiatedProfile();
-}
-
-String InspectorController::getCurrentUserInitiatedProfileName(bool incrementProfileNumber)
-{
-    return m_profilerAgent->getCurrentUserInitiatedProfileName(incrementProfileNumber);
 }
 
 void InspectorController::startUserInitiatedProfiling()

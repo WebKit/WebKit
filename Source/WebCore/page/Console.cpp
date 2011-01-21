@@ -262,20 +262,13 @@ void Console::profile(const String& title, ScriptState* state, PassRefPtr<Script
     if (!page)
         return;
 
-#if ENABLE(INSPECTOR)
-    InspectorController* controller = page->inspectorController();
     // FIXME: log a console message when profiling is disabled.
-    if (!controller->profilerEnabled())
+    if (!InspectorInstrumentation::profilerEnabled(page))
         return;
-#endif
 
     String resolvedTitle = title;
     if (title.isNull()) // no title so give it the next user initiated profile title.
-#if ENABLE(INSPECTOR)
-        resolvedTitle = controller->getCurrentUserInitiatedProfileName(true);
-#else
-        resolvedTitle = "";
-#endif
+        resolvedTitle = InspectorInstrumentation::getCurrentUserInitiatedProfileName(page, true);
 
     ScriptProfiler::start(state, resolvedTitle);
 
@@ -289,22 +282,15 @@ void Console::profileEnd(const String& title, ScriptState* state, PassRefPtr<Scr
     if (!page)
         return;
 
-#if ENABLE(INSPECTOR)
-    InspectorController* controller = page->inspectorController();
-    if (!controller->profilerEnabled())
+    if (!InspectorInstrumentation::profilerEnabled(page))
         return;
-#endif
 
     RefPtr<ScriptProfile> profile = ScriptProfiler::stop(state, title);
     if (!profile)
         return;
 
     m_profiles.append(profile);
-
-#if ENABLE(INSPECTOR)
-    const ScriptCallFrame& lastCaller = callStack->at(0);
-    controller->addProfile(profile, lastCaller.lineNumber(), lastCaller.sourceURL());
-#endif
+    InspectorInstrumentation::addProfile(page, profile, callStack.get());
 }
 
 #endif
