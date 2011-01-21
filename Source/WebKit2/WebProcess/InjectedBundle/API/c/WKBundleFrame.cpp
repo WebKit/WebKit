@@ -202,3 +202,8 @@ WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frameRef)
     
     return toAPI(view->scrollOffset());
 }
+
+WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frameRef, WKURLRef urlRef)
+{
+    return toCopiedAPI(toImpl(frameRef)->suggestedFilenameForResourceWithURL(WebCore::KURL(WebCore::KURL(), toImpl(urlRef)->string())));
+}

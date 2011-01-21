@@ -38,6 +38,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <WebCore/AnimationController.h>
+#include <WebCore/ArchiveResource.h>
 #include <WebCore/CSSComputedStyleDeclaration.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
@@ -524,6 +525,22 @@ String WebFrame::provisionalURL() const
         return String();
 
     return m_coreFrame->loader()->provisionalDocumentLoader()->url().string();
+}
+
+String WebFrame::suggestedFilenameForResourceWithURL(const KURL& url) const
+{
+    if (!m_coreFrame)
+        return String();
+
+    DocumentLoader* loader = m_coreFrame->loader()->documentLoader();
+    if (!loader)
+        return String();
+    
+    RefPtr<ArchiveResource> resource = loader->subresource(url);
+    if (!resource)
+        return String();
+    
+    return resource->response().suggestedFilename();
 }
 
 } // namespace WebKit
