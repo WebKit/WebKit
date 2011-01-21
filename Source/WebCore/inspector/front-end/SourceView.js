@@ -33,8 +33,8 @@ WebInspector.SourceView = function(resource)
     this.element.addStyleClass("source");
 
     var contentProvider = new WebInspector.SourceFrameContentProviderForResource(resource);
-    var canEditScripts = WebInspector.panels.scripts.canEditScripts() && resource.type === WebInspector.Resource.Type.Script;
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, contentProvider, resource.url, canEditScripts);
+    var isScript = resource.type === WebInspector.Resource.Type.Script;
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, contentProvider, resource.url, isScript);
 }
 
 WebInspector.SourceView.prototype = {

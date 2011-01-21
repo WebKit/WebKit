@@ -97,12 +97,15 @@ WebInspector.Script.prototype = {
 
     get source()
     {
+        if (!this._source && this.resource)
+            this._source = this.resource.content;
         return this._source;
     },
 
     set source(source)
     {
         this._source = source;
+        delete this._lineEndings;
     },
 
     requestSource: function(callback)

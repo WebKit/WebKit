@@ -30,7 +30,7 @@ WebInspector.ScriptView = function(script)
     this.element.addStyleClass("script-view");
 
     var contentProvider = new WebInspector.SourceFrameContentProviderForScript(script);
-    this.sourceFrame = new WebInspector.SourceFrame(this.element, contentProvider, "", WebInspector.panels.scripts.canEditScripts());
+    this.sourceFrame = new WebInspector.SourceFrame(this.element, contentProvider, "", true);
 }
 
 WebInspector.ScriptView.prototype = {

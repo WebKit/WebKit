@@ -28,12 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(parentElement, contentProvider, url, canEditScripts)
+WebInspector.SourceFrame = function(parentElement, contentProvider, url, isScript)
 {
     this._parentElement = parentElement;
     this._contentProvider = contentProvider;
     this._url = url;
-    this._canEditScripts = canEditScripts;
+    this._isScript = isScript;
+
 
     this._textModel = new WebInspector.TextEditorModel();
     this._textModel.replaceTabsWithSpaces = true;
@@ -163,6 +164,7 @@ WebInspector.SourceFrame.prototype = {
         element.addEventListener("mousedown", this._mouseDown.bind(this), true);
         element.addEventListener("mousemove", this._mouseMove.bind(this), true);
         element.addEventListener("scroll", this._scroll.bind(this), true);
+        element.addEventListener("dblclick", this._doubleClick.bind(this), true);
         this._parentElement.appendChild(element);
 
         this._textViewer.beginUpdates();
@@ -802,39 +804,34 @@ WebInspector.SourceFrame.prototype = {
         WebInspector.debuggerModel.continueToLine(sourceID, lineNumber + 1);
     },
 
-    _editLine: function(lineNumber, newContent, cancelEditingCallback)
+    _doubleClick: function(event)
     {
-        var lines = [];
-        var oldLines = this._content.split('\n');
-        for (var i = 0; i < oldLines.length; ++i) {
-            if (i === lineNumber)
-                lines.push(newContent);
-            else
-                lines.push(oldLines[i]);
+        if (!Preferences.canEditScriptSource || !this._isScript)
+            return;
+
+        var target = event.target.enclosingNodeOrSelfWithNodeName("TD");
+        if (!target || target.parentElement.firstChild === target)
+            return;  // Do not trigger editing from line numbers.
+
+        var lineRow = target.parentElement;
+        var lineNumber = lineRow.lineNumber;
+        var sourceID = this._sourceIDForLine(lineNumber);
+        if (!sourceID)
+            return;
+
+        function didEditLine(newContent)
+        {
+            var lines = [];
+            var oldLines = this._content.split('\n');
+            for (var i = 0; i < oldLines.length; ++i) {
+                if (i === lineNumber)
+                    lines.push(newContent);
+                else
+                    lines.push(oldLines[i]);
+            }
+            WebInspector.debuggerModel.editScriptSource(sourceID, lines.join("\n"));
         }
-
-        var editData = {};
-        editData.sourceID = this._sourceIDForLine(lineNumber);
-        editData.content = lines.join("\n");
-        editData.line = lineNumber + 1;
-        editData.linesCountToShift = newContent.split("\n").length - 1;
-        this._doEditLine(editData, cancelEditingCallback);
-    },
-
-    _revertEditLine: function(editData, contentToRevertTo)
-    {
-        var newEditData = {};
-        newEditData.sourceID = editData.sourceID;
-        newEditData.content = contentToRevertTo;
-        newEditData.line = editData.line;
-        newEditData.linesCountToShift = -editData.linesCountToShift;
-        this._doEditLine(newEditData);
-    },
-
-    _doEditLine: function(editData, cancelEditingCallback)
-    {
-        var revertEditingCallback = this._revertEditLine.bind(this, editData);
-        WebInspector.panels.scripts.editScriptSource(editData, revertEditingCallback, cancelEditingCallback);
+        this._textViewer.editLine(lineRow, didEditLine.bind(this));
     },
 
     _setBreakpoint: function(lineNumber, enabled, condition)

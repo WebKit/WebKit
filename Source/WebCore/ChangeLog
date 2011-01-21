@@ -1,3 +1,43 @@
+2011-01-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: breakpoints are restored incorrectly when reverting live edit.
+        https://bugs.webkit.org/show_bug.cgi?id=52300
+
+        Fix breakpoints restoring when reverting to old revision by using text diff.
+        Move live edit logic from ScriptsPanel to DebuggerModel.
+        Eliminate unnecessary editLine delegate in TextViewer.
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel):
+        (WebInspector.DebuggerModel.prototype.reset):
+        (WebInspector.DebuggerModel.prototype.editScriptSource):
+        (WebInspector.DebuggerModel.prototype._updateScriptSource):
+        (WebInspector.DebuggerModel.prototype.get callFrames):
+        (WebInspector.DebuggerModel.prototype.pausedScript):
+        (WebInspector.DebuggerModel.prototype.resumedScript):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.get source):
+        * inspector/front-end/ScriptView.js:
+        (WebInspector.ScriptView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._scriptSourceChanged):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype._createViewerIfNeeded):
+        (WebInspector.SourceFrame.prototype._doubleClick.didEditLine):
+        (WebInspector.SourceFrame.prototype._doubleClick):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer):
+        (WebInspector.TextViewer.prototype._handleKeyDown):
+        (WebInspector.TextViewer.prototype.editLine.finishEditing):
+        (WebInspector.TextViewer.prototype.editLine):
+        (WebInspector.TextChunk.prototype._createRow):
+
 2011-01-21  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Eric Seidel.

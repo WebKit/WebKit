@@ -186,6 +186,7 @@ WebInspector.ScriptsPanel = function()
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ScriptSourceChanged, this._scriptSourceChanged, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
 }
@@ -251,6 +252,27 @@ WebInspector.ScriptsPanel.prototype = {
         this._addScript(event.data);
     },
 
+    _scriptSourceChanged: function(event)
+    {
+        var sourceID = event.data.sourceID;
+        var oldSource = event.data.oldSource;
+
+        var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
+        var oldView = script._scriptView;
+        if (oldView) {
+            script._scriptView = new WebInspector.ScriptView(script);
+            this.viewRecreated(oldView, script._scriptView);
+        }
+        if (script.resource) {
+            var revertHandle = WebInspector.debuggerModel.editScriptSource.bind(WebInspector.debuggerModel, sourceID, oldSource);
+            script.resource.setContent(script.source, revertHandle);
+        }
+
+        var callFrames = WebInspector.debuggerModel.callFrames;
+        if (callFrames.length)
+            this._debuggerPaused({ data: { callFrames: callFrames } });
+    },
+
     _addScript: function(script)
     {
         var resource = WebInspector.resourceForURL(script.sourceURL);
@@ -284,52 +306,6 @@ WebInspector.ScriptsPanel.prototype = {
         // Adding first script will add resource.
         this._addScriptToFilesMenu(resource._scriptsPendingResourceLoad[0]);
         delete resource._scriptsPendingResourceLoad;
-    },
-
-    canEditScripts: function()
-    {
-        return Preferences.canEditScriptSource;
-    },
-
-    editScriptSource: function(editData, revertEditingCallback, cancelEditingCallback)
-    {
-        if (!this.canEditScripts())
-            return;
-
-        // Need to clear breakpoints and re-create them later when editing source.
-        var breakpoints = WebInspector.debuggerModel.queryBreakpoints(function(b) { return b.sourceID === editData.sourceID });
-        for (var i = 0; i < breakpoints.length; ++i)
-            breakpoints[i].remove();
-
-        function mycallback(success, newBodyOrErrorMessage, callFrames)
-        {
-            if (success) {
-                var script = WebInspector.debuggerModel.scriptForSourceID(editData.sourceID);
-                script.source = newBodyOrErrorMessage;
-                var oldView = script._scriptView
-                if (oldView) {
-                    script._scriptView = new WebInspector.ScriptView(script);
-                    this.viewRecreated(oldView, script._scriptView);
-                }
-                if (script.resource)
-                    script.resource.setContent(newBodyOrErrorMessage, revertEditingCallback);
-
-                if (callFrames && callFrames.length)
-                    this._debuggerPaused({ data: { callFrames: callFrames } });
-            } else {
-                if (cancelEditingCallback)
-                    cancelEditingCallback();
-                WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Warning);
-            }
-            for (var i = 0; i < breakpoints.length; ++i) {
-                var breakpoint = breakpoints[i];
-                var newLine = breakpoint.line;
-                if (success && breakpoint.line >= editData.line)
-                    newLine += editData.linesCountToShift;
-                WebInspector.debuggerModel.setBreakpoint(editData.sourceID, newLine, breakpoint.enabled, breakpoint.condition);
-            }
-        };
-        InspectorBackend.editScriptSource(editData.sourceID, editData.content, mycallback.bind(this));
     },
 
     selectedCallFrameId: function()

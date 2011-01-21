@@ -43,7 +43,6 @@ WebInspector.TextViewer = function(textModel, platform, url)
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
     this.element.addEventListener("beforecopy", this._beforeCopy.bind(this), false);
     this.element.addEventListener("copy", this._copy.bind(this), false);
-    this.element.addEventListener("dblclick", this._handleDoubleClick.bind(this), false);
 
     this._url = url;
 
@@ -78,11 +77,6 @@ WebInspector.TextViewer.prototype = {
 
         var chunk = this._makeLineAChunk(lineNumber);
         chunk.element.scrollIntoViewIfNeeded();
-    },
-
-    set editCallback(editCallback)
-    {
-        this._editCallback = editCallback;
     },
 
     addDecoration: function(lineNumber, decoration)
@@ -231,20 +225,20 @@ WebInspector.TextViewer.prototype = {
             scrollValue = -1;
         else if (event.keyCode == WebInspector.KeyboardShortcut.Keys.Down.code)
             scrollValue = 1;
-        
+
         if (scrollValue) {
             event.preventDefault();
             event.stopPropagation();
             this.element.scrollByLines(scrollValue);
             return;
         }
-        
+
         scrollValue = 0;
         if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Left.code)
             scrollValue = -40;
         else if (event.keyCode == WebInspector.KeyboardShortcut.Keys.Right.code)
             scrollValue = 40;
-        
+
         if (scrollValue) {
             event.preventDefault();
             event.stopPropagation();
@@ -252,40 +246,23 @@ WebInspector.TextViewer.prototype = {
         }
     },
 
-    _handleDoubleClick: function(e)
+    editLine: function(lineRow, callback)
     {
-        if (!this._editCallback)
-            return;
-
-        var cell = e.target.enclosingNodeOrSelfWithNodeName("TD");
-        if (!cell)
-            return;
-
-        var lineRow = cell.parentElement;
-        if (lineRow.firstChild === cell)
-            return;  // Do not trigger editing from line numbers.
-
-        var oldContent = lineRow.lastChild.innerHTML;
-        var cancelEditingCallback = this._cancelEditingLine.bind(this, lineRow.lastChild, oldContent);
-        var commitEditingCallback = this._commitEditingLine.bind(this, lineRow.lineNumber, lineRow.lastChild, cancelEditingCallback);
-        this._editingLine = WebInspector.startEditing(lineRow.lastChild, {
+        var element = lineRow.lastChild;
+        var oldContent = element.innerHTML;
+        function finishEditing(committed, e, newContent)
+        {
+            if (committed)
+                callback(newContent);
+            element.innerHTML = oldContent;
+            delete this._editingLine;
+        }
+        this._editingLine = WebInspector.startEditing(element, {
             context: null,
-            commitHandler: commitEditingCallback,
-            cancelHandler: cancelEditingCallback,
+            commitHandler: finishEditing.bind(this, true),
+            cancelHandler: finishEditing.bind(this, false),
             multiline: true
         });
-    },
-
-    _commitEditingLine: function(lineNumber, element, cancelEditingCallback)
-    {
-        this._editCallback(lineNumber, element.textContent, cancelEditingCallback);
-        delete this._editingLine;
-    },
-
-    _cancelEditingLine: function(element, oldContent, e)
-    {
-        element.innerHTML = oldContent;
-        delete this._editingLine;
     },
 
     _beforeCopy: function(e)
@@ -786,7 +763,7 @@ WebInspector.TextChunk.prototype = {
 
             var lineContentElement = document.createElement("td");
             lineContentElement.className = "webkit-line-content";
-            lineRow.appendChild(lineContentElement);        
+            lineRow.appendChild(lineContentElement);
         }
         lineRow.lineNumber = lineNumber;
         lineNumberElement.textContent = lineNumber + 1;

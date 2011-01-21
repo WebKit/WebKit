@@ -31,6 +31,7 @@
 WebInspector.DebuggerModel = function()
 {
     this._paused = false;
+    this._callFrames = [];
     this._breakpoints = {};
     this._sourceIDAndLineToBreakpointId = {};
     this._scripts = {};
@@ -43,6 +44,7 @@ WebInspector.DebuggerModel.Events = {
     DebuggerResumed: "debugger-resumed",
     ParsedScriptSource: "parsed-script-source",
     FailedToParseScriptSource: "failed-to-parse-script-source",
+    ScriptSourceChanged: "script-source-changed",
     BreakpointAdded: "breakpoint-added",
     BreakpointRemoved: "breakpoint-removed"
 }
@@ -135,6 +137,7 @@ WebInspector.DebuggerModel.prototype = {
     reset: function()
     {
         this._paused = false;
+        this._callFrames = [];
         this._breakpoints = {};
         delete this._oneTimeBreakpoint;
         this._sourceIDAndLineToBreakpointId = {};
@@ -162,9 +165,64 @@ WebInspector.DebuggerModel.prototype = {
         return scripts;
     },
 
+    editScriptSource: function(sourceID, scriptSource)
+    {
+        function didEditScriptSource(success, newBodyOrErrorMessage, callFrames)
+        {
+            if (success) {
+                if (callFrames && callFrames.length)
+                    this._callFrames = callFrames;
+                this._updateScriptSource(sourceID, newBodyOrErrorMessage);
+            } else
+                WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Warning);
+        }
+        InspectorBackend.editScriptSource(sourceID, scriptSource, didEditScriptSource.bind(this));
+    },
+
+    _updateScriptSource: function(sourceID, scriptSource)
+    {
+        var script = this._scripts[sourceID];
+        var oldSource = script.source;
+        script.source = scriptSource;
+
+        // Clear and re-create breakpoints according to text diff.
+        var diff = Array.diff(oldSource.split("\n"), script.source.split("\n"));
+        for (var id in this._breakpoints) {
+            var breakpoint = this._breakpoints[id];
+            if (breakpoint.sourceID !== sourceID)
+                continue;
+            breakpoint.remove();
+            var lineNumber = breakpoint.line - 1;
+            var newLineNumber = diff.left[lineNumber].row;
+            if (newLineNumber === undefined) {
+                for (var i = lineNumber - 1; i >= 0; --i) {
+                    if (diff.left[i].row === undefined)
+                        continue;
+                    var shiftedLineNumber = diff.left[i].row + lineNumber - i;
+                    if (shiftedLineNumber < diff.right.length) {
+                        var originalLineNumber = diff.right[shiftedLineNumber].row;
+                        if (originalLineNumber === lineNumber || originalLineNumber === undefined)
+                            newLineNumber = shiftedLineNumber;
+                    }
+                    break;
+                }
+            }
+            if (newLineNumber !== undefined)
+                this.setBreakpoint(sourceID, newLineNumber + 1, breakpoint.enabled, breakpoint.condition);
+        }
+
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ScriptSourceChanged, { sourceID: sourceID, oldSource: oldSource });
+    },
+
+    get callFrames()
+    {
+        return this._callFrames;
+    },
+
     _pausedScript: function(details)
     {
         this._paused = true;
+        this._callFrames = details.callFrames;
         if ("_continueToLineBreakpointId" in this) {
             InspectorBackend.removeBreakpoint(this._continueToLineBreakpointId);
             delete this._continueToLineBreakpointId;
@@ -175,6 +233,7 @@ WebInspector.DebuggerModel.prototype = {
     _resumedScript: function()
     {
         this._paused = false;
+        this._callFrames = [];
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
     },
 
