@@ -1,6 +1,6 @@
 // This file indicates the expectations for running Chromium under
 // the GPU-accelerated codepaths as defined in
-// WebKitTools/Scripts/webkitpy/layout_tests/port/chromium_gpu.py
+// Tools/Scripts/webkitpy/layout_tests/port/chromium_gpu.py
 //
 // We skip most of the tests in the repository because they don't trigger
 // the accelerated code paths. We actually only run some of the canvas and
@@ -266,10 +266,6 @@ BUGWK47926 : compositing/geometry/composited-html-size.html = FAIL
 
 // These tests are missing an entire layer in the layer tree output.
 BUGWK47927 WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TEXT
-
-BUGCR60962 WIN : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT PASS
-BUGCR60962 MAC : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT IMAGE
-BUGCR60962 LINUX : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT IMAGE PASS
 
 // The following failure seems suspicious because it does not contain
 // any text; it seems that the layer tree should precisely match
