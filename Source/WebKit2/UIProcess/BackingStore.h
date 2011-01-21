@@ -40,6 +40,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class ShareableBitmap;
 class UpdateInfo;
 class WebPageProxy;
 
@@ -60,10 +61,12 @@ public:
 private:
     BackingStore(const WebCore::IntSize&, WebPageProxy*);
 
+    void incorporateUpdate(ShareableBitmap*, const UpdateInfo&);
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
 
     WebCore::IntSize m_size;
     WebPageProxy* m_webPageProxy;
+    double m_latestUpdateTimestamp;
 
 #if PLATFORM(MAC)
     CGContextRef backingStoreContext();

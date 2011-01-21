@@ -41,7 +41,7 @@ class UpdateInfo {
     WTF_MAKE_NONCOPYABLE(UpdateInfo);
 
 public:
-    UpdateInfo() { }
+    UpdateInfo() : timestamp(0) { }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, UpdateInfo&);

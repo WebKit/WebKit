@@ -25,6 +25,9 @@
 
 #include "BackingStore.h"
 
+#include "ShareableBitmap.h"
+#include "UpdateInfo.h"
+
 using namespace WebCore;
 
 #if !PLATFORM(MAC)
@@ -41,12 +44,31 @@ PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size, WebPageProxy*
 BackingStore::BackingStore(const IntSize& size, WebPageProxy* webPageProxy)
     : m_size(size)
     , m_webPageProxy(webPageProxy)
+    , m_latestUpdateTimestamp(0)
 {
     ASSERT(!m_size.isEmpty());
 }
 
 BackingStore::~BackingStore()
 {
+}
+
+void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
+{
+    if (updateInfo.timestamp < m_latestUpdateTimestamp) {
+        // The update is too old, discard it.
+        return;
+    }
+
+    ASSERT(m_size == updateInfo.viewSize);
+    
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.updateRectBounds.size(), updateInfo.bitmapHandle);
+    if (!bitmap)
+        return;
+    
+    incorporateUpdate(bitmap.get(), updateInfo);
+
+    m_latestUpdateTimestamp = updateInfo.timestamp;
 }
 
 } // namespace WebKit

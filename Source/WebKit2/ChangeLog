@@ -1,3 +1,29 @@
+2011-01-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Keep track of the latest update timestamp in the backing store
+        https://bugs.webkit.org/show_bug.cgi?id=52848
+
+        * Shared/UpdateInfo.h:
+        (WebKit::UpdateInfo::UpdateInfo):
+        Initialize timestamp to 0.
+
+        * UIProcess/BackingStore.cpp:
+        (WebKit::BackingStore::BackingStore):
+        Initialize m_latestUpdateTimestamp to 0.
+
+        (WebKit::BackingStore::incorporateUpdate):
+        If the update is too old, discard it. Otherwise, create a bitmap
+        and pass it to platformIncorporateUpdate. Finally update the timestamp.
+
+        * UIProcess/BackingStore.h:
+        Add m_latestUpdateTimestamp.
+
+        * UIProcess/mac/BackingStoreMac.mm:
+        (WebKit::BackingStore::platformIncorporateUpdate):
+        Update now that we are already given the shareable bitmap.
+
 2011-01-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoffrey Garen.

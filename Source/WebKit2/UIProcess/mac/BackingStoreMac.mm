@@ -92,14 +92,8 @@ CGContextRef BackingStore::backingStoreContext()
     return m_bitmapContext.get();
 }
 
-void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
+void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
 {
-    ASSERT(m_size == updateInfo.viewSize);
-
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.updateRectBounds.size(), updateInfo.bitmapHandle);
-    if (!bitmap)
-        return;
-
     CGContextRef context = backingStoreContext();
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
