@@ -91,6 +91,7 @@
 #define WebKitAcceleratedCompositingEnabledPreferenceKey @"WebKitAcceleratedCompositingEnabled"
 #define WebKitShowDebugBordersPreferenceKey @"WebKitShowDebugBorders"
 #define WebKitShowRepaintCounterPreferenceKey @"WebKitShowRepaintCounter"
+#define WebKitWebAudioEnabledPreferenceKey @"WebKitWebAudioEnabled"
 #define WebKitWebGLEnabledPreferenceKey @"WebKitWebGLEnabled"
 #define WebKitAccelerated2dCanvasEnabledPreferenceKey @"WebKitAccelerated2dCanvasEnabled"
 #define WebKitPluginAllowedRunTimePreferenceKey @"WebKitPluginAllowedRunTime"

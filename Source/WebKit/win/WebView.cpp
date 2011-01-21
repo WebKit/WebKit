@@ -4802,6 +4802,10 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setShowRepaintCounter(enabled);
 
+#if ENABLE(WEB_AUDIO)
+    settings->setWebAudioEnabled(true);
+#endif // ENABLE(WEB_AUDIO)
+
 #if ENABLE(3D_CANVAS)
     settings->setWebGLEnabled(true);
 #endif  // ENABLE(3D_CANVAS)

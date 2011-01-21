@@ -185,6 +185,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)showRepaintCounter;
 - (void)setShowRepaintCounter:(BOOL)show;
 
+- (BOOL)webAudioEnabled;
+- (void)setWebAudioEnabled:(BOOL)enabled;
+
 - (BOOL)webGLEnabled;
 - (void)setWebGLEnabled:(BOOL)enabled;
 

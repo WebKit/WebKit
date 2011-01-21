@@ -68,6 +68,9 @@ public:
     WEBKIT_API static void enableIndexedDatabase(bool);
     WEBKIT_API static bool isIndexedDatabaseEnabled();
 
+    WEBKIT_API static void enableWebAudio(bool);
+    WEBKIT_API static bool isWebAudioEnabled();
+
     WEBKIT_API static void enableWebGL(bool);
     WEBKIT_API static bool isWebGLEnabled();
 

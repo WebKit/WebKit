@@ -156,6 +156,7 @@ Settings::Settings(Page* page)
     , m_showRepaintCounter(false)
     , m_experimentalNotificationsEnabled(false)
     , m_webGLEnabled(false)
+    , m_webAudioEnabled(false)
     , m_acceleratedCanvas2dEnabled(false)
     , m_loadDeferringEnabled(true)
     , m_tiledBackingStoreEnabled(false)
@@ -654,6 +655,11 @@ void Settings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTime
     gShouldUseHighResolutionTimers = shouldUseHighResolutionTimers;
 }
 #endif
+
+void Settings::setWebAudioEnabled(bool enabled)
+{
+    m_webAudioEnabled = enabled;
+}
 
 void Settings::setWebGLEnabled(bool enabled)
 {

@@ -67,6 +67,7 @@
 #define WebKitCacheModelPreferenceKey "WebKitCacheModelPreferenceKey"
 #define WebKitLocalStorageDatabasePathPreferenceKey "WebKitLocalStorageDatabasePath"
 #define WebKitHyperlinkAuditingEnabledPreferenceKey "WebKitHyperlinkAuditingEnabled"
+#define WebKitWebAudioEnabledPreferenceKey "WebKitWebAudioEnabled"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

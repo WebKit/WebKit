@@ -1264,6 +1264,16 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:enabled forKey:WebKitShowRepaintCounterPreferenceKey];
 }
 
+- (BOOL)webAudioEnabled
+{
+    return [self _boolValueForKey:WebKitWebAudioEnabledPreferenceKey];
+}
+
+- (void)setWebAudioEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitWebAudioEnabledPreferenceKey];
+}
+
 - (BOOL)webGLEnabled
 {
     return [self _boolValueForKey:WebKitWebGLEnabledPreferenceKey];

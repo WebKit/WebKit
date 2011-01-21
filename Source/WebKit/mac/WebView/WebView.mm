@@ -1496,6 +1496,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setShowDebugBorders([preferences showDebugBorders]);
     settings->setShowRepaintCounter([preferences showRepaintCounter]);
     settings->setPluginAllowedRunTime([preferences pluginAllowedRunTime]);
+    settings->setWebAudioEnabled([preferences webAudioEnabled]);
     settings->setWebGLEnabled([preferences webGLEnabled]);
     settings->setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());

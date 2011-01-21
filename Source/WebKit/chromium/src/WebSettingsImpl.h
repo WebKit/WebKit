@@ -84,6 +84,7 @@ public:
     virtual void setAllowFileAccessFromFileURLs(bool);
     virtual void setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     virtual void setOfflineWebApplicationCacheEnabled(bool);
+    virtual void setWebAudioEnabled(bool);
     virtual void setExperimentalWebGLEnabled(bool);
     virtual void setShowDebugBorders(bool);
     virtual void setEditingBehavior(EditingBehavior);

@@ -184,6 +184,22 @@ bool WebRuntimeFeatures::isIndexedDatabaseEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableWebAudio(bool enable)
+{
+#if ENABLE(WEB_AUDIO)
+    RuntimeEnabledFeatures::setWebkitAudioContextEnabled(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isWebAudioEnabled()
+{
+#if ENABLE(WEB_AUDIO)
+    return RuntimeEnabledFeatures::webkitAudioContextEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableWebGL(bool enable)
 {
 #if ENABLE(3D_CANVAS)

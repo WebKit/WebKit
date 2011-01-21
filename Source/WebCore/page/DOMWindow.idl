@@ -515,7 +515,7 @@ module window {
         attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Float32ArrayConstructor Float32Array; // Usable with new operator
         attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] DataViewConstructor DataView; // Usable with new operator
 
-        attribute [JSCCustomGetter,Conditional=WEB_AUDIO] AudioContextConstructor webkitAudioContext; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEB_AUDIO,EnabledAtRuntime] AudioContextConstructor webkitAudioContext; // Usable with new operator
         attribute [Conditional=WEB_AUDIO] AudioPannerNodeConstructor webkitAudioPannerNode; // Needed for panning model constants
 
         attribute EventConstructor Event;

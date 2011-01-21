@@ -92,6 +92,11 @@ public:
     static bool openDatabaseSyncEnabled();
 #endif
 
+#if ENABLE(WEB_AUDIO)
+    static void setWebkitAudioContextEnabled(bool isEnabled) { isWebAudioEnabled = isEnabled; }
+    static bool webkitAudioContextEnabled() { return isWebAudioEnabled; }
+#endif
+
 #if ENABLE(3D_CANVAS) || ENABLE(BLOB)
     static void setWebGLEnabled(bool isEnabled) { isWebGLEnabled = isEnabled; }
     static bool arrayBufferEnabled() { return isWebGLEnabled; }
@@ -174,6 +179,7 @@ private:
     static bool isApplicationCacheEnabled;
     static bool isGeolocationEnabled;
     static bool isIndexedDBEnabled;
+    static bool isWebAudioEnabled;
     static bool isWebGLEnabled;
     static bool isPushStateEnabled;
     static bool isTouchEnabled;
