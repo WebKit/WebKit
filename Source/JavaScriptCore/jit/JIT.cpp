@@ -45,10 +45,6 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #include "ResultType.h"
 #include "SamplingTool.h"
 
-#ifndef NDEBUG
-#include <stdio.h>
-#endif
-
 using namespace std;
 
 namespace JSC {
