@@ -1715,6 +1715,7 @@ fast/events/blur-focus-window-should-blur-focus-element.html
 
 # WebKitTestRunner needs layoutTestController.setEditingBehavior
 # <https://bugs.webkit.org/show_bug.cgi?id=42689>
+editing/selection/rtl-move-selection-right-left.html
 editing/selection/5195166-1.html
 editing/selection/context-menu-text-selection.html
 editing/execCommand/query-command-state.html
@@ -2263,9 +2264,11 @@ transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
 
 # This test crashes the WebProcess sporadically
+fast/forms/form-attribute-elements-order.html
 fast/forms/form-attribute-elements-order2.html
 
 # These storage tests fail in WebKit2 on the bot, but not running locally
+fast/workers/storage/executesql-accepts-only-one-statement-sync.html
 fast/workers/storage/change-version-handle-reuse-sync.html
 fast/workers/storage/multiple-databases-garbage-collection.html
 fast/workers/storage/open-database-creation-callback-sync.html

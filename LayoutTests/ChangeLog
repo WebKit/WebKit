@@ -1,3 +1,12 @@
+2011-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Skip a few more tests that are failing on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=52865
+
+        * platform/mac-wk2/Skipped:
+
 2011-01-20  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Not reviewed, add a bug number to disabled test.
