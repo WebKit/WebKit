@@ -50,7 +50,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         port = google_chrome.GetGoogleChromePort(port_name=port_name,
                                                  options=None)
         path = port.baseline_search_path()[0]
-        self.assertEqual(expected_path, os.path.split(path)[1])
+        self.assertEqual(expected_path, port._filesystem.basename(path))
 
     def _verify_expectations_overrides(self, port_name):
         # FIXME: make this more robust when we have the Tree() abstraction.

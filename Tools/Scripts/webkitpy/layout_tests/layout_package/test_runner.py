@@ -42,7 +42,6 @@ import logging
 import math
 import Queue
 import random
-import shutil
 import sys
 import time
 

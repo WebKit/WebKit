@@ -31,20 +31,14 @@
 """WebKit implementations of the Port interface."""
 
 
-from __future__ import with_statement
-
-import codecs
 import logging
+import operator
 import os
 import re
-import shutil
 import signal
 import sys
 import time
 import webbrowser
-import operator
-import tempfile
-import shutil
 
 import webkitpy.common.system.ospath as ospath
 import webkitpy.layout_tests.layout_package.test_output as test_output
@@ -72,8 +66,8 @@ class WebKitPort(base.Port):
         return [self._webkit_baseline_path(self._name)]
 
     def path_to_test_expectations_file(self):
-        return os.path.join(self._webkit_baseline_path(self._name),
-                            'test_expectations.txt')
+        return self._filesystem.join(self._webkit_baseline_path(self._name),
+                                     'test_expectations.txt')
 
     # Only needed by ports which maintain versioned test expectations (like mac-tiger vs. mac-leopard)
     def version(self):
@@ -85,7 +79,7 @@ class WebKitPort(base.Port):
 
     def _check_driver(self):
         driver_path = self._path_to_driver()
-        if not os.path.exists(driver_path):
+        if not self._filesystem.exists(driver_path):
             _log.error("DumpRenderTree was not found at %s" % driver_path)
             return False
         return True
@@ -108,7 +102,7 @@ class WebKitPort(base.Port):
 
     def check_image_diff(self, override_step=None, logging=True):
         image_diff_path = self._path_to_image_diff()
-        if not os.path.exists(image_diff_path):
+        if not self._filesystem.exists(image_diff_path):
             _log.error("ImageDiff was not found at %s" % image_diff_path)
             return False
         return True
@@ -165,8 +159,7 @@ class WebKitPort(base.Port):
             if m.group(2) == 'passed':
                 result = False
         elif output and diff_filename:
-            with open(diff_filename, 'w') as file:
-                file.write(output)
+            self._filesystem.write_text_file(diff_filename, output)
         elif sp.timed_out:
             _log.error("ImageDiff timed out")
         elif sp.crashed:
@@ -300,25 +293,22 @@ class WebKitPort(base.Port):
         return tests_to_skip
 
     def _skipped_file_paths(self):
-        return [os.path.join(self._webkit_baseline_path(self._name),
-                                                        'Skipped')]
+        return [self._filesystem.join(self._webkit_baseline_path(self._name), 'Skipped')]
 
     def _expectations_from_skipped_files(self):
         tests_to_skip = []
         for filename in self._skipped_file_paths():
-            if not os.path.exists(filename):
+            if not self._filesystem.exists(filename):
                 _log.warn("Failed to open Skipped file: %s" % filename)
                 continue
-            with codecs.open(filename, "r", "utf-8") as skipped_file:
-                tests_to_skip.extend(self._tests_from_skipped_file(skipped_file))
+            skipped_file = self._filesystem.read_text_file(filename)
         return tests_to_skip
 
     def test_expectations(self):
         # The WebKit mac port uses a combination of a test_expectations file
         # and 'Skipped' files.
         expectations_path = self.path_to_test_expectations_file()
-        with codecs.open(expectations_path, "r", "utf-8") as file:
-            return file.read() + self._skips()
+        return self._filesystem.read_text_file(expectations_path) + self._skips()
 
     def _skips(self):
         # Each Skipped file contains a list of files
@@ -373,7 +363,7 @@ class WebKitPort(base.Port):
             # The Apache binary path can vary depending on OS and distribution
             # See http://wiki.apache.org/httpd/DistrosDefaultLayout
             for path in ["/usr/sbin/httpd", "/usr/sbin/apache2"]:
-                if os.path.exists(path):
+                if self._filesystem.exists(path):
                     self._cached_apache_path = path
                     break
 
@@ -389,10 +379,10 @@ class WebKitDriver(base.Driver):
     def __init__(self, port, worker_number):
         self._worker_number = worker_number
         self._port = port
-        self._driver_tempdir = tempfile.mkdtemp(prefix='DumpRenderTree-')
+        self._driver_tempdir = port._filesystem.mkdtemp(prefix='DumpRenderTree-')
 
     def __del__(self):
-        shutil.rmtree(self._driver_tempdir)
+        self._port._filesystem.rmtree(str(self._driver_tempdir))
 
     def cmd_line(self):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
@@ -406,7 +396,7 @@ class WebKitDriver(base.Driver):
     def start(self):
         environment = self._port.setup_environ_for_server()
         environment['DYLD_FRAMEWORK_PATH'] = self._port._build_path()
-        environment['DUMPRENDERTREE_TEMP'] = self._driver_tempdir
+        environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         self._server_process = server_process.ServerProcess(self._port,
             "DumpRenderTree", self.cmd_line(), environment)
 

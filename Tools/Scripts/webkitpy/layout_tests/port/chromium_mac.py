@@ -110,7 +110,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
                                          *comps)
 
         path = self.path_from_chromium_base('xcodebuild', *comps)
-        if os.path.exists(path) or self.get_option('use_test_shell'):
+        if self._filesystem.exists(path) or self.get_option('use_test_shell'):
             return path
         return self.path_from_webkit_base(
             'Source', 'WebKit', 'chromium', 'xcodebuild', *comps)
@@ -132,8 +132,8 @@ class ChromiumMacPort(chromium.ChromiumPort):
         return '/usr/sbin/httpd'
 
     def _path_to_apache_config_file(self):
-        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
-                            'apache2-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                                     'apache2-httpd.conf')
 
     def _path_to_lighttpd(self):
         return self._lighttpd_path('bin', 'lighttpd')

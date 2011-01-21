@@ -76,9 +76,9 @@ class MacPort(WebKitPort):
         # platforms and moved into base.Port.
         skipped_files = []
         if self._name in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'):
-            skipped_files.append(os.path.join(
+            skipped_files.append(self._filesystem.join(
                 self._webkit_baseline_path(self._name), 'Skipped'))
-        skipped_files.append(os.path.join(self._webkit_baseline_path('mac'),
+        skipped_files.append(self._filesystem.join(self._webkit_baseline_path('mac'),
                                           'Skipped'))
         return skipped_files
 
@@ -99,7 +99,7 @@ class MacPort(WebKitPort):
         return ''
 
     def _build_java_test_support(self):
-        java_tests_path = os.path.join(self.layout_tests_dir(), "java")
+        java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")
         build_java = ["/usr/bin/make", "-C", java_tests_path]
         if self._executive.run_command(build_java, return_exit_code=True):
             _log.error("Failed to build Java support files: %s" % build_java)
@@ -124,8 +124,8 @@ class MacPort(WebKitPort):
         ]
 
     def _path_to_apache_config_file(self):
-        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
-                            'apache2-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                                     'apache2-httpd.conf')
 
     # FIXME: This doesn't have anything to do with WebKit.
     def _shut_down_http_server(self, server_pid):

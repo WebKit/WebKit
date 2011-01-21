@@ -24,10 +24,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
-import codecs
-import os
 import sys
 
 import chromium_linux
@@ -82,10 +78,9 @@ def _gpu_overrides(port):
             'layout_tests', 'test_expectations_gpu.txt')
     except AssertionError:
         return None
-    if not os.path.exists(overrides_path):
+    if not port._filesystem.exists(overrides_path):
         return None
-    with codecs.open(overrides_path, "r", "utf-8") as file:
-        return file.read()
+    return port._filesystem.read_text_file(overrides_path)
 
 
 class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):

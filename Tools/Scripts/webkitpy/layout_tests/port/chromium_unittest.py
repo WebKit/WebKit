@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os
 import unittest
 import StringIO
 
@@ -131,7 +130,7 @@ class ChromiumPortTest(unittest.TestCase):
         mock_options = mocktool.MockOptions()
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
 
-        fake_test = os.path.join(port.layout_tests_dir(), "fast/js/not-good.js")
+        fake_test = port._filesystem.join(port.layout_tests_dir(), "fast/js/not-good.js")
 
         port.test_expectations = lambda: """BUG_TEST SKIP : fast/js/not-good.js = TEXT
 LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""

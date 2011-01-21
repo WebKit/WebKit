@@ -34,13 +34,8 @@ match, returns FailureImageHashMismatch and outputs both hashes into the layout
 test results directory.
 """
 
-from __future__ import with_statement
-
-import codecs
 import errno
 import logging
-import os
-import shutil
 
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests.test_types import test_type_base

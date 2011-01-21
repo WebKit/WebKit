@@ -83,14 +83,14 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
                                          *comps)
 
         base = self.path_from_chromium_base()
-        if os.path.exists(os.path.join(base, 'sconsbuild')):
-            return os.path.join(base, 'sconsbuild', *comps)
-        if os.path.exists(os.path.join(base, 'out', *comps)) or self.get_option('use_test_shell'):
-            return os.path.join(base, 'out', *comps)
+        if self._filesystem.exists(self._filesystem.join(base, 'sconsbuild')):
+            return self._filesystem.join(base, 'sconsbuild', *comps)
+        if self._filesystem.exists(self._filesystem.join(base, 'out', *comps)) or self.get_option('use_test_shell'):
+            return self._filesystem.join(base, 'out', *comps)
         base = self.path_from_webkit_base()
-        if os.path.exists(os.path.join(base, 'sconsbuild')):
-            return os.path.join(base, 'sconsbuild', *comps)
-        return os.path.join(base, 'out', *comps)
+        if self._filesystem.exists(self._filesystem.join(base, 'sconsbuild')):
+            return self._filesystem.join(base, 'sconsbuild', *comps)
+        return self._filesystem.join(base, 'out', *comps)
 
     def _check_apache_install(self):
         result = self._check_file_exists(self._path_to_apache(),
@@ -137,7 +137,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         else:
             config_name = 'apache2-debian-httpd.conf'
 
-        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
                             config_name)
 
     def _path_to_lighttpd(self):
@@ -167,7 +167,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             return '/usr/bin/wdiff'
 
     def _is_redhat_based(self):
-        return os.path.exists(os.path.join('/etc', 'redhat-release'))
+        return self._filesystem.exists(self._filesystem.join('/etc', 'redhat-release'))
 
     def _shut_down_http_server(self, server_pid):
         """Shut down the lighttpd web server. Blocks until it's fully

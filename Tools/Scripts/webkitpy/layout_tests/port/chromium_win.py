@@ -30,7 +30,6 @@
 """Chromium Win implementation of the Port interface."""
 
 import logging
-import os
 import sys
 
 import chromium
@@ -111,13 +110,12 @@ class ChromiumWinPort(chromium.ChromiumPort):
                                          *comps)
 
         p = self.path_from_chromium_base('webkit', *comps)
-        if os.path.exists(p):
+        if self._filesystem.exists(p):
             return p
         p = self.path_from_chromium_base('chrome', *comps)
-        if os.path.exists(p) or self.get_option('use_test_shell'):
+        if self._filesystem.exists(p) or self.get_option('use_test_shell'):
             return p
-        return os.path.join(self.path_from_webkit_base(), 'WebKit', 'chromium',
-                            *comps)
+        return self._filesystem.join(self.path_from_webkit_base(), 'WebKit', 'chromium', *comps)
 
     def _lighttpd_path(self, *comps):
         return self.path_from_chromium_base('third_party', 'lighttpd', 'win',
@@ -128,8 +126,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
                                             'sbin', 'httpd')
 
     def _path_to_apache_config_file(self):
-        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
-                            'cygwin-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf', 'cygwin-httpd.conf')
 
     def _path_to_lighttpd(self):
         return self._lighttpd_path('LightTPD.exe')

@@ -28,8 +28,6 @@
 
 """Unit testing base class for Port implementations."""
 
-import os
-import tempfile
 import unittest
 
 from webkitpy.tool import mocktool
@@ -64,30 +62,25 @@ class PortTestCase(unittest.TestCase):
         if not port:
             return
 
-        # FIXME: not sure why this shouldn't always be True
-        #self.assertTrue(port.check_image_diff())
         if not port.check_image_diff():
+            # The port hasn't been built - don't run the tests.
             return
 
         dir = port.layout_tests_dir()
-        file1 = os.path.join(dir, 'fast', 'css', 'button_center.png')
-        fh1 = file(file1)
-        contents1 = fh1.read()
-        file2 = os.path.join(dir, 'fast', 'css',
-                             'remove-shorthand-expected.png')
-        fh2 = file(file2)
-        contents2 = fh2.read()
-        tmpfile = tempfile.mktemp()
+        file1 = port._filesystem.join(dir, 'fast', 'css', 'button_center.png')
+        contents1 = port._filesystem.read_binary_file(file1)
+        file2 = port._filesystem.join(dir, 'fast', 'css',
+                                      'remove-shorthand-expected.png')
+        contents2 = port._filesystem.read_binary_file(file2)
+        tmpfd, tmpfile = port._filesystem.open_binary_tempfile('')
+        tmpfd.close()
 
         self.assertFalse(port.diff_image(contents1, contents1))
         self.assertTrue(port.diff_image(contents1, contents2))
 
         self.assertTrue(port.diff_image(contents1, contents2, tmpfile))
-        fh1.close()
-        fh2.close()
-        # FIXME: this may not be being written?
-        # self.assertTrue(os.path.exists(tmpfile))
-        # os.remove(tmpfile)
+
+        port._filesystem.remove(tmpfile)
 
     def test_websocket_server(self):
         port = self.make_port()

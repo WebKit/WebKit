@@ -29,7 +29,6 @@
 """WebKit Win implementation of the Port interface."""
 
 import logging
-import os
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
@@ -60,8 +59,8 @@ class WinPort(WebKitPort):
         ]
 
     def _path_to_apache_config_file(self):
-        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
-                            'cygwin-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                                     'cygwin-httpd.conf')
 
     def _shut_down_http_server(self, server_pid):
         """Shut down the httpd web server. Blocks until it's fully

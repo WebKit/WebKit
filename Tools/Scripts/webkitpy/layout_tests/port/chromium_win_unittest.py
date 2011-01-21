@@ -45,13 +45,15 @@ class ChromiumWinTest(unittest.TestCase):
 
     def tearDown(self):
         sys.platform = self.orig_platform
+        self._port = None
 
     def _mock_path_from_chromium_base(self, *comps):
-        return os.path.join("/chromium/src", *comps)
+        return self._port._filesystem.join("/chromium/src", *comps)
 
     def test_setup_environ_for_server(self):
         port = chromium_win.ChromiumWinPort()
         port._executive = mocktool.MockExecutive(should_log=True)
+        self._port = port
         port.path_from_chromium_base = self._mock_path_from_chromium_base
         output = outputcapture.OutputCapture()
         orig_environ = os.environ.copy()
@@ -65,6 +67,7 @@ class ChromiumWinTest(unittest.TestCase):
             options=ChromiumWinTest.RegisterCygwinOption())
         port._executive = mocktool.MockExecutive(should_log=True)
         port.path_from_chromium_base = self._mock_path_from_chromium_base
+        self._port = port
         setup_mount = self._mock_path_from_chromium_base("third_party",
                                                          "cygwin",
                                                          "setup_mount.bat")

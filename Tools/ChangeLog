@@ -1,5 +1,35 @@
 2011-01-20  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Siedel.
+
+        nrwt: clean up almost all remaining port references, remove
+        unnecessary import clauses. The only remaining references are
+        in places where a mock filesystem makes no sense or can't be
+        used, and in one routine in port/google_chrome_unittest that
+        I'll rewrite in a separate patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52771
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/test_types/image_diff.py:
+
+2011-01-20  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Mihai Parparita.
 
         remove fs refs from run_webkit_tests, rebaseline_chromium_webkit_tests

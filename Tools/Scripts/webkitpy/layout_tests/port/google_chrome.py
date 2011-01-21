@@ -24,11 +24,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
-import codecs
-import os
-
 
 def _test_expectations_overrides(port, super):
     # The chrome ports use the regular overrides plus anything in the
@@ -40,14 +35,11 @@ def _test_expectations_overrides(port, super):
     # this changed in r60427. This should probably be changed back.
     overrides_path = port.path_from_chromium_base('webkit', 'tools',
             'layout_tests', 'test_expectations_chrome.txt')
-    if not os.path.exists(overrides_path):
+    if not port._filesystem.exists(overrides_path):
         return chromium_overrides
 
-    with codecs.open(overrides_path, "r", "utf-8") as file:
-        if chromium_overrides:
-            return chromium_overrides + file.read()
-        else:
-            return file.read()
+    chromium_overrides = chromium_overrides or ''
+    return chromium_overrides + port._filesystem.read_text_file(overrides_path)
 
 def GetGoogleChromePort(**kwargs):
     """Some tests have slightly different results when compiled as Google

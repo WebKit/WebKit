@@ -57,8 +57,8 @@ class GtkPort(WebKitPort):
 
     def _path_to_apache_config_file(self):
         # FIXME: This needs to detect the distribution and change config files.
-        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
-                            'apache2-debian-httpd.conf')
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
+                                     'apache2-debian-httpd.conf')
 
     def _shut_down_http_server(self, server_pid):
         """Shut down the httpd web server. Blocks until it's fully
@@ -103,7 +103,7 @@ class GtkPort(WebKitPort):
         else:
             config_name = 'apache2-debian-httpd.conf'
 
-        return os.path.join(self.layout_tests_dir(), 'http', 'conf',
+        return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
                             config_name)
 
     def _path_to_wdiff(self):
@@ -113,4 +113,4 @@ class GtkPort(WebKitPort):
             return '/usr/bin/wdiff'
 
     def _is_redhat_based(self):
-        return os.path.exists(os.path.join('/etc', 'redhat-release'))
+        return self._filesystem.exists(self._filesystem.join('/etc', 'redhat-release'))
