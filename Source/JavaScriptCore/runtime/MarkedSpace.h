@@ -85,10 +85,11 @@ namespace JSC {
 
         WeakGCHandle* addWeakGCHandle(JSCell*);
 
-        void markConservatively(ConservativeSet&, void* start, void* end);
+        bool contains(void*);
+        bool containsSlowCase(void*);
+        bool isCellAligned(void*);
+        bool isPossibleCell(void*);
 
-        static bool isNumber(JSCell*);
-        
         LiveObjectIterator primaryHeapBegin();
         LiveObjectIterator primaryHeapEnd();
 
@@ -215,6 +216,27 @@ namespace JSC {
     inline void MarkedSpace::markCell(JSCell* cell)
     {
         cellBlock(cell)->marked.set(cellOffset(cell));
+    }
+
+    // Cell size needs to be a power of two for isPossibleCell to be valid.
+    COMPILE_ASSERT(sizeof(CollectorCell) % 2 == 0, Collector_cell_size_is_power_of_two);
+
+    inline bool MarkedSpace::isCellAligned(void *p)
+    {
+        return (((intptr_t)(p) & CELL_MASK) == 0);
+    }
+
+    inline bool MarkedSpace::isPossibleCell(void* p)
+    {
+        return isCellAligned(p) && p;
+    }
+
+    inline bool MarkedSpace::contains(void* x)
+    {
+        if (!isPossibleCell(x))
+            return false;
+            
+        return containsSlowCase(x);
     }
 
 } // namespace JSC

@@ -31,15 +31,16 @@
 
 namespace JSC {
 
-    class JSValue;
-    class UString;
     class GCActivityCallback;
     class JSCell;
     class JSGlobalData;
     class JSValue;
+    class JSValue;
     class LiveObjectIterator;
-    class MarkedArgumentBuffer;
     class MarkStack;
+    class MarkedArgumentBuffer;
+    class RegisterFile;
+    class UString;
     class WeakGCHandlePool;
 
     typedef std::pair<JSValue, UString> ValueStringPair;
@@ -85,10 +86,10 @@ namespace JSC {
         static bool isCellMarked(const JSCell*);
         static bool checkMarkCell(const JSCell*);
         static void markCell(JSCell*);
+        
+        bool contains(void*);
 
         WeakGCHandle* addWeakGCHandle(JSCell*);
-
-        void markConservatively(ConservativeSet&, void* start, void* end);
 
         void pushTempSortVector(WTF::Vector<ValueStringPair>*);
         void popTempSortVector(WTF::Vector<ValueStringPair>*);        
@@ -117,6 +118,8 @@ namespace JSC {
 
         void updateWeakGCHandles();
         WeakGCHandlePool* weakGCHandlePool(size_t index);
+
+        RegisterFile& registerFile();
 
         MarkedSpace m_markedSpace;
         OperationInProgress m_operationInProgress;
@@ -150,6 +153,11 @@ namespace JSC {
     inline void Heap::markCell(JSCell* cell)
     {
         MarkedSpace::markCell(cell);
+    }
+
+    inline bool Heap::contains(void* p)
+    {
+        return m_markedSpace.contains(p);
     }
 
     inline void Heap::reportExtraMemoryCost(size_t cost)

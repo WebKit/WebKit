@@ -147,11 +147,6 @@ void* Heap::allocate(size_t s)
     return result;
 }
 
-void Heap::markConservatively(ConservativeSet& conservativeSet, void* start, void* end)
-{
-    m_markedSpace.markConservatively(conservativeSet, start, end);
-}
-
 void Heap::updateWeakGCHandles()
 {
     for (unsigned i = 0; i < m_weakGCHandlePools.size(); ++i)
@@ -237,7 +232,12 @@ void Heap::markTempSortVectors(MarkStack& markStack)
         }
     }
 }
-    
+
+inline RegisterFile& Heap::registerFile()
+{
+    return m_globalData->interpreter->registerFile();
+}
+
 void Heap::markRoots()
 {
 #ifndef NDEBUG
@@ -258,7 +258,7 @@ void Heap::markRoots()
     // determine whether a reference is valid.
     ConservativeSet conservativeSet;
     m_machineStackMarker.markMachineStackConservatively(conservativeSet);
-    m_globalData->interpreter->registerFile().markCallFrames(conservativeSet, this);
+    m_machineStackMarker.markConservatively(conservativeSet, registerFile().start(), registerFile().end());
 
     // Reset mark bits.
     m_markedSpace.clearMarkBits();

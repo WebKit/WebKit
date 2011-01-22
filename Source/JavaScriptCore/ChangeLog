@@ -1,3 +1,48 @@
+2011-01-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Cleaned up some conservative marking code.
+        https://bugs.webkit.org/show_bug.cgi?id=52946
+        
+        SunSpider reports no change.
+
+        * interpreter/RegisterFile.h: No need for a special marking function,
+        since we already expose a start() and end().
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::registerFile):
+        (JSC::Heap::markRoots):
+        * runtime/Heap.h:
+        (JSC::Heap::contains): Migrated markConservatively() to the machine stack
+        marker class. Now, Heap just provides a contains() function, which the
+        machine stack marker uses for checking whether a pointer points into the heap.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::MachineStackMarker::markCurrentThreadConservativelyInternal):
+        (JSC::MachineStackMarker::markOtherThreadConservatively):
+        (JSC::isPointerAligned):
+        (JSC::MachineStackMarker::markConservatively):
+        * runtime/MachineStackMarker.h: Move the conservative marking code here.
+
+        * runtime/MarkStack.h:
+        (JSC::ConservativeSet::add):
+        (JSC::ConservativeSet::mark): Changed to using a vector instead of hash
+        set. Vector seems to be a bit faster, and it generates smaller code.
+
+        * runtime/MarkedSpace.cpp:
+        (JSC::MarkedSpace::containsSlowCase):
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::isCellAligned):
+        (JSC::MarkedSpace::isPossibleCell):
+        (JSC::MarkedSpace::contains): Kept the code for determining whether a
+        pointer pointed into marked space, and moved the code for marking
+        a set of conservative pointers into the machine stack marker.
+
+        * wtf/HashSet.h:
+        (WTF::::add): Added two missing inlines that I noticed while testing
+        vector vs hash set.
+
 2011-01-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

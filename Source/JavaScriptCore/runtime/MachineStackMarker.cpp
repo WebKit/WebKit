@@ -196,7 +196,7 @@ void MachineStackMarker::unregisterThread()
 
 void NEVER_INLINE MachineStackMarker::markCurrentThreadConservativelyInternal(ConservativeSet& conservativeSet)
 {
-    m_heap->markConservatively(conservativeSet, m_heap->globalData()->stack().current(), m_heap->globalData()->stack().origin());
+    markConservatively(conservativeSet, m_heap->globalData()->stack().current(), m_heap->globalData()->stack().origin());
 }
 
 #if COMPILER(GCC)
@@ -358,10 +358,10 @@ void MachineStackMarker::markOtherThreadConservatively(ConservativeSet& conserva
     size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
 
     // mark the thread's registers
-    m_heap->markConservatively(conservativeSet, static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
+    markConservatively(conservativeSet, static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
 
     void* stackPointer = otherThreadStackPointer(regs);
-    m_heap->markConservatively(conservativeSet, stackPointer, thread->stackBase);
+    markConservatively(conservativeSet, stackPointer, thread->stackBase);
 
     resumeThread(thread->platformThread);
 }
@@ -395,6 +395,38 @@ void MachineStackMarker::markMachineStackConservatively(ConservativeSet& conserv
 #endif
     }
 #endif
+}
+
+inline bool isPointerAligned(void* p)
+{
+    return (((intptr_t)(p) & (sizeof(char*) - 1)) == 0);
+}
+
+void MachineStackMarker::markConservatively(ConservativeSet& conservativeSet, void* start, void* end)
+{
+#if OS(WINCE)
+    if (start > end) {
+        void* tmp = start;
+        start = end;
+        end = tmp;
+    }
+#else
+    ASSERT(start <= end);
+#endif
+
+    ASSERT((static_cast<char*>(end) - static_cast<char*>(start)) < 0x1000000);
+    ASSERT(isPointerAligned(start));
+    ASSERT(isPointerAligned(end));
+
+    char** p = static_cast<char**>(start);
+    char** e = static_cast<char**>(end);
+
+    while (p != e) {
+        char* x = *p++;
+        if (!m_heap->contains(x))
+            continue;
+        conservativeSet.add(reinterpret_cast<JSCell*>(x));
+    }
 }
 
 } // namespace JSC

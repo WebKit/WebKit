@@ -175,14 +175,14 @@ namespace WTF {
     }
 
     template<typename T, typename U, typename V>
-    pair<typename HashSet<T, U, V>::iterator, bool> HashSet<T, U, V>::add(const ValueType& value)
+    inline pair<typename HashSet<T, U, V>::iterator, bool> HashSet<T, U, V>::add(const ValueType& value)
     {
         return m_impl.add(value);
     }
 
     template<typename Value, typename HashFunctions, typename Traits>
     template<typename T, typename HashTranslator>
-    pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool>
+    inline pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool>
     HashSet<Value, HashFunctions, Traits>::add(const T& value)
     {
         typedef HashSetTranslatorAdapter<ValueType, ValueTraits, T, HashTranslator> Adapter;

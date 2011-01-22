@@ -200,82 +200,37 @@ void MarkedSpace::shrinkBlocks(size_t neededBlocks)
         m_heap.collectorBlock(i)->marked.set(HeapConstants::cellsPerBlock - 1);
 }
 
-inline bool isPointerAligned(void* p)
+bool MarkedSpace::containsSlowCase(void* x)
 {
-    return (((intptr_t)(p) & (sizeof(char*) - 1)) == 0);
-}
+    uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
+    xAsBits &= CELL_ALIGN_MASK;
 
-// Cell size needs to be a power of two for isPossibleCell to be valid.
-COMPILE_ASSERT(sizeof(CollectorCell) % 2 == 0, Collector_cell_size_is_power_of_two);
+    uintptr_t offset = xAsBits & BLOCK_OFFSET_MASK;
+    const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
+    if (offset > lastCellOffset)
+        return false;
 
-static inline bool isCellAligned(void *p)
-{
-    return (((intptr_t)(p) & CELL_MASK) == 0);
-}
+    CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(xAsBits - offset);
+    size_t usedBlocks = m_heap.usedBlocks;
+    for (size_t block = 0; block < usedBlocks; block++) {
+        if (m_heap.collectorBlock(block) != blockAddr)
+            continue;
 
-static inline bool isPossibleCell(void* p)
-{
-    return isCellAligned(p) && p;
-}
-
-void MarkedSpace::markConservatively(ConservativeSet& conservativeSet, void* start, void* end)
-{
-#if OS(WINCE)
-    if (start > end) {
-        void* tmp = start;
-        start = end;
-        end = tmp;
+        // x is a pointer into the heap. Now, verify that the cell it
+        // points to is live. (If the cell is dead, we must not mark it,
+        // since that would revive it in a zombie state.)
+        if (block < m_heap.nextBlock)
+            return true;
+        
+        size_t cellOffset = offset / CELL_SIZE;
+        
+        if (block == m_heap.nextBlock && cellOffset < m_heap.nextCell)
+            return true;
+        
+        return blockAddr->marked.get(cellOffset);
     }
-#else
-    ASSERT(start <= end);
-#endif
-
-    ASSERT((static_cast<char*>(end) - static_cast<char*>(start)) < 0x1000000);
-    ASSERT(isPointerAligned(start));
-    ASSERT(isPointerAligned(end));
-
-    char** p = static_cast<char**>(start);
-    char** e = static_cast<char**>(end);
-
-    while (p != e) {
-        char* x = *p++;
-        if (isPossibleCell(x)) {
-            uintptr_t xAsBits = reinterpret_cast<uintptr_t>(x);
-            xAsBits &= CELL_ALIGN_MASK;
-
-            uintptr_t offset = xAsBits & BLOCK_OFFSET_MASK;
-            const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
-            if (offset > lastCellOffset)
-                continue;
-
-            CollectorBlock* blockAddr = reinterpret_cast<CollectorBlock*>(xAsBits - offset);
-            size_t usedBlocks = m_heap.usedBlocks;
-            for (size_t block = 0; block < usedBlocks; block++) {
-                if (m_heap.collectorBlock(block) != blockAddr)
-                    continue;
-
-                // x is a pointer into the heap. Now, verify that the cell it
-                // points to is live. (If the cell is dead, we must not mark it,
-                // since that would revive it in a zombie state.)
-                if (block < m_heap.nextBlock) {
-                    conservativeSet.add(reinterpret_cast<JSCell*>(xAsBits));
-                    break;
-                }
-                
-                size_t cellOffset = offset / CELL_SIZE;
-                
-                if (block == m_heap.nextBlock && cellOffset < m_heap.nextCell) {
-                    conservativeSet.add(reinterpret_cast<JSCell*>(xAsBits));
-                    break;
-                }
-                
-                if (blockAddr->marked.get(cellOffset)) {
-                    conservativeSet.add(reinterpret_cast<JSCell*>(xAsBits));
-                    break;
-                }
-            }
-        }
-    }
+    
+    return false;
 }
 
 void MarkedSpace::clearMarkBits()

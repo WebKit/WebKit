@@ -41,6 +41,7 @@ namespace JSC {
         ~MachineStackMarker();
 
         void markMachineStackConservatively(ConservativeSet&);
+        void markConservatively(ConservativeSet&, void* start, void* end);
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
         void makeUsableFromMultipleThreads();

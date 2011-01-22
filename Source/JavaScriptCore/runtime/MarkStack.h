@@ -27,7 +27,7 @@
 #define MarkStack_h
 
 #include "JSValue.h"
-#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OSAllocator.h>
 
@@ -190,16 +190,15 @@ namespace JSC {
     
     class ConservativeSet {
     public:
-        void add(JSCell* cell) { m_set.add(cell); }
+        void add(JSCell* cell) { m_vector.append(cell); }
         void mark(MarkStack& markStack)
         {
-            HashSet<JSCell*>::iterator end = m_set.end();
-            for (HashSet<JSCell*>::iterator it = m_set.begin(); it != end; ++it)
-                markStack.append(*it);
+            for (size_t i = 0; i < m_vector.size(); ++i)
+                markStack.append(m_vector[i]);
         }
 
     private:
-        HashSet<JSCell*> m_set;
+        Vector<JSCell*, 64> m_vector;
     };
 }
 
