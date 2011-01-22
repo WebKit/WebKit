@@ -73,6 +73,18 @@
 
 namespace JSC {
 
+static inline void swapIfBackwards(void*& begin, void*& end)
+{
+#if OS(WINCE)
+    if (begin <= end)
+        return;
+    swap(begin, end);
+#else
+UNUSED_PARAM(begin);
+UNUSED_PARAM(end);
+#endif
+}
+
 #if ENABLE(JSC_MULTIPLE_THREADS)
 
 #if OS(DARWIN)
@@ -132,18 +144,6 @@ static inline PlatformThread getCurrentPlatformThread()
     return pthread_mach_thread_np(pthread_self());
 #elif OS(WINDOWS)
     return pthread_getw32threadhandle_np(pthread_self());
-#endif
-}
-
-static inline void swapIfBackwards(void*& begin, void*& end)
-{
-#if OS(WINCE)
-    if (begin <= end)
-        return;
-    swap(begin, end);
-#else
-UNUSED_PARAM(begin);
-UNUSED_PARAM(end);
 #endif
 }
 

@@ -1,5 +1,12 @@
 2011-01-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix build: moved helper function out of #ifdef.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::swapIfBackwards):
+
+2011-01-21  Geoffrey Garen  <ggaren@apple.com>
+
         Rubber-stamped by Maciej Stachowiak.
 
         A few of Maciej's review suggestions for my last patch.
