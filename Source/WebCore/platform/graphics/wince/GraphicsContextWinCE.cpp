@@ -1536,7 +1536,7 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPo
     float oldOpacity = m_data->m_opacity;
     m_data->m_opacity *= fillColor().alpha() / 255.0;
 
-    FloatRect textRect = font.selectionRectForText(run, point, font.height(), from, to);
+    FloatRect textRect = font.selectionRectForText(run, point, font.fontMetrics().height(), from, to);
     textRect.setY(textRect.y() - font.fontMetrics().ascent());
     IntRect trRect = enclosingIntRect(m_data->mapRect(textRect));
     RECT bmpRect;

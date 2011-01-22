@@ -1,5 +1,14 @@
 2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Not reviewed. Fix WinCE build.
+
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::drawText):
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::RenderThemeWinCE::adjustMenuListButtonStyle):
+
+2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         REGRESSION: Vertical line metrics incorrect
