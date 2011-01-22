@@ -4775,7 +4775,6 @@ transforms/3d
 compositing
 
 # Missing textInputController
-editing/inserting/insert-composition-whitespace.html
 editing/selection/mixed-editability-10.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html

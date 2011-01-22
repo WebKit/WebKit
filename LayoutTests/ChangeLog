@@ -1,3 +1,15 @@
+2011-01-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline tests that use menulists. Also unskip a non-existent test.
+
+        * platform/gtk/Skipped: Remove non-existent test.
+        * platform/gtk/editing/selection/select-box-expected.checksum:
+        * platform/gtk/editing/selection/select-box-expected.png:
+        * platform/gtk/editing/selection/select-box-expected.txt:
+        * platform/gtk/transforms/2d/zoom-menulist-expected.checksum:
+        * platform/gtk/transforms/2d/zoom-menulist-expected.png:
+        * platform/gtk/transforms/2d/zoom-menulist-expected.txt:
+
 2011-01-21  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.
