@@ -1,3 +1,16 @@
+2011-01-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Fix bug introduced in r76322 that caused NRWT to not actually
+        read the Skipped files properly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52771
+
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
 2011-01-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Sean Garen and Mark Rowe.

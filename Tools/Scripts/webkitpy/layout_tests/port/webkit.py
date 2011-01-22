@@ -283,9 +283,9 @@ class WebKitPort(base.Port):
         unsupported_feature_tests = self._skipped_tests_for_unsupported_features()
         return disabled_feature_tests + webarchive_tests + unsupported_feature_tests
 
-    def _tests_from_skipped_file(self, skipped_file):
+    def _tests_from_skipped_file_contents(self, skipped_file_contents):
         tests_to_skip = []
-        for line in skipped_file.readlines():
+        for line in skipped_file_contents.split('\n'):
             line = line.strip()
             if line.startswith('#') or not len(line):
                 continue
@@ -301,7 +301,8 @@ class WebKitPort(base.Port):
             if not self._filesystem.exists(filename):
                 _log.warn("Failed to open Skipped file: %s" % filename)
                 continue
-            skipped_file = self._filesystem.read_text_file(filename)
+            skipped_file_contents = self._filesystem.read_text_file(filename)
+            tests_to_skip.extend(self._tests_from_skipped_file_contents(skipped_file_contents))
         return tests_to_skip
 
     def test_expectations(self):

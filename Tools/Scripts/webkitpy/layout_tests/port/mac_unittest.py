@@ -69,12 +69,11 @@ svg/batik/text/smallFonts.svg
         "svg/batik/text/smallFonts.svg",
     ]
 
-    def test_skipped_file_paths(self):
+    def test_tests_from_skipped_file_contents(self):
         port = self.make_port()
         if not port:
             return
-        skipped_file = StringIO.StringIO(self.example_skipped_file)
-        self.assertEqual(port._tests_from_skipped_file(skipped_file), self.example_skipped_tests)
+        self.assertEqual(port._tests_from_skipped_file_contents(self.example_skipped_file), self.example_skipped_tests)
 
 
 if __name__ == '__main__':
