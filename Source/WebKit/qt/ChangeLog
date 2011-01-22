@@ -1,3 +1,17 @@
+2011-01-22  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Support layoutTestController.addURLToRedirect()
+        https://bugs.webkit.org/show_bug.cgi?id=52956
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::addURLToRedirect):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2011-01-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

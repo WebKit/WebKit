@@ -185,6 +185,7 @@ public:
 
     static QVariantList nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     static QString responseMimeType(QWebFrame*);
+    static void addURLToRedirect(const QString& origin, const QString& destination);
 };
 
 #endif

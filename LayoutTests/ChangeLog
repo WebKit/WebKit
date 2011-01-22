@@ -1,3 +1,12 @@
+2011-01-22  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Support layoutTestController.addURLToRedirect()
+        https://bugs.webkit.org/show_bug.cgi?id=52956
+
+        * platform/qt/Skipped:
+
 2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

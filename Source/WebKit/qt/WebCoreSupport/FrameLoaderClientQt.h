@@ -250,6 +250,7 @@ public:
     static bool policyDelegatePermissive;
     static bool deferMainResourceDataLoad;
     static bool dumpHistoryCallbacks;
+    static QMap<QString, QString> URLsToRedirect;
 
 private:
     Frame *m_frame;

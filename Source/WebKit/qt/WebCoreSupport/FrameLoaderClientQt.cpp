@@ -180,6 +180,7 @@ QStringList FrameLoaderClientQt::sendRequestClearHeaders;
 QString FrameLoaderClientQt::dumpResourceLoadCallbacksPath;
 bool FrameLoaderClientQt::policyDelegateEnabled = false;
 bool FrameLoaderClientQt::policyDelegatePermissive = false;
+QMap<QString, QString> FrameLoaderClientQt::URLsToRedirect = QMap<QString, QString>();
 
 // Taken from DumpRenderTree/chromium/WebViewHost.cpp
 static const char* navigationTypeToString(NavigationType type)
@@ -1021,6 +1022,11 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
     for (int i = 0; i < sendRequestClearHeaders.size(); ++i)
           newRequest.setHTTPHeaderField(sendRequestClearHeaders.at(i).toLocal8Bit().constData(), QString());
 
+    if (QWebPagePrivate::drtRun) {
+        QString url = newRequest.url().string();
+        if (URLsToRedirect.contains(url))
+            newRequest.setURL(QUrl(URLsToRedirect[url]));
+    }
     // seems like the Mac code doesn't do anything here by default neither
     //qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().string`();
 }

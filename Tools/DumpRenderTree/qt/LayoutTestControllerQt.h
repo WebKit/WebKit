@@ -230,6 +230,8 @@ public slots:
 
     QVariantList nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
 
+    void addURLToRedirect(const QString& origin, const QString& destination);
+
     /*
         Policy values: 'on', 'auto' or 'off'.
         Orientation values: 'vertical' or 'horizontal'.

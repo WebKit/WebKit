@@ -893,6 +893,11 @@ QString DumpRenderTreeSupportQt::responseMimeType(QWebFrame* frame)
     return docLoader->responseMIMEType();
 }
 
+void DumpRenderTreeSupportQt::addURLToRedirect(const QString& origin, const QString& destination)
+{
+    FrameLoaderClientQt::URLsToRedirect[origin] = destination;
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

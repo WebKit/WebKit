@@ -830,5 +830,10 @@ QVariantList LayoutTestController::nodesFromRect(const QWebElement& document, in
     return DumpRenderTreeSupportQt::nodesFromRect(document, x, y, top, right, bottom, left, ignoreClipping);
 }
 
+void LayoutTestController::addURLToRedirect(const QString& origin, const QString& destination)
+{
+    DumpRenderTreeSupportQt::addURLToRedirect(origin, destination);
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;
