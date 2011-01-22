@@ -122,6 +122,7 @@
 		14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */; };
 		14469DEE107EC7E700650446 /* UString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8850255597D01FF60F7 /* UString.cpp */; };
 		146AAB380B66A94400E55F16 /* JSStringRefCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */; };
+		146B16D812EB5B59001BEC1B /* ConservativeSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146B14DB12EB5B12001BEC1B /* ConservativeSet.cpp */; };
 		146FE51211A710430087AE66 /* JITCall32_64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 146FE51111A710430087AE66 /* JITCall32_64.cpp */; };
 		147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */; };
 		147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 147B84620E6DE6B1004775A4 /* PutPropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -708,6 +709,7 @@
 		145C507F0D9DF63B0088F6B9 /* CallData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallData.h; sourceTree = "<group>"; };
 		146AAB2A0B66A84900E55F16 /* JSStringRefCF.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStringRefCF.h; sourceTree = "<group>"; };
 		146AAB370B66A94400E55F16 /* JSStringRefCF.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSStringRefCF.cpp; sourceTree = "<group>"; };
+		146B14DB12EB5B12001BEC1B /* ConservativeSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConservativeSet.cpp; sourceTree = "<group>"; };
 		146FE51111A710430087AE66 /* JITCall32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITCall32_64.cpp; sourceTree = "<group>"; };
 		14760863099C633800437128 /* JSImmediate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImmediate.cpp; sourceTree = "<group>"; };
 		147B83AA0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchedTransitionOptimizer.h; sourceTree = "<group>"; };
@@ -725,6 +727,7 @@
 		148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSContextRefPrivate.h; sourceTree = "<group>"; };
 		149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerCallFrame.cpp; sourceTree = "<group>"; };
 		149B24FF0D8AF6D1009CB8C7 /* Register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Register.h; sourceTree = "<group>"; };
+		149DAAF212EB559D0083B12B /* ConservativeSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConservativeSet.h; sourceTree = "<group>"; };
 		14A1563010966365006FA260 /* DateInstanceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInstanceCache.h; sourceTree = "<group>"; };
 		14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITStubs.cpp; sourceTree = "<group>"; };
 		14A396A60CD2933100B5B4FF /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolTable.h; sourceTree = "<group>"; };
@@ -1708,6 +1711,8 @@
 				65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */,
 				969A09220ED1E09C00F1F681 /* Completion.cpp */,
 				F5BB2BC5030F772101FCFE1D /* Completion.h */,
+				146B14DB12EB5B12001BEC1B /* ConservativeSet.cpp */,
+				149DAAF212EB559D0083B12B /* ConservativeSet.h */,
 				BCA62DFF0E2826310004F30D /* ConstructData.cpp */,
 				BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */,
 				BCD203450E17135E002C7E82 /* DateConstructor.cpp */,
@@ -2711,6 +2716,7 @@
 				E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */,
 				147F39C1107EC37600427A48 /* CommonIdentifiers.cpp in Sources */,
 				147F39C2107EC37600427A48 /* Completion.cpp in Sources */,
+				146B16D812EB5B59001BEC1B /* ConservativeSet.cpp in Sources */,
 				1428082E107EC0570013E7B2 /* ConstructData.cpp in Sources */,
 				86565742115BE3DA00291F40 /* CString.cpp in Sources */,
 				180B9BFE0F16E94D009BDBC5 /* CurrentTime.cpp in Sources */,
@@ -2858,6 +2864,7 @@
 				868BFA0E117CEFD100B908B1 /* StringImpl.cpp in Sources */,
 				14469DEC107EC7E700650446 /* StringObject.cpp in Sources */,
 				14469DED107EC7E700650446 /* StringPrototype.cpp in Sources */,
+				9335F24D12E6765B002B5553 /* StringRecursionChecker.cpp in Sources */,
 				8626BECF11928E3900782FAB /* StringStatics.cpp in Sources */,
 				BCDE3B430E6C832D001453A7 /* Structure.cpp in Sources */,
 				7E4EE70F0EBB7A5B005934AA /* StructureChain.cpp in Sources */,
@@ -2878,7 +2885,6 @@
 				86704B8612DBA33700A9FE7B /* YarrJIT.cpp in Sources */,
 				86704B8912DBA33700A9FE7B /* YarrPattern.cpp in Sources */,
 				86704B4212DB8A8100A9FE7B /* YarrSyntaxChecker.cpp in Sources */,
-				9335F24D12E6765B002B5553 /* StringRecursionChecker.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

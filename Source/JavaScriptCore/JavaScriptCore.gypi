@@ -280,6 +280,8 @@
             'runtime/Lookup.h',
             'runtime/MachineStackMarker.cpp',
             'runtime/MachineStackMarker.h',
+            'runtime/ConservativeSet.cpp',
+            'runtime/ConservativeSet.h',
             'runtime/MarkStack.cpp',
             'runtime/MarkStack.h',
             'runtime/MarkStackWin.cpp',

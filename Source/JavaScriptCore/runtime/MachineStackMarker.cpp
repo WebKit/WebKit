@@ -21,6 +21,7 @@
 #include "config.h"
 #include "MachineStackMarker.h"
 
+#include "ConservativeSet.h"
 #include "Heap.h"
 #include "JSArray.h"
 #include "JSGlobalData.h"
@@ -211,7 +212,7 @@ void NEVER_INLINE MachineStackMarker::markCurrentThreadConservativelyInternal(Co
     void* begin = m_heap->globalData()->stack().current();
     void* end = m_heap->globalData()->stack().origin();
     swapIfBackwards(begin, end);
-    markConservatively(conservativeSet, begin, end);
+    conservativeSet.add(begin, end);
 }
 
 #if COMPILER(GCC)
@@ -373,12 +374,12 @@ void MachineStackMarker::markOtherThreadConservatively(ConservativeSet& conserva
     size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
 
     // mark the thread's registers
-    markConservatively(conservativeSet, static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
+    conservativeSet.add(static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
 
     void* stackPointer = otherThreadStackPointer(regs);
     void* stackBase = thread->stackBase;
     swapIfBackwards(stackPointer, stackBase);
-    markConservatively(conservativeSet, stackPointer, stackBase);
+    conservativeSet.add(stackPointer, stackBase);
 
     resumeThread(thread->platformThread);
 }
@@ -412,25 +413,6 @@ void MachineStackMarker::markMachineStackConservatively(ConservativeSet& conserv
 #endif
     }
 #endif
-}
-
-inline bool isPointerAligned(void* p)
-{
-    return !((intptr_t)(p) & (sizeof(char*) - 1));
-}
-
-void MachineStackMarker::markConservatively(ConservativeSet& conservativeSet, void* start, void* end)
-{
-    ASSERT(start <= end);
-    ASSERT((static_cast<char*>(end) - static_cast<char*>(start)) < 0x1000000);
-    ASSERT(isPointerAligned(start));
-    ASSERT(isPointerAligned(end));
-
-    for (char** it = static_cast<char**>(start); it != static_cast<char**>(end); ++it) {
-        if (!m_heap->contains(*it))
-            continue;
-        conservativeSet.add(reinterpret_cast<JSCell*>(*it));
-    }
 }
 
 } // namespace JSC

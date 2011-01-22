@@ -137,6 +137,7 @@ SET(JavaScriptCore_SOURCES
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
     runtime/MachineStackMarker.cpp
+    runtime/ConservativeSet.cpp
     runtime/MarkStack.cpp
     runtime/MathObject.cpp
     runtime/NativeErrorConstructor.cpp

@@ -179,6 +179,7 @@ SOURCES += \
     runtime/MarkStackPosix.cpp \
     runtime/MarkStackSymbian.cpp \
     runtime/MarkStackWin.cpp \
+    runtime/ConservativeSet.cpp \
     runtime/MarkStack.cpp \
     runtime/MathObject.cpp \
     runtime/NativeErrorConstructor.cpp \

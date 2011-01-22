@@ -1002,6 +1002,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\ConservativeSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\ConservativeSet.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\MarkStack.cpp"
 				>
 			</File>

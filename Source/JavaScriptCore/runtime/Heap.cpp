@@ -22,6 +22,7 @@
 #include "Heap.h"
 
 #include "CollectorHeapIterator.h"
+#include "ConservativeSet.h"
 #include "GCActivityCallback.h"
 #include "GCHandle.h"
 #include "Interpreter.h"
@@ -256,9 +257,9 @@ void Heap::markRoots()
     // We gather the conservative set before clearing mark bits, because
     // conservative gathering uses the mark bits from our last mark pass to
     // determine whether a reference is valid.
-    ConservativeSet conservativeSet;
+    ConservativeSet conservativeSet(this);
     m_machineStackMarker.markMachineStackConservatively(conservativeSet);
-    m_machineStackMarker.markConservatively(conservativeSet, registerFile().start(), registerFile().end());
+    conservativeSet.add(registerFile().start(), registerFile().end());
 
     // Reset mark bits.
     m_markedSpace.clearMarkBits();

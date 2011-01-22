@@ -188,18 +188,6 @@ namespace JSC {
 #endif
     };
     
-    class ConservativeSet {
-    public:
-        void add(JSCell* cell) { m_vector.append(cell); }
-        void mark(MarkStack& markStack)
-        {
-            for (size_t i = 0; i < m_vector.size(); ++i)
-                markStack.append(m_vector[i]);
-        }
-
-    private:
-        Vector<JSCell*, 64> m_vector;
-    };
 }
 
 #endif

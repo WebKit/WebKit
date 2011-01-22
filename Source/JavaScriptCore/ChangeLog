@@ -1,3 +1,39 @@
+2011-01-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        A few of Maciej's review suggestions for my last patch.
+        https://bugs.webkit.org/show_bug.cgi?id=52946        
+
+        SunSpider reports no change.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Updated build systems.
+
+        * runtime/ConservativeSet.cpp: Added.
+        (JSC::isPointerAligned):
+        (JSC::ConservativeSet::add):
+        * runtime/ConservativeSet.h: Added.
+        (JSC::ConservativeSet::ConservativeSet):
+        (JSC::ConservativeSet::mark): Split ConservativeSet out into its own
+        file, and moved the conservative check into ConservativeSet::add, making
+        ConservativeSet's responsibility clearer.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * runtime/MachineStackMarker.cpp:
+        (JSC::MachineStackMarker::markCurrentThreadConservativelyInternal):
+        (JSC::MachineStackMarker::markOtherThreadConservatively):
+        * runtime/MachineStackMarker.h:
+        * runtime/MarkStack.h: Updated for changes above.
+
 2011-01-22  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r76430.

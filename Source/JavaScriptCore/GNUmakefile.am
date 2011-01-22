@@ -343,6 +343,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/Lookup.h \
 	Source/JavaScriptCore/runtime/MachineStackMarker.cpp \
 	Source/JavaScriptCore/runtime/MachineStackMarker.h \
+        Source/JavaScriptCore/runtime/ConservativeSet.cpp \
+        Source/JavaScriptCore/runtime/ConservativeSet.h \
 	Source/JavaScriptCore/runtime/MarkStack.cpp \
 	Source/JavaScriptCore/runtime/MarkStack.h \
 	Source/JavaScriptCore/runtime/MathObject.cpp \
