@@ -155,8 +155,7 @@ IntRect LayerRendererChromium::horizontalScrollbarRect(const IntRect& visibleRec
 
 void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect, const IntRect& visibleRect, const IntRect& contentRect)
 {
-    if (contentRect.intersects(dirtyRect))
-        m_rootLayerTiler->invalidateRect(dirtyRect);
+    m_rootLayerTiler->invalidateRect(dirtyRect);
     if (m_horizontalScrollbarTiler) {
         IntRect scrollbar = horizontalScrollbarRect(visibleRect, contentRect);
         if (dirtyRect.intersects(scrollbar)) {

@@ -1,3 +1,22 @@
+2011-01-22  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix compositor repaints for offscreen fixed elements
+        https://bugs.webkit.org/show_bug.cgi?id=52681
+
+        The fast path scrolling was clipping offscreen invalidations.
+        Additionally, the compositor was ignoring all invalidations that were
+        entirely out of the content rect.
+
+        Test: compositing/ to verify this caused no regressions.
+        Tested fix manually in browser as I could not generate a LayoutTest that reproduced the bug in run-webkit-tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsFastPath):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::invalidateRootLayerRect):
+
 2011-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

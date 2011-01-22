@@ -1097,8 +1097,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             continue;
         IntRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
         updateRect = contentsToWindow(updateRect);
-
-        updateRect.intersect(rectToScroll);
+        if (clipsRepaints())
+            updateRect.intersect(rectToScroll);
         if (!updateRect.isEmpty()) {
             if (subRectToUpdate.size() >= fixedObjectThreshold) {
                 updateInvalidatedSubRect = false;
@@ -1120,7 +1120,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             IntRect scrolledRect = updateRect;
             scrolledRect.move(scrollDelta);
             updateRect.unite(scrolledRect);
-            updateRect.intersect(rectToScroll);
+            if (clipsRepaints())
+                updateRect.intersect(rectToScroll);
             hostWindow()->invalidateContentsAndWindow(updateRect, false);
         }
         return true;
