@@ -60,8 +60,8 @@ static void showGlyphsWithAdvances(const SimpleFontData* font, CGContextRef cont
             savedMatrix = CGContextGetTextMatrix(context);
             CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
             // Move start point to put glyphs into original region.
-            runMatrix.tx = savedMatrix.tx + font->ascent();
-            runMatrix.ty = savedMatrix.ty + font->descent();
+            runMatrix.tx = savedMatrix.tx + font->fontMetrics().ascent();
+            runMatrix.ty = savedMatrix.ty + font->fontMetrics().descent();
             CGContextSetTextMatrix(context, runMatrix);
         }
 

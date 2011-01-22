@@ -1230,8 +1230,8 @@ static int baselinePositionForAccessibilityRenderObject(RenderObject* renderObje
     // FIXME: This implementation of baselinePosition originates from RenderObject.cpp and was
     // removed in r70072. The implementation looks incorrect though, because this is not the
     // baseline of the underlying RenderObject, but of the AccessibilityRenderObject.
-    const Font& f = renderObject->firstLineStyle()->font();
-    return f.ascent() + (renderObject->firstLineStyle()->computedLineHeight() - f.height()) / 2;
+    const FontMetrics& fontMetrics = renderObject->firstLineStyle()->fontMetrics();
+    return fontMetrics.ascent() + (renderObject->firstLineStyle()->computedLineHeight() - fontMetrics.height()) / 2;
 }
 
 static AtkAttributeSet* getAttributeSetForAccessibilityObject(const AccessibilityObject* object)

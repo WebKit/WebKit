@@ -51,7 +51,7 @@ UniscribeHelperTextRun::UniscribeHelperTextRun(const TextRun& run,
     setLetterSpacing(font.letterSpacing());
     setSpaceWidth(font.spaceWidth());
     setWordSpacing(font.wordSpacing());
-    setAscent(font.primaryFont()->ascent());
+    setAscent(font.fontMetrics()->ascent());
 
     init();
 
@@ -121,7 +121,7 @@ bool UniscribeHelperTextRun::nextWinFontData(
         m_hfonts.append(simpleFontData->platformData().hfont());
         m_scriptCaches.append(simpleFontData->platformData().scriptCache());
         m_fontProperties.append(simpleFontData->platformData().scriptFontProperties());
-        m_ascents.append(simpleFontData->ascent());
+        m_ascents.append(simpleFontData->fontMetrics().ascent());
     }
 
     *hfont = m_hfonts[m_fontIndex - 1];

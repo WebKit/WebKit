@@ -2402,6 +2402,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FontFamily.h \
 	Source/WebCore/platform/graphics/FontFastPath.cpp \
 	Source/WebCore/platform/graphics/Font.h \
+	Source/WebCore/platform/graphics/FontMetrics.h \
 	Source/WebCore/platform/graphics/FontOrientation.h \
 	Source/WebCore/platform/graphics/FontRenderingMode.h \
 	Source/WebCore/platform/graphics/FontSelector.h \

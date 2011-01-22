@@ -111,8 +111,8 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 {
     ComplexTextController controller(this, run, true, fallbackFonts);
     if (glyphOverflow) {
-        glyphOverflow->top = max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - ascent());
-        glyphOverflow->bottom = max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - descent());
+        glyphOverflow->top = max<int>(glyphOverflow->top, ceilf(-controller.minGlyphBoundingBoxY()) - fontMetrics().ascent());
+        glyphOverflow->bottom = max<int>(glyphOverflow->bottom, ceilf(controller.maxGlyphBoundingBoxY()) - fontMetrics().descent());
         glyphOverflow->left = max<int>(0, ceilf(-controller.minGlyphBoundingBoxX()));
         glyphOverflow->right = max<int>(0, ceilf(controller.maxGlyphBoundingBoxX() - controller.totalWidth()));
     }

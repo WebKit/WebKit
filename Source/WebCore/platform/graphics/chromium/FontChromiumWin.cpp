@@ -246,10 +246,11 @@ IntRect TransparencyAwareGlyphPainter::estimateTextBounds()
     for (int i = 0; i < m_numGlyphs; i++)
         totalWidth += lroundf(m_glyphBuffer.advanceAt(m_from + i));
 
-    return IntRect(m_point.x() - (m_font->ascent() + m_font->descent()) / 2,
-                   m_point.y() - m_font->ascent() - m_font->lineGap(),
-                   totalWidth + m_font->ascent() + m_font->descent(),
-                   m_font->lineSpacing()); 
+    const FontMetrics& fontMetrics = m_font->fontMetrics();
+    return IntRect(m_point.x() - (fontMetrics.ascent() + fontMetrics.descent()) / 2,
+                   m_point.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
+                   totalWidth + fontMetrics.ascent() + fontMetrics.descent(),
+                   fontMetrics.lineSpacing()); 
 }
 
 bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
@@ -270,7 +271,7 @@ bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
     // Windows' origin is the top-left of the bounding box, so we have
     // to subtract off the font ascent to get it.
     int x = lroundf(m_point.x() + startAdvance);
-    int y = lroundf(m_point.y() - m_font->ascent());
+    int y = lroundf(m_point.y() - m_font->fontMetrics().ascent());
 
     // If there is a non-blur shadow and both the fill color and shadow color 
     // are opaque, handle without skia. 
@@ -354,10 +355,11 @@ IntRect TransparencyAwareUniscribePainter::estimateTextBounds()
     // This algorithm for estimating how much extra space we need (the text may
     // go outside the selection rect) is based roughly on
     // TransparencyAwareGlyphPainter::estimateTextBounds above.
-    return IntRect(left - (m_font->ascent() + m_font->descent()) / 2,
-                   m_point.y() - m_font->ascent() - m_font->lineGap(),
-                   (right - left) + m_font->ascent() + m_font->descent(),
-                   m_font->lineSpacing());
+    const FontMetrics& fontMetrics = m_font->fontMetrics();
+    return IntRect(left - (fontMetrics.ascent() + fontMetrics.descent()) / 2,
+                   m_point.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
+                   (right - left) + fontMetrics.ascent() + fontMetrics.descent(),
+                   fontMetrics.lineSpacing());
 }
 
 }  // namespace
@@ -496,14 +498,14 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
         COLORREF savedTextColor = GetTextColor(hdc);
         SetTextColor(hdc, textColor);
         state.draw(graphicsContext, hdc, static_cast<int>(point.x()) + shadowOffset.width(),
-                   static_cast<int>(point.y() - ascent()) + shadowOffset.height(), from, to);
+                   static_cast<int>(point.y() - fontMetrics().ascent()) + shadowOffset.height(), from, to);
         SetTextColor(hdc, savedTextColor); 
     }
 
     // Uniscribe counts the coordinates from the upper left, while WebKit uses
     // the baseline, so we have to subtract off the ascent.
     state.draw(graphicsContext, hdc, static_cast<int>(point.x()),
-               static_cast<int>(point.y() - ascent()), from, to);
+               static_cast<int>(point.y() - fontMetrics().ascent()), from, to);
 
     context->canvas()->endPlatformPaint();
 }

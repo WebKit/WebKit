@@ -485,7 +485,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     IntPoint boxOrigin = locationIncludingFlipping();
     boxOrigin.move(tx, ty);    
     IntRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
-    IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->font().ascent());
+    IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->fontMetrics().ascent());
 
     if (!isHorizontal()) {
         context->save();
@@ -626,7 +626,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     bool hasTextEmphasis = getEmphasisMarkPosition(styleToUse, emphasisMarkPosition);
     const AtomicString& emphasisMark = hasTextEmphasis ? styleToUse->textEmphasisMarkString() : nullAtom;
     if (!emphasisMark.isEmpty())
-        emphasisMarkOffset = emphasisMarkPosition == TextEmphasisPositionOver ? -font.ascent() - font.emphasisMarkDescent(emphasisMark) : font.descent() + font.emphasisMarkAscent(emphasisMark);
+        emphasisMarkOffset = emphasisMarkPosition == TextEmphasisPositionOver ? -font.fontMetrics().ascent() - font.emphasisMarkDescent(emphasisMark) : font.fontMetrics().descent() + font.emphasisMarkAscent(emphasisMark);
 
     if (!paintSelectedTextOnly) {
         // For stroked painting, we have to change the text drawing mode.  It's probably dangerous to leave that mutated as a side
@@ -837,7 +837,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const IntPoint& bo
     bool linesAreOpaque = !isPrinting && (!(deco & UNDERLINE) || underline.alpha() == 255) && (!(deco & OVERLINE) || overline.alpha() == 255) && (!(deco & LINE_THROUGH) || linethrough.alpha() == 255);
 
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
-    int baseline = styleToUse->font().ascent();
+    int baseline = styleToUse->fontMetrics().ascent();
 
     bool setClip = false;
     int extraOffset = 0;
@@ -970,7 +970,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const IntP
     // So, we generally place the underline at the bottom of the text, but in larger fonts that's not so good so
     // we pin to two pixels under the baseline.
     int lineThickness = cMisspellingLineThickness;
-    int baseline = renderer()->style(m_firstLine)->font().ascent();
+    int baseline = renderer()->style(m_firstLine)->fontMetrics().ascent();
     int descent = logicalHeight() - baseline;
     int underlineOffset;
     if (descent <= (2 + lineThickness)) {
@@ -1127,7 +1127,7 @@ void InlineTextBox::paintCompositionUnderline(GraphicsContext* ctx, const IntPoi
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
-    int baseline = renderer()->style(m_firstLine)->font().ascent();
+    int baseline = renderer()->style(m_firstLine)->fontMetrics().ascent();
     if (underline.thick && logicalHeight() - baseline >= 2)
         lineThickness = 2;
 

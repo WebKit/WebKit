@@ -248,7 +248,7 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
     //First step in drawing the link drag image width
     TextRun labelRun(label.impl());
     TextRun urlRun(urlString.impl());
-    IntSize labelSize(labelFont->width(labelRun), labelFont->ascent() + labelFont->descent());
+    IntSize labelSize(labelFont->width(labelRun), labelFont->fontMetrics().ascent() + labelFont->fontMetrics().descent());
 
     if (labelSize.width() > MAX_DRAG_LABEL_STRING_WIDTH){
         labelSize.setWidth(MAX_DRAG_LABEL_STRING_WIDTH);
@@ -261,7 +261,7 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
 
     if (drawURLString) {
         urlStringSize.setWidth(urlFont->width(urlRun));
-        urlStringSize.setHeight(urlFont->ascent() + urlFont->descent()); 
+        urlStringSize.setHeight(urlFont->fontMetrics().ascent() + urlFont->fontMetrics().descent()); 
         imageSize.setHeight(imageSize.height() + urlStringSize.height());
         if (urlStringSize.width() > MAX_DRAG_LABEL_STRING_WIDTH) {
             imageSize.setWidth(MAX_DRAG_LABEL_WIDTH);
@@ -304,7 +304,7 @@ DragImageRef WebDragClient::createDragImageForLink(KURL& url, const String& inLa
     if (drawURLString) {
         if (clipURLString)
             urlString = StringTruncator::rightTruncate(urlString, imageSize.width() - (DRAG_LABEL_BORDER_X * 2.0f), *urlFont, false);
-        IntPoint textPos(DRAG_LABEL_BORDER_X, imageSize.height() - (DRAG_LABEL_BORDER_Y_OFFSET + urlFont->descent()));
+        IntPoint textPos(DRAG_LABEL_BORDER_X, imageSize.height() - (DRAG_LABEL_BORDER_Y_OFFSET + urlFont->fontMetrics().descent()));
         WebCoreDrawDoubledTextAtPoint(context, urlString, textPos, *urlFont, topColor, bottomColor);
     }
     

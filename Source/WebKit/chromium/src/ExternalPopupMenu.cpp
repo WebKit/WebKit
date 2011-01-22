@@ -142,7 +142,7 @@ void ExternalPopupMenu::getPopupMenuInfo(WebPopupMenuInfo* info)
         popupItem.enabled = m_popupMenuClient->itemIsEnabled(i);
     }
 
-    info->itemHeight = m_popupMenuClient->menuStyle().font().height();
+    info->itemHeight = m_popupMenuClient->menuStyle().font().fontMetrics().height();
     info->itemFontSize =
         static_cast<int>(m_popupMenuClient->menuStyle().font().size());
     info->selectedIndex = m_popupMenuClient->selectedIndex();

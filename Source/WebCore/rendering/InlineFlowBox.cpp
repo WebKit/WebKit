@@ -408,6 +408,7 @@ static int verticalPositionForBox(InlineBox* box, FontBaseline baselineType, boo
         
         if (verticalAlign != BASELINE) {
             const Font& font = parent->style(firstLine)->font();
+            const FontMetrics& fontMetrics = font.fontMetrics();
             int fontSize = font.pixelSize();
 
             LineDirectionMode lineDirection = parent->style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
@@ -417,11 +418,11 @@ static int verticalPositionForBox(InlineBox* box, FontBaseline baselineType, boo
             else if (verticalAlign == SUPER)
                 verticalPosition -= fontSize / 3 + 1;
             else if (verticalAlign == TEXT_TOP)
-                verticalPosition += renderer->baselinePosition(baselineType, firstLine, lineDirection) - font.ascent(baselineType);
+                verticalPosition += renderer->baselinePosition(baselineType, firstLine, lineDirection) - fontMetrics.ascent(baselineType);
             else if (verticalAlign == MIDDLE)
-                verticalPosition += -static_cast<int>(font.xHeight() / 2) - renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType, firstLine, lineDirection);
+                verticalPosition += -static_cast<int>(fontMetrics.xHeight() / 2) - renderer->lineHeight(firstLine, lineDirection) / 2 + renderer->baselinePosition(baselineType, firstLine, lineDirection);
             else if (verticalAlign == TEXT_BOTTOM) {
-                verticalPosition += font.descent(baselineType);
+                verticalPosition += fontMetrics.descent(baselineType);
                 // lineHeight - baselinePosition is always 0 for replaced elements (except inline blocks), so don't bother wasting time in that case.
                 if (!renderer->isReplaced() || renderer->isInlineBlockOrInlineTable())
                     verticalPosition -= (renderer->lineHeight(firstLine, lineDirection) - renderer->baselinePosition(baselineType, firstLine, lineDirection));
@@ -503,9 +504,10 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
             baseline = 0;
             int baselineToBottom = 0;
             for (size_t i = 0; i < usedFonts->size(); ++i) {
-                int halfLeading = (usedFonts->at(i)->lineSpacing() - usedFonts->at(i)->height()) / 2;
-                int usedFontBaseline = halfLeading + usedFonts->at(i)->ascent(baselineType);
-                int usedFontBaselineToBottom = usedFonts->at(i)->lineSpacing() - usedFontBaseline;
+                const FontMetrics& fontMetrics = usedFonts->at(i)->fontMetrics();
+                int halfLeading = (fontMetrics.lineSpacing() - fontMetrics.height()) / 2;
+                int usedFontBaseline = halfLeading + fontMetrics.ascent(baselineType);
+                int usedFontBaselineToBottom = fontMetrics.lineSpacing() - usedFontBaseline;
                 if (!baselineSet) {
                     baselineSet = true;
                     baseline = usedFontBaseline;
@@ -515,9 +517,9 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                     baselineToBottom = max(baselineToBottom, usedFontBaselineToBottom);
                 }
                 if (!affectsAscent)
-                    affectsAscent = usedFonts->at(i)->ascent() - curr->logicalTop() > 0;
+                    affectsAscent = fontMetrics.ascent() - curr->logicalTop() > 0;
                 if (!affectsDescent)
-                    affectsDescent = usedFonts->at(i)->descent() + curr->logicalTop() > 0;
+                    affectsDescent = fontMetrics.descent() + curr->logicalTop() > 0;
             }
             lineHeight = baseline + baselineToBottom;
         } else {
@@ -527,11 +529,12 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
                 // Examine the font box for inline flows and text boxes to see if any part of it is above the baseline.
                 // If the top of our font box relative to the root box baseline is above the root box baseline, then
                 // we are contributing to the maxAscent value.
-                affectsAscent = curr->renderer()->style(m_firstLine)->font().ascent(baselineType) - curr->logicalTop() > 0;
+                const FontMetrics& fontMetrics = curr->renderer()->style(m_firstLine)->fontMetrics();
+                affectsAscent = fontMetrics.ascent(baselineType) - curr->logicalTop() > 0;
                 
                 // Descent is similar.  If any part of our font box is below the root box's baseline, then
                 // we contribute to the maxDescent value.
-                affectsDescent = curr->renderer()->style(m_firstLine)->font().descent(baselineType) + curr->logicalTop() > 0;
+                affectsDescent = fontMetrics.descent(baselineType) + curr->logicalTop() > 0;
             } else {
                 // Replaced elements always affect both the ascent and descent.
                 affectsAscent = true;
@@ -606,8 +609,8 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
         int boxHeightIncludingMargins = boxHeight;
             
         if (curr->isText() || curr->isInlineFlowBox()) {
-            const Font& font = curr->renderer()->style(m_firstLine)->font();
-            newLogicalTop += curr->baselinePosition(baselineType) - font.ascent(baselineType);
+            const FontMetrics& fontMetrics = curr->renderer()->style(m_firstLine)->fontMetrics();
+            newLogicalTop += curr->baselinePosition(baselineType) - fontMetrics.ascent(baselineType);
             if (curr->isInlineFlowBox()) {
                 RenderBoxModelObject* boxObject = toRenderBoxModelObject(curr->renderer());
                 newLogicalTop -= boxObject->style(m_firstLine)->isHorizontalWritingMode() ? boxObject->borderTop() + boxObject->paddingTop() : 
@@ -668,8 +671,8 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
     }
 
     if (isRootInlineBox()) {
-        const Font& font = renderer()->style(m_firstLine)->font();
-        setLogicalTop(logicalTop() + baselinePosition(baselineType) - font.ascent(baselineType));
+        const FontMetrics& fontMetrics = renderer()->style(m_firstLine)->fontMetrics();
+        setLogicalTop(logicalTop() + baselinePosition(baselineType) - fontMetrics.ascent(baselineType));
         
         if (hasTextChildren() || strictMode) {
             if (!setLineTop) {

@@ -172,8 +172,9 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     context->setFillColor(m_missingPluginIndicatorIsPressed ? replacementTextRoundedRectPressedColor() : Color::white, style()->colorSpace());
     context->fillPath(path);
 
+    const FontMetrics& fontMetrics = font.fontMetrics();
     float labelX = roundf(replacementTextRect.location().x() + (replacementTextRect.size().width() - textWidth) / 2);
-    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - font.height()) / 2 + font.ascent());
+    float labelY = roundf(replacementTextRect.location().y() + (replacementTextRect.size().height() - fontMetrics.height()) / 2 + fontMetrics.ascent());
     context->setAlpha(m_missingPluginIndicatorIsPressed ? replacementTextPressedTextOpacity : replacementTextTextOpacity);
     context->setFillColor(Color::black, style()->colorSpace());
     context->drawBidiText(font, run, FloatPoint(labelX, labelY));

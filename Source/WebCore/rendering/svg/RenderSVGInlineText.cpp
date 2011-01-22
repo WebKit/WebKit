@@ -161,7 +161,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
 
     RenderStyle* style = this->style();
     ASSERT(style);
-    int baseline = style->font().ascent();
+    int baseline = style->fontMetrics().ascent();
 
     RenderBlock* containingBlock = this->containingBlock();
     ASSERT(containingBlock);

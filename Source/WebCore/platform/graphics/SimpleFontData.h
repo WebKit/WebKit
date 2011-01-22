@@ -26,6 +26,7 @@
 
 #include "FontBaseline.h"
 #include "FontData.h"
+#include "FontMetrics.h"
 #include "FontPlatformData.h"
 #include "FloatRect.h"
 #include "GlyphMetricsMap.h"
@@ -101,15 +102,9 @@ public:
     // FIXME: Use the actual metrics for fonts with vertical tables instead of just hard-coding.  If the font is horizontally oriented or
     // a broken ideographic font, then just hard-code to split ascent/descent down the middle.  Otherwise we should actually use the metrics
     // from the font itself.
-    int ascent(FontBaseline baselineType = AlphabeticBaseline) const { return baselineType == AlphabeticBaseline ? m_ascent : height() - height() / 2; }
-    int descent(FontBaseline baselineType = AlphabeticBaseline) const { return baselineType == AlphabeticBaseline ? m_descent : height() / 2; }
-    int height() const { return m_ascent + m_descent; }
-    int lineSpacing() const { return m_lineSpacing; }
-    int lineGap() const { return m_lineGap; }
+    const FontMetrics& fontMetrics() const { return m_fontMetrics; }
     float maxCharWidth() const { return m_maxCharWidth; }
     float avgCharWidth() const { return m_avgCharWidth; }
-    float xHeight() const { return m_xHeight; }
-    unsigned unitsPerEm() const { return m_unitsPerEm; }
 
     FloatRect boundsForGlyph(Glyph) const;
     float widthForGlyph(Glyph glyph) const;
@@ -211,14 +206,9 @@ private:
     float widthForGDIGlyph(Glyph glyph) const;
 #endif
 
-    int m_ascent;
-    int m_descent;
-    int m_lineSpacing;
-    int m_lineGap;
+    FontMetrics m_fontMetrics;
     float m_maxCharWidth;
     float m_avgCharWidth;
-    float m_xHeight;
-    unsigned m_unitsPerEm;
     
     FontOrientation m_orientation; // This is our supported orientation according to the tables in the font.  FontPlatformData will just always have the desired orientation.
                                    // This value represents what we actually support.

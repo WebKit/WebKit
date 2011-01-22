@@ -769,7 +769,7 @@ void RenderThemeWin::adjustMenuListButtonStyle(CSSStyleSelector* selector, Rende
     style->setHeight(Length(Auto));
 
     // Calculate our min-height
-    int minHeight = style->font().height();
+    int minHeight = style->fontMetrics().height();
     minHeight = max(minHeight, dropDownBoxMinHeight);
 
     style->setMinHeight(Length(minHeight, Fixed));

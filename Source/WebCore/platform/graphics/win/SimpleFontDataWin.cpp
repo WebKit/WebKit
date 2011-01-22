@@ -66,14 +66,9 @@ bool SimpleFontData::shouldApplyMacAscentHack()
 void SimpleFontData::initGDIFont()
 {
     if (!m_platformData.size()) {
-        m_ascent = 0;
-        m_descent = 0;
-        m_lineGap = 0;
-        m_lineSpacing = 0;
+        m_fontMetrics.reset();
         m_avgCharWidth = 0;
         m_maxCharWidth = 0;
-        m_xHeight = 0;
-        m_unitsPerEm = 0;
         return;
     }
 
@@ -82,21 +77,24 @@ void SimpleFontData::initGDIFont()
      OUTLINETEXTMETRIC metrics;
      GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
      TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
-     m_ascent = textMetrics.tmAscent;
-     m_descent = textMetrics.tmDescent;
-     m_lineGap = textMetrics.tmExternalLeading;
-     m_lineSpacing = m_ascent + m_descent + m_lineGap;
+     float ascent = textMetrics.tmAscent;
+     float descent = textMetrics.tmDescent;
+     float lineGap = textMetrics.tmExternalLeading;
+     m_fontMetrics.setAscent(ascent);
+     m_fontMetrics.setDescent(descent);
+     m_fontMetrics.setLineGap(lineGap);
      m_avgCharWidth = textMetrics.tmAveCharWidth;
      m_maxCharWidth = textMetrics.tmMaxCharWidth;
-     m_xHeight = m_ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
+     float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
 
      GLYPHMETRICS gm;
      MAT2 mat = { 1, 0, 0, 1 };
      DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &mat);
      if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
-         m_xHeight = gm.gmptGlyphOrigin.y;
+         xHeight = gm.gmptGlyphOrigin.y;
 
-     m_unitsPerEm = metrics.otmEMSquare;
+     m_fontMetrics.setXHeight(xHeight);
+     m_fontMetrics.setUnitsPerEm(metrics.otmEMSquare);
 
      SelectObject(hdc, oldFont);
      ReleaseDC(0, hdc);

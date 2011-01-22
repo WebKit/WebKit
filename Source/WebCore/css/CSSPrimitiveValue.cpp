@@ -400,7 +400,7 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
             // We really need to compute EX using fontMetrics for the original specifiedSize and not use
             // our actual constructed rendering font.
             applyZoomMultiplier = false;
-            factor = style->font().xHeight();
+            factor = style->fontMetrics().xHeight();
             break;
         case CSS_REMS:
             applyZoomMultiplier = false;

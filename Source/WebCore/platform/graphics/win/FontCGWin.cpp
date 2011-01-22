@@ -167,8 +167,12 @@ static void drawGDIGlyphs(GraphicsContext* graphicsContext, const SimpleFontData
         drawIntoBitmap = true;
         // We put slop into this rect, since glyphs can overflow the ascent/descent bounds and the left/right edges.
         // FIXME: Can get glyphs' optical bounds (even from CG) to get this right.
-        int lineGap = font->lineGap();
-        textRect = IntRect(point.x() - (font->ascent() + font->descent()) / 2, point.y() - font->ascent() - lineGap, totalWidth + font->ascent() + font->descent(), font->lineSpacing());
+        const FontMetrics& fontMetrics = font->fontMetrics();
+        int lineGap = fontMetrics.lineGap();
+        textRect = IntRect(point.x() - (fontMetrics.ascent() + fontMetrics.descent()) / 2,
+                           point.y() - fontMetrics.ascent() - lineGap,
+                           totalWidth + fontMetrics.ascent() + fontMetrics.descent(),
+                           fontMetrics.lineSpacing());
         bitmap.set(graphicsContext->createWindowsBitmap(textRect.size()));
         memset(bitmap->buffer(), 255, bitmap->bufferLength());
         hdc = bitmap->hdc();

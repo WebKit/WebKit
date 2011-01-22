@@ -54,14 +54,9 @@ static inline float scaleEmToUnits(float x, int unitsPerEm)
 void SimpleFontData::platformInit()
 {
     if (!m_platformData.size()) {
-        m_ascent = 0;
-        m_descent = 0;
-        m_lineGap = 0;
-        m_lineSpacing = 0;
+        m_fontMetrics.reset();
         m_avgCharWidth = 0;
         m_maxCharWidth = 0;
-        m_xHeight = 0;
-        m_unitsPerEm = 0;
         return;
     }
 
@@ -82,10 +77,11 @@ void SimpleFontData::platformInit()
     m_avgCharWidth = textMetric.tmAveCharWidth;
     m_maxCharWidth = textMetric.tmMaxCharWidth;
 
-    m_ascent = textMetric.tmAscent;
-    m_descent = textMetric.tmDescent;
-    m_lineGap = textMetric.tmExternalLeading;
-    m_xHeight = m_ascent * 0.56f;  // Best guess for xHeight for non-Truetype fonts.
+    // FIXME: Access ascent/descent/lineGap with floating point precision.
+    float ascent = textMetric.tmAscent;
+    float descent = textMetric.tmDescent;
+    float lineGap = textMetric.tmExternalLeading;
+    float xHeight = ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
 
     OUTLINETEXTMETRIC outlineTextMetric;
     if (GetOutlineTextMetrics(dc, sizeof(outlineTextMetric), &outlineTextMetric) > 0) {
@@ -94,10 +90,13 @@ void SimpleFontData::platformInit()
         MAT2 identityMatrix = {{0, 1}, {0, 0}, {0, 0}, {0, 1}};
         DWORD len = GetGlyphOutlineW(dc, 'x', GGO_METRICS, &glyphMetrics, 0, 0, &identityMatrix);
         if (len != GDI_ERROR && glyphMetrics.gmBlackBoxY > 0)
-            m_xHeight = static_cast<float>(glyphMetrics.gmBlackBoxY);
+            xHeight = static_cast<float>(glyphMetrics.gmBlackBoxY);
     }
 
-    m_lineSpacing = m_ascent + m_descent + m_lineGap;
+    m_fontMetrics.setAscent(ascent);
+    m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setLineGap(lineGap);
+    m_fontMetrics.setXHeight(xHeight);
 
     SelectObject(dc, oldFont);
     ReleaseDC(0, dc);

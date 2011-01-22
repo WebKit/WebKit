@@ -2907,6 +2907,7 @@
             'platform/graphics/FontFamily.cpp',
             'platform/graphics/FontFamily.h',
             'platform/graphics/FontFastPath.cpp',
+            'platform/graphics/FontMetrics.h',
             'platform/graphics/FontRenderingMode.h',
             'platform/graphics/FontSelector.h',
             'platform/graphics/FontSmoothingMode.h',

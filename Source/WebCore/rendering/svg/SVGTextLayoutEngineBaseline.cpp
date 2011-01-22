@@ -49,9 +49,9 @@ float SVGTextLayoutEngineBaseline::calculateBaselineShift(const SVGRenderStyle* 
     case BS_BASELINE:
         return 0;
     case BS_SUB:
-        return -m_font.height() / 2;
+        return -m_font.fontMetrics().height() / 2;
     case BS_SUPER:
-        return m_font.height() / 2;
+        return m_font.fontMetrics().height() / 2;
     default:
         ASSERT_NOT_REACHED();
         return 0;
@@ -122,27 +122,29 @@ float SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift(bool isVertic
         ASSERT(baseline != AB_AUTO);
     }
 
+    const FontMetrics& fontMetrics = m_font.fontMetrics();
+
     // Note: http://wiki.apache.org/xmlgraphics-fop/LineLayout/AlignmentHandling
     switch (baseline) {
     case AB_BASELINE:
         return dominantBaselineToAlignmentBaseline(isVerticalText, textRendererParent);
     case AB_BEFORE_EDGE:
     case AB_TEXT_BEFORE_EDGE:
-        return m_font.ascent();
+        return fontMetrics.ascent();
     case AB_MIDDLE:
-        return m_font.xHeight() / 2;
+        return fontMetrics.xHeight() / 2;
     case AB_CENTRAL:
-        return (m_font.ascent() - m_font.descent()) / 2;
+        return (fontMetrics.ascent() - fontMetrics.descent()) / 2;
     case AB_AFTER_EDGE:
     case AB_TEXT_AFTER_EDGE:
     case AB_IDEOGRAPHIC:
-        return m_font.descent();
+        return fontMetrics.descent();
     case AB_ALPHABETIC:
         return 0;
     case AB_HANGING:
-        return m_font.ascent() * 8 / 10.f;
+        return fontMetrics.ascent() * 8 / 10.f;
     case AB_MATHEMATICAL:
-        return m_font.ascent() / 2;
+        return fontMetrics.ascent() / 2;
     default:
         ASSERT_NOT_REACHED();
         return 0;
@@ -192,12 +194,14 @@ float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVe
     // Spec: If if the 'glyph-orientation-vertical' results in an orientation angle that is not a multiple of
     // 180 degrees, then the current text position is incremented according to the horizontal metrics of the glyph.
 
+    const FontMetrics& fontMetrics = m_font.fontMetrics();
+
     // Vertical orientation handling.
     if (isVerticalText) {
-        float ascentMinusDescent = m_font.ascent() - m_font.descent();
+        float ascentMinusDescent = fontMetrics.ascent() - fontMetrics.descent();
         if (!angle) {
             xOrientationShift = (ascentMinusDescent - metrics.width()) / 2;
-            yOrientationShift = m_font.ascent();
+            yOrientationShift = fontMetrics.ascent();
         } else if (angle == 180)
             xOrientationShift = (ascentMinusDescent + metrics.width()) / 2;
         else if (angle == 270) {
@@ -217,7 +221,7 @@ float SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation(bool isVe
         yOrientationShift = -metrics.width();
     else if (angle == 180) {
         xOrientationShift = metrics.width();
-        yOrientationShift = -m_font.ascent();
+        yOrientationShift = -fontMetrics.ascent();
     } else if (angle == 270)
         xOrientationShift = metrics.width();
 

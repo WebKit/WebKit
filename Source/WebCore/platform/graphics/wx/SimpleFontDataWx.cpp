@@ -53,12 +53,11 @@ void SimpleFontData::platformInit()
     wxFont *font = m_platformData.font();
     if (font && font->IsOk()) {
         wxFontProperties props = wxFontProperties(font);
-        m_ascent = props.GetAscent();
-        m_descent = props.GetDescent();
-        m_lineSpacing = props.GetLineSpacing();
-        m_xHeight = props.GetXHeight();
-        m_unitsPerEm = 1; // FIXME!
-        m_lineGap = props.GetLineGap();
+        m_fontMetrics.setAscent(props.GetAscent());
+        m_fontMetrics.setDescent(props.GetDescent());
+        m_fontMetrics.setXHeight(props.GetXHeight());
+        m_fontMetrics.setUnitsPerEm(1); // FIXME!
+        m_fontMetrics.setLineGap(props.GetLineGap());
     }
 
     m_syntheticBoldOffset = 0.0f;

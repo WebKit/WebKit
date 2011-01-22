@@ -58,7 +58,7 @@ float SVGTextLayoutEngineSpacing::calculateSVGKerning(bool isVerticalText, const
 
     m_lastGlyph = currentGlyph;
     m_lastGlyph.isValid = true;
-    kerning *= m_font.size() / m_font.primaryFont()->unitsPerEm();
+    kerning *= m_font.size() / m_font.fontMetrics().unitsPerEm();
     return kerning;
 #else
     UNUSED_PARAM(isVerticalText);

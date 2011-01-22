@@ -55,14 +55,9 @@ static const size_t maxVDMXTableSize = 1024 * 1024;  // 1 MB
 void SimpleFontData::platformInit()
 {
     if (!m_platformData.size()) {
-        m_ascent = 0;
-        m_descent = 0;
-        m_lineGap = 0;
-        m_lineSpacing = 0;
+        m_fontMetrics.reset();
         m_avgCharWidth = 0;
         m_maxCharWidth = 0;
-        m_xHeight = 0;
-        m_unitsPerEm = 0;
         return;
     }
 
@@ -88,26 +83,34 @@ void SimpleFontData::platformInit()
         fastFree(vdmxTable);
     }
 
+    float ascent;
+    float descent;
+
     // Beware those who step here: This code is designed to match Win32 font
     // metrics *exactly*.
     if (isVDMXValid) {
-        m_ascent = vdmxAscent;
-        m_descent = -vdmxDescent;
+        // FIXME: Access ascent/descent with floating point precision.
+        ascent = vdmxAscent;
+        descent = -vdmxDescent;
     } else {
         SkScalar height = -metrics.fAscent + metrics.fDescent + metrics.fLeading;
-        m_ascent = SkScalarRound(-metrics.fAscent);
-        m_descent = SkScalarRound(height) - m_ascent;
+        ascent = SkScalarToFloat(-metrics.fAscent);
+        descent = SkScalarToFloat(height) - ascent;
     }
 
+    m_fontMetrics.setAscent(ascent);
+    m_fontMetrics.setDescent(descent);
+
+    float xHeight;
     if (metrics.fXHeight)
-        m_xHeight = metrics.fXHeight;
+        xHeight = metrics.fXHeight;
     else {
         // hack taken from the Windows port
-        m_xHeight = static_cast<float>(m_ascent) * 0.56;
+        xHeight = ascent * 0.56f;
     }
 
-    m_lineGap = SkScalarRound(metrics.fLeading);
-    m_lineSpacing = m_ascent + m_descent + m_lineGap;
+    m_fontMetrics.setLineGap(SkScalarToFloat(metrics.fLeading));
+    m_fontMetrics.setXHeight(xHeight);
 
     if (m_orientation == Vertical) {
         static const uint32_t vheaTag = SkSetFourByteTag('v', 'h', 'e', 'a');
@@ -128,7 +131,7 @@ void SimpleFontData::platformInit()
     if (metrics.fAvgCharWidth)
         m_avgCharWidth = SkScalarRound(metrics.fAvgCharWidth);
     else {
-        m_avgCharWidth = m_xHeight;
+        m_avgCharWidth = xHeight;
 
         GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
 

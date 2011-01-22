@@ -644,7 +644,7 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
     RenderBox* textRenderer = innerTextElement() ? innerTextElement()->renderBox() : 0;
     if (textRenderer) {
         IntPoint textPoint;
-        textPoint.setY(ty + textBlockInsetTop() + placeholderStyle->font().ascent());
+        textPoint.setY(ty + textBlockInsetTop() + placeholderStyle->fontMetrics().ascent());
         if (placeholderStyle->isLeftToRightDirection())
             textPoint.setX(tx + textBlockInsetLeft());
         else

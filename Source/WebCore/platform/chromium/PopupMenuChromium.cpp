@@ -980,7 +980,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
         textX += maxWidth - itemFont.width(textRun);
 
     // Draw the item text.
-    int textY = rowRect.y() + itemFont.ascent() + (rowRect.height() - itemFont.height()) / 2;
+    int textY = rowRect.y() + itemFont.fontMetrics().ascent() + (rowRect.height() - itemFont.fontMetrics().height()) / 2;
     gc->drawBidiText(itemFont, textRun, IntPoint(textX, textY));
 
     // We are using the left padding as the right padding includes room for the scroll-bar which
@@ -1120,7 +1120,7 @@ int PopupListBox::getRowHeight(int index)
     String icon = m_popupClient->itemIcon(index);
     RefPtr<Image> image(Image::loadPlatformResource(icon.utf8().data()));
 
-    int fontHeight = getRowFont(index).height();
+    int fontHeight = getRowFont(index).fontMetrics().height();
     int iconHeight = (image && !image->isNull()) ? image->rect().height() : 0;
 
     return max(fontHeight, iconHeight);

@@ -112,7 +112,7 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
         const Font& font = style()->font();
-        IntSize textSize(min(font.width(TextRun(m_altText.characters(), m_altText.length())), maxAltTextWidth), min(font.height(), maxAltTextHeight));
+        IntSize textSize(min(font.width(TextRun(m_altText.characters(), m_altText.length())), maxAltTextWidth), min(font.fontMetrics().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(textSize);
     }
 
@@ -289,17 +289,18 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
                 int ax = tx + leftBorder + leftPad;
                 int ay = ty + topBorder + topPad;
                 const Font& font = style()->font();
-                int ascent = font.ascent();
+                const FontMetrics& fontMetrics = font.fontMetrics();
+                int ascent = fontMetrics.ascent();
 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
                 TextRun textRun(text.characters(), text.length());
                 int textWidth = font.width(textRun);
                 if (errorPictureDrawn) {
-                    if (usableWidth >= textWidth && font.height() <= imageY)
-                        context->drawText(style()->font(), textRun, IntPoint(ax, ay + ascent));
-                } else if (usableWidth >= textWidth && cHeight >= font.height())
-                    context->drawText(style()->font(), textRun, IntPoint(ax, ay + ascent));
+                    if (usableWidth >= textWidth && fontMetrics.height() <= imageY)
+                        context->drawText(font, textRun, IntPoint(ax, ay + ascent));
+                } else if (usableWidth >= textWidth && cHeight >= fontMetrics.height())
+                    context->drawText(font, textRun, IntPoint(ax, ay + ascent));
             }
         }
     } else if (m_imageResource->hasImage() && cWidth > 0 && cHeight > 0) {

@@ -532,15 +532,16 @@ void FullscreenVideoController::draw()
     // the text at the center of the slider.
     // Left string
     s = timeToString(currentTime());
+    int fontHeight = font.fontMetrics().height();
     TextRun leftText(s);
     context.setFillColor(Color(textColor), ColorSpaceDeviceRGB);
-    context.drawText(font, leftText, IntPoint(windowWidth / 2 - timeSliderWidth / 2 - margin - font.width(leftText), windowHeight - margin - sliderHeight / 2 + font.height() / 4));
+    context.drawText(font, leftText, IntPoint(windowWidth / 2 - timeSliderWidth / 2 - margin - font.width(leftText), windowHeight - margin - sliderHeight / 2 + fontHeight / 4));
 
     // Right string
     s = timeToString(currentTime() - duration());
     TextRun rightText(s);
     context.setFillColor(Color(textColor), ColorSpaceDeviceRGB);
-    context.drawText(font, rightText, IntPoint(windowWidth / 2 + timeSliderWidth / 2 + margin, windowHeight - margin - sliderHeight / 2 + font.height() / 4));
+    context.drawText(font, rightText, IntPoint(windowWidth / 2 + timeSliderWidth / 2 + margin, windowHeight - margin - sliderHeight / 2 + fontHeight / 4));
 
     // Copy to the window
     BLENDFUNCTION blendFunction = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};

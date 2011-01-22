@@ -1,3 +1,189 @@
+2011-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Introduce FontMetrics abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=51456
+
+        Encapsulate ascent/descent/lineHeight/lineGap methods in a single FontMetrics class, instead of
+        having to define them in both Font & SimpleFontData. Changed to store floating point values
+        as default, in order to get accurate information for small sized fonts. All these methods
+        now have floating-point and integer versions. Whenever an integer variant of these functions
+        is called, lroundf() is used to round the value.
+
+        This makes it possible to support small font-sizes for SVG in a follow-up patch, as well
+        as fixing rounding issues when using SVG Fonts.
+        
+        Shouldn't affect existing tests.
+
+        * GNUmakefile.am: Add FontMetrics.h to build. 
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp: Use style->fontMetrics() instead of style->font() to access the metrics.
+        (baselinePositionForAccessibilityRenderObject):
+        * css/CSSPrimitiveValue.cpp:         
+        (WebCore::CSSPrimitiveValue::computeLengthDouble):
+        * html/canvas/CanvasRenderingContext2D.cpp: Ditto.
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * inspector/InspectorController.cpp: Ditto.
+        (WebCore::InspectorController::drawElementTitle):
+        * platform/chromium/PopupMenuChromium.cpp: Ditto.
+        (WebCore::PopupListBox::paintRow):
+        (WebCore::PopupListBox::getRowHeight):
+        * platform/graphics/Font.h: Remove ascent/descent/height/lineGap/lineSpacing/xHeight/unitsPerEm accessor...
+        (WebCore::Font::fontMetrics): ... and only expose a single FontMetrics object here.
+        * platform/graphics/FontFastPath.cpp: Use fontMetrics() to query metrics information.
+        (WebCore::Font::emphasisMarkAscent):
+        (WebCore::Font::emphasisMarkDescent):
+        (WebCore::Font::emphasisMarkHeight):
+        (WebCore::Font::floatWidthForSimpleText):
+        * platform/graphics/FontMetrics.h: Added.
+        (WebCore::FontMetrics::FontMetrics): Creates a FontMetrics object, stored in SimpleFontData.
+        (WebCore::FontMetrics::unitsPerEm): Returns an unsigned describing the unitsPerEm.
+        (WebCore::FontMetrics::setUnitsPerEm): Sets the unitsPerEm value.
+        (WebCore::FontMetrics::floatAscent): Returns the stored m_ascent float.
+        (WebCore::FontMetrics::setAscent): Sets the stored m_ascent float.
+        (WebCore::FontMetrics::floatDescent): Returns the stored m_descent float.
+        (WebCore::FontMetrics::setDescent): Sets the stored m_descent float.
+        (WebCore::FontMetrics::floatHeight): Returns floatAscent() + floatDescent().
+        (WebCore::FontMetrics::floatLineGap): Returns the stored m_lineGap float.
+        (WebCore::FontMetrics::setLineGap): Sets the stored m_lineGap float.
+        (WebCore::FontMetrics::floatLineSpacing): Returns the stored m_lineSpacing float.
+        (WebCore::FontMetrics::setLineSpacing): Sets the stored m_lineSpacing float.
+        (WebCore::FontMetrics::xHeight): Returns the stored m_xHeight float (no integer version available, hence no 'float' prefix).
+        (WebCore::FontMetrics::setXHeight): Sets the stored m_xHeight float.
+        (WebCore::FontMetrics::ascent): Returns a rounded version of ascent().
+        (WebCore::FontMetrics::descent): Ditto (for descent).
+        (WebCore::FontMetrics::height): Returns ascent() + descent().
+        (WebCore::FontMetrics::lineGap): Returns a rounded version of lineGap().
+        (WebCore::FontMetrics::lineSpacing): Ditto (for lineSpacing).
+        (WebCore::FontMetrics::reset): Nulls all members, used only by the platform variants of SimpleFontData.
+        * platform/graphics/SimpleFontData.cpp: Adapt SVG Fonts code, to initialize the FontMetrics object, as the m_ascent/etc.. members are gone.
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::initCharWidths):
+        * platform/graphics/SimpleFontData.h: Remove ascent/descent/height/lineSpacing/lineGap/xHeight/unitsPerEm accessors, and members, just store a FontMetrics object and expose it.
+        (WebCore::SimpleFontData::fontMetrics):
+        (WebCore::SimpleFontData::avgCharWidth):
+        * platform/graphics/chromium/FontChromiumWin.cpp: Use fontMetrics() to query font metrics.
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::estimateTextBounds):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::estimateTextBounds):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp: Adapt platform code, to initialize the FontMetrics object.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp: Ditto.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp: Use fontMetrics() to query font metrics.
+        (WebCore::UniscribeHelperTextRun::UniscribeHelperTextRun):
+        (WebCore::UniscribeHelperTextRun::nextWinFontData):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp: Adapt platform code, to initialize the FontMetrics object.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp: Ditto.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/mac/FontComplexTextMac.cpp: Use fontMetrics() to query font metrics.
+        (WebCore::Font::floatWidthForComplexText):
+        * platform/graphics/mac/FontMac.mm: Ditto.
+        (WebCore::showGlyphsWithAdvances):
+        * platform/graphics/mac/SimpleFontDataMac.mm: Adapt platform code, to initialize the FontMetrics object.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformCharWidthInit):
+        * platform/graphics/pango/SimpleFontDataPango.cpp: Ditto.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/qt/SimpleFontDataQt.cpp: Ditto. (+ Switch to QFontMetricsF to get floating-point accurancy.)
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/FontCGWin.cpp: Use fontMetrics() to query font metrics.
+        (WebCore::drawGDIGlyphs):
+        * platform/graphics/win/FontWin.cpp: Ditto.
+        (WebCore::Font::floatWidthForComplexText):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp: Adapt platform code, to initialize the FontMetrics object.
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp: Ditto.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/SimpleFontDataWin.cpp: Ditto.
+        (WebCore::SimpleFontData::initGDIFont):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp: Use fontMetrics() to query font metrics.
+        (WebCore::GraphicsContext::drawText):
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp: Adapt platform code, to initialize the FontMetrics object.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/wx/SimpleFontDataWx.cpp: Ditto.
+        (WebCore::SimpleFontData::platformInit):
+        * platform/win/PopupMenuWin.cpp: Use style->fontMetrics() instead of style->font() to access the metrics.
+        (WebCore::PopupMenuWin::calculatePositionAndSize): 
+        (WebCore::PopupMenuWin::paint):
+        * rendering/EllipsisBox.cpp: Ditto.
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/InlineBox.cpp: Ditto.
+        (WebCore::InlineBox::logicalHeight):
+        * rendering/InlineFlowBox.cpp: Ditto.
+        (WebCore::verticalPositionForBox):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        * rendering/InlineTextBox.cpp: Ditto.
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintCompositionUnderline):
+        * rendering/RenderBlock.cpp: Ditto.
+        (WebCore::RenderBlock::baselinePosition):
+        (WebCore::RenderBlock::firstLineBoxBaseline):
+        (WebCore::RenderBlock::lastLineBoxBaseline):
+        * rendering/RenderBox.cpp: Ditto.
+        (WebCore::RenderBox::localCaretRect):
+        * rendering/RenderEmbeddedObject.cpp: Ditto.
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderImage.cpp: Ditto.
+        (WebCore::RenderImage::setImageSizeForAltText):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderInline.cpp: Ditto.
+        (WebCore::RenderInline::baselinePosition):
+        * rendering/RenderListBox.cpp: Ditto.
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::itemHeight):
+        * rendering/RenderListMarker.cpp: Ditto.
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::layout):
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::updateMargins):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderTextControl.cpp: Ditto.
+        (WebCore::RenderTextControl::paintPlaceholder):
+        * rendering/RenderTextControlSingleLine.cpp: Ditto.
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        * rendering/RenderThemeWin.cpp: Ditto.
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle):
+        * rendering/mathml/RenderMathMLFraction.cpp: Ditto.
+        (WebCore::RenderMathMLFraction::baselinePosition):
+        * rendering/style/RenderStyle.h: Add "const FontMetrics& fontMetrics() const" accessor.
+        (WebCore::InheritedFlags::fontMetrics):
+        (WebCore::InheritedFlags::computedLineHeight):
+        * rendering/svg/RenderSVGInlineText.cpp: Use style->fontMetrics() instead of style->font() to access the metrics.
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/SVGInlineTextBox.cpp: Ditto.
+        (WebCore::SVGInlineTextBox::selectionRectForTextFragment):
+        (WebCore::positionOffsetForDecoration):
+        (WebCore::SVGInlineTextBox::paintDecorationWithStyle):
+        (WebCore::SVGInlineTextBox::paintTextWithShadows):
+        (WebCore::SVGInlineTextBox::calculateBoundaries):
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp: Ditto.
+        (WebCore::SVGTextLayoutEngineBaseline::calculateBaselineShift):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation):
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp: Ditto.
+        (WebCore::SVGTextLayoutEngineSpacing::calculateSVGKerning):
+        * rendering/svg/SVGTextMetrics.cpp: Ditto.
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+        * rendering/svg/SVGTextQuery.cpp: Ditto.
+        (WebCore::calculateGlyphBoundaries):
+        * svg/SVGFontFaceElement.cpp: 
+        (WebCore::SVGFontFaceElement::unitsPerEm): Rename defaultUnitsPerEm global to gDefaultUnitsPerEm.
+        * svg/SVGLength.cpp: Use style->fontMetrics() instead of style->font() to access the metrics.
+        (WebCore::SVGLength::convertValueFromUserUnitsToEXS):
+        (WebCore::SVGLength::convertValueFromEXSToUserUnits):
+
 2011-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

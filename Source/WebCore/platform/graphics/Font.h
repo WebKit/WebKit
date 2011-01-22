@@ -43,7 +43,7 @@ namespace WebCore {
 class FloatPoint;
 class FloatRect;
 class FontData;
-class FontFallbackList;
+class FontMetrics;
 class FontPlatformData;
 class FontSelector;
 class GlyphBuffer;
@@ -53,8 +53,6 @@ class SVGFontElement;
 class TextRun;
 
 struct GlyphData;
-
-const unsigned defaultUnitsPerEm = 1000;
 
 struct GlyphOverflow {
     GlyphOverflow()
@@ -128,13 +126,7 @@ public:
     bool isPlatformFont() const { return m_isPlatformFont; }
 
     // Metrics that we query the FontFallbackList for.
-    int ascent(FontBaseline baselineType = AlphabeticBaseline) const { return primaryFont()->ascent(baselineType); }
-    int descent(FontBaseline baselineType = AlphabeticBaseline) const { return primaryFont()->descent(baselineType); }
-    int height() const { return ascent() + descent(); }
-    int lineSpacing() const { return primaryFont()->lineSpacing(); }
-    int lineGap() const { return primaryFont()->lineGap(); }
-    float xHeight() const { return primaryFont()->xHeight(); }
-    unsigned unitsPerEm() const { return primaryFont()->unitsPerEm(); }
+    const FontMetrics& fontMetrics() const { return primaryFont()->fontMetrics(); }
     int spaceWidth() const { return (int)ceilf(primaryFont()->adjustedSpaceWidth() + m_letterSpacing); }
     float tabWidth(const SimpleFontData& fontData) const { return 8 * ceilf(fontData.adjustedSpaceWidth() + letterSpacing()); }
     int emphasisMarkAscent(const AtomicString&) const;

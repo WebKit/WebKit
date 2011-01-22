@@ -43,7 +43,7 @@ SVGTextMetrics::SVGTextMetrics(const Font& font, const TextRun& run, unsigned po
     int length = 0;
 
     m_width = font.floatWidth(run, extraCharsAvailable, length, m_glyph.name);
-    m_height = font.height();
+    m_height = font.fontMetrics().height();
     m_glyph.unicodeString = String(run.characters(), length);
     m_glyph.isValid = true;
 

@@ -1345,7 +1345,7 @@ void InspectorController::drawElementTitle(GraphicsContext& context, const IntRe
     context.setFillColor(tooltipBackgroundColor, ColorSpaceDeviceRGB);
     context.drawRect(titleRect);
     context.setFillColor(tooltipFontColor, ColorSpaceDeviceRGB);
-    context.drawText(font, nodeTitleRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.height()));
+    context.drawText(font, nodeTitleRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.fontMetrics().height()));
 }
 
 void InspectorController::openInInspectedWindow(const String& url)

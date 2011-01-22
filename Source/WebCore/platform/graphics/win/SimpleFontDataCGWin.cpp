@@ -64,11 +64,11 @@ void SimpleFontData::platformInit()
     int iAscent = CGFontGetAscent(font);
     int iDescent = CGFontGetDescent(font);
     int iLineGap = CGFontGetLeading(font);
-    m_unitsPerEm = CGFontGetUnitsPerEm(font);
+    unsigned unitsPerEm = CGFontGetUnitsPerEm(font);
     float pointSize = m_platformData.size();
-    float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
-    float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
-    float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
+    float fAscent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
+    float fDescent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
+    float fLineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
     if (!isCustomFont()) {
         HDC dc = GetDC(0);
@@ -93,10 +93,9 @@ void SimpleFontData::platformInit()
         }
     }
 
-    m_ascent = lroundf(fAscent);
-    m_descent = lroundf(fDescent);
-    m_lineGap = lroundf(fLineGap);
-    m_lineSpacing = m_ascent + m_descent + m_lineGap;
+    m_fontMetrics.setAscent(fAscent);
+    m_fontMetrics.setDescent(fDescent);
+    m_fontMetrics.setLineGap(fLineGap);
 
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
@@ -109,11 +108,13 @@ void SimpleFontData::platformInit()
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
         // which has an "x" that is 7x6 pixels.
-        m_xHeight = scaleEmToUnits(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)), m_unitsPerEm) * pointSize;
+        m_fontMetrics.setXHeight(scaleEmToUnits(max(CGRectGetMaxX(xBox), CGRectGetMaxY(xBox)), unitsPerEm) * pointSize);
     } else {
         int iXHeight = CGFontGetXHeight(font);
-        m_xHeight = scaleEmToUnits(iXHeight, m_unitsPerEm) * pointSize;
+        m_fontMetrics.setXHeight(scaleEmToUnits(iXHeight, unitsPerEm) * pointSize);
     }
+
+    m_fontMetrics.setUnitsPerEm(unitsPerEm);
 }
 
 void SimpleFontData::platformCharWidthInit()
@@ -133,7 +134,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     CGRect box;
     CGFontGetGlyphBBoxes(m_platformData.cgFont(), &glyph, 1, &box);
     float pointSize = m_platformData.size();
-    CGFloat scale = pointSize / unitsPerEm();
+    CGFloat scale = pointSize / fontMetrics().unitsPerEm();
     FloatRect boundingBox = CGRectApplyAffineTransform(box, CGAffineTransformMakeScale(scale, -scale));
     if (m_syntheticBoldOffset)
         boundingBox.setWidth(boundingBox.width() + m_syntheticBoldOffset);

@@ -64,27 +64,27 @@ WebFontDescription WebFontImpl::fontDescription() const
 
 int WebFontImpl::ascent() const
 {
-    return m_font.ascent();
+    return m_font.fontMetrics().ascent();
 }
 
 int WebFontImpl::descent() const
 {
-    return m_font.descent();
+    return m_font.fontMetrics().descent();
 }
 
 int WebFontImpl::height() const
 {
-    return m_font.height();
+    return m_font.fontMetrics().height();
 }
 
 int WebFontImpl::lineSpacing() const
 {
-    return m_font.lineSpacing();
+    return m_font.fontMetrics().lineSpacing();
 }
 
 float WebFontImpl::xHeight() const
 {
-    return m_font.xHeight();
+    return m_font.fontMetrics().xHeight();
 }
 
 void WebFontImpl::drawText(WebCanvas* canvas, const WebTextRun& run, const WebFloatPoint& leftBaseline,

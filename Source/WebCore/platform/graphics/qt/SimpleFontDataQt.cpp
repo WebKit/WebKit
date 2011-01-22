@@ -24,7 +24,7 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
-#include <QFontMetrics>
+#include <QFontMetricsF>
 
 namespace WebCore {
 
@@ -41,25 +41,18 @@ bool SimpleFontData::containsCharacters(const UChar*, int) const
 void SimpleFontData::platformInit()
 {
     if (!m_platformData.size()) {
-         m_ascent = 0;
-         m_descent = 0;
-         m_lineGap = 0;
-         m_lineSpacing = 0;
+         m_fontMetrics.reset();
          m_avgCharWidth = 0;
          m_maxCharWidth = 0;
-         m_xHeight = 0;
-         m_unitsPerEm = 0;
          return;
     }
 
-    QFontMetrics fm(m_platformData.font());
-
-    m_ascent = fm.ascent();
-    m_descent = fm.descent();
-    m_lineSpacing = fm.lineSpacing();
-    m_xHeight = fm.xHeight();
+    QFontMetricsF fm(m_platformData.font());
+    m_fontMetrics.setAscent(fm.ascent());
+    m_fontMetrics.setDescent(fm.descent());
+    m_fontMetrics.setXHeight(fm.xHeight());
+    m_fontMetrics.setLineGap(fm.leading());
     m_spaceWidth = fm.width(QLatin1Char(' '));
-    m_lineGap = fm.leading();
 }
 
 void SimpleFontData::platformGlyphInit()

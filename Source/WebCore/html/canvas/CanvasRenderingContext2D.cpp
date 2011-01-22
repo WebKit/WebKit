@@ -1760,7 +1760,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         return;
 
     const Font& font = accessFont();
-    
+    const FontMetrics& fontMetrics = font.fontMetrics();
+
     // FIXME: Handle maxWidth.
     // FIXME: Need to turn off font smoothing.
 
@@ -1777,14 +1778,14 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     switch (state().m_textBaseline) {
     case TopTextBaseline:
     case HangingTextBaseline:
-        location.setY(y + font.ascent());
+        location.setY(y + fontMetrics.ascent());
         break;
     case BottomTextBaseline:
     case IdeographicTextBaseline:
-        location.setY(y - font.descent());
+        location.setY(y - fontMetrics.descent());
         break;
     case MiddleTextBaseline:
-        location.setY(y - font.descent() + font.height() / 2);
+        location.setY(y - fontMetrics.descent() + fontMetrics.height() / 2);
         break;
     case AlphabeticTextBaseline:
     default:
@@ -1812,8 +1813,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     }
 
     // The slop built in to this mask rect matches the heuristic used in FontCGWin.cpp for GDI text.
-    FloatRect textRect = FloatRect(location.x() - font.height() / 2, location.y() - font.ascent() - font.lineGap(),
-                                   width + font.height(), font.lineSpacing());
+    FloatRect textRect = FloatRect(location.x() - fontMetrics.height() / 2, location.y() - fontMetrics.ascent() - fontMetrics.lineGap(),
+                                   width + fontMetrics.height(), fontMetrics.lineSpacing());
     if (!fill)
         textRect.inflate(c->strokeThickness() / 2);
 

@@ -133,15 +133,16 @@ void FontMetrics(const WebFontDescription& description, int* ascent, int* descen
         return;
 
     Font font(makeFont(description));
+    const WebCore::FontMetrics& fontMetrics(font.fontMetrics());
 
     if (ascent)
-        *ascent = font.ascent();
+        *ascent = fontMetrics.ascent();
 
     if (descent)
-        *descent = font.descent();
+        *descent = fontMetrics.descent();
 
     if (lineSpacing)
-        *lineSpacing = font.lineSpacing();
+        *lineSpacing = fontMetrics.lineSpacing();
 }
 
 unsigned CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription& description, float width, WCHAR* buffer)

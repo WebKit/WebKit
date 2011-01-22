@@ -1,3 +1,19 @@
+2011-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Introduce FontMetrics abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=51456
+
+        * src/ExternalPopupMenu.cpp: Use FontMetrics instead of Font to access the metrics.
+        (WebKit::ExternalPopupMenu::getPopupMenuInfo):
+        * src/WebFontImpl.cpp: Ditto.
+        (WebKit::WebFontImpl::ascent):
+        (WebKit::WebFontImpl::descent):
+        (WebKit::WebFontImpl::height):
+        (WebKit::WebFontImpl::lineSpacing):
+        (WebKit::WebFontImpl::xHeight):
+
 2011-01-21  Chris Rogers  <crogers@google.com>
 
         Unreviewed

@@ -905,8 +905,8 @@ int RenderInline::lineHeight(bool firstLine, LineDirectionMode /*direction*/, Li
 
 int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    const Font& f = style(firstLine)->font();
-    return f.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - f.height()) / 2;
+    const FontMetrics& fontMetrics = style(firstLine)->fontMetrics();
+    return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 
 IntSize RenderInline::relativePositionedInlineOffset(const RenderBox* child) const

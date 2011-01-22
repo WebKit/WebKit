@@ -218,19 +218,20 @@ void SimpleFontData::platformInit()
     int iAscent;
     int iDescent;
     int iLineGap;
+    unsigned unitsPerEm;
 #ifdef BUILDING_ON_TIGER
-    wkGetFontMetrics(m_platformData.cgFont(), &iAscent, &iDescent, &iLineGap, &m_unitsPerEm);
+    wkGetFontMetrics(m_platformData.cgFont(), &iAscent, &iDescent, &iLineGap, &unitsPerEm);
 #else
     iAscent = CGFontGetAscent(m_platformData.cgFont());
     iDescent = CGFontGetDescent(m_platformData.cgFont());
     iLineGap = CGFontGetLeading(m_platformData.cgFont());
-    m_unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
+    unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
 #endif
 
     float pointSize = m_platformData.m_size;
-    float fAscent = scaleEmToUnits(iAscent, m_unitsPerEm) * pointSize;
-    float fDescent = -scaleEmToUnits(iDescent, m_unitsPerEm) * pointSize;
-    float fLineGap = scaleEmToUnits(iLineGap, m_unitsPerEm) * pointSize;
+    float ascent = scaleEmToUnits(iAscent, unitsPerEm) * pointSize;
+    float descent = -scaleEmToUnits(iDescent, unitsPerEm) * pointSize;
+    float lineGap = scaleEmToUnits(iLineGap, unitsPerEm) * pointSize;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
     // vertical metrics of their Microsoft counterparts that are the de facto
@@ -239,25 +240,20 @@ void SimpleFontData::platformInit()
     // and add it to the ascent.
     NSString *familyName = [m_platformData.font() familyName];
     if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
-        fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
+        ascent += floorf(((ascent + descent) * 0.15f) + 0.5f);
     else if ([familyName isEqualToString:@"Geeza Pro"]) {
         // Geeza Pro has glyphs that draw slightly above the ascent or far below the descent. Adjust
         // those vertical metrics to better match reality, so that diacritics at the bottom of one line
         // do not overlap diacritics at the top of the next line.
-        fAscent *= 1.08f;
-        fDescent *= 2.f;
+        ascent *= 1.08f;
+        descent *= 2.f;
     }
 
-    m_ascent = lroundf(fAscent);
-    m_descent = lroundf(fDescent);
-    m_lineGap = lroundf(fLineGap);
-    m_lineSpacing = m_ascent + m_descent + m_lineGap;
-    
     // Hack Hiragino line metrics to allow room for marked text underlines.
     // <rdar://problem/5386183>
-    if (m_descent < 3 && m_lineGap >= 3 && [familyName hasPrefix:@"Hiragino"]) {
-        m_lineGap -= 3 - m_descent;
-        m_descent = 3;
+    if (descent < 3 && lineGap >= 3 && [familyName hasPrefix:@"Hiragino"]) {
+        lineGap -= 3 - descent;
+        descent = 3;
     }
     
     if (m_orientation == Vertical) {
@@ -278,6 +274,8 @@ void SimpleFontData::platformInit()
             m_orientation = Horizontal;
     }
 
+    float xHeight;
+
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.
     GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(this, 0)->page();
@@ -288,21 +286,27 @@ void SimpleFontData::platformInit()
         // and web pages that foolishly use this metric for width will be laid out
         // poorly if we return an accurate height. Classic case is Times 13 point,
         // which has an "x" that is 7x6 pixels.
-        m_xHeight = static_cast<float>(max(CGRectGetMaxX(xBox), -CGRectGetMinY(xBox)));
+        xHeight = static_cast<float>(max(CGRectGetMaxX(xBox), -CGRectGetMinY(xBox)));
     } else {
 #ifndef BUILDING_ON_TIGER
-        m_xHeight = static_cast<float>(CGFontGetXHeight(m_platformData.cgFont())) / m_unitsPerEm;
+        xHeight = static_cast<float>(CGFontGetXHeight(m_platformData.cgFont())) / unitsPerEm;
 #else
-        m_xHeight = m_platformData.font() ? [m_platformData.font() xHeight] : 0;
+        xHeight = m_platformData.font() ? [m_platformData.font() xHeight] : 0;
 #endif
         // CGFontGetXHeight() returns a wrong value for "Apple Symbols" font (a float close to 0, but not strictly 0).
-        // The following code makes a guess for m_xHeight in that case.
+        // The following code makes a guess for xHeight in that case.
         // The int cast is a workaround for the "almost" zero value returned by CGFontGetXHeight().
-        if (!static_cast<int>(m_xHeight) && fAscent)
-            m_xHeight = 2 * fAscent / 3;
+        if (!static_cast<int>(xHeight) && ascent)
+            xHeight = 2 * ascent / 3;
     }
+
+    m_fontMetrics.setUnitsPerEm(unitsPerEm);
+    m_fontMetrics.setAscent(ascent);
+    m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setLineGap(lineGap);
+    m_fontMetrics.setXHeight(xHeight);
 }
-    
+
 static CFDataRef copyFontTableForTag(FontPlatformData& platformData, FourCharCode tableName)
 {
 #ifdef BUILDING_ON_TIGER
@@ -337,7 +341,7 @@ void SimpleFontData::platformCharWidthInit()
     if (os2Table && CFDataGetLength(os2Table.get()) >= 4) {
         const UInt8* os2 = CFDataGetBytePtr(os2Table.get());
         SInt16 os2AvgCharWidth = os2[2] * 256 + os2[3];
-        m_avgCharWidth = scaleEmToUnits(os2AvgCharWidth, m_unitsPerEm) * m_platformData.m_size;
+        m_avgCharWidth = scaleEmToUnits(os2AvgCharWidth, m_fontMetrics.unitsPerEm()) * m_platformData.m_size;
     }
 
     RetainPtr<CFDataRef> headTable(AdoptCF, copyFontTableForTag(m_platformData, 'head'));
@@ -348,7 +352,7 @@ void SimpleFontData::platformCharWidthInit()
         SInt16 xMin = static_cast<SInt16>(uxMin);
         SInt16 xMax = static_cast<SInt16>(uxMax);
         float diff = static_cast<float>(xMax - xMin);
-        m_maxCharWidth = scaleEmToUnits(diff, m_unitsPerEm) * m_platformData.m_size;
+        m_maxCharWidth = scaleEmToUnits(diff, m_fontMetrics.unitsPerEm()) * m_platformData.m_size;
     }
 
     // Fallback to a cross-platform estimate, which will populate these values if they are non-positive.

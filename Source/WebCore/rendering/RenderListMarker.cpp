@@ -1265,7 +1265,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         context->translate(-marker.x(), -marker.bottom());
     }
 
-    IntPoint textOrigin = IntPoint(marker.x(), marker.y() + style()->font().ascent());
+    IntPoint textOrigin = IntPoint(marker.x(), marker.y() + style()->fontMetrics().ascent());
 
     if (type == Asterisks || type == Footnotes)
         context->drawText(style()->font(), textRun, textOrigin);
@@ -1311,7 +1311,7 @@ void RenderListMarker::layout()
         setHeight(m_image->imageSize(this, style()->effectiveZoom()).height());
     } else {
         setLogicalWidth(minPreferredLogicalWidth());
-        setLogicalHeight(style()->font().height());
+        setLogicalHeight(style()->fontMetrics().height());
     }
 
     setMarginStart(0);
@@ -1346,11 +1346,12 @@ void RenderListMarker::computePreferredLogicalWidths()
     m_text = "";
 
     const Font& font = style()->font();
+    const FontMetrics& fontMetrics = font.fontMetrics();
 
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.  Generated images for markers really won't become particularly useful
         // until we support the CSS3 marker pseudoclass to allow control over the width and height of the marker box.
-        int bulletWidth = font.ascent() / 2;
+        int bulletWidth = fontMetrics.ascent() / 2;
         m_image->setImageContainerSize(IntSize(bulletWidth, bulletWidth));
         IntSize imageSize = m_image->imageSize(this, style()->effectiveZoom());
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = style()->isHorizontalWritingMode() ? imageSize.width() : imageSize.height();
@@ -1373,7 +1374,7 @@ void RenderListMarker::computePreferredLogicalWidths()
         case Disc:
         case Square:
             m_text = listMarkerText(type, 0); // value is ignored for these types
-            logicalWidth = (font.ascent() * 2 / 3 + 1) / 2 + 2;
+            logicalWidth = (fontMetrics.ascent() * 2 / 3 + 1) / 2 + 2;
             break;
         case Afar:
         case Amharic:
@@ -1472,7 +1473,7 @@ void RenderListMarker::computePreferredLogicalWidths()
 
 void RenderListMarker::updateMargins()
 {
-    const Font& font = style()->font();
+    const FontMetrics& fontMetrics = style()->fontMetrics();
 
     int marginStart = 0;
     int marginEnd = 0;
@@ -1485,7 +1486,7 @@ void RenderListMarker::updateMargins()
             case Circle:
             case Square:
                 marginStart = -1;
-                marginEnd = font.ascent() - minPreferredLogicalWidth() + 1;
+                marginEnd = fontMetrics.ascent() - minPreferredLogicalWidth() + 1;
                 break;
             default:
                 break;
@@ -1495,7 +1496,7 @@ void RenderListMarker::updateMargins()
             if (isImage())
                 marginStart = -minPreferredLogicalWidth() - cMarkerPadding;
             else {
-                int offset = font.ascent() * 2 / 3;
+                int offset = fontMetrics.ascent() * 2 / 3;
                 switch (style()->listStyleType()) {
                     case Disc:
                     case Circle:
@@ -1513,7 +1514,7 @@ void RenderListMarker::updateMargins()
             if (isImage())
                 marginEnd = cMarkerPadding;
             else {
-                int offset = font.ascent() * 2 / 3;
+                int offset = fontMetrics.ascent() * 2 / 3;
                 switch (style()->listStyleType()) {
                     case Disc:
                     case Circle:
@@ -1584,15 +1585,15 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         case Asterisks:
         case Footnotes: {
             const Font& font = style()->font();
-            relativeRect = IntRect(0, 0, font.width(m_text), font.height());
+            relativeRect = IntRect(0, 0, font.width(m_text), font.fontMetrics().height());
             break;
         }
         case Disc:
         case Circle:
         case Square: {
             // FIXME: Are these particular rounding rules necessary?
-            const Font& font = style()->font();
-            int ascent = font.ascent();
+            const FontMetrics& fontMetrics = style()->fontMetrics();
+            int ascent = fontMetrics.ascent();
             int bulletWidth = (ascent * 2 / 3 + 1) / 2;
             relativeRect = IntRect(1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth);
             break;
@@ -1680,7 +1681,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             int itemWidth = font.width(m_text);
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
             int suffixSpaceWidth = font.width(TextRun(suffixSpace, 2));
-            relativeRect = IntRect(0, 0, itemWidth + suffixSpaceWidth, font.height());
+            relativeRect = IntRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());
     }
 
     if (!style()->isHorizontalWritingMode()) {

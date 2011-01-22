@@ -1537,7 +1537,7 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPo
     m_data->m_opacity *= fillColor().alpha() / 255.0;
 
     FloatRect textRect = font.selectionRectForText(run, point, font.height(), from, to);
-    textRect.setY(textRect.y() - font.ascent());
+    textRect.setY(textRect.y() - font.fontMetrics().ascent());
     IntRect trRect = enclosingIntRect(m_data->mapRect(textRect));
     RECT bmpRect;
     AlphaPaintType alphaPaintType = mustSupportAlpha ? AlphaPaintOther : AlphaPaintNone;
@@ -1546,7 +1546,7 @@ void GraphicsContext::drawText(const Font& font, const TextRun& run, const IntPo
             GraphicsContext gc(0);
             gc.setBitmap(bmp);
             gc.scale(FloatSize(m_data->m_transform.a(), m_data->m_transform.d()));
-            font.drawText(&gc, run, IntPoint(0, font.ascent()), from, to);
+            font.drawText(&gc, run, IntPoint(0, font.fontMetrics().ascent()), from, to);
         }
         unsigned key1;
         HDC memDC = bmp->getDC(&key1);
@@ -1591,7 +1591,7 @@ void GraphicsContext::drawText(const SimpleFontData* fontData, const GlyphBuffer
         ? fontData->platformData().getScaledFontHandle(height, scaleX == scaleY ? 0 : width)
         : 0;
 
-    FloatPoint startPoint(point.x(), point.y() - fontData->ascent());
+    FloatPoint startPoint(point.x(), point.y() - fontData->fontMetrics().ascent());
     FloatPoint trPoint = m_data->mapPoint(startPoint);
     int y = stableRound(trPoint.y());
 

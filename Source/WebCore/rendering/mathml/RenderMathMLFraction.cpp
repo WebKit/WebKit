@@ -176,7 +176,7 @@ int RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, LineDir
             refStyle = previousSibling()->style();
         else if (nextSibling())
             refStyle = nextSibling()->style();
-        int shift = int(ceil((refStyle->font().xHeight() + 1) / 2));
+        int shift = int(ceil((refStyle->fontMetrics().xHeight() + 1) / 2));
         return numerator->offsetHeight() + shift;
     }
     return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);

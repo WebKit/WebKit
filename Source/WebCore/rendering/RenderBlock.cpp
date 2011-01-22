@@ -4958,8 +4958,8 @@ int RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLine, Lin
         return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
     }
 
-    const Font& f = style(firstLine)->font();
-    return f.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - f.height()) / 2;
+    const FontMetrics& fontMetrics = style(firstLine)->fontMetrics();
+    return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
 }
 
 int RenderBlock::firstLineBoxBaseline() const
@@ -4969,7 +4969,7 @@ int RenderBlock::firstLineBoxBaseline() const
 
     if (childrenInline()) {
         if (firstLineBox())
-            return firstLineBox()->logicalTop() + style(true)->font().ascent(firstRootBox()->baselineType());
+            return firstLineBox()->logicalTop() + style(true)->fontMetrics().ascent(firstRootBox()->baselineType());
         else
             return -1;
     }
@@ -4995,11 +4995,13 @@ int RenderBlock::lastLineBoxBaseline() const
 
     if (childrenInline()) {
         if (!firstLineBox() && hasLineIfEmpty()) {
-            const Font& f = firstLineStyle()->font();
-            return f.ascent() + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - f.height()) / 2 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
+            const FontMetrics& fontMetrics = firstLineStyle()->fontMetrics();
+            return fontMetrics.ascent()
+                 + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
+                 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
         }
         if (lastLineBox())
-            return lastLineBox()->logicalTop() + style(lastLineBox() == firstLineBox())->font().ascent(lastRootBox()->baselineType());
+            return lastLineBox()->logicalTop() + style(lastLineBox() == firstLineBox())->fontMetrics().ascent(lastRootBox()->baselineType());
         return -1;
     } else {
         bool haveNormalFlowChild = false;
@@ -5012,8 +5014,10 @@ int RenderBlock::lastLineBoxBaseline() const
             }
         }
         if (!haveNormalFlowChild && hasLineIfEmpty()) {
-            const Font& f = firstLineStyle()->font();
-            return f.ascent() + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - f.height()) / 2 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
+            const FontMetrics& fontMetrics = firstLineStyle()->fontMetrics();
+            return fontMetrics.ascent()
+                 + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
+                 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
         }
     }
 

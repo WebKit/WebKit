@@ -438,7 +438,7 @@ float SVGLength::convertValueFromUserUnitsToEXS(float value, const SVGElement* c
 
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
-    float xHeight = ceilf(style->font().xHeight());
+    float xHeight = ceilf(style->fontMetrics().xHeight());
     if (!xHeight) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
@@ -457,7 +457,7 @@ float SVGLength::convertValueFromEXSToUserUnits(float value, const SVGElement* c
     RenderStyle* style = context->renderer()->style();
     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
     // if this causes problems in real world cases maybe it would be best to remove this
-    return value * ceilf(style->font().xHeight());
+    return value * ceilf(style->fontMetrics().xHeight());
 }
 
 SVGLength SVGLength::fromCSSPrimitiveValue(CSSPrimitiveValue* value)

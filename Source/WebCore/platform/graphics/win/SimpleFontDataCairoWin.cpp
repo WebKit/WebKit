@@ -63,13 +63,15 @@ void SimpleFontData::platformInit()
 
     TEXTMETRIC textMetrics;
     GetTextMetrics(hdc, &textMetrics);
-    m_ascent = lroundf(textMetrics.tmAscent * metricsMultiplier);
-    m_descent = lroundf(textMetrics.tmDescent * metricsMultiplier);
-    m_xHeight = m_ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
-    m_lineGap = lroundf(textMetrics.tmExternalLeading * metricsMultiplier);
-    m_lineSpacing = m_ascent + m_descent + m_lineGap;
-    m_avgCharWidth = lroundf(textMetrics.tmAveCharWidth * metricsMultiplier);
-    m_maxCharWidth = lroundf(textMetrics.tmMaxCharWidth * metricsMultiplier);
+    float ascent = textMetrics.tmAscent * metricsMultiplier;
+    float descent = textMetrics.tmDescent * metricsMultiplier;
+    float xHeight = ascent * 0.56f; // Best guess for xHeight for non-Truetype fonts.
+    float lineGap = textMetrics.tmExternalLeading * metricsMultiplier;
+    m_fontMetrics.setAscent(ascent);
+    m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setLineGap(lineGap);
+    m_avgCharWidth = textMetrics.tmAveCharWidth * metricsMultiplier;
+    m_maxCharWidth = textMetrics.tmMaxCharWidth * metricsMultiplier;
 
     OUTLINETEXTMETRIC metrics;
     if (GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics) > 0) {
@@ -78,9 +80,10 @@ void SimpleFontData::platformInit()
         MAT2 mat = { 1, 0, 0, 1 };
         DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &mat);
         if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
-            m_xHeight = gm.gmptGlyphOrigin.y * metricsMultiplier;
+            xHeight = gm.gmptGlyphOrigin.y * metricsMultiplier;
     }
 
+    m_fontMetrics.setXHeight(xHeight);
     cairo_win32_scaled_font_done_font(scaledFont);
 
     m_isSystemFont = false;

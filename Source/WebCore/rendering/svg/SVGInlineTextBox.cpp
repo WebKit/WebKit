@@ -84,7 +84,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     ASSERT(startPosition < endPosition);
 
     const Font& font = style->font();
-    FloatPoint textOrigin(fragment.x, fragment.y - font.ascent());
+    FloatPoint textOrigin(fragment.x, fragment.y - font.fontMetrics().ascent());
     return font.selectionRectForText(constructTextRun(style, fragment), textOrigin, fragment.height, startPosition, endPosition);
 }
 
@@ -409,16 +409,16 @@ bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGText
     return true;
 }
 
-static inline float positionOffsetForDecoration(ETextDecoration decoration, const Font& font, float thickness)
+static inline float positionOffsetForDecoration(ETextDecoration decoration, const FontMetrics& fontMetrics, float thickness)
 {
     // FIXME: For SVG Fonts we need to use the attributes defined in the <font-face> if specified.
     // Compatible with Batik/Opera.
     if (decoration == UNDERLINE)
-        return font.ascent() + thickness * 1.5f;
+        return fontMetrics.ascent() + thickness * 1.5f;
     if (decoration == OVERLINE)
         return thickness;
     if (decoration == LINE_THROUGH)
-        return font.ascent() * 5.0f / 8.0f;
+        return fontMetrics.ascent() * 5.0f / 8.0f;
 
     ASSERT_NOT_REACHED();
     return 0.0f;
@@ -487,6 +487,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextD
     ASSERT(decorationStyle);
 
     const Font& font = decorationStyle->font();
+    const FontMetrics& fontMetrics = font.fontMetrics();
 
     // The initial y value refers to overline position.
     float thickness = thicknessForDecoration(decoration, font);
@@ -494,7 +495,7 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextD
     if (fragment.width <= 0 && thickness <= 0)
         return;
 
-    float y = fragment.y - font.ascent() + positionOffsetForDecoration(decoration, font, thickness);
+    float y = fragment.y - fontMetrics.ascent() + positionOffsetForDecoration(decoration, fontMetrics, thickness);
 
     Path path;
     path.addRect(FloatRect(fragment.x, y, fragment.width, thickness));
@@ -513,7 +514,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, RenderStyl
     const ShadowData* shadow = style->textShadow();
 
     FloatPoint textOrigin(fragment.x, fragment.y);
-    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - font.ascent()), FloatSize(fragment.width, fragment.height));
+    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - font.fontMetrics().ascent()), FloatSize(fragment.width, fragment.height));
 
     do {
         if (!prepareGraphicsContextForTextPainting(context, textRun, style))
@@ -587,7 +588,7 @@ IntRect SVGInlineTextBox::calculateBoundaries() const
     ASSERT(style);
 
     int baseline = baselinePosition(AlphabeticBaseline);
-    int heightDifference = baseline - style->font().ascent();
+    int heightDifference = baseline - style->fontMetrics().ascent();
 
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {

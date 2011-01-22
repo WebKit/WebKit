@@ -125,7 +125,7 @@ unsigned SVGFontFaceElement::unitsPerEm() const
 {
     const AtomicString& value = getAttribute(units_per_emAttr);
     if (value.isEmpty())
-        return defaultUnitsPerEm;
+        return gDefaultUnitsPerEm;
 
     return static_cast<unsigned>(ceilf(value.toFloat()));
 }

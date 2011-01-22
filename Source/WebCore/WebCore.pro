@@ -2117,6 +2117,7 @@ HEADERS += \
     platform/graphics/FontData.h \
     platform/graphics/FontDescription.h \
     platform/graphics/FontFamily.h \
+    platform/graphics/FontMetrics.h \
     platform/graphics/Font.h \
     platform/graphics/GeneratedImage.h \
     platform/graphics/Gradient.h \

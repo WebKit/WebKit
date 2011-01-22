@@ -26549,6 +26549,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FontMetrics.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FontRenderingMode.h"
 					>
 				</File>

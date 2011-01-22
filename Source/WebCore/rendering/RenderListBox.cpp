@@ -303,7 +303,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
 
     // Determine where the item text should be placed
     IntRect r = itemBoundingBoxRect(tx, ty, listIndex);
-    r.move(optionsSpacingHorizontal, style()->font().ascent());
+    r.move(optionsSpacingHorizontal, style()->fontMetrics().ascent());
 
     RenderStyle* itemStyle = element->renderStyle();
     if (!itemStyle)
@@ -550,7 +550,7 @@ void RenderListBox::scrollTo(int newOffset)
 
 int RenderListBox::itemHeight() const
 {
-    return style()->font().height() + rowSpacing;
+    return style()->fontMetrics().height() + rowSpacing;
 }
 
 int RenderListBox::verticalScrollbarWidth() const

@@ -463,6 +463,7 @@ public:
     ETableLayout tableLayout() const { return static_cast<ETableLayout>(noninherited_flags._table_layout); }
 
     const Font& font() const { return inherited->font; }
+    const FontMetrics& fontMetrics() const { return inherited->font.fontMetrics(); }
     const FontDescription& fontDescription() const { return inherited->font.fontDescription(); }
     int fontSize() const { return inherited->font.pixelSize(); }
 
@@ -487,7 +488,7 @@ public:
 
         // Negative value means the line height is not set.  Use the font's built-in spacing.
         if (lh.isNegative())
-            return font().lineSpacing();
+            return fontMetrics().lineSpacing();
 
         if (lh.isPercent())
             return lh.calcMinValue(fontSize());
