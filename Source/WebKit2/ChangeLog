@@ -1,3 +1,48 @@
+2011-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add an asynchronous WKPageForceRepaint
+        https://bugs.webkit.org/show_bug.cgi?id=52964
+        <rdar://problem/8898527>
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageForceRepaint):
+        Call WebPageProxy::forceRepaint.
+
+        * UIProcess/API/C/WKPage.h:
+        Add WKPageForceRepaint.
+
+        * UIProcess/GenericCallback.h:
+        Add a "generic" VoidCallback class.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::forceRepaint):
+        Insert the callback in the m_voidCallbacks map and send a forceRepaint message.
+
+        (WebKit::WebPageProxy::voidCallback):
+        Call the right void callback.
+
+        (WebKit::WebPageProxy::processDidCrash):
+        Invalidate m_voidCallbacks.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add a VoidCallback message.
+
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::forceRepaint):
+        Force a repaint.
+
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h:
+        Add forceRepaint.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::forceRepaint):
+        Call forceRepaint on the drawing area.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add a ForceRepaint message.
+
 2011-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

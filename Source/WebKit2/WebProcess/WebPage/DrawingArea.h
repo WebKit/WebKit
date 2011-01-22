@@ -56,9 +56,9 @@ public:
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
 
     virtual void pageBackgroundTransparencyChanged() { }
-
     virtual void onPageClose() { }
-    
+    virtual void forceRepaint() { }
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext() = 0;
     virtual void detachCompositingContext() = 0;

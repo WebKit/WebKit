@@ -273,7 +273,8 @@ public:
     void getSourceForFrame(WebFrameProxy*, PassRefPtr<StringCallback>);
     void getWebArchiveOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
     void runJavaScriptInMainFrame(const String&, PassRefPtr<StringCallback>);
-
+    void forceRepaint(PassRefPtr<VoidCallback>);
+    
     float headerHeight(WebFrameProxy*);
     float footerHeight(WebFrameProxy*);
     void drawHeader(WebFrameProxy*, const WebCore::FloatRect&);
@@ -510,6 +511,7 @@ private:
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
+    void voidCallback(uint64_t);
     void dataCallback(const CoreIPC::DataReference&, uint64_t);
     void stringCallback(const String&, uint64_t);
 
@@ -556,6 +558,7 @@ private:
     RefPtr<WebInspectorProxy> m_inspector;
 #endif
 
+    HashMap<uint64_t, RefPtr<VoidCallback> > m_voidCallbacks;
     HashMap<uint64_t, RefPtr<DataCallback> > m_dataCallbacks;
     HashMap<uint64_t, RefPtr<StringCallback> > m_stringCallbacks;
 

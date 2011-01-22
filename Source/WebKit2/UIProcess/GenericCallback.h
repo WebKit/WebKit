@@ -35,6 +35,60 @@
 
 namespace WebKit {
 
+class VoidCallback : public RefCounted<VoidCallback> {
+public:
+    typedef void (*CallbackFunction)(WKErrorRef, void*);
+
+    static PassRefPtr<VoidCallback> create(void* context, CallbackFunction callback)
+    {
+        return adoptRef(new VoidCallback(context, callback));
+    }
+
+    VoidCallback()
+    {
+        ASSERT(!m_callback);
+    }
+
+    void performCallback()
+    {
+        ASSERT(m_callback);
+
+        m_callback(0, m_context);
+
+        m_callback = 0;
+    }
+    
+    void invalidate()
+    {
+        ASSERT(m_callback);
+
+        RefPtr<WebError> error = WebError::create();
+        m_callback(toAPI(error.get()), m_context);
+        
+        m_callback = 0;
+    }
+
+    uint64_t callbackID() const { return m_callbackID; }
+
+private:
+    static uint64_t generateCallbackID()
+    {
+        static uint64_t uniqueCallbackID = 1;
+        return uniqueCallbackID++;
+    }
+
+    VoidCallback(void* context, CallbackFunction callback)
+        : m_context(context)
+        , m_callback(callback)
+        , m_callbackID(generateCallbackID())
+    {
+    }
+
+    void* m_context;
+    CallbackFunction m_callback;
+    uint64_t m_callbackID;
+};
+
 template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType>
 class GenericCallback : public RefCounted<GenericCallback<APIReturnValueType, InternalReturnValueType> > {
 public:

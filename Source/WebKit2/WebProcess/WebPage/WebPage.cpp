@@ -1187,6 +1187,12 @@ void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
+void WebPage::forceRepaint(uint64_t callbackID)
+{
+    m_drawingArea->forceRepaint();
+    send(Messages::WebPageProxy::VoidCallback(callbackID));
+}
+    
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 {
     WebPreferencesStore::removeTestRunnerOverrides();

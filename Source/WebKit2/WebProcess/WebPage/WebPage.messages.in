@@ -65,6 +65,9 @@ messages -> WebPage {
     GetWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
     RunJavaScriptInMainFrame(WTF::String script, uint64_t callbackID)
 
+    # FIXME: This should be a drawing area message.
+    ForceRepaint(uint64_t callbackID)
+
     PreferencesDidChange(WebKit::WebPreferencesStore store)
 
     SetUserAgent(WTF::String userAgent)

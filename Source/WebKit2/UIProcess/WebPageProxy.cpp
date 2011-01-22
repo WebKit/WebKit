@@ -1002,6 +1002,20 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCal
     process()->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
 }
 
+void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
+{
+    RefPtr<VoidCallback> callback = prpCallback;
+
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_voidCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::ForceRepaint(callbackID), m_pageID); 
+}
+
 void WebPageProxy::preferencesDidChange()
 {
     if (!isValid())
@@ -2140,6 +2154,17 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 }
 
+void WebPageProxy::voidCallback(uint64_t callbackID)
+{
+    RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallback();
+}
+
 void WebPageProxy::dataCallback(const CoreIPC::DataReference& dataReference, uint64_t callbackID)
 {
     RefPtr<DataCallback> callback = m_dataCallbacks.take(callbackID);
@@ -2249,6 +2274,7 @@ void WebPageProxy::processDidCrash()
 
     m_toolTip = String();
 
+    invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
 

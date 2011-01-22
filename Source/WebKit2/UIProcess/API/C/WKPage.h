@@ -341,6 +341,9 @@ typedef void (^WKPageGetContentsAsStringBlock)(WKStringRef, WKErrorRef);
 WK_EXPORT void WKPageGetContentsAsString_b(WKPageRef page, WKPageGetContentsAsStringBlock block);
 #endif
 
+typedef void (*WKPageForceRepaintFunction)(WKErrorRef, void*);
+WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepaintFunction function);
+
 #ifdef __cplusplus
 }
 #endif

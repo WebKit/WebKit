@@ -42,6 +42,7 @@ public:
     virtual void setNeedsDisplay(const WebCore::IntRect&);
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void display();
+    virtual void forceRepaint();
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext() { }

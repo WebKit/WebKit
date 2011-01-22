@@ -95,6 +95,12 @@ void ChunkedUpdateDrawingArea::display()
     m_displayTimer.stop();
 }
 
+void ChunkedUpdateDrawingArea::forceRepaint()
+{
+    m_isWaitingForUpdate = false;
+    display();
+}
+
 void ChunkedUpdateDrawingArea::scheduleDisplay()
 {
     if (m_paintingIsSuspended)

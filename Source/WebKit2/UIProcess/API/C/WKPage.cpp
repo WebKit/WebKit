@@ -429,3 +429,8 @@ void WKPageGetContentsAsString_b(WKPageRef pageRef, WKPageGetSourceForFrameBlock
     WKPageGetContentsAsString(pageRef, Block_copy(block), callContentsAsStringBlockBlockAndDispose);
 }
 #endif
+
+void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
+{
+    toImpl(pageRef)->forceRepaint(VoidCallback::create(context, callback));
+}
