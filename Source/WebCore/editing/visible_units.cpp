@@ -536,7 +536,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         while (n && startBlock == enclosingNodeWithNonInlineRenderer(n))
             n = previousLeafWithSameEditability(n);
         while (n) {
-            if (highestEditableRoot(Position(n, 0)) != highestRoot)
+            if (highestEditableRoot(firstPositionInOrBeforeNode(n)) != highestRoot)
                 break;
             Position pos(n, caretMinOffset(n));
             if (pos.isCandidate()) {
@@ -567,7 +567,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         RenderObject* renderer = root->closestLeafChildForLogicalLeftPosition(x - absPos.x(), isEditablePosition(p))->renderer();
         Node* node = renderer->node();
         if (node && editingIgnoresContent(node))
-            return Position(node->parentNode(), node->nodeIndex());
+            return positionInParentBeforeNode(node);
         return renderer->positionForPoint(IntPoint(x - absPos.x(), root->lineTop()));
     }
     
@@ -645,7 +645,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         while (n && startBlock == enclosingNodeWithNonInlineRenderer(n))
             n = nextLeafWithSameEditability(n);
         while (n) {
-            if (highestEditableRoot(Position(n, 0)) != highestRoot)
+            if (highestEditableRoot(firstPositionInOrBeforeNode(n)) != highestRoot)
                 break;
             Position pos(n, caretMinOffset(n));
             if (pos.isCandidate()) {
@@ -672,7 +672,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         RenderObject* renderer = root->closestLeafChildForLogicalLeftPosition(x - absPos.x(), isEditablePosition(p))->renderer();
         Node* node = renderer->node();
         if (node && editingIgnoresContent(node))
-            return Position(node->parentNode(), node->nodeIndex());
+            return positionInParentBeforeNode(node);
         return renderer->positionForPoint(IntPoint(x - absPos.x(), root->lineTop()));
     }    
 
@@ -913,7 +913,7 @@ VisiblePosition startOfBlock(const VisiblePosition &c)
     Node *startNode = p.node();
     if (!startNode)
         return VisiblePosition();
-    return VisiblePosition(Position(startNode->enclosingBlockFlowElement(), 0), DOWNSTREAM);
+    return VisiblePosition(firstPositionInNode(startNode->enclosingBlockFlowElement()), DOWNSTREAM);
 }
 
 VisiblePosition endOfBlock(const VisiblePosition &c)

@@ -1,3 +1,24 @@
+2011-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Stop instantiating legacy editing positions in VisibleSelection, visible_units.cpp, Frame, and RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=52759
+
+        Stopped instantiating legacy editing positions in the following files.
+
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        (WebCore::startOfBlock):
+        * page/Frame.cpp:
+        (WebCore::Frame::visiblePositionForPoint):
+        * rendering/RenderBlock.cpp: Removed RenderBlock::positionForRenderer because it was not called anywhere.
+        * rendering/RenderBlock.h: Ditto.
+
 2011-01-22  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

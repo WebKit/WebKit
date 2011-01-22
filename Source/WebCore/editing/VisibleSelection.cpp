@@ -526,13 +526,13 @@ void VisibleSelection::adjustSelectionToAvoidCrossingEditingBoundaries()
             Position p = nextVisuallyDistinctCandidate(m_start);
             Node* shadowAncestor = startRoot ? startRoot->shadowAncestorNode() : 0;
             if (p.isNull() && startRoot && (shadowAncestor != startRoot))
-                p = Position(shadowAncestor, 0);
+                p = positionBeforeNode(shadowAncestor);
             while (p.isNotNull() && !(lowestEditableAncestor(p.node()) == baseEditableAncestor && !isEditablePosition(p))) {
                 Node* root = editableRootForPosition(p);
                 shadowAncestor = root ? root->shadowAncestorNode() : 0;
                 p = isAtomicNode(p.node()) ? positionInParentAfterNode(p.node()) : nextVisuallyDistinctCandidate(p);
                 if (p.isNull() && (shadowAncestor != root))
-                    p = Position(shadowAncestor, 0);
+                    p = positionBeforeNode(shadowAncestor);
             }
             VisiblePosition next(p);
             

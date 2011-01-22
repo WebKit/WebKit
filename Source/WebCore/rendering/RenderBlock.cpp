@@ -3932,25 +3932,6 @@ Position RenderBlock::positionForBox(InlineBox *box, bool start) const
     return Position(box->renderer()->node(), start ? textBox->start() : textBox->start() + textBox->len());
 }
 
-Position RenderBlock::positionForRenderer(RenderObject* renderer, bool start) const
-{
-    if (!renderer)
-        return Position(node(), 0);
-
-    Node* n = renderer->node() ? renderer->node() : node();
-    if (!n)
-        return Position();
-
-    ASSERT(renderer == n->renderer());
-
-    int offset = start ? renderer->caretMinOffset() : renderer->caretMaxOffset();
-
-    // FIXME: This was a runtime check that seemingly couldn't fail; changed it to an assertion for now.
-    ASSERT(!n->isCharacterDataNode() || renderer->isText());
-
-    return Position(n, offset);
-}
-
 // FIXME: This function should go on RenderObject as an instance method. Then
 // all cases in which positionForPoint recurs could call this instead to
 // prevent crossing editable boundaries. This would require many tests.

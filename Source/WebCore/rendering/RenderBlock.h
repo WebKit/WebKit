@@ -568,7 +568,6 @@ private:
     void newLine(EClear);
 
     Position positionForBox(InlineBox*, bool start = true) const;
-    Position positionForRenderer(RenderObject*, bool start = true) const;
     VisiblePosition positionForPointWithInlineChildren(const IntPoint&);
 
     // Adjust tx and ty from painting offsets to the local coords of this renderer
