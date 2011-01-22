@@ -363,7 +363,7 @@ namespace JSC {
 
     inline Heap* Heap::heap(JSCell* c)
     {
-        return MarkedSpace::cellBlock(c)->heap;
+        return MarkedSpace::heap(c);
     }
     
 #if ENABLE(JSC_ZOMBIES)

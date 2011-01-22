@@ -64,18 +64,10 @@ namespace JSC {
     class MarkedSpace {
         WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
-        MarkedSpace(JSGlobalData*);
-        void destroy(ProtectCountSet&);
-
-        void* allocate(size_t);
-
-        size_t objectCount() const;
         struct Statistics {
             size_t size;
             size_t free;
         };
-        Statistics statistics() const;
-        size_t size() const;
 
         static Heap* heap(JSCell*);
 
@@ -83,38 +75,46 @@ namespace JSC {
         static bool checkMarkCell(const JSCell*);
         static void markCell(JSCell*);
 
-        WeakGCHandle* addWeakGCHandle(JSCell*);
+        MarkedSpace(JSGlobalData*);
+        void destroy(ProtectCountSet&);
+
+        JSGlobalData* globalData() { return m_globalData; }
+
+        void* allocate(size_t);
+
+        void clearMarkBits();
+        void markRoots();
+        void reset();
+        void sweep();
+
+        size_t size() const;
+        size_t objectCount() const;
+        Statistics statistics() const;
 
         bool contains(void*);
-        bool containsSlowCase(void*);
-        bool isCellAligned(void*);
-        bool isPossibleCell(void*);
 
         LiveObjectIterator primaryHeapBegin();
         LiveObjectIterator primaryHeapEnd();
 
-        JSGlobalData* globalData() { return m_globalData; }
+    private:
+        bool isCellAligned(void*);
+        bool isPossibleCell(void*);
+        bool containsSlowCase(void*);
 
         static CollectorBlock* cellBlock(const JSCell*);
         static size_t cellOffset(const JSCell*);
-
-        void reset();
-        void sweep();
 
         NEVER_INLINE CollectorBlock* allocateBlock();
         NEVER_INLINE void freeBlock(size_t);
         void resizeBlocks();
         void growBlocks(size_t neededBlocks);
         void shrinkBlocks(size_t neededBlocks);
-        void clearMarkBits();
+
         void clearMarkBits(CollectorBlock*);
         size_t markedCells(size_t startBlock = 0, size_t startCell = 0) const;
 
         void addToStatistics(Statistics&) const;
 
-        void markRoots();
-
-    private:
         CollectorHeap m_heap;
         JSGlobalData* m_globalData;
     };
@@ -201,6 +201,11 @@ namespace JSC {
     inline size_t MarkedSpace::cellOffset(const JSCell* cell)
     {
         return (reinterpret_cast<uintptr_t>(cell) & BLOCK_OFFSET_MASK) / CELL_SIZE;
+    }
+
+    inline Heap* MarkedSpace::heap(JSCell* cell)
+    {
+        return cellBlock(cell)->heap;
     }
 
     inline bool MarkedSpace::isCellMarked(const JSCell* cell)
