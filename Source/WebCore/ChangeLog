@@ -1,3 +1,15 @@
+2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Introduce FontMetrics abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=51456
+
+        Fix Chromium/Win build.
+
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp: s/->/./
+        (WebCore::UniscribeHelperTextRun::UniscribeHelperTextRun):
+
 2011-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

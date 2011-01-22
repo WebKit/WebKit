@@ -51,7 +51,7 @@ UniscribeHelperTextRun::UniscribeHelperTextRun(const TextRun& run,
     setLetterSpacing(font.letterSpacing());
     setSpaceWidth(font.spaceWidth());
     setWordSpacing(font.wordSpacing());
-    setAscent(font.fontMetrics()->ascent());
+    setAscent(font.fontMetrics().ascent());
 
     init();
 
