@@ -69,7 +69,7 @@
 
 namespace WebCore {
 
-QPainter::CompositionMode GraphicsContext::toQtCompositionMode(CompositeOperator op)
+static inline QPainter::CompositionMode toQtCompositionMode(CompositeOperator op)
 {
     switch (op) {
     case CompositeClear:

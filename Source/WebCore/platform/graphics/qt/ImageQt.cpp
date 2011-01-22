@@ -120,11 +120,9 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
 
     CompositeOperator previousOperator = ctxt->compositeOperation();
 
-    ctxt->setCompositeOperation(op);
-    QPainter* p = ctxt->platformContext();
-    if (!pixmap.hasAlpha() && p->compositionMode() == QPainter::CompositionMode_SourceOver)
-        p->setCompositionMode(QPainter::CompositionMode_Source);
+    ctxt->setCompositeOperation(!pixmap.hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
 
+    QPainter* p = ctxt->platformContext();
     QTransform transform(patternTransform);
 
     // If this would draw more than one scaled tile, we scale the pixmap first and then use the result to draw.
@@ -223,15 +221,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         return;
     }
 
-    QPainter* painter(ctxt->platformContext());
-
-    QPainter::CompositionMode compositionMode = GraphicsContext::toQtCompositionMode(op);
-
-    if (!image->hasAlpha() && painter->compositionMode() == QPainter::CompositionMode_SourceOver)
-        compositionMode = QPainter::CompositionMode_Source;
-
-    QPainter::CompositionMode lastCompositionMode = painter->compositionMode();
-    painter->setCompositionMode(compositionMode);
+    CompositeOperator previousOperator = ctxt->compositeOperation();
+    ctxt->setCompositeOperation(!image->hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
 
     ContextShadow* shadow = ctxt->contextShadow();
     if (shadow->m_type != ContextShadow::NoShadow) {
@@ -243,11 +234,9 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
         }
     }
 
-    // Test using example site at
-    // http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    painter->drawPixmap(normalizedDst, *image, normalizedSrc);
+    ctxt->platformContext()->drawPixmap(normalizedDst, *image, normalizedSrc);
 
-    painter->setCompositionMode(lastCompositionMode);
+    ctxt->setCompositeOperation(previousOperator);
 
     if (imageObserver())
         imageObserver()->didDraw(this);
