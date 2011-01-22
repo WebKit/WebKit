@@ -1796,8 +1796,8 @@ void WebPage::drawRectToPDF(uint64_t frameID, const WebCore::IntRect& rect, Vect
 
     CGRect mediaBox = CGRectMake(0, 0, frame->size().width(), frame->size().height());
     RetainPtr<CGContextRef> context(AdoptCF, CGPDFContextCreate(pdfDataConsumer.get(), &mediaBox, 0));
-    CFDictionaryRef pageInfo = CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    CGPDFContextBeginPage(context.get(), pageInfo);
+    RetainPtr<CFDictionaryRef> pageInfo(AdoptCF, CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    CGPDFContextBeginPage(context.get(), pageInfo.get());
 
     GraphicsContext ctx(context.get());
     m_printContext->spoolRect(ctx, rect);

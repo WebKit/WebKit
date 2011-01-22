@@ -2,6 +2,15 @@
 
         Reviewed by Dan Bernstein.
 
+        https://bugs.webkit.org/show_bug.cgi?id=52950
+        Leak in WebPage::drawRectToPDF
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::drawRectToPDF): Use RetainPtr here, too.
+
+2011-01-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         https://bugs.webkit.org/show_bug.cgi?id=52951
         WebKit2 generates a bad PDF for cross process messaging
 
