@@ -1,3 +1,15 @@
+2011-01-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Work around a Clang bug <rdar://problem/8876150> that leads to it incorrectly emitting an access
+        control warning when a client tries to use operator bool exposed above via "using PageBlock::operator bool".
+
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::operator bool):
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::operator bool):
+
 2011-01-21  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.
