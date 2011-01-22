@@ -560,6 +560,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting()
 
     QLocale::setDefault(QLocale::c());
 
+    layoutTestController()->setDeveloperExtrasEnabled(true);
 #ifndef Q_OS_WINCE
     setlocale(LC_ALL, "");
 #endif
@@ -579,26 +580,16 @@ static bool isWebInspectorTest(const QUrl& url)
     return false;
 }
 
-static bool shouldEnableDeveloperExtras(const QUrl& url)
-{
-    return true;
-}
-
 void DumpRenderTree::open(const QUrl& url)
 {
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacksPath(QFileInfo(url.toString()).path());
     resetToConsistentStateBeforeTesting();
 
-    if (shouldEnableDeveloperExtras(m_page->mainFrame()->url())) {
+    if (isWebInspectorTest(m_page->mainFrame()->url()))
         layoutTestController()->closeWebInspector();
-        layoutTestController()->setDeveloperExtrasEnabled(false);
-    }
 
-    if (shouldEnableDeveloperExtras(url)) {
-        layoutTestController()->setDeveloperExtrasEnabled(true);
-        if (isWebInspectorTest(url))
-            layoutTestController()->showWebInspector();
-    }
+    if (isWebInspectorTest(url))
+        layoutTestController()->showWebInspector();
 
     if (isGlobalHistoryTest(url))
         layoutTestController()->dumpHistoryCallbacks();
