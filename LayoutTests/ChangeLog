@@ -1,5 +1,12 @@
 2011-01-21  Andreas Kling  <kling@webkit.org>
 
+        Unreviewed, removing the Qt result for r76414 since the test
+        was actually broken beyond the usual off-by-one metrics.
+
+        * platform/qt/fast/text/justify-nbsp-expected.txt: Removed.
+
+2011-01-21  Andreas Kling  <kling@webkit.org>
+
         Unreviewed, add Qt-specific result for test added in r76414.
 
         * platform/qt/fast/text/justify-nbsp-expected.txt: Added.
