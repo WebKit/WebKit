@@ -33,6 +33,8 @@
 
 #include "WebCommon.h"
 
+#define HAS_WEBAUDIO_FEATURE_ENABLE 1
+
 namespace WebKit {
 
 class WebString;

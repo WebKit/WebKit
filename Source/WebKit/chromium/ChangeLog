@@ -1,3 +1,12 @@
+2011-01-21  Chris Rogers  <crogers@google.com>
+
+        Unreviewed
+
+        Add HAS_WEBAUDIO_FEATURE_ENABLE define to synchronize with chromium-side patch
+        https://bugs.webkit.org/show_bug.cgi?id=52939
+
+        * public/WebSettings.h:
+
 2011-01-21  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Fisher.
