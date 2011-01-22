@@ -43,7 +43,10 @@ class MacTest(port_testcase.PortTestCase):
         port_obj._options.configuration = 'Release'
         return port_obj
 
-    def test_skipped_file_paths(self):
+    # FIXME: This test does not appear to be correct. It seems to receive
+    # different answers on different platforms. We should consider re-enabling
+    # it once we've worked out how to make it correct.
+    def disabled_test_skipped_file_paths(self):
         port = self.make_port()
         if not port:
             return
