@@ -1,3 +1,13 @@
+2011-01-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52951
+        WebKit2 generates a bad PDF for cross process messaging
+
+        * page/PrintContext.cpp: (WebCore::PrintContext::spoolRect): Use a correct offset to actually
+        draw inside the requested rectangle.
+
 2011-01-21  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.

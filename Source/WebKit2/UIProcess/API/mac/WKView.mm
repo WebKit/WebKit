@@ -1497,7 +1497,7 @@ static float currentPrintOperationScale()
     CGContextSaveGState(context);
     // Flip the destination.
     CGContextScaleCTM(context, 1, -1);
-    CGContextTranslateCTM(context, 0, -rect.size.height);
+    CGContextTranslateCTM(context, 0, -CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox).size.height);
     CGContextDrawPDFPage(context, pdfPage);
     CGContextRestoreGState(context);
 }

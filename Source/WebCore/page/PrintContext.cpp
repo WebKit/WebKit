@@ -166,7 +166,7 @@ void PrintContext::spoolRect(GraphicsContext& ctx, const IntRect& rect)
 {
     ctx.save();
     ctx.scale(FloatSize(1, -1));
-    ctx.translate(0, -rect.height());
+    ctx.translate(0, -m_frame->view()->contentsHeight());
     ctx.clip(rect);
     m_frame->view()->paintContents(&ctx, rect);
     ctx.restore();
