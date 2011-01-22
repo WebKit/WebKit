@@ -59,9 +59,8 @@ public:
         painter.setPen(p->pen());
         painter.setBrush(p->brush());
         painter.setTransform(p->transform(), true);
-        painter.setOpacity(p->opacity());
         painter.setFont(p->font());
-        painter.setCompositionMode(p->compositionMode());
+        painter.setOpacity(1);
     }
 
     TransparencyLayer()

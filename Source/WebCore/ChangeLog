@@ -1,3 +1,16 @@
+2011-01-22  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] fast/backgrounds/svg-as-mask.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=52906
+
+        Transparency layers should start out with in SourceOver mode with
+        alpha 1.0 (modeled after CGContextBeginTransparencyLayer.)
+
+        * platform/graphics/qt/TransparencyLayer.h:
+        (WebCore::TransparencyLayer::TransparencyLayer):
+
 2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.
