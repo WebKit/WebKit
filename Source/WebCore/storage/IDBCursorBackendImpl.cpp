@@ -178,7 +178,7 @@ void IDBCursorBackendImpl::loadCurrentRow()
     m_currentId = m_query->getColumnInt64(0);
     m_currentKey = IDBKey::fromQuery(*m_query, 1);
     if (m_isSerializedScriptValueCursor)
-        m_currentSerializedScriptValue = SerializedScriptValue::createFromWire(m_query->getColumnText(4));
+        m_currentSerializedScriptValue = SerializedScriptValue::createFromWire(m_query->getColumnBlobAsString(4));
 
     m_currentIDBKeyValue = IDBKey::fromQuery(*m_query, 5);
 }

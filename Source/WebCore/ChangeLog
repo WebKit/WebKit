@@ -1,3 +1,29 @@
+2011-01-22  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB corrupts data on disk
+        https://bugs.webkit.org/show_bug.cgi?id=52890
+
+        We need to store the SerializedScriptValues on disk in a BLOB column rather than TEXT.
+        Test: storage/indexeddb/data-corruption.html
+
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindBlob):
+        (WebCore::SQLiteStatement::getColumnBlobAsString):
+        (WebCore::SQLiteStatement::getColumnBlobAsVector):
+        * platform/sql/SQLiteStatement.h:
+        * storage/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::loadCurrentRow):
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::runCommands):
+        (WebCore::createTables):
+        (WebCore::createMetaDataTable):
+        (WebCore::migrateDatabase):
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        (WebCore::putObjectStoreData):
+
 2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Fix WinCE build.

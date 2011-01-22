@@ -1,0 +1,88 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test that data inserted into IndexedDB does not get corrupted on disk.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("webkitIndexedDB.open('name')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    debug("openSuccess():");
+    verifySuccessEvent(event);
+    window.db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = setVersionSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = addData;
+
+    deleteAllObjectStores(db, createObjectStore);
+}
+
+function createObjectStore()
+{
+    debug("createObjectStore():");
+    evalAndLog("db.createObjectStore('storeName')");
+}
+
+var testDate = new Date('February 24, 1955 12:00:08');
+
+function addData()
+{
+    debug("addData():");
+    var transaction = evalAndLog("transaction = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    var result = evalAndLog("result = transaction.objectStore('storeName').add({x: testDate}, 'key')");
+    result.onerror = unexpectedErrorCallback;
+    transaction.oncomplete = getData;
+}
+
+function getData()
+{
+    debug("addData():");
+    var transaction = evalAndLog("transaction = db.transaction({mode: webkitIDBTransaction.READ_ONLY})");
+    var result = evalAndLog("result = transaction.objectStore('storeName').get('key')");
+    result.onerror = unexpectedErrorCallback;
+    result.onsuccess = doCheck;
+}
+
+function doCheck()
+{
+    verifySuccessEvent(event);
+    shouldBeTrue("event.result.x.toString() == testDate.toString()");
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

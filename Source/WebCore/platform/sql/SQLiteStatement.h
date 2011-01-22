@@ -42,6 +42,7 @@ public:
     
     int prepare();
     int bindBlob(int index, const void* blob, int size);
+    int bindBlob(int index, const String&);
     int bindText(int index, const String&);
     int bindInt(int index, int);
     int bindInt64(int index, int64_t);
@@ -80,6 +81,7 @@ public:
     int getColumnInt(int col);
     int64_t getColumnInt64(int col);
     const void* getColumnBlob(int col, int& size);
+    String getColumnBlobAsString(int col);
     void getColumnBlobAsVector(int col, Vector<char>&);
 
     bool returnTextResults(int col, Vector<String>&);

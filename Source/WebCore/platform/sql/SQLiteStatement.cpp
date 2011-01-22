@@ -176,6 +176,20 @@ int SQLiteStatement::bindBlob(int index, const void* blob, int size)
     return sqlite3_bind_blob(m_statement, index, blob, size, SQLITE_TRANSIENT);
 }
 
+int SQLiteStatement::bindBlob(int index, const String& text)
+{
+    // String::characters() returns 0 for the empty string, which SQLite
+    // treats as a null, so we supply a non-null pointer for that case.
+    UChar anyCharacter = 0;
+    const UChar* characters;
+    if (text.isEmpty() && !text.isNull())
+        characters = &anyCharacter;
+    else
+        characters = text.characters();
+
+    return bindBlob(index, characters, text.length() * sizeof(UChar));
+}
+
 int SQLiteStatement::bindText(int index, const String& text)
 {
     ASSERT(m_isPrepared);
@@ -355,7 +369,29 @@ int64_t SQLiteStatement::getColumnInt64(int col)
         return 0;
     return sqlite3_column_int64(m_statement, col);
 }
-    
+
+String SQLiteStatement::getColumnBlobAsString(int col)
+{
+    ASSERT(col >= 0);
+
+    if (!m_statement && prepareAndStep() != SQLITE_ROW)
+        return String();
+
+    if (columnCount() <= col)
+        return String();
+
+    const void* blob = sqlite3_column_blob(m_statement, col);
+    if (!blob)
+        return String();
+
+    int size = sqlite3_column_bytes(m_statement, col);
+    if (size < 0)
+        return String();
+
+    ASSERT(!(size % sizeof(UChar)));
+    return String(static_cast<const UChar*>(blob), size / sizeof(UChar));
+}
+
 void SQLiteStatement::getColumnBlobAsVector(int col, Vector<char>& result)
 {
     ASSERT(col >= 0);
@@ -379,7 +415,7 @@ void SQLiteStatement::getColumnBlobAsVector(int col, Vector<char>& result)
     int size = sqlite3_column_bytes(m_statement, col);
     result.resize((size_t)size);
     for (int i = 0; i < size; ++i)
-        result[i] = ((const unsigned char*)blob)[i];
+        result[i] = (static_cast<const unsigned char*>(blob))[i];
 }
 
 const void* SQLiteStatement::getColumnBlob(int col, int& size)

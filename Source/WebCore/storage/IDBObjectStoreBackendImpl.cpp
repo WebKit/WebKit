@@ -118,7 +118,7 @@ void IDBObjectStoreBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<
     ASSERT((key->type() == IDBKey::DateType) != query.isColumnNull(1));
     ASSERT((key->type() == IDBKey::NumberType) != query.isColumnNull(2));
 
-    callbacks->onSuccess(SerializedScriptValue::createFromWire(query.getColumnText(3)));
+    callbacks->onSuccess(SerializedScriptValue::createFromWire(query.getColumnBlobAsString(3)));
     ASSERT(query.step() != SQLResultRow);
 }
 
@@ -142,7 +142,7 @@ static bool putObjectStoreData(SQLiteDatabase& db, IDBKey* key, SerializedScript
     if (query.prepare() != SQLResultOk)
         return false;
     key->bindWithNulls(query, 1);
-    query.bindText(4, value->toWireString());
+    query.bindBlob(4, value->toWireString());
     if (dataRowId != IDBDatabaseBackendImpl::InvalidId)
         query.bindInt64(5, dataRowId);
     else

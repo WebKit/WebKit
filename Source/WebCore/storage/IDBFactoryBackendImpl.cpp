@@ -49,7 +49,7 @@ IDBFactoryBackendImpl::IDBFactoryBackendImpl()
     : m_transactionCoordinator(IDBTransactionCoordinator::create())
 {
 }
-
+ 
 IDBFactoryBackendImpl::~IDBFactoryBackendImpl()
 {
 }
@@ -93,11 +93,24 @@ static PassRefPtr<IDBSQLiteDatabase> openSQLiteDatabase(SecurityOrigin* security
     return sqliteDatabase.release();
 }
 
+static bool runCommands(SQLiteDatabase& sqliteDatabase, const char** commands, size_t numberOfCommands)
+{
+    SQLiteTransaction transaction(sqliteDatabase, false);
+    transaction.begin();
+    for (size_t i = 0; i < numberOfCommands; ++i) {
+        if (!sqliteDatabase.executeCommand(commands[i])) {
+            LOG_ERROR("Failed to run the following command for IndexedDB: %s", commands[i]);
+            return false;
+        }
+    }
+    transaction.commit();
+    return true;
+}
+
 static bool createTables(SQLiteDatabase& sqliteDatabase)
 {
     if (sqliteDatabase.tableExists("Databases"))
         return true;
-
     static const char* commands[] = {
         "CREATE TABLE Databases (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
         "CREATE UNIQUE INDEX Databases_name ON Databases(name)",
@@ -117,17 +130,7 @@ static bool createTables(SQLiteDatabase& sqliteDatabase)
         "CREATE INDEX IndexData_indexId ON IndexData(indexId)",
         };
 
-    SQLiteTransaction transaction(sqliteDatabase, false);
-    transaction.begin();
-    for (size_t i = 0; i < arraysize(commands); ++i) {
-        if (!sqliteDatabase.executeCommand(commands[i])) {
-            // FIXME: We should try to recover from this situation. Maybe nuke the database and start over?
-            LOG_ERROR("Failed to run the following command for IndexedDB: %s", commands[i]);
-            return false;
-        }
-    }
-    transaction.commit();
-    return true;
+    return runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0]));
 }
 
 static bool createMetaDataTable(SQLiteDatabase& sqliteDatabase)
@@ -137,14 +140,7 @@ static bool createMetaDataTable(SQLiteDatabase& sqliteDatabase)
         "INSERT INTO MetaData VALUES ('version', 1)",
     };
 
-    SQLiteTransaction transaction(sqliteDatabase, false);
-    transaction.begin();
-    for (size_t i = 0; i < arraysize(commands); ++i) {
-        if (!sqliteDatabase.executeCommand(commands[i]))
-            return false;
-    }
-    transaction.commit();
-    return true;
+    return runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0]));
 }
 
 static bool getDatabaseVersion(SQLiteDatabase& sqliteDatabase, int* databaseVersion)
@@ -187,17 +183,25 @@ static bool migrateDatabase(SQLiteDatabase& sqliteDatabase)
             "UPDATE MetaData SET value = 2 WHERE name = 'version'",
         };
 
-        SQLiteTransaction transaction(sqliteDatabase, false);
-        transaction.begin();
-        for (size_t i = 0; i < arraysize(commands); ++i) {
-            if (!sqliteDatabase.executeCommand(commands[i])) {
-                LOG_ERROR("Failed to run the following command for IndexedDB: %s", commands[i]);
-                return false;
-            }
-        }
-        transaction.commit();
+        if (!runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0])))
+            return false;
 
         databaseVersion = 2;
+    }
+
+    if (databaseVersion == 2) {
+        // We need to make the ObjectStoreData.value be a BLOB instead of TEXT.
+        static const char* commands[] = {
+            "DROP TABLE IF EXISTS ObjectStoreData", // This drops associated indices.
+            "CREATE TABLE ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate REAL, keyNumber REAL, value BLOB NOT NULL)",
+            "CREATE UNIQUE INDEX ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
+            "UPDATE MetaData SET value = 3 WHERE name = 'version'",
+        };
+
+        if (!runCommands(sqliteDatabase, commands, sizeof(commands) / sizeof(commands[0])))
+            return false;
+
+        databaseVersion = 3;
     }
 
     return true;
