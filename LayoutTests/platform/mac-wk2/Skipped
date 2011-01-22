@@ -2270,6 +2270,7 @@ fast/forms/form-attribute-elements-order.html
 fast/forms/form-attribute-elements-order2.html
 fast/forms/form-attribute-elements.html
 fast/forms/form-attribute.html
+fast/forms/form-collection-elements-order.html
 
 # These storage tests fail in WebKit2 on the bot, but not running locally
 fast/workers/storage/executesql-accepts-only-one-statement-sync.html

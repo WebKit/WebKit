@@ -1,3 +1,12 @@
+2011-01-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Humor the WebKit2 buildbot in its continuing hatred of forms tests
+        https://bugs.webkit.org/show_bug.cgi?id=52944
+
+        * platform/mac-wk2/Skipped:
+
 2011-01-21  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.
