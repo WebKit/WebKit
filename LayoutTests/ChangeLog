@@ -1,3 +1,13 @@
+2011-01-21  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Updated the results after r76414 fixed text justification in this test.
+
+        * platform/mac/fast/text/justified-text-rect-expected.checksum:
+        * platform/mac/fast/text/justified-text-rect-expected.png:
+        * platform/mac/fast/text/justified-text-rect-expected.txt:
+
 2011-01-21  James Robinson  <jamesr@chromium.org>
 
         Update chromium test expectations. fast/animation tests should now pass on all chromium configurations.
