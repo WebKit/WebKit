@@ -1,3 +1,27 @@
+2011-01-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Regression: new window.onerror() implementation leaks cross-origin Javascript errors
+        https://bugs.webkit.org/show_bug.cgi?id=52903
+
+        In case of an exception in a script from different domain only generic message
+        will be passed to window.onerror hander.
+
+        Tests: http/tests/security/cross-origin-script-window-onerror-redirected.html
+               http/tests/security/cross-origin-script-window-onerror.html
+
+        * bindings/js/CachedScriptSourceProvider.h: use URL from the resource response to make sure we do all
+        cross origin checks agains real script URL, not the original URL which may have resulted in a sequence
+        of redirects to different domains.
+        (WebCore::CachedScriptSourceProvider::CachedScriptSourceProvider):
+        * bindings/v8/ScriptSourceCode.h: same for v8.
+        (WebCore::ScriptSourceCode::url):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent): in case the error occurred in a script we cannot
+        access provide concise "Script error." message without any information about the error source. This is
+        what Firefox does in this case.
+
 2011-01-21  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

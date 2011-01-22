@@ -294,9 +294,23 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     if (!target)
         return false;
 
+    String message;
+    int line;
+    String sourceName;
+    KURL targetUrl = completeURL(sourceURL);
+    if (securityOrigin()->canRequest(targetUrl)) {
+        message = errorMessage;
+        line = lineNumber;
+        sourceName = sourceURL;
+    } else {
+        message = "Script error.";
+        sourceName = String();
+        line = 0;
+    }
+
     ASSERT(!m_inDispatchErrorEvent);
     m_inDispatchErrorEvent = true;
-    RefPtr<ErrorEvent> errorEvent = ErrorEvent::create(errorMessage, sourceURL, lineNumber);
+    RefPtr<ErrorEvent> errorEvent = ErrorEvent::create(message, sourceName, line);
     target->dispatchEvent(errorEvent);
     m_inDispatchErrorEvent = false;
     return errorEvent->defaultPrevented();

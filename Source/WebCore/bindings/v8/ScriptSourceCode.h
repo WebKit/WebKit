@@ -63,7 +63,12 @@ public:
 
     const String& source() const { return m_source; }
     CachedScript* cachedScript() const { return m_cachedScript.get(); }
-    const KURL& url() const { return m_url; }
+    const KURL& url() const
+    {
+        if (m_cachedScript)
+            return m_cachedScript->response().url();
+        return m_url;
+    }
     int startLine() const { return m_startPosition.m_line.oneBasedInt(); }
     const TextPosition1& startPosition() const { return m_startPosition; }
 

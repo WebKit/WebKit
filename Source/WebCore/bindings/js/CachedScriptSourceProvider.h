@@ -57,7 +57,7 @@ namespace WebCore {
 
     private:
         CachedScriptSourceProvider(CachedScript* cachedScript)
-            : ScriptSourceProvider(stringToUString(cachedScript->url()), cachedScript->sourceProviderCache())
+            : ScriptSourceProvider(stringToUString(cachedScript->response().url()), cachedScript->sourceProviderCache())
             , m_cachedScript(cachedScript)
         {
             m_cachedScript->addClient(this);
