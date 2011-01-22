@@ -311,4 +311,14 @@ void WebScrollbarImpl::getTickmarks(Vector<WebCore::IntRect>& tickmarks) const
         tickmarks[i] = ticks[i];
 }
 
+Scrollbar* WebScrollbarImpl::horizontalScrollbar() const
+{
+    return m_scrollbar->orientation() == HorizontalScrollbar ? m_scrollbar.get() : 0;
+}
+
+Scrollbar* WebScrollbarImpl::verticalScrollbar() const
+{
+    return m_scrollbar->orientation() == VerticalScrollbar ? m_scrollbar.get() : 0;
+}
+
 } // namespace WebKit

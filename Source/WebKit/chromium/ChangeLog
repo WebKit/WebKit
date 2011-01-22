@@ -1,3 +1,15 @@
+2011-01-22  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium]: Fix WebScrollbarImpl not getting scroll events after recent scrollbar refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=52967
+
+        * src/WebScrollbarImpl.cpp:
+        (WebKit::WebScrollbarImpl::horizontalScrollbar):
+        (WebKit::WebScrollbarImpl::verticalScrollbar):
+        * src/WebScrollbarImpl.h:
+
 2011-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

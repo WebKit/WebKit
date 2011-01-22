@@ -65,6 +65,8 @@ public:
     virtual bool isActive() const;
     virtual bool scrollbarCornerPresent() const;
     virtual void getTickmarks(Vector<WebCore::IntRect>&) const;
+    virtual WebCore::Scrollbar* horizontalScrollbar() const;
+    virtual WebCore::Scrollbar* verticalScrollbar() const;
 
 private:
     bool onMouseDown(const WebInputEvent& event);
