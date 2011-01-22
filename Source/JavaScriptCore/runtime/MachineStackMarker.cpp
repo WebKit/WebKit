@@ -78,7 +78,7 @@ static inline void swapIfBackwards(void*& begin, void*& end)
 #if OS(WINCE)
     if (begin <= end)
         return;
-    swap(begin, end);
+    std::swap(begin, end);
 #else
 UNUSED_PARAM(begin);
 UNUSED_PARAM(end);
