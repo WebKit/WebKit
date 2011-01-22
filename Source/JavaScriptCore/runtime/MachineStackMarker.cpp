@@ -135,6 +135,18 @@ static inline PlatformThread getCurrentPlatformThread()
 #endif
 }
 
+static inline void swapIfBackwards(void*& begin, void*& end)
+{
+#if OS(WINCE)
+    if (begin <= end)
+        return;
+    swap(begin, end);
+#else
+UNUSED_PARAM(begin);
+UNUSED_PARAM(end);
+#endif
+}
+
 void MachineStackMarker::makeUsableFromMultipleThreads()
 {
     if (m_currentThreadRegistrar)
@@ -196,7 +208,10 @@ void MachineStackMarker::unregisterThread()
 
 void NEVER_INLINE MachineStackMarker::markCurrentThreadConservativelyInternal(ConservativeSet& conservativeSet)
 {
-    markConservatively(conservativeSet, m_heap->globalData()->stack().current(), m_heap->globalData()->stack().origin());
+    void* begin = m_heap->globalData()->stack().current();
+    void* end = m_heap->globalData()->stack().origin();
+    swapIfBackwards(begin, end);
+    markConservatively(conservativeSet, begin, end);
 }
 
 #if COMPILER(GCC)
@@ -361,7 +376,9 @@ void MachineStackMarker::markOtherThreadConservatively(ConservativeSet& conserva
     markConservatively(conservativeSet, static_cast<void*>(&regs), static_cast<void*>(reinterpret_cast<char*>(&regs) + regSize));
 
     void* stackPointer = otherThreadStackPointer(regs);
-    markConservatively(conservativeSet, stackPointer, thread->stackBase);
+    void* stackBase = thread->stackBase;
+    swapIfBackwards(stackPointer, stackBase);
+    markConservatively(conservativeSet, stackPointer, stackBase);
 
     resumeThread(thread->platformThread);
 }
@@ -399,33 +416,20 @@ void MachineStackMarker::markMachineStackConservatively(ConservativeSet& conserv
 
 inline bool isPointerAligned(void* p)
 {
-    return (((intptr_t)(p) & (sizeof(char*) - 1)) == 0);
+    return !((intptr_t)(p) & (sizeof(char*) - 1));
 }
 
 void MachineStackMarker::markConservatively(ConservativeSet& conservativeSet, void* start, void* end)
 {
-#if OS(WINCE)
-    if (start > end) {
-        void* tmp = start;
-        start = end;
-        end = tmp;
-    }
-#else
     ASSERT(start <= end);
-#endif
-
     ASSERT((static_cast<char*>(end) - static_cast<char*>(start)) < 0x1000000);
     ASSERT(isPointerAligned(start));
     ASSERT(isPointerAligned(end));
 
-    char** p = static_cast<char**>(start);
-    char** e = static_cast<char**>(end);
-
-    while (p != e) {
-        char* x = *p++;
-        if (!m_heap->contains(x))
+    for (char** it = static_cast<char**>(start); it != static_cast<char**>(end); ++it) {
+        if (!m_heap->contains(*it))
             continue;
-        conservativeSet.add(reinterpret_cast<JSCell*>(x));
+        conservativeSet.add(reinterpret_cast<JSCell*>(*it));
     }
 }
 

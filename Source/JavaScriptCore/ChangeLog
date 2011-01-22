@@ -1,5 +1,30 @@
 2011-01-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Rubber-stamped by Maciej Stachowiak.
+
+        A few of Maciej's review suggestions for my last patch.
+        https://bugs.webkit.org/show_bug.cgi?id=52946        
+
+        SunSpider reports no change.
+
+        * runtime/MachineStackMarker.cpp:
+        (JSC::swapIfBackwards): Added a helper function for handling platforms
+        where the stack can grow in any direction.
+
+        (JSC::MachineStackMarker::markCurrentThreadConservativelyInternal):
+        (JSC::MachineStackMarker::markOtherThreadConservatively): Use the helper
+        function.
+
+        (JSC::isPointerAligned): Use "!" instead of "==0" because a robot told me to.
+
+        (JSC::MachineStackMarker::markConservatively): Changed to use a more
+        standard looping idiom, and to use the helper function above.
+
+        * runtime/MarkedSpace.h:
+        (JSC::MarkedSpace::isCellAligned): Use "!" instead of "==0" because a robot told me to.
+
+2011-01-21  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Cleaned up some conservative marking code.

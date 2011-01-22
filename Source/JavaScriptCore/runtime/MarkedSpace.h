@@ -219,11 +219,11 @@ namespace JSC {
     }
 
     // Cell size needs to be a power of two for isPossibleCell to be valid.
-    COMPILE_ASSERT(sizeof(CollectorCell) % 2 == 0, Collector_cell_size_is_power_of_two);
+    COMPILE_ASSERT(!(sizeof(CollectorCell) % 2), Collector_cell_size_is_power_of_two);
 
     inline bool MarkedSpace::isCellAligned(void *p)
     {
-        return (((intptr_t)(p) & CELL_MASK) == 0);
+        return !((intptr_t)(p) & CELL_MASK);
     }
 
     inline bool MarkedSpace::isPossibleCell(void* p)
