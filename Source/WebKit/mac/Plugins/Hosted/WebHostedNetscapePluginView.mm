@@ -209,7 +209,6 @@ extern "C" {
     
     _proxy->resize(boundsInWindow, visibleRectInWindow);
 
-    CGRect layerBounds = NSRectToCGRect(boundsInWindow);
     CGRect bounds = NSRectToCGRect([self bounds]);
     CGRect frame = NSRectToCGRect([self frame]);
     

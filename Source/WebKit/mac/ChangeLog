@@ -1,3 +1,15 @@
+2011-01-21  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Jon Honeycutt.
+
+        Fix the build when using Clang by removing some unused variables.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView updateAndSetWindow]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullscreen:]):
+        (-[WebFullScreenController exitFullscreen]):
+
 2011-01-21  Chris Rogers  <crogers@google.com>
 
         Reviewed by Darin Fisher.

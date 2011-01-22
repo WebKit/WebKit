@@ -397,7 +397,6 @@ private:
     [[self window] setCollectionBehavior:behavior];
     
     NSView* animationView = [[self _fullscreenWindow] animationView];
-    NSRect viewBounds = [animationView bounds];
     
     NSRect backgroundBounds = {[[self window] convertScreenToBase:screenFrame.origin], screenFrame.size};
     backgroundBounds = [animationView convertRectFromBase:backgroundBounds];
@@ -462,8 +461,7 @@ private:
     CATransform3D moveTransform = CATransform3DMakeTranslation(_initialFrame.origin.x - shrunkDestinationFrame.origin.x, _initialFrame.origin.y - shrunkDestinationFrame.origin.y, 0);
     CATransform3D finalTransform = CATransform3DConcat(shrinkTransform, moveTransform);
     [rendererLayer setTransform:finalTransform];
-    CGRect translatedDestinationFrame = [rendererLayer convertRect:destinationFrame toLayer:[animationView layer]];
-    
+
     CALayer* backgroundLayer = [[self _fullscreenWindow] backgroundLayer];
 
     // Start the opacity animation. We can use implicit animations here because we don't care when
@@ -600,10 +598,9 @@ private:
     CATransform3D moveTransform = CATransform3DMakeTranslation(layerEndFrame.origin.x - shrunkDestinationFrame.origin.x, layerEndFrame.origin.y - shrunkDestinationFrame.origin.y, 0);
     CATransform3D finalTransform = CATransform3DConcat(shrinkTransform, moveTransform);
     [rendererLayer setTransform:finalTransform];
-    CGRect translatedDestinationFrame = [rendererLayer convertRect:layerStartFrame toLayer:[animationView layer]];
-    
+
     CFTimeInterval duration = [self _animationDuration];
-        
+
     CALayer* backgroundLayer = [[self _fullscreenWindow] backgroundLayer];
     [CATransaction begin];
     [CATransaction setAnimationDuration:duration];
