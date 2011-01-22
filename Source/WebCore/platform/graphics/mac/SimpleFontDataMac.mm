@@ -249,6 +249,9 @@ void SimpleFontData::platformInit()
         descent *= 2.f;
     }
 
+    // Compute and store line spacing, before the line metrics hacks are applied.
+    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
+
     // Hack Hiragino line metrics to allow room for marked text underlines.
     // <rdar://problem/5386183>
     if (descent < 3 && lineGap >= 3 && [familyName hasPrefix:@"Hiragino"]) {

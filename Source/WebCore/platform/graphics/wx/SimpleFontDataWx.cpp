@@ -58,6 +58,7 @@ void SimpleFontData::platformInit()
         m_fontMetrics.setXHeight(props.GetXHeight());
         m_fontMetrics.setUnitsPerEm(1); // FIXME!
         m_fontMetrics.setLineGap(props.GetLineGap());
+        m_fontMetrics.setLineSpacing(props.GetLineSpacing());
     }
 
     m_syntheticBoldOffset = 0.0f;

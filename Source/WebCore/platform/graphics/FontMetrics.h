@@ -33,6 +33,7 @@ public:
         , m_ascent(0)
         , m_descent(0)
         , m_lineGap(0)
+        , m_lineSpacing(0)
         , m_xHeight(0)
     {
     }
@@ -66,7 +67,8 @@ public:
     float floatLineGap() const { return m_lineGap; }
     void setLineGap(float lineGap) { m_lineGap = lineGap; }
 
-    float floatLineSpacing() const { return m_ascent + m_descent + m_lineGap; }
+    float floatLineSpacing() const { return m_lineSpacing; }
+    void setLineSpacing(float lineSpacing) { m_lineSpacing = lineSpacing; }
 
     float xHeight() const { return m_xHeight; }
     void setXHeight(float xHeight) { m_xHeight = xHeight; }
@@ -92,12 +94,7 @@ public:
     }
 
     int lineGap() const { return lroundf(m_lineGap); }
-
-    int lineSpacing() const
-    {
-        // This mimics the old WebCore definition of lineSpacing. Changing to lroundf(m_ascent + m_descent + m_lineGap) causes lots of 1px height differences in the DRT dumps
-        return lroundf(m_ascent) + lroundf(m_descent) + lroundf(m_lineGap);
-    }
+    int lineSpacing() const { return lroundf(m_lineSpacing); }
 
 private:
     friend class SimpleFontData;
@@ -108,6 +105,7 @@ private:
         m_ascent = 0;
         m_descent = 0;
         m_lineGap = 0;
+        m_lineSpacing = 0;
         m_xHeight = 0;
     }
 
@@ -115,6 +113,7 @@ private:
     float m_ascent;
     float m_descent;
     float m_lineGap;
+    float m_lineSpacing;
     float m_xHeight;
 };
 

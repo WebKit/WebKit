@@ -88,6 +88,7 @@ SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bo
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
+    m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
     m_fontMetrics.setXHeight(xHeight);
 
     SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();

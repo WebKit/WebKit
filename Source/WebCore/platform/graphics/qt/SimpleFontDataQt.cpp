@@ -52,6 +52,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setDescent(fm.descent());
     m_fontMetrics.setXHeight(fm.xHeight());
     m_fontMetrics.setLineGap(fm.leading());
+    m_fontMetrics.setLineSpacing(fm.lineSpacing());
     m_spaceWidth = fm.width(QLatin1Char(' '));
 }
 

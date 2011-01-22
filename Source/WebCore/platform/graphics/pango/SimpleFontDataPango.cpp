@@ -61,6 +61,7 @@ void SimpleFontData::platformInit()
     float lineSpacing = font_extents.height;
     if (lineSpacing < font_extents.ascent + font_extents.descent)
         lineSpacing = font_extents.ascent + font_extents.descent;
+    m_fontMetrics.setLineSpacing(lroundf(lineSpacing));
     m_fontMetrics.setLineGap(lineSpacing - font_extents.ascent - font_extents.descent);
 
     cairo_scaled_font_text_extents(m_platformData.m_scaledFont, "x", &text_extents);

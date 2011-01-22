@@ -97,6 +97,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setXHeight(xHeight);
+    m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
 
     SelectObject(dc, oldFont);
     ReleaseDC(0, dc);

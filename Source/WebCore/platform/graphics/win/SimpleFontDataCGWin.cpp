@@ -96,6 +96,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setAscent(fAscent);
     m_fontMetrics.setDescent(fDescent);
     m_fontMetrics.setLineGap(fLineGap);
+    m_fontMetrics.setLineSpacing(lroundf(fAscent) + lroundf(fDescent) + lroundf(fLineGap));
 
     // Measure the actual character "x", because AppKit synthesizes X height rather than getting it from the font.
     // Unfortunately, NSFont will round this for us so we don't quite get the right value.

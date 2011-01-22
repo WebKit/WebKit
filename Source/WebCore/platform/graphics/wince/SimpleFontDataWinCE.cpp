@@ -57,6 +57,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
+    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
     m_fontMetrics.setXHeight(ascent * 0.56f);
 }
 

@@ -83,6 +83,7 @@ void SimpleFontData::initGDIFont()
      m_fontMetrics.setAscent(ascent);
      m_fontMetrics.setDescent(descent);
      m_fontMetrics.setLineGap(lineGap);
+     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
      m_avgCharWidth = textMetrics.tmAveCharWidth;
      m_maxCharWidth = textMetrics.tmMaxCharWidth;
      float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.

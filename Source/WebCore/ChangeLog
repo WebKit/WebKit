@@ -1,3 +1,49 @@
+2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: Vertical line metrics incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=52960
+
+        SimpleFontDataMac.mm contains a hack to modifiy lineGap/descent for the 'Hiragino' font.
+        That didn't influence the lineSpacing so far, but does now, causing regressions.
+
+        Restore old line spacing behaviour to fix the regression.
+        Covered by existing fast/blockflow, fast/repaint and fast/text/international test cases.
+
+        * platform/graphics/FontMetrics.h:
+        (WebCore::FontMetrics::FontMetrics):
+        (WebCore::FontMetrics::floatLineSpacing):
+        (WebCore::FontMetrics::setLineSpacing):
+        (WebCore::FontMetrics::lineSpacing):
+        (WebCore::FontMetrics::reset):
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/haiku/SimpleFontDataHaiku.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/pango/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/SimpleFontDataCGWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/SimpleFontDataCairoWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont):
+        * platform/graphics/wince/SimpleFontDataWinCE.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/wx/SimpleFontDataWx.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2011-01-22  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

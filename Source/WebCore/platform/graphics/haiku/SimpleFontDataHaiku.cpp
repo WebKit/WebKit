@@ -52,6 +52,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setDescent(height.descent);
     m_fontMetrics.setXHeight(height.ascent * 0.56f); // Hack taken from the win port.
     m_fontMetrics.setLineGap(height.leading);
+    m_fontMetrics.setLineSpacing(lroundf(height.ascent) + lroundf(height.descent) + lroundf(height.leading));
 }
 
 void SimpleFontData::platformCharWidthInit()

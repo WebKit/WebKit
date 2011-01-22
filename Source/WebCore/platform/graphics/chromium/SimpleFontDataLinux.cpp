@@ -109,8 +109,10 @@ void SimpleFontData::platformInit()
         xHeight = ascent * 0.56f;
     }
 
-    m_fontMetrics.setLineGap(SkScalarToFloat(metrics.fLeading));
+    float lineGap = SkScalarToFloat(metrics.fLeading);
+    m_fontMetrics.setLineGap(lineGap);
     m_fontMetrics.setXHeight(xHeight);
+    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
 
     if (m_orientation == Vertical) {
         static const uint32_t vheaTag = SkSetFourByteTag('v', 'h', 'e', 'a');

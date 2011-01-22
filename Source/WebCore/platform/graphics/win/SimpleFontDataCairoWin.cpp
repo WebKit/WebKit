@@ -70,6 +70,7 @@ void SimpleFontData::platformInit()
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setLineGap(lineGap);
+    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
     m_avgCharWidth = textMetrics.tmAveCharWidth * metricsMultiplier;
     m_maxCharWidth = textMetrics.tmMaxCharWidth * metricsMultiplier;
 
