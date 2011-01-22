@@ -1,3 +1,15 @@
+2011-01-21  Kenji Imasaki  <imasaki@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove resolved BUG13907 from test expectation file and added
+        newly filed BUGCR70252 for media/video-zoom.html to keep track
+        of the issue.
+
+        Also, remove non-flaky test (media/audio-only-video-intrinsic-size.htm).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-21  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline tests that use menulists. Also unskip a non-existent test.

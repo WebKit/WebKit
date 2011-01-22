@@ -793,17 +793,15 @@ BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
 
 // These tests need to be changed to not rely on setTimeout().
-BUGCR13907 BUGCR60740 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
-BUGCR13907 BUGCR60740 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL
-// Flakey test
-BUGCR13907 LINUX : media/audio-only-video-intrinsic-size.html = TIMEOUT PASS
+BUGCR60740 SLOW WIN DEBUG : media/video-played-collapse.html = PASS FAIL
+BUGCR60740 SLOW WIN DEBUG : media/video-seek-past-end-playing.html = PASS FAIL
 
 // We sometimes emit an error from the same source element twice.
-BUGCR13907 BUGCR59226 : media/video-source-error.html = PASS FAIL TIMEOUT
+BUGCR59226 : media/video-source-error.html = PASS FAIL TIMEOUT
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
-BUGCR13907 BUGCR59399 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
+BUGCR59399 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test might be WONTFIX because we don't export a step button in the first place.
@@ -817,8 +815,8 @@ BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
 BUGCR50438 BUGCR20187 : media/controls-drag-timebar.html = PASS FAIL
 
 // These tests are flaky with subtle pixel differences.
-BUGCR13907 LINUX MAC : media/video-zoom.html = IMAGE PASS
-BUGCR13907 BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE PASS
+BUGCR70252 LINUX MAC : media/video-zoom.html = IMAGE PASS
+BUGCR60744 LINUX : media/video-layer-crash.html = IMAGE PASS
 
 // Behavior was changed by WebKit roll 69035:69062.
 BUGCR53660 BUGCR60746 MAC : media/video-transformed.html = IMAGE
@@ -826,11 +824,11 @@ BUGCR53660 BUGCR60746 MAC : media/video-transformed.html = IMAGE
 // This is flaky with a subtle pixel difference in the bottom right corner,
 // which I believe is due to new video scaling algorithm.
 // We should rewrite this test so that we wait for timeupdate event until the time is no less than 1. 
-BUGCR13907 BUGCR60244 : media/video-replaces-poster.html = IMAGE PASS
+BUGCR60244 : media/video-replaces-poster.html = IMAGE PASS
 
 // These tests are failing because they use position-dependent mouse clicks.
 // TESTISSUE 
-BUGCR13907 BUGCR25375 : media/video-controls-transformed.html = FAIL
+BUGCR25375 : media/video-controls-transformed.html = FAIL
 
 // We haven't implemented the WebKit fullscreen extension.
 // UNIMPLEMENTED
