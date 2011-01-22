@@ -1,3 +1,86 @@
+2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        REGRESSION: Vertical line metrics incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=52960
+
+        Revert accidently landed mac baseline changes.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.txt:
+        * platform/mac/svg/text/text-hkern-expected.txt:
+        * platform/mac/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-vkern-expected.txt:
+        * platform/mac/svg/text/text-vkern-on-horizontal-text-expected.txt:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+
+2011-01-22  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        REGRESSION: Vertical line metrics incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=52960
+
+        Rebaselined several text dumps from the bots, after the FontMetrics change.
+        All show 1px diffs, but are progressions, since the lineSpacing calculation has been improved.
+        Mac still has the old results - as it depends on a rounding trick at the moment.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/gtk/svg/text/text-hkern-expected.txt:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/gtk/svg/text/text-vkern-expected.txt:
+        * platform/gtk/svg/text/text-vkern-on-horizontal-text-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.txt:
+        * platform/mac/svg/text/text-hkern-expected.txt:
+        * platform/mac/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-vkern-expected.txt:
+        * platform/mac/svg/text/text-vkern-on-horizontal-text-expected.txt:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/qt/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/qt/svg/text/text-hkern-expected.txt:
+        * platform/qt/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/qt/svg/text/text-vkern-expected.txt:
+        * platform/qt/svg/text/text-vkern-on-horizontal-text-expected.txt:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+
 2011-01-22  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

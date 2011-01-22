@@ -25,15 +25,15 @@ layer at (173,47) size 453x188
       RenderText {#text} at (63,-1) size 340x190
         text run at (63,-1) width 327: "CSS ZEN"
         text run at (56,93) width 340: "GARDEN"
-layer at (173,118) size 453x19
-  RenderBlock (positioned) {H2} at (0,86) size 453x19 [color=#EEFF00]
-    RenderInline {SPAN} at (0,0) size 149x18
-      RenderText {#text} at (152,0) size 88x18
+layer at (173,118) size 453x20
+  RenderBlock (positioned) {H2} at (0,86) size 453x20 [color=#EEFF00]
+    RenderInline {SPAN} at (0,0) size 149x19
+      RenderText {#text} at (152,0) size 88x19
         text run at (152,0) width 88: "The Beauty of "
-      RenderInline {ACRONYM} at (0,0) size 21x18
-        RenderText {#text} at (240,0) size 21x18
+      RenderInline {ACRONYM} at (0,0) size 21x19
+        RenderText {#text} at (240,0) size 21x19
           text run at (240,0) width 21: "CSS"
-      RenderText {#text} at (261,0) size 40x18
+      RenderText {#text} at (261,0) size 40x19
         text run at (261,0) width 40: " Design"
 layer at (173,351) size 453x134
   RenderBlock (positioned) {DIV} at (0,319) size 453x134
