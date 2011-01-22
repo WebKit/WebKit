@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ChunkedUpdateDrawingAreaProxy.h"
+#import "ChunkedUpdateDrawingAreaProxy.h"
 
-#include "DrawingAreaMessageKinds.h"
-#include "DrawingAreaProxyMessageKinds.h"
-#include "UpdateChunk.h"
-#include "WKAPICast.h"
-#include "WKView.h"
-#include "WebPageProxy.h"
+#import "DrawingAreaMessageKinds.h"
+#import "DrawingAreaProxyMessageKinds.h"
+#import "UpdateChunk.h"
+#import "WKAPICast.h"
+#import "WKView.h"
+#import "WebPageProxy.h"
 
 using namespace WebCore;
 

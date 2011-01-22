@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKURLRequestNS.h"
+#import "WKURLRequestNS.h"
 
-#include "WKAPICast.h"
-#include "WebURLRequest.h"
+#import "WKAPICast.h"
+#import "WebURLRequest.h"
 
 using namespace WebKit;
 

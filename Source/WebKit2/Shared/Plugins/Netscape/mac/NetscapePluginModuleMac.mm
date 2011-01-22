@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "NetscapePluginModule.h"
+#import "NetscapePluginModule.h"
 
-#include <WebCore/WebCoreNSStringExtras.h>
-#include <wtf/HashSet.h>
+#import <WebCore/WebCoreNSStringExtras.h>
+#import <wtf/HashSet.h>
 
 using namespace WebCore;
 

@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKCertificateInfoMac.h"
+#import "WKCertificateInfoMac.h"
 
-#include "WKAPICast.h"
-#include "WebCertificateInfo.h"
+#import "WKAPICast.h"
+#import "WebCertificateInfo.h"
 
 using namespace WebKit;
 

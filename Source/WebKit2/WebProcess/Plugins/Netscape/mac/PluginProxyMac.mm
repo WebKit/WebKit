@@ -25,9 +25,9 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "PluginProxy.h"
+#import "PluginProxy.h"
 
-#include <WebKitSystemInterface.h>
+#import <WebKitSystemInterface.h>
 
 namespace WebKit {
 

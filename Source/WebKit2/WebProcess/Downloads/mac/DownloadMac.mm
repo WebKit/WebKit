@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Download.h"
+#import "Download.h"
 
-#include <WebCore/BackForwardController.h>
-#include <WebCore/HistoryItem.h>
-#include <WebCore/Page.h>
-#include <WebCore/ResourceHandle.h>
-#include <WebCore/ResourceResponse.h>
-#include "DataReference.h"
-#include "NotImplemented.h"
-#include "WebPage.h"
+#import <WebCore/BackForwardController.h>
+#import <WebCore/HistoryItem.h>
+#import <WebCore/Page.h>
+#import <WebCore/ResourceHandle.h>
+#import <WebCore/ResourceResponse.h>
+#import "DataReference.h"
+#import "NotImplemented.h"
+#import "WebPage.h"
 
 @interface NSURLDownload (WebNSURLDownloadDetails)
 +(id)_downloadWithLoadingConnection:(NSURLConnection *)connection

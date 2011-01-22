@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "TextChecker.h"
+#import "TextChecker.h"
 
-#include "TextCheckerState.h"
-#include <wtf/RetainPtr.h>
+#import "TextCheckerState.h"
+#import <wtf/RetainPtr.h>
 
 #ifndef BUILDING_ON_SNOW_LEOPARD
 #import <AppKit/NSTextChecker.h>

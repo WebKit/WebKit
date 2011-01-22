@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebPopupMenu.h"
+#import "WebPopupMenu.h"
 
-#include "PlatformPopupMenuData.h"
+#import "PlatformPopupMenuData.h"
 
 using namespace WebCore;
 

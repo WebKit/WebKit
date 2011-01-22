@@ -56,7 +56,9 @@
 #include <WebKit2/WKURLRequest.h>
 #include <WebKit2/WKURLResponse.h>
 
-#if !(defined(__APPLE__) && __APPLE__) || (defined(__OBJC__) && __OBJC__)
+#if defined(__OBJC__) && __OBJC__
+#import <WebKit2/WKView.h>
+#elif !(defined(__APPLE__) && __APPLE__)
 #include <WebKit2/WKView.h>
 #endif
 

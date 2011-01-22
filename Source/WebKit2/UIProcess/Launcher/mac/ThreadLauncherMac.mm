@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ThreadLauncher.h"
+#import "ThreadLauncher.h"
 
-#include "RunLoop.h"
-#include "WebProcess.h"
-#include "WebSystemInterface.h"
-#include <runtime/InitializeThreading.h>
-#include <wtf/Threading.h>
+#import "RunLoop.h"
+#import "WebProcess.h"
+#import "WebSystemInterface.h"
+#import <runtime/InitializeThreading.h>
+#import <wtf/Threading.h>
 
 namespace WebKit {
 

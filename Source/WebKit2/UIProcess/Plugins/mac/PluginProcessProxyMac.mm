@@ -25,10 +25,10 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "PluginProcessProxy.h"
+#import "PluginProcessProxy.h"
 
-#include "PluginProcessCreationParameters.h"
-#include "WebKitSystemInterface.h"
+#import "PluginProcessCreationParameters.h"
+#import "WebKitSystemInterface.h"
 
 namespace WebKit {
 

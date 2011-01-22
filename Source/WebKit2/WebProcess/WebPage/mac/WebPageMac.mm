@@ -23,28 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebPage.h"
+#import "WebPage.h"
 
-#include "AccessibilityWebPageObject.h"
-#include "DataReference.h"
-#include "PluginView.h"
-#include "WebCoreArgumentCoders.h"
-#include "WebEvent.h"
-#include "WebFrame.h"
-#include "WebPageProxyMessages.h"
-#include "WebProcess.h"
-#include <WebCore/AXObjectCache.h>
-#include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/HitTestResult.h>
-#include <WebCore/KeyboardEvent.h>
-#include <WebCore/Page.h>
-#include <WebCore/PlatformKeyboardEvent.h>
-#include <WebCore/ScrollView.h>
-#include <WebCore/TextIterator.h>
-#include <WebCore/WindowsKeyboardCodes.h>
-#include <WebKitSystemInterface.h>
+#import "AccessibilityWebPageObject.h"
+#import "DataReference.h"
+#import "PluginView.h"
+#import "WebCoreArgumentCoders.h"
+#import "WebEvent.h"
+#import "WebFrame.h"
+#import "WebPageProxyMessages.h"
+#import "WebProcess.h"
+#import <WebCore/AXObjectCache.h>
+#import <WebCore/FocusController.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/HitTestResult.h>
+#import <WebCore/KeyboardEvent.h>
+#import <WebCore/Page.h>
+#import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/ScrollView.h>
+#import <WebCore/TextIterator.h>
+#import <WebCore/WindowsKeyboardCodes.h>
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

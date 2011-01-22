@@ -28,13 +28,13 @@
 // FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
 #define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
  
-#include "PluginProcess.h"
+#import "PluginProcess.h"
 
-#include "NetscapePlugin.h"
-#include "PluginProcessShim.h"
-#include "PluginProcessCreationParameters.h"
-#include <WebKitSystemInterface.h>
-#include <dlfcn.h>
+#import "NetscapePlugin.h"
+#import "PluginProcessShim.h"
+#import "PluginProcessCreationParameters.h"
+#import <WebKitSystemInterface.h>
+#import <dlfcn.h>
 
 namespace WebKit {
 

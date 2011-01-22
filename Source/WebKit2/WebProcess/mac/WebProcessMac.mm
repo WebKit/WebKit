@@ -23,23 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebProcess.h"
+#import "WebProcess.h"
 
-#include "SandboxExtension.h"
-#include "WebProcessCreationParameters.h"
-#include <WebCore/MemoryCache.h>
-#include <WebCore/PageCache.h>
-#include <WebKitSystemInterface.h>
-#include <algorithm>
-#include <dispatch/dispatch.h>
-#include <mach/host_info.h>
-#include <mach/mach.h>
-#include <mach/mach_error.h>
+#import "SandboxExtension.h"
+#import "WebProcessCreationParameters.h"
+#import <WebCore/MemoryCache.h>
+#import <WebCore/PageCache.h>
+#import <WebKitSystemInterface.h>
+#import <algorithm>
+#import <dispatch/dispatch.h>
+#import <mach/host_info.h>
+#import <mach/mach.h>
+#import <mach/mach_error.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-#include <sandbox.h>
-#include <stdlib.h>
-#include <sysexits.h>
+#import <sandbox.h>
+#import <stdlib.h>
+#import <sysexits.h>
 #endif
 
 using namespace WebCore;

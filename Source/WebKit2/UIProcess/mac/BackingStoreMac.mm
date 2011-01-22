@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "BackingStore.h"
+#import "BackingStore.h"
 
-#include "CGUtilities.h"
-#include "ShareableBitmap.h"
-#include "UpdateInfo.h"
-#include "WebPageProxy.h"
-#include <WebCore/GraphicsContext.h>
+#import "CGUtilities.h"
+#import "ShareableBitmap.h"
+#import "UpdateInfo.h"
+#import "WebPageProxy.h"
+#import <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 

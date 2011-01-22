@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "LayerBackedDrawingAreaProxy.h"
+#import "LayerBackedDrawingAreaProxy.h"
 
-#include "DrawingAreaMessageKinds.h"
-#include "DrawingAreaProxyMessageKinds.h"
-#include <QuartzCore/QuartzCore.h>
-#include "WKAPICast.h"
-#include "WKView.h"
-#include "WKViewInternal.h"
-#include "WebKitSystemInterface.h"
-#include "WebPageProxy.h"
+#import "DrawingAreaMessageKinds.h"
+#import "DrawingAreaProxyMessageKinds.h"
+#import <QuartzCore/QuartzCore.h>
+#import "WKAPICast.h"
+#import "WKView.h"
+#import "WKViewInternal.h"
+#import "WebKitSystemInterface.h"
+#import "WebPageProxy.h"
 
 using namespace WebCore;
 

@@ -25,16 +25,16 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerBackedDrawingArea.h"
+#import "LayerBackedDrawingArea.h"
 
-#include "DrawingAreaProxyMessageKinds.h"
-#include "WebKitSystemInterface.h"
-#include "WebPage.h"
-#include "WebProcess.h"
-#include <WebCore/Frame.h>
-#include <WebCore/FrameView.h>
-#include <WebCore/GraphicsLayer.h>
-#include <WebCore/Page.h>
+#import "DrawingAreaProxyMessageKinds.h"
+#import "WebKitSystemInterface.h"
+#import "WebPage.h"
+#import "WebProcess.h"
+#import <WebCore/Frame.h>
+#import <WebCore/FrameView.h>
+#import <WebCore/GraphicsLayer.h>
+#import <WebCore/Page.h>
 
 using namespace WebCore;
 

@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKTextInputWindowController.h"
+#import "WKTextInputWindowController.h"
 
-#include <WebKitSystemInterface.h>
+#import <WebKitSystemInterface.h>
 
 @interface WKTextInputPanel : NSPanel {
     NSTextView *_inputTextView;

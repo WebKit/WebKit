@@ -23,9 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "RunLoop.h"
+#import "RunLoop.h"
 
-#include "WorkItem.h"
+#import "WorkItem.h"
 
 void RunLoop::performWork(void* context)
 {

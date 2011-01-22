@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebDatabaseManager.h"
+#import "WebDatabaseManager.h"
 
 namespace WebKit {
 

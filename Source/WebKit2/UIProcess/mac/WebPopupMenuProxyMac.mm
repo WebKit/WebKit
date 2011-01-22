@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebPopupMenuProxyMac.h"
+#import "WebPopupMenuProxyMac.h"
 
-#include "PageClientImpl.h"
-#include "PlatformPopupMenuData.h"
-#include "WKView.h"
-#include "WebPopupItem.h"
-#include <WebKitSystemInterface.h>
+#import "PageClientImpl.h"
+#import "PlatformPopupMenuData.h"
+#import "WKView.h"
+#import "WebPopupItem.h"
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

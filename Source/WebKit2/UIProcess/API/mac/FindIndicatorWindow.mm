@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "FindIndicatorWindow.h"
+#import "FindIndicatorWindow.h"
 
-#include "FindIndicator.h"
-#include <WebCore/GraphicsContext.h>
+#import "FindIndicator.h"
+#import <WebCore/GraphicsContext.h>
 
 static const double bounceAnimationDuration = 0.12;
 static const double timeBeforeFadeStarts = bounceAnimationDuration + 0.2;

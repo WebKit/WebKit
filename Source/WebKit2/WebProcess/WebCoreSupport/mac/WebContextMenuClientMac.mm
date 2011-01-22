@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContextMenuClient.h"
+#import "WebContextMenuClient.h"
 
-#include "NotImplemented.h"
-#include "WebPage.h"
-#include <WebCore/Frame.h>
-#include <WebCore/Page.h>
-#include <wtf/text/WTFString.h>
+#import "NotImplemented.h"
+#import "WebPage.h"
+#import <WebCore/Frame.h>
+#import <WebCore/Page.h>
+#import <wtf/text/WTFString.h>
 
 using namespace WebCore;
 

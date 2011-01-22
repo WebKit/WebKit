@@ -30,23 +30,23 @@
 #import "WebEditorClient.h"
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
+#import "NotImplemented.h"
 
-#include "WebCoreArgumentCoders.h"
-#include "WebPage.h"
-#include "WebFrame.h"
-#include "WebPageProxyMessages.h"
-#include "WebProcess.h"
-#include <WebCore/ArchiveResource.h>
-#include <WebCore/DocumentFragment.h>
-#include <WebCore/DOMDocumentFragmentInternal.h>
-#include <WebCore/DOMDocumentInternal.h>
-#include <WebCore/FocusController.h>
-#include <WebCore/Frame.h>
-#include <WebCore/KeyboardEvent.h>
-#include <WebCore/Page.h>
-#include <WebKit/WebResource.h>
-#include <WebKit/WebNSURLExtras.h>
+#import "WebCoreArgumentCoders.h"
+#import "WebPage.h"
+#import "WebFrame.h"
+#import "WebPageProxyMessages.h"
+#import "WebProcess.h"
+#import <WebCore/ArchiveResource.h>
+#import <WebCore/DocumentFragment.h>
+#import <WebCore/DOMDocumentFragmentInternal.h>
+#import <WebCore/DOMDocumentInternal.h>
+#import <WebCore/FocusController.h>
+#import <WebCore/Frame.h>
+#import <WebCore/KeyboardEvent.h>
+#import <WebCore/Page.h>
+#import <WebKit/WebResource.h>
+#import <WebKit/WebNSURLExtras.h>
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <AppKit/NSTextChecker.h>
 #endif

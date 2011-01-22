@@ -25,11 +25,11 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "PluginControllerProxy.h"
+#import "PluginControllerProxy.h"
 
-#include <QuartzCore/QuartzCore.h>
-#include "PluginProcess.h"
-#include "WebKitSystemInterface.h"
+#import <QuartzCore/QuartzCore.h>
+#import "PluginProcess.h"
+#import "WebKitSystemInterface.h"
 
 using namespace WebCore;
 

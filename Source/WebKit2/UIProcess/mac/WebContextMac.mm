@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContext.h"
+#import "WebContext.h"
 
-#include "WebKitSystemInterface.h"
-#include "WebProcessCreationParameters.h"
-#include <WebCore/FileSystem.h>
-#include <sys/param.h>
+#import "WebKitSystemInterface.h"
+#import "WebProcessCreationParameters.h"
+#import <WebCore/FileSystem.h>
+#import <sys/param.h>
 
 using namespace WebCore;
 

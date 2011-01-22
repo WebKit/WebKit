@@ -25,16 +25,16 @@
 
 #if ENABLE(MEMORY_SAMPLER)  
 
-#include "WebMemorySampler.h"
+#import "WebMemorySampler.h"
 
-#include <JavaScriptCore/MemoryStatistics.h>
-#include <mach/mach.h>
-#include <mach/task.h>
-#include <mach/mach_types.h>
-#include <malloc/malloc.h>
-#include <runtime/JSLock.h>
-#include <WebCore/JSDOMWindow.h>
-#include <wtf/CurrentTime.h>
+#import <JavaScriptCore/MemoryStatistics.h>
+#import <mach/mach.h>
+#import <mach/task.h>
+#import <mach/mach_types.h>
+#import <malloc/malloc.h>
+#import <runtime/JSLock.h>
+#import <WebCore/JSDOMWindow.h>
+#import <wtf/CurrentTime.h>
 
 using namespace WebCore;
 using namespace JSC;

@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebCoreArgumentCoders.h"
+#import "WebCoreArgumentCoders.h"
 
-#include "ArgumentCodersCF.h"
-#include "WebKitSystemInterface.h"
+#import "ArgumentCodersCF.h"
+#import "WebKitSystemInterface.h"
 
 namespace CoreIPC {
 

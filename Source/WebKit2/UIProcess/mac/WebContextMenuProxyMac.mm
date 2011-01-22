@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebContextMenuProxyMac.h"
+#import "WebContextMenuProxyMac.h"
 
-#include "PageClientImpl.h"
-#include "WebContextMenuItemData.h"
-#include "WKView.h"
+#import "PageClientImpl.h"
+#import "WebContextMenuItemData.h"
+#import "WKView.h"
 
-#include <WebCore/IntRect.h>
-#include <WebKitSystemInterface.h>
+#import <WebCore/IntRect.h>
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 

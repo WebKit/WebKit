@@ -23,13 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "NetscapePlugin.h"
+#import "NetscapePlugin.h"
 
-#include "PluginController.h"
-#include "WebEvent.h"
-#include <WebCore/GraphicsContext.h>
-#include <Carbon/Carbon.h>
-#include <WebKitSystemInterface.h>
+#import "PluginController.h"
+#import "WebEvent.h"
+#import <WebCore/GraphicsContext.h>
+#import <Carbon/Carbon.h>
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
