@@ -81,13 +81,11 @@ namespace WebCore {
 
 namespace WebKit {
 
-class ContextMenuState;
 class DrawingAreaProxy;
 class NativeWebKeyboardEvent;
 class PageClient;
 class PlatformCertificateInfo;
 class StringPairVector;
-class WebOpenPanelResultListenerProxy;
 class WebBackForwardList;
 class WebBackForwardListItem;
 class WebContextMenuProxy;
@@ -95,11 +93,13 @@ class WebData;
 class WebEditCommandProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
+class WebOpenPanelResultListenerProxy;
 class WebPageGroup;
 class WebPopupMenuProxy;
 class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
+struct ContextMenuState;
 struct PlatformPopupMenuData;
 struct PrintInfo;
 struct WebPageCreationParameters;

@@ -1161,7 +1161,7 @@ void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceU
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
         if (DocumentLoader* loader = frame->coreFrame()->loader()->documentLoader()) {
             if (RefPtr<ArchiveResource> subresource = loader->subresource(KURL(KURL(), resourceURL))) {
-                if (buffer = subresource->data())
+                if ((buffer = subresource->data()))
                     dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
             }
         }

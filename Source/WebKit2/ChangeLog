@@ -1,3 +1,21 @@
+2011-01-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix the WebKit2 build with clang.
+
+        * Scripts/webkit2/messages.py: Add some more structs to the list.
+        * UIProcess/DrawingAreaProxy.h: Forward-declare UpdateInfo as a class.
+        * UIProcess/TextChecker.h: Forward-declare TextCheckerState as a struct.
+        * UIProcess/WebPageProxy.h: Forward-declare ContextMenuState as a struct.
+        * UIProcess/mac/TextCheckerMac.mm: Fix the type of the string constants so that they can be passed to
+        functions expecting NSString* without generating warnings.
+        * WebProcess/WebPage/DrawingArea.h: Forward-declare WebPageCreationParameters as a struct.
+        * WebProcess/WebPage/DrawingAreaImpl.h: Forward-declare UpdateInfo as a class.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getResourceDataFromFrame): Add parens around the assignment in the condition of
+        the if statement to suppress a warning.
+
 2011-01-21  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

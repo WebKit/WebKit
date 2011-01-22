@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-class TextCheckerState;
+struct TextCheckerState;
 
 class TextChecker {
 public:

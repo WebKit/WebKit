@@ -40,7 +40,7 @@ namespace WebCore {
 namespace WebKit {
 
 class WebPage;
-class WebPageCreationParameters;
+struct WebPageCreationParameters;
 
 class DrawingArea : public RefCounted<DrawingArea> {
 public:

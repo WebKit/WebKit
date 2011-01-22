@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-struct UpdateInfo;
+class UpdateInfo;
 
 class DrawingAreaImpl : public DrawingArea {
 public:

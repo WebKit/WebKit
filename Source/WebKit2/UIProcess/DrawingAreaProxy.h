@@ -35,9 +35,9 @@ class QPainter;
 
 namespace WebKit {
 
+class UpdateInfo;
 class WebPageProxy;
-struct UpdateInfo;
-    
+
 #if PLATFORM(MAC)
 typedef CGContextRef PlatformDrawingContext;
 #elif PLATFORM(WIN)
