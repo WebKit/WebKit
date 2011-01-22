@@ -3105,8 +3105,8 @@ BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 BUGTONY : fast/overflow/overflow-rtl-vertical.html = IMAGE
 
 // These tests have been failing since WebKit roll 76389:76408 has been reverted
-BUGRNIWA WIN : fast/animation/request-animation-frame-cancel.html = TEXT
-BUGRNIWA WIN : fast/animation/request-animation-frame-cancel2.html = TEXT
-BUGRNIWA WIN : fast/animation/request-animation-frame-display.html = TEXT
-BUGRNIWA WIN : fast/animation/request-animation-frame-within-callback.html = TEXT
-BUGRNIWA WIN : fast/animation/request-animation-frame.html = TEXT
+BUGRNIWA WIN MAC : fast/animation/request-animation-frame-cancel.html = PASS TEXT
+BUGRNIWA WIN MAC : fast/animation/request-animation-frame-cancel2.html = PASS TEXT
+BUGRNIWA WIN MAC : fast/animation/request-animation-frame-display.html = PASS TEXT
+BUGRNIWA WIN MAC : fast/animation/request-animation-frame-within-callback.html = PASS TEXT
+BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
