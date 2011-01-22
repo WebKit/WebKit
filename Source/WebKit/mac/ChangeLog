@@ -1,3 +1,15 @@
+2011-01-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52473
+        Auto-scaling to avoid orphans is broken, remove dysfunctional code
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _setPrinting:minimumPageWidth:height:maximumPageWidth:adjustViewSize:paginateScreenContent:]):
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        (-[WebHTMLView knowsPageRange:]):
+
 2011-01-21  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Jon Honeycutt.

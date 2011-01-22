@@ -347,16 +347,6 @@ const float _WebHTMLViewPrintingMinimumShrinkFactor = 1.25;
 // behavior matches MacIE and Mozilla, at least)
 const float _WebHTMLViewPrintingMaximumShrinkFactor = 2;
 
-// This number determines how short the last printed page of a multi-page print session
-// can be before we try to shrink the scale in order to reduce the number of pages, and
-// thus eliminate the orphan.
-#define LastPrintedPageOrphanRatio      0.1f
-
-// This number determines the amount the scale factor is adjusted to try to eliminate orphans.
-// It has no direct mathematical relationship to LastPrintedPageOrphanRatio, due to variable
-// numbers of pages, logic to avoid breaking elements, and CSS-supplied hard page breaks.
-#define PrintingOrphanShrinkAdjustment  1.1f
-
 #define AUTOSCROLL_INTERVAL             0.1f
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.
@@ -482,7 +472,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL closed;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
-    BOOL avoidingPrintOrphan;
     BOOL paginateScreenContent;
     BOOL observingMouseMovedNotifications;
     BOOL observingSuperviewNotifications;
@@ -3909,8 +3898,6 @@ static BOOL isInPasswordField(Frame* coreFrame)
     _private->pageRects = nil;
     _private->printing = printing;
     _private->paginateScreenContent = paginateScreenContent;
-    if (!printing && !paginateScreenContent)
-        _private->avoidingPrintOrphan = NO;
     
     Frame* coreFrame = core([self _frame]);
     if (coreFrame) {
@@ -3970,8 +3957,7 @@ static BOOL isInPasswordField(Frame* coreFrame)
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     float maxShrinkToFitScaleFactor = 1.0f / _WebHTMLViewPrintingMaximumShrinkFactor;
     float shrinkToFitScaleFactor = [printOperation _web_availablePaperWidth] / viewWidth;
-    float shrinkToAvoidOrphan = _private->avoidingPrintOrphan ? (1.0f / PrintingOrphanShrinkAdjustment) : 1.0f;
-    return userScaleFactor * max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor) * shrinkToAvoidOrphan;
+    return userScaleFactor * max(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
 }
 
 // FIXME 3491344: This is a secret AppKit-internal method that we need to override in order
@@ -4060,19 +4046,6 @@ static BOOL isInPasswordField(Frame* coreFrame)
     // the behavior of IE and Camino at least.
     if ([newPageRects count] == 0)
         newPageRects = [NSArray arrayWithObject:[NSValue valueWithRect:NSMakeRect(0, 0, 1, 1)]];
-    else if ([newPageRects count] > 1) {
-        // If the last page is a short orphan, try adjusting the print height slightly to see if this will squeeze the
-        // content onto one fewer page. If it does, use the adjusted scale. If not, use the original scale.
-        float lastPageHeight = NSHeight([[newPageRects lastObject] rectValue]);
-        if (lastPageHeight/fullPageHeight < LastPrintedPageOrphanRatio) {
-            NSArray *adjustedPageRects = [frame _computePageRectsWithPrintWidthScaleFactor:userScaleFactor printHeight:fullPageHeight * PrintingOrphanShrinkAdjustment];
-            // Use the adjusted rects only if the page count went down
-            if ([adjustedPageRects count] < [newPageRects count]) {
-                newPageRects = adjustedPageRects;
-                _private->avoidingPrintOrphan = YES;
-            }
-        }
-    }
     
     _private->pageRects = [newPageRects retain];
     
