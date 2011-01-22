@@ -1,3 +1,10 @@
+2011-01-21  Dan Bernstein  <mitz@apple.com>
+
+        Fix test failure.
+
+        * fast/text/justify-nbsp.html: Removed a contenteditable attribute
+        that was added after generating results.
+
 2011-01-21  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, removing the Qt result for r76414 since the test
