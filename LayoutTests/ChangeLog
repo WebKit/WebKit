@@ -1,3 +1,9 @@
+2011-01-21  James Robinson  <jamesr@chromium.org>
+
+        Update chromium test expectations. fast/animation tests should now pass on all chromium configurations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-21  Dan Bernstein  <mitz@apple.com>
 
         Fix test failure.
