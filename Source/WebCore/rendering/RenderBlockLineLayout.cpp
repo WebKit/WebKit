@@ -325,7 +325,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                 const UChar* characters = rt->characters();
                 for (int i = r->m_start; i < r->m_stop; i++) {
                     UChar c = characters[i];
-                    if (c == ' ' || c == '\n' || c == '\t')
+                    if (Font::treatAsSpace(c))
                         numSpaces++;
                 }
             }
@@ -447,7 +447,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                 const UChar* characters = toRenderText(r->m_object)->characters();
                 for (int i = r->m_start; i < r->m_stop; i++) {
                     UChar c = characters[i];
-                    if (c == ' ' || c == '\n' || c == '\t')
+                    if (Font::treatAsSpace(c))
                         spaces++;
                 }
 

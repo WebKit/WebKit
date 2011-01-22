@@ -1,3 +1,16 @@
+2011-01-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Inconsistent handling of no-break space in justification logic
+        https://bugs.webkit.org/show_bug.cgi?id=52938
+
+        Test: fast/text/justify-nbsp.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Count no-break space as a
+        space when computing the distribution of space between text boxes on the line.
+
 2011-01-21  Charlie Reis  <creis@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -1,3 +1,15 @@
+2011-01-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Inconsistent handling of no-break space in justification logic
+        https://bugs.webkit.org/show_bug.cgi?id=52938
+
+        * fast/text/justify-nbsp-expected.checksum: Added.
+        * fast/text/justify-nbsp-expected.png: Added.
+        * fast/text/justify-nbsp-expected.txt: Added.
+        * fast/text/justify-nbsp.html: Added.
+
 2011-01-21  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by David Levin.
