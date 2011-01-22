@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        Transparent windows with compositing WebKit2 content show garbage
+        https://bugs.webkit.org/show_bug.cgi?id=52966
+        <rdar://problem/8765051>
+
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm:
+        (WebKit::LayerBackedDrawingAreaProxy::paint):
+        If the WKView should draw transparent background, do so.
+
+2011-01-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add an asynchronous WKPageForceRepaint
         https://bugs.webkit.org/show_bug.cgi?id=52964
         <rdar://problem/8898527>

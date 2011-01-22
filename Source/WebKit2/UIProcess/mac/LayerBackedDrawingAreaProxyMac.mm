@@ -89,4 +89,19 @@ void LayerBackedDrawingAreaProxy::detachCompositingContext()
     m_compositingRootLayer = 0;
 }
 
+bool LayerBackedDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
+{
+    WebPageProxy* webPageProxy = page();
+    if (webPageProxy->drawsBackground() && webPageProxy->drawsTransparentBackground()) {
+        CGContextSaveGState(context);
+        CGContextSetBlendMode(context, kCGBlendModeCopy);
+        CGContextSetFillColorWithColor(context, CGColorGetConstantColor(kCGColorClear));
+        CGContextFillRect(context, rect);
+        
+        CGContextRestoreGState(context);
+    }
+
+    return true;
+}
+    
 } // namespace WebKit
