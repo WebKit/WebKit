@@ -37,24 +37,42 @@ class JSCell;
 class ConservativeSet {
 public:
     ConservativeSet(Heap*);
+    ~ConservativeSet();
 
     void add(void* begin, void* end);
     void mark(MarkStack&);
 
 private:
+    static const size_t inlineCapacity = 128;
+    static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
+    
+    void grow();
+
     Heap* m_heap;
-    Vector<JSCell*, 64> m_vector;
+    JSCell** m_set;
+    size_t m_size;
+    size_t m_capacity;
+    JSCell* m_inlineSet[inlineCapacity];
 };
 
 inline ConservativeSet::ConservativeSet(Heap* heap)
     : m_heap(heap)
+    , m_set(m_inlineSet)
+    , m_size(0)
+    , m_capacity(inlineCapacity)
 {
+}
+
+inline ConservativeSet::~ConservativeSet()
+{
+    if (m_set != m_inlineSet)
+        OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(JSCell*));
 }
 
 inline void ConservativeSet::mark(MarkStack& markStack)
 {
-    for (size_t i = 0; i < m_vector.size(); ++i)
-        markStack.append(m_vector[i]);
+    for (size_t i = 0; i < m_size; ++i)
+        markStack.append(m_set[i]);
 }
 
 } // namespace JSC

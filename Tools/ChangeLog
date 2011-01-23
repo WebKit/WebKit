@@ -1,3 +1,18 @@
+2011-01-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Beefed up --threaded mode to catch even more kinds of errors.
+        https://bugs.webkit.org/show_bug.cgi?id=52971
+
+        * DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp: Use a shared
+        context group to force JSC to mark multiple threads. (This used to be
+        the default, but it changed in SnowLeopard.)
+        (runJavaScriptThread): Do more locking and unlocking, and more allocation,
+        to give threading mistakes more chances to show themselves.
+        (startJavaScriptThreads):
+        (stopJavaScriptThreads):
+
 2011-01-22  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

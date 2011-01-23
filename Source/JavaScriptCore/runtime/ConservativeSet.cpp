@@ -33,6 +33,17 @@ inline bool isPointerAligned(void* p)
     return !((intptr_t)(p) & (sizeof(char*) - 1));
 }
 
+void ConservativeSet::grow()
+{
+    size_t newCapacity = m_capacity == inlineCapacity ? nonInlineCapacity : m_capacity * 2;
+    JSCell** newSet = static_cast<JSCell**>(OSAllocator::reserveAndCommit(newCapacity * sizeof(JSCell*)));
+    memcpy(newSet, m_set, m_size * sizeof(JSCell*));
+    if (m_set != m_inlineSet)
+        OSAllocator::decommitAndRelease(m_set, m_capacity * sizeof(JSCell*));
+    m_capacity = newCapacity;
+    m_set = newSet;
+}
+
 void ConservativeSet::add(void* begin, void* end)
 {
     ASSERT(begin <= end);
@@ -43,7 +54,11 @@ void ConservativeSet::add(void* begin, void* end)
     for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it) {
         if (!m_heap->contains(*it))
             continue;
-        m_vector.append(reinterpret_cast<JSCell*>(*it));
+
+        if (m_size == m_capacity)
+            grow();
+
+        m_set[m_size++] = reinterpret_cast<JSCell*>(*it);
     }
 }
 

@@ -37,6 +37,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 
+static JSContextGroupRef javaScriptThreadsGroup;
+
 static pthread_mutex_t javaScriptThreadsMutex = PTHREAD_MUTEX_INITIALIZER;
 static bool javaScriptThreadsShouldTerminate;
 
@@ -51,58 +53,68 @@ static ThreadSet* javaScriptThreads()
     return &staticJavaScriptThreads;
 }
 
-// Loops forever, running a script and randomly respawning, until 
-// javaScriptThreadsShouldTerminate becomes true.
+// This function exercises JSC in a loop until javaScriptThreadsShouldTerminate
+// becomes true or it probabilistically decides to spawn a replacement thread and exit.
 void* runJavaScriptThread(void* arg)
 {
-    const char* const script =
+    static const char* const script =
         "var array = [];"
-        "for (var i = 0; i < 10; i++) {"
+        "for (var i = 0; i < 1024; i++) {"
         "    array.push(String(i));"
         "}";
 
-    while (1) {
-        JSGlobalContextRef ctx = JSGlobalContextCreate(0);
-        JSStringRef scriptRef = JSStringCreateWithUTF8CString(script);
+    pthread_mutex_lock(&javaScriptThreadsMutex);
+    JSGlobalContextRef ctx = JSGlobalContextCreateInGroup(javaScriptThreadsGroup, 0);
+    pthread_mutex_unlock(&javaScriptThreadsMutex);
 
+    pthread_mutex_lock(&javaScriptThreadsMutex);
+    JSStringRef scriptRef = JSStringCreateWithUTF8CString(script);
+    pthread_mutex_unlock(&javaScriptThreadsMutex);
+
+    while (1) {
+        pthread_mutex_lock(&javaScriptThreadsMutex);
         JSValueRef exception = 0;
         JSEvaluateScript(ctx, scriptRef, 0, 0, 1, &exception);
         ASSERT(!exception);
-
-        JSGarbageCollect(ctx);
-        JSGlobalContextRelease(ctx);
-        JSStringRelease(scriptRef);
-        
-        JSGarbageCollect(0);
+        pthread_mutex_unlock(&javaScriptThreadsMutex);
 
         pthread_mutex_lock(&javaScriptThreadsMutex);
+        size_t valuesCount = 1024;
+        JSValueRef values[valuesCount];
+        for (size_t i = 0; i < valuesCount; ++i)
+            values[i] = JSObjectMake(ctx, 0, 0);
+        pthread_mutex_unlock(&javaScriptThreadsMutex);
 
         // Check for cancellation.
-        if (javaScriptThreadsShouldTerminate) {
-            javaScriptThreads()->remove(pthread_self());
-            pthread_mutex_unlock(&javaScriptThreadsMutex);
-            return 0;
-        }
+        if (javaScriptThreadsShouldTerminate)
+            goto done;
 
         // Respawn probabilistically.
         if (random() % 5 == 0) {
+            pthread_mutex_lock(&javaScriptThreadsMutex);
             pthread_t pthread;
             pthread_create(&pthread, 0, &runJavaScriptThread, 0);
             pthread_detach(pthread);
-
-            javaScriptThreads()->remove(pthread_self());
             javaScriptThreads()->add(pthread);
-
             pthread_mutex_unlock(&javaScriptThreadsMutex);
-            return 0;
+            goto done;
         }
-
-        pthread_mutex_unlock(&javaScriptThreadsMutex);
     }
+
+done:
+    pthread_mutex_lock(&javaScriptThreadsMutex);
+    JSStringRelease(scriptRef);
+    JSGarbageCollect(ctx);
+    JSGlobalContextRelease(ctx);
+    javaScriptThreads()->remove(pthread_self());
+    pthread_mutex_unlock(&javaScriptThreadsMutex);
+    return 0;
 }
 
 void startJavaScriptThreads()
 {
+    javaScriptThreadsGroup = JSContextGroupCreate();
+
     pthread_mutex_lock(&javaScriptThreadsMutex);
 
     for (int i = 0; i < javaScriptThreadsCount; i++) {
@@ -120,8 +132,6 @@ void stopJavaScriptThreads()
     pthread_mutex_lock(&javaScriptThreadsMutex);
 
     javaScriptThreadsShouldTerminate = true;
-
-    ASSERT(javaScriptThreads()->size() == javaScriptThreadsCount);
 
     pthread_mutex_unlock(&javaScriptThreadsMutex);
 

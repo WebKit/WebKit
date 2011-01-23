@@ -1,5 +1,25 @@
 2011-01-22  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        ASSERT running run-webkit-tests --threaded.
+        https://bugs.webkit.org/show_bug.cgi?id=52971
+        
+        SunSpider and v8 report no change.
+
+        * runtime/ConservativeSet.cpp:
+        (JSC::ConservativeSet::grow):
+        (JSC::ConservativeSet::add):
+        * runtime/ConservativeSet.h: Tweaked the inline capacity to 128, and
+        the growth policy to 2X, to make SunSpider and v8 happy.
+        (JSC::ConservativeSet::ConservativeSet):
+        (JSC::ConservativeSet::~ConservativeSet):
+        (JSC::ConservativeSet::mark): Use OSAllocator directly, instead of malloc.
+        Malloc is forbidden during a multi-threaded mark phase because it can
+        cause deadlock.
+
+2011-01-22  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Rubber-stamped by Maciej Stachowiak.
