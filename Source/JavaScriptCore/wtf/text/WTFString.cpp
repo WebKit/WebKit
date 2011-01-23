@@ -637,7 +637,7 @@ void String::split(UChar separator, Vector<String>& result) const
 
 CString String::ascii() const
 {
-    // Basic Latin1 (ISO) encoding - Unicode characters 0..255 are
+    // Printable ASCII characters 32..127 and the null character are
     // preserved, characters outside of this range are converted to '?'.
 
     unsigned length = this->length();
