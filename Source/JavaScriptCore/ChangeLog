@@ -1,5 +1,16 @@
 2011-01-23  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by David Kilzer.
+
+        Add String::containsOnlyLatin1()
+        https://bugs.webkit.org/show_bug.cgi?id=52979
+
+        * wtf/text/WTFString.h:
+        (WTF::String::containsOnlyLatin1):
+        (WTF::charactersAreAllLatin1):
+
+2011-01-23  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         Remove obsolete JSVALUE32 code

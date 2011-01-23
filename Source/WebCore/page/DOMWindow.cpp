@@ -964,22 +964,12 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
     return String();
 }
 
-static bool isSafeToConvertCharList(const String& string)
-{
-    for (unsigned i = 0; i < string.length(); i++) {
-        if (string[i] > 0xFF)
-            return false;
-    }
-
-    return true;
-}
-
 String DOMWindow::btoa(const String& stringToEncode, ExceptionCode& ec)
 {
     if (stringToEncode.isNull())
         return String();
 
-    if (!isSafeToConvertCharList(stringToEncode)) {
+    if (!stringToEncode.containsOnlyLatin1()) {
         ec = INVALID_CHARACTER_ERR;
         return String();
     }
@@ -998,7 +988,7 @@ String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)
     if (encodedString.isNull())
         return String();
 
-    if (!isSafeToConvertCharList(encodedString)) {
+    if (!encodedString.containsOnlyLatin1()) {
         ec = INVALID_CHARACTER_ERR;
         return String();
     }
