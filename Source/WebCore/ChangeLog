@@ -1,3 +1,13 @@
+2011-01-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix.
+
+        Web Inspector: looks like efl doesn't regenerate InspectorBackendDispatcher.
+
+        Touch Inspector.idl.
+
+        * inspector/Inspector.idl:
+
 2011-01-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

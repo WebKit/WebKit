@@ -310,7 +310,6 @@ module core {
         [notify, domain=Profiler] void finishHeapSnapshot(out unsigned long uid);
         [notify, domain=Profiler] void setRecordingProfile(out boolean isProfiling);
         [notify, domain=Profiler] void resetProfiles();
-
 #endif // ENABLE_JAVASCRIPT_DEBUGGER
     };
 }
