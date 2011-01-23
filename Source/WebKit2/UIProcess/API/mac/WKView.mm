@@ -36,12 +36,12 @@
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
-#import "PrintInfo.h"
 #import "Region.h"
 #import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
 #import "WKAPICast.h"
+#import "WKPrintingView.h"
 #import "WKStringCF.h"
 #import "WKTextInputWindowController.h"
 #import "WebContext.h"
@@ -71,10 +71,6 @@
 - (void)speakString:(NSString *)string;
 @end
 
-@interface NSView (Details)
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
-@end
-
 @interface NSWindow (Details)
 - (NSRect)_growBoxRect;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
@@ -96,9 +92,6 @@ typedef Vector<RetainPtr<ValidationItem> > ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
 
 }
-
-NSString* const WebKitOriginalTopPrintingMarginKey = @"WebKitOriginalTopMargin";
-NSString* const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomMargin";
 
 @interface WKViewData : NSObject {
 @public
@@ -135,9 +128,6 @@ NSString* const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomMa
     unsigned _selectionStart;
     unsigned _selectionEnd;
 
-    Vector<IntRect> _printingPageRects;
-    double _totalScaleFactorForPrinting;
-
     bool _inBecomeFirstResponder;
     bool _inResignFirstResponder;
     NSEvent *_mouseDownEvent;
@@ -148,36 +138,6 @@ NSString* const WebKitOriginalBottomPrintingMarginKey = @"WebKitOriginalBottomMa
 
 @implementation WKViewData
 @end
-
-@interface WebFrameWrapper : NSObject {
-@public
-    RefPtr<WebFrameProxy> _frame;
-}
-
-- (id)initWithFrameProxy:(WebFrameProxy*)frame;
-- (WebFrameProxy*)webFrame;
-@end
-
-@implementation WebFrameWrapper
-
-- (id)initWithFrameProxy:(WebFrameProxy*)frame
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _frame = frame;
-    return self;
-}
-
-- (WebFrameProxy*)webFrame
-{
-    return _frame.get();
-}
-
-@end
-
-NSString * const PrintedFrameKey = @"WebKitPrintedFrameKey";
 
 @interface NSObject (NSTextInputContextDetails)
 - (BOOL)wantsToHandleMouseEvents;
@@ -1267,6 +1227,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    _data->_page->endPrinting();
     if (useNewDrawingArea()) {
         if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
             CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
@@ -1365,70 +1326,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return (NSInteger)self;
 }
 
-static void setFrameBeingPrinted(NSPrintOperation *printOperation, WebFrameProxy* frame)
-{
-    RetainPtr<WebFrameWrapper> frameWrapper(AdoptNS, [[WebFrameWrapper alloc] initWithFrameProxy:frame]);
-    [[[printOperation printInfo] dictionary] setObject:frameWrapper.get() forKey:PrintedFrameKey];
-}
-
-static WebFrameProxy* frameBeingPrinted()
-{
-    return [[[[[NSPrintOperation currentOperation] printInfo] dictionary] objectForKey:PrintedFrameKey] webFrame];
-}
-
-static float currentPrintOperationScale()
-{
-    ASSERT([NSPrintOperation currentOperation]);
-    ASSERT([[[[NSPrintOperation currentOperation] printInfo] dictionary] objectForKey:NSPrintScalingFactor]);
-    return [[[[[NSPrintOperation currentOperation] printInfo] dictionary] objectForKey:NSPrintScalingFactor] floatValue];
-}
-
-- (void)_adjustPrintingMarginsForHeaderAndFooter
-{
-    NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
-    NSPrintInfo *info = [printOperation printInfo];
-    NSMutableDictionary *infoDictionary = [info dictionary];
-
-    // We need to modify the top and bottom margins in the NSPrintInfo to account for the space needed by the
-    // header and footer. Because this method can be called more than once on the same NSPrintInfo (see 5038087),
-    // we stash away the unmodified top and bottom margins the first time this method is called, and we read from
-    // those stashed-away values on subsequent calls.
-    float originalTopMargin;
-    float originalBottomMargin;
-    NSNumber *originalTopMarginNumber = [infoDictionary objectForKey:WebKitOriginalTopPrintingMarginKey];
-    if (!originalTopMarginNumber) {
-        ASSERT(![infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey]);
-        originalTopMargin = [info topMargin];
-        originalBottomMargin = [info bottomMargin];
-        [infoDictionary setObject:[NSNumber numberWithFloat:originalTopMargin] forKey:WebKitOriginalTopPrintingMarginKey];
-        [infoDictionary setObject:[NSNumber numberWithFloat:originalBottomMargin] forKey:WebKitOriginalBottomPrintingMarginKey];
-    } else {
-        ASSERT([originalTopMarginNumber isKindOfClass:[NSNumber class]]);
-        ASSERT([[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] isKindOfClass:[NSNumber class]]);
-        originalTopMargin = [originalTopMarginNumber floatValue];
-        originalBottomMargin = [[infoDictionary objectForKey:WebKitOriginalBottomPrintingMarginKey] floatValue];
-    }
-    
-    float scale = currentPrintOperationScale();
-    [info setTopMargin:originalTopMargin + _data->_page->headerHeight(frameBeingPrinted()) * scale];
-    [info setBottomMargin:originalBottomMargin + _data->_page->footerHeight(frameBeingPrinted()) * scale];
-}
-
-- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
-{
-    LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
-    NSPrintOperation *printOperation;
-
-    // Only the top frame can currently contain a PDF view.
-    if (_data->_pdfViewController) {
-        ASSERT(toImpl(frameRef)->isMainFrame());
-        printOperation = _data->_pdfViewController->makePrintOperation(printInfo);
-    } else
-        printOperation = [NSPrintOperation printOperationWithView:self printInfo:printInfo];
-
-    setFrameBeingPrinted(printOperation, toImpl(frameRef));
-    return printOperation;
-}
 
 - (BOOL)canChangeFrameLayout:(WKFrameRef)frameRef
 {
@@ -1436,119 +1333,20 @@ static float currentPrintOperationScale()
     return !toImpl(frameRef)->isMainFrame() || !_data->_pdfViewController;
 }
 
-// Return the number of pages available for printing
-- (BOOL)knowsPageRange:(NSRangePointer)range
+- (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo forFrame:(WKFrameRef)frameRef
 {
-    LOG(View, "knowsPageRange:");
-    WebFrameProxy* frame = frameBeingPrinted();
-    ASSERT(frame);
+    LOG(View, "Creating an NSPrintOperation for frame '%s'", toImpl(frameRef)->url().utf8().data());
 
-    if (frame->isMainFrame() && _data->_pdfViewController)
-        return [super knowsPageRange:range];
-
-    [self _adjustPrintingMarginsForHeaderAndFooter];
-
-    _data->_page->computePagesForPrinting(frame, PrintInfo([[NSPrintOperation currentOperation] printInfo]), _data->_printingPageRects, _data->_totalScaleFactorForPrinting);
-
-    *range = NSMakeRange(1, _data->_printingPageRects.size());
-    return YES;
-}
-
-// Take over printing. AppKit applies incorrect clipping, and doesn't print pages beyond the first one.
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
-{
-    // FIXME: This check isn't right for some non-printing cases, such as capturing into a buffer using cacheDisplayInRect:toBitmapImageRep:.
-    if ([NSGraphicsContext currentContextDrawingToScreen]) {
-        _data->_page->endPrinting();
-        [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect rectIsVisibleRectForView:visibleView topView:topView];
-        return;
+    // Only the top frame can currently contain a PDF view.
+    if (_data->_pdfViewController) {
+        if (!toImpl(frameRef)->isMainFrame())
+            return 0;
+        return _data->_pdfViewController->makePrintOperation(printInfo);
+    } else {
+        RetainPtr<WKPrintingView> printingView(AdoptNS, [[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef)]);
+        // NSPrintOperation takes ownership of the view.
+        return [NSPrintOperation printOperationWithView:printingView.get()];
     }
-
-    LOG(View, "Printing rect x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-
-    ASSERT(self == visibleView);
-    ASSERT(frameBeingPrinted());
-
-    WebFrameProxy* frame = frameBeingPrinted();
-    ASSERT(frame);
-
-    _data->_page->beginPrinting(frame, PrintInfo([[NSPrintOperation currentOperation] printInfo]));
-
-    // FIXME: This is optimized for print preview. Get the whole document at once when actually printing.
-    Vector<uint8_t> pdfData;
-    _data->_page->drawRectToPDF(frame, IntRect(rect), pdfData);
-
-    RetainPtr<CGDataProviderRef> pdfDataProvider(AdoptCF, CGDataProviderCreateWithData(0, pdfData.data(), pdfData.size(), 0));
-    RetainPtr<CGPDFDocumentRef> pdfDocument(AdoptCF, CGPDFDocumentCreateWithProvider(pdfDataProvider.get()));
-    if (!pdfDocument) {
-        LOG_ERROR("Couldn't create a PDF document with data passed for printing");
-        return;
-    }
-
-    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfDocument.get(), 1);
-    if (!pdfPage) {
-        LOG_ERROR("Printing data doesn't have page 1");
-        return;
-    }
-
-    NSGraphicsContext *nsGraphicsContext = [NSGraphicsContext currentContext];
-    CGContextRef context = static_cast<CGContextRef>([nsGraphicsContext graphicsPort]);
-
-    CGContextSaveGState(context);
-    // Flip the destination.
-    CGContextScaleCTM(context, 1, -1);
-    CGContextTranslateCTM(context, 0, -CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox).size.height);
-    CGContextDrawPDFPage(context, pdfPage);
-    CGContextRestoreGState(context);
-}
-
-- (void)drawPageBorderWithSize:(NSSize)borderSize
-{
-    ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));    
-
-    // The header and footer rect height scales with the page, but the width is always
-    // all the way across the printed page (inset by printing margins).
-    NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
-    NSPrintInfo *printInfo = [printOperation printInfo];
-    float scale = currentPrintOperationScale();
-    NSSize paperSize = [printInfo paperSize];
-    float headerFooterLeft = [printInfo leftMargin] / scale;
-    float headerFooterWidth = (paperSize.width - ([printInfo leftMargin] + [printInfo rightMargin])) / scale;
-    WebFrameProxy* frame = frameBeingPrinted();
-    NSRect footerRect = NSMakeRect(headerFooterLeft, [printInfo bottomMargin] / scale - _data->_page->footerHeight(frame), headerFooterWidth, _data->_page->footerHeight(frame));
-    NSRect headerRect = NSMakeRect(headerFooterLeft, (paperSize.height - [printInfo topMargin]) / scale, headerFooterWidth, _data->_page->headerHeight(frame));
-
-    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    [currentContext saveGraphicsState];
-    NSRectClip(headerRect);
-    _data->_page->drawHeader(frame, headerRect);
-    [currentContext restoreGraphicsState];
-
-    [currentContext saveGraphicsState];
-    NSRectClip(footerRect);
-    _data->_page->drawFooter(frame, footerRect);
-    [currentContext restoreGraphicsState];
-}
-
-// FIXME 3491344: This is an AppKit-internal method that we need to override in order
-// to get our shrink-to-fit to work with a custom pagination scheme. We can do this better
-// if AppKit makes it SPI/API.
-- (CGFloat)_provideTotalScaleFactorForPrintOperation:(NSPrintOperation *)printOperation 
-{
-    return _data->_totalScaleFactorForPrinting;
-}
-
-// Return the drawing rectangle for a particular page number
-- (NSRect)rectForPage:(NSInteger)page
-{
-    WebFrameProxy* frame = frameBeingPrinted();
-    ASSERT(frame);
-
-    if (frame->isMainFrame() && _data->_pdfViewController)
-        return [super rectForPage:page];
-
-    LOG(View, "rectForPage:%d -> x %d, y %d, width %d, height %d\n", (int)page, _data->_printingPageRects[page - 1].x(), _data->_printingPageRects[page - 1].y(), _data->_printingPageRects[page - 1].width(), _data->_printingPageRects[page - 1].height());
-    return _data->_printingPageRects[page - 1];
 }
 
 @end

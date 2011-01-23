@@ -668,6 +668,8 @@
 		D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484311FF4B6500032B39 /* WebPopupMenu.h */; };
 		D3B9484811FF4B6500032B39 /* WebSearchPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */; };
 		D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */; };
+		E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F01512EA5D11004EC58D /* WKPrintingView.h */; };
+		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
 		E18C92F512DB9E7A00CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
 		E18C92F612DB9E9400CF2AEB /* PrintInfoMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */; };
@@ -1431,6 +1433,8 @@
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchPopupMenu.h; sourceTree = "<group>"; };
+		E134F01512EA5D11004EC58D /* WKPrintingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPrintingView.h; sourceTree = "<group>"; };
+		E134F01912EA5D99004EC58D /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
 		E1CC1B8E12D7EADF00625838 /* PrintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintInfo.h; sourceTree = "<group>"; };
 		E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrintInfoMac.mm; sourceTree = "<group>"; };
@@ -2317,6 +2321,8 @@
 				1AAF061312B01131008E49E2 /* PDFViewController.mm */,
 				BC111B4B112F619200337BAB /* PageClientImpl.h */,
 				BC111B4C112F619200337BAB /* PageClientImpl.mm */,
+				E134F01512EA5D11004EC58D /* WKPrintingView.h */,
+				E134F01912EA5D99004EC58D /* WKPrintingView.mm */,
 				1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */,
 				1A4A9AA712B7E796008FE984 /* WKTextInputWindowController.mm */,
 				BC8699B2116AADAA002A925B /* WKView.h */,
@@ -3069,6 +3075,7 @@
 				C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */,
 				1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */,
 				C574A58112E66681002DFE98 /* PasteboardTypes.h in Headers */,
+				E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3532,6 +3539,7 @@
 				1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */,
 				C574A37712E6099D002DFE98 /* WebDragClientMac.mm in Sources */,
 				C574A58212E66681002DFE98 /* PasteboardTypes.mm in Sources */,
+				E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

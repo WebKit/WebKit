@@ -1,3 +1,31 @@
+2011-01-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52968
+        Use a separate NSView for printing
+
+        Also addresses <rdar://problem/8900148> Improper check for 
+        -[NSGraphicsContext currentContextDrawingToScreen]
+
+        * UIProcess/API/mac/WKPrintingView.h: Added.
+        * UIProcess/API/mac/WKPrintingView.mm: Added.
+        (-[WKPrintingView initWithFrameProxy:]):
+        (-[WKPrintingView isFlipped]):
+        (-[WKPrintingView _adjustPrintingMarginsForHeaderAndFooter]):
+        (-[WKPrintingView knowsPageRange:]):
+        (-[WKPrintingView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        (-[WKPrintingView drawPageBorderWithSize:]):
+        (-[WKPrintingView _provideTotalScaleFactorForPrintOperation:]):
+        (-[WKPrintingView rectForPage:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView drawRect:]):
+        (-[WKView canChangeFrameLayout:]):
+        (-[WKView printOperationWithPrintInfo:forFrame:]):
+        * WebKit2.xcodeproj/project.pbxproj:
+        Moved printing code to a separate view, simplifying as appropriate. The view is currently not
+        referenced by anything in WebKit2 directly, being owned by NSPrintOperation.
+
 2011-01-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
