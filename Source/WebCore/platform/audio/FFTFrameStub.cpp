@@ -36,9 +36,9 @@
 namespace WebCore {
 
 // Normal constructor: allocates for a given fftSize.
-FFTFrame::FFTFrame(unsigned fftSize)
-    : m_FFTSize(fftSize)
-    , m_log2FFTSize(static_cast<unsigned>(log2(fftSize)))
+FFTFrame::FFTFrame(unsigned /*fftSize*/)
+    : m_FFTSize(0)
+    , m_log2FFTSize(0)
 {
     ASSERT_NOT_REACHED();
 }

@@ -1,3 +1,15 @@
+2011-01-22  Chris Rogers  <crogers@google.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Fix FFTFrameStub to compile properly
+        https://bugs.webkit.org/show_bug.cgi?id=52969
+
+        No new tests since this is a build fix.
+
+        * platform/audio/FFTFrameStub.cpp:
+        (WebCore::FFTFrame::FFTFrame):
+
 2011-01-22  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
