@@ -1,3 +1,12 @@
+2011-01-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/6097826> Mail's cursor does not become a resize cursor when moving mouse from scrolled email to the horizontal splitter
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setCursor): If the current cursor comes from a cursor rect, do not override it.
+
 2011-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

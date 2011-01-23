@@ -80,6 +80,10 @@
 #import "NetscapePluginHostManager.h"
 #endif
 
+@interface NSApplication (WebNSApplicationDetails)
+- (NSCursor *)_cursorRectCursor;
+@end
+
 @interface NSView (WebNSViewDetails)
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
@@ -678,6 +682,9 @@ void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, FileCh
 
 void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
 {
+    if ([NSApp _cursorRectCursor])
+        return;
+
     NSCursor *platformCursor = cursor.platformCursor();
     if ([NSCursor currentCursor] == platformCursor)
         return;
