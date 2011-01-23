@@ -80,10 +80,7 @@ String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& 
         if (!CryptSignAndEncodeCertificate(hContext, AT_KEYEXCHANGE, X509_ASN_ENCODING, X509_KEYGEN_REQUEST_TO_BE_SIGNED, &requestInfo, &signAlgo, 0, reinterpret_cast<LPBYTE>(binary.data()), &dwEncodedLength))
             break;
 
-        Vector<char> base64;
-        base64Encode(binary, base64);
-        keyString = String(base64.data(), base64.size());
-
+        keyString = base64Encode(binary);
     } while(0);
 
     if (pPubInfo)

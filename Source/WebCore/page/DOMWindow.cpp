@@ -974,13 +974,7 @@ String DOMWindow::btoa(const String& stringToEncode, ExceptionCode& ec)
         return String();
     }
 
-    Vector<char> in;
-    in.append(stringToEncode.characters(), stringToEncode.length());
-    Vector<char> out;
-
-    base64Encode(in, out);
-
-    return String(out.data(), out.size());
+    return base64Encode(stringToEncode.latin1());
 }
 
 String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)

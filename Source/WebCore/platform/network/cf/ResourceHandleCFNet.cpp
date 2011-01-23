@@ -126,12 +126,7 @@ static void setDefaultMIMEType(CFURLResponseRef response)
 
 static String encodeBasicAuthorization(const String& user, const String& password)
 {
-    CString unencodedString = (user + ":" + password).utf8();
-    Vector<char> unencoded(unencodedString.length());
-    std::copy(unencodedString.data(), unencodedString.data() + unencodedString.length(), unencoded.begin());
-    Vector<char> encoded;
-    base64Encode(unencoded, encoded);
-    return String(encoded.data(), encoded.size());
+    return base64Encode((user + ":" + password).utf8());
 }
 
 CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)

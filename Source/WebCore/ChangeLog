@@ -2,6 +2,36 @@
 
         Reviewed by David Kilzer.
 
+        Add an overload to base64Encode with String output
+        https://bugs.webkit.org/show_bug.cgi?id=50122
+
+        This change removes duplicated code.
+
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::resourceContentBase64):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::btoa):
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::createUniqueFontName):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createUniqueFontName):
+        * platform/graphics/wince/FontCustomPlatformData.cpp:
+        (WebCore::createUniqueFontName):
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::encodeBasicAuthorization):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::encodeBasicAuthorization):
+        * platform/text/Base64.cpp:
+        (WebCore::base64Encode):
+        * platform/text/Base64.h:
+        (WebCore::base64Encode):
+        * platform/wince/KeygenWinCE.cpp:
+        (WebCore::WebCore::signedPublicKeyAndChallengeString):
+
+2011-01-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
         Add String::containsOnlyLatin1()
         https://bugs.webkit.org/show_bug.cgi?id=52979
 

@@ -95,7 +95,6 @@ bool InspectorResourceAgent::resourceContent(Frame* frame, const KURL& url, Stri
 
 bool InspectorResourceAgent::resourceContentBase64(Frame* frame, const KURL& url, String* result)
 {
-    Vector<char> out;
     String textEncodingName;
     RefPtr<SharedBuffer> data = InspectorResourceAgent::resourceData(frame, url, &textEncodingName);
     if (!data) {
@@ -103,8 +102,7 @@ bool InspectorResourceAgent::resourceContentBase64(Frame* frame, const KURL& url
         return false;
     }
 
-    base64Encode(data->buffer(), out);
-    *result = String(out.data(), out.size());
+    *result = base64Encode(data->buffer());
     return true;
 }
 

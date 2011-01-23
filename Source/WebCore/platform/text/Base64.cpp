@@ -60,9 +60,11 @@ static const char base64DecMap[128] = {
     0x31, 0x32, 0x33, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-void base64Encode(const Vector<char>& in, Vector<char>& out, bool insertLFs)
+String base64Encode(const char* data, unsigned length, bool insertLFs)
 {
-    base64Encode(in.data(), in.size(), out, insertLFs);
+    Vector<char> result;
+    base64Encode(data, length, result, insertLFs);
+    return String(result.data(), result.size());
 }
 
 void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insertLFs)

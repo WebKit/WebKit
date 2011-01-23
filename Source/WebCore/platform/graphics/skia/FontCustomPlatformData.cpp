@@ -114,13 +114,12 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
 // not allow access from CSS.
 static String createUniqueFontName()
 {
-    Vector<char> fontUuid(sizeof(GUID));
-    CoCreateGuid(reinterpret_cast<GUID*>(fontUuid.data()));
+    GUID fontUuid;
+    CoCreateGuid(&fontUuid);
 
-    Vector<char> fontNameVector;
-    base64Encode(fontUuid, fontNameVector);
-    ASSERT(fontNameVector.size() < LF_FACESIZE);
-    return String(fontNameVector.data(), fontNameVector.size());
+    String fontName = base64Encode(reinterpret_cast<char*>(&fontUuid), sizeof(fontUuid));
+    ASSERT(fontName.length() < LF_FACESIZE);
+    return fontName;
 }
 #endif
 
