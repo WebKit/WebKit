@@ -65074,6 +65074,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorApplicationCacheAgent.cpp"
 				>
 			</File>

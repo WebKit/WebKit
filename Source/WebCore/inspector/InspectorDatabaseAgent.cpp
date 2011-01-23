@@ -34,7 +34,7 @@
 
 #include "Database.h"
 #include "ExceptionCode.h"
-#include "InspectorController.h"
+#include "InspectorAgent.h"
 #include "InspectorDatabaseResource.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"

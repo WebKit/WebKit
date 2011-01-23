@@ -42,7 +42,7 @@
 
 namespace WebCore {
 class InjectedScriptHost;
-class InspectorController;
+class InspectorAgent;
 class InspectorFrontend;
 class InspectorObject;
 class InspectorValue;
@@ -56,7 +56,7 @@ enum DebuggerEventType {
 class InspectorDebuggerAgent : public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorDebuggerAgent> create(InspectorController*, InspectorFrontend*);
+    static PassOwnPtr<InspectorDebuggerAgent> create(InspectorAgent*, InspectorFrontend*);
     virtual ~InspectorDebuggerAgent();
 
     static bool isDebuggerAlwaysEnabled();
@@ -84,7 +84,7 @@ public:
     void clearForPageNavigation();
 
 private:
-    InspectorDebuggerAgent(InspectorController*, InspectorFrontend*);
+    InspectorDebuggerAgent(InspectorAgent*, InspectorFrontend*);
 
     PassRefPtr<InspectorValue> currentCallFrames();
 
@@ -95,7 +95,7 @@ private:
 
     void restoreBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled);
 
-    InspectorController* m_inspectorController;
+    InspectorAgent* m_inspectorAgent;
     InspectorFrontend* m_frontend;
     ScriptState* m_pausedScriptState;
     HashMap<String, String> m_scriptIDToContent;

@@ -39,9 +39,9 @@
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScript.h"
 #include "InjectedScriptSource.h"
+#include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorConsoleAgent.h"
-#include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
@@ -69,8 +69,8 @@ using namespace std;
 
 namespace WebCore {
 
-InjectedScriptHost::InjectedScriptHost(InspectorController* inspectorController)
-    : m_inspectorController(inspectorController)
+InjectedScriptHost::InjectedScriptHost(InspectorAgent* inspectorAgent)
+    : m_inspectorAgent(inspectorAgent)
     , m_nextInjectedScriptId(1)
     , m_lastWorkerId(1 << 31) // Distinguish ids of fake workers from real ones, to minimize the chances they overlap.
 {
@@ -89,8 +89,8 @@ void InjectedScriptHost::evaluateOnSelf(const String& functionBody, PassRefPtr<I
 
 void InjectedScriptHost::clearConsoleMessages()
 {
-    if (m_inspectorController)
-        m_inspectorController->consoleAgent()->clearConsoleMessages();
+    if (m_inspectorAgent)
+        m_inspectorAgent->consoleAgent()->clearConsoleMessages();
 }
 
 void InjectedScriptHost::copyText(const String& text)
@@ -130,23 +130,23 @@ long InjectedScriptHost::inspectedNode(unsigned long num)
 #if ENABLE(DATABASE)
 Database* InjectedScriptHost::databaseForId(long databaseId)
 {
-    if (m_inspectorController && m_inspectorController->databaseAgent())
-        return m_inspectorController->databaseAgent()->databaseForId(databaseId);
+    if (m_inspectorAgent && m_inspectorAgent->databaseAgent())
+        return m_inspectorAgent->databaseAgent()->databaseForId(databaseId);
     return 0;
 }
 
 void InjectedScriptHost::selectDatabase(Database* database)
 {
-    if (m_inspectorController && m_inspectorController->databaseAgent())
-        m_inspectorController->databaseAgent()->selectDatabase(database);
+    if (m_inspectorAgent && m_inspectorAgent->databaseAgent())
+        m_inspectorAgent->databaseAgent()->selectDatabase(database);
 }
 #endif
 
 #if ENABLE(DOM_STORAGE)
 void InjectedScriptHost::selectDOMStorage(Storage* storage)
 {
-    if (m_inspectorController && m_inspectorController->domStorageAgent())
-        m_inspectorController->domStorageAgent()->selectDOMStorage(storage);
+    if (m_inspectorAgent && m_inspectorAgent->domStorageAgent())
+        m_inspectorAgent->domStorageAgent()->selectDOMStorage(storage);
 }
 #endif
 
@@ -166,7 +166,7 @@ InjectedScript InjectedScriptHost::injectedScriptForObjectId(InspectorObject* ob
 
 InjectedScript InjectedScriptHost::injectedScriptForMainFrame()
 {
-    return injectedScriptFor(mainWorldScriptState(m_inspectorController->inspectedPage()->mainFrame()));
+    return injectedScriptFor(mainWorldScriptState(m_inspectorAgent->inspectedPage()->mainFrame()));
 }
 
 void InjectedScriptHost::discardInjectedScripts()
@@ -192,16 +192,16 @@ void InjectedScriptHost::releaseWrapperObjectGroup(long injectedScriptId, const 
 
 InspectorDOMAgent* InjectedScriptHost::inspectorDOMAgent()
 {
-    if (!m_inspectorController)
+    if (!m_inspectorAgent)
         return 0;
-    return m_inspectorController->domAgent();
+    return m_inspectorAgent->domAgent();
 }
 
 InspectorFrontend* InjectedScriptHost::frontend()
 {
-    if (!m_inspectorController)
+    if (!m_inspectorAgent)
         return 0;
-    return m_inspectorController->frontend();
+    return m_inspectorAgent->frontend();
 }
 
 String InjectedScriptHost::injectedScriptSource()
@@ -223,14 +223,14 @@ long InjectedScriptHost::nextWorkerId()
 
 void InjectedScriptHost::didCreateWorker(long id, const String& url, bool isSharedWorker)
 {
-    if (m_inspectorController)
-        m_inspectorController->didCreateWorker(id, url, isSharedWorker);
+    if (m_inspectorAgent)
+        m_inspectorAgent->didCreateWorker(id, url, isSharedWorker);
 }
 
 void InjectedScriptHost::didDestroyWorker(long id)
 {
-    if (m_inspectorController)
-        m_inspectorController->didDestroyWorker(id);
+    if (m_inspectorAgent)
+        m_inspectorAgent->didDestroyWorker(id);
 }
 #endif // ENABLE(WORKERS)
 

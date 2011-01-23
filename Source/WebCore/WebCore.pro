@@ -1042,6 +1042,7 @@ SOURCES += \
     inspector/ConsoleMessage.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
+    inspector/InspectorAgent.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
     inspector/InspectorBrowserDebuggerAgent.cpp \
     inspector/InspectorCSSAgent.cpp \
@@ -1940,6 +1941,7 @@ HEADERS += \
     inspector/ConsoleMessage.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
+    inspector/InspectorAgent.h \
     inspector/InspectorApplicationCacheAgent.h \
     inspector/InspectorBrowserDebuggerAgent.h \
     inspector/InspectorConsoleAgent.h \

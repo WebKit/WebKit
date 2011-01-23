@@ -39,7 +39,7 @@
 #include "FileSystemCallbacks.h"
 #include "Frame.h"
 #include "FrameTree.h"
-#include "InspectorController.h"
+#include "InspectorAgent.h"
 #include "InspectorFrontend.h"
 #include "LocalFileSystem.h"
 #include "NotImplemented.h"
@@ -69,7 +69,7 @@ public:
 
     void didOpenFileSystem(const String&, PassOwnPtr<AsyncFileSystem> fileSystem)
     {
-        // Agent will be alive even if InspectorController is destroyed until callback is run.
+        // Agent will be alive even if InspectorAgent is destroyed until callback is run.
         m_agent->didGetFileSystemPath(fileSystem->root(), m_type, m_origin);
     }
 
@@ -105,8 +105,8 @@ private:
     String m_origin;
 };
 
-InspectorFileSystemAgent::InspectorFileSystemAgent(InspectorController* inspectorController, InspectorFrontend* frontend)
-    : m_inspectorController(inspectorController)
+InspectorFileSystemAgent::InspectorFileSystemAgent(InspectorAgent* inspectorAgent, InspectorFrontend* frontend)
+    : m_inspectorAgent(inspectorAgent)
     , m_frontend(frontend)
 {
 }
@@ -115,7 +115,7 @@ InspectorFileSystemAgent::~InspectorFileSystemAgent() { }
 
 void InspectorFileSystemAgent::stop()
 {
-    m_inspectorController = 0;
+    m_inspectorAgent = 0;
 }
 
 #if PLATFORM(CHROMIUM)
@@ -139,7 +139,7 @@ void InspectorFileSystemAgent::getFileSystemPathAsync(unsigned int type, const S
     }
 
     AsyncFileSystem::Type asyncFileSystemType = static_cast<AsyncFileSystem::Type>(type);
-    Frame* mainFrame = m_inspectorController->inspectedPage()->mainFrame();
+    Frame* mainFrame = m_inspectorAgent->inspectedPage()->mainFrame();
     for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext()) {
         Document* document = frame->document();
         if (document && document->securityOrigin()->toString() == origin) {
@@ -151,8 +151,8 @@ void InspectorFileSystemAgent::getFileSystemPathAsync(unsigned int type, const S
 
 void InspectorFileSystemAgent::didGetFileSystemPath(const String& root, AsyncFileSystem::Type type, const String& origin)
 {
-    // When controller is being destroyed, this is set to 0. Agent can live even after m_inspectorController is destroyed.
-    if (!m_inspectorController)
+    // When controller is being destroyed, this is set to 0. Agent can live even after m_inspectorAgent is destroyed.
+    if (!m_inspectorAgent)
         return;
 
     m_frontend->didGetFileSystemPath(root, static_cast<unsigned int>(type), origin);
@@ -160,8 +160,8 @@ void InspectorFileSystemAgent::didGetFileSystemPath(const String& root, AsyncFil
 
 void InspectorFileSystemAgent::didGetFileSystemError(AsyncFileSystem::Type type, const String& origin)
 {
-    // When controller is being destroyed, this is set to 0. Agent can live even after m_inspectorController is destroyed.
-    if (!m_inspectorController)
+    // When controller is being destroyed, this is set to 0. Agent can live even after m_inspectorAgent is destroyed.
+    if (!m_inspectorAgent)
         return;
     m_frontend->didGetFileSystemError(static_cast<unsigned int>(type), origin);
 }

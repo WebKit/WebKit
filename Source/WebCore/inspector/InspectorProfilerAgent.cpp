@@ -33,8 +33,8 @@
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
 #include "Console.h"
+#include "InspectorAgent.h"
 #include "InspectorConsoleAgent.h"
-#include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorValues.h"
 #include "KURL.h"
@@ -56,14 +56,14 @@ static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-in
 static const char* const CPUProfileType = "CPU";
 static const char* const HeapProfileType = "HEAP";
 
-PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InspectorController* inspectorController)
+PassOwnPtr<InspectorProfilerAgent> InspectorProfilerAgent::create(InspectorAgent* inspectorAgent)
 {
-    OwnPtr<InspectorProfilerAgent> agent = adoptPtr(new InspectorProfilerAgent(inspectorController));
+    OwnPtr<InspectorProfilerAgent> agent = adoptPtr(new InspectorProfilerAgent(inspectorAgent));
     return agent.release();
 }
 
-InspectorProfilerAgent::InspectorProfilerAgent(InspectorController* inspectorController)
-    : m_inspectorController(inspectorController)
+InspectorProfilerAgent::InspectorProfilerAgent(InspectorAgent* inspectorAgent)
+    : m_inspectorAgent(inspectorAgent)
     , m_frontend(0)
     , m_enabled(ScriptProfiler::isProfilerAlwaysEnabled())
     , m_recordingUserInitiatedProfile(false)
@@ -93,7 +93,7 @@ void InspectorProfilerAgent::addProfileFinishedMessageToConsole(PassRefPtr<Scrip
     RefPtr<ScriptProfile> profile = prpProfile;
     String title = profile->title();
     String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), '#', String::number(profile->uid()), "\" finished.");
-    m_inspectorController->consoleAgent()->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
+    m_inspectorAgent->consoleAgent()->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
 void InspectorProfilerAgent::addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL)
@@ -101,7 +101,7 @@ void InspectorProfilerAgent::addStartProfilingMessageToConsole(const String& tit
     if (!m_frontend)
         return;
     String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), "#0\" started.");
-    m_inspectorController->consoleAgent()->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
+    m_inspectorAgent->consoleAgent()->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
 PassRefPtr<InspectorObject> InspectorProfilerAgent::createProfileHeader(const ScriptProfile& profile)
@@ -235,7 +235,7 @@ void InspectorProfilerAgent::startUserInitiatedProfiling()
     m_recordingUserInitiatedProfile = true;
     String title = getCurrentUserInitiatedProfileName(true);
 #if USE(JSC)
-    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectorController->inspectedPage()->mainFrame(), debuggerWorld())->globalExec();
+    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectorAgent->inspectedPage()->mainFrame(), debuggerWorld())->globalExec();
 #else
     ScriptState* scriptState = 0;
 #endif
@@ -251,7 +251,7 @@ void InspectorProfilerAgent::stopUserInitiatedProfiling(bool ignoreProfile)
     m_recordingUserInitiatedProfile = false;
     String title = getCurrentUserInitiatedProfileName();
 #if USE(JSC)
-    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectorController->inspectedPage()->mainFrame(), debuggerWorld())->globalExec();
+    JSC::ExecState* scriptState = toJSDOMWindow(m_inspectorAgent->inspectedPage()->mainFrame(), debuggerWorld())->globalExec();
 #else
     // Use null script state to avoid filtering by context security token.
     // All functions from all iframes should be visible from Inspector UI.

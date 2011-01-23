@@ -22,6 +22,7 @@
 
 #include "InspectorBackendDispatcher.h"
 #include "InspectorClientQt.h"
+#include "InspectorController.h"
 #include "MD5.h"
 #include "Page.h"
 #include "qwebpage.h"

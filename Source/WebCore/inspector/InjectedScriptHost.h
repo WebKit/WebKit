@@ -31,7 +31,7 @@
 #define InjectedScriptHost_h
 
 #include "Console.h"
-#include "InspectorController.h"
+#include "InspectorAgent.h"
 #include "PlatformString.h"
 #include "ScriptState.h"
 
@@ -52,9 +52,9 @@ class Storage;
 class InjectedScriptHost : public RefCounted<InjectedScriptHost>
 {
 public:
-    static PassRefPtr<InjectedScriptHost> create(InspectorController* inspectorController)
+    static PassRefPtr<InjectedScriptHost> create(InspectorAgent* inspectorAgent)
     {
-        return adoptRef(new InjectedScriptHost(inspectorController));
+        return adoptRef(new InjectedScriptHost(inspectorAgent));
     }
 
     ~InjectedScriptHost();
@@ -62,8 +62,8 @@ public:
     // Part of the protocol.
     void evaluateOnSelf(const String& functionBody, PassRefPtr<InspectorArray> argumentsArray, RefPtr<InspectorValue>* result);
 
-    InspectorController* inspectorController() { return m_inspectorController; }
-    void disconnectController() { m_inspectorController = 0; }
+    InspectorAgent* inspectorAgent() { return m_inspectorAgent; }
+    void disconnectController() { m_inspectorAgent = 0; }
 
     void clearConsoleMessages();
 
@@ -96,14 +96,14 @@ public:
     static bool canAccessInspectedWindow(ScriptState*);
 
 private:
-    InjectedScriptHost(InspectorController* inspectorController);
+    InjectedScriptHost(InspectorAgent*);
     InspectorDOMAgent* inspectorDOMAgent();
     InspectorFrontend* frontend();
     String injectedScriptSource();
     ScriptObject createInjectedScript(const String& source, ScriptState* scriptState, long id);
     void discardInjectedScript(ScriptState*);
 
-    InspectorController* m_inspectorController;
+    InspectorAgent* m_inspectorAgent;
     long m_nextInjectedScriptId;
     long m_lastWorkerId;
     typedef HashMap<long, InjectedScript> IdToInjectedScriptMap;

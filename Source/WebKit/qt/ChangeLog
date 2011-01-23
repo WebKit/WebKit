@@ -1,3 +1,15 @@
+2011-01-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: next step in splitting InspectorController.
+
+        #include "InspectorController.h" was added.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52955
+
+        * WebCoreSupport/InspectorServerQt.cpp:
+
 2011-01-22  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

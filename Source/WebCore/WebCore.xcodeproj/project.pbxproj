@@ -1265,6 +1265,8 @@
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
 		4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DD11B532EC0021FD86 /* EditingBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F2D205212EAE7B3005C2874 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		4F2D205512EAE7B3005C2874 /* InspectorAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F2D205312EAE7B3005C2874 /* InspectorAgent.cpp */; };
 		4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */; };
 		4F3289B611A42AAB005ABE7E /* InspectorValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F3289B411A42AAB005ABE7E /* InspectorValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F4F5FFB11CBD2E100A186BF /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */; };
@@ -7667,6 +7669,8 @@
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
 		4F1534DD11B532EC0021FD86 /* EditingBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehavior.h; sourceTree = "<group>"; };
 		4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehaviorTypes.h; sourceTree = "<group>"; };
+		4F2D205212EAE7B3005C2874 /* InspectorAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgent.h; sourceTree = "<group>"; };
+		4F2D205312EAE7B3005C2874 /* InspectorAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorAgent.cpp; sourceTree = "<group>"; };
 		4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorValues.cpp; sourceTree = "<group>"; };
 		4F3289B411A42AAB005ABE7E /* InspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorValues.h; sourceTree = "<group>"; };
 		4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontend.cpp; sourceTree = "<group>"; };
@@ -12969,6 +12973,8 @@
 				7A0E76F710BF08ED00A0276E /* InjectedScriptHost.h */,
 				7A0E76F810BF08ED00A0276E /* InjectedScriptHost.idl */,
 				7A563F9512DF5C9100F4536D /* InjectedScriptSource.js */,
+				4F2D205212EAE7B3005C2874 /* InspectorAgent.h */,
+				4F2D205312EAE7B3005C2874 /* InspectorAgent.cpp */,
 				B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */,
 				B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */,
 				F3D4C47612E07663003DA150 /* InspectorBrowserDebuggerAgent.cpp */,
@@ -22415,6 +22421,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				BC8AE34F12EA096A00EB3AE6 /* ScrollableArea.h in Headers */,
+				4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25110,6 +25117,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				BC8AE34E12EA096A00EB3AE6 /* ScrollableArea.cpp in Sources */,
+				4F2D205512EAE7B3005C2874 /* InspectorAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -40,15 +40,15 @@
 namespace WebCore {
 
 class Document;
-class InspectorController;
+class InspectorAgent;
 class InspectorFrontend;
 class LocalFileSystem;
 
 class InspectorFileSystemAgent : public RefCounted<InspectorFileSystemAgent> {
 public:
-    static PassRefPtr<InspectorFileSystemAgent> create(InspectorController* inspectorController, InspectorFrontend* frontend)
+    static PassRefPtr<InspectorFileSystemAgent> create(InspectorAgent* inspectorAgent, InspectorFrontend* frontend)
     {
-        return adoptRef(new InspectorFileSystemAgent(inspectorController, frontend));
+        return adoptRef(new InspectorFileSystemAgent(inspectorAgent, frontend));
     }
 
     ~InspectorFileSystemAgent();
@@ -64,10 +64,10 @@ public:
     void didGetFileSystemDisabled();
 
 private:
-    InspectorFileSystemAgent(InspectorController*, InspectorFrontend*);
+    InspectorFileSystemAgent(InspectorAgent*, InspectorFrontend*);
     void getFileSystemRoot(AsyncFileSystem::Type);
 
-    InspectorController* m_inspectorController;
+    InspectorAgent* m_inspectorAgent;
     InspectorFrontend* m_frontend;
 };
 

@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "ScriptExecutionContext.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ class Element;
 class EventContext;
 class DocumentLoader;
 class HitTestResult;
-class InspectorController;
+class InspectorAgent;
 class InspectorResourceAgent;
 class InspectorTimelineAgent;
 class KURL;
@@ -66,7 +67,7 @@ class WebSocketHandshakeRequest;
 class WebSocketHandshakeResponse;
 #endif
 
-typedef pair<InspectorController*, int> InspectorInstrumentationCookie;
+typedef pair<InspectorAgent*, int> InspectorInstrumentationCookie;
 
 class InspectorInstrumentation {
 public:
@@ -171,6 +172,8 @@ public:
 #endif
 
 #if ENABLE(INSPECTOR)
+    static void bindInspectorAgent(Page* page, InspectorAgent* inspectorAgent) { s_inspectorAgents.set(page, inspectorAgent); }
+    static void unbindInspectorAgent(Page* page) { s_inspectorAgents.remove(page); }
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }
     static bool hasFrontends() { return s_frontendCounter; }
@@ -180,120 +183,121 @@ public:
 
 private:
 #if ENABLE(INSPECTOR)
-    static void didClearWindowObjectInWorldImpl(InspectorController*, Frame*, DOMWrapperWorld*);
-    static void inspectedPageDestroyedImpl(InspectorController*);
+    static void didClearWindowObjectInWorldImpl(InspectorAgent*, Frame*, DOMWrapperWorld*);
+    static void inspectedPageDestroyedImpl(InspectorAgent*);
 
-    static void willInsertDOMNodeImpl(InspectorController*, Node* node, Node* parent);
-    static void didInsertDOMNodeImpl(InspectorController*, Node*);
-    static void willRemoveDOMNodeImpl(InspectorController*, Node*);
-    static void didRemoveDOMNodeImpl(InspectorController*, Node*);
-    static void willModifyDOMAttrImpl(InspectorController*, Element*);
-    static void didModifyDOMAttrImpl(InspectorController*, Element*);
-    static void characterDataModifiedImpl(InspectorController*, CharacterData*);
+    static void willInsertDOMNodeImpl(InspectorAgent*, Node* node, Node* parent);
+    static void didInsertDOMNodeImpl(InspectorAgent*, Node*);
+    static void willRemoveDOMNodeImpl(InspectorAgent*, Node*);
+    static void didRemoveDOMNodeImpl(InspectorAgent*, Node*);
+    static void willModifyDOMAttrImpl(InspectorAgent*, Element*);
+    static void didModifyDOMAttrImpl(InspectorAgent*, Element*);
+    static void characterDataModifiedImpl(InspectorAgent*, CharacterData*);
 
-    static void mouseDidMoveOverElementImpl(InspectorController*, const HitTestResult&, unsigned modifierFlags);
-    static bool handleMousePressImpl(InspectorController*);
+    static void mouseDidMoveOverElementImpl(InspectorAgent*, const HitTestResult&, unsigned modifierFlags);
+    static bool handleMousePressImpl(InspectorAgent*);
 
-    static void willSendXMLHttpRequestImpl(InspectorController*, const String& url);
-    static void didScheduleResourceRequestImpl(InspectorController*, const String& url);
-    static void didInstallTimerImpl(InspectorController*, int timerId, int timeout, bool singleShot);
-    static void didRemoveTimerImpl(InspectorController*, int timerId);
+    static void willSendXMLHttpRequestImpl(InspectorAgent*, const String& url);
+    static void didScheduleResourceRequestImpl(InspectorAgent*, const String& url);
+    static void didInstallTimerImpl(InspectorAgent*, int timerId, int timeout, bool singleShot);
+    static void didRemoveTimerImpl(InspectorAgent*, int timerId);
 
-    static InspectorInstrumentationCookie willCallFunctionImpl(InspectorController*, const String& scriptName, int scriptLine);
+    static InspectorInstrumentationCookie willCallFunctionImpl(InspectorAgent*, const String& scriptName, int scriptLine);
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willChangeXHRReadyStateImpl(InspectorController*, XMLHttpRequest* request);
+    static InspectorInstrumentationCookie willChangeXHRReadyStateImpl(InspectorAgent*, XMLHttpRequest* request);
     static void didChangeXHRReadyStateImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willDispatchEventImpl(InspectorController*, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors);
+    static InspectorInstrumentationCookie willDispatchEventImpl(InspectorAgent*, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors);
     static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InspectorController*, const Event& event, DOMWindow* window);
+    static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InspectorAgent*, const Event& event, DOMWindow* window);
     static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willEvaluateScriptImpl(InspectorController*, const String& url, int lineNumber);
+    static InspectorInstrumentationCookie willEvaluateScriptImpl(InspectorAgent*, const String& url, int lineNumber);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willFireTimerImpl(InspectorController*, int timerId);
+    static InspectorInstrumentationCookie willFireTimerImpl(InspectorAgent*, int timerId);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willLayoutImpl(InspectorController*);
+    static InspectorInstrumentationCookie willLayoutImpl(InspectorAgent*);
     static void didLayoutImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willLoadXHRImpl(InspectorController*, XMLHttpRequest* request);
+    static InspectorInstrumentationCookie willLoadXHRImpl(InspectorAgent*, XMLHttpRequest* request);
     static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willPaintImpl(InspectorController*, const IntRect& rect);
+    static InspectorInstrumentationCookie willPaintImpl(InspectorAgent*, const IntRect& rect);
     static void didPaintImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willRecalculateStyleImpl(InspectorController*);
+    static InspectorInstrumentationCookie willRecalculateStyleImpl(InspectorAgent*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
-    static void identifierForInitialRequestImpl(InspectorController*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-    static void willSendRequestImpl(InspectorController*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
-    static void markResourceAsCachedImpl(InspectorController*, unsigned long identifier);
-    static void didLoadResourceFromMemoryCacheImpl(InspectorController*, DocumentLoader*, const CachedResource*);
-    static InspectorInstrumentationCookie willReceiveResourceDataImpl(InspectorController*, unsigned long identifier);
+    static void identifierForInitialRequestImpl(InspectorAgent*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
+    static void willSendRequestImpl(InspectorAgent*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    static void markResourceAsCachedImpl(InspectorAgent*, unsigned long identifier);
+    static void didLoadResourceFromMemoryCacheImpl(InspectorAgent*, DocumentLoader*, const CachedResource*);
+    static InspectorInstrumentationCookie willReceiveResourceDataImpl(InspectorAgent*, unsigned long identifier);
     static void didReceiveResourceDataImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InspectorController*, unsigned long identifier, const ResourceResponse&);
+    static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InspectorAgent*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
-    static void didReceiveContentLengthImpl(InspectorController*, unsigned long identifier, int lengthReceived);
-    static void didFinishLoadingImpl(InspectorController*, unsigned long identifier, double finishTime);
-    static void didFailLoadingImpl(InspectorController*, unsigned long identifier, const ResourceError&);
-    static void resourceRetrievedByXMLHttpRequestImpl(InspectorController*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
-    static void scriptImportedImpl(InspectorController*, unsigned long identifier, const String& sourceString);
-    static void mainResourceFiredLoadEventImpl(InspectorController*, Frame*, const KURL&);
-    static void mainResourceFiredDOMContentEventImpl(InspectorController*, Frame*, const KURL&);
-    static void frameDetachedFromParentImpl(InspectorController*, Frame*);
-    static void didCommitLoadImpl(InspectorController*, DocumentLoader*);
+    static void didReceiveContentLengthImpl(InspectorAgent*, unsigned long identifier, int lengthReceived);
+    static void didFinishLoadingImpl(InspectorAgent*, unsigned long identifier, double finishTime);
+    static void didFailLoadingImpl(InspectorAgent*, unsigned long identifier, const ResourceError&);
+    static void resourceRetrievedByXMLHttpRequestImpl(InspectorAgent*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
+    static void scriptImportedImpl(InspectorAgent*, unsigned long identifier, const String& sourceString);
+    static void mainResourceFiredLoadEventImpl(InspectorAgent*, Frame*, const KURL&);
+    static void mainResourceFiredDOMContentEventImpl(InspectorAgent*, Frame*, const KURL&);
+    static void frameDetachedFromParentImpl(InspectorAgent*, Frame*);
+    static void didCommitLoadImpl(InspectorAgent*, DocumentLoader*);
 
-    static InspectorInstrumentationCookie willWriteHTMLImpl(InspectorController*, unsigned int length, unsigned int startLine);
+    static InspectorInstrumentationCookie willWriteHTMLImpl(InspectorAgent*, unsigned int length, unsigned int startLine);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
 
-    static void addMessageToConsoleImpl(InspectorController*, MessageSource, MessageType, MessageLevel, const String& message, ScriptArguments*, ScriptCallStack*);
-    static void addMessageToConsoleImpl(InspectorController*, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
-    static void consoleCountImpl(InspectorController*, ScriptArguments*, ScriptCallStack*);
-    static void startConsoleTimingImpl(InspectorController*, const String& title);
-    static void stopConsoleTimingImpl(InspectorController*, const String& title, ScriptCallStack*);
-    static void consoleMarkTimelineImpl(InspectorController*, ScriptArguments*);
+    static void addMessageToConsoleImpl(InspectorAgent*, MessageSource, MessageType, MessageLevel, const String& message, ScriptArguments*, ScriptCallStack*);
+    static void addMessageToConsoleImpl(InspectorAgent*, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
+    static void consoleCountImpl(InspectorAgent*, ScriptArguments*, ScriptCallStack*);
+    static void startConsoleTimingImpl(InspectorAgent*, const String& title);
+    static void stopConsoleTimingImpl(InspectorAgent*, const String& title, ScriptCallStack*);
+    static void consoleMarkTimelineImpl(InspectorAgent*, ScriptArguments*);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    static void addStartProfilingMessageToConsoleImpl(InspectorController*, const String& title, unsigned lineNumber, const String& sourceURL);
-    static void addProfileImpl(InspectorController*, RefPtr<ScriptProfile>, ScriptCallStack*);
-    static bool profilerEnabledImpl(InspectorController*);
-    static String getCurrentUserInitiatedProfileNameImpl(InspectorController*, bool incrementProfileNumber);
+    static void addStartProfilingMessageToConsoleImpl(InspectorAgent*, const String& title, unsigned lineNumber, const String& sourceURL);
+    static void addProfileImpl(InspectorAgent*, RefPtr<ScriptProfile>, ScriptCallStack*);
+    static bool profilerEnabledImpl(InspectorAgent*);
+    static String getCurrentUserInitiatedProfileNameImpl(InspectorAgent*, bool incrementProfileNumber);
 #endif
 
 #if ENABLE(DATABASE)
-    static void didOpenDatabaseImpl(InspectorController*, Database*, const String& domain, const String& name, const String& version);
+    static void didOpenDatabaseImpl(InspectorAgent*, Database*, const String& domain, const String& name, const String& version);
 #endif
 
 #if ENABLE(DOM_STORAGE)
-    static void didUseDOMStorageImpl(InspectorController*, StorageArea*, bool isLocalStorage, Frame*);
+    static void didUseDOMStorageImpl(InspectorAgent*, StorageArea*, bool isLocalStorage, Frame*);
 #endif
 
 #if ENABLE(WORKERS)
-    static void didCreateWorkerImpl(InspectorController*, intptr_t id, const String& url, bool isSharedWorker);
-    static void didDestroyWorkerImpl(InspectorController*, intptr_t id);
+    static void didCreateWorkerImpl(InspectorAgent*, intptr_t id, const String& url, bool isSharedWorker);
+    static void didDestroyWorkerImpl(InspectorAgent*, intptr_t id);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-    static void didCreateWebSocketImpl(InspectorController*, unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
-    static void willSendWebSocketHandshakeRequestImpl(InspectorController*, unsigned long identifier, const WebSocketHandshakeRequest&);
-    static void didReceiveWebSocketHandshakeResponseImpl(InspectorController*, unsigned long identifier, const WebSocketHandshakeResponse&);
-    static void didCloseWebSocketImpl(InspectorController*, unsigned long identifier);
+    static void didCreateWebSocketImpl(InspectorAgent*, unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
+    static void willSendWebSocketHandshakeRequestImpl(InspectorAgent*, unsigned long identifier, const WebSocketHandshakeRequest&);
+    static void didReceiveWebSocketHandshakeResponseImpl(InspectorAgent*, unsigned long identifier, const WebSocketHandshakeResponse&);
+    static void didCloseWebSocketImpl(InspectorAgent*, unsigned long identifier);
 #endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    static void networkStateChangedImpl(InspectorController*);
-    static void updateApplicationCacheStatusImpl(InspectorController*, Frame*);
+    static void networkStateChangedImpl(InspectorAgent*);
+    static void updateApplicationCacheStatusImpl(InspectorAgent*, Frame*);
 #endif
 
-    static InspectorController* inspectorControllerForFrame(Frame*);
-    static InspectorController* inspectorControllerForContext(ScriptExecutionContext*);
-    static InspectorController* inspectorControllerForPage(Page*);
-    static InspectorController* inspectorControllerWithFrontendForContext(ScriptExecutionContext*);
-    static InspectorController* inspectorControllerWithFrontendForDocument(Document*);
-    static InspectorController* inspectorControllerWithFrontendForFrame(Frame*);
-    static InspectorController* inspectorControllerWithFrontendForPage(Page*);
+    static InspectorAgent* inspectorAgentForFrame(Frame*);
+    static InspectorAgent* inspectorAgentForContext(ScriptExecutionContext*);
+    static InspectorAgent* inspectorAgentForPage(Page*);
+    static InspectorAgent* inspectorAgentWithFrontendForContext(ScriptExecutionContext*);
+    static InspectorAgent* inspectorAgentWithFrontendForDocument(Document*);
+    static InspectorAgent* inspectorAgentWithFrontendForFrame(Frame*);
+    static InspectorAgent* inspectorAgentWithFrontendForPage(Page*);
 
-    static bool hasFrontend(InspectorController*);
-    static void pauseOnNativeEventIfNeeded(InspectorController*, const String& categoryType, const String& eventName, bool synchronous);
-    static void cancelPauseOnNativeEvent(InspectorController*);
-    static InspectorTimelineAgent* retrieveTimelineAgent(InspectorController*);
+    static bool hasFrontend(InspectorAgent*);
+    static void pauseOnNativeEventIfNeeded(InspectorAgent*, const String& categoryType, const String& eventName, bool synchronous);
+    static void cancelPauseOnNativeEvent(InspectorAgent*);
+    static InspectorTimelineAgent* retrieveTimelineAgent(InspectorAgent*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
-    static InspectorResourceAgent* retrieveResourceAgent(InspectorController*);
+    static InspectorResourceAgent* retrieveResourceAgent(InspectorAgent*);
 
+    static HashMap<Page*, InspectorAgent*> s_inspectorAgents;
     static int s_frontendCounter;
 #endif
 };
@@ -301,41 +305,41 @@ private:
 inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didClearWindowObjectInWorldImpl(inspectorController, frame, world);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(frame))
+        didClearWindowObjectInWorldImpl(inspectorAgent, frame, world);
 #endif
 }
 
 inline void InspectorInstrumentation::inspectedPageDestroyed(Page* page)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        inspectedPageDestroyedImpl(inspectorController);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        inspectedPageDestroyedImpl(inspectorAgent);
 #endif
 }
 
 inline void InspectorInstrumentation::willInsertDOMNode(Document* document, Node* node, Node* parent)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        willInsertDOMNodeImpl(inspectorController, node, parent);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        willInsertDOMNodeImpl(inspectorAgent, node, parent);
 #endif
 }
 
 inline void InspectorInstrumentation::didInsertDOMNode(Document* document, Node* node)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        didInsertDOMNodeImpl(inspectorController, node);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        didInsertDOMNodeImpl(inspectorAgent, node);
 #endif
 }
 
 inline void InspectorInstrumentation::willRemoveDOMNode(Document* document, Node* node)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document)) {
-        willRemoveDOMNodeImpl(inspectorController, node);
-        didRemoveDOMNodeImpl(inspectorController, node);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document)) {
+        willRemoveDOMNodeImpl(inspectorAgent, node);
+        didRemoveDOMNodeImpl(inspectorAgent, node);
     }
 #endif
 }
@@ -343,32 +347,32 @@ inline void InspectorInstrumentation::willRemoveDOMNode(Document* document, Node
 inline void InspectorInstrumentation::willModifyDOMAttr(Document* document, Element* element)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        willModifyDOMAttrImpl(inspectorController, element);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        willModifyDOMAttrImpl(inspectorAgent, element);
 #endif
 }
 
 inline void InspectorInstrumentation::didModifyDOMAttr(Document* document, Element* element)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        didModifyDOMAttrImpl(inspectorController, element);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        didModifyDOMAttrImpl(inspectorAgent, element);
 #endif
 }
 
 inline void InspectorInstrumentation::mouseDidMoveOverElement(Page* page, const HitTestResult& result, unsigned modifierFlags)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForPage(page))
-        mouseDidMoveOverElementImpl(inspectorController, result, modifierFlags);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForPage(page))
+        mouseDidMoveOverElementImpl(inspectorAgent, result, modifierFlags);
 #endif
 }
 
 inline bool InspectorInstrumentation::handleMousePress(Page* page)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForPage(page))
-        return handleMousePressImpl(inspectorController);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForPage(page))
+        return handleMousePressImpl(inspectorAgent);
 #endif
     return false;
 }
@@ -376,40 +380,40 @@ inline bool InspectorInstrumentation::handleMousePress(Page* page)
 inline void InspectorInstrumentation::characterDataModified(Document* document, CharacterData* characterData)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        characterDataModifiedImpl(inspectorController, characterData);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        characterDataModifiedImpl(inspectorAgent, characterData);
 #endif
 }
 
 inline void InspectorInstrumentation::willSendXMLHttpRequest(ScriptExecutionContext* context, const String& url)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        willSendXMLHttpRequestImpl(inspectorController, url);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        willSendXMLHttpRequestImpl(inspectorAgent, url);
 #endif
 }
 
 inline void InspectorInstrumentation::didScheduleResourceRequest(Document* document, const String& url)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        didScheduleResourceRequestImpl(inspectorController, url);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        didScheduleResourceRequestImpl(inspectorAgent, url);
 #endif
 }
 
 inline void InspectorInstrumentation::didInstallTimer(ScriptExecutionContext* context, int timerId, int timeout, bool singleShot)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        didInstallTimerImpl(inspectorController, timerId, timeout, singleShot);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didInstallTimerImpl(inspectorAgent, timerId, timeout, singleShot);
 #endif
 }
 
 inline void InspectorInstrumentation::didRemoveTimer(ScriptExecutionContext* context, int timerId)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        didRemoveTimerImpl(inspectorController, timerId);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didRemoveTimerImpl(inspectorAgent, timerId);
 #endif
 }
 
@@ -417,8 +421,8 @@ inline void InspectorInstrumentation::didRemoveTimer(ScriptExecutionContext* con
 inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction(Frame* frame, const String& scriptName, int scriptLine)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        return willCallFunctionImpl(inspectorController, scriptName, scriptLine);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        return willCallFunctionImpl(inspectorAgent, scriptName, scriptLine);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -434,8 +438,8 @@ inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumenta
 inline InspectorInstrumentationCookie InspectorInstrumentation::willChangeXHRReadyState(ScriptExecutionContext* context, XMLHttpRequest* request)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        return willChangeXHRReadyStateImpl(inspectorController, request);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        return willChangeXHRReadyStateImpl(inspectorAgent, request);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -451,8 +455,8 @@ inline void InspectorInstrumentation::didChangeXHRReadyState(const InspectorInst
 inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEvent(Document* document, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        return willDispatchEventImpl(inspectorController, event, window, node, ancestors);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        return willDispatchEventImpl(inspectorAgent, event, window, node, ancestors);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -468,8 +472,8 @@ inline void InspectorInstrumentation::didDispatchEvent(const InspectorInstrument
 inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWindow(Frame* frame, const Event& event, DOMWindow* window)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        return willDispatchEventOnWindowImpl(inspectorController, event, window);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        return willDispatchEventOnWindowImpl(inspectorAgent, event, window);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -485,8 +489,8 @@ inline void InspectorInstrumentation::didDispatchEventOnWindow(const InspectorIn
 inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScript(Frame* frame, const String& url, int lineNumber)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        return willEvaluateScriptImpl(inspectorController, url, lineNumber);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        return willEvaluateScriptImpl(inspectorAgent, url, lineNumber);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -502,8 +506,8 @@ inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumen
 inline InspectorInstrumentationCookie InspectorInstrumentation::willFireTimer(ScriptExecutionContext* context, int timerId)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        return willFireTimerImpl(inspectorController, timerId);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        return willFireTimerImpl(inspectorAgent, timerId);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -519,8 +523,8 @@ inline void InspectorInstrumentation::didFireTimer(const InspectorInstrumentatio
 inline InspectorInstrumentationCookie InspectorInstrumentation::willLayout(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        return willLayoutImpl(inspectorController);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        return willLayoutImpl(inspectorAgent);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -536,8 +540,8 @@ inline void InspectorInstrumentation::didLayout(const InspectorInstrumentationCo
 inline InspectorInstrumentationCookie InspectorInstrumentation::willLoadXHR(ScriptExecutionContext* context, XMLHttpRequest* request)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        return willLoadXHRImpl(inspectorController, request);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        return willLoadXHRImpl(inspectorAgent, request);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -553,8 +557,8 @@ inline void InspectorInstrumentation::didLoadXHR(const InspectorInstrumentationC
 inline InspectorInstrumentationCookie InspectorInstrumentation::willPaint(Frame* frame, const IntRect& rect)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        return willPaintImpl(inspectorController, rect);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        return willPaintImpl(inspectorAgent, rect);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -570,8 +574,8 @@ inline void InspectorInstrumentation::didPaint(const InspectorInstrumentationCoo
 inline InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateStyle(Document* document)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        return willRecalculateStyleImpl(inspectorController);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        return willRecalculateStyleImpl(inspectorAgent);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -590,7 +594,7 @@ inline void InspectorInstrumentation::identifierForInitialRequest(Frame* frame, 
     // This notification should be procecessed even in cases there is no frontend.
     if (!frame)
         return;
-    if (InspectorController* ic = inspectorControllerForPage(frame->page()))
+    if (InspectorAgent* ic = inspectorAgentForPage(frame->page()))
         identifierForInitialRequestImpl(ic, identifier, loader, request);
 #endif
 }
@@ -598,7 +602,7 @@ inline void InspectorInstrumentation::identifierForInitialRequest(Frame* frame, 
 inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* ic = inspectorControllerWithFrontendForFrame(frame))
+    if (InspectorAgent* ic = inspectorAgentWithFrontendForFrame(frame))
         willSendRequestImpl(ic, identifier, request, redirectResponse);
 #endif
 }
@@ -606,22 +610,22 @@ inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned lon
 inline void InspectorInstrumentation::markResourceAsCached(Page* page, unsigned long identifier)
 {
 #if ENABLE(INSPECTOR)
-    markResourceAsCachedImpl(inspectorControllerForPage(page), identifier); 
+    markResourceAsCachedImpl(inspectorAgentForPage(page), identifier); 
 #endif
 }
 
 inline void InspectorInstrumentation::didLoadResourceFromMemoryCache(Page* page, DocumentLoader* loader, const CachedResource* resource)
 {
 #if ENABLE(INSPECTOR)
-    didLoadResourceFromMemoryCacheImpl(inspectorControllerForPage(page), loader, resource);
+    didLoadResourceFromMemoryCacheImpl(inspectorAgentForPage(page), loader, resource);
 #endif
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceData(Frame* frame, unsigned long identifier)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        return willReceiveResourceDataImpl(inspectorController, identifier);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        return willReceiveResourceDataImpl(inspectorAgent, identifier);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -637,8 +641,8 @@ inline void InspectorInstrumentation::didReceiveResourceData(const InspectorInst
 inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResourceResponse(Frame* frame, unsigned long identifier, const ResourceResponse& response)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        return willReceiveResourceResponseImpl(inspectorController, identifier, response);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        return willReceiveResourceResponseImpl(inspectorAgent, identifier, response);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -654,80 +658,80 @@ inline void InspectorInstrumentation::didReceiveResourceResponse(const Inspector
 inline void InspectorInstrumentation::didReceiveContentLength(Frame* frame, unsigned long identifier, int lengthReceived)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        didReceiveContentLengthImpl(inspectorController, identifier, lengthReceived);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        didReceiveContentLengthImpl(inspectorAgent, identifier, lengthReceived);
 #endif
 }
 
 inline void InspectorInstrumentation::didFinishLoading(Frame* frame, unsigned long identifier, double finishTime)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        didFinishLoadingImpl(inspectorController, identifier, finishTime);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        didFinishLoadingImpl(inspectorAgent, identifier, finishTime);
 #endif
 }
 
 inline void InspectorInstrumentation::didFailLoading(Frame* frame, unsigned long identifier, const ResourceError& error)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        didFailLoadingImpl(inspectorController, identifier, error);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        didFailLoadingImpl(inspectorAgent, identifier, error);
 #endif
 }
 
 inline void InspectorInstrumentation::resourceRetrievedByXMLHttpRequest(ScriptExecutionContext* context, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForContext(context))
-        resourceRetrievedByXMLHttpRequestImpl(inspectorController, identifier, sourceString, url, sendURL, sendLineNumber);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForContext(context))
+        resourceRetrievedByXMLHttpRequestImpl(inspectorAgent, identifier, sourceString, url, sendURL, sendLineNumber);
 #endif
 }
 
 inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext* context, unsigned long identifier, const String& sourceString)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForContext(context))
-        scriptImportedImpl(inspectorController, identifier, sourceString);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForContext(context))
+        scriptImportedImpl(inspectorAgent, identifier, sourceString);
 #endif
 }
 
 inline void InspectorInstrumentation::mainResourceFiredLoadEvent(Frame* frame, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        mainResourceFiredLoadEventImpl(inspectorController, frame, url);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        mainResourceFiredLoadEventImpl(inspectorAgent, frame, url);
 #endif
 }
 
 inline void InspectorInstrumentation::mainResourceFiredDOMContentEvent(Frame* frame, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        mainResourceFiredDOMContentEventImpl(inspectorController, frame, url);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        mainResourceFiredDOMContentEventImpl(inspectorAgent, frame, url);
 #endif
 }
 
 inline void InspectorInstrumentation::frameDetachedFromParent(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        frameDetachedFromParentImpl(inspectorController, frame);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        frameDetachedFromParentImpl(inspectorAgent, frame);
 #endif
 }
 
 inline void InspectorInstrumentation::didCommitLoad(Frame* frame, DocumentLoader* loader)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didCommitLoadImpl(inspectorController, loader);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForFrame(frame))
+        didCommitLoadImpl(inspectorAgent, loader);
 #endif
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTML(Document* document, unsigned int length, unsigned int startLine)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForDocument(document))
-        return willWriteHTMLImpl(inspectorController, length, startLine);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForDocument(document))
+        return willWriteHTMLImpl(inspectorAgent, length, startLine);
 #endif
     return InspectorInstrumentationCookie();
 }
@@ -744,8 +748,8 @@ inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentatio
 inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, Database* database, const String& domain, const String& name, const String& version)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForContext(context))
-        didOpenDatabaseImpl(inspectorController, database, domain, name, version);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForContext(context))
+        didOpenDatabaseImpl(inspectorAgent, database, domain, name, version);
 #endif
 }
 #endif
@@ -754,8 +758,8 @@ inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* co
 inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        didUseDOMStorageImpl(inspectorController, storageArea, isLocalStorage, frame);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        didUseDOMStorageImpl(inspectorAgent, storageArea, isLocalStorage, frame);
 #endif
 }
 #endif
@@ -764,16 +768,16 @@ inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* 
 inline void InspectorInstrumentation::didCreateWorker(ScriptExecutionContext* context, intptr_t id, const String& url, bool isSharedWorker)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        didCreateWorkerImpl(inspectorController, id, url, isSharedWorker);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didCreateWorkerImpl(inspectorAgent, id, url, isSharedWorker);
 #endif
 }
 
 inline void InspectorInstrumentation::didDestroyWorker(ScriptExecutionContext* context, intptr_t id)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        didDestroyWorkerImpl(inspectorController, id);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didDestroyWorkerImpl(inspectorAgent, id);
 #endif
 }
 #endif
@@ -783,32 +787,32 @@ inline void InspectorInstrumentation::didDestroyWorker(ScriptExecutionContext* c
 inline void InspectorInstrumentation::didCreateWebSocket(ScriptExecutionContext* context, unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        didCreateWebSocketImpl(inspectorController, identifier, requestURL, documentURL);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didCreateWebSocketImpl(inspectorAgent, identifier, requestURL, documentURL);
 #endif
 }
 
 inline void InspectorInstrumentation::willSendWebSocketHandshakeRequest(ScriptExecutionContext* context, unsigned long identifier, const WebSocketHandshakeRequest& request)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        willSendWebSocketHandshakeRequestImpl(inspectorController, identifier, request);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        willSendWebSocketHandshakeRequestImpl(inspectorAgent, identifier, request);
 #endif
 }
 
 inline void InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(ScriptExecutionContext* context, unsigned long identifier, const WebSocketHandshakeResponse& response)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        didReceiveWebSocketHandshakeResponseImpl(inspectorController, identifier, response);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didReceiveWebSocketHandshakeResponseImpl(inspectorAgent, identifier, response);
 #endif
 }
 
 inline void InspectorInstrumentation::didCloseWebSocket(ScriptExecutionContext* context, unsigned long identifier)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForContext(context))
-        didCloseWebSocketImpl(inspectorController, identifier);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForContext(context))
+        didCloseWebSocketImpl(inspectorAgent, identifier);
 #endif
 }
 #endif
@@ -816,8 +820,8 @@ inline void InspectorInstrumentation::didCloseWebSocket(ScriptExecutionContext* 
 inline void InspectorInstrumentation::networkStateChanged(Page* page)
 {
 #if ENABLE(INSPECTOR) && ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForPage(page))
-        networkStateChangedImpl(inspectorController);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForPage(page))
+        networkStateChangedImpl(inspectorAgent);
 #endif
 }
 
@@ -825,8 +829,8 @@ inline void InspectorInstrumentation::networkStateChanged(Page* page)
 inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForFrame(frame))
-        updateApplicationCacheStatusImpl(inspectorController, frame);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
+        updateApplicationCacheStatusImpl(inspectorAgent, frame);
 #endif
 }
 #endif
@@ -834,48 +838,48 @@ inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
 inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptArguments* arguments, ScriptCallStack* callStack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        addMessageToConsoleImpl(inspectorController, source, type, level, message, arguments, callStack);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        addMessageToConsoleImpl(inspectorAgent, source, type, level, message, arguments, callStack);
 #endif
 }
 
 inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        addMessageToConsoleImpl(inspectorController, source, type, level, message, lineNumber, sourceID);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        addMessageToConsoleImpl(inspectorAgent, source, type, level, message, lineNumber, sourceID);
 #endif
 }
 
 inline void InspectorInstrumentation::consoleCount(Page* page, ScriptArguments* arguments, ScriptCallStack* stack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        consoleCountImpl(inspectorController, arguments, stack);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        consoleCountImpl(inspectorAgent, arguments, stack);
 #endif
 }
 
 inline void InspectorInstrumentation::startConsoleTiming(Page* page, const String& title)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        startConsoleTimingImpl(inspectorController, title);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        startConsoleTimingImpl(inspectorAgent, title);
 #endif
 }
 
 inline void InspectorInstrumentation::stopConsoleTiming(Page* page, const String& title, ScriptCallStack* stack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        stopConsoleTimingImpl(inspectorController, title, stack);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        stopConsoleTimingImpl(inspectorAgent, title, stack);
 #endif
 }
 
 inline void InspectorInstrumentation::consoleMarkTimeline(Page* page, ScriptArguments* arguments)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerWithFrontendForPage(page))
-        consoleMarkTimelineImpl(inspectorController, arguments);
+    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForPage(page))
+        consoleMarkTimelineImpl(inspectorAgent, arguments);
 #endif
 }
 
@@ -883,24 +887,24 @@ inline void InspectorInstrumentation::consoleMarkTimeline(Page* page, ScriptArgu
 inline void InspectorInstrumentation::addStartProfilingMessageToConsole(Page* page, const String& title, unsigned lineNumber, const String& sourceURL)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        addStartProfilingMessageToConsoleImpl(inspectorController, title, lineNumber, sourceURL);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        addStartProfilingMessageToConsoleImpl(inspectorAgent, title, lineNumber, sourceURL);
 #endif
 }
 
 inline void InspectorInstrumentation::addProfile(Page* page, RefPtr<ScriptProfile> profile, ScriptCallStack* callStack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        addProfileImpl(inspectorController, profile, callStack);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        addProfileImpl(inspectorAgent, profile, callStack);
 #endif
 }
 
 inline bool InspectorInstrumentation::profilerEnabled(Page* page)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        return profilerEnabledImpl(inspectorController);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        return profilerEnabledImpl(inspectorAgent);
 #endif
     return false;
 }
@@ -908,62 +912,62 @@ inline bool InspectorInstrumentation::profilerEnabled(Page* page)
 inline String InspectorInstrumentation::getCurrentUserInitiatedProfileName(Page* page, bool incrementProfileNumber)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForPage(page))
-        return InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(inspectorController, incrementProfileNumber);
+    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
+        return InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(inspectorAgent, incrementProfileNumber);
 #endif
     return "";
 }
 #endif
 
 #if ENABLE(INSPECTOR)
-inline InspectorController* InspectorInstrumentation::inspectorControllerForContext(ScriptExecutionContext* context)
+inline InspectorAgent* InspectorInstrumentation::inspectorAgentForContext(ScriptExecutionContext* context)
 {
     if (context && context->isDocument())
-        return inspectorControllerForPage(static_cast<Document*>(context)->page());
+        return inspectorAgentForPage(static_cast<Document*>(context)->page());
     return 0;
 }
 
-inline InspectorController* InspectorInstrumentation::inspectorControllerForFrame(Frame* frame)
+inline InspectorAgent* InspectorInstrumentation::inspectorAgentForFrame(Frame* frame)
 {
     if (frame)
-        return inspectorControllerForPage(frame->page());
+        return inspectorAgentForPage(frame->page());
     return 0;
 }
 
-inline InspectorController* InspectorInstrumentation::inspectorControllerForPage(Page* page)
+inline InspectorAgent* InspectorInstrumentation::inspectorAgentForPage(Page* page)
 {
     if (!page)
         return 0;
-    return page->inspectorController();
+    return s_inspectorAgents.get(page);
 }
 
-inline InspectorController* InspectorInstrumentation::inspectorControllerWithFrontendForContext(ScriptExecutionContext* context)
+inline InspectorAgent* InspectorInstrumentation::inspectorAgentWithFrontendForContext(ScriptExecutionContext* context)
 {
     if (hasFrontends() && context && context->isDocument())
-        return inspectorControllerWithFrontendForPage(static_cast<Document*>(context)->page());
+        return inspectorAgentWithFrontendForPage(static_cast<Document*>(context)->page());
     return 0;
 }
 
-inline InspectorController* InspectorInstrumentation::inspectorControllerWithFrontendForDocument(Document* document)
+inline InspectorAgent* InspectorInstrumentation::inspectorAgentWithFrontendForDocument(Document* document)
 {
     if (hasFrontends() && document)
-        return inspectorControllerWithFrontendForPage(document->page());
+        return inspectorAgentWithFrontendForPage(document->page());
     return 0;
 }
 
-inline InspectorController* InspectorInstrumentation::inspectorControllerWithFrontendForFrame(Frame* frame)
+inline InspectorAgent* InspectorInstrumentation::inspectorAgentWithFrontendForFrame(Frame* frame)
 {
     if (hasFrontends() && frame)
-        return inspectorControllerWithFrontendForPage(frame->page());
+        return inspectorAgentWithFrontendForPage(frame->page());
     return 0;
 }
 
-inline InspectorController* InspectorInstrumentation::inspectorControllerWithFrontendForPage(Page* page)
+inline InspectorAgent* InspectorInstrumentation::inspectorAgentWithFrontendForPage(Page* page)
 {
     if (page) {
-        if (InspectorController* inspectorController = inspectorControllerForPage(page)) {
-            if (hasFrontend(inspectorController))
-                return inspectorController;
+        if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page)) {
+            if (hasFrontend(inspectorAgent))
+                return inspectorAgent;
         }
     }
     return 0;

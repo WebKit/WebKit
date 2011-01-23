@@ -1,3 +1,229 @@
+2011-01-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: next step in splitting InspectorController.
+
+        Splitting InspectorController is a bit tricky process.
+
+        As a first step I'll do the next things:
+        1) rename existing InspectorController to InspectorAgent;
+        2) s/nspectorController/nspectorAgent/g everywhere in WebCore/inspector but InspectorInstrumentation;
+        3) create a fake InspectorController derived from the InspectorAgent for the rest of WebCore and WebKit;
+
+        The second step is a migration of a small set of functions described in bug 52510 from InspectorAgent to InspectorController.
+
+        As far as the second step will have significant changes in the functions' implementation I'll do it as a separate patch.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52955
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::nodeForId):
+        (WebCore::JSInjectedScriptHost::selectDOMStorage):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::nodeForIdCallback):
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InjectedScriptHost.cpp:
+        (WebCore::InjectedScriptHost::InjectedScriptHost):
+        (WebCore::InjectedScriptHost::clearConsoleMessages):
+        (WebCore::InjectedScriptHost::databaseForId):
+        (WebCore::InjectedScriptHost::selectDatabase):
+        (WebCore::InjectedScriptHost::selectDOMStorage):
+        (WebCore::InjectedScriptHost::injectedScriptForMainFrame):
+        (WebCore::InjectedScriptHost::inspectorDOMAgent):
+        (WebCore::InjectedScriptHost::frontend):
+        (WebCore::InjectedScriptHost::didCreateWorker):
+        (WebCore::InjectedScriptHost::didDestroyWorker):
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::create):
+        (WebCore::InjectedScriptHost::inspectorAgent):
+        (WebCore::InjectedScriptHost::disconnectController):
+        * inspector/InspectorAgent.cpp: Copied from Source/WebCore/inspector/InspectorController.cpp.
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::~InspectorAgent):
+        (WebCore::InspectorAgent::inspectedPageDestroyed):
+        (WebCore::InspectorAgent::enabled):
+        (WebCore::InspectorAgent::inspectorStartsAttached):
+        (WebCore::InspectorAgent::setInspectorStartsAttached):
+        (WebCore::InspectorAgent::setInspectorAttachedHeight):
+        (WebCore::InspectorAgent::inspectorAttachedHeight):
+        (WebCore::InspectorAgent::searchingForNodeInPage):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::inspect):
+        (WebCore::InspectorAgent::focusNode):
+        (WebCore::InspectorAgent::highlight):
+        (WebCore::InspectorAgent::highlightDOMNode):
+        (WebCore::InspectorAgent::highlightFrame):
+        (WebCore::InspectorAgent::hideHighlight):
+        (WebCore::InspectorAgent::mouseDidMoveOverElement):
+        (WebCore::InspectorAgent::handleMousePress):
+        (WebCore::InspectorAgent::setInspectorFrontendClient):
+        (WebCore::InspectorAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorAgent::setSearchingForNode):
+        (WebCore::InspectorAgent::connectFrontend):
+        (WebCore::InspectorAgent::show):
+        (WebCore::InspectorAgent::showPanel):
+        (WebCore::InspectorAgent::close):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::resourceAgent):
+        (WebCore::InspectorAgent::releaseFrontendLifetimeAgents):
+        (WebCore::InspectorAgent::populateScriptObjects):
+        (WebCore::InspectorAgent::pushDataCollectedOffline):
+        (WebCore::InspectorAgent::restoreDebugger):
+        (WebCore::InspectorAgent::restoreProfiler):
+        (WebCore::InspectorAgent::unbindAllResources):
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::mainResourceFiredDOMContentEvent):
+        (WebCore::InspectorAgent::mainResourceFiredLoadEvent):
+        (WebCore::InspectorAgent::isMainResourceLoader):
+        (WebCore::InspectorAgent::willSendRequest):
+        (WebCore::InspectorAgent::ensureSettingsLoaded):
+        (WebCore::InspectorAgent::startTimelineProfiler):
+        (WebCore::InspectorAgent::stopTimelineProfiler):
+        (WebCore::PostWorkerNotificationToFrontendTask::create):
+        (WebCore::PostWorkerNotificationToFrontendTask::PostWorkerNotificationToFrontendTask):
+        (WebCore::PostWorkerNotificationToFrontendTask::performTask):
+        (WebCore::InspectorAgent::postWorkerNotificationToFrontend):
+        (WebCore::InspectorAgent::didCreateWorker):
+        (WebCore::InspectorAgent::didDestroyWorker):
+        (WebCore::InspectorAgent::didOpenDatabase):
+        (WebCore::InspectorAgent::getCookies):
+        (WebCore::InspectorAgent::buildArrayForCookies):
+        (WebCore::InspectorAgent::buildObjectForCookie):
+        (WebCore::InspectorAgent::deleteCookie):
+        (WebCore::InspectorAgent::didUseDOMStorage):
+        (WebCore::InspectorAgent::didCreateWebSocket):
+        (WebCore::InspectorAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorAgent::didCloseWebSocket):
+        (WebCore::InspectorAgent::isRecordingUserInitiatedProfile):
+        (WebCore::InspectorAgent::startUserInitiatedProfiling):
+        (WebCore::InspectorAgent::stopUserInitiatedProfiling):
+        (WebCore::InspectorAgent::profilerEnabled):
+        (WebCore::InspectorAgent::enableProfiler):
+        (WebCore::InspectorAgent::disableProfiler):
+        (WebCore::InspectorAgent::showAndEnableDebugger):
+        (WebCore::InspectorAgent::enableDebugger):
+        (WebCore::InspectorAgent::disableDebugger):
+        (WebCore::InspectorAgent::resume):
+        (WebCore::InspectorAgent::setAllBrowserBreakpoints):
+        (WebCore::InspectorAgent::evaluateForTestInFrontend):
+        (WebCore::InspectorAgent::didEvaluateForTestInFrontend):
+        (WebCore::quadToPath):
+        (WebCore::drawOutlinedQuad):
+        (WebCore::drawOutlinedQuadWithClip):
+        (WebCore::drawHighlightForBox):
+        (WebCore::drawHighlightForLineBoxesOrSVGRenderer):
+        (WebCore::convertFromFrameToMainFrame):
+        (WebCore::frameToMainFrameOffset):
+        (WebCore::InspectorAgent::drawNodeHighlight):
+        (WebCore::InspectorAgent::drawElementTitle):
+        (WebCore::InspectorAgent::openInInspectedWindow):
+        (WebCore::InspectorAgent::addScriptToEvaluateOnLoad):
+        (WebCore::InspectorAgent::removeAllScriptsToEvaluateOnLoad):
+        (WebCore::InspectorAgent::setInspectorExtensionAPI):
+        (WebCore::InspectorAgent::inspectedURL):
+        (WebCore::InspectorAgent::reloadPage):
+        (WebCore::InspectorAgent::setExtraHeaders):
+        * inspector/InspectorAgent.h: Copied from Source/WebCore/inspector/InspectorController.h.
+        (WebCore::InspectorAgent::inspectorBackendDispatcher):
+        (WebCore::InspectorAgent::inspectorClient):
+        (WebCore::InspectorAgent::injectedScriptHost):
+        (WebCore::InspectorAgent::inspectedPage):
+        (WebCore::InspectorAgent::hideDOMNodeHighlight):
+        (WebCore::InspectorAgent::hideFrameHighlight):
+        (WebCore::InspectorAgent::frontend):
+        (WebCore::InspectorAgent::inspectorController):
+        (WebCore::InspectorAgent::inspectorAgent):
+        (WebCore::InspectorAgent::consoleAgent):
+        (WebCore::InspectorAgent::cssAgent):
+        (WebCore::InspectorAgent::domAgent):
+        (WebCore::InspectorAgent::injectedScriptAgent):
+        (WebCore::InspectorAgent::runtimeAgent):
+        (WebCore::InspectorAgent::timelineAgent):
+        (WebCore::InspectorAgent::databaseAgent):
+        (WebCore::InspectorAgent::domStorageAgent):
+        (WebCore::InspectorAgent::fileSystemAgent):
+        (WebCore::InspectorAgent::browserDebuggerAgent):
+        (WebCore::InspectorAgent::debuggerAgent):
+        (WebCore::InspectorAgent::profilerAgent):
+        (WebCore::InspectorAgent::applicationCacheAgent):
+        (WebCore::InspectorAgent::hasInspectorFrontendClient):
+        (WebCore::InspectorAgent::hasFrontend):
+        (WebCore::InspectorAgent::startProfiling):
+        (WebCore::InspectorAgent::stopProfiling):
+        (WebCore::InspectorAgent::debuggerEnabled):
+        (WebCore::InspectorAgent::state):
+        (WebCore::InspectorAgent::settings):
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::InspectorApplicationCacheAgent):
+        (WebCore::InspectorApplicationCacheAgent::getApplicationCaches):
+        * inspector/InspectorApplicationCacheAgent.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::InspectorBrowserDebuggerAgent):
+        (WebCore::InspectorBrowserDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorBrowserDebuggerAgent::restoreStickyBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::removeDOMBreakpoint):
+        (WebCore::InspectorBrowserDebuggerAgent::willInsertDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willRemoveDOMNode):
+        (WebCore::InspectorBrowserDebuggerAgent::willModifyDOMAttr):
+        (WebCore::InspectorBrowserDebuggerAgent::descriptionForDOMEvent):
+        (WebCore::InspectorBrowserDebuggerAgent::pauseOnNativeEventIfNeeded):
+        (WebCore::InspectorBrowserDebuggerAgent::willSendXMLHttpRequest):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        (WebCore::InspectorBrowserDebuggerAgent::create):
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::~InspectorConsoleAgent):
+        (WebCore::InspectorConsoleAgent::clearConsoleMessages):
+        (WebCore::InspectorConsoleAgent::addMessageToConsole):
+        (WebCore::InspectorConsoleAgent::resourceRetrievedByXMLHttpRequest):
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+        (WebCore::InspectorConsoleAgent::setMonitoringXHREnabled):
+        (WebCore::InspectorConsoleAgent::setConsoleMessagesEnabled):
+        (WebCore::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::create):
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::~InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::getCompletionsOnCallFrame):
+        (WebCore::InspectorDebuggerAgent::currentCallFrames):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore::InspectorFileSystemAgentCallbacks::didOpenFileSystem):
+        (WebCore::InspectorFileSystemAgent::InspectorFileSystemAgent):
+        (WebCore::InspectorFileSystemAgent::stop):
+        (WebCore::InspectorFileSystemAgent::getFileSystemPathAsync):
+        (WebCore::InspectorFileSystemAgent::didGetFileSystemPath):
+        (WebCore::InspectorFileSystemAgent::didGetFileSystemError):
+        * inspector/InspectorFileSystemAgent.h:
+        (WebCore::InspectorFileSystemAgent::create):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::setExtensionAPI):
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::create):
+        (WebCore::InspectorProfilerAgent::InspectorProfilerAgent):
+        (WebCore::InspectorProfilerAgent::addProfileFinishedMessageToConsole):
+        (WebCore::InspectorProfilerAgent::addStartProfilingMessageToConsole):
+        (WebCore::InspectorProfilerAgent::startUserInitiatedProfiling):
+        (WebCore::InspectorProfilerAgent::stopUserInitiatedProfiling):
+        * inspector/InspectorProfilerAgent.h:
+
 2011-01-22  Chris Rogers  <crogers@google.com>
 
         Rubber-stamped by Anders Carlsson.

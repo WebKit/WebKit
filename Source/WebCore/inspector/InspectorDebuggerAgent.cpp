@@ -40,18 +40,18 @@
 
 namespace WebCore {
 
-PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorController* inspectorController, InspectorFrontend* frontend)
+PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorAgent* inspectorAgent, InspectorFrontend* frontend)
 {
-    OwnPtr<InspectorDebuggerAgent> agent = adoptPtr(new InspectorDebuggerAgent(inspectorController, frontend));
+    OwnPtr<InspectorDebuggerAgent> agent = adoptPtr(new InspectorDebuggerAgent(inspectorAgent, frontend));
     ScriptDebugServer::shared().clearBreakpoints();
     // FIXME(WK44513): breakpoints activated flag should be synchronized between all front-ends
     ScriptDebugServer::shared().setBreakpointsActivated(true);
-    ScriptDebugServer::shared().addListener(agent.get(), inspectorController->inspectedPage());
+    ScriptDebugServer::shared().addListener(agent.get(), inspectorAgent->inspectedPage());
     return agent.release();
 }
 
-InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorController* inspectorController, InspectorFrontend* frontend)
-    : m_inspectorController(inspectorController)
+InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorAgent* inspectorAgent, InspectorFrontend* frontend)
+    : m_inspectorAgent(inspectorAgent)
     , m_frontend(frontend)
     , m_pausedScriptState(0)
     , m_javaScriptPauseScheduled(false)
@@ -60,7 +60,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorController* inspectorCon
 
 InspectorDebuggerAgent::~InspectorDebuggerAgent()
 {
-    ScriptDebugServer::shared().removeListener(this, m_inspectorController->inspectedPage());
+    ScriptDebugServer::shared().removeListener(this, m_inspectorAgent->inspectedPage());
     m_pausedScriptState = 0;
 }
 
@@ -175,14 +175,14 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(long pauseState, long* ne
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result)
 {
-    InjectedScript injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
+    InjectedScript injectedScript = m_inspectorAgent->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
     if (!injectedScript.hasNoValue())
         injectedScript.evaluateOnCallFrame(callFrameId, expression, objectGroup, result);
 }
 
 void InspectorDebuggerAgent::getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result)
 {
-    InjectedScript injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
+    InjectedScript injectedScript = m_inspectorAgent->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
     if (!injectedScript.hasNoValue())
         injectedScript.getCompletionsOnCallFrame(callFrameId, expression, includeInspectorCommandLineAPI, result);
 }
@@ -198,7 +198,7 @@ PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()
 {
     if (!m_pausedScriptState)
         return InspectorValue::null();
-    InjectedScript injectedScript = m_inspectorController->injectedScriptHost()->injectedScriptFor(m_pausedScriptState);
+    InjectedScript injectedScript = m_inspectorAgent->injectedScriptHost()->injectedScriptFor(m_pausedScriptState);
     if (injectedScript.hasNoValue()) {
         ASSERT_NOT_REACHED();
         return InspectorValue::null();

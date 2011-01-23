@@ -36,7 +36,6 @@
 #include "Frame.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorController.h"
 #include "InspectorValues.h"
 #include "Node.h"
 #include "Page.h"
@@ -147,8 +146,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::nodeForIdCallback(const v8::Argument
     if (!node)
         return v8::Undefined();
 
-    InspectorController* ic = host->inspectorController();
-    if (!ic)
+    if (!host->inspectorAgent())
         return v8::Undefined();
 
     return toV8(node);

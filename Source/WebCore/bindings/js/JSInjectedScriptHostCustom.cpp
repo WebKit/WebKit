@@ -46,7 +46,7 @@
 #include "FrameLoader.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorController.h"
+#include "InspectorAgent.h"
 #include "InspectorValues.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
@@ -128,8 +128,7 @@ JSValue JSInjectedScriptHost::nodeForId(ExecState* exec)
     if (!node)
         return jsUndefined();
 
-    InspectorController* ic = impl()->inspectorController();
-    if (!ic)
+    if (!impl()->inspectorAgent())
         return jsUndefined();
 
     JSLock lock(SilenceAssertionsOnly);
@@ -177,8 +176,7 @@ JSValue JSInjectedScriptHost::selectDOMStorage(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
         return jsUndefined();
-    InspectorController* ic = impl()->inspectorController();
-    if (!ic)
+    if (!impl()->inspectorAgent())
         return jsUndefined();
 
     Storage* storage = toStorage(exec->argument(0));

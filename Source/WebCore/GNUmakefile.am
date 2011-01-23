@@ -1951,6 +1951,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InjectedScript.h \
 	Source/WebCore/inspector/InjectedScriptHost.cpp \
 	Source/WebCore/inspector/InjectedScriptHost.h \
+	Source/WebCore/inspector/InspectorAgent.cpp \
+	Source/WebCore/inspector/InspectorAgent.h \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.cpp \
 	Source/WebCore/inspector/InspectorApplicationCacheAgent.h \
 	Source/WebCore/inspector/InspectorBrowserDebuggerAgent.cpp \

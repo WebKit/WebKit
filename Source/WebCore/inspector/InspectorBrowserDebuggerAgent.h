@@ -44,7 +44,7 @@
 namespace WebCore {
 
 class Element;
-class InspectorController;
+class InspectorAgent;
 class InspectorObject;
 class KURL;
 class Node;
@@ -52,9 +52,9 @@ class Node;
 class InspectorBrowserDebuggerAgent {
     WTF_MAKE_NONCOPYABLE(InspectorBrowserDebuggerAgent);
 public:
-    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorController* inspectorController)
+    static PassOwnPtr<InspectorBrowserDebuggerAgent> create(InspectorAgent* inspectorAgent)
     {
-        return adoptPtr(new InspectorBrowserDebuggerAgent(inspectorController));
+        return adoptPtr(new InspectorBrowserDebuggerAgent(inspectorAgent));
     }
 
     virtual ~InspectorBrowserDebuggerAgent();
@@ -79,7 +79,7 @@ public:
     void pauseOnNativeEventIfNeeded(const String& categoryType, const String& eventName, bool synchronous);
 
 private:
-    InspectorBrowserDebuggerAgent(InspectorController*);
+    InspectorBrowserDebuggerAgent(InspectorAgent*);
 
     void restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint);
 
@@ -88,7 +88,7 @@ private:
     bool hasBreakpoint(Node*, long type);
     void discardBindings();
 
-    InspectorController* m_inspectorController;
+    InspectorAgent* m_inspectorAgent;
     HashMap<Node*, uint32_t> m_domBreakpoints;
     HashSet<String> m_eventListenerBreakpoints;
     HashSet<String> m_XHRBreakpoints;

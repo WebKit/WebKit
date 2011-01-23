@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Frame;
 class InspectorArray;
-class InspectorController;
+class InspectorAgent;
 class InspectorFrontend;
 class InspectorObject;
 class InspectorValue;
@@ -44,7 +44,7 @@ class ResourceResponse;
 class InspectorApplicationCacheAgent {
     WTF_MAKE_NONCOPYABLE(InspectorApplicationCacheAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorApplicationCacheAgent(InspectorController* inspectorController, InspectorFrontend* frontend);
+    InspectorApplicationCacheAgent(InspectorAgent*, InspectorFrontend*);
     ~InspectorApplicationCacheAgent() { }
 
     // Backend to Frontend
@@ -59,7 +59,7 @@ private:
     PassRefPtr<InspectorArray> buildArrayForApplicationCacheResources(const ApplicationCacheHost::ResourceInfoList&);
     PassRefPtr<InspectorObject> buildObjectForApplicationCacheResource(const ApplicationCacheHost::ResourceInfo&);
 
-    InspectorController* m_inspectorController;
+    InspectorAgent* m_inspectorAgent;
     InspectorFrontend* m_frontend;
 };
 

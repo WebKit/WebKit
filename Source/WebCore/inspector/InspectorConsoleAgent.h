@@ -37,7 +37,7 @@ namespace WebCore {
 #if ENABLE(INSPECTOR)
 
 class ConsoleMessage;
-class InspectorController;
+class InspectorAgent;
 class InspectorFrontend;
 class InspectorState;
 class ResourceError;
@@ -49,7 +49,7 @@ class ScriptProfile;
 class InspectorConsoleAgent {
     WTF_MAKE_NONCOPYABLE(InspectorConsoleAgent);
 public:
-    InspectorConsoleAgent(InspectorController*);
+    InspectorConsoleAgent(InspectorAgent*);
     ~InspectorConsoleAgent();
 
     void setConsoleMessagesEnabled(bool enabled, bool* newState);
@@ -77,7 +77,7 @@ private:
     void setConsoleMessagesEnabled(bool);
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
-    InspectorController* m_inspectorController;
+    InspectorAgent* m_inspectorAgent;
     InspectorFrontend* m_frontend;
     ConsoleMessage* m_previousMessage;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;

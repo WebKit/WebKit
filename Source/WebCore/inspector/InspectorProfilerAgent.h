@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class InspectorArray;
-class InspectorController;
+class InspectorAgent;
 class InspectorFrontend;
 class InspectorObject;
 class ScriptHeapSnapshot;
@@ -50,7 +50,7 @@ class ScriptProfile;
 class InspectorProfilerAgent {
     WTF_MAKE_NONCOPYABLE(InspectorProfilerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<InspectorProfilerAgent> create(InspectorController*);
+    static PassOwnPtr<InspectorProfilerAgent> create(InspectorAgent*);
     virtual ~InspectorProfilerAgent();
 
     void addProfile(PassRefPtr<ScriptProfile> prpProfile, unsigned lineNumber, const String& sourceURL);
@@ -77,11 +77,11 @@ private:
     typedef HashMap<unsigned int, RefPtr<ScriptProfile> > ProfilesMap;
     typedef HashMap<unsigned int, RefPtr<ScriptHeapSnapshot> > HeapSnapshotsMap;
 
-    InspectorProfilerAgent(InspectorController*);
+    InspectorProfilerAgent(InspectorAgent*);
     PassRefPtr<InspectorObject> createProfileHeader(const ScriptProfile& profile);
     PassRefPtr<InspectorObject> createSnapshotHeader(const ScriptHeapSnapshot& snapshot);
 
-    InspectorController* m_inspectorController;
+    InspectorAgent* m_inspectorAgent;
     InspectorFrontend* m_frontend;
     bool m_enabled;
     bool m_recordingUserInitiatedProfile;

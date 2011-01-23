@@ -60,7 +60,7 @@ $typeTransform{"InjectedScript"} = {
     "domainAccessor" => "m_inspectorAgent->injectedScriptAgent()",
 };
 $typeTransform{"Inspector"} = {
-    "forwardHeader" => "InspectorController.h", # FIXME: Temporary solution until extracting the real InspectorAgent from InspectorController.
+    "forwardHeader" => "InspectorAgent.h",
     "domainAccessor" => "m_inspectorAgent",
 };
 $typeTransform{"Network"} = {
@@ -269,7 +269,6 @@ sub GenerateInterface
     $backendClassName = $className . "BackendDispatcher";
     $backendJSStubName = $className . "BackendStub";
     my @backendHead;
-    push(@backendHead, "    typedef InspectorController InspectorAgent;"); # FIXME: Temporary substitution until extracting InspectorAgent from InspectorController.
     push(@backendHead, "    ${backendClassName}(InspectorAgent* inspectorAgent) : m_inspectorAgent(inspectorAgent) { }");
     push(@backendHead, "    void reportProtocolError(const long callId, const String& errorText) const;");
     push(@backendHead, "    void dispatch(const String& message);");
