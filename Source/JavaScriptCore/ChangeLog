@@ -1,3 +1,15 @@
+2011-01-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Remove obsolete JSVALUE32 code
+        https://bugs.webkit.org/show_bug.cgi?id=52948
+
+        r70111 removed support for JSVALUE32.
+        ARM, MIPS and X86 support JSVALUE32_64 only.
+
+        * jit/JITStubs.cpp:
+
 2011-01-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Dan Bernstein.
