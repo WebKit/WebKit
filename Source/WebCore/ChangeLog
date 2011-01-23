@@ -1,3 +1,22 @@
+2011-01-23  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][Symbian] Fix --minimal build
+        https://bugs.webkit.org/show_bug.cgi?id=52839
+
+        Some of the plugins' functionality is reimplemented in
+        Symbian specific files.
+        Some of this functionality should be compiled in even if 
+        the guard NETSCAPE_PLUGIN_API is turned off.
+        This patch moves that functionality out of the
+        NETSCAPE_PLUGIN_API guard.
+
+        Build fix so no new tests.
+
+        * WebCore.pro:
+        * plugins/symbian/PluginPackageSymbian.cpp:
+
 2011-01-23  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

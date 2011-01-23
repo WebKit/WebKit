@@ -2842,14 +2842,18 @@ contains (CONFIG, text_breaking_with_icu) {
     LIBS += -licuuc
 }
 
+symbian {
+    SOURCES += \
+        plugins/symbian/PluginDatabaseSymbian.cpp \
+        plugins/symbian/PluginPackageSymbian.cpp
+}
+
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
     SOURCES += plugins/npapi.cpp
 
     symbian {
         SOURCES += \
-        plugins/symbian/PluginPackageSymbian.cpp \
-        plugins/symbian/PluginDatabaseSymbian.cpp \
         plugins/symbian/PluginViewSymbian.cpp \
         plugins/symbian/PluginContainerSymbian.cpp
 

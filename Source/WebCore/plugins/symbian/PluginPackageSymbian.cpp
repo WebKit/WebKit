@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 bool PluginPackage::fetchInfo()
 {
     if (!load())
@@ -169,6 +170,7 @@ bool PluginPackage::load()
     m_loadCount++;
     return true;
 }
+#endif
 
 void PluginPackage::unload()
 {
@@ -186,9 +188,11 @@ void PluginPackage::unload()
     m_pluginLoader = 0;
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 uint16_t PluginPackage::NPVersion() const
 {
     return NP_VERSION_MINOR;
 }
+#endif
 }
 
