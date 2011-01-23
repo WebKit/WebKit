@@ -50,30 +50,6 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
 
     ASSERT(availableWidth > 0 && availableHeight > 0);
 
-    switch (int(args.width)) {
-    case ViewportArguments::ValueDesktopWidth:
-        args.width = desktopWidth;
-        break;
-    case ViewportArguments::ValueDeviceWidth:
-        args.width = deviceWidth;
-        break;
-    case ViewportArguments::ValueDeviceHeight:
-        args.width = deviceHeight;
-        break;
-    }
-
-    switch (int(args.height)) {
-    case ViewportArguments::ValueDesktopWidth:
-        args.height = desktopWidth;
-        break;
-    case ViewportArguments::ValueDeviceWidth:
-        args.height = deviceWidth;
-        break;
-    case ViewportArguments::ValueDeviceHeight:
-        args.height = deviceHeight;
-        break;
-    }
-
     switch (int(args.targetDensityDpi)) {
     case ViewportArguments::ValueDeviceDPI:
         args.targetDensityDpi = deviceDPI;
@@ -98,6 +74,30 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
         availableHeight /= result.devicePixelRatio;
         deviceWidth /= result.devicePixelRatio;
         deviceHeight /= result.devicePixelRatio;
+    }
+
+    switch (int(args.width)) {
+    case ViewportArguments::ValueDesktopWidth:
+        args.width = desktopWidth;
+        break;
+    case ViewportArguments::ValueDeviceWidth:
+        args.width = deviceWidth;
+        break;
+    case ViewportArguments::ValueDeviceHeight:
+        args.width = deviceHeight;
+        break;
+    }
+
+    switch (int(args.height)) {
+    case ViewportArguments::ValueDesktopWidth:
+        args.height = desktopWidth;
+        break;
+    case ViewportArguments::ValueDeviceWidth:
+        args.height = deviceWidth;
+        break;
+    case ViewportArguments::ValueDeviceHeight:
+        args.height = deviceHeight;
+        break;
     }
 
     // Clamp values to range defined by spec and resolve minimum-scale and maximum-scale values
