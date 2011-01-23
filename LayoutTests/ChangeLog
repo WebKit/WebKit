@@ -1,3 +1,15 @@
+2011-01-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15649
+        Empty STYLE elements are not reflected into the document.styleSheets object
+
+        Adding a test for a bug that no longer occurs.
+
+        * fast/dom/document-stylesheets-empty-style-expected.txt: Added.
+        * fast/dom/document-stylesheets-empty-style.html: Added.
+
 2011-01-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver Hunt.
