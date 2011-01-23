@@ -890,9 +890,6 @@ void WebPageProxy::scaleWebView(double scale, const IntPoint& origin)
     if (!isValid())
         return;
 
-    if (m_viewScaleFactor == scale)
-        return;
-
     m_viewScaleFactor = scale;
     process()->send(Messages::WebPage::ScaleWebView(scale, origin), m_pageID);
 }

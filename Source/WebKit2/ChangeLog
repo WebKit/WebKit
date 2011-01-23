@@ -1,3 +1,14 @@
+2011-01-23  Damian Kaleta  <dkaleta@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/8905171>
+        https://bugs.webkit.org/show_bug.cgi?id=52985 
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scaleWebView): Eliminated early return inside WebPageProxy::scaleWebView, making it 
+        consistent with WebKit1.
+
 2011-01-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
