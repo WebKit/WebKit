@@ -62,10 +62,7 @@
 #include <QPolygonF>
 #include <QStack>
 #include <QVector>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -1135,7 +1132,7 @@ void GraphicsContext::rotate(float radians)
     if (paintingDisabled())
         return;
 
-    m_data->p()->rotate(180 / M_PI*radians);
+    m_data->p()->rotate(rad2deg(radians));
 }
 
 void GraphicsContext::scale(const FloatSize& s)

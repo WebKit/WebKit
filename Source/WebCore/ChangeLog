@@ -1,3 +1,14 @@
+2011-01-23  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Tor Arne Vestbø.
+
+        [Qt] Use rad2deg() from WTF instead of rolling our own.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::rotate):
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::addArc):
+
 2011-01-23  Kenneth Rohde Christiansen <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.
