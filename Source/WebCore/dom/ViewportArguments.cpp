@@ -98,11 +98,6 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
         availableHeight /= result.devicePixelRatio;
         deviceWidth /= result.devicePixelRatio;
         deviceHeight /= result.devicePixelRatio;
-
-        if (args.width != ViewportArguments::ValueAuto)
-            args.width /= result.devicePixelRatio;
-        if (args.height != ViewportArguments::ValueAuto)
-            args.height /= result.devicePixelRatio;
     }
 
     // Clamp values to range defined by spec and resolve minimum-scale and maximum-scale values
