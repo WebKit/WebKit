@@ -47,7 +47,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, bool selectInsertedText, TextGranularity granularity, bool killRing)
+TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, const String &textToInsert, bool selectInsertedText, TextGranularity granularity, TextCompositionType compositionType,
+                             bool killRing)
     : CompositeEditCommand(document), 
       m_commandType(commandType), 
       m_textToInsert(textToInsert), 
@@ -55,6 +56,7 @@ TypingCommand::TypingCommand(Document *document, ETypingCommand commandType, con
       m_selectInsertedText(selectInsertedText),
       m_smartDelete(false),
       m_granularity(granularity),
+      m_compositionType(compositionType),
       m_killRing(killRing),
       m_openedByBackwardDelete(false)
 {
@@ -133,18 +135,18 @@ void TypingCommand::updateSelectionIfDifferentFromCurrentSelection(TypingCommand
 }
     
 
-void TypingCommand::insertText(Document* document, const String& text, bool selectInsertedText, bool insertedTextIsComposition)
+void TypingCommand::insertText(Document* document, const String& text, bool selectInsertedText, TextCompositionType composition)
 {
     ASSERT(document);
     
     Frame* frame = document->frame();
     ASSERT(frame);
 
-    insertText(document, text, frame->selection()->selection(), selectInsertedText, insertedTextIsComposition);
+    insertText(document, text, frame->selection()->selection(), selectInsertedText, composition);
 }
 
 // FIXME: We shouldn't need to take selectionForInsertion. It should be identical to SelectionController's current selection.
-void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, bool selectInsertedText, bool insertedTextIsComposition)
+void TypingCommand::insertText(Document* document, const String& text, const VisibleSelection& selectionForInsertion, bool selectInsertedText, TextCompositionType compositionType)
 {
 #if REMOVE_MARKERS_UPON_EDITING
     if (!text.isEmpty())
@@ -161,7 +163,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
     String newText = text;
     Node* startNode = selectionForInsertion.start().node();
     
-    if (startNode && startNode->rootEditableElement() && !insertedTextIsComposition) {        
+    if (startNode && startNode->rootEditableElement() && compositionType != TextCompositionUpdate) {
         // Send BeforeTextInsertedEvent. The event handler will update text if necessary.
         ExceptionCode ec = 0;
         RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
@@ -182,11 +184,13 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
             lastTypingCommand->setStartingSelection(selectionForInsertion);
             lastTypingCommand->setEndingSelection(selectionForInsertion);
         }
+        
+        lastTypingCommand->setCompositionType(compositionType);
         lastTypingCommand->insertText(newText, selectInsertedText);
         return;
     }
 
-    RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, selectInsertedText);
+    RefPtr<TypingCommand> cmd = TypingCommand::create(document, InsertText, newText, selectInsertedText, compositionType);
     if (changeSelection)  {
         cmd->setStartingSelection(selectionForInsertion);
         cmd->setEndingSelection(selectionForInsertion);
@@ -386,7 +390,8 @@ void TypingCommand::insertTextRunWithoutNewlines(const String &text, bool select
         command->setStartingSelection(endingSelection());
         command->setEndingSelection(endingSelection());
     }
-    command->input(text, selectInsertedText);
+    command->input(text, selectInsertedText, 
+                   m_compositionType == TextCompositionNone ? InsertTextCommand::RebalanceLeadingAndTrailingWhitespaces : InsertTextCommand::RebalanceAllWhitespaces);
     typingAddedToOpenCommand(InsertText);
 }
 
