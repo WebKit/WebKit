@@ -1,3 +1,12 @@
+2011-01-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        Typo fix.
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Move the bracket to the right place.
+
 2011-01-24  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

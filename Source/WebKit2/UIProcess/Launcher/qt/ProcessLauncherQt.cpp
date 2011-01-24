@@ -96,7 +96,7 @@ void ProcessLauncher::launchProcess()
     }
 
     // Don't expose the ui socket to the web process
-    while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC == -1)) {
+    while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC)  == -1) {
         if (errno != EINTR) {
             ASSERT_NOT_REACHED();
             while (close(sockets[0]) == -1 && errno == EINTR) { }
