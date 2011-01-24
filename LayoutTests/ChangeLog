@@ -1,3 +1,34 @@
+2011-01-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+        Update Chromim test expectations in response to r76442.
+
+        * platform/chromium-linux/fast/css/acid2-expected.txt: Added.
+        * platform/chromium-linux/fast/css/acid2-pixel-expected.checksum:
+        * platform/chromium-linux/fast/css/acid2-pixel-expected.png:
+        * platform/chromium-linux/fast/css/acid2-pixel-expected.txt: Added.
+        * platform/chromium-linux/fast/forms/button-sizes-expected.checksum:
+        * platform/chromium-linux/fast/forms/button-sizes-expected.png:
+        * platform/chromium-linux/fast/forms/button-sizes-expected.txt:
+        * platform/chromium-linux/fast/forms/input-button-sizes-expected.checksum:
+        * platform/chromium-linux/fast/forms/input-button-sizes-expected.png:
+        * platform/chromium-linux/fast/forms/input-button-sizes-expected.txt:
+        * platform/chromium-linux/http/tests/misc/acid2-expected.txt: Added.
+        * platform/chromium-linux/http/tests/misc/acid2-pixel-expected.checksum:
+        * platform/chromium-linux/http/tests/misc/acid2-pixel-expected.png:
+        * platform/chromium-linux/http/tests/misc/acid2-pixel-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-zoom-01-t-expected.txt: Removed.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * platform/chromium-linux/svg/hixie/perf/003-expected.txt: Removed.
+        * platform/chromium-linux/svg/hixie/perf/004-expected.txt: Removed.
+        * platform/chromium-linux/svg/hixie/perf/005-expected.txt: Removed.
+        * platform/chromium-linux/svg/hixie/perf/006-expected.txt: Removed.
+        * platform/chromium-linux/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt: Removed.
+        * platform/chromium-linux/svg/hixie/viewbox/preserveAspectRatio/002-expected.txt: Removed.
+        * platform/chromium-linux/svg/text/text-text-01-b-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-text-01-b-expected.txt:
+
 2011-01-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Eric Seidel.
