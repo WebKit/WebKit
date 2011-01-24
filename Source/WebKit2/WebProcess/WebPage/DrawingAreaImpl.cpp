@@ -109,6 +109,12 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
     m_scrollOffset += scrollOffset;
 }
 
+void DrawingAreaImpl::forceRepaint()
+{
+    m_isWaitingForDidUpdate = false;
+    display();
+}
+
 void DrawingAreaImpl::attachCompositingContext()
 {
 }
