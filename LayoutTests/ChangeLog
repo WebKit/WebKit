@@ -1,3 +1,20 @@
+2011-01-24  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        Update Chromim test expectations (LINUX/SVG) in response to r76442, again.
+
+        * platform/chromium-linux/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/chromium-linux/svg/text/text-hkern-expected.txt: Added.
+        * platform/chromium-linux/svg/text/text-hkern-on-vertical-text-expected.checksum: Added.
+        * platform/chromium-linux/svg/text/text-hkern-on-vertical-text-expected.png: Added.
+        * platform/chromium-linux/svg/text/text-hkern-on-vertical-text-expected.txt: Added.
+        * platform/chromium-linux/svg/text/text-text-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/text/text-vkern-expected.checksum: Added.
+        * platform/chromium-linux/svg/text/text-vkern-expected.txt: Added.
+
 2011-01-24  Alejandro G. Castro  <alex@igalia.com>
 
         Unreviewed, GTK still does not have TestInputController support. Opened
