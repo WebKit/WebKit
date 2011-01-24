@@ -57,7 +57,7 @@ private:
 
 ShadowBuffer::ShadowBuffer(QObject* parent)
     : QObject(parent)
-    , timerId(0)
+    , timerId(-1)
 {
 }
 
@@ -89,7 +89,8 @@ QImage* ShadowBuffer::scratchImage(const QSize& size)
 void ShadowBuffer::schedulePurge()
 {
     static const double BufferPurgeDelay = 2; // seconds
-    killTimer(timerId);
+    if (timerId >= 0)
+        killTimer(timerId);
     timerId = startTimer(BufferPurgeDelay * 1000);
 }
 
