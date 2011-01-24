@@ -91,8 +91,9 @@ DebuggerScript._formatScript = function(script)
 
 DebuggerScript.setBreakpoint = function(execState, args)
 {
-    args.lineNumber = DebuggerScript._webkitToV8LineNumber(args.lineNumber);
-    var breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, 0 /* column */, args.condition);
+    var lineNumber = DebuggerScript._webkitToV8LineNumber(args.lineNumber);
+    var columnNumber = DebuggerScript._webkitToV8LineNumber(args.columnNumber);
+    var breakId = Debug.setScriptBreakPointById(args.scriptId, lineNumber, columnNumber, args.condition);
     if (!args.enabled)
         Debug.disableScriptBreakPoint(breakId);
 
@@ -100,6 +101,7 @@ DebuggerScript.setBreakpoint = function(execState, args)
     if (!locations.length)
         return undefined;
     args.lineNumber = DebuggerScript._v8ToWebkitLineNumber(locations[0].line);
+    args.columnNumber = DebuggerScript._v8ToWebkitLineNumber(locations[0].column);
     return breakId.toString();
 }
 

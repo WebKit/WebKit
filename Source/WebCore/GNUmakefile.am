@@ -2007,7 +2007,6 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorWorkerResource.h \
 	Source/WebCore/inspector/ScriptArguments.cpp \
 	Source/WebCore/inspector/ScriptArguments.h \
-	Source/WebCore/inspector/ScriptBreakpoint.cpp \
 	Source/WebCore/inspector/ScriptBreakpoint.h \
 	Source/WebCore/inspector/ScriptCallFrame.cpp \
 	Source/WebCore/inspector/ScriptCallFrame.h \

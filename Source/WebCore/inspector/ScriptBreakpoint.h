@@ -31,19 +31,15 @@
 #define ScriptBreakpoint_h
 
 #include "PlatformString.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 
-class InspectorObject;
-struct ScriptBreakpoint;
-
-typedef HashMap<int, ScriptBreakpoint> SourceBreakpoints;
-
 struct ScriptBreakpoint {
-    ScriptBreakpoint(bool enabled, const String& condition)
-        : enabled(enabled)
+    ScriptBreakpoint(long lineNumber, long columnNumber, const String& condition, bool enabled)
+        : lineNumber(lineNumber)
+        , columnNumber(columnNumber)
         , condition(condition)
+        , enabled(enabled)
     {
     }
 
@@ -51,13 +47,10 @@ struct ScriptBreakpoint {
     {
     }
 
-    bool enabled;
+    long lineNumber;
+    long columnNumber;
     String condition;
-
-#if ENABLE(INSPECTOR)
-    static void sourceBreakpointsFromInspectorObject(PassRefPtr<InspectorObject>, SourceBreakpoints*);
-    static PassRefPtr<InspectorObject> inspectorObjectFromSourceBreakpoints(const SourceBreakpoints&);
-#endif
+    bool enabled;
 };
 
 } // namespace WebCore

@@ -253,7 +253,7 @@ module core {
         [domain=Debugger] void activateBreakpoints();
         [domain=Debugger] void deactivateBreakpoints();
 
-        [domain=Debugger] void setBreakpoint(in String sourceID, in unsigned int lineNumber, in String condition, in boolean enabled, out String breakpointId, out unsigned int actualLineNumber);
+        [domain=Debugger] void setBreakpoint(in Object breakpoint, out String breakpointId, out long actualLineNumber, out long actualColumnNumber);
         [domain=Debugger] void removeBreakpoint(in String breakpointId);
 
         [domain=BrowserDebugger] void setDOMBreakpoint(in long nodeId, in long type);
@@ -279,7 +279,7 @@ module core {
         [domain=Debugger] void evaluateOnCallFrame(in Object callFrameId, in String expression, in String objectGroup, out Value result);
         [domain=Debugger] void getCompletionsOnCallFrame(in Object callFrameId, in String expression, in boolean includeInspectorCommandLineAPI, out Value result);
 
-        [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out String sourceID, out unsigned int lineNumber, out String condition, out boolean enabled, out unsigned int originalLineNumber);
+        [notify, domain=Debugger] void breakpointResolved(out String breakpointId, out Object breakpoint);
 
 #if defined(ENABLE_WORKERS) && ENABLE_WORKERS
         [notify, domain=Debugger] void didCreateWorker(out long id, out String url, out boolean isShared);

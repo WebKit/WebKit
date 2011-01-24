@@ -119,10 +119,13 @@ void InspectorBrowserDebuggerAgent::restoreStickyBreakpoint(PassRefPtr<Inspector
         double lineNumber;
         if (!condition->getNumber("lineNumber", &lineNumber))
             return;
+        double columnNumber;
+        if (!condition->getNumber("columnNumber", &columnNumber))
+            return;
         String javaScriptCondition;
         if (!condition->getString("condition", &javaScriptCondition))
             return;
-        m_inspectorAgent->debuggerAgent()->setStickyBreakpoint(url, static_cast<unsigned>(lineNumber), javaScriptCondition, enabled);
+        m_inspectorAgent->debuggerAgent()->setStickyBreakpoint(url, ScriptBreakpoint(long(lineNumber), long(columnNumber), javaScriptCondition, enabled));
     } else if (type == xhrBreakpointType) {
         if (!enabled)
             return;

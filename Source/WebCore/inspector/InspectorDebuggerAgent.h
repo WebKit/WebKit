@@ -32,6 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 #include "InjectedScript.h"
+#include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
@@ -64,8 +65,8 @@ public:
     // Part of the protocol.
     void activateBreakpoints();
     void deactivateBreakpoints();
-    void setStickyBreakpoint(const String& url, unsigned lineNumber, const String& condition, bool enabled);
-    void setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, String* breakpointId, unsigned int* actualLineNumber);
+    void setStickyBreakpoint(const String& url, const WebCore::ScriptBreakpoint&);
+    void setBreakpoint(PassRefPtr<InspectorObject> breakpoint, String* breakpointId, long* actualLineNumber, long* actualColumnNumber);
     void removeBreakpoint(const String& breakpointId);
     void editScriptSource(const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorValue>* newCallFrames);
     void getScriptSource(const String& sourceID, String* scriptSource);
@@ -93,17 +94,19 @@ private:
     virtual void didPause(ScriptState*);
     virtual void didContinue();
 
-    void restoreBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled);
+    void restoreBreakpoint(const String& sourceID, const ScriptBreakpoint&);
+
+    typedef HashMap<String, Vector<String> > URLToSourceIDsMap;
+    typedef std::pair<long, long> Location;
+    typedef HashMap<Location, ScriptBreakpoint> LocationToBreakpointMap;
+    typedef HashMap<String, LocationToBreakpointMap> InspectedURLToBreakpointsMap;
 
     InspectorAgent* m_inspectorAgent;
     InspectorFrontend* m_frontend;
     ScriptState* m_pausedScriptState;
     HashMap<String, String> m_scriptIDToContent;
-    typedef HashMap<String, Vector<String> > URLToSourceIDsMap;
     URLToSourceIDsMap m_urlToSourceIDs;
-    typedef std::pair<String, bool> Breakpoint;
-    typedef HashMap<unsigned, Breakpoint> ScriptBreakpoints;
-    HashMap<String, ScriptBreakpoints> m_stickyBreakpoints;
+    InspectedURLToBreakpointsMap m_stickyBreakpoints;
     RefPtr<InspectorObject> m_breakProgramDetails;
     bool m_javaScriptPauseScheduled;
 };

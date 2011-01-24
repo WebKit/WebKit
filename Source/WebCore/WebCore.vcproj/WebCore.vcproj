@@ -65298,10 +65298,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\ScriptBreakpoint.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\ScriptBreakpoint.h"
 				>
 			</File>

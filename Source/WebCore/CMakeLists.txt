@@ -1179,7 +1179,6 @@ SET(WebCore_SOURCES
     inspector/InspectorTimelineAgent.cpp
     inspector/InspectorValues.cpp
     inspector/ScriptArguments.cpp
-    inspector/ScriptBreakpoint.cpp
     inspector/ScriptCallFrame.cpp
     inspector/ScriptCallStack.cpp
     inspector/TimelineRecordFactory.cpp

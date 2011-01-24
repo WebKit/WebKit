@@ -56,7 +56,7 @@ public:
     void addListener(ScriptDebugListener*, Page*);
     void removeListener(ScriptDebugListener*, Page*);
 
-    String setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, unsigned* actualLineNumber);
+    String setBreakpoint(const String& sourceID, const ScriptBreakpoint&, long* actualLineNumber, long* actualColumnNumber);
     void removeBreakpoint(const String& breakpointId);
     void clearBreakpoints();
     void setBreakpointsActivated(bool activated);

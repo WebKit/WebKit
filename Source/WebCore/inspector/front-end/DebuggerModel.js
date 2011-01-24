@@ -64,19 +64,26 @@ WebInspector.DebuggerModel.prototype = {
                 InspectorBackend.removeBreakpoint(this._continueToLineBreakpointId);
             this._continueToLineBreakpointId = breakpointId;
         }
-        InspectorBackend.setBreakpoint(sourceID, lineNumber, "", true, didSetBreakpoint.bind(this));
+        var breakpoint = { sourceID: sourceID, lineNumber: lineNumber, columnNumber: 1, condition: "", enabled: true };
+        InspectorBackend.setBreakpoint(breakpoint, didSetBreakpoint.bind(this));
         if (this._paused)
             InspectorBackend.resume();
     },
 
     setBreakpoint: function(sourceID, lineNumber, enabled, condition)
     {
-        function didSetBreakpoint(breakpointId, actualLineNumber)
+        function didSetBreakpoint(breakpointId, actualLineNumber, actualColumnNumber)
         {
-            if (breakpointId)
-                this._breakpointSetOnBackend(breakpointId, sourceID, actualLineNumber, condition, enabled, lineNumber, false);
+            if (!breakpointId)
+                return;
+            breakpoint.originalLineNumber = breakpoint.lineNumber;
+            breakpoint.originalColumnumber = breakpoint.columnNumber;
+            breakpoint.lineNumber = actualLineNumber;
+            breakpoint.columnNumber = actualColumnNumber;
+            this._breakpointSetOnBackend(breakpointId, breakpoint, false);
         }
-        InspectorBackend.setBreakpoint(sourceID, lineNumber, condition, enabled, didSetBreakpoint.bind(this));
+        var breakpoint = { sourceID: sourceID, lineNumber: lineNumber, columnNumber: 1, condition: condition, enabled: enabled };
+        InspectorBackend.setBreakpoint(breakpoint, didSetBreakpoint.bind(this));
     },
 
     removeBreakpoint: function(breakpointId)
@@ -89,18 +96,17 @@ WebInspector.DebuggerModel.prototype = {
         breakpoint.dispatchEventToListeners("removed");
     },
 
-    _breakpointSetOnBackend: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, restored)
+    _breakpointSetOnBackend: function(breakpointId, breakpointData, restored)
     {
-        var sourceIDAndLine = this._encodeSourceIDAndLine(sourceID, lineNumber);
+        var sourceIDAndLine = this._encodeSourceIDAndLine(breakpointData.sourceID, breakpointData.lineNumber);
         if (sourceIDAndLine in this._sourceIDAndLineToBreakpointId) {
             InspectorBackend.removeBreakpoint(breakpointId);
             return;
         }
 
-        var url = this._scripts[sourceID].sourceURL;
-        var breakpoint = new WebInspector.Breakpoint(this, breakpointId, sourceID, url, lineNumber, enabled, condition);
+        var breakpoint = new WebInspector.Breakpoint(this, breakpointId, breakpointData);
         breakpoint.restored = restored;
-        breakpoint.originalLineNumber = originalLineNumber;
+        breakpoint.originalLineNumber = breakpointData.originalLineNumber;
         this._breakpoints[breakpointId] = breakpoint;
         this._sourceIDAndLineToBreakpointId[sourceIDAndLine] = breakpointId;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointAdded, breakpoint);
@@ -295,9 +301,9 @@ WebInspector.DebuggerDispatcher.prototype = {
         this._debuggerModel._failedToParseScriptSource(sourceURL, source, startingLine, errorLine, errorMessage);
     },
 
-    breakpointResolved: function(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber)
+    breakpointResolved: function(breakpointId, breakpoint)
     {
-        this._debuggerModel._breakpointSetOnBackend(breakpointId, sourceID, lineNumber, condition, enabled, originalLineNumber, true);
+        this._debuggerModel._breakpointSetOnBackend(breakpointId, breakpoint, true);
     },
 
     didCreateWorker: function()

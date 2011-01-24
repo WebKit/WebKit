@@ -2058,7 +2058,6 @@
             'inspector/InspectorValues.cpp',
             'inspector/InspectorValues.h',
             'inspector/InspectorWorkerResource.h',
-            'inspector/ScriptBreakpoint.cpp',
             'inspector/ScriptBreakpoint.h',
             'inspector/ScriptArguments.cpp',
             'inspector/ScriptArguments.h',

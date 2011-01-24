@@ -29,14 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Breakpoint = function(debuggerModel, breakpointId, sourceID, url, line, enabled, condition)
+WebInspector.Breakpoint = function(debuggerModel, breakpointId, data)
 {
     this.id = breakpointId;
-    this.url = url;
-    this.line = line;
-    this.sourceID = sourceID;
-    this._enabled = enabled;
-    this._condition = condition || "";
+    this.sourceID = data.sourceID;
+    this.line = data.lineNumber;
+    this.column = data.columnNumber;
+    this._condition = data.condition;
+    this._enabled = data.enabled;
     this._debuggerModel = debuggerModel;
 }
 
@@ -57,6 +57,13 @@ WebInspector.Breakpoint.prototype = {
     get condition()
     {
         return this._condition;
+    },
+
+    get url()
+    {
+        if (!this._url)
+            this._url = this._debuggerModel.scriptForSourceID(this.sourceID).sourceURL;
+        return this._url;
     },
 
     get data()

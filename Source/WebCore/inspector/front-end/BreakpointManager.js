@@ -408,7 +408,7 @@ WebInspector.JavaScriptBreakpoint.prototype = {
     _serializeToJSON: function()
     {
         var type = WebInspector.BreakpointManager.BreakpointTypes.JS;
-        return { type: type, condition: { url: this._url, lineNumber: this._lineNumber, condition: this._condition } };
+        return { type: type, condition: { url: this._url, lineNumber: this._lineNumber, columnNumber: 1, condition: this._condition } };
     }
 }
 

@@ -138,19 +138,21 @@ bool ScriptDebugServer::hasListenersInterestedInPage(Page* page)
     return m_pageListenersMap.contains(page);
 }
 
-String ScriptDebugServer::setBreakpoint(const String& sourceID, unsigned lineNumber, const String& condition, bool enabled, unsigned* actualLineNumber)
+String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBreakpoint& scriptBreakpoint, long* actualLineNumber, long* actualColumnNumber)
 {
     intptr_t sourceIDValue = sourceID.toIntPtr();
     if (!sourceIDValue)
         return "";
-    BreakpointsMap::iterator it = m_breakpoints.find(sourceIDValue);
-    if (it == m_breakpoints.end())
-        it = m_breakpoints.set(sourceIDValue, SourceBreakpoints()).first;
-    if (it->second.contains(lineNumber))
+    SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
+    if (it == m_sourceIdToBreakpoints.end())
+        it = m_sourceIdToBreakpoints.set(sourceIDValue, LineToBreakpointMap()).first;
+    if (it->second.contains(scriptBreakpoint.lineNumber))
         return "";
-    it->second.set(lineNumber, ScriptBreakpoint(enabled, condition));
-    *actualLineNumber = lineNumber;
-    return makeString(sourceID, ":", String::number(lineNumber));
+    it->second.set(scriptBreakpoint.lineNumber, scriptBreakpoint);
+    *actualLineNumber = scriptBreakpoint.lineNumber;
+    // FIXME(WK53003): implement setting breakpoints by line:column.
+    *actualColumnNumber = 1;
+    return makeString(sourceID, ":", String::number(scriptBreakpoint.lineNumber));
 }
 
 void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
@@ -166,8 +168,8 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
     unsigned lineNumber = tokens[1].toUInt(&success);
     if (!success)
         return;
-    BreakpointsMap::iterator it = m_breakpoints.find(sourceIDValue);
-    if (it != m_breakpoints.end())
+    SourceIdToBreakpointsMap::iterator it = m_sourceIdToBreakpoints.find(sourceIDValue);
+    if (it != m_sourceIdToBreakpoints.end())
         it->second.remove(lineNumber);
 }
 
@@ -176,10 +178,10 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber) co
     if (!m_breakpointsActivated)
         return false;
 
-    BreakpointsMap::const_iterator it = m_breakpoints.find(sourceID);
-    if (it == m_breakpoints.end())
+    SourceIdToBreakpointsMap::const_iterator it = m_sourceIdToBreakpoints.find(sourceID);
+    if (it == m_sourceIdToBreakpoints.end())
         return false;
-    SourceBreakpoints::const_iterator breakIt = it->second.find(lineNumber);
+    LineToBreakpointMap::const_iterator breakIt = it->second.find(lineNumber);
     if (breakIt == it->second.end() || !breakIt->second.enabled)
         return false;
 
@@ -198,7 +200,7 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, unsigned lineNumber) co
 
 void ScriptDebugServer::clearBreakpoints()
 {
-    m_breakpoints.clear();
+    m_sourceIdToBreakpoints.clear();
 }
 
 void ScriptDebugServer::setBreakpointsActivated(bool activated)
