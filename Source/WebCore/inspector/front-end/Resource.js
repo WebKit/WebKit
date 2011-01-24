@@ -719,7 +719,7 @@ WebInspector.Resource.prototype = {
             this._pendingContentCallbacks.length = 0;
             delete this._contentRequested;
         }
-        WebInspector.NetworkManager.requestContent(this, this._contentEncoded, onResourceContent.bind(this));
+        WebInspector.networkManager.requestContent(this, this._contentEncoded, onResourceContent.bind(this));
     }
 }
 

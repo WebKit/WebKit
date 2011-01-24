@@ -31,16 +31,17 @@
 
 WebInspector.ResourceTreeModel = function()
 {
-    this.reloadCachedResources();
+    this.reset();
 }
 
 WebInspector.ResourceTreeModel.prototype = {
-    reloadCachedResources: function()
+    reset: function()
     {
         this._resourcesByURL = {};
         this._resourcesByFrameId = {};
         this._subframes = {};
-        InspectorBackend.cachedResources(this._processCachedResources.bind(this));
+        if (WebInspector.panels)
+            WebInspector.panels.resources.clear();
     },
 
     addOrUpdateFrame: function(frame)
@@ -208,52 +209,5 @@ WebInspector.ResourceTreeModel.prototype = {
         }
 
         delete this._resourcesByURL[resource.url];
-    },
-
-    _processCachedResources: function(mainFramePayload)
-    {
-        var mainResource = this._addFramesRecursively(mainFramePayload);
-        WebInspector.mainResource = mainResource;
-        mainResource.isMainResource = true;
-    },
-
-    _addFramesRecursively: function(framePayload)
-    {
-        var frameResource = this.createResource(null, framePayload.resource.url, framePayload.resource.loader);
-        WebInspector.NetworkManager.updateResourceWithRequest(frameResource, framePayload.resource.request);
-        WebInspector.NetworkManager.updateResourceWithResponse(frameResource, framePayload.resource.response);
-        frameResource.type = WebInspector.Resource.Type["Document"];
-        frameResource.finished = true;
-
-        this.addOrUpdateFrame(framePayload);
-        this.addResourceToFrame(framePayload.id, frameResource);
-
-        for (var i = 0; framePayload.children && i < framePayload.children.length; ++i)
-            this._addFramesRecursively(framePayload.children[i]);
-
-        if (!framePayload.subresources)
-            return;
-
-        for (var i = 0; i < framePayload.subresources.length; ++i) {
-            var cachedResource = framePayload.subresources[i];
-            var resource = this.createResource(null, cachedResource.url, cachedResource.loader);
-            WebInspector.NetworkManager.updateResourceWithCachedResource(resource, cachedResource);
-            resource.finished = true;
-            this.addResourceToFrame(framePayload.id, resource);
-        }
-        return frameResource;
-    },
-
-    createResource: function(identifier, url, loader, stackTrace)
-    {
-        var resource = new WebInspector.Resource(identifier, url);
-        resource.loader = loader;
-        if (loader) {
-            resource.documentURL = loader.url;
-            this.bindResourceURL(resource);
-        }
-        resource.stackTrace = stackTrace;
-
-        return resource;
     }
 }

@@ -1,3 +1,40 @@
+2011-01-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: extract dispatch API from network manager.
+        https://bugs.webkit.org/show_bug.cgi?id=53009
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager):
+        (WebInspector.NetworkManager.prototype.reset):
+        (WebInspector.NetworkManager.prototype.requestContent):
+        (WebInspector.NetworkManager.prototype._processCachedResources):
+        (WebInspector.NetworkDispatcher):
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithRequest):
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithCachedResource):
+        (WebInspector.NetworkDispatcher.prototype.identifierForInitialRequest):
+        (WebInspector.NetworkDispatcher.prototype.willSendRequest):
+        (WebInspector.NetworkDispatcher.prototype.didReceiveResponse):
+        (WebInspector.NetworkDispatcher.prototype.didLoadResourceFromMemoryCache):
+        (WebInspector.NetworkDispatcher.prototype.didCommitLoadForFrame):
+        (WebInspector.NetworkDispatcher.prototype.didCreateWebSocket):
+        (WebInspector.NetworkDispatcher.prototype._appendRedirect):
+        (WebInspector.NetworkDispatcher.prototype._startResource):
+        (WebInspector.NetworkDispatcher.prototype._updateResource):
+        (WebInspector.NetworkDispatcher.prototype._finishResource):
+        (WebInspector.NetworkDispatcher.prototype._addFramesRecursively):
+        (WebInspector.NetworkDispatcher.prototype._dispatchEventToListeners):
+        (WebInspector.NetworkDispatcher.prototype._createResource):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._innerRequestContent):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype.reset):
+        (WebInspector.ResourceTreeModel.prototype.unbindResourceURL):
+
 2011-01-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
