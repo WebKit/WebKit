@@ -1,3 +1,9 @@
+2011-01-24  Adam Roben  <aroben@apple.com>
+
+        Windows Production build fix
+
+        * WebKit.vcproj/WebKit.make: Update for move of WebKit into Source.
+
 2011-01-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

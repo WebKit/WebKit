@@ -8,7 +8,7 @@ install:
 	set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
 	set WebKitOutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
-	set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\ 
+	set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\ 
 	set PRODUCTION=1
 	devenv "WebKit2.submit.sln" /rebuild $(BUILDSTYLE)
 	-xcopy "$(ConfigurationBuildDir)\bin\*.exe" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y

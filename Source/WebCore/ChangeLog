@@ -1,3 +1,9 @@
+2011-01-24  Adam Roben  <aroben@apple.com>
+
+        Windows Production build fix
+
+        * WebCore.vcproj/WebCore.make: Update for move of WebCore into Source.
+
 2011-01-24  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Nate Chapin.

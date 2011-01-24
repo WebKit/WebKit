@@ -9,7 +9,7 @@ install:
     set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
     set WebKitOutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
-    set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\ 
+    set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\4\ 
 !IF "$(BUILDSTYLE)"=="Release"
     BUILDSTYLE=Release_PGO
     devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
