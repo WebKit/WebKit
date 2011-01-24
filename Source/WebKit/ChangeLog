@@ -1,3 +1,15 @@
+2011-01-23  Mark Rowe  <mrowe@apple.com>
+
+        Follow-up to r76477.
+
+        Fix the scripts that detect problematic code such as static initializers
+        and destructors, weak vtables, inappropriate files in the framework wrappers,
+        and public headers including private headers. These had all been broken
+        since the projects were moved in to the Source directory as the paths to the
+        scripts were not updated at that time.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2011-01-20  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
