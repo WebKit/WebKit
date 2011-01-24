@@ -1,3 +1,16 @@
+2011-01-24  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Oliver Hunt.
+
+        Optimize regex patterns which contain empty alternatives
+        https://bugs.webkit.org/show_bug.cgi?id=51395
+
+        Eliminate the empty alternatives from the regex pattern and convert it to do
+        the matching in an easier way.
+
+        * fast/regex/script-tests/slow.js:
+        * fast/regex/slow-expected.txt:
+
 2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, test fix for r76497.

@@ -488,24 +488,56 @@ public:
         m_alternative = m_alternative->m_parent->m_parent;
 
         PatternTerm& lastTerm = m_alternative->lastTerm();
-        
+
         unsigned numParenAlternatives = parenthesesDisjunction->m_alternatives.size();
         unsigned numBOLAnchoredAlts = 0;
-        // Bubble up BOL flags
+        bool containsEmptyAlternative = false;
+
         for (unsigned i = 0; i < numParenAlternatives; i++) {
+            if (!parenthesesDisjunction->m_alternatives[i]->m_terms.size() && numParenAlternatives > 1) {
+                parenthesesDisjunction->m_alternatives.remove(i);
+                --numParenAlternatives;
+
+                containsEmptyAlternative = true;
+                continue;
+            }
+
+            // Bubble up BOL flags
             if (parenthesesDisjunction->m_alternatives[i]->m_startsWithBOL)
                 numBOLAnchoredAlts++;
         }
-        
+
         if (numBOLAnchoredAlts) {
             m_alternative->m_containsBOL = true;
             // If all the alternatives in parens start with BOL, then so does this one
             if (numBOLAnchoredAlts == numParenAlternatives)
                 m_alternative->m_startsWithBOL = true;
         }
-        
+
         lastTerm.parentheses.lastSubpatternId = m_pattern.m_numSubpatterns;
         m_invertParentheticalAssertion = false;
+
+        if (containsEmptyAlternative) {
+            // Backup and remove the current disjunction's alternatives.
+            Vector<PatternAlternative*> alternatives;
+            alternatives.append(parenthesesDisjunction->m_alternatives);
+            parenthesesDisjunction->m_alternatives.clear();
+            PatternAlternative* alternative = parenthesesDisjunction->addNewAlternative();
+
+            // Insert a new non-capturing parentheses.
+            unsigned subpatternId = m_pattern.m_numSubpatterns + 1;
+            PatternDisjunction* newDisjunction = new PatternDisjunction(alternative);
+            m_pattern.m_disjunctions.append(newDisjunction);
+            alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, newDisjunction, false, false));
+            newDisjunction->m_alternatives.append(alternatives);
+
+            // Set the quantifier of the new parentheses to '?' and set the inherited properties.
+            PatternTerm& disjunctionTerm = alternative->lastTerm();
+            disjunctionTerm.quantify(1, QuantifierGreedy);
+            disjunctionTerm.parentheses.lastSubpatternId = m_pattern.m_numSubpatterns;
+            alternative->m_containsBOL = m_alternative->m_containsBOL;
+            alternative->m_startsWithBOL = m_alternative->m_startsWithBOL;
+        }
     }
 
     void atomBackReference(unsigned subpatternId)
