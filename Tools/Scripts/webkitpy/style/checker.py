@@ -129,16 +129,16 @@ _PATH_RULES_SPECIFIER = [
     ([# The EFL APIs use EFL naming style, which includes
       # both lower-cased and camel-cased, underscore-sparated
       # values.
-      "WebKit/efl/ewk/",
+      "Source/WebKit/efl/ewk/",
       # There is no clean way to avoid "yy_*" names used by flex.
       "Source/WebCore/css/CSSParser.cpp",
       # Qt code uses '_' in some places (such as private slots
       # and on test xxx_data methos on tests)
       "Source/JavaScriptCore/qt/",
-      "WebKit/qt/Api/",
-      "WebKit/qt/tests/",
-      "WebKit/qt/declarative/",
-      "WebKit/qt/examples/"],
+      "Source/WebKit/qt/Api/",
+      "Source/WebKit/qt/tests/",
+      "Source/WebKit/qt/declarative/",
+      "Source/WebKit/qt/examples/"],
      ["-readability/naming"]),
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values.
@@ -243,7 +243,7 @@ _XML_FILE_EXTENSIONS = [
 _SKIPPED_FILES_WITH_WARNING = [
     "gtk2drawing.c", # WebCore/platform/gtk/gtk2drawing.c
     "gtkdrawing.h", # WebCore/platform/gtk/gtkdrawing.h
-    "WebKit/gtk/tests/",
+    "Source/WebKit/gtk/tests/",
     # Soup API that is still being cooked, will be removed from WebKit
     # in a few months when it is merged into soup proper. The style
     # follows the libsoup style completely.

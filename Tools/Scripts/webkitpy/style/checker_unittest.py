@@ -216,11 +216,11 @@ class GlobalVariablesTest(unittest.TestCase):
                       "build/include")
         assertCheck("random_path.cpp",
                     "readability/naming")
-        assertNoCheck("WebKit/gtk/webkit/webkit.h",
+        assertNoCheck("Source/WebKit/gtk/webkit/webkit.h",
                       "readability/naming")
         assertNoCheck("Tools/DumpRenderTree/gtk/DumpRenderTree.cpp",
                       "readability/null")
-        assertNoCheck("WebKit/efl/ewk/ewk_view.h",
+        assertNoCheck("Source/WebKit/efl/ewk/ewk_view.h",
                       "readability/naming")
         assertNoCheck("Source/WebCore/css/CSSParser.cpp",
                       "readability/naming")
@@ -228,26 +228,26 @@ class GlobalVariablesTest(unittest.TestCase):
         # Test if Qt exceptions are indeed working
         assertCheck("Source/JavaScriptCore/qt/api/qscriptengine.cpp",
                     "readability/braces")
-        assertCheck("WebKit/qt/Api/qwebpage.cpp",
+        assertCheck("Source/WebKit/qt/Api/qwebpage.cpp",
                     "readability/braces")
-        assertCheck("WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
+        assertCheck("Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
                     "readability/braces")
-        assertCheck("WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
+        assertCheck("Source/WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
                     "readability/braces")
-        assertCheck("WebKit/qt/examples/platformplugin/WebPlugin.cpp",
+        assertCheck("Source/WebKit/qt/examples/platformplugin/WebPlugin.cpp",
                     "readability/braces")
         assertNoCheck("Source/JavaScriptCore/qt/api/qscriptengine.cpp",
                       "readability/naming")
         assertNoCheck("Source/JavaScriptCore/qt/benchmarks"
                       "/qscriptengine/tst_qscriptengine.cpp",
                       "readability/naming")
-        assertNoCheck("WebKit/qt/Api/qwebpage.cpp",
+        assertNoCheck("Source/WebKit/qt/Api/qwebpage.cpp",
                       "readability/naming")
-        assertNoCheck("WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
+        assertNoCheck("Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
                       "readability/naming")
-        assertNoCheck("WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
+        assertNoCheck("Source/WebKit/qt/declarative/platformplugin/WebPlugin.cpp",
                       "readability/naming")
-        assertNoCheck("WebKit/qt/examples/platformplugin/WebPlugin.cpp",
+        assertNoCheck("Source/WebKit/qt/examples/platformplugin/WebPlugin.cpp",
                       "readability/naming")
 
         assertNoCheck("Source/WebCore/ForwardingHeaders/debugger/Debugger.h",
@@ -301,7 +301,7 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
            "gtkdrawing.h",
            "Source/WebCore/platform/gtk/gtk2drawing.c",
            "Source/WebCore/platform/gtk/gtkdrawing.h",
-           "WebKit/gtk/tests/testatk.c",
+           "Source/WebKit/gtk/tests/testatk.c",
             ]
 
         for path in paths_to_skip:
