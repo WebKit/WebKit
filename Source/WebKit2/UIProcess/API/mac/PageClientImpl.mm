@@ -43,6 +43,10 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
+@interface NSApplication (WebNSApplicationDetails)
+- (NSCursor *)_cursorRectCursor;
+@end
+
 using namespace WebCore;
 
 @interface WebEditCommandObjC : NSObject
@@ -195,7 +199,8 @@ void PageClientImpl::toolTipChanged(const String& oldToolTip, const String& newT
 
 void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
-    [m_wkView _setCursor:cursor.platformCursor()];
+    if (![NSApp _cursorRectCursor])
+        [m_wkView _setCursor:cursor.platformCursor()];
 }
 
 void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
