@@ -64,6 +64,7 @@ WebInspector.SourceFrame.prototype = {
                 this._textViewer.resize();
         } else {
             this._hidePopup();
+            this._clearLineHighlight();
             if (this._textViewer) {
                 this._scrollTop = this._textViewer.element.scrollTop;
                 this._scrollLeft = this._textViewer.element.scrollLeft;
@@ -144,7 +145,7 @@ WebInspector.SourceFrame.prototype = {
             this._lineToHighlight = line;
     },
 
-    clearLineHighlight: function()
+    _clearLineHighlight: function()
     {
         if (this._textViewer)
             this._textViewer.clearLineHighlight();
@@ -175,12 +176,6 @@ WebInspector.SourceFrame.prototype = {
         if (this._lineNumberToReveal) {
             this.revealLine(this._lineNumberToReveal);
             delete this._lineNumberToReveal;
-        }
-
-        if (this._pendingMarkRange) {
-            var range = this._pendingMarkRange;
-            this.markAndRevealRange(range);
-            delete this._pendingMarkRange;
         }
 
         if (this._lineToHighlight) {
@@ -223,35 +218,85 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.endUpdates();
     },
 
-    findSearchMatches: function(query, finishedCallback)
+    performSearch: function(query, callback)
     {
-        function doFindSearchMatches()
+        // Call searchCanceled since it will reset everything we need before doing a new search.
+        this.searchCanceled();
+
+        function doFindSearchMatches(query)
         {
-            var ranges = [];
+            this._currentSearchResultIndex = -1;
+            this._searchResults = [];
 
             // First do case-insensitive search.
             var regexObject = createSearchRegex(query);
-            this._collectRegexMatches(regexObject, ranges);
+            this._collectRegexMatches(regexObject, this._searchResults);
 
             // Then try regex search if user knows the / / hint.
             try {
                 if (/^\/.*\/$/.test(query))
-                    this._collectRegexMatches(new RegExp(query.substring(1, query.length - 1)), ranges);
+                    this._collectRegexMatches(new RegExp(query.substring(1, query.length - 1)), this._searchResults);
             } catch (e) {
                 // Silent catch.
             }
-            finishedCallback(ranges);
+
+            callback(this._searchResults.length);
         }
 
         if (this._textViewer)
-            doFindSearchMatches.call(this);
+            doFindSearchMatches.call(this, query);
         else
-            this._delayedFindSearchMatches = doFindSearchMatches.bind(this);
+            this._delayedFindSearchMatches = doFindSearchMatches.bind(this, query);
+
     },
 
-    cancelFindSearchMatches: function()
+    searchCanceled: function()
     {
         delete this._delayedFindSearchMatches;
+        if (!this._textViewer)
+            return;
+
+        this._currentSearchResultIndex = -1;
+        this._searchResults = [];
+        this._textViewer.markAndRevealRange(null);
+    },
+
+    jumpToFirstSearchResult: function()
+    {
+        this._jumpToSearchResult(0);
+    },
+
+    jumpToLastSearchResult: function()
+    {
+        this._jumpToSearchResult(this._searchResults.length - 1);
+    },
+
+    jumpToNextSearchResult: function()
+    {
+        this._jumpToSearchResult(this._currentSearchResultIndex + 1);
+    },
+
+    jumpToPreviousSearchResult: function()
+    {
+        this._jumpToSearchResult(this._currentSearchResultIndex - 1);
+    },
+
+    showingFirstSearchResult: function()
+    {
+        return this._searchResults.length &&  this._currentSearchResultIndex === 0;
+    },
+
+    showingLastSearchResult: function()
+    {
+        return this._searchResults.length && this._currentSearchResultIndex === (this._searchResults.length - 1);
+    },
+
+    _jumpToSearchResult: function(index)
+    {
+        if (!this._textViewer || !this._searchResults.length)
+            return;
+        this._currentSearchResultIndex = (index + this._searchResults.length) % this._searchResults.length;
+        this._textViewer.markAndRevealRange(this._searchResults[this._currentSearchResultIndex]);
     },
 
     _collectRegexMatches: function(regexObject, ranges)
@@ -269,22 +314,6 @@ WebInspector.SourceFrame.prototype = {
             } while (match)
         }
         return ranges;
-    },
-
-    markAndRevealRange: function(range)
-    {
-        if (this._textViewer)
-            this._textViewer.markAndRevealRange(range);
-        else
-            this._pendingMarkRange = range;
-    },
-
-    clearMarkedRange: function()
-    {
-        if (this._textViewer) {
-            this._textViewer.markAndRevealRange(null);
-        } else
-            delete this._pendingMarkRange;
     },
 
     _incrementMessageRepeatCount: function(msg, repeatDelta)

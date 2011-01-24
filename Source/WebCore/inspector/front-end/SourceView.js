@@ -47,9 +47,7 @@ WebInspector.SourceView.prototype = {
     hide: function()
     {
         this.sourceFrame.visible = false;
-        this.sourceFrame.clearLineHighlight();
         WebInspector.View.prototype.hide.call(this);
-        this._currentSearchResultIndex = -1;
     },
 
     resize: function()
@@ -77,68 +75,42 @@ WebInspector.SourceView.prototype = {
 
     searchCanceled: function()
     {
-        this._currentSearchResultIndex = -1;
-        this._searchResults = [];
-        this.sourceFrame.clearMarkedRange();
-        this.sourceFrame.cancelFindSearchMatches();
+        this.sourceFrame.searchCanceled();
     },
 
     performSearch: function(query, finishedCallback)
     {
-        // Call searchCanceled since it will reset everything we need before doing a new search.
-        this.searchCanceled();
-
-        function didFindSearchMatches(searchResults)
-        {
-            this._searchResults = searchResults;
-            if (this._searchResults)
-                finishedCallback(this, this._searchResults.length);
-        }
-        this.sourceFrame.findSearchMatches(query, didFindSearchMatches.bind(this));
+        this.sourceFrame.performSearch(query, finishedCallback.bind(null, this));
     },
 
     jumpToFirstSearchResult: function()
     {
-        if (!this._searchResults || !this._searchResults.length)
-            return;
-        this._currentSearchResultIndex = 0;
-        this._jumpToSearchResult(this._currentSearchResultIndex);
+        this.sourceFrame.jumpToFirstSearchResult();
     },
 
     jumpToLastSearchResult: function()
     {
-        if (!this._searchResults || !this._searchResults.length)
-            return;
-        this._currentSearchResultIndex = (this._searchResults.length - 1);
-        this._jumpToSearchResult(this._currentSearchResultIndex);
+        this.sourceFrame.jumpToLastSearchResult();
     },
 
     jumpToNextSearchResult: function()
     {
-        if (!this._searchResults || !this._searchResults.length)
-            return;
-        if (++this._currentSearchResultIndex >= this._searchResults.length)
-            this._currentSearchResultIndex = 0;
-        this._jumpToSearchResult(this._currentSearchResultIndex);
+        this.sourceFrame.jumpToNextSearchResult();
     },
 
     jumpToPreviousSearchResult: function()
     {
-        if (!this._searchResults || !this._searchResults.length)
-            return;
-        if (--this._currentSearchResultIndex < 0)
-            this._currentSearchResultIndex = (this._searchResults.length - 1);
-        this._jumpToSearchResult(this._currentSearchResultIndex);
+        this.sourceFrame.jumpToPreviousSearchResult();
     },
 
     showingFirstSearchResult: function()
     {
-        return (this._currentSearchResultIndex === 0);
+        this.sourceFrame.showingFirstSearchResult();
     },
 
     showingLastSearchResult: function()
     {
-        return (this._searchResults && this._currentSearchResultIndex === (this._searchResults.length - 1));
+        this.sourceFrame.showingLastSearchResult();
     },
 
     revealLine: function(lineNumber)
@@ -159,15 +131,6 @@ WebInspector.SourceView.prototype = {
     clearMessages: function()
     {
         this.sourceFrame.clearMessages();
-    },
-
-    _jumpToSearchResult: function(index)
-    {
-        var foundRange = this._searchResults[index];
-        if (!foundRange)
-            return;
-
-        this.sourceFrame.markAndRevealRange(foundRange);
     }
 }
 

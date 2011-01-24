@@ -1,3 +1,39 @@
+2011-01-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move search functions from SourceView to SourceFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=52895
+
+        This is the last step before eliminating SourceView and ScriptView since
+        this classes just delegate everything to SourceFrame.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.set visible):
+        (WebInspector.SourceFrame.prototype._clearLineHighlight):
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype.performSearch.doFindSearchMatches):
+        (WebInspector.SourceFrame.prototype.performSearch):
+        (WebInspector.SourceFrame.prototype.searchCanceled):
+        (WebInspector.SourceFrame.prototype.jumpToFirstSearchResult):
+        (WebInspector.SourceFrame.prototype.jumpToLastSearchResult):
+        (WebInspector.SourceFrame.prototype.jumpToNextSearchResult):
+        (WebInspector.SourceFrame.prototype.jumpToPreviousSearchResult):
+        (WebInspector.SourceFrame.prototype.showingFirstSearchResult):
+        (WebInspector.SourceFrame.prototype.showingLastSearchResult):
+        (WebInspector.SourceFrame.prototype._jumpToSearchResult):
+        * inspector/front-end/SourceView.js:
+        (WebInspector.SourceView.prototype.hide):
+        (WebInspector.SourceView.prototype.searchCanceled):
+        (WebInspector.SourceView.prototype.performSearch):
+        (WebInspector.SourceView.prototype.jumpToFirstSearchResult):
+        (WebInspector.SourceView.prototype.jumpToLastSearchResult):
+        (WebInspector.SourceView.prototype.jumpToNextSearchResult):
+        (WebInspector.SourceView.prototype.jumpToPreviousSearchResult):
+        (WebInspector.SourceView.prototype.showingFirstSearchResult):
+        (WebInspector.SourceView.prototype.showingLastSearchResult):
+        (WebInspector.SourceView.prototype.clearMessages):
+
 2011-01-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r76463.
