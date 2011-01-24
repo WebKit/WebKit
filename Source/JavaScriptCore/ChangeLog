@@ -1,5 +1,18 @@
 2011-01-23  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Use WTF::StringHasher in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=52934
+
+        Add an additional function to calculate the hash
+        of data with a runtimedependent size.
+
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::createBlobHash):
+
+2011-01-23  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by David Kilzer.
 
         Fix comment in String::ascii()

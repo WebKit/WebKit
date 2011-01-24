@@ -1,5 +1,23 @@
 2011-01-23  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Use WTF::StringHasher in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=52934
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::urlHostHash):
+        * platform/LinkHash.cpp:
+        (WebCore::visitedLinkHashInline):
+        * platform/cf/BinaryPropertyList.cpp:
+        (WebCore::IntegerArrayHash::hash):
+        * platform/graphics/wx/FontPlatformDataWx.cpp:
+        (WebCore::FontPlatformData::computeHash):
+        * platform/network/ProtectionSpaceHash.h:
+        (WebCore::ProtectionSpaceHash::hash):
+
+2011-01-23  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by David Kilzer.
 
         Add an overload to base64Encode with String output

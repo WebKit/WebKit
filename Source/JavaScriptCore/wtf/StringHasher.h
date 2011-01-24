@@ -141,6 +141,12 @@ public:
         return createHash<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
     }
 
+    static inline unsigned createBlobHash(const void* data, unsigned size)
+    {
+        ASSERT(!(size % 2));
+        return createHash<UChar>(static_cast<const UChar*>(data), size / sizeof(UChar));
+    }
+
 private:
     static inline UChar defaultCoverter(UChar ch)
     {

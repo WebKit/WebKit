@@ -42,11 +42,11 @@ struct ProtectionSpaceHash {
             protectionSpace.realm().impl() ? protectionSpace.realm().impl()->hash() : 0
         };
 
-        unsigned codeCount = sizeof(hashCodes) / sizeof(UChar);
+        unsigned codeCount = sizeof(hashCodes);
         // Ignore realm for proxies.
         if (protectionSpace.isProxy())
-            codeCount -= sizeof(hashCodes[0]) / sizeof(UChar);
-        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), codeCount);
+            codeCount -= sizeof(hashCodes[0]);
+        return WTF::StringHasher::createBlobHash(hashCodes, codeCount);
     }
     
     static bool equal(const ProtectionSpace& a, const ProtectionSpace& b) { return a == b; }
