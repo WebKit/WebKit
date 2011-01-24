@@ -3091,9 +3091,8 @@ BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 BUGTHAKIS LINUX WIN : media/video-display-toggle.html = IMAGE
 
 // New test that was non-deterministic.
-BUGYURYS : userscripts/window-onerror-for-isolated-world-1.html = PASS TEXT
-BUGYURYS MAC : userscripts/window-onerror-for-isolated-world-2.html = PASS TEXT
-BUGYURYS WIN LINUX : userscripts/window-onerror-for-isolated-world-2.html = PASS TEXT TIMEOUT
+BUGYURYS SLOW DEBUG : userscripts/window-onerror-for-isolated-world-1.html = PASS
+BUGYURYS SLOW DEBUG : userscripts/window-onerror-for-isolated-world-2.html = PASS
 BUGYURYS : http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write.html = PASS TEXT
 BUGYURYS : http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url.html = PASS TEXT
 BUGYURYS : http/tests/security/xss-DENIED-frame-name.html = PASS TEXT

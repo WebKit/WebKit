@@ -1,3 +1,12 @@
+2011-01-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update Chromium test expectations.
+
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * platform/chromium-mac/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * platform/chromium-mac/http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-24  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Oliver Hunt.
