@@ -1,3 +1,22 @@
+2010-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Support icon loading for <input type=file>
+        https://bugs.webkit.org/show_bug.cgi?id=38982
+
+        An icon data in Chromium port is represented as WebCore::Image. We
+        don't need OS-specific code anymore.
+
+        * WebCore.gypi:
+        * platform/graphics/Icon.h:
+        (WebCore::Icon::create): Add Chromium-specific factory.
+        * platform/graphics/chromium/IconChromium.cpp: Added.
+        * platform/graphics/chromium/IconChromiumLinux.cpp: Removed.
+        * platform/graphics/chromium/IconChromiumMac.cpp: Removed.
+        * platform/graphics/chromium/IconChromiumWin.cpp: Removed.
+        * platform/graphics/chromium/PlatformIcon.h:
+
 2011-01-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

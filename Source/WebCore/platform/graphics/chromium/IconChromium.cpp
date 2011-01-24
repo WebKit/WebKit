@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2008, 2009 Google Inc. All rights reserved.
- * 
+ * Copyright (c) 2011, Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -32,12 +32,11 @@
 #include "Icon.h"
 
 #include "GraphicsContext.h"
-#include "NotImplemented.h"
 #include "PlatformString.h"
 
 namespace WebCore {
 
-Icon::Icon(const PlatformIcon& icon)
+Icon::Icon(PassRefPtr<PlatformIcon> icon)
     : m_icon(icon)
 {
 }
@@ -46,9 +45,14 @@ Icon::~Icon()
 {
 }
 
-void Icon::paint(GraphicsContext*, const IntRect&)
+void Icon::paint(GraphicsContext* context, const IntRect& rect)
 {
-    notImplemented();
+    if (context->paintingDisabled())
+        return;
+
+    // An Icon doesn't know the color space of the file upload control.
+    // So use ColorSpaceDeviceRGB.
+    context->drawImage(m_icon.get(), ColorSpaceDeviceRGB, rect);
 }
 
 } // namespace WebCore

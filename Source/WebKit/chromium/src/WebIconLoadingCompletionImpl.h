@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2008, Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,23 +28,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Icon.h"
+#ifndef WebIconLoadingCompletionImpl_h
+#define WebIconLoadingCompletionImpl_h
 
-#include "PassRefPtr.h"
+#include "FileChooser.h"
+#include "WebData.h"
+#include "WebIconLoadingCompletion.h"
+#include <wtf/PassRefPtr.h>
 
-// FIXME: These are temporary stubs, we need real implementations which
-// may come in the form of IconChromium.cpp.  The Windows Chromium
-// implementation is currently in IconWin.cpp.
- 
-namespace WebCore {
+using WebKit::WebIconLoadingCompletion;
+using WebKit::WebData;
 
-Icon::~Icon()
-{
-}
+namespace WebKit {
 
-void Icon::paint(GraphicsContext*, const IntRect&)
-{
-}
+class WebIconLoadingCompletionImpl : public WebIconLoadingCompletion {
+public:
+    WebIconLoadingCompletionImpl(WebCore::FileChooser*);
+    virtual void didLoadIcon(const WebData&);
 
-}
+private:
+    ~WebIconLoadingCompletionImpl();
+
+    RefPtr<WebCore::FileChooser> m_fileChooser;
+};
+
+} // namespace WebKit
+
+#endif

@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
- * 
+ * Copyright (C) 2011 Google Inc. All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,38 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "Icon.h"
+#ifndef WebIconLoadingCompletion_h
+#define WebIconLoadingCompletion_h
 
-#include <windows.h>
-#include <shellapi.h>
+namespace WebKit {
 
-#include "GraphicsContext.h"
-#include "PlatformContextSkia.h"
-#include "PlatformString.h"
-#include "SkiaUtils.h"
+class WebData;
+class WebString;
 
-namespace WebCore {
+// Gets called back when WebViewClient finished loading an icon.
+class WebIconLoadingCompletion {
+public:
+    // Called with the loaded icon data, which is an image data stream
+    // WebCore can decode, such as PNG. A null WebData means a failure of
+    // loading. The callback instance is destroyed when this method is called.
+    virtual void didLoadIcon(const WebData&) = 0;
 
-Icon::Icon(const PlatformIcon& icon)
-    : m_icon(icon)
-{
-}
+protected:
+    virtual ~WebIconLoadingCompletion() { }
+};
 
-Icon::~Icon()
-{
-    if (m_icon)
-        DestroyIcon(m_icon);
-}
+} // namespace WebKit
 
-void Icon::paint(GraphicsContext* context, const IntRect& rect)
-{
-    if (context->paintingDisabled())
-        return;
-
-    HDC hdc = context->platformContext()->canvas()->beginPlatformPaint();
-    DrawIconEx(hdc, rect.x(), rect.y(), m_icon, rect.width(), rect.height(), 0, 0, DI_NORMAL);
-    context->platformContext()->canvas()->endPlatformPaint();
-}
-
-} // namespace WebCore
+#endif

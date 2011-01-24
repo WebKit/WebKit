@@ -70,6 +70,7 @@
 #include "WebFileChooserCompletionImpl.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
+#include "WebIconLoadingCompletionImpl.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
 #include "WebNode.h"
@@ -669,9 +670,13 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
     chooserCompletion->didChooseFile(WebVector<WebString>());
 }
 
-void ChromeClientImpl::chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*)
+void ChromeClientImpl::chooseIconForFiles(const Vector<String>& filenames, FileChooser* fileChooser)
 {
-    notImplemented();
+    if (!m_webView->client())
+        return;
+    WebIconLoadingCompletionImpl* iconCompletion = new WebIconLoadingCompletionImpl(fileChooser);
+    if (!m_webView->client()->queryIconForFiles(filenames, iconCompletion))
+        iconCompletion->didLoadIcon(WebData());
 }
 
 void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,

@@ -1,3 +1,28 @@
+2010-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Support icon loading for <input type=file>
+        https://bugs.webkit.org/show_bug.cgi?id=38982
+
+        Implement ChromeClientImpl::chooseIconForFiles(). It delegates loading
+        to WebViewClient::queryIconForFiles(), and an implementation of
+        WebViewClient::queryIconForFiles() loads an icon and passes it to a
+        FileChooser through WebIconLoadingCompletion.
+
+        * WebKit.gyp:
+        * public/WebIconLoadingCompletion.h: Added.
+        (WebKit::WebIconLoadingCompletion::~WebIconLoadingCompletion):
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::queryIconForFiles):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::chooseIconForFiles):
+        * src/WebIconLoadingCompletionImpl.cpp: Added.
+        (WebKit::WebIconLoadingCompletionImpl::WebIconLoadingCompletionImpl):
+        (WebKit::WebIconLoadingCompletionImpl::~WebIconLoadingCompletionImpl):
+        (WebKit::WebIconLoadingCompletionImpl::didLoadIcon):
+        * src/WebIconLoadingCompletionImpl.h: Added.
+
 2011-01-22  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Adam Barth.

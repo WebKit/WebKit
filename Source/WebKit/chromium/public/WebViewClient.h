@@ -54,6 +54,7 @@ class WebFileChooserCompletion;
 class WebFrame;
 class WebGeolocationClient;
 class WebGeolocationService;
+class WebIconLoadingCompletion;
 class WebImage;
 class WebInputElement;
 class WebKeyboardEvent;
@@ -116,6 +117,10 @@ public:
 
     // Called to retrieve the provider of desktop notifications.
     virtual WebNotificationPresenter* notificationPresenter() { return 0; }
+
+    // Called to request an icon for the specified filenames.
+    // The icon is shown in a file upload control.
+    virtual bool queryIconForFiles(const WebVector<WebString>& filenames, WebIconLoadingCompletion*) { return false; }
 
 
     // Navigational --------------------------------------------------------

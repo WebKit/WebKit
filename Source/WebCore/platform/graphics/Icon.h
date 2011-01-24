@@ -42,6 +42,7 @@ typedef struct _GdkPixbuf GdkPixbuf;
 #elif PLATFORM(EFL)
 typedef struct _Evas_Object Evas_Object;
 #elif PLATFORM(CHROMIUM)
+#include "Image.h"
 #include "PlatformIcon.h"
 #endif
 
@@ -60,6 +61,8 @@ public:
 
 #if PLATFORM(WIN)
     static PassRefPtr<Icon> create(HICON hIcon) { return adoptRef(new Icon(hIcon)); }
+#elif PLATFORM(CHROMIUM)
+    static PassRefPtr<Icon> create(PassRefPtr<PlatformIcon> icon) { return adoptRef(new Icon(icon)); }
 #endif
 
 private:
@@ -79,8 +82,8 @@ private:
     Icon();
     Evas_Object* m_icon;
 #elif PLATFORM(CHROMIUM)
-    Icon(const PlatformIcon&);
-    PlatformIcon m_icon;
+    Icon(PassRefPtr<PlatformIcon>);
+    RefPtr<PlatformIcon> m_icon;
 #endif
 };
 
