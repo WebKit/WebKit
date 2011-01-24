@@ -8,13 +8,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [border: (2px solid #FF0000)]
-      RenderBlock {DIV} at (14,14) size 756x64
-        RenderText {#text} at (0,0) size 151x31
-          text run at (0,0) width 151: "There is a tide"
-        RenderBR {BR} at (151,23) size 0x0
-        RenderText {#text} at (0,32) size 210x31
-          text run at (0,32) width 210: "in the affairs of men"
-      RenderBlock {DIV} at (14,78) size 756x32
-        RenderText {#text} at (0,0) size 256x31
-          text run at (0,0) width 256: "Which taken at the flood"
+      RenderBlock {DIV} at (14,14) size 756x62
+        RenderText {#text} at (0,0) size 147x32
+          text run at (0,0) width 147: "There is a tide"
+        RenderBR {BR} at (147,24) size 0x0
+        RenderText {#text} at (0,31) size 207x32
+          text run at (0,31) width 207: "in the affairs of men"
+      RenderBlock {DIV} at (14,76) size 756x31
+        RenderText {#text} at (0,0) size 253x32
+          text run at (0,0) width 253: "Which taken at the flood"
 caret: position 0 of child 2 {#text} of child 1 {DIV} of body

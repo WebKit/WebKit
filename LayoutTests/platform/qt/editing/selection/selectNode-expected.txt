@@ -2,24 +2,24 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 344x19
-          text run at (0,0) width 344: "This tests Range.selectNode() of a text node and a br."
-      RenderBlock {DIV} at (0,33) size 784x19
-        RenderText {#text} at (0,0) size 24x19
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 358x21
+          text run at (0,0) width 358: "This tests Range.selectNode() of a text node and a br."
+      RenderBlock {DIV} at (0,37) size 784x21
+        RenderText {#text} at (0,0) size 24x21
           text run at (0,0) width 24: "one"
-      RenderBlock {DIV} at (0,52) size 784x38
-        RenderText {#text} at (0,0) size 22x19
-          text run at (0,0) width 22: "two"
-        RenderBR {BR} at (22,14) size 0x0
-        RenderText {#text} at (0,19) size 33x19
-          text run at (0,19) width 33: "three"
-      RenderBlock {DIV} at (0,90) size 784x19
-        RenderText {#text} at (0,0) size 25x19
-          text run at (0,0) width 25: "four"
-      RenderBlock {UL} at (0,123) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-17,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 57x19
-            text run at (0,0) width 57: "Success."
+      RenderBlock {DIV} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 25x21
+          text run at (0,0) width 25: "two"
+        RenderBR {BR} at (25,16) size 0x0
+        RenderText {#text} at (0,21) size 35x21
+          text run at (0,21) width 35: "three"
+      RenderBlock {DIV} at (0,100) size 784x21
+        RenderText {#text} at (0,0) size 29x21
+          text run at (0,0) width 29: "four"
+      RenderBlock {UL} at (0,137) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 55x21
+            text run at (0,0) width 55: "Success."

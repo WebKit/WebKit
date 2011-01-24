@@ -8,26 +8,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x236 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,38) size 756x160
-          RenderBlock {OL} at (0,0) size 756x160
-            RenderListItem {LI} at (40,0) size 716x32
-              RenderListMarker at (-34,0) size 27x31: "1"
-              RenderText {#text} at (0,0) size 39x31
-                text run at (0,0) width 39: "one"
-            RenderListItem {LI} at (40,32) size 716x32
-              RenderListMarker at (-34,0) size 27x31: "2"
-              RenderText {#text} at (0,0) size 37x31
+      RenderBlock {DIV} at (0,0) size 784x231 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x155
+          RenderBlock {OL} at (0,0) size 756x155
+            RenderListItem {LI} at (40,0) size 716x31
+              RenderListMarker at (-32,0) size 24x32: "1"
+              RenderText {#text} at (0,0) size 36x32
+                text run at (0,0) width 36: "one"
+            RenderListItem {LI} at (40,31) size 716x31
+              RenderListMarker at (-32,0) size 24x32: "2"
+              RenderText {#text} at (0,0) size 37x32
                 text run at (0,0) width 37: "two"
-            RenderListItem {LI} at (40,64) size 716x32
-              RenderListMarker at (-34,0) size 27x31: "3"
-              RenderBR {BR} at (0,0) size 0x31
-            RenderListItem {LI} at (40,96) size 716x32
-              RenderListMarker at (-34,0) size 27x31: "4"
-              RenderText {#text} at (0,0) size 41x31
-                text run at (0,0) width 41: "four"
-            RenderListItem {LI} at (40,128) size 716x32
-              RenderListMarker at (-34,0) size 27x31: "5"
-              RenderText {#text} at (0,0) size 37x31
-                text run at (0,0) width 37: "five"
+            RenderListItem {LI} at (40,62) size 716x31
+              RenderListMarker at (-32,0) size 24x32: "3"
+              RenderBR {BR} at (0,0) size 0x32
+            RenderListItem {LI} at (40,93) size 716x31
+              RenderListMarker at (-32,0) size 24x32: "4"
+              RenderText {#text} at (0,0) size 44x32
+                text run at (0,0) width 44: "four"
+            RenderListItem {LI} at (40,124) size 716x31
+              RenderListMarker at (-32,0) size 24x32: "5"
+              RenderText {#text} at (0,0) size 38x32
+                text run at (0,0) width 38: "five"
 caret: position 0 of child 0 {BR} of child 2 {LI} of child 1 {OL} of child 1 {DIV} of child 1 {DIV} of body

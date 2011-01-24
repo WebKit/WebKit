@@ -10,18 +10,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92 [border: (2px solid #FF0000)]
-        RenderBlock {FRIJOLE} at (14,14) size 756x64
-          RenderBlock (anonymous) at (0,0) size 756x32
-            RenderText {#text} at (0,0) size 144x31
-              text run at (0,0) width 144: "one two three"
+      RenderBlock {DIV} at (0,0) size 784x90 [border: (2px solid #FF0000)]
+        RenderBlock {FRIJOLE} at (14,14) size 756x62
+          RenderBlock (anonymous) at (0,0) size 756x31
+            RenderText {#text} at (0,0) size 139x32
+              text run at (0,0) width 139: "one two three"
             RenderInline {FRIJOLE} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
-          RenderBlock (anonymous) at (0,32) size 756x32
-            RenderBlock {DOODAD} at (0,0) size 756x32
-              RenderText {#text} at (0,0) size 121x31
-                text run at (0,0) width 121: "four five six"
-          RenderBlock (anonymous) at (0,64) size 756x0
+          RenderBlock (anonymous) at (0,31) size 756x31
+            RenderBlock {DOODAD} at (0,0) size 756x31
+              RenderText {#text} at (0,0) size 122x32
+                text run at (0,0) width 122: "four five six"
+          RenderBlock (anonymous) at (0,62) size 756x0
             RenderInline {FRIJOLE} at (0,0) size 0x0
 selection start: position 0 of child 0 {#text} of child 1 {DOODAD} of child 1 {FRIJOLE} of child 1 {FRIJOLE} of child 1 {DIV} of body
 selection end:   position 13 of child 0 {#text} of child 1 {DOODAD} of child 1 {FRIJOLE} of child 1 {FRIJOLE} of child 1 {DIV} of body

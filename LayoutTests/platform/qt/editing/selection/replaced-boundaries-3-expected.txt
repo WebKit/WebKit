@@ -10,18 +10,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 783x38
-          text run at (0,0) width 783: "This tests that when a selection that ends at [replaced element, 0] is painted, the replaced element doesn't appear selected."
-          text run at (0,19) width 331: "This test uses a select box for the replaced element."
-      RenderBlock {DIV} at (0,52) size 784x48
-        RenderText {#text} at (0,0) size 23x19
-          text run at (0,0) width 23: "abc"
-        RenderBR {BR} at (23,14) size 0x0
-        RenderMenuList {SELECT} at (2,21) size 260x25 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (8,4) size 228x19
-            RenderText at (0,0) size 228x19
-              text run at (0,0) width 228: "this select box shouldn't be selected"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 755x42
+          text run at (0,0) width 755: "This tests that when a selection that ends at [replaced element, 0] is painted, the replaced element doesn't appear"
+          text run at (0,21) width 60: "selected. "
+          text run at (60,21) width 341: "This test uses a select box for the replaced element."
+      RenderBlock {DIV} at (0,58) size 784x52
+        RenderText {#text} at (0,0) size 24x21
+          text run at (0,0) width 24: "abc"
+        RenderBR {BR} at (24,16) size 0x0
+        RenderMenuList {SELECT} at (2,23) size 268x27 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (8,4) size 236x21
+            RenderText at (0,0) size 236x21
+              text run at (0,0) width 236: "this select box shouldn't be selected"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {DIV} of body
 selection end:   position 1 of child 1 {BR} of child 3 {DIV} of body

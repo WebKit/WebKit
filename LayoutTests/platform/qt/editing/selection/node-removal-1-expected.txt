@@ -5,19 +5,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 761x38
-          text run at (0,0) width 694: "This tests behavior when a node that serves as the start or end of a selection is removed from the document. "
-          text run at (694,0) width 67: "Ideally, we"
-          text run at (0,19) width 645: "would just adjust the selection when an endpoint is removed, for now, we just blow away the selection."
-      RenderBlock {P} at (0,52) size 784x38
-        RenderText {#text} at (0,0) size 783x38
-          text run at (0,0) width 484: "This test creates a selection that ends inside of a node that will be removed. "
-          text run at (484,0) width 175: "Then the node is removed. "
-          text run at (659,0) width 124: "There should be no"
-          text run at (0,19) width 124: "selection afterward."
-      RenderBlock {DIV} at (0,104) size 784x19
-        RenderText {#text} at (0,0) size 34x19
-          text run at (0,0) width 34: "hello "
-        RenderText {#text} at (34,0) size 38x19
-          text run at (34,0) width 38: "world!"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 777x42
+          text run at (0,0) width 727: "This tests behavior when a node that serves as the start or end of a selection is removed from the document. "
+          text run at (727,0) width 50: "Ideally,"
+          text run at (0,21) width 713: "we would just adjust the selection when an endpoint is removed, for now, we just blow away the selection."
+      RenderBlock {P} at (0,58) size 784x42
+        RenderText {#text} at (0,0) size 779x42
+          text run at (0,0) width 506: "This test creates a selection that ends inside of a node that will be removed. "
+          text run at (506,0) width 183: "Then the node is removed. "
+          text run at (689,0) width 90: "There should"
+          text run at (0,21) width 174: "be no selection afterward."
+      RenderBlock {DIV} at (0,116) size 784x21
+        RenderText {#text} at (0,0) size 36x21
+          text run at (0,0) width 36: "hello "
+        RenderText {#text} at (36,0) size 45x21
+          text run at (36,0) width 45: "world!"
