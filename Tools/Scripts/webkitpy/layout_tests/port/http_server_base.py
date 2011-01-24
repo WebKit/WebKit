@@ -67,7 +67,7 @@ class HttpServerBase(object):
             url = 'http%s://127.0.0.1:%d/' % (http_suffix, mapping['port'])
 
             try:
-                response = urllib.urlopen(url)
+                response = urllib.urlopen(url, proxies={})
                 _log.debug("Server running at %s" % url)
             except IOError, e:
                 _log.debug("Server NOT running at %s: %s" % (url, e))

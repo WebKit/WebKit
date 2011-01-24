@@ -73,7 +73,7 @@ def url_is_alive(url):
     wait_time = 10
     while wait_time > 0:
         try:
-            response = urllib.urlopen(url)
+            response = urllib.urlopen(url, proxies={})
             # Server is up and responding.
             return True
         except IOError:
