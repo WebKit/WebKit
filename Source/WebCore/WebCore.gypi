@@ -893,6 +893,7 @@
             'bindings/v8/DOMDataStore.h',
             'bindings/v8/DOMWrapperWorld.cpp',
             'bindings/v8/DOMWrapperWorld.h',
+            'bindings/v8/IntrusiveDOMWrapperMap.h',
             'bindings/v8/IsolatedWorld.cpp',
             'bindings/v8/IsolatedWorld.h',
             'bindings/v8/JavaScriptCallFrame.cpp',

@@ -32,6 +32,7 @@
 #define StaticDOMDataStore_h
 
 #include "DOMDataStore.h"
+#include "IntrusiveDOMWrapperMap.h"
 
 namespace WebCore {
 
