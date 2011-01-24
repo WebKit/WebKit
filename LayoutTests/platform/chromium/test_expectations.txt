@@ -2166,7 +2166,7 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 // HTML5 Geolocation API does not use window.clientInformation.
 BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
-BUGWK40740 MAC LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
+BUGWK40740 MAC : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
 
 BUGCR46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
 BUGCR46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
