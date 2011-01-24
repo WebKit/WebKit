@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Wait for half a second if we're asked to paint when receiving a DidSetSize message
+        https://bugs.webkit.org/show_bug.cgi?id=53028
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::paint):
+
+2011-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Implement forceRedisplay in the new drawing area
         https://bugs.webkit.org/show_bug.cgi?id=53026
 

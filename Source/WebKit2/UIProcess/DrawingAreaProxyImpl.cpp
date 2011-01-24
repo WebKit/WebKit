@@ -26,6 +26,7 @@
 #include "DrawingAreaProxyImpl.h"
 
 #include "DrawingAreaMessages.h"
+#include "DrawingAreaProxyMessages.h"
 #include "Region.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
@@ -60,6 +61,17 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
 
     if (!m_backingStore)
         return;
+
+    if (m_isWaitingForDidSetSize) {
+        if (!m_webPageProxy->isValid())
+            return;
+        if (m_webPageProxy->process()->isLaunching())
+            return;
+
+        // The timeout, in seconds, we use when waiting for a DidSetSize message when we're asked to paint.
+        static const double didSetSizeTimeout = 0.5;
+        m_webPageProxy->process()->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidSetSize>(m_webPageProxy->pageID(), didSetSizeTimeout);
+    }
 
     m_backingStore->paint(context, rect);
     unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
