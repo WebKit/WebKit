@@ -62,8 +62,6 @@ public:
 
     bool makeContextCurrent();
 
-    unsigned int sizeInBytes(GC3Denum type);
-
     void reshape(int width, int height);
     IntSize getInternalFramebufferSize();
 

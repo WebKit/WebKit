@@ -1,3 +1,13 @@
+2011-01-24  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Darin Adler.
+
+        Remove sizeInBytes from GraphicsContext3D's various implementations
+        https://bugs.webkit.org/show_bug.cgi?id=52339
+
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DInternal.h:
+
 2011-01-24  Tony Chang  <tony@chromium.org>
 
         Reviewed by James Robinson.

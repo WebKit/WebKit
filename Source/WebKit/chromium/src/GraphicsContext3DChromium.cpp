@@ -365,7 +365,6 @@ rt GraphicsContext3DInternal::name(t1 a1, t2 a2, t3 a3, t4 a4, t5 a5, t6 a6, t7 
 }
 
 DELEGATE_TO_IMPL_R(makeContextCurrent, bool)
-DELEGATE_TO_IMPL_1R(sizeInBytes, GC3Denum, unsigned int)
 
 bool GraphicsContext3DInternal::isGLES2Compliant() const
 {
@@ -897,7 +896,6 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 #endif
 
 DELEGATE_TO_INTERNAL(makeContextCurrent)
-DELEGATE_TO_INTERNAL_1R(sizeInBytes, GC3Denum, unsigned int)
 DELEGATE_TO_INTERNAL_2(reshape, int, int)
 DELEGATE_TO_INTERNAL_R(getInternalFramebufferSize, IntSize)
 

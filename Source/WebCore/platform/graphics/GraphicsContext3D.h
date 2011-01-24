@@ -47,7 +47,9 @@
 typedef unsigned int GC3Denum;
 typedef unsigned char GC3Dboolean;
 typedef unsigned int GC3Dbitfield;
+typedef signed char GC3Dbyte;
 typedef unsigned char GC3Dubyte;
+typedef short GC3Dshort;
 typedef unsigned short GC3Dushort;
 typedef int GC3Dint;
 typedef int GC3Dsizei;
@@ -486,10 +488,6 @@ public:
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
 #endif
-
-    // Helper to return the size in bytes of OpenGL data types
-    // like GL_FLOAT, GL_INT, etc.
-    unsigned int sizeInBytes(GC3Denum type);
 
     // Helper to texImage2D with pixel==0 case: pixels are initialized to 0.
     // Return true if no GL error is synthesized.

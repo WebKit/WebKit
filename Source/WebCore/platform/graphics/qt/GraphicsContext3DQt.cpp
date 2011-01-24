@@ -1611,28 +1611,6 @@ void GraphicsContext3D::deleteTexture(Platform3DObject texture)
     glDeleteTextures(1, &texture);
 }
 
-unsigned int GraphicsContext3D::sizeInBytes(GC3Denum type)
-{
-    switch (type) {
-    case GraphicsContext3D::BYTE:
-        return sizeof(GLbyte);
-    case GraphicsContext3D::UNSIGNED_BYTE:
-        return sizeof(GLubyte);
-    case GraphicsContext3D::SHORT:
-        return sizeof(GLshort);
-    case GraphicsContext3D::UNSIGNED_SHORT:
-        return sizeof(GLushort);
-    case GraphicsContext3D::INT:
-        return sizeof(GLint);
-    case GraphicsContext3D::UNSIGNED_INT:
-        return sizeof(GLuint);
-    case GraphicsContext3D::FLOAT:
-        return sizeof(GLfloat);
-    default:
-        return 0;
-    }
-}
-
 void GraphicsContext3D::synthesizeGLError(GC3Denum error)
 {
     m_internal->m_syntheticErrors.add(error);

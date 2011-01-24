@@ -487,7 +487,24 @@ void WebGLRenderingContext::reshape(int width, int height)
 
 unsigned int WebGLRenderingContext::sizeInBytes(GC3Denum type)
 {
-    return m_context->sizeInBytes(type);
+    switch (type) {
+    case GraphicsContext3D::BYTE:
+        return sizeof(GC3Dbyte);
+    case GraphicsContext3D::UNSIGNED_BYTE:
+        return sizeof(GC3Dubyte);
+    case GraphicsContext3D::SHORT:
+        return sizeof(GC3Dshort);
+    case GraphicsContext3D::UNSIGNED_SHORT:
+        return sizeof(GC3Dushort);
+    case GraphicsContext3D::INT:
+        return sizeof(GC3Dint);
+    case GraphicsContext3D::UNSIGNED_INT:
+        return sizeof(GC3Duint);
+    case GraphicsContext3D::FLOAT:
+        return sizeof(GC3Dfloat);
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 void WebGLRenderingContext::activeTexture(GC3Denum texture, ExceptionCode& ec)
