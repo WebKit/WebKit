@@ -1,3 +1,14 @@
+2011-01-24  Peter Beverloo  <peter@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: recognize application/x-font-woff as a valid mime-type.
+        https://bugs.webkit.org/show_bug.cgi?id=52977
+
+        No new tests.
+
+        * inspector/front-end/inspector.js:
+
 2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix for r76497.

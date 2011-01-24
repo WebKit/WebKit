@@ -1873,6 +1873,7 @@ WebInspector.MIMETypes = {
     "font/opentype":               {3: true},
     "application/x-font-type1":    {3: true},
     "application/x-font-ttf":      {3: true},
+    "application/x-font-woff":     {3: true},
     "application/x-truetype-font": {3: true},
     "text/javascript":             {4: true},
     "text/ecmascript":             {4: true},
