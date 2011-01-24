@@ -47,11 +47,6 @@ public:
     // text are returned via the listener interface.
     virtual bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar, const WebSecurityOrigin& origin)
     {
-        return startRecognition(requestId, elementRect, language, grammar);
-    }
-    // TODO(satish): Remove this once chromium has rolled past the above change.
-    virtual bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar)
-    {
         WEBKIT_ASSERT_NOT_REACHED();
         return false;
     }
