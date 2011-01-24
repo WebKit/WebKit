@@ -1,3 +1,44 @@
+2011-01-21  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Add support for -webkit-mask properties to the
+        accelerated compositing path.
+        https://bugs.webkit.org/show_bug.cgi?id=49780
+         
+        Tests: Existing tests in LayoutTests/compositing/masks
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::draw):
+        (WebCore::ContentLayerChromium::unreserveContentsTexture):
+        (WebCore::ContentLayerChromium::bindContentsTexture):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setMaskLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setMaskLayer):
+        (WebCore::LayerChromium::maskLayer):
+        (WebCore::LayerChromium::unreserveContentsTexture):
+        (WebCore::LayerChromium::bindContentsTexture):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayersRecursive):
+        * platform/graphics/chromium/LayerTexture.cpp:
+        (WebCore::LayerTexture::bindTexture):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::SharedValues::SharedValues):
+        (WebCore::RenderSurfaceChromium::SharedValues::~SharedValues):
+        (WebCore::RenderSurfaceChromium::RenderSurfaceChromium):
+        (WebCore::RenderSurfaceChromium::draw):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (WebCore::RenderSurfaceChromium::SharedValues::maskShaderProgram):
+        (WebCore::RenderSurfaceChromium::SharedValues::maskShaderSamplerLocation):
+        (WebCore::RenderSurfaceChromium::SharedValues::maskShaderMaskSamplerLocation):
+        (WebCore::RenderSurfaceChromium::SharedValues::maskShaderMatrixLocation):
+        (WebCore::RenderSurfaceChromium::SharedValues::maskShaderAlphaLocation):
+
 2011-01-23  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

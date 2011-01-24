@@ -50,6 +50,9 @@ public:
     virtual ~ContentLayerChromium();
 
     virtual void updateContentsIfDirty();
+    virtual void unreserveContentsTexture();
+    virtual void bindContentsTexture();
+
     virtual void draw();
     virtual bool drawsContent() { return m_owner && m_owner->drawsContent(); }
 

@@ -112,6 +112,9 @@ public:
     void setName(const String& name) { m_name = name; }
     String name() const { return m_name; }
 
+    void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; }
+    LayerChromium* maskLayer() const { return m_maskLayer.get(); }
+
     void setNeedsDisplay(const FloatRect& dirtyRect);
     void setNeedsDisplay();
     const FloatRect& dirtyRect() const { return m_dirtyRect; }
@@ -158,6 +161,8 @@ public:
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() { return false; }
     virtual void updateContentsIfDirty() { }
+    virtual void unreserveContentsTexture() { }
+    virtual void bindContentsTexture() { }
     virtual void draw() { }
 
     void drawDebugBorder();
@@ -221,6 +226,8 @@ protected:
     IntSize m_bounds;
     FloatRect m_dirtyRect;
     bool m_contentsDirty;
+
+    RefPtr<LayerChromium> m_maskLayer;
 
     // Render surface this layer draws into. This is a surface that can belong
     // either to this layer (if m_targetRenderSurface == m_renderSurface) or

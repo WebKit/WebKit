@@ -67,6 +67,7 @@ public:
     virtual void setPreserves3D(bool);
     virtual void setMasksToBounds(bool);
     virtual void setDrawsContent(bool);
+    virtual void setMaskLayer(GraphicsLayer*);
 
     virtual void setBackgroundColor(const Color&);
     virtual void clearBackgroundColor();

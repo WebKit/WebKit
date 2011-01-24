@@ -452,7 +452,9 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     // of their parent.
     bool useSurfaceForClipping = layer->masksToBounds() && !isScaleOrTranslation(combinedTransform);
     bool useSurfaceForOpacity = layer->opacity() != 1 && !layer->preserves3D();
-    if ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantsDrawContent()) {
+    bool useSurfaceForMasking = layer->maskLayer();
+    if (((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantsDrawContent())
+        || useSurfaceForMasking) {
         RenderSurfaceChromium* renderSurface = layer->m_renderSurface.get();
         if (!renderSurface)
             renderSurface = layer->createRenderSurface();
@@ -485,6 +487,13 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
         renderSurface->m_scissorRect = layer->superlayer()->m_scissorRect;
 
         renderSurface->m_layerList.clear();
+
+        if (layer->maskLayer()) {
+            renderSurface->m_maskLayer = layer->maskLayer();
+            layer->maskLayer()->setLayerRenderer(this);
+            layer->maskLayer()->m_targetRenderSurface = renderSurface;
+        } else
+            renderSurface->m_maskLayer = 0;
 
         renderSurfaceLayerList.append(layer);
     } else {
@@ -566,7 +575,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
             layer->m_drawableContentRect.unite(sublayer->m_drawableContentRect);
     }
 
-    if (layer->masksToBounds())
+    if (layer->masksToBounds() || useSurfaceForMasking)
         layer->m_drawableContentRect.intersect(transformedLayerRect);
 
     if (layer->m_renderSurface && layer != m_rootLayer) {

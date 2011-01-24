@@ -263,6 +263,17 @@ void GraphicsLayerChromium::setContentsOpaque(bool opaque)
     updateContentsOpaque();
 }
 
+void GraphicsLayerChromium::setMaskLayer(GraphicsLayer* maskLayer)
+{
+    if (maskLayer == m_maskLayer)
+        return;
+
+    GraphicsLayer::setMaskLayer(maskLayer);
+
+    LayerChromium* maskLayerChromium = m_maskLayer ? m_maskLayer->platformLayer() : 0;
+    m_layer->setMaskLayer(maskLayerChromium);
+}
+
 void GraphicsLayerChromium::setBackfaceVisibility(bool visible)
 {
     if (m_backfaceVisibility == visible)

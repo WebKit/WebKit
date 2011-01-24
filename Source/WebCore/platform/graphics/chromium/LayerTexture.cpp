@@ -79,6 +79,7 @@ void LayerTexture::unreserve()
 
 void LayerTexture::bindTexture()
 {
+    ASSERT(m_textureManager->hasTexture(m_token));
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
 }
 

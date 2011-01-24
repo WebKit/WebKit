@@ -343,7 +343,7 @@ void ContentLayerChromium::draw()
     ASSERT(sv && sv->initialized());
     GraphicsContext3D* context = layerRendererContext();
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-    m_contentsTexture->bindTexture();
+    bindContentsTexture();
     layerRenderer()->useShader(sv->contentShaderProgram());
     GLC(context, context->uniform1i(sv->shaderSamplerLocation(), 0));
 
@@ -361,8 +361,21 @@ void ContentLayerChromium::draw()
                          drawOpacity(), sv->shaderMatrixLocation(),
                          sv->shaderAlphaLocation());
     }
-    m_contentsTexture->unreserve();
+    unreserveContentsTexture();
 }
+
+void ContentLayerChromium::unreserveContentsTexture()
+{
+    if (m_contentsTexture)
+        m_contentsTexture->unreserve();
+}
+
+void ContentLayerChromium::bindContentsTexture()
+{
+    if (m_contentsTexture)
+        m_contentsTexture->bindTexture();
+}
+
 
 }
 #endif // USE(ACCELERATED_COMPOSITING)
