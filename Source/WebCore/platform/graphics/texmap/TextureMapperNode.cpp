@@ -318,7 +318,7 @@ void TextureMapperNode::computeLocalTransform()
     m_transforms.local =
         TransformationMatrix()
         .translate3d(originX + m_state.pos.x(), originY + m_state.pos.y(), m_state.anchorPoint.z())
-        .multLeft(m_state.transform)
+        .multiply(m_state.transform)
         .translate3d(-originX, -originY, -m_state.anchorPoint.z());
     m_transforms.localDirty = false;
 }
@@ -352,7 +352,7 @@ void TextureMapperNode::computeReplicaTransform()
     m_nearestSurfaceSize = nearestSurfaceSize();
 
     if (m_layerType != TransparencyLayer) {
-        m_transforms.replica = TransformationMatrix(m_transforms.target).multLeft(m_state.replicaLayer->m_transforms.local);
+        m_transforms.replica = TransformationMatrix(m_transforms.target).multiply(m_state.replicaLayer->m_transforms.local);
         return;
     }
 
@@ -361,7 +361,7 @@ void TextureMapperNode::computeReplicaTransform()
     m_transforms.replica =
             TransformationMatrix()
                 .translate(originX, originY)
-                .multLeft(m_state.replicaLayer->m_transforms.local)
+                .multiply(m_state.replicaLayer->m_transforms.local)
                 .translate(-originX, -originY);
 }
 
@@ -377,7 +377,7 @@ void TextureMapperNode::computeTransformations()
     TextureMapperNode* parent = m_parent;
     computeLocalTransform();
 
-    m_transforms.target = TransformationMatrix(parent ? parent->m_transforms.forDescendants : TransformationMatrix()).multLeft(m_transforms.local);
+    m_transforms.target = TransformationMatrix(parent ? parent->m_transforms.forDescendants : TransformationMatrix()).multiply(m_transforms.local);
     m_transforms.forDescendants = (m_layerType == ClipLayer ? TransformationMatrix() : m_transforms.target);
 
     if (m_effectTarget)
@@ -408,10 +408,10 @@ void TextureMapperNode::computeTransformations()
     if (m_transforms.perspectiveDirty)
         m_transforms.perspective = TransformationMatrix()
             .translate(centerPoint.x(), centerPoint.y())
-            .multLeft(m_state.childrenTransform)
+            .multiply(m_state.childrenTransform)
             .translate(-centerPoint.x(), -centerPoint.y());
     m_transforms.perspectiveDirty = false;
-    m_transforms.forDescendants.multLeft(m_transforms.perspective);
+    m_transforms.forDescendants.multiply(m_transforms.perspective);
 }
 
 void TextureMapperNode::uploadTextureFromContent(TextureMapper* textureMapper, const IntRect& visibleRect, GraphicsLayer* layer)

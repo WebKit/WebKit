@@ -945,7 +945,7 @@ static IntRect transparencyClipBox(const RenderLayer* l, const RenderLayer* root
 
         TransformationMatrix transform;
         transform.translate(x, y);
-        transform = *l->transform() * transform;
+        transform = transform * *l->transform();
 
         IntRect clipRect = l->boundingBox(l);
         expandClipRectForDescendantsAndReflection(clipRect, l, l, paintBehavior);

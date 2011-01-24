@@ -529,12 +529,12 @@ void GraphicsLayerQtImpl::updateTransform()
     // have to maintain that ourselves for 3D.
     localTransform
             .translate3d(originX + m_state.pos.x(), originY + m_state.pos.y(), m_state.anchorPoint.z())
-            .multLeft(m_baseTransform)
+            .multiply(m_baseTransform)
             .translate3d(-originX, -originY, -m_state.anchorPoint.z());
 
     // This is the actual 3D transform of this item, with the ancestors' transform baked in.
     m_transformRelativeToRootLayer = TransformationMatrix(parent ? parent->m_transformRelativeToRootLayer : TransformationMatrix())
-                                         .multLeft(localTransform);
+                                         .multiply(localTransform);
 
     // Now we have enough information to determine if the layer is facing backwards.
     if (!m_state.backfaceVisibility && m_transformRelativeToRootLayer.inverse().m33() < 0) {
@@ -562,7 +562,7 @@ void GraphicsLayerQtImpl::updateTransform()
     if (!m_state.childrenTransform.isIdentity()) {
         m_transformRelativeToRootLayer
             .translate(m_size.width() / 2, m_size.height() /2)
-            .multLeft(m_state.childrenTransform)
+            .multiply(m_state.childrenTransform)
             .translate(-m_size.width() / 2, -m_size.height() /2);
     }
 

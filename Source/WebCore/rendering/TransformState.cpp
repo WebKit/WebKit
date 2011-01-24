@@ -60,9 +60,9 @@ void TransformState::applyTransform(const TransformationMatrix& transformFromCon
     // If we have an accumulated transform from last time, multiply in this transform
     if (m_accumulatedTransform) {
         if (m_direction == ApplyTransformDirection)
-            m_accumulatedTransform->multiply(transformFromContainer);
+            m_accumulatedTransform.set(new TransformationMatrix(transformFromContainer * *m_accumulatedTransform));
         else
-            m_accumulatedTransform->multLeft(transformFromContainer);
+            m_accumulatedTransform->multiply(transformFromContainer);
     } else if (accumulate == AccumulateTransform) {
         // Make one if we started to accumulate
         m_accumulatedTransform.set(new TransformationMatrix(transformFromContainer));
@@ -140,7 +140,7 @@ void HitTestingTransformState::translate(int x, int y, TransformAccumulation acc
 
 void HitTestingTransformState::applyTransform(const TransformationMatrix& transformFromContainer, TransformAccumulation accumulate)
 {
-    m_accumulatedTransform.multLeft(transformFromContainer);    
+    m_accumulatedTransform.multiply(transformFromContainer);
     if (accumulate == FlattenTransform)
         flattenWithTransform(m_accumulatedTransform);
 

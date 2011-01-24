@@ -387,7 +387,7 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
     // bounds into clip space.
     TransformationMatrix renderMatrix = matrix;
     renderMatrix.scale3d(layer->bounds().width(), layer->bounds().height(), 1);
-    renderMatrix.multiply(m_projectionMatrix);
+    renderMatrix = m_projectionMatrix * renderMatrix;
 
     FloatRect layerRect(-0.5, -0.5, 1, 1);
     FloatRect mappedRect = renderMatrix.mapRect(layerRect);
@@ -433,12 +433,12 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     // LT = Tr[l]
     layerLocalTransform.translate3d(position.x(), position.y(), layer->anchorPointZ());
     // LT = Tr[l] * M[l]
-    layerLocalTransform.multLeft(layer->transform());
+    layerLocalTransform.multiply(layer->transform());
     // LT = Tr[l] * M[l] * Tr[c]
     layerLocalTransform.translate3d(centerOffsetX, centerOffsetY, -layer->anchorPointZ());
 
     TransformationMatrix combinedTransform = parentMatrix;
-    combinedTransform = combinedTransform.multLeft(layerLocalTransform);
+    combinedTransform = combinedTransform.multiply(layerLocalTransform);
 
     FloatRect layerRect(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height(), layer->bounds().width(), layer->bounds().height());
     IntRect transformedLayerRect;
@@ -548,7 +548,7 @@ void LayerRendererChromium::updateLayersRecursive(LayerChromium* layer, const Tr
     }
 
     // Apply the sublayer transform at the center of the layer.
-    sublayerMatrix.multLeft(layer->sublayerTransform());
+    sublayerMatrix.multiply(layer->sublayerTransform());
 
     // The origin of the sublayers is the top left corner of the layer, not the
     // center. The matrix passed down to the sublayers is therefore:

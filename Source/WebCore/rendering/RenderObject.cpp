@@ -1986,7 +1986,7 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
     transform.translate(offsetInContainer.width(), offsetInContainer.height());
     RenderLayer* layer;
     if (hasLayer() && (layer = toRenderBoxModelObject(this)->layer()) && layer->transform())
-        transform.multLeft(layer->currentTransform());
+        transform.multiply(layer->currentTransform());
     
 #if ENABLE(3D_RENDERING)
     if (containerObject && containerObject->hasLayer() && containerObject->style()->hasPerspective()) {
@@ -1998,7 +1998,7 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
         perspectiveMatrix.applyPerspective(containerObject->style()->perspective());
         
         transform.translateRight3d(-perspectiveOrigin.x(), -perspectiveOrigin.y(), 0);
-        transform.multiply(perspectiveMatrix);
+        transform = perspectiveMatrix * transform;
         transform.translateRight3d(perspectiveOrigin.x(), perspectiveOrigin.y(), 0);
     }
 #else

@@ -55,21 +55,17 @@ namespace WebCore {
 // webmasters - are to be held responsible. Basically, don't be a jerk, and remember that anything free comes 
 // with no guarantee.
 
-// A Note About row-major vs. column major matrixes
+// A clarification about the storage of matrix elements
 //
-// The clients of this class (CSSMatrix and SVGMatrix) assume a column-major ordering.
-// That means that when the matrix is initialized with 16 values, the first 4 values
-// go in the 4 rows of the first column, etc. And in the dereferencing calls, the first
-// digit is the column (e.g., m23() is column 2 row 3). Because C++ uses row-major arrays 
-// the internal matrix is stored in row-major order, so m[2][0] means row 2, column 0. This
-// has no bearing on how the matrix is viewed on the outside, since all access is done
-// with function calls. But it does help make the code more clear if you know that.
+// This class uses a 2 dimensional array internally to store the elements of the matrix.  The first index into 
+// the array refers to the column that the element lies in; the second index refers to the row.
 //
-// FIXME: Multiply calls are named for what they do in the internal, row-major world. 
-// multLeft is actually a multRight in a column-major world, and multiply is a multLeft 
-// in a column-major world. For now I've left it that way to avoid too many confusing 
-// changes to the code. In particular AffineTransform uses these same terms for the
-// opposite operations. So we have to be VERY careful when we change them.
+// In other words, this is the layout of the matrix:
+//
+// | m_matrix[0][0] m_matrix[1][0] m_matrix[2][0] m_matrix[3][0] |
+// | m_matrix[0][1] m_matrix[1][1] m_matrix[2][1] m_matrix[3][1] |
+// | m_matrix[0][2] m_matrix[1][2] m_matrix[2][2] m_matrix[3][2] |
+// | m_matrix[0][3] m_matrix[1][3] m_matrix[2][3] m_matrix[3][3] |
 
 typedef double Vector4[4];
 typedef double Vector3[3];
@@ -634,7 +630,7 @@ TransformationMatrix& TransformationMatrix::scaleNonUniform(double sx, double sy
     mat.m_matrix[0][0] = sx;
     mat.m_matrix[1][1] = sy;
 
-    multLeft(mat);
+    multiply(mat);
     return *this;
 }
 
@@ -645,7 +641,7 @@ TransformationMatrix& TransformationMatrix::scale3d(double sx, double sy, double
     mat.m_matrix[1][1] = sy;
     mat.m_matrix[2][2] = sz;
 
-    multLeft(mat);
+    multiply(mat);
     return *this;
 }
 
@@ -732,7 +728,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
         mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
         mat.m_matrix[3][3] = 1.0f;
     }
-    multLeft(mat);
+    multiply(mat);
     return *this;
 }
 
@@ -783,7 +779,7 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
     mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
     mat.m_matrix[3][3] = 1.0f;
     
-    rmat.multLeft(mat);
+    rmat.multiply(mat);
 
     rx /= 2.0f;
     sinA = sin(rx);
@@ -803,9 +799,9 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
     mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
     mat.m_matrix[3][3] = 1.0f;
     
-    rmat.multLeft(mat);
+    rmat.multiply(mat);
 
-    multLeft(rmat);
+    multiply(rmat);
     return *this;
 }
 
@@ -869,7 +865,7 @@ TransformationMatrix& TransformationMatrix::skew(double sx, double sy)
     mat.m_matrix[0][1] = tan(sy); // note that the y shear goes in the first row
     mat.m_matrix[1][0] = tan(sx); // and the x shear in the second row
 
-    multLeft(mat);
+    multiply(mat);
     return *this;
 }
 
@@ -879,7 +875,7 @@ TransformationMatrix& TransformationMatrix::applyPerspective(double p)
     if (p != 0)
         mat.m_matrix[2][3] = -1/p;
 
-    multLeft(mat);
+    multiply(mat);
     return *this;
 }
 
@@ -896,7 +892,7 @@ TransformationMatrix TransformationMatrix::rectToRect(const FloatRect& from, con
 //
 // *this = mat * *this
 //
-TransformationMatrix& TransformationMatrix::multLeft(const TransformationMatrix& mat)
+TransformationMatrix& TransformationMatrix::multiply(const TransformationMatrix& mat)
 {
     Matrix4 tmp;
     
@@ -1105,25 +1101,25 @@ void TransformationMatrix::recompose(const DecomposedType& decomp)
                            2 * (xz - yw), 2 * (yz + xw), 1 - 2 * (xx + yy), 0,
                            0, 0, 0, 1);
     
-    multLeft(rotationMatrix);
+    multiply(rotationMatrix);
     
     // now apply skew
     if (decomp.skewYZ) {
         TransformationMatrix tmp;
         tmp.setM32((float) decomp.skewYZ);
-        multLeft(tmp);
+        multiply(tmp);
     }
     
     if (decomp.skewXZ) {
         TransformationMatrix tmp;
         tmp.setM31((float) decomp.skewXZ);
-        multLeft(tmp);
+        multiply(tmp);
     }
     
     if (decomp.skewXY) {
         TransformationMatrix tmp;
         tmp.setM21((float) decomp.skewXY);
-        multLeft(tmp);
+        multiply(tmp);
     }
     
     // finally, apply scale

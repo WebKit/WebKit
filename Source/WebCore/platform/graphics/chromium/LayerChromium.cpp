@@ -434,9 +434,7 @@ void LayerChromium::drawTexturedQuad(GraphicsContext3D* context, const Transform
     renderMatrix.scale3d(width, height, 1);
 
     // Apply the projection matrix before sending the transform over to the shader.
-    renderMatrix.multiply(projectionMatrix);
-
-    toGLMatrix(&glMatrix[0], renderMatrix);
+    toGLMatrix(&glMatrix[0], projectionMatrix * renderMatrix);
 
     GLC(context, context->uniformMatrix4fv(matrixLocation, false, &glMatrix[0], 1));
 
@@ -458,8 +456,7 @@ void LayerChromium::drawDebugBorder()
     layerRenderer()->useShader(sv->borderShaderProgram());
     TransformationMatrix renderMatrix = drawTransform();
     renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
-    renderMatrix.multiply(layerRenderer()->projectionMatrix());
-    toGLMatrix(&glMatrix[0], renderMatrix);
+    toGLMatrix(&glMatrix[0], layerRenderer()->projectionMatrix() * renderMatrix);
     GraphicsContext3D* context = layerRendererContext();
     GLC(context, context->uniformMatrix4fv(sv->borderShaderMatrixLocation(), false, &glMatrix[0], 1));
 

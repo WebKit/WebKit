@@ -390,7 +390,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
     GL_CMD(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
 
-    TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multLeft(modelViewMatrix).multLeft(TransformationMatrix(
+    TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multiply(modelViewMatrix).multiply(TransformationMatrix(
             targetRect.width(), 0, 0, 0,
             0, targetRect.height(), 0, 0,
             0, 0, 1, 0,
@@ -606,7 +606,7 @@ void TextureMapperGL::paintToTarget(const BitmapTexture& aSurface, const IntSize
     const BitmapTextureGL& surface = static_cast<const BitmapTextureGL&>(aSurface);
 
     // Create the model-view-projection matrix to display on screen.
-    TransformationMatrix matrix = createProjectionMatrix(surfaceSize, true).multLeft(transform).multLeft(
+    TransformationMatrix matrix = createProjectionMatrix(surfaceSize, true).multiply(transform).multiply(
                 TransformationMatrix(
                         surface.m_actualSize.width(), 0, 0, 0,
                         0, surface.m_actualSize.height(), 0, 0,

@@ -1,3 +1,50 @@
+2011-01-24  Shane Stephens  <shanestephens@google.com>
+
+        Reviewed by Chris Marrin.
+
+        TransformationMatrix multiply operations apply operands in wrong order.
+        https://bugs.webkit.org/show_bug.cgi?id=52780
+
+        Rename TranformationMatrix::multLeft into multiply (the method does a multRight,
+        not a multLeft).
+
+        Remove TransformationMatrix::multiply, which was actually doing a multLeft.
+
+        Fix TransformationMatrix::operator* and operator*= such that the operand is
+        applied to the right-hand side of the matrix that the method is called on.
+        i.e., previously "a * b" used to compute "b * a", and "a *= b" used to store
+        "b * a" in "a".  This has now been fixed so "a * b" computes "a * b" and
+        "a *= b" stores "a * b" in "a".
+
+        Convert all call sites for these methods to provide operands in the correct order.
+
+        No new tests as patch adds no new functionality.
+
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::multiply):
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        (WebCore::Matrix3DTransformOperation::apply):
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        (WebCore::MatrixTransformOperation::apply):
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::scaleNonUniform):
+        (WebCore::TransformationMatrix::scale3d):
+        (WebCore::TransformationMatrix::rotate3d):
+        (WebCore::TransformationMatrix::skew):
+        (WebCore::TransformationMatrix::applyPerspective):
+        (WebCore::TransformationMatrix::multiply):
+        (WebCore::TransformationMatrix::recompose):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore::TransformationMatrix::operator*=):
+        (WebCore::TransformationMatrix::operator*):
+        * rendering/RenderLayer.cpp:
+        (WebCore::transparencyClipBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::getTransformFromContainer):
+        * rendering/TransformState.cpp:
+        (WebCore::TransformState::applyTransform):
+        (WebCore::HitTestingTransformState::applyTransform):
+
 2011-01-24  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Nate Chapin.

@@ -208,11 +208,8 @@ public:
     void setF(double f) { m_matrix[3][1] = f; }
 
     // this = this * mat
-    TransformationMatrix& multiply(const TransformationMatrix& t) { return *this *= t; }
+    TransformationMatrix& multiply(const TransformationMatrix&);
 
-    // this = mat * this
-    TransformationMatrix& multLeft(const TransformationMatrix& mat);
-    
     TransformationMatrix& scale(double);
     TransformationMatrix& scaleNonUniform(double sx, double sy);
     TransformationMatrix& scale3d(double sx, double sy, double sz);
@@ -296,19 +293,18 @@ public:
     }
 
     bool operator!=(const TransformationMatrix& other) const { return !(*this == other); }
-    
-    // *this = *this * t (i.e., a multRight)
+
+    // *this = *this * t
     TransformationMatrix& operator*=(const TransformationMatrix& t)
     {
-        *this = *this * t;
-        return *this;
+        return multiply(t);
     }
     
-    // result = *this * t (i.e., a multRight)
+    // result = *this * t
     TransformationMatrix operator*(const TransformationMatrix& t) const
     {
-        TransformationMatrix result = t;
-        result.multLeft(*this);
+        TransformationMatrix result = *this;
+        result.multiply(t);
         return result;
     }
 

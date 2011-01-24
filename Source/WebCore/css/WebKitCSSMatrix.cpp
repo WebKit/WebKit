@@ -91,9 +91,7 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::multiply(WebKitCSSMatrix* secondMat
     if (!secondMatrix)
         return 0;
 
-    TransformationMatrix tmp(secondMatrix->m_matrix);
-    tmp.multiply(m_matrix);
-    return WebKitCSSMatrix::create(tmp);
+    return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).multiply(secondMatrix->m_matrix));
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::inverse(ExceptionCode& ec) const

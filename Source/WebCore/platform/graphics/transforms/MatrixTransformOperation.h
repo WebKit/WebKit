@@ -62,7 +62,7 @@ private:
     virtual bool apply(TransformationMatrix& transform, const IntSize&) const
     {
         TransformationMatrix matrix(m_a, m_b, m_c, m_d, m_e, m_f);
-        transform.multLeft(TransformationMatrix(matrix));
+        transform.multiply(matrix);
         return false;
     }
 
