@@ -941,6 +941,7 @@ editing/spelling/context-menu-suggestions.html
 
 # https://webkit.org/b/32021 - DRT's textInputController is unimplemented on Windows
 editing/input/ime-composition-clearpreedit.html
+editing/inserting/insert-composition-whitespace.html
 editing/selection/5825350-1.html
 editing/selection/5825350-2.html
 fast/text/international/thai-cursor-position.html

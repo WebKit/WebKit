@@ -1,3 +1,10 @@
+2011-01-24  Sam Weinig  <sam@webkit.org>
+
+        Add editing/inserting/insert-composition-whitespace.html to the windows
+        skipped list.
+
+        * platform/win/Skipped:
+
 2011-01-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed.
