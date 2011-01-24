@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8Binding.h"
 
+#include "DOMStringList.h"
 #include "Element.h"
 #include "MathExtras.h"
 #include "PlatformString.h"
@@ -576,6 +577,21 @@ void setElementStringAttr(const v8::AccessorInfo& info,
     Element* imp = V8Element::toNative(info.Holder());
     AtomicString v = toAtomicWebCoreStringWithNullCheck(value);
     imp->setAttribute(name, v);
+}
+
+PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> value)
+{
+    v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
+    if (!v8Value->IsArray())
+        return 0;
+
+    RefPtr<DOMStringList> ret = DOMStringList::create();
+    v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
+    for (size_t i = 0; i < v8Array->Length(); ++i) {
+        v8::Local<v8::Value> indexedValue = v8Array->Get(v8::Integer::New(i));
+        ret->append(v8ValueToWebCoreString(indexedValue));
+    }
+    return ret.release();
 }
 
 } // namespace WebCore

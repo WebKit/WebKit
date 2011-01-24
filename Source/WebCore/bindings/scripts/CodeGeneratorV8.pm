@@ -2832,6 +2832,8 @@ sub GetNativeType
 
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
 
+    return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
+
     # Default, assume native type is a pointer with same type name as idl type
     return "${type}*";
 }
@@ -2885,6 +2887,7 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "static_cast<SVGPaint::SVGPaintType>($value->ToInt32()->Int32Value())" if $type eq "SVGPaintType";
     return "toWebCoreDate($value)" if $type eq "Date";
+    return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMStringList";
 
     if ($type eq "DOMString" or $type eq "DOMUserData") {
         return $value;

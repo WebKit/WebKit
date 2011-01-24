@@ -57,7 +57,7 @@ var testDate = new Date('February 24, 1955 12:00:08');
 function addData()
 {
     debug("addData():");
-    var transaction = evalAndLog("transaction = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    var transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
     var result = evalAndLog("result = transaction.objectStore('storeName').add({x: testDate}, 'key')");
     result.onerror = unexpectedErrorCallback;
     transaction.oncomplete = getData;
@@ -66,7 +66,7 @@ function addData()
 function getData()
 {
     debug("addData():");
-    var transaction = evalAndLog("transaction = db.transaction({mode: webkitIDBTransaction.READ_ONLY})");
+    var transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_ONLY)");
     var result = evalAndLog("result = transaction.objectStore('storeName').get('key')");
     result.onerror = unexpectedErrorCallback;
     result.onsuccess = doCheck;

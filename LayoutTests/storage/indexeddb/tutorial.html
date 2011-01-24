@@ -207,7 +207,7 @@ function onSetVersionComplete()
 {
     // Lets create a new transaction and then not schedule any work on it to watch it abort itself.
     // Transactions (besides those created with setVersion) are created synchronously. Like
-    // createObjectStore, transaction optionally takes in an object with various optional parameters.
+    // createObjectStore, transaction optionally takes in various optional parameters.
     //
     // First of all is the parameter "objectStoreNames". If you pass in a string, we lock just that
     // objectStore.  If you pass in an array, we lock those. Otherwise (for example, if you omit it
@@ -222,7 +222,7 @@ function onSetVersionComplete()
     // Last is "timeout" which is measured in seconds. At the moment, Chromium/WebKit defaults to 0 which
     // means never, but it's possible we'll change this in the future and other implementations may
     // use something different, so set it if you really care.
-    window.currentTransaction = db.transaction({mode: IDBTransaction.READ_WRITE, timeout: 0});
+    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE, 0);
     currentTransaction.oncomplete = unexpectedComplete;
     currentTransaction.onabort = onTransactionAborted;
 
@@ -272,7 +272,7 @@ function onTransactionAborted()
     // Now let's make a real transaction and a person to our objectStore. Just to show it's possible,
     // we'll omit the objectStoreNames parameter which means we'll lock everything even though we only
     // ever access "people".
-    window.currentTransaction = db.transaction({mode: IDBTransaction.READ_WRITE});
+    window.currentTransaction = db.transaction([], IDBTransaction.READ_WRITE);
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");
@@ -310,7 +310,7 @@ function onPutTransactionComplete()
     // OK, now let's query the people objectStore in a couple different ways. First up, let's try get.
     // It simply takes in a key and returns a request whose result will be the value. Note that here
     // we're passing in an array for objectStoreNames rather than a simple string.
-    window.currentTransaction = db.transaction({objectStoreNames: ["people"], mode: IDBTransaction.READ_WRITE, timeout: 0});
+    window.currentTransaction = db.transaction(["people"], IDBTransaction.READ_WRITE, 0);
     currentTransaction.onabort = unexpectedAbort;
 
     var people = currentTransaction.objectStore("people");
@@ -341,7 +341,7 @@ function onGetSuccess()
     // return unique entires (only applies to indexes with unique set to false), PREV to move backwards,
     // and PREV_NO_DUPLICATE.
     var keyRange = IDBKeyRange.bound(1, 3, true, false);
-    var request = people.openCursor({range: keyRange, direction: IDBCursor.NEXT});
+    var request = people.openCursor(keyRange, IDBCursor.NEXT);
     request.onsuccess = onObjectStoreCursor;
     request.onerror = unexpectedError;
 }
@@ -394,10 +394,10 @@ function onIndexGetSuccess()
     // different IDBKeyRanges just to demonstrate how to use them, but we won't bother to handle
     // the onsuccess conditions.
     var lname = event.source;
-    lname.openCursor({range: IDBKeyRange.lowerBound("Doe", false), direction: IDBCursor.NEXT_NO_DUPLICATE});
-    lname.openCursor({direction: IDBCursor.PREV_NO_DUPLICATE});
-    lname.openCursor({range: IDBKeyRange.upperBound("ZZZZ")});
-    lname.openCursor({range: IDBKeyRange.only("Doe"), direction: IDBCursor.PREV});
+    lname.openCursor(IDBKeyRange.lowerBound("Doe", false), IDBCursor.NEXT_NO_DUPLICATE);
+    lname.openCursor(null, IDBCursor.PREV_NO_DUPLICATE);
+    lname.openCursor(IDBKeyRange.upperBound("ZZZZ"));
+    lname.openCursor(IDBKeyRange.only("Doe"), IDBCursor.PREV);
     lname.openCursor();
     lname.openKeyCursor();
 

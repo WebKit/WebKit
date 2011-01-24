@@ -187,7 +187,7 @@ function runNextTest()
     else
         keyRange = webkitIDBKeyRange.upperBound(testData[upper], upperIsOpen);
  
-    var request = indexObject.openKeyCursor({range: keyRange, direction: ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV});
+    var request = indexObject.openKeyCursor(keyRange, ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV);
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }
@@ -254,7 +254,7 @@ function testNullKeyRange()
     debug("");
     debug(str);
  
-    var request = indexObject.openKeyCursor({direction: ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV});
+    var request = indexObject.openKeyCursor(null, ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV);
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }

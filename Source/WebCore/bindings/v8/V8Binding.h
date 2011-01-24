@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+    class DOMStringList;
     class EventListener;
     class EventTarget;
 
@@ -205,6 +206,8 @@ namespace WebCore {
     v8::Persistent<v8::FunctionTemplate> getToStringTemplate();
 
     String int32ToWebCoreString(int value);
+
+    PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value>);
 
     class V8ParameterBase {
     public:

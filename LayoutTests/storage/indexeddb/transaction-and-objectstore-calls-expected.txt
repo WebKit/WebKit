@@ -19,40 +19,40 @@ db.createObjectStore('a')
 db.createObjectStore('b')
 trans.oncomplete = created
 
-trans = db.transaction({objectStoreNames: 'a'})
+trans = db.transaction(['a'])
 trans.objectStore('a')
 Expecting exception from trans.objectStore('b')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 Expecting exception from trans.objectStore('x')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
-trans = db.transaction({objectStoreNames: ['a']})
+trans = db.transaction(['a'])
 trans.objectStore('a')
 Expecting exception from trans.objectStore('b')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 Expecting exception from trans.objectStore('x')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
-trans = db.transaction({objectStoreNames: ['b']})
+trans = db.transaction(['b'])
 trans.objectStore('b')
 Expecting exception from trans.objectStore('a')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 Expecting exception from trans.objectStore('x')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
-trans = db.transaction({objectStoreNames: ['a', 'b']})
+trans = db.transaction(['a', 'b'])
 trans.objectStore('a')
 trans.objectStore('b')
 Expecting exception from trans.objectStore('x')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
-trans = db.transaction({objectStoreNames: ['b', 'a']})
+trans = db.transaction(['b', 'a'])
 trans.objectStore('a')
 trans.objectStore('b')
 Expecting exception from trans.objectStore('x')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
-trans = db.transaction({objectStoreNames: []})
+trans = db.transaction([])
 trans.objectStore('a')
 trans.objectStore('b')
 Expecting exception from trans.objectStore('x')
@@ -64,15 +64,15 @@ trans.objectStore('b')
 Expecting exception from trans.objectStore('x')
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
-Expecting exception from db.transaction({objectStoreNames: 'x'})
+Expecting exception from db.transaction(['x'])
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
-Expecting exception from db.transaction({objectStoreNames: ['x']})
+Expecting exception from db.transaction(['x'])
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
-Expecting exception from db.transaction({objectStoreNames: ['a', 'x']})
+Expecting exception from db.transaction(['a', 'x'])
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
-Expecting exception from db.transaction({objectStoreNames: ['x', 'x']})
+Expecting exception from db.transaction(['x', 'x'])
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
-Expecting exception from db.transaction({objectStoreNames: ['a', 'x', 'b']})
+Expecting exception from db.transaction(['a', 'x', 'b'])
 PASS code is webkitIDBDatabaseException.NOT_FOUND_ERR
 
 PASS successfullyParsed is true

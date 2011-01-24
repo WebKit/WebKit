@@ -1,3 +1,30 @@
+2011-01-24  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Nate Chapin.
+
+        IndexedDatabase methods should not take arguments of type OptionsObject
+        https://bugs.webkit.org/show_bug.cgi?id=53012
+
+        * storage/indexeddb/create-object-store-options-expected.txt:
+        * storage/indexeddb/create-object-store-options.html:
+        * storage/indexeddb/cursor-delete-expected.txt:
+        * storage/indexeddb/cursor-delete.html:
+        * storage/indexeddb/cursor-index-delete-expected.txt:
+        * storage/indexeddb/cursor-index-delete.html:
+        * storage/indexeddb/data-corruption-expected.txt:
+        * storage/indexeddb/data-corruption.html:
+        * storage/indexeddb/database-quota-expected.txt:
+        * storage/indexeddb/database-quota.html:
+        * storage/indexeddb/index-cursor.html:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/objectstore-cursor.html:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/open-cursor.html:
+        * storage/indexeddb/transaction-and-objectstore-calls-expected.txt:
+        * storage/indexeddb/transaction-and-objectstore-calls.html:
+        * storage/indexeddb/tutorial.html:
+
 2011-01-24  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Darin Adler.

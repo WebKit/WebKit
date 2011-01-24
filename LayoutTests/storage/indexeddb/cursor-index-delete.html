@@ -61,9 +61,9 @@ function createAndPopulateObjectStoreAndIndex()
 function openCursor()
 {
     debug("openCursor1");
-    evalAndLog("trans = db.transaction({objectStoreNames: 'test', mode: webkitIDBTransaction.READ_WRITE})");
+    evalAndLog("trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)");
     keyRange = webkitIDBKeyRange.lowerBound(1);
-    result = evalAndLog("trans.objectStore('test').index('testIndex').openCursor({range: keyRange})");
+    result = evalAndLog("trans.objectStore('test').index('testIndex').openCursor(keyRange)");
     verifyResult(result);
     result.onsuccess = cursorSuccess;
     result.onerror = unexpectedErrorCallback;
@@ -74,7 +74,7 @@ function cursorSuccess()
 {
     if (event.result == null) {
         shouldBe("counter", "5");
-        result = evalAndLog("trans.objectStore('test').index('testIndex').openCursor({range: keyRange})");
+        result = evalAndLog("trans.objectStore('test').index('testIndex').openCursor(keyRange)");
         verifyResult(result);
         result.onsuccess = cursorEmpty;
         result.onerror = unexpectedErrorCallback;
@@ -95,7 +95,7 @@ function cursorEmpty()
 
 function addObject()
 {
-    evalAndLog("trans = db.transaction({objectStoreNames: 'test', mode: webkitIDBTransaction.READ_WRITE})");
+    evalAndLog("trans = db.transaction(['test'], webkitIDBTransaction.READ_WRITE)");
     objectStore = evalAndLog("objectStore = trans.objectStore('test')");
     result = evalAndLog("objectStore.add({x: 1}, 'myKey1')");
     verifyResult(result);
@@ -107,7 +107,7 @@ function openCursor2()
 {
     debug("openCursor2");
     evalAndLog("index = event.source.index('testIndex')");
-    result = evalAndLog("index.openCursor({range: keyRange})");
+    result = evalAndLog("index.openCursor(keyRange)");
     verifyResult(result);
     result.onsuccess = deleteObject;
     result.onerror = unexpectedErrorCallback;

@@ -49,37 +49,37 @@ function cleaned()
 
 function created()
 {
-    trans = evalAndLog("trans = db.transaction({objectStoreNames: 'a'})");
+    trans = evalAndLog("trans = db.transaction(['a'])");
     evalAndLog("trans.objectStore('a')");
     evalAndExpectException("trans.objectStore('b')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    trans = evalAndLog("trans = db.transaction({objectStoreNames: ['a']})");
+    trans = evalAndLog("trans = db.transaction(['a'])");
     evalAndLog("trans.objectStore('a')");
     evalAndExpectException("trans.objectStore('b')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    trans = evalAndLog("trans = db.transaction({objectStoreNames: ['b']})");
+    trans = evalAndLog("trans = db.transaction(['b'])");
     evalAndLog("trans.objectStore('b')");
     evalAndExpectException("trans.objectStore('a')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    trans = evalAndLog("trans = db.transaction({objectStoreNames: ['a', 'b']})");
+    trans = evalAndLog("trans = db.transaction(['a', 'b'])");
     evalAndLog("trans.objectStore('a')");
     evalAndLog("trans.objectStore('b')");
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    trans = evalAndLog("trans = db.transaction({objectStoreNames: ['b', 'a']})");
+    trans = evalAndLog("trans = db.transaction(['b', 'a'])");
     evalAndLog("trans.objectStore('a')");
     evalAndLog("trans.objectStore('b')");
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    trans = evalAndLog("trans = db.transaction({objectStoreNames: []})");
+    trans = evalAndLog("trans = db.transaction([])");
     evalAndLog("trans.objectStore('a')");
     evalAndLog("trans.objectStore('b')");
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
@@ -91,11 +91,11 @@ function created()
     evalAndExpectException("trans.objectStore('x')", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
-    evalAndExpectException("db.transaction({objectStoreNames: 'x'})", "webkitIDBDatabaseException.NOT_FOUND_ERR");
-    evalAndExpectException("db.transaction({objectStoreNames: ['x']})", "webkitIDBDatabaseException.NOT_FOUND_ERR");
-    evalAndExpectException("db.transaction({objectStoreNames: ['a', 'x']})", "webkitIDBDatabaseException.NOT_FOUND_ERR");
-    evalAndExpectException("db.transaction({objectStoreNames: ['x', 'x']})", "webkitIDBDatabaseException.NOT_FOUND_ERR");
-    evalAndExpectException("db.transaction({objectStoreNames: ['a', 'x', 'b']})", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['a', 'x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['x', 'x'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
+    evalAndExpectException("db.transaction(['a', 'x', 'b'])", "webkitIDBDatabaseException.NOT_FOUND_ERR");
     debug("");
 
     done();

@@ -129,13 +129,8 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
     m_objectStore->deleteIndex(name, m_transaction.get(), ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, const OptionsObject& options, ExceptionCode& ec)
+PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction, ExceptionCode& ec)
 {
-    RefPtr<IDBKeyRange> range = options.getKeyKeyRange("range");
-
-    // Converted to an unsigned short.
-    int32_t direction = defaultDirection;
-    options.getKeyInt32("direction", direction);
     if (direction != IDBCursor::NEXT && direction != IDBCursor::NEXT_NO_DUPLICATE && direction != IDBCursor::PREV && direction != IDBCursor::PREV_NO_DUPLICATE) {
         // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
         ec = IDBDatabaseException::CONSTRAINT_ERR;

@@ -46,10 +46,10 @@ Deleted all object stores.
 createObjectStore():
 db.createObjectStore('storeName')
 addData():
-transaction = db.transaction({mode: webkitIDBTransaction.READ_WRITE})
+transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)
 result = transaction.objectStore('storeName').add({x: testDate}, 'key')
 addData():
-transaction = db.transaction({mode: webkitIDBTransaction.READ_ONLY})
+transaction = db.transaction([], webkitIDBTransaction.READ_ONLY)
 result = transaction.objectStore('storeName').get('key')
 Success event fired:
 PASS 'result' in event is true

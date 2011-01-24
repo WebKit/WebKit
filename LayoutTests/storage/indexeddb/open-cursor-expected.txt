@@ -50,7 +50,7 @@ PASS 'readyState' in result is true
 An event should fire shortly...
 
 Opening cursor
-event.source.openCursor({range: keyRange})
+event.source.openCursor(keyRange)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -76,7 +76,7 @@ Passing an invalid key into .continue().
 PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
 
 Opening an empty cursor.
-objectStore.openCursor({range: keyRange})
+objectStore.openCursor(keyRange)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true

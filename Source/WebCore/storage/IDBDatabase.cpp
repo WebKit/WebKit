@@ -98,32 +98,17 @@ PassRefPtr<IDBRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, 
     return request;
 }
 
-PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const OptionsObject& options, ExceptionCode& ec)
+PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, PassRefPtr<DOMStringList> prpStoreNames, unsigned short mode, unsigned long timeout, ExceptionCode& ec)
 {
-    RefPtr<DOMStringList> storeNames = options.getKeyDOMStringList("objectStoreNames");
-    if (!storeNames) {
+    RefPtr<DOMStringList> storeNames = prpStoreNames;
+    if (!storeNames)
         storeNames = DOMStringList::create();
-        String storeName;
-        if (options.getKeyString("objectStoreNames", storeName))
-            storeNames->append(storeName);
-    }
 
-    // Gets cast to an unsigned short.
-    int32_t mode = IDBTransaction::READ_ONLY;
-    options.getKeyInt32("mode", mode);
     if (mode != IDBTransaction::READ_WRITE && mode != IDBTransaction::READ_ONLY) {
         // FIXME: May need to change when specced: http://www.w3.org/Bugs/Public/show_bug.cgi?id=11406
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
     }
-
-    // Gets cast to an unsigned long.
-    // FIXME: The spec needs to be updated on this. It should probably take a double.
-    int32_t timeout = defaultTimeout; 
-    options.getKeyInt32("timeout", timeout);
-    int64_t unsignedLongMax = std::numeric_limits<unsigned long>::max();
-    if (timeout < 0 || timeout > unsignedLongMax)
-        timeout = defaultTimeout; // Ignore illegal values.
 
     // We need to create a new transaction synchronously. Locks are acquired asynchronously. Operations
     // can be queued against the transaction at any point. They will start executing as soon as the

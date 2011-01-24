@@ -33,9 +33,9 @@ module storage {
         readonly attribute DOMString keyPath;
         readonly attribute boolean unique;
 
-        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] OptionsObject options)
+        [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction)
             raises (IDBDatabaseException);
-        [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in [Optional] OptionsObject options)
+        [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction))
             raises (IDBDatabaseException);
         [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key)
             raises (IDBDatabaseException);
