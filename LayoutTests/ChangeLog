@@ -1,3 +1,15 @@
+2011-01-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        RTL: selection.modify("move", "forward", "line") when cursor is at start of a line does not move down a line
+        https://bugs.webkit.org/show_bug.cgi?id=51517
+
+        * platform/qt-linux/editing: Removed.
+        * platform/qt-linux/editing/selection: Removed.
+        * platform/qt-linux/editing/selection/extend-to-line-boundary-expected.txt: Removed.
+        * platform/qt/Skipped: Add editing/selection/extend-to-line-boundary.html until fix.
+
 2011-01-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update Chromium test expectations.

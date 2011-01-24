@@ -1,5 +1,0 @@
-PASS for LTR
-FAIL for RTL, selection is 'וּרה שוּרה שוּרה ' but should be 'שוּרה שוּרה שוּרה '
-
-the quick brown fox jumps the quick brown fox jumps the quick brown fox jumps
-שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה שוּרה

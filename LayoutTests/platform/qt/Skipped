@@ -1799,6 +1799,10 @@ editing/selection/context-menu-on-text.html
 # and https://bugs.webkit.org/show_bug.cgi?id=45021
 media/context-menu-actions.html
 
+# RTL: selection.modify("move", "forward", "line") when cursor is at start of a line does not move down a line
+# https://bugs.webkit.org/show_bug.cgi?id=51517
+editing/selection/extend-to-line-boundary.html
+
 # ============================================================================= #
 # Failing editing/spelling tests
 # ============================================================================= #
