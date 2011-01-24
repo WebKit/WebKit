@@ -36,7 +36,7 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
-#include "InspectorInstrumentation.h"
+#include "InspectorDatabaseInstrumentation.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -107,7 +107,7 @@ PassRefPtr<Database> Database::openDatabase(ScriptExecutionContext* context, con
 
     context->setHasOpenDatabases();
 
-    InspectorInstrumentation::didOpenDatabase(context, database.get(), context->securityOrigin()->host(), name, expectedVersion);
+    InspectorInstrumentation::didOpenDatabase(context, database, context->securityOrigin()->host(), name, expectedVersion);
 
     // If it's a new database and a creation callback was provided, reset the expected
     // version to "" and schedule the creation callback. Because of some subtle String

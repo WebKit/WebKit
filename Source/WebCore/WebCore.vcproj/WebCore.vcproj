@@ -65114,6 +65114,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorConsoleInstrumentation.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorController.cpp"
 				>
 			</File>
@@ -65135,6 +65139,10 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorDatabaseAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorDatabaseInstrumentation.h"
 				>
 			</File>
 			<File

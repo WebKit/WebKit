@@ -1,3 +1,53 @@
+2011-01-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        REGRESSION (r72895): console.trace crashes
+        https://bugs.webkit.org/show_bug.cgi?id=52981
+
+        - Use local RefPtr variable for accessing PassRefPtr arguments to make sure the PassRefPtr has
+        non-null value.
+        - Use PassRefPtr for objects whos ownership is passed to the inspector.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorConsoleInstrumentation.h: Added. Extract inline methods called from the console into their
+        own header to reduce compilation time of other classes that depend on the inspector instrumentation.
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        (WebCore::InspectorInstrumentation::consoleCount):
+        (WebCore::InspectorInstrumentation::startConsoleTiming):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::consoleMarkTimeline):
+        (WebCore::InspectorInstrumentation::addStartProfilingMessageToConsole):
+        (WebCore::InspectorInstrumentation::addProfile):
+        (WebCore::InspectorInstrumentation::profilerEnabled):
+        (WebCore::InspectorInstrumentation::getCurrentUserInitiatedProfileName):
+        * inspector/InspectorDatabaseInstrumentation.h: Added. Extract inline methods called from the datanase code into their
+        own header to reduce compilation time of other classes that depend on the inspector instrumentation.
+        (WebCore::InspectorInstrumentation::didOpenDatabase):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        (WebCore::InspectorInstrumentation::consoleCountImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleMarkTimelineImpl):
+        (WebCore::InspectorInstrumentation::addProfileImpl):
+        (WebCore::InspectorInstrumentation::didOpenDatabaseImpl):
+        * inspector/InspectorInstrumentation.h:
+        * page/Console.cpp: use RefPtr local variable instead of accessing PassRefPtr argument directly.
+        (WebCore::Console::addMessage):
+        (WebCore::Console::trace):
+        (WebCore::Console::count):
+        (WebCore::Console::markTimeline):
+        (WebCore::Console::profileEnd):
+        (WebCore::Console::timeEnd):
+        (WebCore::Console::group):
+        (WebCore::Console::groupCollapsed):
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+
 2010-01-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Darin Fisher.

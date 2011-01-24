@@ -1963,10 +1963,12 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorController.h \
 	Source/WebCore/inspector/InspectorConsoleAgent.cpp \
 	Source/WebCore/inspector/InspectorConsoleAgent.h \
+	Source/WebCore/inspector/InspectorConsoleInstrumentation.h \
 	Source/WebCore/inspector/InspectorCSSAgent.cpp \
 	Source/WebCore/inspector/InspectorCSSAgent.h \
 	Source/WebCore/inspector/InspectorDatabaseAgent.cpp \
 	Source/WebCore/inspector/InspectorDatabaseAgent.h \
+	Source/WebCore/inspector/InspectorDatabaseInstrumentation.h \
 	Source/WebCore/inspector/InspectorDatabaseResource.cpp \
 	Source/WebCore/inspector/InspectorDatabaseResource.h \
 	Source/WebCore/inspector/InspectorDebuggerAgent.cpp \

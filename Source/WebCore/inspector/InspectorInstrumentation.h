@@ -35,9 +35,7 @@
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
-
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -131,22 +129,22 @@ public:
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
     static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned int endLine);
 
-    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, ScriptArguments*, ScriptCallStack*);
+    static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     static void addMessageToConsole(Page*, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String&);
-    static void consoleCount(Page*, ScriptArguments*, ScriptCallStack*);
+    static void consoleCount(Page*, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     static void startConsoleTiming(Page*, const String& title);
-    static void stopConsoleTiming(Page*, const String& title, ScriptCallStack*);
-    static void consoleMarkTimeline(Page*, ScriptArguments*);
+    static void stopConsoleTiming(Page*, const String& title, PassRefPtr<ScriptCallStack>);
+    static void consoleMarkTimeline(Page*, PassRefPtr<ScriptArguments>);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsole(Page*, const String& title, unsigned lineNumber, const String& sourceURL);
-    static void addProfile(Page*, RefPtr<ScriptProfile>, ScriptCallStack*);
+    static void addProfile(Page*, RefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
     static bool profilerEnabled(Page*);
     static String getCurrentUserInitiatedProfileName(Page*, bool incrementProfileNumber);
 #endif
 
 #if ENABLE(DATABASE)
-    static void didOpenDatabase(ScriptExecutionContext*, Database*, const String& domain, const String& name, const String& version);
+    static void didOpenDatabase(ScriptExecutionContext*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
 #if ENABLE(DOM_STORAGE)
@@ -243,22 +241,22 @@ private:
     static InspectorInstrumentationCookie willWriteHTMLImpl(InspectorAgent*, unsigned int length, unsigned int startLine);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
 
-    static void addMessageToConsoleImpl(InspectorAgent*, MessageSource, MessageType, MessageLevel, const String& message, ScriptArguments*, ScriptCallStack*);
+    static void addMessageToConsoleImpl(InspectorAgent*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     static void addMessageToConsoleImpl(InspectorAgent*, MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
-    static void consoleCountImpl(InspectorAgent*, ScriptArguments*, ScriptCallStack*);
+    static void consoleCountImpl(InspectorAgent*, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     static void startConsoleTimingImpl(InspectorAgent*, const String& title);
-    static void stopConsoleTimingImpl(InspectorAgent*, const String& title, ScriptCallStack*);
-    static void consoleMarkTimelineImpl(InspectorAgent*, ScriptArguments*);
+    static void stopConsoleTimingImpl(InspectorAgent*, const String& title, PassRefPtr<ScriptCallStack>);
+    static void consoleMarkTimelineImpl(InspectorAgent*, PassRefPtr<ScriptArguments>);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsoleImpl(InspectorAgent*, const String& title, unsigned lineNumber, const String& sourceURL);
-    static void addProfileImpl(InspectorAgent*, RefPtr<ScriptProfile>, ScriptCallStack*);
+    static void addProfileImpl(InspectorAgent*, RefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
     static bool profilerEnabledImpl(InspectorAgent*);
     static String getCurrentUserInitiatedProfileNameImpl(InspectorAgent*, bool incrementProfileNumber);
 #endif
 
 #if ENABLE(DATABASE)
-    static void didOpenDatabaseImpl(InspectorAgent*, Database*, const String& domain, const String& name, const String& version);
+    static void didOpenDatabaseImpl(InspectorAgent*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
 #if ENABLE(DOM_STORAGE)
@@ -744,16 +742,6 @@ inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentatio
 #endif
 }
 
-#if ENABLE(DATABASE)
-inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, Database* database, const String& domain, const String& name, const String& version)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForContext(context))
-        didOpenDatabaseImpl(inspectorAgent, database, domain, name, version);
-#endif
-}
-#endif
-
 #if ENABLE(DOM_STORAGE)
 inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
 {
@@ -832,90 +820,6 @@ inline void InspectorInstrumentation::updateApplicationCacheStatus(Frame* frame)
     if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForFrame(frame))
         updateApplicationCacheStatusImpl(inspectorAgent, frame);
 #endif
-}
-#endif
-
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptArguments* arguments, ScriptCallStack* callStack)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addMessageToConsoleImpl(inspectorAgent, source, type, level, message, arguments, callStack);
-#endif
-}
-
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addMessageToConsoleImpl(inspectorAgent, source, type, level, message, lineNumber, sourceID);
-#endif
-}
-
-inline void InspectorInstrumentation::consoleCount(Page* page, ScriptArguments* arguments, ScriptCallStack* stack)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        consoleCountImpl(inspectorAgent, arguments, stack);
-#endif
-}
-
-inline void InspectorInstrumentation::startConsoleTiming(Page* page, const String& title)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        startConsoleTimingImpl(inspectorAgent, title);
-#endif
-}
-
-inline void InspectorInstrumentation::stopConsoleTiming(Page* page, const String& title, ScriptCallStack* stack)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        stopConsoleTimingImpl(inspectorAgent, title, stack);
-#endif
-}
-
-inline void InspectorInstrumentation::consoleMarkTimeline(Page* page, ScriptArguments* arguments)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForPage(page))
-        consoleMarkTimelineImpl(inspectorAgent, arguments);
-#endif
-}
-
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-inline void InspectorInstrumentation::addStartProfilingMessageToConsole(Page* page, const String& title, unsigned lineNumber, const String& sourceURL)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addStartProfilingMessageToConsoleImpl(inspectorAgent, title, lineNumber, sourceURL);
-#endif
-}
-
-inline void InspectorInstrumentation::addProfile(Page* page, RefPtr<ScriptProfile> profile, ScriptCallStack* callStack)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addProfileImpl(inspectorAgent, profile, callStack);
-#endif
-}
-
-inline bool InspectorInstrumentation::profilerEnabled(Page* page)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        return profilerEnabledImpl(inspectorAgent);
-#endif
-    return false;
-}
-
-inline String InspectorInstrumentation::getCurrentUserInitiatedProfileName(Page* page, bool incrementProfileNumber)
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        return InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(inspectorAgent, incrementProfileNumber);
-#endif
-    return "";
 }
 #endif
 

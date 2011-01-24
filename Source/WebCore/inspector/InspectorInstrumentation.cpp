@@ -518,7 +518,7 @@ void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCo
         timelineAgent->didWriteHTML(endLine);
 }
 
-void InspectorInstrumentation::addMessageToConsoleImpl(InspectorAgent* inspectorAgent, MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptArguments* arguments, ScriptCallStack* callStack)
+void InspectorInstrumentation::addMessageToConsoleImpl(InspectorAgent* inspectorAgent, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
     inspectorAgent->consoleAgent()->addMessageToConsole(source, type, level, message, arguments, callStack);
 }
@@ -528,7 +528,7 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InspectorAgent* inspector
     inspectorAgent->consoleAgent()->addMessageToConsole(source, type, level, message, lineNumber, sourceID);
 }
 
-void InspectorInstrumentation::consoleCountImpl(InspectorAgent* inspectorAgent, ScriptArguments* arguments, ScriptCallStack* stack)
+void InspectorInstrumentation::consoleCountImpl(InspectorAgent* inspectorAgent, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> stack)
 {
     inspectorAgent->consoleAgent()->count(arguments, stack);
 }
@@ -538,12 +538,12 @@ void InspectorInstrumentation::startConsoleTimingImpl(InspectorAgent* inspectorA
     inspectorAgent->consoleAgent()->startTiming(title);
 }
 
-void InspectorInstrumentation::stopConsoleTimingImpl(InspectorAgent* inspectorAgent, const String& title, ScriptCallStack* stack)
+void InspectorInstrumentation::stopConsoleTimingImpl(InspectorAgent* inspectorAgent, const String& title, PassRefPtr<ScriptCallStack> stack)
 {
     inspectorAgent->consoleAgent()->stopTiming(title, stack);
 }
 
-void InspectorInstrumentation::consoleMarkTimelineImpl(InspectorAgent* inspectorAgent, ScriptArguments* arguments)
+void InspectorInstrumentation::consoleMarkTimelineImpl(InspectorAgent* inspectorAgent, PassRefPtr<ScriptArguments> arguments)
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorAgent)) {
         String message;
@@ -559,7 +559,7 @@ void InspectorInstrumentation::addStartProfilingMessageToConsoleImpl(InspectorAg
         profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
 
-void InspectorInstrumentation::addProfileImpl(InspectorAgent* inspectorAgent, RefPtr<ScriptProfile> profile, ScriptCallStack* callStack)
+void InspectorInstrumentation::addProfileImpl(InspectorAgent* inspectorAgent, RefPtr<ScriptProfile> profile, PassRefPtr<ScriptCallStack> callStack)
 {
     if (InspectorProfilerAgent* profilerAgent = inspectorAgent->profilerAgent()) {
         const ScriptCallFrame& lastCaller = callStack->at(0);
@@ -588,7 +588,7 @@ String InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(Inspecto
 #endif
 
 #if ENABLE(DATABASE)
-void InspectorInstrumentation::didOpenDatabaseImpl(InspectorAgent* inspectorAgent, Database* database, const String& domain, const String& name, const String& version)
+void InspectorInstrumentation::didOpenDatabaseImpl(InspectorAgent* inspectorAgent, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
     inspectorAgent->didOpenDatabase(database, domain, name, version);
 }

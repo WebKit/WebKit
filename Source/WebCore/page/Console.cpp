@@ -34,8 +34,8 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
+#include "InspectorConsoleInstrumentation.h"
 #include "InspectorController.h"
-#include "InspectorInstrumentation.h"
 #include "MemoryInfo.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -147,7 +147,7 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
         page->chrome()->client()->addMessageToConsole(source, type, level, message, lineNumber, sourceURL);
 
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, 0, callStack.get());
+        InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, 0, callStack);
     else
         InspectorInstrumentation::addMessageToConsole(page, source, type, level, message, lineNumber, sourceURL);
 
@@ -160,8 +160,11 @@ void Console::addMessage(MessageSource source, MessageType type, MessageLevel le
     printf(" %s\n", message.utf8().data());
 }
 
-void Console::addMessage(MessageType type, MessageLevel level, PassRefPtr<ScriptArguments> arguments,  PassRefPtr<ScriptCallStack> callStack, bool acceptNoArguments)
+void Console::addMessage(MessageType type, MessageLevel level, PassRefPtr<ScriptArguments> prpArguments,  PassRefPtr<ScriptCallStack> prpCallStack, bool acceptNoArguments)
 {
+    RefPtr<ScriptArguments> arguments = prpArguments;
+    RefPtr<ScriptCallStack> callStack = prpCallStack;
+
     Page* page = this->page();
     if (!page)
         return;
@@ -187,7 +190,7 @@ void Console::addMessage(MessageType type, MessageLevel level, PassRefPtr<Script
     if (arguments->getFirstArgumentAsString(message))
         page->chrome()->client()->addMessageToConsole(JSMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 
-    InspectorInstrumentation::addMessageToConsole(page, JSMessageSource, type, level, message, arguments.get(), callStack.get());
+    InspectorInstrumentation::addMessageToConsole(page, JSMessageSource, type, level, message, arguments, callStack);
 }
 
 void Console::debug(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
@@ -222,8 +225,9 @@ void Console::dirxml(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCal
     log(arguments, callStack);
 }
 
-void Console::trace(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+void Console::trace(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> prpCallStack)
 {
+    RefPtr<ScriptCallStack> callStack = prpCallStack;
     addMessage(TraceMessageType, LogMessageLevel, arguments, callStack, true);
 
     if (!shouldPrintExceptions())
@@ -246,12 +250,12 @@ void Console::assertCondition(bool condition, PassRefPtr<ScriptArguments> argume
 
 void Console::count(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    InspectorInstrumentation::consoleCount(page(), arguments.get(), callStack.get());
+    InspectorInstrumentation::consoleCount(page(), arguments, callStack);
 }
 
 void Console::markTimeline(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack>)
 {
-    InspectorInstrumentation::consoleMarkTimeline(page(), arguments.get());
+    InspectorInstrumentation::consoleMarkTimeline(page(), arguments);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -290,7 +294,7 @@ void Console::profileEnd(const String& title, ScriptState* state, PassRefPtr<Scr
         return;
 
     m_profiles.append(profile);
-    InspectorInstrumentation::addProfile(page, profile, callStack.get());
+    InspectorInstrumentation::addProfile(page, profile, callStack);
 }
 
 #endif
@@ -302,17 +306,17 @@ void Console::time(const String& title)
 
 void Console::timeEnd(const String& title, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> callStack)
 {
-    InspectorInstrumentation::stopConsoleTiming(page(), title, callStack.get());
+    InspectorInstrumentation::stopConsoleTiming(page(), title, callStack);
 }
 
 void Console::group(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupMessageType, LogMessageLevel, String(), arguments.get(), callStack.get());
+    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupMessageType, LogMessageLevel, String(), arguments, callStack);
 }
 
 void Console::groupCollapsed(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
-    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupCollapsedMessageType, LogMessageLevel, String(), arguments.get(), callStack.get());
+    InspectorInstrumentation::addMessageToConsole(page(), JSMessageSource, StartGroupCollapsedMessageType, LogMessageLevel, String(), arguments, callStack);
 }
 
 void Console::groupEnd()

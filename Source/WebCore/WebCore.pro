@@ -1945,9 +1945,11 @@ HEADERS += \
     inspector/InspectorApplicationCacheAgent.h \
     inspector/InspectorBrowserDebuggerAgent.h \
     inspector/InspectorConsoleAgent.h \
+    inspector/InspectorConsoleInstrumentation.h \
     inspector/InspectorController.h \
     inspector/InspectorCSSAgent.h \
     inspector/InspectorDatabaseAgent.h \
+    inspector/InspectorDatabaseInstrumentation.h \
     inspector/InspectorDatabaseResource.h \
     inspector/InspectorDebuggerAgent.h \
     inspector/InspectorDOMStorageAgent.h \
