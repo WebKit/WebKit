@@ -1,6 +1,30 @@
 2011-01-23  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
+        Update Chromim test expectations (WIN) in response to r76442.
+
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/chromium-win/svg/batik/text/xmlSpace-expected.txt:
+        * platform/chromium-win/svg/text/text-hkern-expected.txt: Added.
+        * platform/chromium-win/svg/text/text-vkern-on-horizontal-text-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-01-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
         Mark fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html as TEXT for LINUX.
 
         * platform/chromium/test_expectations.txt:
