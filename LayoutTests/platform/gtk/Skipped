@@ -4699,6 +4699,7 @@ fast/events/ime-composition-events-001.html
 fast/dom/tab-in-right-alignment.html
 editing/input/ime-composition-clearpreedit.html
 svg/text/caret-in-svg-text.xhtml
+editing/inserting/insert-composition-whitespace.html
 
 # No User Scripts
 userscripts/script-not-run-for-fragments.html

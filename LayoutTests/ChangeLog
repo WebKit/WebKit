@@ -1,3 +1,9 @@
+2011-01-24  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, skipped insert-composition-whitespace.html due to missing DRT feature.
+
+        * platform/gtk/Skipped:
+
 2011-01-24  Alejandro G. Castro  <alex@igalia.com>
 
 
