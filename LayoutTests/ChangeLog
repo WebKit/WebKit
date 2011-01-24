@@ -1,3 +1,18 @@
+2011-01-24  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for Chinese Segmentation.
+        https://bugs.webkit.org/show_bug.cgi?id=52926
+
+        The CJK segmentation currently does not work in other ports except Chromium.
+        Please refer to https://bugs.webkit.org/show_bug.cgi?id=53044 for detail.
+
+        * fast/text/international/cjk-segmentation-expected.txt: Added.
+        * fast/text/international/cjk-segmentation.html: Added.
+        * platform/chromium/fast/text/international: Added.
+        * platform/chromium/fast/text/international/cjk-segmentation-expected.txt: Added.
+
 2011-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric Seidel.

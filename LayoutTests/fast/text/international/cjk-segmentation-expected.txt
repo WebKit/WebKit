@@ -1,0 +1,182 @@
+Test Chinese Segmentation.
+
+==================================
+FAILED test
+actual: 国
+expected: 国务院
+==================================
+FAILED test
+actual: 院
+expected: 国务院
+==================================
+FAILED test
+actual: 关
+expected: 关于
+==================================
+FAILED test
+actual: 于
+expected: 关于
+==================================
+FAILED test
+actual: 土
+expected: 土地
+==================================
+FAILED test
+actual: 地
+expected: 土地
+==================================
+FAILED test
+actual: 房
+expected: 房屋
+==================================
+FAILED test
+actual: 屋
+expected: 房屋
+==================================
+FAILED test
+actual: 管
+expected: 管理
+==================================
+FAILED test
+actual: 理
+expected: 管理
+==================================
+FAILED test
+actual: 条
+expected: 条例
+==================================
+FAILED test
+actual: 例
+expected: 条例
+==================================
+FAILED test
+actual: 物
+expected: 物价
+==================================
+FAILED test
+actual: 价
+expected: 物价
+==================================
+FAILED test
+actual: 预
+expected: 预期
+==================================
+FAILED test
+actual: 期
+expected: 预期
+==================================
+FAILED test
+actual: 调
+expected: 调控
+==================================
+FAILED test
+actual: 控
+expected: 调控
+==================================
+FAILED test
+actual: 目
+expected: 目标
+==================================
+FAILED test
+actual: 标
+expected: 目标
+==================================
+FAILED test
+actual: 基
+expected: 基本
+==================================
+FAILED test
+actual: 本
+expected: 基本
+==================================
+FAILED test
+actual: 实
+expected: 实现
+==================================
+FAILED test
+actual: 现
+expected: 实现
+==================================
+FAILED test
+actual: 俄
+expected: 俄罗斯
+==================================
+FAILED test
+actual: 罗
+expected: 罗斯
+==================================
+FAILED test
+actual: 斯
+expected: 俄罗斯
+==================================
+FAILED test
+actual: 总
+expected: 总统
+==================================
+FAILED test
+actual: 统
+expected: 总统
+==================================
+FAILED test
+actual: 机
+expected: 机场
+==================================
+FAILED test
+actual: 场
+expected: 机场
+==================================
+FAILED test
+actual: 爆
+expected: 爆炸
+==================================
+FAILED test
+actual: 炸
+expected: 爆炸
+==================================
+FAILED test
+actual: 恐
+expected: 恐怖
+==================================
+FAILED test
+actual: 怖
+expected: 恐怖
+==================================
+FAILED test
+actual: 袭
+expected: 袭击
+==================================
+FAILED test
+actual: 击
+expected: 袭击
+==================================
+FAILED test
+actual: 春
+expected: 春运
+==================================
+FAILED test
+actual: 运
+expected: 春运
+==================================
+FAILED test
+actual: 北
+expected: 北京
+==================================
+FAILED test
+actual: 京
+expected: 北京
+==================================
+FAILED test
+actual: 运
+expected: 运送
+==================================
+FAILED test
+actual: 送
+expected: 运送
+==================================
+FAILED test
+actual: 旅
+expected: 旅客
+==================================
+FAILED test
+actual: 客
+expected: 旅客

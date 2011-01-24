@@ -1,0 +1,3 @@
+Test Chinese Segmentation.
+
+ALL PASS
