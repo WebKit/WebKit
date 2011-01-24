@@ -68,7 +68,7 @@ function setVersionCompleted()
 {
     debug("setVersionCompleted():");
 
-    window.trans = evalAndLog("trans = db.transaction({mode: webkitIDBTransaction.READ_WRITE})");
+    window.trans = evalAndLog("trans = db.transaction([], webkitIDBTransaction.READ_WRITE)");
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = done;
 
