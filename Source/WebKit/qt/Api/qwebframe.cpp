@@ -357,7 +357,6 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
     view->updateLayoutAndStyleIfNeededRecursive();
 
     if (layer & QWebFrame::ContentsLayer) {
-        painter->save();
         for (int i = 0; i < vector.size(); ++i) {
             const QRect& clipRect = vector.at(i);
 
@@ -383,7 +382,6 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
 
             context->restore();
         }
-        painter->restore();
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
         renderCompositedLayers(context, IntRect(clip.boundingRect()));
 #endif
@@ -403,15 +401,13 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
             if (layer & QWebFrame::ScrollBarLayer
                 && !view->scrollbarsSuppressed()
                 && (view->horizontalScrollbar() || view->verticalScrollbar())) {
-                context->save();
-
                 QRect rect = intersectedRect;
                 context->translate(x, y);
                 rect.translate(-x, -y);
 
                 view->paintScrollbars(context, rect);
 
-                context->restore();
+                context->translate(-x, -y);
             }
 
 #if ENABLE(PAN_SCROLLING)
