@@ -1417,6 +1417,7 @@ http/tests/loading/state-object-security-exception.html
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
+editing/inserting/insert-composition-whitespace.html
 svg/text/caret-in-svg-text.xhtml
 editing/input/ime-composition-clearpreedit.html
 editing/spelling/spelling-backspace-between-lines.html
