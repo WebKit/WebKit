@@ -76,6 +76,15 @@ if __name__ == '__main__':
   # Add includes.
   args.extend(['-I' + i for i in additional_include_files(args)])
 
+  # There shouldn't be a circular dependency relationship between .gyp files,
+  # but in Chromium's .gyp files, on non-Mac platforms, circular relationships
+  # currently exist.  The check for circular dependencies is currently
+  # bypassed on other platforms, but is left enabled on the Mac, where a
+  # violation of the rule causes Xcode to misbehave badly.
+  # http://crbug.com/35878.
+  if sys.platform not in ('darwin',):
+    args.append('--no-circular-check')
+
   # On linux, we want gyp to output a makefile (default is scons).
   if sys.platform == 'linux2':
     args.extend(['-fmake',
