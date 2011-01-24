@@ -1,3 +1,13 @@
+2011-01-24  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: LayoutTests: The UNIMPLEMENTED warnings in TextCheckerWin should be disabled
+        https://bugs.webkit.org/show_bug.cgi?id=53029
+
+        * UIProcess/win/TextCheckerWin.cpp:
+        Disable the warnings for this file.
+
 2011-01-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
