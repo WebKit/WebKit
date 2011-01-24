@@ -55,13 +55,13 @@ protected slots:
     void loadProgress(int progress);
     void titleChanged(const QString&);
     void urlChanged(const QUrl&);
+    void openFile();
     void showUserAgentDialog();
 
 private:
     void updateUserAgentList();
 
     BrowserView* m_browser;
-    QMenuBar* m_menu;
     QLineEdit* m_addressBar;
     QStringList m_userAgentList;
 };

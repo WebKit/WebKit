@@ -40,22 +40,25 @@ BrowserWindow::BrowserWindow(QWKContext* context)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
-    m_menu = new QMenuBar();
+    QMenu* fileMenu = menuBar()->addMenu("&File");
+    fileMenu->addAction("New Window", this, SLOT(newWindow()), QKeySequence::New);
+    fileMenu->addAction("Open File", this, SLOT(openFile()), QKeySequence::Open);
+    fileMenu->addSeparator();
+    fileMenu->addAction("Quit", this, SLOT(close()));
+
+    QMenu* toolsMenu = menuBar()->addMenu("&Develop");
+    toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
+
     m_browser = new BrowserView(backingStoreTypeForNewWindow, context);
-    m_addressBar = new QLineEdit();
-
-    m_menu->addAction("New Window", this, SLOT(newWindow()));
-    m_menu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
-
-    m_menu->addSeparator();
-    m_menu->addAction("Quit", this, SLOT(close()));
-
-    m_browser->setFocus(Qt::OtherFocusReason);
-
-    connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
     connect(m_browser->view(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
     connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(titleChanged(const QString&)));
     connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
+
+    this->setCentralWidget(m_browser);
+    m_browser->setFocus(Qt::OtherFocusReason);
+
+    m_addressBar = new QLineEdit();
+    connect(m_addressBar, SIGNAL(returnPressed()), SLOT(changeLocation()));
 
     QToolBar* bar = addToolBar("Navigation");
     bar->addAction(page()->action(QWKPage::Back));
@@ -63,11 +66,6 @@ BrowserWindow::BrowserWindow(QWKContext* context)
     bar->addAction(page()->action(QWKPage::Reload));
     bar->addAction(page()->action(QWKPage::Stop));
     bar->addWidget(m_addressBar);
-
-    this->setMenuBar(m_menu);
-    this->setCentralWidget(m_browser);
-
-    m_browser->setFocus(Qt::OtherFocusReason);
 
     QShortcut* selectAddressBar = new QShortcut(Qt::CTRL | Qt::Key_L, this);
     connect(selectAddressBar, SIGNAL(activated()), this, SLOT(openLocation()));
@@ -137,6 +135,24 @@ void BrowserWindow::urlChanged(const QUrl& url)
     m_addressBar->setText(url.toString());
 }
 
+void BrowserWindow::openFile()
+{
+#ifndef QT_NO_FILEDIALOG
+    static const QString filter("HTML Files (*.htm *.html *.xhtml);;Text Files (*.txt);;Image Files (*.gif *.jpg *.png);;SVG Files (*.svg);;All Files (*)");
+
+    QFileDialog fileDialog(this, tr("Open"), QString(), filter);
+    fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+    fileDialog.setFileMode(QFileDialog::ExistingFile);
+    fileDialog.setOptions(QFileDialog::ReadOnly);
+
+    if (fileDialog.exec()) {
+        QString selectedFile = fileDialog.selectedFiles()[0];
+        if (!selectedFile.isEmpty())
+            load(selectedFile);
+    }
+#endif
+}
+
 void BrowserWindow::updateUserAgentList()
 {
     QFile file(":/useragentlist.txt");
@@ -189,5 +205,4 @@ BrowserWindow::~BrowserWindow()
 {
     delete m_addressBar;
     delete m_browser;
-    delete m_menu;
 }
