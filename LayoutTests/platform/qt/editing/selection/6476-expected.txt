@@ -6,33 +6,33 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {DIV} at (0,0) size 250x38
-        RenderText {#text} at (0,0) size 206x19
-          text run at (0,0) width 206: "Try to create a caret after this lin"
-        RenderInline {SPAN} at (0,0) size 8x19
-          RenderText {#text} at (206,0) size 8x19
-            text run at (206,0) width 8: "e"
-        RenderText {#text} at (214,0) size 4x19
-          text run at (214,0) width 4: " "
-        RenderInline {SPAN} at (0,0) size 0x19
-        RenderText {#text} at (0,19) size 184x19
-          text run at (0,19) width 184: "thisshouldbeonthesecondline"
-      RenderBlock {HR} at (0,45) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,61) size 784x38
-        RenderText {#text} at (0,0) size 135x19
-          text run at (0,0) width 135: "This is a testcase for "
-        RenderInline {A} at (0,0) size 337x19 [color=#0000EE]
-          RenderText {#text} at (135,0) size 337x19
-            text run at (135,0) width 337: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6476"
-        RenderText {#text} at (472,0) size 783x38
-          text run at (472,0) width 8: ". "
-          text run at (480,0) width 303: "Creating an upstream caret with the mouse was"
-          text run at (0,19) width 604: "impossible if the upstream and downstream carets were separated only by unrendered content."
-      RenderBlock {P} at (0,113) size 784x38
-        RenderText {#text} at (0,0) size 770x38
-          text run at (0,0) width 326: "This test uses the eventSender to do mouse clicks. "
-          text run at (326,0) width 444: "To run it manually, click in the space after all the text on the first line in"
-          text run at (0,19) width 169: "the above editable region. "
-          text run at (169,19) width 392: "Clicking should create a caret after the first space after the 'e'."
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {DIV} at (0,0) size 250x42
+        RenderText {#text} at (0,0) size 223x21
+          text run at (0,0) width 223: "Try to create a caret after this lin"
+        RenderInline {SPAN} at (0,0) size 7x21
+          RenderText {#text} at (223,0) size 7x21
+            text run at (223,0) width 7: "e"
+        RenderText {#text} at (230,0) size 4x21
+          text run at (230,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 0x21
+        RenderText {#text} at (0,21) size 193x21
+          text run at (0,21) width 193: "thisshouldbeonthesecondline"
+      RenderBlock {HR} at (0,50) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,68) size 784x42
+        RenderText {#text} at (0,0) size 139x21
+          text run at (0,0) width 139: "This is a testcase for "
+        RenderInline {A} at (0,0) size 365x21 [color=#0000EE]
+          RenderText {#text} at (139,0) size 365x21
+            text run at (139,0) width 365: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6476"
+        RenderText {#text} at (504,0) size 758x42
+          text run at (504,0) width 8: ". "
+          text run at (512,0) width 246: "Creating an upstream caret with the"
+          text run at (0,21) width 718: "mouse was impossible if the upstream and downstream carets were separated only by unrendered content."
+      RenderBlock {P} at (0,126) size 784x42
+        RenderText {#text} at (0,0) size 773x42
+          text run at (0,0) width 336: "This test uses the eventSender to do mouse clicks. "
+          text run at (336,0) width 437: "To run it manually, click in the space after all the text on the first"
+          text run at (0,21) width 222: "line in the above editable region. "
+          text run at (222,21) width 418: "Clicking should create a caret after the first space after the 'e'."
 caret: position 1 of child 2 {#text} of child 1 {DIV} of body

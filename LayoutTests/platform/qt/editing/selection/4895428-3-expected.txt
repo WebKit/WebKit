@@ -3,24 +3,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x58
-        RenderText {#text} at (0,0) size 762x57
-          text run at (0,0) width 762: "We delay focus until mouse up if the mouse down occurs inside a focusable node that is inside an already focused node."
-          text run at (0,19) width 564: "But we shouldn't delay focus unless the mouse down occurs in an already focused node. "
-          text run at (564,19) width 189: "The text field below should be"
-          text run at (0,38) width 58: "focused. "
-        RenderInline {B} at (0,0) size 664x20
-          RenderText {#text} at (58,38) size 664x20
-            text run at (58,38) width 664: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
-      RenderBlock {DIV} at (0,72) size 784x67
-        RenderBlock {DIV} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 20x19
-            text run at (0,0) width 20: "foo"
-        RenderBlock (anonymous) at (0,19) size 784x29
-          RenderTextControl {INPUT} at (2,2) size 168x25 [border: (2px inset #000000)]
-        RenderBlock {DIV} at (0,48) size 784x19
-          RenderText {#text} at (0,0) size 23x19
-            text run at (0,0) width 23: "baz"
-layer at (13,104) size 162x19
-  RenderBlock {DIV} at (3,3) size 162x19
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 768x63
+          text run at (0,0) width 759: "We delay focus until mouse up if the mouse down occurs inside a focusable node that is inside an already focused"
+          text run at (0,21) width 635: "node. But we shouldn't delay focus unless the mouse down occurs in an already focused node. "
+          text run at (635,21) width 133: "The text field below"
+          text run at (0,42) width 128: "should be focused. "
+        RenderInline {B} at (0,0) size 654x21
+          RenderText {#text} at (128,42) size 654x21
+            text run at (128,42) width 654: "To run manually, select everything from 'foo' though 'baz', then mouse down inside the text field."
+      RenderBlock {DIV} at (0,79) size 784x71
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 21x21
+            text run at (0,0) width 21: "foo"
+        RenderBlock (anonymous) at (0,21) size 784x29
+          RenderTextControl {INPUT} at (2,2) size 166x25
+        RenderBlock {DIV} at (0,50) size 784x21
+          RenderText {#text} at (0,0) size 24x21
+            text run at (0,0) width 24: "baz"
+layer at (12,112) size 162x21
+  RenderBlock {DIV} at (2,2) size 162x21
 caret: position 0 of child 0 {DIV} of child 1 {INPUT} of child 2 {DIV} of body

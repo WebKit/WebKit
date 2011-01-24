@@ -8,13 +8,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 412x19
-          text run at (0,0) width 412: "This tests for a bug where images would act as word boundaries."
-      RenderBlock {DIV} at (0,33) size 784x108
-        RenderText {#text} at (0,89) size 390x19
-          text run at (0,89) width 390: "The caret should be just before the second to last word in this"
-        RenderImage {IMG} at (390,0) size 76x103
-        RenderText {#text} at (466,89) size 62x19
-          text run at (466,89) width 62: "sentence."
+      RenderBlock {P} at (0,0) size 784x21
+        RenderText {#text} at (0,0) size 437x21
+          text run at (0,0) width 437: "This tests for a bug where images would act as word boundaries."
+      RenderBlock {DIV} at (0,37) size 784x108
+        RenderText {#text} at (0,87) size 414x21
+          text run at (0,87) width 414: "The caret should be just before the second to last word in this"
+        RenderImage {IMG} at (414,0) size 76x103
+        RenderText {#text} at (490,87) size 61x21
+          text run at (490,87) width 61: "sentence."
 caret: position 59 of child 0 {#text} of child 2 {DIV} of body

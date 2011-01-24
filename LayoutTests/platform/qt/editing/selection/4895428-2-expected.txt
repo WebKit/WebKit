@@ -2,27 +2,27 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 784x57
-          text run at (0,0) width 738: "This tests to see if a mouse click inside an editable, focusable node focuses that node. Normally, we focus a node on"
-          text run at (0,19) width 784: "mouse down, but to make it easier to drag selections containing editable pieces we delay focus until mouse up. The editable"
-          text run at (0,38) width 486: "table cell should be focused and you should see a 'Success' message below."
-      RenderBlock {DIV} at (0,71) size 784x29
-        RenderTable {TABLE} at (0,0) size 145x29 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 143x27
-            RenderTableRow {TR} at (0,2) size 143x23
-              RenderTableCell {TD} at (2,2) size 83x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 79x19
-                  text run at (2,2) width 79: "non-editable"
-              RenderTableCell {TD} at (87,2) size 54x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 50x19
-                  text run at (2,2) width 50: "editable"
-      RenderBlock {DIV} at (0,100) size 784x19
-        RenderBR {BR} at (0,0) size 0x19
-      RenderBlock {UL} at (0,133) size 784x19
-        RenderListItem {LI} at (40,0) size 744x19
-          RenderListMarker at (-17,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 53x19
-            text run at (0,0) width 53: "Success"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 768x63
+          text run at (0,0) width 768: "This tests to see if a mouse click inside an editable, focusable node focuses that node. Normally, we focus a node on"
+          text run at (0,21) width 767: "mouse down, but to make it easier to drag selections containing editable pieces we delay focus until mouse up. The"
+          text run at (0,42) width 554: "editable table cell should be focused and you should see a 'Success' message below."
+      RenderBlock {DIV} at (0,79) size 784x31
+        RenderTable {TABLE} at (0,0) size 153x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 151x29
+            RenderTableRow {TR} at (0,2) size 151x25
+              RenderTableCell {TD} at (2,2) size 88x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 84x21
+                  text run at (2,2) width 84: "non-editable"
+              RenderTableCell {TD} at (92,2) size 57x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 53x21
+                  text run at (2,2) width 53: "editable"
+      RenderBlock {DIV} at (0,110) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
+      RenderBlock {UL} at (0,147) size 784x21
+        RenderListItem {LI} at (40,0) size 744x21
+          RenderListMarker at (-18,0) size 7x21: bullet
+          RenderText {#text} at (0,0) size 51x21
+            text run at (0,0) width 51: "Success"
 caret: position 4 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body
