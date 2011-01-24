@@ -1,3 +1,12 @@
+2011-01-24  Alejandro G. Castro  <alex@igalia.com>
+
+
+        Unreviewed, skipped tests failing the 64bits bot and passing in the
+        32bits bots. Bug following the issue:
+        https://bugs.webkit.org/show_bug.cgi?id=52996
+
+        * platform/gtk/Skipped:
+
 2011-01-23  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
