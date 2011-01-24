@@ -84,7 +84,6 @@
     <file>ScriptFormatter.js</file>
     <file>ScriptFormatterWorker.js</file>
     <file>ScriptsPanel.js</file>
-    <file>ScriptView.js</file>
     <file>Section.js</file>
     <file>Settings.js</file>
     <file>ShortcutsHelp.js</file>
@@ -95,7 +94,6 @@
     <file>SourceHTMLTokenizer.js</file>
     <file>SourceJavaScriptTokenizer.js</file>
     <file>SourceTokenizer.js</file>
-    <file>SourceView.js</file>
     <file>StatusBarButton.js</file>
     <file>StylesSidebarPane.js</file>
     <file>SummaryBar.js</file>

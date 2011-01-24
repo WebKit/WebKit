@@ -102,7 +102,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
 
-        if (this.visibleView instanceof WebInspector.ResourceView)
+        if (this.visibleView.resource)
             this._showResourceView(this.visibleView.resource);
 
         if (this._initializedDefaultSelection)
@@ -378,7 +378,7 @@ WebInspector.ResourcesPanel.prototype = {
         var view = WebInspector.ResourceView.resourceViewForResource(resource);
 
         // Consider rendering diff markup here.
-        if (resource.baseRevision && view instanceof WebInspector.SourceView) {
+        if (resource.baseRevision && view instanceof WebInspector.SourceFrame) {
             function callback(baseContent)
             {
                 if (baseContent)
@@ -413,7 +413,7 @@ WebInspector.ResourcesPanel.prototype = {
             } else
                 offset = i - right[i].row;
         }
-        view.sourceFrame.markDiff(diffData);
+        view.markDiff(diffData);
     },
 
     showDatabase: function(database, tableName)
@@ -690,7 +690,7 @@ WebInspector.ResourcesPanel.prototype = {
         var views = [];
 
         const visibleView = this.visibleView;
-        if (visibleView instanceof WebInspector.ResourceView && visibleView.performSearch)
+        if (visibleView.performSearch)
             views.push(visibleView);
 
         function callback(resourceTreeElement)
@@ -1076,7 +1076,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
     _errorsWarningsUpdated: function()
     {
-        // FIXME: move to the Script/SourceView.
+        // FIXME: move to the SourceFrame.
         if (!this._resource.warnings && !this._resource.errors) {
             var view = WebInspector.ResourceView.existingResourceViewForResource(this._resource);
             if (view && view.clearMessages)

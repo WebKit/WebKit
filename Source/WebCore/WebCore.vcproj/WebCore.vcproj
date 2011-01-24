@@ -65701,10 +65701,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\ScriptView.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\Section.js"
 					>
 				</File>
@@ -65742,10 +65738,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\SourceTokenizer.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\SourceView.js"
 					>
 				</File>
 				<File

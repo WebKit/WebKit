@@ -50,7 +50,11 @@ WebInspector.ResourceView.createResourceView = function(resource)
     case WebInspector.resourceCategories.stylesheets:
     case WebInspector.resourceCategories.scripts:
     case WebInspector.resourceCategories.xhr:
-        return new WebInspector.SourceView(resource);
+        var contentProvider = new WebInspector.SourceFrameContentProviderForResource(resource);
+        var isScript = resource.type === WebInspector.Resource.Type.Script;
+        var view = new WebInspector.SourceFrame(contentProvider, resource.url, isScript);
+        view.resource = resource;
+        return view;
     case WebInspector.resourceCategories.images:
         return new WebInspector.ImageView(resource);
     case WebInspector.resourceCategories.fonts:
@@ -68,7 +72,7 @@ WebInspector.ResourceView.resourceViewTypeMatchesResource = function(resource)
     case WebInspector.resourceCategories.stylesheets:
     case WebInspector.resourceCategories.scripts:
     case WebInspector.resourceCategories.xhr:
-        return resourceView.__proto__ === WebInspector.SourceView.prototype;
+        return resourceView.__proto__ === WebInspector.SourceFrame.prototype;
     case WebInspector.resourceCategories.images:
         return resourceView.__proto__ === WebInspector.ImageView.prototype;
     case WebInspector.resourceCategories.fonts:
@@ -115,3 +119,37 @@ WebInspector.ResourceView.existingResourceViewForResource = function(resource)
         return null;
     return resource._resourcesView;
 }
+
+
+WebInspector.SourceFrameContentProviderForResource = function(resource)
+{
+    WebInspector.SourceFrameContentProvider.call(this);
+    this._resource = resource;
+}
+
+//This is a map from resource.type to mime types
+//found in WebInspector.SourceTokenizer.Registry.
+WebInspector.SourceFrameContentProviderForResource.DefaultMIMETypeForResourceType = {
+    0: "text/html",
+    1: "text/css",
+    4: "text/javascript"
+}
+
+WebInspector.SourceFrameContentProviderForResource.prototype = {
+    requestContent: function(callback)
+    {
+        function contentLoaded(content)
+        {
+            var mimeType = WebInspector.SourceFrameContentProviderForResource.DefaultMIMETypeForResourceType[this._resource.type] || this._resource.mimeType;
+            callback(mimeType, content);
+        }
+        this._resource.requestContent(contentLoaded.bind(this));
+    },
+
+    scripts: function()
+    {
+        return WebInspector.debuggerModel.scriptsForURL(this._resource.url);
+    }
+}
+
+WebInspector.SourceFrameContentProviderForResource.prototype.__proto__ = WebInspector.SourceFrameContentProvider.prototype;

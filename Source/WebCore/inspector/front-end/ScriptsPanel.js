@@ -258,10 +258,10 @@ WebInspector.ScriptsPanel.prototype = {
         var oldSource = event.data.oldSource;
 
         var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
-        var oldView = script._scriptView;
+        var oldView = script._sourceFrame
         if (oldView) {
-            script._scriptView = new WebInspector.ScriptView(script);
-            this.viewRecreated(oldView, script._scriptView);
+            delete script._sourceFrame;
+            this.viewRecreated(oldView, this._sourceFrameForScriptOrResource(script));
         }
         if (script.resource) {
             var revertHandle = WebInspector.debuggerModel.editScriptSource.bind(WebInspector.debuggerModel, sourceID, oldSource);
@@ -484,43 +484,17 @@ WebInspector.ScriptsPanel.prototype = {
             this.sidebarPanes.callstack.handleShortcut(event);
     },
 
-    scriptViewForScript: function(script)
-    {
-        if (!script)
-            return null;
-        if (!script._scriptView)
-            script._scriptView = new WebInspector.ScriptView(script);
-        return script._scriptView;
-    },
-
-    sourceFrameForScript: function(script)
-    {
-        var view = this.scriptViewForScript(script);
-        if (!view)
-            return null;
-
-        // Setting up the source frame requires that we be attached.
-        if (!this.element.parentNode)
-            this.attach();
-
-        return view.sourceFrame;
-    },
-
     _sourceFrameForScriptOrResource: function(scriptOrResource)
     {
+        if (scriptOrResource._sourceFrame)
+            return scriptOrResource._sourceFrame;
         if (scriptOrResource instanceof WebInspector.Resource)
-            return this._sourceFrameForResource(scriptOrResource);
-        if (scriptOrResource instanceof WebInspector.Script)
-            return this.sourceFrameForScript(scriptOrResource);
-    },
-
-    _sourceFrameForResource: function(resource)
-    {
-        var view = WebInspector.ResourceView.resourceViewForResource(resource);
-        if (!view)
-            return null;
-
-        return view.sourceFrame;
+            scriptOrResource._sourceFrame = WebInspector.ResourceView.resourceViewForResource(scriptOrResource);
+        else if (scriptOrResource instanceof WebInspector.Script) {
+            var contentProvider = new WebInspector.SourceFrameContentProviderForScript(scriptOrResource);
+            scriptOrResource._sourceFrame = new WebInspector.SourceFrame(contentProvider, scriptOrResource.sourceURL, true);
+        }
+        return scriptOrResource._sourceFrame;
     },
 
     _showScriptOrResource: function(scriptOrResource, options)
@@ -531,12 +505,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (!scriptOrResource)
             return;
 
-        var view;
-        if (scriptOrResource instanceof WebInspector.Resource)
-            view = WebInspector.ResourceView.resourceViewForResource(scriptOrResource);
-        else if (scriptOrResource instanceof WebInspector.Script)
-            view = this.scriptViewForScript(scriptOrResource);
-
+        var view = this._sourceFrameForScriptOrResource(scriptOrResource);
         if (!view)
             return;
 
@@ -738,7 +707,7 @@ WebInspector.ScriptsPanel.prototype = {
                 this._pauseOnExceptionButton.title = WebInspector.UIString("Pause on all exceptions.\nClick to Pause on uncaught exceptions.");
             else if (pauseOnExceptionsState == WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions)
                 this._pauseOnExceptionButton.title = WebInspector.UIString("Pause on uncaught exceptions.\nClick to Not pause on exceptions.");
-    
+
             this._pauseOnExceptionButton.state = pauseOnExceptionsState;
             WebInspector.settings.pauseOnExceptionState = pauseOnExceptionsState;
         }
@@ -824,8 +793,8 @@ WebInspector.ScriptsPanel.prototype = {
 
     _formatScript: function()
     {
-        if (this.visibleView && this.visibleView.sourceFrame)
-            this.visibleView.sourceFrame.formatSource();
+        if (this.visibleView)
+            this.visibleView.formatSource();
     },
 
     _enableDebugging: function()
@@ -1043,3 +1012,41 @@ WebInspector.ScriptsPanel.prototype = {
 }
 
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
+
+
+WebInspector.SourceFrameContentProviderForScript = function(script)
+{
+    WebInspector.SourceFrameContentProvider.call(this);
+    this._script = script;
+}
+
+WebInspector.SourceFrameContentProviderForScript.prototype = {
+    requestContent: function(callback)
+    {
+        if (this._script.source) {
+            callback("text/javascript", this._script.source);
+            return;
+        }
+
+        function didRequestSource(content)
+        {
+            var source;
+            if (content) {
+                var prefix = "";
+                for (var i = 0; i < this._script.startingLine - 1; ++i)
+                    prefix += "\n";
+                source = prefix + content;
+            } else
+                source = WebInspector.UIString("<source is not available>");
+            callback("text/javascript", source);
+        }
+        this._script.requestSource(didRequestSource.bind(this));
+    },
+
+    scripts: function()
+    {
+        return [this._script];
+    }
+}
+
+WebInspector.SourceFrameContentProviderForScript.prototype.__proto__ = WebInspector.SourceFrameContentProvider.prototype;

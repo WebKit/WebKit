@@ -28,16 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFrame = function(parentElement, contentProvider, url, isScript)
+WebInspector.SourceFrame = function(contentProvider, url, isScript)
 {
-    this._parentElement = parentElement;
+    WebInspector.View.call(this);
+
+    this.element.addStyleClass("script-view");
+
     this._contentProvider = contentProvider;
     this._url = url;
     this._isScript = isScript;
 
-
     this._textModel = new WebInspector.TextEditorModel();
     this._textModel.replaceTabsWithSpaces = true;
+
+    this._currentSearchResultIndex = -1;
+    this._searchResults = [];
 
     this._messages = [];
     this._rowMessages = {};
@@ -48,29 +53,41 @@ WebInspector.SourceFrame = function(parentElement, contentProvider, url, isScrip
 
 WebInspector.SourceFrame.prototype = {
 
-    set visible(visible)
+    show: function(parentElement)
     {
+        WebInspector.View.prototype.show.call(this, parentElement);
+
         if (!this._contentRequested) {
             this._contentRequested = true;
             this._contentProvider.requestContent(this._createTextViewer.bind(this));
         }
 
-        if (visible) {
-            if (this._textViewer && this._scrollTop)
+        if (this._textViewer) {
+            if (this._scrollTop)
                 this._textViewer.element.scrollTop = this._scrollTop;
-            if (this._textViewer && this._scrollLeft)
+            if (this._scrollLeft)
                 this._textViewer.element.scrollLeft = this._scrollLeft;
-            if (this._textViewer)
-                this._textViewer.resize();
-        } else {
-            this._hidePopup();
-            this._clearLineHighlight();
-            if (this._textViewer) {
-                this._scrollTop = this._textViewer.element.scrollTop;
-                this._scrollLeft = this._textViewer.element.scrollLeft;
-                this._textViewer.freeCachedElements();
-            }
+            this._textViewer.resize();
         }
+    },
+
+    hide: function()
+    {
+        WebInspector.View.prototype.hide.call(this);
+
+        this._hidePopup();
+        this._clearLineHighlight();
+
+        if (this._textViewer) {
+            this._scrollTop = this._textViewer.element.scrollTop;
+            this._scrollLeft = this._textViewer.element.scrollLeft;
+            this._textViewer.freeCachedElements();
+        }
+    },
+
+    hasContent: function()
+    {
+        return true;
     },
 
     markDiff: function(diffData)
@@ -166,7 +183,7 @@ WebInspector.SourceFrame.prototype = {
         element.addEventListener("mousemove", this._mouseMove.bind(this), true);
         element.addEventListener("scroll", this._scroll.bind(this), true);
         element.addEventListener("dblclick", this._doubleClick.bind(this), true);
-        this._parentElement.appendChild(element);
+        this.element.appendChild(element);
 
         this._textViewer.beginUpdates();
 
@@ -240,7 +257,7 @@ WebInspector.SourceFrame.prototype = {
                 // Silent catch.
             }
 
-            callback(this._searchResults.length);
+            callback(this, this._searchResults.length);
         }
 
         if (this._textViewer)
@@ -910,7 +927,7 @@ WebInspector.SourceFrame.prototype = {
     }
 }
 
-WebInspector.SourceFrame.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.SourceFrame.prototype.__proto__ = WebInspector.View.prototype;
 
 
 WebInspector.SourceFrameContentProvider = function()
