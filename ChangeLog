@@ -1,3 +1,9 @@
+2011-01-24  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        * runtime: Removed. It was accidentally created by r76457.
+
 2011-01-24  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
