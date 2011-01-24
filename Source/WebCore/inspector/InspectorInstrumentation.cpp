@@ -61,7 +61,12 @@ static const char* const setTimerEventName = "setTimer";
 static const char* const clearTimerEventName = "clearTimer";
 static const char* const timerFiredEventName = "timerFired";
 
-HashMap<Page*, InspectorAgent*> InspectorInstrumentation::s_inspectorAgents;
+HashMap<Page*, InspectorAgent*>& InspectorInstrumentation::inspectorAgents()
+{
+    static HashMap<Page*, InspectorAgent*>& agents = *new HashMap<Page*, InspectorAgent*>;
+    return agents;
+}
+
 int InspectorInstrumentation::s_frontendCounter = 0;
 
 static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)

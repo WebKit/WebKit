@@ -172,8 +172,8 @@ public:
 #endif
 
 #if ENABLE(INSPECTOR)
-    static void bindInspectorAgent(Page* page, InspectorAgent* inspectorAgent) { s_inspectorAgents.set(page, inspectorAgent); }
-    static void unbindInspectorAgent(Page* page) { s_inspectorAgents.remove(page); }
+    static void bindInspectorAgent(Page* page, InspectorAgent* inspectorAgent) { inspectorAgents().set(page, inspectorAgent); }
+    static void unbindInspectorAgent(Page* page) { inspectorAgents().remove(page); }
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }
     static bool hasFrontends() { return s_frontendCounter; }
@@ -297,7 +297,7 @@ private:
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
     static InspectorResourceAgent* retrieveResourceAgent(InspectorAgent*);
 
-    static HashMap<Page*, InspectorAgent*> s_inspectorAgents;
+    static HashMap<Page*, InspectorAgent*>& inspectorAgents();
     static int s_frontendCounter;
 #endif
 };
@@ -938,7 +938,7 @@ inline InspectorAgent* InspectorInstrumentation::inspectorAgentForPage(Page* pag
 {
     if (!page)
         return 0;
-    return s_inspectorAgents.get(page);
+    return inspectorAgents().get(page);
 }
 
 inline InspectorAgent* InspectorInstrumentation::inspectorAgentWithFrontendForContext(ScriptExecutionContext* context)

@@ -1,3 +1,25 @@
+2011-01-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r76459.
+
+        Static member variables or globals of types that have constructors or destructors are bad as
+        they generate static initializers and destructors. This is code that is run either at link time
+        when the library is loaded in to memory or at application termination time. Both of these are
+        terrible for performance and are thus outlawed in WebKit code.
+
+        The typical solution is to replace the static member or global with a function that allocates
+        the necessary variable on the heap. The variable is leaked to prevent it from being destroyed
+        at application termination time. The DEFINE_STATIC_LOCAL macro wraps this in to a concise little
+        package, but sadly fails to work in this case due to the type containing multiple template
+        parameters.
+        
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::inspectorAgents):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::bindInspectorAgent):
+        (WebCore::InspectorInstrumentation::unbindInspectorAgent):
+        (WebCore::InspectorInstrumentation::inspectorAgentForPage):
+
 2011-01-21  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by Kenneth Russell.
