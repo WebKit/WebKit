@@ -151,7 +151,7 @@ private:
     bool m_breakpointsActivated;
     JavaScriptCallFrame* m_pauseOnCallFrame;
     RefPtr<JavaScriptCallFrame> m_currentCallFrame;
-    SourceIdToBreakpointsMap m_sourceIdToScriptBreakpoints;
+    SourceIdToBreakpointsMap m_sourceIdToBreakpoints;
     Timer<ScriptDebugServer> m_recompileTimer;
 };
 
