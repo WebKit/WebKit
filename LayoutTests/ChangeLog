@@ -1,3 +1,26 @@
+2011-01-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        Update Chromim test expectations (WIN/SVG) in response to r76442.
+
+        * platform/chromium-win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.checksum:
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.txt: Added.
+        * platform/chromium-win/svg/text/text-hkern-on-vertical-text-expected.checksum:
+        * platform/chromium-win/svg/text/text-hkern-on-vertical-text-expected.png:
+        * platform/chromium-win/svg/text/text-hkern-on-vertical-text-expected.txt: Added.
+        * platform/chromium-win/svg/text/text-text-04-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-04-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-04-t-expected.txt:
+        * platform/chromium-win/svg/text/text-vkern-expected.checksum:
+        * platform/chromium-win/svg/text/text-vkern-expected.png:
+        * platform/chromium-win/svg/text/text-vkern-expected.txt: Added.
+
 2011-01-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.
