@@ -188,7 +188,9 @@ EOT
     },
     {
         name    => 'site_wide_secret',
-        default => sub { generate_random_password(256) },
+        # 64 characters is roughly the equivalent of a 384-bit key, which
+        # is larger than anybody would ever be able to brute-force.
+        default => sub { generate_random_password(64) },
         desc    => <<EOT
 # This secret key is used by your installation for the creation and
 # validation of encrypted tokens to prevent unsolicited changes,
@@ -295,7 +297,14 @@ sub update_localconfig {
     my @new_vars;
     foreach my $var (LOCALCONFIG_VARS) {
         my $name = $var->{name};
-        if (!defined $localconfig->{$name}) {
+        my $value = $localconfig->{$name};
+        # Regenerate site_wide_secret if it was made by our old, weak
+        # generate_random_password. Previously we used to generate
+        # a 256-character string for site_wide_secret.
+        $value = undef if ($name eq 'site_wide_secret' and defined $value
+                           and length($value) == 256);
+        
+        if (!defined $value) {
             push(@new_vars, $name);
             $var->{default} = &{$var->{default}} if ref($var->{default}) eq 'CODE';
             $localconfig->{$name} = $answer->{$name} || $var->{default};
@@ -341,6 +350,18 @@ EOT
                       Data::Dumper->Dump([$localconfig->{$var->{name}}], 
                                          ["*$var->{name}"]);
             }
+        }
+        # When updating site_wide_secret to the new value, don't
+        # leave the old value behind.
+        if (grep { $_ eq 'site_wide_secret' } @new_vars) {
+            my $read = new IO::File($filename, '<') || die "$filename: $!";
+            my $text;
+            { local $/; $text = <$read> }
+            $read->close;
+            $text =~ s/^\$site_wide_secret = '\w{256}';$//ms;
+            my $write = new IO::File($filename, '>') || die "$filename: $!";
+            print $write $text;
+            $write->close;
         }
 
         my $newstuff = join(', ', @new_vars);

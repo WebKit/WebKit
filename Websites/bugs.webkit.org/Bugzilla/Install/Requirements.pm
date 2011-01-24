@@ -232,6 +232,12 @@ sub OPTIONAL_MODULES {
         version => '1.999022',
         feature => 'mod_perl'
     },
+    {
+        package => 'Math-Random-Secure',
+        module  => 'Math::Random::Secure',
+        version => '0.05',
+        feature => 'Improve cookie and token security',
+    },
     );
 
     my $all_modules = _get_extension_requirements(
