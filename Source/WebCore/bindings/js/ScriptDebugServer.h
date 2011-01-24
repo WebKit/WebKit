@@ -93,8 +93,6 @@ public:
 
     JavaScriptCallFrame* currentCallFrame();
 
-    void pageCreated(Page*);
-
     bool isDebuggerAlwaysEnabled();
 
 private:

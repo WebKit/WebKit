@@ -1,3 +1,18 @@
+2011-01-24  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [JSC] remove ScriptDebugServer::pageCreated
+        https://bugs.webkit.org/show_bug.cgi?id=53007
+
+        It's impossible to create "provisional" inspector for pages which are
+        not yet created so there is no need to listen for page creation in ScriptDebugServer.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        * bindings/js/ScriptDebugServer.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+
 2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
