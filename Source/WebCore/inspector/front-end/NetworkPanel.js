@@ -118,8 +118,6 @@ WebInspector.NetworkPanel.prototype = {
         if (!this._viewingResourceMode)
             return;
         WebInspector.Panel.prototype.updateSidebarWidth.call(this, width);
-        if (this._summaryBarElement.parentElement === this.element)
-            this._summaryBarElement.style.width = width + "px";
     },
 
     updateMainViewWidth: function(width)
@@ -147,7 +145,6 @@ WebInspector.NetworkPanel.prototype = {
                 delete this._summaryBarRowNode;
             }
             this._summaryBarElement.addStyleClass("network-summary-bar-bottom");
-            this._summaryBarElement.style.setProperty("width", this.sidebarElement.offsetWidth + "px");
             this.element.appendChild(this._summaryBarElement);
             this._dataGrid.element.style.bottom = "20px";
             return;
@@ -157,7 +154,6 @@ WebInspector.NetworkPanel.prototype = {
             // Glue status to table.
             this._summaryBarRowNode = new WebInspector.NetworkTotalGridNode(this._summaryBarElement);
             this._summaryBarElement.removeStyleClass("network-summary-bar-bottom");
-            this._summaryBarElement.style.removeProperty("width");
             this._dataGrid.appendChild(this._summaryBarRowNode);
             this._dataGrid.element.style.bottom = 0;
             this._sortItems();
@@ -933,7 +929,6 @@ WebInspector.NetworkPanel.prototype = {
             this._viewsContainerElement.addStyleClass("hidden");
             this.sidebarElement.style.right = 0;
             this.sidebarElement.style.removeProperty("width");
-            this._summaryBarElement.style.removeProperty("width");
             if (this._dataGrid.selectedNode)
                 this._dataGrid.selectedNode.selected = false;
         }
