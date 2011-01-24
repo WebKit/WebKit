@@ -1,6 +1,13 @@
 2011-01-23  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
+        Mark fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html as TEXT for LINUX.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-01-23  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
         Update Chromim test expectations in response to r76442.
 
         * platform/chromium-linux/fast/css/acid2-expected.txt: Added.

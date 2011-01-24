@@ -3110,3 +3110,7 @@ BUGRNIWA WIN MAC : fast/animation/request-animation-frame-cancel2.html = PASS TE
 BUGRNIWA WIN MAC : fast/animation/request-animation-frame-display.html = PASS TEXT
 BUGRNIWA WIN MAC : fast/animation/request-animation-frame-within-callback.html = PASS TEXT
 BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
+
+// Failing after r76422
+BUGCR70573 LINUX : fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html = TEXT
+
