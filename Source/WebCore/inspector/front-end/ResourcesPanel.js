@@ -102,7 +102,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
 
-        if (this.visibleView.resource)
+        if (this.visibleView && this.visibleView.resource)
             this._showResourceView(this.visibleView.resource);
 
         if (this._initializedDefaultSelection)

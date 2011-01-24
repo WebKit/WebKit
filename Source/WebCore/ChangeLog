@@ -1,3 +1,10 @@
+2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix for r76497.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.show):
+
 2011-01-24  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Tor Arne Vestbø.
