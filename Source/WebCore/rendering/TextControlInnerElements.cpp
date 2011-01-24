@@ -77,7 +77,6 @@ VisiblePosition RenderTextControlInnerBlock::positionForPoint(const IntPoint& po
 
 TextControlInnerElement::TextControlInnerElement(Document* document, HTMLElement* shadowParent)
     : HTMLDivElement(divTag, document)
-    , m_shadowParent(shadowParent)
 {
     setShadowHost(shadowParent);
 }

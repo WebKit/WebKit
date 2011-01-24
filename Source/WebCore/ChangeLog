@@ -1,3 +1,16 @@
+2011-01-24  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        TextControlInnerElement::m_shadowParent should be removed.
+        https://bugs.webkit.org/show_bug.cgi?id=52998
+
+        No new tests. No behavioral change.
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+        * rendering/TextControlInnerElements.h:
+
 2011-01-24  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

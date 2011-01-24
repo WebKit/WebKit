@@ -48,8 +48,6 @@ protected:
 
 private:
     virtual bool isMouseFocusable() const { return false; }
-
-    RefPtr<HTMLElement> m_shadowParent;
 };
 
 class TextControlInnerTextElement : public TextControlInnerElement {
