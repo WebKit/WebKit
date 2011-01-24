@@ -42,13 +42,19 @@ inline FileChooser::FileChooser(FileChooserClient* client, const Vector<String>&
     , m_isInitializing(true)
 {
     m_filenames = initialFilenames;
+}
+
+void FileChooser::initialize()
+{
     loadIcon();
     m_isInitializing = false;
 }
 
 PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const Vector<String>& initialFilenames)
 {
-    return adoptRef(new FileChooser(client, initialFilenames));
+    RefPtr<FileChooser> chooser(adoptRef(new FileChooser(client, initialFilenames)));
+    chooser->initialize();
+    return chooser;
 }
 
 FileChooser::~FileChooser()

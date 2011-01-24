@@ -1,3 +1,19 @@
+2011-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, trivial fix.
+
+        Fix a Chromium-only assertion failure by r76491.
+        https://bugs.webkit.org/show_bug.cgi?id=38982
+
+        Separate icon loading from the FileChooser constructor in order to avoid
+        ref() before adoptRef().
+
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::FileChooser):
+        (WebCore::FileChooser::initialize):
+        (WebCore::FileChooser::create):
+        * platform/FileChooser.h:
+
 2011-01-24  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

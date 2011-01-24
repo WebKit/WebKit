@@ -81,6 +81,7 @@ public:
 
 private:
     FileChooser(FileChooserClient*, const Vector<String>& initialFilenames);
+    void initialize();
     void loadIcon();
 
     FileChooserClient* m_client;
