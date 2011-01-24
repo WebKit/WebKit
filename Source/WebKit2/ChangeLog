@@ -1,3 +1,10 @@
+2011-01-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
+        * win/WebKit2.vcproj: Don't build the CG Utilities when building
+        without CG support.
+
 2011-01-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
