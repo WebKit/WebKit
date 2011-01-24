@@ -1,3 +1,11 @@
+2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, test fix for r76497.
+
+        * http/tests/inspector/debugger-test2.js:
+        (initialize_DebuggerTest.InspectorTest.setBreakpointInVisibleView):
+        (initialize_DebuggerTest.InspectorTest._showScriptSource):
+
 2011-01-24  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.

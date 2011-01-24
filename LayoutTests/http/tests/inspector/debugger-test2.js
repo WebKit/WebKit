@@ -92,7 +92,7 @@ InspectorTest.captureStackTrace = function(callFrames)
 
 InspectorTest.setBreakpointInVisibleView = function(lineNumber, enabled, condition)
 {
-    WebInspector.currentPanel.visibleView.sourceFrame._setBreakpoint(lineNumber, enabled, condition);
+    WebInspector.currentPanel.visibleView._setBreakpoint(lineNumber, enabled, condition);
 }
 
 InspectorTest._pausedScript = function(details)
@@ -167,7 +167,7 @@ InspectorTest._showScriptSource = function(scriptName, callback)
         scriptsPanel._showScriptOrResource(scriptResource);
     }
 
-    var sourceFrame = WebInspector.currentPanel.visibleView.sourceFrame;
+    var sourceFrame = WebInspector.currentPanel.visibleView;
     if (sourceFrame._content)
         callback(sourceFrame);
     else
