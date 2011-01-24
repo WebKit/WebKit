@@ -1,6 +1,6 @@
 # JavaScriptCore - qmake build info
 CONFIG += building-libs
-include($$PWD/../../WebKit.pri)
+include($$PWD/../WebKit.pri)
 include(JavaScriptCore.pri)
 
 TEMPLATE = lib

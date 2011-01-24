@@ -1,4 +1,4 @@
-include(../../../../WebKit.pri)
+include(../../../WebKit.pri)
 
 unix {
     QDOC = SRCDIR=$$PWD/../../.. OUTPUT_DIR=$$OUTPUT_DIR $$(QTDIR)/bin/qdoc3

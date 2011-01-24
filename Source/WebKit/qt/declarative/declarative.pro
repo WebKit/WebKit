@@ -33,7 +33,7 @@ symbian: {
     TARGET = $$TARGET$${QT_LIBINFIX}
 }
 
-include(../../../../WebKit.pri)
+include(../../../WebKit.pri)
 
 QT += declarative
 

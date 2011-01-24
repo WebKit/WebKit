@@ -1,6 +1,6 @@
 # JavaScriptCore - Qt4 build info
 
-include(../../common.pri)
+include(../common.pri)
 
 VPATH += $$PWD
 

@@ -4,14 +4,14 @@
 # either the generated files directory or as part of the Qt package through
 # QTDIR_build
 CONFIG(QTDIR_build): CONFIG += standalone_package
-else:exists($$PWD/Source/WebCore/generated): CONFIG += standalone_package
+else:exists($$PWD/WebCore/generated): CONFIG += standalone_package
 
 CONFIG += depend_includepath
 DEPENDPATH += $$OUT_PWD
 
 DEFINES += BUILDING_QT__=1
 building-libs {
-    win32-msvc*|win32-icc: INCLUDEPATH += $$PWD/Source/JavaScriptCore/os-win32
+    win32-msvc*|win32-icc: INCLUDEPATH += $$PWD/JavaScriptCore/os-win32
 } else {
     CONFIG(QTDIR_build) {
         QT += webkit
@@ -32,7 +32,7 @@ building-libs {
                 symbian {
                     TARGET.EPOCSTACKSIZE = 0x14000 // 80 kB
                     # For EXEs only: set heap to usable value
-                    TARGET.EPOCHEAPSIZE = 
+                    TARGET.EPOCHEAPSIZE =
                     heapSizeRule = \
                     "$${LITERAL_HASH}ifdef WINSCW" \
                         "EPOCHEAPSIZE  0x40000 0x2000000 // Min 256kB, Max 32MB" \
@@ -44,7 +44,7 @@ building-libs {
             }
         }
     }
-    DEPENDPATH += $$PWD/Source/WebKit/qt/Api
+    DEPENDPATH += $$PWD/WebKit/qt/Api
 }
 
 !mac:!unix|symbian {
@@ -55,7 +55,7 @@ CONFIG(release, debug|release) {
     DEFINES += NDEBUG
 }
 
-INCLUDEPATH += $$OUTPUT_DIR/Source/include/QtWebKit
+INCLUDEPATH += $$OUTPUT_DIR/include/QtWebKit
 
 CONFIG -= warn_on
 *-g++*:QMAKE_CXXFLAGS += -Wall -Wextra -Wreturn-type -fno-strict-aliasing -Wcast-align -Wchar-subscripts -Wformat-security -Wreturn-type -Wno-unused-parameter -Wno-sign-compare -Wno-switch -Wno-switch-enum -Wundef -Wmissing-noreturn -Winit-self
@@ -70,7 +70,7 @@ symbian|*-armcc {
     RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293
     RVCT_COMMON_CXXFLAGS = $$RVCT_COMMON_CFLAGS --no_parse_templates
     # Make debug symbols leaner in RVCT4.x. Ignored by compiler for release builds
-    QMAKE_CXXFLAGS.ARMCC_4_0 += --remove_unneeded_entities 
+    QMAKE_CXXFLAGS.ARMCC_4_0 += --remove_unneeded_entities
 }
 
 *-armcc {

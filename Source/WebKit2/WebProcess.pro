@@ -5,7 +5,7 @@ SOURCES += \
     qt/MainQt.cpp
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
-include(../../WebKit.pri)
+include($$PWD/../WebKit.pri)
 
 DESTDIR = $$OUTPUT_DIR/bin
 !CONFIG(standalone_package): CONFIG -= app_bundle

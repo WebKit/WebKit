@@ -1,3 +1,16 @@
+2011-01-24  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Move project files into Source
+        https://bugs.webkit.org/show_bug.cgi?id=52891
+
+        * Source/DerivedSources.pro: Copied from DerivedSources.pro.
+        * Source/WebKit.pri: Renamed from WebKit.pri.
+        * Source/WebKit.pro: Added.
+        * Source/common.pri: Renamed from common.pri.
+        * WebKit.pro: Removed.
+
 2011-01-20  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

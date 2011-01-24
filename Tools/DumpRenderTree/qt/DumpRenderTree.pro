@@ -5,12 +5,12 @@ CONFIG += uitools
 BASEDIR = $$PWD/../
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 
-include(../../../WebKit.pri)
+include(../../../Source/WebKit.pri)
 INCLUDEPATH += ../../../Source
 INCLUDEPATH += ../../../Source/JavaScriptCore
 INCLUDEPATH += ../../../Source/JavaScriptCore/ForwardingHeaders
 INCLUDEPATH += $$BASEDIR
-DESTDIR = ../../../bin
+DESTDIR = ../../bin
 
 unix:!mac:!symbian {
     CONFIG += link_pkgconfig

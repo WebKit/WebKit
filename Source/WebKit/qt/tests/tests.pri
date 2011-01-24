@@ -10,7 +10,7 @@ INCLUDEPATH += \
     $$PWD \
     $$PWD/../Api
 
-include(../../../../WebKit.pri)
+include(../../../WebKit.pri)
 QT += testlib network
 
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR

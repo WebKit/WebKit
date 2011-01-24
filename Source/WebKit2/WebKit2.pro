@@ -13,8 +13,8 @@ CONFIG(standalone_package) {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../WebCore/generated
 }
 
-include($$PWD/../../WebKit.pri)
-include($$PWD/../../common.pri)
+include($$PWD/../WebKit.pri)
+include($$PWD/../common.pri)
 include($$PWD/../WebCore/features.pri)
 include(WebKit2.pri)
 

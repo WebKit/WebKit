@@ -79,7 +79,7 @@ symbian: {
 }
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ..
-include($$PWD/../../WebKit.pri)
+include($$PWD/../WebKit.pri)
 
 TEMPLATE = lib
 TARGET = QtWebKit

@@ -1,5 +1,5 @@
 
-include(../../common.pri)
+include(../common.pri)
 include(features.pri)
 
 CONFIG(standalone_package) {

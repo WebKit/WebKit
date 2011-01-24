@@ -6,7 +6,7 @@ isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..
 GENERATED_SOURCES_DIR = ../generated
 
 
-include(../../../WebKit.pri)
+include(../../../Source/WebKit.pri)
 
 !CONFIG(release, debug|release) {
     OBJECTS_DIR = obj/debug
@@ -68,4 +68,4 @@ linux-* {
 }
 
 include(../../../Source/JavaScriptCore/JavaScriptCore.pri)
-addJavaScriptCoreLib(../../../Source/JavaScriptCore)
+addJavaScriptCoreLib(../../JavaScriptCore)

@@ -2,15 +2,11 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-        Source/JavaScriptCore/DerivedSources.pro \
-        Source/WebCore/DerivedSources.pro \
-        Source/WebKit/qt/Api/DerivedSources.pro
+        JavaScriptCore/DerivedSources.pro \
+        WebCore/DerivedSources.pro \
+        WebKit/qt/Api/DerivedSources.pro
 
-webkit2 {
-    SUBDIRS += Source/WebKit2/DerivedSources.pro \
-            Tools/WebKitTestRunner/DerivedSources.pro \
-            Tools/MiniBrowser/DerivedSources.pro
-}
+webkit2: SUBDIRS += WebKit2/DerivedSources.pro
 
 for(subpro, SUBDIRS) {
     subdir = $${dirname(subpro)}

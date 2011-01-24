@@ -9,7 +9,7 @@ win32-*: CONFIG += console
 win32-msvc*: CONFIG += exceptions_off stl_off
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR= ..
-include($$PWD/../../WebKit.pri)
+include($$PWD/../WebKit.pri)
 
 unix:!mac:!symbian:CONFIG += link_pkgconfig
 

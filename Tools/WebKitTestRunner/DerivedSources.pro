@@ -34,7 +34,7 @@ defineTest(addExtraCompiler) {
     return(true)
 }
 
-SRC_ROOT_DIR = $$replace(PWD, /Tools/WebKitTestRunner, /)
+SRC_ROOT_DIR = $$replace(PWD, /Tools/WebKitTestRunner, "")
 
 # Make sure forwarded headers needed by this project are present
 fwheader_generator.commands = perl $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/Tools/WebKitTestRunner $${OUTPUT_DIR}/include qt

@@ -43,11 +43,11 @@ HEADERS += \
     OBJECTS_DIR = obj/release
 }
 
-include(../../../../WebKit.pri)
+include(../../../../Source/WebKit.pri)
 include(../../../../Source/JavaScriptCore/JavaScriptCore.pri)
-addJavaScriptCoreLib(../../../../Source/JavaScriptCore)
+addJavaScriptCoreLib(../../../JavaScriptCore)
 include(../../../../Source/WebKit2/WebKit2.pri)
-addWebKit2Lib(../../../../Source/WebKit2)
+addWebKit2Lib(../../../WebKit2)
 
 INCLUDEPATH += \
     $$PWD \

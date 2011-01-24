@@ -3,7 +3,7 @@ TARGET = TestNetscapePlugIn
 
 VPATH = ../../unix/TestNetscapePlugin ../../TestNetscapePlugIn
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
-include(../../../../WebKit.pri)
+include(../../../../Source/WebKit.pri)
 
 DESTDIR = $$OUTPUT_DIR/lib/plugins
 
