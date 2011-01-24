@@ -113,9 +113,6 @@ void ChunkedUpdateDrawingAreaProxy::didSetSize(UpdateChunk* updateChunk)
     invalidateBackingStore();
     if (!updateChunk->isEmpty())
         drawUpdateChunkIntoBackingStore(updateChunk);
-
-    WebPageProxy* page = this->page();
-    page->process()->responsivenessTimer()->stop();
 }
 
 void ChunkedUpdateDrawingAreaProxy::update(UpdateChunk* updateChunk)
@@ -143,7 +140,6 @@ void ChunkedUpdateDrawingAreaProxy::sendSetSize()
         return;
     m_isWaitingForDidSetFrameNotification = true;
     
-    m_webPageProxy->process()->responsivenessTimer()->start();
     m_webPageProxy->process()->send(DrawingAreaLegacyMessage::SetSize, m_webPageProxy->pageID(), CoreIPC::In(info().identifier, m_size));
 }
     

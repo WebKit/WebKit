@@ -80,7 +80,6 @@ void LayerBackedDrawingAreaProxy::sizeDidChange()
 
     m_isWaitingForDidSetFrameNotification = true;
 
-    page->process()->responsivenessTimer()->start();
     page->process()->send(DrawingAreaLegacyMessage::SetSize, page->pageID(), CoreIPC::In(info().identifier, m_size));
 }
 
@@ -119,9 +118,6 @@ void LayerBackedDrawingAreaProxy::didSetSize(const IntSize& size)
 
     if (size != m_lastSetViewSize)
         setSize(m_lastSetViewSize);
-
-    WebPageProxy* page = this->page();
-    page->process()->responsivenessTimer()->stop();
 }
 
 void LayerBackedDrawingAreaProxy::update()
