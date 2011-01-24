@@ -601,10 +601,10 @@ WebInspector.HeapSnapshotView.prototype = {
         var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier;
         var sortProperty = {
             cons: ["constructorName", null],
-            count: ["count", null],
-            size: ["size", "count"],
-            countDelta: this.showCountDeltaAsPercent ? ["countDeltaPercent", null] : ["countDelta", null],
-            sizeDelta: this.showSizeDeltaAsPercent ? ["sizeDeltaPercent", "countDeltaPercent"] : ["sizeDelta", "sizeDeltaPercent"]
+            count: ["count", "constructorName"],
+            size: ["size", "constructorName"],
+            countDelta: [this.showCountDeltaAsPercent ? "countDeltaPercent" : "countDelta", "constructorName"],
+            sizeDelta: [this.showSizeDeltaAsPercent ? "sizeDeltaPercent" : "sizeDelta", "constructorName"]
         }[sortColumnIdentifier];
 
         this.snapshotDataGridList.sort(WebInspector.HeapSnapshotDataGridList.propertyComparator(sortProperty[0], sortProperty[1], sortAscending));
@@ -1046,10 +1046,17 @@ WebInspector.HeapSnapshotDataGridList.propertyComparator = function(property, pr
     if (!comparator) {
         comparator = function(lhs, rhs) {
             var l = lhs[property], r = rhs[property];
-            if ((l === null || r === null) && property2 !== null)
-                l = lhs[property2], r = rhs[property2];
-            var result = l < r ? -1 : (l > r ? 1 : 0);
-            return isAscending ? result : -result;
+            var result = 0;
+            if (l !== null && r !== null) {
+                result = l < r ? -1 : (l > r ? 1 : 0);
+            }
+            if (result !== 0 || property2 === null) {
+                return isAscending ? result : -result;
+            } else {
+                l = lhs[property2];
+                r = rhs[property2];
+                return l < r ? -1 : (l > r ? 1 : 0);
+            }
         };
         this.propertyComparators[(isAscending ? 1 : 0)][propertyHash] = comparator;
     }

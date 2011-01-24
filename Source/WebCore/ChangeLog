@@ -1,3 +1,18 @@
+2011-01-21  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Fix heap snapshot table sorting.
+
+        Fix table sorting to avoid qsort instability artefacts.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52914
+
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotView.prototype._sortData):
+        (WebInspector.HeapSnapshotDataGridList.propertyComparator.comparator):
+        (WebInspector.HeapSnapshotDataGridList.propertyComparator):
+
 2011-01-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
