@@ -1,3 +1,13 @@
+2011-01-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Find duplicate strings in localizedStrings.js
+
+        https://bugs.webkit.org/show_bug.cgi?id=53005
+
+        * Scripts/check-inspector-strings:
+
 2011-01-24  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -113,3 +113,10 @@ if __name__ == "__main__":
     unused_strings = old_strings - strings
     for s in unused_strings:
         _log.info("Unused: \"%s\"" % (s))
+
+    localized_strings_duplicates = {}
+    for s in localized_strings_extractor.localized_strings:
+        if s in localized_strings_duplicates:
+            _log.info("Duplicate: \"%s\"" % (s))
+        else:
+            localized_strings_duplicates.setdefault(s)
