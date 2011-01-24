@@ -811,18 +811,8 @@ static void closeCallback(GObject* source, GAsyncResult* res, gpointer)
         return;
 
     ResourceHandleInternal* d = handle->getInternal();
-    ResourceHandleClient* client = handle->client();
-
     g_input_stream_close_finish(d->m_inputStream.get(), res, 0);
     cleanupSoupRequestOperation(handle.get());
-
-    // The load may have been cancelled, the client may have been
-    // destroyed already. In such cases calling didFinishLoading is a
-    // bad idea.
-    if (d->m_cancelled || !client)
-        return;
-
-    client->didFinishLoading(handle.get(), 0);
 }
 
 static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer data)
@@ -854,6 +844,10 @@ static void readCallback(GObject* source, GAsyncResult* asyncResult, gpointer da
     }
 
     if (!bytesRead) {
+        // Finish the load. We do not wait for the stream to
+        // close. Instead we better notify WebCore as soon as possible
+        client->didFinishLoading(handle.get(), 0);
+
         g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT,
                                    0, closeCallback, 0);
         return;

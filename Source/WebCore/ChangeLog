@@ -1,3 +1,21 @@
+2011-01-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Gtk] ResourceHandleSoup: do not wait for streams to close to issue didFinishLoading
+        https://bugs.webkit.org/show_bug.cgi?id=52885
+
+        No new tests as it does not change functionality. We will not wait for
+        the the input stream to close to issue didFinishLoading to
+        WebCore. We expect a subtle performance improvement with this
+        patch when loading complex web pages, as we wouldn't have to wait
+        for the stream to close (which involves creating a thread among
+        other things).
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::closeCallback):
+        (WebCore::readCallback):
+
 2011-01-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
