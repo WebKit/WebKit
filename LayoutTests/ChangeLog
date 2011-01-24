@@ -3,6 +3,15 @@
         Unreviewed.
 
         Add Qt specific expected results for passing editing/selections tests.
+        Compared to Mac png files and Mac expected files. (part 2)
+
+        * platform/qt/editing/selection/ [...]:
+
+2011-01-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        Add Qt specific expected results for passing editing/selections tests.
         Compared to Mac png files and Mac expected files. (part 1)
 
         * platform/qt/editing/selection/ [...]:

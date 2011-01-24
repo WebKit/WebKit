@@ -1,12 +1,16 @@
-CONSOLE MESSAGE: line 9: TypeError: Value undefined (result of expression eventSender.moveTo) is not object.
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
+    RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 425x75 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (25,25) size 100x20 [bgcolor=#FFFFFF]
-      RenderBlock {P} at (0,89) size 784x38
-        RenderText {#text} at (0,0) size 738x38
-          text run at (0,0) width 738: "This test clicks inside an editable div element, and must result in the element receiving focus. If the test succeeds the"
-          text run at (0,19) width 214: "element should have a focus ring."
+      RenderBlock {P} at (0,91) size 784x42
+        RenderText {#text} at (0,0) size 773x42
+          text run at (0,0) width 773: "This test clicks inside an editable div element, and must result in the element receiving focus. If the test succeeds the"
+          text run at (0,21) width 224: "element should have a focus ring."
+caret: position 0 of child 0 {DIV} of child 0 {DIV} of body

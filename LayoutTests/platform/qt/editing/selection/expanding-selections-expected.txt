@@ -1,0 +1,26 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 2 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 752x42
+          text run at (0,0) width 441: "This tests double clicking inside and at the end of an editable div. "
+          text run at (441,0) width 311: "The selection that is created should not extend"
+          text run at (0,21) width 181: "outside the editable region."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 219x21
+          text run at (0,0) width 219: "This text is inside an editable div"
+        RenderInline {SPAN} at (0,0) size 4x21
+          RenderText {#text} at (219,0) size 4x21
+            text run at (219,0) width 4: " "
+layer at (8,103) size 784x21
+  RenderBlock {P} at (0,95) size 784x21
+    RenderText {#text} at (0,0) size 160x21
+      text run at (0,0) width 160: "This text is not editable."
+caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 3 {DIV} of body
