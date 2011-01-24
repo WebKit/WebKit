@@ -1,3 +1,73 @@
+2011-01-24  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Move contentEditable related test cases to the right place as they are DOM
+        related instead of editing related.
+        https://bugs.webkit.org/show_bug.cgi?id=53010
+
+        * editing/editability: Removed.
+        * editing/editability/attr-empty-string-expected.txt: Removed.
+        * editing/editability/attr-empty-string.html: Removed.
+        * editing/editability/attr-false-string-expected.txt: Removed.
+        * editing/editability/attr-false-string.html: Removed.
+        * editing/editability/attr-invalid-string-expected.txt: Removed.
+        * editing/editability/attr-invalid-string.html: Removed.
+        * editing/editability/attr-missing-ancestor-false-expected.txt: Removed.
+        * editing/editability/attr-missing-ancestor-false.html: Removed.
+        * editing/editability/attr-missing-ancestor-true-expected.txt: Removed.
+        * editing/editability/attr-missing-ancestor-true.html: Removed.
+        * editing/editability/attr-missing-parent-ancestor-missing-expected.txt: Removed.
+        * editing/editability/attr-missing-parent-ancestor-missing.html: Removed.
+        * editing/editability/attr-missing-parent-false-expected.txt: Removed.
+        * editing/editability/attr-missing-parent-false.html: Removed.
+        * editing/editability/attr-missing-parent-true-expected.txt: Removed.
+        * editing/editability/attr-missing-parent-true.html: Removed.
+        * editing/editability/attr-true-string-expected.txt: Removed.
+        * editing/editability/attr-true-string.html: Removed.
+        * editing/editability/set-false-expected.txt: Removed.
+        * editing/editability/set-false.html: Removed.
+        * editing/editability/set-inherit-parent-false-expected.txt: Removed.
+        * editing/editability/set-inherit-parent-false.html: Removed.
+        * editing/editability/set-inherit-parent-true-expected.txt: Removed.
+        * editing/editability/set-inherit-parent-true.html: Removed.
+        * editing/editability/set-invalid-value-expected.txt: Removed.
+        * editing/editability/set-invalid-value.html: Removed.
+        * editing/editability/set-true-expected.txt: Removed.
+        * editing/editability/set-true.html: Removed.
+        * editing/editability/set-value-caseinsensitive-expected.txt: Removed.
+        * editing/editability/set-value-caseinsensitive.html: Removed.
+        * fast/dom/HTMLElement/attr-empty-string-expected.txt: Copied from LayoutTests/editing/editability/attr-empty-string-expected.txt.
+        * fast/dom/HTMLElement/attr-empty-string.html: Copied from LayoutTests/editing/editability/attr-empty-string.html.
+        * fast/dom/HTMLElement/attr-false-string-expected.txt: Copied from LayoutTests/editing/editability/attr-false-string-expected.txt.
+        * fast/dom/HTMLElement/attr-false-string.html: Copied from LayoutTests/editing/editability/attr-false-string.html.
+        * fast/dom/HTMLElement/attr-invalid-string-expected.txt: Copied from LayoutTests/editing/editability/attr-invalid-string-expected.txt.
+        * fast/dom/HTMLElement/attr-invalid-string.html: Copied from LayoutTests/editing/editability/attr-invalid-string.html.
+        * fast/dom/HTMLElement/attr-missing-ancestor-false-expected.txt: Copied from LayoutTests/editing/editability/attr-missing-ancestor-false-expected.txt.
+        * fast/dom/HTMLElement/attr-missing-ancestor-false.html: Copied from LayoutTests/editing/editability/attr-missing-ancestor-false.html.
+        * fast/dom/HTMLElement/attr-missing-ancestor-true-expected.txt: Copied from LayoutTests/editing/editability/attr-missing-ancestor-true-expected.txt.
+        * fast/dom/HTMLElement/attr-missing-ancestor-true.html: Copied from LayoutTests/editing/editability/attr-missing-ancestor-true.html.
+        * fast/dom/HTMLElement/attr-missing-parent-ancestor-missing-expected.txt: Copied from LayoutTests/editing/editability/attr-missing-parent-ancestor-missing-expected.txt.
+        * fast/dom/HTMLElement/attr-missing-parent-ancestor-missing.html: Copied from LayoutTests/editing/editability/attr-missing-parent-ancestor-missing.html.
+        * fast/dom/HTMLElement/attr-missing-parent-false-expected.txt: Copied from LayoutTests/editing/editability/attr-missing-parent-false-expected.txt.
+        * fast/dom/HTMLElement/attr-missing-parent-false.html: Copied from LayoutTests/editing/editability/attr-missing-parent-false.html.
+        * fast/dom/HTMLElement/attr-missing-parent-true-expected.txt: Copied from LayoutTests/editing/editability/attr-missing-parent-true-expected.txt.
+        * fast/dom/HTMLElement/attr-missing-parent-true.html: Copied from LayoutTests/editing/editability/attr-missing-parent-true.html.
+        * fast/dom/HTMLElement/attr-true-string-expected.txt: Copied from LayoutTests/editing/editability/attr-true-string-expected.txt.
+        * fast/dom/HTMLElement/attr-true-string.html: Copied from LayoutTests/editing/editability/attr-true-string.html.
+        * fast/dom/HTMLElement/set-false-expected.txt: Copied from LayoutTests/editing/editability/set-false-expected.txt.
+        * fast/dom/HTMLElement/set-false.html: Copied from LayoutTests/editing/editability/set-false.html.
+        * fast/dom/HTMLElement/set-inherit-parent-false-expected.txt: Copied from LayoutTests/editing/editability/set-inherit-parent-false-expected.txt.
+        * fast/dom/HTMLElement/set-inherit-parent-false.html: Copied from LayoutTests/editing/editability/set-inherit-parent-false.html.
+        * fast/dom/HTMLElement/set-inherit-parent-true-expected.txt: Copied from LayoutTests/editing/editability/set-inherit-parent-true-expected.txt.
+        * fast/dom/HTMLElement/set-inherit-parent-true.html: Copied from LayoutTests/editing/editability/set-inherit-parent-true.html.
+        * fast/dom/HTMLElement/set-invalid-value-expected.txt: Copied from LayoutTests/editing/editability/set-invalid-value-expected.txt.
+        * fast/dom/HTMLElement/set-invalid-value.html: Copied from LayoutTests/editing/editability/set-invalid-value.html.
+        * fast/dom/HTMLElement/set-true-expected.txt: Copied from LayoutTests/editing/editability/set-true-expected.txt.
+        * fast/dom/HTMLElement/set-true.html: Copied from LayoutTests/editing/editability/set-true.html.
+        * fast/dom/HTMLElement/set-value-caseinsensitive-expected.txt: Copied from LayoutTests/editing/editability/set-value-caseinsensitive-expected.txt.
+        * fast/dom/HTMLElement/set-value-caseinsensitive.html: Copied from LayoutTests/editing/editability/set-value-caseinsensitive.html.
+
 2011-01-24  Sam Weinig  <sam@webkit.org>
 
         Add editing/inserting/insert-composition-whitespace.html to the windows

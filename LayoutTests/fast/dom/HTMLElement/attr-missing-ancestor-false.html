@@ -1,19 +1,24 @@
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
-<script src="../../fast/js/resources/js-test-pre.js"></script>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
 <p id="description"></p>
 <div id="console"></p>
 <div id="result"></div>
 <div id="div" contentEditable="false">
-    <p id="p"></p>
+  <div>
+    <div>
+      <p id="p"></p>
+    </div>
+  </div>
 </div>
 <script>
-description('When contentEditable is missing, it maps to "inherit" state and the element is NOT editable if its parent is NOT.')
+description('When contentEditable is missing, it maps to "inherit" state and the element is NOT editable if its nearest ancestor is NOT.')
 
-shouldBe('document.getElementById("p").hasAttribute("contentEditable")','false');
+shouldBe('document.getElementById("p").hasAttribute("contentEditable")', 'false');
 shouldBe('document.getElementById("p").contentEditable', '"inherit"');
 shouldBe('document.getElementById("p").isContentEditable', 'false');
 shouldBe('window.getComputedStyle(p, "").getPropertyValue("-webkit-user-modify")', '"read-only"');
@@ -22,6 +27,6 @@ document.getElementById("div").style.display= 'none';
 
 window.successfullyParsed = true;
 </script>
-<script src="../../fast/js/resources/js-test-post.js"></script>
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
