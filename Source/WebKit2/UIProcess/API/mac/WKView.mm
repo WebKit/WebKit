@@ -1224,14 +1224,34 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     [self _updateWindowAndViewFrames];
 }
 
+static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)
+{
+    if (!page->drawsBackground())
+        return;
+
+    CGContextSaveGState(context);
+    CGContextSetBlendMode(context, kCGBlendModeCopy);
+
+    CGColorRef backgroundColor;
+    if (page->drawsTransparentBackground())
+        backgroundColor = CGColorGetConstantColor(kCGColorClear);
+    else
+        backgroundColor = CGColorGetConstantColor(kCGColorWhite);
+
+    CGContextSetFillColorWithColor(context, backgroundColor);
+    CGContextFillRect(context, rect);
+
+    CGContextRestoreGState(context);
+}
+
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "drawRect: x:%g, y:%g, width:%g, height:%g", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     _data->_page->endPrinting();
     if (useNewDrawingArea()) {
-        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
-            CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+        CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
 
+        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(_data->_page->drawingArea())) {
             const NSRect *rectsBeingDrawn;
             NSInteger numRectsBeingDrawn;
             [self getRectsBeingDrawn:&rectsBeingDrawn count:&numRectsBeingDrawn];
@@ -1239,11 +1259,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
                 Region unpaintedRegion;
                 IntRect rect = enclosingIntRect(rectsBeingDrawn[i]);
                 drawingArea->paint(context, rect, unpaintedRegion);
+
+                Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
+                for (size_t i = 0; i < unpaintedRects.size(); ++i)
+                    drawPageBackground(context, _data->_page.get(), unpaintedRects[i]);
             }
-        } else if (_data->_page->drawsBackground()) {
-            [_data->_page->drawsTransparentBackground() ? [NSColor clearColor] : [NSColor whiteColor] set];
-            NSRectFill(rect);
-        }
+        } else 
+            drawPageBackground(context, _data->_page.get(), enclosingIntRect(rect));
 
         _data->_page->didDraw();
         return;

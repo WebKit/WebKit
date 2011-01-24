@@ -1,3 +1,17 @@
+2011-01-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fill unpainted rects with the background color.
+        https://bugs.webkit.org/show_bug.cgi?id=53025
+
+        * UIProcess/API/mac/WKView.mm:
+        (drawPageBackground):
+        Add new helper function.
+
+        (-[WKView drawRect:]):
+        Iterate over the unpainted rects and fill them with the background color.
+
 2011-01-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
