@@ -28,6 +28,7 @@
 
 #include "ApplicationCacheStorage.h"
 #include "WebProcessCreationParameters.h"
+#include <QProcess>
 
 namespace WebKit {
 
@@ -42,6 +43,7 @@ String WebContext::applicationCacheDirectory()
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
 {
+    qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
 }
 
 } // namespace WebKit

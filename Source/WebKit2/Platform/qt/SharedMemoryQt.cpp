@@ -29,139 +29,181 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "CleanupHandler.h"
 #include "WebCoreArgumentCoders.h"
+#include <QDir>
+#include <errno.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <QCoreApplication>
-#include <QLatin1String>
-#include <QSharedMemory>
-#include <QString>
-#include <QUuid>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
 
 namespace WebKit {
 
 SharedMemory::Handle::Handle()
-    : m_key()
+    : m_fileDescriptor(-1)
     , m_size(0)
 {
 }
 
 SharedMemory::Handle::~Handle()
 {
+    if (!isNull())
+        while (close(m_fileDescriptor) == -1 && errno == EINTR) { }
 }
 
 bool SharedMemory::Handle::isNull() const
 {
-    return m_key.isNull();
+    return m_fileDescriptor == -1;
 }
 
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encodeUInt64(m_size);
-    encoder->encode(m_key);
-    m_key = String();
+    ASSERT(!isNull());
+
+    encoder->encode(releaseToAttachment());
 }
 
 bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
 {
     ASSERT_ARG(handle, !handle.m_size);
-    ASSERT_ARG(handle, handle.m_key.isNull());
+    ASSERT_ARG(handle, handle.isNull());
 
-    uint64_t size;
-    if (!decoder->decodeUInt64(size))
+    CoreIPC::Attachment attachment;
+    if (!decoder->decode(attachment))
         return false;
 
-    String key;
-    if (!decoder->decode(key))
-       return false;
-
-    handle.m_size = size;
-    handle.m_key = key;
-
+    handle.adoptFromAttachment(attachment.releaseFileDescriptor(), attachment.size());
     return true;
 }
 
-static QString createUniqueKey()
+CoreIPC::Attachment SharedMemory::Handle::releaseToAttachment() const
 {
-    return QLatin1String("QWKSharedMemoryKey") + QUuid::createUuid().toString();
+    ASSERT(!isNull());
+
+    int temp = m_fileDescriptor;
+    m_fileDescriptor = -1;
+    return CoreIPC::Attachment(temp, m_size);
+}
+
+void SharedMemory::Handle::adoptFromAttachment(int fileDescriptor, size_t size)
+{
+    ASSERT(!m_size);
+    ASSERT(isNull());
+
+    m_fileDescriptor = fileDescriptor;
+    m_size = size;
 }
 
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
-    RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
-    QSharedMemory* impl = new QSharedMemory(createUniqueKey());
-    bool created = impl->create(size);
-    ASSERT_UNUSED(created, created);
+    QString tempName = QDir::temp().filePath("qwkshm.XXXXXX");
+    QByteArray tempNameCSTR = tempName.toLocal8Bit();
+    char* tempNameC = tempNameCSTR.data();
 
-    sharedMemory->m_impl = impl;
-    sharedMemory->m_size = size;
-    sharedMemory->m_data = impl->data();
+    int fileDescriptor;
+    while ((fileDescriptor = mkostemp(tempNameC, O_CREAT | O_CLOEXEC | O_RDWR)) == -1) {
+        if (errno != EINTR)
+            return 0;
+    }
 
-    // Do not leave the shared memory segment behind.
-    CleanupHandler::instance()->markForCleanup(impl);
+    while (ftruncate(fileDescriptor, size) == -1) {
+        if (errno != EINTR) {
+            while (close(fileDescriptor) == -1 && errno == EINTR) { }
+            unlink(tempNameC);
+            return 0;
+        }
+    }
 
-    return sharedMemory.release();
+    void* data = mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
+    if (data == MAP_FAILED) {
+        while (close(fileDescriptor) == -1 && errno == EINTR) { }
+        unlink(tempNameC);
+        return 0;
+    }
+
+    unlink(tempNameC);
+
+    RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
+    instance->m_data = data;
+    instance->m_fileDescriptor = fileDescriptor;
+    instance->m_size = size;
+    return instance.release();
 }
 
-static inline QSharedMemory::AccessMode accessMode(SharedMemory::Protection protection)
+static inline int accessModeMMap(SharedMemory::Protection protection)
 {
     switch (protection) {
     case SharedMemory::ReadOnly:
-        return QSharedMemory::ReadOnly;
+        return PROT_READ;
     case SharedMemory::ReadWrite:
-        return QSharedMemory::ReadWrite;
+        return PROT_READ | PROT_WRITE;
     }
 
     ASSERT_NOT_REACHED();
-    return QSharedMemory::ReadWrite;
+    return PROT_READ | PROT_WRITE;
 }
 
 PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
 {
-    if (handle.isNull())
+    ASSERT(!handle.isNull());
+
+    void* data = mmap(0, handle.m_size, accessModeMMap(protection), MAP_SHARED, handle.m_fileDescriptor, 0);
+    if (data == MAP_FAILED)
         return 0;
 
-    QSharedMemory* impl = new QSharedMemory(QString(handle.m_key));
-    bool attached = impl->attach(accessMode(protection));
-    if (!attached) {
-        delete impl;
-        return 0;
-    }
-
-    RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
-    sharedMemory->m_impl = impl;
-    ASSERT(handle.m_size == impl->size());
-    sharedMemory->m_size = handle.m_size;
-    sharedMemory->m_data = impl->data();
-
-    // Do not leave the shared memory segment behind.
-    CleanupHandler::instance()->markForCleanup(impl);
-
-    return sharedMemory.release();
+    RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
+    instance->m_data = data;
+    instance->m_fileDescriptor = handle.m_fileDescriptor;
+    instance->m_size = handle.m_size;
+    handle.m_fileDescriptor = -1;
+    return instance;
 }
 
 SharedMemory::~SharedMemory()
 {
-    if (CleanupHandler::instance()->hasStartedDeleting())
-        return;
+    munmap(m_data, m_size);
+    while (close(m_fileDescriptor) == -1 && errno == EINTR) { }
+}
 
-    CleanupHandler::instance()->unmark(m_impl);
-    delete m_impl;
+static inline int accessModeFile(SharedMemory::Protection protection)
+{
+    switch (protection) {
+    case SharedMemory::ReadOnly:
+        return O_RDONLY;
+    case SharedMemory::ReadWrite:
+        return O_RDWR;
+    }
+
+    ASSERT_NOT_REACHED();
+    return O_RDWR;
 }
 
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
 {
-    ASSERT_ARG(handle, handle.m_key.isNull());
     ASSERT_ARG(handle, !handle.m_size);
+    ASSERT_ARG(handle, handle.isNull());
 
-    QString key = m_impl->key();
-    if (key.isNull())
-        return false;
-    handle.m_key = String(key);
+    int duplicatedHandle;
+    while ((duplicatedHandle = dup(m_fileDescriptor)) == -1) {
+        if (errno != EINTR) {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+    }
+
+    while ((fcntl(duplicatedHandle, F_SETFD,  O_CLOEXEC | accessModeFile(protection)) == -1)) {
+        if (errno != EINTR) {
+            ASSERT_NOT_REACHED();
+            while (close(duplicatedHandle) == -1 && errno == EINTR) { }
+            return false;
+        }
+    }
+    handle.m_fileDescriptor = duplicatedHandle;
     handle.m_size = m_size;
-
     return true;
 }
 

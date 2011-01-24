@@ -29,114 +29,331 @@
 #include "ArgumentEncoder.h"
 #include "ProcessLauncher.h"
 #include "WorkItem.h"
+#include "SharedMemory.h"
+#include "WebProcessProxy.h"
 #include <QApplication>
-#include <QLocalServer>
-#include <QLocalSocket>
+#include <QSocketNotifier>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <wtf/Assertions.h>
 
 using namespace std;
 
 namespace CoreIPC {
 
-// This is what other ports use...
 static const size_t messageMaxSize = 4096;
+static const size_t attachmentMaxAmount = 255;
+
+enum {
+    MessageBodyIsOOL = 1 << 31
+};
+
+class MessageInfo {
+public:
+    MessageInfo() { }
+
+    MessageInfo(MessageID messageID, size_t bodySize, size_t initialAttachmentCount)
+        : m_messageID(messageID.toInt())
+        , m_bodySize(bodySize)
+        , m_attachmentCount(initialAttachmentCount)
+    {
+        ASSERT(!(m_messageID & MessageBodyIsOOL));
+    }
+
+    void setMessageBodyOOL()
+    {
+        ASSERT(!isMessageBodyOOL());
+
+        m_messageID |= MessageBodyIsOOL;
+        m_attachmentCount++;
+    }
+
+    bool isMessageBodyOOL() const { return m_messageID & MessageBodyIsOOL; }
+
+    size_t bodySize() const { return m_bodySize; }
+
+    MessageID messageID() const { return MessageID::fromInt(m_messageID & ~MessageBodyIsOOL); }
+
+    size_t attachmentCount() const { return m_attachmentCount; }
+
+private:
+    uint32_t m_messageID;
+    size_t m_bodySize;
+    size_t m_attachmentCount;
+};
 
 void Connection::platformInitialize(Identifier identifier)
 {
-    m_serverName = identifier;
-    m_socket = 0;
+    m_socketDescriptor = identifier;
+    m_socketNotifier = 0;
     m_readBuffer.resize(messageMaxSize);
     m_currentMessageSize = 0;
 }
 
 void Connection::platformInvalidate()
 {
-    m_socket->disconnect();
-    if (!m_isServer)
-        m_socket->deleteLater();
-    m_socket = 0;
+    if (m_socketDescriptor != -1)
+        while (close(m_socketDescriptor) == -1 && errno == EINTR) { }
+
+    if (!m_isConnected)
+        return;
+
+    delete m_socketNotifier;
+    m_socketNotifier = 0;
+    m_socketDescriptor = -1;
+    m_isConnected = false;
 }
+
+class SocketNotifierResourceGuard {
+public:
+    SocketNotifierResourceGuard(QSocketNotifier* socketNotifier)
+        : m_socketNotifier(socketNotifier)
+    {
+        m_socketNotifier->setEnabled(false);
+    }
+
+    ~SocketNotifierResourceGuard()
+    {
+        m_socketNotifier->setEnabled(true);
+    }
+
+private:
+    QSocketNotifier* const m_socketNotifier;
+};
+
+template<class T, class iterator>
+class AttachmentResourceGuard {
+public:
+    AttachmentResourceGuard(T& attachments)
+        : m_attachments(attachments)
+    {
+    }
+    ~AttachmentResourceGuard()
+    {
+        iterator end = m_attachments.end();
+        for (iterator i = m_attachments.begin(); i != end; ++i)
+            i->dispose();
+    }
+private:
+    T& m_attachments;
+};
 
 void Connection::readyReadHandler()
 {
-    while (m_socket->bytesAvailable()) {
-        if (!m_currentMessageSize) {
-            size_t numberOfBytesRead = m_socket->read(reinterpret_cast<char*>(m_readBuffer.data()), sizeof(size_t));
-            ASSERT_UNUSED(numberOfBytesRead, numberOfBytesRead);
-            m_currentMessageSize = *reinterpret_cast<size_t*>(m_readBuffer.data());
-        }
+    Deque<Attachment> attachments;
+    SocketNotifierResourceGuard socketNotifierEnabler(m_socketNotifier);
+    AttachmentResourceGuard<Deque<Attachment>, Deque<Attachment>::iterator> attachementDisposer(attachments);
 
-        if (m_socket->bytesAvailable() < m_currentMessageSize)
+    char attachmentDescriptorBuffer[CMSG_SPACE(sizeof(int) * (attachmentMaxAmount))];
+    struct msghdr message;
+    memset(&message, 0, sizeof(message));
+
+    struct iovec iov[1];
+    memset(&iov, 0, sizeof(iov));
+
+    message.msg_control = attachmentDescriptorBuffer;
+    message.msg_controllen = CMSG_SPACE(sizeof(int) * (attachmentMaxAmount));
+
+    iov[0].iov_base = m_readBuffer.data();
+    iov[0].iov_len = m_readBuffer.size();
+
+    message.msg_iov = iov;
+    message.msg_iovlen = 1;
+
+
+    int messageLength = 0;
+    while ((messageLength = recvmsg(m_socketDescriptor, &message, MSG_CMSG_CLOEXEC)) == -1) {
+        if (errno != EINTR)
             return;
-
-        if (m_readBuffer.size() < m_currentMessageSize)
-            m_readBuffer.grow(m_currentMessageSize);
-
-        size_t numberOfBytesRead = m_socket->read(reinterpret_cast<char*>(m_readBuffer.data()), m_currentMessageSize);
-        ASSERT_UNUSED(numberOfBytesRead, numberOfBytesRead);
-
-        // The messageID is encoded at the end of the buffer.
-        size_t realBufferSize = m_currentMessageSize - sizeof(uint32_t);
-        uint32_t messageID = *reinterpret_cast<uint32_t*>(m_readBuffer.data() + realBufferSize);
-
-        processIncomingMessage(MessageID::fromInt(messageID), adoptPtr(new ArgumentDecoder(m_readBuffer.data(), realBufferSize)));
-
-        m_currentMessageSize = 0;
     }
+
+    struct cmsghdr* controlMessage = CMSG_FIRSTHDR(&message);
+
+    MessageInfo messageInfo;
+    unsigned char* messageData = m_readBuffer.data();
+
+    memcpy(&messageInfo, messageData, sizeof(messageInfo));
+    ASSERT(messageLength == sizeof(messageInfo) + messageInfo.attachmentCount() * sizeof(size_t) + (messageInfo.isMessageBodyOOL() ? 0 : messageInfo.bodySize()));
+
+    messageData += sizeof(messageInfo);
+
+    RefPtr<WebKit::SharedMemory> oolMessageBody;
+
+    if (messageInfo.attachmentCount()) {
+        if (controlMessage && controlMessage->cmsg_level == SOL_SOCKET && controlMessage->cmsg_type == SCM_RIGHTS) {
+            size_t attachmentSizes[messageInfo.attachmentCount()];
+            memcpy(attachmentSizes, messageData, sizeof(attachmentSizes));
+
+            messageData += sizeof(attachmentSizes);
+
+            int fileDescriptors[messageInfo.attachmentCount()];
+            memcpy(fileDescriptors, CMSG_DATA(controlMessage), sizeof(fileDescriptors));
+
+            int attachmentCount = messageInfo.attachmentCount();
+
+            if (messageInfo.isMessageBodyOOL())
+                attachmentCount--;
+
+            for (int i = 0; i < attachmentCount; ++i)
+                attachments.append(Attachment(fileDescriptors[i], attachmentSizes[i]));
+
+            if (messageInfo.isMessageBodyOOL()) {
+                ASSERT(messageInfo.bodySize());
+
+                WebKit::SharedMemory::Handle handle;
+                handle.adoptFromAttachment(fileDescriptors[attachmentCount], attachmentSizes[attachmentCount]);
+                if (handle.isNull()) {
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+
+                oolMessageBody = WebKit::SharedMemory::create(handle, WebKit::SharedMemory::ReadOnly);
+                if (!oolMessageBody) {
+                    ASSERT_NOT_REACHED();
+                    return;
+                }
+            }
+
+            controlMessage = CMSG_NXTHDR(&message, controlMessage);
+        } else {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+
+    ASSERT(attachments.size() == messageInfo.isMessageBodyOOL() ? messageInfo.attachmentCount() - 1 : messageInfo.attachmentCount());
+
+    unsigned char* messageBody = messageData;
+
+    if (messageInfo.isMessageBodyOOL())
+        messageBody = reinterpret_cast<unsigned char*>(oolMessageBody->data());
+
+    ArgumentDecoder* argumentDecoder;
+    if (attachments.isEmpty())
+        argumentDecoder = new ArgumentDecoder(messageBody, messageInfo.bodySize());
+    else
+        argumentDecoder = new ArgumentDecoder(messageBody, messageInfo.bodySize(), attachments);
+
+    processIncomingMessage(messageInfo.messageID(), adoptPtr(argumentDecoder));
+
+    ASSERT(!controlMessage);
 }
 
 bool Connection::open()
 {
-    ASSERT(!m_socket);
-
-    if (m_isServer) {
-        m_socket = WebKit::ProcessLauncher::takePendingConnection();
-        m_isConnected = m_socket;
-        if (m_isConnected) {
-            m_connectionQueue.moveSocketToWorkThread(m_socket);
-            m_connectionQueue.connectSignal(m_socket, SIGNAL(readyRead()), WorkItem::create(this, &Connection::readyReadHandler));
+    ASSERT(!m_socketNotifier);
+    int flags = fcntl(m_socketDescriptor, F_GETFL, 0);
+    while (fcntl(m_socketDescriptor, F_SETFL, flags | O_NONBLOCK) == -1) {
+        if (errno != EINTR) {
+            ASSERT_NOT_REACHED();
+            return false;
         }
-    } else {
-        m_socket = new QLocalSocket();
-        m_socket->connectToServer(m_serverName);
-        m_connectionQueue.moveSocketToWorkThread(m_socket);
-        m_connectionQueue.connectSignal(m_socket, SIGNAL(readyRead()), WorkItem::create(this, &Connection::readyReadHandler));
-        m_connectionQueue.connectSignal(m_socket, SIGNAL(disconnected()), WorkItem::create(this, &Connection::connectionDidClose));
-        m_isConnected = m_socket->waitForConnected();
     }
-    return m_isConnected;
+
+    m_isConnected = true;
+    m_socketNotifier = m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WorkItem::create(this, &Connection::readyReadHandler));
+
+    // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal
+    // handler.
+    m_connectionQueue.scheduleWork(WorkItem::create(this, &Connection::readyReadHandler));
+
+    return true;
 }
 
 bool Connection::platformCanSendOutgoingMessages() const
 {
-    return m_socket;
+    return m_socketNotifier;
 }
 
 bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
 {
-    ASSERT(m_socket);
+    ASSERT(m_socketNotifier);
+    COMPILE_ASSERT(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, AttachmentsFitToMessageInline);
 
-    // We put the message ID last.
-    arguments->encodeUInt32(messageID.toInt());
+    Vector<Attachment> attachments = arguments->releaseAttachments();
+    AttachmentResourceGuard<Vector<Attachment>, Vector<Attachment>::iterator> attachementDisposer(attachments);
 
-    size_t bufferSize = arguments->bufferSize();
-
-    // Write message size first
-    // FIXME: Should  just do a single write.
-    qint64 bytesWrittenForSize = m_socket->write(reinterpret_cast<char*>(&bufferSize), sizeof(bufferSize));
-    if (bytesWrittenForSize != sizeof(bufferSize)) {
-        connectionDidClose();
+    if (attachments.size() > (attachmentMaxAmount - 1)) {
+        ASSERT_NOT_REACHED();
         return false;
     }
 
-    qint64 bytesWrittenForBuffer = m_socket->write(reinterpret_cast<char*>(arguments->buffer()), arguments->bufferSize());
-    if (bytesWrittenForBuffer != arguments->bufferSize()) {
-        connectionDidClose();
-        return false;
+    MessageInfo messageInfo(messageID, arguments->bufferSize(), attachments.size());
+    size_t messageSizeWithBodyInline = sizeof(messageInfo) + (attachments.size() * sizeof(size_t)) + arguments->bufferSize();
+    if (messageSizeWithBodyInline > messageMaxSize && arguments->bufferSize()) {
+        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::create(arguments->bufferSize());
+        if (!oolMessageBody)
+            return false;
+
+        WebKit::SharedMemory::Handle handle;
+        if (!oolMessageBody->createHandle(handle, WebKit::SharedMemory::ReadOnly))
+            return false;
+
+        messageInfo.setMessageBodyOOL();
+
+        memcpy(oolMessageBody->data(), arguments->buffer(), arguments->bufferSize());
+
+        attachments.append(handle.releaseToAttachment());
     }
 
-    m_socket->flush();
+    struct msghdr message;
+    memset(&message, 0, sizeof(message));
 
+    struct iovec iov[3];
+    memset(&iov, 0, sizeof(iov));
+
+    message.msg_iov = iov;
+    int iovLength = 1;
+
+    iov[0].iov_base = reinterpret_cast<void*>(&messageInfo);
+    iov[0].iov_len = sizeof(messageInfo);
+
+    char attachmentFDBuffer[CMSG_SPACE(sizeof(int) * (attachments.size()))];
+    size_t attachmentSizes[attachments.size()];
+
+    if (!attachments.isEmpty()) {
+        message.msg_control = attachmentFDBuffer;
+        message.msg_controllen = sizeof(attachmentFDBuffer);
+
+        struct cmsghdr* cmsg = CMSG_FIRSTHDR(&message);
+        cmsg->cmsg_level = SOL_SOCKET;
+        cmsg->cmsg_type = SCM_RIGHTS;
+        cmsg->cmsg_len = CMSG_LEN(sizeof(int) * attachments.size());
+
+        int* fdptr = reinterpret_cast<int*>(CMSG_DATA(cmsg));
+        for (int i = 0; i < attachments.size(); ++i) {
+            attachmentSizes[i] = attachments[i].size();
+            fdptr[i] = attachments[i].fileDescriptor();
+        }
+
+        message.msg_controllen = cmsg->cmsg_len;
+
+        iov[iovLength].iov_base = attachmentSizes;
+        iov[iovLength].iov_len = sizeof(attachmentSizes);
+        ++iovLength;
+    }
+
+    if (!messageInfo.isMessageBodyOOL() && arguments->bufferSize()) {
+        iov[iovLength].iov_base = reinterpret_cast<void*>(arguments->buffer());
+        iov[iovLength].iov_len = arguments->bufferSize();
+        ++iovLength;
+    }
+
+    message.msg_iovlen = iovLength;
+
+    int bytesSent = 0;
+    while ((bytesSent = sendmsg(m_socketDescriptor, &message, 0)) == -1) {
+        if (errno != EINTR)
+            return false;
+    }
     return true;
+}
+
+void Connection::setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier process)
+{
+    m_connectionQueue.scheduleWorkOnTermination(process, WorkItem::create(this, &Connection::connectionDidClose));
 }
 
 } // namespace CoreIPC

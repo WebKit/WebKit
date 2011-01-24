@@ -1,3 +1,100 @@
+2011-01-24  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Remove CleanupHandler by passing file descriptors.
+
+        Deleting files in signal handler of UI process is not a good idea,
+        because the memory where filenames are stored might not be valid
+        after a crash.
+
+        To avoid the need of using signal handlers for cleanup,
+        change following:
+          1) Avoid passing filenames between processes, pass fds
+          2) When mmap'ing files, delete them immediately after
+             opening and mmap'ing them.
+          3) Pass sockets with fds during fork+exec instead of
+             passing them via the filesystem.
+          4) Use mmap'ed files for implementation of SharedMemory.
+             QSharedMemory does not support cleanup correctly.
+
+        Consquences:
+          - Move MappedMemory to SharedMemory, make UpdateChunk use this.
+          - Implement CoreIPC::Attachment using mmaped files.
+          - Send messages using datagram socket. This solution works
+            similiarly to Mach ports on Mac.
+          - Send big messages out-of-line and thus avoid increasing
+            the receive buffer.
+          - Remove MemoryMappedPool and rely on libc/kernel caching
+            of mmapped areas.
+          - Unmap memory areas after use.
+          - When UI process crashes, kill the web process using SIGKILL.
+            This is possible again because cleanup handler is not needed.
+
+        [WK2][Qt] Multiple problems with MemoryMappedPool
+        https://bugs.webkit.org/show_bug.cgi?id=51984
+
+        * Platform/CoreIPC/Attachment.cpp:
+        (CoreIPC::Attachment::Attachment):
+        * Platform/CoreIPC/Attachment.h:
+        (CoreIPC::Attachment::size):
+        (CoreIPC::Attachment::releaseFileDescriptor):
+        (CoreIPC::Attachment::fileDescriptor):
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::MessageInfo::MessageInfo):
+        (CoreIPC::MessageInfo::setMessageBodyOOL):
+        (CoreIPC::MessageInfo::isMessageBodyOOL):
+        (CoreIPC::MessageInfo::bodySize):
+        (CoreIPC::MessageInfo::messageID):
+        (CoreIPC::MessageInfo::attachmentCount):
+        (CoreIPC::Connection::platformInitialize):
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::SocketNotifierDisableGuard::SocketNotifierDisableGuard):
+        (CoreIPC::SocketNotifierDisableGuard::~SocketNotifierDisableGuard):
+        (CoreIPC::Connection::readyReadHandler):
+        (CoreIPC::Connection::open):
+        (CoreIPC::Connection::platformCanSendOutgoingMessages):
+        (CoreIPC::Connection::sendOutgoingMessage):
+        * Platform/SharedMemory.h:
+        * Platform/WorkQueue.h:
+        * Platform/qt/MappedMemoryPool.cpp: Removed.
+        * Platform/qt/MappedMemoryPool.h: Removed.
+        * Platform/qt/SharedMemoryQt.cpp:
+        (WebKit::SharedMemory::Handle::Handle):
+        (WebKit::SharedMemory::Handle::~Handle):
+        (WebKit::SharedMemory::Handle::isNull):
+        (WebKit::SharedMemory::Handle::encode):
+        (WebKit::SharedMemory::Handle::decode):
+        (WebKit::SharedMemory::Handle::releaseToAttachment):
+        (WebKit::SharedMemory::Handle::adoptFromAttachment):
+        (WebKit::SharedMemory::create):
+        (WebKit::accessModeMMap):
+        (WebKit::SharedMemory::~SharedMemory):
+        (WebKit::accessModeFile):
+        (WebKit::SharedMemory::createHandle):
+        * Platform/qt/WorkQueueQt.cpp:
+        (WorkQueue::registerSocketEventHandler):
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::UpdateChunk):
+        (WebKit::UpdateChunk::~UpdateChunk):
+        (WebKit::UpdateChunk::encode):
+        (WebKit::UpdateChunk::decode):
+        (WebKit::UpdateChunk::createImage):
+        * Shared/qt/UpdateChunk.h:
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::QtWebProcess::QtWebProcess):
+        (WebKit::QtWebProcess::setupChildProcess):
+        (WebKit::ProcessLauncher::launchProcess):
+        (WebKit::ProcessLauncher::platformInvalidate):
+        * UIProcess/Launcher/qt/ThreadLauncherQt.cpp:
+        (WebKit::webThreadBody):
+        (WebKit::ThreadLauncher::createWebThread):
+        * WebKit2.pro:
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2011-01-24  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

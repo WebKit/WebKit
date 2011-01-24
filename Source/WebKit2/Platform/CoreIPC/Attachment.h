@@ -40,12 +40,16 @@ public:
 #if PLATFORM(MAC)
         MachPortType,
         MachOOLMemoryType
+#elif PLATFORM(QT)
+        MappedMemory
 #endif
     };
 
 #if PLATFORM(MAC)
     Attachment(mach_port_name_t port, mach_msg_type_name_t disposition);
     Attachment(void* address, mach_msg_size_t size, mach_msg_copy_options_t copyOptions, bool deallocate);
+#elif PLATFORM(QT)
+    Attachment(int fileDescriptor, size_t);
 #endif
 
     Type type() const { return m_type; }
@@ -62,6 +66,13 @@ public:
     mach_msg_size_t size() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.size; }
     mach_msg_copy_options_t copyOptions() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.copyOptions; }
     bool deallocate() const { ASSERT(m_type == MachOOLMemoryType); return m_oolMemory.deallocate; }
+#elif PLATFORM(QT)
+    size_t size() const { return m_size; }
+
+    int releaseFileDescriptor() { int temp = m_fileDescriptor; m_fileDescriptor = -1; return temp; }
+    int fileDescriptor() const { return m_fileDescriptor; }
+
+    void dispose();
 #endif
 
     void encode(ArgumentEncoder*) const;
@@ -83,6 +94,9 @@ private:
             bool deallocate;
         } m_oolMemory;
     };
+#elif PLATFORM(QT)
+    int m_fileDescriptor;
+    size_t m_size;
 #endif
 };
 

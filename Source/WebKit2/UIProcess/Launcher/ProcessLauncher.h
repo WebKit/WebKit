@@ -72,11 +72,6 @@ public:
 
     static bool getProcessTypeFromString(const char*, ProcessType&);
 
-#if PLATFORM(QT)
-    friend class ProcessLauncherHelper;
-    static QLocalSocket* takePendingConnection();
-#endif
-
 private:
     ProcessLauncher(Client*, const LaunchOptions& launchOptions);
 

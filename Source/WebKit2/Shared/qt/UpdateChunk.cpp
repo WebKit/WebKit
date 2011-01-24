@@ -29,7 +29,6 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "MappedMemoryPool.h"
 #include "WebCoreArgumentCoders.h"
 #include <QIODevice>
 #include <QImage>
@@ -43,28 +42,35 @@ using namespace std;
 namespace WebKit {
 
 UpdateChunk::UpdateChunk()
-    : m_mappedMemory(0)
 {
 }
 
 UpdateChunk::UpdateChunk(const IntRect& rect)
     : m_rect(rect)
-    , m_mappedMemory(MappedMemoryPool::instance()->mapMemory(size()))
+    , m_sharedMemory(SharedMemory::create(size()))
 {
 }
 
 UpdateChunk::~UpdateChunk()
 {
-    if (m_mappedMemory)
-        m_mappedMemory->markFree();
 }
 
 void UpdateChunk::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_rect);
-    encoder->encode(String(m_mappedMemory->mappedFileName()));
+    if (!m_sharedMemory) {
+        encoder->encode(false);
+        return;
+    }
 
-    m_mappedMemory = 0;
+    SharedMemory::Handle handle;
+    if (m_sharedMemory->createHandle(handle, SharedMemory::ReadOnly)) {
+        encoder->encode(true);
+        encoder->encode(handle);
+    } else
+        encoder->encode(false);
+
+    m_sharedMemory = 0;
 }
 
 bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& chunk)
@@ -74,16 +80,23 @@ bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& chunk)
     IntRect rect;
     if (!decoder->decode(rect))
         return false;
+
     chunk.m_rect = rect;
 
-    if (chunk.isEmpty())
-        return true; // Successfully decoded empty chunk.
-
-    String fileName;
-    if (!decoder->decode(fileName))
+    bool hasSharedMemory;
+    if (!decoder->decode(hasSharedMemory))
         return false;
 
-    chunk.m_mappedMemory = MappedMemoryPool::instance()->mapFile(fileName, chunk.size());
+    if (!hasSharedMemory) {
+        chunk.m_sharedMemory = 0;
+        return true;
+    }
+
+    SharedMemory::Handle handle;
+    if (!decoder->decode(handle))
+        return false;
+
+    chunk.m_sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);
     return true;
 }
 
@@ -101,7 +114,10 @@ size_t UpdateChunk::size() const
 
 QImage UpdateChunk::createImage() const
 {
-    ASSERT(m_mappedMemory);
+    ASSERT(m_sharedMemory);
+    if (!m_sharedMemory)
+        return QImage();
+
     QImage::Format format;
     int bpp;
     if (QPixmap::defaultDepth() == 16) {
@@ -112,7 +128,7 @@ QImage UpdateChunk::createImage() const
         bpp = 4;
     }
 
-    return QImage(m_mappedMemory->data(), m_rect.width(), m_rect.height(), (m_rect.width() * bpp + 3) & ~0x3, format);
+    return QImage(reinterpret_cast<unsigned char*>(m_sharedMemory->data()), m_rect.width(), m_rect.height(), (m_rect.width() * bpp + 3) & ~0x3, format);
 }
 
 } // namespace WebKit

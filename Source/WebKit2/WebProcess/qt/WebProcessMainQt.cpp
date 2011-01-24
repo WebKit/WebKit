@@ -160,7 +160,18 @@ QWEBKIT_EXPORT int WebProcessMainQt(int argc, char** argv)
     RunLoop::initializeMainRunLoop();
 
     // Create the connection.
-    QString identifier(app->arguments().size() > 1 ? app->arguments().at(1) : "");
+    if (app->arguments().size() <= 1) {
+        qDebug() << "Error: wrong number of arguments.";
+        return 1;
+    }
+
+    bool wasNumber = false;
+    int identifier = app->arguments().at(1).toInt(&wasNumber, 10);
+    if (!wasNumber) {
+        qDebug() << "Error: connection identifier wrong.";
+        return 1;
+    }
+
     WebKit::WebProcess::shared().initialize(identifier, RunLoop::main());
 
     RunLoop::run();

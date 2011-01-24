@@ -41,7 +41,8 @@
 #include <wtf/Vector.h>
 
 #if PLATFORM(QT)
-class QLocalSocket;
+#include <QSocketNotifier>
+#include "PlatformProcessIdentifier.h"
 class QObject;
 class QThread;
 #elif PLATFORM(GTK)
@@ -79,10 +80,8 @@ public:
     void registerHandle(HANDLE, PassOwnPtr<WorkItem>);
     void unregisterAndCloseHandle(HANDLE);
 #elif PLATFORM(QT)
-    void connectSignal(QObject*, const char* signal, PassOwnPtr<WorkItem>);
-    void disconnectSignal(QObject*, const char* signal);
-
-    void moveSocketToWorkThread(QLocalSocket*);
+    QSocketNotifier* registerSocketEventHandler(int, QSocketNotifier::Type, PassOwnPtr<WorkItem>);
+    void scheduleWorkOnTermination(WebKit::PlatformProcessIdentifier, PassOwnPtr<WorkItem>);
 #elif PLATFORM(GTK)
     void registerEventSourceHandler(int, int, PassOwnPtr<WorkItem>);
     void unregisterEventSourceHandler(int);

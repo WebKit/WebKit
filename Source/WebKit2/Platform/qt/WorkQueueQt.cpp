@@ -29,6 +29,7 @@
 #include <QLocalSocket>
 #include <QObject>
 #include <QThread>
+#include <QProcess>
 #include <wtf/Threading.h>
 #include "NotImplemented.h"
 
@@ -75,32 +76,17 @@ public:
     WorkItem* m_workItem;
 };
 
-void WorkQueue::connectSignal(QObject* o, const char* signal, PassOwnPtr<WorkItem> workItem)
-{
-    WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, o, signal, workItem.leakPtr());
-    itemQt->moveToThread(m_workThread);
-    m_signalListeners.add(o, itemQt);
-}
-
-void WorkQueue::disconnectSignal(QObject* o, const char* name)
-{
-    HashMap<QObject*, WorkItemQt*>::iterator it = m_signalListeners.find(o);
-    for (; it != m_signalListeners.end(); ++it) {
-        if (strcmp(it->second->m_signal, name))
-            continue;
-        delete it->second;
-        m_signalListeners.remove(it);
-        return;
-    }
-}
-
-void WorkQueue::moveSocketToWorkThread(QLocalSocket* socket)
+QSocketNotifier* WorkQueue::registerSocketEventHandler(int socketDescriptor, QSocketNotifier::Type type, PassOwnPtr<WorkItem> workItem)
 {
     ASSERT(m_workThread);
-    ASSERT(socket);
 
-    socket->setParent(0);
-    socket->moveToThread(m_workThread);
+    QSocketNotifier* notifier = new QSocketNotifier(socketDescriptor, type, 0);
+    notifier->setEnabled(false);
+    notifier->moveToThread(m_workThread);
+    WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, notifier, SIGNAL(activated(int)), workItem.leakPtr());
+    itemQt->moveToThread(m_workThread);
+    notifier->setEnabled(true);
+    return notifier;
 }
 
 void WorkQueue::platformInitialize(const char*)
@@ -127,6 +113,12 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double)
 {
     notImplemented();
+}
+
+void WorkQueue::scheduleWorkOnTermination(WebKit::PlatformProcessIdentifier process, PassOwnPtr<WorkItem> workItem)
+{
+    WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, process, SIGNAL(finished(int, QProcess::ExitStatus)), workItem.leakPtr());
+    itemQt->moveToThread(m_workThread);
 }
 
 #include "WorkQueueQt.moc"

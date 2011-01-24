@@ -24,53 +24,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ThreadLauncher.h"
-
-#include "RunLoop.h"
-#include "WebProcess.h"
-#include <runtime/InitializeThreading.h>
-#include <wtf/Threading.h>
-
-#include <QApplication>
-#include <QDebug>
-#include <QFile>
-#include <QLocalServer>
-#include <QProcess>
-
-#include <QtCore/qglobal.h>
-
-#include <sys/resource.h>
+#include "Attachment.h"
+#if PLATFORM(QT)
 #include <unistd.h>
+#include <errno.h>
+#endif
 
-using namespace WebCore;
 
-namespace WebKit {
+namespace CoreIPC {
 
-static void* webThreadBody(void* /* context */)
+Attachment::Attachment(int fileDescriptor, size_t size)
+    : m_type(MappedMemory)
+    , m_fileDescriptor(fileDescriptor)
+    , m_size(size)
 {
-    // Initialization
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-
-    // FIXME: We do not support threaded mode for now.
-
-    WebProcess::shared().initialize(-1, RunLoop::current());
-    RunLoop::run();
-
-    return 0;
+    ASSERT(m_fileDescriptor);
+    ASSERT(m_size);
 }
 
-CoreIPC::Connection::Identifier ThreadLauncher::createWebThread()
+void Attachment::dispose()
 {
-    srandom(time(0));
-    int connectionIdentifier = random();
-
-    if (!createThread(webThreadBody, reinterpret_cast<void*>(connectionIdentifier), "WebKit2: WebThread")) {
-        qWarning() << "failed starting thread";
-        return 0;
-    }
-
-    return connectionIdentifier;
+    if (m_fileDescriptor != -1)
+        while (close(m_fileDescriptor) == -1 && (errno == EINTR)) { }
 }
 
-} // namespace WebKit
+} // namespace CoreIPC

@@ -49,7 +49,12 @@ ArgumentEncoder::~ArgumentEncoder()
 {
     if (m_buffer)
         fastFree(m_buffer);
+#if !PLATFORM(QT)
     // FIXME: We need to dispose of the attachments in cases of failure.
+#else
+    for (int i = 0; i < m_attachments.size(); ++i)
+        m_attachments[i].dispose();
+#endif
 }
 
 static inline size_t roundUpToAlignment(size_t value, unsigned alignment)

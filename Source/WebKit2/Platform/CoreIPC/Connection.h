@@ -44,9 +44,8 @@
 #elif PLATFORM(WIN)
 #include <string>
 #elif PLATFORM(QT)
-#include <QString>
-class QLocalServer;
-class QLocalSocket;
+class QSocketNotifier;
+#include "PlatformProcessIdentifier.h"
 #endif
 
 class RunLoop;
@@ -98,7 +97,7 @@ public:
     typedef HANDLE Identifier;
     static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
 #elif PLATFORM(QT)
-    typedef const QString Identifier;
+    typedef int Identifier;
 #elif PLATFORM(GTK)
     typedef int Identifier;
 #endif
@@ -109,6 +108,8 @@ public:
 
 #if PLATFORM(MAC)
     void setShouldCloseConnectionOnMachExceptions();
+#elif PLATFORM(QT)
+    void setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier);
 #endif
 
     bool open();
@@ -285,8 +286,8 @@ private:
 
     Vector<uint8_t> m_readBuffer;
     size_t m_currentMessageSize;
-    QLocalSocket* m_socket;
-    QString m_serverName;
+    QSocketNotifier* m_socketNotifier;
+    int m_socketDescriptor;
 #elif PLATFORM(GTK)
     void readEventHandler();
     void processCompletedMessage();

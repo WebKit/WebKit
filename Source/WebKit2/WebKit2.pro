@@ -232,7 +232,6 @@ HEADERS += \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
     Platform/WorkQueue.h \
-    Platform/qt/MappedMemoryPool.h \
     Shared/API/c/WKBase.h \
     Shared/API/c/WKCertificateInfo.h \
     Shared/API/c/WKContextMenuItem.h \
@@ -293,7 +292,6 @@ HEADERS += \
     Shared/WebURLResponse.h \
     Shared/WebUserContentURLPattern.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
-    Shared/qt/CleanupHandler.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
@@ -459,12 +457,12 @@ SOURCES += \
     Platform/CoreIPC/BinarySemaphore.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
+    Platform/CoreIPC/qt/AttachmentQt.cpp \
     Platform/CoreIPC/qt/ConnectionQt.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
-    Platform/qt/MappedMemoryPool.cpp \
     Platform/qt/ModuleQt.cpp \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/SharedMemoryQt.cpp \
@@ -517,7 +515,6 @@ SOURCES += \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
     Shared/qt/ShareableBitmapQt.cpp \
-    Shared/qt/CleanupHandler.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \

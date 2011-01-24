@@ -29,6 +29,7 @@
 
 #include <QImage>
 #include <WebCore/IntRect.h>
+#include "SharedMemory.h"
 
 namespace CoreIPC {
 class ArgumentEncoder;
@@ -36,8 +37,6 @@ class ArgumentDecoder;
 }
 
 namespace WebKit {
-
-class MappedMemory;
 
 class UpdateChunk {
 public:
@@ -58,7 +57,7 @@ private:
 
     WebCore::IntRect m_rect;
 
-    mutable MappedMemory* m_mappedMemory;
+    mutable RefPtr<SharedMemory> m_sharedMemory;
 };
 
 } // namespace WebKit

@@ -27,17 +27,9 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
-#include "CleanupHandler.h"
 #include "NotImplemented.h"
 #include "RunLoop.h"
 #include "WebProcess.h"
-#include <runtime/InitializeThreading.h>
-#include <string>
-#include <wtf/HashSet.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
-#include <wtf/text/WTFString.h>
-
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
@@ -45,51 +37,26 @@
 #include <QMetaType>
 #include <QProcess>
 #include <QString>
-
 #include <QtCore/qglobal.h>
-
+#include <errno.h>
+#include <fcntl.h>
+#include <runtime/InitializeThreading.h>
+#include <string>
 #include <sys/resource.h>
+#include <sys/socket.h>
 #include <unistd.h>
+#include <wtf/HashSet.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/Threading.h>
+#include <wtf/text/WTFString.h>
+#if defined Q_OS_UNIX
+#include <sys/prctl.h>
+#include <signal.h>
+#endif
 
 using namespace WebCore;
 
 namespace WebKit {
-
-class ProcessLauncherHelper : public QObject {
-    Q_OBJECT
-public:
-    ~ProcessLauncherHelper();
-    void launch(WebKit::ProcessLauncher*);
-    QLocalSocket* takePendingConnection();
-    static ProcessLauncherHelper* instance();
-
-    const QString serverName() const { return m_server.serverName(); }
-
-private:
-    ProcessLauncherHelper();
-    QLocalServer m_server;
-    QList<WorkItem*> m_items;
-
-    Q_SLOT void newConnection();
-};
-
-Q_GLOBAL_STATIC(WTF::HashSet<QProcess*>, processes);
-
-static void cleanupAtExit()
-{
-    // Terminate our web process(es).
-    WTF::HashSet<QProcess*>::const_iterator end = processes()->end();
-    for (WTF::HashSet<QProcess*>::const_iterator it = processes()->begin(); it != end; ++it) {
-        QProcess* process = *it;
-        process->disconnect(process);
-        process->terminate();
-        if (!process->waitForFinished(200))
-            process->kill();
-    }
-
-    // Do not leave the socket file behind.
-    QLocalServer::removeServer(ProcessLauncherHelper::instance()->serverName());
-}
 
 class QtWebProcess : public QProcess
 {
@@ -98,32 +65,20 @@ public:
     QtWebProcess(QObject* parent = 0)
         : QProcess(parent)
     {
-        static bool isRegistered = false;
-        if (!isRegistered) {
-            qRegisterMetaType<QProcess::ProcessState>("QProcess::ProcessState");
-            isRegistered = true;
-        }
-
-        connect(this, SIGNAL(stateChanged(QProcess::ProcessState)), this, SLOT(processStateChanged(QProcess::ProcessState)));
     }
 
-private slots:
-    void processStateChanged(QProcess::ProcessState state);
+protected:
+    virtual void setupChildProcess();
 };
 
-void QtWebProcess::processStateChanged(QProcess::ProcessState state)
+void QtWebProcess::setupChildProcess()
 {
-    QProcess* process = qobject_cast<QProcess*>(sender());
-    if (!process)
-        return;
-
-    if (state == QProcess::Running)
-        processes()->add(process);
-    else if (state == QProcess::NotRunning)
-        processes()->remove(process);
+#if defined Q_OS_UNIX
+    prctl(PR_SET_PDEATHSIG, SIGKILL);
+#endif
 }
 
-void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
+void ProcessLauncher::launchProcess()
 {
     QString applicationPath = "%1 %2";
 
@@ -133,11 +88,37 @@ void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
         applicationPath = applicationPath.arg("QtWebProcess");
     }
 
-    QString program(applicationPath.arg(m_server.serverName()));
+    int sockets[2];
+    if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sockets) == -1) {
+        qDebug() << "Creation of socket failed with errno:" << errno;
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // Don't expose the ui socket to the web process
+    while (fcntl(sockets[1], F_SETFD, FD_CLOEXEC == -1)) {
+        if (errno != EINTR) {
+            ASSERT_NOT_REACHED();
+            while (close(sockets[0]) == -1 && errno == EINTR) { }
+            while (close(sockets[1]) == -1 && errno == EINTR) { }
+            return;
+        }
+    }
+
+    QString program(applicationPath.arg(sockets[0]));
 
     QProcess* webProcess = new QtWebProcess();
     webProcess->setProcessChannelMode(QProcess::ForwardedChannels);
     webProcess->start(program);
+
+    // Don't expose the web socket to possible future web processes
+    while (fcntl(sockets[0], F_SETFD, FD_CLOEXEC) == -1) {
+        if (errno != EINTR) {
+            ASSERT_NOT_REACHED();
+            delete webProcess;
+            return;
+        }
+    }
 
     if (!webProcess->waitForStarted()) {
         qDebug() << "Failed to start" << program;
@@ -148,55 +129,7 @@ void ProcessLauncherHelper::launch(WebKit::ProcessLauncher* launcher)
 
     setpriority(PRIO_PROCESS, webProcess->pid(), 10);
 
-    m_items.append(WorkItem::create(launcher, &WebKit::ProcessLauncher::didFinishLaunchingProcess, webProcess, m_server.serverName()).leakPtr());
-}
-
-QLocalSocket* ProcessLauncherHelper::takePendingConnection()
-{
-    return m_server.nextPendingConnection();
-}
-
-ProcessLauncherHelper::~ProcessLauncherHelper()
-{
-    m_server.close();
-}
-
-ProcessLauncherHelper::ProcessLauncherHelper()
-{
-    srandom(time(0));
-    if (!m_server.listen("QtWebKit" + QString::number(random()))) {
-        qDebug() << "Failed to create server socket.";
-        ASSERT_NOT_REACHED();
-    }
-    connect(&m_server, SIGNAL(newConnection()), this, SLOT(newConnection()));
-}
-
-ProcessLauncherHelper* ProcessLauncherHelper::instance()
-{
-    static ProcessLauncherHelper* result = 0;
-    if (!result) {
-        result = new ProcessLauncherHelper();
-
-        // The purpose of the following line is to ensure that our static is initialized before the exit handler is installed.
-        processes()->clear();
-
-        atexit(cleanupAtExit);
-    }
-    return result;
-}
-
-void ProcessLauncherHelper::newConnection()
-{
-    ASSERT(!m_items.isEmpty());
-
-    m_items[0]->execute();
-    delete m_items[0];
-    m_items.pop_front();
-}
-
-void ProcessLauncher::launchProcess()
-{
-    ProcessLauncherHelper::instance()->launch(this);
+    RunLoop::main()->scheduleWork(WorkItem::create(this, &WebKit::ProcessLauncher::didFinishLaunchingProcess, webProcess, sockets[1]));
 }
 
 void ProcessLauncher::terminateProcess()
@@ -208,14 +141,9 @@ void ProcessLauncher::terminateProcess()
     m_processIdentifier->terminate();
 }
 
-QLocalSocket* ProcessLauncher::takePendingConnection()
-{
-    return ProcessLauncherHelper::instance()->takePendingConnection();
-}
-
 void ProcessLauncher::platformInvalidate()
 {
-    notImplemented();
+
 }
 
 } // namespace WebKit

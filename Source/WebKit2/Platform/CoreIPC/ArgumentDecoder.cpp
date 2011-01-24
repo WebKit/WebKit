@@ -46,7 +46,13 @@ ArgumentDecoder::~ArgumentDecoder()
 {
     ASSERT(m_buffer);
     fastFree(m_buffer);
+#if !PLATFORM(QT)
     // FIXME: We need to dispose of the mach ports in cases of failure.
+#else
+    Deque<Attachment>::iterator end = m_attachments.end();
+    for (Deque<Attachment>::iterator it = m_attachments.begin(); it != end; ++it)
+        it->dispose();
+#endif
 }
 
 void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)

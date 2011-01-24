@@ -31,10 +31,7 @@
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(QT)
-#include <QtGlobal>
-QT_BEGIN_NAMESPACE
-class QSharedMemory;
-QT_END_NAMESPACE
+#include "Attachment.h"
 #include <wtf/text/WTFString.h>
 #endif
 
@@ -63,6 +60,10 @@ public:
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
+#if PLATFORM(QT)
+        CoreIPC::Attachment releaseToAttachment() const;
+        void adoptFromAttachment(int fileDescriptor, size_t);
+#endif
     private:
         friend class SharedMemory;
 #if PLATFORM(MAC)
@@ -70,7 +71,7 @@ public:
 #elif PLATFORM(WIN)
         mutable HANDLE m_handle;
 #elif PLATFORM(QT)
-        mutable String m_key;
+        mutable int m_fileDescriptor;
 #endif
         size_t m_size;
     };
@@ -97,7 +98,7 @@ private:
 #if PLATFORM(WIN)
     HANDLE m_handle;
 #elif PLATFORM(QT)
-    QSharedMemory* m_impl;
+    int m_fileDescriptor;
 #endif
 };
 
