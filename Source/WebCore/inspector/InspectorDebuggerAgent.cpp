@@ -111,7 +111,7 @@ void InspectorDebuggerAgent::setBreakpoint(PassRefPtr<InspectorObject> breakpoin
     bool enabled;
     if (!breakpoint->getBoolean("enabled", &enabled))
         return;
-    ScriptBreakpoint scriptBreakpoint(lineNumber, columnNumber, condition, enabled);
+    ScriptBreakpoint scriptBreakpoint((long) lineNumber, (long) columnNumber, condition, enabled);
     *breakpointId = ScriptDebugServer::shared().setBreakpoint(sourceID, scriptBreakpoint, actualLineNumber, actualColumnNumber);
 }
 

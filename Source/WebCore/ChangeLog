@@ -12,6 +12,13 @@
 
         Unreviewed, build fix  for r76509.
 
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+
+2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, build fix  for r76509.
+
         * bindings/js/ScriptDebugServer.h:
 
 2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
