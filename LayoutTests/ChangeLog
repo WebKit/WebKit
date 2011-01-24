@@ -1,3 +1,14 @@
+2011-01-24  Andrei Popescu  <andreip@google.com>
+
+        Unreviewed, build fix.
+
+        LayoutTest/storage/indexeddb/objectstore-autoincrement.html is failing after r76533
+        https://bugs.webkit.org/show_bug.cgi?id=53032
+
+        Fix the expected output, which still had an error.
+
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+
 2011-01-24  Kenji Imasaki  <imasaki@chromium.org>
 
         Reviewed by Jian Li.
