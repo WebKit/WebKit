@@ -89,7 +89,7 @@ def archiveBuiltProduct(configuration, platform):
             shutil.rmtree(thinDirectory)
         os.mkdir(thinDirectory)
 
-        for dirname in ["bin", "lib", "Source/JavaScriptCore"]:
+        for dirname in ["bin", "lib", "JavaScriptCore"]:
             fromDir = os.path.join(configurationBuildDirectory, dirname, "*")
             toDir = os.path.join(thinDirectory, dirname)
             os.makedirs(toDir)
