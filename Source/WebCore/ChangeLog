@@ -1,3 +1,16 @@
+2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [REGRESSION] AppCache view on resources panel is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=53002
+
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView.prototype._update):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync):
+
 2011-01-24  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

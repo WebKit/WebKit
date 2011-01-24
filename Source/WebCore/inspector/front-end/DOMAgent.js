@@ -502,19 +502,19 @@ WebInspector.ApplicationCacheDispatcher = function()
 {
 }
 
-WebInspector.ApplicationCacheDispatcher.prototype = {
-    getApplicationCachesAsync: function(callback)
+WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync = function(callback)
+{
+    function mycallback(applicationCaches)
     {
-        function mycallback(applicationCaches)
-        {
-            // FIXME: Currently, this list only returns a single application cache.
-            if (applicationCaches)
-                callback(applicationCaches);
-        }
-    
-        InspectorBackend.getApplicationCaches(mycallback);
-    },
-        
+        // FIXME: Currently, this list only returns a single application cache.
+        if (applicationCaches)
+            callback(applicationCaches);
+    }
+
+    InspectorBackend.getApplicationCaches(mycallback);
+}
+
+WebInspector.ApplicationCacheDispatcher.prototype = {
     updateApplicationCacheStatus: function(status)
     {
         WebInspector.panels.resources.updateApplicationCacheStatus(status);

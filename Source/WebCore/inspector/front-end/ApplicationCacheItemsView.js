@@ -136,7 +136,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
     _update: function()
     {
-        WebInspector.ApplicationCache.getApplicationCachesAsync(this._updateCallback.bind(this));
+        WebInspector.ApplicationCacheDispatcher.getApplicationCachesAsync(this._updateCallback.bind(this));
     },
 
     _updateCallback: function(applicationCaches)
