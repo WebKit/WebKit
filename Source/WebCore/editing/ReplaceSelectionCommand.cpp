@@ -496,10 +496,10 @@ void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
 void ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (!m_lastLeafInserted->renderer() && 
-        m_lastLeafInserted->isTextNode() && 
-        !enclosingNodeWithTag(Position(m_lastLeafInserted.get(), 0), selectTag) && 
-        !enclosingNodeWithTag(Position(m_lastLeafInserted.get(), 0), scriptTag)) {
+    if (!m_lastLeafInserted->renderer()
+        && m_lastLeafInserted->isTextNode()
+        && !enclosingNodeWithTag(firstPositionInOrBeforeNode(m_lastLeafInserted.get()), selectTag)
+        && !enclosingNodeWithTag(firstPositionInOrBeforeNode(m_lastLeafInserted.get()), scriptTag)) {
         if (m_firstNodeInserted == m_lastLeafInserted) {
             removeNode(m_lastLeafInserted.get());
             m_lastLeafInserted = 0;
@@ -743,7 +743,7 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     if (endOfParagraph(startOfParagraphToMove) == destination) {
         RefPtr<Node> placeholder = createBreakElement(document());
         insertNodeBefore(placeholder, startOfParagraphToMove.deepEquivalent().node());
-        destination = VisiblePosition(Position(placeholder.get(), 0));
+        destination = VisiblePosition(positionBeforeNode(placeholder.get()));
     }
 
     moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);
@@ -1045,7 +1045,7 @@ void ReplaceSelectionCommand::doApply()
                 if (isListItem(enclosingNode)) {
                     RefPtr<Node> newListItem = createListItemElement(document());
                     insertNodeAfter(newListItem, enclosingNode);
-                    setEndingSelection(VisiblePosition(Position(newListItem, 0)));
+                    setEndingSelection(VisiblePosition(firstPositionInNode(newListItem.get())));
                 } else
                     // Use a default paragraph element (a plain div) for the empty paragraph, using the last paragraph
                     // block's style seems to annoy users.
@@ -1124,7 +1124,7 @@ bool ReplaceSelectionCommand::shouldRemoveEndBR(Node* endBR, const VisiblePositi
     if (!endBR || !endBR->inDocument())
         return false;
         
-    VisiblePosition visiblePos(Position(endBR, 0));
+    VisiblePosition visiblePos(positionBeforeNode(endBR));
     
     // Don't remove the br if nothing was inserted.
     if (visiblePos.previous() == originalVisPosBeforeEndBR)
@@ -1261,7 +1261,7 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
 {
     if (!fragment.firstChild() || fragment.firstChild() != fragment.lastChild() || !fragment.firstChild()->isTextNode())
         return false;
-        
+
     // FIXME: Would be nice to handle smart replace in the fast path.
     if (m_smartReplace || fragment.hasInterchangeNewlineAtStart() || fragment.hasInterchangeNewlineAtEnd())
         return false;
@@ -1270,20 +1270,22 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     // Our fragment creation code handles tabs, spaces, and newlines, so we don't have to worry about those here.
     String text(textNode->data());
     
-    Position start = endingSelection().start();
-    Position end = endingSelection().end();
-    
-    if (start.anchorNode() != end.anchorNode() || !start.anchorNode()->isTextNode())
+    Position start = endingSelection().start().parentAnchoredEquivalent();
+    Position end = endingSelection().end().parentAnchoredEquivalent();
+    ASSERT(start.anchorType() == Position::PositionIsOffsetInAnchor);
+    ASSERT(end.anchorType() == Position::PositionIsOffsetInAnchor);
+
+    if (start.containerNode() != end.containerNode() || !start.containerNode()->isTextNode())
         return false;
-        
-    replaceTextInNode(static_cast<Text*>(start.anchorNode()), start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
-    
-    end = Position(start.anchorNode(), start.offsetInContainerNode() + text.length());
-    
+
+    replaceTextInNode(static_cast<Text*>(start.containerNode()), start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
+
+    end = Position(start.containerNode(), start.offsetInContainerNode() + text.length(), Position::PositionIsOffsetInAnchor);
+
     VisibleSelection selectionAfterReplace(m_selectReplacement ? start : end, end);
-    
+
     setEndingSelection(selectionAfterReplace);
-    
+
     return true;
 }
 

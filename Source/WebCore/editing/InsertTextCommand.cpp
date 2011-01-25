@@ -61,13 +61,13 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& p)
     if (!pos.node()->isTextNode()) {
         RefPtr<Node> textNode = document()->createEditingTextNode("");
         insertNodeAt(textNode.get(), pos);
-        return Position(textNode.get(), 0);
+        return firstPositionInNode(textNode.get());
     }
 
     if (isTabSpanTextNode(pos.node())) {
         RefPtr<Node> textNode = document()->createEditingTextNode("");
         insertNodeAtTabSpanPosition(textNode.get(), pos);
-        return Position(textNode.get(), 0);
+        return firstPositionInNode(textNode.get());
     }
 
     return pos;
@@ -83,23 +83,25 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     if (text.contains('\t') || text.contains(' ') || text.contains('\n'))
         return false;
     
-    Position start = endingSelection().start();
-    Position end = endingSelection().end();
-    
-    if (start.node() != end.node() || !start.node()->isTextNode() || isTabSpanTextNode(start.node()))
+    Position start = endingSelection().start().parentAnchoredEquivalent();
+    Position end = endingSelection().end().parentAnchoredEquivalent();
+    ASSERT(start.anchorType() == Position::PositionIsOffsetInAnchor);
+    ASSERT(end.anchorType() == Position::PositionIsOffsetInAnchor);
+
+    if (start.containerNode() != end.containerNode() || !start.containerNode()->isTextNode() || isTabSpanTextNode(start.containerNode()))
         return false;
-        
-    replaceTextInNode(static_cast<Text*>(start.node()), start.deprecatedEditingOffset(), end.deprecatedEditingOffset() - start.deprecatedEditingOffset(), text);
-    
-    Position endPosition(start.node(), start.deprecatedEditingOffset() + text.length());
-    
+
+    replaceTextInNode(static_cast<Text*>(start.containerNode()), start.offsetInContainerNode(), end.offsetInContainerNode() - start.offsetInContainerNode(), text);
+
+    Position endPosition(start.containerNode(), start.offsetInContainerNode() + text.length());
+
     // We could have inserted a part of composed character sequence,
     // so we are basically treating ending selection as a range to avoid validation.
     // <http://bugs.webkit.org/show_bug.cgi?id=15781>
     VisibleSelection forcedEndingSelection;
     forcedEndingSelection.setWithoutValidation(start, endPosition);
     setEndingSelection(forcedEndingSelection);
-    
+
     if (!selectInsertedText)
         setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
     
@@ -170,7 +172,7 @@ void InsertTextCommand::input(const String& text, bool selectInsertedText, Rebal
         int offset = startPosition.deprecatedEditingOffset();
 
         insertTextIntoNode(textNode, offset, text);
-        endPosition = Position(textNode, offset + text.length());
+        endPosition = Position(textNode, offset + text.length(), Position::PositionIsOffsetInAnchor);
 
         if (whitespaceRebalance == RebalanceLeadingAndTrailingWhitespaces) {
             // The insertion may require adjusting adjacent whitespace, if it is present.
@@ -213,7 +215,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {
         insertTextIntoNode(static_cast<Text *>(node), offset, "\t");
-        return Position(node, offset + 1);
+        return Position(node, offset + 1, Position::PositionIsOffsetInAnchor);
     }
     
     // create new tab span
@@ -236,9 +238,9 @@ Position InsertTextCommand::insertTab(const Position& pos)
             insertNodeBefore(spanNode, textNode);
         }
     }
-    
+
     // return the position following the new tab
-    return Position(spanNode->lastChild(), caretMaxOffset(spanNode->lastChild()));
+    return lastPositionInNode(spanNode.get());
 }
 
 bool InsertTextCommand::isInsertTextCommand() const

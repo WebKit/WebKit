@@ -1774,7 +1774,7 @@ void SelectionController::setSelectionFromNone()
     while (node && !node->hasTagName(bodyTag))
         node = node->traverseNextNode();
     if (node)
-        setSelection(VisibleSelection(Position(node, 0), DOWNSTREAM));
+        setSelection(VisibleSelection(firstPositionInOrBeforeNode(node), DOWNSTREAM));
 }
 
 bool SelectionController::shouldChangeSelection(const VisibleSelection& newSelection) const

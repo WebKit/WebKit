@@ -141,7 +141,7 @@ void SpellChecker::didCheck(int sequence, const Vector<SpellCheckingResult>& res
     }
 
     int startOffset = 0;
-    PositionIterator start = Position(m_requestNode, 0);
+    PositionIterator start = firstPositionInOrBeforeNode(m_requestNode.get());
     for (size_t i = 0; i < results.size(); ++i) {
         if (results[i].type() != DocumentMarker::Spelling && results[i].type() != DocumentMarker::Grammar)
             continue;

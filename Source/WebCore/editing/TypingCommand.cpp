@@ -436,7 +436,7 @@ bool TypingCommand::makeEditableRootEmpty()
         removeNode(child);
 
     addBlockPlaceholderIfNeeded(root);
-    setEndingSelection(VisibleSelection(Position(root, 0), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(firstPositionInNode(root), DOWNSTREAM));
 
     return true;
 }
@@ -495,7 +495,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             selection.modify(SelectionController::AlterationExtend, DirectionBackward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
         } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
-            setEndingSelection(VisibleSelection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
+            setEndingSelection(VisibleSelection(positionAfterNode(table), endingSelection().start(), DOWNSTREAM));
             typingAddedToOpenCommand(DeleteKey);
             return;
         }
@@ -596,7 +596,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
                     extraCharacters = selectionToDelete.end().deprecatedEditingOffset() - selectionToDelete.start().deprecatedEditingOffset();
                 else
                     extraCharacters = selectionToDelete.end().deprecatedEditingOffset();
-                extent = Position(extent.node(), extent.deprecatedEditingOffset() + extraCharacters);
+                extent = Position(extent.node(), extent.deprecatedEditingOffset() + extraCharacters, Position::PositionIsOffsetInAnchor);
             }
             selectionAfterUndo.setWithoutValidation(startingSelection().start(), extent);
         }
