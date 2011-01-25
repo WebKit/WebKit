@@ -35,6 +35,7 @@ EXPORTS
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
     ??1RegExp@JSC@@QAE@XZ
+    ??1SourceProviderCache@JSC@@QAE@XZ
     ??1Structure@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
@@ -59,6 +60,7 @@ EXPORTS
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
+    ?byteSize@SourceProviderCache@JSC@@QBEIXZ
     ?calculateDSTOffset@WTF@@YANNN@Z
     ?calculateStringHashFromUTF8@Unicode@WTF@@YAIPBD0AAI@Z
     ?calculateUTCOffset@WTF@@YAHXZ

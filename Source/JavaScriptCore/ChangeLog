@@ -1,5 +1,13 @@
 2011-01-25  Antti Koivisto  <antti@apple.com>
 
+        Not reviewed.
+        
+        Try to fix windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-01-25  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Oliver Hunt.
 
         REGRESSION: Leak in JSParser::Scope::copyCapturedVariablesToVector()
