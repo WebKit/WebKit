@@ -7052,9 +7052,21 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                 break;
             }   
             case WebKitCSSTransformValue::PerspectiveTransformOperation: {
-                double p = firstValue->getDoubleValue();
-                if (p < 0.0)
+                bool ok = true;
+                Length p = Length(0, Fixed);
+                if (CSSPrimitiveValue::isUnitTypeLength(firstValue->primitiveType()))
+                    p = convertToLength(firstValue, style, rootStyle, zoomFactor, &ok);
+                else {
+                    // This is a quirk that should go away when 3d transforms are finalized.
+                    double val = firstValue->getDoubleValue();
+                    ok = val >= 0;
+                    val = min<double>(val, numeric_limits<int>::max());
+                    p = Length(static_cast<int>(val), Fixed);
+                }
+                
+                if (!ok)
                     return false;
+
                 operations.operations().append(PerspectiveTransformOperation::create(p));
                 break;
             }

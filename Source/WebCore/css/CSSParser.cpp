@@ -5316,6 +5316,10 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
                 // 1st param of translateZ() cannot be a percentage
                 if (!validUnit(a, FLength, true))
                     return 0;
+            } else if (info.type() == WebKitCSSTransformValue::PerspectiveTransformOperation && argNumber == 0) {
+                // 1st param of perspective() must be a non-negative number (deprecated) or length.
+                if (!validUnit(a, FNumber | FLength | FNonNeg, true))
+                    return 0;
             } else if (!validUnit(a, unit, true))
                 return 0;
 

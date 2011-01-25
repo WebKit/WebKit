@@ -1,3 +1,34 @@
+2011-01-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        perspective() transform function should take lengths
+        https://bugs.webkit.org/show_bug.cgi?id=52683
+        
+        The argument to the perspective() transform function should
+        be a Length, rather than a bare number. Bare numbers are still
+        accepted (and treated as px), but this behavior is deprecated.
+
+        Test: animations/3d/transform-perspective.html
+              transforms/3d/general/3dtransform-values.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseTransform): Check the units for the perspective()
+        function. Allow bare numbers for backwards compatibility.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::createTransformOperations): Convert
+        value to Length.
+        * platform/graphics/transforms/PerspectiveTransformOperation.cpp:
+        (WebCore::clampToPostiveInteger): Helper.
+        (WebCore::PerspectiveTransformOperation::blend): Blend via Lengths.
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        (WebCore::PerspectiveTransformOperation::create): double -> Length.
+        (WebCore::PerspectiveTransformOperation::perspective): Ditto.
+        (WebCore::PerspectiveTransformOperation::isIdentity): Ditto.
+        (WebCore::PerspectiveTransformOperation::apply): Ditto.
+        (WebCore::PerspectiveTransformOperation::PerspectiveTransformOperation): Assert
+        that the Length is a fixed type.
+
 2011-01-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

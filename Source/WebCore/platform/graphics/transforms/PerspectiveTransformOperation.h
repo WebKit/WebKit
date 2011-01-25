@@ -26,21 +26,22 @@
 #ifndef PerspectiveTransformOperation_h
 #define PerspectiveTransformOperation_h
 
+#include "Length.h"
 #include "TransformOperation.h"
 
 namespace WebCore {
 
 class PerspectiveTransformOperation : public TransformOperation {
 public:
-    static PassRefPtr<PerspectiveTransformOperation> create(double p)
+    static PassRefPtr<PerspectiveTransformOperation> create(const Length& p)
     {
         return adoptRef(new PerspectiveTransformOperation(p));
     }
 
-    double perspective() const { return m_p; }
+    Length perspective() const { return m_p; }
     
 private:
-    virtual bool isIdentity() const { return m_p == 0; }
+    virtual bool isIdentity() const { return m_p.calcFloatValue(1) == 0; }
     virtual OperationType getOperationType() const { return PERSPECTIVE; }
     virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == PERSPECTIVE; }
 
@@ -54,18 +55,19 @@ private:
 
     virtual bool apply(TransformationMatrix& transform, const IntSize&) const
     {
-        transform.applyPerspective(m_p);
+        transform.applyPerspective(m_p.calcFloatValue(1));
         return false;
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
 
-    PerspectiveTransformOperation(double p)
+    PerspectiveTransformOperation(const Length& p)
         : m_p(p)
     {
+        ASSERT(p.isFixed());
     }
 
-    double m_p;
+    Length m_p;
 };
 
 } // namespace WebCore
