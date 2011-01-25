@@ -16,6 +16,17 @@
 
         Reviewed by Anders Carlsson.
 
+        Pipe a timestamp down into the PlatformWheelEvent for the Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=53111
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformWheelEvent::WebKit2PlatformWheelEvent):
+        Assign the timestamp.
+
+2011-01-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Add hasPreciseScrollingDeltas bit to PlatformWheelEvent on the Mac.
         https://bugs.webkit.org/show_bug.cgi?id=53107
 

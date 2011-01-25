@@ -64,6 +64,7 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
     , m_altKey([event modifierFlags] & NSAlternateKeyMask)
     , m_metaKey([event modifierFlags] & NSCommandKeyMask)
     , m_phase(phaseForEvent(event))
+    , m_timestamp([event timestamp])
 {
     BOOL continuous;
 
