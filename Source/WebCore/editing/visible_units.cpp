@@ -292,7 +292,7 @@ static unsigned previousWordPositionBoundary(const UChar* characters, unsigned l
 VisiblePosition previousWordPosition(const VisiblePosition &c)
 {
     VisiblePosition prev = previousBoundary(c, previousWordPositionBoundary);
-    return c.honorEditableBoundaryAtOrAfter(prev);
+    return c.honorEditableBoundaryAtOrBefore(prev);
 }
 
 static unsigned nextWordPositionBoundary(const UChar* characters, unsigned length, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
@@ -308,7 +308,7 @@ static unsigned nextWordPositionBoundary(const UChar* characters, unsigned lengt
 VisiblePosition nextWordPosition(const VisiblePosition &c)
 {
     VisiblePosition next = nextBoundary(c, nextWordPositionBoundary);    
-    return c.honorEditableBoundaryAtOrBefore(next);
+    return c.honorEditableBoundaryAtOrAfter(next);
 }
 
 // ---------
@@ -391,7 +391,7 @@ VisiblePosition startOfLine(const VisiblePosition& c)
 {
     VisiblePosition visPos = startPositionForLine(c);
 
-    return c.honorEditableBoundaryAtOrAfter(visPos);
+    return c.honorEditableBoundaryAtOrBefore(visPos);
 }
 
 static VisiblePosition endPositionForLine(const VisiblePosition& c)
@@ -458,7 +458,7 @@ VisiblePosition endOfLine(const VisiblePosition& c)
         visPos = endPositionForLine(visPos);
     }
     
-    return c.honorEditableBoundaryAtOrBefore(visPos);
+    return c.honorEditableBoundaryAtOrAfter(visPos);
 }
 
 bool inSameLine(const VisiblePosition &a, const VisiblePosition &b)
@@ -720,7 +720,7 @@ static unsigned previousSentencePositionBoundary(const UChar* characters, unsign
 VisiblePosition previousSentencePosition(const VisiblePosition &c)
 {
     VisiblePosition prev = previousBoundary(c, previousSentencePositionBoundary);
-    return c.honorEditableBoundaryAtOrAfter(prev);
+    return c.honorEditableBoundaryAtOrBefore(prev);
 }
 
 static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned length, unsigned, BoundarySearchContextAvailability, bool&)
@@ -734,7 +734,7 @@ static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned l
 VisiblePosition nextSentencePosition(const VisiblePosition &c)
 {
     VisiblePosition next = nextBoundary(c, nextSentencePositionBoundary);    
-    return c.honorEditableBoundaryAtOrBefore(next);
+    return c.honorEditableBoundaryAtOrAfter(next);
 }
 
 VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
@@ -1133,7 +1133,7 @@ VisiblePosition logicalStartOfLine(const VisiblePosition& c)
     // Please refer to https://bugs.webkit.org/show_bug.cgi?id=49107 for detail.
     VisiblePosition visPos = logicalStartPositionForLine(c);
     
-    return c.honorEditableBoundaryAtOrAfter(visPos);
+    return c.honorEditableBoundaryAtOrBefore(visPos);
 }
 
 static VisiblePosition logicalEndPositionForLine(const VisiblePosition& c)
@@ -1190,7 +1190,7 @@ VisiblePosition logicalEndOfLine(const VisiblePosition& c)
     if (!inSameLogicalLine(c, visPos))
         visPos = visPos.previous();
     
-    return c.honorEditableBoundaryAtOrBefore(visPos);
+    return c.honorEditableBoundaryAtOrAfter(visPos);
 }
 
 VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direction)

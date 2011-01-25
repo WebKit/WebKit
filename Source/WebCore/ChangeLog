@@ -1,3 +1,30 @@
+2011-01-25  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Cannot extend or modify forward by word over a non-contenteditable region
+        https://bugs.webkit.org/show_bug.cgi?id=53070
+
+        Test: editing/selection/extend-forward-by-word-over-non-editable.html
+
+        Change all instances of honorEditableBoundaryAtOrAfter to honorEditableBoundaryAtOrBefore and vice versa in the
+        functions which determine the end/start of words/lines/sentences in visible_units.cpp.
+
+        This fixes the bug where moving forwards by a word over a non-contenteditable region would place the cursor
+        inside that region, and then get moved back to the start of the word due to honorEditableBoundaryAtOrBefore.
+        The cursor is now moved to the end of the region (which is effectively a noop in this case).
+
+        * editing/visible_units.cpp: Change all instances of honorEditableBoundaryAtOrAfter to
+        honorEditableBoundaryAtOrBefore and vice versa.
+        (WebCore::previousWordPosition):
+        (WebCore::nextWordPosition):
+        (WebCore::startOfLine):
+        (WebCore::endOfLine):
+        (WebCore::previousSentencePosition):
+        (WebCore::nextSentencePosition):
+        (WebCore::logicalStartOfLine):
+        (WebCore::logicalEndOfLine):
+
 2011-01-25  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed build fix.

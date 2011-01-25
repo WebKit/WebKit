@@ -1,3 +1,15 @@
+2011-01-25  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Cannot extend or modify forward by word over a non-contenteditable region
+        https://bugs.webkit.org/show_bug.cgi?id=53070
+
+        Add regression test.
+
+        * editing/selection/extend-forward-by-word-over-non-editable-expected.txt: Added.
+        * editing/selection/extend-forward-by-word-over-non-editable.html: Added.
+
 2011-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed SVG rebaselines for Chromium.
