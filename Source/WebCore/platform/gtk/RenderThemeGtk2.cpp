@@ -608,6 +608,15 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
 }
 #endif
 
+void RenderThemeGtk::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const
+{
+}
+
+bool RenderThemeGtk::paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&)
+{
+    return true;
+}
+
 GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
 {
     ASSERT(widgetType == GTK_TYPE_CONTAINER || widgetType == GTK_TYPE_ENTRY);

@@ -45,6 +45,8 @@ namespace WebCore {
 
 // This is the default value defined by GTK+, where it was defined as MIN_ARROW_SIZE in gtkarrow.c.
 static const int minArrowSize = 15;
+// This is the default value defined by GTK+, where it was defined as MIN_ARROW_WIDTH in gtkspinbutton.c.
+static const int minSpinButtonArrowSize = 6;
 
 typedef HashMap<GType, GRefPtr<GtkStyleContext> > StyleContextMap;
 static StyleContextMap& styleContextMap();
@@ -719,6 +721,117 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
     return false;
 }
 #endif
+
+static gint spinButtonArrowSize(GtkStyleContext* context)
+{
+    const PangoFontDescription* fontDescription = gtk_style_context_get_font(context, static_cast<GtkStateFlags>(0));
+    gint fontSize = pango_font_description_get_size(fontDescription);
+    gint arrowSize = max(PANGO_PIXELS(fontSize), minSpinButtonArrowSize);
+
+    return arrowSize - arrowSize % 2; // Force even.
+}
+
+void RenderThemeGtk::adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_SPIN_BUTTON);
+
+    GtkBorder padding;
+    gtk_style_context_get_padding(context, static_cast<GtkStateFlags>(0), &padding);
+
+    int width = spinButtonArrowSize(context) + padding.left + padding.right;
+    style->setWidth(Length(width, Fixed));
+    style->setMinWidth(Length(width, Fixed));
+}
+
+static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect, GtkArrowType arrowType)
+{
+    ASSERT(arrowType == GTK_ARROW_UP || arrowType == GTK_ARROW_DOWN);
+
+    gtk_style_context_save(context);
+    gtk_style_context_add_class(context, GTK_STYLE_CLASS_BUTTON);
+
+    GtkTextDirection direction = gtk_style_context_get_direction(context);
+    guint state = static_cast<guint>(gtk_style_context_get_state(context));
+    if (!(state & GTK_STATE_FLAG_INSENSITIVE)) {
+        if (theme->isPressed(renderObject)) {
+            if ((arrowType == GTK_ARROW_UP && theme->isSpinUpButtonPartPressed(renderObject))
+                || (arrowType == GTK_ARROW_DOWN && !theme->isSpinUpButtonPartPressed(renderObject)))
+                state |= GTK_STATE_FLAG_ACTIVE;
+        } else if (theme->isHovered(renderObject)) {
+            if ((arrowType == GTK_ARROW_UP && theme->isSpinUpButtonPartHovered(renderObject))
+                || (arrowType == GTK_ARROW_DOWN && !theme->isSpinUpButtonPartHovered(renderObject)))
+                state |= GTK_STATE_FLAG_PRELIGHT;
+        }
+    }
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(state));
+
+    // Paint button.
+    IntRect buttonRect(rect);
+    guint junction = gtk_style_context_get_junction_sides(context);
+    if (arrowType == GTK_ARROW_UP)
+        junction |= GTK_JUNCTION_BOTTOM;
+    else {
+        junction |= GTK_JUNCTION_TOP;
+        buttonRect.move(0, rect.height() / 2);
+    }
+    buttonRect.setHeight(rect.height() / 2);
+    gtk_style_context_set_junction_sides(context, static_cast<GtkJunctionSides>(junction));
+
+    gtk_render_background(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+
+    // Paint arrow centered inside button.
+    // This code is based on gtkspinbutton.c code.
+    IntRect arrowRect;
+    gdouble angle;
+    if (arrowType == GTK_ARROW_UP) {
+        angle = 0;
+        arrowRect.setY(rect.y());
+        arrowRect.setHeight(rect.height() / 2 - 2);
+    } else {
+        angle = G_PI;
+        arrowRect.setY(rect.y() + buttonRect.y());
+        arrowRect.setHeight(rect.height() - arrowRect.y() - 2);
+    }
+    arrowRect.setWidth(rect.width() - 3);
+    if (direction == GTK_TEXT_DIR_LTR)
+        arrowRect.setX(rect.x() + 1);
+    else
+        arrowRect.setX(rect.x() + 2);
+
+    gint width = arrowRect.width() / 2;
+    width -= width % 2 - 1; // Force odd.
+    gint height = (width + 1) / 2;
+
+    arrowRect.move((arrowRect.width() - width) / 2, (arrowRect.height() - height) / 2);
+    gtk_render_arrow(context, paintInfo.context->platformContext(), angle, arrowRect.x(), arrowRect.y(), width);
+
+    gtk_style_context_restore(context);
+}
+
+bool RenderThemeGtk::paintInnerSpinButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_SPIN_BUTTON);
+    gtk_style_context_save(context);
+
+    GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction()));
+    gtk_style_context_set_direction(context, direction);
+
+    guint flags = 0;
+    if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+    else if (isFocused(renderObject))
+        flags |= GTK_STATE_FLAG_FOCUSED;
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
+    gtk_style_context_remove_class(context, GTK_STYLE_CLASS_ENTRY);
+
+    paintSpinArrowButton(this, context, renderObject, paintInfo, rect, GTK_ARROW_UP);
+    paintSpinArrowButton(this, context, renderObject, paintInfo, rect, GTK_ARROW_DOWN);
+
+    gtk_style_context_restore(context);
+
+    return false;
+}
 
 GRefPtr<GdkPixbuf> RenderThemeGtk::getStockIcon(GType widgetType, const char* iconName, gint direction, gint state, gint iconSize)
 {

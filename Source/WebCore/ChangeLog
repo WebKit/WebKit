@@ -1,3 +1,25 @@
+2011-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement spin buttons in RenderThemeGtk
+        https://bugs.webkit.org/show_bug.cgi?id=51454
+
+        Paint inner up/down buttons for spin button elements when building
+        with GTK+ 3.x.
+
+        Test results will land with the GTK+ 2.x version of this patch.
+
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/gtk/RenderThemeGtk2.cpp:
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeGtk::paintInnerSpinButton):
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::spinButtonArrowSize):
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+        (WebCore::paintSpinArrowButton):
+        (WebCore::RenderThemeGtk::paintInnerSpinButton):
+
 2011-01-24  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed. Missed move of one m_deleted use to be outside NDEBUG block

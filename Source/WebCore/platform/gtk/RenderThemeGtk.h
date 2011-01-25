@@ -171,6 +171,9 @@ protected:
 
     virtual bool paintCapsLockIndicator(RenderObject*, const PaintInfo&, const IntRect&);
 
+    virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+
 private:
     void platformInit();
     static void setTextInputBorders(RenderStyle*);
