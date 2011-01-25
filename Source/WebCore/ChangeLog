@@ -1,3 +1,21 @@
+2011-01-24  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Darin Adler.
+
+        Roll back r67261 ("Don't fire onclick on middle clicks") due to
+        regressions.
+        https://bugs.webkit.org/show_bug.cgi?id=46733
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::isLinkClick):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::preDispatchEventHandler):
+        (WebCore::HTMLInputElement::postDispatchEventHandler):
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2011-01-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

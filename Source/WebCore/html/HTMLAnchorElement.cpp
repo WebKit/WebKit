@@ -541,7 +541,7 @@ bool isMiddleMouseButtonEvent(Event* event)
 
 bool isLinkClick(Event* event)
 {
-    return event->type() == eventNames().clickEvent || (event->type() == eventNames().mouseupEvent && isMiddleMouseButtonEvent(event));
+    return event->type() == eventNames().clickEvent && (!event->isMouseEvent() || static_cast<MouseEvent*>(event)->button() != RightButton);
 }
 
 void handleLinkClick(Event* event, Document* document, const String& url, const String& target, bool hideReferrer)

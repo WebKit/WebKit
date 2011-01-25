@@ -45,6 +45,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
@@ -942,6 +943,8 @@ void* HTMLInputElement::preDispatchEventHandler(Event* event)
 {
     if (event->type() != eventNames().clickEvent)
         return 0;
+    if (!event->isMouseEvent() || static_cast<MouseEvent*>(event)->button() != LeftButton)
+        return 0;
     // FIXME: Check whether there are any cases where this actually ends up leaking.
     return m_inputType->willDispatchClick().leakPtr();
 }
@@ -949,8 +952,6 @@ void* HTMLInputElement::preDispatchEventHandler(Event* event)
 void HTMLInputElement::postDispatchEventHandler(Event* event, void* dataFromPreDispatch)
 {
     OwnPtr<ClickHandlingState> state = adoptPtr(static_cast<ClickHandlingState*>(dataFromPreDispatch));
-    if (event->type() != eventNames().clickEvent)
-        return;
     if (!state)
         return;
     m_inputType->didDispatchClick(event, *state);
@@ -958,7 +959,7 @@ void HTMLInputElement::postDispatchEventHandler(Event* event, void* dataFromPreD
 
 void HTMLInputElement::defaultEventHandler(Event* evt)
 {
-    if (evt->isMouseEvent() && evt->type() == eventNames().clickEvent) {
+    if (evt->isMouseEvent() && evt->type() == eventNames().clickEvent && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         m_inputType->handleClickEvent(static_cast<MouseEvent*>(evt));
         if (evt->defaultHandled())
             return;
