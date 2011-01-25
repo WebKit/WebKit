@@ -39,11 +39,6 @@ PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendInterface::create()
     return PlatformBridge::idbFactory();
 }
 
-IDBFactoryBackendInterface::~IDBFactoryBackendInterface()
-{
-    PlatformBridge::idbShutdown();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

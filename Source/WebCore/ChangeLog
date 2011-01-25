@@ -1,3 +1,22 @@
+2011-01-25  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: Remove PlatformBridge::idbShutdown()
+        https://bugs.webkit.org/show_bug.cgi?id=53077
+
+        Since Chromium r72157, this is not used anymore. The previous use was
+        to signal to the embedder that IndexedDB was shutting down, but we
+        agreed it is better if the embedder keeps track of that itself.
+
+        No new tests: this does not change any functionality.
+
+        * platform/chromium/PlatformBridge.h:
+        * storage/IDBFactoryBackendInterface.cpp:
+        * storage/IDBFactoryBackendInterface.h:
+        (WebCore::IDBFactoryBackendInterface::~IDBFactoryBackendInterface):
+        * storage/chromium/IDBFactoryBackendInterface.cpp:
+
 2011-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

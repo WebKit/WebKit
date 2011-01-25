@@ -509,12 +509,6 @@ PassRefPtr<IDBFactoryBackendInterface> PlatformBridge::idbFactory()
     return IDBFactoryBackendProxy::create();
 }
 
-void PlatformBridge::idbShutdown()
-{
-    // In the browser process, this shuts down the utility process. In the renderer process, it does nothing.
-    webKitClient()->idbShutdown();
-}
-
 void PlatformBridge::createIDBKeysFromSerializedValuesAndKeyPath(const Vector<RefPtr<SerializedScriptValue> >& values, const String& keyPath, Vector<RefPtr<IDBKey> >& keys)
 {
     WebVector<WebSerializedScriptValue> webValues = values;
