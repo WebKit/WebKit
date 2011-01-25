@@ -29,25 +29,29 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "RenderSVGResourceFilterPrimitive.h"
 
+#include "RenderSVGResource.h"
 #include "SVGFEImage.h"
+#include "SVGFilter.h"
 
 namespace WebCore {
 
-FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect, SVGFilter* filter)
+FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect)
 {
     FloatRect uniteRect;
     FloatRect subregionBoundingBox = effect->effectBoundaries();
     FloatRect subregion = subregionBoundingBox;
+    SVGFilter* filter = static_cast<SVGFilter*>(effect->filter());
+    ASSERT(filter);
 
     if (effect->filterEffectType() != FilterEffectTypeTile) {
         // FETurbulence, FEImage and FEFlood don't have input effects, take the filter region as unite rect.
         if (unsigned numberOfInputEffects = effect->inputEffects().size()) {
             for (unsigned i = 0; i < numberOfInputEffects; ++i)
-                uniteRect.unite(determineFilterPrimitiveSubregion(effect->inputEffect(i), filter));
+                uniteRect.unite(determineFilterPrimitiveSubregion(effect->inputEffect(i)));
         } else
             uniteRect = filter->filterRegionInUserSpace();
     } else {
-        determineFilterPrimitiveSubregion(effect->inputEffect(0), filter);
+        determineFilterPrimitiveSubregion(effect->inputEffect(0));
         uniteRect = filter->filterRegionInUserSpace();
     }
 
@@ -90,7 +94,7 @@ FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(Fi
     // FEImage needs the unclipped subregion in absolute coordinates to determine the correct
     // destination rect in combination with preserveAspectRatio.
     if (effect->filterEffectType() == FilterEffectTypeImage)
-        reinterpret_cast<FEImage*>(effect)->setAbsoluteSubregion(absoluteSubregion);
+        static_cast<FEImage*>(effect)->setAbsoluteSubregion(absoluteSubregion);
 
     // Clip every filter effect to the filter region.
     FloatRect absoluteScaledFilterRegion = filter->filterRegion();

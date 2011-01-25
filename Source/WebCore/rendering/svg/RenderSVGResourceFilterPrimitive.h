@@ -30,25 +30,32 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 
 #include "RenderSVGHiddenContainer.h"
-#include "SVGFilter.h"
-#include "SVGFilterPrimitiveStandardAttributes.h"
+#include "RenderSVGResourceFilter.h"
 
 namespace WebCore {
 
+class FilterEffect;
+
 class RenderSVGResourceFilterPrimitive : public RenderSVGHiddenContainer {
 public:
-
-    explicit RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes* filterPrimitiveElement)
+    explicit RenderSVGResourceFilterPrimitive(SVGStyledElement* filterPrimitiveElement)
         : RenderSVGHiddenContainer(filterPrimitiveElement)
     {
     }
 
-    // They depend on the RenderObject argument of RenderSVGResourceFilter::applyResource.
-    static FloatRect determineFilterPrimitiveSubregion(FilterEffect*, SVGFilter*);
-
-private:
     virtual const char* renderName() const { return "RenderSVGResourceFilterPrimitive"; }
     virtual bool isSVGResourceFilterPrimitive() const { return true; }
+
+    // They depend on the RenderObject argument of RenderSVGResourceFilter::applyResource.
+    static FloatRect determineFilterPrimitiveSubregion(FilterEffect*);
+
+    inline void primitiveAttributeChanged(const QualifiedName& attribute)
+    {
+        RenderObject* filter = parent();
+        if (!filter || !filter->isSVGResourceFilter())
+            return;
+        static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, attribute);
+    }
 };
 
 } // namespace WebCore

@@ -24,6 +24,7 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "PlatformString.h"
+#include "RenderObject.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -43,16 +44,20 @@ public:
     FilterEffect* getEffectById(const AtomicString& id) const;
     FilterEffect* lastEffect() const { return m_lastEffect.get(); }
 
-    void appendEffectToEffectReferences(RefPtr<FilterEffect>);
+    void appendEffectToEffectReferences(RefPtr<FilterEffect>, RenderObject*);
 
-    inline FilterEffectSet& getEffectReferences(FilterEffect* effect)
+    inline FilterEffectSet& effectReferences(FilterEffect* effect)
     {
         // Only allowed for effects belongs to this builder.
         ASSERT(m_effectReferences.contains(effect));
         return m_effectReferences.find(effect)->second;
     }
 
+    // Required to change the attributes of a filter during an svgAttributeChanged.
+    inline FilterEffect* effectByRenderer(RenderObject* object) { return m_effectRenderer.get(object); }
+
     void clearEffects();
+    void clearResultsRecursive(FilterEffect*);
 
 private:
     SVGFilterBuilder(Filter*);
@@ -69,6 +74,7 @@ private:
     // The value is a list, which contains those filter effects,
     // which depends on the key filter effect.
     HashMap<RefPtr<FilterEffect>, FilterEffectSet> m_effectReferences;
+    HashMap<RenderObject*, FilterEffect*> m_effectRenderer;
 
     RefPtr<FilterEffect> m_lastEffect;
 };

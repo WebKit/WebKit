@@ -22,7 +22,8 @@
 #define SVGFilterPrimitiveStandardAttributes_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
-#include "RenderSVGResource.h"
+#include "RenderSVGResourceFilter.h"
+#include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGAnimatedLength.h"
 #include "SVGAnimatedString.h"
 #include "SVGStyledElement.h"
@@ -41,6 +42,7 @@ public:
     void setStandardAttributes(bool, FilterEffect*) const;
 
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter* filter) = 0;
+    virtual void setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
 
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document*);
@@ -50,11 +52,16 @@ protected:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-protected:
     inline void invalidate()
     {
         if (RenderObject* primitiveRenderer = renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(primitiveRenderer);
+    }
+
+    inline void primitiveAttributeChanged(const QualifiedName& attribute)
+    {
+        if (RenderObject* primitiveRenderer = renderer())
+            static_cast<RenderSVGResourceFilterPrimitive*>(primitiveRenderer)->primitiveAttributeChanged(attribute);
     }
 
 private:

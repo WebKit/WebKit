@@ -111,7 +111,7 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(Filter* fi
             builder->clearEffects();
             return 0;
         }
-        builder->appendEffectToEffectReferences(effect);
+        builder->appendEffectToEffectReferences(effect, effectElement->renderer());
         effectElement->setStandardAttributes(primitiveBoundingBoxMode, effect.get());
         builder->add(effectElement->result(), effect);
     }
@@ -208,13 +208,13 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     if (!lastEffect)
         return false;
 
-    RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(lastEffect, filterData->filter.get());
+    RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(lastEffect);
     FloatRect subRegion = lastEffect->maxEffectRect();
     // At least one FilterEffect has a too big image size,
     // recalculate the effect sizes with new scale factors.
     if (!fitsInMaximumImageSize(subRegion.size(), scale)) {
         filterData->filter->setFilterResolution(scale);
-        RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(lastEffect, filterData->filter.get());
+        RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(lastEffect);
     }
 
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
@@ -290,16 +290,19 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         // This is the real filtering of the object. It just needs to be called on the
         // initial filtering process. We just take the stored filter result on a
         // second drawing.
-        if (!filterData->builded) {
+        if (!filterData->builded)
             filterData->filter->setSourceImage(filterData->sourceGraphicBuffer.release());
+
+        // Always true if filterData is just built (filterData->builded is false).
+        if (!lastEffect->hasResult()) {
             lastEffect->apply();
 #if !PLATFORM(CG)
             ImageBuffer* resultImage = lastEffect->asImageBuffer();
             if (resultImage)
                 resultImage->transformColorSpace(ColorSpaceLinearRGB, ColorSpaceDeviceRGB);
 #endif
-            filterData->builded = true;
         }
+        filterData->builded = true;
 
         ImageBuffer* resultImage = lastEffect->asImageBuffer();
         if (resultImage) {
@@ -322,6 +325,29 @@ FloatRect RenderSVGResourceFilter::resourceBoundingBox(RenderObject* object)
         return element->filterBoundingBox(object->objectBoundingBox());
 
     return FloatRect();
+}
+
+void RenderSVGResourceFilter::primitiveAttributeChanged(RenderObject* object, const QualifiedName& attribute)
+{
+    HashMap<RenderObject*, FilterData*>::iterator it = m_filter.begin();
+    HashMap<RenderObject*, FilterData*>::iterator end = m_filter.end();
+    SVGFilterPrimitiveStandardAttributes* primitve = static_cast<SVGFilterPrimitiveStandardAttributes*>(object->node());
+
+    for (; it != end; ++it) {
+        FilterData* filterData = it->second;
+        if (!filterData->builded)
+            continue;
+
+        SVGFilterBuilder* builder = filterData->builder.get();
+        FilterEffect* effect = builder->effectByRenderer(object);
+        if (!effect)
+            continue;
+        primitve->setFilterEffectAttribute(effect, attribute);
+        builder->clearResultsRecursive(effect);
+
+        // Repaint the image on the screen.
+        markClientForInvalidation(it->first, RepaintInvalidation);
+    }
 }
 
 }

@@ -68,10 +68,11 @@ FilterEffect* SVGFilterBuilder::getEffectById(const AtomicString& id) const
     return m_namedEffects.get(id).get();
 }
 
-void SVGFilterBuilder::appendEffectToEffectReferences(RefPtr<FilterEffect> effectReference)
+void SVGFilterBuilder::appendEffectToEffectReferences(RefPtr<FilterEffect> effectReference, RenderObject* object)
 {
     // The effect must be a newly created filter effect.
     ASSERT(!m_effectReferences.contains(effectReference));
+    ASSERT(object && !m_effectRenderer.contains(object));
     m_effectReferences.add(effectReference, FilterEffectSet());
 
     FilterEffect* effect = effectReference.get();
@@ -79,7 +80,8 @@ void SVGFilterBuilder::appendEffectToEffectReferences(RefPtr<FilterEffect> effec
 
     // It is not possible to add the same value to a set twice.
     for (unsigned i = 0; i < numberOfInputEffects; ++i)
-        getEffectReferences(effect->inputEffect(i)).add(effect);
+        effectReferences(effect->inputEffect(i)).add(effect);
+    m_effectRenderer.add(object, effectReference.get());
 }
 
 void SVGFilterBuilder::clearEffects()
@@ -87,7 +89,21 @@ void SVGFilterBuilder::clearEffects()
     m_lastEffect = 0;
     m_namedEffects.clear();
     m_effectReferences.clear();
+    m_effectRenderer.clear();
     addBuiltinEffects();
+}
+
+void SVGFilterBuilder::clearResultsRecursive(FilterEffect* effect)
+{
+    if (!effect->hasResult())
+        return;
+
+    effect->clearResult();
+
+    HashSet<FilterEffect*>& effectReferences = this->effectReferences(effect);
+    HashSet<FilterEffect*>::iterator end = effectReferences.end();
+    for (HashSet<FilterEffect*>::iterator it = effectReferences.begin(); it != end; ++it)
+         clearResultsRecursive(*it);
 }
 
 } // namespace WebCore

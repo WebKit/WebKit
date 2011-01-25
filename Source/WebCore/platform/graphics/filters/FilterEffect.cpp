@@ -77,6 +77,16 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
+void FilterEffect::clearResult()
+{
+    if (m_imageBufferResult)
+        m_imageBufferResult.clear();
+    if (m_unmultipliedImageResult)
+        m_unmultipliedImageResult.clear();
+    if (m_premultipliedImageResult)
+        m_premultipliedImageResult.clear();
+}
+
 ImageBuffer* FilterEffect::asImageBuffer()
 {
     if (!hasResult())

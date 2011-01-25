@@ -70,6 +70,12 @@ void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(Attribute* attr)
         return SVGStyledElement::parseMappedAttribute(attr);
 }
 
+void SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute(FilterEffect*, const QualifiedName&)
+{
+    // When all filters support this method, it will be changed to a pure virtual method.
+    ASSERT_NOT_REACHED();
+}
+
 void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledElement::svgAttributeChanged(attrName);

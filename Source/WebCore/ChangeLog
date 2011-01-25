@@ -1,3 +1,66 @@
+2011-01-25  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Dirk Schulze.
+
+        Repaint SVG elements with filter instead of relayout where possible
+        https://bugs.webkit.org/show_bug.cgi?id=52200
+
+        This patch allows repainting of filters, when their
+        attribute changes does not require relayout.
+
+        Existing dynamic-update tests cover this feature.
+
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::clearResult): Clearing the currently stored image
+        before repainting.
+        * platform/graphics/filters/FilterEffect.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGResourceFilter): Not only the filter primitives,
+        but filters should also be detected to allow safe testing and casting.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives): Passing the renderer.
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        determineFilterPrimitiveSubregion does not require the filter anymore.
+        (WebCore::RenderSVGResourceFilter::postApplyResource): Repaint
+        if lastEffect->hasResult() is false.
+        (WebCore::RenderSVGResourceFilter::primitiveAttributeChanged):
+        Searching for all FilterEffects, whose created by the current FilterElement,
+        and clearing all resulting images depending on those FilterEffects.
+        * rendering/svg/RenderSVGResourceFilter.h:
+        (WebCore::RenderSVGResourceFilter::isSVGResourceFilter):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion):
+        The filter argument is unnecessary anymore. But is is still kept as a static
+        member, since the primitive renderer still does not know about the
+        FilterEffect objects.
+        * rendering/svg/RenderSVGResourceFilterPrimitive.h:
+        (WebCore::RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive):
+        (WebCore::RenderSVGResourceFilterPrimitive::primitiveAttributeChanged):
+        Calls RenderSVGResourceFilter::primitiveAttributeChanged.
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::setFilterEffectAttribute):
+        Setting the new attribute value for each FilterEffect.
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        * svg/SVGFEDiffuseLightingElement.h:
+        Calling primitiveAttributeChanged.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute):
+        This function will be removed when all FilterElement implements
+        their setFilterEffectAttribute
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged):
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::appendEffectToEffectReferences): The
+        renderers are assigned to the filter effects.
+        (WebCore::SVGFilterBuilder::clearEffects):
+        (WebCore::SVGFilterBuilder::clearResultsRecursive): Recursively
+        clearing the result images for those filters, whose depend on
+        the starting filter.
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::effectReferences): 'get' is unnecessary
+        (WebCore::SVGFilterBuilder::effectByRenderer): returns the
+        FilterEffect belongs to this RenderObject.
+
 2011-01-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

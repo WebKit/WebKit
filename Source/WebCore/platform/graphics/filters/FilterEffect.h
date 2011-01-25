@@ -53,6 +53,7 @@ public:
     virtual ~FilterEffect();
 
     bool hasResult() const { return m_imageBufferResult || m_unmultipliedImageResult || m_premultipliedImageResult; }
+    void clearResult();
     ImageBuffer* asImageBuffer();
     PassRefPtr<ByteArray> asUnmultipliedImage(const IntRect&);
     PassRefPtr<ByteArray> asPremultipliedImage(const IntRect&);

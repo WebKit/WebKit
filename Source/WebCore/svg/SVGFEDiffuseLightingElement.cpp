@@ -84,15 +84,30 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+void SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    FEDiffuseLighting* diffuseLighting = static_cast<FEDiffuseLighting*>(effect);
+    if (attrName == SVGNames::surfaceScaleAttr)
+        diffuseLighting->setSurfaceScale(surfaceScale());
+    else if (attrName == SVGNames::diffuseConstantAttr)
+        diffuseLighting->setDiffuseConstant(diffuseConstant());
+    else if (attrName == SVGNames::lighting_colorAttr) {
+        RefPtr<RenderStyle> filterStyle = styleForRenderer();
+        diffuseLighting->setLightingColor(filterStyle->svgStyle()->lightingColor());
+    }
+}
+
 void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::surfaceScaleAttr
+    if (attrName == SVGNames::surfaceScaleAttr
         || attrName == SVGNames::diffuseConstantAttr
         || attrName == SVGNames::kernelUnitLengthAttr
         || attrName == SVGNames::lighting_colorAttr)
+        primitiveAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr)
         invalidate();
 }
 
