@@ -29,31 +29,14 @@
 #ifndef SourceProvider_h
 #define SourceProvider_h
 
+#include "SourceProviderCache.h"
 #include "UString.h"
-#include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/TextPosition.h>
 
-
 namespace JSC {
-
-    class SourceProviderCache {
-    public:
-        struct Item {};
-
-        SourceProviderCache() : m_contentByteSize(0) {}
-        ~SourceProviderCache() { deleteAllValues(m_map); }
-        
-        unsigned byteSize() const { return m_contentByteSize + sizeof(*this) + m_map.capacity() * sizeof(Item*); } 
-        void add(int sourcePosition, PassOwnPtr<Item> item, unsigned size) { m_map.add(sourcePosition, item.leakPtr()); m_contentByteSize += size; }
-        const Item* get(int sourcePosition) const { return m_map.get(sourcePosition); }
-
-    private:
-        HashMap<int, Item*> m_map;
-        unsigned m_contentByteSize;
-    };
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:

@@ -1,3 +1,38 @@
+2011-01-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION: Leak in JSParser::Scope::copyCapturedVariablesToVector()
+        https://bugs.webkit.org/show_bug.cgi?id=53061
+         
+        Cache did not know about the subclass so failed to fully delete the items. 
+        Got rid of the subclass and moved the classes to separate files.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * parser/JSParser.cpp:
+        (JSC::JSParser::Scope::saveFunctionInfo):
+        (JSC::JSParser::Scope::restoreFunctionInfo):
+        (JSC::JSParser::findCachedFunctionInfo):
+        (JSC::JSParser::parseFunctionInfo):
+        * parser/SourceProvider.h:
+        * parser/SourceProviderCache.cpp: Added.
+        (JSC::SourceProviderCache::~SourceProviderCache):
+        (JSC::SourceProviderCache::byteSize):
+        * parser/SourceProviderCache.h: Added.
+        (JSC::SourceProviderCache::SourceProviderCache):
+        (JSC::SourceProviderCache::add):
+        (JSC::SourceProviderCache::get):
+        * parser/SourceProviderCacheItem.h: Added.
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        (JSC::SourceProviderCacheItem::approximateByteSize):
+        (JSC::SourceProviderCacheItem::closeBraceToken):
+
 2011-01-25  Marcilio Mendonca  <mamendonca@rim.com>
 
         Reviewed by Darin Adler.

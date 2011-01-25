@@ -202,6 +202,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/parser/ResultType.h \
 	Source/JavaScriptCore/parser/SourceCode.h \
 	Source/JavaScriptCore/parser/SourceProvider.h \
+	Source/JavaScriptCore/parser/SourceProviderCache.cpp \
+	Source/JavaScriptCore/parser/SourceProviderCache.h \
+	Source/JavaScriptCore/parser/SourceProviderCacheItem.h \
 	Source/JavaScriptCore/parser/SyntaxChecker.h \
 	Source/JavaScriptCore/pcre/pcre_compile.cpp \
 	Source/JavaScriptCore/pcre/pcre_exec.cpp \

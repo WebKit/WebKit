@@ -1954,6 +1954,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\parser\SourceProviderCache.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\SourceProviderCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\SourceProviderCacheItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\parser\SyntaxChecker.h"
 				>
 			</File>

@@ -67,6 +67,7 @@ SET(JavaScriptCore_SOURCES
     parser/Nodes.cpp
     parser/Parser.cpp
     parser/ParserArena.cpp
+    parser/SourceProviderCache.cpp
 
     pcre/pcre_compile.cpp
     pcre/pcre_exec.cpp

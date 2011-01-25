@@ -115,6 +115,7 @@ SOURCES += \
     parser/Nodes.cpp \
     parser/ParserArena.cpp \
     parser/Parser.cpp \
+    parser/SourceProviderCache.cpp \
     profiler/Profile.cpp \
     profiler/ProfileGenerator.cpp \
     profiler/ProfileNode.cpp \
