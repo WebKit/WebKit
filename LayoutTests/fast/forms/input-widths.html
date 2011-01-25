@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">Text field types should have the same default widths.</p>
+<div id="console"></div>
+
+<div id=parent>
+<input type=text id=text>
+
+<input type=email id=email>
+<input type=number id=number>
+<input type=password id=password>
+<input type=tel id=tel>
+<input type=url id=url>
+
+<input type=color id=color>
+<input type=date id=date>
+<input type=datetime id=datetime>
+<input type=datetime-local id=datetimelocal>
+<input type=month id=month>
+<input type=time id=time>
+<input type=week id=week>
+</div>
+
+<script>
+var baseWidth = document.getElementById('text').offsetWidth;
+
+shouldBe('document.getElementById("email").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("number").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("password").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("tel").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("url").offsetWidth', 'baseWidth');
+
+// type=search is not tested intentionally.
+
+// The folloiwng types should be removed when dedicated UIs are implemented.
+shouldBe('document.getElementById("color").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("date").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("datetime").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("datetimelocal").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("month").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("time").offsetWidth', 'baseWidth');
+shouldBe('document.getElementById("week").offsetWidth', 'baseWidth');
+
+document.getElementById('parent').innerHTML = '';
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

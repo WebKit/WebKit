@@ -2,6 +2,30 @@
 
         Reviewed by Dimitri Glazkov.
 
+        [Windows] Textfield <input>s have different widths.
+        https://bugs.webkit.org/show_bug.cgi?id=48405
+
+        - Apply the padding override for type=text to other textfield types too.
+        - Reset margin value of outer spin button, which is not used in Windows.
+        - Don't add inner spin button width to the preferred text field width.
+          Text fields should have the identical widths regardless of the
+          existence of spin buttons.
+
+        Test: fast/forms/input-widths.html
+
+        * css/themeWin.css:
+        (input[type="week"]):
+        (input[type="week"]:disabled):
+        (input[type="search"]::-webkit-search-cancel-button):
+        (input::-webkit-outer-spin-button):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        Don't add inner spin button width to the preferred width.
+
+2011-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
         Some bugs of search cancel button and spin button about state change in
         an event handler.
         https://bugs.webkit.org/show_bug.cgi?id=46950

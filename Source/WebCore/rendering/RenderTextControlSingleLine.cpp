@@ -560,9 +560,6 @@ int RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
         result += cancelRenderer->borderLeft() + cancelRenderer->borderRight() +
                   cancelRenderer->paddingLeft() + cancelRenderer->paddingRight();
 
-    if (RenderBox* spinRenderer = m_innerSpinButton ? m_innerSpinButton->renderBox() : 0)
-        result += spinRenderer->minPreferredLogicalWidth();
-
 #if ENABLE(INPUT_SPEECH)
     if (RenderBox* speechRenderer = m_speechButton ? m_speechButton->renderBox() : 0) {
         result += speechRenderer->borderLeft() + speechRenderer->borderRight() +
