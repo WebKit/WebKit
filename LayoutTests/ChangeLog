@@ -1,3 +1,9 @@
+2011-01-25  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, remove passing chromium win tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

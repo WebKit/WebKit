@@ -3111,26 +3111,7 @@ BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 
 // Regressions from r76442.
-BUGTONY WIN : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-03-t.svg = TEXT
 BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-24-t.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/fonts-desc-02-t.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/fonts-elem-05-t.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/fonts-elem-06-t.svg = TEXT
 BUGTONY WIN : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/masking-mask-01-b.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/render-groups-01-b.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/render-groups-03-t.svg = TEXT
-BUGTONY WIN : svg/W3C-SVG-1.1/text-text-04-t.svg = TEXT
-BUGTONY WIN : svg/batik/text/xmlSpace.svg = TEXT
-BUGTONY WIN : svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html = TEXT
-BUGTONY WIN : svg/text/text-hkern.svg = TEXT
-BUGTONY WIN : svg/text/text-vkern-on-horizontal-text.svg = TEXT
 BUGTONY WIN : svg/custom/svg-fonts-in-html.html = IMAGE+TEXT
 BUGTONY WIN : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT
-BUGTONY WIN : svg/text/text-hkern-on-vertical-text.svg = IMAGE+TEXT
-BUGTONY WIN : svg/text/text-text-04-t.svg = IMAGE+TEXT
-BUGTONY WIN : svg/text/text-vkern.svg = IMAGE+TEXT
