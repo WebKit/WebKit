@@ -155,6 +155,7 @@ private:
                       // each word break we accumulate error. This is the
                       // number of pixels that we are behind so far.
     int m_letterSpacing; // pixels to be added after each glyph.
+    String m_smallCapsString; // substring of m_run converted to small caps.
 };
 
 } // namespace WebCore

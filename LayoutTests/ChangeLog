@@ -1,3 +1,17 @@
+2011-01-25  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Support small caps in complex text on linux
+        https://bugs.webkit.org/show_bug.cgi?id=53051
+
+        * platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.png: Added.
+        * platform/chromium-linux/fast/text/atsui-multiple-renderers-expected.txt: Added.
+        * platform/chromium-linux/fast/text/atsui-small-caps-punctuation-size-expected.checksum: Added.
+        * platform/chromium-linux/fast/text/atsui-small-caps-punctuation-size-expected.png: Added.
+        * platform/chromium/test_expectations.txt: Re-enable 2 tests on linux.
+
 2011-01-25  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix: add failing test to gtk/Skipped.

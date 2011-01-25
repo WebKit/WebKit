@@ -551,7 +551,7 @@ BUGCR8941 WIN : http/tests/xmlhttprequest/web-apps/012.html = FAIL
 // Mostly this is because of international text rendering differences.
 
 // Incrorect results, in incorrect international font metrics.
-BUGCR20521 LINUX WIN : fast/text/atsui-multiple-renderers.html = FAIL
+BUGCR20521 WIN : fast/text/atsui-multiple-renderers.html = FAIL
 BUGCR20521 LINUX WIN : fast/text/atsui-pointtooffset-calls-cg.html = FAIL TIMEOUT
 BUGCR20521 LINUX WIN : fast/text/atsui-rtl-override-selection.html = FAIL
 
@@ -1111,7 +1111,6 @@ BUGCR10342 LINUX MAC : fast/loader/file-URL-with-port-number.html = TIMEOUT
 // code enabled?
 BUGCR10343 LINUX : fast/text/atsui-kerning-and-ligatures.html = FAIL
 BUGCR10343 LINUX RELEASE : fast/text/atsui-partial-selection.html = IMAGE
-BUGCR10343 LINUX : fast/text/atsui-small-caps-punctuation-size.html = FAIL
 
 // Started timing out with agl's complext text change.  Page is verrry slow.
 BUGCR10343 SKIP LINUX : fast/text/large-text-composed-char.html = TIMEOUT FAIL

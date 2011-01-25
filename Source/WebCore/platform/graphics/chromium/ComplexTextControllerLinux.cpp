@@ -146,6 +146,9 @@ void ComplexTextController::reset(unsigned offset)
 // TextRun has been reached.
 bool ComplexTextController::nextScriptRun()
 {
+    // Ensure we're not pointing at the small caps buffer.
+    m_item.string = m_run.characters();
+
     if (!hb_utf16_script_run_next(&m_numCodePoints, &m_item.item, m_run.characters(), m_run.length(), &m_indexOfNextScriptRun))
         return false;
 
@@ -157,10 +160,14 @@ bool ComplexTextController::nextScriptRun()
     // So we allow that to run first, then do a second pass over the range it
     // found and take the largest subregion that stays within a single font.
     m_currentFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
+    bool isFirstCharacterLowerCase = u_islower(m_item.string[m_item.item.pos]);
     unsigned endOfRun;
     for (endOfRun = 1; endOfRun < m_item.item.length; ++endOfRun) {
-        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos + endOfRun], false).fontData;
+        UChar nextCharacter = m_item.string[m_item.item.pos + endOfRun];
+        const SimpleFontData* nextFontData = m_font->glyphDataForCharacter(nextCharacter, false).fontData;
         if (nextFontData != m_currentFontData)
+            break;
+        if (m_font->isSmallCaps() && isFirstCharacterLowerCase != u_islower(nextCharacter))
             break;
     }
     m_item.item.length = endOfRun;
@@ -184,7 +191,18 @@ float ComplexTextController::widthOfFullRun()
 
 void ComplexTextController::setupFontForScriptRun()
 {
-    const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false).fontData;
+    FontDataVariant fontDataVariant = AutoVariant;
+    // Determine if this script run needs to be converted to small caps.
+    // nextScriptRun() will always send us a run of the same case, so we only
+    // need to check the first character's case.
+    if (m_font->isSmallCaps() && u_islower(m_item.string[m_item.item.pos])) {
+        m_smallCapsString = String(m_run.data(m_item.item.pos), m_item.item.length);
+        m_smallCapsString.makeUpper();
+        m_item.string = m_smallCapsString.characters();
+        m_item.item.pos = 0;
+        fontDataVariant = SmallCapsVariant;
+    }
+    const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, fontDataVariant).fontData;
     const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
     m_item.face = platformData.harfbuzzFace();
     void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
