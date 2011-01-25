@@ -17,7 +17,7 @@ var test = function()
 
     function step2(event)
     {
-        var script = WebInspector.debuggerModel.scriptForSourceID(event.data);
+        var script = event.data;
         if (script.sourceURL !== WebInspector.mainResource.url)
             return;
         scripts.push(script);

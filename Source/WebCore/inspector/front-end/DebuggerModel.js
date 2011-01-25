@@ -247,7 +247,7 @@ WebInspector.DebuggerModel.prototype = {
     {
         var script = new WebInspector.Script(sourceID, sourceURL, "", lineOffset, columnOffset, length, undefined, undefined, scriptWorldType);
         this._scripts[sourceID] = script;
-        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, sourceID);
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, script);
     },
 
     _failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)

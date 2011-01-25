@@ -61,6 +61,11 @@ WebInspector.NetworkManager.prototype = {
         var mainResource = this._dispatcher._addFramesRecursively(mainFramePayload);
         WebInspector.mainResource = mainResource;
         mainResource.isMainResource = true;
+    },
+
+    inflightResourceForURL: function(url)
+    {
+        return this._dispatcher._inflightResourcesByURL[url];
     }
 }
 
@@ -69,7 +74,8 @@ WebInspector.NetworkManager.prototype.__proto__ = WebInspector.Object.prototype;
 WebInspector.NetworkDispatcher = function(resourceTreeModel, manager)
 {
     this._manager = manager;
-    this._inflightResources = {};
+    this._inflightResourcesById = {};
+    this._inflightResourcesByURL = {};
     this._resourceTreeModel = resourceTreeModel;
     this._lastIdentifierForCachedResource = 0;
     InspectorBackend.registerDomainDispatcher("Network", this);
@@ -128,7 +134,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     willSendRequest: function(identifier, time, request, redirectResponse)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -151,7 +157,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     markResourceAsCached: function(identifier)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -161,7 +167,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didReceiveResponse: function(identifier, time, resourceType, response)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -176,7 +182,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didReceiveContentLength: function(identifier, time, lengthReceived)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -188,7 +194,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didFinishLoading: function(identifier, finishTime)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -197,7 +203,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didFailLoading: function(identifier, time, localizedDescription)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -256,7 +262,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     willSendWebSocketHandshakeRequest: function(identifier, time, request)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -270,7 +276,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didReceiveWebSocketHandshakeResponse: function(identifier, time, response)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
@@ -285,7 +291,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didCloseWebSocket: function(identifier, time)
     {
-        var resource = this._inflightResources[identifier];
+        var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
         this._finishResource(resource, time);
@@ -293,17 +299,11 @@ WebInspector.NetworkDispatcher.prototype = {
 
     _appendRedirect: function(identifier, time, redirectURL)
     {
-        var originalResource = this._inflightResources[identifier];
+        var originalResource = this._inflightResourcesById[identifier];
         var previousRedirects = originalResource.redirects || [];
         originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
         delete originalResource.redirects;
         this._finishResource(originalResource, time);
-        // We bound resource early, but it happened to be a redirect and won't make it through to
-        // the resource tree -- so unbind it.
-        // FIXME: we should bind upon adding to the tree only (encapsulated into ResourceTreeModel),
-        // Script debugger should do explicit late binding on its own.
-        this._resourceTreeModel.unbindResourceURL(originalResource);
-        
         var newResource = this._createResource(identifier, redirectURL, originalResource.loader, originalResource.stackTrace);
         newResource.redirects = previousRedirects.concat(originalResource);
         return newResource;
@@ -311,7 +311,8 @@ WebInspector.NetworkDispatcher.prototype = {
 
     _startResource: function(resource)
     {
-        this._inflightResources[resource.identifier] = resource;
+        this._inflightResourcesById[resource.identifier] = resource;
+        this._inflightResourcesByURL[resource.url] = resource;
         this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceStarted, resource);
     },
 
@@ -325,7 +326,8 @@ WebInspector.NetworkDispatcher.prototype = {
         resource.endTime = finishTime;
         resource.finished = true;
         this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceFinished, resource);
-        delete this._inflightResources[resource.identifier];
+        delete this._inflightResourcesById[resource.identifier];
+        delete this._inflightResourcesByURL[resource.url];
     },
 
     _addFramesRecursively: function(framePayload)
@@ -364,10 +366,8 @@ WebInspector.NetworkDispatcher.prototype = {
     {
         var resource = new WebInspector.Resource(identifier, url);
         resource.loader = loader;
-        if (loader) {
+        if (loader)
             resource.documentURL = loader.url;
-            this._resourceTreeModel.bindResourceURL(resource);
-        }
         resource.stackTrace = stackTrace;
         return resource;
     }

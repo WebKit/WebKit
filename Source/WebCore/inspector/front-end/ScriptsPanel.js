@@ -242,9 +242,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _parsedScriptSource: function(event)
     {
-        var sourceID = event.data;
-        var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
-        this._addScript(script);
+        this._addScript(event.data);
     },
 
     _failedToParseScriptSource: function(event)
@@ -275,7 +273,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _addScript: function(script)
     {
-        var resource = WebInspector.resourceForURL(script.sourceURL);
+        var resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
         if (resource) {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.

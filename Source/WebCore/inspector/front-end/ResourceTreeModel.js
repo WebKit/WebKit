@@ -82,6 +82,7 @@ WebInspector.ResourceTreeModel.prototype = {
             this._resourcesByFrameId[frameId] = resourcesForFrame;
         }
         resourcesForFrame.push(resource);
+        this._bindResourceURL(resource);
 
         WebInspector.panels.resources.addResourceToFrame(frameId, resource);
     },
@@ -129,7 +130,7 @@ WebInspector.ResourceTreeModel.prototype = {
         return entry;
     },
 
-    bindResourceURL: function(resource)
+    _bindResourceURL: function(resource)
     {
         var resourceForURL = this._resourcesByURL[resource.url];
         if (!resourceForURL)
@@ -169,7 +170,7 @@ WebInspector.ResourceTreeModel.prototype = {
                 preservedResourcesForFrame.push(resource);
                 continue;
             }
-            this.unbindResourceURL(resource);
+            this._unbindResourceURL(resource);
         }
 
         delete this._resourcesByFrameId[frameId];
@@ -195,7 +196,7 @@ WebInspector.ResourceTreeModel.prototype = {
         return false;
     },
 
-    unbindResourceURL: function(resource)
+    _unbindResourceURL: function(resource)
     {
         var resourceForURL = this._resourcesByURL[resource.url];
         if (!resourceForURL)

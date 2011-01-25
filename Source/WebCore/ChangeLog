@@ -1,3 +1,46 @@
+2011-01-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: bind resources to URLs upon adding them into the tree.
+        https://bugs.webkit.org/show_bug.cgi?id=53013
+
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.selectorsCallback):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged.callback):
+        (WebInspector.CSSStyleModel.prototype._styleSheetChanged):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype._processCachedResources):
+        (WebInspector.NetworkManager.prototype.inflightResourceForURL):
+        (WebInspector.NetworkDispatcher):
+        (WebInspector.NetworkDispatcher.prototype.willSendRequest):
+        (WebInspector.NetworkDispatcher.prototype.markResourceAsCached):
+        (WebInspector.NetworkDispatcher.prototype.didReceiveResponse):
+        (WebInspector.NetworkDispatcher.prototype.didReceiveContentLength):
+        (WebInspector.NetworkDispatcher.prototype.didFinishLoading):
+        (WebInspector.NetworkDispatcher.prototype.didFailLoading):
+        (WebInspector.NetworkDispatcher.prototype.willSendWebSocketHandshakeRequest):
+        (WebInspector.NetworkDispatcher.prototype.didReceiveWebSocketHandshakeResponse):
+        (WebInspector.NetworkDispatcher.prototype.didCloseWebSocket):
+        (WebInspector.NetworkDispatcher.prototype._appendRedirect):
+        (WebInspector.NetworkDispatcher.prototype._startResource):
+        (WebInspector.NetworkDispatcher.prototype._finishResource):
+        (WebInspector.NetworkDispatcher.prototype._createResource):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype.addResourceToFrame):
+        (WebInspector.ResourceTreeModel.prototype._bindResourceURL):
+        (WebInspector.ResourceTreeModel.prototype._clearResources):
+        (WebInspector.ResourceTreeModel.prototype._unbindResourceURL):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.canShowSourceLine):
+        (WebInspector.ResourcesPanel.prototype.showSourceLine):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._parsedScriptSource):
+        (WebInspector.ScriptsPanel.prototype._addScript):
+
 2011-01-25  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

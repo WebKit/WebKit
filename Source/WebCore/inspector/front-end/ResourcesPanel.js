@@ -338,12 +338,12 @@ WebInspector.ResourcesPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        return !!WebInspector.resourceTreeModel.resourceForURL(url);
+        return !!WebInspector.resourceForURL(url);
     },
 
     showSourceLine: function(url, line)
     {
-        var resource = WebInspector.resourceTreeModel.resourceForURL(url);
+        var resource = WebInspector.resourceForURL(url);
         if (resource.type === WebInspector.Resource.Type.XHR) {
             // Show XHRs in the network panel only.
             if (WebInspector.panels.network && WebInspector.panels.network.canShowSourceLine(url, line)) {
@@ -352,7 +352,7 @@ WebInspector.ResourcesPanel.prototype = {
             }
             return;
         }
-        this.showResource(WebInspector.resourceTreeModel.resourceForURL(url), line);
+        this.showResource(WebInspector.resourceForURL(url), line);
     },
 
     showResource: function(resource, line)
