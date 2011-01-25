@@ -221,7 +221,7 @@ SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
     "ret" "\n"
 );
 
-#elif COMPILER(GCC) && CPU(ARM_THUMB2)
+#elif (COMPILER(GCC) || COMPILER(RVCT)) && CPU(ARM_THUMB2)
 
 #define THUNK_RETURN_ADDRESS_OFFSET      0x38
 #define PRESERVED_RETURN_ADDRESS_OFFSET  0x3C
