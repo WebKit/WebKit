@@ -37,10 +37,9 @@ public:
     static PassRefPtr<Int32Array> create(int* array, unsigned length);
     static PassRefPtr<Int32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
-#if !COMPILER(RVCT)
-    using TypedArrayBase<int>::set;
-    using IntegralTypedArrayBase<int>::set;
-#endif
+    // Can’t use "using" here due to a bug in the RVCT compiler.
+    void set(TypedArrayBase<int>* array, unsigned offset, ExceptionCode& ec) { return TypedArrayBase<int>::set(array, offset, ec); }
+    void set(unsigned index, double value) { return IntegralTypedArrayBase<int>::set(index, value); }
 
     PassRefPtr<Int32Array> slice(int start) const;
     PassRefPtr<Int32Array> slice(int start, int end) const;

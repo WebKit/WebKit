@@ -1,3 +1,24 @@
+2011-01-25  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Symbian] RVCT fails to compile [U|I]nt[8|16|32]Array.h
+        https://bugs.webkit.org/show_bug.cgi?id=51873
+        
+        Replace the using declaration, because it doesn't compile on RVCT, and WINSCW has the same issue.
+        No new functionality so no new tests.
+
+        * html/canvas/Int32Array.h:
+        (WebCore::Int32Array::set):
+        * html/canvas/Int8Array.h:
+        (WebCore::Int8Array::set):
+        * html/canvas/Uint16Array.h:
+        (WebCore::Uint16Array::set):
+        * html/canvas/Uint32Array.h:
+        (WebCore::Uint32Array::set):
+        * html/canvas/Uint8Array.h:
+        (WebCore::Uint8Array::set):
+
 2011-01-25  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Dirk Schulze.
