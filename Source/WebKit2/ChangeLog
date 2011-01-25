@@ -1,5 +1,12 @@
 2011-01-24  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+        
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+
+2011-01-24  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Reset the page scale factor on standard frame loads

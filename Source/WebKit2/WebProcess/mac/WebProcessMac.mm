@@ -135,7 +135,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
         "WEBKIT2_FRAMEWORK_DIR", frameworkPath,
         "DARWIN_USER_TEMP_DIR", (const char*)tmpRealPath,
         "DARWIN_USER_CACHE_DIR", (const char*)cacheRealPath,
-        "WEBKIT_DATABASE_DIR", (const char*)parameters.databaseDirectory.data(),
+        "WEBKIT_DATABASE_DIR", (const char*)[(NSString *)parameters.databaseDirectory fileSystemRepresentation],
         "NSURL_CACHE_DIR", (const char*)parameters.nsURLCachePath.data(),
         "UI_PROCESS_BUNDLE_RESOURCE_DIR", (const char*)parameters.uiProcessBundleResourcePath.data(),
         NULL
