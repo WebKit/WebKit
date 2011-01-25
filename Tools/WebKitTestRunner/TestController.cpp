@@ -29,8 +29,8 @@
 #include "StringFunctions.h"
 #include "TestInvocation.h"
 #include <cstdio>
-#include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKContextPrivate.h>
+#include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -104,6 +104,13 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
     return true;
 }
 
+static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long, const void*)
+{
+    static const unsigned long long defaultQuota = 5 * 1024 * 1024;    
+    return defaultQuota;
+}
+
+
 void TestController::runModal(WKPageRef page, const void* clientInfo)
 {
     runModal(static_cast<PlatformWebView*>(const_cast<void*>(clientInfo)));
@@ -149,7 +156,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         runBeforeUnloadConfirmPanel,
         0, // didDraw
         0, // pageDidScroll
-        0, // exceededDatabaseQuota
+        exceededDatabaseQuota,
         0, // runOpenPanel
         0, // decidePolicyForGeolocationPermissionRequest
         0, // headerHeight
@@ -281,7 +288,7 @@ void TestController::initialize(int argc, const char* argv[])
         runBeforeUnloadConfirmPanel,
         0, // didDraw
         0, // pageDidScroll
-        0, // exceededDatabaseQuota
+        exceededDatabaseQuota,
         0, // runOpenPanel
         0, // decidePolicyForGeolocationPermissionRequest
         0, // headerHeight

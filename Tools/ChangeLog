@@ -1,5 +1,17 @@
 2011-01-24  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Implement database quota callback to fix storage tests on WebKit2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=53064
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::exceededDatabaseQuota):
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+
+2011-01-24  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Use designated temp directory for the database for WebKit2
