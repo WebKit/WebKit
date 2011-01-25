@@ -171,6 +171,11 @@ NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
     return NPERR_NO_ERROR;
 }
 
+mach_port_t NetscapePlugin::compositingRenderServerPort()
+{
+    return m_pluginController->compositingRenderServerPort();
+}
+
 #ifndef NP_NO_CARBON
 typedef HashMap<WindowRef, NetscapePlugin*> WindowMap;
 

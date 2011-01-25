@@ -56,6 +56,8 @@ public:
     NPBool convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double& destX, double& destY, NPCoordinateSpace destSpace);
     NPError popUpContextMenu(NPMenu*);
 
+    mach_port_t compositingRenderServerPort();
+
 #ifndef NP_NO_CARBON
     WindowRef windowRef() const;
     bool isWindowActive() const { return m_windowHasFocus; }

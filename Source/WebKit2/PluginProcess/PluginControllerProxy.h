@@ -90,6 +90,7 @@ private:
 
 #if PLATFORM(MAC)
     virtual void setComplexTextInputEnabled(bool);
+    virtual mach_port_t compositingRenderServerPort();
 #endif
 
     virtual String proxiesForURL(const String&);

@@ -1,3 +1,31 @@
+2011-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        need a way to request the host CALayer render server port
+        https://bugs.webkit.org/show_bug.cgi?id=53101
+        <rdar://problem/8913620>
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::compositingRenderServerPort):
+        Get the render server port from the plug-in process.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Call NetscapePlugin::compositingRenderServerPort.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::compositingRenderServerPort):
+        Call PluginController::compositingRenderServerPort.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::compositingRenderServerPort):
+        Get the render server port from the web process.
+
+        * WebProcess/Plugins/PluginView.h:
+        Add compositingRenderServerPort.
+
 2011-01-25  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Dan Bernstein.

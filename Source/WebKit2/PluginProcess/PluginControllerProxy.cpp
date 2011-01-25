@@ -249,6 +249,11 @@ void PluginControllerProxy::setComplexTextInputEnabled(bool complexTextInputEnab
     m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputEnabled(complexTextInputEnabled), m_pluginInstanceID);
 }
 
+mach_port_t PluginControllerProxy::compositingRenderServerPort()
+{
+    return PluginProcess::shared().compositingRenderServerPort();
+}
+
 String PluginControllerProxy::proxiesForURL(const String& urlString)
 {
     String proxyString;

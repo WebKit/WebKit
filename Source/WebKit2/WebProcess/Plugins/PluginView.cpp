@@ -30,6 +30,7 @@
 #include "WebEvent.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/DocumentLoader.h>
@@ -959,6 +960,12 @@ void PluginView::setComplexTextInputEnabled(bool complexTextInputEnabled)
 {
     m_webPage->send(Messages::WebPageProxy::SetComplexTextInputEnabled(m_plugin->pluginComplexTextInputIdentifier(), complexTextInputEnabled));
 }
+
+mach_port_t PluginView::compositingRenderServerPort()
+{
+    return WebProcess::shared().compositingRenderServerPort();
+}
+
 #endif
     
 String PluginView::proxiesForURL(const String& urlString)

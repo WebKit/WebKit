@@ -91,6 +91,9 @@ public:
 #if PLATFORM(MAC)
     // Tells the controller that complex text input be enabled or disabled for the plug-in.
     virtual void setComplexTextInputEnabled(bool) = 0;
+
+    // Returns the mach port of the compositing render server.
+    virtual mach_port_t compositingRenderServerPort() = 0;
 #endif
 
     // Returns the proxies for the given URL or null on failure.
