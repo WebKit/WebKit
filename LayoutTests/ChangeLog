@@ -1,3 +1,9 @@
+2011-01-25  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, mark inspector/debugger-scripts.html as failing on chromium linux.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-01-21  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Darin Adler.

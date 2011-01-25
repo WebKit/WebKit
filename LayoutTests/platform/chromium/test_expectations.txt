@@ -3107,3 +3107,5 @@ BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
 
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
+
+BUGWK53112 LINUX : inspector/debugger-scripts.html = TIMEOUT
