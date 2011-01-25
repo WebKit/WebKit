@@ -1,3 +1,77 @@
+2011-01-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Update Snow Leopard svg/ pixel test baselines, to make run-webkit-tests -p pass again with --tolerance 0.
+        Contains only marginal differences, or updates pixel test results that were forgotten to update.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-06-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-06-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-07-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-07-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-01-t-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-use-01-t-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.checksum:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.png:
+        * platform/mac/svg/custom/foreign-object-skew-expected.checksum:
+        * platform/mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/mac/svg/custom/image-rescale-expected.checksum:
+        * platform/mac/svg/custom/image-rescale-expected.png:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.checksum:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.checksum:
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop-expected.png:
+        * platform/mac/svg/filters/feComposite-expected.checksum:
+        * platform/mac/svg/filters/feComposite-expected.png:
+        * platform/mac/svg/filters/filter-rounding-issues-expected.checksum:
+        * platform/mac/svg/filters/filter-rounding-issues-expected.png:
+        * platform/mac/svg/filters/filteredImage-expected.checksum:
+        * platform/mac/svg/filters/filteredImage-expected.png:
+        * platform/mac/svg/repaint/filter-repaint-expected.checksum:
+        * platform/mac/svg/repaint/filter-repaint-expected.png:
+        * platform/mac/svg/text/text-text-05-t-expected.checksum:
+        * platform/mac/svg/text/text-text-05-t-expected.png:
+        * platform/mac/svg/text/text-text-06-t-expected.checksum:
+        * platform/mac/svg/text/text-text-06-t-expected.png:
+
 2011-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, add bug url for failing test on GTK.
