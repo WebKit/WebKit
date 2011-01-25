@@ -5605,3 +5605,12 @@ svg/text/text-hkern-on-vertical-text.svg
 svg/text/text-hkern.svg
 svg/text/text-vkern-on-horizontal-text.svg
 svg/text/text-vkern.svg
+
+# This media test seems to time out.
+# https://bugs.webkit.org/show_bug.cgi?id=53056
+media/unsupported-rtsp.html
+
+# These two crash after r76555.
+# https://bugs.webkit.org/show_bug.cgi?id=53057
+http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
+http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync.html
