@@ -1,7 +1,7 @@
-!IF !defined(BUILDSTYLE)
-BUILDSTYLE=Release
-!ELSEIF "$(BUILDSTYLE)"=="DEBUG"
+!IF defined(BUILDSTYLE) && "$(BUILDSTYLE)"=="DEBUG"
 BUILDSTYLE=Debug_All
+!ELSE
+BUILDSTYLE=Release_PGO
 !ENDIF
 
 install:
@@ -10,8 +10,7 @@ install:
     set WebKitOutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
     set WebKitVSPropsRedirectionDir=$(SRCROOT)\AppleInternal\tools\vsprops\OpenSource\1\2\3\4\ 
-!IF "$(BUILDSTYLE)"=="Release"
-    set BUILDSTYLE=Release_PGO
+!IF "$(BUILDSTYLE)"=="Release_PGO"
     devenv "JavaScriptCoreSubmit.sln" /rebuild $(BUILDSTYLE)
     set PATH=$(SYSTEMDRIVE)\cygwin\bin;$(PATH)
     xcopy "$(SRCROOT)\AppleInternal\tests\SunSpider\*" "%ConfigurationBuildDir%\tests\SunSpider" /e/v/i/h/y
