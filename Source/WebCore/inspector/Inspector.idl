@@ -242,8 +242,6 @@ module core {
         [domain=Inspector] void enableDebugger(in boolean always);
         [domain=Inspector] void disableDebugger(in boolean always);
 
-        [domain=Inspector] void setAllBrowserBreakpoints(in Object breakpoints);
-
         [notify, domain=Debugger] void debuggerWasEnabled();
         [notify, domain=Debugger] void debuggerWasDisabled();
 
@@ -253,9 +251,11 @@ module core {
         [domain=Debugger] void activateBreakpoints();
         [domain=Debugger] void deactivateBreakpoints();
 
+        [domain=Debugger] void setAllJavaScriptBreakpoints(in Object breakpoints);
         [domain=Debugger] void setBreakpoint(in Object breakpoint, out String breakpointId, out long actualLineNumber, out long actualColumnNumber);
         [domain=Debugger] void removeBreakpoint(in String breakpointId);
 
+        [domain=BrowserDebugger] void setAllBrowserBreakpoints(in Object breakpoints);
         [domain=BrowserDebugger] void setDOMBreakpoint(in long nodeId, in long type);
         [domain=BrowserDebugger] void removeDOMBreakpoint(in long nodeId, in long type);
         [domain=BrowserDebugger] void setEventListenerBreakpoint(in String eventName);

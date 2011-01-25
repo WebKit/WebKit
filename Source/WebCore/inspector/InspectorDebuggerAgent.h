@@ -62,6 +62,9 @@ public:
 
     static bool isDebuggerAlwaysEnabled();
 
+    void setAllJavaScriptBreakpoints(PassRefPtr<InspectorObject>);
+    void inspectedURLChanged(const String& url);
+
     // Part of the protocol.
     void activateBreakpoints();
     void deactivateBreakpoints();
@@ -82,8 +85,6 @@ public:
     void evaluateOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, const String& objectGroup, RefPtr<InspectorValue>* result);
     void getCompletionsOnCallFrame(PassRefPtr<InspectorObject> callFrameId, const String& expression, bool includeInspectorCommandLineAPI, RefPtr<InspectorValue>* result);
 
-    void clearForPageNavigation();
-
 private:
     InspectorDebuggerAgent(InspectorAgent*, InspectorFrontend*);
 
@@ -94,6 +95,7 @@ private:
     virtual void didPause(ScriptState*);
     virtual void didContinue();
 
+    void restoreBreakpoints(const String& inspectedURL);
     void restoreBreakpoint(const String& sourceID, const ScriptBreakpoint&);
 
     typedef HashMap<String, Vector<String> > URLToSourceIDsMap;
@@ -109,6 +111,7 @@ private:
     InspectedURLToBreakpointsMap m_stickyBreakpoints;
     RefPtr<InspectorObject> m_breakProgramDetails;
     bool m_javaScriptPauseScheduled;
+    bool m_breakpointsRestored;
 };
 
 } // namespace WebCore

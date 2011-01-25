@@ -34,6 +34,7 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorFrontend.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "PlatformString.h"
 #include "ScriptDebugServer.h"
@@ -55,6 +56,7 @@ InspectorDebuggerAgent::InspectorDebuggerAgent(InspectorAgent* inspectorAgent, I
     , m_frontend(frontend)
     , m_pausedScriptState(0)
     , m_javaScriptPauseScheduled(false)
+    , m_breakpointsRestored(false)
 {
 }
 
@@ -77,6 +79,54 @@ void InspectorDebuggerAgent::activateBreakpoints()
 void InspectorDebuggerAgent::deactivateBreakpoints()
 {
     ScriptDebugServer::shared().deactivateBreakpoints();
+}
+
+void InspectorDebuggerAgent::setAllJavaScriptBreakpoints(PassRefPtr<InspectorObject> breakpoints)
+{
+    m_inspectorAgent->state()->setObject(InspectorState::javaScriptBreakpoints, breakpoints);
+    if (!m_breakpointsRestored) {
+        restoreBreakpoints(m_inspectorAgent->inspectedURLWithoutFragment());
+        m_breakpointsRestored = true;
+    }
+}
+
+void InspectorDebuggerAgent::inspectedURLChanged(const String& url)
+{
+    m_scriptIDToContent.clear();
+    m_urlToSourceIDs.clear();
+    restoreBreakpoints(url);
+}
+
+void InspectorDebuggerAgent::restoreBreakpoints(const String& inspectedURL)
+{
+    m_stickyBreakpoints.clear();
+
+    RefPtr<InspectorObject> allBreakpoints = m_inspectorAgent->state()->getObject(InspectorState::javaScriptBreakpoints);
+    RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(inspectedURL);
+    if (!breakpoints)
+        return;
+    for (unsigned i = 0; i < breakpoints->length(); ++i) {
+        RefPtr<InspectorObject> breakpoint = breakpoints->get(i)->asObject();
+        if (!breakpoint)
+            continue;
+        String url;
+        if (!breakpoint->getString("url", &url))
+            continue;
+        double lineNumber;
+        if (!breakpoint->getNumber("lineNumber", &lineNumber))
+            continue;
+        double columnNumber;
+        if (!breakpoint->getNumber("columnNumber", &columnNumber))
+            return;
+        String condition;
+        if (!breakpoint->getString("condition", &condition))
+            continue;
+        bool enabled;
+        if (!breakpoint->getBoolean("enabled", &enabled))
+            continue;
+        ScriptBreakpoint scriptBreakpoint((long) lineNumber, (long) columnNumber, condition, enabled);
+        setStickyBreakpoint(url, scriptBreakpoint);
+    }
 }
 
 void InspectorDebuggerAgent::setStickyBreakpoint(const String& url, const ScriptBreakpoint& breakpoint)
@@ -211,13 +261,6 @@ void InspectorDebuggerAgent::getCompletionsOnCallFrame(PassRefPtr<InspectorObjec
     InjectedScript injectedScript = m_inspectorAgent->injectedScriptHost()->injectedScriptForObjectId(callFrameId.get());
     if (!injectedScript.hasNoValue())
         injectedScript.getCompletionsOnCallFrame(callFrameId, expression, includeInspectorCommandLineAPI, result);
-}
-
-void InspectorDebuggerAgent::clearForPageNavigation()
-{
-    m_scriptIDToContent.clear();
-    m_urlToSourceIDs.clear();
-    m_stickyBreakpoints.clear();
 }
 
 PassRefPtr<InspectorValue> InspectorDebuggerAgent::currentCallFrames()

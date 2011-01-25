@@ -1,3 +1,36 @@
+2011-01-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: debugger and browser debugger agents should manage sticky breakpoints independently.
+        https://bugs.webkit.org/show_bug.cgi?id=52999
+
+        * inspector/Inspector.idl:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::enableDebugger):
+        (WebCore::InspectorAgent::inspectedURLWithoutFragment):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorBrowserDebuggerAgent.cpp:
+        (WebCore::InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints):
+        (WebCore::InspectorBrowserDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorBrowserDebuggerAgent::restoreStickyBreakpoint):
+        * inspector/InspectorBrowserDebuggerAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::setAllJavaScriptBreakpoints):
+        (WebCore::InspectorDebuggerAgent::inspectedURLChanged):
+        (WebCore::InspectorDebuggerAgent::restoreBreakpoints):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorState.cpp:
+        (WebCore::InspectorState::InspectorState):
+        * inspector/InspectorState.h:
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype._projectChanged):
+        (WebInspector.BreakpointManager.prototype._saveBreakpoints):
+        (WebInspector.BreakpointManager.prototype._pushBreakpointsToBackend):
+
 2011-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

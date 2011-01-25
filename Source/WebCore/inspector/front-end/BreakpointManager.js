@@ -34,7 +34,6 @@ WebInspector.BreakpointManager = function()
     var breakpoints = WebInspector.settings.findSettingForAllProjects("nativeBreakpoints");
     for (var projectId in breakpoints)
         this._stickyBreakpoints[projectId] = this._validateBreakpoints(breakpoints[projectId]);
-    InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
 
     this._breakpoints = {};
     this._domBreakpointsRestored = false;
@@ -245,6 +244,11 @@ WebInspector.BreakpointManager.prototype = {
             else if (breakpoint.type === WebInspector.BreakpointManager.BreakpointTypes.XHR)
                 this._createXHRBreakpoint(breakpoint.condition.url, breakpoint.enabled, true);
         }
+
+        if (!this._breakpointsPushedToFrontend) {
+            this._pushBreakpointsToBackend();
+            this._breakpointsPushedToFrontend = true;
+        }
     },
 
     restoreDOMBreakpoints: function()
@@ -303,7 +307,34 @@ WebInspector.BreakpointManager.prototype = {
         WebInspector.settings.nativeBreakpoints = breakpoints;
 
         this._stickyBreakpoints[WebInspector.settings.projectId] = breakpoints;
-        InspectorBackend.setAllBrowserBreakpoints(this._stickyBreakpoints);
+        this._pushBreakpointsToBackend();
+    },
+
+    _pushBreakpointsToBackend: function()
+    {
+        var allJavaScriptBreakpoints = {};
+        var allBrowserBreakpoints = {};
+        for (var projectId in this._stickyBreakpoints) {
+            var breakpoints = this._stickyBreakpoints[projectId];
+            var javaScriptBreakpoints = [];
+            var browserBreakpoints = [];
+            for (var i = 0; i < breakpoints.length; ++i) {
+                if (breakpoints[i].type == WebInspector.BreakpointManager.BreakpointTypes.JS) {
+                    var data = {};
+                    data.enabled = breakpoints[i].enabled;
+                    for (var p in breakpoints[i].condition)
+                        data[p] = breakpoints[i].condition[p];
+                    javaScriptBreakpoints.push(data);
+                } else
+                    browserBreakpoints.push(breakpoints[i]);
+            }
+            if (javaScriptBreakpoints.length)
+                allJavaScriptBreakpoints[projectId] = javaScriptBreakpoints;
+            if (browserBreakpoints.length)
+                allBrowserBreakpoints[projectId] = browserBreakpoints;
+        }
+        InspectorBackend.setAllJavaScriptBreakpoints(allJavaScriptBreakpoints);
+        InspectorBackend.setAllBrowserBreakpoints(allBrowserBreakpoints);
     },
 
     _validateBreakpoints: function(persistentBreakpoints)

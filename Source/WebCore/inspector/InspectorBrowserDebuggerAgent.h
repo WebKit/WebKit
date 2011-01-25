@@ -46,7 +46,6 @@ namespace WebCore {
 class Element;
 class InspectorAgent;
 class InspectorObject;
-class KURL;
 class Node;
 
 class InspectorBrowserDebuggerAgent {
@@ -59,7 +58,8 @@ public:
 
     virtual ~InspectorBrowserDebuggerAgent();
 
-    void inspectedURLChanged(const KURL&);
+    void setAllBrowserBreakpoints(PassRefPtr<InspectorObject>);
+    void inspectedURLChanged(const String& url);
 
     // BrowserDebugger API for InspectorFrontend
     void setXHRBreakpoint(const String& url);

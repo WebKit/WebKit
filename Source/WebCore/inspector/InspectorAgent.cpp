@@ -644,9 +644,10 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_debuggerAgent) {
-            m_debuggerAgent->clearForPageNavigation();
+            KURL url = inspectedURLWithoutFragment();
+            m_debuggerAgent->inspectedURLChanged(url);
             if (m_browserDebuggerAgent)
-                m_browserDebuggerAgent->inspectedURLChanged(inspectedURL());
+                m_browserDebuggerAgent->inspectedURLChanged(url);
         }
 #endif
 
@@ -1052,7 +1053,6 @@ void InspectorAgent::enableDebugger(bool always)
 
     m_debuggerAgent = InspectorDebuggerAgent::create(this, m_frontend.get());
     m_browserDebuggerAgent = InspectorBrowserDebuggerAgent::create(this);
-    m_browserDebuggerAgent->inspectedURLChanged(inspectedURL());
 
     m_frontend->debuggerWasEnabled();
 }
@@ -1388,6 +1388,13 @@ void InspectorAgent::setInspectorExtensionAPI(const String& source)
 KURL InspectorAgent::inspectedURL() const
 {
     return m_inspectedPage->mainFrame()->loader()->url();
+}
+
+KURL InspectorAgent::inspectedURLWithoutFragment() const
+{
+    KURL url = inspectedURL();
+    url.removeFragmentIdentifier();
+    return url;
 }
 
 void InspectorAgent::reloadPage()

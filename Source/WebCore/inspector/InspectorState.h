@@ -49,6 +49,7 @@ public:
         searchingForNode,
         consoleMessagesEnabled,
         userInitiatedProfiling,
+        javaScriptBreakpoints,
         browserBreakpoints,
         resourceAgentEnabled,
         lastPropertyId

@@ -71,16 +71,20 @@ InspectorBrowserDebuggerAgent::~InspectorBrowserDebuggerAgent()
 {
 }
 
-void InspectorBrowserDebuggerAgent::inspectedURLChanged(const KURL& url)
+void InspectorBrowserDebuggerAgent::setAllBrowserBreakpoints(PassRefPtr<InspectorObject> breakpoints)
+{
+    m_inspectorAgent->state()->setObject(InspectorState::browserBreakpoints, breakpoints);
+    inspectedURLChanged(m_inspectorAgent->inspectedURLWithoutFragment());
+}
+
+void InspectorBrowserDebuggerAgent::inspectedURLChanged(const String& url)
 {
     m_eventListenerBreakpoints.clear();
     m_XHRBreakpoints.clear();
     m_hasXHRBreakpointWithEmptyURL = false;
 
     RefPtr<InspectorObject> allBreakpoints = m_inspectorAgent->state()->getObject(InspectorState::browserBreakpoints);
-    KURL urlCopy = url;
-    urlCopy.removeFragmentIdentifier();
-    RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(urlCopy);
+    RefPtr<InspectorArray> breakpoints = allBreakpoints->getArray(url);
     if (!breakpoints)
         return;
     for (unsigned i = 0; i < breakpoints->length(); ++i)
@@ -89,10 +93,6 @@ void InspectorBrowserDebuggerAgent::inspectedURLChanged(const KURL& url)
 
 void InspectorBrowserDebuggerAgent::restoreStickyBreakpoint(PassRefPtr<InspectorObject> breakpoint)
 {
-    DEFINE_STATIC_LOCAL(String, eventListenerBreakpointType, ("EventListener"));
-    DEFINE_STATIC_LOCAL(String, javaScriptBreakpointType, ("JS"));
-    DEFINE_STATIC_LOCAL(String, xhrBreakpointType, ("XHR"));
-
     if (!breakpoint)
         return;
     String type;
@@ -105,28 +105,14 @@ void InspectorBrowserDebuggerAgent::restoreStickyBreakpoint(PassRefPtr<Inspector
     if (!condition)
         return;
 
-    if (type == eventListenerBreakpointType) {
+    if (type == eventListenerNativeBreakpointType) {
         if (!enabled)
             return;
         String eventName;
         if (!condition->getString("eventName", &eventName))
             return;
         setEventListenerBreakpoint(eventName);
-    } else if (type == javaScriptBreakpointType && m_inspectorAgent->debuggerAgent()) {
-        String url;
-        if (!condition->getString("url", &url))
-            return;
-        double lineNumber;
-        if (!condition->getNumber("lineNumber", &lineNumber))
-            return;
-        double columnNumber;
-        if (!condition->getNumber("columnNumber", &columnNumber))
-            return;
-        String javaScriptCondition;
-        if (!condition->getString("condition", &javaScriptCondition))
-            return;
-        m_inspectorAgent->debuggerAgent()->setStickyBreakpoint(url, ScriptBreakpoint(long(lineNumber), long(columnNumber), javaScriptCondition, enabled));
-    } else if (type == xhrBreakpointType) {
+    } else if (type == xhrNativeBreakpointType) {
         if (!enabled)
             return;
         String url;
