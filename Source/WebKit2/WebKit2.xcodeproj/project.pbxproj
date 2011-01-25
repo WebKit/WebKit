@@ -694,7 +694,6 @@
 		F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */; };
 		F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445B12A885E9000612D8 /* WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F6A25FD912ADC6BD00DC40CC /* WebDatabaseManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6A25FD812ADC6BD00DC40CC /* WebDatabaseManagerMac.mm */; };
 		F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */; };
 		F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */; };
 /* End PBXBuildFile section */
@@ -1457,7 +1456,6 @@
 		F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSecurityOrigin.cpp; sourceTree = "<group>"; };
 		F634445B12A885E9000612D8 /* WKSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSecurityOrigin.h; sourceTree = "<group>"; };
 		F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSerializedScriptValuePrivate.h; sourceTree = "<group>"; };
-		F6A25FD812ADC6BD00DC40CC /* WebDatabaseManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDatabaseManagerMac.mm; sourceTree = "<group>"; };
 		F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDatabaseManager.cpp; sourceTree = "<group>"; };
 		F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2279,7 +2277,6 @@
 			children = (
 				C554FFA212E4E8EA002F22C0 /* WebDragClientMac.mm */,
 				51021E9B12B16788005C033C /* WebContextMenuClientMac.mm */,
-				F6A25FD812ADC6BD00DC40CC /* WebDatabaseManagerMac.mm */,
 				C5237F5F12441CA300780472 /* WebEditorClientMac.mm */,
 				BC111ADF112F5BC200337BAB /* WebErrorsMac.mm */,
 				9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */,
@@ -3481,7 +3478,6 @@
 				512F58F912A88A5400629530 /* WKCredential.cpp in Sources */,
 				512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */,
 				F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */,
-				F6A25FD912ADC6BD00DC40CC /* WebDatabaseManagerMac.mm in Sources */,
 				F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */,
 				51021E9C12B16788005C033C /* WebContextMenuClientMac.mm in Sources */,
 				1AAF061512B01131008E49E2 /* PDFViewController.mm in Sources */,

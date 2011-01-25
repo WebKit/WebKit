@@ -323,6 +323,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/FindIndicator.h \
 	Source/WebKit2/UIProcess/GenericCallback.h \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
+	Source/WebKit2/UIProcess/gtk/WebContextGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPageProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebPreferencesGtk.cpp \
@@ -504,7 +505,6 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Plugins/PluginView.cpp \
 	Source/WebKit2/WebProcess/Plugins/PluginView.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebContextMenuClientGtk.cpp \
-	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebDatabaseManagerGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebFrameNetworkingContext.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.cpp \

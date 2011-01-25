@@ -1,3 +1,23 @@
+2011-01-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Use designated temp directory for the database for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=53052
+        
+        Adopt the new WK2 API for this.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::libraryPathForTesting):
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformLibraryPathForTesting):
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::platformLibraryPathForTesting):
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformLibraryPathForTesting):
+
 2011-01-24  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Stephanie Lewis.

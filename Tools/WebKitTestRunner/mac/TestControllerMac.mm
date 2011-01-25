@@ -71,4 +71,9 @@ void TestController::runModal(PlatformWebView* view)
     [NSApp runModalForWindow:window];
 }
 
+const char* TestController::platformLibraryPathForTesting()
+{
+    return [[@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath] UTF8String];
+}
+
 } // namespace WTR

@@ -32,6 +32,7 @@
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKPreferencesPrivate.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WTR {
@@ -164,6 +165,18 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
     return newPage;
 }
 
+const char* TestController::libraryPathForTesting()
+{
+    // FIXME: This may not be sufficient to prevent interactions/crashes
+    // when running more than one copy of DumpRenderTree.
+    // See https://bugs.webkit.org/show_bug.cgi?id=10906
+    char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
+    if (dumpRenderTreeTemp)
+        return dumpRenderTreeTemp;
+    return platformLibraryPathForTesting();
+}
+
+
 void TestController::initialize(int argc, const char* argv[])
 {
     platformInitialize();
@@ -219,6 +232,15 @@ void TestController::initialize(int argc, const char* argv[])
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
 
     m_context.adopt(WKContextCreateWithInjectedBundlePath(injectedBundlePath()));
+
+    const char* path = libraryPathForTesting();
+    if (path) {
+        Vector<char> databaseDirectory(strlen(path) + strlen("/Databases"));
+        sprintf(databaseDirectory.data(), "%s%s", path, "/Databases");
+        WKRetainPtr<WKStringRef> databaseDirectoryWK(AdoptWK, WKStringCreateWithUTF8CString(databaseDirectory.data()));
+        WKContextSetDatabaseDirectory(m_context.get(), databaseDirectoryWK.get());
+    }
+
     platformInitializeContext();
 
     WKContextInjectedBundleClient injectedBundleClient = {

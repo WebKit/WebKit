@@ -1401,10 +1401,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\WebProcess\WebCoreSupport\win\WebDatabaseManagerWin.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\WebProcess\WebCoreSupport\win\WebErrorsWin.cpp"
 						>
 					</File>

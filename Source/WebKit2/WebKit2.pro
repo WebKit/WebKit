@@ -663,7 +663,6 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
     WebProcess/WebCoreSupport/qt/WebContextMenuClientQt.cpp \
-    WebProcess/WebCoreSupport/qt/WebDatabaseManagerQt.cpp \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \

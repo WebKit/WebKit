@@ -52,5 +52,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.shouldPaintNativeControls = m_shouldPaintNativeControls;
 }
 
+String WebContext::platformDefaultDatabaseDirectory() const
+{
+    return WebCore::pathByAppendingComponent(WebCore::localUserSpecificStorageDirectory(), "Databases");
+}
+
 } // namespace WebKit
 

@@ -43,6 +43,7 @@ class WebDatabaseManager : public WebCore::DatabaseTrackerClient {
     WTF_MAKE_NONCOPYABLE(WebDatabaseManager);
 public:
     static WebDatabaseManager& shared();
+    static void initialize(const String& databaseDirectory);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
@@ -63,8 +64,6 @@ private:
     // WebCore::DatabaseTrackerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);
     virtual void dispatchDidModifyDatabase(WebCore::SecurityOrigin*, const String& databaseIdentifier);
-
-    String databaseDirectory() const;
 };
 
 } // namespace WebKit

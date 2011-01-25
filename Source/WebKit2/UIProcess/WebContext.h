@@ -137,6 +137,8 @@ public:
     };
     static Statistics& statistics();
 
+    void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 
@@ -161,6 +163,9 @@ private:
 
     static void languageChanged(void* context);
     void languageChanged();
+
+    String databaseDirectory() const;
+    String platformDefaultDatabaseDirectory() const;
 
     ProcessModel m_processModel;
     
@@ -203,6 +208,8 @@ private:
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
 #endif
+
+    String m_overrideDatabaseDirectory;
 };
 
 } // namespace WebKit

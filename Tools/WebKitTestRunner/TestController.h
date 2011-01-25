@@ -90,6 +90,9 @@ private:
     static void runModal(WKPageRef, const void* clientInfo);
     static void runModal(PlatformWebView*);
 
+    static const char* libraryPathForTesting();
+    static const char* platformLibraryPathForTesting();
+
     OwnPtr<TestInvocation> m_currentInvocation;
 
     bool m_dumpPixels;

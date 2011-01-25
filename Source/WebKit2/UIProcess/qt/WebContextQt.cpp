@@ -46,4 +46,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
     qRegisterMetaType<QProcess::ExitStatus>("QProcess::ExitStatus");
 }
 
+String WebContext::platformDefaultDatabaseDirectory() const
+{
+    // FIXME: Implement.
+    return "";
+}
+
 } // namespace WebKit

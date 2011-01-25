@@ -133,6 +133,11 @@ void TestController::runModal(PlatformWebView*)
     // FIXME: Need to implement this to test showModalDialog.
 }
 
+const char* TestController::platformLibraryPathForTesting()
+{
+    return 0;
+}
+
 #include "TestControllerQt.moc"
 
 } // namespace WTR

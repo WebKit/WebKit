@@ -119,11 +119,6 @@ WebProcess::WebProcess()
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
 #endif // USE(PLATFORM_STRATEGIES)
-
-#if ENABLE(DATABASE)
-    // Make sure the WebDatabaseManager is initialized so that the Database directory is set.
-    WebDatabaseManager::shared();
-#endif
 }
 
 void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, RunLoop* runLoop)
@@ -158,6 +153,11 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
             m_injectedBundle.clear();
         }
     }
+
+#if ENABLE(DATABASE)
+    // Make sure the WebDatabaseManager is initialized so that the Database directory is set.
+    WebDatabaseManager::initialize(parameters.databaseDirectory);
+#endif
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (!parameters.applicationCacheDirectory.isEmpty())

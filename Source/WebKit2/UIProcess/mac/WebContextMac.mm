@@ -90,5 +90,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.uiProcessBundleResourcePath = fileSystemRepresentation([[NSBundle mainBundle] resourcePath]);
 }
 
+String WebContext::platformDefaultDatabaseDirectory() const
+{
+    return [@"~/Library/WebKit/Databases" stringByStandardizingPath];
+}
+
 } // namespace WebKit
 

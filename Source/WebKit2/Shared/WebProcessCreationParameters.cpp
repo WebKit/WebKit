@@ -46,6 +46,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(injectedBundlePath);
     encoder->encode(injectedBundlePathExtensionHandle);
     encoder->encode(applicationCacheDirectory);
+    encoder->encode(databaseDirectory);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
@@ -75,6 +76,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.injectedBundlePathExtensionHandle))
         return false;
     if (!decoder->decode(parameters.applicationCacheDirectory))
+        return false;
+    if (!decoder->decode(parameters.databaseDirectory))
         return false;
     if (!decoder->decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;
