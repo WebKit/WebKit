@@ -1,22 +1,15 @@
 <!DOCTYPE html>
 <html>
-<span id="a" style="display:none"></span>
-<span id="b">FAIL</span>
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-var a = document.getElementById("a");
-window.webkitRequestAnimationFrame(function() {
-    b.innerHTML="PASS";
-}, a);
-
-var b = document.getElementById("b");
-window.webkitRequestAnimationFrame(function() {
-    a.style.display="";
-}, b);
-
-if (window.layoutTestController)
-    layoutTestController.display();
-</script>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<span id="e"></span>
+<span id="f"></span>
+<script src="script-tests/request-animation-frame-display.js"></script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
 </html>

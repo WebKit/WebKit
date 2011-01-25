@@ -1,3 +1,31 @@
+2011-01-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Convert requestAnimationFrame tests to be script-tests
+        https://bugs.webkit.org/show_bug.cgi?id=53109
+
+        This converts the new requestAnimationFrame tests to be proper script-tests using make-script-test-wrapper.
+
+        * fast/animation/request-animation-frame-cancel-expected.txt:
+        * fast/animation/request-animation-frame-cancel.html:
+        * fast/animation/request-animation-frame-cancel2-expected.txt:
+        * fast/animation/request-animation-frame-cancel2.html:
+        * fast/animation/request-animation-frame-display-expected.txt:
+        * fast/animation/request-animation-frame-display.html:
+        * fast/animation/request-animation-frame-expected.txt:
+        * fast/animation/request-animation-frame-within-callback-expected.txt:
+        * fast/animation/request-animation-frame-within-callback.html:
+        * fast/animation/request-animation-frame.html:
+        * fast/animation/script-tests/TEMPLATE.html: Added.
+        * fast/animation/script-tests/request-animation-frame-cancel.js: Copied from LayoutTests/fast/animation/request-animation-frame-cancel.html.
+        * fast/animation/script-tests/request-animation-frame-cancel2.js: Copied from LayoutTests/fast/animation/request-animation-frame-cancel2.html.
+        (secondCallbackId):
+        * fast/animation/script-tests/request-animation-frame-display.js: Added.
+        * fast/animation/script-tests/request-animation-frame-within-callback.js: Copied from LayoutTests/fast/animation/request-animation-frame-within-callback.html.
+        (window):
+        * fast/animation/script-tests/request-animation-frame.js: Added.
+
 2011-01-20  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

@@ -1,1 +1,9 @@
-PASS
+Tests one requestAnimationFrame callback cancelling a second
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

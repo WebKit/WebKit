@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
-<span id="e">PASS</span>
-<script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
-
-var e = document.getElementById("e");
-var id = window.webkitRequestAnimationFrame(function() {
-    e.innerHTML = "FAIL";
-}, e);
-
-window.webkitCancelRequestAnimationFrame(id);
-
-if (window.layoutTestController)
-    layoutTestController.display();
-</script>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<span id="e"></span>
+<span id="f"></span>
+<script src="script-tests/request-animation-frame-cancel.js"></script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
