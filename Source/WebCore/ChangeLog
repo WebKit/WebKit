@@ -1,3 +1,11 @@
+2011-01-25  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed build fix.
+        After r76466, efsrv.lib is used unconditionally.
+        Don't guard it with ENABLE_NETSCAPE_PLUGIN_API.
+
+        * WebCore.pro:
+
 2011-01-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

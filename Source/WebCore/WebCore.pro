@@ -2847,6 +2847,8 @@ symbian {
     SOURCES += \
         plugins/symbian/PluginDatabaseSymbian.cpp \
         plugins/symbian/PluginPackageSymbian.cpp
+
+    LIBS += -lefsrv
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
@@ -2861,8 +2863,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
         HEADERS += \
         plugins/symbian/PluginContainerSymbian.h \
         plugins/symbian/npinterface.h
-
-        LIBS += -lefsrv
 
     } else {
 
