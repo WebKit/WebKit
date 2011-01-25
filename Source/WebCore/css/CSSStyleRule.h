@@ -50,7 +50,7 @@ public:
     // Not part of the CSSOM
     virtual bool parseString(const String&, bool = false);
 
-    void adoptSelectorVector(Vector<CSSSelector*>& selectors) { m_selectorList.adoptSelectorVector(selectors); }
+    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectors) { m_selectorList.adoptSelectorVector(selectors); }
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
 
     const CSSSelectorList& selectorList() const { return m_selectorList; }

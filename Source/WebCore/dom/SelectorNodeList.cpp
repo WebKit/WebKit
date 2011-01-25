@@ -50,8 +50,8 @@ PassRefPtr<StaticNodeList> createSelectorNodeList(Node* rootNode, const CSSSelec
 
     CSSStyleSelector::SelectorChecker selectorChecker(document, strictParsing);
 
-    if (strictParsing && rootNode->inDocument() && onlySelector && onlySelector->m_match == CSSSelector::Id && !document->containsMultipleElementsWithId(onlySelector->m_value)) {
-        Element* element = document->getElementById(onlySelector->m_value);
+    if (strictParsing && rootNode->inDocument() && onlySelector && onlySelector->m_match == CSSSelector::Id && !document->containsMultipleElementsWithId(onlySelector->value())) {
+        Element* element = document->getElementById(onlySelector->value());
         if (element && (rootNode->isDocumentNode() || element->isDescendantOf(rootNode)) && selectorChecker.checkSelector(onlySelector, element))
             nodes.append(element);
     } else {

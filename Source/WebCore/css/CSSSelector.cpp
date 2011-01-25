@@ -36,38 +36,15 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-
-class CSSSelectorBag {
-    WTF_MAKE_NONCOPYABLE(CSSSelectorBag);
-public:
-    CSSSelectorBag() { }
-    ~CSSSelectorBag()
-    {
-        ASSERT(isEmpty());
-    }
-
-    bool isEmpty() const
-    {
-        return m_stack.isEmpty();
-    }
-
-    void add(PassOwnPtr<CSSSelector> selector)
-    {
-        if (selector)
-            m_stack.append(selector.leakPtr());
-    }
-
-    PassOwnPtr<CSSSelector> takeAny()
-    {
-        ASSERT(!isEmpty());
-        OwnPtr<CSSSelector> selector = adoptPtr(m_stack.last());
-        m_stack.removeLast();
-        return selector.release();
-    }
-
-private:
-    Vector<CSSSelector*, 16> m_stack;
-};
+    
+void CSSSelector::createRareData()
+{
+    if (m_hasRareData) 
+        return;
+    // Move the value to the rare data stucture.
+    m_data.m_rareData = new RareData(adoptRef(m_data.m_value));
+    m_hasRareData = true;
+}
 
 unsigned CSSSelector::specificity() const
 {
@@ -577,7 +554,7 @@ void CSSSelector::extractPseudoType() const
     if (m_match != PseudoClass && m_match != PseudoElement && m_match != PagePseudoClass)
         return;
 
-    m_pseudoType = parsePseudoType(m_value);
+    m_pseudoType = parsePseudoType(value());
 
     bool element = false; // pseudo-element
     bool compat = false; // single colon compatbility mode
@@ -721,7 +698,7 @@ bool CSSSelector::operator==(const CSSSelector& other)
     while (sel1 && sel2) {
         if (sel1->m_tag != sel2->m_tag || sel1->attribute() != sel2->attribute() ||
              sel1->relation() != sel2->relation() || sel1->m_match != sel2->m_match ||
-             sel1->m_value != sel2->m_value ||
+             sel1->value() != sel2->value() ||
              sel1->pseudoType() != sel2->pseudoType() ||
              sel1->argument() != sel2->argument())
             return false;
@@ -755,13 +732,13 @@ String CSSSelector::selectorText() const
     while (true) {
         if (cs->m_match == CSSSelector::Id) {
             str += "#";
-            serializeIdentifier(cs->m_value, str);
+            serializeIdentifier(cs->value(), str);
         } else if (cs->m_match == CSSSelector::Class) {
             str += ".";
-            serializeIdentifier(cs->m_value, str);
+            serializeIdentifier(cs->value(), str);
         } else if (cs->m_match == CSSSelector::PseudoClass || cs->m_match == CSSSelector::PagePseudoClass) {
             str += ":";
-            str += cs->m_value;
+            str += cs->value();
             if (cs->pseudoType() == PseudoNot) {
                 if (CSSSelector* subSel = cs->simpleSelector())
                     str += subSel->selectorText();
@@ -776,7 +753,7 @@ String CSSSelector::selectorText() const
             }
         } else if (cs->m_match == CSSSelector::PseudoElement) {
             str += "::";
-            str += cs->m_value;
+            str += cs->value();
         } else if (cs->hasAttribute()) {
             str += "[";
             const AtomicString& prefix = cs->attribute().prefix();
@@ -812,7 +789,7 @@ String CSSSelector::selectorText() const
                     break;
             }
             if (cs->m_match != CSSSelector::Set) {
-                serializeString(cs->m_value, str);
+                serializeString(cs->value(), str);
                 str += "]";
             }
         }
@@ -835,14 +812,6 @@ String CSSSelector::selectorText() const
     }
 
     return str;
-}
-    
-void CSSSelector::setTagHistory(CSSSelector* tagHistory) 
-{ 
-    if (m_hasRareData) 
-        m_data.m_rareData->m_tagHistory.set(tagHistory); 
-    else 
-        m_data.m_tagHistory = tagHistory; 
 }
 
 const QualifiedName& CSSSelector::attribute() const
@@ -869,10 +838,10 @@ void CSSSelector::setArgument(const AtomicString& value)
     m_data.m_rareData->m_argument = value; 
 }
 
-void CSSSelector::setSimpleSelector(CSSSelector* value)
+void CSSSelector::setSimpleSelector(PassOwnPtr<CSSSelector> value)
 {
     createRareData(); 
-    m_data.m_rareData->m_simpleSelector.set(value); 
+    m_data.m_rareData->m_simpleSelector = value; 
 }
 
 bool CSSSelector::parseNth()
@@ -972,35 +941,6 @@ bool CSSSelector::RareData::matchNth(int count)
         if (count > m_b)
             return false;
         return (m_b - count) % (-m_a) == 0;
-    }
-}
-
-inline void CSSSelector::releaseOwnedSelectorsToBag(CSSSelectorBag& bag)
-{
-    if (m_hasRareData) {
-        ASSERT(m_data.m_rareData);
-        bag.add(m_data.m_rareData->m_tagHistory.release());
-        bag.add(m_data.m_rareData->m_simpleSelector.release());
-        delete m_data.m_rareData;
-        // Clear the pointer so that a destructor of this selector will not
-        // traverse this chain.
-        m_data.m_rareData = 0;
-    } else {
-        bag.add(adoptPtr(m_data.m_tagHistory));
-        // Clear the pointer for the same reason.
-        m_data.m_tagHistory = 0;
-    }
-}
-
-void CSSSelector::deleteReachableSelectors()
-{
-    // Traverse the chain of selectors and delete each iteratively.
-    CSSSelectorBag selectorsToBeDeleted;
-    releaseOwnedSelectorsToBag(selectorsToBeDeleted);
-    while (!selectorsToBeDeleted.isEmpty()) {
-        OwnPtr<CSSSelector> selector(selectorsToBeDeleted.takeAny());
-        ASSERT(selector);
-        selector->releaseOwnedSelectorsToBag(selectorsToBeDeleted);
     }
 }
 

@@ -2217,20 +2217,20 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
         return false;
 
     if (sel->hasTag()) {
-        const AtomicString& selLocalName = sel->m_tag.localName();
+        const AtomicString& selLocalName = sel->tag().localName();
         if (selLocalName != starAtom && selLocalName != e->localName())
             return false;
-        const AtomicString& selNS = sel->m_tag.namespaceURI();
+        const AtomicString& selNS = sel->tag().namespaceURI();
         if (selNS != starAtom && selNS != e->namespaceURI())
             return false;
     }
 
     if (sel->hasAttribute()) {
         if (sel->m_match == CSSSelector::Class)
-            return e->hasClass() && static_cast<StyledElement*>(e)->classNames().contains(sel->m_value);
+            return e->hasClass() && static_cast<StyledElement*>(e)->classNames().contains(sel->value());
 
         if (sel->m_match == CSSSelector::Id)
-            return e->hasID() && e->idForStyleResolution() == sel->m_value;
+            return e->hasID() && e->idForStyleResolution() == sel->value();
         
         const QualifiedName& attr = sel->attribute();
 
@@ -2249,22 +2249,22 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
 
         switch (sel->m_match) {
         case CSSSelector::Exact:
-            if (caseSensitive ? sel->m_value != value : !equalIgnoringCase(sel->m_value, value))
+            if (caseSensitive ? sel->value() != value : !equalIgnoringCase(sel->value(), value))
                 return false;
             break;
         case CSSSelector::List:
         {
             // Ignore empty selectors or selectors containing spaces
-            if (sel->m_value.contains(' ') || sel->m_value.isEmpty())
+            if (sel->value().contains(' ') || sel->value().isEmpty())
                 return false;
 
             unsigned startSearchAt = 0;
             while (true) {
-                size_t foundPos = value.find(sel->m_value, startSearchAt, caseSensitive);
+                size_t foundPos = value.find(sel->value(), startSearchAt, caseSensitive);
                 if (foundPos == notFound)
                     return false;
                 if (foundPos == 0 || value[foundPos - 1] == ' ') {
-                    unsigned endStr = foundPos + sel->m_value.length();
+                    unsigned endStr = foundPos + sel->value().length();
                     if (endStr == value.length() || value[endStr] == ' ')
                         break; // We found a match.
                 }
@@ -2275,24 +2275,24 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             break;
         }
         case CSSSelector::Contain:
-            if (!value.contains(sel->m_value, caseSensitive) || sel->m_value.isEmpty())
+            if (!value.contains(sel->value(), caseSensitive) || sel->value().isEmpty())
                 return false;
             break;
         case CSSSelector::Begin:
-            if (!value.startsWith(sel->m_value, caseSensitive) || sel->m_value.isEmpty())
+            if (!value.startsWith(sel->value(), caseSensitive) || sel->value().isEmpty())
                 return false;
             break;
         case CSSSelector::End:
-            if (!value.endsWith(sel->m_value, caseSensitive) || sel->m_value.isEmpty())
+            if (!value.endsWith(sel->value(), caseSensitive) || sel->value().isEmpty())
                 return false;
             break;
         case CSSSelector::Hyphen:
-            if (value.length() < sel->m_value.length())
+            if (value.length() < sel->value().length())
                 return false;
-            if (!value.startsWith(sel->m_value, caseSensitive))
+            if (!value.startsWith(sel->value(), caseSensitive))
                 return false;
             // It they start the same, check for exact match or following '-':
-            if (value.length() != sel->m_value.length() && value[sel->m_value.length()] != '-')
+            if (value.length() != sel->value().length() && value[sel->value().length()] != '-')
                 return false;
             break;
         case CSSSelector::PseudoClass:
@@ -2905,20 +2905,20 @@ void CSSRuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
 void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
 {
     if (sel->m_match == CSSSelector::Id) {
-        addToRuleSet(sel->m_value.impl(), m_idRules, rule, sel);
+        addToRuleSet(sel->value().impl(), m_idRules, rule, sel);
         return;
     }
     if (sel->m_match == CSSSelector::Class) {
-        addToRuleSet(sel->m_value.impl(), m_classRules, rule, sel);
+        addToRuleSet(sel->value().impl(), m_classRules, rule, sel);
         return;
     }
      
     if (sel->isUnknownPseudoElement()) {
-        addToRuleSet(sel->m_value.impl(), m_pseudoRules, rule, sel);
+        addToRuleSet(sel->value().impl(), m_pseudoRules, rule, sel);
         return;
     }
 
-    const AtomicString& localName = sel->m_tag.localName();
+    const AtomicString& localName = sel->tag().localName();
     if (localName != starAtom) {
         addToRuleSet(localName.impl(), m_tagRules, rule, sel);
         return;
@@ -3006,12 +3006,12 @@ static void collectIdsAndSiblingRulesFromList(HashSet<AtomicStringImpl*>& ids, O
     for (CSSRuleData* data = rules->first(); data; data = data->next()) {
         bool foundSiblingSelector = false;
         for (CSSSelector* selector = data->selector(); selector; selector = selector->tagHistory()) {
-            if (selector->m_match == CSSSelector::Id && !selector->m_value.isEmpty())
-                ids.add(selector->m_value.impl());
+            if (selector->m_match == CSSSelector::Id && !selector->value().isEmpty())
+                ids.add(selector->value().impl());
             if (CSSSelector* simpleSelector = selector->simpleSelector()) {
                 ASSERT(!simpleSelector->simpleSelector());
-                if (simpleSelector->m_match == CSSSelector::Id && !simpleSelector->m_value.isEmpty())
-                    ids.add(simpleSelector->m_value.impl());
+                if (simpleSelector->m_match == CSSSelector::Id && !simpleSelector->value().isEmpty())
+                    ids.add(simpleSelector->value().impl());
             }
             if (selector->isSiblingSelector())
                 foundSiblingSelector = true;
@@ -3136,7 +3136,7 @@ void CSSStyleSelector::matchPageRulesForList(CSSRuleDataList* rules, bool isLeft
 
     for (CSSRuleData* d = rules->first(); d; d = d->next()) {
         CSSStyleRule* rule = d->rule();
-        const AtomicString& selectorLocalName = d->selector()->m_tag.localName();
+        const AtomicString& selectorLocalName = d->selector()->tag().localName();
         if (selectorLocalName != starAtom && selectorLocalName != pageName)
             continue;
         CSSSelector::PseudoType pseudoType = d->selector()->pseudoType();

@@ -1,3 +1,122 @@
+2011-01-23  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52983
+        Eliminate m_tagHistory pointer from CSSSelector
+
+        Keep the component selectors in the array in CSSSelectorList instead
+        of maintaining a linked list between them. This allows eliminating
+        m_tagHistory pointer, shrinking CSSSelector by 25% (selection performance
+        seems to improve some too due to better locality).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        
+            Make CSSSelector.h a private header.
+        
+        * css/CSSGrammar.y:
+        
+            Use CSSParserSelector during parsing to keep the tag history in 
+            a linked list. This is flattened to an array after parsing.
+            Use accessors for setting selector values.
+            Use OwnPtr in selector vector.
+            
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        * css/CSSPageRule.h:
+        (WebCore::CSSPageRule::create):
+        
+            Simplify.
+    
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::createFloatingSelector):
+        (WebCore::CSSParser::sinkFloatingSelector):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::updateSpecifiersWithElementName):
+        (WebCore::CSSParser::createPageRule):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::reusableSelectorVector):
+        
+            CSSSelector -> CSSParserSelector.
+            Use OwnPtr in selector vector.
+            
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::CSSParserSelector):
+        (WebCore::CSSParserSelector::~CSSParserSelector):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserSelector::releaseSelector):
+        (WebCore::CSSParserSelector::setTag):
+        (WebCore::CSSParserSelector::setValue):
+        (WebCore::CSSParserSelector::setAttribute):
+        (WebCore::CSSParserSelector::setArgument):
+        (WebCore::CSSParserSelector::setSimpleSelector):
+        (WebCore::CSSParserSelector::setMatch):
+        (WebCore::CSSParserSelector::setRelation):
+        (WebCore::CSSParserSelector::setForPage):
+        (WebCore::CSSParserSelector::pseudoType):
+        (WebCore::CSSParserSelector::isUnknownPseudoElement):
+        (WebCore::CSSParserSelector::isSimple):
+        (WebCore::CSSParserSelector::tagHistory):
+        (WebCore::CSSParserSelector::setTagHistory):
+        
+            Linked list used during parsing.
+            Avoid recursive destruction.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+        (WebCore::CSSSelector::operator==):
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::CSSSelector::setSimpleSelector):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::~CSSSelector):
+        (WebCore::CSSSelector::tagHistory):
+        (WebCore::CSSSelector::tag):
+        (WebCore::CSSSelector::value):
+        (WebCore::CSSSelector::setTag):
+        (WebCore::CSSSelector::isLastInTagHistory):
+        (WebCore::CSSSelector::setNotLastInTagHistory):
+        (WebCore::CSSSelector::RareData::RareData):
+        (WebCore::CSSSelector::RareData::~RareData):
+        (WebCore::CSSSelector::createRareData):
+        (WebCore::CSSSelector::setValue):
+        
+            Remove m_tagHistory.
+            Keep m_value in the union with the rare data pointer instead.
+            Make m_value and m_tag private, implement accessors.
+            Add a new bit to indicate end of the tag history (multipart selector).
+            Eliminate complex destruction. Selectors are now deleted as an array or by a CSSParserSelector chain.
+            
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        
+            Flatten everything to an array.
+        
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        * css/CSSSelectorList.h:
+        (WebCore::CSSSelectorList::hasOneSelector):
+        (WebCore::CSSSelectorList::next):
+        
+            Skip over the subparts of multipart selectors to find the next selector.
+    
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::adoptSelectorVector):
+        
+            CSSSelector -> CSSParserSelector.
+            
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::CSSRuleSet::addRule):
+        (WebCore::collectIdsAndSiblingRulesFromList):
+        (WebCore::CSSStyleSelector::matchPageRulesForList):
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList):
+        
+            Use accessors.
+
 2011-01-25  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Chang.

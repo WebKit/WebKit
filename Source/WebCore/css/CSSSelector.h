@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-    class CSSSelectorBag;
-
     // this class represents a selector for a StyleRule
     class CSSSelector {
         WTF_MAKE_NONCOPYABLE(CSSSelector); WTF_MAKE_FAST_ALLOCATED;
@@ -42,6 +40,7 @@ namespace WebCore {
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
             , m_isLastInSelectorList(false)
+            , m_isLastInTagHistory(true)
             , m_hasRareData(false)
             , m_isForPage(false)
             , m_tag(anyQName())
@@ -54,6 +53,7 @@ namespace WebCore {
             , m_pseudoType(PseudoNotParsed)
             , m_parsedNth(false)
             , m_isLastInSelectorList(false)
+            , m_isLastInTagHistory(true)
             , m_hasRareData(false)
             , m_isForPage(false)
             , m_tag(qName)
@@ -62,18 +62,10 @@ namespace WebCore {
 
         ~CSSSelector()
         {
-            // Exit if this selector does not own any objects to be deleted.
-            if (m_hasRareData) {
-                if (!m_data.m_rareData)
-                    return;
-            } else if (!m_data.m_tagHistory)
-                return;
-
-            // We can not delete the owned object(s) by simply calling delete
-            // directly on them. That would lead to recursive destructor calls
-            // which might cause stack overflow. We have to delete them
-            // iteratively.
-            deleteReachableSelectors();
+            if (m_hasRareData)
+                delete m_data.m_rareData;
+            else if (m_data.m_value)
+                m_data.m_value->deref();
         }
 
         /**
@@ -255,29 +247,31 @@ namespace WebCore {
         static PseudoType parsePseudoType(const AtomicString&);
         static PseudoId pseudoId(PseudoType);
 
-        CSSSelector* tagHistory() const { return m_hasRareData ? m_data.m_rareData->m_tagHistory.get() : m_data.m_tagHistory; }
-        void setTagHistory(CSSSelector* tagHistory);
+        // Selectors are kept in an array by CSSSelectorList. The next component of the selector is 
+        // the next item in the array.
+        CSSSelector* tagHistory() const { return m_isLastInTagHistory ? 0 : const_cast<CSSSelector*>(this + 1); }
 
         bool hasTag() const { return m_tag != anyQName(); }
         bool hasAttribute() const { return m_match == Id || m_match == Class || (m_hasRareData && m_data.m_rareData->m_attribute != anyQName()); }
         
+        const QualifiedName& tag() const { return m_tag; }
+        // AtomicString is really just an AtomicStringImpl* so the cast below is safe.
+        // FIXME: Perhaps call sites could be changed to accept AtomicStringImpl?
+        const AtomicString& value() const { return *reinterpret_cast<const AtomicString*>(m_hasRareData ? &m_data.m_rareData->m_value : &m_data.m_value); }
         const QualifiedName& attribute() const;
         const AtomicString& argument() const { return m_hasRareData ? m_data.m_rareData->m_argument : nullAtom; }
         CSSSelector* simpleSelector() const { return m_hasRareData ? m_data.m_rareData->m_simpleSelector.get() : 0; }
         
-        void setAttribute(const QualifiedName& value);
-        void setArgument(const AtomicString& value);
-        void setSimpleSelector(CSSSelector* value);
+        void setTag(const QualifiedName& value) { m_tag = value; }
+        void setValue(const AtomicString&);
+        void setAttribute(const QualifiedName&);
+        void setArgument(const AtomicString&);
+        void setSimpleSelector(PassOwnPtr<CSSSelector>);
         
         bool parseNth();
         bool matchNth(int count);
 
-        bool matchesPseudoElement() const 
-        { 
-            if (m_pseudoType == PseudoUnknown)
-                extractPseudoType();
-            return m_match == PseudoElement;
-        }
+        bool matchesPseudoElement() const;
         bool isUnknownPseudoElement() const;
         bool isSiblingSelector() const;
 
@@ -285,6 +279,9 @@ namespace WebCore {
 
         bool isLastInSelectorList() const { return m_isLastInSelectorList; }
         void setLastInSelectorList() { m_isLastInSelectorList = true; }
+        bool isLastInTagHistory() const { return m_isLastInTagHistory; }
+        void setNotLastInTagHistory() { m_isLastInTagHistory = false; }
+
         bool isSimple() const;
 
         bool isForPage() const { return m_isForPage; }
@@ -297,11 +294,9 @@ namespace WebCore {
     private:
         bool m_parsedNth              : 1; // Used for :nth-* 
         bool m_isLastInSelectorList   : 1;
+        bool m_isLastInTagHistory     : 1;
         bool m_hasRareData            : 1;
         bool m_isForPage              : 1;
-
-        void releaseOwnedSelectorsToBag(CSSSelectorBag&);
-        void deleteReachableSelectors();
 
         unsigned specificityForOneSelector() const;
         unsigned specificityForPage() const;
@@ -310,44 +305,47 @@ namespace WebCore {
         struct RareData {
             WTF_MAKE_NONCOPYABLE(RareData); WTF_MAKE_FAST_ALLOCATED;
         public:
-            RareData(PassOwnPtr<CSSSelector> tagHistory)
-                : m_a(0)
+            RareData(PassRefPtr<AtomicStringImpl> value)
+                : m_value(value.leakRef())
+                , m_a(0)
                 , m_b(0)
-                , m_tagHistory(tagHistory)
                 , m_attribute(anyQName())
                 , m_argument(nullAtom)
             {
+            }
+            ~RareData()
+            {
+                if (m_value)
+                    m_value->deref();
             }
 
             bool parseNth();
             bool matchNth(int count);
 
+            AtomicStringImpl* m_value; // Plain pointer to keep things uniform with the union.
             int m_a; // Used for :nth-*
             int m_b; // Used for :nth-*
-            OwnPtr<CSSSelector> m_tagHistory;
             OwnPtr<CSSSelector> m_simpleSelector; // Used for :not.
             QualifiedName m_attribute; // used for attribute selector
             AtomicString m_argument; // Used for :contains, :lang and :nth-*
         };
-
-        void createRareData()
-        {
-            if (m_hasRareData) 
-                return;
-            m_data.m_rareData = new RareData(adoptPtr(m_data.m_tagHistory));
-            m_hasRareData = true;
-        }
+        void createRareData();
         
         union DataUnion {
-            DataUnion() : m_tagHistory(0) { }
-            CSSSelector* m_tagHistory;
+            DataUnion() : m_value(0) { }
+            AtomicStringImpl* m_value;
             RareData* m_rareData;
         } m_data;
         
-    public:
-        mutable AtomicString m_value;
         QualifiedName m_tag;
     };
+    
+inline bool CSSSelector::matchesPseudoElement() const 
+{ 
+    if (m_pseudoType == PseudoUnknown)
+        extractPseudoType();
+    return m_match == PseudoElement;
+}
 
 inline bool CSSSelector::isUnknownPseudoElement() const
 {
@@ -370,6 +368,26 @@ inline bool CSSSelector::isSiblingSelector() const
         || type == PseudoNthOfType
         || type == PseudoNthLastChild
         || type == PseudoNthLastOfType;
+}
+    
+inline void CSSSelector::setValue(const AtomicString& value)
+{ 
+    // Need to do ref counting manually for the union.
+    if (m_hasRareData) {
+        m_data.m_rareData->m_value = value.impl();
+        m_data.m_rareData->m_value->ref();
+        return;
+    }
+    m_data.m_value = value.impl();
+    m_data.m_value->ref();
+}
+
+inline void move(PassOwnPtr<CSSSelector> from, CSSSelector* to) 
+{
+    memcpy(to, from.get(), sizeof(CSSSelector));
+    // We want to free the memory (which was allocated with fastNew), but we
+    // don't want the destructor to run since it will affect the copy we've just made.
+    fastDeleteSkippingDestructor(from.leakPtr());
 }
 
 } // namespace WebCore

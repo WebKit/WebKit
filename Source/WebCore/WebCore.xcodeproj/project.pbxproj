@@ -3273,7 +3273,7 @@
 		A80E734F0A199C77007FB8C5 /* CSSSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E73480A199C77007FB8C5 /* CSSSelector.cpp */; };
 		A80E73500A199C77007FB8C5 /* StyleBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E73490A199C77007FB8C5 /* StyleBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E73510A199C77007FB8C5 /* StyleList.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E734A0A199C77007FB8C5 /* StyleList.h */; };
-		A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E734B0A199C77007FB8C5 /* CSSSelector.h */; };
+		A80E73520A199C77007FB8C5 /* CSSSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E734B0A199C77007FB8C5 /* CSSSelector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A80E73530A199C77007FB8C5 /* StyleBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E734C0A199C77007FB8C5 /* StyleBase.cpp */; };
 		A80E7A170A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E7A150A19C3D6007FB8C5 /* JSHTMLMetaElement.cpp */; };
 		A80E7A180A19C3D6007FB8C5 /* JSHTMLMetaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E7A160A19C3D6007FB8C5 /* JSHTMLMetaElement.h */; };

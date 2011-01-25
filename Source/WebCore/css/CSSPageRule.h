@@ -34,9 +34,9 @@ class CSSSelectorList;
 
 class CSSPageRule : public CSSStyleRule {
 public:
-    static PassRefPtr<CSSPageRule> create(CSSStyleSheet* parent, CSSSelector* selector, int sourceLine)
+    static PassRefPtr<CSSPageRule> create(CSSStyleSheet* parent, int sourceLine)
     {
-        return adoptRef(new CSSPageRule(parent, selector, sourceLine));
+        return adoptRef(new CSSPageRule(parent, sourceLine));
     }
 
     virtual ~CSSPageRule();
@@ -44,7 +44,7 @@ public:
     virtual String selectorText() const;
 
 private:
-    CSSPageRule(CSSStyleSheet* parent, CSSSelector* selector, int sourceLine);
+    CSSPageRule(CSSStyleSheet* parent, int sourceLine);
 
     virtual bool isPageRule() { return true; }
 

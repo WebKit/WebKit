@@ -20,11 +20,15 @@
 
 #include "config.h"
 #include "CSSParserValues.h"
+
 #include "CSSPrimitiveValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSQuirkPrimitiveValue.h"
+#include "CSSSelector.h"
 
 namespace WebCore {
+        
+using namespace WTF;
 
 CSSParserValueList::~CSSParserValueList()
 {
@@ -69,6 +73,27 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     else if (unit >= CSSParserValue::Q_EMS)
         parsedValue = CSSQuirkPrimitiveValue::create(fValue, CSSPrimitiveValue::CSS_EMS);
     return parsedValue;
+}
+    
+CSSParserSelector::CSSParserSelector()
+    : m_selector(adoptPtr(fastNew<CSSSelector>()))
+{
+}
+
+CSSParserSelector::~CSSParserSelector()
+{
+    if (!m_tagHistory)
+        return;
+    Vector<CSSParserSelector*, 16> toDelete;
+    CSSParserSelector* selector = m_tagHistory.leakPtr();
+    while (true) {
+        toDelete.append(selector);
+        CSSParserSelector* next = selector->m_tagHistory.leakPtr();
+        if (!next)
+            break;
+        selector = next;
+    }
+    deleteAllValues(toDelete);
 }
 
 }

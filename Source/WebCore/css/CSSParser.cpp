@@ -179,7 +179,6 @@ CSSParser::~CSSParser()
     fastDeleteAllValues(m_floatingSelectors);
     deleteAllValues(m_floatingValueLists);
     deleteAllValues(m_floatingFunctions);
-    deleteAllValues(m_reusableSelectorVector);
 }
 
 void CSSParserString::lower()
@@ -5700,20 +5699,20 @@ void CSSParser::countLines()
     }
 }
 
-CSSSelector* CSSParser::createFloatingSelector()
+CSSParserSelector* CSSParser::createFloatingSelector()
 {
-    CSSSelector* selector = fastNew<CSSSelector>();
+    CSSParserSelector* selector = new CSSParserSelector;
     m_floatingSelectors.add(selector);
     return selector;
 }
 
-CSSSelector* CSSParser::sinkFloatingSelector(CSSSelector* selector)
+PassOwnPtr<CSSParserSelector> CSSParser::sinkFloatingSelector(CSSParserSelector* selector)
 {
     if (selector) {
         ASSERT(m_floatingSelectors.contains(selector));
         m_floatingSelectors.remove(selector);
     }
-    return selector;
+    return adoptPtr(selector);
 }
 
 CSSParserValueList* CSSParser::createFloatingValueList()
@@ -5855,7 +5854,7 @@ WebKitCSSKeyframesRule* CSSParser::createKeyframesRule()
     return rulePtr;
 }
 
-CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
+CSSRule* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors)
 {
     CSSStyleRule* result = 0;
     markRuleBodyEnd();
@@ -5917,21 +5916,21 @@ void CSSParser::addNamespace(const AtomicString& prefix, const AtomicString& uri
     m_styleSheet->addNamespace(this, prefix, uri);
 }
 
-void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSSelector* specifiers)
+void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePrefix, const AtomicString& elementName, CSSParserSelector* specifiers)
 {
     AtomicString determinedNamespace = namespacePrefix != nullAtom && m_styleSheet ? m_styleSheet->determineNamespace(namespacePrefix) : m_defaultNamespace;
     QualifiedName tag = QualifiedName(namespacePrefix, elementName, determinedNamespace);
     if (!specifiers->isUnknownPseudoElement()) {
-        specifiers->m_tag = tag;
+        specifiers->setTag(tag);
         return;
     }
 
     if (Document* doc = document())
         doc->setUsesDescendantRules(true);
 
-    specifiers->m_relation = CSSSelector::ShadowDescendant;
-    if (CSSSelector* history = specifiers->tagHistory()) {
-        history->m_tag = tag;
+    specifiers->setRelation(CSSSelector::ShadowDescendant);
+    if (CSSParserSelector* history = specifiers->tagHistory()) {
+        history->setTag(tag);
         return;
     }
 
@@ -5940,19 +5939,22 @@ void CSSParser::updateSpecifiersWithElementName(const AtomicString& namespacePre
     if (elementName == starAtom && m_defaultNamespace == starAtom)
         return;
 
-    CSSSelector* elementNameSelector = fastNew<CSSSelector>();
-    elementNameSelector->m_tag = tag;
+    CSSParserSelector* elementNameSelector = new CSSParserSelector;
+    elementNameSelector->setTag(tag);
     specifiers->setTagHistory(elementNameSelector);
 }
 
 
-CSSRule* CSSParser::createPageRule(CSSSelector* pageSelector)
+CSSRule* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelector)
 {
     // FIXME: Margin at-rules are ignored.
     m_allowImportRules = m_allowNamespaceDeclarations = false;
     CSSPageRule* pageRule = 0;
     if (pageSelector) {
-        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet, pageSelector, m_lastSelectorLineNumber);
+        RefPtr<CSSPageRule> rule = CSSPageRule::create(m_styleSheet, m_lastSelectorLineNumber);
+        Vector<OwnPtr<CSSParserSelector> > selectorVector;
+        selectorVector.append(pageSelector);
+        rule->adoptSelectorVector(selectorVector);
         rule->setDeclaration(CSSMutableStyleDeclaration::create(rule.get(), m_parsedProperties, m_numParsedProperties));
         pageRule = rule.get();
         m_parsedStyleObjects.append(rule.release());

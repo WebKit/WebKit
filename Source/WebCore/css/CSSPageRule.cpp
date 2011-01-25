@@ -27,12 +27,9 @@
 
 namespace WebCore {
 
-CSSPageRule::CSSPageRule(CSSStyleSheet* parent, CSSSelector* selector, int sourceLine)
+CSSPageRule::CSSPageRule(CSSStyleSheet* parent, int sourceLine)
     : CSSStyleRule(parent, sourceLine)
 {
-    Vector<CSSSelector*> selectors;
-    selectors.append(selector);
-    adoptSelectorVector(selectors);
 }
 
 CSSPageRule::~CSSPageRule()

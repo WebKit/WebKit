@@ -69,8 +69,8 @@ using namespace HTMLNames;
 
     CSSRule* rule;
     CSSRuleList* ruleList;
-    CSSSelector* selector;
-    Vector<CSSSelector*>* selectorList;
+    CSSParserSelector* selector;
+    Vector<OwnPtr<CSSParserSelector> >* selectorList;
     CSSSelector::MarginBoxType marginBox;
     CSSSelector::Relation relation;
     MediaList* mediaList;
@@ -663,14 +663,14 @@ page_selector:
     IDENT {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
+        $$->setTag(QualifiedName(nullAtom, $1, p->m_defaultNamespace));
         $$->setForPage();
     }
     | IDENT pseudo_page {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = $2;
         if ($$) {
-            $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
+            $$->setTag(QualifiedName(nullAtom, $1, p->m_defaultNamespace));
             $$->setForPage();
         }
     }
@@ -812,7 +812,6 @@ selector_list:
         if ($1) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->reusableSelectorVector();
-            deleteAllValues(*$$);
             $$->shrink(0);
             $$->append(p->sinkFloatingSelector($1));
             p->updateLastSelectorLineAndPosition();
@@ -853,10 +852,10 @@ selector:
             $$ = 0;
         else if ($$) {
             CSSParser* p = static_cast<CSSParser*>(parser);
-            CSSSelector* end = $$;
+            CSSParserSelector* end = $$;
             while (end->tagHistory())
                 end = end->tagHistory();
-            end->m_relation = CSSSelector::Descendant;
+            end->setRelation(CSSSelector::Descendant);
             end->setTagHistory(p->sinkFloatingSelector($1));
             if (Document* doc = p->document())
                 doc->setUsesDescendantRules(true);
@@ -868,10 +867,10 @@ selector:
             $$ = 0;
         else if ($$) {
             CSSParser* p = static_cast<CSSParser*>(parser);
-            CSSSelector* end = $$;
+            CSSParserSelector* end = $$;
             while (end->tagHistory())
                 end = end->tagHistory();
-            end->m_relation = $2;
+            end->setRelation($2);
             end->setTagHistory(p->sinkFloatingSelector($1));
             if ($2 == CSSSelector::Child) {
                 if (Document* doc = p->document())
@@ -897,7 +896,7 @@ simple_selector:
     element_name {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
+        $$->setTag(QualifiedName(nullAtom, $1, p->m_defaultNamespace));
     }
     | element_name specifier_list {
         $$ = $2;
@@ -914,10 +913,10 @@ simple_selector:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         if (p->m_styleSheet)
-            $$->m_tag = QualifiedName(namespacePrefix, $2,
-                                      p->m_styleSheet->determineNamespace(namespacePrefix));
+            $$->setTag(QualifiedName(namespacePrefix, $2,
+                                      p->m_styleSheet->determineNamespace(namespacePrefix)));
         else // FIXME: Shouldn't this case be an error?
-            $$->m_tag = QualifiedName(nullAtom, $2, p->m_defaultNamespace);
+            $$->setTag(QualifiedName(nullAtom, $2, p->m_defaultNamespace));
     }
     | namespace_selector element_name specifier_list {
         $$ = $3;
@@ -956,8 +955,8 @@ specifier_list:
             $$ = 0;
         else if ($1) {
             CSSParser* p = static_cast<CSSParser*>(parser);
-            CSSSelector* end;
-            CSSSelector* history;
+            CSSParserSelector* end;
+            CSSParserSelector* history;
             // Ensure that unknown pseudo element always stays at the top of selector chain.
             if ($2->isUnknownPseudoElement()) {
                 end = $2;
@@ -969,7 +968,7 @@ specifier_list:
             $$ = end;
             while(end->tagHistory())
                 end = end->tagHistory();
-            end->m_relation = CSSSelector::SubSelector;
+            end->setRelation(CSSSelector::SubSelector);
             end->setTagHistory(p->sinkFloatingSelector(history));
         }
     }
@@ -982,10 +981,10 @@ specifier:
     IDSEL {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_match = CSSSelector::Id;
+        $$->setMatch(CSSSelector::Id);
         if (!p->m_strict)
             $1.lower();
-        $$->m_value = $1;
+        $$->setValue($1);
     }
   | HEX {
         if ($1.characters[0] >= '0' && $1.characters[0] <= '9') {
@@ -993,10 +992,10 @@ specifier:
         } else {
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelector();
-            $$->m_match = CSSSelector::Id;
+            $$->setMatch(CSSSelector::Id);
             if (!p->m_strict)
                 $1.lower();
-            $$->m_value = $1;
+            $$->setValue($1);
         }
     }
   | class
@@ -1008,10 +1007,10 @@ class:
     '.' IDENT {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_match = CSSSelector::Class;
+        $$->setMatch(CSSSelector::Class);
         if (!p->m_strict)
             $2.lower();
-        $$->m_value = $2;
+        $$->setValue($2);
     }
   ;
 
@@ -1030,13 +1029,13 @@ attrib:
     '[' maybe_space attr_name ']' {
         $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom));
-        $$->m_match = CSSSelector::Set;
+        $$->setMatch(CSSSelector::Set);
     }
     | '[' maybe_space attr_name match maybe_space ident_or_string maybe_space ']' {
         $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->setAttribute(QualifiedName(nullAtom, $3, nullAtom));
-        $$->m_match = (CSSSelector::Match)$4;
-        $$->m_value = $6;
+        $$->setMatch((CSSSelector::Match)$4);
+        $$->setValue($6);
     }
     | '[' maybe_space namespace_selector attr_name ']' {
         AtomicString namespacePrefix = $3;
@@ -1044,7 +1043,7 @@ attrib:
         $$ = p->createFloatingSelector();
         $$->setAttribute(QualifiedName(namespacePrefix, $4,
                                    p->m_styleSheet->determineNamespace(namespacePrefix)));
-        $$->m_match = CSSSelector::Set;
+        $$->setMatch(CSSSelector::Set);
     }
     | '[' maybe_space namespace_selector attr_name match maybe_space ident_or_string maybe_space ']' {
         AtomicString namespacePrefix = $3;
@@ -1052,8 +1051,8 @@ attrib:
         $$ = p->createFloatingSelector();
         $$->setAttribute(QualifiedName(namespacePrefix, $4,
                                    p->m_styleSheet->determineNamespace(namespacePrefix)));
-        $$->m_match = (CSSSelector::Match)$5;
-        $$->m_value = $7;
+        $$->setMatch((CSSSelector::Match)$5);
+        $$->setValue($7);
     }
   ;
 
@@ -1086,9 +1085,9 @@ ident_or_string:
 pseudo_page:
     ':' IDENT {
         $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
-        $$->m_match = CSSSelector::PagePseudoClass;
+        $$->setMatch(CSSSelector::PagePseudoClass);
         $2.lower();
-        $$->m_value = $2;
+        $$->setValue($2);
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
@@ -1097,9 +1096,9 @@ pseudo_page:
 pseudo:
     ':' IDENT {
         $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
-        $$->m_match = CSSSelector::PseudoClass;
+        $$->setMatch(CSSSelector::PseudoClass);
         $2.lower();
-        $$->m_value = $2;
+        $$->setValue($2);
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
@@ -1131,9 +1130,9 @@ pseudo:
     }
     | ':' ':' IDENT {
         $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
-        $$->m_match = CSSSelector::PseudoElement;
+        $$->setMatch(CSSSelector::PseudoElement);
         $3.lower();
-        $$->m_value = $3;
+        $$->setValue($3);
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoFirstLine) {
             CSSParser* p = static_cast<CSSParser*>(parser);
@@ -1150,9 +1149,9 @@ pseudo:
     | ':' FUNCTION maybe_space NTH maybe_space ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_match = CSSSelector::PseudoClass;
+        $$->setMatch(CSSSelector::PseudoClass);
         $$->setArgument($4);
-        $$->m_value = $2;
+        $$->setValue($2);
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
@@ -1168,9 +1167,9 @@ pseudo:
     | ':' FUNCTION maybe_space maybe_unary_operator INTEGER maybe_space ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_match = CSSSelector::PseudoClass;
+        $$->setMatch(CSSSelector::PseudoClass);
         $$->setArgument(String::number($4 * $5));
-        $$->m_value = $2;
+        $$->setValue($2);
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
@@ -1186,10 +1185,10 @@ pseudo:
     | ':' FUNCTION maybe_space IDENT maybe_space ')' {
         CSSParser *p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_match = CSSSelector::PseudoClass;
+        $$->setMatch(CSSSelector::PseudoClass);
         $$->setArgument($4);
         $2.lower();
-        $$->m_value = $2;
+        $$->setValue($2);
         CSSSelector::PseudoType type = $$->pseudoType();
         if (type == CSSSelector::PseudoUnknown)
             $$ = 0;
@@ -1211,10 +1210,10 @@ pseudo:
         else {
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelector();
-            $$->m_match = CSSSelector::PseudoClass;
-            $$->setSimpleSelector(p->sinkFloatingSelector($4));
+            $$->setMatch(CSSSelector::PseudoClass);
+            $$->setSimpleSelector(p->sinkFloatingSelector($4)->releaseSelector());
             $2.lower();
-            $$->m_value = $2;
+            $$->setValue($2);
         }
     }
   ;

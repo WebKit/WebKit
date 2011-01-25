@@ -30,6 +30,8 @@
 
 namespace WebCore {
     
+class CSSParserSelector;
+    
 class CSSSelectorList {
     WTF_MAKE_NONCOPYABLE(CSSSelectorList); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -37,11 +39,11 @@ public:
     ~CSSSelectorList();
 
     void adopt(CSSSelectorList& list);
-    void adoptSelectorVector(Vector<CSSSelector*>& selectorVector);
+    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector);
     
     CSSSelector* first() const { return m_selectorArray ? m_selectorArray : 0; }
-    static CSSSelector* next(CSSSelector* previous) { return previous->isLastInSelectorList() ? 0 : previous + 1; }
-    bool hasOneSelector() const { return m_selectorArray ? m_selectorArray->isLastInSelectorList() : false; }
+    static CSSSelector* next(CSSSelector*);
+    bool hasOneSelector() const { return m_selectorArray && !next(m_selectorArray); }
 
     bool selectorsNeedNamespaceResolution();
     bool hasUnknownPseudoElements() const;
@@ -49,9 +51,18 @@ public:
 private:
     void deleteSelectors();
 
+    // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.
     // End of the array is indicated by m_isLastInSelectorList bit in the last item.
     CSSSelector* m_selectorArray;
 };
+
+inline CSSSelector* CSSSelectorList::next(CSSSelector* current)
+{
+    // Skip subparts of combound selectors.
+    while (!current->isLastInTagHistory())
+        current++;
+    return current->isLastInSelectorList() ? 0 : current + 1;
+}
 
 } // namespace WebCore
 

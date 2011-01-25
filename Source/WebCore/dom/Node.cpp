@@ -1636,7 +1636,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
 
     // FIXME: we could also optimize for the the [id="foo"] case
     if (strictParsing && inDocument() && querySelectorList.hasOneSelector() && querySelectorList.first()->m_match == CSSSelector::Id) {
-        Element* element = document()->getElementById(querySelectorList.first()->m_value);
+        Element* element = document()->getElementById(querySelectorList.first()->value());
         if (element && (isDocumentNode() || element->isDescendantOf(this)) && selectorChecker.checkSelector(querySelectorList.first(), element))
             return element;
         return 0;
