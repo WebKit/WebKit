@@ -1,3 +1,16 @@
+2011-01-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] remove unused layoutTestController callback
+        https://bugs.webkit.org/show_bug.cgi?id=53103
+
+        This method is used by a test_shell_test, but not needed by DRT.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-01-25  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         Reviewed by Andreas Kling.
