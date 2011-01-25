@@ -1,3 +1,11 @@
+2011-01-25  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix: rollback untintentional changes in media expected results.
+
+        * media/video-source-moved-expected.txt:
+        * media/video-source-none-supported-expected.txt:
+        * LayoutTests/platform/win/media/audio-data-url-expected.txt:
+
 2011-01-25  Tony Chang  <tony@chromium.org>
 
         Unreviewed, mark inspector/debugger-scripts.html as failing on chromium linux.
