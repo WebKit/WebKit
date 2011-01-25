@@ -219,7 +219,7 @@ void SearchFieldCancelButtonElement::detach()
 void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (renderer() && renderer()->visibleToHitTesting()) {
             if (Frame* frame = document()->frame()) {
@@ -232,13 +232,12 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
         event->setDefaultHandled();
     }
     if (event->type() == eventNames().mouseupEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
-        if (m_capturing && renderer() && renderer()->visibleToHitTesting()) {
+        if (m_capturing) {
             if (Frame* frame = document()->frame()) {
                 frame->eventHandler()->setCapturingMouseEventsNode(0);
                 m_capturing = false;
             }
             if (hovered()) {
-                RefPtr<HTMLInputElement> protector(input);
                 String oldValue = input->value();
                 input->setValue("");
                 if (!oldValue.isEmpty()) {
@@ -271,6 +270,18 @@ PassRefPtr<SpinButtonElement> SpinButtonElement::create(HTMLElement* shadowParen
     return adoptRef(new SpinButtonElement(shadowParent));
 }
 
+void SpinButtonElement::detach()
+{
+    stopRepeatingTimer();
+    if (m_capturing) {
+        if (Frame* frame = document()->frame()) {
+            frame->eventHandler()->setCapturingMouseEventsNode(0);
+            m_capturing = false;
+        }
+    }
+    TextControlInnerElement::detach();
+}
+
 void SpinButtonElement::defaultEventHandler(Event* event)
 {
     if (!event->isMouseEvent()) {
@@ -286,7 +297,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
         return;
     }
 
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
+    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
     if (input->disabled() || input->isReadOnlyFormControl()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
@@ -297,12 +308,18 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     IntPoint local = roundedIntPoint(box->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
     if (mouseEvent->type() == eventNames().mousedownEvent && mouseEvent->button() == LeftButton) {
         if (box->borderBoxRect().contains(local)) {
-            RefPtr<Node> protector(input);
+            // The following functions of HTMLInputElement may run JavaScript
+            // code which detaches this shadow node. We need to take a reference
+            // and check renderer() after such function calls.
+            RefPtr<Node> protector(this);
             input->focus();
             input->select();
-            input->stepUpFromRenderer(m_upDownState == Up ? 1 : -1);
+            if (renderer()) {
+                input->stepUpFromRenderer(m_upDownState == Up ? 1 : -1);
+                if (renderer())
+                    startRepeatingTimer();
+            }
             event->setDefaultHandled();
-            startRepeatingTimer();
         }
     } else if (mouseEvent->type() == eventNames().mouseupEvent && mouseEvent->button() == LeftButton)
         stopRepeatingTimer();
@@ -403,8 +420,12 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
         return;
     }
 
+    // The call to focus() below dispatches a focus event, and an event handler in the page might
+    // remove the input element from DOM. To make sure it remains valid until we finish our work
+    // here, we take a temporary reference.
+    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+
     // On mouse down, select the text and set focus.
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (renderer() && renderer()->visibleToHitTesting()) {
             if (Frame* frame = document()->frame()) {
@@ -412,10 +433,6 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
                 m_capturing = true;
             }
         }
-        // The call to focus() below dispatches a focus event, and an event handler in the page might
-        // remove the input element from DOM. To make sure it remains valid until we finish our work
-        // here, we take a temporary reference.
-        RefPtr<HTMLInputElement> holdRef(input);
         RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
         input->focus();
         input->select();
@@ -482,11 +499,10 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
 {
     m_results = results;
 
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     // The call to setValue() below dispatches an event, and an event handler in the page might
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
-    RefPtr<HTMLInputElement> holdRef(input);
+    RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
     RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
     input->setValue(results.isEmpty() ? "" : results[0]->utterance());
     input->dispatchEvent(SpeechInputEvent::create(eventNames().webkitspeechchangeEvent, results));

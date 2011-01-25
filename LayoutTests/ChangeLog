@@ -1,3 +1,16 @@
+2011-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Some bugs of search cancel button and spin button about state change in
+        an event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=46950
+
+        * fast/forms/input-number-change-type-on-focus-expected.txt: Added.
+        * fast/forms/input-number-change-type-on-focus.html: Added.
+        * fast/forms/search-hide-cancel-on-cancel-expected.txt: Added.
+        * fast/forms/search-hide-cancel-on-cancel.html: Added.
+
 2011-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

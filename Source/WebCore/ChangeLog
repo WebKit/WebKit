@@ -1,3 +1,38 @@
+2011-01-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Some bugs of search cancel button and spin button about state change in
+        an event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=46950
+
+        Fix the following problems:
+         * Type=search field didn't release event capturing
+         * Assertion failure when an input field with spin buttons was changed
+           to another type on focus event.
+         * A input field with spin button didn't release event capturing when it
+           was changed to another type on focus event.
+
+        Tests: fast/forms/input-number-change-type-on-focus.html
+               fast/forms/search-hide-cancel-on-cancel.html
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+         - Make the variable 'input' RefPtr.  It makes the code simpler.
+         - Remove visibility check on mouseup event. We should release capturing
+           anyway because the cancel button may be invisible if JavaScript code
+           called by the focus event removes the input value.
+        (WebCore::SpinButtonElement::detach):
+         - Release capturing on detach because it is possible that a spin button
+           node is detached while it is capturing events.
+        (WebCore::SpinButtonElement::defaultEventHandler):
+          Take a reference to this and check renderer() after some functions which
+          may run JavaScript code.
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+          Make the variable 'input' RefPtr to align other functions in this file.
+        (WebCore::InputFieldSpeechButtonElement::setRecognitionResult): ditto.
+        * rendering/TextControlInnerElements.h: Declare SpinButtonElement::detach().
+
 2011-01-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

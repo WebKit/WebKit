@@ -99,6 +99,7 @@ public:
 private:
     SpinButtonElement(HTMLElement*);
 
+    virtual void detach();
     virtual bool isSpinButtonElement() const { return true; }
     // FIXME: shadowAncestorNode() should be const.
     virtual bool isEnabledFormControl() const { return static_cast<Element*>(const_cast<SpinButtonElement*>(this)->shadowAncestorNode())->isEnabledFormControl(); }
