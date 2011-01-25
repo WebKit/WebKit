@@ -2165,7 +2165,7 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 // HTML5 Geolocation API does not use window.clientInformation.
 BUGCR11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
-BUGWK40740 MAC : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
+BUGWK40740 MAC LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
 
 BUGCR46603 : fast/frames/lots-of-iframes.html = PASS TIMEOUT
 BUGCR46603 : fast/frames/lots-of-objects.html = PASS TIMEOUT
@@ -3097,9 +3097,8 @@ BUGYURYS : http/tests/security/xss-DENIED-frame-name.html = PASS TEXT
 
 BUGRNIWA SLOW LINUX : fast/text/large-text-composed-char-dos.html = PASS
 
-// Seems to be caused by http://trac.webkit.org/changeset/76291 . Needs
-// investigation.
-BUGTONY : fast/overflow/overflow-rtl-vertical.html = IMAGE
+// Seems to be caused by http://trac.webkit.org/changeset/76291
+BUGWK53042 : fast/overflow/overflow-rtl-vertical.html = IMAGE
 
 // These tests have been failing since WebKit roll 76389:76408 has been reverted
 BUGRNIWA WIN MAC : fast/animation/request-animation-frame-cancel.html = PASS TEXT
@@ -3108,8 +3107,30 @@ BUGRNIWA WIN MAC : fast/animation/request-animation-frame-display.html = PASS TE
 BUGRNIWA WIN MAC : fast/animation/request-animation-frame-within-callback.html = PASS TEXT
 BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
 
-// Failing after r76422
-BUGCR70573 LINUX : fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html = TEXT
-
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
+
+// Regressions from r76442.
+BUGTONY WIN : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-03-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-24-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/fonts-desc-02-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/fonts-elem-05-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/fonts-elem-06-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/masking-mask-01-b.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/render-groups-01-b.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/render-groups-03-t.svg = TEXT
+BUGTONY WIN : svg/W3C-SVG-1.1/text-text-04-t.svg = TEXT
+BUGTONY WIN : svg/batik/text/xmlSpace.svg = TEXT
+BUGTONY WIN : svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html = TEXT
+BUGTONY WIN : svg/text/text-hkern.svg = TEXT
+BUGTONY WIN : svg/text/text-vkern-on-horizontal-text.svg = TEXT
+BUGTONY WIN : svg/custom/svg-fonts-in-html.html = IMAGE+TEXT
+BUGTONY WIN : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT
+BUGTONY WIN : svg/text/text-hkern-on-vertical-text.svg = IMAGE+TEXT
+BUGTONY WIN : svg/text/text-text-04-t.svg = IMAGE+TEXT
+BUGTONY WIN : svg/text/text-vkern.svg = IMAGE+TEXT

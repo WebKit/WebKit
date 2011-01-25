@@ -1,3 +1,10 @@
+2011-01-24  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, round ascent and descent to match old code.
+
+        * platform/graphics/chromium/SimpleFontDataLinux.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2011-01-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.

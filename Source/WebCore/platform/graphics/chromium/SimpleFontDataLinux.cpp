@@ -89,13 +89,12 @@ void SimpleFontData::platformInit()
     // Beware those who step here: This code is designed to match Win32 font
     // metrics *exactly*.
     if (isVDMXValid) {
-        // FIXME: Access ascent/descent with floating point precision.
         ascent = vdmxAscent;
         descent = -vdmxDescent;
     } else {
         SkScalar height = -metrics.fAscent + metrics.fDescent + metrics.fLeading;
-        ascent = SkScalarToFloat(-metrics.fAscent);
-        descent = SkScalarToFloat(height) - ascent;
+        ascent = SkScalarRound(-metrics.fAscent);
+        descent = SkScalarRound(height) - ascent;
     }
 
     m_fontMetrics.setAscent(ascent);
