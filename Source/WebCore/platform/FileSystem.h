@@ -203,7 +203,7 @@ String filenameForDisplay(const String&);
 CString applicationDirectoryPath();
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !OS(WINCE)
 String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();
 bool safeCreateFile(const String&, CFDataRef);
