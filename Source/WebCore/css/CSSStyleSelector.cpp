@@ -2885,6 +2885,7 @@ CSSRuleSet::~CSSRuleSet()
 { 
     deleteAllValues(m_idRules);
     deleteAllValues(m_classRules);
+    deleteAllValues(m_pseudoRules);
     deleteAllValues(m_tagRules);
 }
 

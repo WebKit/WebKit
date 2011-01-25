@@ -1,5 +1,17 @@
 2011-01-24  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Leaking CSSRuleDataList objects
+        https://bugs.webkit.org/show_bug.cgi?id=53062
+
+        Fix leaked CSSRuleDataLists added to the m_pseudoRules hash.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::~CSSRuleSet):
+
+2011-01-24  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Eric Seidel.
 
         Refcount Images used in rendering code
