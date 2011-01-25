@@ -1,3 +1,13 @@
+2011-01-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Windows production build fix.
+        Use correct environment variable escaping
+
+        * win/WebKit2.make:
+        * win/WebKit2Generated.make:
+
 2011-01-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

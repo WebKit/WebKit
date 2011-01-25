@@ -1,3 +1,12 @@
+2011-01-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Windows production build fix.
+        Use correct environment variable escaping
+
+        * WebKit.vcproj/WebKit.make:
+
 2011-01-24  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Eric Seidel.
