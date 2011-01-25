@@ -49,7 +49,9 @@ var Preferences = {
     useDataURLForResourceImageIcons: true,
     showTimingTab: false,
     showCookiesTab: false,
-    debugMode: false
+    debugMode: false,
+    heapProfilerPresent: false,
+    detailedHeapProfiles: false
 }
 
 WebInspector.Settings = function()

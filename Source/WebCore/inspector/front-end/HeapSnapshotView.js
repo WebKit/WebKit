@@ -27,154 +27,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-WebInspector.HeapSnapshotEdgesIterator = function(snapshot, edges)
-{
-    this._snapshot = snapshot;
-    this._edges = edges;
-    this._edgeIndex = 0;
-}
-
-WebInspector.HeapSnapshotEdgesIterator.prototype = {
-    get done()
-    {
-        return this._edgeIndex >= this._edges.length;
-    },
-
-    get isElement()
-    {
-        return this._getType() === this._snapshot._edgeElementType;
-    },
-
-    get isHidden()
-    {
-        return this._getType() === this._snapshot._edgeHiddenType;
-    },
-
-    get name()
-    {
-        return this.isElement || this.isHidden ? this._getNameOrIndex() : this._snapshot._strings[this._getNameOrIndex()];
-    },
-
-    next: function()
-    {
-        this._edgeIndex += this._snapshot._edgeFieldsCount;
-    },
-
-    get node()
-    {
-        return new WebInspector.HeapSnapshotNodeWrapper(this._snapshot, this.nodeIndex);
-    },
-
-    get nodeIndex()
-    {
-        return this._edges[this._edgeIndex + this._snapshot._edgeToNodeOffset];
-    },
-
-    _getNameOrIndex: function()
-    {
-        return this._edges[this._edgeIndex + this._snapshot._edgeNameOffset];
-    },
-
-    _getType: function()
-    {
-        return this._edges[this._edgeIndex + this._snapshot._edgeTypeOffset];
-    }
-};
-
-WebInspector.HeapSnapshotNodeWrapper = function(snapshot, nodeIndex)
-{
-    this._snapshot = snapshot;
-    this._nodes = snapshot._nodes;
-    this._nodeIndex = nodeIndex;
-}
-
-WebInspector.HeapSnapshotNodeWrapper.prototype = {
-    get edges()
-    {
-        return new WebInspector.HeapSnapshotEdgesIterator(this._snapshot, this._getEdges());
-    },
-
-    get edgesCount()
-    {
-        return this._nodes[this._nodeIndex + this._snapshot._edgesCountOffset];
-    },
-
-    get instancesCount()
-    {
-        return this._nodes[this._nodeIndex + this._snapshot._nodeInstancesCountOffset];
-    },
-
-    get isHidden()
-    {
-        return this._getType() === this._snapshot._nodeHiddenType;
-    },
-
-    get name()
-    {
-        return this._snapshot._strings[this._getName()];
-    },
-
-    get selfSize()
-    {
-        return this._nodes[this._nodeIndex + this._snapshot._nodeSelfSizeOffset]; 
-    },
-
-    _getName: function()
-    {
-        return this._nodes[this._nodeIndex + this._snapshot._nodeNameOffset]; 
-    },
-
-    _getEdges: function()
-    {
-        var firstEdgeIndex = this._nodeIndex + this._snapshot._firstEdgeOffset;
-        return this._nodes.slice(firstEdgeIndex, firstEdgeIndex + this.edgesCount * this._snapshot._edgeFieldsCount);
-    },
-
-    _getType: function()
-    {
-        return this._nodes[this._nodeIndex + this._snapshot._nodeTypeOffset];
-    }
-};
-
-WebInspector.HeapSnapshot = function(profile)
-{
-    this._profile = profile;
-    this._nodes = profile.nodes;
-    this._strings = profile.strings;
-
-    this._init();
-}
-
-WebInspector.HeapSnapshot.prototype = {
-    _init: function()
-    {
-        this._metaNodeIndex = 0;
-        this._rootNodeIndex = 1;
-        var meta = this._nodes[this._metaNodeIndex];
-        this._nodeTypeOffset = meta.fields.indexOf("type");
-        this._nodeNameOffset = meta.fields.indexOf("name");
-        this._nodeIdOffset = meta.fields.indexOf("id");
-        this._nodeInstancesCountOffset = this._nodeIdOffset;
-        this._nodeSelfSizeOffset = meta.fields.indexOf("self_size");
-        this._edgesCountOffset = meta.fields.indexOf("children_count");
-        this._firstEdgeOffset = meta.fields.indexOf("children");
-        this._nodeTypes = meta.types[this._nodeTypeOffset];
-        this._nodeHiddenType = this._nodeTypes.indexOf("hidden");
-        var edgesMeta = meta.types[this._firstEdgeOffset];
-        this._edgeFieldsCount = edgesMeta.fields.length;
-        this._edgeTypeOffset = edgesMeta.fields.indexOf("type");
-        this._edgeNameOffset = edgesMeta.fields.indexOf("name_or_index");
-        this._edgeToNodeOffset = edgesMeta.fields.indexOf("to_node");
-        this._edgeTypes = edgesMeta.types[this._edgeTypeOffset];
-        this._edgeElementType = this._edgeTypes.indexOf("element");
-        this._edgeHiddenType = this._edgeTypes.indexOf("hidden");
-    },
-
-    get rootEdges()
-    {
-        return (new WebInspector.HeapSnapshotNodeWrapper(this, this._rootNodeIndex)).edges;
-    }
-};
 
 WebInspector.HeapSnapshotView = function(parent, profile)
 {
@@ -246,7 +98,7 @@ WebInspector.HeapSnapshotView = function(parent, profile)
 
     function profileCallback(profile)
     {
-        var list = this._getProfiles();
+        var list = this._profiles();
         var profileIndex;
         for (var i = 0; i < list.length; ++i)
             if (list[i].uid === profile.uid) {
@@ -440,7 +292,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _changeBase: function()
     {
-        if (this.baseSnapshot.uid === this._getProfiles()[this.baseSelectElement.selectedIndex].uid)
+        if (this.baseSnapshot.uid === this._profiles()[this.baseSelectElement.selectedIndex].uid)
             return;
 
         this._resetDataGridList(resetCompleted.bind(this));
@@ -468,7 +320,7 @@ WebInspector.HeapSnapshotView.prototype = {
         return this._snapshotDataGridList;
     },
 
-    _getProfiles: function()
+    _profiles: function()
     {
         return WebInspector.panels.profiles.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
     },
@@ -581,7 +433,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _resetDataGridList: function(callback)
     {
-        this._loadProfile(this._getProfiles()[this.baseSelectElement.selectedIndex], profileLoaded.bind(this));
+        this._loadProfile(this._profiles()[this.baseSelectElement.selectedIndex], profileLoaded.bind(this));
 
         function profileLoaded(profile)
         {
@@ -614,7 +466,7 @@ WebInspector.HeapSnapshotView.prototype = {
 
     _updateBaseOptions: function()
     {
-        var list = this._getProfiles();
+        var list = this._profiles();
         // We're assuming that snapshots can only be added.
         if (this.baseSelectElement.length === list.length)
             return;
@@ -1155,7 +1007,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 
     buttonClicked: function()
     {
-        InspectorBackend.takeHeapSnapshot();
+        InspectorBackend.takeHeapSnapshot(false);
     },
 
     get welcomeMessage()

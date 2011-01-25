@@ -304,12 +304,13 @@ module core {
         [domain=Profiler] void clearProfiles();
 
         // FIXME: split into Profiler and HeapProfiler.
-        [domain=Profiler] void takeHeapSnapshot();
+        [domain=Profiler] void takeHeapSnapshot(in boolean detailed);
         [notify, domain=Profiler] void addProfileHeader(out Object header);
         [notify, domain=Profiler] void addHeapSnapshotChunk(out unsigned long uid, out String chunk);
         [notify, domain=Profiler] void finishHeapSnapshot(out unsigned long uid);
         [notify, domain=Profiler] void setRecordingProfile(out boolean isProfiling);
         [notify, domain=Profiler] void resetProfiles();
+        [notify, domain=Profiler] void reportHeapSnapshotProgress(out int done, out int total);
 #endif // ENABLE_JAVASCRIPT_DEBUGGER
     };
 }

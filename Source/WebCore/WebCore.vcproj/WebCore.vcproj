@@ -65457,6 +65457,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DetailedHeapshotView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DOMAgent.js"
 					>
 				</File>
@@ -65534,6 +65538,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\heapProfiler.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\HeapSnapshot.js"
 					>
 				</File>
 				<File

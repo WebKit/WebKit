@@ -41,6 +41,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.ignoreWhitespace = false;
     Preferences.samplingCPUProfiler = true;
     Preferences.heapProfilerPresent = true;
+    Preferences.detailedHeapProfiles = false;
     Preferences.debuggerAlwaysEnabled = true;
     Preferences.profilerAlwaysEnabled = true;
     Preferences.canEditScriptSource = true;

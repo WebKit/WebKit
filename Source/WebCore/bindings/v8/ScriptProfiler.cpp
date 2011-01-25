@@ -53,10 +53,40 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
     return profile ? ScriptProfile::create(profile) : 0;
 }
 
-PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& title)
+namespace {
+
+class ActivityControlAdapter : public v8::ActivityControl {
+public:
+    ActivityControlAdapter(ScriptProfiler::HeapSnapshotProgress* progress)
+            : m_progress(progress), m_firstReport(true) { }
+    ControlOption ReportProgressValue(int done, int total)
+    {
+        ControlOption result = m_progress->isCanceled() ? kAbort : kContinue;
+        if (m_firstReport) {
+            m_firstReport = false;
+            m_progress->Start(total);
+        } else
+            m_progress->Worked(done);
+        if (done >= total)
+            m_progress->Done();
+        return result;
+    }
+private:
+    ScriptProfiler::HeapSnapshotProgress* m_progress;
+    bool m_firstReport;
+};
+
+} // namespace
+
+PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& title, HeapSnapshotProgress* control)
 {
     v8::HandleScope hs;
-    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kAggregated);
+    const v8::HeapSnapshot* snapshot = 0;
+    if (control) {
+        ActivityControlAdapter adapter(control);
+        snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kFull, &adapter);
+    } else
+        snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kAggregated);
     return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
 }
 

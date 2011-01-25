@@ -1,3 +1,80 @@
+2011-01-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Prepare for landing of detailed heap snapshots.
+
+        - Introduce Preferences.detailedHeapProfiles flag for controlling
+          querying of detailed heap snapshots.
+        - Add boilerplate code for the new view.
+        - Factor out common code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52624
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/ScriptProfiler.h:
+        (WebCore::ScriptProfiler::HeapSnapshotControl::~HeapSnapshotControl):
+        (WebCore::ScriptProfiler::takeHeapSnapshot):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::takeHeapSnapshot):
+        * bindings/v8/ScriptProfiler.h:
+        (WebCore::ScriptProfiler::HeapSnapshotControl::~HeapSnapshotControl):
+        * inspector/Inspector.idl:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::takeHeapSnapshot):
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/front-end/DetailedHeapshotView.js: Added.
+        (WebInspector.DetailedHeapshotView):
+        (WebInspector.DetailedHeapshotView.prototype.get statusBarItems):
+        (WebInspector.DetailedHeapshotView.prototype.get profile):
+        (WebInspector.DetailedHeapshotView.prototype.set profile):
+        (WebInspector.DetailedHeapshotView.prototype.show):
+        (WebInspector.DetailedHeapshotView.prototype.hide):
+        (WebInspector.DetailedHeapshotProfileType):
+        (WebInspector.DetailedHeapshotProfileType.prototype.get buttonTooltip):
+        (WebInspector.DetailedHeapshotProfileType.prototype.get buttonStyle):
+        (WebInspector.DetailedHeapshotProfileType.prototype.buttonClicked):
+        (WebInspector.DetailedHeapshotProfileType.prototype.get welcomeMessage):
+        (WebInspector.DetailedHeapshotProfileType.prototype.createSidebarTreeElementForProfile):
+        (WebInspector.DetailedHeapshotProfileType.prototype.createView):
+        * inspector/front-end/HeapSnapshot.js: Added.
+        (WebInspector.HeapSnapshotEdgesIterator):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype.get done):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype.get isElement):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype.get isHidden):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype.get name):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype.next):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype.get node):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype.get nodeIndex):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype._getNameOrIndex):
+        (WebInspector.HeapSnapshotEdgesIterator.prototype._getType):
+        (WebInspector.HeapSnapshotNodeWrapper):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype.get edges):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype.get edgesCount):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype.get instancesCount):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype.get isHidden):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype.get name):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype.get selfSize):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype._getName):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype._getEdges):
+        (WebInspector.HeapSnapshotNodeWrapper.prototype._getType):
+        (WebInspector.HeapSnapshot):
+        (WebInspector.HeapSnapshot.prototype._init):
+        (WebInspector.HeapSnapshot.prototype.get rootEdges):
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotProfileType.prototype.buttonClicked):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._setRecordingProfile):
+        (WebInspector.ProfilesPanel.prototype._reportHeapSnapshotProgress):
+        (WebInspector.ProfilerDispatcher.prototype.setRecordingProfile):
+        (WebInspector.ProfilerDispatcher.prototype.reportHeapSnapshotProgress):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2011-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

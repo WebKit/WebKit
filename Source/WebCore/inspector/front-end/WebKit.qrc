@@ -28,6 +28,7 @@
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>
     <file>DatabaseTableView.js</file>
+    <file>DetailedHeapshotView.js</file>
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
     <file>DOMAgent.js</file>
@@ -48,6 +49,7 @@
     <file>FontView.js</file>
     <file>GoToLineDialog.js</file>
     <file>HAREntry.js</file>
+    <file>HeapSnapshot.js</file>
     <file>HeapSnapshotView.js</file>
     <file>HelpScreen.js</file>
     <file>ImageView.js</file>

@@ -38,9 +38,18 @@ namespace WebCore {
 class ScriptProfiler {
     WTF_MAKE_NONCOPYABLE(ScriptProfiler);
 public:
+    class HeapSnapshotProgress {
+    public:
+        virtual ~HeapSnapshotProgress() { }
+        virtual void Start(int totalWork) = 0;
+        virtual void Worked(int workDone) = 0;
+        virtual void Done() = 0;
+        virtual bool isCanceled() = 0;
+    };
+
     static void start(ScriptState* state, const String& title);
     static PassRefPtr<ScriptProfile> stop(ScriptState* state, const String& title);
-    static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&) { return 0; }
+    static PassRefPtr<ScriptHeapSnapshot> takeHeapSnapshot(const String&, HeapSnapshotProgress*) { return 0; }
     static bool isProfilerAlwaysEnabled();
 };
 

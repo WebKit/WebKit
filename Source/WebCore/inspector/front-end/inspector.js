@@ -223,8 +223,12 @@ var WebInspector = {
         if (hiddenPanels.indexOf("profiles") === -1) {
             this.panels.profiles = new WebInspector.ProfilesPanel();
             this.panels.profiles.registerProfileType(new WebInspector.CPUProfileType());
-            if (Preferences.heapProfilerPresent)
-                this.panels.profiles.registerProfileType(new WebInspector.HeapSnapshotProfileType());
+            if (Preferences.heapProfilerPresent) {
+                if (!Preferences.detailedHeapProfiles)
+                    this.panels.profiles.registerProfileType(new WebInspector.HeapSnapshotProfileType());
+                else
+                    this.panels.profiles.registerProfileType(new WebInspector.DetailedHeapshotProfileType());
+            }
         }
         if (hiddenPanels.indexOf("audits") === -1)
             this.panels.audits = new WebInspector.AuditsPanel();

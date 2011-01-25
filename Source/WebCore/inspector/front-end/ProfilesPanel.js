@@ -370,8 +370,9 @@ WebInspector.ProfilesPanel.prototype = {
         this.profileViewStatusBarItemsContainer.removeChildren();
 
         var statusBarItems = view.statusBarItems;
-        for (var i = 0; i < statusBarItems.length; ++i)
-            this.profileViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
+        if (statusBarItems)
+            for (var i = 0; i < statusBarItems.length; ++i)
+                this.profileViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
     getProfiles: function(typeId)
@@ -629,6 +630,10 @@ WebInspector.ProfilesPanel.prototype = {
                 this._removeProfileHeader(this._temporaryRecordingProfile);
         }
         this.updateProfileTypeButtons();
+    },
+
+    _reportHeapSnapshotProgress: function(done, total)
+    {
     }
 }
 
@@ -674,6 +679,11 @@ WebInspector.ProfilerDispatcher.prototype = {
     setRecordingProfile: function(isProfiling)
     {
         this._profiler._setRecordingProfile(isProfiling);
+    },
+
+    reportHeapSnapshotProgress: function(done, total)
+    {
+        this._profiler._reportHeapSnapshotProgress(done, total);
     }
 }
 

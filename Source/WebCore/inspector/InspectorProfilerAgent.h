@@ -70,7 +70,7 @@ public:
     void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend; }
     void startUserInitiatedProfiling();
     void stopUserInitiatedProfiling(bool ignoreProfile = false);
-    void takeHeapSnapshot();
+    void takeHeapSnapshot(bool detailed);
     void toggleRecordButton(bool isProfiling);
 
 private:

@@ -267,12 +267,37 @@ void InspectorProfilerAgent::stopUserInitiatedProfiling(bool ignoreProfile)
     toggleRecordButton(false);
 }
 
-void InspectorProfilerAgent::takeHeapSnapshot()
+namespace {
+
+class HeapSnapshotProgress: public ScriptProfiler::HeapSnapshotProgress {
+public:
+    explicit HeapSnapshotProgress(InspectorFrontend* frontend)
+        : m_frontend(frontend) { }
+    void Start(int totalWork)
+    {
+        m_totalWork = totalWork;
+    }
+    void Worked(int workDone)
+    {
+        if (m_frontend)
+            m_frontend->reportHeapSnapshotProgress(workDone, m_totalWork);
+    }
+    void Done() { }
+    bool isCanceled() { return false; }
+private:
+    InspectorFrontend* m_frontend;
+    int m_totalWork;
+};
+
+};
+
+void InspectorProfilerAgent::takeHeapSnapshot(bool detailed)
 {
     String title = makeString(UserInitiatedProfileName, '.', String::number(m_nextUserInitiatedHeapSnapshotNumber));
     ++m_nextUserInitiatedHeapSnapshotNumber;
 
-    RefPtr<ScriptHeapSnapshot> snapshot = ScriptProfiler::takeHeapSnapshot(title);
+    HeapSnapshotProgress progress(m_frontend);
+    RefPtr<ScriptHeapSnapshot> snapshot = ScriptProfiler::takeHeapSnapshot(title, detailed ? &progress : 0);
     if (snapshot) {
         m_snapshots.add(snapshot->uid(), snapshot);
         if (m_frontend)
