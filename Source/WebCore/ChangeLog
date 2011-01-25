@@ -1,3 +1,17 @@
+2011-01-25  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Empty URLs are never display isolated
+        https://bugs.webkit.org/show_bug.cgi?id=53053
+
+        This check mirrors the check in the local case.  There isn't a good way
+        to test this with a LayoutTest, but it is tested in Chromium (where
+        this registry is used).
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated):
+
 2011-01-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

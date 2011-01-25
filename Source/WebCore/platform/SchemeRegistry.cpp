@@ -131,6 +131,8 @@ void SchemeRegistry::registerURLSchemeAsDisplayIsolated(const String& scheme)
 
 bool SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated(const String& scheme)
 {
+    if (scheme.isEmpty())
+        return false;
     return displayIsolatedURLSchemes().contains(scheme);
 }
 
