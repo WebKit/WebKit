@@ -1,3 +1,30 @@
+2011-01-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add LayerTreeHost class
+        https://bugs.webkit.org/show_bug.cgi?id=53132
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add LayerTreeHost files.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        Initialize m_layerTreeHost.
+
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        Call the m_layerTreeHost.
+
+        * WebProcess/WebPage/LayerTreeHost.cpp: Added.
+        (WebKit::LayerTreeHost::attachRootCompositingLayer):
+        (WebKit::LayerTreeHost::detachRootCompositingLayer):
+        Add stubbed out functions.
+
+        (WebKit::LayerTreeHost::syncCompositingLayers):
+        Sync the compositing layers in the main frame.
+
+        * WebProcess/WebPage/LayerTreeHost.h: Added.
+
 2011-01-25  Steve Falkenburg  <sfalken@apple.com>
 
         Rubber-stamped by Adam Roben.

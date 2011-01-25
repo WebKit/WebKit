@@ -55,6 +55,7 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_isWaitingForDidUpdate(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::display)
+    , m_layerTreeHost(webPage)
 {
 }
 
@@ -123,8 +124,12 @@ void DrawingAreaImpl::detachCompositingContext()
 {
 }
 
-void DrawingAreaImpl::setRootCompositingLayer(WebCore::GraphicsLayer*)
+void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
+    if (graphicsLayer)
+        m_layerTreeHost.attachRootCompositingLayer(graphicsLayer);
+    else
+        m_layerTreeHost.detachRootCompositingLayer();
 }
 
 void DrawingAreaImpl::scheduleCompositingLayerSync()

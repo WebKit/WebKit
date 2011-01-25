@@ -27,6 +27,7 @@
 #define DrawingAreaImpl_h
 
 #include "DrawingArea.h"
+#include "LayerTreeHost.h"
 #include "Region.h"
 #include "RunLoop.h"
 
@@ -76,6 +77,9 @@ private:
     bool m_isPaintingSuspended;
 
     RunLoop::Timer<DrawingAreaImpl> m_displayTimer;
+
+    // The layer tree host which handles accelerated compositing.
+    LayerTreeHost m_layerTreeHost;
 };
 
 } // namespace WebKit
