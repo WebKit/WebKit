@@ -71,11 +71,13 @@ PlatformWheelEvent::PlatformWheelEvent(NSEvent* event, NSView *windowView)
     if (continuous) {
         m_wheelTicksX = m_deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
         m_wheelTicksY = m_deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
+        m_hasPreciseScrollingDeltas = true;
     } else {
         m_wheelTicksX = m_deltaX;
         m_wheelTicksY = m_deltaY;
         m_deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
         m_deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+        m_hasPreciseScrollingDeltas = false;
     }
 }
 

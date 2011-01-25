@@ -44,7 +44,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
 }
 
 #if PLATFORM(MAC)
-WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, Modifiers modifiers, double timestamp)
+WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Phase phase, bool hasPreciseScrollingDeltas, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
     , m_position(position)
     , m_globalPosition(globalPosition)
@@ -52,6 +52,7 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
     , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
     , m_phase(phase)
+    , m_hasPreciseScrollingDeltas(hasPreciseScrollingDeltas)
 {
     ASSERT(isWheelEventType(type));
 }

@@ -166,7 +166,7 @@ public:
 
     WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Modifiers, double timestamp);
 #if PLATFORM(MAC)
-    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, Modifiers, double timestamp);
+    WebWheelEvent(Type, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, const WebCore::FloatSize& delta, const WebCore::FloatSize& wheelTicks, Granularity, Phase, bool hasPreciseScrollingDeltas, Modifiers, double timestamp);
 #endif
 
     const WebCore::IntPoint position() const { return m_position; }
@@ -176,6 +176,7 @@ public:
     Granularity granularity() const { return static_cast<Granularity>(m_granularity); }
 #if PLATFORM(MAC)
     Phase phase() const { return static_cast<Phase>(m_phase); }
+    bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
 #endif
 
     void encode(CoreIPC::ArgumentEncoder*) const;
@@ -191,6 +192,7 @@ private:
     uint32_t m_granularity; // Granularity
 #if PLATFORM(MAC)
     uint32_t m_phase; // Phase
+    bool m_hasPreciseScrollingDeltas;
 #endif
 };
 

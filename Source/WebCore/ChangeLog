@@ -1,3 +1,16 @@
+2011-01-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add hasPreciseScrollingDeltas bit to PlatformWheelEvent on the Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=53107
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        (WebCore::PlatformWheelEvent::hasPreciseScrollingDeltas):
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2011-01-20  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
