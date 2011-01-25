@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(3D_CANVAS)
+#if ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(WEBGL)
 
 #include "DrawingBuffer.h"
 

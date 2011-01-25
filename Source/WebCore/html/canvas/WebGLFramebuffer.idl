@@ -24,6 +24,6 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS] WebGLFramebuffer {
+    interface [Conditional=WEBGL] WebGLFramebuffer {
     };
 }

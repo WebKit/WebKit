@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "ANGLEWebKitBridge.h"
 #include <wtf/OwnArrayPtr.h>
@@ -117,4 +117,4 @@ bool ANGLEWebKitBridge::validateShaderSource(const char* shaderSource, ANGLEShad
 
 }
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

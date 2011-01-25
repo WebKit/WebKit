@@ -70,7 +70,7 @@ static IntRect clipBox(RenderBox* renderer);
 
 static inline bool isAcceleratedCanvas(RenderObject* renderer)
 {
-#if ENABLE(3D_CANVAS) || ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     if (renderer->isCanvas()) {
         HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer->node());
         if (CanvasRenderingContext* context = canvas->renderingContext())
@@ -287,7 +287,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         m_graphicsLayer->setContentsToMedia(mediaElement->platformLayer());
     }
 #endif
-#if ENABLE(3D_CANVAS) || ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     else if (isAcceleratedCanvas(renderer)) {
         HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(renderer->node());
         if (CanvasRenderingContext* context = canvas->renderingContext())
@@ -803,7 +803,7 @@ bool RenderLayerBacking::containsPaintedContent() const
         return hasBoxDecorationsOrBackground(renderer());
 #endif
 #if PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-#elif ENABLE(3D_CANVAS) || ENABLE(ACCELERATED_2D_CANVAS)
+#elif ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     if (isAcceleratedCanvas(renderer()))
         return hasBoxDecorationsOrBackground(renderer());
 #endif
@@ -843,7 +843,7 @@ void RenderLayerBacking::contentChanged(RenderLayer::ContentChangeType changeTyp
         updateAfterLayout(CompositingChildren, isUpdateRoot);
     }
 
-#if ENABLE(3D_CANVAS) || ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     if ((changeType == RenderLayer::CanvasChanged) && isAcceleratedCanvas(renderer())) {
         m_graphicsLayer->setContentsNeedsDisplay();
         return;

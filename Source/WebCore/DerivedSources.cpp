@@ -37,7 +37,7 @@
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
-#if ENABLE(3D_CANVAS)    
+#if ENABLE(WEBGL)    
 #include "JSWebGLRenderingContext.cpp"
 #endif
 #include "JSCDATASection.cpp"

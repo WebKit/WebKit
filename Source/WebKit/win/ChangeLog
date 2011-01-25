@@ -1,3 +1,13 @@
+2011-01-24  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Change ENABLE_3D_CANVAS to ENABLE_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=53041
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2011-01-25  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

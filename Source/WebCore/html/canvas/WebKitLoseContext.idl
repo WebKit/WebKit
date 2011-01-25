@@ -24,7 +24,7 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS, OmitConstructor] WebKitLoseContext {
+    interface [Conditional=WEBGL, OmitConstructor] WebKitLoseContext {
         [StrictTypeChecking] void loseContext();
     };
 }

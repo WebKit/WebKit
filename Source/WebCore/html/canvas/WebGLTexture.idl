@@ -24,6 +24,6 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS] WebGLTexture {
+    interface [Conditional=WEBGL] WebGLTexture {
     };
 }

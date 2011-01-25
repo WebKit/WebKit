@@ -24,7 +24,7 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS, OmitConstructor, DontCheckEnums] OESStandardDerivatives {
+    interface [Conditional=WEBGL, OmitConstructor, DontCheckEnums] OESStandardDerivatives {
         const unsigned int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
     };
 }

@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if USE(ACCELERATED_COMPOSITING)
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #import "WebGLLayer.h"
 
@@ -163,5 +163,5 @@ static void freeData(void *, const void *data, size_t /* size */)
 
 @end
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)
 #endif // USE(ACCELERATED_COMPOSITING)

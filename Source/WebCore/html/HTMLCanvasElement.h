@@ -118,7 +118,7 @@ public:
 
     AffineTransform baseTransform() const;
 
-#if ENABLE(3D_CANVAS)    
+#if ENABLE(WEBGL)    
     bool is3D() const;
 #endif
 

@@ -64,7 +64,7 @@ void JSXMLHttpRequest::markChildren(MarkStack& markStack)
     if (Document* responseDocument = m_impl->optionalResponseXML())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseDocument);
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
     if (ArrayBuffer* responseArrayBuffer = m_impl->optionalResponseArrayBuffer())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseArrayBuffer);
 #endif
@@ -124,7 +124,7 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(toBlob(val), ec);
         else if (val.inherits(&JSDOMFormData::s_info))
             impl()->send(toDOMFormData(val), ec);
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
         else if (val.inherits(&JSArrayBuffer::s_info))
             impl()->send(toArrayBuffer(val), ec);
 #endif
@@ -189,7 +189,7 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
 #endif
 
     case XMLHttpRequest::ResponseTypeArrayBuffer:
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
         {
             ExceptionCode ec = 0;
             ArrayBuffer* arrayBuffer = impl()->responseArrayBuffer(ec);

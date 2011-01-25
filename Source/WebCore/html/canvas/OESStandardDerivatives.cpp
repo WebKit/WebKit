@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "OESStandardDerivatives.h"
 
@@ -51,4 +51,4 @@ PassRefPtr<OESStandardDerivatives> OESStandardDerivatives::create()
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

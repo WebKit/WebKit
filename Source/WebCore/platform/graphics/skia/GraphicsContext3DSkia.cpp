@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
 
@@ -87,4 +87,4 @@ bool GraphicsContext3D::getImageData(Image* image,
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

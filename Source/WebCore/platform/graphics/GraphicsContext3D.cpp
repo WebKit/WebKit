@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
 
@@ -1437,4 +1437,4 @@ bool GraphicsContext3D::packPixels(const uint8_t* sourceData,
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

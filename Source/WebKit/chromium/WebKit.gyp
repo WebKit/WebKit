@@ -663,7 +663,7 @@
                         'chromium_code': 1,
                     }
                 }],
-                ['"ENABLE_3D_CANVAS=1" in feature_defines', {
+                ['"ENABLE_WEBGL=1" in feature_defines', {
                     'conditions': [
                         ['OS=="mac"', {
                             'link_settings': {

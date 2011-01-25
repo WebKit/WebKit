@@ -4682,9 +4682,9 @@ endif  # END ENABLE_BLOB
 # ---
 # 3D canvas (WebGL) support
 # ---
-if ENABLE_3D_CANVAS
-FEATURE_DEFINES += ENABLE_3D_CANVAS=1
-webcore_cppflags += -DENABLE_3D_CANVAS=1
+if ENABLE_WEBGL
+FEATURE_DEFINES += ENABLE_WEBGL=1
+webcore_cppflags += -DENABLE_WEBGL=1
 webcore_sources += \
 	Source/WebCore/html/canvas/WebGLActiveInfo.h \
 	Source/WebCore/html/canvas/WebGLBuffer.cpp \
@@ -4711,7 +4711,7 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLTexture.h \
 	Source/WebCore/html/canvas/WebGLUniformLocation.cpp \
 	Source/WebCore/html/canvas/WebGLUniformLocation.h
-endif  # END ENABLE_3D_CANVAS
+endif  # END ENABLE_WEBGL
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl

@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "Int32Array.h"
 
@@ -64,4 +64,4 @@ PassRefPtr<Int32Array> Int32Array::slice(int start, int end) const
 
 }
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

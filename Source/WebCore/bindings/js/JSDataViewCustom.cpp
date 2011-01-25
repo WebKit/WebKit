@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "JSDataView.h"
 
@@ -161,4 +161,4 @@ JSValue JSDataView::setUint8(ExecState* exec)
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

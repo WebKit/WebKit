@@ -1,3 +1,143 @@
+2011-01-24  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Change ENABLE_3D_CANVAS to ENABLE_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=53041
+
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.cpp:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * bindings/js/JSArrayBufferCustom.cpp:
+        * bindings/js/JSCanvasRenderingContextCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDataViewCustom.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSFloat32ArrayCustom.cpp:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::markChildren):
+        (WebCore::JSXMLHttpRequest::send):
+        (WebCore::JSXMLHttpRequest::response):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::getCSSCanvasContextCallback):
+        * bindings/v8/custom/V8Float32ArrayCustom.cpp:
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+        * bindings/v8/custom/V8Int16ArrayCustom.cpp:
+        * bindings/v8/custom/V8Int32ArrayCustom.cpp:
+        * bindings/v8/custom/V8Int8ArrayCustom.cpp:
+        * bindings/v8/custom/V8Uint16ArrayCustom.cpp:
+        * bindings/v8/custom/V8Uint32ArrayCustom.cpp:
+        * bindings/v8/custom/V8Uint8ArrayCustom.cpp:
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::responseAccessorGetter):
+        (WebCore::V8XMLHttpRequest::sendCallback):
+        * features.pri:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::reset):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/ArrayBuffer.cpp:
+        * html/canvas/ArrayBuffer.idl:
+        * html/canvas/ArrayBufferView.cpp:
+        * html/canvas/ArrayBufferView.idl:
+        * html/canvas/DataView.cpp:
+        * html/canvas/DataView.idl:
+        * html/canvas/Float32Array.cpp:
+        * html/canvas/Float32Array.idl:
+        * html/canvas/Int16Array.cpp:
+        * html/canvas/Int16Array.idl:
+        * html/canvas/Int32Array.cpp:
+        * html/canvas/Int32Array.idl:
+        * html/canvas/Int8Array.cpp:
+        * html/canvas/Int8Array.idl:
+        * html/canvas/OESStandardDerivatives.cpp:
+        * html/canvas/OESStandardDerivatives.idl:
+        * html/canvas/OESTextureFloat.cpp:
+        * html/canvas/OESTextureFloat.idl:
+        * html/canvas/Uint16Array.cpp:
+        * html/canvas/Uint16Array.idl:
+        * html/canvas/Uint32Array.cpp:
+        * html/canvas/Uint32Array.idl:
+        * html/canvas/Uint8Array.cpp:
+        * html/canvas/Uint8Array.idl:
+        * html/canvas/WebGLActiveInfo.idl:
+        * html/canvas/WebGLBuffer.cpp:
+        * html/canvas/WebGLBuffer.idl:
+        * html/canvas/WebGLContextAttributes.cpp:
+        * html/canvas/WebGLContextAttributes.idl:
+        * html/canvas/WebGLContextEvent.idl:
+        * html/canvas/WebGLExtension.cpp:
+        * html/canvas/WebGLFramebuffer.cpp:
+        * html/canvas/WebGLFramebuffer.idl:
+        * html/canvas/WebGLGetInfo.cpp:
+        * html/canvas/WebGLObject.cpp:
+        * html/canvas/WebGLProgram.cpp:
+        * html/canvas/WebGLProgram.idl:
+        * html/canvas/WebGLRenderbuffer.cpp:
+        * html/canvas/WebGLRenderbuffer.idl:
+        * html/canvas/WebGLRenderingContext.cpp:
+        * html/canvas/WebGLRenderingContext.idl:
+        * html/canvas/WebGLShader.cpp:
+        * html/canvas/WebGLShader.idl:
+        * html/canvas/WebGLTexture.cpp:
+        * html/canvas/WebGLTexture.idl:
+        * html/canvas/WebGLUniformLocation.cpp:
+        * html/canvas/WebGLUniformLocation.idl:
+        * html/canvas/WebKitLoseContext.cpp:
+        * html/canvas/WebKitLoseContext.idl:
+        * page/DOMWindow.idl:
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        * platform/graphics/GraphicsContext3D.cpp:
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        * platform/graphics/gpu/mac/DrawingBufferMac.mm:
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        * platform/graphics/mac/WebGLLayer.mm:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/qt/Extensions3DQt.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::GraphicsLayerQtImpl):
+        (WebCore::GraphicsLayerQtImpl::paint):
+        (WebCore::GraphicsLayerQtImpl::flushChanges):
+        * platform/graphics/qt/GraphicsLayerQt.h:
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::isAcceleratedCanvas):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::containsPaintedContent):
+        (WebCore::RenderLayerBacking::contentChanged):
+        * webaudio/AudioBuffer.cpp:
+        * webaudio/AudioBuffer.idl:
+        * webaudio/RealtimeAnalyser.cpp:
+        * webaudio/RealtimeAnalyser.h:
+        * webaudio/RealtimeAnalyserNode.h:
+        * webaudio/RealtimeAnalyserNode.idl:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setResponseType):
+        (WebCore::XMLHttpRequest::clearResponse):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/XMLHttpRequest.h:
+
 2011-01-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

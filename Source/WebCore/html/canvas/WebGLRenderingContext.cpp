@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "WebGLRenderingContext.h"
 
@@ -4642,4 +4642,4 @@ void WebGLRenderingContext::LRUImageBufferCache::bubbleToFront(int idx)
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

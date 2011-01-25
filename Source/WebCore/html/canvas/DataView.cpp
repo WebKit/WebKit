@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "DataView.h"
 
@@ -232,4 +232,4 @@ void DataView::setFloat64(unsigned byteOffset, double value, bool littleEndian, 
 
 }
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

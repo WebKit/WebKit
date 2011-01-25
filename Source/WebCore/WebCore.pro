@@ -3759,7 +3759,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
     }
 }
 
-contains(DEFINES, ENABLE_BLOB=1) | contains(DEFINES, ENABLE_3D_CANVAS=1) {
+contains(DEFINES, ENABLE_BLOB=1) | contains(DEFINES, ENABLE_WEBGL=1) {
     !v8 {
         HEADERS += \
             bindings/js/JSArrayBufferViewHelper.h
@@ -3802,7 +3802,7 @@ contains(DEFINES, ENABLE_BLOB=1) | contains(DEFINES, ENABLE_3D_CANVAS=1) {
         html/canvas/Uint16Array.cpp
     }
 
-contains(DEFINES, ENABLE_3D_CANVAS=1) {
+contains(DEFINES, ENABLE_WEBGL=1) {
     tobe|!tobe: QT += opengl
 
     HEADERS += \

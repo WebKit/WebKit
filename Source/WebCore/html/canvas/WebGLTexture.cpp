@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "WebGLTexture.h"
 
@@ -353,4 +353,4 @@ const WebGLTexture::LevelInfo* WebGLTexture::getLevelInfo(GC3Denum target, GC3Di
 
 }
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

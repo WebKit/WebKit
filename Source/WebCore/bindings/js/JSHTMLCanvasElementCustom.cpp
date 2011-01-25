@@ -30,7 +30,7 @@
 #include "CanvasContextAttributes.h"
 #include "HTMLCanvasElement.h"
 #include "JSCanvasRenderingContext2D.h"
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
 #include "WebGLContextAttributes.h"
 #endif
@@ -55,7 +55,7 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
     HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(impl());
     const UString& contextId = exec->argument(0).toString(exec);
     RefPtr<CanvasContextAttributes> attrs;
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     if (contextId == "experimental-webgl" || contextId == "webkit-3d") {
         attrs = WebGLContextAttributes::create();
         WebGLContextAttributes* webGLAttrs = static_cast<WebGLContextAttributes*>(attrs.get());

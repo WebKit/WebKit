@@ -41,7 +41,7 @@
 #include "V8CanvasRenderingContext2D.h"
 #include "V8Node.h"
 #include "V8Proxy.h"
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 #include "V8WebGLRenderingContext.h"
 #endif
 #include <wtf/MathExtras.h>
@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     HTMLCanvasElement* imp = V8HTMLCanvasElement::toNative(holder);
     String contextId = toWebCoreString(args[0]);
     RefPtr<CanvasContextAttributes> attrs;
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     if (contextId == "experimental-webgl" || contextId == "webkit-3d") {
         attrs = WebGLContextAttributes::create();
         WebGLContextAttributes* webGLAttrs = static_cast<WebGLContextAttributes*>(attrs.get());
@@ -84,7 +84,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
         return v8::Null();
     if (result->is2d())
         return toV8(static_cast<CanvasRenderingContext2D*>(result));
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     else if (result->is3d())
         return toV8(static_cast<WebGLRenderingContext*>(result));
 #endif

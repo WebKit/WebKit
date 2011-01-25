@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "Extensions3DChromium.h"
 
@@ -89,4 +89,4 @@ void Extensions3DChromium::copyTextureToParentTextureCHROMIUM(unsigned texture, 
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

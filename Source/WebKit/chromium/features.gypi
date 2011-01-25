@@ -39,7 +39,7 @@
       # chromium build, overrides this list with its own values. See
       # features_override.gypi inline documentation for more details.
       'feature_defines': [
-        'ENABLE_3D_CANVAS=1',
+        'ENABLE_WEBGL=1',
         'ENABLE_3D_RENDERING=1',
         'ENABLE_ACCELERATED_2D_CANVAS=1',
         'ENABLE_BLOB=1',

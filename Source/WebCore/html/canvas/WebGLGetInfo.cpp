@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "WebGLGetInfo.h"
 
@@ -229,4 +229,4 @@ PassRefPtr<Uint8Array> WebGLGetInfo::getWebGLUnsignedByteArray() const
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

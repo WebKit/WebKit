@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
 
@@ -1071,4 +1071,4 @@ bool GraphicsContext3D::isGLES2Compliant() const
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

@@ -97,7 +97,7 @@ public:
     static bool webkitAudioContextEnabled() { return isWebAudioEnabled; }
 #endif
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
     static void setWebGLEnabled(bool isEnabled) { isWebGLEnabled = isEnabled; }
     static bool arrayBufferEnabled() { return isWebGLEnabled; }
     static bool int8ArrayEnabled() { return isWebGLEnabled; }

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "ArrayBufferView.h"
 
@@ -106,4 +106,4 @@ void ArrayBufferView::calculateOffsetAndLength(int start, int end, unsigned arra
 
 }
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

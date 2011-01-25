@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEB_AUDIO) & ENABLE(3D_CANVAS)
+#if ENABLE(WEB_AUDIO) & ENABLE(WEBGL)
 
 #include "AudioBuffer.h"
 
@@ -107,4 +107,4 @@ void AudioBuffer::zero()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_AUDIO) & ENABLE(3D_CANVAS)
+#endif // ENABLE(WEB_AUDIO) & ENABLE(WEBGL)

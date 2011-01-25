@@ -34,7 +34,7 @@ namespace WebCore {
 class AudioBus;
 class FFTFrame;
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 class Float32Array;
 class Uint8Array;
 #endif
@@ -61,7 +61,7 @@ public:
     void setSmoothingTimeConstant(float k) { m_smoothingTimeConstant = k; }
     float smoothingTimeConstant() const { return static_cast<float>(m_smoothingTimeConstant); }
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     void getFloatFrequencyData(Float32Array*);
     void getByteFrequencyData(Uint8Array*);
     void getByteTimeDomainData(Uint8Array*);

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "Extensions3DOpenGL.h"
 
@@ -125,4 +125,4 @@ void Extensions3DOpenGL::renderbufferStorageMultisample(unsigned long target, un
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

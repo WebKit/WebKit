@@ -171,7 +171,7 @@ void QWebSettingsPrivate::apply()
 
         settings->setAcceleratedCompositingEnabled(value);
 #endif
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
         value = attributes.value(QWebSettings::WebGLEnabled,
                                  global->attributes.value(QWebSettings::WebGLEnabled));
 

@@ -365,13 +365,13 @@ AC_ARG_ENABLE(3D_transforms,
               [],[enable_3D_transforms="no"])
 AC_MSG_RESULT([$enable_3D_transforms])
 
-# check whether to enable 3D canvas (WebGL) support
-AC_MSG_CHECKING([whether to enable 3D canvas (WebGL) support])
-AC_ARG_ENABLE(3D_canvas,
-              AC_HELP_STRING([--enable-3D-canvas],
-                             [enable support for 3D canvas (WebGL) [default=yes]]),
-              [], [enable_3D_canvas="no"])
-AC_MSG_RESULT([$enable_3D_canvas])
+# check whether to enable WebGL support
+AC_MSG_CHECKING([whether to enable WebGL support])
+AC_ARG_ENABLE(WebGL,
+              AC_HELP_STRING([--enable-WebGL],
+                             [enable support for (WebGL [default=yes]]),
+              [], [enable_WebGL="no"])
+AC_MSG_RESULT([$enable_WebGL])
 
 # check whether to enable channel messaging support
 AC_MSG_CHECKING([whether to enable HTML5 Channel Messaging support])
@@ -963,7 +963,7 @@ AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_3D_TRANSFORMS],[test "$enable_3D_transforms" = "yes"])
-AM_CONDITIONAL([ENABLE_3D_CANVAS],[test "$enable_3D_canvas" = "yes"])
+AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_WebGL" = "yes"])
 AM_CONDITIONAL([ENABLE_BLOB],[test "$enable_blob" = "yes"])
 AM_CONDITIONAL([ENABLE_CHANNEL_MESSAGING],[test "$enable_channel_messaging" = "yes"])
 AM_CONDITIONAL([ENABLE_JAVASCRIPT_DEBUGGER],[test "$enable_javascript_debugger" = "yes"])

@@ -34,7 +34,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 namespace WebCore {
 
@@ -1649,4 +1649,4 @@ bool GraphicsContext3D::getImageData(Image* image,
 
 }
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "ArrayBuffer.h"
 
@@ -101,4 +101,4 @@ void* ArrayBuffer::tryAllocate(unsigned numElements, unsigned elementByteSize)
 
 }
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

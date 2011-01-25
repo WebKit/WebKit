@@ -1,3 +1,18 @@
+2011-01-24  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Change ENABLE_3D_CANVAS to ENABLE_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=53041
+
+        * WebKit.gyp:
+        * features.gypi:
+        * src/Extensions3DChromium.cpp:
+        * src/GraphicsContext3DChromium.cpp:
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableWebGL):
+        (WebKit::WebRuntimeFeatures::isWebGLEnabled):
+
 2011-01-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

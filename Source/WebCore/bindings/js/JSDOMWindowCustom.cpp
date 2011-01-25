@@ -48,7 +48,7 @@
 #include <runtime/JSFunction.h>
 #include <runtime/PrototypeFunction.h>
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 #include "JSArrayBuffer.h"
 #include "JSDataView.h"
 #include "JSFloat32Array.h"
@@ -538,7 +538,7 @@ JSValue JSDOMWindow::webKitCSSMatrix(ExecState* exec) const
     return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec, this);
 }
  
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 JSValue JSDOMWindow::arrayBuffer(ExecState* exec) const
 {
     return getDOMConstructor<JSArrayBufferConstructor>(exec, this);

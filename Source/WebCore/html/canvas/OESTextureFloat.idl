@@ -24,6 +24,6 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS, OmitConstructor] OESTextureFloat {
+    interface [Conditional=WEBGL, OmitConstructor] OESTextureFloat {
     };
 }

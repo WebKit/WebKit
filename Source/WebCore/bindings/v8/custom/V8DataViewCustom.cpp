@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "DataView.h"
 
@@ -121,4 +121,4 @@ v8::Handle<v8::Value> V8DataView::setUint8Callback(const v8::Arguments& args)
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

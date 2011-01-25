@@ -26,7 +26,7 @@
 module html {
 
     interface [
-        Conditional=3D_CANVAS
+        Conditional=WEBGL
     ] WebGLActiveInfo {
         readonly attribute int size;
         readonly attribute unsigned int type;

@@ -26,7 +26,7 @@
 #include "Image.h"
 #include "TextureMapperNode.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 #include "GraphicsContext3D.h"
 #endif
 
@@ -73,7 +73,7 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsBackgroundColor(const Color&);
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*);
     virtual void setGraphicsContext3DNeedsDisplay();
 #endif

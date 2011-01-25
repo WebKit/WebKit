@@ -4806,9 +4806,9 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setWebAudioEnabled(true);
 #endif // ENABLE(WEB_AUDIO)
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     settings->setWebGLEnabled(true);
-#endif  // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)
 
     hr = prefsPrivate->isDNSPrefetchingEnabled(&enabled);
     if (FAILED(hr))

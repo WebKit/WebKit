@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "ArrayBuffer.h"
 
@@ -78,4 +78,4 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

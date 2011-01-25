@@ -25,7 +25,7 @@
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "JSCanvasRenderingContext2D.h"
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
 #endif
 #include "JSDOMWindowCustom.h"

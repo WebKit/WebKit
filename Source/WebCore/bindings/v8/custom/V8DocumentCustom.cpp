@@ -49,7 +49,7 @@
 #include "V8Proxy.h"
 #include "V8Touch.h"
 #include "V8TouchList.h"
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 #include "V8WebGLRenderingContext.h"
 #endif
 #include "V8XPathNSResolver.h"
@@ -110,10 +110,10 @@ v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Argument
         return v8::Undefined();
     if (result->is2d())
         return toV8(static_cast<CanvasRenderingContext2D*>(result));
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     else if (result->is3d())
         return toV8(static_cast<WebGLRenderingContext*>(result));
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)
     ASSERT_NOT_REACHED();
     return v8::Undefined();
 }

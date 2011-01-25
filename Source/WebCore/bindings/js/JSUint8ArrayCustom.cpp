@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
 
 #include "JSUint8Array.h"
 
@@ -63,4 +63,4 @@ EncodedJSValue JSC_HOST_CALL JSUint8ArrayConstructor::constructJSUint8Array(Exec
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#endif // ENABLE(WEBGL) || ENABLE(BLOB)

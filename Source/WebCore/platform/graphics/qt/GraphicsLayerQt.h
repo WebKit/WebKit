@@ -20,7 +20,7 @@
 #ifndef GraphicsLayerQt_h
 #define GraphicsLayerQt_h
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 #include "GraphicsContext3D.h"
 #endif
 #include "GraphicsLayer.h"
@@ -79,7 +79,7 @@ public:
     virtual void setContentsNeedsDisplay();
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsBackgroundColor(const Color&);
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     virtual void setContentsToGraphicsContext3D(const GraphicsContext3D*);
     virtual void setGraphicsContext3DNeedsDisplay();
 #endif

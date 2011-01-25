@@ -95,7 +95,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAccessorGetter(v8::Local<v8::Str
         return v8::Undefined();
 #endif
 
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
     case XMLHttpRequest::ResponseTypeArrayBuffer:
         {
             ExceptionCode ec = 0;
@@ -193,7 +193,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
             DOMFormData* domFormData = V8DOMFormData::toNative(object);
             ASSERT(domFormData);
             xmlHttpRequest->send(domFormData, ec);
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
         } else if (V8ArrayBuffer::HasInstance(arg)) {
             v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(arg);
             ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(object);

@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "WebGLRenderbuffer.h"
 
@@ -57,4 +57,4 @@ void WebGLRenderbuffer::deleteObjectImpl(Platform3DObject object)
 
 }
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

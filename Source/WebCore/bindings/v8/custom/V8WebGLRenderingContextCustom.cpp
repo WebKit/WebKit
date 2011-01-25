@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "V8WebGLRenderingContext.h"
 
@@ -773,4 +773,4 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::vertexAttrib4fvCallback(const v8:
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

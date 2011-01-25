@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
 #include "GraphicsContextCG.h"
@@ -254,4 +254,4 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

@@ -95,7 +95,7 @@ public:
     void send(const String&, ExceptionCode&);
     void send(Blob*, ExceptionCode&);
     void send(DOMFormData*, ExceptionCode&);
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
     void send(ArrayBuffer*, ExceptionCode&);
 #endif
     void abort();
@@ -115,7 +115,7 @@ public:
     String responseType();
     ResponseTypeCode responseTypeCode() const { return m_responseTypeCode; }
     
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
     // response attribute has custom getter.
     ArrayBuffer* responseArrayBuffer(ExceptionCode&);
     ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }
@@ -206,7 +206,7 @@ private:
     mutable bool m_createdDocument;
     mutable RefPtr<Document> m_responseXML;
     
-#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
+#if ENABLE(WEBGL) || ENABLE(BLOB)
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
     mutable RefPtr<ArrayBuffer> m_responseArrayBuffer;
 #endif

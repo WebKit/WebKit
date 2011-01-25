@@ -305,7 +305,7 @@ public:
         }
     } m_state;
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     const GraphicsContext3D* m_gc3D;
 #endif
 
@@ -335,7 +335,7 @@ GraphicsLayerQtImpl::GraphicsLayerQtImpl(GraphicsLayerQt* newLayer)
 #if ENABLE(TILED_BACKING_STORE)
     , m_tiledBackingStore(0)
 #endif
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     , m_gc3D(0)
 #endif
 {
@@ -647,7 +647,7 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
     case MediaContentType:
         // we don't need to paint anything: we have a QGraphicsItem from the media element
         break;
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     case Canvas3DContentType:
         m_gc3D->paint(painter, option->rect);
         break;
@@ -791,7 +791,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
             setFlag(ItemHasNoContents, !m_layer->drawsContent());
             break;
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
         case Canvas3DContentType:
             if (m_pendingContent.contentType != m_currentContent.contentType)
                 update();
@@ -1250,7 +1250,7 @@ void GraphicsLayerQt::setContentsBackgroundColor(const Color& color)
     GraphicsLayer::setContentsBackgroundColor(color);
 }
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 void GraphicsLayerQt::setContentsToGraphicsContext3D(const GraphicsContext3D* ctx)
 {
     if (ctx == m_impl->m_gc3D)

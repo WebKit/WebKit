@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 #include "Extensions3DQt.h"
 
@@ -58,4 +58,4 @@ int Extensions3DQt::getGraphicsResetStatusARB()
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(WEBGL)

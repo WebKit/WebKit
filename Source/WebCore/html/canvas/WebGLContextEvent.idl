@@ -25,7 +25,7 @@
 
 module html {
     interface [
-        Conditional=3D_CANVAS,
+        Conditional=WEBGL,
     ] WebGLContextEvent : Event {
         readonly attribute DOMString statusMessage;
         [StrictTypeChecking] void initEvent(in DOMString eventTypeArg,

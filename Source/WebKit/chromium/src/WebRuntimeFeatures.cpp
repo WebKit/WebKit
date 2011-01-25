@@ -202,14 +202,14 @@ bool WebRuntimeFeatures::isWebAudioEnabled()
 
 void WebRuntimeFeatures::enableWebGL(bool enable)
 {
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     RuntimeEnabledFeatures::setWebGLEnabled(enable);
 #endif
 }
 
 bool WebRuntimeFeatures::isWebGLEnabled()
 {
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     return RuntimeEnabledFeatures::webGLRenderingContextEnabled();
 #else
     return false;

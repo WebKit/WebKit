@@ -48,7 +48,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#if ENABLE(3D_CANVAS)    
+#if ENABLE(WEBGL)    
 #include "WebGLContextAttributes.h"
 #include "WebGLRenderingContext.h"
 #endif
@@ -166,7 +166,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
         }
         return m_context.get();
     }
-#if ENABLE(3D_CANVAS)    
+#if ENABLE(WEBGL)    
     Settings* settings = document()->settings();
     if (settings && settings->webGLEnabled()
 #if !PLATFORM(CHROMIUM) && !PLATFORM(QT)
@@ -232,7 +232,7 @@ void HTMLCanvasElement::reset()
     IntSize oldSize = size();
     setSurfaceSize(IntSize(w, h)); // The image buffer gets cleared here.
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
     if (m_context && m_context->is3d() && oldSize != size())
         static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
 #endif
@@ -279,7 +279,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
     }
 }
 
-#if ENABLE(3D_CANVAS)    
+#if ENABLE(WEBGL)    
 bool HTMLCanvasElement::is3D() const
 {
     return m_context && m_context->is3d();

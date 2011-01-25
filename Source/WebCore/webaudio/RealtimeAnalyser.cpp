@@ -32,7 +32,7 @@
 #include "AudioUtilities.h"
 #include "FFTFrame.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 #include "Float32Array.h"
 #include "Uint8Array.h"
 #endif
@@ -193,7 +193,7 @@ void RealtimeAnalyser::doFFTAnalysis()
     }
 }
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(WEBGL)
 
 void RealtimeAnalyser::getFloatFrequencyData(Float32Array* destinationArray)
 {
@@ -294,7 +294,7 @@ void RealtimeAnalyser::getByteTimeDomainData(Uint8Array* destinationArray)
     }
 }
 
-#endif // 3D_CANVAS
+#endif // WEBGL
 
 } // namespace WebCore
 

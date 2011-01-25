@@ -492,28 +492,28 @@ module window {
         attribute CanvasGradientConstructor CanvasGradient;
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
         attribute ImageDataConstructor ImageData;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLActiveInfoConstructor WebGLActiveInfo;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLBufferConstructor WebGLBuffer;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLFramebufferConstructor WebGLFramebuffer;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLProgramConstructor WebGLProgram;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLRenderbufferConstructor WebGLRenderbuffer;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLRenderingContextConstructor WebGLRenderingContext;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLShaderConstructor WebGLShader;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLTextureConstructor WebGLTexture;
-        attribute [Conditional=3D_CANVAS,EnabledAtRuntime] WebGLUniformLocationConstructor WebGLUniformLocation;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLActiveInfoConstructor WebGLActiveInfo;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLBufferConstructor WebGLBuffer;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLFramebufferConstructor WebGLFramebuffer;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLProgramConstructor WebGLProgram;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLRenderbufferConstructor WebGLRenderbuffer;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLRenderingContextConstructor WebGLRenderingContext;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLShaderConstructor WebGLShader;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLTextureConstructor WebGLTexture;
+        attribute [Conditional=WEBGL,EnabledAtRuntime] WebGLUniformLocationConstructor WebGLUniformLocation;
         attribute TextMetricsConstructor TextMetrics;
 
         attribute DOMStringMapConstructor DOMStringMap;
 
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] ArrayBufferConstructor ArrayBuffer; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Int8ArrayConstructor Int8Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Uint8ArrayConstructor Uint8Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Int16ArrayConstructor Int16Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Uint16ArrayConstructor Uint16Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Int32ArrayConstructor Int32Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Uint32ArrayConstructor Uint32Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] Float32ArrayConstructor Float32Array; // Usable with new operator
-        attribute [JSCCustomGetter,Conditional=3D_CANVAS|BLOB,EnabledAtRuntime] DataViewConstructor DataView; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] ArrayBufferConstructor ArrayBuffer; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Int8ArrayConstructor Int8Array; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Uint8ArrayConstructor Uint8Array; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Int16ArrayConstructor Int16Array; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Uint16ArrayConstructor Uint16Array; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Int32ArrayConstructor Int32Array; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Uint32ArrayConstructor Uint32Array; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] Float32ArrayConstructor Float32Array; // Usable with new operator
+        attribute [JSCCustomGetter,Conditional=WEBGL|BLOB,EnabledAtRuntime] DataViewConstructor DataView; // Usable with new operator
 
         attribute [JSCCustomGetter,Conditional=WEB_AUDIO,EnabledAtRuntime] AudioContextConstructor webkitAudioContext; // Usable with new operator
         attribute [Conditional=WEB_AUDIO] AudioPannerNodeConstructor webkitAudioPannerNode; // Needed for panning model constants
