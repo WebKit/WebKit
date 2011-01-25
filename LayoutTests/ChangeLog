@@ -1,3 +1,32 @@
+2011-01-25  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Introduce FontMetrics abstraction
+        https://bugs.webkit.org/show_bug.cgi?id=51456
+
+        Update gtk/qt baseline.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/gtk/svg/text/text-hkern-expected.txt:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/gtk/svg/text/text-vkern-expected.txt:
+        * platform/gtk/svg/text/text-vkern-on-horizontal-text-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-with-no-element-reference-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/qt/svg/text/text-hkern-expected.txt:
+        * platform/qt/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/qt/svg/text/text-vkern-expected.txt:
+        * platform/qt/svg/text/text-vkern-on-horizontal-text-expected.txt:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+
 2011-01-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
