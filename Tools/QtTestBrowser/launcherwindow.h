@@ -163,6 +163,7 @@ protected slots:
     void toggleFrameFlattening(bool toggle);
     void toggleInterruptingJavaScriptEnabled(bool enable);
     void toggleJavascriptCanOpenWindows(bool enable);
+    void toggleAutoLoadImages(bool enable);
 
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     void toggleQGLWidgetViewport(bool enable);

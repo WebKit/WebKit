@@ -1,3 +1,18 @@
+2011-01-25  Mansi Mithal  <mansi.mithal@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        QtTestBrowser should have a UI Settings to prevent loading images
+        https://bugs.webkit.org/show_bug.cgi?id=52409
+        
+        Added a new action item named "DisableAutoLoadImages"
+        under the "Settings" menu 
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+        (LauncherWindow::toggleAutoLoadImages):
+        * QtTestBrowser/launcherwindow.h:
+
 2011-01-25  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
