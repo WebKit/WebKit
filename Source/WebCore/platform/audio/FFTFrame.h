@@ -35,8 +35,13 @@
 #include <Accelerate/Accelerate.h>
 #endif
 
-#if !OS(DARWIN) && USE(WEBAUDIO_MKL)
+#if !OS(DARWIN)
+#if USE(WEBAUDIO_MKL)
 #include "mkl_dfti.h"
+#endif // USE(WEBAUDIO_MKL)
+#if USE(WEBAUDIO_FFTW)
+#include "fftw3.h"
+#endif // USE(WEBAUDIO_FFTW)
 #endif
 
 #include <wtf/PassOwnPtr.h>
@@ -98,8 +103,8 @@ private:
     DSPSplitComplex m_frame;
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
-#endif // OS(DARWIN)
-#if !OS(DARWIN) && USE(WEBAUDIO_MKL)
+#else // !OS(DARWIN)
+#if USE(WEBAUDIO_MKL)
     // Interleaves the planar real and imaginary data and returns a
     // pointer to the resulting storage which can be used for in-place
     // or out-of-place operations. FIXME: ideally all of the MKL
@@ -115,7 +120,26 @@ private:
     AudioFloatArray m_complexData;
     AudioFloatArray m_realData;
     AudioFloatArray m_imagData;
-#endif // !OS(DARWIN) && USE(WEBAUDIO_MKL)
+#endif // USE(WEBAUDIO_MKL)
+#if USE(WEBAUDIO_FFTW)
+    fftwf_plan m_forwardPlan;
+    fftwf_plan m_backwardPlan;
+
+    enum Direction {
+        Forward,
+        Backward
+    };
+
+    AudioFloatArray m_realData;
+    AudioFloatArray m_imagData;
+
+    static fftwf_plan* fftwForwardPlans;
+    static fftwf_plan* fftwBackwardPlans;
+
+    static fftwf_plan fftwPlanForSize(unsigned fftSize, Direction,
+                                      float*, float*, float*);
+#endif // USE(WEBAUDIO_FFTW)
+#endif // !OS(DARWIN)
 };
 
 } // namespace WebCore

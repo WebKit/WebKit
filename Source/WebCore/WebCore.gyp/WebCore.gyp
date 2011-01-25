@@ -852,10 +852,15 @@
           },
         }],
         # FIXME: (kbr) ideally this target should just depend on webcore_prerequisites
-        # to pick up this include directory, but I'm nervous about making that change.
+        # to pick up these include directories, but I'm nervous about making that change.
         ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
           'include_dirs': [
             '<(chromium_src_dir)/third_party/mkl/include',
+          ],
+        }],
+        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
+          'include_dirs': [
+            '<(chromium_src_dir)/third_party/fftw/api',
           ],
         }],
       ],
@@ -1034,6 +1039,14 @@
             ],
           },
         }],
+        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
+          # This directory needs to be on the include path for multiple sub-targets of webcore.
+          'direct_dependent_settings': {
+            'include_dirs': [
+              '<(chromium_src_dir)/third_party/fftw/api',
+            ],
+          },
+        }],
       ],
     },
     {
@@ -1096,7 +1109,7 @@
         # Exclude things that don't apply to the Chromium platform on the basis
         # of their enclosing directories and tags at the ends of their
         # filenames.
-        ['exclude', '(android|cairo|cf|cg|curl|gtk|haiku|linux|mac|mkl|opentype|posix|qt|soup|svg|symbian|win|wx)/'],
+        ['exclude', '(android|cairo|cf|cg|curl|fftw|gtk|haiku|linux|mac|mkl|opentype|posix|qt|soup|svg|symbian|win|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|Wx)\\.(cpp|mm?)$'],
 
         # A few things can't be excluded by patterns.  List them individually.
@@ -1268,6 +1281,11 @@
         ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
           'sources/': [
             ['include', 'platform/audio/mkl/FFTFrameMKL\\.cpp$'],
+          ],
+        }],
+        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
+          'sources/': [
+            ['include', 'platform/audio/fftw/FFTFrameFFTW\\.cpp$'],
           ],
         }],
       ],
@@ -1498,6 +1516,23 @@
                   'mkl_core.lib',
                 ],
               },
+            },
+          },
+        }],
+        ['OS=="linux" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
+          # FIXME: (kbr) figure out how to make these dependencies
+          # work in a cross-platform way. Attempts to use
+          # "link_settings" and "libraries" in conjunction with the
+          # msvs-specific settings didn't work so far.
+          'all_dependent_settings': {
+            'ldflags': [
+              # FIXME: (kbr) build the FFTW into PRODUCT_DIR using GYP.
+              '-Lthird_party/fftw/.libs',
+            ],
+            'link_settings': {
+              'libraries': [
+                '-lfftw3f'
+              ],
             },
           },
         }],
