@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x275
-  RenderBlock {html} at (0,0) size 800x275
-    RenderBody {body} at (8,21) size 784x238
+layer at (0,0) size 800x285
+  RenderBlock {html} at (0,0) size 800x285
+    RenderBody {body} at (8,21) size 784x248
       RenderBlock {h1} at (0,0) size 784x37
         RenderText {#text} at (0,0) size 116x36
           text run at (0,0) width 116: "Test for "
@@ -12,18 +12,18 @@ layer at (0,0) size 800x275
       RenderBlock {p} at (0,58) size 784x20
         RenderText {#text} at (0,0) size 474x19
           text run at (0,0) width 474: "Following text should be rendered as usual. Only \"A\" has a glyph in SVG Font."
-      RenderBlock {p} at (0,94) size 784x16
-        RenderText {#text} at (0,0) size 35x15
-          text run at (0,0) width 35: "XXA"
-      RenderBlock {p} at (0,126) size 784x16
-        RenderText {#text} at (0,0) size 35x15
-          text run at (0,0) width 35: "XAX"
-      RenderBlock {p} at (0,158) size 784x16
-        RenderText {#text} at (0,0) size 35x15
-          text run at (0,0) width 35: "AXX"
-      RenderBlock {p} at (0,190) size 784x16
-        RenderText {#text} at (0,0) size 33x15
-          text run at (0,0) width 33: "XXX"
-      RenderBlock {p} at (0,222) size 784x16
-        RenderText {#text} at (0,0) size 38x15
-          text run at (0,0) width 38: "AAA"
+      RenderBlock {p} at (0,94) size 784x18
+        RenderText {#text} at (0,1) size 35x16
+          text run at (0,1) width 35: "XXA"
+      RenderBlock {p} at (0,128) size 784x18
+        RenderText {#text} at (0,1) size 35x16
+          text run at (0,1) width 35: "XAX"
+      RenderBlock {p} at (0,162) size 784x18
+        RenderText {#text} at (0,1) size 35x16
+          text run at (0,1) width 35: "AXX"
+      RenderBlock {p} at (0,196) size 784x18
+        RenderText {#text} at (0,1) size 33x16
+          text run at (0,1) width 33: "XXX"
+      RenderBlock {p} at (0,230) size 784x18
+        RenderText {#text} at (0,1) size 38x16
+          text run at (0,1) width 38: "AAA"

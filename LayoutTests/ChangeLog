@@ -1,3 +1,47 @@
+2011-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed SVG rebaselines for Chromium.
+
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.txt: Removed.
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.txt: Removed.
+        * platform/chromium-linux/svg/batik/text/textPosition2-expected.txt:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/svg-fonts-with-no-element-reference-expected.checksum:
+        * platform/chromium-linux/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-without-missing-glyph-expected.checksum:
+        * platform/chromium-linux/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/chromium-linux/svg/text/text-text-06-t-expected.checksum:
+        * platform/chromium-linux/svg/text/text-text-06-t-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/svg/text/text-text-06-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-06-t-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPosition2-expected.txt:
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.checksum:
+        * platform/chromium-win/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-without-missing-glyph-expected.checksum:
+        * platform/chromium-win/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/chromium-win/svg/text/text-text-06-t-expected.checksum:
+        * platform/chromium-win/svg/text/text-text-06-t-expected.png:
+        * platform/chromium-win/svg/text/text-text-06-t-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-25  Tony Chang  <tony@chromium.org>
 
         Unreviewed, remove passing chromium win tests.

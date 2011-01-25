@@ -3114,4 +3114,3 @@ BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 BUGTONY WIN : svg/W3C-SVG-1.1/animate-elem-24-t.svg = TEXT
 BUGTONY WIN : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH TEXT
 BUGTONY WIN : svg/custom/svg-fonts-in-html.html = IMAGE+TEXT
-BUGTONY WIN : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT
