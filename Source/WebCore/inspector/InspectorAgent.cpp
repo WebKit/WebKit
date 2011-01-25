@@ -193,26 +193,6 @@ bool InspectorAgent::enabled() const
     return m_inspectedPage->settings()->developerExtrasEnabled();
 }
 
-bool InspectorAgent::inspectorStartsAttached()
-{
-    return m_settings->getBoolean(InspectorSettings::InspectorStartsAttached);
-}
-
-void InspectorAgent::setInspectorStartsAttached(bool attached)
-{
-    m_settings->setBoolean(InspectorSettings::InspectorStartsAttached, attached);
-}
-
-void InspectorAgent::setInspectorAttachedHeight(long height)
-{
-    m_settings->setLong(InspectorSettings::InspectorAttachedHeight, height);
-}
-
-long InspectorAgent::inspectorAttachedHeight() const
-{
-    return m_settings->getLong(InspectorSettings::InspectorAttachedHeight);
-}
-
 bool InspectorAgent::searchingForNodeInPage() const
 {
     return m_state->getBoolean(InspectorState::searchingForNode);

@@ -64,6 +64,9 @@ public:
 
     virtual bool sendMessageToFrontend(const WTF::String&);
 
+    bool inspectorStartsAttached();
+    void setInspectorStartsAttached(bool);
+
     void releaseFrontendPage();
 
 private:

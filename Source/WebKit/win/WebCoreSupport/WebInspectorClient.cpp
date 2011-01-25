@@ -271,8 +271,7 @@ void WebInspectorFrontendClient::attachWindow()
     if (m_attached)
         return;
 
-    // FIXME: This flag can be saved to the flags storage directly.
-    m_inspectedWebView->page()->inspectorController()->setInspectorStartsAttached(true);
+    m_inspectorClient->setInspectorStartsAttached(true);
 
     closeWindowWithoutNotifications();
     showWindowWithoutNotifications();
@@ -283,8 +282,7 @@ void WebInspectorFrontendClient::detachWindow()
     if (!m_attached)
         return;
 
-    // FIXME: This flag can be saved to the flags storage directly.
-    m_inspectedWebView->page()->inspectorController()->setInspectorStartsAttached(false);
+    m_inspectorClient->setInspectorStartsAttached(false);
 
     closeWindowWithoutNotifications();
     showWindowWithoutNotifications();
@@ -365,7 +363,7 @@ void WebInspectorFrontendClient::showWindowWithoutNotifications()
     else {
         // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
         // FIXME: This flag can be fetched directly from the flags storage.
-        shouldAttach = m_inspectedWebView->page()->inspectorController()->inspectorStartsAttached();
+        shouldAttach = m_inspectorClient->inspectorStartsAttached();
 
         if (shouldAttach && !canAttachWindow())
             shouldAttach = false;

@@ -1,3 +1,16 @@
+2011-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove "attached" state related methods from InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=53086
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::sendMessageToFrontend):
+        (WebInspectorClient::inspectorStartsAttached):
+        (WebInspectorClient::setInspectorStartsAttached):
+        (WebInspectorClient::releaseFrontendPage):
+
 2011-01-03  Pratik Solanki  <psolanki@apple.com>
 
         Mac build fix. Define WTF_USE_CFNETWORK for Windows build only.

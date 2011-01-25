@@ -65,6 +65,8 @@
 
 using namespace WebCore;
 
+static const char* inspectorStartsAttachedSetting = "inspectorStartsAttached";
+
 static inline CFStringRef createKeyForPreferences(const String& key)
 {
     RetainPtr<CFStringRef> keyCFString(AdoptCF, key.createCFString());
@@ -98,12 +100,24 @@ void WebInspectorClient::storeSetting(const String& key, const String& setting)
     CFPreferencesSetAppValue(preferencesKey.get(), objectToStore.get(), kCFPreferencesCurrentApplication);
 }
 
-void WebInspectorClient::releaseFrontendPage()
-{
-    m_frontendPage = 0;
-}
-
 bool WebInspectorClient::sendMessageToFrontend(const String& message)
 {
     return doDispatchMessageOnFrontendPage(m_frontendPage, message);
+}
+
+bool WebInspectorClient::inspectorStartsAttached()
+{
+    String value;
+    populateSetting(inspectorStartsAttachedSetting, &value);
+    return value == "true";
+}
+
+void WebInspectorClient::setInspectorStartsAttached(bool attached)
+{
+    storeSetting(inspectorStartsAttachedSetting, attached ? "true" : "false");
+}
+
+void WebInspectorClient::releaseFrontendPage()
+{
+    m_frontendPage = 0;
 }

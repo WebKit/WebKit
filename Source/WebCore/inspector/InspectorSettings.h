@@ -47,8 +47,6 @@ public:
     static const char* MonitoringXHREnabled;
     static const char* ProfilerAlwaysEnabled;
     static const char* DebuggerAlwaysEnabled;
-    static const char* InspectorStartsAttached;
-    static const char* InspectorAttachedHeight;
 
     InspectorSettings(InspectorClient* client);
 

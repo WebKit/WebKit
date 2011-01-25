@@ -63,6 +63,11 @@ public:
 
     virtual bool sendMessageToFrontend(const WTF::String&);
 
+    bool inspectorStartsAttached();
+    void setInspectorStartsAttached(bool);
+
+    void releaseFrontendPage();
+
     void updateHighlight();
     void frontendClosing()
     {
@@ -70,7 +75,6 @@ public:
         releaseFrontendPage();
     }
 
-    void releaseFrontendPage();
 private:
     ~WebInspectorClient();
 

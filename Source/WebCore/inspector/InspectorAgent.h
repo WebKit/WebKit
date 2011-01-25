@@ -257,11 +257,6 @@ public:
     void removeAllScriptsToEvaluateOnLoad();
     void setInspectorExtensionAPI(const String& source);
 
-    bool inspectorStartsAttached();
-    void setInspectorStartsAttached(bool);
-    void setInspectorAttachedHeight(long);
-    long inspectorAttachedHeight() const;
-
     InspectorState* state() { return m_state.get(); }
     InspectorSettings* settings() { return m_settings.get(); }
 

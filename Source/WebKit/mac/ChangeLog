@@ -1,3 +1,16 @@
+2011-01-25  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove "attached" state related methods from InspectorAgent
+        https://bugs.webkit.org/show_bug.cgi?id=53086
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController showWindow:]):
+        (-[WebInspectorWindowController attach]):
+        (-[WebInspectorWindowController detach]):
+
 2011-01-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

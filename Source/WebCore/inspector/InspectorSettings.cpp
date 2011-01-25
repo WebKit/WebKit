@@ -39,8 +39,6 @@ namespace WebCore {
 const char* InspectorSettings::MonitoringXHREnabled = "xhrMonitor";
 const char* InspectorSettings::ProfilerAlwaysEnabled = "profilerEnabled";
 const char* InspectorSettings::DebuggerAlwaysEnabled = "debuggerEnabled";
-const char* InspectorSettings::InspectorStartsAttached = "inspectorStartsAttached";
-const char* InspectorSettings::InspectorAttachedHeight = "inspectorAttachedHeight";
 
 InspectorSettings::InspectorSettings(InspectorClient* client)
     : m_client(client)
@@ -48,8 +46,6 @@ InspectorSettings::InspectorSettings(InspectorClient* client)
     registerBoolean(MonitoringXHREnabled, false);
     registerBoolean(ProfilerAlwaysEnabled, false);
     registerBoolean(DebuggerAlwaysEnabled, false);
-    registerBoolean(InspectorStartsAttached, true);
-    registerLong(InspectorAttachedHeight, 300);
 }
 
 bool InspectorSettings::getBoolean(const String& name)
