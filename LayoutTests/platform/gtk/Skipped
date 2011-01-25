@@ -5614,3 +5614,4 @@ media/unsupported-rtsp.html
 # https://bugs.webkit.org/show_bug.cgi?id=53057
 http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html
 http/tests/xmlhttprequest/simple-cross-origin-denied-events-sync.html
+http/tests/xmlhttprequest/simple-cross-origin-denied-events.html

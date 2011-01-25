@@ -1,5 +1,11 @@
 2011-01-24  Martin Robinson  <mrobinson@igalia.com>
 
+        Skip one more crashing test.
+
+        * platform/gtk/Skipped: Skip a test.
+
+2011-01-24  Martin Robinson  <mrobinson@igalia.com>
+
         Skipping failing tests after r76555.
 
         * platform/gtk/Skipped: Skip failing tests.
