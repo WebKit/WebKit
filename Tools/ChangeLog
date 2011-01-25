@@ -1,3 +1,15 @@
+2011-01-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        Add EFL Builder to core waterfall
+        https://bugs.webkit.org/show_bug.cgi?id=52704
+
+        Add EFL Builder to the core waterfall again.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+
 2011-01-24  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Tony Chang.
