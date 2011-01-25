@@ -1,3 +1,9 @@
+2011-01-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, trivial debugger test fix.
+
+        * src/js/Tests.js:
+
 2011-01-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Adler.

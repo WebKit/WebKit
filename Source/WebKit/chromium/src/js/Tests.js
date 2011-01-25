@@ -685,7 +685,7 @@ TestSuite.prototype._checkSourceFrameWhenLoaded = function(expectations, callbac
 {
     var test = this;
 
-    var frame = WebInspector.currentPanel.visibleView.sourceFrame;
+    var frame = WebInspector.currentPanel.visibleView;
 
     if (frame._textViewer)
         checkExecLine();
