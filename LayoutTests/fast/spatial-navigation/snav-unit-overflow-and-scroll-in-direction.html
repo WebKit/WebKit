@@ -31,7 +31,7 @@
 
     var resultMap1 = [
       ["Down", "start"],
-      ["", ""]
+      ["DONE", "DONE"]
     ];
 
     var resultMap2 = [
@@ -52,7 +52,6 @@
       document.getElementById("start").focus();
 
       setTimeout(step1 , 0);
-      setTimeout(step2 , 50);
     }
 
     function step1()
@@ -60,7 +59,7 @@
       // Actions in 'resultMap1' should keep the focus in the currently
       // focused element ('start') once the best candidate ('end') is not
       // visible in current viewport.
-      initTest(resultMap1);
+      initTest(resultMap1, step1Completed);
     }
 
     function step2()
@@ -72,10 +71,15 @@
         eventSender.keyDown("end");
 
       // And 'resultMap2' re-tries to move focus down.
-      initTest(resultMap2, testCompleted);
+      initTest(resultMap2, step2Completed);
     }
 
-    function testCompleted()
+    function step1Completed()
+    {
+      setTimeout(step2 , 0);
+    }
+
+    function step2Completed()
     {
       if (window.layoutTestController)
         layoutTestController.notifyDone();

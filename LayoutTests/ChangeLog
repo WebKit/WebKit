@@ -1,3 +1,16 @@
+2011-01-25  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Antonio Gomes.
+
+        fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=53073
+
+        Make the two steps in the flaky test to be executed sequentially.
+
+        * fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html:
+        Fix flaky test by chaining its two steps up.
+        * platform/gtk/Skipped: Unskip test.
+
 2011-01-25  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
