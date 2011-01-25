@@ -1,3 +1,24 @@
+2011-01-21  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Updating the expected result for 5408255 and adding tests for caret positioning at the
+        beginning and end of RenderBoxes.
+
+        Undo moves caret to invalid position
+        https://bugs.webkit.org/show_bug.cgi?id=49744
+
+        * editing/selection/caret-painting-after-paste-undo-rtl.html: Added.
+        * editing/selection/caret-painting-after-paste-undo.html: Added.
+        * platform/mac/editing/deleting/5408255-expected.checksum:
+        * platform/mac/editing/deleting/5408255-expected.png:
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-expected.png: Added.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-expected.txt: Added.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-rtl-expected.checksum: Added.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-rtl-expected.png: Added.
+        * platform/mac/editing/selection/caret-painting-after-paste-undo-rtl-expected.txt: Added.
+
 2011-01-25  Tony Chang  <tony@chromium.org>
 
         Unreviewed, add chromium-mac baselines after r76599.

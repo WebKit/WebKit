@@ -1,3 +1,18 @@
+2011-01-21  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Adding border and padding to the calculation of the local caret rect for RenderBoxes.
+
+        Undo moves caret to invalid position
+        https://bugs.webkit.org/show_bug.cgi?id=49744
+
+        Tests: editing/selection/caret-painting-after-paste-undo-rtl.html
+               editing/selection/caret-painting-after-paste-undo.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localCaretRect):
+
 2011-01-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
