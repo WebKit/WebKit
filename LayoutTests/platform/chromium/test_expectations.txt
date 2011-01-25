@@ -3106,7 +3106,3 @@ BUGRNIWA WIN MAC : fast/animation/request-animation-frame.html = PASS TEXT
 
 // Added by http://trac.webkit.org/changeset/76548
 BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
-
-// Regressions from r76442.
-BUGTONY WIN : svg/custom/svg-fonts-in-html.html = IMAGE+TEXT
-

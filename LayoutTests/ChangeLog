@@ -1,3 +1,12 @@
+2011-01-25  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, rebaseline a test on chromium-win.  Part of r76586 rebaselines.
+
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another unreviewed SVG rebaselines for Chromium.
