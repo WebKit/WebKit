@@ -5374,6 +5374,9 @@ editing/selection/extend-by-character-003.html
 editing/selection/extend-by-character-004.html
 editing/selection/extend-by-character-005.html
 
+# flaky test (see https://bugs.webkit.org/show_bug.cgi?id=53074)
+editing/selection/extend-selection-bidi.html
+
 # Remaining Sputnik failures
 # https://bugs.webkit.org/show_bug.cgi?id=43568
 fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
