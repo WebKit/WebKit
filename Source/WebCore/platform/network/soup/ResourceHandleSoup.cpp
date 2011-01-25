@@ -801,6 +801,10 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, false /*defersLoading*/, false /*shouldContentSniff*/));
     handle->start(context);
 
+    // If the request has already failed, do not run the main loop, or else we'll block indefinitely.
+    if (handle->d->m_scheduledFailureType != NoFailure)
+        return;
+
     syncLoader.run();
 }
 

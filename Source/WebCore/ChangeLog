@@ -1,3 +1,18 @@
+2011-01-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Many DOM XHTML tests time out
+        https://bugs.webkit.org/show_bug.cgi?id=52553
+
+        Properly handle the situation where a synchronous load fails before the inner
+        event loop has started. In this case, we simply do not run the inner event loop,
+        or else it will block indefinitely (since no GIO or libsoup callbacks will fire).
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously): Bail out of a synchronous
+        load if it fails up front.
+
 2011-01-24  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Darin Adler.
