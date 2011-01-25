@@ -1,3 +1,13 @@
+2011-01-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Ensure layouted frame when painting
+        https://bugs.webkit.org/show_bug.cgi?id=53108
+
+        * WebView.cpp:
+        (WebView::paint):
+
 2011-01-04  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix.

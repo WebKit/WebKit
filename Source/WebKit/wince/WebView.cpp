@@ -232,11 +232,17 @@ void WebView::stop()
 
 void WebView::paint(HDC hDC, const IntRect& clipRect)
 {
+    FrameView* frameView = view();
+    if (!frameView)
+        return;
+
     OwnPtr<HRGN> clipRgn(CreateRectRgn(clipRect.x(), clipRect.y(), clipRect.right(), clipRect.bottom()));
     SelectClipRgn(hDC, clipRgn.get());
 
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
     GraphicsContext gc(hDC);
-    view()->paint(&gc, clipRect);
+    frameView->paint(&gc, clipRect);
 }
 
 bool WebView::handlePaint(HWND hWnd)
