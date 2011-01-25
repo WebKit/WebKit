@@ -40,7 +40,6 @@
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
-                    { "name": "gtk-linux-slave-4", "platform": "gtk"},
 
                     { "name": "szeged-linux-1", "platform": "qt"},
                     { "name": "szeged-linux-2", "platform": "qt"},
@@ -143,11 +142,6 @@
                       "slavenames": ["gtk-linux-slave-3"]
                     },
                     {
-                      "name": "GTK Linux 64-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-64-release",
-                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["gtk-linux-slave-4"]
-                    },
-                    {
                       "name": "Qt Linux Release", "type": "BuildAndTest", "builddir": "qt-linux-release",
                       "platform": "qt", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-linux-1"]
@@ -232,7 +226,7 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)",
                                        "SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks",
-                                       "GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug", "GTK Linux 64-bit Release",
+                                       "GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv5 Release", "Qt Linux ARMv7 Release", 
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
